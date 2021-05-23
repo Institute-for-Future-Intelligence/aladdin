@@ -1,26 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
+/*
+ * @Copyright 2021. Institute for Future Intelligence, Inc.
+ */
+
+import React, {useRef, useState} from 'react';
+import * as THREE from 'three';
 import './App.css';
+import {Canvas, useFrame} from '@react-three/fiber';
+
+function Box(props: any) {
+    // This reference will give us direct access to the mesh
+    const mesh = useRef<THREE.Mesh>(null!);
+    // Set up state for the hovered and active state
+    const [hovered, setHover] = useState(false)
+    const [active, setActive] = useState(false)
+    // Subscribe this component to the render-loop, rotate the mesh every frame
+    useFrame((state, delta) => {
+        if (mesh.current) {
+            //@ts-ignore
+            mesh.current.rotation.x += 0.01
+        }
+    })
+    // Return view, these are regular three.js elements expressed in JSX
+    return (
+        <mesh
+            {...props}
+            ref={mesh}
+            scale={active ? 1.5 : 1}
+            onClick={(event) => setActive(!active)}
+            onPointerOver={(event) => setHover(true)}
+            onPointerOut={(event) => setHover(false)}
+        >
+            <boxGeometry args={[5, 5, 5]}/>
+            <meshStandardMaterial color={hovered ? 'red' : 'orange'}/>
+        </mesh>
+    )
+}
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <div className="App">
+            <p>Aladdin</p>
+            <Canvas>
+                <ambientLight/>
+                <pointLight position={[10, 10, 10]}/>
+                <Box position={[-30, 0, -20]}/>
+                <Box position={[-10, 0, -15]}/>
+                <Box position={[10, 0, -15]}/>
+                <Box position={[30, 0, -20]}/>
+            </Canvas>
+        </div>
+    );
 }
 
 export default App;
