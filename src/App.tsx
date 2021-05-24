@@ -7,19 +7,18 @@ import * as THREE from 'three';
 import './App.css';
 import {Canvas, useFrame} from '@react-three/fiber';
 
-function Box(props: any) {
+const Box = (props: JSX.IntrinsicElements['mesh']) => {
     // This reference will give us direct access to the mesh
     const mesh = useRef<THREE.Mesh>(null!);
     // Set up state for the hovered and active state
-    const [hovered, setHover] = useState(false)
-    const [active, setActive] = useState(false)
+    const [hovered, setHover] = useState(false);
+    const [active, setActive] = useState(false);
     // Subscribe this component to the render-loop, rotate the mesh every frame
     useFrame((state, delta) => {
         if (mesh.current) {
-            //@ts-ignore
             mesh.current.rotation.x += 0.01
         }
-    })
+    });
     // Return view, these are regular three.js elements expressed in JSX
     return (
         <mesh
@@ -34,9 +33,9 @@ function Box(props: any) {
             <meshStandardMaterial color={hovered ? 'red' : 'orange'}/>
         </mesh>
     )
-}
+};
 
-function App() {
+const App = () => {
     return (
         <div className="App">
             <p>Aladdin</p>
