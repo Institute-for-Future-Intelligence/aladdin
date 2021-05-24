@@ -5,50 +5,9 @@
 import React, {useRef, useState} from 'react';
 import * as THREE from 'three';
 import './App.css';
-import {Canvas, extend, Object3DNode, useFrame, useLoader, useThree} from '@react-three/fiber';
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-
-// Extend will make OrbitControls available as a JSX element called orbitControls for us to use.
-extend({OrbitControls});
-
-declare global {
-    namespace JSX {
-        interface IntrinsicElements {
-            'orbitControls': Object3DNode<OrbitControls, typeof OrbitControls>;
-        }
-    }
-}
-
-const CameraControls = () => {
-    // Get a reference to the Three.js Camera, and the canvas html element.
-    // We need these to setup the OrbitControls class.
-    // https://threejs.org/docs/#examples/en/controls/OrbitControls
-
-    const {
-        camera,
-        gl: {domElement},
-    } = useThree();
-
-    // Ref to the controls, so that we can update them on every frame using useFrame
-    const controls = useRef<OrbitControls>(null);
-    useFrame((state) => {
-        if (controls.current) {
-            controls.current.update();
-        }
-    });
-
-    return (
-        <orbitControls
-            ref={controls}
-            args={[camera, domElement]}
-            enableZoom={false}
-            maxAzimuthAngle={Math.PI / 4}
-            maxPolarAngle={Math.PI}
-            minAzimuthAngle={-Math.PI / 4}
-            minPolarAngle={0}
-        />
-    );
-};
+import {Canvas, useFrame, useThree} from '@react-three/fiber';
+import SkyImage from './resources/daysky.jpg';
+import MyOrbitControls from "./orbitControls";
 
 const Box = (props: JSX.IntrinsicElements['mesh']) => {
     // This reference will give us direct access to the mesh
@@ -78,6 +37,17 @@ const Box = (props: JSX.IntrinsicElements['mesh']) => {
     )
 };
 
+const SkyBox = () => {
+    const {scene} = useThree();
+    const loader = new THREE.TextureLoader();
+    const texture = loader.load(SkyImage, (texture) => {
+        // const rt = new THREE.WebGLCubeRenderTarget(texture.image.height);
+        // rt.fromEquirectangularTexture(new THREE.WebGLRenderer(), texture);
+        scene.background = texture;
+    });
+    return null;
+};
+
 const App = () => {
     return (
         <div className="App">
@@ -89,7 +59,8 @@ const App = () => {
             }}>Aladdin
             </div>
             <Canvas style={{height: "calc(100vh - 60px)"}}>
-                <CameraControls/>
+                <MyOrbitControls/>
+                <SkyBox/>
                 <ambientLight intensity={0.6}/>
                 <pointLight color="white" position={[1, 1, -1]}/>
                 <gridHelper args={[100, 100, 'black', 'lightGray']}/>
