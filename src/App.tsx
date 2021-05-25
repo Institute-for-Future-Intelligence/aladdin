@@ -6,9 +6,9 @@ import React, {useRef, useState} from 'react';
 import * as THREE from 'three';
 import './App.css';
 import {Canvas, useFrame, useThree} from '@react-three/fiber';
-import SkyImage from './resources/daysky.jpg';
 import MyOrbitControls from "./orbitControls";
 import Hemisphere from "./models/hemisphere";
+import Ground from "./models/ground";
 
 const Box = (props: JSX.IntrinsicElements['mesh']) => {
     // This reference will give us direct access to the mesh
@@ -38,17 +38,6 @@ const Box = (props: JSX.IntrinsicElements['mesh']) => {
     )
 };
 
-const SkyBox = () => {
-    const {scene} = useThree();
-    const loader = new THREE.TextureLoader();
-    const texture = loader.load(SkyImage, (texture) => {
-        // const rt = new THREE.WebGLCubeRenderTarget(texture.image.height);
-        // rt.fromEquirectangularTexture(new THREE.WebGLRenderer(), texture);
-        scene.background = texture;
-    });
-    return null;
-};
-
 const App = () => {
     return (
         <div className="App">
@@ -61,10 +50,11 @@ const App = () => {
             </div>
             <Canvas style={{height: "calc(100vh - 60px)"}}>
                 <MyOrbitControls/>
-                <ambientLight intensity={0.6}/>
+                <ambientLight intensity={0.5}/>
                 <pointLight color="white" position={[1, 1, -1]}/>
-                <gridHelper args={[100, 100, 'black', 'lightGray']}/>
+                <gridHelper args={[100, 100, 'black', 'gray']}/>
                 <Box position={[0, 2.5, -20]}/>
+                <Ground/>
                 <Hemisphere/>
             </Canvas>
         </div>

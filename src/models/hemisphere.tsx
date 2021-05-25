@@ -14,13 +14,12 @@ const Hemisphere = (props: JSX.IntrinsicElements['mesh']) => {
         <mesh
             {...props}
             ref={mesh}
-            scale={1000}
+            scale={1}
         >
-            <sphereGeometry args={[1, 16, 16, 0, 2 * Math.PI, 0, Math.PI / 2 + 0.01]}/>
+            <sphereGeometry args={[1000, 16, 16, 0, 2 * Math.PI, 0, Math.PI / 2 + 0.01]}/>
             <meshBasicMaterial map={texture}
                                side={THREE.DoubleSide}
-                               transparent={true}
-                               opacity={0.5}
+                               opacity={1}
                                color={'skyblue'}/>
         </mesh>
     )
