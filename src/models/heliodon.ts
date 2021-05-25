@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import {Util} from "./Util";
+import {Util} from "./util";
 
 export class Heliodon {
 

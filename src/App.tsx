@@ -8,6 +8,7 @@ import './App.css';
 import {Canvas, useFrame, useThree} from '@react-three/fiber';
 import SkyImage from './resources/daysky.jpg';
 import MyOrbitControls from "./orbitControls";
+import Hemisphere from "./models/hemisphere";
 
 const Box = (props: JSX.IntrinsicElements['mesh']) => {
     // This reference will give us direct access to the mesh
@@ -60,11 +61,11 @@ const App = () => {
             </div>
             <Canvas style={{height: "calc(100vh - 60px)"}}>
                 <MyOrbitControls/>
-                <SkyBox/>
                 <ambientLight intensity={0.6}/>
                 <pointLight color="white" position={[1, 1, -1]}/>
                 <gridHelper args={[100, 100, 'black', 'lightGray']}/>
                 <Box position={[0, 2.5, -20]}/>
+                <Hemisphere/>
             </Canvas>
         </div>
     );

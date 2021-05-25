@@ -2,9 +2,9 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import React, {useRef} from "react";
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import {extend, Object3DNode, useFrame, useThree} from "@react-three/fiber";
-import React, {useRef} from "react";
 
 // Extend will make OrbitControls available as a JSX element called orbitControls for us to use.
 extend({OrbitControls});
@@ -43,9 +43,9 @@ const MyOrbitControls = () => {
             ref={controls}
             args={[camera, domElement]}
             enableZoom={true}
-            maxAzimuthAngle={Math.PI / 2}
-            maxPolarAngle={Math.PI}
-            minAzimuthAngle={-Math.PI / 2}
+            maxAzimuthAngle={Math.PI}
+            maxPolarAngle={Math.PI * 2}
+            minAzimuthAngle={-Math.PI}
             minPolarAngle={0}
         />
     );
