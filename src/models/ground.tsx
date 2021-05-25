@@ -6,19 +6,28 @@ import React, {useRef} from "react";
 import * as THREE from "three";
 import {Euler} from "three";
 
-const Ground = (props: JSX.IntrinsicElements['mesh']) => {
+export interface GroundProps {
+    color?: string;
+
+    [key: string]: any;
+}
+
+const Ground = ({
+                    color = 'forestgreen',
+                    ...props
+                }: GroundProps) => {
     const mesh = useRef<THREE.Mesh>(null!);
     return (
         <mesh
             {...props}
             ref={mesh}
             scale={1}
-            rotation={new Euler(Math.PI/2, 0, 0)}
+            rotation={new Euler(Math.PI / 2, 0, 0)}
         >
             <planeGeometry args={[10000, 10000]}/>
             <meshBasicMaterial side={THREE.DoubleSide}
                                opacity={1}
-                               color={'forestgreen'}/>
+                               color={color}/>
         </mesh>
     )
 };

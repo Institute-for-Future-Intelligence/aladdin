@@ -5,10 +5,11 @@
 import React, {useRef, useState} from 'react';
 import * as THREE from 'three';
 import './App.css';
-import {Canvas, useFrame, useThree} from '@react-three/fiber';
-import MyOrbitControls from "./orbitControls";
+import {Canvas, useFrame} from '@react-three/fiber';
+import OrbitController from "./orbitController";
 import Hemisphere from "./models/hemisphere";
 import Ground from "./models/ground";
+import Axes from "./models/axes";
 
 const Box = (props: JSX.IntrinsicElements['mesh']) => {
     // This reference will give us direct access to the mesh
@@ -48,13 +49,14 @@ const App = () => {
                 fontSize: '30px'
             }}>Aladdin
             </div>
-            <Canvas style={{height: "calc(100vh - 60px)"}}>
-                <MyOrbitControls/>
+            <Canvas style={{height: "calc(100vh - 60px)"}} shadows={true}>
+                <OrbitController/>
                 <ambientLight intensity={0.5}/>
                 <pointLight color="white" position={[1, 1, -1]}/>
-                <gridHelper args={[100, 100, 'black', 'gray']}/>
+                <gridHelper args={[500, 100, 'gray', 'gray']}/>
                 <Box position={[0, 2.5, -20]}/>
                 <Ground/>
+                <Axes/>
                 <Hemisphere/>
             </Canvas>
         </div>

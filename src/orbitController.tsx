@@ -17,7 +17,11 @@ declare global {
     }
 }
 
-const MyOrbitControls = () => {
+export interface OrbitControllerProps {
+    [key: string]: any;
+}
+
+const OrbitController = () => {
     // Get a reference to the Three.js Camera, and the canvas html element.
     // We need these to setup the OrbitControls class.
     // https://threejs.org/docs/#examples/en/controls/OrbitControls
@@ -44,12 +48,10 @@ const MyOrbitControls = () => {
             args={[camera, domElement]}
             enableZoom={true}
             maxAzimuthAngle={Math.PI}
-            maxPolarAngle={Math.PI * 2}
             minAzimuthAngle={-Math.PI}
-            minPolarAngle={0}
         />
     );
 
 };
 
-export default MyOrbitControls;
+export default OrbitController;

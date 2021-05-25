@@ -4,12 +4,29 @@
 
 import React, {useRef} from "react";
 import * as THREE from "three";
-import SkyImage from "../resources/daysky.jpg";
+import DaySkyImage from "../resources/daysky.jpg";
+import NightSkyImage from "../resources/nightsky.jpg";
 
-const Hemisphere = (props: JSX.IntrinsicElements['mesh']) => {
+export interface HemisphereProps {
+    type?: string,
+
+    [key: string]: any;
+}
+
+const Hemisphere = ({
+                        type = 'day sky',
+                        ...props
+                    }: HemisphereProps) => {
     const mesh = useRef<THREE.Mesh>(null!);
     const loader = new THREE.TextureLoader();
-    const texture = loader.load(SkyImage);
+    let texture;
+    switch (type) {
+        case 'night sky':
+            texture = loader.load(NightSkyImage);
+            break;
+        default:
+            texture = loader.load(DaySkyImage);
+    }
     return (
         <mesh
             {...props}
