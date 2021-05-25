@@ -5,7 +5,7 @@
 import React, {Suspense, useRef, useState} from 'react';
 import * as THREE from 'three';
 import './App.css';
-import {Canvas, useFrame, useThree} from '@react-three/fiber';
+import {Canvas, useFrame} from '@react-three/fiber';
 import OrbitController from "./orbitController";
 import Hemisphere from "./models/hemisphere";
 import Ground from "./models/ground";
@@ -55,15 +55,15 @@ const App = () => {
                 fontSize: '30px'
             }}>Aladdin
             </div>
-            <Canvas style={{height: "calc(100vh - 60px)"}}>
-                 <Suspense fallback={null}>
+            <Canvas style={{height: 'calc(100vh - 60px)', backgroundColor: 'black'}}>
+                <Suspense fallback={null}>
                     <OrbitController/>
                     <ambientLight intensity={0.5}/>
                     <pointLight color="white" position={[1, 1, -1]}/>
                     <gridHelper args={[500, 100, 'gray', 'gray']}/>
                     <Box position={[0, 2.5, -20]}/>
-                    <Compass position={[0, 0, 0]}/>
                     <Ground/>
+                    <Compass/>
                     <Axes/>
                     <Hemisphere/>
                 </Suspense>

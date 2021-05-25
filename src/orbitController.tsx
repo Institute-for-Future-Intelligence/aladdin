@@ -26,10 +26,7 @@ const OrbitController = () => {
     // We need these to setup the OrbitControls class.
     // https://threejs.org/docs/#examples/en/controls/OrbitControls
 
-    const {
-        camera,
-        gl: {domElement},
-    } = useThree();
+    const {camera, gl: {domElement}} = useThree();
 
     // Ref to the controls, so that we can update them on every frame using useFrame
     const controls = useRef<OrbitControls>(null);

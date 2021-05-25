@@ -3,7 +3,7 @@
  */
 
 import React, {useRef} from "react";
-import {useLoader} from '@react-three/fiber'
+import {useFrame, useLoader, useThree} from '@react-three/fiber'
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 import * as THREE from "three";
 import {Euler} from "three";
@@ -15,11 +15,18 @@ export interface CompassProps {
 }
 
 const Compass = ({
-                     scale = 0.1,
+                     scale = 0.01,
                      ...props
                  }: CompassProps) => {
     const model = useLoader(OBJLoader, 'static/assets/compass.obj')
     const mesh = useRef<THREE.Mesh>(null!);
+    const {camera} = useThree();
+    useFrame((state) => {
+        if (mesh.current) {
+            const v = new THREE.Vector3(0.88, -0.8, 0).unproject(camera);
+            mesh.current.position.set(v.x, v.y, v.z);
+        }
+    });
     return (
         <mesh
             {...props}
