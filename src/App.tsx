@@ -61,7 +61,7 @@ const App = () => {
                     <ambientLight intensity={0.5}/>
                     <pointLight color="white" position={[1, 1, -1]}/>
                     <gridHelper args={[500, 100, 'gray', 'gray']}/>
-                    <Box position={[0, 2.5, -20]}/>
+                    <Box position={[10, 2.5, -20]}/>
                     <Ground/>
                     <Compass/>
                     <Axes/>
