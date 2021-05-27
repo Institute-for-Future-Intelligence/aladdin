@@ -6,7 +6,7 @@ import React, {Suspense} from 'react';
 import './App.css';
 import {Canvas} from '@react-three/fiber';
 import OrbitController from "./orbitController";
-import Hemisphere from "./models/hemisphere";
+import Sky from "./models/sky";
 import Axes from "./models/axes";
 import Compass from "./models/compass";
 import Scene from "./Scene";
@@ -32,7 +32,7 @@ const App = () => {
                     <ambientLight intensity={0.25}/>
                     <directionalLight
                         color='white'
-                        position={[0, 2, 0]}
+                        position={[2, 2, 0]}
                         intensity={0.5}
                         castShadow
                         shadow-mapSize-height={512}
@@ -42,7 +42,7 @@ const App = () => {
                     <Compass/>
                     <Axes/>
                     <Ground/>
-                    <Hemisphere/>
+                    <Sky/>
                     <Scene/>
                 </Suspense>
             </Canvas>

@@ -7,17 +7,17 @@ import * as THREE from "three";
 import DaySkyImage from "../resources/daysky.jpg";
 import NightSkyImage from "../resources/nightsky.jpg";
 
-export interface HemisphereProps {
+export interface SkyProps {
     type?: string,
 
     [key: string]: any;
 }
 
-const Hemisphere = ({
-                        type = 'day sky',
-                        ...props
-                    }: HemisphereProps) => {
-    const mesh = useRef<THREE.Mesh>(null!);
+const Sky = ({
+                 type = 'day sky',
+                 ...props
+             }: SkyProps) => {
+    const meshRef = useRef<THREE.Mesh>(null!);
     const loader = new THREE.TextureLoader();
     let texture;
     switch (type) {
@@ -30,8 +30,16 @@ const Hemisphere = ({
     return (
         <mesh
             {...props}
-            ref={mesh}
+            ref={meshRef}
             scale={1}
+            onClick={(e) => {
+                if (e.intersections.length > 0) {
+                    const skyClicked = e.intersections[0].object === meshRef.current;
+                    if (skyClicked) {
+                        console.log('Sky clicked');
+                    }
+                }
+            }}
         >
             <sphereGeometry args={[1000, 16, 16, 0, 2 * Math.PI, 0, Math.PI / 2 + 0.01]}/>
             <meshBasicMaterial map={texture}
@@ -42,4 +50,4 @@ const Hemisphere = ({
     )
 };
 
-export default Hemisphere;
+export default Sky;
