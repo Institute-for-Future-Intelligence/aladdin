@@ -20,17 +20,19 @@ const App = () => {
                 height: '60px',
                 paddingTop: '10px',
                 fontSize: '30px'
-            }}>Aladdin
+            }}>
+                <img alt='Logo' src={'static/assets/aladdin-logo.png'} height='50px' style={{verticalAlign: 'middle'}}/>
+                <span style={{paddingLeft: '20px', verticalAlign: 'middle'}}>Aladdin</span>
             </div>
             <Canvas shadows={true}
                     camera={{position: [0, 2, 5], fov: 90}}
-                    style={{height: 'calc(100vh - 60px)', backgroundColor: 'black'}}>
+                    style={{height: 'calc(100vh - 70px)', backgroundColor: 'black'}}>
                 <Suspense fallback={null}>
                     <OrbitController/>
                     <ambientLight intensity={0.25}/>
                     <directionalLight
                         color='white'
-                        position={[0, 100, 0]}
+                        position={[0, 2, 0]}
                         intensity={0.5}
                         castShadow
                         shadow-mapSize-height={512}
@@ -46,6 +48,6 @@ const App = () => {
             </Canvas>
         </div>
     );
-}
+};
 
 export default App;

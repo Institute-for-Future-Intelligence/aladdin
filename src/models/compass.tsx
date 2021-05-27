@@ -33,9 +33,9 @@ const Compass = ({
     const compassMaterial = new THREE.MeshBasicMaterial({color: 'red'});
     return (
         <mesh
-            {...props}
-            ref={mesh}
-            rotation={new Euler(-Math.PI / 2, 0, 0)}
+              {...props}
+              ref={mesh}
+              rotation={new Euler(-Math.PI / 2, 0, 0)}
         >
             <mesh position={[-0.001, 0.02, 0]} material={textMaterial}>
                 <textGeometry args={['N', textGeometryParams]}/>
