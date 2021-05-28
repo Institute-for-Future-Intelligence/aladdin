@@ -31,6 +31,7 @@ const Sky = ({
         <mesh
             {...props}
             ref={meshRef}
+            name={'Sky'}
             scale={1}
             onClick={(e) => {
                 if (e.intersections.length > 0) {

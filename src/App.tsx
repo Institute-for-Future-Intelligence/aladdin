@@ -9,7 +9,7 @@ import OrbitController from "./orbitController";
 import Sky from "./models/sky";
 import Axes from "./models/axes";
 import Compass from "./models/compass";
-import Scene from "./Scene";
+import Scene from "./scene";
 import Ground from "./models/ground";
 
 const App = () => {

@@ -48,13 +48,16 @@ const Foundation = ({
             {/* draw rectangle */}
             <Box castShadow receiveShadow
                  ref={baseRef}
+                 name={'Foundation'}
                  onClick={(e) => {
                      if (e.intersections.length > 0) {
                          setActive(e.intersections[0].object === baseRef.current);
                      }
                  }}
                  onPointerOver={(e) => {
-                     setHovered(true);
+                     if (e.intersections.length > 0) {
+                         setHovered(e.intersections[0].object === baseRef.current);
+                     }
                  }}
                  onPointerOut={() => {
                      setHovered(false);

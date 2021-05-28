@@ -4,6 +4,7 @@
 
 import React, {useRef} from "react";
 import {Plane} from "@react-three/drei";
+import * as THREE from "three";
 
 export interface GroundProps {
     color?: string;
@@ -19,6 +20,7 @@ const Ground = ({
     return (
         <Plane receiveShadow
                ref={planeRef}
+               name={'Ground'}
                onClick={(e) => {
                    if (e.intersections.length > 0) {
                        const groundClicked = e.intersections[0].object === planeRef.current;
@@ -30,7 +32,9 @@ const Ground = ({
                rotation={[-Math.PI / 2, 0, 0]}
                position={[0, 0, 1]}
                args={[10000, 10000]}>
-            <meshStandardMaterial attach="material" color={color}/>
+            <meshStandardMaterial side={THREE.DoubleSide}
+                                  attach="material"
+                                  color={color}/>
         </Plane>
     )
 };
