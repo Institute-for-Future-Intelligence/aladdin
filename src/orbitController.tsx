@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useRef} from "react";
+import React, {useEffect, useRef} from "react";
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import {extend, Object3DNode, useThree} from "@react-three/fiber";
 import {useStore} from "./stores/common";
@@ -22,15 +22,27 @@ export interface OrbitControllerProps {
     [key: string]: any;
 }
 
+// Get a reference to the Three.js Camera, and the canvas html element.
+// We need these to setup the OrbitControls class.
+// https://threejs.org/docs/#examples/en/controls/OrbitControls
 const OrbitController = () => {
-    // Get a reference to the Three.js Camera, and the canvas html element.
-    // We need these to setup the OrbitControls class.
-    // https://threejs.org/docs/#examples/en/controls/OrbitControls
 
     const set = useStore(state => state.set);
     const {camera, gl: {domElement}} = useThree();
+    // Ref to the controls, so that we can update them on every frame using useFrame
+    const controls = useRef<OrbitControls>(null);
 
-    const onCameraPositionChange = () => {
+    useEffect(() => {
+        if (controls.current) {
+            controls.current.target.set(0, 0, 0);
+            controls.current.addEventListener('end', onInteractionEnd);
+        }
+        return () => {
+            controls.current?.removeEventListener('end', onInteractionEnd);
+        }
+    }, []);
+
+    const onInteractionEnd = () => {
         set((state) => {
             const w = state.worlds['default'];
             if (w) {
@@ -41,13 +53,6 @@ const OrbitController = () => {
             }
         });
     };
-
-    // Ref to the controls, so that we can update them on every frame using useFrame
-    const controls = useRef<OrbitControls>(null);
-    if (controls.current) {
-        controls.current.target.set(0, 0, 0);
-        controls.current.addEventListener('change', onCameraPositionChange);
-    }
 
     // animation
     // useFrame((state) => {

@@ -41,7 +41,6 @@ const Ground = ({
                        const groundClicked = e.intersections[0].object === planeRef.current;
                        if (groundClicked) {
                            selectNone();
-                           console.log('Ground clicked');
                        }
                    }
                }}

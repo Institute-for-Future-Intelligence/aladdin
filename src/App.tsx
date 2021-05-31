@@ -33,6 +33,8 @@ const App = () => {
         cameraPosition.set(world.cameraPosition.x, world.cameraPosition.y, world.cameraPosition.z);
     }
 
+    console.log('x')
+
     return (
         <div className="App">
             <div style={{

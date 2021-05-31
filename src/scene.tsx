@@ -10,14 +10,7 @@ import {FoundationModel} from "./models/foundationModel";
 
 const Scene: React.FC<{ world: WorldModel }> = ({world}) => {
     return (
-        <group onPointerMissed={(e) => {
-            if (e.intersections) {
-                e.intersections.forEach(x => {
-                    console.log(x.object);
-                });
-            }
-        }}
-        >
+        <group>
             <Box castShadow receiveShadow
                  args={[1, 2, 1]}
                  position={[0, 1, 0]}>
