@@ -6,6 +6,7 @@ import React, {useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
 import {Vector3} from "three";
 import {ModelProps} from "./modelProps";
+import {useStore} from "../stores/common";
 
 export interface FoundationProps extends ModelProps {
     lx: number; // length in x direction
@@ -14,6 +15,7 @@ export interface FoundationProps extends ModelProps {
 }
 
 const Foundation = ({
+                        id,
                         cx,
                         cy,
                         lx = 1,
@@ -41,6 +43,9 @@ const Foundation = ({
 
     const yOffset = 0.002;
 
+    // @ts-ignore
+    const set = useStore(state => state.set);
+
     return (
 
         <group>
@@ -52,6 +57,15 @@ const Foundation = ({
                  onClick={(e) => {
                      if (e.intersections.length > 0) {
                          setActive(e.intersections[0].object === baseRef.current);
+                         set((state) => {
+                             const w = state.worlds['default'];
+                             if (w) {
+                                 const f = w.foundations[id];
+                                 if (f) {
+                                     f.color = 'green';
+                                 }
+                             }
+                         })
                      }
                  }}
                  onPointerOver={(e) => {

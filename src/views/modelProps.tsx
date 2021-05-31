@@ -5,6 +5,7 @@
 import React from "react";
 
 export interface ModelProps {
+    id: string;
     cx: number; // x coordinate of the center
     cy: number; // y coordinate of the center
     selected?: boolean,

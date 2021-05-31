@@ -2,17 +2,42 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {Suspense} from 'react';
+import React, {Suspense, useEffect} from 'react';
 import './App.css';
 import {Canvas} from '@react-three/fiber';
 import OrbitController from "./orbitController";
-import Sky from "./models/sky";
-import Axes from "./models/axes";
-import Compass from "./models/compass";
+import Sky from "./views/sky";
+import Axes from "./views/axes";
+import Compass from "./views/compass";
 import Scene from "./scene";
-import Ground from "./models/ground";
+import Ground from "./views/ground";
+import {useStore} from "./stores/common";
+import {Foundation} from "./models/foundation";
 
 const App = () => {
+
+    const worlds = useStore(state => state.worlds);
+    const createNewWorld = useStore(state => state.createNewWorld);
+    const world = worlds['default'];
+
+    console.log('***', worlds)
+
+    const init = () => {
+        const foundations: { [key: string]: Foundation } = {};
+        const foundation1 = {cx: 0, cy: 0, lx: 2, ly: 4, height: 0.1, id: 'f1'};
+        const foundation2 = {cx: 1, cy: 2, lx: 2, ly: 2, height: 0.5, id: 'f2'};
+        foundations[foundation1.id] = foundation1;
+        foundations[foundation2.id] = foundation2;
+        const world = {name: 'default', foundations: foundations};
+        createNewWorld(world);
+    }
+
+    useEffect(() => {
+        if (Object.values(worlds).length === 0) {
+            //init();
+        }
+    }, []);
+
     return (
         <div className="App">
             <div style={{
@@ -43,7 +68,7 @@ const App = () => {
                     <Axes/>
                     <Ground/>
                     <Sky/>
-                    <Scene/>
+                    {world && <Scene world={world}/>}
                 </Suspense>
             </Canvas>
         </div>
