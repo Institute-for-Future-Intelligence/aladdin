@@ -5,9 +5,10 @@
 import React from 'react';
 import Foundation from "./views/foundation";
 import {Box} from "@react-three/drei";
-import {World} from "./models/world";
+import {WorldModel} from "./models/worldModel";
+import {FoundationModel} from "./models/foundationModel";
 
-const Scene: React.FC<{ world: World }> = ({world}) => {
+const Scene: React.FC<{ world: WorldModel }> = ({world}) => {
     return (
         <group onPointerMissed={(e) => {
             if (e.intersections) {
@@ -22,7 +23,9 @@ const Scene: React.FC<{ world: World }> = ({world}) => {
                  position={[0, 1, 0]}>
                 <meshStandardMaterial attach="material" color={'white'}/>
             </Box>
-            {Object.values(world.foundations).map(foundation => <Foundation key={foundation.id} {...foundation}/>)}
+            {world.elements
+                .filter(e => e.type === 'Foundation')
+                .map(e => <Foundation key={e.id} {...e as FoundationModel}/>)}
         </group>
     );
 };

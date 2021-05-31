@@ -2,13 +2,13 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import {Foundation} from "./foundation";
 import {Vector3} from "three";
+import {ElementModel} from "./elementModel";
 
-export interface World {
+export interface WorldModel {
 
     name: string;
     cameraPosition: Vector3;
-    foundations: { [key: string]: Foundation };
+    elements: ElementModel[];
 
 }

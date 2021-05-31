@@ -5,17 +5,17 @@
 import create from 'zustand';
 import {devtools, persist} from 'zustand/middleware';
 import produce, {enableMapSet} from 'immer';
-import {World} from "../models/world";
-import {Foundation} from "../models/foundation";
+import {WorldModel} from "../models/worldModel";
 import {Vector3} from "three";
+import {ElementModel} from "../models/elementModel";
 
 enableMapSet();
 
 export interface CommonStoreState {
     set: (fn: (state: CommonStoreState) => void) => void;
-    worlds: { [key: string]: World };
+    worlds: { [key: string]: WorldModel };
     createNewWorld: () => void;
-    getWorld: (name: string) => World;
+    getWorld: (name: string) => WorldModel;
 }
 
 export const useStore = create<CommonStoreState>(devtools(persist((
@@ -36,14 +36,14 @@ export const useStore = create<CommonStoreState>(devtools(persist((
 
         createNewWorld() {
             immerSet((state: CommonStoreState) => {
-                const foundations: { [key: string]: Foundation } = {};
-                const foundation1 = {cx: 0, cy: 0, lx: 2, ly: 4, height: 0.1, id: 'f1'};
-                const foundation2 = {cx: 1, cy: 2, lx: 2, ly: 2, height: 0.5, id: 'f2'};
-                foundations[foundation1.id] = foundation1;
-                foundations[foundation2.id] = foundation2;
+                const elements: ElementModel[] = [];
+                const e1 = {type: 'Foundation', cx: 0, cy: 0, lx: 2, ly: 4, height: 0.1, id: 'f1'};
+                const e2 = {type: 'Foundation', cx: 1, cy: 2, lx: 2, ly: 2, height: 0.2, id: 'f2'};
+                elements.push(e1);
+                elements.push(e2);
                 const world = {
                     name: 'default',
-                    foundations: foundations,
+                    elements: elements,
                     cameraPosition: new Vector3(0, 0, 5)
                 };
                 state.worlds[world.name] = world;

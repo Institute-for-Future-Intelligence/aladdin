@@ -2,17 +2,11 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useRef, useState} from "react";
+import React, {useRef} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
 import {Vector3} from "three";
-import {ModelProps} from "./modelProps";
 import {useStore} from "../stores/common";
-
-export interface FoundationProps extends ModelProps {
-    lx: number; // length in x direction
-    ly: number; // length in y direction
-    height: number;
-}
+import {FoundationModel} from "../models/foundationModel";
 
 const Foundation = ({
                         id,
@@ -23,13 +17,11 @@ const Foundation = ({
                         height = 0.1,
                         color = 'gray',
                         lineColor = 'black',
-                        hoverColor = 'lightGray',
+                        hovered = false,
                         selected = false,
-                    }: FoundationProps) => {
+                    }: FoundationModel) => {
 
     const set = useStore(state => state.set);
-    const [hovered, setHovered] = useState(false);
-    const [active, setActive] = useState(selected);
 
     const baseRef = useRef();
     const handleLLRef = useRef();
@@ -44,6 +36,31 @@ const Foundation = ({
 
     const yOffset = 0.002;
 
+    const selectMe = () => {
+        set((state) => {
+            const w = state.worlds['default'];
+            if (w) {
+                for (const e of w.elements) {
+                    e.selected = e.id === id;
+                }
+            }
+        });
+    };
+
+    const hoverMe = (on: boolean) => {
+        set((state) => {
+            const w = state.worlds['default'];
+            if (w) {
+                for (const e of w.elements) {
+                    if (e.id === id) {
+                        e.hovered = on;
+                        break;
+                    }
+                }
+            }
+        });
+    };
+
     return (
 
         <group>
@@ -54,29 +71,26 @@ const Foundation = ({
                  name={'Foundation'}
                  onClick={(e) => {
                      if (e.intersections.length > 0) {
-                         setActive(e.intersections[0].object === baseRef.current);
-                         set((state) => {
-                             const w = state.worlds['default'];
-                             if (w) {
-                                 const f = w.foundations[id];
-                                 if (f) {
-                                     f.color = 'green';
-                                 }
-                             }
-                         });
+                         const intersected = e.intersections[0].object === baseRef.current;
+                         if (intersected) {
+                             selectMe();
+                         }
                      }
                  }}
                  onPointerOver={(e) => {
                      if (e.intersections.length > 0) {
-                         setHovered(e.intersections[0].object === baseRef.current);
+                         const intersected = e.intersections[0].object === baseRef.current;
+                         if (intersected) {
+                             hoverMe(true);
+                         }
                      }
                  }}
-                 onPointerOut={() => {
-                     setHovered(false);
+                 onPointerOut={(e) => {
+                     hoverMe(false);
                  }}
                  args={[lx, height, ly]}
                  position={[cx, height / 2, cy]}>
-                <meshStandardMaterial attach="material" color={hovered ? hoverColor : color}/>
+                <meshStandardMaterial attach="material" color={hovered ? 'lightGray' : color}/>
             </Box>
 
             <>
@@ -124,7 +138,7 @@ const Foundation = ({
             </>
 
             {/* draw handles */}
-            {active &&
+            {selected &&
             <>
                 <Sphere ref={handleLLRef}
                         args={[0.1, 6, 6]}

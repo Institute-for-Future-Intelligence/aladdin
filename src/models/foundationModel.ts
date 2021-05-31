@@ -2,14 +2,12 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-export interface Foundation {
+import {ElementModel} from "./elementModel";
 
-    cx: number;
-    cy: number;
+export interface FoundationModel extends ElementModel {
+
     lx: number;
     ly: number;
     height: number;
-    color?: string;
-    id: string;
 
 }

@@ -5,6 +5,7 @@
 import React, {useRef} from "react";
 import {Plane} from "@react-three/drei";
 import * as THREE from "three";
+import {useStore} from "../stores/common";
 
 export interface GroundProps {
     color?: string;
@@ -16,7 +17,21 @@ const Ground = ({
                     color = 'forestgreen',
                     ...props
                 }: GroundProps) => {
+
+    const set = useStore(state => state.set);
     const planeRef = useRef();
+
+    const selectNone = () => {
+        set((state) => {
+            const w = state.worlds['default'];
+            if (w) {
+                for (const e of w.elements) {
+                    e.selected = false;
+                }
+            }
+        });
+    };
+
     return (
         <Plane receiveShadow
                ref={planeRef}
@@ -25,6 +40,7 @@ const Ground = ({
                    if (e.intersections.length > 0) {
                        const groundClicked = e.intersections[0].object === planeRef.current;
                        if (groundClicked) {
+                           selectNone();
                            console.log('Ground clicked');
                        }
                    }
