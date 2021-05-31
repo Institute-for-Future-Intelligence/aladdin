@@ -12,31 +12,26 @@ import Compass from "./views/compass";
 import Scene from "./scene";
 import Ground from "./views/ground";
 import {useStore} from "./stores/common";
-import {Foundation} from "./models/foundation";
+import {Vector3} from "three";
 
 const App = () => {
 
     const worlds = useStore(state => state.worlds);
+    const getWorld = useStore(state => state.getWorld);
     const createNewWorld = useStore(state => state.createNewWorld);
-    const world = worlds['default'];
-
-    console.log('***', worlds)
-
-    const init = () => {
-        const foundations: { [key: string]: Foundation } = {};
-        const foundation1 = {cx: 0, cy: 0, lx: 2, ly: 4, height: 0.1, id: 'f1'};
-        const foundation2 = {cx: 1, cy: 2, lx: 2, ly: 2, height: 0.5, id: 'f2'};
-        foundations[foundation1.id] = foundation1;
-        foundations[foundation2.id] = foundation2;
-        const world = {name: 'default', foundations: foundations};
-        createNewWorld(world);
-    }
+    const world = worlds['default']; // currently we have only one world, which is default
 
     useEffect(() => {
-        if (Object.values(worlds).length === 0) {
-            //init();
+        const defaultWorld = getWorld('default');
+        if (!defaultWorld) {
+            createNewWorld();
         }
     }, []);
+
+    const cameraPosition = new Vector3(0, 0, 5);
+    if (world) {
+        cameraPosition.set(world.cameraPosition.x, world.cameraPosition.y, world.cameraPosition.z);
+    }
 
     return (
         <div className="App">
@@ -50,7 +45,10 @@ const App = () => {
                 <span style={{paddingLeft: '20px', verticalAlign: 'middle'}}>Aladdin</span>
             </div>
             <Canvas shadows={true}
-                    camera={{position: [0, 2, 5], fov: 90}}
+                    camera={{
+                        position: cameraPosition,
+                        fov: 90
+                    }}
                     style={{height: 'calc(100vh - 70px)', backgroundColor: 'black'}}>
                 <Suspense fallback={null}>
                     <OrbitController/>

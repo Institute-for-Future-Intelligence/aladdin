@@ -22,7 +22,7 @@ const Scene: React.FC<{ world: World }> = ({world}) => {
                  position={[0, 1, 0]}>
                 <meshStandardMaterial attach="material" color={'white'}/>
             </Box>
-            {Object.values(world.foundations).map(foundation => <Foundation {...foundation}/>)}
+            {Object.values(world.foundations).map(foundation => <Foundation key={foundation.id} {...foundation}/>)}
         </group>
     );
 };

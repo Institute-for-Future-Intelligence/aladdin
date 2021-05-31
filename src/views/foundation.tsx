@@ -27,6 +27,7 @@ const Foundation = ({
                         selected = false,
                     }: FoundationProps) => {
 
+    const set = useStore(state => state.set);
     const [hovered, setHovered] = useState(false);
     const [active, setActive] = useState(selected);
 
@@ -42,9 +43,6 @@ const Foundation = ({
     const positionUR = new Vector3(cx + lx / 2, height / 2, cy + ly / 2);
 
     const yOffset = 0.002;
-
-    // @ts-ignore
-    const set = useStore(state => state.set);
 
     return (
 
@@ -65,7 +63,7 @@ const Foundation = ({
                                      f.color = 'green';
                                  }
                              }
-                         })
+                         });
                      }
                  }}
                  onPointerOver={(e) => {
