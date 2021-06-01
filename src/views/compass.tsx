@@ -5,8 +5,7 @@
 import React, {useRef} from "react";
 import {useFrame, useLoader, useThree} from '@react-three/fiber'
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
-import * as THREE from "three";
-import {Euler, FontLoader, TextGeometryParameters} from "three";
+import {Euler, FontLoader, Mesh, MeshBasicMaterial, TextGeometryParameters, Vector3} from "three";
 
 export interface CompassProps {
     scale?: number;
@@ -20,22 +19,22 @@ const Compass = ({
                  }: CompassProps) => {
     const model = useLoader(OBJLoader, 'static/assets/compass.obj');
     const font = useLoader(FontLoader, 'static/fonts/helvetiker_regular.typeface.json');
-    const mesh = useRef<THREE.Mesh>(null!);
+    const mesh = useRef<Mesh>(null!);
     const {camera} = useThree();
     useFrame((state) => {
         if (mesh.current) {
-            const v = new THREE.Vector3(0.88, -0.8, 0).unproject(camera);
+            const v = new Vector3(0.88, -0.8, 0).unproject(camera);
             mesh.current.position.set(v.x, v.y, v.z);
         }
     });
     const textGeometryParams = {font: font, height: 0.00, size: 0.005} as TextGeometryParameters;
-    const textMaterial = new THREE.MeshBasicMaterial({color: 'white'});
-    const compassMaterial = new THREE.MeshBasicMaterial({color: 'red'});
+    const textMaterial = new MeshBasicMaterial({color: 'white'});
+    const compassMaterial = new MeshBasicMaterial({color: 'red'});
     return (
         <mesh
-              {...props}
-              ref={mesh}
-              rotation={new Euler(-Math.PI / 2, 0, 0)}
+            {...props}
+            ref={mesh}
+            rotation={new Euler(-Math.PI / 2, 0, 0)}
         >
             <mesh position={[-0.001, 0.02, 0]} material={textMaterial}>
                 <textGeometry args={['N', textGeometryParams]}/>
@@ -51,7 +50,7 @@ const Compass = ({
             </mesh>
             <primitive object={model} scale={scale} material={compassMaterial}/>
         </mesh>
-    )
+    );
 };
 
 export default Compass;

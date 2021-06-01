@@ -2,7 +2,33 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import {Vector3} from "three";
+
 export class Util {
+
+    static get UNIT_VECTOR_POS_X() {
+        return new Vector3(1, 0, 0);
+    }
+
+    static get UNIT_VECTOR_NEG_X() {
+        return new Vector3(-1, 0, 0);
+    }
+
+    static get UNIT_VECTOR_POS_Y() {
+        return new Vector3(0, 1, 0);
+    }
+
+    static get UNIT_VECTOR_NEG_Y() {
+        return new Vector3(0, -1, 0);
+    }
+
+    static get UNIT_VECTOR_POS_Z() {
+        return new Vector3(0, 0, 1);
+    }
+
+    static get UNIT_VECTOR_NEG_Z() {
+        return new Vector3(0, 0, -1);
+    }
 
     static get ZERO_TOLERANCE() {
         return 0.0001;

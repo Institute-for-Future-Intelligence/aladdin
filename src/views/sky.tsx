@@ -3,9 +3,9 @@
  */
 
 import React, {useMemo, useRef} from "react";
-import * as THREE from "three";
 import DaySkyImage from "../resources/daysky.jpg";
 import NightSkyImage from "../resources/nightsky.jpg";
+import {DoubleSide, Mesh, TextureLoader} from "three";
 
 export interface SkyProps {
     type?: string,
@@ -18,9 +18,9 @@ const Sky = ({
                  ...props
              }: SkyProps) => {
 
-    const meshRef = useRef<THREE.Mesh>(null!);
+    const meshRef = useRef<Mesh>(null!);
     const texture = useMemo(() => {
-        const loader = new THREE.TextureLoader();
+        const loader = new TextureLoader();
         let texture;
         switch (type) {
             case 'night sky':
@@ -49,7 +49,7 @@ const Sky = ({
         >
             <sphereGeometry args={[1000, 16, 16, 0, 2 * Math.PI, 0, Math.PI / 2 + 0.01]}/>
             <meshBasicMaterial map={texture}
-                               side={THREE.DoubleSide}
+                               side={DoubleSide}
                                opacity={1}
                                color={'skyblue'}/>
         </mesh>

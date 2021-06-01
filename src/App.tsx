@@ -13,6 +13,7 @@ import Scene from "./scene";
 import Ground from "./views/ground";
 import {useStore} from "./stores/common";
 import {Vector3} from "three";
+import Heliodon from "./views/heliodon";
 
 const App = () => {
 
@@ -68,6 +69,7 @@ const App = () => {
                     <Axes/>
                     <Ground/>
                     <Sky/>
+                    <Heliodon date={new Date()} latitude={42}/>
                     {world && <Scene world={world}/>}
                 </Suspense>
             </Canvas>

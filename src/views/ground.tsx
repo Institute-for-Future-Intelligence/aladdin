@@ -4,8 +4,8 @@
 
 import React, {useRef} from "react";
 import {Plane} from "@react-three/drei";
-import * as THREE from "three";
 import {useStore} from "../stores/common";
+import {DoubleSide} from "three";
 
 export interface GroundProps {
     color?: string;
@@ -47,7 +47,7 @@ const Ground = ({
                rotation={[-Math.PI / 2, 0, 0]}
                position={[0, 0, 1]}
                args={[10000, 10000]}>
-            <meshStandardMaterial side={THREE.DoubleSide}
+            <meshStandardMaterial side={DoubleSide}
                                   attach="material"
                                   color={color}/>
         </Plane>

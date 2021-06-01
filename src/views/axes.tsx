@@ -3,7 +3,7 @@
  */
 
 import React, {useRef} from "react";
-import * as THREE from "three";
+import {BufferGeometry, LineBasicMaterial, Mesh, Vector3} from "three";
 
 export interface AxesProps {
     endPoint?: number,
@@ -15,25 +15,25 @@ const Axes = ({
                   endPoint = 1000,
                   ...props
               }: AxesProps) => {
-    const mesh = useRef<THREE.Mesh>(null!);
+    const mesh = useRef<Mesh>(null!);
 
     const pointsXAxis = [];
-    pointsXAxis.push(new THREE.Vector3(-endPoint, 0, 0));
-    pointsXAxis.push(new THREE.Vector3(endPoint, 0, 0));
-    const geometryXAxis = new THREE.BufferGeometry().setFromPoints(pointsXAxis);
-    const materialXAxis = new THREE.LineBasicMaterial({color: 'red', linewidth: 10});
+    pointsXAxis.push(new Vector3(-endPoint, 0, 0));
+    pointsXAxis.push(new Vector3(endPoint, 0, 0));
+    const geometryXAxis = new BufferGeometry().setFromPoints(pointsXAxis);
+    const materialXAxis = new LineBasicMaterial({color: 'red', linewidth: 10});
 
     const pointsYAxis = [];
-    pointsYAxis.push(new THREE.Vector3(0, -endPoint, 0));
-    pointsYAxis.push(new THREE.Vector3(0, endPoint, 0));
-    const geometryYAxis = new THREE.BufferGeometry().setFromPoints(pointsYAxis);
-    const materialYAxis = new THREE.LineBasicMaterial({color: 'green', linewidth: 10});
+    pointsYAxis.push(new Vector3(0, -endPoint, 0));
+    pointsYAxis.push(new Vector3(0, endPoint, 0));
+    const geometryYAxis = new BufferGeometry().setFromPoints(pointsYAxis);
+    const materialYAxis = new LineBasicMaterial({color: 'green', linewidth: 10});
 
     const pointsZAxis = [];
-    pointsZAxis.push(new THREE.Vector3(0, 0, -endPoint));
-    pointsZAxis.push(new THREE.Vector3(0, 0, endPoint));
-    const geometryZAxis = new THREE.BufferGeometry().setFromPoints(pointsZAxis);
-    const materialZAxis = new THREE.LineBasicMaterial({color: 'blue', linewidth: 10});
+    pointsZAxis.push(new Vector3(0, 0, -endPoint));
+    pointsZAxis.push(new Vector3(0, 0, endPoint));
+    const geometryZAxis = new BufferGeometry().setFromPoints(pointsZAxis);
+    const materialZAxis = new LineBasicMaterial({color: 'blue', linewidth: 10});
 
     return (
         <mesh
