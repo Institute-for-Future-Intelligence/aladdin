@@ -20,16 +20,19 @@ const Compass = ({
     const model = useLoader(OBJLoader, 'static/assets/compass.obj');
     const font = useLoader(FontLoader, 'static/fonts/helvetiker_regular.typeface.json');
     const mesh = useRef<Mesh>(null!);
-    const {camera} = useThree();
-    useFrame((state) => {
-        if (mesh.current) {
-            const v = new Vector3(0.88, -0.8, 0).unproject(camera);
-            mesh.current.position.set(v.x, v.y, v.z);
-        }
-    });
     const textGeometryParams = {font: font, height: 0.00, size: 0.005} as TextGeometryParameters;
     const textMaterial = new MeshBasicMaterial({color: 'white'});
     const compassMaterial = new MeshBasicMaterial({color: 'red'});
+
+    // FIXME: This is not the right way to fix the compass
+    const {camera} = useThree();
+    useFrame((state) => {
+        if (mesh.current) {
+            const v = new Vector3(0.88, -0.8, 0.1).unproject(camera);
+            mesh.current.position.set(v.x, v.y, v.z);
+        }
+    });
+
     return (
         <mesh
             {...props}

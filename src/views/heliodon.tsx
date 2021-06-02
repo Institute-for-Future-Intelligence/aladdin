@@ -129,8 +129,8 @@ const Heliodon = ({
     const sunPathPoints = useMemo(() => {
         const step = Util.TWO_PI / HOUR_DIVISIONS;
         const points = [];
-        for (let angleAtHour = -Math.PI; angleAtHour < Math.PI + step / 2.0; angleAtHour += step) {
-            const v = computeSunLocation(angleAtHour, declinationAngle, latitude);
+        for (let h = -Math.PI; h < Math.PI + step / 2.0; h += step) {
+            const v = computeSunLocation(h, declinationAngle, latitude);
             if (v.z > -0.3) {
                 points.push(v);
             }
@@ -149,20 +149,20 @@ const Heliodon = ({
         let verticesCount = 0;
         const vertices: Vector3[] = [];
         const indices = [];
-        for (let declinationAngle = -TILT_ANGLE; declinationAngle < TILT_ANGLE - declinationStep / 2.0; declinationAngle += declinationStep) {
-            for (let hourAngle = -Math.PI; hourAngle < Math.PI - hourStep / 2.0; hourAngle += hourStep) {
-                let hourAngle2 = hourAngle + hourStep;
-                let declinationAngle2 = declinationAngle + declinationStep;
-                if (hourAngle2 > Math.PI) {
-                    hourAngle2 = Math.PI;
+        for (let d = -TILT_ANGLE; d < TILT_ANGLE - declinationStep / 2.0; d += declinationStep) {
+            for (let h = -Math.PI; h < Math.PI - hourStep / 2.0; h += hourStep) {
+                let h2 = h + hourStep;
+                let d2 = d + declinationStep;
+                if (h2 > Math.PI) {
+                    h2 = Math.PI;
                 }
-                if (declinationAngle2 > TILT_ANGLE) {
-                    declinationAngle2 = TILT_ANGLE;
+                if (d2 > TILT_ANGLE) {
+                    d2 = TILT_ANGLE;
                 }
-                const v1 = computeSunLocation(hourAngle, declinationAngle, latitude);
-                const v2 = computeSunLocation(hourAngle2, declinationAngle, latitude);
-                const v3 = computeSunLocation(hourAngle2, declinationAngle2, latitude);
-                const v4 = computeSunLocation(hourAngle, declinationAngle2, latitude);
+                const v1 = computeSunLocation(h, d, latitude);
+                const v2 = computeSunLocation(h2, d, latitude);
+                const v3 = computeSunLocation(h2, d2, latitude);
+                const v4 = computeSunLocation(h, d2, latitude);
                 if (v1.z >= 0 || v2.z >= 0 || v3.z >= 0 || v4.z >= 0) {
                     vertices.push(v1, v2, v3, v4);
                     indices.push(verticesCount);
@@ -215,7 +215,7 @@ const Heliodon = ({
                     new MeshBasicMaterial({color: 0x000000})]}/>
             {/* draw sun path*/}
             <mesh>
-                <Line points={sunPathPoints} color={'yellow'}/>
+                {sunPathPoints.length > 3 && <Line points={sunPathPoints} color={'yellow'}/>}
                 <mesh
                     args={[sunbeltGeometry,
                         new MeshBasicMaterial({
