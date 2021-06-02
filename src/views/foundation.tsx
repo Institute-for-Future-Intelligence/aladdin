@@ -95,46 +95,34 @@ const Foundation = ({
 
             <>
                 {/* draw wireframe lines upper face */}
-                <Line points={[[positionLL.x, height, positionLL.z], [positionLR.x, height, positionLR.z]]}>
-                    <lineBasicMaterial color={lineColor}/>
-                </Line>
-                <Line points={[[positionLR.x, height, positionLR.z], [positionUR.x, height, positionUR.z]]}>
-                    <lineBasicMaterial color={lineColor}/>
-                </Line>
-                <Line points={[[positionUR.x, height, positionUR.z], [positionUL.x, height, positionUL.z]]}>
-                    <lineBasicMaterial color={lineColor}/>
-                </Line>
-                <Line points={[[positionUL.x, height, positionUL.z], [positionLL.x, height, positionLL.z]]}>
-                    <lineBasicMaterial color={lineColor}/>
-                </Line>
+                <Line points={[[positionLL.x, height, positionLL.z], [positionLR.x, height, positionLR.z]]}
+                      color={lineColor}/>
+                <Line points={[[positionLR.x, height, positionLR.z], [positionUR.x, height, positionUR.z]]}
+                      color={lineColor}/>
+                <Line points={[[positionUR.x, height, positionUR.z], [positionUL.x, height, positionUL.z]]}
+                      color={lineColor}/>
+                <Line points={[[positionUL.x, height, positionUL.z], [positionLL.x, height, positionLL.z]]}
+                      color={lineColor}/>
 
                 {/* draw wireframe lines lower face */}
-                <Line points={[[positionLL.x, yOffset, positionLL.z], [positionLR.x, yOffset, positionLR.z]]}>
-                    <lineBasicMaterial color={lineColor}/>
-                </Line>
-                <Line points={[[positionLR.x, yOffset, positionLR.z], [positionUR.x, yOffset, positionUR.z]]}>
-                    <lineBasicMaterial color={lineColor}/>
-                </Line>
-                <Line points={[[positionUR.x, yOffset, positionUR.z], [positionUL.x, yOffset, positionUL.z]]}>
-                    <lineBasicMaterial color={lineColor}/>
-                </Line>
-                <Line points={[[positionUL.x, yOffset, positionUL.z], [positionLL.x, yOffset, positionLL.z]]}>
-                    <lineBasicMaterial color={lineColor}/>
-                </Line>
+                <Line points={[[positionLL.x, yOffset, positionLL.z], [positionLR.x, yOffset, positionLR.z]]}
+                      color={lineColor}/>
+                <Line points={[[positionLR.x, yOffset, positionLR.z], [positionUR.x, yOffset, positionUR.z]]}
+                      color={lineColor}/>
+                <Line points={[[positionUR.x, yOffset, positionUR.z], [positionUL.x, yOffset, positionUL.z]]}
+                      color={lineColor}/>
+                <Line points={[[positionUL.x, yOffset, positionUL.z], [positionLL.x, yOffset, positionLL.z]]}
+                      color={lineColor}/>
 
                 {/* draw wireframe vertical lines */}
-                <Line points={[[positionLL.x, yOffset, positionLL.z], [positionLL.x, height, positionLL.z]]}>
-                    <lineBasicMaterial color={lineColor}/>
-                </Line>
-                <Line points={[[positionLR.x, yOffset, positionLR.z], [positionLR.x, height, positionLR.z]]}>
-                    <lineBasicMaterial color={lineColor}/>
-                </Line>
-                <Line points={[[positionUL.x, yOffset, positionUL.z], [positionUL.x, height, positionUL.z]]}>
-                    <lineBasicMaterial color={lineColor}/>
-                </Line>
-                <Line points={[[positionUR.x, yOffset, positionUR.z], [positionUR.x, height, positionUR.z]]}>
-                    <lineBasicMaterial color={lineColor}/>
-                </Line>
+                <Line points={[[positionLL.x, yOffset, positionLL.z], [positionLL.x, height, positionLL.z]]}
+                      color={lineColor}/>
+                <Line points={[[positionLR.x, yOffset, positionLR.z], [positionLR.x, height, positionLR.z]]}
+                      color={lineColor}/>
+                <Line points={[[positionUL.x, yOffset, positionUL.z], [positionUL.x, height, positionUL.z]]}
+                      color={lineColor}/>
+                <Line points={[[positionUR.x, yOffset, positionUR.z], [positionUR.x, height, positionUR.z]]}
+                      color={lineColor}/>
             </>
 
             {/* draw handles */}

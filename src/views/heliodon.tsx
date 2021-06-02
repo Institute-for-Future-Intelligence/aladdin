@@ -3,7 +3,7 @@
  */
 
 import {Util} from "../util";
-import {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {
     BufferAttribute,
     BufferGeometry,
@@ -15,10 +15,11 @@ import {
     SphereGeometry,
     Vector3
 } from "three";
+import {Line} from "@react-three/drei";
 
 export interface HeliodonProps {
     date: Date;
-    latitude: number;
+    latitude: number; // in radian
 
     [key: string]: any;
 }
@@ -29,20 +30,20 @@ const BASE_DIVISIONS = 72;
 const DECLINATION_DIVISIONS = 12;
 const r = 5;
 
-const computeDeclinationAngle = (date: Date) => {
+export const computeDeclinationAngle = (date: Date) => {
     const days = Math.floor((date.getTime()
         - new Date(date.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
     return TILT_ANGLE * Math.sin(Util.TWO_PI * (284 + days) / 365.25);
 };
 
-const computeHourAngle = (date: Date) => {
+export const computeHourAngle = (date: Date) => {
     const minutes = date.getHours() * 60 + date.getMinutes() - 12 * 60;
     return minutes / (12.0 * 60.0) * Math.PI;
 }
 
-const computeSunLocation = (hourAngle: number,
-                            declinationAngle: number,
-                            observerLatitude: number) => {
+export const computeSunLocation = (hourAngle: number,
+                                   declinationAngle: number,
+                                   observerLatitude: number) => {
     const altitudeAngle = Math.asin(
         Math.sin(declinationAngle) * Math.sin(observerLatitude) +
         Math.cos(declinationAngle) * Math.cos(hourAngle) * Math.cos(observerLatitude)
@@ -61,17 +62,18 @@ const computeSunLocation = (hourAngle: number,
 const Heliodon = ({
                       date = new Date(),
                       latitude = 42 / 180.0 * Math.PI,
-                      ...props
                   }: HeliodonProps) => {
 
-    const [declinationAngle, setDeclinationAngle] = useState<number>(0);
-    const [hourAngle, setHouseAngle] = useState<number>(0);
+    const [declinationAngle, setDeclinationAngle] = useState<number>(computeDeclinationAngle(date));
+    const [hourAngle, setHouseAngle] = useState<number>(computeHourAngle(date));
 
     useEffect(() => {
+        setHouseAngle(computeHourAngle(date));
+        setDeclinationAngle(computeDeclinationAngle(date));
         return () => {
             // remove listeners if any
         }
-    }, []);
+    }, [date]);
 
     const [basePositions, baseNormals, baseColors, tickPoints] = useMemo(() => {
         const basePoints: Vector3[] = [];
@@ -79,22 +81,22 @@ const Heliodon = ({
         const step = Math.PI * 2 / BASE_DIVISIONS;
         let counter = 0;
         for (let angle = 0; angle < Util.TWO_PI + step / 2.0; angle += step) {
-            const trimedAngle = Math.min(angle, Util.TWO_PI);
+            const theta = Math.min(angle, Util.TWO_PI);
             let width = 0.3;
             // TODO: This is inefficient. We should use indexed buffer to share vertices
-            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r, trimedAngle, 0)));
-            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r + width, trimedAngle, 0)));
-            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r, trimedAngle + step, 0)));
-            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r + width, trimedAngle, 0)));
-            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r + width, trimedAngle + step, 0)));
-            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r, trimedAngle + step, 0)));
+            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r, theta, 0)));
+            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r + width, theta, 0)));
+            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r, theta + step, 0)));
+            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r + width, theta, 0)));
+            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r + width, theta + step, 0)));
+            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r, theta + step, 0)));
             let p;
-            if (Util.TWO_PI - trimedAngle > Util.ZERO_TOLERANCE) {
+            if (Util.TWO_PI - theta > Util.ZERO_TOLERANCE) {
                 width = counter % 3 === 0 ? 0.5 : 0.3;
-                p = new Vector3(r, trimedAngle, 0);
+                p = new Vector3(r, theta, 0);
                 p.z = 0.002;
                 tickPoints.push(Util.sphericalToCartesianZ(p));
-                p = new Vector3(r + width, trimedAngle, 0);
+                p = new Vector3(r + width, theta, 0);
                 p.z = 0.002;
                 tickPoints.push(Util.sphericalToCartesianZ(p));
             }
@@ -127,8 +129,8 @@ const Heliodon = ({
     const sunPathPoints = useMemo(() => {
         const step = Util.TWO_PI / HOUR_DIVISIONS;
         const points = [];
-        for (let hourAngle = -Math.PI; hourAngle < Math.PI + step / 2.0; hourAngle += step) {
-            const v = computeSunLocation(hourAngle, declinationAngle, latitude);
+        for (let angleAtHour = -Math.PI; angleAtHour < Math.PI + step / 2.0; angleAtHour += step) {
+            const v = computeSunLocation(angleAtHour, declinationAngle, latitude);
             if (v.z > -0.3) {
                 points.push(v);
             }
@@ -137,8 +139,6 @@ const Heliodon = ({
     }, [latitude, date]);
 
     const sunPosition = useMemo(() => {
-        setHouseAngle(computeHourAngle(date));
-        setDeclinationAngle(computeDeclinationAngle(date));
         return computeSunLocation(hourAngle, declinationAngle, latitude);
     }, [latitude, date]);
 
@@ -215,13 +215,7 @@ const Heliodon = ({
                     new MeshBasicMaterial({color: 0x000000})]}/>
             {/* draw sun path*/}
             <mesh>
-                <lineSegments
-                    args={[new BufferGeometry().setFromPoints(sunPathPoints),
-                        new MeshBasicMaterial({
-                                color: new Color(1, 1, 0),
-                                clippingPlanes: [new Plane(Util.UNIT_VECTOR_POS_Y, 0)]
-                            }
-                        )]}/>
+                <Line points={sunPathPoints} color={'yellow'}/>
                 <mesh
                     args={[sunbeltGeometry,
                         new MeshBasicMaterial({
