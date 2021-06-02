@@ -14,13 +14,19 @@ import Ground from "./views/ground";
 import {useStore} from "./stores/common";
 import {Vector3} from "three";
 import Heliodon from "./views/heliodon";
+import Menu from './menu';
+import {Util} from "./util";
 
 const App = () => {
 
+    const setCommonStore = useStore(state => state.set);
     const worlds = useStore(state => state.worlds);
     const getWorld = useStore(state => state.getWorld);
     const createNewWorld = useStore(state => state.createNewWorld);
     const world = worlds['default']; // currently we have only one world, which is default
+
+    const heliodon = useStore(state => state.heliodon);
+    const latitude = useStore(state => state.latitude);
 
     useEffect(() => {
         const defaultWorld = getWorld('default');
@@ -36,17 +42,35 @@ const App = () => {
 
     console.log('x')
 
+    const toggleHeliodon = (on: boolean) => {
+        setCommonStore(state => {
+            state.heliodon = on;
+        });
+    };
+
+    const changeLatitude = (latitude: number) => {
+        console.log(latitude)
+        setCommonStore(state => {
+            state.latitude = latitude;
+        });
+    };
+
     return (
         <div className="App">
             <div style={{
                 backgroundColor: 'lightblue',
-                height: '60px',
+                height: '72px',
                 paddingTop: '10px',
                 fontSize: '30px'
             }}>
                 <img alt='Logo' src={'static/assets/aladdin-logo.png'} height='50px' style={{verticalAlign: 'middle'}}/>
                 <span style={{paddingLeft: '20px', verticalAlign: 'middle'}}>Aladdin</span>
             </div>
+            <Menu latitude={latitude}
+                  date={new Date()}
+                  heliodon={heliodon}
+                  changeLatitude={changeLatitude}
+                  toggleHeliodon={toggleHeliodon}/>
             <Canvas shadows={true}
                     camera={{
                         position: cameraPosition,
@@ -58,7 +82,7 @@ const App = () => {
                     <ambientLight intensity={0.25}/>
                     <directionalLight
                         color='white'
-                        position={[2, 2, 0]}
+                        position={[0, 2, 2]}
                         intensity={0.5}
                         castShadow
                         shadow-mapSize-height={512}
@@ -69,7 +93,11 @@ const App = () => {
                     <Axes/>
                     <Ground/>
                     <Sky/>
-                    <Heliodon date={new Date()} latitude={42}/>
+                    {heliodon &&
+                    <Heliodon
+                        date={new Date(2021, 6, 22, 12)}
+                        latitude={Util.toRadians(latitude)}
+                    />}
                     {world && <Scene world={world}/>}
                 </Suspense>
             </Canvas>

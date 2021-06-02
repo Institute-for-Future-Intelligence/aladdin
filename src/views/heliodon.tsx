@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import {Util} from "./util";
+import {Util} from "../util";
 import {useEffect, useMemo, useState} from "react";
 import {
     BufferAttribute,
@@ -56,9 +56,9 @@ const computeSunLocation = (hourAngle: number,
     // reverse the x so that sun moves from east to west
     coords.setX(-coords.x);
     // swap y and z coordinates
-    const z = coords.z;
-    coords.z = coords.y;
-    coords.y = z;
+    // const z = coords.z;
+    // coords.z = coords.y;
+    // coords.y = z;
     return coords;
 };
 
@@ -73,7 +73,10 @@ const Heliodon = ({
     const [sunPosition, setSunPosition] = useState<Vector3>(new Vector3());
 
     useEffect(() => {
+        setHouseAngle(computeHourAngle(date));
+        setDeclinationAngle(computeDeclinationAngle(date));
         setSunPosition(computeSunLocation(hourAngle, declinationAngle, latitude));
+        console.log(Util.toDegrees(latitude), hourAngle, declinationAngle, sunPosition)
         return () => {
             // remove listeners if any
         }

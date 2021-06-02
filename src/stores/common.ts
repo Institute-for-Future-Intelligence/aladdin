@@ -16,6 +16,9 @@ export interface CommonStoreState {
     worlds: { [key: string]: WorldModel };
     createNewWorld: () => void;
     getWorld: (name: string) => WorldModel;
+
+    heliodon: boolean;
+    latitude: number;
 }
 
 export const useStore = create<CommonStoreState>(devtools(persist((
@@ -25,6 +28,10 @@ export const useStore = create<CommonStoreState>(devtools(persist((
 ) => {
     const immerSet: CommonStoreState['set'] = fn => set(produce(fn));
     return {
+
+        heliodon: false,
+
+        latitude: 42,
 
         set: immerSet,
 
