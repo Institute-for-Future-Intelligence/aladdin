@@ -49,7 +49,6 @@ const App = () => {
     };
 
     const changeLatitude = (latitude: number) => {
-        console.log(latitude)
         setCommonStore(state => {
             state.latitude = latitude;
         });
@@ -95,7 +94,7 @@ const App = () => {
                     <Sky/>
                     {heliodon &&
                     <Heliodon
-                        date={new Date(2021, 6, 22, 12)}
+                        date={new Date(2021, 5, 22, 12)}
                         latitude={Util.toRadians(latitude)}
                     />}
                     {world && <Scene world={world}/>}

@@ -30,8 +30,8 @@ const DECLINATION_DIVISIONS = 12;
 const r = 5;
 
 const computeDeclinationAngle = (date: Date) => {
-    // let days = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-    let days = 0;
+    const days = Math.floor((date.getTime()
+        - new Date(date.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
     return TILT_ANGLE * Math.sin(Util.TWO_PI * (284 + days) / 365.25);
 };
 
@@ -55,10 +55,6 @@ const computeSunLocation = (hourAngle: number,
     Util.sphericalToCartesianZ(coords);
     // reverse the x so that sun moves from east to west
     coords.setX(-coords.x);
-    // swap y and z coordinates
-    // const z = coords.z;
-    // coords.z = coords.y;
-    // coords.y = z;
     return coords;
 };
 
@@ -70,13 +66,8 @@ const Heliodon = ({
 
     const [declinationAngle, setDeclinationAngle] = useState<number>(0);
     const [hourAngle, setHouseAngle] = useState<number>(0);
-    const [sunPosition, setSunPosition] = useState<Vector3>(new Vector3());
 
     useEffect(() => {
-        setHouseAngle(computeHourAngle(date));
-        setDeclinationAngle(computeDeclinationAngle(date));
-        setSunPosition(computeSunLocation(hourAngle, declinationAngle, latitude));
-        console.log(Util.toDegrees(latitude), hourAngle, declinationAngle, sunPosition)
         return () => {
             // remove listeners if any
         }
@@ -143,7 +134,13 @@ const Heliodon = ({
             }
         }
         return points;
-    }, []);
+    }, [latitude, date]);
+
+    const sunPosition = useMemo(() => {
+        setHouseAngle(computeHourAngle(date));
+        setDeclinationAngle(computeDeclinationAngle(date));
+        return computeSunLocation(hourAngle, declinationAngle, latitude);
+    }, [latitude, date]);
 
     const sunbeltGeometry = useMemo(() => {
         const declinationStep = 2.0 * TILT_ANGLE / DECLINATION_DIVISIONS;
@@ -181,7 +178,7 @@ const Heliodon = ({
         geometry.setFromPoints(vertices);
         geometry.setIndex(new BufferAttribute(new Uint16Array(indices), 1));
         return geometry;
-    }, []);
+    }, [latitude]);
 
     return (
         <mesh rotation={new Euler(-Math.PI / 2, 0, 0)}>
