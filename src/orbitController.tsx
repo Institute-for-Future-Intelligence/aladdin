@@ -33,14 +33,15 @@ const OrbitController = () => {
     const controls = useRef<OrbitControls>(null);
 
     useEffect(() => {
-        if (controls.current) {
-            controls.current.target.set(0, 0, 0);
-            controls.current.addEventListener('end', onInteractionEnd);
+        const c = controls.current;
+        if (c) {
+            c.target.set(0, 0, 0);
+            c.addEventListener('end', onInteractionEnd);
         }
         return () => {
-            controls.current?.removeEventListener('end', onInteractionEnd);
+            c?.removeEventListener('end', onInteractionEnd);
         }
-    }, []);
+    });
 
     const onInteractionEnd = () => {
         set((state) => {

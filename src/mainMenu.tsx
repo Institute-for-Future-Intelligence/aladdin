@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useState} from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import {Menu, Dropdown, Checkbox, Slider} from 'antd';
 import {ReactComponent as MenuSVG} from './assets/menu.svg';
@@ -31,14 +31,14 @@ export interface menuProps {
     changeDate?: (date: Date) => void;
 }
 
-export default ({
-                    heliodon,
-                    latitude,
-                    date,
-                    toggleHeliodon,
-                    changeLatitude,
-                    changeDate,
-                }: menuProps) => {
+const MainMenu = ({
+                      heliodon,
+                      latitude,
+                      date,
+                      toggleHeliodon,
+                      changeLatitude,
+                      changeDate,
+                  }: menuProps) => {
 
     const onToggleHeliodon = () => {
         toggleHeliodon?.(!heliodon);
@@ -64,7 +64,7 @@ export default ({
                 <Slider
                     min={-90}
                     max={90}
-                    tooltipVisible={true}
+                    tooltipVisible={false}
                     defaultValue={latitude}
                     onChange={onChangeLatitude}/>
             </Menu.Item>
@@ -77,3 +77,5 @@ export default ({
         </Dropdown>
     );
 };
+
+export default MainMenu;

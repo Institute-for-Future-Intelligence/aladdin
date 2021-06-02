@@ -14,7 +14,7 @@ import Ground from "./views/ground";
 import {useStore} from "./stores/common";
 import {Vector3} from "three";
 import Heliodon from "./views/heliodon";
-import Menu from './menu';
+import MainMenu from './mainMenu';
 import {Util} from "./util";
 
 const App = () => {
@@ -36,7 +36,7 @@ const App = () => {
         if (!defaultWorld) {
             createNewWorld();
         }
-    }, []);
+    });
 
     const cameraPosition = new Vector3(0, 0, 5);
     if (world) {
@@ -68,11 +68,11 @@ const App = () => {
                 <img alt='Logo' src={'static/assets/aladdin-logo.png'} height='50px' style={{verticalAlign: 'middle'}}/>
                 <span style={{paddingLeft: '20px', verticalAlign: 'middle'}}>Aladdin</span>
             </div>
-            <Menu latitude={latitude}
-                  date={new Date()}
-                  heliodon={heliodon}
-                  changeLatitude={changeLatitude}
-                  toggleHeliodon={toggleHeliodon}/>
+            <MainMenu latitude={latitude}
+                      date={new Date()}
+                      heliodon={heliodon}
+                      changeLatitude={changeLatitude}
+                      toggleHeliodon={toggleHeliodon}/>
             <Canvas shadows={true}
                     camera={{
                         position: cameraPosition,
