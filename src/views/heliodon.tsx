@@ -3,7 +3,7 @@
  */
 
 import {Util} from "../util";
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo} from "react";
 import {
     BufferAttribute,
     BufferGeometry,
@@ -16,8 +16,6 @@ import {
     Vector3
 } from "three";
 import {
-    computeDeclinationAngle,
-    computeHourAngle,
     computeSunLocation,
     TILT_ANGLE
 } from "./sunTools";
@@ -25,6 +23,8 @@ import {Line} from "@react-three/drei";
 
 export interface HeliodonProps {
     radius: number;
+    hourAngle: number;
+    declinationAngle: number;
     date: Date;
     latitude: number; // in radian
 
@@ -36,21 +36,18 @@ const BASE_DIVISIONS = 72;
 const DECLINATION_DIVISIONS = 12;
 
 const Heliodon = ({
+                      hourAngle,
+                      declinationAngle,
                       radius = 5,
                       date = new Date(),
                       latitude = 42 / 180.0 * Math.PI,
                   }: HeliodonProps) => {
 
-    const [declinationAngle, setDeclinationAngle] = useState<number>(computeDeclinationAngle(date));
-    const [hourAngle, setHouseAngle] = useState<number>(computeHourAngle(date));
-
     useEffect(() => {
-        setHouseAngle(computeHourAngle(date));
-        setDeclinationAngle(computeDeclinationAngle(date));
         return () => {
             // remove listeners if any
         }
-    }, [date]);
+    }, [date, latitude]);
 
     const [basePositions, baseNormals, baseColors, tickPoints] = useMemo(() => {
         const basePoints: Vector3[] = [];
@@ -113,11 +110,11 @@ const Heliodon = ({
             }
         }
         return points;
-    }, [latitude, date, radius]);
+    }, [latitude, radius, declinationAngle]);
 
     const sunPosition = useMemo(() => {
         return computeSunLocation(radius, hourAngle, declinationAngle, latitude);
-    }, [latitude, date, radius]);
+    }, [latitude, declinationAngle, hourAngle, radius]);
 
     const sunbeltGeometry = useMemo(() => {
         const declinationStep = 2.0 * TILT_ANGLE / DECLINATION_DIVISIONS;

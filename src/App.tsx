@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {Suspense, useEffect} from 'react';
+import React, {Suspense, useEffect, useState} from 'react';
 import './App.css';
 import {Canvas} from '@react-three/fiber';
 import OrbitController from "./orbitController";
@@ -12,10 +12,11 @@ import Compass from "./views/compass";
 import Scene from "./scene";
 import Ground from "./views/ground";
 import {useStore} from "./stores/common";
-import {Vector3} from "three";
+import {Euler, Vector3} from "three";
 import Heliodon from "./views/heliodon";
-import MainMenu from './mainMenu';
 import {Util} from "./util";
+import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./views/sunTools";
+import MainPanel from "./mainPanel";
 
 const App = () => {
 
@@ -30,6 +31,9 @@ const App = () => {
 
     const today = new Date(2021, 5, 22, 12);
     const radius = 5;
+    const [hourAngle, setHourAngle] = useState<number>(computeHourAngle(today));
+    const [declinationAngle, setDeclinationAngle] = useState<number>(computeDeclinationAngle(today));
+    const [sunlightDirection, setSunlightDirection] = useState<Vector3>(new Vector3(0, 2, 2));
 
     useEffect(() => {
         const defaultWorld = getWorld('default');
@@ -37,6 +41,13 @@ const App = () => {
             createNewWorld();
         }
     });
+
+    useEffect(() => {
+        setHourAngle(computeHourAngle(today));
+        setDeclinationAngle(computeDeclinationAngle(today));
+        setSunlightDirection(computeSunLocation(radius, hourAngle, declinationAngle, Util.toRadians(latitude))
+            .applyEuler(new Euler(-Math.PI / 2, 0, 0)));
+    }, [latitude]);
 
     const cameraPosition = new Vector3(0, 0, 5);
     if (world) {
@@ -68,11 +79,11 @@ const App = () => {
                 <img alt='Logo' src={'static/assets/aladdin-logo.png'} height='50px' style={{verticalAlign: 'middle'}}/>
                 <span style={{paddingLeft: '20px', verticalAlign: 'middle'}}>Aladdin</span>
             </div>
-            <MainMenu latitude={latitude}
-                      date={new Date()}
-                      heliodon={heliodon}
-                      changeLatitude={changeLatitude}
-                      toggleHeliodon={toggleHeliodon}/>
+            <MainPanel latitude={latitude}
+                       date={new Date()}
+                       heliodon={heliodon}
+                       changeLatitude={changeLatitude}
+                       toggleHeliodon={toggleHeliodon}/>
             <Canvas shadows={true}
                     camera={{
                         position: cameraPosition,
@@ -84,7 +95,7 @@ const App = () => {
                     <ambientLight intensity={0.25}/>
                     <directionalLight
                         color='white'
-                        position={[0, 2, 2]}
+                        position={[sunlightDirection.x, sunlightDirection.y, sunlightDirection.z]}
                         intensity={0.5}
                         castShadow
                         shadow-mapSize-height={512}
@@ -97,6 +108,8 @@ const App = () => {
                     <Sky/>
                     {heliodon &&
                     <Heliodon
+                        hourAngle={hourAngle}
+                        declinationAngle={declinationAngle}
                         radius={radius}
                         date={today}
                         latitude={Util.toRadians(latitude)}
