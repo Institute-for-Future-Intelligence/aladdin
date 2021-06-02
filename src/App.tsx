@@ -29,6 +29,7 @@ const App = () => {
     const latitude = useStore(state => state.latitude);
 
     const today = new Date(2021, 5, 22, 12);
+    const radius = 5;
 
     useEffect(() => {
         const defaultWorld = getWorld('default');
@@ -96,6 +97,7 @@ const App = () => {
                     <Sky/>
                     {heliodon &&
                     <Heliodon
+                        radius={radius}
                         date={today}
                         latitude={Util.toRadians(latitude)}
                     />}

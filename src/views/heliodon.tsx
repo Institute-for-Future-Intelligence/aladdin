@@ -15,51 +15,28 @@ import {
     SphereGeometry,
     Vector3
 } from "three";
+import {
+    computeDeclinationAngle,
+    computeHourAngle,
+    computeSunLocation,
+    TILT_ANGLE
+} from "./sunTools";
 import {Line} from "@react-three/drei";
 
 export interface HeliodonProps {
+    radius: number;
     date: Date;
     latitude: number; // in radian
 
     [key: string]: any;
 }
 
-const TILT_ANGLE = 23.45 / 180.0 * Math.PI;
 const HOUR_DIVISIONS = 96;
 const BASE_DIVISIONS = 72;
 const DECLINATION_DIVISIONS = 12;
-const r = 5;
-
-export const computeDeclinationAngle = (date: Date) => {
-    const days = Math.floor((date.getTime()
-        - new Date(date.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
-    return TILT_ANGLE * Math.sin(Util.TWO_PI * (284 + days) / 365.25);
-};
-
-export const computeHourAngle = (date: Date) => {
-    const minutes = date.getHours() * 60 + date.getMinutes() - 12 * 60;
-    return minutes / (12.0 * 60.0) * Math.PI;
-}
-
-export const computeSunLocation = (hourAngle: number,
-                                   declinationAngle: number,
-                                   observerLatitude: number) => {
-    const altitudeAngle = Math.asin(
-        Math.sin(declinationAngle) * Math.sin(observerLatitude) +
-        Math.cos(declinationAngle) * Math.cos(hourAngle) * Math.cos(observerLatitude)
-    );
-    const xAzm = Math.sin(hourAngle) * Math.cos(declinationAngle);
-    const yAzm = Math.cos(observerLatitude) * Math.sin(declinationAngle)
-        - Math.cos(hourAngle) * Math.cos(declinationAngle) * Math.sin(observerLatitude);
-    const azimuthAngle = Math.atan2(yAzm, xAzm);
-    const coords = new Vector3(r, azimuthAngle, altitudeAngle);
-    Util.sphericalToCartesianZ(coords);
-    // reverse the x so that sun moves from east to west
-    coords.setX(-coords.x);
-    return coords;
-};
 
 const Heliodon = ({
+                      radius = 5,
                       date = new Date(),
                       latitude = 42 / 180.0 * Math.PI,
                   }: HeliodonProps) => {
@@ -84,19 +61,19 @@ const Heliodon = ({
             const theta = Math.min(angle, Util.TWO_PI);
             let width = 0.3;
             // TODO: This is inefficient. We should use indexed buffer to share vertices
-            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r, theta, 0)));
-            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r + width, theta, 0)));
-            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r, theta + step, 0)));
-            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r + width, theta, 0)));
-            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r + width, theta + step, 0)));
-            basePoints.push(Util.sphericalToCartesianZ(new Vector3(r, theta + step, 0)));
+            basePoints.push(Util.sphericalToCartesianZ(new Vector3(radius, theta, 0)));
+            basePoints.push(Util.sphericalToCartesianZ(new Vector3(radius + width, theta, 0)));
+            basePoints.push(Util.sphericalToCartesianZ(new Vector3(radius, theta + step, 0)));
+            basePoints.push(Util.sphericalToCartesianZ(new Vector3(radius + width, theta, 0)));
+            basePoints.push(Util.sphericalToCartesianZ(new Vector3(radius + width, theta + step, 0)));
+            basePoints.push(Util.sphericalToCartesianZ(new Vector3(radius, theta + step, 0)));
             let p;
             if (Util.TWO_PI - theta > Util.ZERO_TOLERANCE) {
                 width = counter % 3 === 0 ? 0.5 : 0.3;
-                p = new Vector3(r, theta, 0);
+                p = new Vector3(radius, theta, 0);
                 p.z = 0.002;
                 tickPoints.push(Util.sphericalToCartesianZ(p));
-                p = new Vector3(r + width, theta, 0);
+                p = new Vector3(radius + width, theta, 0);
                 p.z = 0.002;
                 tickPoints.push(Util.sphericalToCartesianZ(p));
             }
@@ -124,23 +101,23 @@ const Heliodon = ({
         }
 
         return [basePositions, baseNormals, baseColors, tickPoints];
-    }, []);
+    }, [radius]);
 
     const sunPathPoints = useMemo(() => {
         const step = Util.TWO_PI / HOUR_DIVISIONS;
         const points = [];
         for (let h = -Math.PI; h < Math.PI + step / 2.0; h += step) {
-            const v = computeSunLocation(h, declinationAngle, latitude);
+            const v = computeSunLocation(radius, h, declinationAngle, latitude);
             if (v.z > -0.3) {
                 points.push(v);
             }
         }
         return points;
-    }, [latitude, date]);
+    }, [latitude, date, radius]);
 
     const sunPosition = useMemo(() => {
-        return computeSunLocation(hourAngle, declinationAngle, latitude);
-    }, [latitude, date]);
+        return computeSunLocation(radius, hourAngle, declinationAngle, latitude);
+    }, [latitude, date, radius]);
 
     const sunbeltGeometry = useMemo(() => {
         const declinationStep = 2.0 * TILT_ANGLE / DECLINATION_DIVISIONS;
@@ -159,10 +136,10 @@ const Heliodon = ({
                 if (d2 > TILT_ANGLE) {
                     d2 = TILT_ANGLE;
                 }
-                const v1 = computeSunLocation(h, d, latitude);
-                const v2 = computeSunLocation(h2, d, latitude);
-                const v3 = computeSunLocation(h2, d2, latitude);
-                const v4 = computeSunLocation(h, d2, latitude);
+                const v1 = computeSunLocation(radius, h, d, latitude);
+                const v2 = computeSunLocation(radius, h2, d, latitude);
+                const v3 = computeSunLocation(radius, h2, d2, latitude);
+                const v4 = computeSunLocation(radius, h, d2, latitude);
                 if (v1.z >= 0 || v2.z >= 0 || v3.z >= 0 || v4.z >= 0) {
                     vertices.push(v1, v2, v3, v4);
                     indices.push(verticesCount);
@@ -178,7 +155,7 @@ const Heliodon = ({
         geometry.setFromPoints(vertices);
         geometry.setIndex(new BufferAttribute(new Uint16Array(indices), 1));
         return geometry;
-    }, [latitude]);
+    }, [latitude, radius]);
 
     return (
         <mesh rotation={new Euler(-Math.PI / 2, 0, 0)}>
