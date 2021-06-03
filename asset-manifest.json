@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/aladdin/static/css/main.8c8b27cf.chunk.css",
+    "main.js": "/aladdin/static/js/main.5b3a19da.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.5b3a19da.chunk.js.map",
+    "runtime-main.js": "/aladdin/static/js/runtime-main.2fcbc801.js",
+    "runtime-main.js.map": "/aladdin/static/js/runtime-main.2fcbc801.js.map",
+    "static/css/2.c5b6f512.chunk.css": "/aladdin/static/css/2.c5b6f512.chunk.css",
+    "static/js/2.6c042705.chunk.js": "/aladdin/static/js/2.6c042705.chunk.js",
+    "static/js/2.6c042705.chunk.js.map": "/aladdin/static/js/2.6c042705.chunk.js.map",
+    "static/js/3.3f98560e.chunk.js": "/aladdin/static/js/3.3f98560e.chunk.js",
+    "static/js/3.3f98560e.chunk.js.map": "/aladdin/static/js/3.3f98560e.chunk.js.map",
+    "index.html": "/aladdin/index.html",
+    "static/css/2.c5b6f512.chunk.css.map": "/aladdin/static/css/2.c5b6f512.chunk.css.map",
+    "static/css/main.8c8b27cf.chunk.css.map": "/aladdin/static/css/main.8c8b27cf.chunk.css.map",
+    "static/js/2.6c042705.chunk.js.LICENSE.txt": "/aladdin/static/js/2.6c042705.chunk.js.LICENSE.txt",
+    "static/media/daysky.66925efd.jpg": "/aladdin/static/media/daysky.66925efd.jpg",
+    "static/media/menu.c2982aed.svg": "/aladdin/static/media/menu.c2982aed.svg",
+    "static/media/nightsky.2ee37da6.jpg": "/aladdin/static/media/nightsky.2ee37da6.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.2fcbc801.js",
+    "static/css/2.c5b6f512.chunk.css",
+    "static/js/2.6c042705.chunk.js",
+    "static/css/main.8c8b27cf.chunk.css",
+    "static/js/main.5b3a19da.chunk.js"
+  ]
+}
