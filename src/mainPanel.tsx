@@ -5,7 +5,9 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import {ReactComponent as MenuIcon} from './assets/menu.svg';
-import {Switch, Slider} from "antd";
+import {Switch, Slider, DatePicker, TimePicker} from "antd";
+import moment from 'moment';
+
 import 'antd/dist/antd.css';
 
 const Container = styled.div`
@@ -16,7 +18,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   padding: 16px;
-  z-index: 9999;
+  z-index: 9;
 
   svg.icon {
     height: 36px;
@@ -32,7 +34,6 @@ const ColumnWrapper = styled.div`
   left: 0;
   top: 0;
   width: 600px;
-  height: 200px;
   padding: 0px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
@@ -44,6 +45,7 @@ const RowWrapper = styled.div`
   background-color: #f8f8f8;
   position: relative;
   padding: 10px;
+  justify-content: space-evenly;
   display: flex;
   flex-direction: row;
 `;
@@ -74,6 +76,7 @@ export interface MainPanelProps {
     toggleHeliodon?: (on: boolean) => void;
     changeLatitude?: (latitude: number) => void;
     changeDate?: (date: Date) => void;
+    changeTime?: (date: Date) => void;
 }
 
 const MainPanel = ({
@@ -83,6 +86,7 @@ const MainPanel = ({
                        toggleHeliodon,
                        changeLatitude,
                        changeDate,
+                       changeTime,
                    }: MainPanelProps) => {
 
     const [shown, setShown] = useState<boolean>(false);
@@ -105,21 +109,40 @@ const MainPanel = ({
                     </Header>
                     <RowWrapper>
                         <div>
-                            Heliodon:<br/><Switch checked={heliodon} onChange={(selected) => {
-                            toggleHeliodon?.(selected);
-                        }}/>
+                            Heliodon:<br/>
+                            <Switch checked={heliodon} onChange={(selected) => {
+                                toggleHeliodon?.(selected);
+                            }}/>
                         </div>
                         <div>
-                            Latitude: <Slider
-                            style={{width: '150px'}}
-                            min={-90}
-                            max={90}
-                            tooltipVisible={false}
-                            defaultValue={latitude}
-                            onChange={(value: number) => {
-                                changeLatitude?.(value);
-                            }}
-                        />
+                            Date:<br/>
+                            <DatePicker defaultValue={moment(date)}
+                                        onChange={(moment) => {
+                                            if (moment) changeDate?.(moment.toDate());
+                                        }}
+                            />
+                        </div>
+                        <div>
+                            Time:<br/>
+                            <TimePicker defaultValue={moment(date, 'HH:mm')}
+                                        format={'HH:mm'}
+                                        onChange={(moment) => {
+                                            if (moment) changeTime?.(moment.toDate());
+                                        }}
+                            />
+                        </div>
+                        <div>
+                            Latitude:
+                            <Slider
+                                style={{width: '150px'}}
+                                min={-90}
+                                max={90}
+                                tooltipVisible={false}
+                                defaultValue={latitude}
+                                onChange={(value: number) => {
+                                    changeLatitude?.(value);
+                                }}
+                            />
                         </div>
                     </RowWrapper>
                 </ColumnWrapper>

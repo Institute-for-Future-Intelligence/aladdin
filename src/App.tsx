@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {Suspense, useEffect, useState} from 'react';
+import React, {Suspense, useEffect, useMemo, useState} from 'react';
 import './App.css';
 import {Canvas} from '@react-three/fiber';
 import OrbitController from "./orbitController";
@@ -24,16 +24,16 @@ const App = () => {
     const worlds = useStore(state => state.worlds);
     const getWorld = useStore(state => state.getWorld);
     const createNewWorld = useStore(state => state.createNewWorld);
-    const world = worlds['default']; // currently we have only one world, which is default
-
     const heliodon = useStore(state => state.heliodon);
     const latitude = useStore(state => state.latitude);
+    const now = new Date(useStore(state => state.date));
 
-    const today = new Date(2021, 5, 22, 12);
-    const radius = 5;
-    const [hourAngle, setHourAngle] = useState<number>(computeHourAngle(today));
-    const [declinationAngle, setDeclinationAngle] = useState<number>(computeDeclinationAngle(today));
+    const [hourAngle, setHourAngle] = useState<number>(0);
+    const [declinationAngle, setDeclinationAngle] = useState<number>(0);
     const [sunlightDirection, setSunlightDirection] = useState<Vector3>(new Vector3(0, 2, 2));
+
+    const world = worlds['default']; // currently we have only one world, which is default
+    const radius = 5;
 
     useEffect(() => {
         const defaultWorld = getWorld('default');
@@ -43,11 +43,14 @@ const App = () => {
     });
 
     useEffect(() => {
-        setHourAngle(computeHourAngle(today));
-        setDeclinationAngle(computeDeclinationAngle(today));
         setSunlightDirection(computeSunLocation(radius, hourAngle, declinationAngle, Util.toRadians(latitude))
             .applyEuler(new Euler(-Math.PI / 2, 0, 0)));
-    }, [latitude]);
+    }, [latitude, hourAngle, declinationAngle]);
+
+    useMemo(() => {
+        setHourAngle(computeHourAngle(now));
+        setDeclinationAngle(computeDeclinationAngle(now));
+    }, [now.toString()]);
 
     const cameraPosition = new Vector3(0, 0, 5);
     if (world) {
@@ -59,6 +62,24 @@ const App = () => {
     const toggleHeliodon = (on: boolean) => {
         setCommonStore(state => {
             state.heliodon = on;
+        });
+    };
+
+    const changeDate = (date: Date) => {
+        const d = new Date(now);
+        d.setFullYear(date.getFullYear());
+        d.setMonth(date.getMonth());
+        d.setDate(date.getDate());
+        setCommonStore(state => {
+            state.date = d.toString();
+        });
+    };
+
+    const changeTime = (date: Date) => {
+        const d = new Date(now);
+        d.setHours(date.getHours(), date.getMinutes());
+        setCommonStore(state => {
+            state.date = d.toString();
         });
     };
 
@@ -80,8 +101,10 @@ const App = () => {
                 <span style={{paddingLeft: '20px', verticalAlign: 'middle'}}>Aladdin</span>
             </div>
             <MainPanel latitude={latitude}
-                       date={new Date()}
+                       date={now}
                        heliodon={heliodon}
+                       changeDate={changeDate}
+                       changeTime={changeTime}
                        changeLatitude={changeLatitude}
                        toggleHeliodon={toggleHeliodon}/>
             <Canvas shadows={true}
@@ -111,7 +134,7 @@ const App = () => {
                         hourAngle={hourAngle}
                         declinationAngle={declinationAngle}
                         radius={radius}
-                        date={today}
+                        date={now}
                         latitude={Util.toRadians(latitude)}
                     />}
                     {world && <Scene world={world}/>}
