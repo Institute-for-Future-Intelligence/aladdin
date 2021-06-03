@@ -1,5 +1,7 @@
 /*
  * @Copyright 2021. Institute for Future Intelligence, Inc.
+ *
+ * @author Charles Xie
  */
 
 import React, {Suspense, useEffect, useMemo, useState} from 'react';
