@@ -89,6 +89,8 @@ const App = () => {
         });
     };
 
+    const sunAboveHorizon = sunlightDirection.y > 0;
+
     return (
         <div className="App">
             <div style={{
@@ -119,7 +121,7 @@ const App = () => {
                     <directionalLight
                         color='white'
                         position={[sunlightDirection.x, sunlightDirection.y, sunlightDirection.z]}
-                        intensity={0.5}
+                        intensity={sunAboveHorizon ? 0.5 : 0}
                         castShadow
                         shadow-mapSize-height={512}
                         shadow-mapSize-width={512}
@@ -128,7 +130,7 @@ const App = () => {
                     <Compass/>
                     <Axes/>
                     <Ground/>
-                    <Sky/>
+                    <Sky type={sunAboveHorizon ? 'day sky' : 'night sky'}/>
                     {heliodon &&
                     <Heliodon
                         hourAngle={hourAngle}

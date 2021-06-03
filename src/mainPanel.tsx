@@ -56,7 +56,7 @@ const Header = styled.div`
   height: 24px;
   padding: 10px;
   background-color: #e8e8e8;
-  color: #fff;
+  color: #888;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -102,20 +102,20 @@ const MainPanel = ({
             {shown && (
                 <ColumnWrapper>
                     <Header>
-                        <span>&nbsp;</span>
+                        <span>Solar Settings</span>
                         <span style={{cursor: 'pointer'}} onClick={() => {
                             setShown(false);
                         }}>Close</span>
                     </Header>
                     <RowWrapper>
                         <div>
-                            Heliodon:<br/>
+                            Heliodon<br/>
                             <Switch checked={heliodon} onChange={(selected) => {
                                 toggleHeliodon?.(selected);
                             }}/>
                         </div>
                         <div>
-                            Date:<br/>
+                            Date<br/>
                             <DatePicker defaultValue={moment(date)}
                                         onChange={(moment) => {
                                             if (moment) changeDate?.(moment.toDate());
@@ -123,7 +123,7 @@ const MainPanel = ({
                             />
                         </div>
                         <div>
-                            Time:<br/>
+                            Time<br/>
                             <TimePicker defaultValue={moment(date, 'HH:mm')}
                                         format={'HH:mm'}
                                         onChange={(moment) => {
@@ -132,9 +132,10 @@ const MainPanel = ({
                             />
                         </div>
                         <div>
-                            Latitude:
+                            Latitude
                             <Slider
                                 style={{width: '150px'}}
+                                marks={{'-90': '-90°', 0: '0°', 90: '90°'}}
                                 min={-90}
                                 max={90}
                                 tooltipVisible={false}
