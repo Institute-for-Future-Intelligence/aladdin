@@ -2,12 +2,11 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {ReactComponent as MenuIcon} from './assets/menu.svg';
-import {Switch, Slider, DatePicker, TimePicker} from "antd";
+import {Space, Switch, Slider, DatePicker, TimePicker} from "antd";
 import moment from 'moment';
-
 import 'antd/dist/antd.css';
 
 const Container = styled.div`
@@ -33,21 +32,12 @@ const ColumnWrapper = styled.div`
   position: absolute;
   left: 0;
   top: 0;
-  width: 600px;
+  width: 640px;
   padding: 0px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
   display: flex;
   flex-direction: column;
-`;
-
-const RowWrapper = styled.div`
-  background-color: #f8f8f8;
-  position: relative;
-  padding: 10px;
-  justify-content: space-evenly;
-  display: flex;
-  flex-direction: row;
 `;
 
 const Header = styled.div`
@@ -73,7 +63,9 @@ export interface MainPanelProps {
     heliodon: boolean;
     latitude: number;
     date: Date;
+    animateSun?: boolean;
     toggleHeliodon?: (on: boolean) => void;
+    toggleSunAnimation?: (on: boolean) => void;
     changeLatitude?: (latitude: number) => void;
     changeDate?: (date: Date) => void;
     changeTime?: (date: Date) => void;
@@ -83,13 +75,38 @@ const MainPanel = ({
                        heliodon,
                        latitude,
                        date,
+                       animateSun,
                        toggleHeliodon,
+                       toggleSunAnimation,
                        changeLatitude,
                        changeDate,
                        changeTime,
                    }: MainPanelProps) => {
 
     const [shown, setShown] = useState<boolean>(false);
+    const requestRef = useRef<number>(0);
+    const previousFrameTime = useRef<number>(-1);
+
+    useEffect(() => {
+        requestRef.current = requestAnimationFrame(animate);
+        return () => {
+            cancelAnimationFrame(requestRef.current);
+        }
+    }, [animateSun]);
+
+    const animate = () => {
+        if (animateSun) {
+            requestRef.current = requestAnimationFrame(animate);
+            const currentFrameTime = Date.now();
+            if (currentFrameTime - previousFrameTime.current > 100) {
+                const day = date.getDate();
+                date.setHours(date.getHours() + 1);
+                date.setDate(day)
+                changeTime?.(date);
+                previousFrameTime.current = currentFrameTime;
+            }
+        }
+    };
 
     return (
         <Container
@@ -107,7 +124,7 @@ const MainPanel = ({
                             setShown(false);
                         }}>Close</span>
                     </Header>
-                    <RowWrapper>
+                    <Space style={{padding: '20px'}} align={'baseline'} size={20}>
                         <div>
                             Heliodon<br/>
                             <Switch checked={heliodon} onChange={(selected) => {
@@ -115,8 +132,14 @@ const MainPanel = ({
                             }}/>
                         </div>
                         <div>
+                            Animate<br/>
+                            <Switch checked={animateSun} onChange={(selected) => {
+                                toggleSunAnimation?.(selected);
+                            }}/>
+                        </div>
+                        <div>
                             Date<br/>
-                            <DatePicker defaultValue={moment(date)}
+                            <DatePicker value={moment(date)}
                                         onChange={(moment) => {
                                             if (moment) changeDate?.(moment.toDate());
                                         }}
@@ -124,7 +147,7 @@ const MainPanel = ({
                         </div>
                         <div>
                             Time<br/>
-                            <TimePicker defaultValue={moment(date, 'HH:mm')}
+                            <TimePicker value={moment(date, 'HH:mm')}
                                         format={'HH:mm'}
                                         onChange={(moment) => {
                                             if (moment) changeTime?.(moment.toDate());
@@ -145,7 +168,7 @@ const MainPanel = ({
                                 }}
                             />
                         </div>
-                    </RowWrapper>
+                    </Space>
                 </ColumnWrapper>
             )}
         </Container>

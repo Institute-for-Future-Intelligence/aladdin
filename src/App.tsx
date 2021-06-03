@@ -31,6 +31,7 @@ const App = () => {
     const [hourAngle, setHourAngle] = useState<number>(0);
     const [declinationAngle, setDeclinationAngle] = useState<number>(0);
     const [sunlightDirection, setSunlightDirection] = useState<Vector3>(new Vector3(0, 2, 2));
+    const [animateSun, setAnimateSun] = useState<boolean>(false);
 
     const world = worlds['default']; // currently we have only one world, which is default
     const radius = 5;
@@ -63,6 +64,10 @@ const App = () => {
         setCommonStore(state => {
             state.heliodon = on;
         });
+    };
+
+    const toggleSunAnimation = (on: boolean) => {
+        setAnimateSun(on);
     };
 
     const changeDate = (date: Date) => {
@@ -105,10 +110,13 @@ const App = () => {
             <MainPanel latitude={latitude}
                        date={now}
                        heliodon={heliodon}
+                       animateSun={animateSun}
                        changeDate={changeDate}
                        changeTime={changeTime}
                        changeLatitude={changeLatitude}
-                       toggleHeliodon={toggleHeliodon}/>
+                       toggleHeliodon={toggleHeliodon}
+                       toggleSunAnimation={toggleSunAnimation}
+            />
             <Canvas shadows={true}
                     camera={{
                         position: cameraPosition,
