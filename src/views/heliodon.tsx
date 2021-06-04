@@ -16,6 +16,7 @@ import {
     Vector3
 } from "three";
 import {
+    computeDeclinationAngle,
     computeSunLocation,
     TILT_ANGLE
 } from "./sunTools";
@@ -48,6 +49,8 @@ const Heliodon = ({
             // remove listeners if any
         }
     }, [date, latitude]);
+
+    const nRibLines = 5;
 
     const [basePositions, baseNormals, baseColors, tickPoints] = useMemo(() => {
         const basePoints: Vector3[] = [];
@@ -105,12 +108,35 @@ const Heliodon = ({
         const points = [];
         for (let h = -Math.PI; h < Math.PI + step / 2.0; h += step) {
             const v = computeSunLocation(radius, h, declinationAngle, latitude);
-            if (v.z > -0.3) {
+            if (v.z > -0.1) {
                 points.push(v);
             }
         }
         return points;
     }, [latitude, radius, declinationAngle]);
+
+    const getSunPathPointsByDate = (d: number) => {
+        const step = Util.TWO_PI / HOUR_DIVISIONS;
+        const points = [];
+        for (let h = -Math.PI; h < Math.PI + step / 2.0; h += step) {
+            const v = computeSunLocation(radius, h, d, latitude);
+            if (v.z > -0.1) {
+                points.push(v);
+            }
+        }
+        return points;
+    };
+
+    const pointArraySunPaths = useMemo(() => {
+        const dMin = computeDeclinationAngle(new Date(2021, 11, 22));
+        const dMax = computeDeclinationAngle(new Date(2021, 5, 22));
+        const delta = (dMax - dMin) / nRibLines;
+        const arr = [];
+        for (let i = 0; i <= nRibLines; i++) {
+            arr.push(getSunPathPointsByDate(dMin + i * delta));
+        }
+        return arr;
+    }, [latitude, radius]);
 
     const sunPosition = useMemo(() => {
         return computeSunLocation(radius, hourAngle, declinationAngle, latitude);
@@ -189,7 +215,16 @@ const Heliodon = ({
                     new MeshBasicMaterial({color: 0x000000})]}/>
             {/* draw sun path*/}
             <mesh>
-                {sunPathPoints.length > 3 && <Line points={sunPathPoints} color={'yellow'}/>}
+                {sunPathPoints.length > 3 && <Line lineWidth={2} points={sunPathPoints} color={'yellow'}/>}
+                {pointArraySunPaths
+                    .filter(a => a.length > 3)
+                    .map((a, index) => {
+                        return <Line opacity={index === 0 || index === nRibLines ? 1 : 0.5}
+                                     lineWidth={index === 0 || index === nRibLines ? 1 : 0.5}
+                                     points={a}
+                                     color={'#999'}/>;
+                    })
+                }
                 <mesh
                     args={[sunbeltGeometry,
                         new MeshBasicMaterial({
@@ -199,12 +234,14 @@ const Heliodon = ({
                             opacity: 0.5,
                             clippingPlanes: [new Plane(Util.UNIT_VECTOR_POS_Y, 0)]
                         })
-                    ]}/>
+                    ]}
+                />
                 <mesh
                     position={sunPosition}
                     args={[new SphereGeometry(0.25, 20, 20),
                         new MeshBasicMaterial({color: 0xffffff00})
-                    ]}/>
+                    ]}
+                />
             </mesh>
         </mesh>
     );
