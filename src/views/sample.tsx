@@ -7,7 +7,7 @@ import {useLoader} from '@react-three/fiber'
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 import {Mesh} from "three";
 
-// import {MTLLoader} from "three/examples/jsm/loaders/MTLLoader";
+import {MTLLoader} from "three/examples/jsm/loaders/MTLLoader";
 
 export interface SampleProps {
     scale?: number;
@@ -16,20 +16,18 @@ export interface SampleProps {
 }
 
 const Sample = ({
-                    scale = 0.02,
+                    scale = 0.5,
                     ...props
                 }: SampleProps) => {
 
     const mesh = useRef<Mesh>(null!);
 
-    // const material = useLoader(MTLLoader, 'static/assets/federal.mtl');
-    // const model = useLoader(OBJLoader, 'static/assets/house.obj', loader => {
-    //     material.preload();
-    //     // @ts-ignore
-    //     loader.setMaterials(material);
-    // });
-
-    const model = useLoader(OBJLoader, 'static/assets/house.obj');
+    const material = useLoader(MTLLoader, 'static/assets/house.mtl');
+    const model = useLoader(OBJLoader, 'static/assets/house.obj', loader => {
+        material.preload();
+        // @ts-ignore
+        loader.setMaterials(material);
+    });
 
     if (model) {
         model.castShadow = true;
@@ -46,7 +44,7 @@ const Sample = ({
         <mesh
             {...props}
             ref={mesh}
-            position={[0, scale * 20, 0]}
+            position={[-3, 0, 3]}
         >
             <primitive object={model} scale={scale}/>
         </mesh>
