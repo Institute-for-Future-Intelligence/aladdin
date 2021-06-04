@@ -19,6 +19,7 @@ import Heliodon from "./views/heliodon";
 import {Util} from "./util";
 import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./views/sunTools";
 import MainPanel from "./mainPanel";
+import Sample from "./views/sample";
 
 const App = () => {
 
@@ -36,7 +37,7 @@ const App = () => {
     const [animateSun, setAnimateSun] = useState<boolean>(false);
 
     const world = worlds['default']; // currently we have only one world, which is default
-    const radius = 5;
+    const radius = 10;
 
     useEffect(() => {
         const defaultWorld = getWorld('default');
@@ -138,6 +139,7 @@ const App = () => {
                     />
                     <gridHelper args={[500, 100, 'gray', 'gray']}/>
                     <Compass/>
+                    <Sample/>
                     <Axes/>
                     <Ground/>
                     <Sky type={sunAboveHorizon ? 'day sky' : 'night sky'}/>
@@ -149,7 +151,7 @@ const App = () => {
                         date={now}
                         latitude={Util.toRadians(latitude)}
                     />}
-                    {world && <Scene world={world}/>}
+                    {/*{world && <Scene world={world}/>}*/}
                 </Suspense>
             </Canvas>
         </div>

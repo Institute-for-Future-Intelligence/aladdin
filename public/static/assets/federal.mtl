@@ -1,0 +1,1540 @@
+# Ardor3D 1.0 MTL file
+newmtl federal.mtl_1
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_2
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_3
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_4
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_5
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_6
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.6392157 0.3372549 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_7
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_8
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.6392157 0.3372549 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_9
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_10
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.6392157 0.3372549 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_11
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_12
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_13
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_14
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_15
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_16
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_17
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_18
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_19
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_20
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_21
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_22
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_23
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_24
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_25
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_26
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_27
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_28
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 0.4 0.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_29
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_30
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.5 0.5 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_31
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 0.4 0.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_32
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_33
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.5 0.5 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_34
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 0.4 0.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_35
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_36
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.5 0.5 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_37
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 0.4 0.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_38
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_39
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.5 0.5 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_40
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_41
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_42
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_43
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_44
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_45
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_46
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_47
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.6392157 0.3372549 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_48
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_49
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.6392157 0.3372549 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_50
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_51
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.6392157 0.3372549 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_52
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_53
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.6392157 0.3372549 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_54
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_55
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_56
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_57
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_58
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_59
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_60
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_61
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_62
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 0.4 0.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_63
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_64
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.5 0.5 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_65
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 0.4 0.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_66
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_67
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.5 0.5 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_68
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 0.4 0.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_69
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_70
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.5 0.5 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_71
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 0.4 0.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_72
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_73
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.5 0.5 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_74
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_75
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_76
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_77
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_78
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_79
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_80
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_81
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_82
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_83
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_84
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_85
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.6392157 0.3372549 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_86
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_87
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.6392157 0.3372549 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_88
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_89
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.6392157 0.3372549 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_90
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_91
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_92
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_93
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_94
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_95
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_96
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_97
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_98
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_99
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_100
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_101
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_102
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_103
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_104
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_105
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.2 0.2 0.2
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_106
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+map_Kd door.png
+newmtl federal.mtl_107
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+map_Kd door.png
+newmtl federal.mtl_108
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+map_Kd door.png
+newmtl federal.mtl_109
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_110
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_111
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_112
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_113
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_114
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_115
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_116
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_117
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_118
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_119
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_120
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_121
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_122
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_123
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.6392157 0.3372549 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_124
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_125
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_126
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_127
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_128
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_129
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_130
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_131
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_132
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_133
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_134
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.6392157 0.3372549 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_135
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_136
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_137
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_138
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_139
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_140
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_141
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_142
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_143
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_144
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_145
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_146
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_147
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_148
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_149
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_150
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_151
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_152
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_153
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_154
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_155
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_156
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_157
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_158
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_159
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_160
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_161
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_162
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_163
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_164
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_165
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_166
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_167
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_168
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_169
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_170
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_171
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_172
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_173
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_174
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_175
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_176
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_177
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_178
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_179
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_180
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_181
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_182
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_183
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_184
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_185
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_186
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_187
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_188
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.627451 0.32941177 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_189
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_190
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_191
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.627451 0.32941177 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_192
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_193
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_194
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.6392157 0.3372549 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_195
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_196
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_197
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_198
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.627451 0.32941177 0.19215687
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_199
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_200
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_201
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_202
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_203
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_204
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_205
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_206
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_207
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_208
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_209
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_210
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_211
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_212
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_213
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_214
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_215
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_216
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_217
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_218
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_219
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_220
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_221
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_222
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_223
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_224
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_225
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_226
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_227
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_228
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_229
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_230
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_231
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_232
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_233
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_234
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_235
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_236
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_237
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_238
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_239
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_240
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_241
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_242
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_243
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_244
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_245
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_246
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_247
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_248
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_249
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_250
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_251
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.38039216 0.2784314 0.09803922
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_252
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_253
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_254
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_255
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+illum 1
+newmtl federal.mtl_256
+Ns 0.0
+Ka 0.2 0.2 0.2
+Kd 0.3 0.3 0.5
+Ks 0.0 0.0 0.0
+illum 1

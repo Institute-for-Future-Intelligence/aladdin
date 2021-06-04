@@ -43,8 +43,8 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         createNewWorld() {
             immerSet((state: CommonStoreState) => {
                 const elements: ElementModel[] = [];
-                const e1 = {type: 'Foundation', cx: 0, cy: 0, lx: 2, ly: 4, height: 0.1, id: 'f1'};
-                const e2 = {type: 'Foundation', cx: 1, cy: 2, lx: 2, ly: 2, height: 0.2, id: 'f2'};
+                const e1 = {type: 'Foundation', cx: 5, cy: 0, lx: 1, ly: 2, height: 0.1, id: 'f1'};
+                const e2 = {type: 'Foundation', cx: 5, cy: 2, lx: 2, ly: 2, height: 0.2, id: 'f2'};
                 elements.push(e1);
                 elements.push(e2);
                 const world = {

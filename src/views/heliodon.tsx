@@ -39,7 +39,7 @@ const DECLINATION_DIVISIONS = 12;
 const Heliodon = ({
                       hourAngle,
                       declinationAngle,
-                      radius = 5,
+                      radius = 10,
                       date = new Date(),
                       latitude = 42 / 180.0 * Math.PI,
                   }: HeliodonProps) => {
@@ -219,7 +219,8 @@ const Heliodon = ({
                 {pointArraySunPaths
                     .filter(a => a.length > 3)
                     .map((a, index) => {
-                        return <Line opacity={index === 0 || index === nRibLines ? 1 : 0.5}
+                        return <Line key={index}
+                                     opacity={index === 0 || index === nRibLines ? 1 : 0.5}
                                      lineWidth={index === 0 || index === nRibLines ? 1 : 0.5}
                                      points={a}
                                      color={'#999'}/>;
