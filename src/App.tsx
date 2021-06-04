@@ -20,6 +20,7 @@ import {Util} from "./util";
 import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./views/sunTools";
 import MainPanel from "./mainPanel";
 import Sample from "./views/sample";
+import aladdinLogo from './assets/aladdin-logo.png';
 
 const App = () => {
 
@@ -107,7 +108,7 @@ const App = () => {
                 paddingTop: '10px',
                 fontSize: '30px'
             }}>
-                <img alt='Logo' src={'static/assets/aladdin-logo.png'} height='50px' style={{verticalAlign: 'middle'}}/>
+                <img alt='Logo' src={aladdinLogo} height='50px' style={{verticalAlign: 'middle'}}/>
                 <span style={{paddingLeft: '20px', verticalAlign: 'middle'}}>Aladdin</span>
             </div>
             <MainPanel latitude={latitude}

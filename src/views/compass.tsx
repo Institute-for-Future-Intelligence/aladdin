@@ -6,6 +6,8 @@ import React, {useRef} from "react";
 import {useFrame, useLoader, useThree} from '@react-three/fiber'
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 import {Euler, FontLoader, Mesh, MeshBasicMaterial, TextGeometryParameters, Vector3} from "three";
+import compassObj from '../assets/compass.obj';
+import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
 
 export interface CompassProps {
     scale?: number;
@@ -17,8 +19,8 @@ const Compass = ({
                      scale = 0.01,
                      ...props
                  }: CompassProps) => {
-    const model = useLoader(OBJLoader, 'static/assets/compass.obj');
-    const font = useLoader(FontLoader, 'static/fonts/helvetiker_regular.typeface.json');
+    const model = useLoader(OBJLoader, compassObj);
+    const font = useLoader(FontLoader, helvetikerFont);
     const mesh = useRef<Mesh>(null!);
     const textGeometryParams = {font: font, height: 0.00, size: 0.005} as TextGeometryParameters;
     const textMaterial = new MeshBasicMaterial({color: 'white'});

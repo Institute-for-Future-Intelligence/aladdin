@@ -2,7 +2,7 @@
   "name": "aladdin",
   "version": "0.0.1",
   "private": true,
-  "homepage": "https://institute-for-future-intelligence.github.io",
+  "homepage": "https://institute-for-future-intelligence.github.io/aladdin",
   "dependencies": {
     "@react-three/drei": "^5.2.0",
     "@react-three/fiber": "^6.2.0",

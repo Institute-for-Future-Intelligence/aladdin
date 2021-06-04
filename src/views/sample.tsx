@@ -5,9 +5,10 @@
 import React, {useRef} from "react";
 import {useLoader} from '@react-three/fiber'
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
-import {Mesh} from "three";
-
+import {Group, Mesh} from "three";
 import {MTLLoader} from "three/examples/jsm/loaders/MTLLoader";
+import sampleMtl from '../assets/house.mtl';
+import sampleObj from '../assets/house.obj';
 
 export interface SampleProps {
     scale?: number;
@@ -22,12 +23,12 @@ const Sample = ({
 
     const mesh = useRef<Mesh>(null!);
 
-    const material = useLoader(MTLLoader, 'static/assets/house.mtl');
-    const model = useLoader(OBJLoader, 'static/assets/house.obj', loader => {
+    const material = useLoader(MTLLoader, sampleMtl) as MTLLoader.MaterialCreator;
+    const model = useLoader(OBJLoader, sampleObj, loader => {
         material.preload();
         // @ts-ignore
         loader.setMaterials(material);
-    });
+    }) as Group;
 
     if (model) {
         model.castShadow = true;
