@@ -5,3 +5,8 @@ This project is supported by the National Science Foundation (NSF) under grant n
 ## Renewable Energy Engineering
 
 The context is in the field of renewable energy engineering design.
+
+## Demo Site
+
+The app is published at: https://institute-for-future-intelligence.github.io/aladdin/
+
