@@ -3,8 +3,9 @@
  */
 
 import React from 'react';
+import {useStore} from "./stores/common";
 import styled from 'styled-components';
-import {Menu, Dropdown, Checkbox, Slider} from 'antd';
+import {Menu, Dropdown, Space, Checkbox} from 'antd';
 import {ReactComponent as MenuSVG} from './assets/menu.svg';
 import 'antd/dist/antd.css';
 
@@ -22,57 +23,47 @@ const StyledMenuSVG = styled(MenuSVG)`
   }
 `;
 
-export interface menuProps {
-    heliodon: boolean;
-    latitude: number;
-    date: Date;
-    toggleHeliodon?: (on: boolean) => void;
-    changeLatitude?: (latitude: number) => void;
-    changeDate?: (date: Date) => void;
-}
+const MainMenu = () => {
 
-const MainMenu = ({
-                      heliodon,
-                      latitude,
-                      date,
-                      toggleHeliodon,
-                      changeLatitude,
-                      changeDate,
-                  }: menuProps) => {
+    const set = useStore(state => state.set);
+    const showSceneSettings = useStore(state => state.showSceneSettings);
+    const showSolarSettings = useStore(state => state.showSolarSettings);
 
-    const onToggleHeliodon = () => {
-        toggleHeliodon?.(!heliodon);
+    // @ts-ignore
+    const onChangeShowSceneSettings = (e) => {
+        set((state) => {
+            state.showSceneSettings = e.target.checked;
+        });
     };
 
-    const onChangeLatitude = (value: number) => {
-        changeLatitude?.(value);
-    };
-
-    const onChangeDate = (date: Date) => {
-        changeDate?.(date);
+    // @ts-ignore
+    const onChangeShowSolarSettings = (e) => {
+        set((state) => {
+            state.showSolarSettings = e.target.checked;
+        });
     };
 
     const menu = (
         <Menu>
-            <Menu.Item key={'heliodon-checkbox'}>
-                <Checkbox checked={heliodon} onClick={onToggleHeliodon}>
-                    Heliodon
-                </Checkbox>
+            <Menu.Item key={'scene-settings-switch'}>
+                <Space>
+                    <Checkbox checked={showSceneSettings} onChange={onChangeShowSceneSettings}>
+                        Scene Settings
+                    </Checkbox>
+                </Space>
             </Menu.Item>
-            <Menu.Item key={'latitude-slider'}>
-                Latitude:
-                <Slider
-                    min={-90}
-                    max={90}
-                    tooltipVisible={false}
-                    defaultValue={latitude}
-                    onChange={onChangeLatitude}/>
+            <Menu.Item key={'solar-settings-switch'}>
+                <Space>
+                    <Checkbox checked={showSolarSettings} onChange={onChangeShowSolarSettings}>
+                        Solar Settings
+                    </Checkbox>
+                </Space>
             </Menu.Item>
         </Menu>
     );
 
     return (
-        <Dropdown overlay={menu}>
+        <Dropdown overlay={menu} trigger={['click']}>
             <StyledMenuSVG/>
         </Dropdown>
     );

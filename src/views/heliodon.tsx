@@ -59,7 +59,7 @@ const Heliodon = ({
         let counter = 0;
         for (let angle = 0; angle < Util.TWO_PI + step / 2.0; angle += step) {
             const theta = Math.min(angle, Util.TWO_PI);
-            let width = 0.3;
+            let width = 0.05 * radius;
             // TODO: This is inefficient. We should use indexed buffer to share vertices
             basePoints.push(Util.sphericalToCartesianZ(new Vector3(radius, theta, 0)));
             basePoints.push(Util.sphericalToCartesianZ(new Vector3(radius + width, theta, 0)));
@@ -69,7 +69,7 @@ const Heliodon = ({
             basePoints.push(Util.sphericalToCartesianZ(new Vector3(radius, theta + step, 0)));
             let p;
             if (Util.TWO_PI - theta > Util.ZERO_TOLERANCE) {
-                width = counter % 3 === 0 ? 0.5 : 0.3;
+                width = 0.05 * radius + (counter % 3 === 0 ? 0.2 : 0);
                 p = new Vector3(radius, theta, 0);
                 p.z = 0.002;
                 tickPoints.push(Util.sphericalToCartesianZ(p));

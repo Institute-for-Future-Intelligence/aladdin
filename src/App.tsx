@@ -18,9 +18,11 @@ import {Euler, Vector3} from "three";
 import Heliodon from "./views/heliodon";
 import {Util} from "./util";
 import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./views/sunTools";
-import MainPanel from "./mainPanel";
 import Sample from "./views/sample";
 import aladdinLogo from './assets/aladdin-logo.png';
+import MainMenu from "./mainMenu";
+import SceneSettingsPanel from "./sceneSettingsPanel";
+import SolarSettingsPanel from "./solarSettingsPanel";
 
 const App = () => {
 
@@ -28,6 +30,11 @@ const App = () => {
     const worlds = useStore(state => state.worlds);
     const getWorld = useStore(state => state.getWorld);
     const createNewWorld = useStore(state => state.createNewWorld);
+
+    const showSceneSettings = useStore(state => state.showSceneSettings);
+    const showSolarSettings = useStore(state => state.showSolarSettings);
+
+    const grid = useStore(state => state.grid);
     const heliodon = useStore(state => state.heliodon);
     const latitude = useStore(state => state.latitude);
     const now = new Date(useStore(state => state.date));
@@ -52,10 +59,11 @@ const App = () => {
             .applyEuler(new Euler(-Math.PI / 2, 0, 0)));
     }, [latitude, hourAngle, declinationAngle]);
 
+    const nowString = now.toString();
     useMemo(() => {
         setHourAngle(computeHourAngle(now));
         setDeclinationAngle(computeDeclinationAngle(now));
-    }, [now.toString()]);
+    }, [nowString]);
 
     const cameraPosition = new Vector3(0, 0, 5);
     if (world) {
@@ -63,6 +71,12 @@ const App = () => {
     }
 
     console.log('x')
+
+    const toggleGrid = (on: boolean) => {
+        setCommonStore(state => {
+            state.grid = on;
+        });
+    };
 
     const toggleHeliodon = (on: boolean) => {
         setCommonStore(state => {
@@ -111,16 +125,22 @@ const App = () => {
                 <img alt='Logo' src={aladdinLogo} height='50px' style={{verticalAlign: 'middle'}}/>
                 <span style={{paddingLeft: '20px', verticalAlign: 'middle'}}>Aladdin</span>
             </div>
-            <MainPanel latitude={latitude}
-                       date={now}
-                       heliodon={heliodon}
-                       animateSun={animateSun}
-                       changeDate={changeDate}
-                       changeTime={changeTime}
-                       changeLatitude={changeLatitude}
-                       toggleHeliodon={toggleHeliodon}
-                       toggleSunAnimation={toggleSunAnimation}
-            />
+            <MainMenu/>
+            {showSceneSettings &&
+            <SceneSettingsPanel grid={grid}
+                                toggleGrid={toggleGrid}
+            />}
+            {showSolarSettings &&
+            <SolarSettingsPanel latitude={latitude}
+                                date={now}
+                                heliodon={heliodon}
+                                animateSun={animateSun}
+                                changeDate={changeDate}
+                                changeTime={changeTime}
+                                changeLatitude={changeLatitude}
+                                toggleHeliodon={toggleHeliodon}
+                                toggleSunAnimation={toggleSunAnimation}
+            />}
             <Canvas shadows={true}
                     camera={{
                         position: cameraPosition,
@@ -138,7 +158,7 @@ const App = () => {
                         shadow-mapSize-height={512}
                         shadow-mapSize-width={512}
                     />
-                    <gridHelper args={[500, 100, 'gray', 'gray']}/>
+                    {grid && <gridHelper args={[500, 100, 'gray', 'gray']}/>}
                     <Compass/>
                     <Sample/>
                     <Axes/>

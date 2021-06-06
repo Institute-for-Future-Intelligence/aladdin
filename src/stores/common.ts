@@ -17,6 +17,10 @@ export interface CommonStoreState {
     createNewWorld: () => void;
     getWorld: (name: string) => WorldModel;
 
+    showSceneSettings: boolean;
+    showSolarSettings: boolean;
+
+    grid: boolean;
     heliodon: boolean;
     latitude: number;
     date: string;
@@ -32,6 +36,10 @@ export const useStore = create<CommonStoreState>(devtools(persist((
 
         set: immerSet,
 
+        showSceneSettings: false,
+        showSolarSettings: false,
+
+        grid: false,
         heliodon: false,
         latitude: 42,
         date: new Date(2021, 5, 22, 12).toString(),
