@@ -7,18 +7,10 @@ import {Plane} from "@react-three/drei";
 import {useStore} from "../stores/common";
 import {DoubleSide} from "three";
 
-export interface GroundProps {
-    color?: string;
-
-    [key: string]: any;
-}
-
-const Ground = ({
-                    color = 'forestgreen',
-                    ...props
-                }: GroundProps) => {
+const Ground = () => {
 
     const set = useStore(state => state.set);
+    const groundColor = useStore(state => state.groundColor);
     const planeRef = useRef();
 
     const selectNone = () => {
@@ -49,7 +41,7 @@ const Ground = ({
                args={[10000, 10000]}>
             <meshStandardMaterial side={DoubleSide}
                                   attach="material"
-                                  color={color}/>
+                                  color={groundColor}/>
         </Plane>
     )
 };

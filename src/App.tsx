@@ -20,9 +20,12 @@ import {Util} from "./util";
 import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./views/sunTools";
 import Sample from "./views/sample";
 import aladdinLogo from './assets/aladdin-logo.png';
+import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from "./mainMenu";
 import SceneSettingsPanel from "./sceneSettingsPanel";
 import SolarSettingsPanel from "./solarSettingsPanel";
+import {VERSION} from "./constants";
+import {visitIFI} from "./helpers";
 
 const App = () => {
 
@@ -34,7 +37,9 @@ const App = () => {
     const showSceneSettings = useStore(state => state.showSceneSettings);
     const showSolarSettings = useStore(state => state.showSolarSettings);
 
+    const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
+    const groundColor = useStore(state => state.groundColor);
     const heliodon = useStore(state => state.heliodon);
     const latitude = useStore(state => state.latitude);
     const now = new Date(useStore(state => state.date));
@@ -72,19 +77,32 @@ const App = () => {
 
     console.log('x')
 
-    const toggleGrid = (on: boolean) => {
+    const setAxes = (on: boolean) => {
+        setCommonStore(state => {
+            state.axes = on;
+        });
+    };
+
+    const setGrid = (on: boolean) => {
         setCommonStore(state => {
             state.grid = on;
         });
     };
 
-    const toggleHeliodon = (on: boolean) => {
+    const setGroundColor = (color: string) => {
+        setCommonStore(state => {
+            state.groundColor = color;
+        });
+    };
+
+    const setHeliodon = (on: boolean) => {
         setCommonStore(state => {
             state.heliodon = on;
         });
     };
 
-    const toggleSunAnimation = (on: boolean) => {
+    // animation state should not be persisted
+    const setSunAnimation = (on: boolean) => {
         setAnimateSun(on);
     };
 
@@ -122,13 +140,33 @@ const App = () => {
                 paddingTop: '10px',
                 fontSize: '30px'
             }}>
-                <img alt='Logo' src={aladdinLogo} height='50px' style={{verticalAlign: 'middle'}}/>
+                <img alt='Aladdin Logo' src={aladdinLogo} height='50px' style={{verticalAlign: 'middle'}}/>
                 <span style={{paddingLeft: '20px', verticalAlign: 'middle'}}>Aladdin</span>
+            </div>
+            <div style={{
+                position: 'absolute',
+                bottom: '10px',
+                left: '10px',
+                zIndex: 999,
+                fontSize: '12px',
+                color: 'white'
+            }}>
+                <img alt='IFI Logo'
+                     src={ifiLogo}
+                     height='40px'
+                     style={{verticalAlign: 'bottom', cursor: 'pointer'}}
+                     title={'Go to Institute for Future Intelligence'}
+                     onClick={visitIFI}/>
+                &nbsp;&nbsp; Institute for Future Intelligence, &copy;{new Date().getFullYear()}. Version {VERSION}
             </div>
             <MainMenu/>
             {showSceneSettings &&
-            <SceneSettingsPanel grid={grid}
-                                toggleGrid={toggleGrid}
+            <SceneSettingsPanel axes={axes}
+                                grid={grid}
+                                groundColor={groundColor}
+                                setAxes={setAxes}
+                                setGrid={setGrid}
+                                setGroundColor={setGroundColor}
             />}
             {showSolarSettings &&
             <SolarSettingsPanel latitude={latitude}
@@ -138,8 +176,8 @@ const App = () => {
                                 changeDate={changeDate}
                                 changeTime={changeTime}
                                 changeLatitude={changeLatitude}
-                                toggleHeliodon={toggleHeliodon}
-                                toggleSunAnimation={toggleSunAnimation}
+                                setHeliodon={setHeliodon}
+                                setSunAnimation={setSunAnimation}
             />}
             <Canvas shadows={true}
                     camera={{
@@ -161,7 +199,7 @@ const App = () => {
                     {grid && <gridHelper args={[500, 100, 'gray', 'gray']}/>}
                     <Compass/>
                     <Sample/>
-                    <Axes/>
+                    {axes && <Axes/>}
                     <Ground/>
                     <Sky type={sunAboveHorizon ? 'day sky' : 'night sky'}/>
                     {heliodon &&

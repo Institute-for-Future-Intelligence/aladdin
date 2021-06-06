@@ -21,6 +21,8 @@ export interface CommonStoreState {
     showSolarSettings: boolean;
 
     grid: boolean;
+    axes: boolean;
+    groundColor: string;
     heliodon: boolean;
     latitude: number;
     date: string;
@@ -40,6 +42,8 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         showSolarSettings: false,
 
         grid: false,
+        axes: true,
+        groundColor: 'forestgreen',
         heliodon: false,
         latitude: 42,
         date: new Date(2021, 5, 22, 12).toString(),

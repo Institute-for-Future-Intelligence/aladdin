@@ -57,8 +57,8 @@ export interface SolarSettingsPanelProps {
     latitude: number;
     date: Date;
     animateSun?: boolean;
-    toggleHeliodon?: (on: boolean) => void;
-    toggleSunAnimation?: (on: boolean) => void;
+    setHeliodon?: (on: boolean) => void;
+    setSunAnimation?: (on: boolean) => void;
     changeLatitude?: (latitude: number) => void;
     changeDate?: (date: Date) => void;
     changeTime?: (date: Date) => void;
@@ -69,8 +69,8 @@ const SolarSettingsPanel = ({
                                 latitude,
                                 date,
                                 animateSun,
-                                toggleHeliodon,
-                                toggleSunAnimation,
+                                setHeliodon,
+                                setSunAnimation,
                                 changeLatitude,
                                 changeDate,
                                 changeTime,
@@ -93,7 +93,7 @@ const SolarSettingsPanel = ({
             const currentFrameTime = Date.now();
             if (currentFrameTime - previousFrameTime.current > 100) {
                 const day = date.getDate();
-                date.setHours(date.getHours() + 1);
+                date.setHours(date.getHours(), date.getMinutes() + 15);
                 date.setDate(day)
                 changeTime?.(date);
                 previousFrameTime.current = currentFrameTime;
@@ -116,13 +116,13 @@ const SolarSettingsPanel = ({
                     <div>
                         Heliodon<br/>
                         <Switch checked={heliodon} onChange={(checked) => {
-                            toggleHeliodon?.(checked);
+                            setHeliodon?.(checked);
                         }}/>
                     </div>
                     <div>
                         Animate<br/>
                         <Switch checked={animateSun} onChange={(checked) => {
-                            toggleSunAnimation?.(checked);
+                            setSunAnimation?.(checked);
                         }}/>
                     </div>
                     <div>
@@ -143,7 +143,7 @@ const SolarSettingsPanel = ({
                         />
                     </div>
                     <div>
-                        Latitude
+                        Latitude: {latitude}°
                         <Slider
                             style={{width: '150px'}}
                             marks={{'-90': '-90°', 0: '0°', 90: '90°'}}

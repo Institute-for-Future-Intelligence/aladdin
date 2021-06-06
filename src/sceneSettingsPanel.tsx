@@ -6,6 +6,7 @@ import React from 'react';
 import {useStore} from "./stores/common";
 import styled from 'styled-components';
 import {Space, Switch} from "antd";
+import {CompactPicker} from 'react-color';
 import 'antd/dist/antd.css';
 
 const Container = styled.div`
@@ -52,13 +53,21 @@ const Header = styled.div`
 `;
 
 export interface SceneSettingsPanelProps {
+    axes: boolean;
     grid: boolean;
-    toggleGrid?: (on: boolean) => void;
+    groundColor: string;
+    setAxes?: (on: boolean) => void;
+    setGrid?: (on: boolean) => void;
+    setGroundColor?: (color: string) => void;
 }
 
 const SceneSettingsPanel = ({
                                 grid,
-                                toggleGrid,
+                                axes,
+                                groundColor,
+                                setGrid,
+                                setAxes,
+                                setGroundColor,
                             }: SceneSettingsPanelProps) => {
 
     const set = useStore(state => state.set);
@@ -75,10 +84,24 @@ const SceneSettingsPanel = ({
                     }}>Close</span>
                 </Header>
                 <Space style={{padding: '20px'}} align={'baseline'} size={20}>
+                    <Space direction={'vertical'}>
+                        <div>
+                            Axes<br/>
+                            <Switch checked={axes} onChange={(checked) => {
+                                setAxes?.(checked);
+                            }}/>
+                        </div>
+                        <div>
+                            Grid<br/>
+                            <Switch checked={grid} onChange={(checked) => {
+                                setGrid?.(checked);
+                            }}/>
+                        </div>
+                    </Space>
                     <div>
-                        Grid<br/>
-                        <Switch checked={grid} onChange={(checked) => {
-                            toggleGrid?.(checked);
+                        Ground Color<br/>
+                        <CompactPicker color={groundColor} onChangeComplete={(colorResult) => {
+                            setGroundColor?.(colorResult.hex);
                         }}/>
                     </div>
                 </Space>
