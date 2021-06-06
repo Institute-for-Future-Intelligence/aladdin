@@ -7,6 +7,7 @@ import {useStore} from "./stores/common";
 import styled from 'styled-components';
 import {Space, Switch} from "antd";
 import {CompactPicker} from 'react-color';
+import Maps from "./maps";
 import 'antd/dist/antd.css';
 
 const Container = styled.div`
@@ -25,8 +26,8 @@ const ColumnWrapper = styled.div`
   position: absolute;
   left: 0;
   top: 0;
-  width: 640px;
-  padding: 0;
+  width: 420px;
+  padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
   display: flex;
@@ -59,6 +60,8 @@ export interface SceneSettingsPanelProps {
     setAxes?: (on: boolean) => void;
     setGrid?: (on: boolean) => void;
     setGroundColor?: (color: string) => void;
+    changeLatitude?: (latitude: number) => void;
+    changeLongitude?: (longitude: number) => void;
 }
 
 const SceneSettingsPanel = ({
@@ -68,9 +71,13 @@ const SceneSettingsPanel = ({
                                 setGrid,
                                 setAxes,
                                 setGroundColor,
+                                changeLatitude,
+                                changeLongitude,
                             }: SceneSettingsPanelProps) => {
 
     const set = useStore(state => state.set);
+    const latitude = useStore(state => state.latitude);
+    const longitude = useStore(state => state.longitude);
 
     return (
         <Container>
@@ -83,27 +90,35 @@ const SceneSettingsPanel = ({
                         });
                     }}>Close</span>
                 </Header>
-                <Space style={{padding: '20px'}} align={'baseline'} size={20}>
-                    <Space direction={'vertical'}>
+                <Space direction={'vertical'}>
+                    <Space style={{padding: '20px'}} align={'baseline'} size={20}>
+                        <Space direction={'vertical'}>
+                            <div>
+                                Axes<br/>
+                                <Switch checked={axes} onChange={(checked) => {
+                                    setAxes?.(checked);
+                                }}/>
+                            </div>
+                            <div>
+                                Grid<br/>
+                                <Switch checked={grid} onChange={(checked) => {
+                                    setGrid?.(checked);
+                                }}/>
+                            </div>
+                        </Space>
                         <div>
-                            Axes<br/>
-                            <Switch checked={axes} onChange={(checked) => {
-                                setAxes?.(checked);
-                            }}/>
-                        </div>
-                        <div>
-                            Grid<br/>
-                            <Switch checked={grid} onChange={(checked) => {
-                                setGrid?.(checked);
+                            Ground Color<br/>
+                            <CompactPicker color={groundColor} onChangeComplete={(colorResult) => {
+                                setGroundColor?.(colorResult.hex);
                             }}/>
                         </div>
                     </Space>
-                    <div>
-                        Ground Color<br/>
-                        <CompactPicker color={groundColor} onChangeComplete={(colorResult) => {
-                            setGroundColor?.(colorResult.hex);
-                        }}/>
-                    </div>
+                    <Space>
+                        <div>
+                            Map: ({latitude.toFixed(3)}°, {longitude.toFixed(3)}°)<br/>
+                            <Maps setLatitude={changeLatitude} setLongitude={changeLongitude}/>
+                        </div>
+                    </Space>
                 </Space>
             </ColumnWrapper>
         </Container>

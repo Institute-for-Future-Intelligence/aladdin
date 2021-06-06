@@ -130,6 +130,12 @@ const App = () => {
         });
     };
 
+    const changeLongitude = (longitude: number) => {
+        setCommonStore(state => {
+            state.longitude = longitude;
+        });
+    };
+
     const sunAboveHorizon = sunlightDirection.y > 0;
 
     return (
@@ -167,6 +173,8 @@ const App = () => {
                                 setAxes={setAxes}
                                 setGrid={setGrid}
                                 setGroundColor={setGroundColor}
+                                changeLatitude={changeLatitude}
+                                changeLongitude={changeLongitude}
             />}
             {showSolarSettings &&
             <SolarSettingsPanel latitude={latitude}
