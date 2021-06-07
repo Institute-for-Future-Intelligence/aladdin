@@ -12,6 +12,8 @@ import {LoadScript, StandaloneSearchBox} from "@react-google-maps/api";
 import {Libraries} from "@react-google-maps/api/dist/utils/make-load-script-url";
 import 'antd/dist/antd.css';
 
+const libraries = ['places'] as Libraries;
+
 const Container = styled.div`
   position: fixed;
   top: 10px;
@@ -89,8 +91,6 @@ const SceneSettingsPanel = ({
     const mapZoom = useStore(state => state.mapZoom);
     const address = useStore(state => state.address);
     const searchBox = useRef<google.maps.places.SearchBox>();
-
-    const libraries = ['places'] as Libraries;
 
     const onPlacesChanged = () => {
         const places = searchBox.current?.getPlaces();

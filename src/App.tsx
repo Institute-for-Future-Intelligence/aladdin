@@ -26,6 +26,7 @@ import SceneSettingsPanel from "./sceneSettingsPanel";
 import SolarSettingsPanel from "./solarSettingsPanel";
 import {VERSION} from "./constants";
 import {visitIFI} from "./helpers";
+import AcceptCookie from "./acceptCookie";
 
 const App = () => {
 
@@ -242,6 +243,7 @@ const App = () => {
                     {/*{world && <Scene world={world}/>}*/}
                 </Suspense>
             </Canvas>
+            <AcceptCookie/>
         </div>
     );
 };
