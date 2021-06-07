@@ -26,6 +26,9 @@ export interface CommonStoreState {
     heliodon: boolean;
     latitude: number;
     longitude: number;
+    mapZoom: number;
+    mapType: string;
+    mapTilt: number;
     date: string;
 }
 
@@ -48,6 +51,9 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         heliodon: false,
         latitude: 42.2844063,
         longitude: -71.3488548,
+        mapZoom: 16,
+        mapType: 'roadmap',
+        mapTilt: 0,
         date: new Date(2021, 5, 22, 12).toString(),
 
         worlds: {},

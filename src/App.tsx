@@ -136,6 +136,24 @@ const App = () => {
         });
     };
 
+    const changeMapZoom = (zoom: number) => {
+        setCommonStore(state => {
+            state.mapZoom = zoom;
+        });
+    };
+
+    const changeMapTilt = (tilt: number) => {
+        setCommonStore(state => {
+            state.mapTilt = tilt;
+        });
+    };
+
+    const changeMapType = (type: string) => {
+        setCommonStore(state => {
+            state.mapType = type;
+        });
+    };
+
     const sunAboveHorizon = sunlightDirection.y > 0;
 
     return (
@@ -175,6 +193,9 @@ const App = () => {
                                 setGroundColor={setGroundColor}
                                 changeLatitude={changeLatitude}
                                 changeLongitude={changeLongitude}
+                                changeMapZoom={changeMapZoom}
+                                changeMapTilt={changeMapTilt}
+                                changeMapType={changeMapType}
             />}
             {showSolarSettings &&
             <SolarSettingsPanel latitude={latitude}

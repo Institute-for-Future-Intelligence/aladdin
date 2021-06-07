@@ -143,7 +143,7 @@ const SolarSettingsPanel = ({
                         />
                     </div>
                     <div>
-                        Latitude: {latitude}°
+                        Latitude: {latitude.toFixed(4)}°
                         <Slider
                             style={{width: '150px'}}
                             marks={{'-90': '-90°', 0: '0°', 90: '90°'}}

@@ -62,6 +62,9 @@ export interface SceneSettingsPanelProps {
     setGroundColor?: (color: string) => void;
     changeLatitude?: (latitude: number) => void;
     changeLongitude?: (longitude: number) => void;
+    changeMapZoom?: (zoom: number) => void;
+    changeMapTilt?: (tilt: number) => void;
+    changeMapType?: (type: string) => void;
 }
 
 const SceneSettingsPanel = ({
@@ -73,11 +76,15 @@ const SceneSettingsPanel = ({
                                 setGroundColor,
                                 changeLatitude,
                                 changeLongitude,
+                                changeMapZoom,
+                                changeMapTilt,
+                                changeMapType,
                             }: SceneSettingsPanelProps) => {
 
     const set = useStore(state => state.set);
     const latitude = useStore(state => state.latitude);
     const longitude = useStore(state => state.longitude);
+    const mapZoom = useStore(state => state.mapZoom);
 
     return (
         <Container>
@@ -115,8 +122,15 @@ const SceneSettingsPanel = ({
                     </Space>
                     <Space>
                         <div>
-                            Map: ({latitude.toFixed(3)}°, {longitude.toFixed(3)}°)<br/>
-                            <Maps setLatitude={changeLatitude} setLongitude={changeLongitude}/>
+                            Coordinates: ({latitude.toFixed(2)}°, {longitude.toFixed(2)}°),
+                            Zoom: {mapZoom}
+                            <br/>
+                            <Maps setLatitude={changeLatitude}
+                                  setLongitude={changeLongitude}
+                                  setZoom={changeMapZoom}
+                                  setTilt={changeMapTilt}
+                                  setType={changeMapType}
+                            />
                         </div>
                     </Space>
                 </Space>

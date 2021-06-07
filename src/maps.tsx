@@ -8,11 +8,11 @@ import {useStore} from "./stores/common";
 
 export interface MapsProp {
 
-    zoom?: number;
-
     setLatitude?: (value: number) => void;
     setLongitude?: (value: number) => void;
     setZoom?: (value: number) => void;
+    setTilt?: (value: number) => void;
+    setType?: (value: string) => void;
 
 }
 
@@ -22,14 +22,18 @@ const containerStyle = {
 };
 
 const Maps = ({
-                  zoom = 16,
                   setLatitude,
                   setLongitude,
                   setZoom,
+                  setTilt,
+                  setType,
               }: MapsProp) => {
 
     const latitude = useStore(state => state.latitude);
     const longitude = useStore(state => state.longitude);
+    const zoom = useStore(state => state.mapZoom);
+    const type = useStore(state => state.mapType);
+    const tilt = useStore(state => state.mapTilt);
     const [map, setMap] = useState<google.maps.Map | null>(null);
 
     const {isLoaded} = useJsApiLoader({
@@ -59,16 +63,48 @@ const Maps = ({
         }
     };
 
+    const onZoomChanged = () => {
+        if (map) {
+            const z = map.getZoom();
+            if (z !== zoom) {
+                setZoom?.(z);
+            }
+        }
+    };
+
+    const onTiltChanged = () => {
+        if (map) {
+            const t = map.getTilt();
+            if (t !== tilt) {
+                setTilt?.(t);
+            }
+        }
+    };
+
+    const onMapTypeIdChanged = () => {
+        if (map) {
+            const typeId = map.getMapTypeId();
+            if (typeId !== type) {
+                setType?.(typeId);
+            }
+        }
+    };
+
     const latLng = {lat: latitude, lng: longitude};
 
     return isLoaded ? (
         <GoogleMap
             mapContainerStyle={containerStyle}
+            mapTypeId={type}
             center={latLng}
             zoom={zoom}
+            tilt={tilt}
             onLoad={onLoad}
             onUnmount={onUnmount}
             onCenterChanged={onCenterChanged}
+            onZoomChanged={onZoomChanged}
+            onTiltChanged={onTiltChanged}
+            onMapTypeIdChanged={onMapTypeIdChanged}
         >
             { /* Child components, such as markers, info windows, etc. */}
             <></>
