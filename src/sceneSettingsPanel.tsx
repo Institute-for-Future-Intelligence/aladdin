@@ -2,12 +2,14 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, {useRef} from 'react';
 import {useStore} from "./stores/common";
 import styled from 'styled-components';
 import {Space, Switch} from "antd";
 import {CompactPicker} from 'react-color';
 import Maps from "./maps";
+import {LoadScript, StandaloneSearchBox} from "@react-google-maps/api";
+import {Libraries} from "@react-google-maps/api/dist/utils/make-load-script-url";
 import 'antd/dist/antd.css';
 
 const Container = styled.div`
@@ -85,57 +87,105 @@ const SceneSettingsPanel = ({
     const latitude = useStore(state => state.latitude);
     const longitude = useStore(state => state.longitude);
     const mapZoom = useStore(state => state.mapZoom);
+    const address = useStore(state => state.address);
+    const searchBox = useRef<google.maps.places.SearchBox>();
+
+    const libraries = ['places'] as Libraries;
+
+    const onPlacesChanged = () => {
+        const places = searchBox.current?.getPlaces();
+        if (places && places.length > 0) {
+            set((state) => {
+                const geometry = places[0].geometry;
+                if (geometry) {
+                    state.latitude = geometry.location.lat();
+                    state.longitude = geometry.location.lng();
+                }
+                state.address = places[0].formatted_address as string;
+            });
+        }
+    };
+
+    const onLoad = (s: google.maps.places.SearchBox) => {
+        searchBox.current = s;
+    };
 
     return (
-        <Container>
-            <ColumnWrapper>
-                <Header>
-                    <span>Scene Settings</span>
-                    <span style={{cursor: 'pointer'}} onClick={() => {
-                        set((state) => {
-                            state.showSceneSettings = false;
-                        });
-                    }}>Close</span>
-                </Header>
-                <Space direction={'vertical'}>
-                    <Space style={{padding: '20px'}} align={'baseline'} size={20}>
-                        <Space direction={'vertical'}>
+        <LoadScript id="script-loader" googleMapsApiKey={process.env.REACT_APP_MAPS_API_KEY as string}
+                    libraries={libraries}>
+            <Container>
+                <ColumnWrapper>
+                    <Header>
+                        <span>Scene Settings</span>
+                        <span style={{cursor: 'pointer'}} onClick={() => {
+                            set((state) => {
+                                state.showSceneSettings = false;
+                            });
+                        }}>Close</span>
+                    </Header>
+                    <Space direction={'vertical'}>
+                        <Space style={{padding: '20px'}} align={'baseline'} size={20}>
+                            <Space direction={'vertical'}>
+                                <div>
+                                    Axes<br/>
+                                    <Switch checked={axes} onChange={(checked) => {
+                                        setAxes?.(checked);
+                                    }}/>
+                                </div>
+                                <div>
+                                    Grid<br/>
+                                    <Switch checked={grid} onChange={(checked) => {
+                                        setGrid?.(checked);
+                                    }}/>
+                                </div>
+                            </Space>
                             <div>
-                                Axes<br/>
-                                <Switch checked={axes} onChange={(checked) => {
-                                    setAxes?.(checked);
-                                }}/>
-                            </div>
-                            <div>
-                                Grid<br/>
-                                <Switch checked={grid} onChange={(checked) => {
-                                    setGrid?.(checked);
+                                Ground Color<br/>
+                                <CompactPicker color={groundColor} onChangeComplete={(colorResult) => {
+                                    setGroundColor?.(colorResult.hex);
                                 }}/>
                             </div>
                         </Space>
-                        <div>
-                            Ground Color<br/>
-                            <CompactPicker color={groundColor} onChangeComplete={(colorResult) => {
-                                setGroundColor?.(colorResult.hex);
-                            }}/>
-                        </div>
+                        <Space>
+                            <div>
+                                <StandaloneSearchBox onLoad={onLoad}
+                                                     onPlacesChanged={onPlacesChanged}>
+                                    <input
+                                        type="text"
+                                        placeholder={address}
+                                        style={{
+                                            boxSizing: `border-box`,
+                                            border: `1px solid transparent`,
+                                            width: `400px`,
+                                            height: `32px`,
+                                            padding: `0 12px`,
+                                            borderRadius: `3px`,
+                                            boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
+                                            fontSize: `14px`,
+                                            outline: `none`,
+                                            textOverflow: `ellipses`,
+                                            position: "relative"
+                                        }}
+                                    />
+                                </StandaloneSearchBox>
+                            </div>
+                        </Space>
+                        <Space>
+                            <div>
+                                <Maps setLatitude={changeLatitude}
+                                      setLongitude={changeLongitude}
+                                      setZoom={changeMapZoom}
+                                      setTilt={changeMapTilt}
+                                      setType={changeMapType}
+                                />
+                                Coordinates: ({latitude.toFixed(2)}°, {longitude.toFixed(2)}°),
+                                Zoom: {mapZoom}
+                            </div>
+                        </Space>
                     </Space>
-                    <Space>
-                        <div>
-                            Coordinates: ({latitude.toFixed(2)}°, {longitude.toFixed(2)}°),
-                            Zoom: {mapZoom}
-                            <br/>
-                            <Maps setLatitude={changeLatitude}
-                                  setLongitude={changeLongitude}
-                                  setZoom={changeMapZoom}
-                                  setTilt={changeMapTilt}
-                                  setType={changeMapType}
-                            />
-                        </div>
-                    </Space>
-                </Space>
-            </ColumnWrapper>
-        </Container>
+                </ColumnWrapper>
+            </Container>
+        </LoadScript>
     );
 };
 

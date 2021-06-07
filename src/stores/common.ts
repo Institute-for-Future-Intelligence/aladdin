@@ -24,6 +24,7 @@ export interface CommonStoreState {
     axes: boolean;
     groundColor: string;
     heliodon: boolean;
+    address: string;
     latitude: number;
     longitude: number;
     mapZoom: number;
@@ -37,7 +38,9 @@ export const useStore = create<CommonStoreState>(devtools(persist((
     get,
     api,
 ) => {
+
     const immerSet: CommonStoreState['set'] = fn => set(produce(fn));
+
     return {
 
         set: immerSet,
@@ -49,6 +52,8 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         axes: true,
         groundColor: 'forestgreen',
         heliodon: false,
+
+        address: 'Natick, MA',
         latitude: 42.2844063,
         longitude: -71.3488548,
         mapZoom: 16,
