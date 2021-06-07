@@ -3,7 +3,7 @@
  */
 
 import React, {memo, useCallback, useState} from "react";
-import {GoogleMap, useJsApiLoader} from '@react-google-maps/api';
+import {GoogleMap} from '@react-google-maps/api';
 import {useStore} from "./stores/common";
 
 export interface MapsProp {
@@ -35,11 +35,6 @@ const Maps = ({
     const type = useStore(state => state.mapType);
     const tilt = useStore(state => state.mapTilt);
     const [map, setMap] = useState<google.maps.Map | null>(null);
-
-    const {isLoaded} = useJsApiLoader({
-        id: 'google-map-script',
-        googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY as string
-    });
 
     const onLoad = useCallback((map: google.maps.Map) => {
         setMap(map);
@@ -92,7 +87,7 @@ const Maps = ({
 
     const latLng = {lat: latitude, lng: longitude};
 
-    return isLoaded ? (
+    return (
         <GoogleMap
             mapContainerStyle={containerStyle}
             mapTypeId={type}
@@ -109,7 +104,7 @@ const Maps = ({
             { /* Child components, such as markers, info windows, etc. */}
             <></>
         </GoogleMap>
-    ) : <></>
+    );
 };
 
 export default memo(Maps);

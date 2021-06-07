@@ -8,8 +8,9 @@ import styled from 'styled-components';
 import {Space, Switch} from "antd";
 import {CompactPicker} from 'react-color';
 import Maps from "./maps";
-import {LoadScript, StandaloneSearchBox} from "@react-google-maps/api";
+import {StandaloneSearchBox, useJsApiLoader} from "@react-google-maps/api";
 import {Libraries} from "@react-google-maps/api/dist/utils/make-load-script-url";
+import Spinner from './components/spinner';
 import 'antd/dist/antd.css';
 
 const libraries = ['places'] as Libraries;
@@ -92,6 +93,12 @@ const SceneSettingsPanel = ({
     const address = useStore(state => state.address);
     const searchBox = useRef<google.maps.places.SearchBox>();
 
+    const {isLoaded, loadError} = useJsApiLoader({
+        id: 'google-map-script',
+        googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY as string,
+        libraries: libraries
+    });
+
     const onPlacesChanged = () => {
         const places = searchBox.current?.getPlaces();
         if (places && places.length > 0) {
@@ -111,65 +118,66 @@ const SceneSettingsPanel = ({
     };
 
     return (
-        <LoadScript id="script-loader" googleMapsApiKey={process.env.REACT_APP_MAPS_API_KEY as string}
-                    libraries={libraries}>
-            <Container>
-                <ColumnWrapper>
-                    <Header>
-                        <span>Scene Settings</span>
-                        <span style={{cursor: 'pointer'}} onClick={() => {
-                            set((state) => {
-                                state.showSceneSettings = false;
-                            });
-                        }}>Close</span>
-                    </Header>
-                    <Space direction={'vertical'}>
-                        <Space style={{padding: '20px'}} align={'baseline'} size={20}>
-                            <Space direction={'vertical'}>
-                                <div>
-                                    Axes<br/>
-                                    <Switch checked={axes} onChange={(checked) => {
-                                        setAxes?.(checked);
-                                    }}/>
-                                </div>
-                                <div>
-                                    Grid<br/>
-                                    <Switch checked={grid} onChange={(checked) => {
-                                        setGrid?.(checked);
-                                    }}/>
-                                </div>
-                            </Space>
+        <Container>
+            <ColumnWrapper>
+                <Header>
+                    <span>Scene Settings</span>
+                    <span style={{cursor: 'pointer'}} onClick={() => {
+                        set((state) => {
+                            state.showSceneSettings = false;
+                        });
+                    }}>Close</span>
+                </Header>
+                <Space direction={'vertical'}>
+                    <Space style={{padding: '20px'}} align={'baseline'} size={20}>
+                        <Space direction={'vertical'}>
                             <div>
-                                Ground Color<br/>
-                                <CompactPicker color={groundColor} onChangeComplete={(colorResult) => {
-                                    setGroundColor?.(colorResult.hex);
+                                Axes<br/>
+                                <Switch checked={axes} onChange={(checked) => {
+                                    setAxes?.(checked);
+                                }}/>
+                            </div>
+                            <div>
+                                Grid<br/>
+                                <Switch checked={grid} onChange={(checked) => {
+                                    setGrid?.(checked);
                                 }}/>
                             </div>
                         </Space>
-                        <Space>
-                            <div>
-                                <StandaloneSearchBox onLoad={onLoad}
-                                                     onPlacesChanged={onPlacesChanged}>
-                                    <input
-                                        type="text"
-                                        placeholder={address}
-                                        style={{
-                                            boxSizing: `border-box`,
-                                            border: `1px solid transparent`,
-                                            width: `400px`,
-                                            height: `32px`,
-                                            padding: `0 12px`,
-                                            borderRadius: `3px`,
-                                            boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
-                                            fontSize: `14px`,
-                                            outline: `none`,
-                                            textOverflow: `ellipses`,
-                                            position: "relative"
-                                        }}
-                                    />
-                                </StandaloneSearchBox>
-                            </div>
-                        </Space>
+                        <div>
+                            Ground Color<br/>
+                            <CompactPicker color={groundColor} onChangeComplete={(colorResult) => {
+                                setGroundColor?.(colorResult.hex);
+                            }}/>
+                        </div>
+                    </Space>
+                    {isLoaded &&
+                    <Space>
+                        <div>
+                            <StandaloneSearchBox onLoad={onLoad}
+                                                 onPlacesChanged={onPlacesChanged}>
+                                <input
+                                    type="text"
+                                    placeholder={address}
+                                    style={{
+                                        boxSizing: `border-box`,
+                                        border: `1px solid transparent`,
+                                        width: `400px`,
+                                        height: `32px`,
+                                        padding: `0 12px`,
+                                        borderRadius: `3px`,
+                                        boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
+                                        fontSize: `14px`,
+                                        outline: `none`,
+                                        textOverflow: `ellipses`,
+                                        position: "relative"
+                                    }}
+                                />
+                            </StandaloneSearchBox>
+                        </div>
+                    </Space>
+                    }
+                    {isLoaded ?
                         <Space>
                             <div>
                                 <Maps setLatitude={changeLatitude}
@@ -178,14 +186,21 @@ const SceneSettingsPanel = ({
                                       setTilt={changeMapTilt}
                                       setType={changeMapType}
                                 />
-                                Coordinates: ({latitude.toFixed(2)}°, {longitude.toFixed(2)}°),
+                                Coordinates: ({latitude.toFixed(4)}°, {longitude.toFixed(4)}°),
                                 Zoom: {mapZoom}
                             </div>
                         </Space>
+                        :
+                        <Spinner/>
+                    }
+                    {loadError &&
+                    <Space>
+                        <div>Map cannot be loaded right now, sorry.</div>
                     </Space>
-                </ColumnWrapper>
-            </Container>
-        </LoadScript>
+                    }
+                </Space>
+            </ColumnWrapper>
+        </Container>
     );
 };
 
