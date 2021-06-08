@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.9d5b29c0.chunk.css",
-    "main.js": "/aladdin/static/js/main.74b415bc.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.74b415bc.chunk.js.map",
-    "runtime-main.js": "/aladdin/static/js/runtime-main.00806820.js",
-    "runtime-main.js.map": "/aladdin/static/js/runtime-main.00806820.js.map",
+    "main.js": "/aladdin/static/js/main.8b5900f9.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.8b5900f9.chunk.js.map",
+    "runtime-main.js": "/aladdin/static/js/runtime-main.d014f3bc.js",
+    "runtime-main.js.map": "/aladdin/static/js/runtime-main.d014f3bc.js.map",
     "static/css/2.3c3a73a9.chunk.css": "/aladdin/static/css/2.3c3a73a9.chunk.css",
-    "static/js/2.97efdd21.chunk.js": "/aladdin/static/js/2.97efdd21.chunk.js",
-    "static/js/2.97efdd21.chunk.js.map": "/aladdin/static/js/2.97efdd21.chunk.js.map",
-    "static/js/3.73082830.chunk.js": "/aladdin/static/js/3.73082830.chunk.js",
-    "static/js/3.73082830.chunk.js.map": "/aladdin/static/js/3.73082830.chunk.js.map",
+    "static/js/2.6a9d9168.chunk.js": "/aladdin/static/js/2.6a9d9168.chunk.js",
+    "static/js/2.6a9d9168.chunk.js.map": "/aladdin/static/js/2.6a9d9168.chunk.js.map",
+    "static/js/3.f3779526.chunk.js": "/aladdin/static/js/3.f3779526.chunk.js",
+    "static/js/3.f3779526.chunk.js.map": "/aladdin/static/js/3.f3779526.chunk.js.map",
     "index.html": "/aladdin/index.html",
     "static/css/2.3c3a73a9.chunk.css.map": "/aladdin/static/css/2.3c3a73a9.chunk.css.map",
     "static/css/main.9d5b29c0.chunk.css.map": "/aladdin/static/css/main.9d5b29c0.chunk.css.map",
-    "static/js/2.97efdd21.chunk.js.LICENSE.txt": "/aladdin/static/js/2.97efdd21.chunk.js.LICENSE.txt",
+    "static/js/2.6a9d9168.chunk.js.LICENSE.txt": "/aladdin/static/js/2.6a9d9168.chunk.js.LICENSE.txt",
     "static/media/aladdin-logo.96b59d24.png": "/aladdin/static/media/aladdin-logo.96b59d24.png",
     "static/media/compass.7ded737e.obj": "/aladdin/static/media/compass.7ded737e.obj",
     "static/media/daysky.66925efd.jpg": "/aladdin/static/media/daysky.66925efd.jpg",
@@ -25,10 +25,10 @@
     "static/media/nightsky.2ee37da6.jpg": "/aladdin/static/media/nightsky.2ee37da6.jpg"
   },
   "entrypoints": [
-    "static/js/runtime-main.00806820.js",
+    "static/js/runtime-main.d014f3bc.js",
     "static/css/2.3c3a73a9.chunk.css",
-    "static/js/2.97efdd21.chunk.js",
+    "static/js/2.6a9d9168.chunk.js",
     "static/css/main.9d5b29c0.chunk.css",
-    "static/js/main.74b415bc.chunk.js"
+    "static/js/main.8b5900f9.chunk.js"
   ]
 }
