@@ -27,6 +27,7 @@ import SolarSettingsPanel from "./solarSettingsPanel";
 import {VERSION} from "./constants";
 import {visitIFI} from "./helpers";
 import AcceptCookie from "./acceptCookie";
+import GroundImage from "./views/groundImage";
 
 const App = () => {
 
@@ -40,6 +41,7 @@ const App = () => {
 
     const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
+    const groundImage = useStore(state => state.groundImage);
     const groundColor = useStore(state => state.groundColor);
     const heliodon = useStore(state => state.heliodon);
     const latitude = useStore(state => state.latitude);
@@ -90,6 +92,12 @@ const App = () => {
         });
     };
 
+    const setGroundImage = (on: boolean) => {
+        setCommonStore(state => {
+            state.groundImage = on;
+        });
+    };
+
     const setGroundColor = (color: string) => {
         setCommonStore(state => {
             state.groundColor = color;
@@ -128,6 +136,13 @@ const App = () => {
     const changeLatitude = (latitude: number) => {
         setCommonStore(state => {
             state.latitude = latitude;
+        });
+    };
+
+    const changeLatitudeAndRemoveAddress = (latitude: number) => {
+        setCommonStore(state => {
+            state.latitude = latitude;
+            state.address = '';
         });
     };
 
@@ -188,9 +203,11 @@ const App = () => {
             {showSceneSettings &&
             <SceneSettingsPanel axes={axes}
                                 grid={grid}
+                                groundImage={groundImage}
                                 groundColor={groundColor}
                                 setAxes={setAxes}
                                 setGrid={setGrid}
+                                setGroundImage={setGroundImage}
                                 setGroundColor={setGroundColor}
                                 changeLatitude={changeLatitude}
                                 changeLongitude={changeLongitude}
@@ -205,7 +222,7 @@ const App = () => {
                                 animateSun={animateSun}
                                 changeDate={changeDate}
                                 changeTime={changeTime}
-                                changeLatitude={changeLatitude}
+                                changeLatitude={changeLatitudeAndRemoveAddress}
                                 setHeliodon={setHeliodon}
                                 setSunAnimation={setSunAnimation}
             />}
@@ -231,6 +248,7 @@ const App = () => {
                     <Sample/>
                     {axes && <Axes/>}
                     <Ground/>
+                    {groundImage && <GroundImage/>}
                     <Sky type={sunAboveHorizon ? 'day sky' : 'night sky'}/>
                     {heliodon &&
                     <Heliodon

@@ -61,9 +61,11 @@ const Header = styled.div`
 export interface SceneSettingsPanelProps {
     axes: boolean;
     grid: boolean;
+    groundImage: boolean;
     groundColor: string;
     setAxes?: (on: boolean) => void;
     setGrid?: (on: boolean) => void;
+    setGroundImage?: (on: boolean) => void;
     setGroundColor?: (color: string) => void;
     changeLatitude?: (latitude: number) => void;
     changeLongitude?: (longitude: number) => void;
@@ -75,9 +77,11 @@ export interface SceneSettingsPanelProps {
 const SceneSettingsPanel = ({
                                 grid,
                                 axes,
+                                groundImage,
                                 groundColor,
                                 setGrid,
                                 setAxes,
+                                setGroundImage,
                                 setGroundColor,
                                 changeLatitude,
                                 changeLongitude,
@@ -129,23 +133,37 @@ const SceneSettingsPanel = ({
                     }}>Close</span>
                 </Header>
                 <Space direction={'vertical'}>
-                    <Space style={{padding: '20px'}} align={'baseline'} size={20}>
+                    <Space style={{padding: '20px'}} align={'center'} size={20}>
                         <Space direction={'vertical'}>
-                            <div>
-                                Axes<br/>
-                                <Switch checked={axes} onChange={(checked) => {
-                                    setAxes?.(checked);
-                                }}/>
-                            </div>
-                            <div>
-                                Grid<br/>
-                                <Switch checked={grid} onChange={(checked) => {
-                                    setGrid?.(checked);
-                                }}/>
-                            </div>
+                            <Space>
+                                <Space style={{width: '40px'}}>Axes:</Space>
+                                <Switch title={'Show axes'}
+                                        checked={axes}
+                                        onChange={(checked) => {
+                                            setAxes?.(checked);
+                                        }}
+                                />
+                            </Space>
+                            <Space>
+                                <Space style={{width: '40px'}}>Grid:</Space>
+                                <Switch title={'Show ground grid'}
+                                        checked={grid}
+                                        onChange={(checked) => {
+                                            setGrid?.(checked);
+                                        }}
+                                />
+                            </Space>
+                            <Space>
+                                <Space style={{width: '40px'}}>Image:</Space>
+                                <Switch title={'Show ground image'}
+                                        checked={groundImage}
+                                        onChange={(checked) => {
+                                            setGroundImage?.(checked);
+                                        }}
+                                />
+                            </Space>
                         </Space>
-                        <div>
-                            Ground Color<br/>
+                        <div>Ground Color<br/>
                             <CompactPicker color={groundColor} onChangeComplete={(colorResult) => {
                                 setGroundColor?.(colorResult.hex);
                             }}/>

@@ -22,6 +22,7 @@ export interface CommonStoreState {
 
     grid: boolean;
     axes: boolean;
+    groundImage: boolean;
     groundColor: string;
     heliodon: boolean;
     address: string;
@@ -50,6 +51,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
 
         grid: false,
         axes: true,
+        groundImage: false,
         groundColor: 'forestgreen',
         heliodon: false,
 
