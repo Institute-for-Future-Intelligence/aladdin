@@ -75,8 +75,8 @@ export interface SceneSettingsPanelProps {
 }
 
 const SceneSettingsPanel = ({
-                                grid,
                                 axes,
+                                grid,
                                 groundImage,
                                 groundColor,
                                 setGrid,

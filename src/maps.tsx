@@ -17,6 +17,7 @@ export interface MapsProp {
 }
 
 const containerStyle = {
+    border: '1px solid',
     width: '400px',
     height: '400px'
 };

@@ -24,6 +24,7 @@ export interface CommonStoreState {
     axes: boolean;
     groundImage: boolean;
     groundColor: string;
+    theme: string;
     heliodon: boolean;
     address: string;
     latitude: number;
@@ -32,6 +33,9 @@ export interface CommonStoreState {
     mapType: string;
     mapTilt: number;
     date: string;
+
+    clickObjectType: string | null;
+
 }
 
 export const useStore = create<CommonStoreState>(devtools(persist((
@@ -53,6 +57,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         axes: true,
         groundImage: false,
         groundColor: 'forestgreen',
+        theme: 'Default',
         heliodon: false,
 
         address: 'Natick, MA',
@@ -62,6 +67,8 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         mapType: 'roadmap',
         mapTilt: 0,
         date: new Date(2021, 5, 22, 12).toString(),
+
+        clickObjectType: null,
 
         worlds: {},
         getWorld(name: string) {

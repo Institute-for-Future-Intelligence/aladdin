@@ -28,6 +28,10 @@ import {VERSION} from "./constants";
 import {visitIFI} from "./helpers";
 import AcceptCookie from "./acceptCookie";
 import GroundImage from "./views/groundImage";
+import {Dropdown, Menu, Radio} from "antd";
+import {ClickObjectType, Theme} from "./types";
+
+const {SubMenu} = Menu;
 
 const App = () => {
 
@@ -38,11 +42,13 @@ const App = () => {
 
     const showSceneSettings = useStore(state => state.showSceneSettings);
     const showSolarSettings = useStore(state => state.showSolarSettings);
+    const clickObjectType = useStore(state => state.clickObjectType);
 
     const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
     const groundImage = useStore(state => state.groundImage);
     const groundColor = useStore(state => state.groundColor);
+    const theme = useStore(state => state.theme);
     const heliodon = useStore(state => state.heliodon);
     const latitude = useStore(state => state.latitude);
     const now = new Date(useStore(state => state.date));
@@ -170,6 +176,37 @@ const App = () => {
         });
     };
 
+    //@ts-ignore
+    const selectTheme = (e) => {
+        setCommonStore(state => {
+            state.theme = e.target.value;
+        });
+    };
+
+    const radioStyle = {
+        display: 'block',
+        height: '30px',
+        paddingLeft: '10px',
+        lineHeight: '30px',
+    };
+
+    const contextMenu = clickObjectType === ClickObjectType.sky ? (
+        <Menu>
+            {<SubMenu key={'theme'} title={'Theme'}>
+                <Radio.Group onChange={selectTheme} value={theme}>
+                    <Radio style={radioStyle} value={Theme.default}>Default</Radio>
+                    <Radio style={radioStyle} value={Theme.desert}>Desert</Radio>
+                </Radio.Group>
+            </SubMenu>}
+        </Menu>
+    ) : (
+        <Menu>
+            <Menu.Item key={'screenshot'}>
+                Take a Screenshot
+            </Menu.Item>
+        </Menu>
+    );
+
     const sunAboveHorizon = sunlightDirection.y > 0;
 
     return (
@@ -226,41 +263,45 @@ const App = () => {
                                 setHeliodon={setHeliodon}
                                 setSunAnimation={setSunAnimation}
             />}
-            <Canvas shadows={true}
-                    camera={{
-                        position: cameraPosition,
-                        fov: 90
-                    }}
-                    style={{height: 'calc(100vh - 70px)', backgroundColor: 'black'}}>
-                <Suspense fallback={null}>
-                    <OrbitController/>
-                    <ambientLight intensity={0.25}/>
-                    <directionalLight
-                        color='white'
-                        position={[sunlightDirection.x, sunlightDirection.y, sunlightDirection.z]}
-                        intensity={sunAboveHorizon ? 0.5 : 0}
-                        castShadow
-                        shadow-mapSize-height={512}
-                        shadow-mapSize-width={512}
-                    />
-                    {grid && <gridHelper args={[500, 100, 'gray', 'gray']}/>}
-                    <Compass/>
-                    <Sample/>
-                    {axes && <Axes/>}
-                    <Ground/>
-                    {groundImage && <GroundImage/>}
-                    <Sky type={sunAboveHorizon ? 'day sky' : 'night sky'}/>
-                    {heliodon &&
-                    <Heliodon
-                        hourAngle={hourAngle}
-                        declinationAngle={declinationAngle}
-                        radius={radius}
-                        date={now}
-                        latitude={Util.toRadians(latitude)}
-                    />}
-                    {/*{world && <Scene world={world}/>}*/}
-                </Suspense>
-            </Canvas>
+            <Dropdown key={'canvas-context-menu'} overlay={contextMenu} trigger={['contextMenu']}>
+                <div>
+                    <Canvas shadows={true}
+                            camera={{
+                                position: cameraPosition,
+                                fov: 90
+                            }}
+                            style={{height: 'calc(100vh - 70px)', backgroundColor: 'black'}}>
+                        <Suspense fallback={null}>
+                            <OrbitController/>
+                            <ambientLight intensity={0.25}/>
+                            <directionalLight
+                                color='white'
+                                position={[sunlightDirection.x, sunlightDirection.y, sunlightDirection.z]}
+                                intensity={sunAboveHorizon ? 0.5 : 0}
+                                castShadow
+                                shadow-mapSize-height={512}
+                                shadow-mapSize-width={512}
+                            />
+                            {grid && <gridHelper args={[500, 100, 'gray', 'gray']}/>}
+                            <Compass/>
+                            <Sample/>
+                            {axes && <Axes/>}
+                            <Ground/>
+                            {groundImage && <GroundImage/>}
+                            <Sky theme={theme} night={!sunAboveHorizon}/>
+                            {heliodon &&
+                            <Heliodon
+                                hourAngle={hourAngle}
+                                declinationAngle={declinationAngle}
+                                radius={radius}
+                                date={now}
+                                latitude={Util.toRadians(latitude)}
+                            />}
+                            {/*{world && <Scene world={world}/>}*/}
+                        </Suspense>
+                    </Canvas>
+                </div>
+            </Dropdown>
             <AcceptCookie/>
         </div>
     );
