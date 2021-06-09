@@ -52,7 +52,7 @@ const Header = styled.div`
   }
 `;
 
-export interface SolarSettingsPanelProps {
+export interface HeliodonSettingsPanelProps {
     heliodon: boolean;
     latitude: number;
     date: Date;
@@ -64,17 +64,17 @@ export interface SolarSettingsPanelProps {
     changeTime?: (date: Date) => void;
 }
 
-const SolarSettingsPanel = ({
-                                heliodon,
-                                latitude,
-                                date,
-                                animateSun,
-                                setHeliodon,
-                                setSunAnimation,
-                                changeLatitude,
-                                changeDate,
-                                changeTime,
-                            }: SolarSettingsPanelProps) => {
+const HeliodonSettingsPanel = ({
+                                   heliodon,
+                                   latitude,
+                                   date,
+                                   animateSun,
+                                   setHeliodon,
+                                   setSunAnimation,
+                                   changeLatitude,
+                                   changeDate,
+                                   changeTime,
+                               }: HeliodonSettingsPanelProps) => {
 
     const set = useStore(state => state.set);
     const requestRef = useRef<number>(0);
@@ -105,16 +105,16 @@ const SolarSettingsPanel = ({
         <Container>
             <ColumnWrapper>
                 <Header>
-                    <span>Solar Settings</span>
+                    <span>Heliodon Settings</span>
                     <span style={{cursor: 'pointer'}} onClick={() => {
                         set((state) => {
-                            state.showSolarSettings = false;
+                            state.showHeliodonSettings = false;
                         });
                     }}>Close</span>
                 </Header>
                 <Space style={{padding: '20px'}} align={'baseline'} size={20}>
                     <div>
-                        Heliodon<br/>
+                        Show<br/>
                         <Switch checked={heliodon} onChange={(checked) => {
                             setHeliodon?.(checked);
                         }}/>
@@ -162,4 +162,4 @@ const SolarSettingsPanel = ({
     );
 };
 
-export default SolarSettingsPanel;
+export default HeliodonSettingsPanel;

@@ -58,12 +58,10 @@ const Header = styled.div`
   }
 `;
 
-export interface SceneSettingsPanelProps {
-    axes: boolean;
+export interface GroundSettingsPanelProps {
     grid: boolean;
     groundImage: boolean;
     groundColor: string;
-    setAxes?: (on: boolean) => void;
     setGrid?: (on: boolean) => void;
     setGroundImage?: (on: boolean) => void;
     setGroundColor?: (color: string) => void;
@@ -74,21 +72,19 @@ export interface SceneSettingsPanelProps {
     changeMapType?: (type: string) => void;
 }
 
-const SceneSettingsPanel = ({
-                                axes,
-                                grid,
-                                groundImage,
-                                groundColor,
-                                setGrid,
-                                setAxes,
-                                setGroundImage,
-                                setGroundColor,
-                                changeLatitude,
-                                changeLongitude,
-                                changeMapZoom,
-                                changeMapTilt,
-                                changeMapType,
-                            }: SceneSettingsPanelProps) => {
+const GroundSettingsPanel = ({
+                                 grid,
+                                 groundImage,
+                                 groundColor,
+                                 setGrid,
+                                 setGroundImage,
+                                 setGroundColor,
+                                 changeLatitude,
+                                 changeLongitude,
+                                 changeMapZoom,
+                                 changeMapTilt,
+                                 changeMapType,
+                             }: GroundSettingsPanelProps) => {
 
     const set = useStore(state => state.set);
     const latitude = useStore(state => state.latitude);
@@ -125,25 +121,16 @@ const SceneSettingsPanel = ({
         <Container>
             <ColumnWrapper>
                 <Header>
-                    <span>Scene Settings</span>
+                    <span>Ground Settings</span>
                     <span style={{cursor: 'pointer'}} onClick={() => {
                         set((state) => {
-                            state.showSceneSettings = false;
+                            state.showGroundSettings = false;
                         });
                     }}>Close</span>
                 </Header>
                 <Space direction={'vertical'}>
                     <Space style={{padding: '20px'}} align={'center'} size={20}>
                         <Space direction={'vertical'}>
-                            <Space>
-                                <Space style={{width: '40px'}}>Axes:</Space>
-                                <Switch title={'Show axes'}
-                                        checked={axes}
-                                        onChange={(checked) => {
-                                            setAxes?.(checked);
-                                        }}
-                                />
-                            </Space>
                             <Space>
                                 <Space style={{width: '40px'}}>Grid:</Space>
                                 <Switch title={'Show ground grid'}
@@ -222,4 +209,4 @@ const SceneSettingsPanel = ({
     );
 };
 
-export default SceneSettingsPanel;
+export default GroundSettingsPanel;

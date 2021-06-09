@@ -5,7 +5,7 @@
 import React from 'react';
 import {useStore} from "./stores/common";
 import styled from 'styled-components';
-import {Menu, Dropdown, Space, Checkbox} from 'antd';
+import {Menu, Dropdown, Checkbox} from 'antd';
 import {ReactComponent as MenuSVG} from './assets/menu.svg';
 import 'antd/dist/antd.css';
 
@@ -26,38 +26,34 @@ const StyledMenuSVG = styled(MenuSVG)`
 const MainMenu = () => {
 
     const set = useStore(state => state.set);
-    const showSceneSettings = useStore(state => state.showSceneSettings);
-    const showSolarSettings = useStore(state => state.showSolarSettings);
+    const showGroundSettings = useStore(state => state.showGroundSettings);
+    const showHeliodonSettings = useStore(state => state.showHeliodonSettings);
 
     // @ts-ignore
-    const onChangeShowSceneSettings = (e) => {
+    const onChangeShowGroundSettings = (e) => {
         set((state) => {
-            state.showSceneSettings = e.target.checked;
+            state.showGroundSettings = e.target.checked;
         });
     };
 
     // @ts-ignore
-    const onChangeShowSolarSettings = (e) => {
+    const onChangeShowHeliodonSettings = (e) => {
         set((state) => {
-            state.showSolarSettings = e.target.checked;
+            state.showHeliodonSettings = e.target.checked;
         });
     };
 
     const menu = (
         <Menu>
-            <Menu.Item key={'scene-settings-switch'}>
-                <Space>
-                    <Checkbox checked={showSceneSettings} onChange={onChangeShowSceneSettings}>
-                        Scene Settings
-                    </Checkbox>
-                </Space>
+            <Menu.Item key={'ground-settings-switch'}>
+                <Checkbox checked={showGroundSettings} onChange={onChangeShowGroundSettings}>
+                    Ground Settings
+                </Checkbox>
             </Menu.Item>
-            <Menu.Item key={'solar-settings-switch'}>
-                <Space>
-                    <Checkbox checked={showSolarSettings} onChange={onChangeShowSolarSettings}>
-                        Solar Settings
-                    </Checkbox>
-                </Space>
+            <Menu.Item key={'heliodon-settings-switch'}>
+                <Checkbox checked={showHeliodonSettings} onChange={onChangeShowHeliodonSettings}>
+                    Heliodon Settings
+                </Checkbox>
             </Menu.Item>
         </Menu>
     );

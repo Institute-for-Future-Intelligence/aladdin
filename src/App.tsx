@@ -22,16 +22,15 @@ import Sample from "./views/sample";
 import aladdinLogo from './assets/aladdin-logo.png';
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from "./mainMenu";
-import SceneSettingsPanel from "./sceneSettingsPanel";
-import SolarSettingsPanel from "./solarSettingsPanel";
+import GroundSettingsPanel from "./groundSettingsPanel";
+import HeliodonSettingsPanel from "./heliodonSettingsPanel";
 import {VERSION} from "./constants";
 import {visitIFI} from "./helpers";
 import AcceptCookie from "./acceptCookie";
 import GroundImage from "./views/groundImage";
-import {Dropdown, Menu, Radio} from "antd";
-import {ClickObjectType, Theme} from "./types";
+import {Dropdown} from "antd";
+import ContextMenu from "./contextMenu";
 
-const {SubMenu} = Menu;
 
 const App = () => {
 
@@ -40,9 +39,8 @@ const App = () => {
     const getWorld = useStore(state => state.getWorld);
     const createNewWorld = useStore(state => state.createNewWorld);
 
-    const showSceneSettings = useStore(state => state.showSceneSettings);
-    const showSolarSettings = useStore(state => state.showSolarSettings);
-    const clickObjectType = useStore(state => state.clickObjectType);
+    const showGroundSettings = useStore(state => state.showGroundSettings);
+    const showHeliodonSettings = useStore(state => state.showHeliodonSettings);
 
     const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
@@ -176,37 +174,6 @@ const App = () => {
         });
     };
 
-    //@ts-ignore
-    const selectTheme = (e) => {
-        setCommonStore(state => {
-            state.theme = e.target.value;
-        });
-    };
-
-    const radioStyle = {
-        display: 'block',
-        height: '30px',
-        paddingLeft: '10px',
-        lineHeight: '30px',
-    };
-
-    const contextMenu = clickObjectType === ClickObjectType.sky ? (
-        <Menu>
-            {<SubMenu key={'theme'} title={'Theme'}>
-                <Radio.Group onChange={selectTheme} value={theme}>
-                    <Radio style={radioStyle} value={Theme.default}>Default</Radio>
-                    <Radio style={radioStyle} value={Theme.desert}>Desert</Radio>
-                </Radio.Group>
-            </SubMenu>}
-        </Menu>
-    ) : (
-        <Menu>
-            <Menu.Item key={'screenshot'}>
-                Take a Screenshot
-            </Menu.Item>
-        </Menu>
-    );
-
     const sunAboveHorizon = sunlightDirection.y > 0;
 
     return (
@@ -237,33 +204,31 @@ const App = () => {
                 &nbsp;&nbsp; Institute for Future Intelligence, &copy;{new Date().getFullYear()}. Version {VERSION}
             </div>
             <MainMenu/>
-            {showSceneSettings &&
-            <SceneSettingsPanel axes={axes}
-                                grid={grid}
-                                groundImage={groundImage}
-                                groundColor={groundColor}
-                                setAxes={setAxes}
-                                setGrid={setGrid}
-                                setGroundImage={setGroundImage}
-                                setGroundColor={setGroundColor}
-                                changeLatitude={changeLatitude}
-                                changeLongitude={changeLongitude}
-                                changeMapZoom={changeMapZoom}
-                                changeMapTilt={changeMapTilt}
-                                changeMapType={changeMapType}
+            {showGroundSettings &&
+            <GroundSettingsPanel grid={grid}
+                                 groundImage={groundImage}
+                                 groundColor={groundColor}
+                                 setGrid={setGrid}
+                                 setGroundImage={setGroundImage}
+                                 setGroundColor={setGroundColor}
+                                 changeLatitude={changeLatitude}
+                                 changeLongitude={changeLongitude}
+                                 changeMapZoom={changeMapZoom}
+                                 changeMapTilt={changeMapTilt}
+                                 changeMapType={changeMapType}
             />}
-            {showSolarSettings &&
-            <SolarSettingsPanel latitude={latitude}
-                                date={now}
-                                heliodon={heliodon}
-                                animateSun={animateSun}
-                                changeDate={changeDate}
-                                changeTime={changeTime}
-                                changeLatitude={changeLatitudeAndRemoveAddress}
-                                setHeliodon={setHeliodon}
-                                setSunAnimation={setSunAnimation}
+            {showHeliodonSettings &&
+            <HeliodonSettingsPanel latitude={latitude}
+                                   date={now}
+                                   heliodon={heliodon}
+                                   animateSun={animateSun}
+                                   changeDate={changeDate}
+                                   changeTime={changeTime}
+                                   changeLatitude={changeLatitudeAndRemoveAddress}
+                                   setHeliodon={setHeliodon}
+                                   setSunAnimation={setSunAnimation}
             />}
-            <Dropdown key={'canvas-context-menu'} overlay={contextMenu} trigger={['contextMenu']}>
+            <Dropdown key={'canvas-context-menu'} overlay={<ContextMenu/>} trigger={['contextMenu']}>
                 <div>
                     <Canvas shadows={true}
                             camera={{

@@ -17,8 +17,8 @@ export interface CommonStoreState {
     createNewWorld: () => void;
     getWorld: (name: string) => WorldModel;
 
-    showSceneSettings: boolean;
-    showSolarSettings: boolean;
+    showGroundSettings: boolean;
+    showHeliodonSettings: boolean;
 
     grid: boolean;
     axes: boolean;
@@ -50,8 +50,8 @@ export const useStore = create<CommonStoreState>(devtools(persist((
 
         set: immerSet,
 
-        showSceneSettings: false,
-        showSolarSettings: false,
+        showGroundSettings: false,
+        showHeliodonSettings: false,
 
         grid: false,
         axes: true,

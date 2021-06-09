@@ -4,10 +4,11 @@
 
 export enum Theme {
     default = 'Default',
-    desert = 'Desert'
+    desert = 'Desert',
+    grassland = 'Grassland',
 }
 
 export enum ClickObjectType {
     sky = 'Sky',
-    ground = 'Ground'
+    ground = 'Ground',
 }

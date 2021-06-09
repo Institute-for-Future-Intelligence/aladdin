@@ -7,6 +7,8 @@ import DefaultDaySkyImage from "../resources/daysky.jpg";
 import DefaultNightSkyImage from "../resources/nightsky.jpg";
 import DesertDaySkyImage from "../resources/desert.jpg";
 import DesertNightSkyImage from "../resources/desert-night.jpg";
+import GrasslandDaySkyImage from "../resources/grassland.jpg";
+import GrasslandNightSkyImage from "../resources/grassland-night.jpg";
 import {DoubleSide, Mesh, TextureLoader} from "three";
 import {useStore} from "../stores/common";
 import {ClickObjectType} from "../types";
@@ -33,6 +35,9 @@ const Sky = ({
         switch (theme) {
             case 'Desert':
                 texture = loader.load(night ? DesertNightSkyImage : DesertDaySkyImage);
+                break;
+            case 'Grassland':
+                texture = loader.load(night ? GrasslandNightSkyImage : GrasslandDaySkyImage);
                 break;
             default:
                 texture = loader.load(night ? DefaultNightSkyImage : DefaultDaySkyImage);
