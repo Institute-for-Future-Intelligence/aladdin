@@ -30,6 +30,8 @@ import AcceptCookie from "./acceptCookie";
 import GroundImage from "./views/groundImage";
 import {Dropdown} from "antd";
 import ContextMenu from "./contextMenu";
+import GraphPanel from "./graphPanel";
+import {GraphType} from "./types";
 
 
 const App = () => {
@@ -39,7 +41,7 @@ const App = () => {
     const getWorld = useStore(state => state.getWorld);
     const createNewWorld = useStore(state => state.createNewWorld);
     const loadWeatherData = useStore(state => state.loadWeatherData);
-    const getWeather = useStore(state => state.getWeather);
+    const getClosestCity = useStore(state => state.getClosestCity);
 
     const showGroundSettings = useStore(state => state.showGroundSettings);
     const showHeliodonSettings = useStore(state => state.showHeliodonSettings);
@@ -51,12 +53,14 @@ const App = () => {
     const theme = useStore(state => state.theme);
     const heliodon = useStore(state => state.heliodon);
     const latitude = useStore(state => state.latitude);
+    const longitude = useStore(state => state.longitude);
     const now = new Date(useStore(state => state.date));
 
     const [hourAngle, setHourAngle] = useState<number>(0);
     const [declinationAngle, setDeclinationAngle] = useState<number>(0);
     const [sunlightDirection, setSunlightDirection] = useState<Vector3>(new Vector3(0, 2, 2));
     const [animateSun, setAnimateSun] = useState<boolean>(false);
+    const [city, setCity] = useState<string | null>('Boston MA, USA');
 
     const world = worlds['default']; // currently we have only one world, which is default
     const radius = 10;
@@ -72,6 +76,7 @@ const App = () => {
     useEffect(() => {
         setSunlightDirection(computeSunLocation(radius, hourAngle, declinationAngle, Util.toRadians(latitude))
             .applyEuler(new Euler(-Math.PI / 2, 0, 0)));
+        setCity(getClosestCity(latitude, longitude));
     }, [latitude, hourAngle, declinationAngle]);
 
     const nowString = now.toString();
@@ -225,6 +230,7 @@ const App = () => {
                                    setHeliodon={setHeliodon}
                                    setSunAnimation={setSunAnimation}
             />}
+            <GraphPanel city={city} graphs={[GraphType.monthlyTemperatures]}/>
             <Dropdown key={'canvas-context-menu'} overlay={<ContextMenu/>} trigger={['contextMenu']}>
                 <div>
                     <Canvas shadows={true}

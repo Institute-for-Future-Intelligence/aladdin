@@ -11,6 +11,7 @@ import {ElementModel} from "../models/elementModel";
 import {WeatherModel} from "../models/weatherModel";
 import weather from '../resources/weather.csv';
 import Papa from "papaparse";
+import {Util} from "../util";
 
 enableMapSet();
 
@@ -36,9 +37,11 @@ export interface CommonStoreState {
     mapType: string;
     mapTilt: number;
     date: string;
+
     weatherData: { [key: string]: WeatherModel };
     getWeather: (location: string) => WeatherModel;
     loadWeatherData: () => void;
+    getClosestCity: (lat: number, lng: number) => string | null;
 
     clickObjectType: string | null;
 
@@ -96,6 +99,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 state.worlds[world.name] = world;
             })
         },
+
         loadWeatherData() {
             const data: WeatherModel[] = [];
             Papa.parse(weather, {
@@ -130,8 +134,8 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                         }
                     }
                     immerSet((state: CommonStoreState) => {
-                        for (const x of data) {
-                            state.weatherData[x.city + ' ' + x.country] = x;
+                        for (const row of data) {
+                            state.weatherData[row.city + ', ' + row.country] = row;
                         }
                     });
                 }
@@ -140,6 +144,22 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         getWeather(location: string) {
             return get().weatherData[location];
         },
+        getClosestCity(lat: number, lng: number) {
+            let min: number = Number.MAX_VALUE;
+            let city = null;
+            let distance: number;
+            const wd = get().weatherData;
+            for (const name in wd) {
+                if (wd.hasOwnProperty(name)) {
+                    distance = Util.getDistance(lng, lat, wd[name].longitude, wd[name].latitude);
+                    if (distance < min) {
+                        min = distance;
+                        city = name;
+                    }
+                }
+            }
+            return city;
+        }
     };
 }, {name: 'aladdin-storage'})));
 
