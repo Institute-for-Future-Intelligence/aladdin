@@ -38,6 +38,8 @@ const App = () => {
     const worlds = useStore(state => state.worlds);
     const getWorld = useStore(state => state.getWorld);
     const createNewWorld = useStore(state => state.createNewWorld);
+    const loadWeatherData = useStore(state => state.loadWeatherData);
+    const getWeather = useStore(state => state.getWeather);
 
     const showGroundSettings = useStore(state => state.showGroundSettings);
     const showHeliodonSettings = useStore(state => state.showHeliodonSettings);
@@ -64,7 +66,8 @@ const App = () => {
         if (!defaultWorld) {
             createNewWorld();
         }
-    });
+        loadWeatherData();
+    }, []);
 
     useEffect(() => {
         setSunlightDirection(computeSunLocation(radius, hourAngle, declinationAngle, Util.toRadians(latitude))
@@ -83,12 +86,6 @@ const App = () => {
     }
 
     console.log('x')
-
-    const setAxes = (on: boolean) => {
-        setCommonStore(state => {
-            state.axes = on;
-        });
-    };
 
     const setGrid = (on: boolean) => {
         setCommonStore(state => {
@@ -249,7 +246,7 @@ const App = () => {
                             />
                             {grid && <gridHelper args={[500, 100, 'gray', 'gray']}/>}
                             <Compass/>
-                            <Sample/>
+                            {/*<Sample/>*/}
                             {axes && <Axes/>}
                             <Ground/>
                             {groundImage && <GroundImage/>}
@@ -262,7 +259,7 @@ const App = () => {
                                 date={now}
                                 latitude={Util.toRadians(latitude)}
                             />}
-                            {/*{world && <Scene world={world}/>}*/}
+                            {world && <Scene world={world}/>}
                         </Suspense>
                     </Canvas>
                 </div>

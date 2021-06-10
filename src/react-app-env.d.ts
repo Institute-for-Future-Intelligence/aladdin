@@ -3,3 +3,4 @@
 declare module '*.obj';
 declare module '*.mtl';
 declare module '*.fnt';
+declare module '*.csv';

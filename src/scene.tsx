@@ -13,7 +13,7 @@ const Scene: React.FC<{ world: WorldModel }> = ({world}) => {
         <group>
             <Box castShadow receiveShadow
                  args={[1, 2, 1]}
-                 position={[5, 1, 2]}>
+                 position={[2, 1, 2]}>
                 <meshStandardMaterial attach="material" color={'white'}/>
             </Box>
             {world.elements

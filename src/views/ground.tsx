@@ -51,7 +51,7 @@ const Ground = () => {
                    }
                }}
                rotation={[-Math.PI / 2, 0, 0]}
-               position={[0, -0.1, 0]}
+               position={[0, -0.01, 0]}
                args={[10000, 10000]}>
             <meshStandardMaterial side={DoubleSide} attach="material" color={groundColor}/>
         </Plane>
