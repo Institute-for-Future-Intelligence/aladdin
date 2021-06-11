@@ -3,6 +3,7 @@
  */
 
 import React, {useMemo} from 'react';
+import BarGraph from "./components/barGraph";
 import LineGraph from './components/lineGraph';
 import {WeatherDataType} from "./types";
 import styled from "styled-components";
@@ -130,6 +131,22 @@ const WeatherPanel = ({
                 </Header>
                 <>
                     {graphs.map(g => {
+                        if (g === WeatherDataType.sunshineHours) {
+                            return (
+                                <BarGraph
+                                    key={g}
+                                    type={g}
+                                    dataSource={getData[g]}
+                                    height={responsiveHeight}
+                                    labelX={'Month'}
+                                    labelY={yNames[g]}
+                                    unitY={yUnits[g]}
+                                    fractionDigits={0}
+                                    color={'#FFD700'}
+                                    {...rest}
+                                />
+                            );
+                        }
                         return (
                             <LineGraph
                                 key={g}
@@ -139,6 +156,7 @@ const WeatherPanel = ({
                                 labelX={'Month'}
                                 labelY={yNames[g]}
                                 unitY={yUnits[g]}
+                                fractionDigits={0}
                                 {...rest}
                             />
                         );

@@ -4,24 +4,23 @@
 
 import React, {useEffect, useMemo, useState} from 'react';
 import {
+    Bar,
+    BarChart,
     CartesianGrid,
     Label,
     Legend,
-    Line,
-    LineChart,
     ReferenceLine,
     ResponsiveContainer,
     Tooltip,
     XAxis,
     YAxis,
 } from 'recharts';
-import {createSymbol, SYMBOLS} from "./symbols";
 import {MONTHS, PRESET_COLORS} from "../constants";
 import {WeatherDataType, GraphDatumEntry} from "../types";
 import {useStore} from "../stores/common";
 import {Util} from "../util";
 
-export interface LineGraphProps {
+export interface BarGraphProps {
     type: WeatherDataType;
     dataSource: GraphDatumEntry[];
     height: number;
@@ -30,29 +29,28 @@ export interface LineGraphProps {
     unitX?: string;
     unitY?: string;
     fractionDigits?: number;
+    color?: string;
 
     [key: string]: any;
 }
 
-const LineGraph = ({
-                       type,
-                       dataSource,
-                       height,
-                       labelX,
-                       labelY,
-                       unitX,
-                       unitY,
-                       fractionDigits = 2,
-                       ...rest
-                   }: LineGraphProps) => {
+const BarGraph = ({
+                      type,
+                      dataSource,
+                      height,
+                      labelX,
+                      labelY,
+                      unitX,
+                      unitY,
+                      fractionDigits = 2,
+                      color,
+                      ...rest
+                  }: BarGraphProps) => {
 
-    const [lineCount, setLineCount] = useState<number>(0);
+    const [dataSetCount, setDataSetCount] = useState<number>(0);
     const [horizontalGridLines, setHorizontalGridLines] = useState<boolean>(true);
     const [verticalGridLines, setVerticalGridLines] = useState<boolean>(true);
     const [legendDataKey, setLegendDataKey] = useState<string | null>(null);
-    const [lineWidth, setLineWidth] = useState<number>(2);
-    const [symbolCount, setSymbolCount] = useState<number>(12);
-    const [symbolSize, setSymbolSize] = useState<number>(1);
     const now = useStore(state => state.date);
 
     //init
@@ -61,15 +59,14 @@ const LineGraph = ({
             return;
         }
         const len = Array.isArray(dataSource) ? Object.keys(dataSource[0]).length - 1 : Object.keys(dataSource).length - 1;
-        if (lineCount !== len) {
-            setLineCount(len);
+        if (dataSetCount !== len) {
+            setDataSetCount(len);
         }
     }, [dataSource]);
 
-    const getLines = useMemo(() => {
-        const lines = [];
-        let defaultSymbol;
-        for (let i = 0; i < lineCount; i++) {
+    const getBars = useMemo(() => {
+        const bars = [];
+        for (let i = 0; i < dataSetCount; i++) {
             let name = '';
             switch (type) {
                 case WeatherDataType.monthlyTemperatures:
@@ -83,29 +80,19 @@ const LineGraph = ({
                     break;
             }
             const opacity = legendDataKey === null ? 1 : (legendDataKey === name ? 1 : 0.25);
-            const symbol = createSymbol(
-                SYMBOLS[i],
-                symbolSize,
-                symbolCount,
-                opacity
-            );
-            if (i === 0) defaultSymbol = symbol;
-            lines.push(
-                <Line
+            bars.push(
+                <Bar
                     key={i}
-                    type="natural"
                     name={name}
                     dataKey={name}
-                    stroke={PRESET_COLORS[i]}
+                    fill={color ? color : PRESET_COLORS[i]}
                     opacity={opacity}
-                    strokeWidth={lineWidth}
-                    dot={symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
                     isAnimationActive={false}
                 />,
             );
         }
-        return lines;
-    }, [lineCount, lineWidth, symbolCount, symbolSize, legendDataKey]);
+        return bars;
+    }, [dataSetCount, legendDataKey]);
 
     // @ts-ignore
     const onMouseDown = (e) => {
@@ -125,7 +112,7 @@ const LineGraph = ({
         <>
             {dataSource && (
                 // need two div wrappers to disable the responsiveness of ResponsiveContainer
-                <div id={'line-graph-' + labelX + '-' + labelY}
+                <div id={'bar-graph-' + labelX + '-' + labelY}
                      style={{width: '100%', height: `${height}%`, position: 'relative'}}>
                     <div
                         style={{
@@ -138,7 +125,7 @@ const LineGraph = ({
                         }}
                     >
                         <ResponsiveContainer width="100%" height={`100%`}>
-                            <LineChart
+                            <BarChart
                                 data={dataSource}
                                 onMouseDown={onMouseDown}
                                 margin={{
@@ -165,7 +152,7 @@ const LineGraph = ({
                                         position="bottom"
                                     />
                                 </XAxis>
-                                <YAxis domain={['dataMin - 5', 'auto']}>
+                                <YAxis domain={[0, 'auto']}>
                                     <Label
                                         dx={-15}
                                         value={labelY + (unitY ? ' (' + unitY + ')' : '')}
@@ -174,14 +161,14 @@ const LineGraph = ({
                                         position="center"
                                     />
                                 </YAxis>
-                                {getLines}
-                                {lineCount > 1 &&
+                                {getBars}
+                                {dataSetCount > 1 &&
                                 <Legend iconType='plainline'
                                         verticalAlign='top'
                                         height={36}
                                         onMouseLeave={onMouseLeaveLegend}
                                         onMouseEnter={onMouseEnterLegend}/>}
-                            </LineChart>
+                            </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
@@ -191,4 +178,4 @@ const LineGraph = ({
     );
 };
 
-export default LineGraph;
+export default BarGraph;
