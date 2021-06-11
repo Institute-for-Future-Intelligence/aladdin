@@ -58,7 +58,7 @@ const Header = styled.div`
   }
 `;
 
-export interface GroundSettingsPanelProps {
+export interface GroundPanelProps {
     grid: boolean;
     groundImage: boolean;
     groundColor: string;
@@ -72,21 +72,21 @@ export interface GroundSettingsPanelProps {
     changeMapType?: (type: string) => void;
 }
 
-const GroundSettingsPanel = ({
-                                 grid,
-                                 groundImage,
-                                 groundColor,
-                                 setGrid,
-                                 setGroundImage,
-                                 setGroundColor,
-                                 changeLatitude,
-                                 changeLongitude,
-                                 changeMapZoom,
-                                 changeMapTilt,
-                                 changeMapType,
-                             }: GroundSettingsPanelProps) => {
+const GroundPanel = ({
+                         grid,
+                         groundImage,
+                         groundColor,
+                         setGrid,
+                         setGroundImage,
+                         setGroundColor,
+                         changeLatitude,
+                         changeLongitude,
+                         changeMapZoom,
+                         changeMapTilt,
+                         changeMapType,
+                     }: GroundPanelProps) => {
 
-    const set = useStore(state => state.set);
+    const setCommonStore = useStore(state => state.set);
     const latitude = useStore(state => state.latitude);
     const longitude = useStore(state => state.longitude);
     const mapZoom = useStore(state => state.mapZoom);
@@ -102,7 +102,7 @@ const GroundSettingsPanel = ({
     const onPlacesChanged = () => {
         const places = searchBox.current?.getPlaces();
         if (places && places.length > 0) {
-            set((state) => {
+            setCommonStore((state) => {
                 const geometry = places[0].geometry;
                 if (geometry) {
                     state.latitude = geometry.location.lat();
@@ -123,8 +123,8 @@ const GroundSettingsPanel = ({
                 <Header>
                     <span>Ground Settings</span>
                     <span style={{cursor: 'pointer'}} onClick={() => {
-                        set((state) => {
-                            state.showGroundSettings = false;
+                        setCommonStore((state) => {
+                            state.showGroundPanel = false;
                         });
                     }}>Close</span>
                 </Header>
@@ -209,4 +209,4 @@ const GroundSettingsPanel = ({
     );
 };
 
-export default GroundSettingsPanel;
+export default GroundPanel;

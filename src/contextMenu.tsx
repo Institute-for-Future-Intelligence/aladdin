@@ -24,8 +24,9 @@ const ContextMenu = () => {
     const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
     const theme = useStore(state => state.theme);
-    const showHeliodonSettings = useStore(state => state.showHeliodonSettings);
-    const showGroundSettings = useStore(state => state.showGroundSettings);
+    const showHeliodonPanel = useStore(state => state.showHeliodonPanel);
+    const showGroundPanel = useStore(state => state.showGroundPanel);
+    const showWeatherPanel = useStore(state => state.showWeatherPanel);
     const clickObjectType = useStore(state => state.clickObjectType);
 
     //@ts-ignore
@@ -43,16 +44,16 @@ const ContextMenu = () => {
     };
 
     //@ts-ignore
-    const changeHeliodon = (e) => {
+    const changeShowWeatherPanel = (e) => {
         setCommonStore(state => {
-            state.heliodon = e.target.checked;
+            state.showWeatherPanel = e.target.checked;
         });
     };
 
     //@ts-ignore
-    const changeShowHeliodonSettings = (e) => {
+    const changeShowHeliodonPanel = (e) => {
         setCommonStore(state => {
-            state.showHeliodonSettings = e.target.checked;
+            state.showHeliodonPanel = e.target.checked;
         });
     };
 
@@ -64,9 +65,9 @@ const ContextMenu = () => {
     };
 
     //@ts-ignore
-    const changeShowGroundSettings = (e) => {
+    const changeShowGroundPanel = (e) => {
         setCommonStore(state => {
-            state.showGroundSettings = e.target.checked;
+            state.showGroundPanel = e.target.checked;
         });
     };
 
@@ -79,14 +80,14 @@ const ContextMenu = () => {
                             Axes
                         </Checkbox>
                     </Menu.Item>
-                    <Menu.Item key={'heliodon'}>
-                        <Checkbox checked={heliodon} onChange={changeHeliodon}>
-                            Heliodon
+                    <Menu.Item key={'heliodon-settings'}>
+                        <Checkbox checked={showHeliodonPanel} onChange={changeShowHeliodonPanel}>
+                            Heliodon Settings
                         </Checkbox>
                     </Menu.Item>
-                    <Menu.Item key={'heliodon-settings'}>
-                        <Checkbox checked={showHeliodonSettings} onChange={changeShowHeliodonSettings}>
-                            Heliodon Settings
+                    <Menu.Item key={'weather-data'}>
+                        <Checkbox checked={showWeatherPanel} onChange={changeShowWeatherPanel}>
+                            Weather Data
                         </Checkbox>
                     </Menu.Item>
                     {<SubMenu key={'theme'} title={'Theme'}>
@@ -106,7 +107,7 @@ const ContextMenu = () => {
                         </Checkbox>
                     </Menu.Item>
                     <Menu.Item key={'ground-settings'}>
-                        <Checkbox checked={showGroundSettings} onChange={changeShowGroundSettings}>
+                        <Checkbox checked={showGroundPanel} onChange={changeShowGroundPanel}>
                             Ground Settings
                         </Checkbox>
                     </Menu.Item>

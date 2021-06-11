@@ -3,8 +3,6 @@
  */
 
 export interface RechartsDatumEntry {
-    x: number;
-
     [key: string]: number | undefined;
 }
 

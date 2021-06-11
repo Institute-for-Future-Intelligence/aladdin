@@ -10,12 +10,12 @@ import {ClickObjectType} from "../types";
 
 const Ground = () => {
 
-    const set = useStore(state => state.set);
+    const setCommonStore = useStore(state => state.set);
     const groundColor = useStore(state => state.groundColor);
     const planeRef = useRef();
 
     const selectNone = () => {
-        set((state) => {
+        setCommonStore((state) => {
             const w = state.worlds['default'];
             if (w) {
                 for (const e of w.elements) {
@@ -33,7 +33,7 @@ const Ground = () => {
                    if (e.intersections.length > 0) {
                        const groundClicked = e.intersections[0].object === planeRef.current;
                        if (groundClicked) {
-                           set((state) => {
+                           setCommonStore((state) => {
                                state.clickObjectType = ClickObjectType.ground;
                            });
                        }
@@ -43,7 +43,7 @@ const Ground = () => {
                    if (e.intersections.length > 0) {
                        const groundClicked = e.intersections[0].object === planeRef.current;
                        if (groundClicked) {
-                           set((state) => {
+                           setCommonStore((state) => {
                                state.clickObjectType = ClickObjectType.ground;
                            });
                            selectNone();

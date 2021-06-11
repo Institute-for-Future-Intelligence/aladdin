@@ -27,7 +27,7 @@ export interface OrbitControllerProps {
 // https://threejs.org/docs/#examples/en/controls/OrbitControls
 const OrbitController = () => {
 
-    const set = useStore(state => state.set);
+    const setCommonStore = useStore(state => state.set);
     const {camera, gl: {domElement}} = useThree();
     // Ref to the controls, so that we can update them on every frame using useFrame
     const controls = useRef<OrbitControls>(null);
@@ -44,7 +44,7 @@ const OrbitController = () => {
     });
 
     const onInteractionEnd = () => {
-        set((state) => {
+        setCommonStore((state) => {
             const w = state.worlds['default'];
             if (w) {
                 // FIXME: why can't set function be used?

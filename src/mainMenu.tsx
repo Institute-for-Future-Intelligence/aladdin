@@ -25,34 +25,47 @@ const StyledMenuSVG = styled(MenuSVG)`
 
 const MainMenu = () => {
 
-    const set = useStore(state => state.set);
-    const showGroundSettings = useStore(state => state.showGroundSettings);
-    const showHeliodonSettings = useStore(state => state.showHeliodonSettings);
+    const setCommonStore = useStore(state => state.set);
+    const showGroundPanel = useStore(state => state.showGroundPanel);
+    const showWeatherPanel = useStore(state => state.showWeatherPanel);
+    const showHeliodonPanel = useStore(state => state.showHeliodonPanel);
 
     // @ts-ignore
-    const onChangeShowGroundSettings = (e) => {
-        set((state) => {
-            state.showGroundSettings = e.target.checked;
+    const onChangeShowGroundPanel = (e) => {
+        setCommonStore((state) => {
+            state.showGroundPanel = e.target.checked;
         });
     };
 
     // @ts-ignore
-    const onChangeShowHeliodonSettings = (e) => {
-        set((state) => {
-            state.showHeliodonSettings = e.target.checked;
+    const onChangeShowWeatherPanel = (e) => {
+        setCommonStore((state) => {
+            state.showWeatherPanel = e.target.checked;
+        });
+    };
+
+    // @ts-ignore
+    const onChangeShowHeliodonPanel = (e) => {
+        setCommonStore((state) => {
+            state.showHeliodonPanel = e.target.checked;
         });
     };
 
     const menu = (
         <Menu>
-            <Menu.Item key={'ground-settings-switch'}>
-                <Checkbox checked={showGroundSettings} onChange={onChangeShowGroundSettings}>
+            <Menu.Item key={'ground-panel-check-box'}>
+                <Checkbox checked={showGroundPanel} onChange={onChangeShowGroundPanel}>
                     Ground Settings
                 </Checkbox>
             </Menu.Item>
-            <Menu.Item key={'heliodon-settings-switch'}>
-                <Checkbox checked={showHeliodonSettings} onChange={onChangeShowHeliodonSettings}>
+            <Menu.Item key={'heliodon-panel-check-box'}>
+                <Checkbox checked={showHeliodonPanel} onChange={onChangeShowHeliodonPanel}>
                     Heliodon Settings
+                </Checkbox>
+            </Menu.Item>
+            <Menu.Item key={'weather-panel-check-box'}>
+                <Checkbox checked={showWeatherPanel} onChange={onChangeShowWeatherPanel}>
+                    Weather Data
                 </Checkbox>
             </Menu.Item>
         </Menu>

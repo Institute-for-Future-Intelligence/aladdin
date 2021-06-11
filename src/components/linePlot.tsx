@@ -2,43 +2,45 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useState, useMemo, useEffect} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
-    LineChart,
+    CartesianGrid,
     Label,
-    Line,
     Legend,
+    Line,
+    LineChart,
     ReferenceLine,
+    ResponsiveContainer,
+    Tooltip,
     XAxis,
     YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
 } from 'recharts';
 import {createSymbol, SYMBOLS} from "./symbols";
-import {PRESET_COLORS} from "../constants";
-import {RechartsDatumEntry} from "../types";
+import {MONTHS, PRESET_COLORS} from "../constants";
+import {GraphType, RechartsDatumEntry} from "../types";
+import {useStore} from "../stores/common";
+import {Util} from "../util";
 
 export interface LinePlotProps {
-    dataSource?: RechartsDatumEntry[];
+    type: GraphType;
+    dataSource: RechartsDatumEntry[];
     height: number;
     labelX?: string,
     labelY?: string,
     unitX?: string;
     unitY?: string;
-    selectedDataKey?: string | null;
 
     [key: string]: any;
 }
 
 const LinePlot = ({
+                      type,
                       dataSource,
                       height,
                       labelX,
                       labelY,
                       unitX,
                       unitY,
-                      selectedDataKey = null,
                       ...rest
                   }: LinePlotProps) => {
 
@@ -49,6 +51,7 @@ const LinePlot = ({
     const [lineWidth, setLineWidth] = useState<number>(2);
     const [symbolCount, setSymbolCount] = useState<number>(25);
     const [symbolSize, setSymbolSize] = useState<number>(1);
+    const now = useStore(state => state.date);
 
     //init
     useEffect(() => {
@@ -62,11 +65,22 @@ const LinePlot = ({
     }, [dataSource]);
 
     const getLines = useMemo(() => {
-        const lineArr = [];
+        const lines = [];
         let defaultSymbol;
         for (let i = 0; i < lineCount; i++) {
-            const opacity = (selectedDataKey === null && legendDataKey === null) ? 1
-                : (selectedDataKey === `T${i + 1}` || legendDataKey === `T${i + 1}` ? 1 : 0.25);
+            let name = '';
+            switch (type) {
+                case GraphType.monthlyTemperatures:
+                    name = i === 0 ? `Low` : 'High';
+                    break;
+                case GraphType.sunshineHours:
+                    name = 'Sunshine';
+                    break;
+                case GraphType.hourlyTemperatures:
+                    name = 'Temperature';
+                    break;
+            }
+            const opacity = legendDataKey === null ? 1 : (legendDataKey === name ? 1 : 0.25);
             const symbol = createSymbol(
                 SYMBOLS[i],
                 symbolSize,
@@ -74,12 +88,12 @@ const LinePlot = ({
                 opacity
             );
             if (i === 0) defaultSymbol = symbol;
-            lineArr.push(
+            lines.push(
                 <Line
                     key={i}
                     type="monotone"
-                    dataKey={i === 0 ? `Low` : 'High'}
-                    name={i === 0 ? `Low` : 'High'}
+                    name={name}
+                    dataKey={name}
                     stroke={PRESET_COLORS[i]}
                     opacity={opacity}
                     strokeWidth={lineWidth}
@@ -88,10 +102,8 @@ const LinePlot = ({
                 />,
             );
         }
-        return lineArr;
-    }, [lineCount, lineWidth, symbolCount, symbolSize, legendDataKey, selectedDataKey]);
-
-    let refLineX = 0;
+        return lines;
+    }, [lineCount, lineWidth, symbolCount, symbolSize, legendDataKey]);
 
     // @ts-ignore
     const onMouseDown = (e) => {
@@ -139,8 +151,12 @@ const LinePlot = ({
                                     horizontal={horizontalGridLines}
                                     stroke={"rgba(128, 128, 128, 0.3)"}
                                 />
-                                <ReferenceLine x={refLineX} stroke="orange" strokeWidth={2}/>
-                                <XAxis dataKey="Month">
+                                <ReferenceLine
+                                    x={MONTHS[Math.floor(Util.daysIntoYear(now) / 365 * 12)]}
+                                    stroke="orange"
+                                    strokeWidth={2}
+                                />
+                                <XAxis dataKey={labelX}>
                                     <Label
                                         value={labelX + (unitX ? ' (' + unitX + ')' : '')}
                                         offset={0}
@@ -149,9 +165,11 @@ const LinePlot = ({
                                 </XAxis>
                                 <YAxis domain={['dataMin - 5', 'auto']}>
                                     <Label
+                                        dx={-15}
                                         value={labelY + (unitY ? ' (' + unitY + ')' : '')}
+                                        offset={0}
                                         angle={-90}
-                                        position="insideLeft"
+                                        position="center"
                                     />
                                 </YAxis>
                                 {getLines}

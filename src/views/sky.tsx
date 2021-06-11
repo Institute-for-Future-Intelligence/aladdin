@@ -27,7 +27,7 @@ const Sky = ({
                  ...props
              }: SkyProps) => {
 
-    const set = useStore(state => state.set);
+    const setCommonStore = useStore(state => state.set);
     const meshRef = useRef<Mesh>(null!);
     const texture = useMemo(() => {
         const loader = new TextureLoader();
@@ -49,7 +49,7 @@ const Sky = ({
         if (e.intersections.length > 0) {
             const skyClicked = e.intersections[0].object === meshRef.current;
             if (skyClicked) {
-                set((state) => {
+                setCommonStore((state) => {
                     state.clickObjectType = ClickObjectType.sky;
                 });
             }

@@ -52,7 +52,7 @@ const Header = styled.div`
   }
 `;
 
-export interface HeliodonSettingsPanelProps {
+export interface HeliodonPanelProps {
     heliodon: boolean;
     latitude: number;
     date: Date;
@@ -64,19 +64,19 @@ export interface HeliodonSettingsPanelProps {
     changeTime?: (date: Date) => void;
 }
 
-const HeliodonSettingsPanel = ({
-                                   heliodon,
-                                   latitude,
-                                   date,
-                                   animateSun,
-                                   setHeliodon,
-                                   setSunAnimation,
-                                   changeLatitude,
-                                   changeDate,
-                                   changeTime,
-                               }: HeliodonSettingsPanelProps) => {
+const HeliodonPanel = ({
+                           heliodon,
+                           latitude,
+                           date,
+                           animateSun,
+                           setHeliodon,
+                           setSunAnimation,
+                           changeLatitude,
+                           changeDate,
+                           changeTime,
+                       }: HeliodonPanelProps) => {
 
-    const set = useStore(state => state.set);
+    const setCommonStore = useStore(state => state.set);
     const requestRef = useRef<number>(0);
     const previousFrameTime = useRef<number>(-1);
 
@@ -107,8 +107,8 @@ const HeliodonSettingsPanel = ({
                 <Header>
                     <span>Heliodon Settings</span>
                     <span style={{cursor: 'pointer'}} onClick={() => {
-                        set((state) => {
-                            state.showHeliodonSettings = false;
+                        setCommonStore((state) => {
+                            state.showHeliodonPanel = false;
                         });
                     }}>Close</span>
                 </Header>
@@ -162,4 +162,4 @@ const HeliodonSettingsPanel = ({
     );
 };
 
-export default HeliodonSettingsPanel;
+export default HeliodonPanel;

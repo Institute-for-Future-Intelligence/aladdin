@@ -21,7 +21,7 @@ const Foundation = ({
                         selected = false,
                     }: FoundationModel) => {
 
-    const set = useStore(state => state.set);
+    const setCommonStore = useStore(state => state.set);
 
     const baseRef = useRef();
     const handleLLRef = useRef();
@@ -37,7 +37,7 @@ const Foundation = ({
     const yOffset = 0.002;
 
     const selectMe = () => {
-        set((state) => {
+        setCommonStore((state) => {
             const w = state.worlds['default'];
             if (w) {
                 for (const e of w.elements) {
@@ -48,7 +48,7 @@ const Foundation = ({
     };
 
     const hoverMe = (on: boolean) => {
-        set((state) => {
+        setCommonStore((state) => {
             const w = state.worlds['default'];
             if (w) {
                 for (const e of w.elements) {

@@ -53,7 +53,7 @@ const Header = styled.div`
   }
 `;
 
-export interface GraphPanelProps {
+export interface WeatherPanelProps {
 
     city: string | null;
     graphs: GraphType[];
@@ -62,14 +62,14 @@ export interface GraphPanelProps {
 
 }
 
-const GraphPanel = ({
-                        city,
-                        graphs,
-                        ...rest
-                    }: GraphPanelProps) => {
+const WeatherPanel = ({
+                          city,
+                          graphs,
+                          ...rest
+                      }: WeatherPanelProps) => {
 
+    const setCommonStore = useStore(state => state.set);
     const getWeather = useStore(state => state.getWeather);
-    const selectedDataKey = useRef<string | null>(null);
 
     const responsiveHeight = useMemo(() => {
         return graphs ? Math.floor(100 / graphs.length) : 100;
@@ -99,7 +99,12 @@ const GraphPanel = ({
                             break;
                         case GraphType.sunshineHours:
                             for (let i = 0; i < 12; i++) {
-                                result[g].push({i: weather.sunshineHours[i]});
+                                result[g].push(
+                                    {
+                                        Month: MONTHS[i],
+                                        Sunshine: weather.sunshineHours[i]
+                                    }
+                                );
                             }
                             break;
                     }
@@ -109,24 +114,31 @@ const GraphPanel = ({
         return result;
     }, [graphs, city]);
 
+    const yNames = ['Temperature', 'Temperature', 'Sunshine'];
+    const yUnits = ['°C', '°C', 'Hours'];
+
     return (
         <Container>
             <ColumnWrapper>
                 <Header>
-                    <span>Temperature</span>
+                    <span>Weather</span>
                     <span style={{cursor: 'pointer'}} onClick={() => {
+                        setCommonStore((state) => {
+                            state.showWeatherPanel = false;
+                        });
                     }}>Close</span>
                 </Header>
                 <>
                     {graphs.map(g => {
                         return (
                             <LinePlot
+                                key={g}
+                                type={g}
                                 dataSource={getData[g]}
                                 height={responsiveHeight}
                                 labelX={'Month'}
-                                labelY={'Temperature'}
-                                unitY={'°C'}
-                                selectedDataKey={selectedDataKey.current}
+                                labelY={yNames[g]}
+                                unitY={yUnits[g]}
                                 {...rest}
                             />
                         );
@@ -141,4 +153,4 @@ const GraphPanel = ({
 
 };
 
-export default GraphPanel;
+export default WeatherPanel;

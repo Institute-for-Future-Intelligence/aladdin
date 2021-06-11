@@ -18,19 +18,18 @@ import {Euler, Vector3} from "three";
 import Heliodon from "./views/heliodon";
 import {Util} from "./util";
 import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./views/sunTools";
-import Sample from "./views/sample";
 import aladdinLogo from './assets/aladdin-logo.png';
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from "./mainMenu";
-import GroundSettingsPanel from "./groundSettingsPanel";
-import HeliodonSettingsPanel from "./heliodonSettingsPanel";
+import GroundPanel from "./groundPanel";
+import HeliodonPanel from "./heliodonPanel";
 import {VERSION} from "./constants";
 import {visitIFI} from "./helpers";
 import AcceptCookie from "./acceptCookie";
 import GroundImage from "./views/groundImage";
 import {Dropdown} from "antd";
 import ContextMenu from "./contextMenu";
-import GraphPanel from "./graphPanel";
+import WeatherPanel from "./weatherPanel";
 import {GraphType} from "./types";
 
 
@@ -43,8 +42,9 @@ const App = () => {
     const loadWeatherData = useStore(state => state.loadWeatherData);
     const getClosestCity = useStore(state => state.getClosestCity);
 
-    const showGroundSettings = useStore(state => state.showGroundSettings);
-    const showHeliodonSettings = useStore(state => state.showHeliodonSettings);
+    const showGroundPanel = useStore(state => state.showGroundPanel);
+    const showHeliodonPanel = useStore(state => state.showHeliodonPanel);
+    const showWeatherPanel = useStore(state => state.showWeatherPanel);
 
     const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
@@ -206,31 +206,34 @@ const App = () => {
                 &nbsp;&nbsp; Institute for Future Intelligence, &copy;{new Date().getFullYear()}. Version {VERSION}
             </div>
             <MainMenu/>
-            {showGroundSettings &&
-            <GroundSettingsPanel grid={grid}
-                                 groundImage={groundImage}
-                                 groundColor={groundColor}
-                                 setGrid={setGrid}
-                                 setGroundImage={setGroundImage}
-                                 setGroundColor={setGroundColor}
-                                 changeLatitude={changeLatitude}
-                                 changeLongitude={changeLongitude}
-                                 changeMapZoom={changeMapZoom}
-                                 changeMapTilt={changeMapTilt}
-                                 changeMapType={changeMapType}
+            {showGroundPanel &&
+            <GroundPanel grid={grid}
+                         groundImage={groundImage}
+                         groundColor={groundColor}
+                         setGrid={setGrid}
+                         setGroundImage={setGroundImage}
+                         setGroundColor={setGroundColor}
+                         changeLatitude={changeLatitude}
+                         changeLongitude={changeLongitude}
+                         changeMapZoom={changeMapZoom}
+                         changeMapTilt={changeMapTilt}
+                         changeMapType={changeMapType}
             />}
-            {showHeliodonSettings &&
-            <HeliodonSettingsPanel latitude={latitude}
-                                   date={now}
-                                   heliodon={heliodon}
-                                   animateSun={animateSun}
-                                   changeDate={changeDate}
-                                   changeTime={changeTime}
-                                   changeLatitude={changeLatitudeAndRemoveAddress}
-                                   setHeliodon={setHeliodon}
-                                   setSunAnimation={setSunAnimation}
+            {showHeliodonPanel &&
+            <HeliodonPanel latitude={latitude}
+                           date={now}
+                           heliodon={heliodon}
+                           animateSun={animateSun}
+                           changeDate={changeDate}
+                           changeTime={changeTime}
+                           changeLatitude={changeLatitudeAndRemoveAddress}
+                           setHeliodon={setHeliodon}
+                           setSunAnimation={setSunAnimation}
             />}
-            <GraphPanel city={city} graphs={[GraphType.monthlyTemperatures]}/>
+            {showWeatherPanel &&
+            <WeatherPanel city={city}
+                          graphs={[GraphType.monthlyTemperatures, GraphType.sunshineHours]}
+            />}
             <Dropdown key={'canvas-context-menu'} overlay={<ContextMenu/>} trigger={['contextMenu']}>
                 <div>
                     <Canvas shadows={true}
