@@ -90,6 +90,7 @@ const GroundPanel = ({
     const latitude = useStore(state => state.latitude);
     const longitude = useStore(state => state.longitude);
     const mapZoom = useStore(state => state.mapZoom);
+    const mapWeatherStations = useStore(state => state.mapWeatherStations);
     const address = useStore(state => state.address);
     const searchBox = useRef<google.maps.places.SearchBox>();
 
@@ -117,6 +118,12 @@ const GroundPanel = ({
         searchBox.current = s;
     };
 
+    const setMapWeatherStations = (on: boolean) => {
+        setCommonStore(state => {
+            state.mapWeatherStations = on;
+        });
+    };
+
     return (
         <Container>
             <ColumnWrapper>
@@ -132,7 +139,7 @@ const GroundPanel = ({
                     <Space style={{padding: '20px'}} align={'center'} size={20}>
                         <Space direction={'vertical'}>
                             <Space>
-                                <Space style={{width: '40px'}}>Grid:</Space>
+                                <Space style={{width: '60px'}}>Grid:</Space>
                                 <Switch title={'Show ground grid'}
                                         checked={grid}
                                         onChange={(checked) => {
@@ -141,11 +148,20 @@ const GroundPanel = ({
                                 />
                             </Space>
                             <Space>
-                                <Space style={{width: '40px'}}>Image:</Space>
+                                <Space style={{width: '60px'}}>Image:</Space>
                                 <Switch title={'Show ground image'}
                                         checked={groundImage}
                                         onChange={(checked) => {
                                             setGroundImage?.(checked);
+                                        }}
+                                />
+                            </Space>
+                            <Space>
+                                <Space style={{width: '60px'}}>Stations:</Space>
+                                <Switch title={'Show weather stations'}
+                                        checked={mapWeatherStations}
+                                        onChange={(checked) => {
+                                            setMapWeatherStations(checked);
                                         }}
                                 />
                             </Space>

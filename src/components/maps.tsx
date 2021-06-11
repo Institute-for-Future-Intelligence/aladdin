@@ -39,6 +39,7 @@ const Maps = ({
     const bounds = useRef<google.maps.LatLngBounds | null | undefined>();
     const cities = useRef<google.maps.LatLng[]>([]);
     const weatherData = useStore(state => state.weatherData);
+    const mapWeatherStations = useStore(state => state.mapWeatherStations);
     const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
     useEffect(() => {
@@ -71,7 +72,9 @@ const Maps = ({
     const onBoundsChanged = () => {
         if (map) {
             bounds.current = map.getBounds();
-            loadCities();
+            if (mapWeatherStations) {
+                loadCities();
+            }
         }
     };
 
@@ -135,7 +138,8 @@ const Maps = ({
         >
             { /* Child components, such as markers, info windows, etc. */}
             <>
-                {cities.current.map((c, index) => {
+                {mapWeatherStations &&
+                cities.current.map((c, index) => {
                     const scale = 0.2 * zoom;
                     return (
                         <Marker

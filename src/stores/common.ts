@@ -37,6 +37,7 @@ export interface CommonStoreState {
     mapZoom: number;
     mapType: string;
     mapTilt: number;
+    mapWeatherStations: boolean;
     date: string;
 
     weatherData: { [key: string]: WeatherModel };
@@ -77,6 +78,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         mapZoom: 16,
         mapType: 'roadmap',
         mapTilt: 0,
+        mapWeatherStations: false,
         date: new Date(2021, 5, 22, 12).toString(),
         weatherData: {},
 
