@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useMemo, useRef} from 'react';
+import React, {useMemo} from 'react';
 import LinePlot from './components/linePlot';
 import {GraphType} from "./types";
 import styled from "styled-components";

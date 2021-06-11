@@ -54,6 +54,7 @@ const App = () => {
     const heliodon = useStore(state => state.heliodon);
     const latitude = useStore(state => state.latitude);
     const longitude = useStore(state => state.longitude);
+    const weatherData = useStore(state => state.weatherData);
     const now = new Date(useStore(state => state.date));
 
     const [hourAngle, setHourAngle] = useState<number>(0);
@@ -76,8 +77,11 @@ const App = () => {
     useEffect(() => {
         setSunlightDirection(computeSunLocation(radius, hourAngle, declinationAngle, Util.toRadians(latitude))
             .applyEuler(new Euler(-Math.PI / 2, 0, 0)));
-        setCity(getClosestCity(latitude, longitude));
     }, [latitude, hourAngle, declinationAngle]);
+
+    useEffect(() => {
+        setCity(getClosestCity(latitude, longitude));
+    }, [latitude, longitude, weatherData]);
 
     const nowString = now.toString();
     useMemo(() => {
