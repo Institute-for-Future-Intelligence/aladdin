@@ -2,9 +2,9 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {memo, useCallback, useState} from "react";
-import {GoogleMap} from '@react-google-maps/api';
-import {useStore} from "./stores/common";
+import React, {memo, useCallback, useEffect, useRef, useState} from "react";
+import {GoogleMap, Marker} from '@react-google-maps/api';
+import {useStore} from "../stores/common";
 
 export interface MapsProp {
 
@@ -36,6 +36,13 @@ const Maps = ({
     const type = useStore(state => state.mapType);
     const tilt = useStore(state => state.mapTilt);
     const [map, setMap] = useState<google.maps.Map | null>(null);
+    const bounds = useRef<google.maps.LatLngBounds | null | undefined>();
+    const cities = useRef<google.maps.LatLng[]>([]);
+    const weatherData = useStore(state => state.weatherData);
+    const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+
+    useEffect(() => {
+    }, [updateFlag]);
 
     const onLoad = useCallback((map: google.maps.Map) => {
         setMap(map);
@@ -44,6 +51,29 @@ const Maps = ({
     const onUnmount = useCallback(function callback(map) {
         setMap(null);
     }, []);
+
+    const loadCities = () => {
+        if (bounds.current) {
+            cities.current.length = 0;
+            for (const x in weatherData) {
+                if (weatherData.hasOwnProperty(x)) {
+                    const w = weatherData[x];
+                    const pos = new google.maps.LatLng(w.latitude, w.longitude);
+                    if (bounds.current.contains(pos)) {
+                        cities.current.push(pos);
+                    }
+                }
+            }
+            setUpdateFlag(!updateFlag);
+        }
+    };
+
+    const onBoundsChanged = () => {
+        if (map) {
+            bounds.current = map.getBounds();
+            loadCities();
+        }
+    };
 
     const onCenterChanged = () => {
         if (map) {
@@ -96,6 +126,7 @@ const Maps = ({
             zoom={zoom}
             tilt={tilt}
             onLoad={onLoad}
+            onBoundsChanged={onBoundsChanged}
             onUnmount={onUnmount}
             onCenterChanged={onCenterChanged}
             onZoomChanged={onZoomChanged}
@@ -103,7 +134,23 @@ const Maps = ({
             onMapTypeIdChanged={onMapTypeIdChanged}
         >
             { /* Child components, such as markers, info windows, etc. */}
-            <></>
+            <>
+                {cities.current.map((c, index) => {
+                    const scale = 0.2 * zoom;
+                    return (
+                        <Marker
+                            key={index}
+                            icon={{
+                                path: google.maps.SymbolPath.CIRCLE,
+                                strokeColor: 'red',
+                                strokeWeight: scale + 2,
+                                scale: scale,
+                            }}
+                            position={c}
+                        />
+                    )
+                })}
+            </>
         </GoogleMap>
     );
 };
