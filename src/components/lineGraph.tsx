@@ -17,13 +17,13 @@ import {
 } from 'recharts';
 import {createSymbol, SYMBOLS} from "./symbols";
 import {MONTHS, PRESET_COLORS} from "../constants";
-import {GraphType, RechartsDatumEntry} from "../types";
+import {WeatherDataType, GraphDatumEntry} from "../types";
 import {useStore} from "../stores/common";
 import {Util} from "../util";
 
-export interface LinePlotProps {
-    type: GraphType;
-    dataSource: RechartsDatumEntry[];
+export interface LineGraphProps {
+    type: WeatherDataType;
+    dataSource: GraphDatumEntry[];
     height: number;
     labelX?: string,
     labelY?: string,
@@ -33,23 +33,23 @@ export interface LinePlotProps {
     [key: string]: any;
 }
 
-const LinePlot = ({
-                      type,
-                      dataSource,
-                      height,
-                      labelX,
-                      labelY,
-                      unitX,
-                      unitY,
-                      ...rest
-                  }: LinePlotProps) => {
+const LineGraph = ({
+                       type,
+                       dataSource,
+                       height,
+                       labelX,
+                       labelY,
+                       unitX,
+                       unitY,
+                       ...rest
+                   }: LineGraphProps) => {
 
     const [lineCount, setLineCount] = useState<number>(0);
     const [horizontalGridLines, setHorizontalGridLines] = useState<boolean>(true);
     const [verticalGridLines, setVerticalGridLines] = useState<boolean>(true);
     const [legendDataKey, setLegendDataKey] = useState<string | null>(null);
     const [lineWidth, setLineWidth] = useState<number>(2);
-    const [symbolCount, setSymbolCount] = useState<number>(25);
+    const [symbolCount, setSymbolCount] = useState<number>(12);
     const [symbolSize, setSymbolSize] = useState<number>(1);
     const now = useStore(state => state.date);
 
@@ -70,13 +70,13 @@ const LinePlot = ({
         for (let i = 0; i < lineCount; i++) {
             let name = '';
             switch (type) {
-                case GraphType.monthlyTemperatures:
+                case WeatherDataType.monthlyTemperatures:
                     name = i === 0 ? `Low` : 'High';
                     break;
-                case GraphType.sunshineHours:
+                case WeatherDataType.sunshineHours:
                     name = 'Sunshine';
                     break;
-                case GraphType.hourlyTemperatures:
+                case WeatherDataType.hourlyTemperatures:
                     name = 'Temperature';
                     break;
             }
@@ -91,7 +91,7 @@ const LinePlot = ({
             lines.push(
                 <Line
                     key={i}
-                    type="monotone"
+                    type="natural"
                     name={name}
                     dataKey={name}
                     stroke={PRESET_COLORS[i]}
@@ -189,4 +189,4 @@ const LinePlot = ({
     );
 };
 
-export default LinePlot;
+export default LineGraph;

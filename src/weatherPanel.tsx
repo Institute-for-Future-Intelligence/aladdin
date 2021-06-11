@@ -3,8 +3,8 @@
  */
 
 import React, {useMemo} from 'react';
-import LinePlot from './components/linePlot';
-import {GraphType} from "./types";
+import LineGraph from './components/lineGraph';
+import {WeatherDataType} from "./types";
 import styled from "styled-components";
 import {useStore} from "./stores/common";
 import {MONTHS} from "./constants";
@@ -56,7 +56,7 @@ const Header = styled.div`
 export interface WeatherPanelProps {
 
     city: string | null;
-    graphs: GraphType[];
+    graphs: WeatherDataType[];
 
     [key: string]: any;
 
@@ -86,7 +86,7 @@ const WeatherPanel = ({
                 graphs.forEach(g => {
                     result[g] = [];
                     switch (g) {
-                        case GraphType.monthlyTemperatures:
+                        case WeatherDataType.monthlyTemperatures:
                             for (let i = 0; i < 12; i++) {
                                 result[g].push(
                                     {
@@ -97,7 +97,7 @@ const WeatherPanel = ({
                                 );
                             }
                             break;
-                        case GraphType.sunshineHours:
+                        case WeatherDataType.sunshineHours:
                             for (let i = 0; i < 12; i++) {
                                 result[g].push(
                                     {
@@ -131,7 +131,7 @@ const WeatherPanel = ({
                 <>
                     {graphs.map(g => {
                         return (
-                            <LinePlot
+                            <LineGraph
                                 key={g}
                                 type={g}
                                 dataSource={getData[g]}

@@ -2,11 +2,11 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-export interface RechartsDatumEntry {
+export interface GraphDatumEntry {
     [key: string]: number | undefined;
 }
 
-export enum GraphType {
+export enum WeatherDataType {
     hourlyTemperatures = 0,
     monthlyTemperatures = 1,
     sunshineHours = 2,

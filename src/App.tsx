@@ -30,7 +30,7 @@ import GroundImage from "./views/groundImage";
 import {Dropdown} from "antd";
 import ContextMenu from "./contextMenu";
 import WeatherPanel from "./weatherPanel";
-import {GraphType} from "./types";
+import {WeatherDataType} from "./types";
 
 
 const App = () => {
@@ -236,7 +236,7 @@ const App = () => {
             />}
             {showWeatherPanel &&
             <WeatherPanel city={city}
-                          graphs={[GraphType.monthlyTemperatures, GraphType.sunshineHours]}
+                          graphs={[WeatherDataType.monthlyTemperatures, WeatherDataType.sunshineHours]}
             />}
             <Dropdown key={'canvas-context-menu'} overlay={<ContextMenu/>} trigger={['contextMenu']}>
                 <div>
