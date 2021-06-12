@@ -20,7 +20,6 @@ const radioStyle = {
 const ContextMenu = () => {
 
     const setCommonStore = useStore(state => state.set);
-    const heliodon = useStore(state => state.heliodon);
     const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
     const theme = useStore(state => state.theme);
@@ -98,6 +97,30 @@ const ContextMenu = () => {
                         </Radio.Group>
                     </SubMenu>}
                 </Menu>);
+        case ClickObjectType.Foundation:
+            return (
+                <Menu>
+                    <Menu.Item key={'foundation-prop'}>
+                        Foundation
+                    </Menu.Item>
+                </Menu>
+            );
+        case ClickObjectType.Sensor:
+            return (
+                <Menu>
+                    <Menu.Item key={'sensor-prop'}>
+                        Sensor
+                    </Menu.Item>
+                </Menu>
+            );
+        case ClickObjectType.Cuboid:
+            return (
+                <Menu>
+                    <Menu.Item key={'cuboid-prop'}>
+                        Cuboid
+                    </Menu.Item>
+                </Menu>
+            );
         default:
             return (
                 <Menu>

@@ -8,11 +8,13 @@ export interface ElementModel {
     type: string;
     cx: number; // x coordinate of the center
     cy: number; // y coordinate of the center
+
     selected?: boolean;
     hovered?: boolean;
     color?: string;
     lineColor?: string;
     lineWidth?: number;
+    showLabel?: boolean;
 
     [key: string]: any;
 }

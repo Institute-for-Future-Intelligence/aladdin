@@ -7,6 +7,7 @@ import {Box, Line, Sphere} from "@react-three/drei";
 import {Vector3} from "three";
 import {useStore} from "../stores/common";
 import {FoundationModel} from "../models/foundationModel";
+import {ClickObjectType} from "../types";
 
 const Foundation = ({
                         id,
@@ -75,6 +76,16 @@ const Foundation = ({
                          const intersected = e.intersections[0].object === baseRef.current;
                          if (intersected) {
                              selectMe();
+                         }
+                     }
+                 }}
+                 onContextMenu={(e) => {
+                     if (e.intersections.length > 0) {
+                         const intersected = e.intersections[0].object === baseRef.current;
+                         if (intersected) {
+                             setCommonStore((state) => {
+                                 state.clickObjectType = ClickObjectType.Foundation;
+                             });
                          }
                      }
                  }}
@@ -162,6 +173,17 @@ const Foundation = ({
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Sphere>
             </>
+            }
+
+            {hovered &&
+            <textSprite
+                text={'Foundation'}
+                fontSize={90}
+                fontFace={'Times Roman'}
+                textHeight={1}
+                scale={[1, 0.2, 0.2]}
+                position={[cx, height + 0.2, cy]}
+            />
             }
 
         </group>

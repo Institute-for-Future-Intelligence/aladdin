@@ -7,6 +7,7 @@ import {Box, Line, Sphere} from "@react-three/drei";
 import {Vector3} from "three";
 import {useStore} from "../stores/common";
 import {SensorModel} from "../models/sensorModel";
+import {ClickObjectType} from "../types";
 
 const Sensor = ({
                     id,
@@ -20,6 +21,7 @@ const Sensor = ({
                     lineWidth = 0.1,
                     hovered = false,
                     selected = false,
+                    showLabel = true,
                 }: SensorModel) => {
 
     cy = -cy; // we want positive y to point north
@@ -76,6 +78,16 @@ const Sensor = ({
                          }
                      }
                  }}
+                 onContextMenu={(e) => {
+                     if (e.intersections.length > 0) {
+                         const intersected = e.intersections[0].object === baseRef.current;
+                         if (intersected) {
+                             setCommonStore((state) => {
+                                 state.clickObjectType = ClickObjectType.Sensor;
+                             });
+                         }
+                     }
+                 }}
                  onPointerOver={(e) => {
                      if (e.intersections.length > 0) {
                          const intersected = e.intersections[0].object === baseRef.current;
@@ -88,7 +100,8 @@ const Sensor = ({
                      hoverMe(false);
                  }}
                  args={[lx, height, ly]}
-                 position={[cx, height / 2, cy]}>
+                 position={[cx, height / 2, cy]}
+            >
                 <meshStandardMaterial attach="material" color={hovered ? 'lightGray' : color}/>
             </Box>
 
@@ -137,13 +150,23 @@ const Sensor = ({
 
             {/* draw handle */}
             {selected &&
-            <Sphere ref={handleRef}
-                    args={[0.1, 6, 6]}
-                    position={position}>
+            <Sphere
+                ref={handleRef}
+                args={[0.1, 6, 6]}
+                position={position}>
                 <meshStandardMaterial attach="material" color={'white'}/>
             </Sphere>
             }
-
+            {(hovered || showLabel) &&
+            <textSprite
+                text={'Sensor'}
+                fontSize={90}
+                fontFace={'Times Roman'}
+                textHeight={1}
+                scale={[0.5, 0.2, 0.2]}
+                position={[cx, height + 0.2, cy]}
+            />
+            }
         </group>
     )
 };

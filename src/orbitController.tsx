@@ -4,19 +4,8 @@
 
 import React, {useEffect, useRef} from "react";
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
-import {extend, Object3DNode, useThree} from "@react-three/fiber";
+import {useThree} from "@react-three/fiber";
 import {useStore} from "./stores/common";
-
-// Extend will make OrbitControls available as a JSX element called orbitControls for us to use.
-extend({OrbitControls});
-
-declare global {
-    namespace JSX {
-        interface IntrinsicElements {
-            'orbitControls': Object3DNode<OrbitControls, typeof OrbitControls>;
-        }
-    }
-}
 
 export interface OrbitControllerProps {
     [key: string]: any;
