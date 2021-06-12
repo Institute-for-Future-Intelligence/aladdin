@@ -17,7 +17,7 @@ import {useStore} from "./stores/common";
 import {Euler, Vector3} from "three";
 import Heliodon from "./views/heliodon";
 import {Util} from "./util";
-import {computeDeclinationAngle, computeHourAngle, computeSunLocation, getSunDirection} from "./views/sunTools";
+import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./views/sunTools";
 import aladdinLogo from './assets/aladdin-logo.png';
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from "./mainMenu";

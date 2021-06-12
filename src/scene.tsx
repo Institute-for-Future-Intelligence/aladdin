@@ -4,21 +4,25 @@
 
 import React from 'react';
 import Foundation from "./views/foundation";
-import {Box} from "@react-three/drei";
+import Sensor from "./views/sensor";
+import Cuboid from "./views/cuboid";
 import {WorldModel} from "./models/worldModel";
 import {FoundationModel} from "./models/foundationModel";
+import {SensorModel} from "./models/sensorModel";
+import {CuboidModel} from "./models/cuboidModel";
 
 const Scene: React.FC<{ world: WorldModel }> = ({world}) => {
     return (
         <group>
-            <Box castShadow receiveShadow
-                 args={[1, 2, 1]}
-                 position={[2, 1, 2]}>
-                <meshStandardMaterial attach="material" color={'white'}/>
-            </Box>
             {world.elements
                 .filter(e => e.type === 'Foundation')
                 .map(e => <Foundation key={e.id} {...e as FoundationModel}/>)}
+            {world.elements
+                .filter(e => e.type === 'Sensor')
+                .map(e => <Sensor key={e.id} {...e as SensorModel}/>)}
+            {world.elements
+                .filter(e => e.type === 'Cuboid')
+                .map(e => <Cuboid key={e.id} {...e as CuboidModel}/>)}
         </group>
     );
 };

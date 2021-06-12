@@ -5,21 +5,21 @@
 import React, {useRef} from "react";
 import {useLoader} from '@react-three/fiber'
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
-import {Group, Mesh} from "three";
 import {MTLLoader} from "three/examples/jsm/loaders/MTLLoader";
+import {Group, Mesh} from "three";
 import sampleMtl from '../assets/house.mtl';
 import sampleObj from '../assets/house.obj';
 
-export interface SampleProps {
+export interface ObjProps {
     scale?: number;
 
     [key: string]: any;
 }
 
-const Sample = ({
-                    scale = 0.5,
-                    ...props
-                }: SampleProps) => {
+const Obj = ({
+                 scale = 0.5,
+                 ...props
+             }: ObjProps) => {
 
     const mesh = useRef<Mesh>(null!);
 
@@ -52,4 +52,4 @@ const Sample = ({
     );
 };
 
-export default Sample;
+export default Obj;

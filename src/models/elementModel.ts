@@ -12,6 +12,7 @@ export interface ElementModel {
     hovered?: boolean;
     color?: string;
     lineColor?: string;
+    lineWidth?: number;
 
     [key: string]: any;
 }

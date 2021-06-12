@@ -6,32 +6,30 @@ import React, {useRef} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
 import {Vector3} from "three";
 import {useStore} from "../stores/common";
-import {FoundationModel} from "../models/foundationModel";
+import {SensorModel} from "../models/sensorModel";
 
-const Foundation = ({
-                        id,
-                        cx,
-                        cy,
-                        lx = 1,
-                        ly = 1,
-                        height = 0.1,
-                        color = 'gray',
-                        lineColor = 'black',
-                        lineWidth = 0.1,
-                        hovered = false,
-                        selected = false,
-                    }: FoundationModel) => {
+const Sensor = ({
+                    id,
+                    cx,
+                    cy,
+                    lx = 1,
+                    ly = 1,
+                    height = 0.1,
+                    color = 'gray',
+                    lineColor = 'black',
+                    lineWidth = 0.1,
+                    hovered = false,
+                    selected = false,
+                }: SensorModel) => {
 
     cy = -cy; // we want positive y to point north
 
     const setCommonStore = useStore(state => state.set);
 
     const baseRef = useRef();
-    const handleLLRef = useRef();
-    const handleULRef = useRef();
-    const handleLRRef = useRef();
-    const handleURRef = useRef();
+    const handleRef = useRef();
 
+    const position = new Vector3(cx, height / 2, cy);
     const positionLL = new Vector3(cx - lx / 2, height / 2, cy - ly / 2);
     const positionUL = new Vector3(cx - lx / 2, height / 2, cy + ly / 2);
     const positionLR = new Vector3(cx + lx / 2, height / 2, cy - ly / 2);
@@ -106,7 +104,6 @@ const Foundation = ({
                       lineWidth={lineWidth}
                       color={lineColor}/>
                 <Line points={[[positionUL.x, height, positionUL.z], [positionLL.x, height, positionLL.z]]}
-                      lineWidth={lineWidth}
                       color={lineColor}/>
 
                 {/* draw wireframe lines lower face */}
@@ -138,34 +135,17 @@ const Foundation = ({
                       color={lineColor}/>
             </>
 
-            {/* draw handles */}
+            {/* draw handle */}
             {selected &&
-            <>
-                <Sphere ref={handleLLRef}
-                        args={[0.1, 6, 6]}
-                        position={positionLL}>
-                    <meshStandardMaterial attach="material" color={'white'}/>
-                </Sphere>
-                <Sphere ref={handleULRef}
-                        args={[0.1, 6, 6]}
-                        position={positionUL}>
-                    <meshStandardMaterial attach="material" color={'white'}/>
-                </Sphere>
-                <Sphere ref={handleLRRef}
-                        args={[0.1, 6, 6]}
-                        position={positionLR}>
-                    <meshStandardMaterial attach="material" color={'white'}/>
-                </Sphere>
-                <Sphere ref={handleURRef}
-                        args={[0.1, 6, 6]}
-                        position={positionUR}>
-                    <meshStandardMaterial attach="material" color={'white'}/>
-                </Sphere>
-            </>
+            <Sphere ref={handleRef}
+                    args={[0.1, 6, 6]}
+                    position={position}>
+                <meshStandardMaterial attach="material" color={'white'}/>
+            </Sphere>
             }
 
         </group>
     )
 };
 
-export default Foundation;
+export default Sensor;
