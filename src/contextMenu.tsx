@@ -3,12 +3,19 @@
  */
 
 import React from 'react';
+import styled from "styled-components";
 import {useStore} from "./stores/common";
 import {Menu, Checkbox, Radio} from 'antd';
-import {ClickObjectType, Theme} from "./types";
+import {ObjectType, Theme} from "./types";
 import 'antd/dist/antd.css';
 
-const {SubMenu} = Menu;
+// TODO: Reduce the space between menu items
+const StyledMenu = styled(Menu)`
+  padding: 0;
+  margin: 0;
+`;
+
+const {SubMenu} = StyledMenu;
 
 const radioStyle = {
     display: 'block',
@@ -20,6 +27,7 @@ const radioStyle = {
 const ContextMenu = () => {
 
     const setCommonStore = useStore(state => state.set);
+    const getSelectedElement = useStore(state => state.getSelectedElement);
     const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
     const theme = useStore(state => state.theme);
@@ -70,10 +78,20 @@ const ContextMenu = () => {
         });
     };
 
-    switch (clickObjectType) {
-        case ClickObjectType.Sky:
+    const selectedElement = getSelectedElement();
+
+    //@ts-ignore
+    const changeSensorLight = (e) => {
+        setCommonStore(state => {
+            //const s = state.getSelectedElement();
+            //if (s) s.light = e.target.checked;
+        });
+    };
+
+    switch (selectedElement ? selectedElement.type : clickObjectType) {
+        case ObjectType.Sky:
             return (
-                <Menu>
+                <StyledMenu style={{padding: 0, margin: 0}}>
                     <Menu.Item key={'axes'}>
                         <Checkbox checked={axes} onChange={changeAxes}>
                             Axes
@@ -96,34 +114,48 @@ const ContextMenu = () => {
                             <Radio style={radioStyle} value={Theme.Grassland}>Grassland</Radio>
                         </Radio.Group>
                     </SubMenu>}
-                </Menu>);
-        case ClickObjectType.Foundation:
+                </StyledMenu>);
+        case ObjectType.Foundation:
             return (
-                <Menu>
-                    <Menu.Item key={'foundation-prop'}>
-                        Foundation
+                <StyledMenu>
+                    <Menu.Item key={'foundation-copy'}>
+                        Copy
                     </Menu.Item>
-                </Menu>
+                    <Menu.Item key={'foundation-cut'}>
+                        Cut
+                    </Menu.Item>
+                </StyledMenu>
             );
-        case ClickObjectType.Sensor:
+        case ObjectType.Sensor:
             return (
-                <Menu>
-                    <Menu.Item key={'sensor-prop'}>
-                        Sensor
+                <StyledMenu>
+                    <Menu.Item key={'cuboid-copy'}>
+                        Copy
                     </Menu.Item>
-                </Menu>
+                    <Menu.Item key={'cuboid-cut'}>
+                        Cut
+                    </Menu.Item>
+                    <Menu.Item key={'sensor-light'}>
+                        <Checkbox checked={selectedElement?.light} onChange={changeSensorLight}>
+                            Light
+                        </Checkbox>
+                    </Menu.Item>
+                </StyledMenu>
             );
-        case ClickObjectType.Cuboid:
+        case ObjectType.Cuboid:
             return (
-                <Menu>
-                    <Menu.Item key={'cuboid-prop'}>
-                        Cuboid
+                <StyledMenu>
+                    <Menu.Item key={'cuboid-copy'}>
+                        Copy
                     </Menu.Item>
-                </Menu>
+                    <Menu.Item key={'cuboid-cut'}>
+                        Cut
+                    </Menu.Item>
+                </StyledMenu>
             );
         default:
             return (
-                <Menu>
+                <StyledMenu>
                     <Menu.Item key={'ground-grid'}>
                         <Checkbox checked={grid} onChange={changeGrid}>
                             Grid
@@ -134,7 +166,10 @@ const ContextMenu = () => {
                             Ground Settings
                         </Checkbox>
                     </Menu.Item>
-                </Menu>
+                    <Menu.Item key={'ground-paste'}>
+                        Paste
+                    </Menu.Item>
+                </StyledMenu>
             );
     }
 

@@ -11,7 +11,7 @@ import GrasslandDaySkyImage from "../resources/grassland.jpg";
 import GrasslandNightSkyImage from "../resources/grassland-night.jpg";
 import {DoubleSide, Mesh, TextureLoader} from "three";
 import {useStore} from "../stores/common";
-import {ClickObjectType} from "../types";
+import {ObjectType} from "../types";
 import {ThreeEvent} from "@react-three/fiber";
 
 export interface SkyProps {
@@ -45,12 +45,24 @@ const Sky = ({
         return texture;
     }, [theme, night]);
 
+    const selectNone = () => {
+        setCommonStore((state) => {
+            const w = state.worlds['default'];
+            if (w) {
+                for (const e of w.elements) {
+                    e.selected = false;
+                }
+            }
+        });
+    };
+
     const clickSky = (e: ThreeEvent<MouseEvent>) => {
         if (e.intersections.length > 0) {
             const skyClicked = e.intersections[0].object === meshRef.current;
             if (skyClicked) {
+                selectNone();
                 setCommonStore((state) => {
-                    state.clickObjectType = ClickObjectType.Sky;
+                    state.clickObjectType = ObjectType.Sky;
                 });
             }
         }

@@ -12,6 +12,10 @@ import {WeatherModel} from "../models/weatherModel";
 import weather from '../resources/weather.csv';
 import Papa from "papaparse";
 import {Util} from "../util";
+import {ObjectType} from "../types";
+import {FoundationModel} from "../models/foundationModel";
+import {CuboidModel} from "../models/cuboidModel";
+import {SensorModel} from "../models/sensorModel";
 
 enableMapSet();
 
@@ -46,6 +50,7 @@ export interface CommonStoreState {
     getClosestCity: (lat: number, lng: number) => string | null;
 
     clickObjectType: string | null;
+    getSelectedElement: () => ElementModel | null;
 
 }
 
@@ -82,7 +87,6 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         date: new Date(2021, 5, 22, 12).toString(),
         weatherData: {},
 
-        clickObjectType: null,
 
         worlds: {},
         getWorld(name: string) {
@@ -91,9 +95,35 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         createNewWorld() {
             immerSet((state: CommonStoreState) => {
                 const elements: ElementModel[] = [];
-                const e1 = {type: 'Foundation', cx: 0, cy: 0, lx: 2, ly: 2, height: 0.1, id: 'f1'};
-                const e2 = {type: 'Cuboid', cx: 0, cy: 3, lx: 2, ly: 2, height: 4, id: 'c1'};
-                const e3 = {type: 'Sensor', cx: 2, cy: 2, lx: 0.05, ly: 0.05, height: 0.01, id: 's1'};
+                const e1 = {
+                    type: ObjectType.Foundation,
+                    cx: 0,
+                    cy: 0,
+                    lx: 2,
+                    ly: 2,
+                    height: 0.1,
+                    id: 'f1'
+                } as FoundationModel;
+                const e2 = {
+                    type: ObjectType.Cuboid,
+                    cx: 0,
+                    cy: 3,
+                    lx: 2,
+                    ly: 2,
+                    height: 4,
+                    id: 'c1'
+                } as CuboidModel;
+                const e3 = {
+                    type: ObjectType.Sensor,
+                    cx: 2,
+                    cy: 2,
+                    lx: 0.05,
+                    ly: 0.05,
+                    height: 0.01,
+                    id: 's1',
+                    light: true,
+                    heatFlux: false
+                } as SensorModel;
                 elements.push(e1);
                 elements.push(e2);
                 elements.push(e3);
@@ -104,6 +134,17 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 };
                 state.worlds[world.name] = world;
             })
+        },
+
+        clickObjectType: null,
+        getSelectedElement() {
+            const elements = get().worlds['default'].elements;
+            for (const e of elements) {
+                if (e.selected) {
+                    return e;
+                }
+            }
+            return null;
         },
 
         loadWeatherData() {

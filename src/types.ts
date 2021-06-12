@@ -35,7 +35,7 @@ export enum Theme {
     Grassland = 'Grassland',
 }
 
-export enum ClickObjectType {
+export enum ObjectType {
     Sky = 'Sky',
     Ground = 'Ground',
     Foundation = 'Foundation',

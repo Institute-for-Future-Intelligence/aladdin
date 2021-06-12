@@ -6,7 +6,7 @@ import React, {useRef} from "react";
 import {Plane} from "@react-three/drei";
 import {useStore} from "../stores/common";
 import {DoubleSide} from "three";
-import {ClickObjectType} from "../types";
+import {ObjectType} from "../types";
 
 const Ground = () => {
 
@@ -33,8 +33,9 @@ const Ground = () => {
                    if (e.intersections.length > 0) {
                        const groundClicked = e.intersections[0].object === planeRef.current;
                        if (groundClicked) {
+                           selectNone();
                            setCommonStore((state) => {
-                               state.clickObjectType = ClickObjectType.Ground;
+                               state.clickObjectType = ObjectType.Ground;
                            });
                        }
                    }
@@ -44,7 +45,7 @@ const Ground = () => {
                        const groundClicked = e.intersections[0].object === planeRef.current;
                        if (groundClicked) {
                            setCommonStore((state) => {
-                               state.clickObjectType = ClickObjectType.Ground;
+                               state.clickObjectType = ObjectType.Ground;
                            });
                            selectNone();
                        }

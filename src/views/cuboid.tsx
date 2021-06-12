@@ -7,7 +7,6 @@ import {Box, Line, Sphere} from "@react-three/drei";
 import {Vector3} from "three";
 import {useStore} from "../stores/common";
 import {CuboidModel} from "../models/cuboidModel";
-import {ClickObjectType} from "../types";
 
 const Cuboid = ({
                     id,
@@ -92,9 +91,7 @@ const Cuboid = ({
                      if (e.intersections.length > 0) {
                          const intersected = e.intersections[0].object === baseRef.current;
                          if (intersected) {
-                             setCommonStore((state) => {
-                                 state.clickObjectType = ClickObjectType.Cuboid;
-                             });
+                             selectMe();
                          }
                      }
                  }}
@@ -111,7 +108,7 @@ const Cuboid = ({
                  }}
                  args={[lx, height, ly]}
                  position={[cx, height / 2, cy]}>
-                <meshStandardMaterial attach="material" color={hovered ? 'lightGray' : color}/>
+                <meshStandardMaterial attach="material" color={color}/>
             </Box>
 
             <>

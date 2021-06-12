@@ -7,7 +7,6 @@ import {Box, Line, Sphere} from "@react-three/drei";
 import {Vector3} from "three";
 import {useStore} from "../stores/common";
 import {SensorModel} from "../models/sensorModel";
-import {ClickObjectType} from "../types";
 
 const Sensor = ({
                     id,
@@ -22,6 +21,8 @@ const Sensor = ({
                     hovered = false,
                     selected = false,
                     showLabel = true,
+                    light = true,
+                    heatFlux = false,
                 }: SensorModel) => {
 
     cy = -cy; // we want positive y to point north
@@ -82,9 +83,7 @@ const Sensor = ({
                      if (e.intersections.length > 0) {
                          const intersected = e.intersections[0].object === baseRef.current;
                          if (intersected) {
-                             setCommonStore((state) => {
-                                 state.clickObjectType = ClickObjectType.Sensor;
-                             });
+                             selectMe();
                          }
                      }
                  }}
@@ -102,7 +101,7 @@ const Sensor = ({
                  args={[lx, height, ly]}
                  position={[cx, height / 2, cy]}
             >
-                <meshStandardMaterial attach="material" color={hovered ? 'lightGray' : color}/>
+                <meshStandardMaterial attach="material" color={color}/>
             </Box>
 
             <>
