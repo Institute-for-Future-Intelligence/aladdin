@@ -69,13 +69,13 @@ const BarGraph = ({
         for (let i = 0; i < dataSetCount; i++) {
             let name = '';
             switch (type) {
-                case WeatherDataType.monthlyTemperatures:
+                case WeatherDataType.MonthlyTemperatures:
                     name = i === 0 ? `Low` : 'High';
                     break;
-                case WeatherDataType.sunshineHours:
+                case WeatherDataType.SunshineHours:
                     name = 'Sunshine';
                     break;
-                case WeatherDataType.hourlyTemperatures:
+                case WeatherDataType.HourlyTemperatures:
                     name = 'Temperature';
                     break;
             }

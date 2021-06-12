@@ -7,18 +7,18 @@ export interface GraphDatumEntry {
 }
 
 export enum WeatherDataType {
-    hourlyTemperatures = 0,
-    monthlyTemperatures = 1,
-    sunshineHours = 2,
+    HourlyTemperatures = 0,
+    MonthlyTemperatures = 1,
+    SunshineHours = 2,
 }
 
 export enum Theme {
-    default = 'Default',
-    desert = 'Desert',
-    grassland = 'Grassland',
+    Default = 'Default',
+    Desert = 'Desert',
+    Grassland = 'Grassland',
 }
 
 export enum ClickObjectType {
-    sky = 'Sky',
-    ground = 'Ground',
+    Sky = 'Sky',
+    Ground = 'Ground',
 }

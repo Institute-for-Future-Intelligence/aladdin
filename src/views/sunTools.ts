@@ -18,21 +18,28 @@ export const computeHourAngle = (date: Date) => {
     return minutes / (12.0 * 60.0) * Math.PI;
 }
 
+export const getSunDirection = (date: Date, latitude: number) => {
+    return computeSunLocation
+    (1, computeHourAngle(date), computeDeclinationAngle(date), Util.toRadians(latitude)).normalize();
+};
+
 export const computeSunLocation = (radius: number,
                                    hourAngle: number,
                                    declinationAngle: number,
-                                   observerLatitude: number) => {
-    const altitudeAngle = Math.asin(
-        Math.sin(declinationAngle) * Math.sin(observerLatitude) +
-        Math.cos(declinationAngle) * Math.cos(hourAngle) * Math.cos(observerLatitude)
-    );
-    const xAzm = Math.sin(hourAngle) * Math.cos(declinationAngle);
-    const yAzm = Math.cos(observerLatitude) * Math.sin(declinationAngle)
-        - Math.cos(hourAngle) * Math.cos(declinationAngle) * Math.sin(observerLatitude);
+                                   latitude: number) => {
+    const cosDec = Math.cos(declinationAngle);
+    const sinDec = Math.sin(declinationAngle);
+    const cosLat = Math.cos(latitude);
+    const sinLat = Math.sin(latitude);
+    const cosHou = Math.cos(hourAngle);
+    const sinHou = Math.sin(hourAngle);
+    const altitudeAngle = Math.asin(sinDec * sinLat + cosDec * cosHou * cosLat);
+    const xAzm = sinHou * cosDec;
+    const yAzm = cosLat * sinDec - cosHou * cosDec * sinLat;
     const azimuthAngle = Math.atan2(yAzm, xAzm);
     const coords = new Vector3(radius, azimuthAngle, altitudeAngle);
     Util.sphericalToCartesianZ(coords);
     // reverse the x so that sun moves from east to west
-    coords.setX(-coords.x);
+    coords.x = -coords.x;
     return coords;
 };

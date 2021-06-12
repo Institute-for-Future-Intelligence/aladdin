@@ -5,7 +5,7 @@
  */
 
 import React, {Suspense, useEffect, useMemo, useState} from 'react';
-import './App.css';
+import './app.css';
 import {Canvas} from '@react-three/fiber';
 import OrbitController from "./orbitController";
 import Sky from "./views/sky";
@@ -17,7 +17,7 @@ import {useStore} from "./stores/common";
 import {Euler, Vector3} from "three";
 import Heliodon from "./views/heliodon";
 import {Util} from "./util";
-import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./views/sunTools";
+import {computeDeclinationAngle, computeHourAngle, computeSunLocation, getSunDirection} from "./views/sunTools";
 import aladdinLogo from './assets/aladdin-logo.png';
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from "./mainMenu";
@@ -236,7 +236,7 @@ const App = () => {
             />}
             {showWeatherPanel &&
             <WeatherPanel city={city}
-                          graphs={[WeatherDataType.monthlyTemperatures, WeatherDataType.sunshineHours]}
+                          graphs={[WeatherDataType.MonthlyTemperatures, WeatherDataType.SunshineHours]}
             />}
             <Dropdown key={'canvas-context-menu'} overlay={<ContextMenu/>} trigger={['contextMenu']}>
                 <div>

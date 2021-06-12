@@ -87,7 +87,7 @@ const WeatherPanel = ({
                 graphs.forEach(g => {
                     result[g] = [];
                     switch (g) {
-                        case WeatherDataType.monthlyTemperatures:
+                        case WeatherDataType.MonthlyTemperatures:
                             for (let i = 0; i < 12; i++) {
                                 result[g].push(
                                     {
@@ -98,7 +98,7 @@ const WeatherPanel = ({
                                 );
                             }
                             break;
-                        case WeatherDataType.sunshineHours:
+                        case WeatherDataType.SunshineHours:
                             for (let i = 0; i < 12; i++) {
                                 result[g].push(
                                     {
@@ -131,7 +131,7 @@ const WeatherPanel = ({
                 </Header>
                 <>
                     {graphs.map(g => {
-                        if (g === WeatherDataType.sunshineHours) {
+                        if (g === WeatherDataType.SunshineHours) {
                             return (
                                 <BarGraph
                                     key={g}

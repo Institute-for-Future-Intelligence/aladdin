@@ -50,7 +50,7 @@ const Sky = ({
             const skyClicked = e.intersections[0].object === meshRef.current;
             if (skyClicked) {
                 setCommonStore((state) => {
-                    state.clickObjectType = ClickObjectType.sky;
+                    state.clickObjectType = ClickObjectType.Sky;
                 });
             }
         }

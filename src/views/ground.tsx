@@ -34,7 +34,7 @@ const Ground = () => {
                        const groundClicked = e.intersections[0].object === planeRef.current;
                        if (groundClicked) {
                            setCommonStore((state) => {
-                               state.clickObjectType = ClickObjectType.ground;
+                               state.clickObjectType = ClickObjectType.Ground;
                            });
                        }
                    }
@@ -44,7 +44,7 @@ const Ground = () => {
                        const groundClicked = e.intersections[0].object === planeRef.current;
                        if (groundClicked) {
                            setCommonStore((state) => {
-                               state.clickObjectType = ClickObjectType.ground;
+                               state.clickObjectType = ClickObjectType.Ground;
                            });
                            selectNone();
                        }

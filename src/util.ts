@@ -50,7 +50,7 @@ export class Util {
         return radians * (180 / Math.PI);
     }
 
-    static sphericalToCartesianZ(sphereCoords: THREE.Vector3) {
+    static sphericalToCartesianZ(sphereCoords: Vector3) {
         let a = sphereCoords.x * Math.cos(sphereCoords.z);
         let x = a * Math.cos(sphereCoords.y);
         let y = a * Math.sin(sphereCoords.y);

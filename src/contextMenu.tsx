@@ -72,7 +72,7 @@ const ContextMenu = () => {
     };
 
     switch (clickObjectType) {
-        case ClickObjectType.sky:
+        case ClickObjectType.Sky:
             return (
                 <Menu>
                     <Menu.Item key={'axes'}>
@@ -92,9 +92,9 @@ const ContextMenu = () => {
                     </Menu.Item>
                     {<SubMenu key={'theme'} title={'Theme'}>
                         <Radio.Group onChange={selectTheme} value={theme} style={{height: '105px'}}>
-                            <Radio style={radioStyle} value={Theme.default}>Default</Radio>
-                            <Radio style={radioStyle} value={Theme.desert}>Desert</Radio>
-                            <Radio style={radioStyle} value={Theme.grassland}>Grassland</Radio>
+                            <Radio style={radioStyle} value={Theme.Default}>Default</Radio>
+                            <Radio style={radioStyle} value={Theme.Desert}>Desert</Radio>
+                            <Radio style={radioStyle} value={Theme.Grassland}>Grassland</Radio>
                         </Radio.Group>
                     </SubMenu>}
                 </Menu>);
