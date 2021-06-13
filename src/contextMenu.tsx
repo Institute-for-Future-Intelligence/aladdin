@@ -4,10 +4,12 @@
 
 import React from 'react';
 import styled from "styled-components";
+import 'antd/dist/antd.css';
 import {useStore} from "./stores/common";
+import {useWorker} from "@koale/useworker";
 import {Menu, Checkbox, Radio} from 'antd';
 import {ObjectType, Theme} from "./types";
-import 'antd/dist/antd.css';
+import {computeDailyData} from "./analysis/sensorAnalysis";
 
 // TODO: Reduce the space between menu items
 const StyledMenu = styled(Menu)`
@@ -27,8 +29,11 @@ const radioStyle = {
 const ContextMenu = () => {
 
     const setCommonStore = useStore(state => state.set);
+    const latitude = useStore(state => state.latitude);
+    const longitude = useStore(state => state.longitude);
+    const today = new Date(useStore(state => state.date));
     const getSelectedElement = useStore(state => state.getSelectedElement);
-    const updateSelectedElement = useStore(state => state.updateSelectedElement);
+    const updateElementById = useStore(state => state.updateElementById);
     const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
     const theme = useStore(state => state.theme);
@@ -37,47 +42,7 @@ const ContextMenu = () => {
     const showWeatherPanel = useStore(state => state.showWeatherPanel);
     const clickObjectType = useStore(state => state.clickObjectType);
 
-    //@ts-ignore
-    const selectTheme = (e) => {
-        setCommonStore(state => {
-            state.theme = e.target.value;
-        });
-    };
-
-    //@ts-ignore
-    const changeAxes = (e) => {
-        setCommonStore(state => {
-            state.axes = e.target.checked;
-        });
-    };
-
-    //@ts-ignore
-    const changeShowWeatherPanel = (e) => {
-        setCommonStore(state => {
-            state.showWeatherPanel = e.target.checked;
-        });
-    };
-
-    //@ts-ignore
-    const changeShowHeliodonPanel = (e) => {
-        setCommonStore(state => {
-            state.showHeliodonPanel = e.target.checked;
-        });
-    };
-
-    //@ts-ignore
-    const changeGrid = (e) => {
-        setCommonStore(state => {
-            state.grid = e.target.checked;
-        });
-    };
-
-    //@ts-ignore
-    const changeShowGroundPanel = (e) => {
-        setCommonStore(state => {
-            state.showGroundPanel = e.target.checked;
-        });
-    };
+    const [sensorDailyCollector] = useWorker(computeDailyData);
 
     const selectedElement = getSelectedElement();
     switch (selectedElement ? selectedElement.type : clickObjectType) {
@@ -85,27 +50,43 @@ const ContextMenu = () => {
             return (
                 <StyledMenu style={{padding: 0, margin: 0}}>
                     <Menu.Item key={'axes'}>
-                        <Checkbox checked={axes} onChange={changeAxes}>
+                        <Checkbox checked={axes} onChange={(e) => {
+                            setCommonStore(state => {
+                                state.axes = e.target.checked;
+                            });
+                        }}>
                             Axes
                         </Checkbox>
                     </Menu.Item>
                     <Menu.Item key={'heliodon-settings'}>
-                        <Checkbox checked={showHeliodonPanel} onChange={changeShowHeliodonPanel}>
+                        <Checkbox checked={showHeliodonPanel} onChange={(e) => {
+                            setCommonStore(state => {
+                                state.showHeliodonPanel = e.target.checked;
+                            });
+                        }}>
                             Heliodon Settings
                         </Checkbox>
                     </Menu.Item>
                     <Menu.Item key={'weather-data'}>
-                        <Checkbox checked={showWeatherPanel} onChange={changeShowWeatherPanel}>
+                        <Checkbox checked={showWeatherPanel} onChange={(e) => {
+                            setCommonStore(state => {
+                                state.showWeatherPanel = e.target.checked;
+                            });
+                        }}>
                             Weather Data
                         </Checkbox>
                     </Menu.Item>
-                    {<SubMenu key={'theme'} title={'Theme'}>
-                        <Radio.Group onChange={selectTheme} value={theme} style={{height: '105px'}}>
+                    <SubMenu key={'theme'} title={'Theme'}>
+                        <Radio.Group value={theme} style={{height: '105px'}} onChange={(e) => {
+                            setCommonStore(state => {
+                                state.theme = e.target.value;
+                            });
+                        }}>
                             <Radio style={radioStyle} value={Theme.Default}>Default</Radio>
                             <Radio style={radioStyle} value={Theme.Desert}>Desert</Radio>
                             <Radio style={radioStyle} value={Theme.Grassland}>Grassland</Radio>
                         </Radio.Group>
-                    </SubMenu>}
+                    </SubMenu>
                 </StyledMenu>);
         case ObjectType.Foundation:
             return (
@@ -121,19 +102,37 @@ const ContextMenu = () => {
         case ObjectType.Sensor:
             return (
                 <StyledMenu>
-                    <Menu.Item key={'cuboid-copy'}>
+                    <Menu.Item key={'sensor-copy'}>
                         Copy
                     </Menu.Item>
-                    <Menu.Item key={'cuboid-cut'}>
+                    <Menu.Item key={'sensor-cut'}>
                         Cut
                     </Menu.Item>
                     <Menu.Item key={'sensor-light'}>
-                        <Checkbox checked={selectedElement?.showLabel} onChange={(e) => {
-                            updateSelectedElement({showLabel: e.target.checked});
+                        <Checkbox checked={!!selectedElement?.showLabel} onChange={(e) => {
+                            if (selectedElement) {
+                                updateElementById(selectedElement.id, {showLabel: e.target.checked});
+                            }
                         }}>
                             Show Label
                         </Checkbox>
                     </Menu.Item>
+                    <SubMenu key={'analysis'} title={'Analysis'}>
+                        <Menu.Item key={'sensor-collect-daily-data'} onClick={async () => {
+                            const result = await sensorDailyCollector(latitude, longitude, today);
+                            console.log(result)
+                        }}>
+                            Collect Daily Data
+                        </Menu.Item>
+                        <Menu.Item key={'sensor-collect-yearly-data'} onClick={async () => {
+                            for (let i = 0; i < 12; i++) {
+                                const result = await sensorDailyCollector(latitude, longitude);
+                                console.log(result)
+                            }
+                        }}>
+                            Collect Yearly Data
+                        </Menu.Item>
+                    </SubMenu>
                 </StyledMenu>
             );
         case ObjectType.Cuboid:
@@ -151,12 +150,20 @@ const ContextMenu = () => {
             return (
                 <StyledMenu>
                     <Menu.Item key={'ground-grid'}>
-                        <Checkbox checked={grid} onChange={changeGrid}>
+                        <Checkbox checked={grid} onChange={(e) => {
+                            setCommonStore(state => {
+                                state.grid = e.target.checked;
+                            });
+                        }}>
                             Grid
                         </Checkbox>
                     </Menu.Item>
                     <Menu.Item key={'ground-settings'}>
-                        <Checkbox checked={showGroundPanel} onChange={changeShowGroundPanel}>
+                        <Checkbox checked={showGroundPanel} onChange={(e) => {
+                            setCommonStore(state => {
+                                state.showGroundPanel = e.target.checked;
+                            });
+                        }}>
                             Ground Settings
                         </Checkbox>
                     </Menu.Item>
