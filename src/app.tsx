@@ -17,7 +17,7 @@ import {useStore} from "./stores/common";
 import {Euler, Vector3} from "three";
 import Heliodon from "./views/heliodon";
 import {Util} from "./util";
-import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./views/sunTools";
+import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./analysis/sunTools";
 import aladdinLogo from './assets/aladdin-logo.png';
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from "./mainMenu";
@@ -31,7 +31,6 @@ import {Dropdown} from "antd";
 import ContextMenu from "./contextMenu";
 import WeatherPanel from "./weatherPanel";
 import {WeatherDataType} from "./types";
-
 
 const App = () => {
 
@@ -259,7 +258,7 @@ const App = () => {
                             />
                             {grid && <gridHelper args={[500, 100, 'gray', 'gray']}/>}
                             <Compass/>
-                            {/*<Sample/>*/}
+                            {/*<Obj/>*/}
                             {axes && <Axes/>}
                             <Ground/>
                             {groundImage && <GroundImage/>}

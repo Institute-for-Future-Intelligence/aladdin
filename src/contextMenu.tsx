@@ -10,6 +10,8 @@ import {useWorker} from "@koale/useworker";
 import {Menu, Checkbox, Radio} from 'antd';
 import {ObjectType, Theme} from "./types";
 import {computeDailyData} from "./analysis/sensorAnalysis";
+import {SensorModel} from "./models/sensorModel";
+import {MONTHS} from "./constants";
 
 // TODO: Reduce the space between menu items
 const StyledMenu = styled(Menu)`
@@ -119,15 +121,24 @@ const ContextMenu = () => {
                     </Menu.Item>
                     <SubMenu key={'analysis'} title={'Analysis'}>
                         <Menu.Item key={'sensor-collect-daily-data'} onClick={async () => {
-                            const result = await sensorDailyCollector(latitude, longitude, today);
-                            console.log(result)
+                            const result = await sensorDailyCollector(
+                                selectedElement as SensorModel,
+                                latitude,
+                                longitude,
+                                today);
+                            console.log(today, result)
                         }}>
                             Collect Daily Data
                         </Menu.Item>
                         <Menu.Item key={'sensor-collect-yearly-data'} onClick={async () => {
                             for (let i = 0; i < 12; i++) {
-                                const result = await sensorDailyCollector(latitude, longitude);
-                                console.log(result)
+                                const firstDay = new Date(today.getFullYear(), i, 1);
+                                const result = await sensorDailyCollector(
+                                    selectedElement as SensorModel,
+                                    latitude,
+                                    longitude,
+                                    firstDay);
+                                console.log(MONTHS[i], result)
                             }
                         }}>
                             Collect Yearly Data

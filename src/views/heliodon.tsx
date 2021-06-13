@@ -19,7 +19,7 @@ import {
     computeDeclinationAngle,
     computeSunLocation,
     TILT_ANGLE
-} from "./sunTools";
+} from "../analysis/sunTools";
 import {Line} from "@react-three/drei";
 
 export interface HeliodonProps {
