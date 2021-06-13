@@ -51,6 +51,8 @@ export interface CommonStoreState {
 
     clickObjectType: string | null;
     getSelectedElement: () => ElementModel | null;
+    updateSelectedElement: (element: Partial<ElementModel>) => void;
+    selectNone: () => void;
 
 }
 
@@ -121,6 +123,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                     ly: 0.05,
                     height: 0.01,
                     id: 's1',
+                    showLabel: false,
                     light: true,
                     heatFlux: false
                 } as SensorModel;
@@ -146,6 +149,30 @@ export const useStore = create<CommonStoreState>(devtools(persist((
             }
             return null;
         },
+        updateSelectedElement(newAttributes) {
+            immerSet((state: CommonStoreState) => {
+                const w = state.worlds['default'];
+                if (w) {
+                    for (let [index, e] of w.elements.entries()) {
+                        if (e.selected) {
+                            w.elements[index] = {...e, ...newAttributes};
+                            break;
+                        }
+                    }
+                }
+            });
+        },
+        selectNone() {
+            immerSet((state: CommonStoreState) => {
+                const w = state.worlds['default'];
+                if (w) {
+                    for (const e of w.elements) {
+                        e.selected = false;
+                    }
+                }
+            });
+        },
+
 
         loadWeatherData() {
             const data: WeatherModel[] = [];

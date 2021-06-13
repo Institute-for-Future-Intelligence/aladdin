@@ -28,6 +28,7 @@ const Sky = ({
              }: SkyProps) => {
 
     const setCommonStore = useStore(state => state.set);
+    const selectNone = useStore(state => state.selectNone);
     const meshRef = useRef<Mesh>(null!);
     const texture = useMemo(() => {
         const loader = new TextureLoader();
@@ -44,17 +45,6 @@ const Sky = ({
         }
         return texture;
     }, [theme, night]);
-
-    const selectNone = () => {
-        setCommonStore((state) => {
-            const w = state.worlds['default'];
-            if (w) {
-                for (const e of w.elements) {
-                    e.selected = false;
-                }
-            }
-        });
-    };
 
     const clickSky = (e: ThreeEvent<MouseEvent>) => {
         if (e.intersections.length > 0) {

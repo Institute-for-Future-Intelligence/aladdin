@@ -11,19 +11,9 @@ import {ObjectType} from "../types";
 const Ground = () => {
 
     const setCommonStore = useStore(state => state.set);
+    const selectNone = useStore(state => state.selectNone);
     const groundColor = useStore(state => state.groundColor);
     const planeRef = useRef();
-
-    const selectNone = () => {
-        setCommonStore((state) => {
-            const w = state.worlds['default'];
-            if (w) {
-                for (const e of w.elements) {
-                    e.selected = false;
-                }
-            }
-        });
-    };
 
     return (
         <Plane receiveShadow

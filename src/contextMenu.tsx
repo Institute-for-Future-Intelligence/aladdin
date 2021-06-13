@@ -28,6 +28,7 @@ const ContextMenu = () => {
 
     const setCommonStore = useStore(state => state.set);
     const getSelectedElement = useStore(state => state.getSelectedElement);
+    const updateSelectedElement = useStore(state => state.updateSelectedElement);
     const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
     const theme = useStore(state => state.theme);
@@ -79,15 +80,6 @@ const ContextMenu = () => {
     };
 
     const selectedElement = getSelectedElement();
-
-    //@ts-ignore
-    const changeSensorLight = (e) => {
-        setCommonStore(state => {
-            //const s = state.getSelectedElement();
-            //if (s) s.light = e.target.checked;
-        });
-    };
-
     switch (selectedElement ? selectedElement.type : clickObjectType) {
         case ObjectType.Sky:
             return (
@@ -136,8 +128,10 @@ const ContextMenu = () => {
                         Cut
                     </Menu.Item>
                     <Menu.Item key={'sensor-light'}>
-                        <Checkbox checked={selectedElement?.light} onChange={changeSensorLight}>
-                            Light
+                        <Checkbox checked={selectedElement?.showLabel} onChange={(e) => {
+                            updateSelectedElement({showLabel: e.target.checked});
+                        }}>
+                            Show Label
                         </Checkbox>
                     </Menu.Item>
                 </StyledMenu>
