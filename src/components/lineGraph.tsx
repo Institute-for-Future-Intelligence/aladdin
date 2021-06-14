@@ -17,12 +17,12 @@ import {
 } from 'recharts';
 import {createSymbol, SYMBOLS} from "./symbols";
 import {PRESET_COLORS} from "../constants";
-import {GraphDataType, GraphDatumEntry} from "../types";
+import {GraphDataType, DatumEntry} from "../types";
 import {CurveType} from "recharts/types/shape/Curve";
 
 export interface LineGraphProps {
     type: GraphDataType;
-    dataSource: GraphDatumEntry[];
+    dataSource: DatumEntry[];
     height: number;
     labelX?: string,
     labelY?: string,
@@ -93,7 +93,8 @@ const LineGraph = ({
                 case GraphDataType.ClearnessData:
                     name = 'Clearness';
                     break;
-                case GraphDataType.RadiationSensorData:
+                case GraphDataType.DailyRadiationSensorData:
+                case GraphDataType.YearlyRadiationSensorData:
                     name = 'Radiation';
                     break;
             }

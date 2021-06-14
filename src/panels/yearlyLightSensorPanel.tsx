@@ -56,7 +56,7 @@ const Header = styled.div`
   }
 `;
 
-export interface SensorPanelProps {
+export interface YearlyLightSensorPanelProps {
 
     city: string | null;
 
@@ -64,13 +64,13 @@ export interface SensorPanelProps {
 
 }
 
-const SensorPanel = ({
-                         city,
-                         ...rest
-                     }: SensorPanelProps) => {
+const YearlyLightSensorPanel = ({
+                                    city,
+                                    ...rest
+                                }: YearlyLightSensorPanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
-    const sensorData = useStore(state => state.sensorData);
+    const sensorData = useStore(state => state.yearlyLightSensorData);
     const now = useStore(state => state.date);
 
     const responsiveHeight = 100;
@@ -80,10 +80,10 @@ const SensorPanel = ({
         <Container>
             <ColumnWrapper>
                 <Header>
-                    <span>Sensor: {city}</span>
+                    <span>Light Sensor: {city}</span>
                     <span style={{cursor: 'pointer'}} onClick={() => {
                         setCommonStore((state) => {
-                            state.showSensorPanel = false;
+                            state.showYearlyLightSensorPanel = false;
                         });
                     }}>Close</span>
                 </Header>
@@ -115,7 +115,7 @@ const SensorPanel = ({
                     {...rest}
                 />
                 <LineGraph
-                    type={GraphDataType.RadiationSensorData}
+                    type={GraphDataType.YearlyRadiationSensorData}
                     dataSource={sensorData.map(e => ({Month: e.Month, Radiation: e.Radiation}))}
                     height={responsiveHeight}
                     labelX={'Month'}
@@ -133,4 +133,4 @@ const SensorPanel = ({
 
 };
 
-export default SensorPanel;
+export default YearlyLightSensorPanel;

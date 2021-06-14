@@ -16,11 +16,11 @@ import {
     YAxis,
 } from 'recharts';
 import {PRESET_COLORS} from "../constants";
-import {GraphDataType, GraphDatumEntry} from "../types";
+import {GraphDataType, DatumEntry} from "../types";
 
 export interface BarGraphProps {
     type: GraphDataType;
-    dataSource: GraphDatumEntry[];
+    dataSource: DatumEntry[];
     height: number;
     labelX?: string,
     labelY?: string,
@@ -87,7 +87,8 @@ const BarGraph = ({
                 case GraphDataType.ClearnessData:
                     name = 'Clearness';
                     break;
-                case GraphDataType.RadiationSensorData:
+                case GraphDataType.DailyRadiationSensorData:
+                case GraphDataType.YearlyRadiationSensorData:
                     name = 'Radiation';
                     break;
             }

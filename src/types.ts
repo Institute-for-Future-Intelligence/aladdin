@@ -19,7 +19,7 @@ declare global {
     }
 }
 
-export interface GraphDatumEntry {
+export interface DatumEntry {
     [key: string]: number | undefined | string;
 }
 
@@ -29,7 +29,8 @@ export enum GraphDataType {
     SunshineHours = 2,
     DaylightData = 3,
     ClearnessData = 4,
-    RadiationSensorData = 5,
+    YearlyRadiationSensorData = 5,
+    DailyRadiationSensorData = 6,
 }
 
 export enum Theme {

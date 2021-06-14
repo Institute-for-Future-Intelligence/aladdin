@@ -31,7 +31,8 @@ import {Dropdown} from "antd";
 import ContextMenu from "./contextMenu";
 import WeatherPanel from "./panels/weatherPanel";
 import {GraphDataType} from "./types";
-import SensorPanel from "./panels/sensorPanel";
+import YearlyLightSensorPanel from "./panels/yearlyLightSensorPanel";
+import DailyLightSensorPanel from "./panels/dailyLightSensorPanel";
 
 const App = () => {
 
@@ -45,7 +46,8 @@ const App = () => {
     const showGroundPanel = useStore(state => state.showGroundPanel);
     const showHeliodonPanel = useStore(state => state.showHeliodonPanel);
     const showWeatherPanel = useStore(state => state.showWeatherPanel);
-    const showSensorPanel = useStore(state => state.showSensorPanel);
+    const showDailyLightSensorPanel = useStore(state => state.showDailyLightSensorPanel);
+    const showYearlyLightSensorPanel = useStore(state => state.showYearlyLightSensorPanel);
 
     const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
@@ -235,8 +237,8 @@ const App = () => {
                            setHeliodon={setHeliodon}
                            setSunAnimation={setSunAnimation}
             />}
-            {showSensorPanel &&
-            <SensorPanel city={city}/>}
+            {showYearlyLightSensorPanel && <YearlyLightSensorPanel city={city}/>}
+            {showDailyLightSensorPanel && <DailyLightSensorPanel city={city}/>}
             {showWeatherPanel &&
             <WeatherPanel city={city}
                           graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}

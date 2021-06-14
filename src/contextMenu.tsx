@@ -9,7 +9,7 @@ import {useStore} from "./stores/common";
 import {useWorker} from "@koale/useworker";
 import {Menu, Checkbox, Radio} from 'antd';
 import {ObjectType, Theme} from "./types";
-import {computeDailyData} from "./analysis/sensorAnalysis";
+import {computeDailyData, computeHourlyData} from "./analysis/sensorAnalysis";
 import {SensorModel} from "./models/sensorModel";
 
 // TODO: Reduce the space between menu items
@@ -55,7 +55,8 @@ const ContextMenu = ({
     const showGroundPanel = useStore(state => state.showGroundPanel);
     const showWeatherPanel = useStore(state => state.showWeatherPanel);
     const clickObjectType = useStore(state => state.clickObjectType);
-    const setSensorData = useStore(state => state.setSensorData);
+    const setDailyLightSensorData = useStore(state => state.setDailyLightSensorData);
+    const setYearlyLightSensorData = useStore(state => state.setYearlyLightSensorData);
 
     const weather = getWeather(city ?? 'Boston MA, USA');
     const ground = getWorld('default').ground;
@@ -134,7 +135,7 @@ const ContextMenu = ({
                     </Menu.Item>
                     <SubMenu key={'analysis'} title={'Analysis'}>
                         <Menu.Item key={'sensor-collect-daily-data'} onClick={async () => {
-                            const result = computeDailyData(
+                            const result = computeHourlyData(
                                 selectedElement as SensorModel,
                                 weather,
                                 ground,
@@ -142,7 +143,10 @@ const ContextMenu = ({
                                 longitude,
                                 city ? getWeather(city).elevation : 0,
                                 today);
-                            console.log(result)
+                            setDailyLightSensorData(result);
+                            setCommonStore(state => {
+                                state.showDailyLightSensorPanel = true;
+                            });
                         }}>
                             Collect Daily Data
                         </Menu.Item>
@@ -160,9 +164,9 @@ const ContextMenu = ({
                                     midMonth);
                                 data.push(result);
                             }
-                            setSensorData(data);
+                            setYearlyLightSensorData(data);
                             setCommonStore(state => {
-                                state.showSensorPanel = true;
+                                state.showYearlyLightSensorPanel = true;
                             });
                         }}>
                             Collect Yearly Data

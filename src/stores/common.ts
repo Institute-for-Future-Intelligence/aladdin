@@ -12,7 +12,7 @@ import {WeatherModel} from "../models/weatherModel";
 import weather from '../resources/weather.csv';
 import Papa from "papaparse";
 import {Util} from "../util";
-import {GraphDatumEntry, ObjectType} from "../types";
+import {DatumEntry, ObjectType} from "../types";
 import {FoundationModel} from "../models/foundationModel";
 import {CuboidModel} from "../models/cuboidModel";
 import {SensorModel} from "../models/sensorModel";
@@ -28,7 +28,8 @@ export interface CommonStoreState {
     showGroundPanel: boolean;
     showHeliodonPanel: boolean;
     showWeatherPanel: boolean;
-    showSensorPanel: boolean;
+    showDailyLightSensorPanel: boolean;
+    showYearlyLightSensorPanel: boolean;
 
     grid: boolean;
     axes: boolean;
@@ -55,8 +56,10 @@ export interface CommonStoreState {
     selectNone: () => void;
     updateElementById: (id: string, element: Partial<ElementModel>) => void;
 
-    sensorData: GraphDatumEntry[];
-    setSensorData: (data: GraphDatumEntry[]) => void;
+    dailyLightSensorData: DatumEntry[];
+    setDailyLightSensorData: (data: DatumEntry[]) => void;
+    yearlyLightSensorData: DatumEntry[];
+    setYearlyLightSensorData: (data: DatumEntry[]) => void;
 
 }
 
@@ -75,7 +78,8 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         showGroundPanel: false,
         showHeliodonPanel: false,
         showWeatherPanel: false,
-        showSensorPanel: false,
+        showDailyLightSensorPanel: false,
+        showYearlyLightSensorPanel: false,
 
         grid: false,
         axes: true,
@@ -94,10 +98,16 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         date: new Date(2021, 5, 22, 12).toString(),
         weatherData: {},
 
-        sensorData: [],
-        setSensorData(data) {
+        yearlyLightSensorData: [],
+        setYearlyLightSensorData(data) {
             immerSet((state: CommonStoreState) => {
-                state.sensorData = [...data];
+                state.yearlyLightSensorData = [...data];
+            });
+        },
+        dailyLightSensorData: [],
+        setDailyLightSensorData(data) {
+            immerSet((state: CommonStoreState) => {
+                state.dailyLightSensorData = [...data];
             });
         },
 
