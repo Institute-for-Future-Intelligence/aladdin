@@ -3,12 +3,12 @@
  */
 
 import React, {useMemo} from 'react';
-import BarGraph from "./components/barGraph";
-import LineGraph from './components/lineGraph';
-import {WeatherDataType} from "./types";
+import BarGraph from "../components/barGraph";
+import LineGraph from '../components/lineGraph';
+import {GraphDataType} from "../types";
 import styled from "styled-components";
-import {useStore} from "./stores/common";
-import {MONTHS} from "./constants";
+import {useStore} from "../stores/common";
+import {MONTHS} from "../constants";
 
 const Container = styled.div`
   position: fixed;
@@ -57,7 +57,7 @@ const Header = styled.div`
 export interface WeatherPanelProps {
 
     city: string | null;
-    graphs: WeatherDataType[];
+    graphs: GraphDataType[];
 
     [key: string]: any;
 
@@ -87,7 +87,7 @@ const WeatherPanel = ({
                 graphs.forEach(g => {
                     result[g] = [];
                     switch (g) {
-                        case WeatherDataType.MonthlyTemperatures:
+                        case GraphDataType.MonthlyTemperatures:
                             for (let i = 0; i < 12; i++) {
                                 result[g].push(
                                     {
@@ -98,7 +98,7 @@ const WeatherPanel = ({
                                 );
                             }
                             break;
-                        case WeatherDataType.SunshineHours:
+                        case GraphDataType.SunshineHours:
                             for (let i = 0; i < 12; i++) {
                                 result[g].push(
                                     {
@@ -131,7 +131,7 @@ const WeatherPanel = ({
                 </Header>
                 <>
                     {graphs.map(g => {
-                        if (g === WeatherDataType.SunshineHours) {
+                        if (g === GraphDataType.SunshineHours) {
                             return (
                                 <BarGraph
                                     key={g}

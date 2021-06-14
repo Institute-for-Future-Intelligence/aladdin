@@ -21,16 +21,17 @@ import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./a
 import aladdinLogo from './assets/aladdin-logo.png';
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from "./mainMenu";
-import GroundPanel from "./groundPanel";
-import HeliodonPanel from "./heliodonPanel";
+import GroundPanel from "./panels/groundPanel";
+import HeliodonPanel from "./panels/heliodonPanel";
 import {VERSION} from "./constants";
 import {visitIFI} from "./helpers";
 import AcceptCookie from "./acceptCookie";
 import GroundImage from "./views/groundImage";
 import {Dropdown} from "antd";
 import ContextMenu from "./contextMenu";
-import WeatherPanel from "./weatherPanel";
-import {WeatherDataType} from "./types";
+import WeatherPanel from "./panels/weatherPanel";
+import {GraphDataType} from "./types";
+import SensorPanel from "./panels/sensorPanel";
 
 const App = () => {
 
@@ -44,6 +45,7 @@ const App = () => {
     const showGroundPanel = useStore(state => state.showGroundPanel);
     const showHeliodonPanel = useStore(state => state.showHeliodonPanel);
     const showWeatherPanel = useStore(state => state.showWeatherPanel);
+    const showSensorPanel = useStore(state => state.showSensorPanel);
 
     const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
@@ -233,11 +235,13 @@ const App = () => {
                            setHeliodon={setHeliodon}
                            setSunAnimation={setSunAnimation}
             />}
+            {showSensorPanel &&
+            <SensorPanel city={city}/>}
             {showWeatherPanel &&
             <WeatherPanel city={city}
-                          graphs={[WeatherDataType.MonthlyTemperatures, WeatherDataType.SunshineHours]}
+                          graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}
             />}
-            <Dropdown key={'canvas-context-menu'} overlay={<ContextMenu/>} trigger={['contextMenu']}>
+            <Dropdown key={'canvas-context-menu'} overlay={<ContextMenu city={city}/>} trigger={['contextMenu']}>
                 <div>
                     <Canvas shadows={true}
                             camera={{

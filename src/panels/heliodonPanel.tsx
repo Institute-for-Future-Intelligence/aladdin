@@ -3,7 +3,7 @@
  */
 
 import React, {useEffect, useRef} from 'react';
-import {useStore} from "./stores/common";
+import {useStore} from "../stores/common";
 import styled from 'styled-components';
 import {Space, Switch, Slider, DatePicker, TimePicker} from "antd";
 import moment from 'moment';

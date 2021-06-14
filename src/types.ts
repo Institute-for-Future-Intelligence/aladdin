@@ -20,13 +20,16 @@ declare global {
 }
 
 export interface GraphDatumEntry {
-    [key: string]: number | undefined;
+    [key: string]: number | undefined | string;
 }
 
-export enum WeatherDataType {
+export enum GraphDataType {
     HourlyTemperatures = 0,
     MonthlyTemperatures = 1,
     SunshineHours = 2,
+    DaylightData = 3,
+    ClearnessData = 4,
+    RadiationSensorData = 5,
 }
 
 export enum Theme {

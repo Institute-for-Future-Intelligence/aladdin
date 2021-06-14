@@ -3,14 +3,14 @@
  */
 
 import React, {useRef} from 'react';
-import {useStore} from "./stores/common";
+import {useStore} from "../stores/common";
 import styled from 'styled-components';
 import {Space, Switch} from "antd";
 import {CompactPicker} from 'react-color';
-import Maps from "./components/maps";
+import Maps from "../components/maps";
 import {StandaloneSearchBox, useJsApiLoader} from "@react-google-maps/api";
 import {Libraries} from "@react-google-maps/api/dist/utils/make-load-script-url";
-import Spinner from './components/spinner';
+import Spinner from '../components/spinner';
 import 'antd/dist/antd.css';
 
 const libraries = ['places'] as Libraries;

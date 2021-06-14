@@ -16,12 +16,12 @@ import {
     YAxis,
 } from 'recharts';
 import {MONTHS, PRESET_COLORS} from "../constants";
-import {WeatherDataType, GraphDatumEntry} from "../types";
+import {GraphDataType, GraphDatumEntry} from "../types";
 import {useStore} from "../stores/common";
 import {Util} from "../util";
 
 export interface BarGraphProps {
-    type: WeatherDataType;
+    type: GraphDataType;
     dataSource: GraphDatumEntry[];
     height: number;
     labelX?: string,
@@ -69,13 +69,13 @@ const BarGraph = ({
         for (let i = 0; i < dataSetCount; i++) {
             let name = '';
             switch (type) {
-                case WeatherDataType.MonthlyTemperatures:
+                case GraphDataType.MonthlyTemperatures:
                     name = i === 0 ? `Low` : 'High';
                     break;
-                case WeatherDataType.SunshineHours:
+                case GraphDataType.SunshineHours:
                     name = 'Sunshine';
                     break;
-                case WeatherDataType.HourlyTemperatures:
+                case GraphDataType.HourlyTemperatures:
                     name = 'Temperature';
                     break;
             }

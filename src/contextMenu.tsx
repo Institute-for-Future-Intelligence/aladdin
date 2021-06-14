@@ -11,7 +11,6 @@ import {Menu, Checkbox, Radio} from 'antd';
 import {ObjectType, Theme} from "./types";
 import {computeDailyData} from "./analysis/sensorAnalysis";
 import {SensorModel} from "./models/sensorModel";
-import {MONTHS} from "./constants";
 
 // TODO: Reduce the space between menu items
 const StyledMenu = styled(Menu)`
@@ -28,12 +27,24 @@ const radioStyle = {
     lineHeight: '30px',
 };
 
-const ContextMenu = () => {
+export interface ContextMenuProps {
+
+    city: string | null;
+
+    [key: string]: any;
+
+}
+
+const ContextMenu = ({
+                         city,
+                         ...rest
+                     }: ContextMenuProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const latitude = useStore(state => state.latitude);
     const longitude = useStore(state => state.longitude);
     const today = new Date(useStore(state => state.date));
+    const getWeather = useStore(state => state.getWeather);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const updateElementById = useStore(state => state.updateElementById);
     const axes = useStore(state => state.axes);
@@ -43,9 +54,9 @@ const ContextMenu = () => {
     const showGroundPanel = useStore(state => state.showGroundPanel);
     const showWeatherPanel = useStore(state => state.showWeatherPanel);
     const clickObjectType = useStore(state => state.clickObjectType);
+    const setSensorData = useStore(state => state.setSensorData);
 
-    const [sensorDailyCollector] = useWorker(computeDailyData);
-
+    const weather = getWeather(city ?? 'Boston MA, USA');
     const selectedElement = getSelectedElement();
     switch (selectedElement ? selectedElement.type : clickObjectType) {
         case ObjectType.Sky:
@@ -121,25 +132,32 @@ const ContextMenu = () => {
                     </Menu.Item>
                     <SubMenu key={'analysis'} title={'Analysis'}>
                         <Menu.Item key={'sensor-collect-daily-data'} onClick={async () => {
-                            const result = await sensorDailyCollector(
+                            const result = computeDailyData(
                                 selectedElement as SensorModel,
+                                weather,
                                 latitude,
                                 longitude,
                                 today);
-                            console.log(today, result)
+                            console.log(result)
                         }}>
                             Collect Daily Data
                         </Menu.Item>
                         <Menu.Item key={'sensor-collect-yearly-data'} onClick={async () => {
+                            const data = [];
                             for (let i = 0; i < 12; i++) {
-                                const firstDay = new Date(today.getFullYear(), i, 1);
-                                const result = await sensorDailyCollector(
+                                const midMonth = new Date(today.getFullYear(), i, 15, 12);
+                                const result = computeDailyData(
                                     selectedElement as SensorModel,
+                                    weather,
                                     latitude,
                                     longitude,
-                                    firstDay);
-                                console.log(MONTHS[i], result)
+                                    midMonth);
+                                data.push(result);
                             }
+                            setSensorData(data);
+                            setCommonStore(state => {
+                                state.showSensorPanel = true;
+                            });
                         }}>
                             Collect Yearly Data
                         </Menu.Item>
