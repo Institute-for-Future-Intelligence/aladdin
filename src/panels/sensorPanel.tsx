@@ -71,27 +71,11 @@ const SensorPanel = ({
     const sensorData = useStore(state => state.sensorData);
     const responsiveHeight = 100;
 
-    const daylight = sensorData.map(value => value.Daylight);
-    const daylightData = [];
-    for (let i = 0; i < 12; i++) {
-        daylightData.push({Month: MONTHS[i], Daylight: daylight[i]});
-    }
-    const clearness = sensorData.map(value => value.Clearness);
-    const clearnessData = [];
-    for (let i = 0; i < 12; i++) {
-        clearnessData.push({Month: MONTHS[i], Clearness: clearness[i]});
-    }
-    const radiation = sensorData.map(value => value.Radiation);
-    const radiationData = [];
-    for (let i = 0; i < 12; i++) {
-        radiationData.push({Month: MONTHS[i], Radiation: radiation[i]});
-    }
-
     return (
         <Container>
             <ColumnWrapper>
                 <Header>
-                    <span>Sensor</span>
+                    <span>Sensor: {city}</span>
                     <span style={{cursor: 'pointer'}} onClick={() => {
                         setCommonStore((state) => {
                             state.showSensorPanel = false;
@@ -100,7 +84,7 @@ const SensorPanel = ({
                 </Header>
                 <LineGraph
                     type={GraphDataType.DaylightData}
-                    dataSource={daylightData}
+                    dataSource={sensorData.map(e => ({Month: e.Month, Daylight: e.Daylight}))}
                     height={responsiveHeight}
                     labelX={'Month'}
                     labelY={'Daylight'}
@@ -110,7 +94,7 @@ const SensorPanel = ({
                 />
                 <LineGraph
                     type={GraphDataType.ClearnessData}
-                    dataSource={clearnessData}
+                    dataSource={sensorData.map(e => ({Month: e.Month, Clearness: e.Clearness}))}
                     height={responsiveHeight}
                     labelX={'Month'}
                     labelY={'Clearness'}
@@ -120,7 +104,7 @@ const SensorPanel = ({
                 />
                 <LineGraph
                     type={GraphDataType.RadiationSensorData}
-                    dataSource={radiationData}
+                    dataSource={sensorData.map(e => ({Month: e.Month, Radiation: e.Radiation}))}
                     height={responsiveHeight}
                     labelX={'Month'}
                     labelY={'Radiation'}
@@ -128,9 +112,6 @@ const SensorPanel = ({
                     fractionDigits={1}
                     {...rest}
                 />
-                <div>
-                    <span>{city}</span>
-                </div>
             </ColumnWrapper>
         </Container>
     );

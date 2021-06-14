@@ -102,7 +102,7 @@ const LineGraph = ({
             lines.push(
                 <Line
                     key={i}
-                    type="natural"
+                    type="linear"
                     name={name}
                     dataKey={name}
                     stroke={PRESET_COLORS[i]}

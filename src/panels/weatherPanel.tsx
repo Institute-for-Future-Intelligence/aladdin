@@ -122,7 +122,7 @@ const WeatherPanel = ({
         <Container>
             <ColumnWrapper>
                 <Header>
-                    <span>Weather</span>
+                    <span>Weather: {city}</span>
                     <span style={{cursor: 'pointer'}} onClick={() => {
                         setCommonStore((state) => {
                             state.showWeatherPanel = false;
@@ -161,9 +161,6 @@ const WeatherPanel = ({
                             />
                         );
                     })}
-                    <div>
-                        <span>{city}</span>
-                    </div>
                 </>
             </ColumnWrapper>
         </Container>

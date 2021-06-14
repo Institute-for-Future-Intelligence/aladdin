@@ -7,6 +7,7 @@ import {getSunDirection} from "./sunTools";
 import {Vector3} from "three";
 import {WeatherModel} from "../models/weatherModel";
 import {GraphDatumEntry} from "../types";
+import {MONTHS} from "../constants";
 
 const TIMES_PER_HOUR = 4; // how many times an hour
 const INTERVAL = 60 / TIMES_PER_HOUR;
@@ -17,7 +18,7 @@ export const computeDailyData = (sensor: SensorModel,
                                  lng: number,
                                  date: Date) => {
 
-    const normal = new Vector3(0, 0, 1);
+    const normal = new Vector3(0, -1, 0);
 
     let total = 0;
     let count = 0;
@@ -29,24 +30,20 @@ export const computeDailyData = (sensor: SensorModel,
                 const cur = new Date(date.getFullYear(), date.getMonth(), date.getDate(), i, j * INTERVAL);
                 const sunDirection = getSunDirection(cur, lat);
                 if (sunDirection.z < 0) break loop; // the sun has set, break the outer loop
+                // avoid double counting at noon, which is the starting point
+                count += noon ? 0.5 : 1;
                 const rad = normal.dot(sunDirection);
                 if (rad > 0) {
-                    if (noon) { // avoid double counting at noon, which is the starting point
-                        count += 0.5;
-                        total += rad * 0.5;
-                        noon = false;
-                    } else {
-                        count += 1;
-                        total += rad;
-                    }
+                    total += noon ? rad * 0.5 : rad;
                 }
+                if (noon) noon = false;
             }
         }
     const daylight = count * INTERVAL / 30;
     let sunshineHours = weather.sunshineHours[date.getMonth()] / 30;
 
     return {
-        Month: date.getMonth(),
+        Month: MONTHS[date.getMonth()],
         Daylight: daylight,
         Clearness: (sunshineHours / daylight) * 100,
         Radiation: total * 2 * sunshineHours / daylight
