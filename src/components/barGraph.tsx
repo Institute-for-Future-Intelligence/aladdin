@@ -15,10 +15,8 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
-import {MONTHS, PRESET_COLORS} from "../constants";
+import {PRESET_COLORS} from "../constants";
 import {GraphDataType, GraphDatumEntry} from "../types";
-import {useStore} from "../stores/common";
-import {Util} from "../util";
 
 export interface BarGraphProps {
     type: GraphDataType;
@@ -28,7 +26,10 @@ export interface BarGraphProps {
     labelY?: string,
     unitX?: string;
     unitY?: string;
+    yMin?: string | number;
+    yMax?: string | number;
     fractionDigits?: number;
+    referenceX?: number | string;
     color?: string;
 
     [key: string]: any;
@@ -42,7 +43,10 @@ const BarGraph = ({
                       labelY,
                       unitX,
                       unitY,
+                      yMin = 'auto',
+                      yMax = 'auto',
                       fractionDigits = 2,
+                      referenceX,
                       color,
                       ...rest
                   }: BarGraphProps) => {
@@ -51,7 +55,6 @@ const BarGraph = ({
     const [horizontalGridLines, setHorizontalGridLines] = useState<boolean>(true);
     const [verticalGridLines, setVerticalGridLines] = useState<boolean>(true);
     const [legendDataKey, setLegendDataKey] = useState<string | null>(null);
-    const now = useStore(state => state.date);
 
     //init
     useEffect(() => {
@@ -77,6 +80,15 @@ const BarGraph = ({
                     break;
                 case GraphDataType.HourlyTemperatures:
                     name = 'Temperature';
+                    break;
+                case GraphDataType.DaylightData:
+                    name = 'Daylight';
+                    break;
+                case GraphDataType.ClearnessData:
+                    name = 'Clearness';
+                    break;
+                case GraphDataType.RadiationSensorData:
+                    name = 'Radiation';
                     break;
             }
             const opacity = legendDataKey === null ? 1 : (legendDataKey === name ? 1 : 0.25);
@@ -141,7 +153,7 @@ const BarGraph = ({
                                     stroke={"rgba(128, 128, 128, 0.3)"}
                                 />
                                 <ReferenceLine
-                                    x={MONTHS[Math.floor(Util.daysIntoYear(now) / 365 * 12)]}
+                                    x={referenceX}
                                     stroke="orange"
                                     strokeWidth={2}
                                 />
@@ -152,7 +164,7 @@ const BarGraph = ({
                                         position="bottom"
                                     />
                                 </XAxis>
-                                <YAxis domain={[0, 'auto']}>
+                                <YAxis domain={[yMin, yMax]}>
                                     <Label
                                         dx={-15}
                                         value={labelY + (unitY ? ' (' + unitY + ')' : '')}

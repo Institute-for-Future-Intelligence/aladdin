@@ -6,8 +6,10 @@ import React from 'react';
 import LineGraph from '../components/lineGraph';
 import styled from "styled-components";
 import {useStore} from "../stores/common";
-import {GraphDataType, GraphDatumEntry} from "../types";
+import {GraphDataType} from "../types";
 import {MONTHS} from "../constants";
+import {Util} from "../util";
+import BarGraph from "../components/barGraph";
 
 const Container = styled.div`
   position: fixed;
@@ -26,7 +28,7 @@ const ColumnWrapper = styled.div`
   right: 0;
   top: 0;
   width: 500px;
-  height: 600px;
+  height: 650px;
   padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
@@ -69,7 +71,10 @@ const SensorPanel = ({
 
     const setCommonStore = useStore(state => state.set);
     const sensorData = useStore(state => state.sensorData);
+    const now = useStore(state => state.date);
+
     const responsiveHeight = 100;
+    const referenceX = MONTHS[Math.floor(Util.daysIntoYear(now) / 365 * 12)];
 
     return (
         <Container>
@@ -89,17 +94,24 @@ const SensorPanel = ({
                     labelX={'Month'}
                     labelY={'Daylight'}
                     unitY={'Hours'}
+                    yMin={0}
+                    curveType={'natural'}
                     fractionDigits={1}
+                    referenceX={referenceX}
                     {...rest}
                 />
-                <LineGraph
+                <BarGraph
                     type={GraphDataType.ClearnessData}
                     dataSource={sensorData.map(e => ({Month: e.Month, Clearness: e.Clearness}))}
                     height={responsiveHeight}
                     labelX={'Month'}
                     labelY={'Clearness'}
                     unitY={'%'}
+                    yMin={0}
+                    yMax={100}
                     fractionDigits={1}
+                    referenceX={referenceX}
+                    color={'#66CDAA'}
                     {...rest}
                 />
                 <LineGraph
@@ -109,7 +121,10 @@ const SensorPanel = ({
                     labelX={'Month'}
                     labelY={'Radiation'}
                     unitY={'kWh/m²/day'}
-                    fractionDigits={1}
+                    yMin={0}
+                    curveType={'natural'}
+                    fractionDigits={2}
+                    referenceX={referenceX}
                     {...rest}
                 />
             </ColumnWrapper>

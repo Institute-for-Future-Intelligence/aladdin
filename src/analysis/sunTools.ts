@@ -48,16 +48,16 @@ export const computeSunLocation = (radius: number,
 
 // Solar radiation incident outside the earth's atmosphere is called extraterrestrial radiation.
 // https://pvpmc.sandia.gov/modeling-steps/1-weather-design-inputs/irradiance-and-insolation-2/extraterrestrial-radiation/
-export const getExtraterrestrialRadiation = (dayOfYear: number) => {
+const getExtraterrestrialRadiation = (dayOfYear: number) => {
     const b = 2 * Math.PI * dayOfYear / 365;
     const er = 1.00011 + 0.034221 * Math.cos(b) + 0.00128 * Math.sin(b) + 0.000719 * Math.cos(2 * b) + 0.000077 * Math.sin(2 * b);
     return SOLAR_CONSTANT * er;
 }
 
 // air mass calculation from http://en.wikipedia.org/wiki/Air_mass_(solar_energy)#At_higher_altitudes
-export const computeAirMass = (airMassType: AirMass,
-                               sunDirection: Vector3,
-                               altitude: number) => {
+const computeAirMass = (airMassType: AirMass,
+                        sunDirection: Vector3,
+                        altitude: number) => {
     let zenithAngle;
     switch (airMassType) {
         case AirMass.NONE:
@@ -84,13 +84,6 @@ export const calculatePeakRadiation = (sunDirection: Vector3,
     return getExtraterrestrialRadiation(dayOfYear)
         * Math.pow(0.7, Math.pow(computeAirMass(airMassType, sunDirection, altitude), 0.678));
 };
-
-export const calculateDirectRadiation = (sunDirection: Vector3,
-                                         normal: Vector3,
-                                         peakRadiation: number) => {
-    const result = sunDirection.dot(normal) * peakRadiation;
-    return result < 0 ? 0 : result;
-}
 
 // see: http://www.physics.arizona.edu/~cronin/Solar/References/Irradiance%20Models%20and%20Data/WOC01.pdf
 export const calculateDiffuseAndReflectedRadiation = (ground: GroundModel,

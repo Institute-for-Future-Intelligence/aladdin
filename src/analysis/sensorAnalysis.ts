@@ -5,7 +5,6 @@
 import {SensorModel} from "../models/sensorModel";
 import {
     calculateDiffuseAndReflectedRadiation,
-    calculateDirectRadiation,
     calculatePeakRadiation,
     getSunDirection
 } from "./sunTools";
@@ -28,36 +27,31 @@ export const computeDailyData = (sensor: SensorModel,
                                  altitude: number,
                                  date: Date) => {
 
-    const normal = new Vector3(0, -1, 0);
+    const normal = new Vector3(0, 0, 1);
 
     let total = 0;
     let count = 0;
-    let noon = true;
 
-    loop:
-        for (let i = 12; i < 24; i++) {
-            for (let j = 0; j < TIMES_PER_HOUR; j++) {
-                const cur = new Date(date.getFullYear(), date.getMonth(), date.getDate(), i, j * INTERVAL);
-                const sunDirection = getSunDirection(cur, lat);
-                if (sunDirection.z < 0) break loop; // the sun has set, break the outer loop
-                const peakRadiation = calculatePeakRadiation(sunDirection, Util.dayOfYear(cur), altitude, AirMass.KASTEN_YOUNG);
-                // avoid double counting at noon, which is the starting point
-                count += noon ? 0.5 : 1;
+    for (let i = 0; i < 24; i++) {
+        for (let j = 0; j < TIMES_PER_HOUR; j++) {
+            const cur = new Date(date.getFullYear(), date.getMonth(), date.getDate(), i, j * INTERVAL);
+            const sunDirection = getSunDirection(cur, lat);
+            if (sunDirection.z > 0) {
+                // when the sun is out
+                count++;
+                const peakRadiation = calculatePeakRadiation(sunDirection, Util.dayOfYear(cur), altitude, AirMass.SPHERE_MODEL);
                 const dot = normal.dot(sunDirection);
-                let directRadiation = 0;
                 if (dot > 0) {
-                    directRadiation = calculateDirectRadiation(sunDirection, normal, peakRadiation);
-                    // avoid double counting at noon, which is the starting point
-                    total += noon ? directRadiation * 0.5 : directRadiation;
+                    // direct radiation
+                    total += dot * peakRadiation;
                 }
-                const indirectRadiation = calculateDiffuseAndReflectedRadiation(ground, date.getMonth(), normal, peakRadiation);
-                total += indirectRadiation;
-                if (noon) noon = false;
+                // indirect radiation
+                total += calculateDiffuseAndReflectedRadiation(ground, date.getMonth(), normal, peakRadiation);
             }
         }
-    const daylight = count * INTERVAL / 30;
+    }
+    const daylight = count * INTERVAL / 60;
     let clearness = weather.sunshineHours[date.getMonth()] / (30 * daylight);
-    total *= 2;// double it because we only calculate half day above
     total *= clearness; // apply clearness
     total /= TIMES_PER_HOUR; // convert the unit of timeStep from minute to hour so that we get kWh
 

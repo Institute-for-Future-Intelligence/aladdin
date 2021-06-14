@@ -9,6 +9,7 @@ import {GraphDataType} from "../types";
 import styled from "styled-components";
 import {useStore} from "../stores/common";
 import {MONTHS} from "../constants";
+import {Util} from "../util";
 
 const Container = styled.div`
   position: fixed;
@@ -71,6 +72,7 @@ const WeatherPanel = ({
 
     const setCommonStore = useStore(state => state.set);
     const getWeather = useStore(state => state.getWeather);
+    const now = useStore(state => state.date);
 
     const responsiveHeight = useMemo(() => {
         return graphs ? Math.floor(100 / graphs.length) : 100;
@@ -117,6 +119,7 @@ const WeatherPanel = ({
 
     const yNames = ['Temperature', 'Temperature', 'Sunshine'];
     const yUnits = ['°C', '°C', 'Hours'];
+    const referenceX = MONTHS[Math.floor(Util.daysIntoYear(now) / 365 * 12)];
 
     return (
         <Container>
@@ -141,7 +144,9 @@ const WeatherPanel = ({
                                     labelX={'Month'}
                                     labelY={yNames[g]}
                                     unitY={yUnits[g]}
+                                    yMin={0}
                                     fractionDigits={0}
+                                    referenceX={referenceX}
                                     color={'#FFD700'}
                                     {...rest}
                                 />
@@ -157,6 +162,7 @@ const WeatherPanel = ({
                                 labelY={yNames[g]}
                                 unitY={yUnits[g]}
                                 fractionDigits={0}
+                                referenceX={referenceX}
                                 {...rest}
                             />
                         );

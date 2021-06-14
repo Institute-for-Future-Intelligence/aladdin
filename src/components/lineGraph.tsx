@@ -16,10 +16,9 @@ import {
     YAxis,
 } from 'recharts';
 import {createSymbol, SYMBOLS} from "./symbols";
-import {MONTHS, PRESET_COLORS} from "../constants";
+import {PRESET_COLORS} from "../constants";
 import {GraphDataType, GraphDatumEntry} from "../types";
-import {useStore} from "../stores/common";
-import {Util} from "../util";
+import {CurveType} from "recharts/types/shape/Curve";
 
 export interface LineGraphProps {
     type: GraphDataType;
@@ -29,6 +28,10 @@ export interface LineGraphProps {
     labelY?: string,
     unitX?: string;
     unitY?: string;
+    yMin?: string | number;
+    yMax?: string | number;
+    curveType?: CurveType;
+    referenceX?: number | string;
     fractionDigits?: number;
 
     [key: string]: any;
@@ -42,6 +45,10 @@ const LineGraph = ({
                        labelY,
                        unitX,
                        unitY,
+                       yMin = 'auto',
+                       yMax = 'auto',
+                       curveType = 'linear',
+                       referenceX,
                        fractionDigits = 2,
                        ...rest
                    }: LineGraphProps) => {
@@ -53,7 +60,6 @@ const LineGraph = ({
     const [lineWidth, setLineWidth] = useState<number>(2);
     const [symbolCount, setSymbolCount] = useState<number>(12);
     const [symbolSize, setSymbolSize] = useState<number>(1);
-    const now = useStore(state => state.date);
 
     //init
     useEffect(() => {
@@ -102,7 +108,7 @@ const LineGraph = ({
             lines.push(
                 <Line
                     key={i}
-                    type="linear"
+                    type={curveType}
                     name={name}
                     dataKey={name}
                     stroke={PRESET_COLORS[i]}
@@ -163,7 +169,7 @@ const LineGraph = ({
                                     stroke={"rgba(128, 128, 128, 0.3)"}
                                 />
                                 <ReferenceLine
-                                    x={MONTHS[Math.floor(Util.daysIntoYear(now) / 365 * 12)]}
+                                    x={referenceX}
                                     stroke="orange"
                                     strokeWidth={2}
                                 />
@@ -174,7 +180,7 @@ const LineGraph = ({
                                         position="bottom"
                                     />
                                 </XAxis>
-                                <YAxis domain={['auto', 'auto']}>
+                                <YAxis domain={[yMin, yMax]}>
                                     <Label
                                         dx={-15}
                                         value={labelY + (unitY ? ' (' + unitY + ')' : '')}
