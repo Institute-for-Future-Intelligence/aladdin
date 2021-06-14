@@ -141,9 +141,15 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 elements.push(e1);
                 elements.push(e2);
                 elements.push(e3);
+                const ground = {
+                    albedo: 0.3,
+                    thermalDiffusivity: 0.05,
+                    snowReflectionFactors: new Array(12).fill(0)
+                };
                 const world = {
                     name: 'default',
                     elements: elements,
+                    ground: ground,
                     cameraPosition: new Vector3(0, 0, 5)
                 };
                 state.worlds[world.name] = world;

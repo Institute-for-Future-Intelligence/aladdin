@@ -30,6 +30,10 @@ export class Util {
         return new Vector3(0, 0, -1);
     }
 
+    static isZero(x: number) {
+        return Math.abs(x) < Util.ZERO_TOLERANCE;
+    }
+
     static get ZERO_TOLERANCE() {
         return 0.0001;
     }
@@ -69,9 +73,12 @@ export class Util {
     }
 
     static daysIntoYear(date: string) {
-        const now = new Date(date);
-        const start = new Date(now.getFullYear(), 0, 0);
-        const diff = now.getTime() - start.getTime();
+        return Util.dayOfYear(new Date(date));
+    }
+
+    static dayOfYear(date: Date) {
+        const start = new Date(date.getFullYear(), 0, 0);
+        const diff = date.getTime() - start.getTime();
         const oneDay = 1000 * 60 * 60 * 24;
         return Math.floor(diff / oneDay);
     }

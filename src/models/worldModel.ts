@@ -10,7 +10,7 @@ export interface WorldModel {
 
     name: string;
     cameraPosition: Vector3;
-    ground?: GroundModel;
+    ground: GroundModel;
     elements: ElementModel[];
 
 }

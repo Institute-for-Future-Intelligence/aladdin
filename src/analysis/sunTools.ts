@@ -4,6 +4,8 @@
 
 import {Util} from "../util";
 import {Vector3} from "three";
+import {AirMass, ASHRAE_C, SOLAR_CONSTANT} from "./analysisConstants";
+import {GroundModel} from "../models/groundModel";
 
 export const TILT_ANGLE = 23.45 / 180.0 * Math.PI;
 
@@ -43,3 +45,68 @@ export const computeSunLocation = (radius: number,
     coords.x = -coords.x;
     return coords;
 };
+
+// Solar radiation incident outside the earth's atmosphere is called extraterrestrial radiation.
+// https://pvpmc.sandia.gov/modeling-steps/1-weather-design-inputs/irradiance-and-insolation-2/extraterrestrial-radiation/
+export const getExtraterrestrialRadiation = (dayOfYear: number) => {
+    const b = 2 * Math.PI * dayOfYear / 365;
+    const er = 1.00011 + 0.034221 * Math.cos(b) + 0.00128 * Math.sin(b) + 0.000719 * Math.cos(2 * b) + 0.000077 * Math.sin(2 * b);
+    return SOLAR_CONSTANT * er;
+}
+
+// air mass calculation from http://en.wikipedia.org/wiki/Air_mass_(solar_energy)#At_higher_altitudes
+export const computeAirMass = (airMassType: AirMass,
+                               sunDirection: Vector3,
+                               altitude: number) => {
+    let zenithAngle;
+    switch (airMassType) {
+        case AirMass.NONE:
+            return 1;
+        case AirMass.KASTEN_YOUNG:
+            zenithAngle = sunDirection.angleTo(Util.UNIT_VECTOR_POS_Z);
+            return 1 / (Math.cos(zenithAngle) + 0.50572 * Math.pow(96.07995 - zenithAngle / Math.PI * 180, -1.6364));
+        default:
+            zenithAngle = sunDirection.angleTo(Util.UNIT_VECTOR_POS_Z);
+            const cos = Math.cos(zenithAngle);
+            const r = 708;
+            const c = altitude / 9000;
+            return Math.sqrt((r + c) * (r + c) * cos * cos + (2 * r + 1 + c) * (1 - c)) - (r + c) * cos;
+    }
+};
+
+// Reused peak solar radiation value. Must be called once and only once before
+// calling calculateDirectRadiation and calculateDiffusionAndReflection
+export const calculatePeakRadiation = (sunDirection: Vector3,
+                                       dayOfYear: number,
+                                       altitude: number,
+                                       airMassType: AirMass) => {
+    // don't use the 1.1 prefactor as we consider diffuse radiation in the ASHRAE model
+    return getExtraterrestrialRadiation(dayOfYear)
+        * Math.pow(0.7, Math.pow(computeAirMass(airMassType, sunDirection, altitude), 0.678));
+};
+
+export const calculateDirectRadiation = (sunDirection: Vector3,
+                                         normal: Vector3,
+                                         peakRadiation: number) => {
+    const result = sunDirection.dot(normal) * peakRadiation;
+    return result < 0 ? 0 : result;
+}
+
+// see: http://www.physics.arizona.edu/~cronin/Solar/References/Irradiance%20Models%20and%20Data/WOC01.pdf
+export const calculateDiffuseAndReflectedRadiation = (ground: GroundModel,
+                                                      month: number,
+                                                      normal: Vector3,
+                                                      peakRadiation: number) => {
+    let result = 0;
+    const cos = normal.dot(Util.UNIT_VECTOR_POS_Z);
+    const viewFactorWithSky = 0.5 * (1 + cos);
+    if (viewFactorWithSky > 0) { // diffuse irradiance from the sky
+        result += ASHRAE_C[month] * viewFactorWithSky * peakRadiation;
+    }
+    // if a surface faces down, it should receive ground reflection as well
+    const viewFactorWithGround = 0.5 * Math.abs(1 - cos);
+    if (!Util.isZero(viewFactorWithGround)) { // short-wave reflection from the ground
+        result += ground.albedo * viewFactorWithGround * peakRadiation;
+    }
+    return result;
+}

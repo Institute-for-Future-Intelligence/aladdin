@@ -44,6 +44,7 @@ const ContextMenu = ({
     const latitude = useStore(state => state.latitude);
     const longitude = useStore(state => state.longitude);
     const today = new Date(useStore(state => state.date));
+    const getWorld = useStore(state => state.getWorld);
     const getWeather = useStore(state => state.getWeather);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const updateElementById = useStore(state => state.updateElementById);
@@ -57,6 +58,7 @@ const ContextMenu = ({
     const setSensorData = useStore(state => state.setSensorData);
 
     const weather = getWeather(city ?? 'Boston MA, USA');
+    const ground = getWorld('default').ground;
     const selectedElement = getSelectedElement();
     switch (selectedElement ? selectedElement.type : clickObjectType) {
         case ObjectType.Sky:
@@ -135,8 +137,10 @@ const ContextMenu = ({
                             const result = computeDailyData(
                                 selectedElement as SensorModel,
                                 weather,
+                                ground,
                                 latitude,
                                 longitude,
+                                city ? getWeather(city).elevation : 0,
                                 today);
                             console.log(result)
                         }}>
@@ -149,8 +153,10 @@ const ContextMenu = ({
                                 const result = computeDailyData(
                                     selectedElement as SensorModel,
                                     weather,
+                                    ground,
                                     latitude,
                                     longitude,
+                                    city ? getWeather(city).elevation : 0,
                                     midMonth);
                                 data.push(result);
                             }
