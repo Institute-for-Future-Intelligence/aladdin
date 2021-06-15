@@ -30,7 +30,7 @@ import GroundImage from "./views/groundImage";
 import {Dropdown} from "antd";
 import ContextMenu from "./contextMenu";
 import WeatherPanel from "./panels/weatherPanel";
-import {GraphDataType} from "./types";
+import {GraphDataType, ObjectType} from "./types";
 import YearlyLightSensorPanel from "./panels/yearlyLightSensorPanel";
 import DailyLightSensorPanel from "./panels/dailyLightSensorPanel";
 import {computeDailyData, computeHourlyData} from "./analysis/sensorAnalysis";
@@ -61,7 +61,6 @@ const App = () => {
     const longitude = useStore(state => state.longitude);
     const weatherData = useStore(state => state.weatherData);
     const now = new Date(useStore(state => state.date));
-    const getSelectedElement = useStore(state => state.getSelectedElement);
     const getWeather = useStore(state => state.getWeather);
     const updateElementById = useStore(state => state.updateElementById);
     const setDailyLightSensorData = useStore(state => state.setDailyLightSensorData);
@@ -194,19 +193,24 @@ const App = () => {
     const sunAboveHorizon = sunlightDirection.y > 0;
 
     const collectDailyLightSensorData = async () => {
-        const selectedElement = getSelectedElement();
-        if (selectedElement) {
+        const elements = getWorld('default').elements;
+        if (elements && elements.length > 0) {
             const ground = getWorld('default').ground;
-            const result = computeHourlyData(
-                selectedElement as SensorModel,
-                weather,
-                ground,
-                latitude,
-                longitude,
-                city ? getWeather(city).elevation : 0,
-                now);
-            setDailyLightSensorData(result);
-            updateElementById(selectedElement.id, {time: selectedElement.time + 1});
+            const elevation = city ? getWeather(city).elevation : 0;
+            for (const e of elements) {
+                if (e.type === ObjectType.Sensor) {
+                    const result = computeHourlyData(
+                        e as SensorModel,
+                        weather,
+                        ground,
+                        latitude,
+                        longitude,
+                        elevation,
+                        now);
+                    setDailyLightSensorData(result);
+                    updateElementById(e.id, {time: e.time + 1});
+                }
+            }
             setCommonStore(state => {
                 state.showDailyLightSensorPanel = true;
             });
@@ -214,23 +218,29 @@ const App = () => {
     };
 
     const collectYearlyLightSensorData = async () => {
-        const selectedElement = getSelectedElement();
-        if (selectedElement) {
+        const elements = getWorld('default').elements;
+        if (elements && elements.length > 0) {
             const ground = getWorld('default').ground;
-            const data = [];
-            for (let i = 0; i < 12; i++) {
-                const midMonth = new Date(now.getFullYear(), i, 15, 12);
-                const result = computeDailyData(
-                    selectedElement as SensorModel,
-                    weather,
-                    ground,
-                    latitude,
-                    longitude,
-                    city ? getWeather(city).elevation : 0,
-                    midMonth);
-                data.push(result);
+            const elevation = city ? getWeather(city).elevation : 0;
+            for (const e of elements) {
+                if (e.type === ObjectType.Sensor) {
+                    const data = [];
+                    for (let i = 0; i < 12; i++) {
+                        const midMonth = new Date(now.getFullYear(), i, 15, 12);
+                        const result = computeDailyData(
+                            e as SensorModel,
+                            weather,
+                            ground,
+                            latitude,
+                            longitude,
+                            elevation,
+                            midMonth
+                        );
+                        data.push(result);
+                    }
+                    setYearlyLightSensorData(data);
+                }
             }
-            setYearlyLightSensorData(data);
             setCommonStore(state => {
                 state.showYearlyLightSensorPanel = true;
             });
@@ -315,7 +325,7 @@ const App = () => {
                             <OrbitController/>
                             <ambientLight intensity={0.25} name={'Ambient Light'}/>
                             <directionalLight
-                                name={'Directional Ligh'}
+                                name={'Directional Light'}
                                 color='white'
                                 position={[sunlightDirection.x, sunlightDirection.y, sunlightDirection.z]}
                                 intensity={sunAboveHorizon ? 0.5 : 0}
