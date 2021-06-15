@@ -13,7 +13,7 @@ export interface AxesProps {
 
 const Axes = ({lineWidth = 1, endPoint = 1000}: AxesProps) => {
     return (
-        <mesh>
+        <mesh name={'Axes'}>
             <Line points={[new Vector3(-endPoint, 0, 0), new Vector3(endPoint, 0, 0)]}
                   color={'red'}
                   lineWidth={lineWidth}/>

@@ -39,6 +39,7 @@ const Compass = ({
         <mesh
             {...props}
             ref={mesh}
+            name={'Compass'}
             rotation={new Euler(-Math.PI / 2, 0, 0)}
         >
             <mesh position={[-0.001, 0.02, 0]} material={textMaterial}>

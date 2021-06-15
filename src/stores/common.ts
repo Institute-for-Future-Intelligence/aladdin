@@ -53,6 +53,7 @@ export interface CommonStoreState {
 
     clickObjectType: string | null;
     getSelectedElement: () => ElementModel | null;
+    getElementById: (id: string) => ElementModel | null;
     selectNone: () => void;
     updateElementById: (id: string, element: Partial<ElementModel>) => void;
 
@@ -138,8 +139,9 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 } as CuboidModel;
                 const e3 = {
                     type: ObjectType.Sensor,
-                    cx: 2,
-                    cy: 2,
+                    cx: 0,
+                    cy: 5,
+                    cz: 0,
                     lx: 0.05,
                     ly: 0.05,
                     height: 0.01,
@@ -171,6 +173,15 @@ export const useStore = create<CommonStoreState>(devtools(persist((
             const elements = get().worlds['default'].elements;
             for (const e of elements) {
                 if (e.selected) {
+                    return e;
+                }
+            }
+            return null;
+        },
+        getElementById(id: string) {
+            const elements = get().worlds['default'].elements;
+            for (const e of elements) {
+                if (e.id === id) {
                     return e;
                 }
             }

@@ -2,20 +2,23 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useRef} from "react";
+import React, {useEffect, useRef} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
-import {Vector3} from "three";
+import {Object3D, Raycaster, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {SensorModel} from "../models/sensorModel";
+import {useThree} from "@react-three/fiber";
+import {getSunDirection} from "../analysis/sunTools";
 
 const Sensor = ({
                     id,
                     cx,
                     cy,
+                    cz,
                     lx = 1,
                     ly = 1,
                     height = 0.1,
-                    color = 'gray',
+                    color = 'white',
                     lineColor = 'black',
                     lineWidth = 0.1,
                     hovered = false,
@@ -23,20 +26,47 @@ const Sensor = ({
                     showLabel = false,
                     light = true,
                     heatFlux = false,
+                    time,
                 }: SensorModel) => {
 
     cy = -cy; // we want positive y to point north
 
     const setCommonStore = useStore(state => state.set);
+    const now = new Date(useStore(state => state.date));
+    const latitude = useStore(state => state.latitude);
+    const updateElementById = useStore(state => state.updateElementById);
+    const getElementById = useStore(state => state.getElementById);
 
     const baseRef = useRef();
     const handleRef = useRef();
 
-    const position = new Vector3(cx, height / 2, cy);
-    const positionLL = new Vector3(cx - lx / 2, height / 2, cy - ly / 2);
-    const positionUL = new Vector3(cx - lx / 2, height / 2, cy + ly / 2);
-    const positionLR = new Vector3(cx + lx / 2, height / 2, cy - ly / 2);
-    const positionUR = new Vector3(cx + lx / 2, height / 2, cy + ly / 2);
+    const position = new Vector3(cx, cz, cy);
+    const positionLL = new Vector3(cx - lx / 2, 0, cy - ly / 2);
+    const positionUL = new Vector3(cx - lx / 2, 0, cy + ly / 2);
+    const positionLR = new Vector3(cx + lx / 2, 0, cy - ly / 2);
+    const positionUR = new Vector3(cx + lx / 2, 0, cy + ly / 2);
+
+    const element = getElementById(id);
+    const {scene} = useThree();
+    const ray = new Raycaster();
+
+    useEffect(() => {
+        const sunDirection = getSunDirection(now, latitude);
+        // convert the direction from physics model to the coordinate system of three.js
+        ray.set(position, new Vector3(sunDirection.x, sunDirection.z, -sunDirection.y));
+        const content = scene.children.filter(c => c.name === 'Content');
+        if (content.length > 0) {
+            const components = content[0].children;
+            const objects: Object3D[] = [];
+            for (const c of components) {
+                objects.push(...c.children.filter(x => x.castShadow));
+            }
+            console.log('***', objects)
+            const intersects = ray.intersectObjects(objects);
+            console.log(intersects)
+            updateElementById(id, {lit: intersects.length === 0});
+        }
+    }, [time]);
 
     const selectMe = () => {
         setCommonStore((state) => {
@@ -65,12 +95,12 @@ const Sensor = ({
 
     return (
 
-        <group>
+        <group name={'Sensor Group'}>
 
-            {/* draw rectangle */}
-            <Box castShadow receiveShadow
+            {/* draw rectangle (too small to cast shadow) */}
+            <Box receiveShadow
                  ref={baseRef}
-                 name={'Foundation'}
+                 name={'Sensor'}
                  onClick={(e) => {
                      if (e.intersections.length > 0) {
                          const intersected = e.intersections[0].object === baseRef.current;
@@ -101,48 +131,61 @@ const Sensor = ({
                  args={[lx, height, ly]}
                  position={[cx, height / 2, cy]}
             >
-                <meshStandardMaterial attach="material" color={color}/>
+                <meshStandardMaterial attach="material" color={element?.lit ? 'red' : color}/>
             </Box>
 
             <>
                 {/* draw wireframe lines upper face */}
                 <Line points={[[positionLL.x, height, positionLL.z], [positionLR.x, height, positionLR.z]]}
+                      name={'Line LL-LR Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
                 <Line points={[[positionLR.x, height, positionLR.z], [positionUR.x, height, positionUR.z]]}
+                      name={'Line LR-UR Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
                 <Line points={[[positionUR.x, height, positionUR.z], [positionUL.x, height, positionUL.z]]}
+                      name={'Line UR-UL Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
                 <Line points={[[positionUL.x, height, positionUL.z], [positionLL.x, height, positionLL.z]]}
+                      name={'Line UL-LL Upper Face'}
+                      lineWidth={lineWidth}
                       color={lineColor}/>
 
                 {/* draw wireframe lines lower face */}
-                <Line points={[[positionLL.x, 0, positionLL.z], [positionLR.x, 0, positionLR.z]]}
+                <Line points={[positionLL, positionLR]}
+                      name={'Line LL-LR Lower Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionLR.x, 0, positionLR.z], [positionUR.x, 0, positionUR.z]]}
+                <Line points={[positionLR, positionUR]}
+                      name={'Line LR-UR Lower Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUR.x, 0, positionUR.z], [positionUL.x, 0, positionUL.z]]}
+                <Line points={[positionUR, positionUL]}
+                      name={'Line UR-UL Lower Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUL.x, 0, positionUL.z], [positionLL.x, 0, positionLL.z]]}
+                <Line points={[positionUL, positionLL]}
+                      name={'Line UL-LL Lower Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
 
                 {/* draw wireframe vertical lines */}
-                <Line points={[[positionLL.x, 0, positionLL.z], [positionLL.x, height, positionLL.z]]}
+                <Line points={[positionLL, [positionLL.x, height, positionLL.z]]}
+                      name={'Line LL-LL Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionLR.x, 0, positionLR.z], [positionLR.x, height, positionLR.z]]}
+                <Line points={[positionLR, [positionLR.x, height, positionLR.z]]}
+                      name={'Line LR-LR Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUL.x, 0, positionUL.z], [positionUL.x, height, positionUL.z]]}
+                <Line points={[positionUL, [positionUL.x, height, positionUL.z]]}
+                      name={'Line UL-UL Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUR.x, 0, positionUR.z], [positionUR.x, height, positionUR.z]]}
+                <Line points={[positionUR, [positionUR.x, height, positionUR.z]]}
+                      name={'Line UR-UR Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
             </>
@@ -152,12 +195,14 @@ const Sensor = ({
             <Sphere
                 ref={handleRef}
                 args={[0.1, 6, 6]}
+                name={'Handle'}
                 position={position}>
                 <meshStandardMaterial attach="material" color={'white'}/>
             </Sphere>
             }
             {(hovered || showLabel) &&
             <textSprite
+                name={'Label'}
                 text={'Sensor'}
                 fontSize={90}
                 fontFace={'Times Roman'}

@@ -73,12 +73,12 @@ const Cuboid = ({
 
     return (
 
-        <group>
+        <group name={'Cuboid Group'}>
 
             {/* draw rectangular cuboid */}
             <Box castShadow receiveShadow
                  ref={baseRef}
-                 name={'Foundation'}
+                 name={'Cuboid'}
                  onClick={(e) => {
                      if (e.intersections.length > 0) {
                          const intersected = e.intersections[0].object === baseRef.current;
@@ -112,53 +112,65 @@ const Cuboid = ({
             </Box>
 
             <>
-                {/* draw wireframe lines upper face */}
-                <Line points={[[positionLLTop.x, height, positionLLTop.z], [positionLRTop.x, height, positionLRTop.z]]}
+                {/* draw wireframe lines top */}
+                <Line points={[positionLLTop, positionLRTop]}
+                      name={'Line LL-LR Top'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionLRTop.x, height, positionLRTop.z], [positionURTop.x, height, positionURTop.z]]}
+                <Line points={[positionLRTop, positionURTop]}
+                      name={'Line LR-UR Top'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionURTop.x, height, positionURTop.z], [positionULTop.x, height, positionULTop.z]]}
+                <Line points={[positionURTop, positionULTop]}
+                      name={'Line UR-UL Top'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionULTop.x, height, positionULTop.z], [positionLLTop.x, height, positionLLTop.z]]}
+                <Line points={[positionULTop, positionLLTop]}
+                      name={'Line UL-LL Top'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
 
                 {/* draw wireframe lines lower face */}
                 <Line
-                    points={[[positionLLTop.x, 0, positionLLTop.z], [positionLRTop.x, 0, positionLRTop.z]]}
+                    points={[positionLLBot, positionLRBot]}
+                    name={'Line LL-LR Bottom'}
                     lineWidth={lineWidth}
                     color={lineColor}/>
                 <Line
-                    points={[[positionLRTop.x, 0, positionLRTop.z], [positionURTop.x, 0, positionURTop.z]]}
+                    points={[positionLRBot, positionURBot]}
+                    name={'Line LR-UR Bottom'}
                     lineWidth={lineWidth}
                     color={lineColor}/>
                 <Line
-                    points={[[positionURTop.x, 0, positionURTop.z], [positionULTop.x, 0, positionULTop.z]]}
+                    points={[positionURBot, positionULBot]}
+                    name={'Line UR-UL Bottom'}
                     lineWidth={lineWidth}
                     color={lineColor}/>
                 <Line
-                    points={[[positionULTop.x, 0, positionULTop.z], [positionLLTop.x, 0, positionLLTop.z]]}
+                    points={[positionULBot, positionLLBot]}
+                    name={'Line UL-LL Bottom'}
                     lineWidth={lineWidth}
                     color={lineColor}/>
 
                 {/* draw wireframe vertical lines */}
                 <Line
-                    points={[[positionLLTop.x, 0, positionLLTop.z], [positionLLTop.x, height, positionLLTop.z]]}
+                    points={[positionLLTop, positionLLBot]}
+                    name={'Line LL-LL Vertical'}
                     lineWidth={lineWidth}
                     color={lineColor}/>
                 <Line
-                    points={[[positionLRTop.x, 0, positionLRTop.z], [positionLRTop.x, height, positionLRTop.z]]}
+                    points={[positionLRTop, positionLRBot]}
+                    name={'Line LR-LR Vertical'}
                     lineWidth={lineWidth}
                     color={lineColor}/>
                 <Line
-                    points={[[positionULTop.x, 0, positionULTop.z], [positionULTop.x, height, positionULTop.z]]}
+                    points={[positionULTop, positionULBot]}
+                    name={'Line UL-UL Vertical'}
                     lineWidth={lineWidth}
                     color={lineColor}/>
                 <Line
-                    points={[[positionURTop.x, 0, positionURTop.z], [positionURTop.x, height, positionURTop.z]]}
+                    points={[positionURTop, positionURBot]}
+                    name={'Line UR-UR Vertical'}
                     lineWidth={lineWidth}
                     color={lineColor}/>
             </>
@@ -167,41 +179,49 @@ const Cuboid = ({
             {selected &&
             <>
                 <Sphere ref={handleLLTopRef}
+                        name={'Handle LL Top'}
                         args={[0.1, 6, 6]}
                         position={positionLLTop}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Sphere>
                 <Sphere ref={handleULTopRef}
+                        name={'Handle UL Top'}
                         args={[0.1, 6, 6]}
                         position={positionULTop}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Sphere>
                 <Sphere ref={handleLRTopRef}
+                        name={'Handle LR Top'}
                         args={[0.1, 6, 6]}
                         position={positionLRTop}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Sphere>
                 <Sphere ref={handleURTopRef}
+                        name={'Handle UR Top'}
                         args={[0.1, 6, 6]}
                         position={positionURTop}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Sphere>
                 <Sphere ref={handleLLBotRef}
+                        name={'Handle LL Bottom'}
                         args={[0.1, 6, 6]}
                         position={positionLLBot}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Sphere>
                 <Sphere ref={handleULBotRef}
+                        name={'Handle UL Bottom'}
                         args={[0.1, 6, 6]}
                         position={positionULBot}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Sphere>
                 <Sphere ref={handleLRBotRef}
+                        name={'Handle LR Bottom'}
                         args={[0.1, 6, 6]}
                         position={positionLRBot}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Sphere>
                 <Sphere ref={handleURBotRef}
+                        name={'Handle UR Bottom'}
                         args={[0.1, 6, 6]}
                         position={positionURBot}>
                     <meshStandardMaterial attach="material" color={'white'}/>
@@ -211,6 +231,7 @@ const Cuboid = ({
 
             {hovered &&
             <textSprite
+                name={'Label'}
                 text={'Box'}
                 fontSize={90}
                 fontFace={'Times Roman'}

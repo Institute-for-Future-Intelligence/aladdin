@@ -33,6 +33,8 @@ import WeatherPanel from "./panels/weatherPanel";
 import {GraphDataType} from "./types";
 import YearlyLightSensorPanel from "./panels/yearlyLightSensorPanel";
 import DailyLightSensorPanel from "./panels/dailyLightSensorPanel";
+import {computeDailyData, computeHourlyData} from "./analysis/sensorAnalysis";
+import {SensorModel} from "./models/sensorModel";
 
 const App = () => {
 
@@ -59,6 +61,11 @@ const App = () => {
     const longitude = useStore(state => state.longitude);
     const weatherData = useStore(state => state.weatherData);
     const now = new Date(useStore(state => state.date));
+    const getSelectedElement = useStore(state => state.getSelectedElement);
+    const getWeather = useStore(state => state.getWeather);
+    const updateElementById = useStore(state => state.updateElementById);
+    const setDailyLightSensorData = useStore(state => state.setDailyLightSensorData);
+    const setYearlyLightSensorData = useStore(state => state.setYearlyLightSensorData);
 
     const [hourAngle, setHourAngle] = useState<number>(0);
     const [declinationAngle, setDeclinationAngle] = useState<number>(0);
@@ -67,6 +74,7 @@ const App = () => {
     const [city, setCity] = useState<string | null>('Boston MA, USA');
 
     const world = worlds['default']; // currently we have only one world, which is default
+    const weather = getWeather(city ?? 'Boston MA, USA');
     const radius = 10;
 
     useEffect(() => {
@@ -185,6 +193,50 @@ const App = () => {
 
     const sunAboveHorizon = sunlightDirection.y > 0;
 
+    const collectDailyLightSensorData = async () => {
+        const selectedElement = getSelectedElement();
+        if (selectedElement) {
+            const ground = getWorld('default').ground;
+            const result = computeHourlyData(
+                selectedElement as SensorModel,
+                weather,
+                ground,
+                latitude,
+                longitude,
+                city ? getWeather(city).elevation : 0,
+                now);
+            setDailyLightSensorData(result);
+            updateElementById(selectedElement.id, {time: selectedElement.time + 1});
+            setCommonStore(state => {
+                state.showDailyLightSensorPanel = true;
+            });
+        }
+    };
+
+    const collectYearlyLightSensorData = async () => {
+        const selectedElement = getSelectedElement();
+        if (selectedElement) {
+            const ground = getWorld('default').ground;
+            const data = [];
+            for (let i = 0; i < 12; i++) {
+                const midMonth = new Date(now.getFullYear(), i, 15, 12);
+                const result = computeDailyData(
+                    selectedElement as SensorModel,
+                    weather,
+                    ground,
+                    latitude,
+                    longitude,
+                    city ? getWeather(city).elevation : 0,
+                    midMonth);
+                data.push(result);
+            }
+            setYearlyLightSensorData(data);
+            setCommonStore(state => {
+                state.showYearlyLightSensorPanel = true;
+            });
+        }
+    };
+
     return (
         <div className="App">
             <div style={{
@@ -243,7 +295,15 @@ const App = () => {
             <WeatherPanel city={city}
                           graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}
             />}
-            <Dropdown key={'canvas-context-menu'} overlay={<ContextMenu city={city}/>} trigger={['contextMenu']}>
+            <Dropdown key={'canvas-context-menu'}
+                      trigger={['contextMenu']}
+                      overlay={
+                          <ContextMenu
+                              city={city}
+                              collectDailyLightSensorData={collectDailyLightSensorData}
+                              collectYearlyLightSensorData={collectYearlyLightSensorData}
+                          />
+                      }>
                 <div>
                     <Canvas shadows={true}
                             camera={{
@@ -253,8 +313,9 @@ const App = () => {
                             style={{height: 'calc(100vh - 70px)', backgroundColor: 'black'}}>
                         <Suspense fallback={null}>
                             <OrbitController/>
-                            <ambientLight intensity={0.25}/>
+                            <ambientLight intensity={0.25} name={'Ambient Light'}/>
                             <directionalLight
+                                name={'Directional Ligh'}
                                 color='white'
                                 position={[sunlightDirection.x, sunlightDirection.y, sunlightDirection.z]}
                                 intensity={sunAboveHorizon ? 0.5 : 0}
@@ -262,7 +323,7 @@ const App = () => {
                                 shadow-mapSize-height={512}
                                 shadow-mapSize-width={512}
                             />
-                            {grid && <gridHelper args={[500, 100, 'gray', 'gray']}/>}
+                            {grid && <gridHelper name={'Grid'} args={[500, 100, 'gray', 'gray']}/>}
                             <Compass/>
                             {/*<Obj/>*/}
                             {axes && <Axes/>}

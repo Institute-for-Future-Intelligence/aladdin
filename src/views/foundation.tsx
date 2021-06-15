@@ -64,7 +64,7 @@ const Foundation = ({
 
     return (
 
-        <group>
+        <group name={'Foundation Group'}>
 
             {/* draw rectangle */}
             <Box castShadow receiveShadow
@@ -105,43 +105,55 @@ const Foundation = ({
             <>
                 {/* draw wireframe lines upper face */}
                 <Line points={[[positionLL.x, height, positionLL.z], [positionLR.x, height, positionLR.z]]}
+                      name={'Line LL-LR Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
                 <Line points={[[positionLR.x, height, positionLR.z], [positionUR.x, height, positionUR.z]]}
+                      name={'Line LR-UR Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
                 <Line points={[[positionUR.x, height, positionUR.z], [positionUL.x, height, positionUL.z]]}
+                      name={'Line UR-UL Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
                 <Line points={[[positionUL.x, height, positionUL.z], [positionLL.x, height, positionLL.z]]}
+                      name={'Line UL-LL Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
 
                 {/* draw wireframe lines lower face */}
                 <Line points={[[positionLL.x, 0, positionLL.z], [positionLR.x, 0, positionLR.z]]}
+                      name={'Line LL-LR Lower Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
                 <Line points={[[positionLR.x, 0, positionLR.z], [positionUR.x, 0, positionUR.z]]}
+                      name={'Line LR-UR Lower Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
                 <Line points={[[positionUR.x, 0, positionUR.z], [positionUL.x, 0, positionUL.z]]}
+                      name={'Line UR-UL Lower Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
                 <Line points={[[positionUL.x, 0, positionUL.z], [positionLL.x, 0, positionLL.z]]}
+                      name={'Line UL-LL Lower Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
 
                 {/* draw wireframe vertical lines */}
                 <Line points={[[positionLL.x, 0, positionLL.z], [positionLL.x, height, positionLL.z]]}
+                      name={'Line LL-LL Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
                 <Line points={[[positionLR.x, 0, positionLR.z], [positionLR.x, height, positionLR.z]]}
+                      name={'Line LR-LR Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
                 <Line points={[[positionUL.x, 0, positionUL.z], [positionUL.x, height, positionUL.z]]}
+                      name={'Line UL-UL Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
                 <Line points={[[positionUR.x, 0, positionUR.z], [positionUR.x, height, positionUR.z]]}
+                      name={'Line UR-UR Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
             </>
@@ -151,21 +163,25 @@ const Foundation = ({
             <>
                 <Sphere ref={handleLLRef}
                         args={[0.1, 6, 6]}
+                        name={'Handle LL'}
                         position={positionLL}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Sphere>
                 <Sphere ref={handleULRef}
                         args={[0.1, 6, 6]}
+                        name={'Handle UL'}
                         position={positionUL}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Sphere>
                 <Sphere ref={handleLRRef}
                         args={[0.1, 6, 6]}
+                        name={'Handle LR'}
                         position={positionLR}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Sphere>
                 <Sphere ref={handleURRef}
                         args={[0.1, 6, 6]}
+                        name={'Handle UR'}
                         position={positionUR}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Sphere>
@@ -174,6 +190,7 @@ const Foundation = ({
 
             {hovered &&
             <textSprite
+                name={'Label'}
                 text={'Foundation'}
                 fontSize={90}
                 fontFace={'Times Roman'}

@@ -30,6 +30,8 @@ const radioStyle = {
 export interface ContextMenuProps {
 
     city: string | null;
+    collectDailyLightSensorData: () => void;
+    collectYearlyLightSensorData: () => void;
 
     [key: string]: any;
 
@@ -37,15 +39,12 @@ export interface ContextMenuProps {
 
 const ContextMenu = ({
                          city,
+                         collectDailyLightSensorData,
+                         collectYearlyLightSensorData,
                          ...rest
                      }: ContextMenuProps) => {
 
     const setCommonStore = useStore(state => state.set);
-    const latitude = useStore(state => state.latitude);
-    const longitude = useStore(state => state.longitude);
-    const today = new Date(useStore(state => state.date));
-    const getWorld = useStore(state => state.getWorld);
-    const getWeather = useStore(state => state.getWeather);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const updateElementById = useStore(state => state.updateElementById);
     const axes = useStore(state => state.axes);
@@ -55,12 +54,8 @@ const ContextMenu = ({
     const showGroundPanel = useStore(state => state.showGroundPanel);
     const showWeatherPanel = useStore(state => state.showWeatherPanel);
     const clickObjectType = useStore(state => state.clickObjectType);
-    const setDailyLightSensorData = useStore(state => state.setDailyLightSensorData);
-    const setYearlyLightSensorData = useStore(state => state.setYearlyLightSensorData);
-
-    const weather = getWeather(city ?? 'Boston MA, USA');
-    const ground = getWorld('default').ground;
     const selectedElement = getSelectedElement();
+
     switch (selectedElement ? selectedElement.type : clickObjectType) {
         case ObjectType.Sky:
             return (
@@ -134,41 +129,10 @@ const ContextMenu = ({
                         </Checkbox>
                     </Menu.Item>
                     <SubMenu key={'analysis'} title={'Analysis'}>
-                        <Menu.Item key={'sensor-collect-daily-data'} onClick={async () => {
-                            const result = computeHourlyData(
-                                selectedElement as SensorModel,
-                                weather,
-                                ground,
-                                latitude,
-                                longitude,
-                                city ? getWeather(city).elevation : 0,
-                                today);
-                            setDailyLightSensorData(result);
-                            setCommonStore(state => {
-                                state.showDailyLightSensorPanel = true;
-                            });
-                        }}>
+                        <Menu.Item key={'sensor-collect-daily-data'} onClick={collectDailyLightSensorData}>
                             Collect Daily Data
                         </Menu.Item>
-                        <Menu.Item key={'sensor-collect-yearly-data'} onClick={async () => {
-                            const data = [];
-                            for (let i = 0; i < 12; i++) {
-                                const midMonth = new Date(today.getFullYear(), i, 15, 12);
-                                const result = computeDailyData(
-                                    selectedElement as SensorModel,
-                                    weather,
-                                    ground,
-                                    latitude,
-                                    longitude,
-                                    city ? getWeather(city).elevation : 0,
-                                    midMonth);
-                                data.push(result);
-                            }
-                            setYearlyLightSensorData(data);
-                            setCommonStore(state => {
-                                state.showYearlyLightSensorPanel = true;
-                            });
-                        }}>
+                        <Menu.Item key={'sensor-collect-yearly-data'} onClick={collectYearlyLightSensorData}>
                             Collect Yearly Data
                         </Menu.Item>
                     </SubMenu>

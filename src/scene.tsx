@@ -12,9 +12,14 @@ import {FoundationModel} from "./models/foundationModel";
 import {SensorModel} from "./models/sensorModel";
 import {CuboidModel} from "./models/cuboidModel";
 
-const Scene: React.FC<{ world: WorldModel }> = ({world}) => {
+export interface SceneProps {
+    world: WorldModel;
+}
+
+const Scene: React.FC<SceneProps> = ({world}: SceneProps) => {
+
     return (
-        <group>
+        <group name={'Content'}>
             {world.elements
                 .filter(e => e.type === ObjectType.Foundation)
                 .map(e => <Foundation key={e.id} {...e as FoundationModel}/>)}

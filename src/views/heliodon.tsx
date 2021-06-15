@@ -181,7 +181,7 @@ const Heliodon = ({
     }, [latitude, radius]);
 
     return (
-        <mesh rotation={new Euler(-Math.PI / 2, 0, 0)}>
+        <mesh rotation={new Euler(-Math.PI / 2, 0, 0)} name={'Heliodon'}>
             {/* draw base */}
             <mesh>
                 <bufferGeometry attach='geometry'>
