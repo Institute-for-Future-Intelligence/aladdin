@@ -96,7 +96,7 @@ const LineGraph = ({
                     break;
                 case GraphDataType.DailyRadiationSensorData:
                 case GraphDataType.YearlyRadiationSensorData:
-                    name = 'Radiation';
+                    name = 'Radiation' + (i + 1);
                     break;
             }
             const opacity = legendDataKey === null ? 1 : (legendDataKey === name ? 1 : 0.25);

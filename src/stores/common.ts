@@ -142,7 +142,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 } as CuboidModel;
                 const e3 = {
                     type: ObjectType.Sensor,
-                    cx: 0,
+                    cx: 2,
                     cy: 5,
                     cz: 0,
                     lx: 0.05,
@@ -153,9 +153,37 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                     light: true,
                     heatFlux: false
                 } as SensorModel;
+                const e4 = {
+                    type: ObjectType.Sensor,
+                    cx: 0,
+                    cy: 5,
+                    cz: 0,
+                    lx: 0.05,
+                    ly: 0.05,
+                    height: 0.01,
+                    id: 's2',
+                    showLabel: false,
+                    light: true,
+                    heatFlux: false
+                } as SensorModel;
+                const e5 = {
+                    type: ObjectType.Sensor,
+                    cx: 0,
+                    cy: 6,
+                    cz: 0,
+                    lx: 0.05,
+                    ly: 0.05,
+                    height: 0.01,
+                    id: 's3',
+                    showLabel: false,
+                    light: true,
+                    heatFlux: false
+                } as SensorModel;
                 elements.push(e1);
                 elements.push(e2);
                 elements.push(e3);
+                elements.push(e4);
+                elements.push(e5);
                 const ground = {
                     albedo: 0.3,
                     thermalDiffusivity: 0.05,

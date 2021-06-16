@@ -144,7 +144,7 @@ const YearlyLightSensorPanel = ({
                     />
                     <LineGraph
                         type={GraphDataType.YearlyRadiationSensorData}
-                        dataSource={sensorData.map(e => ({Month: e.Month, Radiation: e.Radiation}))}
+                        dataSource={sensorData.map(({Daylight, Clearness, ...item}) => item)}
                         height={responsiveHeight}
                         labelX={'Month'}
                         labelY={'Radiation'}
