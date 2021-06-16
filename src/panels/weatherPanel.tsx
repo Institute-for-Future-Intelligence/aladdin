@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import BarGraph from "../components/barGraph";
 import LineGraph from '../components/lineGraph';
 import {GraphDataType} from "../types";
@@ -10,6 +10,7 @@ import styled from "styled-components";
 import {useStore} from "../stores/common";
 import {MONTHS} from "../constants";
 import {Util} from "../util";
+import ReactDraggable, {DraggableEventHandler} from "react-draggable";
 
 const Container = styled.div`
   position: fixed;
@@ -46,6 +47,7 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: move;
 
   svg.icon {
     height: 16px;
@@ -73,6 +75,7 @@ const WeatherPanel = ({
     const setCommonStore = useStore(state => state.set);
     const getWeather = useStore(state => state.getWeather);
     const now = useStore(state => state.date);
+    const [curPosition, setCurPosition] = useState({x: 0, y: 0});
 
     const responsiveHeight = useMemo(() => {
         return graphs ? Math.floor(100 / graphs.length) : 100;
@@ -121,22 +124,64 @@ const WeatherPanel = ({
     const yUnits = ['°C', '°C', 'Hours'];
     const referenceX = MONTHS[Math.floor(Util.daysIntoYear(now) / 365 * 12)];
 
+    const onDrag: DraggableEventHandler = (e, ui) => {
+        // TODO
+        setCurPosition({
+            x: ui.x,
+            y: ui.y,
+        });
+    };
+
+    const onDragStart: DraggableEventHandler = (e, ui) => {
+        // TODO
+    };
+
+    const onDragEnd: DraggableEventHandler = (e, ui) => {
+        // TODO
+    };
+
     return (
-        <Container>
-            <ColumnWrapper>
-                <Header>
-                    <span>Weather: {city}</span>
-                    <span style={{cursor: 'pointer'}} onClick={() => {
-                        setCommonStore((state) => {
-                            state.showWeatherPanel = false;
-                        });
-                    }}>Close</span>
-                </Header>
-                <>
-                    {graphs.map(g => {
-                        if (g === GraphDataType.SunshineHours) {
+        <ReactDraggable
+            handle={'.handle'}
+            bounds={'parent'}
+            axis='both'
+            position={curPosition}
+            onDrag={onDrag}
+            onStart={onDragStart}
+            onStop={onDragEnd}
+        >
+            <Container>
+                <ColumnWrapper>
+                    <Header className='handle'>
+                        <span>Weather: {city}</span>
+                        <span style={{cursor: 'pointer'}} onClick={() => {
+                            setCommonStore((state) => {
+                                state.showWeatherPanel = false;
+                            });
+                        }}>Close</span>
+                    </Header>
+                    <>
+                        {graphs.map(g => {
+                            if (g === GraphDataType.SunshineHours) {
+                                return (
+                                    <BarGraph
+                                        key={g}
+                                        type={g}
+                                        dataSource={getData[g]}
+                                        height={responsiveHeight}
+                                        labelX={'Month'}
+                                        labelY={yNames[g]}
+                                        unitY={yUnits[g]}
+                                        yMin={0}
+                                        fractionDigits={0}
+                                        referenceX={referenceX}
+                                        color={'#FFD700'}
+                                        {...rest}
+                                    />
+                                );
+                            }
                             return (
-                                <BarGraph
+                                <LineGraph
                                     key={g}
                                     type={g}
                                     dataSource={getData[g]}
@@ -144,32 +189,16 @@ const WeatherPanel = ({
                                     labelX={'Month'}
                                     labelY={yNames[g]}
                                     unitY={yUnits[g]}
-                                    yMin={0}
                                     fractionDigits={0}
                                     referenceX={referenceX}
-                                    color={'#FFD700'}
                                     {...rest}
                                 />
                             );
-                        }
-                        return (
-                            <LineGraph
-                                key={g}
-                                type={g}
-                                dataSource={getData[g]}
-                                height={responsiveHeight}
-                                labelX={'Month'}
-                                labelY={yNames[g]}
-                                unitY={yUnits[g]}
-                                fractionDigits={0}
-                                referenceX={referenceX}
-                                {...rest}
-                            />
-                        );
-                    })}
-                </>
-            </ColumnWrapper>
-        </Container>
+                        })}
+                    </>
+                </ColumnWrapper>
+            </Container>
+        </ReactDraggable>
     );
 
 };

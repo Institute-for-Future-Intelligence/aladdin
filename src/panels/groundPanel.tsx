@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {useStore} from "../stores/common";
 import styled from 'styled-components';
 import {Space, Switch} from "antd";
@@ -11,6 +11,7 @@ import Maps from "../components/maps";
 import {StandaloneSearchBox, useJsApiLoader} from "@react-google-maps/api";
 import {Libraries} from "@react-google-maps/api/dist/utils/make-load-script-url";
 import Spinner from '../components/spinner';
+import ReactDraggable, {DraggableEventHandler} from "react-draggable";
 import 'antd/dist/antd.css';
 
 const libraries = ['places'] as Libraries;
@@ -49,6 +50,7 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: move;
 
   svg.icon {
     height: 16px;
@@ -93,6 +95,7 @@ const GroundPanel = ({
     const mapWeatherStations = useStore(state => state.mapWeatherStations);
     const address = useStore(state => state.address);
     const searchBox = useRef<google.maps.places.SearchBox>();
+    const [curPosition, setCurPosition] = useState({x: 0, y: 0});
 
     const {isLoaded, loadError} = useJsApiLoader({
         id: 'google-map-script',
@@ -124,104 +127,130 @@ const GroundPanel = ({
         });
     };
 
+    const onDrag: DraggableEventHandler = (e, ui) => {
+        // TODO
+        setCurPosition({
+            x: ui.x,
+            y: ui.y,
+        });
+    };
+
+    const onDragStart: DraggableEventHandler = (e, ui) => {
+        // TODO
+    };
+
+    const onDragEnd: DraggableEventHandler = (e, ui) => {
+        // TODO
+    };
+
     return (
-        <Container>
-            <ColumnWrapper>
-                <Header>
-                    <span>Ground Settings</span>
-                    <span style={{cursor: 'pointer'}} onClick={() => {
-                        setCommonStore((state) => {
-                            state.showGroundPanel = false;
-                        });
-                    }}>Close</span>
-                </Header>
-                <Space direction={'vertical'}>
-                    <Space style={{padding: '20px'}} align={'center'} size={20}>
-                        <Space direction={'vertical'}>
-                            <Space>
-                                <Space style={{width: '60px'}}>Grid:</Space>
-                                <Switch title={'Show ground grid'}
-                                        checked={grid}
-                                        onChange={(checked) => {
-                                            setGrid?.(checked);
-                                        }}
-                                />
+        <ReactDraggable
+            handle={'.handle'}
+            bounds={'parent'}
+            axis='both'
+            position={curPosition}
+            onDrag={onDrag}
+            onStart={onDragStart}
+            onStop={onDragEnd}
+        >
+            <Container>
+                <ColumnWrapper>
+                    <Header className='handle'>
+                        <span>Ground Settings</span>
+                        <span style={{cursor: 'pointer'}} onClick={() => {
+                            setCommonStore((state) => {
+                                state.showGroundPanel = false;
+                            });
+                        }}>Close</span>
+                    </Header>
+                    <Space direction={'vertical'}>
+                        <Space style={{padding: '20px'}} align={'center'} size={20}>
+                            <Space direction={'vertical'}>
+                                <Space>
+                                    <Space style={{width: '60px'}}>Grid:</Space>
+                                    <Switch title={'Show ground grid'}
+                                            checked={grid}
+                                            onChange={(checked) => {
+                                                setGrid?.(checked);
+                                            }}
+                                    />
+                                </Space>
+                                <Space>
+                                    <Space style={{width: '60px'}}>Image:</Space>
+                                    <Switch title={'Show ground image'}
+                                            checked={groundImage}
+                                            onChange={(checked) => {
+                                                setGroundImage?.(checked);
+                                            }}
+                                    />
+                                </Space>
+                                <Space>
+                                    <Space style={{width: '60px'}}>Stations:</Space>
+                                    <Switch title={'Show weather stations'}
+                                            checked={mapWeatherStations}
+                                            onChange={(checked) => {
+                                                setMapWeatherStations(checked);
+                                            }}
+                                    />
+                                </Space>
                             </Space>
-                            <Space>
-                                <Space style={{width: '60px'}}>Image:</Space>
-                                <Switch title={'Show ground image'}
-                                        checked={groundImage}
-                                        onChange={(checked) => {
-                                            setGroundImage?.(checked);
-                                        }}
-                                />
-                            </Space>
-                            <Space>
-                                <Space style={{width: '60px'}}>Stations:</Space>
-                                <Switch title={'Show weather stations'}
-                                        checked={mapWeatherStations}
-                                        onChange={(checked) => {
-                                            setMapWeatherStations(checked);
-                                        }}
-                                />
-                            </Space>
-                        </Space>
-                        <div>Ground Color<br/>
-                            <CompactPicker color={groundColor} onChangeComplete={(colorResult) => {
-                                setGroundColor?.(colorResult.hex);
-                            }}/>
-                        </div>
-                    </Space>
-                    {isLoaded &&
-                    <Space>
-                        <div>
-                            <StandaloneSearchBox onLoad={onLoad}
-                                                 onPlacesChanged={onPlacesChanged}>
-                                <input
-                                    type="text"
-                                    placeholder={address}
-                                    style={{
-                                        boxSizing: `border-box`,
-                                        border: `1px solid transparent`,
-                                        width: `400px`,
-                                        height: `32px`,
-                                        padding: `0 12px`,
-                                        borderRadius: `3px`,
-                                        boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
-                                        fontSize: `14px`,
-                                        outline: `none`,
-                                        textOverflow: `ellipses`,
-                                        position: "relative"
-                                    }}
-                                />
-                            </StandaloneSearchBox>
-                        </div>
-                    </Space>
-                    }
-                    {isLoaded ?
-                        <Space>
-                            <div>
-                                <Maps setLatitude={changeLatitude}
-                                      setLongitude={changeLongitude}
-                                      setZoom={changeMapZoom}
-                                      setTilt={changeMapTilt}
-                                      setType={changeMapType}
-                                />
-                                Coordinates: ({latitude.toFixed(4)}°, {longitude.toFixed(4)}°),
-                                Zoom: {mapZoom}
+                            <div>Ground Color<br/>
+                                <CompactPicker color={groundColor} onChangeComplete={(colorResult) => {
+                                    setGroundColor?.(colorResult.hex);
+                                }}/>
                             </div>
                         </Space>
-                        :
-                        <Spinner/>
-                    }
-                    {loadError &&
-                    <Space>
-                        <div>Map cannot be loaded right now, sorry.</div>
+                        {isLoaded &&
+                        <Space>
+                            <div>
+                                <StandaloneSearchBox onLoad={onLoad}
+                                                     onPlacesChanged={onPlacesChanged}>
+                                    <input
+                                        type="text"
+                                        placeholder={address}
+                                        style={{
+                                            boxSizing: `border-box`,
+                                            border: `1px solid transparent`,
+                                            width: `400px`,
+                                            height: `32px`,
+                                            padding: `0 12px`,
+                                            borderRadius: `3px`,
+                                            boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
+                                            fontSize: `14px`,
+                                            outline: `none`,
+                                            textOverflow: `ellipses`,
+                                            position: "relative"
+                                        }}
+                                    />
+                                </StandaloneSearchBox>
+                            </div>
+                        </Space>
+                        }
+                        {isLoaded ?
+                            <Space>
+                                <div>
+                                    <Maps setLatitude={changeLatitude}
+                                          setLongitude={changeLongitude}
+                                          setZoom={changeMapZoom}
+                                          setTilt={changeMapTilt}
+                                          setType={changeMapType}
+                                    />
+                                    Coordinates: ({latitude.toFixed(4)}°, {longitude.toFixed(4)}°),
+                                    Zoom: {mapZoom}
+                                </div>
+                            </Space>
+                            :
+                            <Spinner/>
+                        }
+                        {loadError &&
+                        <Space>
+                            <div>Map cannot be loaded right now, sorry.</div>
+                        </Space>
+                        }
                     </Space>
-                    }
-                </Space>
-            </ColumnWrapper>
-        </Container>
+                </ColumnWrapper>
+            </Container>
+        </ReactDraggable>
     );
 };
 

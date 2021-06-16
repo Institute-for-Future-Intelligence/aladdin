@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import LineGraph from '../components/lineGraph';
 import styled from "styled-components";
 import {useStore} from "../stores/common";
@@ -10,6 +10,7 @@ import {GraphDataType} from "../types";
 import {MONTHS} from "../constants";
 import {Util} from "../util";
 import BarGraph from "../components/barGraph";
+import ReactDraggable, {DraggableEventHandler} from "react-draggable";
 
 const Container = styled.div`
   position: fixed;
@@ -47,6 +48,7 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: move;
 
   svg.icon {
     height: 16px;
@@ -72,63 +74,90 @@ const YearlyLightSensorPanel = ({
     const setCommonStore = useStore(state => state.set);
     const sensorData = useStore(state => state.yearlyLightSensorData);
     const now = useStore(state => state.date);
+    const [curPosition, setCurPosition] = useState({x: 0, y: 0});
 
     const responsiveHeight = 100;
     const referenceX = MONTHS[Math.floor(Util.daysIntoYear(now) / 365 * 12)];
 
+    const onDrag: DraggableEventHandler = (e, ui) => {
+        // TODO
+        setCurPosition({
+            x: ui.x,
+            y: ui.y,
+        });
+    };
+
+    const onDragStart: DraggableEventHandler = (e, ui) => {
+        // TODO
+    };
+
+    const onDragEnd: DraggableEventHandler = (e, ui) => {
+        // TODO
+    };
+
     return (
-        <Container>
-            <ColumnWrapper>
-                <Header>
-                    <span>Light Sensor: {city}</span>
-                    <span style={{cursor: 'pointer'}} onClick={() => {
-                        setCommonStore((state) => {
-                            state.showYearlyLightSensorPanel = false;
-                        });
-                    }}>Close</span>
-                </Header>
-                <LineGraph
-                    type={GraphDataType.DaylightData}
-                    dataSource={sensorData.map(e => ({Month: e.Month, Daylight: e.Daylight}))}
-                    height={responsiveHeight}
-                    labelX={'Month'}
-                    labelY={'Daylight'}
-                    unitY={'Hours'}
-                    yMin={0}
-                    curveType={'natural'}
-                    fractionDigits={1}
-                    referenceX={referenceX}
-                    {...rest}
-                />
-                <BarGraph
-                    type={GraphDataType.ClearnessData}
-                    dataSource={sensorData.map(e => ({Month: e.Month, Clearness: e.Clearness}))}
-                    height={responsiveHeight}
-                    labelX={'Month'}
-                    labelY={'Clearness'}
-                    unitY={'%'}
-                    yMin={0}
-                    yMax={100}
-                    fractionDigits={1}
-                    referenceX={referenceX}
-                    color={'#66CDAA'}
-                    {...rest}
-                />
-                <LineGraph
-                    type={GraphDataType.YearlyRadiationSensorData}
-                    dataSource={sensorData.map(e => ({Month: e.Month, Radiation: e.Radiation}))}
-                    height={responsiveHeight}
-                    labelX={'Month'}
-                    labelY={'Radiation'}
-                    unitY={'kWh/m²/day'}
-                    yMin={0}
-                    curveType={'natural'}
-                    fractionDigits={2}
-                    referenceX={referenceX}
-                    {...rest}
-                />
-            </ColumnWrapper>
-        </Container>
+        <ReactDraggable
+            handle={'.handle'}
+            bounds={'parent'}
+            axis='both'
+            position={curPosition}
+            onDrag={onDrag}
+            onStart={onDragStart}
+            onStop={onDragEnd}
+        >
+            <Container>
+                <ColumnWrapper>
+                    <Header className='handle'>
+                        <span>Light Sensor: {city}</span>
+                        <span style={{cursor: 'pointer'}} onClick={() => {
+                            setCommonStore((state) => {
+                                state.showYearlyLightSensorPanel = false;
+                            });
+                        }}>Close</span>
+                    </Header>
+                    <LineGraph
+                        type={GraphDataType.DaylightData}
+                        dataSource={sensorData.map(e => ({Month: e.Month, Daylight: e.Daylight}))}
+                        height={responsiveHeight}
+                        labelX={'Month'}
+                        labelY={'Daylight'}
+                        unitY={'Hours'}
+                        yMin={0}
+                        curveType={'natural'}
+                        fractionDigits={1}
+                        referenceX={referenceX}
+                        {...rest}
+                    />
+                    <BarGraph
+                        type={GraphDataType.ClearnessData}
+                        dataSource={sensorData.map(e => ({Month: e.Month, Clearness: e.Clearness}))}
+                        height={responsiveHeight}
+                        labelX={'Month'}
+                        labelY={'Clearness'}
+                        unitY={'%'}
+                        yMin={0}
+                        yMax={100}
+                        fractionDigits={1}
+                        referenceX={referenceX}
+                        color={'#66CDAA'}
+                        {...rest}
+                    />
+                    <LineGraph
+                        type={GraphDataType.YearlyRadiationSensorData}
+                        dataSource={sensorData.map(e => ({Month: e.Month, Radiation: e.Radiation}))}
+                        height={responsiveHeight}
+                        labelX={'Month'}
+                        labelY={'Radiation'}
+                        unitY={'kWh/m²/day'}
+                        yMin={0}
+                        curveType={'natural'}
+                        fractionDigits={2}
+                        referenceX={referenceX}
+                        {...rest}
+                    />
+                </ColumnWrapper>
+            </Container>
+        </ReactDraggable>
     );
 
 };

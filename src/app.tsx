@@ -33,7 +33,7 @@ import WeatherPanel from "./panels/weatherPanel";
 import {GraphDataType} from "./types";
 import YearlyLightSensorPanel from "./panels/yearlyLightSensorPanel";
 import DailyLightSensorPanel from "./panels/dailyLightSensorPanel";
-import Simulation from "./simulation";
+import Simulation from "./analysis/simulation";
 
 const App = () => {
 
@@ -189,6 +189,9 @@ const App = () => {
     const sunAboveHorizon = sunlightDirection.y > 0;
 
     const collectDailyLightSensorData = () => {
+        setCommonStore(state => {
+            state.timesPerHour = 20;
+        });
         setDailyLightSensorDataFlag(!dailyLightSensorDataFlag);
         setCommonStore(state => {
             state.showDailyLightSensorPanel = true;
@@ -196,6 +199,9 @@ const App = () => {
     };
 
     const collectYearlyLightSensorData = async () => {
+        setCommonStore(state => {
+            state.timesPerHour = 20;
+        });
         setYearlyLightSensorDataFlag(!yearlyLightSensorDataFlag);
         setCommonStore(state => {
             state.showYearlyLightSensorPanel = true;

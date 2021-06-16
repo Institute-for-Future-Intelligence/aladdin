@@ -57,6 +57,7 @@ export interface CommonStoreState {
     selectNone: () => void;
     updateElementById: (id: string, element: Partial<ElementModel>) => void;
 
+    timesPerHour: number;
     dailyLightSensorData: DatumEntry[];
     setDailyLightSensorData: (data: DatumEntry[]) => void;
     yearlyLightSensorData: DatumEntry[];
@@ -98,6 +99,8 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         mapWeatherStations: false,
         date: new Date(2021, 5, 22, 12).toString(),
         weatherData: {},
+
+        timesPerHour: 20, // how many times per hour to collect data
 
         yearlyLightSensorData: [],
         setYearlyLightSensorData(data) {

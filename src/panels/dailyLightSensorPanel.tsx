@@ -2,12 +2,13 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import LineGraph from '../components/lineGraph';
 import styled from "styled-components";
 import {useStore} from "../stores/common";
 import {GraphDataType} from "../types";
 import moment from "moment";
+import ReactDraggable, {DraggableEventHandler} from 'react-draggable';
 
 const Container = styled.div`
   position: fixed;
@@ -45,6 +46,7 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: move;
 
   svg.icon {
     height: 16px;
@@ -70,36 +72,63 @@ const DailyLightSensorPanel = ({
     const setCommonStore = useStore(state => state.set);
     const sensorData = useStore(state => state.dailyLightSensorData);
     const now = new Date(useStore(state => state.date));
+    const [curPosition, setCurPosition] = useState({x: 0, y: 0});
 
     const responsiveHeight = 100;
 
+    const onDrag: DraggableEventHandler = (e, ui) => {
+        // TODO
+        setCurPosition({
+            x: ui.x,
+            y: ui.y,
+        });
+    };
+
+    const onDragStart: DraggableEventHandler = (e, ui) => {
+        // TODO
+    };
+
+    const onDragEnd: DraggableEventHandler = (e, ui) => {
+        // TODO
+    };
+
     return (
-        <Container>
-            <ColumnWrapper>
-                <Header>
-                    <span>Light Sensor: {city} | {moment(now).format('MM/DD')}</span>
-                    <span style={{cursor: 'pointer'}} onClick={() => {
-                        setCommonStore((state) => {
-                            state.showDailyLightSensorPanel = false;
-                        });
-                    }}>Close</span>
-                </Header>
-                <LineGraph
-                    type={GraphDataType.DailyRadiationSensorData}
-                    dataSource={sensorData}
-                    height={responsiveHeight}
-                    labelX={'Hour'}
-                    labelY={'Radiation'}
-                    unitY={'kWh/m²/day'}
-                    yMin={0}
-                    curveType={'linear'}
-                    fractionDigits={2}
-                    symbolCount={24}
-                    referenceX={now.getHours()}
-                    {...rest}
-                />
-            </ColumnWrapper>
-        </Container>
+        <ReactDraggable
+            handle={'.handle'}
+            bounds={'parent'}
+            axis='both'
+            position={curPosition}
+            onDrag={onDrag}
+            onStart={onDragStart}
+            onStop={onDragEnd}
+        >
+            <Container>
+                <ColumnWrapper>
+                    <Header className='handle'>
+                        <span>Light Sensor: {city} | {moment(now).format('MM/DD')}</span>
+                        <span style={{cursor: 'pointer'}} onClick={() => {
+                            setCommonStore((state) => {
+                                state.showDailyLightSensorPanel = false;
+                            });
+                        }}>Close</span>
+                    </Header>
+                    <LineGraph
+                        type={GraphDataType.DailyRadiationSensorData}
+                        dataSource={sensorData}
+                        height={responsiveHeight}
+                        labelX={'Hour'}
+                        labelY={'Radiation'}
+                        unitY={'kWh/m²/day'}
+                        yMin={0}
+                        curveType={'linear'}
+                        fractionDigits={2}
+                        symbolCount={24}
+                        referenceX={now.getHours()}
+                        {...rest}
+                    />
+                </ColumnWrapper>
+            </Container>
+        </ReactDraggable>
     );
 
 };
