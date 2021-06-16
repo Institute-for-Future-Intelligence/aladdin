@@ -33,6 +33,7 @@ export interface LineGraphProps {
     curveType?: CurveType;
     referenceX?: number | string;
     fractionDigits?: number;
+    symbolCount?: number;
 
     [key: string]: any;
 }
@@ -50,6 +51,7 @@ const LineGraph = ({
                        curveType = 'linear',
                        referenceX,
                        fractionDigits = 2,
+                       symbolCount = 12,
                        ...rest
                    }: LineGraphProps) => {
 
@@ -58,7 +60,6 @@ const LineGraph = ({
     const [verticalGridLines, setVerticalGridLines] = useState<boolean>(true);
     const [legendDataKey, setLegendDataKey] = useState<string | null>(null);
     const [lineWidth, setLineWidth] = useState<number>(2);
-    const [symbolCount, setSymbolCount] = useState<number>(12);
     const [symbolSize, setSymbolSize] = useState<number>(1);
 
     //init

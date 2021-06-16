@@ -2,13 +2,11 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useRef} from "react";
+import React, {useRef} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
-import {Object3D, Raycaster, Vector3} from "three";
+import {Vector3} from "three";
 import {useStore} from "../stores/common";
 import {SensorModel} from "../models/sensorModel";
-import {useThree} from "@react-three/fiber";
-import {getSunDirection} from "../analysis/sunTools";
 
 const Sensor = ({
                     id,
@@ -26,15 +24,11 @@ const Sensor = ({
                     showLabel = false,
                     light = true,
                     heatFlux = false,
-                    time,
                 }: SensorModel) => {
 
     cy = -cy; // we want positive y to point north
 
     const setCommonStore = useStore(state => state.set);
-    const now = new Date(useStore(state => state.date));
-    const latitude = useStore(state => state.latitude);
-    const updateElementById = useStore(state => state.updateElementById);
     const getElementById = useStore(state => state.getElementById);
 
     const baseRef = useRef();
@@ -47,26 +41,6 @@ const Sensor = ({
     const positionUR = new Vector3(cx + lx / 2, 0, cy + ly / 2);
 
     const element = getElementById(id);
-    const {scene} = useThree();
-    const ray = new Raycaster();
-
-    useEffect(() => {
-        const sunDirection = getSunDirection(now, latitude);
-        // convert the direction from physics model to the coordinate system of three.js
-        ray.set(position, new Vector3(sunDirection.x, sunDirection.z, -sunDirection.y));
-        const content = scene.children.filter(c => c.name === 'Content');
-        if (content.length > 0) {
-            const components = content[0].children;
-            const objects: Object3D[] = [];
-            for (const c of components) {
-                objects.push(...c.children.filter(x => x.castShadow));
-            }
-            console.log('***', objects)
-            const intersects = ray.intersectObjects(objects);
-            console.log(intersects)
-            updateElementById(id, {lit: intersects.length === 0});
-        }
-    }, [time]);
 
     const selectMe = () => {
         setCommonStore((state) => {

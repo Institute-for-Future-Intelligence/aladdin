@@ -6,12 +6,10 @@ import {ElementModel} from "./elementModel";
 
 export interface SensorModel extends ElementModel {
 
-    cz: number;
     lx: number;
     ly: number;
     light: boolean;
     heatFlux: boolean;
-    time?: Date;
     lit?: boolean;
 
 }

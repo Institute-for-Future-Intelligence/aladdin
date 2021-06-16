@@ -92,8 +92,9 @@ const DailyLightSensorPanel = ({
                     labelY={'Radiation'}
                     unitY={'kWh/m²/day'}
                     yMin={0}
-                    curveType={'natural'}
+                    curveType={'linear'}
                     fractionDigits={2}
+                    symbolCount={24}
                     referenceX={now.getHours()}
                     {...rest}
                 />

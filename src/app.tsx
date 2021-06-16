@@ -11,7 +11,7 @@ import OrbitController from "./orbitController";
 import Sky from "./views/sky";
 import Axes from "./views/axes";
 import Compass from "./views/compass";
-import Scene from "./scene";
+import SceneContent from "./sceneContent";
 import Ground from "./views/ground";
 import {useStore} from "./stores/common";
 import {Euler, Vector3} from "three";
@@ -30,11 +30,10 @@ import GroundImage from "./views/groundImage";
 import {Dropdown} from "antd";
 import ContextMenu from "./contextMenu";
 import WeatherPanel from "./panels/weatherPanel";
-import {GraphDataType, ObjectType} from "./types";
+import {GraphDataType} from "./types";
 import YearlyLightSensorPanel from "./panels/yearlyLightSensorPanel";
 import DailyLightSensorPanel from "./panels/dailyLightSensorPanel";
-import {computeDailyData, computeHourlyData} from "./analysis/sensorAnalysis";
-import {SensorModel} from "./models/sensorModel";
+import Simulation from "./simulation";
 
 const App = () => {
 
@@ -61,19 +60,16 @@ const App = () => {
     const longitude = useStore(state => state.longitude);
     const weatherData = useStore(state => state.weatherData);
     const now = new Date(useStore(state => state.date));
-    const getWeather = useStore(state => state.getWeather);
-    const updateElementById = useStore(state => state.updateElementById);
-    const setDailyLightSensorData = useStore(state => state.setDailyLightSensorData);
-    const setYearlyLightSensorData = useStore(state => state.setYearlyLightSensorData);
 
     const [hourAngle, setHourAngle] = useState<number>(0);
     const [declinationAngle, setDeclinationAngle] = useState<number>(0);
     const [sunlightDirection, setSunlightDirection] = useState<Vector3>(new Vector3(0, 2, 2));
     const [animateSun, setAnimateSun] = useState<boolean>(false);
     const [city, setCity] = useState<string | null>('Boston MA, USA');
+    const [dailyLightSensorDataFlag, setDailyLightSensorDataFlag] = useState<boolean>(false);
+    const [yearlyLightSensorDataFlag, setYearlyLightSensorDataFlag] = useState<boolean>(false);
 
     const world = worlds['default']; // currently we have only one world, which is default
-    const weather = getWeather(city ?? 'Boston MA, USA');
     const radius = 10;
 
     useEffect(() => {
@@ -192,59 +188,18 @@ const App = () => {
 
     const sunAboveHorizon = sunlightDirection.y > 0;
 
-    const collectDailyLightSensorData = async () => {
-        const elements = getWorld('default').elements;
-        if (elements && elements.length > 0) {
-            const ground = getWorld('default').ground;
-            const elevation = city ? getWeather(city).elevation : 0;
-            for (const e of elements) {
-                if (e.type === ObjectType.Sensor) {
-                    const result = computeHourlyData(
-                        e as SensorModel,
-                        weather,
-                        ground,
-                        latitude,
-                        longitude,
-                        elevation,
-                        now);
-                    setDailyLightSensorData(result);
-                    updateElementById(e.id, {time: e.time + 1});
-                }
-            }
-            setCommonStore(state => {
-                state.showDailyLightSensorPanel = true;
-            });
-        }
+    const collectDailyLightSensorData = () => {
+        setDailyLightSensorDataFlag(!dailyLightSensorDataFlag);
+        setCommonStore(state => {
+            state.showDailyLightSensorPanel = true;
+        });
     };
 
     const collectYearlyLightSensorData = async () => {
-        const elements = getWorld('default').elements;
-        if (elements && elements.length > 0) {
-            const ground = getWorld('default').ground;
-            const elevation = city ? getWeather(city).elevation : 0;
-            for (const e of elements) {
-                if (e.type === ObjectType.Sensor) {
-                    const data = [];
-                    for (let i = 0; i < 12; i++) {
-                        const midMonth = new Date(now.getFullYear(), i, 15, 12);
-                        const result = computeDailyData(
-                            e as SensorModel,
-                            weather,
-                            ground,
-                            latitude,
-                            longitude,
-                            elevation,
-                            midMonth
-                        );
-                        data.push(result);
-                    }
-                    setYearlyLightSensorData(data);
-                }
-            }
-            setCommonStore(state => {
-                state.showYearlyLightSensorPanel = true;
-            });
-        }
+        setYearlyLightSensorDataFlag(!yearlyLightSensorDataFlag);
+        setCommonStore(state => {
+            state.showYearlyLightSensorPanel = true;
+        });
     };
 
     return (
@@ -336,6 +291,9 @@ const App = () => {
                             {grid && <gridHelper name={'Grid'} args={[500, 100, 'gray', 'gray']}/>}
                             <Compass/>
                             {/*<Obj/>*/}
+                            <Simulation city={city}
+                                        dailyLightSensorDataFlag={dailyLightSensorDataFlag}
+                                        yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}/>
                             {axes && <Axes/>}
                             <Ground/>
                             {groundImage && <GroundImage/>}
@@ -348,7 +306,7 @@ const App = () => {
                                 date={now}
                                 latitude={Util.toRadians(latitude)}
                             />}
-                            {world && <Scene world={world}/>}
+                            {world && <SceneContent world={world}/>}
                         </Suspense>
                     </Canvas>
                 </div>

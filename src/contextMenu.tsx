@@ -9,8 +9,6 @@ import {useStore} from "./stores/common";
 import {useWorker} from "@koale/useworker";
 import {Menu, Checkbox, Radio} from 'antd';
 import {ObjectType, Theme} from "./types";
-import {computeDailyData, computeHourlyData} from "./analysis/sensorAnalysis";
-import {SensorModel} from "./models/sensorModel";
 
 // TODO: Reduce the space between menu items
 const StyledMenu = styled(Menu)`
