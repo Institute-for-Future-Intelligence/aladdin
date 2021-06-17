@@ -9,6 +9,8 @@ import {Menu, Dropdown, Checkbox} from 'antd';
 import {ReactComponent as MenuSVG} from './assets/menu.svg';
 import 'antd/dist/antd.css';
 
+const {SubMenu} = Menu;
+
 const StyledMenuSVG = styled(MenuSVG)`
   position: absolute;
   top: 10px;
@@ -23,7 +25,20 @@ const StyledMenuSVG = styled(MenuSVG)`
   }
 `;
 
-const MainMenu = () => {
+export interface MainMenuProps {
+
+    collectDailyLightSensorData: () => void;
+    collectYearlyLightSensorData: () => void;
+
+    [key: string]: any;
+
+}
+
+const MainMenu = ({
+                      collectDailyLightSensorData,
+                      collectYearlyLightSensorData,
+                      ...rest
+                  }: MainMenuProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const showGroundPanel = useStore(state => state.showGroundPanel);
@@ -68,6 +83,14 @@ const MainMenu = () => {
                     Weather Data
                 </Checkbox>
             </Menu.Item>
+            <SubMenu key={'sensors'} title={'Sensors'}>
+                <Menu.Item key={'sensor-collect-daily-data'} onClick={collectDailyLightSensorData}>
+                    Collect Daily Data
+                </Menu.Item>
+                <Menu.Item key={'sensor-collect-yearly-data'} onClick={collectYearlyLightSensorData}>
+                    Collect Yearly Data
+                </Menu.Item>
+            </SubMenu>
         </Menu>
     );
 

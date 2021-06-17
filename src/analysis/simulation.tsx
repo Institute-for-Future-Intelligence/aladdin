@@ -68,7 +68,6 @@ const Simulation = ({
                 objects.push(...c.children.filter(x => x.castShadow));
             }
             const intersects = ray.intersectObjects(objects);
-            //console.log(time, intersects)
             return intersects.length > 0;
         }
         return false;
@@ -97,8 +96,8 @@ const Simulation = ({
     }
 
     const collectDailyLightSensorData = (sensor: SensorModel) => {
-        const normal = new Vector3(0, 0, 1);
         const position = new Vector3(sensor.cx, sensor.cy, sensor.cz);
+        const normal = new Vector3(sensor.normal[0], sensor.normal[1], sensor.normal[2]);
         const result = new Array(24).fill(0);
         const year = now.getFullYear();
         const month = now.getMonth();
@@ -155,7 +154,7 @@ const Simulation = ({
     const collectYearlyLightSensorData = (sensor: SensorModel) => {
         const data = [];
         const position = new Vector3(sensor.cx, sensor.cy, sensor.cz);
-        const normal = new Vector3(0, 0, 1);
+        const normal = new Vector3(sensor.normal[0], sensor.normal[1], sensor.normal[2]);
         const year = now.getFullYear();
         const date = 15;
         for (let month = 0; month < 12; month++) {

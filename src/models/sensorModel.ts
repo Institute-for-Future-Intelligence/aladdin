@@ -8,6 +8,7 @@ export interface SensorModel extends ElementModel {
 
     lx: number;
     ly: number;
+    normal: number[];
     light: boolean;
     heatFlux: boolean;
     lit?: boolean;

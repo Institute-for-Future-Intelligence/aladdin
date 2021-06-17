@@ -235,7 +235,10 @@ const App = () => {
                      onClick={visitIFI}/>
                 &nbsp;&nbsp; Institute for Future Intelligence, &copy;{new Date().getFullYear()}. Version {VERSION}
             </div>
-            <MainMenu/>
+            <MainMenu
+                collectDailyLightSensorData={collectDailyLightSensorData}
+                collectYearlyLightSensorData={collectYearlyLightSensorData}
+            />
             {showGroundPanel &&
             <GroundPanel grid={grid}
                          groundImage={groundImage}
