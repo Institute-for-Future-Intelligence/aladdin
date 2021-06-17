@@ -52,6 +52,7 @@ const App = () => {
 
     const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
+    const enableOrbitController = useStore(state => state.enableOrbitController);
     const groundImage = useStore(state => state.groundImage);
     const groundColor = useStore(state => state.groundColor);
     const theme = useStore(state => state.theme);
@@ -99,8 +100,6 @@ const App = () => {
     if (world) {
         cameraPosition.set(world.cameraPosition.x, world.cameraPosition.y, world.cameraPosition.z);
     }
-
-    console.log('x')
 
     const setGrid = (on: boolean) => {
         setCommonStore(state => {
@@ -208,6 +207,8 @@ const App = () => {
         });
     };
 
+    console.log('x', enableOrbitController)
+
     return (
         <div className="App">
             <div style={{
@@ -286,7 +287,7 @@ const App = () => {
                             }}
                             style={{height: 'calc(100vh - 70px)', backgroundColor: 'black'}}>
                         <Suspense fallback={null}>
-                            <OrbitController/>
+                            {<OrbitController enabled={enableOrbitController}/>}
                             <ambientLight intensity={0.25} name={'Ambient Light'}/>
                             <directionalLight
                                 name={'Directional Light'}

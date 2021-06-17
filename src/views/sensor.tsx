@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useRef} from "react";
+import React, {useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
 import {Vector3} from "three";
 import {useStore} from "../stores/common";
@@ -19,7 +19,6 @@ const Sensor = ({
                     color = 'white',
                     lineColor = 'black',
                     lineWidth = 0.1,
-                    hovered = false,
                     selected = false,
                     showLabel = false,
                     light = true,
@@ -30,7 +29,7 @@ const Sensor = ({
 
     const setCommonStore = useStore(state => state.set);
     const getElementById = useStore(state => state.getElementById);
-
+    const [hovered, setHovered] = useState(false);
     const baseRef = useRef();
     const handleRef = useRef();
 
@@ -48,20 +47,6 @@ const Sensor = ({
             if (w) {
                 for (const e of w.elements) {
                     e.selected = e.id === id;
-                }
-            }
-        });
-    };
-
-    const hoverMe = (on: boolean) => {
-        setCommonStore((state) => {
-            const w = state.worlds['default'];
-            if (w) {
-                for (const e of w.elements) {
-                    if (e.id === id) {
-                        e.hovered = on;
-                        break;
-                    }
                 }
             }
         });
@@ -95,12 +80,18 @@ const Sensor = ({
                      if (e.intersections.length > 0) {
                          const intersected = e.intersections[0].object === baseRef.current;
                          if (intersected) {
-                             hoverMe(true);
+                             setHovered(true);
                          }
                      }
                  }}
                  onPointerOut={(e) => {
-                     hoverMe(false);
+                     setHovered(false);
+                 }}
+                 onPointerDown={(e) => {
+                 }}
+                 onPointerUp={(e) => {
+                 }}
+                 onPointerMove={(e) => {
                  }}
                  args={[lx, height, ly]}
                  position={[cx, height / 2, cy]}

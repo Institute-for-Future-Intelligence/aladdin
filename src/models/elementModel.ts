@@ -11,7 +11,6 @@ export interface ElementModel {
     cz: number; // y coordinate of the center
 
     selected?: boolean;
-    hovered?: boolean;
     color?: string;
     lineColor?: string;
     lineWidth?: number;

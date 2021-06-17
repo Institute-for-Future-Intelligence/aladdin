@@ -51,6 +51,7 @@ export interface CommonStoreState {
     loadWeatherData: () => void;
     getClosestCity: (lat: number, lng: number) => string | null;
 
+    enableOrbitController : boolean;
     clickObjectType: string | null;
     getSelectedElement: () => ElementModel | null;
     getElementById: (id: string) => ElementModel | null;
@@ -185,8 +186,8 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 elements.push(e1);
                 elements.push(e2);
                 elements.push(e3);
-                elements.push(e4);
-                elements.push(e5);
+                // elements.push(e4);
+                // elements.push(e5);
                 const ground = {
                     albedo: 0.3,
                     thermalDiffusivity: 0.05,
@@ -202,6 +203,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
             })
         },
 
+        enableOrbitController: true,
         clickObjectType: null,
         getSelectedElement() {
             const elements = get().worlds['default'].elements;

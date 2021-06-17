@@ -8,13 +8,17 @@ import {useThree} from "@react-three/fiber";
 import {useStore} from "./stores/common";
 
 export interface OrbitControllerProps {
+    enabled?: boolean;
+
     [key: string]: any;
 }
 
 // Get a reference to the Three.js Camera, and the canvas html element.
 // We need these to setup the OrbitControls class.
 // https://threejs.org/docs/#examples/en/controls/OrbitControls
-const OrbitController = () => {
+const OrbitController = ({
+                             enabled = true,
+                         }: OrbitControllerProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const {camera, gl: {domElement}} = useThree();
@@ -24,11 +28,13 @@ const OrbitController = () => {
     useEffect(() => {
         const c = controls.current;
         if (c) {
-            c.target.set(0, 0, 0);
+            //c.target.set(0, 0, 0);
             c.addEventListener('end', onInteractionEnd);
         }
         return () => {
-            c?.removeEventListener('end', onInteractionEnd);
+            if (c) {
+                c.removeEventListener('end', onInteractionEnd);
+            }
         }
     });
 
@@ -55,7 +61,8 @@ const OrbitController = () => {
         <orbitControls
             ref={controls}
             args={[camera, domElement]}
-            enableZoom={true}
+            enabled={enabled}
+            enablePan={false}
             maxAzimuthAngle={Math.PI}
             minAzimuthAngle={-Math.PI}
         />

@@ -29,6 +29,9 @@ const SceneContent: React.FC<SceneContentProps> = ({world, sceneRef}: SceneConte
         }
     });
 
+    // const content = scene.children.filter(c => c.name === 'Content');
+    // if (content && content.length > 0) console.log(content[0].children[1].children[0].position)
+
     return (
         <group name={'Content'}>
             {world.elements
