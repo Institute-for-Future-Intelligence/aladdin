@@ -26,15 +26,27 @@ const Foundation = ({
     const setCommonStore = useStore(state => state.set);
     const [hovered, setHovered] = useState(false);
     const baseRef = useRef();
-    const handleLLRef = useRef();
-    const handleULRef = useRef();
-    const handleLRRef = useRef();
-    const handleURRef = useRef();
+    const resizeHandleLLRef = useRef();
+    const resizeHandleULRef = useRef();
+    const resizeHandleLRRef = useRef();
+    const resizeHandleURRef = useRef();
+    const handleSize = 0.16;
 
     const positionLL = new Vector3(cx - lx / 2, height / 2, cy - ly / 2);
     const positionUL = new Vector3(cx - lx / 2, height / 2, cy + ly / 2);
     const positionLR = new Vector3(cx + lx / 2, height / 2, cy - ly / 2);
     const positionUR = new Vector3(cx + lx / 2, height / 2, cy + ly / 2);
+
+    const moveHandleLowerRef = useRef();
+    const moveHandleUpperRef = useRef();
+    const moveHandleLeftRef = useRef();
+    const moveHandleRightRef = useRef();
+
+    const offset = 0.2;
+    const positionLower = new Vector3(cx, height / 2, cy - ly / 2 - offset);
+    const positionUpper = new Vector3(cx, height / 2, cy + ly / 2 + offset);
+    const positionLeft = new Vector3(cx - lx / 2 - offset, height / 2, cy);
+    const positionRight = new Vector3(cx + lx / 2 + offset, height / 2, cy);
 
     const selectMe = () => {
         setCommonStore((state) => {
@@ -150,29 +162,56 @@ const Foundation = ({
             {/* draw handles */}
             {selected &&
             <>
-                <Sphere ref={handleLLRef}
-                        args={[0.1, 6, 6]}
-                        name={'Handle LL'}
-                        position={positionLL}>
+                {/* resize handles */}
+                <Box ref={resizeHandleLLRef}
+                     args={[handleSize, height * 1.2, handleSize]}
+                     name={'Resize Handle LL'}
+                     position={positionLL}>
                     <meshStandardMaterial attach="material" color={'white'}/>
+                </Box>
+                <Box ref={resizeHandleULRef}
+                     args={[handleSize, height * 1.2, handleSize]}
+                     name={'Resize Handle UL'}
+                     position={positionUL}>
+                    <meshStandardMaterial attach="material" color={'white'}/>
+                </Box>
+                <Box ref={resizeHandleLRRef}
+                     args={[handleSize, height * 1.2, handleSize]}
+                     name={'Resize Handle LR'}
+                     position={positionLR}>
+                    <meshStandardMaterial attach="material" color={'white'}/>
+                </Box>
+                <Box ref={resizeHandleURRef}
+                     args={[handleSize, height * 1.2, handleSize]}
+                     name={'Resize Handle UR'}
+                     position={positionUR}>
+                    <meshStandardMaterial attach="material" color={'white'}/>
+                </Box>
+
+                {/* move handles */}
+                <Sphere ref={moveHandleLowerRef}
+                        args={[0.1, 6, 6]}
+                        name={'Move Handle Lower'}
+                        position={positionLower}>
+                    <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
-                <Sphere ref={handleULRef}
+                <Sphere ref={moveHandleUpperRef}
                         args={[0.1, 6, 6]}
-                        name={'Handle UL'}
-                        position={positionUL}>
-                    <meshStandardMaterial attach="material" color={'white'}/>
+                        name={'Move Handle Upper'}
+                        position={positionUpper}>
+                    <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
-                <Sphere ref={handleLRRef}
+                <Sphere ref={moveHandleLeftRef}
                         args={[0.1, 6, 6]}
-                        name={'Handle LR'}
-                        position={positionLR}>
-                    <meshStandardMaterial attach="material" color={'white'}/>
+                        name={'Move Handle Left'}
+                        position={positionLeft}>
+                    <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
-                <Sphere ref={handleURRef}
+                <Sphere ref={moveHandleRightRef}
                         args={[0.1, 6, 6]}
-                        name={'Handle UR'}
-                        position={positionUR}>
-                    <meshStandardMaterial attach="material" color={'white'}/>
+                        name={'Move Handle Right'}
+                        position={positionRight}>
+                    <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
             </>
             }

@@ -15,7 +15,7 @@ const Cuboid = ({
                     lx = 1,
                     ly = 1,
                     height = 1,
-                    color = 'white',
+                    color = 'silver',
                     lineColor = 'black',
                     lineWidth = 0.1,
                     selected = false,
@@ -27,14 +27,14 @@ const Cuboid = ({
     const [hovered, setHovered] = useState(false);
 
     const baseRef = useRef();
-    const handleLLTopRef = useRef();
-    const handleULTopRef = useRef();
-    const handleLRTopRef = useRef();
-    const handleURTopRef = useRef();
-    const handleLLBotRef = useRef();
-    const handleULBotRef = useRef();
-    const handleLRBotRef = useRef();
-    const handleURBotRef = useRef();
+    const resizeHandleLLTopRef = useRef();
+    const resizeHandleULTopRef = useRef();
+    const resizeHandleLRTopRef = useRef();
+    const resizeHandleURTopRef = useRef();
+    const resizeHandleLLBotRef = useRef();
+    const resizeHandleULBotRef = useRef();
+    const resizeHandleLRBotRef = useRef();
+    const resizeHandleURBotRef = useRef();
 
     const positionLLTop = new Vector3(cx - lx / 2, height, cy - ly / 2);
     const positionULTop = new Vector3(cx - lx / 2, height, cy + ly / 2);
@@ -45,6 +45,21 @@ const Cuboid = ({
     const positionULBot = new Vector3(cx - lx / 2, 0, cy + ly / 2);
     const positionLRBot = new Vector3(cx + lx / 2, 0, cy - ly / 2);
     const positionURBot = new Vector3(cx + lx / 2, 0, cy + ly / 2);
+
+    const moveHandleLowerFaceRef = useRef();
+    const moveHandleUpperFaceRef = useRef();
+    const moveHandleLeftFaceRef = useRef();
+    const moveHandleRightFaceRef = useRef();
+    const moveHandleTopFaceRef = useRef();
+
+    const offset = 0.1;
+    const positionLowerFace = new Vector3(cx, height / 2, cy - ly / 2 - offset);
+    const positionUpperFace = new Vector3(cx, height / 2, cy + ly / 2 + offset);
+    const positionLeftFace = new Vector3(cx - lx / 2 - offset, height / 2, cy);
+    const positionRightFace = new Vector3(cx + lx / 2 + offset, height / 2, cy);
+    const positionTopFace = new Vector3(cx, height + offset, cy);
+
+    const handleSize = 0.16;
 
     const selectMe = () => {
         setCommonStore((state) => {
@@ -164,53 +179,86 @@ const Cuboid = ({
             {/* draw handles */}
             {selected &&
             <>
-                <Sphere ref={handleLLTopRef}
-                        name={'Handle LL Top'}
-                        args={[0.1, 6, 6]}
-                        position={positionLLTop}>
+                {/* resize handles */}
+                <Box ref={resizeHandleLLTopRef}
+                     name={'Resize Handle LL Top'}
+                     args={[handleSize, handleSize, handleSize]}
+                     position={positionLLTop}>
                     <meshStandardMaterial attach="material" color={'white'}/>
+                </Box>
+                <Box ref={resizeHandleULTopRef}
+                     name={'Resize Handle UL Top'}
+                     args={[handleSize, handleSize, handleSize]}
+                     position={positionULTop}>
+                    <meshStandardMaterial attach="material" color={'white'}/>
+                </Box>
+                <Box ref={resizeHandleLRTopRef}
+                     name={'Resize Handle LR Top'}
+                     args={[handleSize, handleSize, handleSize]}
+                     position={positionLRTop}>
+                    <meshStandardMaterial attach="material" color={'white'}/>
+                </Box>
+                <Box ref={resizeHandleURTopRef}
+                     name={'Resize Handle UR Top'}
+                     args={[handleSize, handleSize, handleSize]}
+                     position={positionURTop}>
+                    <meshStandardMaterial attach="material" color={'white'}/>
+                </Box>
+                <Box ref={resizeHandleLLBotRef}
+                     name={'Resize Handle LL Bottom'}
+                     args={[handleSize, handleSize, handleSize]}
+                     position={positionLLBot}>
+                    <meshStandardMaterial attach="material" color={'white'}/>
+                </Box>
+                <Box ref={resizeHandleULBotRef}
+                     name={'Resize Handle UL Bottom'}
+                     args={[handleSize, handleSize, handleSize]}
+                     position={positionULBot}>
+                    <meshStandardMaterial attach="material" color={'white'}/>
+                </Box>
+                <Box ref={resizeHandleLRBotRef}
+                     name={'Resize Handle LR Bottom'}
+                     args={[handleSize, handleSize, handleSize]}
+                     position={positionLRBot}>
+                    <meshStandardMaterial attach="material" color={'white'}/>
+                </Box>
+                <Box ref={resizeHandleURBotRef}
+                     name={'Resize Handle UR Bottom'}
+                     args={[handleSize, handleSize, handleSize]}
+                     position={positionURBot}>
+                    <meshStandardMaterial attach="material" color={'white'}/>
+                </Box>
+
+                {/* move handles */}
+                <Sphere ref={moveHandleLowerFaceRef}
+                        args={[0.1, 6, 6]}
+                        name={'Move Handle Lower Face'}
+                        position={positionLowerFace}>
+                    <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
-                <Sphere ref={handleULTopRef}
-                        name={'Handle UL Top'}
+                <Sphere ref={moveHandleUpperFaceRef}
                         args={[0.1, 6, 6]}
-                        position={positionULTop}>
-                    <meshStandardMaterial attach="material" color={'white'}/>
+                        name={'Move Handle Upper Face'}
+                        position={positionUpperFace}>
+                    <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
-                <Sphere ref={handleLRTopRef}
-                        name={'Handle LR Top'}
+                <Sphere ref={moveHandleLeftFaceRef}
                         args={[0.1, 6, 6]}
-                        position={positionLRTop}>
-                    <meshStandardMaterial attach="material" color={'white'}/>
+                        name={'Move Handle Left Face'}
+                        position={positionLeftFace}>
+                    <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
-                <Sphere ref={handleURTopRef}
-                        name={'Handle UR Top'}
+                <Sphere ref={moveHandleRightFaceRef}
                         args={[0.1, 6, 6]}
-                        position={positionURTop}>
-                    <meshStandardMaterial attach="material" color={'white'}/>
+                        name={'Move Handle Right Face'}
+                        position={positionRightFace}>
+                    <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
-                <Sphere ref={handleLLBotRef}
-                        name={'Handle LL Bottom'}
+                <Sphere ref={moveHandleTopFaceRef}
                         args={[0.1, 6, 6]}
-                        position={positionLLBot}>
-                    <meshStandardMaterial attach="material" color={'white'}/>
-                </Sphere>
-                <Sphere ref={handleULBotRef}
-                        name={'Handle UL Bottom'}
-                        args={[0.1, 6, 6]}
-                        position={positionULBot}>
-                    <meshStandardMaterial attach="material" color={'white'}/>
-                </Sphere>
-                <Sphere ref={handleLRBotRef}
-                        name={'Handle LR Bottom'}
-                        args={[0.1, 6, 6]}
-                        position={positionLRBot}>
-                    <meshStandardMaterial attach="material" color={'white'}/>
-                </Sphere>
-                <Sphere ref={handleURBotRef}
-                        name={'Handle UR Bottom'}
-                        args={[0.1, 6, 6]}
-                        position={positionURBot}>
-                    <meshStandardMaterial attach="material" color={'white'}/>
+                        name={'Move Handle Top Face'}
+                        position={positionTopFace}>
+                    <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
             </>
             }

@@ -156,7 +156,7 @@ const Sensor = ({
                 args={[0.1, 6, 6]}
                 name={'Handle'}
                 position={position}>
-                <meshStandardMaterial attach="material" color={'white'}/>
+                <meshStandardMaterial attach="material" color={'orange'}/>
             </Sphere>
             }
             {(hovered || showLabel) &&
