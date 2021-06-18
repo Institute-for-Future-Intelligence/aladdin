@@ -46,6 +46,16 @@ export class Util {
         return Math.PI * 2;
     }
 
+    // convert the coordinates from the model system to the view system
+    static modelToView(v: Vector3) {
+        return new Vector3(v.x, v.z, -v.y);
+    }
+
+    // convert the coordinates from the view system to the model system
+    static viewToModel(v: Vector3) {
+        return new Vector3(v.x, -v.z, v.y);
+    }
+
     static toRadians(degrees: number) {
         return degrees * (Math.PI / 180);
     }

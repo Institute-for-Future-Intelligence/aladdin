@@ -51,7 +51,7 @@ export interface CommonStoreState {
     loadWeatherData: () => void;
     getClosestCity: (lat: number, lng: number) => string | null;
 
-    enableOrbitController : boolean;
+    enableOrbitController: boolean;
     clickObjectType: string | null;
     getSelectedElement: () => ElementModel | null;
     getElementById: (id: string) => ElementModel | null;

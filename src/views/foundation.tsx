@@ -4,10 +4,9 @@
 
 import React, {useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
-import {Raycaster, Vector2, Vector3} from "three";
+import {Vector3} from "three";
 import {useStore} from "../stores/common";
 import {FoundationModel} from "../models/foundationModel";
-import {useThree} from "@react-three/fiber";
 
 const Foundation = ({
                         id,
@@ -25,10 +24,7 @@ const Foundation = ({
     cy = -cy; // we want positive y to point north
 
     const setCommonStore = useStore(state => state.set);
-    const updateElementById = useStore(state => state.updateElementById);
-    const {camera, scene} = useThree();
     const [hovered, setHovered] = useState(false);
-    const [grabbed, setGrabbed] = useState(false);
     const baseRef = useRef();
     const handleLLRef = useRef();
     const handleULRef = useRef();
@@ -48,13 +44,6 @@ const Foundation = ({
                     e.selected = e.id === id;
                 }
             }
-        });
-    };
-
-    const grabMe = (on: boolean) => {
-        setGrabbed(on);
-        setCommonStore((state) => {
-            state.enableOrbitController = !on;
         });
     };
 
@@ -90,26 +79,12 @@ const Foundation = ({
                          const intersected = e.intersections[0].object === baseRef.current;
                          if (intersected) {
                              selectMe();
-                             grabMe(true);
                          }
                      }
                  }}
                  onPointerUp={(e) => {
-                     grabMe(false);
                  }}
                  onPointerMove={(e) => {
-                     if (grabbed) {
-                         const mouse = new Vector2();
-                         mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-                         mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-                         const ray = new Raycaster();
-                         ray.setFromCamera(mouse, camera);
-                         const intersects = ray.intersectObjects(scene.children);
-                         if (intersects.length > 0) {
-                             const p = intersects[0].point;
-                             updateElementById(id, {cx: p.x, cy: -p.z, cz: 0});
-                         }
-                     }
                  }}
                  args={[lx, height, ly]}
                  position={[cx, height / 2, cy]}>

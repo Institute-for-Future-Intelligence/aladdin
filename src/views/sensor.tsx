@@ -60,7 +60,7 @@ const Sensor = ({
             <Box receiveShadow
                  ref={baseRef}
                  name={'Sensor'}
-                 onClick={(e) => {
+                 onPointerDown={(e) => {
                      if (e.intersections.length > 0) {
                          const intersected = e.intersections[0].object === baseRef.current;
                          if (intersected) {
@@ -86,12 +86,6 @@ const Sensor = ({
                  }}
                  onPointerOut={(e) => {
                      setHovered(false);
-                 }}
-                 onPointerDown={(e) => {
-                 }}
-                 onPointerUp={(e) => {
-                 }}
-                 onPointerMove={(e) => {
                  }}
                  args={[lx, height, ly]}
                  position={[cx, height / 2, cy]}

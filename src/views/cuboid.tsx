@@ -65,7 +65,7 @@ const Cuboid = ({
             <Box castShadow receiveShadow
                  ref={baseRef}
                  name={'Cuboid'}
-                 onClick={(e) => {
+                 onPointerDown={(e) => {
                      if (e.intersections.length > 0) {
                          const intersected = e.intersections[0].object === baseRef.current;
                          if (intersected) {

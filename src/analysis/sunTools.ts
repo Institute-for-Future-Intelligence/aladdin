@@ -49,7 +49,7 @@ export const computeSunLocation = (radius: number,
 // Solar radiation incident outside the earth's atmosphere is called extraterrestrial radiation.
 // https://pvpmc.sandia.gov/modeling-steps/1-weather-design-inputs/irradiance-and-insolation-2/extraterrestrial-radiation/
 const getExtraterrestrialRadiation = (dayOfYear: number) => {
-    const b = 2 * Math.PI * dayOfYear / 365;
+    const b = Util.TWO_PI * dayOfYear / 365;
     const er = 1.00011 + 0.034221 * Math.cos(b) + 0.00128 * Math.sin(b) + 0.000719 * Math.cos(2 * b) + 0.000077 * Math.sin(2 * b);
     return SOLAR_CONSTANT * er;
 }

@@ -56,10 +56,7 @@ const Simulation = ({
 
     const inShadow = (time: Date, position: Vector3, sunDirection: Vector3) => {
         // convert the position and direction from physics model to the coordinate system of three.js
-        ray.set(
-            new Vector3(position.x, position.z, -position.y),
-            new Vector3(sunDirection.x, sunDirection.z, -sunDirection.y)
-        );
+        ray.set(Util.modelToView(position), Util.modelToView(sunDirection));
         const content = scene.children.filter(c => c.name === 'Content');
         if (content.length > 0) {
             const components = content[0].children;
