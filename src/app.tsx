@@ -4,7 +4,7 @@
  * @author Charles Xie
  */
 
-import React, {Suspense, useEffect, useMemo, useState} from 'react';
+import React, {Suspense, useEffect, useMemo, useRef, useState} from 'react';
 import './app.css';
 import {Canvas} from '@react-three/fiber';
 import OrbitController from "./orbitController";
@@ -34,6 +34,8 @@ import {GraphDataType} from "./types";
 import YearlyLightSensorPanel from "./panels/yearlyLightSensorPanel";
 import DailyLightSensorPanel from "./panels/dailyLightSensorPanel";
 import Simulation from "./analysis/simulation";
+import MainToolBar from "./mainToolBar";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 const App = () => {
 
@@ -49,6 +51,7 @@ const App = () => {
     const showWeatherPanel = useStore(state => state.showWeatherPanel);
     const showDailyLightSensorPanel = useStore(state => state.showDailyLightSensorPanel);
     const showYearlyLightSensorPanel = useStore(state => state.showYearlyLightSensorPanel);
+    const autoRotate = useStore(state => state.autoRotate);
 
     const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
@@ -72,6 +75,7 @@ const App = () => {
 
     const world = worlds['default']; // currently we have only one world, which is default
     const radius = 10;
+    const orbitControlsRef = useRef<OrbitControls>();
 
     useEffect(() => {
         const defaultWorld = getWorld('default');
@@ -97,8 +101,10 @@ const App = () => {
     }, [nowString]);
 
     const cameraPosition = new Vector3(0, 0, 5);
+    const panCenter = new Vector3();
     if (world) {
         cameraPosition.set(world.cameraPosition.x, world.cameraPosition.y, world.cameraPosition.z);
+        panCenter.set(world.panCenter.x, world.panCenter.y, world.panCenter.z);
     }
 
     const setGrid = (on: boolean) => {
@@ -240,6 +246,7 @@ const App = () => {
                 collectDailyLightSensorData={collectDailyLightSensorData}
                 collectYearlyLightSensorData={collectYearlyLightSensorData}
             />
+            <MainToolBar orbitControls={orbitControlsRef.current}/>
             {showGroundPanel &&
             <GroundPanel grid={grid}
                          groundImage={groundImage}
@@ -286,7 +293,12 @@ const App = () => {
                                 fov: 90
                             }}
                             style={{height: 'calc(100vh - 70px)', backgroundColor: 'black'}}>
-                        <OrbitController enabled={enableOrbitController}/>
+                        <OrbitController
+                            enabled={enableOrbitController}
+                            autoRotate={autoRotate}
+                            panCenter={panCenter}
+                            orbitControlsRef={orbitControlsRef}
+                        />
                         <Suspense fallback={null}>
                             <ambientLight intensity={0.25} name={'Ambient Light'}/>
                             <directionalLight
@@ -298,7 +310,9 @@ const App = () => {
                                 shadow-mapSize-height={512}
                                 shadow-mapSize-width={512}
                             />
-                            {grid && <gridHelper name={'Grid'} args={[500, 100, 'gray', 'gray']}/>}
+                            {(grid || !enableOrbitController) &&
+                            <gridHelper name={'Grid'} args={[500, 100, 'gray', 'gray']}/>
+                            }
                             <Compass/>
                             {/*<Obj/>*/}
                             <Simulation city={city}

@@ -30,6 +30,7 @@ export interface CommonStoreState {
     showWeatherPanel: boolean;
     showDailyLightSensorPanel: boolean;
     showYearlyLightSensorPanel: boolean;
+    autoRotate: boolean;
 
     grid: boolean;
     axes: boolean;
@@ -83,6 +84,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         showWeatherPanel: false,
         showDailyLightSensorPanel: false,
         showYearlyLightSensorPanel: false,
+        autoRotate: false,
 
         grid: false,
         axes: true,
@@ -197,6 +199,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                     name: 'default',
                     elements: elements,
                     ground: ground,
+                    panCenter: new Vector3(0, 0, 0),
                     cameraPosition: new Vector3(0, 0, 5)
                 };
                 state.worlds[world.name] = world;

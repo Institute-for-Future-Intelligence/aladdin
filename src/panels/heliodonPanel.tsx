@@ -12,7 +12,7 @@ import ReactDraggable, {DraggableEventHandler} from "react-draggable";
 
 const Container = styled.div`
   position: fixed;
-  top: 10px;
+  top: 80px;
   left: 10px;
   display: flex;
   justify-content: center;
