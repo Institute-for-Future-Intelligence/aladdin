@@ -66,14 +66,6 @@ const Foundation = ({
             <Box castShadow receiveShadow
                  ref={baseRef}
                  name={'Foundation'}
-                 onClick={(e) => {
-                     if (e.intersections.length > 0) {
-                         const intersected = e.intersections[0].object === baseRef.current;
-                         if (intersected) {
-                             selectMe();
-                         }
-                     }
-                 }}
                  onContextMenu={(e) => {
                      if (e.intersections.length > 0) {
                          const intersected = e.intersections[0].object === baseRef.current;
@@ -94,7 +86,13 @@ const Foundation = ({
                      setHovered(false);
                  }}
                  onPointerDown={(e) => {
-                     grabMe(true);
+                     if (e.intersections.length > 0) {
+                         const intersected = e.intersections[0].object === baseRef.current;
+                         if (intersected) {
+                             selectMe();
+                             grabMe(true);
+                         }
+                     }
                  }}
                  onPointerUp={(e) => {
                      grabMe(false);

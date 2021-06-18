@@ -28,15 +28,15 @@ const OrbitController = ({
     useEffect(() => {
         const c = controls.current;
         if (c) {
-            //c.target.set(0, 0, 0);
             c.addEventListener('end', onInteractionEnd);
         }
         return () => {
             if (c) {
+                c.dispose();
                 c.removeEventListener('end', onInteractionEnd);
             }
         }
-    });
+    }, []);
 
     const onInteractionEnd = () => {
         setCommonStore((state) => {

@@ -207,7 +207,7 @@ const App = () => {
         });
     };
 
-    console.log('x', enableOrbitController)
+    console.log('x')
 
     return (
         <div className="App">
@@ -286,8 +286,8 @@ const App = () => {
                                 fov: 90
                             }}
                             style={{height: 'calc(100vh - 70px)', backgroundColor: 'black'}}>
+                        <OrbitController enabled={enableOrbitController}/>
                         <Suspense fallback={null}>
-                            {<OrbitController enabled={enableOrbitController}/>}
                             <ambientLight intensity={0.25} name={'Ambient Light'}/>
                             <directionalLight
                                 name={'Directional Light'}
