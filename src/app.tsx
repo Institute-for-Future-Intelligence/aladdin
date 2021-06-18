@@ -36,6 +36,7 @@ import DailyLightSensorPanel from "./panels/dailyLightSensorPanel";
 import Simulation from "./analysis/simulation";
 import MainToolBar from "./mainToolBar";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import About from "./about";
 
 const App = () => {
 
@@ -72,6 +73,7 @@ const App = () => {
     const [city, setCity] = useState<string | null>('Boston MA, USA');
     const [dailyLightSensorDataFlag, setDailyLightSensorDataFlag] = useState<boolean>(false);
     const [yearlyLightSensorDataFlag, setYearlyLightSensorDataFlag] = useState<boolean>(false);
+    const [aboutUs, setAboutUs] = useState(false);
 
     const world = worlds['default']; // currently we have only one world, which is default
     const radius = 10;
@@ -213,6 +215,10 @@ const App = () => {
         });
     };
 
+    const openAboutUs = (on: boolean) => {
+        setAboutUs(on);
+    };
+
     console.log('x')
 
     return (
@@ -245,6 +251,7 @@ const App = () => {
             <MainMenu
                 collectDailyLightSensorData={collectDailyLightSensorData}
                 collectYearlyLightSensorData={collectYearlyLightSensorData}
+                openAboutUs={openAboutUs}
             />
             <MainToolBar orbitControls={orbitControlsRef.current}/>
             {showGroundPanel &&
@@ -277,6 +284,7 @@ const App = () => {
             <WeatherPanel city={city}
                           graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}
             />}
+            {aboutUs && <About openAboutUs={openAboutUs}/>}
             <Dropdown key={'canvas-context-menu'}
                       trigger={['contextMenu']}
                       overlay={

@@ -29,6 +29,7 @@ export interface MainMenuProps {
 
     collectDailyLightSensorData: () => void;
     collectYearlyLightSensorData: () => void;
+    openAboutUs: (on: boolean) => void;
 
     [key: string]: any;
 
@@ -37,6 +38,7 @@ export interface MainMenuProps {
 const MainMenu = ({
                       collectDailyLightSensorData,
                       collectYearlyLightSensorData,
+                      openAboutUs,
                       ...rest
                   }: MainMenuProps) => {
 
@@ -59,23 +61,11 @@ const MainMenu = ({
         });
     };
 
-    // @ts-ignore
-    const onChangeShowHeliodonPanel = (e) => {
-        setCommonStore((state) => {
-            state.showHeliodonPanel = e.target.checked;
-        });
-    };
-
     const menu = (
         <Menu>
             <Menu.Item key={'ground-panel-check-box'}>
                 <Checkbox checked={showGroundPanel} onChange={onChangeShowGroundPanel}>
                     Ground Settings
-                </Checkbox>
-            </Menu.Item>
-            <Menu.Item key={'heliodon-panel-check-box'}>
-                <Checkbox checked={showHeliodonPanel} onChange={onChangeShowHeliodonPanel}>
-                    Heliodon Settings
                 </Checkbox>
             </Menu.Item>
             <Menu.Item key={'weather-panel-check-box'}>
@@ -91,6 +81,11 @@ const MainMenu = ({
                     Collect Yearly Data
                 </Menu.Item>
             </SubMenu>
+            <Menu.Item key={'about-us'} onClick={() => {
+                openAboutUs(true);
+            }}>
+                About Us
+            </Menu.Item>
         </Menu>
     );
 
