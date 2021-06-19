@@ -5,7 +5,7 @@
 import React, {useMemo, useRef, useState} from "react";
 import {Plane} from "@react-three/drei";
 import {useStore} from "../stores/common";
-import {Raycaster, Vector2} from "three";
+import {Mesh, Raycaster, Vector2} from "three";
 import {ObjectType} from "../types";
 import {ElementModel} from "../models/elementModel";
 import {useThree} from "@react-three/fiber";
@@ -18,8 +18,8 @@ const Ground = () => {
     const groundColor = useStore(state => state.groundColor);
     const setElementPosition = useStore(state => state.setElementPosition);
     const [grabbedElement, setGrabbedElement] = useState<ElementModel | null>(null);
-    const {camera, scene} = useThree();
-    const planeRef = useRef();
+    const {camera} = useThree();
+    const planeRef = useRef<Mesh>();
     const ray = useMemo(() => new Raycaster(), []);
 
     return (
@@ -60,12 +60,12 @@ const Ground = () => {
                    });
                }}
                onPointerMove={(e) => {
-                   if (grabbedElement) {
+                   if (grabbedElement && planeRef && planeRef.current) {
                        const mouse = new Vector2();
                        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
                        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
                        ray.setFromCamera(mouse, camera);
-                       const intersects = ray.intersectObjects(scene.children);
+                       const intersects = ray.intersectObjects([planeRef.current]);
                        if (intersects.length > 0) {
                            const p = intersects[0].point;
                            setElementPosition(grabbedElement.id, p.x, -p.z, 0);

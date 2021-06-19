@@ -4,9 +4,10 @@
 
 import React, {useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
-import {Vector3} from "three";
+import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {CuboidModel} from "../models/cuboidModel";
+import {Util} from "../util";
 
 const Cuboid = ({
                     id,
@@ -26,15 +27,15 @@ const Cuboid = ({
     const setCommonStore = useStore(state => state.set);
     const [hovered, setHovered] = useState(false);
 
-    const baseRef = useRef();
-    const resizeHandleLLTopRef = useRef();
-    const resizeHandleULTopRef = useRef();
-    const resizeHandleLRTopRef = useRef();
-    const resizeHandleURTopRef = useRef();
-    const resizeHandleLLBotRef = useRef();
-    const resizeHandleULBotRef = useRef();
-    const resizeHandleLRBotRef = useRef();
-    const resizeHandleURBotRef = useRef();
+    const baseRef = useRef<Mesh>();
+    const resizeHandleLLTopRef = useRef<Mesh>();
+    const resizeHandleULTopRef = useRef<Mesh>();
+    const resizeHandleLRTopRef = useRef<Mesh>();
+    const resizeHandleURTopRef = useRef<Mesh>();
+    const resizeHandleLLBotRef = useRef<Mesh>();
+    const resizeHandleULBotRef = useRef<Mesh>();
+    const resizeHandleLRBotRef = useRef<Mesh>();
+    const resizeHandleURBotRef = useRef<Mesh>();
 
     const positionLLTop = new Vector3(cx - lx / 2, height, cy - ly / 2);
     const positionULTop = new Vector3(cx - lx / 2, height, cy + ly / 2);
@@ -46,11 +47,11 @@ const Cuboid = ({
     const positionLRBot = new Vector3(cx + lx / 2, 0, cy - ly / 2);
     const positionURBot = new Vector3(cx + lx / 2, 0, cy + ly / 2);
 
-    const moveHandleLowerFaceRef = useRef();
-    const moveHandleUpperFaceRef = useRef();
-    const moveHandleLeftFaceRef = useRef();
-    const moveHandleRightFaceRef = useRef();
-    const moveHandleTopFaceRef = useRef();
+    const moveHandleLowerFaceRef = useRef<Mesh>();
+    const moveHandleUpperFaceRef = useRef<Mesh>();
+    const moveHandleLeftFaceRef = useRef<Mesh>();
+    const moveHandleRightFaceRef = useRef<Mesh>();
+    const moveHandleTopFaceRef = useRef<Mesh>();
 
     const offset = 0.1;
     const positionLowerFace = new Vector3(cx, height / 2, cy - ly / 2 - offset);
@@ -61,13 +62,14 @@ const Cuboid = ({
 
     const handleSize = 0.16;
 
+    if (baseRef && baseRef.current) {
+        Util.setVector(baseRef.current.position, cx, height / 2, cy);
+    }
+
     const selectMe = () => {
         setCommonStore((state) => {
-            const w = state.worlds['default'];
-            if (w) {
-                for (const e of w.elements) {
-                    e.selected = e.id === id;
-                }
+            for (const e of state.world.elements) {
+                e.selected = e.id === id;
             }
         });
     };
@@ -79,6 +81,7 @@ const Cuboid = ({
             {/* draw rectangular cuboid */}
             <Box castShadow receiveShadow
                  ref={baseRef}
+                 args={[lx, height, ly]}
                  name={'Cuboid'}
                  onPointerDown={(e) => {
                      if (e.intersections.length > 0) {
@@ -107,11 +110,11 @@ const Cuboid = ({
                  onPointerOut={(e) => {
                      setHovered(false);
                  }}
-                 args={[lx, height, ly]}
-                 position={[cx, height / 2, cy]}>
+            >
                 <meshStandardMaterial attach="material" color={color}/>
             </Box>
 
+            {!selected &&
             <>
                 {/* draw wireframe lines top */}
                 <Line points={[positionLLTop, positionLRTop]}
@@ -175,6 +178,7 @@ const Cuboid = ({
                     lineWidth={lineWidth}
                     color={lineColor}/>
             </>
+            }
 
             {/* draw handles */}
             {selected &&
@@ -263,7 +267,7 @@ const Cuboid = ({
             </>
             }
 
-            {hovered &&
+            {hovered && !selected &&
             <textSprite
                 name={'Label'}
                 text={'Box'}

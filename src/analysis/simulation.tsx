@@ -27,7 +27,8 @@ const Simulation = ({
                         yearlyLightSensorDataFlag,
                     }: SimulationProps) => {
 
-    const getWorld = useStore(state => state.getWorld);
+    const world = useStore(state => state.world);
+    const elements = world.elements;
     const getWeather = useStore(state => state.getWeather);
     const now = new Date(useStore(state => state.date));
     const latitude = useStore(state => state.latitude);
@@ -36,8 +37,6 @@ const Simulation = ({
     const setYearlyLightSensorData = useStore(state => state.setYearlyLightSensorData);
     const {scene} = useThree();
     const weather = getWeather(city ?? 'Boston MA, USA');
-    const ground = getWorld('default').ground;
-    const elements = getWorld('default').elements;
     const elevation = city ? getWeather(city).elevation : 0;
     const interval = 60 / timesPerHour;
     const ray = useMemo(() => new Raycaster(), []);
@@ -117,7 +116,7 @@ const Simulation = ({
                         }
                     }
                     // indirect radiation
-                    result[i] += calculateDiffuseAndReflectedRadiation(ground, month, normal, peakRadiation);
+                    result[i] += calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
                 }
             }
         }
@@ -175,7 +174,7 @@ const Simulation = ({
                             }
                         }
                         // indirect radiation
-                        total += calculateDiffuseAndReflectedRadiation(ground, month, normal, peakRadiation);
+                        total += calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
                     }
                 }
             }

@@ -11,7 +11,7 @@ import OrbitController from "./orbitController";
 import Sky from "./views/sky";
 import Axes from "./views/axes";
 import Compass from "./views/compass";
-import SceneContent from "./sceneContent";
+import WorldContent from "./worldContent";
 import Ground from "./views/ground";
 import {useStore} from "./stores/common";
 import {Euler, Vector3} from "three";
@@ -41,8 +41,7 @@ import About from "./about";
 const App = () => {
 
     const setCommonStore = useStore(state => state.set);
-    const worlds = useStore(state => state.worlds);
-    const createNewWorld = useStore(state => state.createNewWorld);
+    const world = useStore(state => state.world);
     const loadWeatherData = useStore(state => state.loadWeatherData);
     const getClosestCity = useStore(state => state.getClosestCity);
 
@@ -73,15 +72,10 @@ const App = () => {
     const [dailyLightSensorDataFlag, setDailyLightSensorDataFlag] = useState<boolean>(false);
     const [yearlyLightSensorDataFlag, setYearlyLightSensorDataFlag] = useState<boolean>(false);
     const [aboutUs, setAboutUs] = useState(false);
-
-    const world = worlds['default']; // currently we have only one world, which is default
-    const radius = 10;
     const orbitControlsRef = useRef<OrbitControls>();
+    const radius = 10;
 
     useEffect(() => {
-        if (!world) {
-            createNewWorld();
-        }
         loadWeatherData();
     }, []);
 
@@ -305,6 +299,7 @@ const App = () => {
                             panCenter={panCenter}
                             orbitControlsRef={orbitControlsRef}
                         />
+                        <WorldContent world={world}/>
                         <Suspense fallback={null}>
                             <ambientLight intensity={0.25} name={'Ambient Light'}/>
                             <directionalLight
@@ -336,7 +331,6 @@ const App = () => {
                                 date={now}
                                 latitude={Util.toRadians(latitude)}
                             />}
-                            {world && <SceneContent world={world}/>}
                         </Suspense>
                     </Canvas>
                 </div>

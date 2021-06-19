@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect} from 'react';
+import React from 'react';
 import Foundation from "./views/foundation";
 import Sensor from "./views/sensor";
 import Cuboid from "./views/cuboid";
@@ -11,26 +11,12 @@ import {ObjectType} from "./types";
 import {FoundationModel} from "./models/foundationModel";
 import {SensorModel} from "./models/sensorModel";
 import {CuboidModel} from "./models/cuboidModel";
-import {Scene} from "three";
-import {useThree} from "@react-three/fiber";
 
-export interface SceneContentProps {
+export interface WorldContentProps {
     world: WorldModel;
-    sceneRef?: React.MutableRefObject<Scene | undefined>;
 }
 
-const SceneContent: React.FC<SceneContentProps> = ({world, sceneRef}: SceneContentProps) => {
-
-    const {scene} = useThree();
-
-    useEffect(() => {
-        if (sceneRef) {
-            sceneRef.current = scene;
-        }
-    });
-
-    // const content = scene.children.filter(c => c.name === 'Content');
-    // if (content && content.length > 0) console.log(content[0].children[1].children[0].position)
+const WorldContent: React.FC<WorldContentProps> = ({world}: WorldContentProps) => {
 
     return (
         <group name={'Content'}>
@@ -47,4 +33,4 @@ const SceneContent: React.FC<SceneContentProps> = ({world, sceneRef}: SceneConte
     );
 };
 
-export default SceneContent;
+export default WorldContent;

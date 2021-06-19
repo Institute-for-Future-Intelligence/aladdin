@@ -54,17 +54,15 @@ const OrbitController = ({
 
     const onInteractionEnd = () => {
         setCommonStore((state) => {
-            const w = state.worlds['default'];
-            if (w) {
-                // FIXME: why can't set function be used?
-                w.cameraPosition.x = camera.position.x;
-                w.cameraPosition.y = camera.position.y;
-                w.cameraPosition.z = camera.position.z;
-                if (controls.current) {
-                    w.panCenter.x = controls.current.target.x;
-                    w.panCenter.y = controls.current.target.y;
-                    w.panCenter.z = controls.current.target.z;
-                }
+            const w = state.world;
+            // FIXME: why can't set function be used?
+            w.cameraPosition.x = camera.position.x;
+            w.cameraPosition.y = camera.position.y;
+            w.cameraPosition.z = camera.position.z;
+            if (controls.current) {
+                w.panCenter.x = controls.current.target.x;
+                w.panCenter.y = controls.current.target.y;
+                w.panCenter.z = controls.current.target.z;
             }
         });
     };

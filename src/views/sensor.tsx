@@ -4,9 +4,10 @@
 
 import React, {useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
-import {Vector3} from "three";
+import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {SensorModel} from "../models/sensorModel";
+import {Util} from "../util";
 
 const Sensor = ({
                     id,
@@ -30,8 +31,8 @@ const Sensor = ({
     const setCommonStore = useStore(state => state.set);
     const getElementById = useStore(state => state.getElementById);
     const [hovered, setHovered] = useState(false);
-    const baseRef = useRef();
-    const handleRef = useRef();
+    const baseRef = useRef<Mesh>();
+    const handleRef = useRef<Mesh>();
 
     const position = new Vector3(cx, cz, cy);
     const positionLL = new Vector3(cx - lx / 2, 0, cy - ly / 2);
@@ -39,15 +40,19 @@ const Sensor = ({
     const positionLR = new Vector3(cx + lx / 2, 0, cy - ly / 2);
     const positionUR = new Vector3(cx + lx / 2, 0, cy + ly / 2);
 
+    if (baseRef && baseRef.current) {
+        Util.setVector(baseRef.current.position, cx, height / 2, cy);
+    }
+    if (handleRef && handleRef.current) {
+        Util.copyVector(handleRef.current.position, position);
+    }
+
     const element = getElementById(id);
 
     const selectMe = () => {
         setCommonStore((state) => {
-            const w = state.worlds['default'];
-            if (w) {
-                for (const e of w.elements) {
-                    e.selected = e.id === id;
-                }
+            for (const e of state.world.elements) {
+                e.selected = e.id === id;
             }
         });
     };
@@ -59,6 +64,7 @@ const Sensor = ({
             {/* draw rectangle (too small to cast shadow) */}
             <Box receiveShadow
                  ref={baseRef}
+                 args={[lx, height, ly]}
                  name={'Sensor'}
                  onPointerDown={(e) => {
                      if (e.intersections.length > 0) {
@@ -87,12 +93,11 @@ const Sensor = ({
                  onPointerOut={(e) => {
                      setHovered(false);
                  }}
-                 args={[lx, height, ly]}
-                 position={[cx, height / 2, cy]}
             >
                 <meshStandardMaterial attach="material" color={element?.lit ? 'red' : color}/>
             </Box>
 
+            {!selected &&
             <>
                 {/* draw wireframe lines upper face */}
                 <Line points={[[positionLL.x, height, positionLL.z], [positionLR.x, height, positionLR.z]]}
@@ -148,18 +153,18 @@ const Sensor = ({
                       lineWidth={lineWidth}
                       color={lineColor}/>
             </>
+            }
 
             {/* draw handle */}
             {selected &&
             <Sphere
                 ref={handleRef}
                 args={[0.1, 6, 6]}
-                name={'Handle'}
-                position={position}>
+                name={'Handle'}>
                 <meshStandardMaterial attach="material" color={'orange'}/>
             </Sphere>
             }
-            {(hovered || showLabel) &&
+            {(hovered || showLabel) && !selected &&
             <textSprite
                 name={'Label'}
                 text={'Sensor'}

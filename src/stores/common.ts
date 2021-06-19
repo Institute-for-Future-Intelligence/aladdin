@@ -6,24 +6,19 @@ import create from 'zustand';
 import {devtools, persist} from 'zustand/middleware';
 import produce, {enableMapSet} from 'immer';
 import {WorldModel} from "../models/worldModel";
-import {Vector3} from "three";
 import {ElementModel} from "../models/elementModel";
 import {WeatherModel} from "../models/weatherModel";
 import weather from '../resources/weather.csv';
 import Papa from "papaparse";
 import {Util} from "../util";
-import {DatumEntry, ObjectType} from "../types";
-import {FoundationModel} from "../models/foundationModel";
-import {CuboidModel} from "../models/cuboidModel";
-import {SensorModel} from "../models/sensorModel";
+import {DatumEntry} from "../types";
+import {DefaultWorldModel} from "./DefaultWorldModel";
 
 enableMapSet();
 
 export interface CommonStoreState {
     set: (fn: (state: CommonStoreState) => void) => void;
-    worlds: { [key: string]: WorldModel };
-    createNewWorld: () => void;
-    getWorld: (name: string) => WorldModel;
+    world: WorldModel;
 
     showGroundPanel: boolean;
     showHeliodonPanel: boolean;
@@ -79,6 +74,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
     return {
 
         set: immerSet,
+        world: new DefaultWorldModel(),
 
         showGroundPanel: false,
         showHeliodonPanel: false,
@@ -119,119 +115,34 @@ export const useStore = create<CommonStoreState>(devtools(persist((
             });
         },
 
-        worlds: {},
-        getWorld(name: string) {
-            return get().worlds[name];
-        },
-        createNewWorld() {
-            immerSet((state: CommonStoreState) => {
-                const elements: ElementModel[] = [];
-                const e1 = {
-                    type: ObjectType.Foundation,
-                    cx: 0,
-                    cy: 0,
-                    lx: 2,
-                    ly: 2,
-                    height: 0.1,
-                    id: 'f1'
-                } as FoundationModel;
-                const e2 = {
-                    type: ObjectType.Cuboid,
-                    cx: 0,
-                    cy: 3,
-                    lx: 2,
-                    ly: 2,
-                    height: 4,
-                    id: 'c1'
-                } as CuboidModel;
-                const e3 = {
-                    type: ObjectType.Sensor,
-                    cx: 2,
-                    cy: 5,
-                    cz: 0,
-                    lx: 0.05,
-                    ly: 0.05,
-                    normal: [0, 0, 1],
-                    height: 0.01,
-                    id: 's1',
-                    showLabel: false,
-                    light: true,
-                    heatFlux: false
-                } as SensorModel;
-                const e4 = {
-                    type: ObjectType.Sensor,
-                    cx: 0,
-                    cy: 5,
-                    cz: 0,
-                    lx: 0.05,
-                    ly: 0.05,
-                    normal: [0, 0, 1],
-                    height: 0.01,
-                    id: 's2',
-                    showLabel: false,
-                    light: true,
-                    heatFlux: false
-                } as SensorModel;
-                const e5 = {
-                    type: ObjectType.Sensor,
-                    cx: 0,
-                    cy: 6,
-                    cz: 0,
-                    lx: 0.05,
-                    ly: 0.05,
-                    normal: [0, 0, 1],
-                    height: 0.01,
-                    id: 's3',
-                    showLabel: false,
-                    light: true,
-                    heatFlux: false
-                } as SensorModel;
-                elements.push(e1);
-                elements.push(e2);
-                elements.push(e3);
-                // elements.push(e4);
-                // elements.push(e5);
-                const ground = {
-                    albedo: 0.3,
-                    thermalDiffusivity: 0.05,
-                    snowReflectionFactors: new Array(12).fill(0)
-                };
-                const world = {
-                    name: 'default',
-                    elements: elements,
-                    ground: ground,
-                    panCenter: new Vector3(0, 0, 0),
-                    cameraPosition: new Vector3(0, 0, 5)
-                };
-                state.worlds[world.name] = world;
-            })
-        },
-
         enableOrbitController: true,
         clickObjectType: null,
         getSelectedElement() {
-            const elements = get().worlds['default'].elements;
-            for (const e of elements) {
-                if (e.selected) {
-                    return e;
+            const elements = get().world?.elements;
+            if (elements) {
+                for (const e of elements) {
+                    if (e.selected) {
+                        return e;
+                    }
                 }
             }
             return null;
         },
         getElementById(id: string) {
-            const elements = get().worlds['default'].elements;
-            for (const e of elements) {
-                if (e.id === id) {
-                    return e;
+            const elements = get().world?.elements;
+            if (elements) {
+                for (const e of elements) {
+                    if (e.id === id) {
+                        return e;
+                    }
                 }
             }
             return null;
         },
         selectNone() {
             immerSet((state: CommonStoreState) => {
-                const w = state.worlds['default'];
-                if (w) {
-                    for (const e of w.elements) {
+                if (state.world) {
+                    for (const e of state.world.elements) {
                         e.selected = false;
                     }
                 }
@@ -239,11 +150,10 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         },
         updateElementById(id, newProps) {
             immerSet((state: CommonStoreState) => {
-                const w = state.worlds['default'];
-                if (w) {
-                    for (let [i, e] of w.elements.entries()) {
+                if (state.world) {
+                    for (let [i, e] of state.world.elements.entries()) {
                         if (e.id === id) {
-                            w.elements[i] = {...e, ...newProps};
+                            state.world.elements[i] = {...e, ...newProps};
                             break;
                         }
                     }
@@ -252,7 +162,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         },
         setElementPosition(id, x, y, z) {
             immerSet((state: CommonStoreState) => {
-                const w = state.worlds['default'];
+                const w = state.world;
                 if (w) {
                     for (let [i, e] of w.elements.entries()) {
                         if (e.id === id) {
