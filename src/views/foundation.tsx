@@ -4,9 +4,10 @@
 
 import React, {useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
-import {Vector3} from "three";
+import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {FoundationModel} from "../models/foundationModel";
+import {Util} from "../util";
 
 const Foundation = ({
                         id,
@@ -17,7 +18,7 @@ const Foundation = ({
                         height = 0.1,
                         color = 'gray',
                         lineColor = 'black',
-                        lineWidth = 0.1,
+                        lineWidth = 0.2,
                         selected = false,
                     }: FoundationModel) => {
 
@@ -25,28 +26,54 @@ const Foundation = ({
 
     const setCommonStore = useStore(state => state.set);
     const [hovered, setHovered] = useState(false);
-    const baseRef = useRef();
-    const resizeHandleLLRef = useRef();
-    const resizeHandleULRef = useRef();
-    const resizeHandleLRRef = useRef();
-    const resizeHandleURRef = useRef();
+    const baseRef = useRef<Mesh>();
+    const resizeHandleLLRef = useRef<Mesh>();
+    const resizeHandleULRef = useRef<Mesh>();
+    const resizeHandleLRRef = useRef<Mesh>();
+    const resizeHandleURRef = useRef<Mesh>();
+    const moveHandleLowerRef = useRef<Mesh>();
+    const moveHandleUpperRef = useRef<Mesh>();
+    const moveHandleLeftRef = useRef<Mesh>();
+    const moveHandleRightRef = useRef<Mesh>();
+
     const handleSize = 0.16;
+    const offset = 0.2;
+    const wireframe = true;
 
     const positionLL = new Vector3(cx - lx / 2, height / 2, cy - ly / 2);
     const positionUL = new Vector3(cx - lx / 2, height / 2, cy + ly / 2);
     const positionLR = new Vector3(cx + lx / 2, height / 2, cy - ly / 2);
     const positionUR = new Vector3(cx + lx / 2, height / 2, cy + ly / 2);
 
-    const moveHandleLowerRef = useRef();
-    const moveHandleUpperRef = useRef();
-    const moveHandleLeftRef = useRef();
-    const moveHandleRightRef = useRef();
+    if (baseRef && baseRef.current) {
+        Util.setVector(baseRef.current.position, cx, height / 2, cy);
+    }
 
-    const offset = 0.2;
-    const positionLower = new Vector3(cx, height / 2, cy - ly / 2 - offset);
-    const positionUpper = new Vector3(cx, height / 2, cy + ly / 2 + offset);
-    const positionLeft = new Vector3(cx - lx / 2 - offset, height / 2, cy);
-    const positionRight = new Vector3(cx + lx / 2 + offset, height / 2, cy);
+    if (resizeHandleLLRef && resizeHandleLLRef.current) {
+        Util.copyVector(resizeHandleLLRef.current.position, positionLL);
+    }
+    if (resizeHandleULRef && resizeHandleULRef.current) {
+        Util.copyVector(resizeHandleULRef.current.position, positionUL);
+    }
+    if (resizeHandleLRRef && resizeHandleLRRef.current) {
+        Util.copyVector(resizeHandleLRRef.current.position, positionLR);
+    }
+    if (resizeHandleURRef && resizeHandleURRef.current) {
+        Util.copyVector(resizeHandleURRef.current.position, positionUR);
+    }
+
+    if (moveHandleLowerRef && moveHandleLowerRef.current) {
+        Util.setVector(moveHandleLowerRef.current.position, cx, height / 2, cy - ly / 2 - offset);
+    }
+    if (moveHandleUpperRef && moveHandleUpperRef.current) {
+        Util.setVector(moveHandleUpperRef.current.position, cx, height / 2, cy + ly / 2 + offset);
+    }
+    if (moveHandleLeftRef && moveHandleLeftRef.current) {
+        Util.setVector(moveHandleLeftRef.current.position, cx - lx / 2 - offset, height / 2, cy);
+    }
+    if (moveHandleRightRef && moveHandleRightRef.current) {
+        Util.setVector(moveHandleRightRef.current.position, cx + lx / 2 + offset, height / 2, cy);
+    }
 
     const selectMe = () => {
         setCommonStore((state) => {
@@ -67,6 +94,7 @@ const Foundation = ({
             <Box castShadow receiveShadow
                  ref={baseRef}
                  name={'Foundation'}
+                 args={[lx, height, ly]}
                  onContextMenu={(e) => {
                      if (e.intersections.length > 0) {
                          const intersected = e.intersections[0].object === baseRef.current;
@@ -98,11 +126,11 @@ const Foundation = ({
                  }}
                  onPointerMove={(e) => {
                  }}
-                 args={[lx, height, ly]}
-                 position={[cx, height / 2, cy]}>
+            >
                 <meshStandardMaterial attach="material" color={color}/>
             </Box>
 
+            {(wireframe && !selected) &&
             <>
                 {/* draw wireframe lines upper face */}
                 <Line points={[[positionLL.x, height, positionLL.z], [positionLR.x, height, positionLR.z]]}
@@ -158,6 +186,7 @@ const Foundation = ({
                       lineWidth={lineWidth}
                       color={lineColor}/>
             </>
+            }
 
             {/* draw handles */}
             {selected &&
@@ -165,67 +194,58 @@ const Foundation = ({
                 {/* resize handles */}
                 <Box ref={resizeHandleLLRef}
                      args={[handleSize, height * 1.2, handleSize]}
-                     name={'Resize Handle LL'}
-                     position={positionLL}>
+                     name={'Resize Handle LL'}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Box>
                 <Box ref={resizeHandleULRef}
                      args={[handleSize, height * 1.2, handleSize]}
-                     name={'Resize Handle UL'}
-                     position={positionUL}>
+                     name={'Resize Handle UL'}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Box>
                 <Box ref={resizeHandleLRRef}
                      args={[handleSize, height * 1.2, handleSize]}
-                     name={'Resize Handle LR'}
-                     position={positionLR}>
+                     name={'Resize Handle LR'}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Box>
                 <Box ref={resizeHandleURRef}
                      args={[handleSize, height * 1.2, handleSize]}
-                     name={'Resize Handle UR'}
-                     position={positionUR}>
+                     name={'Resize Handle UR'}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Box>
 
                 {/* move handles */}
                 <Sphere ref={moveHandleLowerRef}
                         args={[0.1, 6, 6]}
-                        name={'Move Handle Lower'}
-                        position={positionLower}>
+                        name={'Move Handle Lower'}>
                     <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
                 <Sphere ref={moveHandleUpperRef}
                         args={[0.1, 6, 6]}
-                        name={'Move Handle Upper'}
-                        position={positionUpper}>
+                        name={'Move Handle Upper'}>
                     <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
                 <Sphere ref={moveHandleLeftRef}
                         args={[0.1, 6, 6]}
-                        name={'Move Handle Left'}
-                        position={positionLeft}>
+                        name={'Move Handle Left'}>
                     <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
                 <Sphere ref={moveHandleRightRef}
                         args={[0.1, 6, 6]}
-                        name={'Move Handle Right'}
-                        position={positionRight}>
+                        name={'Move Handle Right'}>
                     <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
             </>
             }
 
-            {hovered &&
+            {(hovered && !selected) &&
             <textSprite
                 name={'Label'}
                 text={'Foundation'}
                 fontSize={90}
                 fontFace={'Times Roman'}
                 textHeight={1}
-                scale={[1, 0.2, 0.2]}
                 position={[cx, height + 0.2, cy]}
-            />
+                scale={[1, 0.2, 0.2]}/>
             }
 
         </group>

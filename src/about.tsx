@@ -34,6 +34,7 @@ const About = ({openAboutUs}: AboutProps) => {
                 position: 'absolute',
                 fontSize: 'medium',
                 color: 'antiquewhite',
+                cursor: 'pointer',
                 bottom: '10px'
             }} onClick={() => {
                 openAboutUs(false);

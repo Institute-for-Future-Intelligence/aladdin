@@ -46,6 +46,18 @@ export class Util {
         return Math.PI * 2;
     }
 
+    static copyVector(to: Vector3, from: Vector3) {
+        to.x = from.x;
+        to.y = from.y;
+        to.z = from.z;
+    }
+
+    static setVector(v: Vector3, x: number, y: number, z: number) {
+        v.x = x;
+        v.y = y;
+        v.z = z;
+    }
+
     // convert the coordinates from the model system to the view system
     static modelToView(v: Vector3) {
         return new Vector3(v.x, v.z, -v.y);

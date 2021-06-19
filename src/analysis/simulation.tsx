@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect} from "react";
+import React, {useEffect, useMemo} from "react";
 import {calculateDiffuseAndReflectedRadiation, calculatePeakRadiation, getSunDirection} from "./sunTools";
 import {Object3D, Raycaster, Vector3} from "three";
 import {useThree} from "@react-three/fiber";
@@ -35,12 +35,12 @@ const Simulation = ({
     const setDailyLightSensorData = useStore(state => state.setDailyLightSensorData);
     const setYearlyLightSensorData = useStore(state => state.setYearlyLightSensorData);
     const {scene} = useThree();
-    const ray = new Raycaster();
     const weather = getWeather(city ?? 'Boston MA, USA');
     const ground = getWorld('default').ground;
     const elements = getWorld('default').elements;
     const elevation = city ? getWeather(city).elevation : 0;
     const interval = 60 / timesPerHour;
+    const ray = useMemo(() => new Raycaster(), []);
 
     useEffect(() => {
         if (elements && elements.length > 0) {

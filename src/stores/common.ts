@@ -58,6 +58,7 @@ export interface CommonStoreState {
     getElementById: (id: string) => ElementModel | null;
     selectNone: () => void;
     updateElementById: (id: string, element: Partial<ElementModel>) => void;
+    setElementPosition: (id: string, x: number, y: number, z: number) => void;
 
     timesPerHour: number;
     dailyLightSensorData: DatumEntry[];
@@ -243,6 +244,21 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                     for (let [i, e] of w.elements.entries()) {
                         if (e.id === id) {
                             w.elements[i] = {...e, ...newProps};
+                            break;
+                        }
+                    }
+                }
+            });
+        },
+        setElementPosition(id, x, y, z) {
+            immerSet((state: CommonStoreState) => {
+                const w = state.worlds['default'];
+                if (w) {
+                    for (let [i, e] of w.elements.entries()) {
+                        if (e.id === id) {
+                            w.elements[i].cx = x;
+                            w.elements[i].cy = y;
+                            w.elements[i].cz = z;
                             break;
                         }
                     }

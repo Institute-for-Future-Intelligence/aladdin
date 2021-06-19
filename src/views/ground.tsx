@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useRef, useState} from "react";
+import React, {useMemo, useRef, useState} from "react";
 import {Plane} from "@react-three/drei";
 import {useStore} from "../stores/common";
 import {DoubleSide, Raycaster, Vector2} from "three";
@@ -16,11 +16,11 @@ const Ground = () => {
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const selectNone = useStore(state => state.selectNone);
     const groundColor = useStore(state => state.groundColor);
-    const updateElementById = useStore(state => state.updateElementById);
+    const setElementPosition = useStore(state => state.setElementPosition);
     const [grabbedElement, setGrabbedElement] = useState<ElementModel | null>(null);
     const {camera, scene} = useThree();
     const planeRef = useRef();
-    const ray = new Raycaster();
+    const ray = useMemo(() => new Raycaster(), []);
 
     return (
         <Plane receiveShadow
@@ -68,7 +68,7 @@ const Ground = () => {
                        const intersects = ray.intersectObjects(scene.children);
                        if (intersects.length > 0) {
                            const p = intersects[0].point;
-                           updateElementById(grabbedElement.id, {cx: p.x, cy: -p.z, cz: 0});
+                           setElementPosition(grabbedElement.id, p.x, -p.z, 0);
                        }
                    }
                }}
