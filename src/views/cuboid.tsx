@@ -7,7 +7,6 @@ import {Box, Line, Sphere} from "@react-three/drei";
 import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {CuboidModel} from "../models/cuboidModel";
-import {Util} from "../util";
 
 const Cuboid = ({
                     id,
@@ -62,10 +61,6 @@ const Cuboid = ({
 
     const handleSize = 0.16;
 
-    if (baseRef && baseRef.current) {
-        Util.setVector(baseRef.current.position, cx, height / 2, cy);
-    }
-
     const selectMe = () => {
         setCommonStore((state) => {
             for (const e of state.elements) {
@@ -82,6 +77,7 @@ const Cuboid = ({
             <Box castShadow receiveShadow
                  ref={baseRef}
                  args={[lx, height, ly]}
+                 position={[cx, height / 2, cy]}
                  name={'Cuboid'}
                  onPointerDown={(e) => {
                      if (e.intersections.length > 0) {

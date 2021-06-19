@@ -7,7 +7,6 @@ import {Box, Line, Sphere} from "@react-three/drei";
 import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {SensorModel} from "../models/sensorModel";
-import {Util} from "../util";
 
 const Sensor = ({
                     id,
@@ -40,13 +39,6 @@ const Sensor = ({
     const positionLR = new Vector3(cx + lx / 2, 0, cy - ly / 2);
     const positionUR = new Vector3(cx + lx / 2, 0, cy + ly / 2);
 
-    if (baseRef && baseRef.current) {
-        Util.setVector(baseRef.current.position, cx, height / 2, cy);
-    }
-    if (handleRef && handleRef.current) {
-        Util.copyVector(handleRef.current.position, position);
-    }
-
     const element = getElementById(id);
 
     const selectMe = () => {
@@ -65,6 +57,7 @@ const Sensor = ({
             <Box receiveShadow
                  ref={baseRef}
                  args={[lx, height, ly]}
+                 position={[cx, height / 2, cy]}
                  name={'Sensor'}
                  onPointerDown={(e) => {
                      if (e.intersections.length > 0) {
@@ -159,6 +152,7 @@ const Sensor = ({
             {selected &&
             <Sphere
                 ref={handleRef}
+                position={position}
                 args={[0.1, 6, 6]}
                 name={'Handle'}>
                 <meshStandardMaterial attach="material" color={'orange'}/>

@@ -7,7 +7,6 @@ import {Box, Line, Sphere} from "@react-three/drei";
 import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {FoundationModel} from "../models/foundationModel";
-import {Util} from "../util";
 
 const Foundation = ({
                         id,
@@ -45,36 +44,6 @@ const Foundation = ({
     const positionLR = new Vector3(cx + lx / 2, height / 2, cy - ly / 2);
     const positionUR = new Vector3(cx + lx / 2, height / 2, cy + ly / 2);
 
-    if (baseRef && baseRef.current) {
-        Util.setVector(baseRef.current.position, cx, height / 2, cy);
-    }
-
-    if (resizeHandleLLRef && resizeHandleLLRef.current) {
-        Util.copyVector(resizeHandleLLRef.current.position, positionLL);
-    }
-    if (resizeHandleULRef && resizeHandleULRef.current) {
-        Util.copyVector(resizeHandleULRef.current.position, positionUL);
-    }
-    if (resizeHandleLRRef && resizeHandleLRRef.current) {
-        Util.copyVector(resizeHandleLRRef.current.position, positionLR);
-    }
-    if (resizeHandleURRef && resizeHandleURRef.current) {
-        Util.copyVector(resizeHandleURRef.current.position, positionUR);
-    }
-
-    if (moveHandleLowerRef && moveHandleLowerRef.current) {
-        Util.setVector(moveHandleLowerRef.current.position, cx, height / 2, cy - ly / 2 - offset);
-    }
-    if (moveHandleUpperRef && moveHandleUpperRef.current) {
-        Util.setVector(moveHandleUpperRef.current.position, cx, height / 2, cy + ly / 2 + offset);
-    }
-    if (moveHandleLeftRef && moveHandleLeftRef.current) {
-        Util.setVector(moveHandleLeftRef.current.position, cx - lx / 2 - offset, height / 2, cy);
-    }
-    if (moveHandleRightRef && moveHandleRightRef.current) {
-        Util.setVector(moveHandleRightRef.current.position, cx + lx / 2 + offset, height / 2, cy);
-    }
-
     const selectMe = () => {
         setCommonStore((state) => {
             for (const e of state.elements) {
@@ -91,6 +60,7 @@ const Foundation = ({
             <Box castShadow receiveShadow
                  ref={baseRef}
                  name={'Foundation'}
+                 position={[cx, height / 2, cy]}
                  args={[lx, height, ly]}
                  onContextMenu={(e) => {
                      if (e.intersections.length > 0) {
@@ -190,21 +160,25 @@ const Foundation = ({
             <>
                 {/* resize handles */}
                 <Box ref={resizeHandleLLRef}
+                     position={positionLL}
                      args={[handleSize, height * 1.2, handleSize]}
                      name={'Resize Handle LL'}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Box>
                 <Box ref={resizeHandleULRef}
+                     position={positionUL}
                      args={[handleSize, height * 1.2, handleSize]}
                      name={'Resize Handle UL'}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Box>
                 <Box ref={resizeHandleLRRef}
+                     position={positionLR}
                      args={[handleSize, height * 1.2, handleSize]}
                      name={'Resize Handle LR'}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Box>
                 <Box ref={resizeHandleURRef}
+                     position={positionUR}
                      args={[handleSize, height * 1.2, handleSize]}
                      name={'Resize Handle UR'}>
                     <meshStandardMaterial attach="material" color={'white'}/>
@@ -213,21 +187,25 @@ const Foundation = ({
                 {/* move handles */}
                 <Sphere ref={moveHandleLowerRef}
                         args={[0.1, 6, 6]}
+                        position={[cx, height / 2, cy - ly / 2 - offset]}
                         name={'Move Handle Lower'}>
                     <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
                 <Sphere ref={moveHandleUpperRef}
                         args={[0.1, 6, 6]}
+                        position={[cx, height / 2, cy + ly / 2 + offset]}
                         name={'Move Handle Upper'}>
                     <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
                 <Sphere ref={moveHandleLeftRef}
                         args={[0.1, 6, 6]}
+                        position={[cx - lx / 2 - offset, height / 2, cy]}
                         name={'Move Handle Left'}>
                     <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
                 <Sphere ref={moveHandleRightRef}
                         args={[0.1, 6, 6]}
+                        position={[cx + lx / 2 + offset, height / 2, cy]}
                         name={'Move Handle Right'}>
                     <meshStandardMaterial attach="material" color={'orange'}/>
                 </Sphere>
