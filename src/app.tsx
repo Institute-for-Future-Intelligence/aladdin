@@ -42,7 +42,6 @@ const App = () => {
 
     const setCommonStore = useStore(state => state.set);
     const worlds = useStore(state => state.worlds);
-    const getWorld = useStore(state => state.getWorld);
     const createNewWorld = useStore(state => state.createNewWorld);
     const loadWeatherData = useStore(state => state.loadWeatherData);
     const getClosestCity = useStore(state => state.getClosestCity);
@@ -80,8 +79,7 @@ const App = () => {
     const orbitControlsRef = useRef<OrbitControls>();
 
     useEffect(() => {
-        const defaultWorld = getWorld('default');
-        if (!defaultWorld) {
+        if (!world) {
             createNewWorld();
         }
         loadWeatherData();

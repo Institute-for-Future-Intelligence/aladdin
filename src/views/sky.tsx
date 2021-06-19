@@ -9,7 +9,7 @@ import DesertDaySkyImage from "../resources/desert.jpg";
 import DesertNightSkyImage from "../resources/desert-night.jpg";
 import GrasslandDaySkyImage from "../resources/grassland.jpg";
 import GrasslandNightSkyImage from "../resources/grassland-night.jpg";
-import {DoubleSide, Mesh, TextureLoader} from "three";
+import {BackSide, Mesh, TextureLoader} from "three";
 import {useStore} from "../stores/common";
 import {ObjectType} from "../types";
 import {ThreeEvent} from "@react-three/fiber";
@@ -73,7 +73,7 @@ const Sky = ({
         >
             <sphereGeometry args={[1000, 16, 16, 0, 2 * Math.PI, 0, Math.PI / 2 + 0.01]}/>
             <meshBasicMaterial map={texture}
-                               side={DoubleSide}
+                               side={BackSide}
                                opacity={1}
                                color={'skyblue'}/>
         </mesh>

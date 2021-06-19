@@ -5,7 +5,7 @@
 import React, {useMemo, useRef, useState} from "react";
 import {Plane} from "@react-three/drei";
 import {useStore} from "../stores/common";
-import {DoubleSide, Raycaster, Vector2} from "three";
+import {Raycaster, Vector2} from "three";
 import {ObjectType} from "../types";
 import {ElementModel} from "../models/elementModel";
 import {useThree} from "@react-three/fiber";
@@ -74,8 +74,9 @@ const Ground = () => {
                }}
                rotation={[-Math.PI / 2, 0, 0]}
                position={[0, -0.01, 0]}
-               args={[10000, 10000]}>
-            <meshStandardMaterial side={DoubleSide} attach="material" color={groundColor}/>
+               args={[10000, 10000]}
+        >
+            <meshStandardMaterial attach="material" color={groundColor}/>
         </Plane>
     )
 };
