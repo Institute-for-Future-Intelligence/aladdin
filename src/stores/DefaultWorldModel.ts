@@ -17,7 +17,6 @@ export class DefaultWorldModel implements WorldModel {
     cameraPosition: Vector3;
     panCenter: Vector3;
     ground: GroundModel;
-    elements: ElementModel[] = [];
 
     constructor() {
 
@@ -30,6 +29,10 @@ export class DefaultWorldModel implements WorldModel {
         this.panCenter = new Vector3(0, 0, 0);
         this.cameraPosition = new Vector3(0, 0, 5);
 
+    }
+
+    getElements() {
+        const elements: ElementModel[] = [];
         const e1 = {
             type: ObjectType.Foundation,
             cx: 0,
@@ -90,11 +93,12 @@ export class DefaultWorldModel implements WorldModel {
             light: true,
             heatFlux: false
         } as SensorModel;
-        this.elements.push(e1);
-        this.elements.push(e2);
-        this.elements.push(e3);
-        // this.elements.push(e4);
-        // this.elements.push(e5);
+        elements.push(e1);
+        elements.push(e2);
+        elements.push(e3);
+        // elements.push(e4);
+        // elements.push(e5);
+        return elements;
     }
 
 }

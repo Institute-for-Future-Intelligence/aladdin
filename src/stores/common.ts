@@ -19,6 +19,7 @@ enableMapSet();
 export interface CommonStoreState {
     set: (fn: (state: CommonStoreState) => void) => void;
     world: WorldModel;
+    elements: ElementModel[];
 
     showGroundPanel: boolean;
     showHeliodonPanel: boolean;
@@ -70,11 +71,14 @@ export const useStore = create<CommonStoreState>(devtools(persist((
 ) => {
 
     const immerSet: CommonStoreState['set'] = fn => set(produce(fn));
+    const defaultWorldModel = new DefaultWorldModel();
+    const defaultElements = defaultWorldModel.getElements();
 
     return {
 
         set: immerSet,
-        world: new DefaultWorldModel(),
+        world: defaultWorldModel,
+        elements: defaultElements,
 
         showGroundPanel: false,
         showHeliodonPanel: false,
@@ -118,59 +122,48 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         enableOrbitController: true,
         clickObjectType: null,
         getSelectedElement() {
-            const elements = get().world?.elements;
-            if (elements) {
-                for (const e of elements) {
-                    if (e.selected) {
-                        return e;
-                    }
+            const elements = get().elements;
+            for (const e of elements) {
+                if (e.selected) {
+                    return e;
                 }
             }
             return null;
         },
         getElementById(id: string) {
-            const elements = get().world?.elements;
-            if (elements) {
-                for (const e of elements) {
-                    if (e.id === id) {
-                        return e;
-                    }
+            const elements = get().elements;
+            for (const e of elements) {
+                if (e.id === id) {
+                    return e;
                 }
             }
             return null;
         },
         selectNone() {
             immerSet((state: CommonStoreState) => {
-                if (state.world) {
-                    for (const e of state.world.elements) {
-                        e.selected = false;
-                    }
+                for (const e of state.elements) {
+                    e.selected = false;
                 }
             });
         },
         updateElementById(id, newProps) {
             immerSet((state: CommonStoreState) => {
-                if (state.world) {
-                    for (let [i, e] of state.world.elements.entries()) {
-                        if (e.id === id) {
-                            state.world.elements[i] = {...e, ...newProps};
-                            break;
-                        }
+                for (let [i, e] of state.elements.entries()) {
+                    if (e.id === id) {
+                        state.elements[i] = {...e, ...newProps};
+                        break;
                     }
                 }
             });
         },
         setElementPosition(id, x, y, z) {
             immerSet((state: CommonStoreState) => {
-                const w = state.world;
-                if (w) {
-                    for (let [i, e] of w.elements.entries()) {
-                        if (e.id === id) {
-                            w.elements[i].cx = x;
-                            w.elements[i].cy = y;
-                            w.elements[i].cz = z;
-                            break;
-                        }
+                for (let [i, e] of state.elements.entries()) {
+                    if (e.id === id) {
+                        state.elements[i].cx = x;
+                        state.elements[i].cy = y;
+                        state.elements[i].cz = z;
+                        break;
                     }
                 }
             });

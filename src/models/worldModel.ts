@@ -3,7 +3,6 @@
  */
 
 import {Vector3} from "three";
-import {ElementModel} from "./elementModel";
 import {GroundModel} from "./groundModel";
 
 export interface WorldModel {
@@ -12,6 +11,5 @@ export interface WorldModel {
     cameraPosition: Vector3;
     panCenter: Vector3;
     ground: GroundModel;
-    elements: ElementModel[];
 
 }

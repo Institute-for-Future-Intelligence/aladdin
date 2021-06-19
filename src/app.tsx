@@ -11,7 +11,7 @@ import OrbitController from "./orbitController";
 import Sky from "./views/sky";
 import Axes from "./views/axes";
 import Compass from "./views/compass";
-import WorldContent from "./worldContent";
+import ElementsRenderer from "./elementsRenderer";
 import Ground from "./views/ground";
 import {useStore} from "./stores/common";
 import {Euler, Vector3} from "three";
@@ -299,7 +299,7 @@ const App = () => {
                             panCenter={panCenter}
                             orbitControlsRef={orbitControlsRef}
                         />
-                        <WorldContent world={world}/>
+                        <ElementsRenderer/>
                         <Suspense fallback={null}>
                             <ambientLight intensity={0.25} name={'Ambient Light'}/>
                             <directionalLight

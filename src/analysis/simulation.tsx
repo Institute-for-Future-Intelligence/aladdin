@@ -28,7 +28,7 @@ const Simulation = ({
                     }: SimulationProps) => {
 
     const world = useStore(state => state.world);
-    const elements = world.elements;
+    const elements = useStore(state => state.elements);
     const getWeather = useStore(state => state.getWeather);
     const now = new Date(useStore(state => state.date));
     const latitude = useStore(state => state.latitude);

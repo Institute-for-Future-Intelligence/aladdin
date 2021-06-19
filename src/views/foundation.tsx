@@ -77,7 +77,7 @@ const Foundation = ({
 
     const selectMe = () => {
         setCommonStore((state) => {
-            for (const e of state.world.elements) {
+            for (const e of state.elements) {
                 e.selected = e.id === id;
             }
         });
