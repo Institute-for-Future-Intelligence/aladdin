@@ -9,6 +9,7 @@ import {useStore} from "../stores/common";
 import {FoundationModel} from "../models/foundationModel";
 import {ThreeEvent} from "@react-three/fiber";
 import {MoveHandleType} from "../types";
+import {HANDLE_SIZE, MOVE_HANDLE_OFFSET} from "../constants";
 
 const Foundation = ({
                         id,
@@ -16,7 +17,7 @@ const Foundation = ({
                         cy,
                         lx = 1,
                         ly = 1,
-                        height = 0.1,
+                        lz = 0.1,
                         color = 'gray',
                         lineColor = 'black',
                         lineWidth = 0.2,
@@ -37,14 +38,12 @@ const Foundation = ({
     const moveHandleLeftRef = useRef<Mesh>();
     const moveHandleRightRef = useRef<Mesh>();
 
-    const handleSize = 0.16;
-    const offset = 0.2;
     const wireframe = true;
 
-    const positionLL = new Vector3(cx - lx / 2, height / 2, cy - ly / 2);
-    const positionUL = new Vector3(cx - lx / 2, height / 2, cy + ly / 2);
-    const positionLR = new Vector3(cx + lx / 2, height / 2, cy - ly / 2);
-    const positionUR = new Vector3(cx + lx / 2, height / 2, cy + ly / 2);
+    const positionLL = new Vector3(cx - lx / 2, lz / 2, cy - ly / 2);
+    const positionUL = new Vector3(cx - lx / 2, lz / 2, cy + ly / 2);
+    const positionLR = new Vector3(cx + lx / 2, lz / 2, cy - ly / 2);
+    const positionUR = new Vector3(cx + lx / 2, lz / 2, cy + ly / 2);
 
     const selectMe = (e: ThreeEvent<MouseEvent>) => {
         if (e.intersections.length > 0) {
@@ -68,8 +67,8 @@ const Foundation = ({
             <Box castShadow receiveShadow
                  ref={baseRef}
                  name={'Foundation'}
-                 position={[cx, height / 2, cy]}
-                 args={[lx, height, ly]}
+                 position={[cx, lz / 2, cy]}
+                 args={[lx, lz, ly]}
                  onContextMenu={(e) => {
                      selectMe(e);
                  }}
@@ -98,19 +97,19 @@ const Foundation = ({
             {(wireframe && !selected) &&
             <>
                 {/* draw wireframe lines upper face */}
-                <Line points={[[positionLL.x, height, positionLL.z], [positionLR.x, height, positionLR.z]]}
+                <Line points={[[positionLL.x, lz, positionLL.z], [positionLR.x, lz, positionLR.z]]}
                       name={'Line LL-LR Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionLR.x, height, positionLR.z], [positionUR.x, height, positionUR.z]]}
+                <Line points={[[positionLR.x, lz, positionLR.z], [positionUR.x, lz, positionUR.z]]}
                       name={'Line LR-UR Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUR.x, height, positionUR.z], [positionUL.x, height, positionUL.z]]}
+                <Line points={[[positionUR.x, lz, positionUR.z], [positionUL.x, lz, positionUL.z]]}
                       name={'Line UR-UL Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUL.x, height, positionUL.z], [positionLL.x, height, positionLL.z]]}
+                <Line points={[[positionUL.x, lz, positionUL.z], [positionLL.x, lz, positionLL.z]]}
                       name={'Line UL-LL Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
@@ -134,19 +133,19 @@ const Foundation = ({
                       color={lineColor}/>
 
                 {/* draw wireframe vertical lines */}
-                <Line points={[[positionLL.x, 0, positionLL.z], [positionLL.x, height, positionLL.z]]}
+                <Line points={[[positionLL.x, 0, positionLL.z], [positionLL.x, lz, positionLL.z]]}
                       name={'Line LL-LL Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionLR.x, 0, positionLR.z], [positionLR.x, height, positionLR.z]]}
+                <Line points={[[positionLR.x, 0, positionLR.z], [positionLR.x, lz, positionLR.z]]}
                       name={'Line LR-LR Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUL.x, 0, positionUL.z], [positionUL.x, height, positionUL.z]]}
+                <Line points={[[positionUL.x, 0, positionUL.z], [positionUL.x, lz, positionUL.z]]}
                       name={'Line UL-UL Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUR.x, 0, positionUR.z], [positionUR.x, height, positionUR.z]]}
+                <Line points={[[positionUR.x, 0, positionUR.z], [positionUR.x, lz, positionUR.z]]}
                       name={'Line UR-UR Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
@@ -159,7 +158,7 @@ const Foundation = ({
                 {/* resize handles */}
                 <Box ref={resizeHandleLLRef}
                      position={positionLL}
-                     args={[handleSize, height * 1.2, handleSize]}
+                     args={[HANDLE_SIZE, lz * 1.2, HANDLE_SIZE]}
                      name={'Resize Handle LL'}
                      onPointerDown={(e) => {
                          selectMe(e);
@@ -169,7 +168,7 @@ const Foundation = ({
                 </Box>
                 <Box ref={resizeHandleULRef}
                      position={positionUL}
-                     args={[handleSize, height * 1.2, handleSize]}
+                     args={[HANDLE_SIZE, lz * 1.2, HANDLE_SIZE]}
                      name={'Resize Handle UL'}
                      onPointerDown={(e) => {
                          selectMe(e);
@@ -179,7 +178,7 @@ const Foundation = ({
                 </Box>
                 <Box ref={resizeHandleLRRef}
                      position={positionLR}
-                     args={[handleSize, height * 1.2, handleSize]}
+                     args={[HANDLE_SIZE, lz * 1.2, HANDLE_SIZE]}
                      name={'Resize Handle LR'}
                      onPointerDown={(e) => {
                          selectMe(e);
@@ -189,7 +188,7 @@ const Foundation = ({
                 </Box>
                 <Box ref={resizeHandleURRef}
                      position={positionUR}
-                     args={[handleSize, height * 1.2, handleSize]}
+                     args={[HANDLE_SIZE, lz * 1.2, HANDLE_SIZE]}
                      name={'Resize Handle UR'}
                      onPointerDown={(e) => {
                          selectMe(e);
@@ -201,7 +200,7 @@ const Foundation = ({
                 {/* move handles */}
                 <Sphere ref={moveHandleLowerRef}
                         args={[0.1, 6, 6]}
-                        position={[cx, height / 2, cy - ly / 2 - offset]}
+                        position={[cx, lz / 2, cy - ly / 2 - MOVE_HANDLE_OFFSET]}
                         name={MoveHandleType.MoveHandleLower}
                         onPointerDown={(e) => {
                             selectMe(e);
@@ -211,7 +210,7 @@ const Foundation = ({
                 </Sphere>
                 <Sphere ref={moveHandleUpperRef}
                         args={[0.1, 6, 6]}
-                        position={[cx, height / 2, cy + ly / 2 + offset]}
+                        position={[cx, lz / 2, cy + ly / 2 + MOVE_HANDLE_OFFSET]}
                         name={MoveHandleType.MoveHandleUpper}
                         onPointerDown={(e) => {
                             selectMe(e);
@@ -221,7 +220,7 @@ const Foundation = ({
                 </Sphere>
                 <Sphere ref={moveHandleLeftRef}
                         args={[0.1, 6, 6]}
-                        position={[cx - lx / 2 - offset, height / 2, cy]}
+                        position={[cx - lx / 2 - MOVE_HANDLE_OFFSET, lz / 2, cy]}
                         name={MoveHandleType.MoveHandleLeft}
                         onPointerDown={(e) => {
                             selectMe(e);
@@ -231,7 +230,7 @@ const Foundation = ({
                 </Sphere>
                 <Sphere ref={moveHandleRightRef}
                         args={[0.1, 6, 6]}
-                        position={[cx + lx / 2 + offset, height / 2, cy]}
+                        position={[cx + lx / 2 + MOVE_HANDLE_OFFSET, lz / 2, cy]}
                         name={MoveHandleType.MoveHandleRight}
                         onPointerDown={(e) => {
                             selectMe(e);
@@ -249,7 +248,7 @@ const Foundation = ({
                 fontSize={90}
                 fontFace={'Times Roman'}
                 textHeight={1}
-                position={[cx, height + 0.2, cy]}
+                position={[cx, lz + 0.2, cy]}
                 scale={[1, 0.2, 0.2]}/>
             }
 

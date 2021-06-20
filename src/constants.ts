@@ -33,3 +33,6 @@ export const MONTHS = [
     'Nov',
     'Dec'
 ];
+
+export const MOVE_HANDLE_OFFSET = 0.2;
+export const HANDLE_SIZE = 0.16;

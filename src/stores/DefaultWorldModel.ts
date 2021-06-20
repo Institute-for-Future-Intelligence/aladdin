@@ -38,8 +38,8 @@ export class DefaultWorldModel implements WorldModel {
             cx: 0,
             cy: 0,
             lx: 2,
-            ly: 2,
-            height: 0.1,
+            ly: 3,
+            lz: 0.1,
             id: 'f1'
         } as FoundationModel;
         const e2 = {
@@ -48,7 +48,7 @@ export class DefaultWorldModel implements WorldModel {
             cy: 3,
             lx: 2,
             ly: 2,
-            height: 4,
+            lz: 4,
             id: 'c1'
         } as CuboidModel;
         const e3 = {
@@ -58,8 +58,8 @@ export class DefaultWorldModel implements WorldModel {
             cz: 0,
             lx: 0.05,
             ly: 0.05,
+            lz: 0.01,
             normal: [0, 0, 1],
-            height: 0.01,
             id: 's1',
             showLabel: false,
             light: true,
@@ -72,8 +72,8 @@ export class DefaultWorldModel implements WorldModel {
             cz: 0,
             lx: 0.05,
             ly: 0.05,
+            lz: 0.01,
             normal: [0, 0, 1],
-            height: 0.01,
             id: 's2',
             showLabel: false,
             light: true,
@@ -86,8 +86,8 @@ export class DefaultWorldModel implements WorldModel {
             cz: 0,
             lx: 0.05,
             ly: 0.05,
+            lz: 0.01,
             normal: [0, 0, 1],
-            height: 0.01,
             id: 's3',
             showLabel: false,
             light: true,

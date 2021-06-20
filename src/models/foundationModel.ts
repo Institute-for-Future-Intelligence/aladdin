@@ -6,8 +6,4 @@ import {ElementModel} from "./elementModel";
 
 export interface FoundationModel extends ElementModel {
 
-    lx: number;
-    ly: number;
-    height: number;
-
 }

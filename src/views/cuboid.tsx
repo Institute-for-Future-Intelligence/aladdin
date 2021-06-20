@@ -9,6 +9,7 @@ import {useStore} from "../stores/common";
 import {CuboidModel} from "../models/cuboidModel";
 import {ThreeEvent} from "@react-three/fiber";
 import {MoveHandleType} from "../types";
+import {HANDLE_SIZE, MOVE_HANDLE_OFFSET} from "../constants";
 
 const Cuboid = ({
                     id,
@@ -16,7 +17,7 @@ const Cuboid = ({
                     cy,
                     lx = 1,
                     ly = 1,
-                    height = 1,
+                    lz = 1,
                     color = 'silver',
                     lineColor = 'black',
                     lineWidth = 0.1,
@@ -38,10 +39,10 @@ const Cuboid = ({
     const resizeHandleLRBotRef = useRef<Mesh>();
     const resizeHandleURBotRef = useRef<Mesh>();
 
-    const positionLLTop = new Vector3(cx - lx / 2, height, cy - ly / 2);
-    const positionULTop = new Vector3(cx - lx / 2, height, cy + ly / 2);
-    const positionLRTop = new Vector3(cx + lx / 2, height, cy - ly / 2);
-    const positionURTop = new Vector3(cx + lx / 2, height, cy + ly / 2);
+    const positionLLTop = new Vector3(cx - lx / 2, lz, cy - ly / 2);
+    const positionULTop = new Vector3(cx - lx / 2, lz, cy + ly / 2);
+    const positionLRTop = new Vector3(cx + lx / 2, lz, cy - ly / 2);
+    const positionURTop = new Vector3(cx + lx / 2, lz, cy + ly / 2);
 
     const positionLLBot = new Vector3(cx - lx / 2, 0, cy - ly / 2);
     const positionULBot = new Vector3(cx - lx / 2, 0, cy + ly / 2);
@@ -54,14 +55,11 @@ const Cuboid = ({
     const moveHandleRightFaceRef = useRef<Mesh>();
     const moveHandleTopFaceRef = useRef<Mesh>();
 
-    const offset = 0.1;
-    const positionLowerFace = new Vector3(cx, height / 2, cy - ly / 2 - offset);
-    const positionUpperFace = new Vector3(cx, height / 2, cy + ly / 2 + offset);
-    const positionLeftFace = new Vector3(cx - lx / 2 - offset, height / 2, cy);
-    const positionRightFace = new Vector3(cx + lx / 2 + offset, height / 2, cy);
-    const positionTopFace = new Vector3(cx, height + offset, cy);
-
-    const handleSize = 0.16;
+    const positionLowerFace = new Vector3(cx, lz / 2, cy - ly / 2 - MOVE_HANDLE_OFFSET);
+    const positionUpperFace = new Vector3(cx, lz / 2, cy + ly / 2 + MOVE_HANDLE_OFFSET);
+    const positionLeftFace = new Vector3(cx - lx / 2 - MOVE_HANDLE_OFFSET, lz / 2, cy);
+    const positionRightFace = new Vector3(cx + lx / 2 + MOVE_HANDLE_OFFSET, lz / 2, cy);
+    const positionTopFace = new Vector3(cx, lz + MOVE_HANDLE_OFFSET, cy);
 
     const selectMe = (e: ThreeEvent<MouseEvent>) => {
         if (e.intersections.length > 0) {
@@ -84,8 +82,8 @@ const Cuboid = ({
             {/* draw rectangular cuboid */}
             <Box castShadow receiveShadow
                  ref={baseRef}
-                 args={[lx, height, ly]}
-                 position={[cx, height / 2, cy]}
+                 args={[lx, lz, ly]}
+                 position={[cx, lz / 2, cy]}
                  name={'Cuboid'}
                  onPointerDown={(e) => {
                      selectMe(e);
@@ -180,7 +178,7 @@ const Cuboid = ({
                 {/* resize handles */}
                 <Box ref={resizeHandleLLTopRef}
                      name={'Resize Handle LL Top'}
-                     args={[handleSize, handleSize, handleSize]}
+                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionLLTop}
                      onPointerDown={(e) => {
                          selectMe(e);
@@ -190,7 +188,7 @@ const Cuboid = ({
                 </Box>
                 <Box ref={resizeHandleULTopRef}
                      name={'Resize Handle UL Top'}
-                     args={[handleSize, handleSize, handleSize]}
+                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionULTop}
                      onPointerDown={(e) => {
                          selectMe(e);
@@ -200,7 +198,7 @@ const Cuboid = ({
                 </Box>
                 <Box ref={resizeHandleLRTopRef}
                      name={'Resize Handle LR Top'}
-                     args={[handleSize, handleSize, handleSize]}
+                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionLRTop}
                      onPointerDown={(e) => {
                          selectMe(e);
@@ -210,7 +208,7 @@ const Cuboid = ({
                 </Box>
                 <Box ref={resizeHandleURTopRef}
                      name={'Resize Handle UR Top'}
-                     args={[handleSize, handleSize, handleSize]}
+                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionURTop}
                      onPointerDown={(e) => {
                          selectMe(e);
@@ -220,7 +218,7 @@ const Cuboid = ({
                 </Box>
                 <Box ref={resizeHandleLLBotRef}
                      name={'Resize Handle LL Bottom'}
-                     args={[handleSize, handleSize, handleSize]}
+                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionLLBot}
                      onPointerDown={(e) => {
                          selectMe(e);
@@ -230,7 +228,7 @@ const Cuboid = ({
                 </Box>
                 <Box ref={resizeHandleULBotRef}
                      name={'Resize Handle UL Bottom'}
-                     args={[handleSize, handleSize, handleSize]}
+                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionULBot}
                      onPointerDown={(e) => {
                          selectMe(e);
@@ -240,7 +238,7 @@ const Cuboid = ({
                 </Box>
                 <Box ref={resizeHandleLRBotRef}
                      name={'Resize Handle LR Bottom'}
-                     args={[handleSize, handleSize, handleSize]}
+                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionLRBot}
                      onPointerDown={(e) => {
                          selectMe(e);
@@ -250,7 +248,7 @@ const Cuboid = ({
                 </Box>
                 <Box ref={resizeHandleURBotRef}
                      name={'Resize Handle UR Bottom'}
-                     args={[handleSize, handleSize, handleSize]}
+                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionURBot}
                      onPointerDown={(e) => {
                          selectMe(e);
@@ -321,7 +319,7 @@ const Cuboid = ({
                 fontFace={'Times Roman'}
                 textHeight={1}
                 scale={[0.4, 0.2, 0.2]}
-                position={[cx, height + 0.2, cy]}
+                position={[cx, lz + 0.2, cy]}
             />
             }
 

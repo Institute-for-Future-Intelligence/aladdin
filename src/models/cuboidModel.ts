@@ -6,8 +6,4 @@ import {ElementModel} from "./elementModel";
 
 export interface CuboidModel extends ElementModel {
 
-    lx: number;
-    ly: number;
-    height: number;
-
 }

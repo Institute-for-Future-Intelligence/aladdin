@@ -9,6 +9,7 @@ import {Mesh, Raycaster, Vector2} from "three";
 import {MoveHandleType, ObjectType} from "../types";
 import {ElementModel} from "../models/elementModel";
 import {useThree} from "@react-three/fiber";
+import {MOVE_HANDLE_OFFSET} from "../constants";
 
 const Ground = () => {
 
@@ -18,8 +19,8 @@ const Ground = () => {
     const moveHandleType = useStore(state => state.moveHandleType);
     const groundColor = useStore(state => state.groundColor);
     const setElementPosition = useStore(state => state.setElementPosition);
-    const [grabbedElement, setGrabbedElement] = useState<ElementModel | null>(null);
-    const {camera} = useThree();
+    const [grab, setGrab] = useState<ElementModel | null>(null);
+    const {camera, gl: {domElement}} = useThree();
     const planeRef = useRef<Mesh>();
     const ray = useMemo(() => new Raycaster(), []);
 
@@ -47,7 +48,7 @@ const Ground = () => {
                            });
                            selectNone();
                        } else {
-                           setGrabbedElement(getSelectedElement());
+                           setGrab(getSelectedElement());
                            setCommonStore((state) => {
                                state.enableOrbitController = false;
                            });
@@ -55,41 +56,43 @@ const Ground = () => {
                    }
                }}
                onPointerUp={(e) => {
-                   setGrabbedElement(null);
+                   setGrab(null);
                    setCommonStore((state) => {
                        state.enableOrbitController = true;
                    });
                }}
                onPointerMove={(e) => {
-                   if (grabbedElement && planeRef && planeRef.current) {
-                       switch (grabbedElement.type) {
-                           case ObjectType.Sensor:
-                               const mouse = new Vector2();
-                               mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-                               mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-                               ray.setFromCamera(mouse, camera);
-                               const intersects = ray.intersectObjects([planeRef.current]);
-                               if (intersects.length > 0) {
-                                   const p = intersects[0].point;
-                                   setElementPosition(grabbedElement.id, p.x, -p.z, 0);
-                               }
-                               break;
-                           case ObjectType.Foundation:
-                           case ObjectType.Cuboid:
-                               if (moveHandleType) {
-                                   if (Object.values(MoveHandleType).includes(moveHandleType)) {
-                                       const mouse = new Vector2();
-                                       mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-                                       mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-                                       ray.setFromCamera(mouse, camera);
-                                       const intersects = ray.intersectObjects([planeRef.current]);
-                                       if (intersects.length > 0) {
-                                           const p = intersects[0].point;
-                                           setElementPosition(grabbedElement.id, p.x, -p.z, 0);
-                                       }
+                   if (grab && planeRef && planeRef.current && grab.type) {
+                       const mouse = new Vector2();
+                       mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
+                       mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
+                       ray.setFromCamera(mouse, camera);
+                       const intersects = ray.intersectObjects([planeRef.current]);
+                       if (intersects.length > 0) {
+                           const p = intersects[0].point;
+                           switch (grab.type) {
+                               case ObjectType.Sensor:
+                                   setElementPosition(grab.id, p.x, -p.z, 0);
+                                   break;
+                               case ObjectType.Foundation:
+                                   switch (moveHandleType) {
+                                       case MoveHandleType.MoveHandleLower:
+                                           setElementPosition(grab.id, p.x, -p.z - grab.ly / 2 - MOVE_HANDLE_OFFSET, 0);
+                                           break;
+                                       case MoveHandleType.MoveHandleUpper:
+                                           setElementPosition(grab.id, p.x, -p.z + grab.ly / 2 + MOVE_HANDLE_OFFSET, 0);
+                                           break;
+                                       case MoveHandleType.MoveHandleLeft:
+                                           setElementPosition(grab.id, p.x + grab.lx / 2 + MOVE_HANDLE_OFFSET, -p.z, 0);
+                                           break;
+                                       case MoveHandleType.MoveHandleRight:
+                                           setElementPosition(grab.id, p.x - grab.lx / 2 - MOVE_HANDLE_OFFSET, -p.z, 0);
+                                           break;
                                    }
-                               }
-                               break;
+                                   break;
+                               case ObjectType.Cuboid:
+                                   break;
+                           }
                        }
                    }
                }}

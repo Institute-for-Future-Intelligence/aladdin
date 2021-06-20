@@ -16,7 +16,7 @@ const Sensor = ({
                     cz,
                     lx = 1,
                     ly = 1,
-                    height = 0.1,
+                    lz = 0.1,
                     color = 'white',
                     lineColor = 'black',
                     lineWidth = 0.1,
@@ -62,8 +62,8 @@ const Sensor = ({
             {/* draw rectangle (too small to cast shadow) */}
             <Box receiveShadow
                  ref={baseRef}
-                 args={[lx, height, ly]}
-                 position={[cx, height / 2, cy]}
+                 args={[lx, lz, ly]}
+                 position={[cx, lz / 2, cy]}
                  name={'Sensor'}
                  onPointerDown={(e) => {
                      selectMe(e);
@@ -89,19 +89,19 @@ const Sensor = ({
             {!selected &&
             <>
                 {/* draw wireframe lines upper face */}
-                <Line points={[[positionLL.x, height, positionLL.z], [positionLR.x, height, positionLR.z]]}
+                <Line points={[[positionLL.x, lz, positionLL.z], [positionLR.x, lz, positionLR.z]]}
                       name={'Line LL-LR Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionLR.x, height, positionLR.z], [positionUR.x, height, positionUR.z]]}
+                <Line points={[[positionLR.x, lz, positionLR.z], [positionUR.x, lz, positionUR.z]]}
                       name={'Line LR-UR Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUR.x, height, positionUR.z], [positionUL.x, height, positionUL.z]]}
+                <Line points={[[positionUR.x, lz, positionUR.z], [positionUL.x, lz, positionUL.z]]}
                       name={'Line UR-UL Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUL.x, height, positionUL.z], [positionLL.x, height, positionLL.z]]}
+                <Line points={[[positionUL.x, lz, positionUL.z], [positionLL.x, lz, positionLL.z]]}
                       name={'Line UL-LL Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
@@ -125,19 +125,19 @@ const Sensor = ({
                       color={lineColor}/>
 
                 {/* draw wireframe vertical lines */}
-                <Line points={[positionLL, [positionLL.x, height, positionLL.z]]}
+                <Line points={[positionLL, [positionLL.x, lz, positionLL.z]]}
                       name={'Line LL-LL Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[positionLR, [positionLR.x, height, positionLR.z]]}
+                <Line points={[positionLR, [positionLR.x, lz, positionLR.z]]}
                       name={'Line LR-LR Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[positionUL, [positionUL.x, height, positionUL.z]]}
+                <Line points={[positionUL, [positionUL.x, lz, positionUL.z]]}
                       name={'Line UL-UL Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[positionUR, [positionUR.x, height, positionUR.z]]}
+                <Line points={[positionUR, [positionUR.x, lz, positionUR.z]]}
                       name={'Line UR-UR Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
@@ -165,7 +165,7 @@ const Sensor = ({
                 fontFace={'Times Roman'}
                 textHeight={1}
                 scale={[0.5, 0.2, 0.2]}
-                position={[cx, height + 0.2, cy]}
+                position={[cx, lz + 0.2, cy]}
             />
             }
         </group>
