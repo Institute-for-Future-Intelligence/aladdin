@@ -46,6 +46,7 @@ export class DefaultWorldModel implements WorldModel {
             type: ObjectType.Cuboid,
             cx: 0,
             cy: 3,
+            cz: 2,
             lx: 2,
             ly: 2,
             lz: 4,

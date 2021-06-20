@@ -11,7 +11,7 @@ import {WeatherModel} from "../models/weatherModel";
 import weather from '../resources/weather.csv';
 import Papa from "papaparse";
 import {Util} from "../util";
-import {DatumEntry, MoveHandleType, ObjectType} from "../types";
+import {DatumEntry, MoveHandleType, ObjectType, ResizeHandleType} from "../types";
 import {DefaultWorldModel} from "./DefaultWorldModel";
 
 enableMapSet();
@@ -51,11 +51,13 @@ export interface CommonStoreState {
     enableOrbitController: boolean;
     clickObjectType: ObjectType | null;
     moveHandleType: MoveHandleType | null;
+    resizeHandleType: ResizeHandleType | null;
     getSelectedElement: () => ElementModel | null;
     getElementById: (id: string) => ElementModel | null;
     selectNone: () => void;
     updateElementById: (id: string, element: Partial<ElementModel>) => void;
-    setElementPosition: (id: string, x: number, y: number, z: number) => void;
+    setElementPosition: (id: string, x: number, y: number, z?: number) => void;
+    setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
 
     timesPerHour: number;
     dailyLightSensorData: DatumEntry[];
@@ -123,6 +125,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         enableOrbitController: true,
         clickObjectType: null,
         moveHandleType: null,
+        resizeHandleType: null,
         getSelectedElement() {
             const elements = get().elements;
             for (const e of elements) {
@@ -158,13 +161,29 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 }
             });
         },
-        setElementPosition(id, x, y, z) {
+        setElementPosition(id, x, y, z?) {
             immerSet((state: CommonStoreState) => {
                 for (let [i, e] of state.elements.entries()) {
                     if (e.id === id) {
                         state.elements[i].cx = x;
                         state.elements[i].cy = y;
-                        state.elements[i].cz = z;
+                        if (z) {
+                            state.elements[i].cz = z;
+                        }
+                        break;
+                    }
+                }
+            });
+        },
+        setElementSize(id, lx, ly, lz?) {
+            immerSet((state: CommonStoreState) => {
+                for (let [i, e] of state.elements.entries()) {
+                    if (e.id === id) {
+                        state.elements[i].lx = lx;
+                        state.elements[i].ly = ly;
+                        if (lz) {
+                            state.elements[i].lz = lz;
+                        }
                         break;
                     }
                 }

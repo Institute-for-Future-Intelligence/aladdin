@@ -8,7 +8,7 @@ import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {FoundationModel} from "../models/foundationModel";
 import {ThreeEvent} from "@react-three/fiber";
-import {MoveHandleType} from "../types";
+import {ActionType, MoveHandleType, ResizeHandleType} from "../types";
 import {HANDLE_SIZE, MOVE_HANDLE_OFFSET} from "../constants";
 
 const Foundation = ({
@@ -45,7 +45,7 @@ const Foundation = ({
     const positionLR = new Vector3(cx + lx / 2, lz / 2, cy - ly / 2);
     const positionUR = new Vector3(cx + lx / 2, lz / 2, cy + ly / 2);
 
-    const selectMe = (e: ThreeEvent<MouseEvent>) => {
+    const selectMe = (e: ThreeEvent<MouseEvent>, action: ActionType) => {
         if (e.intersections.length > 0) {
             const intersected = e.intersections[0].object === e.eventObject;
             if (intersected) {
@@ -53,7 +53,19 @@ const Foundation = ({
                     for (const e of state.elements) {
                         e.selected = e.id === id;
                     }
-                    state.moveHandleType = e.eventObject.name as MoveHandleType;
+                    switch (action) {
+                        case ActionType.Move:
+                            state.moveHandleType = e.eventObject.name as MoveHandleType;
+                            state.resizeHandleType = null;
+                            break;
+                        case ActionType.Resize:
+                            state.resizeHandleType = e.eventObject.name as ResizeHandleType;
+                            state.moveHandleType = null;
+                            break;
+                        default:
+                            state.moveHandleType = null;
+                            state.resizeHandleType = null;
+                    }
                 });
             }
         }
@@ -70,7 +82,7 @@ const Foundation = ({
                  position={[cx, lz / 2, cy]}
                  args={[lx, lz, ly]}
                  onContextMenu={(e) => {
-                     selectMe(e);
+                     selectMe(e, ActionType.Select);
                  }}
                  onPointerOver={(e) => {
                      if (e.intersections.length > 0) {
@@ -84,7 +96,7 @@ const Foundation = ({
                      setHovered(false);
                  }}
                  onPointerDown={(e) => {
-                     selectMe(e);
+                     selectMe(e, ActionType.Select);
                  }}
                  onPointerUp={(e) => {
                  }}
@@ -159,9 +171,9 @@ const Foundation = ({
                 <Box ref={resizeHandleLLRef}
                      position={positionLL}
                      args={[HANDLE_SIZE, lz * 1.2, HANDLE_SIZE]}
-                     name={'Resize Handle LL'}
+                     name={ResizeHandleType.LowerLeft}
                      onPointerDown={(e) => {
-                         selectMe(e);
+                         selectMe(e, ActionType.Resize);
                      }}
                 >
                     <meshStandardMaterial attach="material" color={'white'}/>
@@ -169,9 +181,9 @@ const Foundation = ({
                 <Box ref={resizeHandleULRef}
                      position={positionUL}
                      args={[HANDLE_SIZE, lz * 1.2, HANDLE_SIZE]}
-                     name={'Resize Handle UL'}
+                     name={ResizeHandleType.UpperLeft}
                      onPointerDown={(e) => {
-                         selectMe(e);
+                         selectMe(e, ActionType.Resize);
                      }}
                 >
                     <meshStandardMaterial attach="material" color={'white'}/>
@@ -179,9 +191,9 @@ const Foundation = ({
                 <Box ref={resizeHandleLRRef}
                      position={positionLR}
                      args={[HANDLE_SIZE, lz * 1.2, HANDLE_SIZE]}
-                     name={'Resize Handle LR'}
+                     name={ResizeHandleType.LowerRight}
                      onPointerDown={(e) => {
-                         selectMe(e);
+                         selectMe(e, ActionType.Resize);
                      }}
                 >
                     <meshStandardMaterial attach="material" color={'white'}/>
@@ -189,9 +201,9 @@ const Foundation = ({
                 <Box ref={resizeHandleURRef}
                      position={positionUR}
                      args={[HANDLE_SIZE, lz * 1.2, HANDLE_SIZE]}
-                     name={'Resize Handle UR'}
+                     name={ResizeHandleType.UpperRight}
                      onPointerDown={(e) => {
-                         selectMe(e);
+                         selectMe(e, ActionType.Resize);
                      }}
                 >
                     <meshStandardMaterial attach="material" color={'white'}/>
@@ -201,9 +213,9 @@ const Foundation = ({
                 <Sphere ref={moveHandleLowerRef}
                         args={[0.1, 6, 6]}
                         position={[cx, lz / 2, cy - ly / 2 - MOVE_HANDLE_OFFSET]}
-                        name={MoveHandleType.MoveHandleLower}
+                        name={MoveHandleType.Lower}
                         onPointerDown={(e) => {
-                            selectMe(e);
+                            selectMe(e, ActionType.Move);
                         }}
                 >
                     <meshStandardMaterial attach="material" color={'orange'}/>
@@ -211,9 +223,9 @@ const Foundation = ({
                 <Sphere ref={moveHandleUpperRef}
                         args={[0.1, 6, 6]}
                         position={[cx, lz / 2, cy + ly / 2 + MOVE_HANDLE_OFFSET]}
-                        name={MoveHandleType.MoveHandleUpper}
+                        name={MoveHandleType.Upper}
                         onPointerDown={(e) => {
-                            selectMe(e);
+                            selectMe(e, ActionType.Move);
                         }}
                 >
                     <meshStandardMaterial attach="material" color={'orange'}/>
@@ -221,9 +233,9 @@ const Foundation = ({
                 <Sphere ref={moveHandleLeftRef}
                         args={[0.1, 6, 6]}
                         position={[cx - lx / 2 - MOVE_HANDLE_OFFSET, lz / 2, cy]}
-                        name={MoveHandleType.MoveHandleLeft}
+                        name={MoveHandleType.Left}
                         onPointerDown={(e) => {
-                            selectMe(e);
+                            selectMe(e, ActionType.Move);
                         }}
                 >
                     <meshStandardMaterial attach="material" color={'orange'}/>
@@ -231,9 +243,9 @@ const Foundation = ({
                 <Sphere ref={moveHandleRightRef}
                         args={[0.1, 6, 6]}
                         position={[cx + lx / 2 + MOVE_HANDLE_OFFSET, lz / 2, cy]}
-                        name={MoveHandleType.MoveHandleRight}
+                        name={MoveHandleType.Right}
                         onPointerDown={(e) => {
-                            selectMe(e);
+                            selectMe(e, ActionType.Move);
                         }}
                 >
                     <meshStandardMaterial attach="material" color={'orange'}/>

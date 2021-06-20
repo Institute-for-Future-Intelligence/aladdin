@@ -290,7 +290,7 @@ const App = () => {
                     <Canvas shadows={true}
                             camera={{
                                 position: cameraPosition,
-                                fov: 90
+                                fov: 45,
                             }}
                             style={{height: 'calc(100vh - 70px)', backgroundColor: 'black'}}>
                         <OrbitController

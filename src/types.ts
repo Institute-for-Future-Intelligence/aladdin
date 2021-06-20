@@ -47,10 +47,23 @@ export enum ObjectType {
     Cuboid = 'Cuboid',
 }
 
+export enum ActionType {
+    Select = 'Select',
+    Move = 'Move',
+    Resize = 'Resize',
+}
+
 export enum MoveHandleType {
-    MoveHandleLower = 'Move Handle Lower',
-    MoveHandleUpper = 'Move Handle Upper',
-    MoveHandleLeft = 'Move Handle Left',
-    MoveHandleRight = 'Move Handle Right',
-    MoveHandleTop = 'Move Handle Top',
+    Lower = 'Move Handle Lower',
+    Upper = 'Move Handle Upper',
+    Left = 'Move Handle Left',
+    Right = 'Move Handle Right',
+    Top = 'Move Handle Top',
+}
+
+export enum ResizeHandleType {
+    LowerLeft = 'Resize Handle Lower Left',
+    UpperLeft = 'Resize Handle Upper Left',
+    LowerRight = 'Resize Handle Lower Right',
+    UpperRight = 'Resize Handle Upper Right',
 }

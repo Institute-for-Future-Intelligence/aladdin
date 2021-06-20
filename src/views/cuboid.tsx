@@ -55,10 +55,11 @@ const Cuboid = ({
     const moveHandleRightFaceRef = useRef<Mesh>();
     const moveHandleTopFaceRef = useRef<Mesh>();
 
-    const positionLowerFace = new Vector3(cx, lz / 2, cy - ly / 2 - MOVE_HANDLE_OFFSET);
-    const positionUpperFace = new Vector3(cx, lz / 2, cy + ly / 2 + MOVE_HANDLE_OFFSET);
-    const positionLeftFace = new Vector3(cx - lx / 2 - MOVE_HANDLE_OFFSET, lz / 2, cy);
-    const positionRightFace = new Vector3(cx + lx / 2 + MOVE_HANDLE_OFFSET, lz / 2, cy);
+    const h = 0;
+    const positionLowerFace = new Vector3(cx, h, cy - ly / 2 - MOVE_HANDLE_OFFSET);
+    const positionUpperFace = new Vector3(cx, h, cy + ly / 2 + MOVE_HANDLE_OFFSET);
+    const positionLeftFace = new Vector3(cx - lx / 2 - MOVE_HANDLE_OFFSET, h, cy);
+    const positionRightFace = new Vector3(cx + lx / 2 + MOVE_HANDLE_OFFSET, h, cy);
     const positionTopFace = new Vector3(cx, lz + MOVE_HANDLE_OFFSET, cy);
 
     const selectMe = (e: ThreeEvent<MouseEvent>) => {
@@ -260,7 +261,7 @@ const Cuboid = ({
                 {/* move handles */}
                 <Sphere ref={moveHandleLowerFaceRef}
                         args={[0.1, 6, 6]}
-                        name={MoveHandleType.MoveHandleLower}
+                        name={MoveHandleType.Lower}
                         position={positionLowerFace}
                         onPointerDown={(e) => {
                             selectMe(e);
@@ -270,7 +271,7 @@ const Cuboid = ({
                 </Sphere>
                 <Sphere ref={moveHandleUpperFaceRef}
                         args={[0.1, 6, 6]}
-                        name={MoveHandleType.MoveHandleUpper}
+                        name={MoveHandleType.Upper}
                         position={positionUpperFace}
                         onPointerDown={(e) => {
                             selectMe(e);
@@ -280,7 +281,7 @@ const Cuboid = ({
                 </Sphere>
                 <Sphere ref={moveHandleLeftFaceRef}
                         args={[0.1, 6, 6]}
-                        name={MoveHandleType.MoveHandleLeft}
+                        name={MoveHandleType.Left}
                         position={positionLeftFace}
                         onPointerDown={(e) => {
                             selectMe(e);
@@ -290,7 +291,7 @@ const Cuboid = ({
                 </Sphere>
                 <Sphere ref={moveHandleRightFaceRef}
                         args={[0.1, 6, 6]}
-                        name={MoveHandleType.MoveHandleRight}
+                        name={MoveHandleType.Right}
                         position={positionRightFace}
                         onPointerDown={(e) => {
                             selectMe(e);
@@ -300,7 +301,7 @@ const Cuboid = ({
                 </Sphere>
                 <Sphere ref={moveHandleTopFaceRef}
                         args={[0.1, 6, 6]}
-                        name={MoveHandleType.MoveHandleTop}
+                        name={MoveHandleType.Top}
                         position={positionTopFace}
                         onPointerDown={(e) => {
                             selectMe(e);
