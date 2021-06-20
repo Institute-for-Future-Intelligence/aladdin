@@ -7,6 +7,7 @@ import {Box, Line, Sphere} from "@react-three/drei";
 import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {SensorModel} from "../models/sensorModel";
+import {ThreeEvent} from "@react-three/fiber";
 
 const Sensor = ({
                     id,
@@ -41,12 +42,17 @@ const Sensor = ({
 
     const element = getElementById(id);
 
-    const selectMe = () => {
-        setCommonStore((state) => {
-            for (const e of state.elements) {
-                e.selected = e.id === id;
+    const selectMe = (e: ThreeEvent<MouseEvent>) => {
+        if (e.intersections.length > 0) {
+            const intersected = e.intersections[0].object === e.eventObject;
+            if (intersected) {
+                setCommonStore((state) => {
+                    for (const e of state.elements) {
+                        e.selected = e.id === id;
+                    }
+                });
             }
-        });
+        }
     };
 
     return (
@@ -60,20 +66,10 @@ const Sensor = ({
                  position={[cx, height / 2, cy]}
                  name={'Sensor'}
                  onPointerDown={(e) => {
-                     if (e.intersections.length > 0) {
-                         const intersected = e.intersections[0].object === baseRef.current;
-                         if (intersected) {
-                             selectMe();
-                         }
-                     }
+                     selectMe(e);
                  }}
                  onContextMenu={(e) => {
-                     if (e.intersections.length > 0) {
-                         const intersected = e.intersections[0].object === baseRef.current;
-                         if (intersected) {
-                             selectMe();
-                         }
-                     }
+                     selectMe(e);
                  }}
                  onPointerOver={(e) => {
                      if (e.intersections.length > 0) {
@@ -154,7 +150,10 @@ const Sensor = ({
                 ref={handleRef}
                 position={position}
                 args={[0.1, 6, 6]}
-                name={'Handle'}>
+                name={'Handle'}
+                onPointerDown={(e) => {
+                    selectMe(e);
+                }}>
                 <meshStandardMaterial attach="material" color={'orange'}/>
             </Sphere>
             }

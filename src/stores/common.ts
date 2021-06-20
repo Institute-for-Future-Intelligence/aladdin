@@ -11,7 +11,7 @@ import {WeatherModel} from "../models/weatherModel";
 import weather from '../resources/weather.csv';
 import Papa from "papaparse";
 import {Util} from "../util";
-import {DatumEntry} from "../types";
+import {DatumEntry, MoveHandleType, ObjectType} from "../types";
 import {DefaultWorldModel} from "./DefaultWorldModel";
 
 enableMapSet();
@@ -49,7 +49,8 @@ export interface CommonStoreState {
     getClosestCity: (lat: number, lng: number) => string | null;
 
     enableOrbitController: boolean;
-    clickObjectType: string | null;
+    clickObjectType: ObjectType | null;
+    moveHandleType: MoveHandleType | null;
     getSelectedElement: () => ElementModel | null;
     getElementById: (id: string) => ElementModel | null;
     selectNone: () => void;
@@ -121,6 +122,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
 
         enableOrbitController: true,
         clickObjectType: null,
+        moveHandleType: null,
         getSelectedElement() {
             const elements = get().elements;
             for (const e of elements) {

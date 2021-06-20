@@ -46,3 +46,11 @@ export enum ObjectType {
     Sensor = 'Sensor',
     Cuboid = 'Cuboid',
 }
+
+export enum MoveHandleType {
+    MoveHandleLower = 'Move Handle Lower',
+    MoveHandleUpper = 'Move Handle Upper',
+    MoveHandleLeft = 'Move Handle Left',
+    MoveHandleRight = 'Move Handle Right',
+    MoveHandleTop = 'Move Handle Top',
+}

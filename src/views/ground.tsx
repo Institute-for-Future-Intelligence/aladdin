@@ -6,7 +6,7 @@ import React, {useMemo, useRef, useState} from "react";
 import {Plane} from "@react-three/drei";
 import {useStore} from "../stores/common";
 import {Mesh, Raycaster, Vector2} from "three";
-import {ObjectType} from "../types";
+import {MoveHandleType, ObjectType} from "../types";
 import {ElementModel} from "../models/elementModel";
 import {useThree} from "@react-three/fiber";
 
@@ -15,6 +15,7 @@ const Ground = () => {
     const setCommonStore = useStore(state => state.set);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const selectNone = useStore(state => state.selectNone);
+    const moveHandleType = useStore(state => state.moveHandleType);
     const groundColor = useStore(state => state.groundColor);
     const setElementPosition = useStore(state => state.setElementPosition);
     const [grabbedElement, setGrabbedElement] = useState<ElementModel | null>(null);
@@ -61,14 +62,34 @@ const Ground = () => {
                }}
                onPointerMove={(e) => {
                    if (grabbedElement && planeRef && planeRef.current) {
-                       const mouse = new Vector2();
-                       mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-                       mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-                       ray.setFromCamera(mouse, camera);
-                       const intersects = ray.intersectObjects([planeRef.current]);
-                       if (intersects.length > 0) {
-                           const p = intersects[0].point;
-                           setElementPosition(grabbedElement.id, p.x, -p.z, 0);
+                       switch (grabbedElement.type) {
+                           case ObjectType.Sensor:
+                               const mouse = new Vector2();
+                               mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                               mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+                               ray.setFromCamera(mouse, camera);
+                               const intersects = ray.intersectObjects([planeRef.current]);
+                               if (intersects.length > 0) {
+                                   const p = intersects[0].point;
+                                   setElementPosition(grabbedElement.id, p.x, -p.z, 0);
+                               }
+                               break;
+                           case ObjectType.Foundation:
+                           case ObjectType.Cuboid:
+                               if (moveHandleType) {
+                                   if (Object.values(MoveHandleType).includes(moveHandleType)) {
+                                       const mouse = new Vector2();
+                                       mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                                       mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+                                       ray.setFromCamera(mouse, camera);
+                                       const intersects = ray.intersectObjects([planeRef.current]);
+                                       if (intersects.length > 0) {
+                                           const p = intersects[0].point;
+                                           setElementPosition(grabbedElement.id, p.x, -p.z, 0);
+                                       }
+                                   }
+                               }
+                               break;
                        }
                    }
                }}
