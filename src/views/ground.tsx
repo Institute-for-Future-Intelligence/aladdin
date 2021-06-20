@@ -120,22 +120,57 @@ const Ground = () => {
                                    }
                                    break;
                                case ObjectType.Cuboid:
-                                   switch (moveHandleType) {
-                                       case MoveHandleType.Lower:
-                                           setElementPosition(grab.id, p.x, -p.z - grab.ly / 2 - MOVE_HANDLE_OFFSET);
-                                           break;
-                                       case MoveHandleType.Upper:
-                                           setElementPosition(grab.id, p.x, -p.z + grab.ly / 2 + MOVE_HANDLE_OFFSET);
-                                           break;
-                                       case MoveHandleType.Left:
-                                           setElementPosition(grab.id, p.x + grab.lx / 2 + MOVE_HANDLE_OFFSET, -p.z);
-                                           break;
-                                       case MoveHandleType.Right:
-                                           setElementPosition(grab.id, p.x - grab.lx / 2 - MOVE_HANDLE_OFFSET, -p.z);
-                                           break;
-                                       case MoveHandleType.Top:
-                                           setElementPosition(grab.id, p.x, -p.z);
-                                           break;
+                                   if (moveHandleType) {
+                                       switch (moveHandleType) {
+                                           case MoveHandleType.Lower:
+                                               setElementPosition(grab.id, p.x, -p.z - grab.ly / 2 - MOVE_HANDLE_OFFSET);
+                                               break;
+                                           case MoveHandleType.Upper:
+                                               setElementPosition(grab.id, p.x, -p.z + grab.ly / 2 + MOVE_HANDLE_OFFSET);
+                                               break;
+                                           case MoveHandleType.Left:
+                                               setElementPosition(grab.id, p.x + grab.lx / 2 + MOVE_HANDLE_OFFSET, -p.z);
+                                               break;
+                                           case MoveHandleType.Right:
+                                               setElementPosition(grab.id, p.x - grab.lx / 2 - MOVE_HANDLE_OFFSET, -p.z);
+                                               break;
+                                           case MoveHandleType.Top:
+                                               setElementPosition(grab.id, p.x, -p.z);
+                                               break;
+                                       }
+                                   }
+                                   if (resizeHandleType) {
+                                       let lx, ly;
+                                       switch (resizeHandleType) {
+                                           case ResizeHandleType.LowerLeft:
+                                               lx = Math.max((grab.cx - p.x) * 2, 0.5);
+                                               ly = Math.max(-(grab.cy + p.z) * 2, 0.5);
+                                               setElementSize(grab.id, lx, ly);
+                                               break;
+                                           case ResizeHandleType.UpperLeft:
+                                               lx = Math.max((grab.cx - p.x) * 2, 0.5);
+                                               ly = Math.max((grab.cy + p.z) * 2, 0.5);
+                                               setElementSize(grab.id, lx, ly);
+                                               break;
+                                           case ResizeHandleType.LowerRight:
+                                               lx = Math.max(-(grab.cx - p.x) * 2, 0.5);
+                                               ly = Math.max(-(grab.cy + p.z) * 2, 0.5);
+                                               setElementSize(grab.id, lx, ly);
+                                               break;
+                                           case ResizeHandleType.UpperRight:
+                                               lx = Math.max(-(grab.cx - p.x) * 2, 0.5);
+                                               ly = Math.max((grab.cy + p.z) * 2, 0.5);
+                                               setElementSize(grab.id, lx, ly);
+                                               break;
+                                           case ResizeHandleType.LowerLeftTop:
+                                               break;
+                                           case ResizeHandleType.UpperLeftTop:
+                                               break;
+                                           case ResizeHandleType.LowerRightTop:
+                                               break;
+                                           case ResizeHandleType.UpperRightTop:
+                                               break;
+                                       }
                                    }
                                    break;
                            }

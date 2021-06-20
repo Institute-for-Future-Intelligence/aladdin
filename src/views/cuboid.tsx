@@ -8,7 +8,7 @@ import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {CuboidModel} from "../models/cuboidModel";
 import {ThreeEvent} from "@react-three/fiber";
-import {MoveHandleType} from "../types";
+import {ActionType, MoveHandleType, ResizeHandleType} from "../types";
 import {HANDLE_SIZE, MOVE_HANDLE_OFFSET} from "../constants";
 
 const Cuboid = ({
@@ -62,7 +62,7 @@ const Cuboid = ({
     const positionRightFace = new Vector3(cx + lx / 2 + MOVE_HANDLE_OFFSET, h, cy);
     const positionTopFace = new Vector3(cx, lz + MOVE_HANDLE_OFFSET, cy);
 
-    const selectMe = (e: ThreeEvent<MouseEvent>) => {
+    const selectMe = (e: ThreeEvent<MouseEvent>, action: ActionType) => {
         if (e.intersections.length > 0) {
             const intersected = e.intersections[0].object === e.eventObject;
             if (intersected) {
@@ -70,7 +70,19 @@ const Cuboid = ({
                     for (const e of state.elements) {
                         e.selected = e.id === id;
                     }
-                    state.moveHandleType = e.eventObject.name as MoveHandleType;
+                    switch (action) {
+                        case ActionType.Move:
+                            state.moveHandleType = e.eventObject.name as MoveHandleType;
+                            state.resizeHandleType = null;
+                            break;
+                        case ActionType.Resize:
+                            state.resizeHandleType = e.eventObject.name as ResizeHandleType;
+                            state.moveHandleType = null;
+                            break;
+                        default:
+                            state.moveHandleType = null;
+                            state.resizeHandleType = null;
+                    }
                 });
             }
         }
@@ -87,10 +99,10 @@ const Cuboid = ({
                  position={[cx, lz / 2, cy]}
                  name={'Cuboid'}
                  onPointerDown={(e) => {
-                     selectMe(e);
+                     selectMe(e, ActionType.Select);
                  }}
                  onContextMenu={(e) => {
-                     selectMe(e);
+                     selectMe(e, ActionType.Select);
                  }}
                  onPointerOver={(e) => {
                      if (e.intersections.length > 0) {
@@ -178,81 +190,81 @@ const Cuboid = ({
             <>
                 {/* resize handles */}
                 <Box ref={resizeHandleLLTopRef}
-                     name={'Resize Handle LL Top'}
+                     name={ResizeHandleType.LowerLeftTop}
                      args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionLLTop}
                      onPointerDown={(e) => {
-                         selectMe(e);
+                         selectMe(e, ActionType.Resize);
                      }}
                 >
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Box>
                 <Box ref={resizeHandleULTopRef}
-                     name={'Resize Handle UL Top'}
+                     name={ResizeHandleType.UpperLeftTop}
                      args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionULTop}
                      onPointerDown={(e) => {
-                         selectMe(e);
+                         selectMe(e, ActionType.Resize);
                      }}
                 >
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Box>
                 <Box ref={resizeHandleLRTopRef}
-                     name={'Resize Handle LR Top'}
+                     name={ResizeHandleType.LowerRightTop}
                      args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionLRTop}
                      onPointerDown={(e) => {
-                         selectMe(e);
+                         selectMe(e, ActionType.Resize);
                      }}
                 >
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Box>
                 <Box ref={resizeHandleURTopRef}
-                     name={'Resize Handle UR Top'}
+                     name={ResizeHandleType.UpperRightTop}
                      args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionURTop}
                      onPointerDown={(e) => {
-                         selectMe(e);
+                         selectMe(e, ActionType.Resize);
                      }}
                 >
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Box>
                 <Box ref={resizeHandleLLBotRef}
-                     name={'Resize Handle LL Bottom'}
+                     name={ResizeHandleType.LowerLeft}
                      args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionLLBot}
                      onPointerDown={(e) => {
-                         selectMe(e);
+                         selectMe(e, ActionType.Resize);
                      }}
                 >
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Box>
                 <Box ref={resizeHandleULBotRef}
-                     name={'Resize Handle UL Bottom'}
+                     name={ResizeHandleType.UpperLeft}
                      args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionULBot}
                      onPointerDown={(e) => {
-                         selectMe(e);
+                         selectMe(e, ActionType.Resize);
                      }}
                 >
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Box>
                 <Box ref={resizeHandleLRBotRef}
-                     name={'Resize Handle LR Bottom'}
+                     name={ResizeHandleType.LowerRight}
                      args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionLRBot}
                      onPointerDown={(e) => {
-                         selectMe(e);
+                         selectMe(e, ActionType.Resize);
                      }}
                 >
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Box>
                 <Box ref={resizeHandleURBotRef}
-                     name={'Resize Handle UR Bottom'}
+                     name={ResizeHandleType.UpperRight}
                      args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
                      position={positionURBot}
                      onPointerDown={(e) => {
-                         selectMe(e);
+                         selectMe(e, ActionType.Resize);
                      }}
                 >
                     <meshStandardMaterial attach="material" color={'white'}/>
@@ -264,7 +276,7 @@ const Cuboid = ({
                         name={MoveHandleType.Lower}
                         position={positionLowerFace}
                         onPointerDown={(e) => {
-                            selectMe(e);
+                            selectMe(e, ActionType.Move);
                         }}
                 >
                     <meshStandardMaterial attach="material" color={'orange'}/>
@@ -274,7 +286,7 @@ const Cuboid = ({
                         name={MoveHandleType.Upper}
                         position={positionUpperFace}
                         onPointerDown={(e) => {
-                            selectMe(e);
+                            selectMe(e, ActionType.Move);
                         }}
                 >
                     <meshStandardMaterial attach="material" color={'orange'}/>
@@ -284,7 +296,7 @@ const Cuboid = ({
                         name={MoveHandleType.Left}
                         position={positionLeftFace}
                         onPointerDown={(e) => {
-                            selectMe(e);
+                            selectMe(e, ActionType.Move);
                         }}
                 >
                     <meshStandardMaterial attach="material" color={'orange'}/>
@@ -294,7 +306,7 @@ const Cuboid = ({
                         name={MoveHandleType.Right}
                         position={positionRightFace}
                         onPointerDown={(e) => {
-                            selectMe(e);
+                            selectMe(e, ActionType.Move);
                         }}
                 >
                     <meshStandardMaterial attach="material" color={'orange'}/>
@@ -304,7 +316,7 @@ const Cuboid = ({
                         name={MoveHandleType.Top}
                         position={positionTopFace}
                         onPointerDown={(e) => {
-                            selectMe(e);
+                            selectMe(e, ActionType.Move);
                         }}
                 >
                     <meshStandardMaterial attach="material" color={'orange'}/>

@@ -66,4 +66,8 @@ export enum ResizeHandleType {
     UpperLeft = 'Resize Handle Upper Left',
     LowerRight = 'Resize Handle Lower Right',
     UpperRight = 'Resize Handle Upper Right',
+    LowerLeftTop = 'Resize Handle Lower Left Top',
+    UpperLeftTop = 'Resize Handle Upper Left Top',
+    LowerRightTop = 'Resize Handle Lower Right Top',
+    UpperRightTop = 'Resize Handle Upper Right Top',
 }
