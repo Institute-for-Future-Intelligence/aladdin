@@ -7,7 +7,8 @@ import {Box, Line, Sphere} from "@react-three/drei";
 import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {SensorModel} from "../models/sensorModel";
-import {ThreeEvent} from "@react-three/fiber";
+import {ThreeEvent, useThree} from "@react-three/fiber";
+import {MOVE_HANDLE_RADIUS} from "../constants";
 
 const Sensor = ({
                     id,
@@ -30,6 +31,7 @@ const Sensor = ({
 
     const setCommonStore = useStore(state => state.set);
     const getElementById = useStore(state => state.getElementById);
+    const {gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
     const baseRef = useRef<Mesh>();
     const handleRef = useRef<Mesh>();
@@ -76,11 +78,13 @@ const Sensor = ({
                          const intersected = e.intersections[0].object === baseRef.current;
                          if (intersected) {
                              setHovered(true);
+                             domElement.style.cursor = 'move';
                          }
                      }
                  }}
                  onPointerOut={(e) => {
                      setHovered(false);
+                     domElement.style.cursor = 'default';
                  }}
             >
                 <meshStandardMaterial attach="material" color={element?.lit ? 'red' : color}/>
@@ -149,7 +153,7 @@ const Sensor = ({
             <Sphere
                 ref={handleRef}
                 position={position}
-                args={[0.1, 6, 6]}
+                args={[MOVE_HANDLE_RADIUS, 6, 6]}
                 name={'Handle'}
                 onPointerDown={(e) => {
                     selectMe(e);

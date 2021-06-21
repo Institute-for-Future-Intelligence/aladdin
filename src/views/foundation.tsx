@@ -9,7 +9,7 @@ import {useStore} from "../stores/common";
 import {FoundationModel} from "../models/foundationModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {ActionType, MoveHandleType, ResizeHandleType} from "../types";
-import {HANDLE_SIZE, MOVE_HANDLE_OFFSET} from "../constants";
+import {RESIZE_HANDLE_SIZE, MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS} from "../constants";
 
 const Foundation = ({
                         id,
@@ -78,7 +78,16 @@ const Foundation = ({
                 const intersected = e.intersections[0].object === e.eventObject;
                 if (intersected) {
                     setHoveredHandle(handle);
-                    domElement.style.cursor = 'pointer';
+                    if ( // unfortunately, I cannot find a way to tell the type of an enum variable
+                        handle === MoveHandleType.Upper ||
+                        handle === MoveHandleType.Lower ||
+                        handle === MoveHandleType.Left ||
+                        handle === MoveHandleType.Right
+                    ) {
+                        domElement.style.cursor = 'move';
+                    } else {
+                        domElement.style.cursor = 'pointer';
+                    }
                 }
             }
         };
@@ -87,6 +96,8 @@ const Foundation = ({
             setHoveredHandle(null);
             domElement.style.cursor = 'default';
         };
+
+        const h = MOVE_HANDLE_RADIUS / 2;
 
         return (
 
@@ -187,7 +198,7 @@ const Foundation = ({
                     {/* resize handles */}
                     <Box ref={resizeHandleLLRef}
                          position={positionLL}
-                         args={[HANDLE_SIZE, lz * 1.2, HANDLE_SIZE]}
+                         args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
                          name={ResizeHandleType.LowerLeft}
                          onPointerDown={(e) => {
                              selectMe(e, ActionType.Resize);
@@ -204,7 +215,7 @@ const Foundation = ({
                     </Box>
                     <Box ref={resizeHandleULRef}
                          position={positionUL}
-                         args={[HANDLE_SIZE, lz * 1.2, HANDLE_SIZE]}
+                         args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
                          name={ResizeHandleType.UpperLeft}
                          onPointerDown={(e) => {
                              selectMe(e, ActionType.Resize);
@@ -221,7 +232,7 @@ const Foundation = ({
                     </Box>
                     <Box ref={resizeHandleLRRef}
                          position={positionLR}
-                         args={[HANDLE_SIZE, lz * 1.2, HANDLE_SIZE]}
+                         args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
                          name={ResizeHandleType.LowerRight}
                          onPointerDown={(e) => {
                              selectMe(e, ActionType.Resize);
@@ -238,7 +249,7 @@ const Foundation = ({
                     </Box>
                     <Box ref={resizeHandleURRef}
                          position={positionUR}
-                         args={[HANDLE_SIZE, lz * 1.2, HANDLE_SIZE]}
+                         args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
                          name={ResizeHandleType.UpperRight}
                          onPointerDown={(e) => {
                              selectMe(e, ActionType.Resize);
@@ -256,8 +267,8 @@ const Foundation = ({
 
                     {/* move handles */}
                     <Sphere ref={moveHandleLowerRef}
-                            args={[0.1, 6, 6]}
-                            position={[cx, lz / 2, cy - ly / 2 - MOVE_HANDLE_OFFSET]}
+                            args={[MOVE_HANDLE_RADIUS, 6, 6]}
+                            position={[cx, h, cy - ly / 2 - MOVE_HANDLE_OFFSET]}
                             name={MoveHandleType.Lower}
                             onPointerDown={(e) => {
                                 selectMe(e, ActionType.Move);
@@ -273,8 +284,8 @@ const Foundation = ({
                                               color={hoveredHandle === MoveHandleType.Lower ? 'red' : 'orange'}/>
                     </Sphere>
                     <Sphere ref={moveHandleUpperRef}
-                            args={[0.1, 6, 6]}
-                            position={[cx, lz / 2, cy + ly / 2 + MOVE_HANDLE_OFFSET]}
+                            args={[MOVE_HANDLE_RADIUS, 6, 6]}
+                            position={[cx, h, cy + ly / 2 + MOVE_HANDLE_OFFSET]}
                             name={MoveHandleType.Upper}
                             onPointerDown={(e) => {
                                 selectMe(e, ActionType.Move);
@@ -290,8 +301,8 @@ const Foundation = ({
                                               color={hoveredHandle === MoveHandleType.Upper ? 'red' : 'orange'}/>
                     </Sphere>
                     <Sphere ref={moveHandleLeftRef}
-                            args={[0.1, 6, 6]}
-                            position={[cx - lx / 2 - MOVE_HANDLE_OFFSET, lz / 2, cy]}
+                            args={[MOVE_HANDLE_RADIUS, 6, 6]}
+                            position={[cx - lx / 2 - MOVE_HANDLE_OFFSET, h, cy]}
                             name={MoveHandleType.Left}
                             onPointerDown={(e) => {
                                 selectMe(e, ActionType.Move);
@@ -307,8 +318,8 @@ const Foundation = ({
                                               color={hoveredHandle === MoveHandleType.Left ? 'red' : 'orange'}/>
                     </Sphere>
                     <Sphere ref={moveHandleRightRef}
-                            args={[0.1, 6, 6]}
-                            position={[cx + lx / 2 + MOVE_HANDLE_OFFSET, lz / 2, cy]}
+                            args={[MOVE_HANDLE_RADIUS, 6, 6]}
+                            position={[cx + lx / 2 + MOVE_HANDLE_OFFSET, h, cy]}
                             name={MoveHandleType.Right}
                             onPointerDown={(e) => {
                                 selectMe(e, ActionType.Move);

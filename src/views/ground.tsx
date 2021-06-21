@@ -22,6 +22,7 @@ const Ground = () => {
     const groundColor = useStore(state => state.groundColor);
     const setElementPosition = useStore(state => state.setElementPosition);
     const setElementSize = useStore(state => state.setElementSize);
+    const updateElement = useStore(state => state.updateElementById);
     const [grab, setGrab] = useState<ElementModel | null>(null);
     const {camera, gl: {domElement}} = useThree();
     const groundPlaneRef = useRef<Mesh>();
@@ -37,13 +38,21 @@ const Ground = () => {
             intersectionPlaneType = IntersectionPlaneType.Horizontal;
             Util.setVector(intersectionPlanePosition, grab.cx, grab.lz, -grab.cy);
             Util.setEuler(intersectionPlaneAngle, -Math.PI / 2, 0, 0);
-        } else if (
-            resizeHandleType === ResizeHandleType.LowerLeftTop ||
-            resizeHandleType === ResizeHandleType.UpperLeftTop ||
-            resizeHandleType === ResizeHandleType.LowerRightTop ||
-            resizeHandleType === ResizeHandleType.UpperRightTop) {
+        } else if (resizeHandleType === ResizeHandleType.LowerLeftTop) {
             intersectionPlaneType = IntersectionPlaneType.Vertical;
-            Util.setVector(intersectionPlanePosition, grab.cx, grab.lz, -grab.cy);
+            Util.setVector(intersectionPlanePosition, grab.cx - grab.lx / 2, 0, -grab.cy - grab.ly / 2);
+            Util.setEuler(intersectionPlaneAngle, 0, 0, 0);
+        } else if (resizeHandleType === ResizeHandleType.UpperLeftTop) {
+            intersectionPlaneType = IntersectionPlaneType.Vertical;
+            Util.setVector(intersectionPlanePosition, grab.cx - grab.lx / 2, 0, -grab.cy + grab.ly / 2);
+            Util.setEuler(intersectionPlaneAngle, 0, 0, 0);
+        } else if (resizeHandleType === ResizeHandleType.LowerRightTop) {
+            intersectionPlaneType = IntersectionPlaneType.Vertical;
+            Util.setVector(intersectionPlanePosition, grab.cx + grab.lx / 2, 0, -grab.cy - grab.ly / 2);
+            Util.setEuler(intersectionPlaneAngle, 0, 0, 0);
+        } else if (resizeHandleType === ResizeHandleType.UpperRightTop) {
+            intersectionPlaneType = IntersectionPlaneType.Vertical;
+            Util.setVector(intersectionPlanePosition, grab.cx + grab.lx / 2, 0, -grab.cy + grab.ly / 2);
             Util.setEuler(intersectionPlaneAngle, 0, 0, 0);
         }
     }
@@ -56,16 +65,18 @@ const Ground = () => {
                 visible={false}
                 rotation={intersectionPlaneAngle}
                 position={intersectionPlanePosition}
-                args={[100, 100]}>
+                args={[1000, 1000]}>
+                <meshStandardMaterial attach="material" opacity={0.1} color={'white'}/>
             </Plane>
             }
             {grab && intersectionPlaneType === IntersectionPlaneType.Vertical &&
             <Plane
                 ref={verticalPlaneRef}
-                visible={true}
+                visible={false}
                 rotation={intersectionPlaneAngle}
                 position={intersectionPlanePosition}
-                args={[100, 100]}>
+                args={[1000, 1000]}>
+                <meshStandardMaterial attach="material" opacity={0.1} color={'white'}/>
             </Plane>
             }
             <Plane receiveShadow
@@ -176,11 +187,16 @@ const Ground = () => {
                                            const p = intersects[0].point;
                                            setElementPosition(grab.id, p.x, -p.z);
                                        }
-                                   } else if (
+                                   } else if (verticalPlaneRef.current && (
                                        resizeHandleType === ResizeHandleType.LowerLeftTop ||
                                        resizeHandleType === ResizeHandleType.UpperLeftTop ||
                                        resizeHandleType === ResizeHandleType.LowerRightTop ||
-                                       resizeHandleType === ResizeHandleType.UpperRightTop) {
+                                       resizeHandleType === ResizeHandleType.UpperRightTop)) {
+                                       intersects = ray.intersectObjects([verticalPlaneRef.current]);
+                                       if (intersects.length > 0) {
+                                           const p = intersects[0].point;
+                                           updateElement(grab.id, {lz: p.y});
+                                       }
                                    } else {
                                        intersects = ray.intersectObjects([groundPlaneRef.current]);
                                        if (intersects.length > 0) {
@@ -232,11 +248,11 @@ const Ground = () => {
                            }
                        }
                    }}
-            >
-                <meshStandardMaterial attach="material" color={groundColor}/>
-            </Plane>
-        </>
-    )
-};
+                       >
+                       <meshStandardMaterial attach="material" color={groundColor}/>
+                       </Plane>
+                       </>
+                       )
+                   };
 
 export default Ground;

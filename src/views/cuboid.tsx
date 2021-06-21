@@ -7,9 +7,9 @@ import {Box, Line, Sphere} from "@react-three/drei";
 import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {CuboidModel} from "../models/cuboidModel";
-import {ThreeEvent} from "@react-three/fiber";
+import {ThreeEvent, useThree} from "@react-three/fiber";
 import {ActionType, MoveHandleType, ResizeHandleType} from "../types";
-import {HANDLE_SIZE, MOVE_HANDLE_OFFSET} from "../constants";
+import {RESIZE_HANDLE_SIZE, MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS} from "../constants";
 
 const Cuboid = ({
                     id,
@@ -27,7 +27,9 @@ const Cuboid = ({
     cy = -cy; // we want positive y to point north
 
     const setCommonStore = useStore(state => state.set);
+    const {gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
+    const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
 
     const baseRef = useRef<Mesh>();
     const resizeHandleLLTopRef = useRef<Mesh>();
@@ -44,10 +46,11 @@ const Cuboid = ({
     const positionLRTop = new Vector3(cx + lx / 2, lz, cy - ly / 2);
     const positionURTop = new Vector3(cx + lx / 2, lz, cy + ly / 2);
 
-    const positionLLBot = new Vector3(cx - lx / 2, 0, cy - ly / 2);
-    const positionULBot = new Vector3(cx - lx / 2, 0, cy + ly / 2);
-    const positionLRBot = new Vector3(cx + lx / 2, 0, cy - ly / 2);
-    const positionURBot = new Vector3(cx + lx / 2, 0, cy + ly / 2);
+    const h = MOVE_HANDLE_RADIUS / 2;
+    const positionLLBot = new Vector3(cx - lx / 2, h, cy - ly / 2);
+    const positionULBot = new Vector3(cx - lx / 2, h, cy + ly / 2);
+    const positionLRBot = new Vector3(cx + lx / 2, h, cy - ly / 2);
+    const positionURBot = new Vector3(cx + lx / 2, h, cy + ly / 2);
 
     const moveHandleLowerFaceRef = useRef<Mesh>();
     const moveHandleUpperFaceRef = useRef<Mesh>();
@@ -55,7 +58,6 @@ const Cuboid = ({
     const moveHandleRightFaceRef = useRef<Mesh>();
     const moveHandleTopFaceRef = useRef<Mesh>();
 
-    const h = 0;
     const positionLowerFace = new Vector3(cx, h, cy - ly / 2 - MOVE_HANDLE_OFFSET);
     const positionUpperFace = new Vector3(cx, h, cy + ly / 2 + MOVE_HANDLE_OFFSET);
     const positionLeftFace = new Vector3(cx - lx / 2 - MOVE_HANDLE_OFFSET, h, cy);
@@ -86,6 +88,31 @@ const Cuboid = ({
                 });
             }
         }
+    };
+
+    const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType) => {
+        if (e.intersections.length > 0) {
+            const intersected = e.intersections[0].object === e.eventObject;
+            if (intersected) {
+                setHoveredHandle(handle);
+                if ( // unfortunately, I cannot find a way to tell the type of an enum variable
+                    handle === MoveHandleType.Top ||
+                    handle === MoveHandleType.Upper ||
+                    handle === MoveHandleType.Lower ||
+                    handle === MoveHandleType.Left ||
+                    handle === MoveHandleType.Right
+                ) {
+                    domElement.style.cursor = 'move';
+                } else {
+                    domElement.style.cursor = 'pointer';
+                }
+            }
+        }
+    };
+
+    const noHoverHandle = () => {
+        setHoveredHandle(null);
+        domElement.style.cursor = 'default';
     };
 
     return (
@@ -191,135 +218,226 @@ const Cuboid = ({
                 {/* resize handles */}
                 <Box ref={resizeHandleLLTopRef}
                      name={ResizeHandleType.LowerLeftTop}
-                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
+                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
                      position={positionLLTop}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                      }}
+                     onPointerOver={(e) => {
+                         hoverHandle(e, ResizeHandleType.LowerLeftTop);
+                     }}
+                     onPointerOut={(e) => {
+                         noHoverHandle();
+                     }}
                 >
-                    <meshStandardMaterial attach="material" color={'white'}/>
+                    <meshStandardMaterial attach="material"
+                                          color={hoveredHandle === ResizeHandleType.LowerLeftTop ? 'red' : 'white'}/>
                 </Box>
                 <Box ref={resizeHandleULTopRef}
                      name={ResizeHandleType.UpperLeftTop}
-                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
+                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
                      position={positionULTop}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                      }}
+                     onPointerOver={(e) => {
+                         hoverHandle(e, ResizeHandleType.UpperLeftTop);
+                     }}
+                     onPointerOut={(e) => {
+                         noHoverHandle();
+                     }}
                 >
-                    <meshStandardMaterial attach="material" color={'white'}/>
+                    <meshStandardMaterial attach="material"
+                                          color={hoveredHandle === ResizeHandleType.UpperLeftTop ? 'red' : 'white'}/>
                 </Box>
                 <Box ref={resizeHandleLRTopRef}
                      name={ResizeHandleType.LowerRightTop}
-                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
+                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
                      position={positionLRTop}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                      }}
+                     onPointerOver={(e) => {
+                         hoverHandle(e, ResizeHandleType.LowerRightTop);
+                     }}
+                     onPointerOut={(e) => {
+                         noHoverHandle();
+                     }}
                 >
-                    <meshStandardMaterial attach="material" color={'white'}/>
+                    <meshStandardMaterial attach="material"
+                                          color={hoveredHandle === ResizeHandleType.LowerRightTop ? 'red' : 'white'}/>
                 </Box>
                 <Box ref={resizeHandleURTopRef}
                      name={ResizeHandleType.UpperRightTop}
-                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
+                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
                      position={positionURTop}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                      }}
+                     onPointerOver={(e) => {
+                         hoverHandle(e, ResizeHandleType.UpperRightTop);
+                     }}
+                     onPointerOut={(e) => {
+                         noHoverHandle();
+                     }}
                 >
-                    <meshStandardMaterial attach="material" color={'white'}/>
+                    <meshStandardMaterial attach="material"
+                                          color={hoveredHandle === ResizeHandleType.UpperRightTop ? 'red' : 'white'}/>
                 </Box>
                 <Box ref={resizeHandleLLBotRef}
                      name={ResizeHandleType.LowerLeft}
-                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
+                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
                      position={positionLLBot}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                      }}
+                     onPointerOver={(e) => {
+                         hoverHandle(e, ResizeHandleType.LowerLeft);
+                     }}
+                     onPointerOut={(e) => {
+                         noHoverHandle();
+                     }}
                 >
-                    <meshStandardMaterial attach="material" color={'white'}/>
+                    <meshStandardMaterial attach="material"
+                                          color={hoveredHandle === ResizeHandleType.LowerLeft ? 'red' : 'white'}/>
                 </Box>
                 <Box ref={resizeHandleULBotRef}
                      name={ResizeHandleType.UpperLeft}
-                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
+                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
                      position={positionULBot}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                      }}
+                     onPointerOver={(e) => {
+                         hoverHandle(e, ResizeHandleType.UpperLeft);
+                     }}
+                     onPointerOut={(e) => {
+                         noHoverHandle();
+                     }}
                 >
-                    <meshStandardMaterial attach="material" color={'white'}/>
+                    <meshStandardMaterial attach="material"
+                                          color={hoveredHandle === ResizeHandleType.UpperLeft ? 'red' : 'white'}/>
                 </Box>
                 <Box ref={resizeHandleLRBotRef}
                      name={ResizeHandleType.LowerRight}
-                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
+                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
                      position={positionLRBot}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                      }}
+                     onPointerOver={(e) => {
+                         hoverHandle(e, ResizeHandleType.LowerRight);
+                     }}
+                     onPointerOut={(e) => {
+                         noHoverHandle();
+                     }}
                 >
-                    <meshStandardMaterial attach="material" color={'white'}/>
+                    <meshStandardMaterial attach="material"
+                                          color={hoveredHandle === ResizeHandleType.LowerRight ? 'red' : 'white'}/>
                 </Box>
                 <Box ref={resizeHandleURBotRef}
                      name={ResizeHandleType.UpperRight}
-                     args={[HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE]}
+                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
                      position={positionURBot}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                      }}
+                     onPointerOver={(e) => {
+                         hoverHandle(e, ResizeHandleType.UpperRight);
+                     }}
+                     onPointerOut={(e) => {
+                         noHoverHandle();
+                     }}
                 >
-                    <meshStandardMaterial attach="material" color={'white'}/>
+                    <meshStandardMaterial attach="material"
+                                          color={hoveredHandle === ResizeHandleType.UpperRight ? 'red' : 'white'}/>
                 </Box>
 
                 {/* move handles */}
                 <Sphere ref={moveHandleLowerFaceRef}
-                        args={[0.1, 6, 6]}
+                        args={[MOVE_HANDLE_RADIUS, 6, 6]}
                         name={MoveHandleType.Lower}
                         position={positionLowerFace}
                         onPointerDown={(e) => {
                             selectMe(e, ActionType.Move);
                         }}
+                        onPointerOver={(e) => {
+                            hoverHandle(e, MoveHandleType.Lower);
+                        }}
+                        onPointerOut={(e) => {
+                            noHoverHandle();
+                        }}
                 >
-                    <meshStandardMaterial attach="material" color={'orange'}/>
+                    <meshStandardMaterial attach="material"
+                                          color={hoveredHandle === MoveHandleType.Lower ? 'red' : 'orange'}/>
                 </Sphere>
                 <Sphere ref={moveHandleUpperFaceRef}
-                        args={[0.1, 6, 6]}
+                        args={[MOVE_HANDLE_RADIUS, 6, 6]}
                         name={MoveHandleType.Upper}
                         position={positionUpperFace}
                         onPointerDown={(e) => {
                             selectMe(e, ActionType.Move);
                         }}
+                        onPointerOver={(e) => {
+                            hoverHandle(e, MoveHandleType.Upper);
+                        }}
+                        onPointerOut={(e) => {
+                            noHoverHandle();
+                        }}
                 >
-                    <meshStandardMaterial attach="material" color={'orange'}/>
+                    <meshStandardMaterial attach="material"
+                                          color={hoveredHandle === MoveHandleType.Upper ? 'red' : 'orange'}/>
                 </Sphere>
                 <Sphere ref={moveHandleLeftFaceRef}
-                        args={[0.1, 6, 6]}
+                        args={[MOVE_HANDLE_RADIUS, 6, 6]}
                         name={MoveHandleType.Left}
                         position={positionLeftFace}
                         onPointerDown={(e) => {
                             selectMe(e, ActionType.Move);
                         }}
+                        onPointerOver={(e) => {
+                            hoverHandle(e, MoveHandleType.Left);
+                        }}
+                        onPointerOut={(e) => {
+                            noHoverHandle();
+                        }}
                 >
-                    <meshStandardMaterial attach="material" color={'orange'}/>
+                    <meshStandardMaterial attach="material"
+                                          color={hoveredHandle === MoveHandleType.Left ? 'red' : 'orange'}/>
                 </Sphere>
                 <Sphere ref={moveHandleRightFaceRef}
-                        args={[0.1, 6, 6]}
+                        args={[MOVE_HANDLE_RADIUS, 6, 6]}
                         name={MoveHandleType.Right}
                         position={positionRightFace}
                         onPointerDown={(e) => {
                             selectMe(e, ActionType.Move);
                         }}
+                        onPointerOver={(e) => {
+                            hoverHandle(e, MoveHandleType.Right);
+                        }}
+                        onPointerOut={(e) => {
+                            noHoverHandle();
+                        }}
                 >
-                    <meshStandardMaterial attach="material" color={'orange'}/>
+                    <meshStandardMaterial attach="material"
+                                          color={hoveredHandle === MoveHandleType.Right ? 'red' : 'orange'}/>
                 </Sphere>
                 <Sphere ref={moveHandleTopFaceRef}
-                        args={[0.1, 6, 6]}
+                        args={[MOVE_HANDLE_RADIUS, 6, 6]}
                         name={MoveHandleType.Top}
                         position={positionTopFace}
                         onPointerDown={(e) => {
                             selectMe(e, ActionType.Move);
                         }}
+                        onPointerOver={(e) => {
+                            hoverHandle(e, MoveHandleType.Top);
+                        }}
+                        onPointerOut={(e) => {
+                            noHoverHandle();
+                        }}
                 >
-                    <meshStandardMaterial attach="material" color={'orange'}/>
+                    <meshStandardMaterial attach="material"
+                                          color={hoveredHandle === MoveHandleType.Top ? 'red' : 'orange'}/>
                 </Sphere>
             </>
             }
