@@ -5,7 +5,7 @@
 import React, {useMemo, useRef, useState} from "react";
 import {Plane} from "@react-three/drei";
 import {useStore} from "../stores/common";
-import {Euler, Mesh, Raycaster, Vector2, Vector3} from "three";
+import {DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3} from "three";
 import {IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType} from "../types";
 import {ElementModel} from "../models/elementModel";
 import {useThree} from "@react-three/fiber";
@@ -66,7 +66,7 @@ const Ground = () => {
                 rotation={intersectionPlaneAngle}
                 position={intersectionPlanePosition}
                 args={[1000, 1000]}>
-                <meshStandardMaterial attach="material" opacity={0.1} color={'white'}/>
+                <meshStandardMaterial attach="material" side={DoubleSide} opacity={0.1} color={'white'}/>
             </Plane>
             }
             {grab && intersectionPlaneType === IntersectionPlaneType.Vertical &&
@@ -76,7 +76,7 @@ const Ground = () => {
                 rotation={intersectionPlaneAngle}
                 position={intersectionPlanePosition}
                 args={[1000, 1000]}>
-                <meshStandardMaterial attach="material" opacity={0.1} color={'white'}/>
+                <meshStandardMaterial attach="material" side={DoubleSide} opacity={0.1} color={'white'}/>
             </Plane>
             }
             <Plane receiveShadow
@@ -195,7 +195,7 @@ const Ground = () => {
                                        intersects = ray.intersectObjects([verticalPlaneRef.current]);
                                        if (intersects.length > 0) {
                                            const p = intersects[0].point;
-                                           updateElement(grab.id, {lz: p.y});
+                                           updateElement(grab.id, {lz: Math.max(1, p.y)});
                                        }
                                    } else {
                                        intersects = ray.intersectObjects([groundPlaneRef.current]);
@@ -248,11 +248,11 @@ const Ground = () => {
                            }
                        }
                    }}
-                       >
-                       <meshStandardMaterial attach="material" color={groundColor}/>
-                       </Plane>
-                       </>
-                       )
-                   };
+            >
+                <meshStandardMaterial attach="material" color={groundColor}/>
+            </Plane>
+        </>
+    )
+};
 
 export default Ground;
