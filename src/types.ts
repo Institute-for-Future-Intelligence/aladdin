@@ -71,3 +71,9 @@ export enum ResizeHandleType {
     LowerRightTop = 'Resize Handle Lower Right Top',
     UpperRightTop = 'Resize Handle Upper Right Top',
 }
+
+export enum IntersectionPlaneType {
+    Horizontal = 'Horizontal',
+    Vertical = 'Vertical',
+    Ground = 'Ground',
+}
