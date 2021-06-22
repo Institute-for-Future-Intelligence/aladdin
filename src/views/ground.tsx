@@ -30,6 +30,18 @@ const Ground = () => {
     const horizontalPlaneRef = useRef<Mesh>();
     const verticalPlaneRef = useRef<Mesh>();
     const ray = useMemo(() => new Raycaster(), []);
+    const cosAngle = useMemo(() => {
+        if (grab) {
+            return Math.cos(grab.rotation[1]);
+        }
+        return 1;
+    }, [grab?.rotation]);
+    const sinAngle = useMemo(() => {
+        if (grab) {
+            return Math.sin(grab.rotation[1]);
+        }
+        return 0;
+    }, [grab?.rotation]);
 
     let intersectionPlaneType = IntersectionPlaneType.Ground;
     const intersectionPlanePosition = useMemo(() => new Vector3(), []);
@@ -138,19 +150,28 @@ const Ground = () => {
                                    intersects = ray.intersectObjects([groundPlaneRef.current]);
                                    if (intersects.length > 0) {
                                        const p = intersects[0].point;
+                                       let x0, y0;
                                        if (moveHandleType) {
                                            switch (moveHandleType) {
                                                case MoveHandleType.Lower:
-                                                   setElementPosition(grab.id, p.x, -p.z - grab.ly / 2 - MOVE_HANDLE_OFFSET);
+                                                   x0 = p.x;
+                                                   y0 = -p.z - (grab.ly / 2 + MOVE_HANDLE_OFFSET);
+                                                   setElementPosition(grab.id, x0, y0);
                                                    break;
                                                case MoveHandleType.Upper:
-                                                   setElementPosition(grab.id, p.x, -p.z + grab.ly / 2 + MOVE_HANDLE_OFFSET);
+                                                   x0 = p.x;
+                                                   y0 = -p.z + (grab.ly / 2 + MOVE_HANDLE_OFFSET);
+                                                   setElementPosition(grab.id, x0, y0);
                                                    break;
                                                case MoveHandleType.Left:
-                                                   setElementPosition(grab.id, p.x + grab.lx / 2 + MOVE_HANDLE_OFFSET, -p.z);
+                                                   x0 = p.x + (grab.lx / 2 + MOVE_HANDLE_OFFSET);
+                                                   y0 = -p.z;
+                                                   setElementPosition(grab.id, x0, y0);
                                                    break;
                                                case MoveHandleType.Right:
-                                                   setElementPosition(grab.id, p.x - grab.lx / 2 - MOVE_HANDLE_OFFSET, -p.z);
+                                                   x0 = p.x - (grab.lx / 2 + MOVE_HANDLE_OFFSET);
+                                                   y0 = -p.z;
+                                                   setElementPosition(grab.id, x0, y0);
                                                    break;
                                            }
                                        }

@@ -26,6 +26,7 @@ const Foundation = ({
                         lx = 1,
                         ly = 1,
                         lz = 0.1,
+                        rotation = [0, 0, 0],
                         color = 'gray',
                         lineColor = 'black',
                         lineWidth = 0.2,
@@ -111,7 +112,7 @@ const Foundation = ({
 
         return (
 
-            <group name={'Foundation Group'}>
+            <group name={'Foundation Group ' + id} rotation={Util.getEuler(rotation)}>
 
                 {/* draw rectangle */}
                 <Box castShadow receiveShadow

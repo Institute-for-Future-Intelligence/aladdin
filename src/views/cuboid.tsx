@@ -26,6 +26,7 @@ const Cuboid = ({
                     lx = 1,
                     ly = 1,
                     lz = 1,
+                    rotation = [0, 0, 0],
                     color = 'silver',
                     lineColor = 'black',
                     lineWidth = 0.1,
@@ -127,7 +128,7 @@ const Cuboid = ({
 
     return (
 
-        <group name={'Cuboid Group'}>
+        <group name={'Cuboid Group ' + id} rotation={Util.getEuler(rotation)}>
 
             {/* draw rectangular cuboid */}
             <Box castShadow receiveShadow

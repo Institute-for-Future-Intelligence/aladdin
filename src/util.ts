@@ -74,6 +74,11 @@ export class Util {
         v.z = z;
     }
 
+    static getEuler(v: number[]) {
+        if (v.length !== 3) throw new Error(v + ' must be an array with three elements.');
+        return new Euler(v[0], v[1], v[2]);
+    }
+
     // convert the coordinates from the model system to the view system
     static modelToView(v: Vector3) {
         return new Vector3(v.x, v.z, -v.y);

@@ -13,6 +13,7 @@ export interface ElementModel {
     ly: number; // length in y direction
     lz: number; // length in z direction
     normal: number[]; // normal vector of this element's primary surface if applicable
+    rotation: number[]; // Euler angle for the orientation
 
     selected?: boolean;
     color?: string;

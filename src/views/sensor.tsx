@@ -8,7 +8,7 @@ import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {SensorModel} from "../models/sensorModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {MOVE_HANDLE_RADIUS} from "../constants";
+import {HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS} from "../constants";
 
 const Sensor = ({
                     id,
@@ -59,7 +59,7 @@ const Sensor = ({
 
     return (
 
-        <group name={'Sensor Group'}>
+        <group name={'Sensor Group ' + id}>
 
             {/* draw rectangle (too small to cast shadow) */}
             <Box receiveShadow
@@ -87,7 +87,7 @@ const Sensor = ({
                      domElement.style.cursor = 'default';
                  }}
             >
-                <meshStandardMaterial attach="material" color={element?.lit ? 'red' : color}/>
+                <meshStandardMaterial attach="material" color={element?.lit ? HIGHLIGHT_HANDLE_COLOR : color}/>
             </Box>
 
             {!selected &&
