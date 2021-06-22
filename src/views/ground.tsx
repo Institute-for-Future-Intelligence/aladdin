@@ -213,27 +213,21 @@ const Ground = () => {
                                                }
                                            }
                                            if (resizeHandleType) {
-                                               let lx, ly;
+                                               const lx = Math.max(Math.abs(resizeAnchor.x - p.x), 0.5);
+                                               const ly = Math.max(Math.abs(resizeAnchor.y - p.z), 0.5);
+                                               setElementSize(grab.id, lx, ly);
                                                switch (resizeHandleType) {
                                                    case ResizeHandleType.LowerLeft:
-                                                       lx = Math.max((grab.cx - p.x) * 2, 0.5);
-                                                       ly = Math.max(-(grab.cy + p.z) * 2, 0.5);
-                                                       setElementSize(grab.id, lx, ly);
+                                                       setElementPosition(grab.id, p.x + lx / 2, -p.z - ly / 2);
                                                        break;
                                                    case ResizeHandleType.UpperLeft:
-                                                       lx = Math.max((grab.cx - p.x) * 2, 0.5);
-                                                       ly = Math.max((grab.cy + p.z) * 2, 0.5);
-                                                       setElementSize(grab.id, lx, ly);
+                                                       setElementPosition(grab.id, p.x + lx / 2, -p.z + ly / 2);
                                                        break;
                                                    case ResizeHandleType.LowerRight:
-                                                       lx = Math.max(-(grab.cx - p.x) * 2, 0.5);
-                                                       ly = Math.max(-(grab.cy + p.z) * 2, 0.5);
-                                                       setElementSize(grab.id, lx, ly);
+                                                       setElementPosition(grab.id, p.x - lx / 2, -p.z - ly / 2);
                                                        break;
                                                    case ResizeHandleType.UpperRight:
-                                                       lx = Math.max(-(grab.cx - p.x) * 2, 0.5);
-                                                       ly = Math.max((grab.cy + p.z) * 2, 0.5);
-                                                       setElementSize(grab.id, lx, ly);
+                                                       setElementPosition(grab.id, p.x - lx / 2, -p.z + ly / 2);
                                                        break;
                                                }
                                            }

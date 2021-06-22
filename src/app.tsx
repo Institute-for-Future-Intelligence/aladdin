@@ -312,7 +312,7 @@ const App = () => {
                                 shadow-mapSize-width={512}
                             />
                             {(grid || !enableOrbitController) &&
-                            <gridHelper name={'Grid'} args={[500, 100, 'gray', 'gray']}/>
+                            <gridHelper name={'Grid'} args={[100, 100, 'gray', 'gray']}/>
                             }
                             <Compass/>
                             {/*<Obj/>*/}

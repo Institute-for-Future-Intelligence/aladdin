@@ -58,6 +58,11 @@ export class Util {
         v.z = z;
     }
 
+    static copyVector2(to: Vector2, from: Vector2) {
+        to.x = from.x;
+        to.y = from.y;
+    }
+
     static setVector2(v: Vector2, x: number, y: number) {
         v.x = x;
         v.y = y;

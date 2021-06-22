@@ -10,6 +10,7 @@ import {CuboidModel} from "../models/cuboidModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {ActionType, MoveHandleType, ResizeHandleType} from "../types";
 import {RESIZE_HANDLE_SIZE, MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS} from "../constants";
+import {Util} from "../util";
 
 const Cuboid = ({
                     id,
@@ -290,6 +291,9 @@ const Cuboid = ({
                      position={positionLLBot}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
+                         setCommonStore(state => {
+                             Util.setVector2(state.resizeAnchor, cx + lx / 2, cy + ly / 2);
+                         });
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.LowerLeft);
@@ -307,6 +311,9 @@ const Cuboid = ({
                      position={positionULBot}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
+                         setCommonStore(state => {
+                             Util.setVector2(state.resizeAnchor, cx + lx / 2, cy - ly / 2);
+                         });
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.UpperLeft);
@@ -324,6 +331,9 @@ const Cuboid = ({
                      position={positionLRBot}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
+                         setCommonStore(state => {
+                             Util.setVector2(state.resizeAnchor, cx - lx / 2, cy + ly / 2);
+                         });
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.LowerRight);
@@ -341,6 +351,9 @@ const Cuboid = ({
                      position={positionURBot}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
+                         setCommonStore(state => {
+                             Util.setVector2(state.resizeAnchor, cx - lx / 2, cy - ly / 2);
+                         });
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.UpperRight);
