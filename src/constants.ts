@@ -37,3 +37,7 @@ export const MONTHS = [
 export const MOVE_HANDLE_OFFSET = 0.2;
 export const MOVE_HANDLE_RADIUS = 0.1;
 export const RESIZE_HANDLE_SIZE = 0.16;
+
+export const MOVE_HANDLE_COLOR = 'orange';
+export const RESIZE_HANDLE_COLOR = 'white';
+export const HIGHLIGHT_HANDLE_COLOR = 'red';

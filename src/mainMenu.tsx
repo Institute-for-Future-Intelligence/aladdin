@@ -45,7 +45,6 @@ const MainMenu = ({
     const setCommonStore = useStore(state => state.set);
     const showGroundPanel = useStore(state => state.showGroundPanel);
     const showWeatherPanel = useStore(state => state.showWeatherPanel);
-    const showHeliodonPanel = useStore(state => state.showHeliodonPanel);
 
     // @ts-ignore
     const onChangeShowGroundPanel = (e) => {

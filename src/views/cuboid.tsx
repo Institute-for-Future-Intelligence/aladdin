@@ -9,7 +9,14 @@ import {useStore} from "../stores/common";
 import {CuboidModel} from "../models/cuboidModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {ActionType, MoveHandleType, ResizeHandleType} from "../types";
-import {RESIZE_HANDLE_SIZE, MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS} from "../constants";
+import {
+    RESIZE_HANDLE_SIZE,
+    MOVE_HANDLE_OFFSET,
+    MOVE_HANDLE_RADIUS,
+    HIGHLIGHT_HANDLE_COLOR,
+    RESIZE_HANDLE_COLOR,
+    MOVE_HANDLE_COLOR
+} from "../constants";
 import {Util} from "../util";
 
 const Cuboid = ({
@@ -28,6 +35,8 @@ const Cuboid = ({
     cy = -cy; // we want positive y to point north
 
     const setCommonStore = useStore(state => state.set);
+    const moveHandleType = useStore(state => state.moveHandleType);
+    const resizeHandleType = useStore(state => state.resizeHandleType);
     const {gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
     const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
@@ -231,8 +240,13 @@ const Cuboid = ({
                          noHoverHandle();
                      }}
                 >
-                    <meshStandardMaterial attach="material"
-                                          color={hoveredHandle === ResizeHandleType.LowerLeftTop ? 'red' : 'white'}/>
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === ResizeHandleType.LowerLeftTop ||
+                            resizeHandleType === ResizeHandleType.LowerLeftTop ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                        }
+                    />
                 </Box>
                 <Box ref={resizeHandleULTopRef}
                      name={ResizeHandleType.UpperLeftTop}
@@ -248,8 +262,13 @@ const Cuboid = ({
                          noHoverHandle();
                      }}
                 >
-                    <meshStandardMaterial attach="material"
-                                          color={hoveredHandle === ResizeHandleType.UpperLeftTop ? 'red' : 'white'}/>
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === ResizeHandleType.UpperLeftTop ||
+                            resizeHandleType === ResizeHandleType.UpperLeftTop ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                        }
+                    />
                 </Box>
                 <Box ref={resizeHandleLRTopRef}
                      name={ResizeHandleType.LowerRightTop}
@@ -265,8 +284,13 @@ const Cuboid = ({
                          noHoverHandle();
                      }}
                 >
-                    <meshStandardMaterial attach="material"
-                                          color={hoveredHandle === ResizeHandleType.LowerRightTop ? 'red' : 'white'}/>
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === ResizeHandleType.LowerRightTop ||
+                            resizeHandleType === ResizeHandleType.LowerRightTop ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                        }
+                    />
                 </Box>
                 <Box ref={resizeHandleURTopRef}
                      name={ResizeHandleType.UpperRightTop}
@@ -282,8 +306,13 @@ const Cuboid = ({
                          noHoverHandle();
                      }}
                 >
-                    <meshStandardMaterial attach="material"
-                                          color={hoveredHandle === ResizeHandleType.UpperRightTop ? 'red' : 'white'}/>
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === ResizeHandleType.UpperRightTop ||
+                            resizeHandleType === ResizeHandleType.UpperRightTop ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                        }
+                    />
                 </Box>
                 <Box ref={resizeHandleLLBotRef}
                      name={ResizeHandleType.LowerLeft}
@@ -302,8 +331,13 @@ const Cuboid = ({
                          noHoverHandle();
                      }}
                 >
-                    <meshStandardMaterial attach="material"
-                                          color={hoveredHandle === ResizeHandleType.LowerLeft ? 'red' : 'white'}/>
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === ResizeHandleType.LowerLeft ||
+                            resizeHandleType === ResizeHandleType.LowerLeft ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                        }
+                    />
                 </Box>
                 <Box ref={resizeHandleULBotRef}
                      name={ResizeHandleType.UpperLeft}
@@ -322,8 +356,13 @@ const Cuboid = ({
                          noHoverHandle();
                      }}
                 >
-                    <meshStandardMaterial attach="material"
-                                          color={hoveredHandle === ResizeHandleType.UpperLeft ? 'red' : 'white'}/>
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === ResizeHandleType.UpperLeft ||
+                            resizeHandleType === ResizeHandleType.UpperLeft ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                        }
+                    />
                 </Box>
                 <Box ref={resizeHandleLRBotRef}
                      name={ResizeHandleType.LowerRight}
@@ -342,8 +381,13 @@ const Cuboid = ({
                          noHoverHandle();
                      }}
                 >
-                    <meshStandardMaterial attach="material"
-                                          color={hoveredHandle === ResizeHandleType.LowerRight ? 'red' : 'white'}/>
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === ResizeHandleType.LowerRight ||
+                            resizeHandleType === ResizeHandleType.LowerRight ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                        }
+                    />
                 </Box>
                 <Box ref={resizeHandleURBotRef}
                      name={ResizeHandleType.UpperRight}
@@ -362,8 +406,13 @@ const Cuboid = ({
                          noHoverHandle();
                      }}
                 >
-                    <meshStandardMaterial attach="material"
-                                          color={hoveredHandle === ResizeHandleType.UpperRight ? 'red' : 'white'}/>
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === ResizeHandleType.UpperRight ||
+                            resizeHandleType === ResizeHandleType.UpperRight ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                        }
+                    />
                 </Box>
 
                 {/* move handles */}
@@ -381,8 +430,13 @@ const Cuboid = ({
                             noHoverHandle();
                         }}
                 >
-                    <meshStandardMaterial attach="material"
-                                          color={hoveredHandle === MoveHandleType.Lower ? 'red' : 'orange'}/>
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === MoveHandleType.Lower ||
+                            moveHandleType === MoveHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                        }
+                    />
                 </Sphere>
                 <Sphere ref={moveHandleUpperFaceRef}
                         args={[MOVE_HANDLE_RADIUS, 6, 6]}
@@ -398,8 +452,13 @@ const Cuboid = ({
                             noHoverHandle();
                         }}
                 >
-                    <meshStandardMaterial attach="material"
-                                          color={hoveredHandle === MoveHandleType.Upper ? 'red' : 'orange'}/>
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === MoveHandleType.Upper ||
+                            moveHandleType === MoveHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                        }
+                    />
                 </Sphere>
                 <Sphere ref={moveHandleLeftFaceRef}
                         args={[MOVE_HANDLE_RADIUS, 6, 6]}
@@ -415,8 +474,13 @@ const Cuboid = ({
                             noHoverHandle();
                         }}
                 >
-                    <meshStandardMaterial attach="material"
-                                          color={hoveredHandle === MoveHandleType.Left ? 'red' : 'orange'}/>
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === MoveHandleType.Left ||
+                            moveHandleType === MoveHandleType.Left ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                        }
+                    />
                 </Sphere>
                 <Sphere ref={moveHandleRightFaceRef}
                         args={[MOVE_HANDLE_RADIUS, 6, 6]}
@@ -432,8 +496,13 @@ const Cuboid = ({
                             noHoverHandle();
                         }}
                 >
-                    <meshStandardMaterial attach="material"
-                                          color={hoveredHandle === MoveHandleType.Right ? 'red' : 'orange'}/>
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === MoveHandleType.Right ||
+                            moveHandleType === MoveHandleType.Right ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                        }
+                    />
                 </Sphere>
                 <Sphere ref={moveHandleTopFaceRef}
                         args={[MOVE_HANDLE_RADIUS, 6, 6]}
@@ -449,8 +518,13 @@ const Cuboid = ({
                             noHoverHandle();
                         }}
                 >
-                    <meshStandardMaterial attach="material"
-                                          color={hoveredHandle === MoveHandleType.Top ? 'red' : 'orange'}/>
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === MoveHandleType.Top ||
+                            moveHandleType === MoveHandleType.Top ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                        }
+                    />
                 </Sphere>
             </>
             }

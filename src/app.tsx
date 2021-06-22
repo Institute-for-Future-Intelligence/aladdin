@@ -211,6 +211,14 @@ const App = () => {
         setAboutUs(on);
     };
 
+    const contextMenu = (
+        <ContextMenu
+            city={city}
+            collectDailyLightSensorData={collectDailyLightSensorData}
+            collectYearlyLightSensorData={collectYearlyLightSensorData}
+        />
+    );
+
     console.log('x')
 
     return (
@@ -277,15 +285,7 @@ const App = () => {
                           graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}
             />}
             {aboutUs && <About openAboutUs={openAboutUs}/>}
-            <Dropdown key={'canvas-context-menu'}
-                      trigger={['contextMenu']}
-                      overlay={
-                          <ContextMenu
-                              city={city}
-                              collectDailyLightSensorData={collectDailyLightSensorData}
-                              collectYearlyLightSensorData={collectYearlyLightSensorData}
-                          />
-                      }>
+            <Dropdown key={'canvas-context-menu'} trigger={['contextMenu']} overlay={contextMenu}>
                 <div>
                     <Canvas shadows={true}
                             camera={{

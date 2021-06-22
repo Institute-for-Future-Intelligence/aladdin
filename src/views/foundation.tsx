@@ -9,7 +9,14 @@ import {useStore} from "../stores/common";
 import {FoundationModel} from "../models/foundationModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {ActionType, MoveHandleType, ResizeHandleType} from "../types";
-import {RESIZE_HANDLE_SIZE, MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS} from "../constants";
+import {
+    HIGHLIGHT_HANDLE_COLOR,
+    MOVE_HANDLE_COLOR,
+    MOVE_HANDLE_OFFSET,
+    MOVE_HANDLE_RADIUS,
+    RESIZE_HANDLE_COLOR,
+    RESIZE_HANDLE_SIZE
+} from "../constants";
 import {Util} from "../util";
 
 const Foundation = ({
@@ -28,6 +35,8 @@ const Foundation = ({
         cy = -cy; // we want positive y to point north
 
         const setCommonStore = useStore(state => state.set);
+        const moveHandleType = useStore(state => state.moveHandleType);
+        const resizeHandleType = useStore(state => state.resizeHandleType);
         const {gl: {domElement}} = useThree();
         const [hovered, setHovered] = useState(false);
         const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
@@ -214,8 +223,13 @@ const Foundation = ({
                              noHoverHandle();
                          }}
                     >
-                        <meshStandardMaterial attach="material"
-                                              color={hoveredHandle === ResizeHandleType.LowerLeft ? 'red' : 'white'}/>
+                        <meshStandardMaterial
+                            attach="material"
+                            color={
+                                hoveredHandle === ResizeHandleType.LowerLeft ||
+                                resizeHandleType === ResizeHandleType.LowerLeft ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                            }
+                        />
                     </Box>
                     <Box ref={resizeHandleULRef}
                          position={positionUL}
@@ -234,8 +248,13 @@ const Foundation = ({
                              noHoverHandle();
                          }}
                     >
-                        <meshStandardMaterial attach="material"
-                                              color={hoveredHandle === ResizeHandleType.UpperLeft ? 'red' : 'white'}/>
+                        <meshStandardMaterial
+                            attach="material"
+                            color={
+                                hoveredHandle === ResizeHandleType.UpperLeft ||
+                                resizeHandleType === ResizeHandleType.UpperLeft ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                            }
+                        />
                     </Box>
                     <Box ref={resizeHandleLRRef}
                          position={positionLR}
@@ -254,8 +273,13 @@ const Foundation = ({
                              noHoverHandle();
                          }}
                     >
-                        <meshStandardMaterial attach="material"
-                                              color={hoveredHandle === ResizeHandleType.LowerRight ? 'red' : 'white'}/>
+                        <meshStandardMaterial
+                            attach="material"
+                            color={
+                                hoveredHandle === ResizeHandleType.LowerRight ||
+                                resizeHandleType === ResizeHandleType.LowerRight ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                            }
+                        />
                     </Box>
                     <Box ref={resizeHandleURRef}
                          position={positionUR}
@@ -274,8 +298,13 @@ const Foundation = ({
                              noHoverHandle();
                          }}
                     >
-                        <meshStandardMaterial attach="material"
-                                              color={hoveredHandle === ResizeHandleType.UpperRight ? 'red' : 'white'}/>
+                        <meshStandardMaterial
+                            attach="material"
+                            color={
+                                hoveredHandle === ResizeHandleType.UpperRight ||
+                                resizeHandleType === ResizeHandleType.UpperRight ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                            }
+                        />
                     </Box>
 
                     {/* move handles */}
@@ -293,8 +322,13 @@ const Foundation = ({
                                 noHoverHandle();
                             }}
                     >
-                        <meshStandardMaterial attach="material"
-                                              color={hoveredHandle === MoveHandleType.Lower ? 'red' : 'orange'}/>
+                        <meshStandardMaterial
+                            attach="material"
+                            color={
+                                hoveredHandle === MoveHandleType.Lower ||
+                                moveHandleType === MoveHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                            }
+                        />
                     </Sphere>
                     <Sphere ref={moveHandleUpperRef}
                             args={[MOVE_HANDLE_RADIUS, 6, 6]}
@@ -310,8 +344,13 @@ const Foundation = ({
                                 noHoverHandle();
                             }}
                     >
-                        <meshStandardMaterial attach="material"
-                                              color={hoveredHandle === MoveHandleType.Upper ? 'red' : 'orange'}/>
+                        <meshStandardMaterial
+                            attach="material"
+                            color={
+                                hoveredHandle === MoveHandleType.Upper ||
+                                moveHandleType === MoveHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                            }
+                        />
                     </Sphere>
                     <Sphere ref={moveHandleLeftRef}
                             args={[MOVE_HANDLE_RADIUS, 6, 6]}
@@ -327,8 +366,13 @@ const Foundation = ({
                                 noHoverHandle();
                             }}
                     >
-                        <meshStandardMaterial attach="material"
-                                              color={hoveredHandle === MoveHandleType.Left ? 'red' : 'orange'}/>
+                        <meshStandardMaterial
+                            attach="material"
+                            color={
+                                hoveredHandle === MoveHandleType.Left ||
+                                moveHandleType === MoveHandleType.Left ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                            }
+                        />
                     </Sphere>
                     <Sphere ref={moveHandleRightRef}
                             args={[MOVE_HANDLE_RADIUS, 6, 6]}
@@ -344,8 +388,13 @@ const Foundation = ({
                                 noHoverHandle();
                             }}
                     >
-                        <meshStandardMaterial attach="material"
-                                              color={hoveredHandle === MoveHandleType.Right ? 'red' : 'orange'}/>
+                        <meshStandardMaterial
+                            attach="material"
+                            color={
+                                hoveredHandle === MoveHandleType.Right ||
+                                moveHandleType === MoveHandleType.Right ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                            }
+                        />
                     </Sphere>
                 </>
                 }
