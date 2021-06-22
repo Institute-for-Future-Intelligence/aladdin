@@ -13,6 +13,7 @@ import Papa from "papaparse";
 import {Util} from "../util";
 import {DatumEntry, MoveHandleType, ObjectType, ResizeHandleType} from "../types";
 import {DefaultWorldModel} from "./DefaultWorldModel";
+import {Vector2} from "three";
 
 enableMapSet();
 
@@ -52,6 +53,7 @@ export interface CommonStoreState {
     clickObjectType: ObjectType | null;
     moveHandleType: MoveHandleType | null;
     resizeHandleType: ResizeHandleType | null;
+    resizeAnchor: Vector2;
     getSelectedElement: () => ElementModel | null;
     getElementById: (id: string) => ElementModel | null;
     selectNone: () => void;
@@ -126,6 +128,8 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         clickObjectType: null,
         moveHandleType: null,
         resizeHandleType: null,
+        resizeAnchor: new Vector2(),
+
         getSelectedElement() {
             const elements = get().elements;
             for (const e of elements) {

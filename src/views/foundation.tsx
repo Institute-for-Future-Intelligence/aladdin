@@ -10,6 +10,7 @@ import {FoundationModel} from "../models/foundationModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {ActionType, MoveHandleType, ResizeHandleType} from "../types";
 import {RESIZE_HANDLE_SIZE, MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS} from "../constants";
+import {Util} from "../util";
 
 const Foundation = ({
                         id,
@@ -202,6 +203,9 @@ const Foundation = ({
                          name={ResizeHandleType.LowerLeft}
                          onPointerDown={(e) => {
                              selectMe(e, ActionType.Resize);
+                             setCommonStore(state => {
+                                 Util.setVector2(state.resizeAnchor, cx + lx / 2, cy + ly / 2);
+                             });
                          }}
                          onPointerOver={(e) => {
                              hoverHandle(e, ResizeHandleType.LowerLeft);
@@ -219,6 +223,9 @@ const Foundation = ({
                          name={ResizeHandleType.UpperLeft}
                          onPointerDown={(e) => {
                              selectMe(e, ActionType.Resize);
+                             setCommonStore(state => {
+                                 Util.setVector2(state.resizeAnchor, cx + lx / 2, cy - ly / 2);
+                             });
                          }}
                          onPointerOver={(e) => {
                              hoverHandle(e, ResizeHandleType.UpperLeft);
@@ -236,6 +243,9 @@ const Foundation = ({
                          name={ResizeHandleType.LowerRight}
                          onPointerDown={(e) => {
                              selectMe(e, ActionType.Resize);
+                             setCommonStore(state => {
+                                 Util.setVector2(state.resizeAnchor, cx - lx / 2, cy + ly / 2);
+                             });
                          }}
                          onPointerOver={(e) => {
                              hoverHandle(e, ResizeHandleType.LowerRight);
@@ -253,6 +263,9 @@ const Foundation = ({
                          name={ResizeHandleType.UpperRight}
                          onPointerDown={(e) => {
                              selectMe(e, ActionType.Resize);
+                             setCommonStore(state => {
+                                 Util.setVector2(state.resizeAnchor, cx - lx / 2, cy - ly / 2);
+                             });
                          }}
                          onPointerOver={(e) => {
                              hoverHandle(e, ResizeHandleType.UpperRight);

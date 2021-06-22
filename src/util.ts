@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import {Euler, Vector3} from "three";
+import {Euler, Vector2, Vector3} from "three";
 
 export class Util {
 
@@ -56,6 +56,11 @@ export class Util {
         v.x = x;
         v.y = y;
         v.z = z;
+    }
+
+    static setVector2(v: Vector2, x: number, y: number) {
+        v.x = x;
+        v.y = y;
     }
 
     static setEuler(v: Euler, x: number, y: number, z: number) {
