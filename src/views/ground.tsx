@@ -162,18 +162,18 @@ const Ground = () => {
                                                    setElementPosition(grab.id, x0, y0);
                                                    break;
                                                case MoveHandleType.Upper:
-                                                   x0 = p.x;
-                                                   y0 = -p.z + ly2;
+                                                   x0 = p.x - sinAngle * ly2;
+                                                   y0 = -p.z + cosAngle * ly2;
                                                    setElementPosition(grab.id, x0, y0);
                                                    break;
                                                case MoveHandleType.Left:
-                                                   x0 = p.x + lx2;
-                                                   y0 = -p.z;
+                                                   x0 = p.x + cosAngle * lx2;
+                                                   y0 = -p.z + sinAngle * lx2;
                                                    setElementPosition(grab.id, x0, y0);
                                                    break;
                                                case MoveHandleType.Right:
-                                                   x0 = p.x - lx2;
-                                                   y0 = -p.z;
+                                                   x0 = p.x - cosAngle * lx2;
+                                                   y0 = -p.z - sinAngle * lx2;
                                                    setElementPosition(grab.id, x0, y0);
                                                    break;
                                            }

@@ -41,7 +41,7 @@ export class DefaultWorldModel implements WorldModel {
             ly: 3,
             lz: 0.1,
             normal: [0, 0, 1],
-            rotation: [0, Math.PI / 3, 0],
+            rotation: [0, 0, 0],
             id: 'f1'
         } as FoundationModel;
         const e2 = {
@@ -92,7 +92,7 @@ export class DefaultWorldModel implements WorldModel {
             ly: 3,
             lz: 0.1,
             normal: [0, 0, 1],
-            rotation: [0, 0, 0],
+            rotation: [0, Math.PI / 3, 0],
             id: 'f2'
         } as FoundationModel;
         elements.push(e1);
