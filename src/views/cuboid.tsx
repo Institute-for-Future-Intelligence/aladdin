@@ -61,7 +61,7 @@ const Cuboid = ({
     const positionLRTop = new Vector3(hx, hz, -hy);
     const positionURTop = new Vector3(hx, hz, hy);
 
-    const handleLift = MOVE_HANDLE_RADIUS / 2;
+    const handleLift = MOVE_HANDLE_RADIUS;
     const positionLLBot = new Vector3(-hx, handleLift - hz, -hy);
     const positionULBot = new Vector3(-hx, handleLift - hz, hy);
     const positionLRBot = new Vector3(hx, handleLift - hz, -hy);

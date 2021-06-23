@@ -9,7 +9,7 @@ import {DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3} from "three";
 import {IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType} from "../types";
 import {ElementModel} from "../models/elementModel";
 import {useThree} from "@react-three/fiber";
-import {MOVE_HANDLE_OFFSET} from "../constants";
+import {MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS} from "../constants";
 import {Util} from "../util";
 
 const Ground = () => {
@@ -50,7 +50,13 @@ const Ground = () => {
     if (grab) {
         if (moveHandleType === MoveHandleType.Top) {
             intersectionPlaneType = IntersectionPlaneType.Horizontal;
-            Util.setVector(intersectionPlanePosition, grab.cx, grab.lz, -grab.cy);
+            Util.setVector(intersectionPlanePosition, grab.cx, grab.lz + MOVE_HANDLE_OFFSET, -grab.cy);
+            Util.setEuler(intersectionPlaneAngle, -Math.PI / 2, 0, 0);
+        } else if (
+            moveHandleType === MoveHandleType.Left || moveHandleType === MoveHandleType.Right ||
+            moveHandleType === MoveHandleType.Lower || moveHandleType === MoveHandleType.Upper) {
+            intersectionPlaneType = IntersectionPlaneType.Horizontal;
+            Util.setVector(intersectionPlanePosition, grab.cx, MOVE_HANDLE_RADIUS, -grab.cy);
             Util.setEuler(intersectionPlaneAngle, -Math.PI / 2, 0, 0);
         } else if (resizeHandleType === ResizeHandleType.LowerLeftTop) {
             intersectionPlaneType = IntersectionPlaneType.Vertical;
@@ -133,7 +139,7 @@ const Ground = () => {
                        });
                    }}
                    onPointerMove={(e) => {
-                       if (grab && groundPlaneRef && groundPlaneRef.current && grab.type) {
+                       if (grab && grab.type) {
                            const mouse = new Vector2();
                            mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
                            mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
@@ -141,98 +147,43 @@ const Ground = () => {
                            let intersects;
                            switch (grab.type) {
                                case ObjectType.Sensor:
-                                   intersects = ray.intersectObjects([groundPlaneRef.current]);
-                                   if (intersects.length > 0) {
-                                       const p = intersects[0].point;
-                                       setElementPosition(grab.id, p.x, -p.z);
-                                   }
-                                   break;
-                               case ObjectType.Foundation:
-                                   intersects = ray.intersectObjects([groundPlaneRef.current]);
-                                   if (intersects.length > 0) {
-                                       const p = intersects[0].point;
-                                       let x0, y0;
-                                       const lx2 = grab.lx / 2 + MOVE_HANDLE_OFFSET;
-                                       const ly2 = grab.ly / 2 + MOVE_HANDLE_OFFSET;
-                                       if (moveHandleType) {
-                                           switch (moveHandleType) {
-                                               case MoveHandleType.Lower:
-                                                   x0 = p.x + sinAngle * ly2;
-                                                   y0 = -p.z - cosAngle * ly2;
-                                                   setElementPosition(grab.id, x0, y0);
-                                                   break;
-                                               case MoveHandleType.Upper:
-                                                   x0 = p.x - sinAngle * ly2;
-                                                   y0 = -p.z + cosAngle * ly2;
-                                                   setElementPosition(grab.id, x0, y0);
-                                                   break;
-                                               case MoveHandleType.Left:
-                                                   x0 = p.x + cosAngle * lx2;
-                                                   y0 = -p.z + sinAngle * lx2;
-                                                   setElementPosition(grab.id, x0, y0);
-                                                   break;
-                                               case MoveHandleType.Right:
-                                                   x0 = p.x - cosAngle * lx2;
-                                                   y0 = -p.z - sinAngle * lx2;
-                                                   setElementPosition(grab.id, x0, y0);
-                                                   break;
-                                           }
-                                       }
-                                       if (resizeHandleType) {
-                                           const lx = Math.max(Math.abs(resizeAnchor.x - p.x), 0.5);
-                                           const ly = Math.max(Math.abs(resizeAnchor.y - p.z), 0.5);
-                                           setElementSize(grab.id, lx, ly);
-                                           switch (resizeHandleType) {
-                                               case ResizeHandleType.LowerLeft:
-                                                   setElementPosition(grab.id, p.x + lx / 2, -p.z - ly / 2);
-                                                   break;
-                                               case ResizeHandleType.UpperLeft:
-                                                   setElementPosition(grab.id, p.x + lx / 2, -p.z + ly / 2);
-                                                   break;
-                                               case ResizeHandleType.LowerRight:
-                                                   setElementPosition(grab.id, p.x - lx / 2, -p.z - ly / 2);
-                                                   break;
-                                               case ResizeHandleType.UpperRight:
-                                                   setElementPosition(grab.id, p.x - lx / 2, -p.z + ly / 2);
-                                                   break;
-                                           }
-                                       }
-                                   }
-                                   break;
-                               case ObjectType.Cuboid:
-                                   if (moveHandleType === MoveHandleType.Top && horizontalPlaneRef.current) {
+                                   if (horizontalPlaneRef.current) {
                                        intersects = ray.intersectObjects([horizontalPlaneRef.current]);
                                        if (intersects.length > 0) {
                                            const p = intersects[0].point;
                                            setElementPosition(grab.id, p.x, -p.z);
                                        }
-                                   } else if (verticalPlaneRef.current && (
-                                       resizeHandleType === ResizeHandleType.LowerLeftTop ||
-                                       resizeHandleType === ResizeHandleType.UpperLeftTop ||
-                                       resizeHandleType === ResizeHandleType.LowerRightTop ||
-                                       resizeHandleType === ResizeHandleType.UpperRightTop)) {
-                                       intersects = ray.intersectObjects([verticalPlaneRef.current]);
-                                       if (intersects.length > 0) {
-                                           const p = intersects[0].point;
-                                           updateElement(grab.id, {lz: Math.max(1, p.y)});
-                                       }
-                                   } else {
-                                       intersects = ray.intersectObjects([groundPlaneRef.current]);
+                                   }
+                                   break;
+                               case ObjectType.Foundation:
+                                   if (horizontalPlaneRef.current) {
+                                       intersects = ray.intersectObjects([horizontalPlaneRef.current]);
                                        if (intersects.length > 0) {
                                            const p = intersects[0].point;
                                            if (moveHandleType) {
+                                               let x0, y0;
+                                               const hx = grab.lx / 2 + MOVE_HANDLE_OFFSET;
+                                               const hy = grab.ly / 2 + MOVE_HANDLE_OFFSET;
                                                switch (moveHandleType) {
                                                    case MoveHandleType.Lower:
-                                                       setElementPosition(grab.id, p.x, -p.z - grab.ly / 2 - MOVE_HANDLE_OFFSET);
+                                                       x0 = p.x + sinAngle * hy;
+                                                       y0 = -p.z - cosAngle * hy;
+                                                       setElementPosition(grab.id, x0, y0);
                                                        break;
                                                    case MoveHandleType.Upper:
-                                                       setElementPosition(grab.id, p.x, -p.z + grab.ly / 2 + MOVE_HANDLE_OFFSET);
+                                                       x0 = p.x - sinAngle * hy;
+                                                       y0 = -p.z + cosAngle * hy;
+                                                       setElementPosition(grab.id, x0, y0);
                                                        break;
                                                    case MoveHandleType.Left:
-                                                       setElementPosition(grab.id, p.x + grab.lx / 2 + MOVE_HANDLE_OFFSET, -p.z);
+                                                       x0 = p.x + cosAngle * hx;
+                                                       y0 = -p.z + sinAngle * hx;
+                                                       setElementPosition(grab.id, x0, y0);
                                                        break;
                                                    case MoveHandleType.Right:
-                                                       setElementPosition(grab.id, p.x - grab.lx / 2 - MOVE_HANDLE_OFFSET, -p.z);
+                                                       x0 = p.x - cosAngle * hx;
+                                                       y0 = -p.z - sinAngle * hx;
+                                                       setElementPosition(grab.id, x0, y0);
                                                        break;
                                                }
                                            }
@@ -254,6 +205,76 @@ const Ground = () => {
                                                        setElementPosition(grab.id, p.x - lx / 2, -p.z + ly / 2);
                                                        break;
                                                }
+                                           }
+                                       }
+                                   }
+                                   break;
+                               case ObjectType.Cuboid:
+                                   if (horizontalPlaneRef.current) {
+                                       intersects = ray.intersectObjects([horizontalPlaneRef.current]);
+                                       if (intersects.length > 0) {
+                                           const p = intersects[0].point;
+                                           if (moveHandleType) {
+                                               if (moveHandleType === MoveHandleType.Top) {
+                                                   setElementPosition(grab.id, p.x, -p.z);
+                                               } else {
+                                                   let x0, y0;
+                                                   const hx = grab.lx / 2 + MOVE_HANDLE_OFFSET;
+                                                   const hy = grab.ly / 2 + MOVE_HANDLE_OFFSET;
+                                                   switch (moveHandleType) {
+                                                       case MoveHandleType.Lower:
+                                                           x0 = p.x + sinAngle * hy;
+                                                           y0 = -p.z - cosAngle * hy;
+                                                           setElementPosition(grab.id, x0, y0);
+                                                           break;
+                                                       case MoveHandleType.Upper:
+                                                           x0 = p.x - sinAngle * hy;
+                                                           y0 = -p.z + cosAngle * hy;
+                                                           setElementPosition(grab.id, x0, y0);
+                                                           break;
+                                                       case MoveHandleType.Left:
+                                                           x0 = p.x + cosAngle * hx;
+                                                           y0 = -p.z + sinAngle * hx;
+                                                           setElementPosition(grab.id, x0, y0);
+                                                           break;
+                                                       case MoveHandleType.Right:
+                                                           x0 = p.x - cosAngle * hx;
+                                                           y0 = -p.z - sinAngle * hx;
+                                                           setElementPosition(grab.id, x0, y0);
+                                                           break;
+                                                   }
+                                               }
+                                           }
+                                           if (resizeHandleType) {
+                                               const lx = Math.max(Math.abs(resizeAnchor.x - p.x), 0.5);
+                                               const ly = Math.max(Math.abs(resizeAnchor.y - p.z), 0.5);
+                                               setElementSize(grab.id, lx, ly);
+                                               switch (resizeHandleType) {
+                                                   case ResizeHandleType.LowerLeft:
+                                                       setElementPosition(grab.id, p.x + lx / 2, -p.z - ly / 2);
+                                                       break;
+                                                   case ResizeHandleType.UpperLeft:
+                                                       setElementPosition(grab.id, p.x + lx / 2, -p.z + ly / 2);
+                                                       break;
+                                                   case ResizeHandleType.LowerRight:
+                                                       setElementPosition(grab.id, p.x - lx / 2, -p.z - ly / 2);
+                                                       break;
+                                                   case ResizeHandleType.UpperRight:
+                                                       setElementPosition(grab.id, p.x - lx / 2, -p.z + ly / 2);
+                                                       break;
+                                               }
+                                           }
+                                       }
+                                   } else if (verticalPlaneRef.current) {
+                                       if (
+                                           resizeHandleType === ResizeHandleType.LowerLeftTop ||
+                                           resizeHandleType === ResizeHandleType.UpperLeftTop ||
+                                           resizeHandleType === ResizeHandleType.LowerRightTop ||
+                                           resizeHandleType === ResizeHandleType.UpperRightTop) {
+                                           intersects = ray.intersectObjects([verticalPlaneRef.current]);
+                                           if (intersects.length > 0) {
+                                               const p = intersects[0].point;
+                                               updateElement(grab.id, {lz: Math.max(1, p.y)});
                                            }
                                        }
                                    }
