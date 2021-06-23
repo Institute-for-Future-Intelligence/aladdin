@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useRef, useState} from "react";
+import React, {useMemo, useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
 import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
@@ -52,32 +52,30 @@ const Cuboid = ({
     const resizeHandleULBotRef = useRef<Mesh>();
     const resizeHandleLRBotRef = useRef<Mesh>();
     const resizeHandleURBotRef = useRef<Mesh>();
-
-    const hx = lx / 2;
-    const hy = ly / 2;
-    const hz = lz / 2;
-    const positionLLTop = new Vector3(-hx, hz, -hy);
-    const positionULTop = new Vector3(-hx, hz, hy);
-    const positionLRTop = new Vector3(hx, hz, -hy);
-    const positionURTop = new Vector3(hx, hz, hy);
-
-    const handleLift = MOVE_HANDLE_RADIUS;
-    const positionLLBot = new Vector3(-hx, handleLift - hz, -hy);
-    const positionULBot = new Vector3(-hx, handleLift - hz, hy);
-    const positionLRBot = new Vector3(hx, handleLift - hz, -hy);
-    const positionURBot = new Vector3(hx, handleLift - hz, hy);
-
     const moveHandleLowerFaceRef = useRef<Mesh>();
     const moveHandleUpperFaceRef = useRef<Mesh>();
     const moveHandleLeftFaceRef = useRef<Mesh>();
     const moveHandleRightFaceRef = useRef<Mesh>();
     const moveHandleTopFaceRef = useRef<Mesh>();
 
-    const positionLowerFace = new Vector3(0, handleLift - hz, -hy - MOVE_HANDLE_OFFSET);
-    const positionUpperFace = new Vector3(0, handleLift - hz, hy + MOVE_HANDLE_OFFSET);
-    const positionLeftFace = new Vector3(-hx - MOVE_HANDLE_OFFSET, handleLift - hz, 0);
-    const positionRightFace = new Vector3(hx + MOVE_HANDLE_OFFSET, handleLift - hz, 0);
-    const positionTopFace = new Vector3(0, hz + MOVE_HANDLE_OFFSET, 0);
+    const hx = lx / 2;
+    const hy = ly / 2;
+    const hz = lz / 2;
+    const positionLLTop = useMemo(() => new Vector3(-hx, hz, -hy), [hx, hy, hz]);
+    const positionULTop = useMemo(() => new Vector3(-hx, hz, hy), [hx, hy, hz]);
+    const positionLRTop = useMemo(() => new Vector3(hx, hz, -hy), [hx, hy, hz]);
+    const positionURTop = useMemo(() => new Vector3(hx, hz, hy), [hx, hy, hz]);
+    const positionLLBot = useMemo(() => new Vector3(-hx, -hz, -hy), [hx, hy, hz]);
+    const positionULBot = useMemo(() => new Vector3(-hx, -hz, hy), [hx, hy, hz]);
+    const positionLRBot = useMemo(() => new Vector3(hx, -hz, -hy), [hx, hy, hz]);
+    const positionURBot = useMemo(() => new Vector3(hx, -hz, hy), [hx, hy, hz]);
+
+    const handleLift = MOVE_HANDLE_RADIUS;
+    const positionLowerFace = useMemo(() => new Vector3(0, handleLift - hz, -hy - MOVE_HANDLE_OFFSET), [hy, hz]);
+    const positionUpperFace = useMemo(() => new Vector3(0, handleLift - hz, hy + MOVE_HANDLE_OFFSET), [hy, hz]);
+    const positionLeftFace = useMemo(() => new Vector3(-hx - MOVE_HANDLE_OFFSET, handleLift - hz, 0), [hx, hz]);
+    const positionRightFace = useMemo(() => new Vector3(hx + MOVE_HANDLE_OFFSET, handleLift - hz, 0), [hx, hz]);
+    const positionTopFace = useMemo(() => new Vector3(0, hz + MOVE_HANDLE_OFFSET, 0), [hz]);
 
     const selectMe = (e: ThreeEvent<MouseEvent>, action: ActionType) => {
         if (e.intersections.length > 0) {
@@ -207,22 +205,22 @@ const Cuboid = ({
 
                 {/* draw wireframe vertical lines */}
                 <Line
-                    points={[positionLLTop, positionLLBot]}
+                    points={[positionLLBot, positionLLTop]}
                     name={'Line LL-LL Vertical'}
                     lineWidth={lineWidth}
                     color={lineColor}/>
                 <Line
-                    points={[positionLRTop, positionLRBot]}
+                    points={[positionLRBot, positionLRTop]}
                     name={'Line LR-LR Vertical'}
                     lineWidth={lineWidth}
                     color={lineColor}/>
                 <Line
-                    points={[positionULTop, positionULBot]}
+                    points={[positionULBot, positionULTop]}
                     name={'Line UL-UL Vertical'}
                     lineWidth={lineWidth}
                     color={lineColor}/>
                 <Line
-                    points={[positionURTop, positionURBot]}
+                    points={[positionURBot, positionURTop]}
                     name={'Line UR-UR Vertical'}
                     lineWidth={lineWidth}
                     color={lineColor}/>
@@ -324,7 +322,7 @@ const Cuboid = ({
                 <Box ref={resizeHandleLLBotRef}
                      name={ResizeHandleType.LowerLeft}
                      args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
-                     position={positionLLBot}
+                     position={new Vector3(-hx, RESIZE_HANDLE_SIZE / 2 - hz, -hy)}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
@@ -349,7 +347,7 @@ const Cuboid = ({
                 <Box ref={resizeHandleULBotRef}
                      name={ResizeHandleType.UpperLeft}
                      args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
-                     position={positionULBot}
+                     position={new Vector3(-hx, RESIZE_HANDLE_SIZE / 2 - hz, hy)}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
@@ -374,7 +372,7 @@ const Cuboid = ({
                 <Box ref={resizeHandleLRBotRef}
                      name={ResizeHandleType.LowerRight}
                      args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
-                     position={positionLRBot}
+                     position={new Vector3(hx, RESIZE_HANDLE_SIZE / 2 - hz, -hy)}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
@@ -399,7 +397,7 @@ const Cuboid = ({
                 <Box ref={resizeHandleURBotRef}
                      name={ResizeHandleType.UpperRight}
                      args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
-                     position={positionURBot}
+                     position={new Vector3(hx, RESIZE_HANDLE_SIZE / 2 - hz, hy)}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
@@ -544,7 +542,7 @@ const Cuboid = ({
                 fontFace={'Times Roman'}
                 textHeight={1}
                 scale={[0.4, 0.2, 0.2]}
-                position={[0, lz + 0.2, 0]}
+                position={[0, hz + 0.2, 0]}
             />
             }
 

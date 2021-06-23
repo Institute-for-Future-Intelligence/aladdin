@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useRef, useState} from "react";
+import React, {useMemo, useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
 import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
@@ -58,10 +58,10 @@ const Foundation = ({
     const hy = ly / 2;
     const hz = lz / 2;
 
-    const positionLL = new Vector3(-hx, hz, -hy);
-    const positionUL = new Vector3(-hx, hz, hy);
-    const positionLR = new Vector3(hx, hz, -hy);
-    const positionUR = new Vector3(hx, hz, hy);
+    const positionLL = useMemo(() => new Vector3(-hx, hz, -hy), [hx, hy, hz]);
+    const positionUL = useMemo(() => new Vector3(-hx, hz, hy), [hx, hy, hz]);
+    const positionLR = useMemo(() => new Vector3(hx, hz, -hy), [hx, hy, hz]);
+    const positionUR = useMemo(() => new Vector3(hx, hz, hy), [hx, hy, hz]);
 
     const selectMe = (e: ThreeEvent<MouseEvent>, action: ActionType) => {
         if (e.intersections.length > 0) {
@@ -153,19 +153,19 @@ const Foundation = ({
             {(wireframe && !selected) &&
             <>
                 {/* draw wireframe lines upper face */}
-                <Line points={[[positionLL.x, hz, positionLL.z], [positionLR.x, hz, positionLR.z]]}
+                <Line points={[positionLL, positionLR]}
                       name={'Line LL-LR Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionLR.x, hz, positionLR.z], [positionUR.x, hz, positionUR.z]]}
+                <Line points={[positionLR, positionUR]}
                       name={'Line LR-UR Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUR.x, hz, positionUR.z], [positionUL.x, hz, positionUL.z]]}
+                <Line points={[positionUR, positionUL]}
                       name={'Line UR-UL Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUL.x, hz, positionUL.z], [positionLL.x, hz, positionLL.z]]}
+                <Line points={[positionUL, positionLL]}
                       name={'Line UL-LL Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
@@ -189,19 +189,19 @@ const Foundation = ({
                       color={lineColor}/>
 
                 {/* draw wireframe vertical lines */}
-                <Line points={[[positionLL.x, -hz, positionLL.z], [positionLL.x, hz, positionLL.z]]}
+                <Line points={[[positionLL.x, -hz, positionLL.z], positionLL]}
                       name={'Line LL-LL Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionLR.x, -hz, positionLR.z], [positionLR.x, hz, positionLR.z]]}
+                <Line points={[[positionLR.x, -hz, positionLR.z], positionLR]}
                       name={'Line LR-LR Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUL.x, -hz, positionUL.z], [positionUL.x, hz, positionUL.z]]}
+                <Line points={[[positionUL.x, -hz, positionUL.z], positionUL]}
                       name={'Line UL-UL Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUR.x, -hz, positionUR.z], [positionUR.x, hz, positionUR.z]]}
+                <Line points={[[positionUR.x, -hz, positionUR.z], positionUR]}
                       name={'Line UR-UR Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
@@ -213,7 +213,7 @@ const Foundation = ({
             <>
                 {/* resize handles */}
                 <Box ref={resizeHandleLLRef}
-                     position={positionLL}
+                     position={[positionLL.x, 0, positionLL.z]}
                      args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
                      name={ResizeHandleType.LowerLeft}
                      onPointerDown={(e) => {
@@ -238,7 +238,7 @@ const Foundation = ({
                     />
                 </Box>
                 <Box ref={resizeHandleULRef}
-                     position={positionUL}
+                     position={[positionUL.x, 0, positionUL.z]}
                      args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
                      name={ResizeHandleType.UpperLeft}
                      onPointerDown={(e) => {
@@ -263,7 +263,7 @@ const Foundation = ({
                     />
                 </Box>
                 <Box ref={resizeHandleLRRef}
-                     position={positionLR}
+                     position={[positionLR.x, 0, positionLR.z]}
                      args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
                      name={ResizeHandleType.LowerRight}
                      onPointerDown={(e) => {
@@ -288,7 +288,7 @@ const Foundation = ({
                     />
                 </Box>
                 <Box ref={resizeHandleURRef}
-                     position={positionUR}
+                     position={[positionUR.x, 0, positionUR.z]}
                      args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
                      name={ResizeHandleType.UpperRight}
                      onPointerDown={(e) => {
@@ -412,7 +412,7 @@ const Foundation = ({
                 fontSize={90}
                 fontFace={'Times Roman'}
                 textHeight={1}
-                position={[0, lz + 0.2, 0]}
+                position={[0, hz + 0.2, 0]}
                 scale={[1, 0.2, 0.2]}/>
             }
 
