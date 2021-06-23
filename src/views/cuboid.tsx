@@ -53,16 +53,19 @@ const Cuboid = ({
     const resizeHandleLRBotRef = useRef<Mesh>();
     const resizeHandleURBotRef = useRef<Mesh>();
 
-    const positionLLTop = new Vector3(cx - lx / 2, lz, cy - ly / 2);
-    const positionULTop = new Vector3(cx - lx / 2, lz, cy + ly / 2);
-    const positionLRTop = new Vector3(cx + lx / 2, lz, cy - ly / 2);
-    const positionURTop = new Vector3(cx + lx / 2, lz, cy + ly / 2);
+    const hx = lx / 2;
+    const hy = ly / 2;
+    const hz = lz / 2;
+    const positionLLTop = new Vector3(-hx, hz, -hy);
+    const positionULTop = new Vector3(-hx, hz, hy);
+    const positionLRTop = new Vector3(hx, hz, -hy);
+    const positionURTop = new Vector3(hx, hz, hy);
 
-    const h = MOVE_HANDLE_RADIUS / 2;
-    const positionLLBot = new Vector3(cx - lx / 2, h, cy - ly / 2);
-    const positionULBot = new Vector3(cx - lx / 2, h, cy + ly / 2);
-    const positionLRBot = new Vector3(cx + lx / 2, h, cy - ly / 2);
-    const positionURBot = new Vector3(cx + lx / 2, h, cy + ly / 2);
+    const handleLift = MOVE_HANDLE_RADIUS / 2;
+    const positionLLBot = new Vector3(-hx, handleLift - hz, -hy);
+    const positionULBot = new Vector3(-hx, handleLift - hz, hy);
+    const positionLRBot = new Vector3(hx, handleLift - hz, -hy);
+    const positionURBot = new Vector3(hx, handleLift - hz, hy);
 
     const moveHandleLowerFaceRef = useRef<Mesh>();
     const moveHandleUpperFaceRef = useRef<Mesh>();
@@ -70,11 +73,11 @@ const Cuboid = ({
     const moveHandleRightFaceRef = useRef<Mesh>();
     const moveHandleTopFaceRef = useRef<Mesh>();
 
-    const positionLowerFace = new Vector3(cx, h, cy - ly / 2 - MOVE_HANDLE_OFFSET);
-    const positionUpperFace = new Vector3(cx, h, cy + ly / 2 + MOVE_HANDLE_OFFSET);
-    const positionLeftFace = new Vector3(cx - lx / 2 - MOVE_HANDLE_OFFSET, h, cy);
-    const positionRightFace = new Vector3(cx + lx / 2 + MOVE_HANDLE_OFFSET, h, cy);
-    const positionTopFace = new Vector3(cx, lz + MOVE_HANDLE_OFFSET, cy);
+    const positionLowerFace = new Vector3(0, handleLift - hz, -hy - MOVE_HANDLE_OFFSET);
+    const positionUpperFace = new Vector3(0, handleLift - hz, hy + MOVE_HANDLE_OFFSET);
+    const positionLeftFace = new Vector3(-hx - MOVE_HANDLE_OFFSET, handleLift - hz, 0);
+    const positionRightFace = new Vector3(hx + MOVE_HANDLE_OFFSET, handleLift - hz, 0);
+    const positionTopFace = new Vector3(0, hz + MOVE_HANDLE_OFFSET, 0);
 
     const selectMe = (e: ThreeEvent<MouseEvent>, action: ActionType) => {
         if (e.intersections.length > 0) {
@@ -129,14 +132,15 @@ const Cuboid = ({
 
     return (
 
-        <group name={'Cuboid Group ' + id} rotation={Util.getEuler(rotation)}>
+        <group name={'Cuboid Group ' + id}
+               position={[cx, hz, cy]}
+               rotation={Util.getEuler(rotation)}>
 
             {/* draw rectangular cuboid */}
             <Box castShadow={shadowEnabled}
                  receiveShadow={shadowEnabled}
                  ref={baseRef}
                  args={[lx, lz, ly]}
-                 position={[cx, lz / 2, cy]}
                  name={'Cuboid'}
                  onPointerDown={(e) => {
                      selectMe(e, ActionType.Select);
@@ -324,7 +328,7 @@ const Cuboid = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx + lx / 2, cy + ly / 2);
+                             Util.setVector2(state.resizeAnchor, cx + hx, cy + hy);
                          });
                      }}
                      onPointerOver={(e) => {
@@ -349,7 +353,7 @@ const Cuboid = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx + lx / 2, cy - ly / 2);
+                             Util.setVector2(state.resizeAnchor, cx + hx, cy - hy);
                          });
                      }}
                      onPointerOver={(e) => {
@@ -374,7 +378,7 @@ const Cuboid = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx - lx / 2, cy + ly / 2);
+                             Util.setVector2(state.resizeAnchor, cx - hx, cy + hy);
                          });
                      }}
                      onPointerOver={(e) => {
@@ -399,7 +403,7 @@ const Cuboid = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx - lx / 2, cy - ly / 2);
+                             Util.setVector2(state.resizeAnchor, cx - hx, cy - hy);
                          });
                      }}
                      onPointerOver={(e) => {
@@ -540,7 +544,7 @@ const Cuboid = ({
                 fontFace={'Times Roman'}
                 textHeight={1}
                 scale={[0.4, 0.2, 0.2]}
-                position={[cx, lz + 0.2, cy]}
+                position={[0, lz + 0.2, 0]}
             />
             }
 

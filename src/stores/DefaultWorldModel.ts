@@ -98,7 +98,7 @@ export class DefaultWorldModel implements WorldModel {
         elements.push(e1);
         elements.push(e2);
         elements.push(e3);
-        // elements.push(e4);
+        elements.push(e4);
         elements.push(e5);
         return elements;
     }
