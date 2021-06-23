@@ -36,6 +36,7 @@ const Foundation = ({
         cy = -cy; // we want positive y to point north
 
         const setCommonStore = useStore(state => state.set);
+        const shadowEnabled = useStore(state => state.shadowEnabled);
         const moveHandleType = useStore(state => state.moveHandleType);
         const resizeHandleType = useStore(state => state.resizeHandleType);
         const {gl: {domElement}} = useThree();
@@ -115,7 +116,8 @@ const Foundation = ({
             <group name={'Foundation Group ' + id} rotation={Util.getEuler(rotation)}>
 
                 {/* draw rectangle */}
-                <Box castShadow receiveShadow
+                <Box castShadow={shadowEnabled}
+                     receiveShadow={shadowEnabled}
                      ref={baseRef}
                      name={'Foundation'}
                      position={[cx, lz / 2, cy]}

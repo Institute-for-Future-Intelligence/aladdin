@@ -30,6 +30,7 @@ const Sensor = ({
     cy = -cy; // we want positive y to point north
 
     const setCommonStore = useStore(state => state.set);
+    const shadowEnabled = useStore(state => state.shadowEnabled);
     const getElementById = useStore(state => state.getElementById);
     const {gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
@@ -62,7 +63,7 @@ const Sensor = ({
         <group name={'Sensor Group ' + id}>
 
             {/* draw rectangle (too small to cast shadow) */}
-            <Box receiveShadow
+            <Box receiveShadow={shadowEnabled}
                  ref={baseRef}
                  args={[lx, lz, ly]}
                  position={[cx, lz / 2, cy]}

@@ -36,6 +36,7 @@ const Cuboid = ({
     cy = -cy; // we want positive y to point north
 
     const setCommonStore = useStore(state => state.set);
+    const shadowEnabled = useStore(state => state.shadowEnabled);
     const moveHandleType = useStore(state => state.moveHandleType);
     const resizeHandleType = useStore(state => state.resizeHandleType);
     const {gl: {domElement}} = useThree();
@@ -131,7 +132,8 @@ const Cuboid = ({
         <group name={'Cuboid Group ' + id} rotation={Util.getEuler(rotation)}>
 
             {/* draw rectangular cuboid */}
-            <Box castShadow receiveShadow
+            <Box castShadow={shadowEnabled}
+                 receiveShadow={shadowEnabled}
                  ref={baseRef}
                  args={[lx, lz, ly]}
                  position={[cx, lz / 2, cy]}

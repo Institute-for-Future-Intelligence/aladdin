@@ -15,6 +15,7 @@ import {Util} from "../util";
 const Ground = () => {
 
     const setCommonStore = useStore(state => state.set);
+    const shadowEnabled = useStore(state => state.shadowEnabled);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const selectNone = useStore(state => state.selectNone);
     const moveHandleType = useStore(state => state.moveHandleType);
@@ -92,7 +93,7 @@ const Ground = () => {
                 <meshStandardMaterial attach="material" side={DoubleSide} opacity={0.1} color={'white'}/>
             </Plane>
             }
-            <Plane receiveShadow
+            <Plane receiveShadow={shadowEnabled}
                    ref={groundPlaneRef}
                    name={'Ground'}
                    rotation={[-Math.PI / 2, 0, 0]}
@@ -151,25 +152,27 @@ const Ground = () => {
                                    if (intersects.length > 0) {
                                        const p = intersects[0].point;
                                        let x0, y0;
+                                       const lx2 = grab.lx / 2 + MOVE_HANDLE_OFFSET;
+                                       const ly2 = grab.ly / 2 + MOVE_HANDLE_OFFSET;
                                        if (moveHandleType) {
                                            switch (moveHandleType) {
                                                case MoveHandleType.Lower:
-                                                   x0 = p.x;
-                                                   y0 = -p.z - (grab.ly / 2 + MOVE_HANDLE_OFFSET);
+                                                   x0 = p.x + sinAngle * ly2;
+                                                   y0 = -p.z - cosAngle * ly2;
                                                    setElementPosition(grab.id, x0, y0);
                                                    break;
                                                case MoveHandleType.Upper:
                                                    x0 = p.x;
-                                                   y0 = -p.z + (grab.ly / 2 + MOVE_HANDLE_OFFSET);
+                                                   y0 = -p.z + ly2;
                                                    setElementPosition(grab.id, x0, y0);
                                                    break;
                                                case MoveHandleType.Left:
-                                                   x0 = p.x + (grab.lx / 2 + MOVE_HANDLE_OFFSET);
+                                                   x0 = p.x + lx2;
                                                    y0 = -p.z;
                                                    setElementPosition(grab.id, x0, y0);
                                                    break;
                                                case MoveHandleType.Right:
-                                                   x0 = p.x - (grab.lx / 2 + MOVE_HANDLE_OFFSET);
+                                                   x0 = p.x - lx2;
                                                    y0 = -p.z;
                                                    setElementPosition(grab.id, x0, y0);
                                                    break;

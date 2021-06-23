@@ -35,6 +35,7 @@ export interface CommonStoreState {
     groundColor: string;
     theme: string;
     heliodon: boolean;
+    shadowEnabled: boolean;
     address: string;
     latitude: number;
     longitude: number;
@@ -98,6 +99,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         groundColor: 'forestgreen',
         theme: 'Default',
         heliodon: false,
+        shadowEnabled: true,
 
         address: 'Natick, MA',
         latitude: 42.2844063,

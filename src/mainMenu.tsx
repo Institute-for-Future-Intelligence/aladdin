@@ -45,31 +45,35 @@ const MainMenu = ({
     const setCommonStore = useStore(state => state.set);
     const showGroundPanel = useStore(state => state.showGroundPanel);
     const showWeatherPanel = useStore(state => state.showWeatherPanel);
-
-    // @ts-ignore
-    const onChangeShowGroundPanel = (e) => {
-        setCommonStore((state) => {
-            state.showGroundPanel = e.target.checked;
-        });
-    };
-
-    // @ts-ignore
-    const onChangeShowWeatherPanel = (e) => {
-        setCommonStore((state) => {
-            state.showWeatherPanel = e.target.checked;
-        });
-    };
+    const shadowEnabled = useStore(state => state.shadowEnabled);
 
     const menu = (
         <Menu>
             <Menu.Item key={'ground-panel-check-box'}>
-                <Checkbox checked={showGroundPanel} onChange={onChangeShowGroundPanel}>
+                <Checkbox checked={showGroundPanel} onChange={(e) => {
+                    setCommonStore((state) => {
+                        state.showGroundPanel = e.target.checked;
+                    });
+                }}>
                     Ground Settings
                 </Checkbox>
             </Menu.Item>
             <Menu.Item key={'weather-panel-check-box'}>
-                <Checkbox checked={showWeatherPanel} onChange={onChangeShowWeatherPanel}>
+                <Checkbox checked={showWeatherPanel} onChange={(e) => {
+                    setCommonStore((state) => {
+                        state.showWeatherPanel = e.target.checked;
+                    });
+                }}>
                     Weather Data
+                </Checkbox>
+            </Menu.Item>
+            <Menu.Item key={'shadow-check-box'}>
+                <Checkbox checked={shadowEnabled} onChange={(e) => {
+                    setCommonStore((state) => {
+                        state.shadowEnabled = e.target.checked;
+                    });
+                }}>
+                    Enable Shadow
                 </Checkbox>
             </Menu.Item>
             <SubMenu key={'sensors'} title={'Sensors'}>
