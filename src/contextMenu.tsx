@@ -150,6 +150,17 @@ const ContextMenu = ({
                     {selectedElement && <ReshapeElementMenu elementId={selectedElement.id} name={'foundation'}/>}
                 </StyledMenu>
             );
+        case ObjectType.Human:
+            return (
+                <StyledMenu>
+                    <Menu.Item key={'human-copy'}>
+                        Copy
+                    </Menu.Item>
+                    <Menu.Item key={'human-cut'}>
+                        Cut
+                    </Menu.Item>
+                </StyledMenu>
+            );
         default:
             return (
                 <StyledMenu>

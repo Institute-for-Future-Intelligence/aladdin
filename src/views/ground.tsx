@@ -138,6 +138,15 @@ const Ground = () => {
                            ray.setFromCamera(mouse, camera);
                            let intersects;
                            switch (grab.type) {
+                               case ObjectType.Human:
+                                   if (groundPlaneRef.current) {
+                                       intersects = ray.intersectObjects([groundPlaneRef.current]);
+                                       if (intersects.length > 0) {
+                                           const p = intersects[0].point;
+                                           setElementPosition(grab.id, p.x, -p.z);
+                                       }
+                                   }
+                                   break;
                                case ObjectType.Sensor:
                                    if (groundPlaneRef.current) {
                                        intersects = ray.intersectObjects([groundPlaneRef.current]);

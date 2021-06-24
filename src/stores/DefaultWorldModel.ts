@@ -10,6 +10,7 @@ import {SensorModel} from "../models/sensorModel";
 import {Vector3} from "three";
 import {WorldModel} from "../models/worldModel";
 import {GroundModel} from "../models/groundModel";
+import {HumanModel} from "../models/humanModel";
 
 export class DefaultWorldModel implements WorldModel {
 
@@ -100,6 +101,34 @@ export class DefaultWorldModel implements WorldModel {
         elements.push(e3);
         elements.push(e4);
         elements.push(e5);
+
+        const h1 = {
+            type: ObjectType.Human,
+            name: 'Jack',
+            cx: 4,
+            cy: 4,
+            lx: 0.5,
+            ly: 0.5,
+            lz: 1.8,
+            normal: [1, 0, 0],
+            rotation: [0, 0, 0],
+            id: 'human1'
+        } as HumanModel;
+        const h2 = {
+            type: ObjectType.Human,
+            name: 'Jill',
+            cx: 5,
+            cy: 5,
+            lx: 0.5,
+            ly: 0.5,
+            lz: 1.6,
+            normal: [1, 0, 0],
+            rotation: [0, 0, 0],
+            id: 'human2'
+        } as HumanModel;
+        elements.push(h1);
+        elements.push(h2);
+
         return elements;
     }
 

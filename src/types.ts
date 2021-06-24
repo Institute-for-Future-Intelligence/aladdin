@@ -45,6 +45,8 @@ export enum ObjectType {
     Foundation = 'Foundation',
     Sensor = 'Sensor',
     Cuboid = 'Cuboid',
+    Human = 'Human',
+    Tree = 'Tree',
 }
 
 export enum ActionType {

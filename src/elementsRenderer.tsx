@@ -11,6 +11,8 @@ import {FoundationModel} from "./models/foundationModel";
 import {SensorModel} from "./models/sensorModel";
 import {CuboidModel} from "./models/cuboidModel";
 import {useStore} from "./stores/common";
+import {HumanModel} from "./models/humanModel";
+import Human from "./views/human";
 
 const ElementsRenderer: React.FC = () => {
 
@@ -27,6 +29,9 @@ const ElementsRenderer: React.FC = () => {
             {elements
                 .filter(e => e.type === ObjectType.Cuboid)
                 .map(e => <Cuboid key={e.id} {...e as CuboidModel}/>)}
+            {elements
+                .filter(e => e.type === ObjectType.Human)
+                .map(e => <Human key={e.id} {...e as HumanModel}/>)}
         </group>
     );
 };
