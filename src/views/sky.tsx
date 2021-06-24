@@ -47,6 +47,8 @@ const Sky = ({
     }, [theme, night]);
 
     const clickSky = (e: ThreeEvent<MouseEvent>) => {
+        // We must check if there is really a first intersection, onClick does not guarantee it
+        // onClick listener for an object can still fire an event even when the object is behind another one
         if (e.intersections.length > 0) {
             const skyClicked = e.intersections[0].object === meshRef.current;
             if (skyClicked) {

@@ -41,6 +41,10 @@ const Foundation = ({
     const resizeHandleType = useStore(state => state.resizeHandleType);
     const {gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
+    const [hoveredResizeHandleLL, setHoveredResizeHandleLL] = useState(false);
+    const [hoveredResizeHandleUL, setHoveredResizeHandleUL] = useState(false);
+    const [hoveredResizeHandleLR, setHoveredResizeHandleLR] = useState(false);
+    const [hoveredResizeHandleUR, setHoveredResizeHandleUR] = useState(false);
     const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
     const baseRef = useRef<Mesh>();
     const resizeHandleLLRef = useRef<Mesh>();
@@ -57,13 +61,21 @@ const Foundation = ({
     const hx = lx / 2;
     const hy = ly / 2;
     const hz = lz / 2;
-
     const positionLL = useMemo(() => new Vector3(-hx, hz, -hy), [hx, hy, hz]);
     const positionUL = useMemo(() => new Vector3(-hx, hz, hy), [hx, hy, hz]);
     const positionLR = useMemo(() => new Vector3(hx, hz, -hy), [hx, hy, hz]);
     const positionUR = useMemo(() => new Vector3(hx, hz, hy), [hx, hy, hz]);
 
+    const cosAngle = useMemo(() => {
+        return Math.cos(rotation[1]);
+    }, [rotation]);
+    const sinAngle = useMemo(() => {
+        return Math.sin(rotation[1]);
+    }, [rotation]);
+
     const selectMe = (e: ThreeEvent<MouseEvent>, action: ActionType) => {
+        // We must check if there is really a first intersection, onPointerDown does not guarantee it
+        // onPointerDown listener for an object can still fire an event even when the object is behind another one
         if (e.intersections.length > 0) {
             const intersected = e.intersections[0].object === e.eventObject;
             if (intersected) {
@@ -104,12 +116,30 @@ const Foundation = ({
                 } else {
                     domElement.style.cursor = 'pointer';
                 }
+                switch (handle) {
+                    case ResizeHandleType.LowerLeft:
+                        setHoveredResizeHandleLL(true);
+                        break;
+                    case ResizeHandleType.UpperLeft:
+                        setHoveredResizeHandleUL(true);
+                        break;
+                    case ResizeHandleType.LowerRight:
+                        setHoveredResizeHandleLR(true);
+                        break;
+                    case ResizeHandleType.UpperRight:
+                        setHoveredResizeHandleUR(true);
+                        break;
+                }
             }
         }
     };
 
     const noHoverHandle = () => {
         setHoveredHandle(null);
+        setHoveredResizeHandleLL(false);
+        setHoveredResizeHandleUL(false);
+        setHoveredResizeHandleLR(false);
+        setHoveredResizeHandleUR(false);
         domElement.style.cursor = 'default';
     };
 
@@ -405,8 +435,7 @@ const Foundation = ({
             </>
             }
 
-            {(hovered && !selected) &&
-            <textSprite
+            {(hovered && !selected) && <textSprite
                 name={'Label'}
                 text={'Foundation'}
                 fontSize={90}
@@ -414,6 +443,42 @@ const Foundation = ({
                 textHeight={1}
                 position={[0, hz + 0.2, 0]}
                 scale={[1, 0.2, 0.2]}/>
+            }
+            {hoveredResizeHandleLL && <textSprite
+                name={'Label'}
+                text={'LL'}
+                fontSize={100}
+                fontFace={'Times Roman'}
+                textHeight={1}
+                position={[-hx, hz + 0.2, -hy]}
+                scale={[0.2, 0.2, 0.2]}/>
+            }
+            {hoveredResizeHandleUL && <textSprite
+                name={'Label'}
+                text={'UL'}
+                fontSize={100}
+                fontFace={'Times Roman'}
+                textHeight={1}
+                position={[-hx, hz + 0.2, hy]}
+                scale={[0.2, 0.2, 0.2]}/>
+            }
+            {hoveredResizeHandleLR && <textSprite
+                name={'Label'}
+                text={'LR'}
+                fontSize={100}
+                fontFace={'Times Roman'}
+                textHeight={1}
+                position={[hx, hz + 0.2, -hy]}
+                scale={[0.2, 0.2, 0.2]}/>
+            }
+            {hoveredResizeHandleUR && <textSprite
+                name={'Label'}
+                text={'UR'}
+                fontSize={100}
+                fontFace={'Times Roman'}
+                textHeight={1}
+                position={[hx, hz + 0.2, hy]}
+                scale={[0.2, 0.2, 0.2]}/>
             }
 
         </group>

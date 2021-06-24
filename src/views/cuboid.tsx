@@ -78,6 +78,8 @@ const Cuboid = ({
     const positionTopFace = useMemo(() => new Vector3(0, hz + MOVE_HANDLE_OFFSET, 0), [hz]);
 
     const selectMe = (e: ThreeEvent<MouseEvent>, action: ActionType) => {
+        // We must check if there is really a first intersection, onPointerDown does not guarantee it
+        // onPointerDown listener for an object can still fire an event even when the object is behind another one
         if (e.intersections.length > 0) {
             const intersected = e.intersections[0].object === e.eventObject;
             if (intersected) {

@@ -40,14 +40,15 @@ const Sensor = ({
     const hx = lx / 2;
     const hy = ly / 2;
     const hz = lz / 2;
-    const position = new Vector3(0, 0, 0);
-    const positionLL = new Vector3(-hx, 0, -hy);
-    const positionUL = new Vector3(-hx, 0, hy);
-    const positionLR = new Vector3(hx, 0, -hy);
-    const positionUR = new Vector3(hx, 0, hy);
+    const positionLL = new Vector3(-hx, hz, -hy);
+    const positionUL = new Vector3(-hx, hz, hy);
+    const positionLR = new Vector3(hx, hz, -hy);
+    const positionUR = new Vector3(hx, hz, hy);
     const element = getElementById(id);
 
     const selectMe = (e: ThreeEvent<MouseEvent>) => {
+        // We must check if there is really a first intersection, onPointerDown does not guarantee it
+        // onPointerDown listener for an object can still fire an event even when the object is behind another one
         if (e.intersections.length > 0) {
             const intersected = e.intersections[0].object === e.eventObject;
             if (intersected) {
@@ -95,19 +96,19 @@ const Sensor = ({
             {!selected &&
             <>
                 {/* draw wireframe lines upper face */}
-                <Line points={[[positionLL.x, hz, positionLL.z], [positionLR.x, hz, positionLR.z]]}
+                <Line points={[positionLL, positionLR]}
                       name={'Line LL-LR Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionLR.x, hz, positionLR.z], [positionUR.x, hz, positionUR.z]]}
+                <Line points={[positionLR, positionUR]}
                       name={'Line LR-UR Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUR.x, hz, positionUR.z], [positionUL.x, hz, positionUL.z]]}
+                <Line points={[positionUR, positionUL]}
                       name={'Line UR-UL Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUL.x, hz, positionUL.z], [positionLL.x, hz, positionLL.z]]}
+                <Line points={[positionUL, positionLL]}
                       name={'Line UL-LL Upper Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
@@ -131,19 +132,19 @@ const Sensor = ({
                       color={lineColor}/>
 
                 {/* draw wireframe vertical lines */}
-                <Line points={[[positionLL.x, -hz, positionLL.z], [positionLL.x, hz, positionLL.z]]}
+                <Line points={[[positionLL.x, -hz, positionLL.z], positionLL]}
                       name={'Line LL-LL Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionLR.x, -hz, positionLR.z], [positionLR.x, hz, positionLR.z]]}
+                <Line points={[[positionLR.x, -hz, positionLR.z], positionLR]}
                       name={'Line LR-LR Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUL.x, -hz, positionUL.z], [positionUL.x, hz, positionUL.z]]}
+                <Line points={[[positionUL.x, -hz, positionUL.z], positionUL]}
                       name={'Line UL-UL Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUR.x, -hz, positionUR.z], [positionUR.x, hz, positionUR.z]]}
+                <Line points={[[positionUR.x, -hz, positionUR.z], positionUR]}
                       name={'Line UR-UR Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
@@ -154,7 +155,7 @@ const Sensor = ({
             {selected &&
             <Sphere
                 ref={handleRef}
-                position={position}
+                position={new Vector3(0, 0, 0)}
                 args={[MOVE_HANDLE_RADIUS, 6, 6]}
                 name={'Handle'}
                 onPointerDown={(e) => {
@@ -176,7 +177,6 @@ const Sensor = ({
             }
         </group>
     )
-}
-;
+};
 
 export default Sensor;

@@ -139,8 +139,8 @@ const Ground = () => {
                            let intersects;
                            switch (grab.type) {
                                case ObjectType.Sensor:
-                                   if (intersectionPlaneRef.current) {
-                                       intersects = ray.intersectObjects([intersectionPlaneRef.current]);
+                                   if (groundPlaneRef.current) {
+                                       intersects = ray.intersectObjects([groundPlaneRef.current]);
                                        if (intersects.length > 0) {
                                            const p = intersects[0].point;
                                            setElementPosition(grab.id, p.x, -p.z);
@@ -180,21 +180,23 @@ const Ground = () => {
                                                }
                                            }
                                            if (resizeHandleType) {
-                                               const lx = Math.max(Math.abs(resizeAnchor.x - p.x), 0.5);
-                                               const ly = Math.max(Math.abs(resizeAnchor.y - p.z), 0.5);
-                                               setElementSize(grab.id, lx, ly);
+                                               const lx = resizeAnchor.x - p.x;
+                                               const ly = resizeAnchor.y - p.z;
+                                               const dx = Math.abs(lx * cosAngle - ly * sinAngle) / 2;
+                                               const dy = Math.abs(lx * sinAngle + ly * cosAngle) / 2;
+                                               setElementSize(grab.id, Math.abs(lx), Math.abs(ly));
                                                switch (resizeHandleType) {
                                                    case ResizeHandleType.LowerLeft:
-                                                       setElementPosition(grab.id, p.x + lx / 2, -p.z - ly / 2);
+                                                       setElementPosition(grab.id, p.x + dx, -p.z - dy);
                                                        break;
                                                    case ResizeHandleType.UpperLeft:
-                                                       setElementPosition(grab.id, p.x + lx / 2, -p.z + ly / 2);
+                                                       setElementPosition(grab.id, p.x + dx, -p.z + dy);
                                                        break;
                                                    case ResizeHandleType.LowerRight:
-                                                       setElementPosition(grab.id, p.x - lx / 2, -p.z - ly / 2);
+                                                       setElementPosition(grab.id, p.x - dx, -p.z - dy);
                                                        break;
                                                    case ResizeHandleType.UpperRight:
-                                                       setElementPosition(grab.id, p.x - lx / 2, -p.z + ly / 2);
+                                                       setElementPosition(grab.id, p.x - dx, -p.z + dy);
                                                        break;
                                                }
                                            }
