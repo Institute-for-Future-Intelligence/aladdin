@@ -106,11 +106,14 @@ const DailyLightSensorPanel = ({
                 <ColumnWrapper>
                     <Header className='handle'>
                         <span>Light Sensor: {city} | {moment(now).format('MM/DD')}</span>
-                        <span style={{cursor: 'pointer'}} onClick={() => {
-                            setCommonStore((state) => {
-                                state.showDailyLightSensorPanel = false;
-                            });
-                        }}>Close</span>
+                        <span style={{cursor: 'pointer'}}
+                              onMouseDown={() => {
+                                  setCommonStore((state) => {
+                                      state.showDailyLightSensorPanel = false;
+                                  });
+                              }}>
+                            Close
+                        </span>
                     </Header>
                     <LineGraph
                         type={GraphDataType.DailyRadiationSensorData}

@@ -154,11 +154,14 @@ const WeatherPanel = ({
                 <ColumnWrapper>
                     <Header className='handle'>
                         <span>Weather: {city}</span>
-                        <span style={{cursor: 'pointer'}} onClick={() => {
-                            setCommonStore((state) => {
-                                state.showWeatherPanel = false;
-                            });
-                        }}>Close</span>
+                        <span style={{cursor: 'pointer'}}
+                              onMouseDown={() => {
+                                  setCommonStore((state) => {
+                                      state.showWeatherPanel = false;
+                                  });
+                              }}>
+                            Close
+                        </span>
                     </Header>
                     <>
                         {graphs.map(g => {

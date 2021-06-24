@@ -9,6 +9,7 @@ import {useStore} from "./stores/common";
 import {useWorker} from "@koale/useworker";
 import {Menu, Checkbox, Radio} from 'antd';
 import {ObjectType, Theme} from "./types";
+import ReshapeElementMenu from "./components/reshapeElementMenu";
 
 // TODO: Reduce the space between menu items
 const StyledMenu = styled(Menu)`
@@ -43,7 +44,6 @@ const ContextMenu = ({
                      }: ContextMenuProps) => {
 
     const setCommonStore = useStore(state => state.set);
-    const getSelectedElement = useStore(state => state.getSelectedElement);
     const updateElementById = useStore(state => state.updateElementById);
     const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
@@ -52,6 +52,7 @@ const ContextMenu = ({
     const showGroundPanel = useStore(state => state.showGroundPanel);
     const showWeatherPanel = useStore(state => state.showWeatherPanel);
     const clickObjectType = useStore(state => state.clickObjectType);
+    const getSelectedElement = useStore(state => state.getSelectedElement);
     const selectedElement = getSelectedElement();
 
     switch (selectedElement ? selectedElement.type : clickObjectType) {
@@ -106,6 +107,7 @@ const ContextMenu = ({
                     <Menu.Item key={'foundation-cut'}>
                         Cut
                     </Menu.Item>
+                    {selectedElement && <ReshapeElementMenu elementId={selectedElement.id} name={'foundation'}/>}
                 </StyledMenu>
             );
         case ObjectType.Sensor:
@@ -145,6 +147,7 @@ const ContextMenu = ({
                     <Menu.Item key={'cuboid-cut'}>
                         Cut
                     </Menu.Item>
+                    {selectedElement && <ReshapeElementMenu elementId={selectedElement.id} name={'foundation'}/>}
                 </StyledMenu>
             );
         default:

@@ -36,7 +36,7 @@ const About = ({openAboutUs}: AboutProps) => {
                 color: 'antiquewhite',
                 cursor: 'pointer',
                 bottom: '10px'
-            }} onClick={() => {
+            }} onMouseDown={() => {
                 openAboutUs(false);
             }}>
                 Close

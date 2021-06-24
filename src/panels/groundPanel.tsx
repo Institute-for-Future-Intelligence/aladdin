@@ -157,11 +157,14 @@ const GroundPanel = ({
                 <ColumnWrapper>
                     <Header className='handle'>
                         <span>Ground Settings</span>
-                        <span style={{cursor: 'pointer'}} onClick={() => {
-                            setCommonStore((state) => {
-                                state.showGroundPanel = false;
-                            });
-                        }}>Close</span>
+                        <span style={{cursor: 'pointer'}}
+                              onMouseDown={() => {
+                                  setCommonStore((state) => {
+                                      state.showGroundPanel = false;
+                                  });
+                              }}>
+                            Close
+                        </span>
                     </Header>
                     <Space direction={'vertical'}>
                         <Space style={{padding: '20px'}} align={'center'} size={20}>

@@ -60,6 +60,7 @@ export interface CommonStoreState {
     selectNone: () => void;
     updateElementById: (id: string, element: Partial<ElementModel>) => void;
     setElementPosition: (id: string, x: number, y: number, z?: number) => void;
+    setElementRotation: (id: string, x: number, y: number, z: number) => void;
     setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
 
     timesPerHour: number;
@@ -176,6 +177,18 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                         if (z) {
                             state.elements[i].cz = z;
                         }
+                        break;
+                    }
+                }
+            });
+        },
+        setElementRotation(id, x, y, z) {
+            immerSet((state: CommonStoreState) => {
+                for (let [i, e] of state.elements.entries()) {
+                    if (e.id === id) {
+                        state.elements[i].rotation[0] = x;
+                        state.elements[i].rotation[1] = y;
+                        state.elements[i].rotation[2] = z;
                         break;
                     }
                 }

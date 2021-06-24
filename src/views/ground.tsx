@@ -180,11 +180,11 @@ const Ground = () => {
                                                }
                                            }
                                            if (resizeHandleType) {
-                                               const lx = resizeAnchor.x - p.x;
-                                               const ly = resizeAnchor.y - p.z;
+                                               const lx = Math.abs(resizeAnchor.x - p.x);
+                                               const ly = Math.abs(resizeAnchor.y - p.z);
                                                const dx = Math.abs(lx * cosAngle - ly * sinAngle) / 2;
                                                const dy = Math.abs(lx * sinAngle + ly * cosAngle) / 2;
-                                               setElementSize(grab.id, Math.abs(lx), Math.abs(ly));
+                                               setElementSize(grab.id, lx, ly);
                                                switch (resizeHandleType) {
                                                    case ResizeHandleType.LowerLeft:
                                                        setElementPosition(grab.id, p.x + dx, -p.z - dy);

@@ -109,11 +109,14 @@ const YearlyLightSensorPanel = ({
                 <ColumnWrapper>
                     <Header className='handle'>
                         <span>Light Sensor: {city}</span>
-                        <span style={{cursor: 'pointer'}} onClick={() => {
-                            setCommonStore((state) => {
-                                state.showYearlyLightSensorPanel = false;
-                            });
-                        }}>Close</span>
+                        <span style={{cursor: 'pointer'}}
+                              onMouseDown={() => {
+                                  setCommonStore((state) => {
+                                      state.showYearlyLightSensorPanel = false;
+                                  });
+                              }}>
+                            Close
+                        </span>
                     </Header>
                     <LineGraph
                         type={GraphDataType.DaylightData}

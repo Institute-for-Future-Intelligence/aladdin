@@ -134,11 +134,14 @@ const HeliodonPanel = ({
                 <ColumnWrapper>
                     <Header className='handle'>
                         <span>Heliodon Settings</span>
-                        <span style={{cursor: 'pointer'}} onClick={() => {
-                            setCommonStore((state) => {
-                                state.showHeliodonPanel = false;
-                            });
-                        }}>Close</span>
+                        <span style={{cursor: 'pointer'}}
+                              onMouseDown={() => {
+                                  setCommonStore((state) => {
+                                      state.showHeliodonPanel = false;
+                                  });
+                              }}>
+                            Close
+                        </span>
                     </Header>
                     <Space style={{padding: '20px'}} align={'baseline'} size={20}>
                         <div>
