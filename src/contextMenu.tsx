@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useState} from 'react';
+import React from 'react';
 import styled from "styled-components";
 import 'antd/dist/antd.css';
 import {useStore} from "./stores/common";
@@ -10,9 +10,7 @@ import {useWorker} from "@koale/useworker";
 import {Menu, Checkbox, Radio} from 'antd';
 import {ObjectType, Theme} from "./types";
 import ReshapeElementMenu from "./components/reshapeElementMenu";
-import {TreeModel} from "./models/treeModel";
 import HumanMenu from "./components/humanMenu";
-import {HumanModel} from "./models/humanModel";
 import TreeMenu from "./components/treeMenu";
 
 // TODO: Reduce the space between menu items
@@ -56,10 +54,10 @@ const ContextMenu = ({
     const showGroundPanel = useStore(state => state.showGroundPanel);
     const showWeatherPanel = useStore(state => state.showWeatherPanel);
     const clickObjectType = useStore(state => state.clickObjectType);
-    const getSelectedElement = useStore(state => state.getSelectedElement);
     const cutElementById = useStore(state => state.cutElementById);
     const copyElementById = useStore(state => state.copyElementById);
     const pasteElement = useStore(state => state.pasteElement);
+    const getSelectedElement = useStore(state => state.getSelectedElement);
     const selectedElement = getSelectedElement();
 
     const copyElement = () => {
@@ -184,7 +182,7 @@ const ContextMenu = ({
                     <Menu.Item key={'human-cut'} onClick={cutElement}>
                         Cut
                     </Menu.Item>
-                    {selectedElement && <HumanMenu human={selectedElement as HumanModel}/>}
+                    {selectedElement && <HumanMenu/>}
                 </StyledMenu>
             );
         case ObjectType.Tree:
@@ -199,11 +197,13 @@ const ContextMenu = ({
                     {selectedElement &&
                     <ReshapeElementMenu elementId={selectedElement.id}
                                         name={'tree'}
+                                        maxWidth={40}
+                                        maxHeight={20}
                                         widthName={'Spread'}
-                                        length={false}
-                                        angle={false}/>
+                                        adjustLength={false}
+                                        adjustAngle={false}/>
                     }
-                    {selectedElement && <TreeMenu tree={selectedElement as TreeModel}/>}
+                    {selectedElement && <TreeMenu/>}
                 </StyledMenu>
             );
         default:

@@ -7,6 +7,8 @@ import {ObjectType} from "../types";
 import {MathUtils} from "three";
 import {TreeModel} from "./treeModel";
 import {SensorModel} from "./sensorModel";
+import {FoundationModel} from "./foundationModel";
+import {CuboidModel} from "./cuboidModel";
 
 export class ElementModelCloner {
 
@@ -51,6 +53,35 @@ export class ElementModelCloner {
             normal: [...sensor.normal],
             id: MathUtils.generateUUID()
         } as HumanModel;
+    }
+
+    static cloneFoundation(foundation: FoundationModel, x: number, y: number) {
+        return {
+            type: ObjectType.Foundation,
+            cx: x,
+            cy: y,
+            lx: foundation.lx,
+            ly: foundation.ly,
+            lz: foundation.lz,
+            normal: [...foundation.normal],
+            rotation: [...foundation.rotation],
+            id: MathUtils.generateUUID()
+        } as FoundationModel;
+    }
+
+    static cloneCuboid(cuboid: CuboidModel, x: number, y: number) {
+        return {
+            type: ObjectType.Cuboid,
+            cx: x,
+            cy: y,
+            cz: cuboid.cz,
+            lx: cuboid.lx,
+            ly: cuboid.ly,
+            lz: cuboid.lz,
+            normal: [...cuboid.normal],
+            rotation: [...cuboid.rotation],
+            id: MathUtils.generateUUID()
+        } as CuboidModel;
     }
 
 }

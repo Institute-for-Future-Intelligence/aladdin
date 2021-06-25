@@ -11,20 +11,26 @@ import {useStore} from "../stores/common";
 export interface ReshapeElementMenuProps {
     elementId: string;
     name: string;
-    width?: boolean;
-    length?: boolean;
-    height?: boolean;
-    angle?: boolean;
+    maxWidth?: number;
+    maxLength?: number;
+    maxHeight?: number;
+    adjustWidth?: boolean;
+    adjustLength?: boolean;
+    adjustHeight?: boolean;
+    adjustAngle?: boolean;
     widthName?: string;
 }
 
 const ReshapeElementMenu = ({
                                 elementId,
                                 name = 'default',
-                                width = true,
-                                length = true,
-                                height = true,
-                                angle = true,
+                                maxWidth = 100,
+                                maxLength = 100,
+                                maxHeight = 100,
+                                adjustWidth = true,
+                                adjustLength = true,
+                                adjustHeight = true,
+                                adjustAngle = true,
                                 widthName = 'Width',
                             }: ReshapeElementMenuProps) => {
 
@@ -36,11 +42,11 @@ const ReshapeElementMenu = ({
 
     return (
         <Menu key={name}>
-            {width &&
+            {adjustWidth &&
             <Menu.Item key={name + '-lx'}>
                 <Space style={{width: '60px'}}>{widthName}:</Space>
                 <NumericInput min={0.1}
-                              max={100}
+                              max={maxWidth}
                               precision={1}
                               value={element ? element.lx.toFixed(1) : 1}
                               size={5}
@@ -54,11 +60,11 @@ const ReshapeElementMenu = ({
                 />
             </Menu.Item>
             }
-            {length &&
+            {adjustLength &&
             <Menu.Item key={name + '-ly'}>
                 <Space style={{width: '60px'}}>Length:</Space>
                 <NumericInput min={0.1}
-                              max={100}
+                              max={maxLength}
                               precision={1}
                               value={element ? element.ly.toFixed(1) : 1}
                               size={5}
@@ -72,11 +78,11 @@ const ReshapeElementMenu = ({
                 />
             </Menu.Item>
             }
-            {height &&
+            {adjustHeight &&
             <Menu.Item key={name + '-lz'}>
                 <Space style={{width: '60px'}}>Height:</Space>
                 <NumericInput min={0.1}
-                              max={10}
+                              max={maxHeight}
                               precision={1}
                               step={0.1}
                               value={element ? element.lz.toFixed(1) : 0.1}
@@ -91,7 +97,7 @@ const ReshapeElementMenu = ({
                 />
             </Menu.Item>
             }
-            {angle &&
+            {adjustAngle &&
             <Menu.Item key={name + '-angle'}>
                 <Space style={{width: '60px'}}>Angle:</Space>
                 <NumericInput min={0}

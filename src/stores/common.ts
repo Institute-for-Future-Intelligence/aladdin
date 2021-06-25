@@ -18,6 +18,8 @@ import {ElementModelCloner} from "../models/ElementModelCloner";
 import {HumanModel} from "../models/humanModel";
 import {TreeModel} from "../models/treeModel";
 import {SensorModel} from "../models/sensorModel";
+import {FoundationModel} from "../models/foundationModel";
+import {CuboidModel} from "../models/cuboidModel";
 
 enableMapSet();
 
@@ -257,6 +259,14 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                         case ObjectType.Sensor:
                             state.elements.push(ElementModelCloner.cloneSensor(
                                 state.elementToPaste as SensorModel, state.pastePoint.x, -state.pastePoint.z, state.pastePoint.y));
+                            break;
+                        case ObjectType.Foundation:
+                            state.elements.push(ElementModelCloner.cloneFoundation(
+                                state.elementToPaste as FoundationModel, state.pastePoint.x, -state.pastePoint.z));
+                            break;
+                        case ObjectType.Cuboid:
+                            state.elements.push(ElementModelCloner.cloneCuboid(
+                                state.elementToPaste as CuboidModel, state.pastePoint.x, -state.pastePoint.z));
                             break;
                     }
                 }

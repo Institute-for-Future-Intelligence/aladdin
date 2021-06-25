@@ -5,7 +5,6 @@
 import React, {useState} from "react";
 import {Menu, Radio, Space} from "antd";
 import {useStore} from "../stores/common";
-import {TreeModel} from "../models/treeModel";
 import {TreeType} from "../types";
 import CottonwoodImage from "../resources/cottonwood.png";
 import DogwoodImage from "../resources/dogwood.png";
@@ -24,18 +23,17 @@ const radioStyle = {
     lineHeight: '30px',
 };
 
-export interface TreeMenuProps {
-    tree: TreeModel;
-}
-
-const TreeMenu = ({tree}: TreeMenuProps) => {
+const TreeMenu = () => {
 
     const updateElementById = useStore(state => state.updateElementById);
+    const getSelectedElement = useStore(state => state.getSelectedElement);
     const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+
+    const tree = getSelectedElement();
 
     return (
         <SubMenu key={'type'} title={'Change Type'}>
-            <Radio.Group value={tree.name}
+            <Radio.Group value={tree?.name}
                          style={{height: '250px'}}
                          onChange={(e) => {
                              if (tree) {
@@ -45,43 +43,53 @@ const TreeMenu = ({tree}: TreeMenuProps) => {
                          }}
             >
                 <Radio style={radioStyle} value={TreeType.Cottonwood}>
-                    <Space style={{padding: '10px'}} align={'center'} size={40}>
+                    <Space style={{paddingBottom: '16px', paddingRight: '10px'}} align={'center'} size={40}>
                         <img alt={TreeType.Cottonwood} src={CottonwoodImage} width={20}/>
                     </Space>
                     {TreeType.Cottonwood}
                 </Radio>
                 <Radio style={radioStyle} value={TreeType.Dogwood}>
-                    <Space style={{padding: '10px'}} align={'center'} size={40}>
+                    <Space style={{paddingTop: '16px', paddingBottom: '16px', paddingRight: '10px'}}
+                           align={'center'}
+                           size={40}>
                         <img alt={TreeType.Dogwood} src={DogwoodImage} width={20}/>
                     </Space>
                     {TreeType.Dogwood}
                 </Radio>
                 <Radio style={radioStyle} value={TreeType.Elm}>
-                    <Space style={{padding: '10px'}} align={'center'} size={40}>
+                    <Space style={{paddingTop: '16px', paddingBottom: '16px', paddingRight: '10px'}}
+                           align={'center'}
+                           size={40}>
                         <img alt={TreeType.Elm} src={ElmImage} width={20}/>
                     </Space>
                     {TreeType.Elm}
                 </Radio>
                 <Radio style={radioStyle} value={TreeType.Linden}>
-                    <Space style={{padding: '10px'}} align={'center'} size={40}>
+                    <Space style={{paddingTop: '16px', paddingBottom: '16px', paddingRight: '10px'}}
+                           align={'center'}
+                           size={40}>
                         <img alt={TreeType.Linden} src={LindenImage} width={20}/>
                     </Space>
                     {TreeType.Linden}
                 </Radio>
                 <Radio style={radioStyle} value={TreeType.Maple}>
-                    <Space style={{padding: '10px'}} align={'center'} size={40}>
+                    <Space style={{paddingTop: '16px', paddingBottom: '16px', paddingRight: '10px'}}
+                           align={'center'}
+                           size={40}>
                         <img alt={TreeType.Maple} src={MapleImage} width={20}/>
                     </Space>
                     {TreeType.Maple}
                 </Radio>
                 <Radio style={radioStyle} value={TreeType.Oak}>
-                    <Space style={{padding: '10px'}} align={'center'} size={40}>
+                    <Space style={{paddingTop: '16px', paddingBottom: '16px', paddingRight: '10px'}}
+                           align={'center'}
+                           size={40}>
                         <img alt={TreeType.Oak} src={OakImage} width={20}/>
                     </Space>
                     {TreeType.Oak}
                 </Radio>
                 <Radio style={radioStyle} value={TreeType.Pine}>
-                    <Space style={{padding: '10px'}} align={'center'} size={40}>
+                    <Space style={{paddingTop: '16px', paddingRight: '10px'}} align={'center'} size={40}>
                         <img alt={TreeType.Pine} src={PineImage} width={20}/>
                     </Space>
                     {TreeType.Pine}
