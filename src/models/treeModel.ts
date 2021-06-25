@@ -6,4 +6,7 @@ import {ElementModel} from "./elementModel";
 
 export interface TreeModel extends ElementModel {
 
+    name: string;
+    evergreen: boolean;
+
 }

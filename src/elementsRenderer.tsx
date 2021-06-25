@@ -13,6 +13,8 @@ import {CuboidModel} from "./models/cuboidModel";
 import {useStore} from "./stores/common";
 import {HumanModel} from "./models/humanModel";
 import Human from "./views/human";
+import {TreeModel} from "./models/treeModel";
+import Tree from "./views/tree";
 
 const ElementsRenderer: React.FC = () => {
 
@@ -32,6 +34,9 @@ const ElementsRenderer: React.FC = () => {
             {elements
                 .filter(e => e.type === ObjectType.Human)
                 .map(e => <Human key={e.id} {...e as HumanModel}/>)}
+            {elements
+                .filter(e => e.type === ObjectType.Tree)
+                .map(e => <Tree key={e.id} {...e as TreeModel}/>)}
         </group>
     );
 };

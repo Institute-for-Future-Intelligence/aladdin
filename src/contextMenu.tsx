@@ -161,6 +161,17 @@ const ContextMenu = ({
                     </Menu.Item>
                 </StyledMenu>
             );
+        case ObjectType.Tree:
+            return (
+                <StyledMenu>
+                    <Menu.Item key={'tree-copy'}>
+                        Copy
+                    </Menu.Item>
+                    <Menu.Item key={'tree-cut'}>
+                        Cut
+                    </Menu.Item>
+                </StyledMenu>
+            );
         default:
             return (
                 <StyledMenu>

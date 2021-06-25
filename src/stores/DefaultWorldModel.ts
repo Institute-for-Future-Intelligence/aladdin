@@ -11,6 +11,7 @@ import {Vector3} from "three";
 import {WorldModel} from "../models/worldModel";
 import {GroundModel} from "../models/groundModel";
 import {HumanModel} from "../models/humanModel";
+import {TreeModel} from "../models/treeModel";
 
 export class DefaultWorldModel implements WorldModel {
 
@@ -128,6 +129,35 @@ export class DefaultWorldModel implements WorldModel {
         } as HumanModel;
         elements.push(h1);
         elements.push(h2);
+
+        const tree1 = {
+            type: ObjectType.Tree,
+            name: 'Dogwood',
+            evergreen: false,
+            cx: -5,
+            cy: -6,
+            lx: 0.5,
+            ly: 0.5,
+            lz: 4,
+            normal: [1, 0, 0],
+            rotation: [0, 0, 0],
+            id: 'tree1'
+        } as TreeModel;
+        const tree2 = {
+            type: ObjectType.Tree,
+            name: 'Pine',
+            evergreen: true,
+            cx: -5,
+            cy: 5,
+            lx: 0.5,
+            ly: 0.5,
+            lz: 6,
+            normal: [1, 0, 0],
+            rotation: [0, 0, 0],
+            id: 'tree2'
+        } as TreeModel;
+        elements.push(tree1);
+        elements.push(tree2);
 
         return elements;
     }

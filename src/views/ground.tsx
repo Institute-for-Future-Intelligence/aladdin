@@ -139,14 +139,7 @@ const Ground = () => {
                            let intersects;
                            switch (grab.type) {
                                case ObjectType.Human:
-                                   if (groundPlaneRef.current) {
-                                       intersects = ray.intersectObjects([groundPlaneRef.current]);
-                                       if (intersects.length > 0) {
-                                           const p = intersects[0].point;
-                                           setElementPosition(grab.id, p.x, -p.z);
-                                       }
-                                   }
-                                   break;
+                               case ObjectType.Tree:
                                case ObjectType.Sensor:
                                    if (groundPlaneRef.current) {
                                        intersects = ray.intersectObjects([groundPlaneRef.current]);

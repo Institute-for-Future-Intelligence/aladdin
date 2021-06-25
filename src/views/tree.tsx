@@ -3,112 +3,110 @@
  */
 
 import React, {useMemo, useRef, useState} from "react";
-import JackImage from "../resources/jack.png";
-import JadeImage from "../resources/jade.png";
-import JaneImage from "../resources/jane.png";
-import JayeImage from "../resources/jaye.png";
-import JeanImage from "../resources/jean.png";
-import JediImage from "../resources/jedi.png";
-import JeffImage from "../resources/jeff.png";
-import JenaImage from "../resources/jena.png";
-import JeniImage from "../resources/jeni.png";
-import JessImage from "../resources/jess.png";
-import JettImage from "../resources/jett.png";
-import JillImage from "../resources/jill.png";
-import JoanImage from "../resources/joan.png";
-import JoelImage from "../resources/joel.png";
-import JohnImage from "../resources/john.png";
-import JoseImage from "../resources/jose.png";
-import JuddImage from "../resources/judd.png";
-import JudyImage from "../resources/judy.png";
-import JuneImage from "../resources/june.png";
-import JuroImage from "../resources/juro.png";
-import {DoubleSide, Mesh, TextureLoader, Vector3} from "three";
+import DogwoodImage from "../resources/dogwood.png";
+import DogwoodShedImage from "../resources/dogwood_shed.png";
+import ElmImage from "../resources/elm.png";
+import ElmShedImage from "../resources/elm_shed.png";
+import LindenImage from "../resources/linden.png";
+import LindenShedImage from "../resources/linden_shed.png";
+import MapleImage from "../resources/maple.png";
+import MapleShedImage from "../resources/maple_shed.png";
+import OakImage from "../resources/oak.png";
+import OakShedImage from "../resources/oak_shed.png";
+import PineImage from "../resources/pine.png";
+import {DoubleSide, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {HumanModel} from "../models/humanModel";
 import {Billboard, Sphere} from "@react-three/drei";
 import {MOVE_HANDLE_RADIUS} from "../constants";
+import {TreeModel} from "../models/treeModel";
 
-const Human = ({
-                   id,
-                   cx,
-                   cy,
-                   lz,
-                   name = 'Jack',
-                   selected = false,
-                   ...props
-               }: HumanModel) => {
+const Tree = ({
+                  id,
+                  cx,
+                  cy,
+                  lz,
+                  name = 'Pine',
+                  selected = false,
+                  ...props
+              }: TreeModel) => {
 
     cy = -cy; // we want positive y to point north
 
     const setCommonStore = useStore(state => state.set);
+    const shadowEnabled = useStore(state => state.shadowEnabled);
     const [hovered, setHovered] = useState(false);
     const meshRef = useRef<Mesh>(null!);
     const {gl: {domElement}} = useThree();
+
+    let dimX, dimY;
+    switch (name) {
+        case 'Dogwood':
+        case 'Dogwood_Shed':
+            dimX = 3;
+            dimY = 4.3;
+            break;
+        case 'Elm':
+        case 'Elm_Shed':
+            dimX = 3;
+            dimY = 3;
+            break;
+        case 'Linden':
+        case 'Linden_Shed':
+            dimX = 3;
+            dimY = 3;
+            break;
+        case 'Maple':
+        case 'Maple_Shed':
+            dimX = 3;
+            dimY = 3;
+            break;
+        case 'Oak':
+        case 'Oak_Shed':
+            dimX = 3;
+            dimY = 3;
+            break;
+        default:
+            dimX = 2;
+            dimY = 6.5;
+    }
+
     const texture = useMemo(() => {
         const loader = new TextureLoader();
         let texture;
         switch (name) {
-            case 'Jade':
-                texture = loader.load(JadeImage);
+            case 'Dogwood':
+                texture = loader.load(DogwoodImage);
                 break;
-            case 'Jane':
-                texture = loader.load(JaneImage);
+            case 'Dogwood_Shed':
+                texture = loader.load(DogwoodShedImage);
                 break;
-            case 'Jaye':
-                texture = loader.load(JayeImage);
+            case 'Elm':
+                texture = loader.load(ElmImage);
                 break;
-            case 'Jean':
-                texture = loader.load(JeanImage);
+            case 'Elm_Shed':
+                texture = loader.load(ElmShedImage);
                 break;
-            case 'Jedi':
-                texture = loader.load(JediImage);
+            case 'Linden':
+                texture = loader.load(LindenImage);
                 break;
-            case 'Jeff':
-                texture = loader.load(JeffImage);
+            case 'Linden_Shed':
+                texture = loader.load(LindenShedImage);
                 break;
-            case 'Jena':
-                texture = loader.load(JenaImage);
+            case 'Maple':
+                texture = loader.load(MapleImage);
                 break;
-            case 'Jeni':
-                texture = loader.load(JeniImage);
+            case 'Maple_Shed':
+                texture = loader.load(MapleShedImage);
                 break;
-            case 'Jess':
-                texture = loader.load(JessImage);
+            case 'Oak':
+                texture = loader.load(OakImage);
                 break;
-            case 'Jett':
-                texture = loader.load(JettImage);
-                break;
-            case 'Jill':
-                texture = loader.load(JillImage);
-                break;
-            case 'Joan':
-                texture = loader.load(JoanImage);
-                break;
-            case 'Joel':
-                texture = loader.load(JoelImage);
-                break;
-            case 'John':
-                texture = loader.load(JohnImage);
-                break;
-            case 'Jose':
-                texture = loader.load(JoseImage);
-                break;
-            case 'Judd':
-                texture = loader.load(JuddImage);
-                break;
-            case 'Judy':
-                texture = loader.load(JudyImage);
-                break;
-            case 'June':
-                texture = loader.load(JuneImage);
-                break;
-            case 'Juro':
-                texture = loader.load(JuroImage);
+            case 'Oak_Shed':
+                texture = loader.load(OakShedImage);
                 break;
             default:
-                texture = loader.load(JackImage);
+                texture = loader.load(PineImage);
         }
         return texture;
     }, [name]);
@@ -129,11 +127,19 @@ const Human = ({
     };
 
     return (
-        <group name={'Human Group ' + id} position={[cx, lz / 2, cy]}>
+        <group name={'Tree Group ' + id} position={[cx, lz / 2, cy]}>
 
             <Billboard
-                args={[0.6, 1.8]}
+                castShadow={shadowEnabled}
+                args={[dimX, dimY]}
                 ref={meshRef}
+                customDepthMaterial={
+                    new MeshDepthMaterial({
+                        depthPacking: RGBADepthPacking,
+                        map: texture,
+                        alphaTest: 0.5
+                    })
+                }
                 name={name}
                 onContextMenu={(e) => {
                     selectMe(e);
@@ -195,4 +201,4 @@ const Human = ({
     )
 };
 
-export default Human;
+export default Tree;
