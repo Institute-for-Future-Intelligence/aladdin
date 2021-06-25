@@ -10,10 +10,14 @@ import {ElementModel} from "../models/elementModel";
 import {WeatherModel} from "../models/weatherModel";
 import weather from '../resources/weather.csv';
 import Papa from "papaparse";
-import {Util} from "../util";
+import {Util} from "../Util";
 import {DatumEntry, MoveHandleType, ObjectType, ResizeHandleType} from "../types";
 import {DefaultWorldModel} from "./DefaultWorldModel";
-import {Vector2} from "three";
+import {Vector2, Vector3} from "three";
+import {ElementModelCloner} from "../models/ElementModelCloner";
+import {HumanModel} from "../models/humanModel";
+import {TreeModel} from "../models/treeModel";
+import {SensorModel} from "../models/sensorModel";
 
 enableMapSet();
 
@@ -63,9 +67,11 @@ export interface CommonStoreState {
     setElementRotation: (id: string, x: number, y: number, z: number) => void;
     setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
 
+    pastePoint: Vector3;
+    elementToPaste: ElementModel | null;
     copyElementById: (id: string) => void;
     cutElementById: (id: string) => void;
-    pasteElementAt: (x: number, y: number, z?: number) => void;
+    pasteElement: () => void;
 
     timesPerHour: number;
     dailyLightSensorData: DatumEntry[];
@@ -213,21 +219,48 @@ export const useStore = create<CommonStoreState>(devtools(persist((
             });
         },
 
+        elementToPaste: null,
+        pastePoint: new Vector3(),
         copyElementById(id) {
-
+            immerSet((state: CommonStoreState) => {
+                for (const e of state.elements) {
+                    if (e.id === id) {
+                        state.elementToPaste = e;
+                        break;
+                    }
+                }
+            });
         },
         cutElementById(id) {
             immerSet((state: CommonStoreState) => {
                 for (const e of state.elements) {
                     if (e.id === id) {
                         Util.deleteElement(state.elements, e);
+                        state.elementToPaste = e;
                         break;
                     }
                 }
             });
         },
-        pasteElementAt(x: number, y: number, z?: number) {
-
+        pasteElement() {
+            immerSet((state: CommonStoreState) => {
+                if (state.elementToPaste) {
+                    switch (state.elementToPaste.type) {
+                        case ObjectType.Human:
+                            state.elements.push(ElementModelCloner.cloneHuman(
+                                state.elementToPaste as HumanModel, state.pastePoint.x, -state.pastePoint.z, state.pastePoint.y));
+                            break;
+                        case ObjectType.Tree:
+                            state.elements.push(ElementModelCloner.cloneTree(
+                                state.elementToPaste as TreeModel, state.pastePoint.x, -state.pastePoint.z, state.pastePoint.y));
+                            break;
+                        case ObjectType.Sensor:
+                            state.elements.push(ElementModelCloner.cloneSensor(
+                                state.elementToPaste as SensorModel, state.pastePoint.x, -state.pastePoint.z, state.pastePoint.y));
+                            break;
+                    }
+                }
+            });
         },
 
         loadWeatherData() {

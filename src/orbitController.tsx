@@ -6,7 +6,7 @@ import React, {useEffect, useRef} from "react";
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import {useFrame, useThree} from "@react-three/fiber";
 import {useStore} from "./stores/common";
-import {Util} from "./util";
+import {Util} from "./Util";
 import {Vector3} from "three";
 
 export interface OrbitControllerProps {

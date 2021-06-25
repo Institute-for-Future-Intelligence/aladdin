@@ -10,7 +10,7 @@ import {IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType} fro
 import {ElementModel} from "../models/elementModel";
 import {useThree} from "@react-three/fiber";
 import {MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS} from "../constants";
-import {Util} from "../util";
+import {Util} from "../Util";
 
 const Ground = () => {
 
@@ -103,6 +103,7 @@ const Ground = () => {
                            if (groundClicked) {
                                selectNone();
                                setCommonStore((state) => {
+                                   Util.copyVector(state.pastePoint, e.intersections[0].point);
                                    state.clickObjectType = ObjectType.Ground;
                                });
                            }

@@ -9,7 +9,7 @@ import {GraphDataType} from "../types";
 import styled from "styled-components";
 import {useStore} from "../stores/common";
 import {MONTHS} from "../constants";
-import {Util} from "../util";
+import {Util} from "../Util";
 import ReactDraggable, {DraggableEventHandler} from "react-draggable";
 
 const Container = styled.div`

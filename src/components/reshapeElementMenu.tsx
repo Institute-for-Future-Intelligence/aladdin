@@ -5,7 +5,7 @@
 import React, {useState} from "react";
 import {Menu, Space} from "antd";
 import NumericInput from "react-numeric-input";
-import {Util} from "../util";
+import {Util} from "../Util";
 import {useStore} from "../stores/common";
 
 export interface ReshapeElementMenuProps {

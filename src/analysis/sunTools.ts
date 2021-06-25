@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import {Util} from "../util";
+import {Util} from "../Util";
 import {Vector3} from "three";
 import {AirMass, ASHRAE_C, SOLAR_CONSTANT} from "./analysisConstants";
 import {GroundModel} from "../models/groundModel";

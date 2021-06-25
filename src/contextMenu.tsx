@@ -59,9 +59,8 @@ const ContextMenu = ({
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const cutElementById = useStore(state => state.cutElementById);
     const copyElementById = useStore(state => state.copyElementById);
-    const pasteElementAt = useStore(state => state.pasteElementAt);
+    const pasteElement = useStore(state => state.pasteElement);
     const selectedElement = getSelectedElement();
-    const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
     const copyElement = () => {
         if (selectedElement) {
@@ -73,10 +72,6 @@ const ContextMenu = ({
         if (selectedElement) {
             cutElementById(selectedElement.id);
         }
-    };
-
-    const pasteElement = () => {
-        pasteElementAt(0, 0, 0);
     };
 
     switch (selectedElement ? selectedElement.type : clickObjectType) {

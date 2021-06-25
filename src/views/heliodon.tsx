@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import {Util} from "../util";
+import {Util} from "../Util";
 import React, {useEffect, useMemo} from "react";
 import {
     BufferAttribute,

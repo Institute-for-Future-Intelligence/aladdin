@@ -8,7 +8,7 @@ import styled from "styled-components";
 import {useStore} from "../stores/common";
 import {GraphDataType} from "../types";
 import {MONTHS} from "../constants";
-import {Util} from "../util";
+import {Util} from "../Util";
 import BarGraph from "../components/barGraph";
 import ReactDraggable, {DraggableEventHandler} from "react-draggable";
 

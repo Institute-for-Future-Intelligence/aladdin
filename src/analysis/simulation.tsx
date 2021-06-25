@@ -8,7 +8,7 @@ import {Object3D, Raycaster, Vector3} from "three";
 import {useThree} from "@react-three/fiber";
 import {useStore} from "../stores/common";
 import {DatumEntry, ObjectType} from "../types";
-import {Util} from "../util";
+import {Util} from "../Util";
 import {AirMass} from "./analysisConstants";
 import {MONTHS} from "../constants";
 import {SensorModel} from "../models/sensorModel";

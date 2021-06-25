@@ -17,7 +17,7 @@ import {
     RESIZE_HANDLE_COLOR,
     RESIZE_HANDLE_SIZE
 } from "../constants";
-import {Util} from "../util";
+import {Util} from "../Util";
 
 const Foundation = ({
                         id,

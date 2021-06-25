@@ -17,7 +17,7 @@ import {
     RESIZE_HANDLE_COLOR,
     MOVE_HANDLE_COLOR
 } from "../constants";
-import {Util} from "../util";
+import {Util} from "../Util";
 
 const Cuboid = ({
                     id,

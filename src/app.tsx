@@ -16,7 +16,7 @@ import Ground from "./views/ground";
 import {useStore} from "./stores/common";
 import {Euler, Vector3} from "three";
 import Heliodon from "./views/heliodon";
-import {Util} from "./util";
+import {Util} from "./Util";
 import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./analysis/sunTools";
 import aladdinLogo from './assets/aladdin-logo.png';
 import ifiLogo from './assets/ifi-logo.png';
@@ -285,7 +285,10 @@ const App = () => {
                           graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}
             />}
             {aboutUs && <About openAboutUs={openAboutUs}/>}
-            <Dropdown key={'canvas-context-menu'} trigger={['contextMenu']} overlay={contextMenu}>
+            <Dropdown key={'canvas-context-menu'}
+                      trigger={['contextMenu']}
+                      overlay={contextMenu}
+            >
                 <div>
                     <Canvas shadows={true}
                             camera={{
