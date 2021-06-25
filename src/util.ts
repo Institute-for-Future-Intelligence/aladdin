@@ -79,6 +79,13 @@ export class Util {
         return new Euler(v[0], v[1], v[2]);
     }
 
+    static deleteElement(a: any[], e: any) {
+        const i = a.indexOf(e, 0);
+        if (i > -1) {
+            a.splice(i, 1);
+        }
+    }
+
     // convert the coordinates from the model system to the view system
     static modelToView(v: Vector3) {
         return new Vector3(v.x, v.z, -v.y);

@@ -63,6 +63,10 @@ export interface CommonStoreState {
     setElementRotation: (id: string, x: number, y: number, z: number) => void;
     setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
 
+    copyElementById: (id: string) => void;
+    cutElementById: (id: string) => void;
+    pasteElementAt: (x: number, y: number, z?: number) => void;
+
     timesPerHour: number;
     dailyLightSensorData: DatumEntry[];
     setDailyLightSensorData: (data: DatumEntry[]) => void;
@@ -207,6 +211,23 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                     }
                 }
             });
+        },
+
+        copyElementById(id) {
+
+        },
+        cutElementById(id) {
+            immerSet((state: CommonStoreState) => {
+                for (const e of state.elements) {
+                    if (e.id === id) {
+                        Util.deleteElement(state.elements, e);
+                        break;
+                    }
+                }
+            });
+        },
+        pasteElementAt(x: number, y: number, z?: number) {
+
         },
 
         loadWeatherData() {
