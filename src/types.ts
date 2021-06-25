@@ -98,3 +98,26 @@ export enum ShedTreeType {
     Maple = 'Maple Shed',
     Oak = 'Oak Shed',
 }
+
+export enum HumanName {
+    Jack = 'Jack',
+    Jade = 'Jade',
+    Jane = 'Jane',
+    Jaye = 'Jaye',
+    Jean = 'Jean',
+    Jedi = 'Jedi',
+    Jeff = 'Jeff',
+    Jena = 'Jena',
+    Jeni = 'Jeni',
+    Jess = 'Jess',
+    Jett = 'Jett',
+    Jill = 'Jill',
+    Joan = 'Joan',
+    Joel = 'Joel',
+    John = 'John',
+    Jose = 'Jose',
+    Judd = 'Judd',
+    Judy = 'Judy',
+    June = 'June',
+    Juro = 'Juro',
+}

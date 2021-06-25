@@ -152,6 +152,7 @@ const Foundation = ({
             {/* draw rectangle */}
             <Box castShadow={shadowEnabled}
                  receiveShadow={shadowEnabled}
+                 uuid={id}
                  ref={baseRef}
                  name={'Foundation'}
                  args={[lx, lz, ly]}

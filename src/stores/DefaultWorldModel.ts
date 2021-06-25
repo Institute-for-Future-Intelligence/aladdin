@@ -3,7 +3,7 @@
  */
 
 import {ElementModel} from "../models/elementModel";
-import {ObjectType} from "../types";
+import {HumanName, ObjectType} from "../types";
 import {FoundationModel} from "../models/foundationModel";
 import {CuboidModel} from "../models/cuboidModel";
 import {SensorModel} from "../models/sensorModel";
@@ -105,24 +105,18 @@ export class DefaultWorldModel implements WorldModel {
 
         const h1 = {
             type: ObjectType.Human,
-            name: 'Jack',
+            name: HumanName.Jack,
             cx: 4,
             cy: 4,
-            lx: 0.5,
-            ly: 0.5,
-            lz: 1.8,
             normal: [1, 0, 0],
             rotation: [0, 0, 0],
             id: 'human1'
         } as HumanModel;
         const h2 = {
             type: ObjectType.Human,
-            name: 'Jill',
+            name: HumanName.Jill,
             cx: 5,
             cy: 5,
-            lx: 0.5,
-            ly: 0.5,
-            lz: 1.6,
             normal: [1, 0, 0],
             rotation: [0, 0, 0],
             id: 'human2'
@@ -136,8 +130,7 @@ export class DefaultWorldModel implements WorldModel {
             evergreen: false,
             cx: -5,
             cy: -6,
-            lx: 0.5,
-            ly: 0.5,
+            lx: 3,
             lz: 4,
             normal: [1, 0, 0],
             rotation: [0, 0, 0],
@@ -149,8 +142,7 @@ export class DefaultWorldModel implements WorldModel {
             evergreen: true,
             cx: -5,
             cy: 5,
-            lx: 0.5,
-            ly: 0.5,
+            lx: 2,
             lz: 6,
             normal: [1, 0, 0],
             rotation: [0, 0, 0],

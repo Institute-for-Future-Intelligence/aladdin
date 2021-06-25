@@ -29,13 +29,13 @@ import {ThreeEvent, useThree} from "@react-three/fiber";
 import {HumanModel} from "../models/humanModel";
 import {Billboard, Sphere} from "@react-three/drei";
 import {MOVE_HANDLE_RADIUS} from "../constants";
+import {HumanName} from "../types";
 
 const Human = ({
                    id,
                    cx,
                    cy,
-                   lz,
-                   name = 'Jack',
+                   name = HumanName.Jack,
                    selected = false,
                    ...props
                }: HumanModel) => {
@@ -50,67 +50,131 @@ const Human = ({
         const loader = new TextureLoader();
         let texture;
         switch (name) {
-            case 'Jade':
+            case HumanName.Jade:
                 texture = loader.load(JadeImage);
                 break;
-            case 'Jane':
+            case HumanName.Jane:
                 texture = loader.load(JaneImage);
                 break;
-            case 'Jaye':
+            case HumanName.Jaye:
                 texture = loader.load(JayeImage);
                 break;
-            case 'Jean':
+            case HumanName.Jean:
                 texture = loader.load(JeanImage);
                 break;
-            case 'Jedi':
+            case HumanName.Jedi:
                 texture = loader.load(JediImage);
                 break;
-            case 'Jeff':
+            case HumanName.Jeff:
                 texture = loader.load(JeffImage);
                 break;
-            case 'Jena':
+            case HumanName.Jena:
                 texture = loader.load(JenaImage);
                 break;
-            case 'Jeni':
+            case HumanName.Jeni:
                 texture = loader.load(JeniImage);
                 break;
-            case 'Jess':
+            case HumanName.Jess:
                 texture = loader.load(JessImage);
                 break;
-            case 'Jett':
+            case HumanName.Jett:
                 texture = loader.load(JettImage);
                 break;
-            case 'Jill':
+            case HumanName.Jill:
                 texture = loader.load(JillImage);
                 break;
-            case 'Joan':
+            case HumanName.Joan:
                 texture = loader.load(JoanImage);
                 break;
-            case 'Joel':
+            case HumanName.Joel:
                 texture = loader.load(JoelImage);
                 break;
-            case 'John':
+            case HumanName.John:
                 texture = loader.load(JohnImage);
                 break;
-            case 'Jose':
+            case HumanName.Jose:
                 texture = loader.load(JoseImage);
                 break;
-            case 'Judd':
+            case HumanName.Judd:
                 texture = loader.load(JuddImage);
                 break;
-            case 'Judy':
+            case HumanName.Judy:
                 texture = loader.load(JudyImage);
                 break;
-            case 'June':
+            case HumanName.June:
                 texture = loader.load(JuneImage);
                 break;
-            case 'Juro':
+            case HumanName.Juro:
                 texture = loader.load(JuroImage);
                 break;
             default:
                 texture = loader.load(JackImage);
         }
         return texture;
+    }, [name]);
+
+    const width = useMemo(() => {
+        switch (name) {
+            case HumanName.Jane:
+                return 0.45;
+            case HumanName.Jena:
+                return 0.4;
+            case HumanName.Joel:
+                return 1;
+            case HumanName.John:
+                return 0.8;
+            case HumanName.Jose:
+                return 2;
+            case HumanName.June:
+                return 0.4;
+            default:
+                return 0.6;
+        }
+    }, [name]);
+
+    const height = useMemo(() => {
+        switch (name) {
+            case HumanName.Jade:
+                return 1.6;
+            case HumanName.Jane:
+                return 1.55;
+            case HumanName.Jaye:
+                return 1.65;
+            case HumanName.Jean:
+                return 1.8;
+            case HumanName.Jedi:
+                return 1.75;
+            case HumanName.Jeff:
+                return 1.65;
+            case HumanName.Jena:
+                return 1.5;
+            case HumanName.Jeni:
+                return 1.7;
+            case HumanName.Jess:
+                return 1.4;
+            case HumanName.Jett:
+                return 1.85;
+            case HumanName.Jill:
+                return 1.64;
+            case HumanName.Joan:
+                return 1.68;
+            case HumanName.Joel:
+                return 1.75;
+            case HumanName.John:
+                return 1.85;
+            case HumanName.Jose:
+                return 1.6;
+            case HumanName.Judd:
+                return 1.68;
+            case HumanName.Judy:
+                return 1.55;
+            case HumanName.June:
+                return 1.85;
+            case HumanName.Juro:
+                return 1.9;
+            default:
+                return 1.8;
+        }
     }, [name]);
 
     const selectMe = (e: ThreeEvent<MouseEvent>) => {
@@ -130,16 +194,17 @@ const Human = ({
 
     return (
         <group name={'Human Group ' + id}
-               position={[cx, lz / 2, cy]}>
+               position={[cx, height / 2, cy]}>
 
             <Billboard
-                args={[0.6, 1.8]}
+                uuid={id}
+                args={[width, height]}
                 ref={meshRef}
                 name={name}
                 onContextMenu={(e) => {
                     selectMe(e);
                 }}
-                onClick={(e) => {
+                onPointerDown={(e) => {
                     selectMe(e);
                 }}
                 onPointerOver={(e) => {
@@ -164,7 +229,7 @@ const Human = ({
             {/* draw handle */}
             {selected &&
             <Sphere
-                position={new Vector3(0, -lz / 2, 0)}
+                position={new Vector3(0, -height / 2, 0)}
                 args={[MOVE_HANDLE_RADIUS * 2, 6, 6]}
                 name={'Handle'}
                 onPointerDown={(e) => {
@@ -188,7 +253,7 @@ const Human = ({
                 fontFace={'Times Roman'}
                 textHeight={1}
                 scale={[0.5, 0.2, 0.2]}
-                position={[0, lz / 2 + 0.4, 0]}
+                position={[0, height / 2 + 0.4, 0]}
             />
             }
 

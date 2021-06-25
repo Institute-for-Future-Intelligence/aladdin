@@ -109,9 +109,11 @@ const Tree = ({
                position={[cx, lz / 2, cy]}>
 
             <Billboard
+                uuid={id}
                 castShadow={shadowEnabled}
                 args={[lx, lz]}
                 ref={meshRef}
+                renderOrder={0}
                 customDepthMaterial={
                     new MeshDepthMaterial({
                         depthPacking: RGBADepthPacking,
@@ -123,7 +125,7 @@ const Tree = ({
                 onContextMenu={(e) => {
                     selectMe(e);
                 }}
-                onClick={(e) => {
+                onPointerDown={(e) => {
                     selectMe(e);
                 }}
                 onPointerOver={(e) => {
@@ -151,6 +153,7 @@ const Tree = ({
                 position={new Vector3(0, -lz / 2, 0)}
                 args={[MOVE_HANDLE_RADIUS * 2, 6, 6]}
                 name={'Handle'}
+                renderOrder={2}
                 onPointerDown={(e) => {
                     selectMe(e);
                 }}

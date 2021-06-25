@@ -3,9 +3,10 @@
  */
 
 import {ElementModel} from "./elementModel";
+import {HumanName} from "../types";
 
 export interface HumanModel extends ElementModel {
 
-    name: string;
+    name: HumanName;
 
 }

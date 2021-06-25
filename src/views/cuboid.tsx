@@ -139,6 +139,7 @@ const Cuboid = ({
             {/* draw rectangular cuboid */}
             <Box castShadow={shadowEnabled}
                  receiveShadow={shadowEnabled}
+                 uuid={id}
                  ref={baseRef}
                  args={[lx, lz, ly]}
                  name={'Cuboid'}
