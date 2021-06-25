@@ -3,6 +3,8 @@
  */
 
 import React, {useMemo, useRef, useState} from "react";
+import CottonwoodImage from "../resources/cottonwood.png";
+import CottonwoodShedImage from "../resources/cottonwood_shed.png";
 import DogwoodImage from "../resources/dogwood.png";
 import DogwoodShedImage from "../resources/dogwood_shed.png";
 import ElmImage from "../resources/elm.png";
@@ -20,13 +22,15 @@ import {ThreeEvent, useThree} from "@react-three/fiber";
 import {Billboard, Sphere} from "@react-three/drei";
 import {MOVE_HANDLE_RADIUS} from "../constants";
 import {TreeModel} from "../models/treeModel";
+import {ShedTreeType, TreeType} from "../types";
 
 const Tree = ({
                   id,
                   cx,
                   cy,
+                  lx,
                   lz,
-                  name = 'Pine',
+                  name = TreeType.Pine,
                   selected = false,
                   ...props
               }: TreeModel) => {
@@ -39,70 +43,44 @@ const Tree = ({
     const meshRef = useRef<Mesh>(null!);
     const {gl: {domElement}} = useThree();
 
-    let dimX, dimY;
-    switch (name) {
-        case 'Dogwood':
-        case 'Dogwood_Shed':
-            dimX = 3;
-            dimY = 4.3;
-            break;
-        case 'Elm':
-        case 'Elm_Shed':
-            dimX = 3;
-            dimY = 3;
-            break;
-        case 'Linden':
-        case 'Linden_Shed':
-            dimX = 3;
-            dimY = 3;
-            break;
-        case 'Maple':
-        case 'Maple_Shed':
-            dimX = 3;
-            dimY = 3;
-            break;
-        case 'Oak':
-        case 'Oak_Shed':
-            dimX = 3;
-            dimY = 3;
-            break;
-        default:
-            dimX = 2;
-            dimY = 6.5;
-    }
-
     const texture = useMemo(() => {
         const loader = new TextureLoader();
         let texture;
         switch (name) {
-            case 'Dogwood':
+            case TreeType.Cottonwood:
+                texture = loader.load(CottonwoodImage);
+                break;
+            case ShedTreeType.Cottonwood:
+                texture = loader.load(CottonwoodShedImage);
+                break;
+            case TreeType.Dogwood:
                 texture = loader.load(DogwoodImage);
                 break;
-            case 'Dogwood_Shed':
+            case ShedTreeType.Dogwood:
                 texture = loader.load(DogwoodShedImage);
                 break;
-            case 'Elm':
+            case TreeType.Elm:
                 texture = loader.load(ElmImage);
                 break;
-            case 'Elm_Shed':
+            case ShedTreeType.Elm:
                 texture = loader.load(ElmShedImage);
                 break;
-            case 'Linden':
+            case TreeType.Linden:
                 texture = loader.load(LindenImage);
                 break;
-            case 'Linden_Shed':
+            case ShedTreeType.Linden:
                 texture = loader.load(LindenShedImage);
                 break;
-            case 'Maple':
+            case TreeType.Maple:
                 texture = loader.load(MapleImage);
                 break;
-            case 'Maple_Shed':
+            case ShedTreeType.Maple:
                 texture = loader.load(MapleShedImage);
                 break;
-            case 'Oak':
+            case TreeType.Oak:
                 texture = loader.load(OakImage);
                 break;
-            case 'Oak_Shed':
+            case ShedTreeType.Oak:
                 texture = loader.load(OakShedImage);
                 break;
             default:
@@ -127,17 +105,18 @@ const Tree = ({
     };
 
     return (
-        <group name={'Tree Group ' + id} position={[cx, lz / 2, cy]}>
+        <group name={'Tree Group ' + id}
+               position={[cx, lz / 2, cy]}>
 
             <Billboard
                 castShadow={shadowEnabled}
-                args={[dimX, dimY]}
+                args={[lx, lz]}
                 ref={meshRef}
                 customDepthMaterial={
                     new MeshDepthMaterial({
                         depthPacking: RGBADepthPacking,
                         map: texture,
-                        alphaTest: 0.5
+                        alphaTest: 0.1
                     })
                 }
                 name={name}

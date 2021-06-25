@@ -129,7 +129,8 @@ const Human = ({
     };
 
     return (
-        <group name={'Human Group ' + id} position={[cx, lz / 2, cy]}>
+        <group name={'Human Group ' + id}
+               position={[cx, lz / 2, cy]}>
 
             <Billboard
                 args={[0.6, 1.8]}

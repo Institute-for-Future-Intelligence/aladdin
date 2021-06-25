@@ -63,7 +63,8 @@ const Sensor = ({
 
     return (
 
-        <group name={'Sensor Group ' + id} position={[cx, hz, cy]}>
+        <group name={'Sensor Group ' + id}
+               position={[cx, hz, cy]}>
 
             {/* draw rectangle (too small to cast shadow) */}
             <Box receiveShadow={shadowEnabled}

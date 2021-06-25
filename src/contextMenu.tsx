@@ -2,14 +2,22 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import styled from "styled-components";
 import 'antd/dist/antd.css';
 import {useStore} from "./stores/common";
 import {useWorker} from "@koale/useworker";
-import {Menu, Checkbox, Radio} from 'antd';
-import {ObjectType, Theme} from "./types";
+import {Menu, Checkbox, Radio, Space} from 'antd';
+import {ObjectType, Theme, TreeType} from "./types";
 import ReshapeElementMenu from "./components/reshapeElementMenu";
+import {TreeModel} from "./models/treeModel";
+import CottonwoodImage from "./resources/cottonwood.png";
+import DogwoodImage from "./resources/dogwood.png";
+import ElmImage from "./resources/elm.png";
+import LindenImage from "./resources/linden.png";
+import MapleImage from "./resources/maple.png";
+import OakImage from "./resources/oak.png";
+import PineImage from "./resources/pine.png";
 
 // TODO: Reduce the space between menu items
 const StyledMenu = styled(Menu)`
@@ -54,6 +62,7 @@ const ContextMenu = ({
     const clickObjectType = useStore(state => state.clickObjectType);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const selectedElement = getSelectedElement();
+    const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
     switch (selectedElement ? selectedElement.type : clickObjectType) {
         case ObjectType.Sky:
@@ -163,13 +172,73 @@ const ContextMenu = ({
             );
         case ObjectType.Tree:
             return (
-                <StyledMenu>
+                <StyledMenu style={{padding: 0, margin: 0}}>
                     <Menu.Item key={'tree-copy'}>
                         Copy
                     </Menu.Item>
                     <Menu.Item key={'tree-cut'}>
                         Cut
                     </Menu.Item>
+                    {selectedElement &&
+                    <ReshapeElementMenu elementId={selectedElement.id}
+                                        name={'tree'}
+                                        widthName={'Spread'}
+                                        length={false}
+                                        angle={false}/>
+                    }
+                    <SubMenu key={'type'} title={'Change Type'}>
+                        <Radio.Group value={(selectedElement as TreeModel).name}
+                                     style={{height: '240px'}}
+                                     onChange={(e) => {
+                                         if (selectedElement) {
+                                             updateElementById(selectedElement.id, {name: e.target.value});
+                                             setUpdateFlag(!updateFlag);
+                                         }
+                                     }}>
+                            <Radio style={radioStyle} value={TreeType.Cottonwood}>
+                                <Space style={{padding: '4px'}} align={'center'} size={40}>
+                                    <img alt={TreeType.Cottonwood} src={CottonwoodImage} width={20}/>
+                                </Space>
+                                {TreeType.Cottonwood}
+                            </Radio>
+                            <Radio style={radioStyle} value={TreeType.Dogwood}>
+                                <Space style={{padding: '4px'}} align={'center'} size={40}>
+                                    <img alt={TreeType.Dogwood} src={DogwoodImage} width={20}/>
+                                </Space>
+                                {TreeType.Dogwood}
+                            </Radio>
+                            <Radio style={radioStyle} value={TreeType.Elm}>
+                                <Space style={{padding: '4px'}} align={'center'} size={40}>
+                                    <img alt={TreeType.Elm} src={ElmImage} width={20}/>
+                                </Space>
+                                {TreeType.Elm}
+                            </Radio>
+                            <Radio style={radioStyle} value={TreeType.Linden}>
+                                <Space style={{padding: '4px'}} align={'center'} size={40}>
+                                    <img alt={TreeType.Linden} src={LindenImage} width={20}/>
+                                </Space>
+                                {TreeType.Linden}
+                            </Radio>
+                            <Radio style={radioStyle} value={TreeType.Maple}>
+                                <Space style={{padding: '4px'}} align={'center'} size={40}>
+                                    <img alt={TreeType.Maple} src={MapleImage} width={20}/>
+                                </Space>
+                                {TreeType.Maple}
+                            </Radio>
+                            <Radio style={radioStyle} value={TreeType.Oak}>
+                                <Space style={{padding: '4px'}} align={'center'} size={40}>
+                                    <img alt={TreeType.Oak} src={OakImage} width={20}/>
+                                </Space>
+                                {TreeType.Oak}
+                            </Radio>
+                            <Radio style={radioStyle} value={TreeType.Pine}>
+                                <Space style={{padding: '4px'}} align={'center'} size={40}>
+                                    <img alt={TreeType.Pine} src={PineImage} width={20}/>
+                                </Space>
+                                {TreeType.Pine}
+                            </Radio>
+                        </Radio.Group>
+                    </SubMenu>
                 </StyledMenu>
             );
         default:

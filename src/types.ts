@@ -79,3 +79,22 @@ export enum IntersectionPlaneType {
     Vertical = 'Vertical',
     Ground = 'Ground',
 }
+
+export enum TreeType {
+    Cottonwood = 'Cottonwood',
+    Dogwood = 'Dogwood',
+    Elm = 'Elm',
+    Linden = 'Linden',
+    Maple = 'Maple',
+    Oak = 'Oak',
+    Pine = 'Pine'
+}
+
+export enum ShedTreeType {
+    Cottonwood = 'Cottonwood Shed',
+    Dogwood = 'Dogwood Shed',
+    Elm = 'Elm Shed',
+    Linden = 'Linden Shed',
+    Maple = 'Maple Shed',
+    Oak = 'Oak Shed',
+}

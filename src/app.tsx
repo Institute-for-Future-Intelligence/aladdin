@@ -308,8 +308,14 @@ const App = () => {
                                 position={[sunlightDirection.x, sunlightDirection.y, sunlightDirection.z]}
                                 intensity={sunAboveHorizon ? 0.5 : 0}
                                 castShadow
-                                shadow-mapSize-height={512}
-                                shadow-mapSize-width={512}
+                                shadow-mapSize-height={4096}
+                                shadow-mapSize-width={4096}
+                                shadowCameraNear={1}
+                                shadowCameraFar={100}
+                                shadowCameraLeft={-100}
+                                shadowCameraRight={100}
+                                shadowCameraTop={100}
+                                shadowCameraBottom={-100}
                             />
                             {(grid || !enableOrbitController) &&
                             <gridHelper name={'Grid'} args={[100, 100, 'gray', 'gray']}/>

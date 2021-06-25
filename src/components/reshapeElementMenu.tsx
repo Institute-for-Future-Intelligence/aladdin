@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React from "react";
+import React, {useState} from "react";
 import {Menu, Space} from "antd";
 import NumericInput from "react-numeric-input";
 import {Util} from "../util";
@@ -11,13 +11,24 @@ import {useStore} from "../stores/common";
 export interface ReshapeElementMenuProps {
     elementId: string;
     name: string;
+    width?: boolean;
+    length?: boolean;
+    height?: boolean;
+    angle?: boolean;
+    widthName?: string;
 }
 
 const ReshapeElementMenu = ({
                                 elementId,
                                 name = 'default',
+                                width = true,
+                                length = true,
+                                height = true,
+                                angle = true,
+                                widthName = 'Width',
                             }: ReshapeElementMenuProps) => {
 
+    const [updateFlag, setUpdateFlag] = useState<boolean>(false);
     const setElementSize = useStore(state => state.setElementSize);
     const setElementRotation = useStore(state => state.setElementRotation);
     const getElementById = useStore(state => state.getElementById);
@@ -25,8 +36,9 @@ const ReshapeElementMenu = ({
 
     return (
         <Menu key={name}>
+            {width &&
             <Menu.Item key={name + '-lx'}>
-                <Space style={{width: '60px'}}>Length:</Space>
+                <Space style={{width: '60px'}}>{widthName}:</Space>
                 <NumericInput min={0.1}
                               max={100}
                               precision={1}
@@ -36,12 +48,15 @@ const ReshapeElementMenu = ({
                               onChange={(e) => {
                                   if (element) {
                                       setElementSize(element.id, e ?? 1, element.ly);
+                                      setUpdateFlag(!updateFlag);
                                   }
                               }}
                 />
             </Menu.Item>
+            }
+            {length &&
             <Menu.Item key={name + '-ly'}>
-                <Space style={{width: '60px'}}>Width:</Space>
+                <Space style={{width: '60px'}}>Length:</Space>
                 <NumericInput min={0.1}
                               max={100}
                               precision={1}
@@ -51,10 +66,13 @@ const ReshapeElementMenu = ({
                               onChange={(e) => {
                                   if (element) {
                                       setElementSize(element.id, element.lx, e ?? 1);
+                                      setUpdateFlag(!updateFlag);
                                   }
                               }}
                 />
             </Menu.Item>
+            }
+            {height &&
             <Menu.Item key={name + '-lz'}>
                 <Space style={{width: '60px'}}>Height:</Space>
                 <NumericInput min={0.1}
@@ -67,10 +85,13 @@ const ReshapeElementMenu = ({
                               onChange={(e) => {
                                   if (element) {
                                       setElementSize(element.id, element.lx, element.ly, e ?? 0.1);
+                                      setUpdateFlag(!updateFlag);
                                   }
                               }}
                 />
             </Menu.Item>
+            }
+            {angle &&
             <Menu.Item key={name + '-angle'}>
                 <Space style={{width: '60px'}}>Angle:</Space>
                 <NumericInput min={0}
@@ -87,10 +108,12 @@ const ReshapeElementMenu = ({
                                           Util.toRadians(e ?? 0),
                                           element.rotation[2]
                                       );
+                                      setUpdateFlag(!updateFlag);
                                   }
                               }}
                 />
             </Menu.Item>
+            }
         </Menu>
     );
 
