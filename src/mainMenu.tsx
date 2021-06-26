@@ -30,6 +30,7 @@ export interface MainMenuProps {
     collectDailyLightSensorData: () => void;
     collectYearlyLightSensorData: () => void;
     openAboutUs: (on: boolean) => void;
+    requestUpdate: () => void;
 
     [key: string]: any;
 
@@ -39,13 +40,14 @@ const MainMenu = ({
                       collectDailyLightSensorData,
                       collectYearlyLightSensorData,
                       openAboutUs,
+                      requestUpdate,
                       ...rest
                   }: MainMenuProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const showGroundPanel = useStore(state => state.showGroundPanel);
     const showWeatherPanel = useStore(state => state.showWeatherPanel);
-    const shadowEnabled = useStore(state => state.shadowEnabled);
+    const viewState = useStore(state => state.viewState);
 
     const menu = (
         <Menu>
@@ -68,10 +70,11 @@ const MainMenu = ({
                 </Checkbox>
             </Menu.Item>
             <Menu.Item key={'shadow-check-box'}>
-                <Checkbox checked={shadowEnabled} onChange={(e) => {
+                <Checkbox checked={viewState.shadowEnabled} onChange={(e) => {
                     setCommonStore((state) => {
-                        state.shadowEnabled = e.target.checked;
+                        state.viewState.shadowEnabled = e.target.checked;
                     });
+                    requestUpdate();
                 }}>
                     Enable Shadow
                 </Checkbox>

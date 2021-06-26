@@ -42,6 +42,7 @@ const App = () => {
 
     const setCommonStore = useStore(state => state.set);
     const world = useStore(state => state.world);
+    const viewState = useStore(state => state.viewState);
     const loadWeatherData = useStore(state => state.loadWeatherData);
     const getClosestCity = useStore(state => state.getClosestCity);
 
@@ -52,7 +53,6 @@ const App = () => {
     const showYearlyLightSensorPanel = useStore(state => state.showYearlyLightSensorPanel);
     const autoRotate = useStore(state => state.autoRotate);
 
-    const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
     const enableOrbitController = useStore(state => state.enableOrbitController);
     const groundImage = useStore(state => state.groundImage);
@@ -64,6 +64,7 @@ const App = () => {
     const weatherData = useStore(state => state.weatherData);
     const now = new Date(useStore(state => state.date));
 
+    const [updateFlag, setUpdateFlag] = useState<boolean>(false);
     const [hourAngle, setHourAngle] = useState<number>(0);
     const [declinationAngle, setDeclinationAngle] = useState<number>(0);
     const [sunlightDirection, setSunlightDirection] = useState<Vector3>(new Vector3(0, 2, 2));
@@ -93,6 +94,10 @@ const App = () => {
         setHourAngle(computeHourAngle(now));
         setDeclinationAngle(computeDeclinationAngle(now));
     }, [nowString]);
+
+    const requestUpdate = () => {
+        setUpdateFlag(!updateFlag);
+    };
 
     const cameraPosition = new Vector3(0, 0, 5);
     const panCenter = new Vector3();
@@ -216,6 +221,7 @@ const App = () => {
             city={city}
             collectDailyLightSensorData={collectDailyLightSensorData}
             collectYearlyLightSensorData={collectYearlyLightSensorData}
+            requestUpdate={requestUpdate}
         />
     );
 
@@ -252,6 +258,7 @@ const App = () => {
                 collectDailyLightSensorData={collectDailyLightSensorData}
                 collectYearlyLightSensorData={collectYearlyLightSensorData}
                 openAboutUs={openAboutUs}
+                requestUpdate={requestUpdate}
             />
             <MainToolBar orbitControls={orbitControlsRef.current}/>
             {showGroundPanel &&
@@ -328,7 +335,7 @@ const App = () => {
                             <Simulation city={city}
                                         dailyLightSensorDataFlag={dailyLightSensorDataFlag}
                                         yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}/>
-                            {axes && <Axes/>}
+                            {viewState.axes && <Axes/>}
                             <Ground/>
                             {groundImage && <GroundImage/>}
                             <Sky theme={theme} night={!sunAboveHorizon}/>

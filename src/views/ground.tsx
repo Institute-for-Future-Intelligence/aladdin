@@ -15,7 +15,7 @@ import {Util} from "../Util";
 const Ground = () => {
 
     const setCommonStore = useStore(state => state.set);
-    const shadowEnabled = useStore(state => state.shadowEnabled);
+    const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const selectNone = useStore(state => state.selectNone);
     const moveHandleType = useStore(state => state.moveHandleType);

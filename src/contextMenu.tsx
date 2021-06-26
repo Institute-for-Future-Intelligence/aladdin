@@ -34,6 +34,7 @@ export interface ContextMenuProps {
     city: string | null;
     collectDailyLightSensorData: () => void;
     collectYearlyLightSensorData: () => void;
+    requestUpdate: () => void;
 
     [key: string]: any;
 
@@ -43,13 +44,14 @@ const ContextMenu = ({
                          city,
                          collectDailyLightSensorData,
                          collectYearlyLightSensorData,
+                         requestUpdate,
                          ...rest
                      }: ContextMenuProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const world = useStore(state => state.world);
+    const viewState = useStore(state => state.viewState);
     const updateElementById = useStore(state => state.updateElementById);
-    const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
     const theme = useStore(state => state.theme);
     const showHeliodonPanel = useStore(state => state.showHeliodonPanel);
@@ -79,9 +81,10 @@ const ContextMenu = ({
             return (
                 <StyledMenu style={{padding: 0, margin: 0}}>
                     <Menu.Item key={'axes'}>
-                        <Checkbox checked={axes} onChange={(e) => {
+                        <Checkbox checked={viewState.axes} onChange={(e) => {
                             setCommonStore(state => {
-                                state.axes = e.target.checked;
+                                state.viewState.axes = e.target.checked;
+                                requestUpdate();
                             });
                         }}>
                             Axes
@@ -130,7 +133,12 @@ const ContextMenu = ({
                     <Menu.Item key={'foundation-paste'} onClick={pasteElement}>
                         Paste
                     </Menu.Item>
-                    {selectedElement && <ReshapeElementMenu elementId={selectedElement.id} name={'foundation'}/>}
+                    {selectedElement &&
+                    <ReshapeElementMenu
+                        elementId={selectedElement.id}
+                        name={'foundation'}
+                        requestUpdate={requestUpdate}/>
+                    }
                 </StyledMenu>
             );
         case ObjectType.Sensor:
@@ -173,7 +181,12 @@ const ContextMenu = ({
                     <Menu.Item key={'cuboid-paste'} onClick={pasteElement}>
                         Paste
                     </Menu.Item>
-                    {selectedElement && <ReshapeElementMenu elementId={selectedElement.id} name={'foundation'}/>}
+                    {selectedElement &&
+                    <ReshapeElementMenu
+                        elementId={selectedElement.id}
+                        name={'cuboid'}
+                        requestUpdate={requestUpdate}/>
+                    }
                 </StyledMenu>
             );
         case ObjectType.Human:
@@ -185,7 +198,7 @@ const ContextMenu = ({
                     <Menu.Item key={'human-cut'} onClick={cutElement}>
                         Cut
                     </Menu.Item>
-                    {selectedElement && <HumanMenu/>}
+                    {selectedElement && <HumanMenu requestUpdate={requestUpdate}/>}
                 </StyledMenu>
             );
         case ObjectType.Tree:
@@ -204,9 +217,10 @@ const ContextMenu = ({
                                         maxHeight={20}
                                         widthName={'Spread'}
                                         adjustLength={false}
-                                        adjustAngle={false}/>
+                                        adjustAngle={false}
+                                        requestUpdate={requestUpdate}/>
                     }
-                    {selectedElement && <TreeMenu/>}
+                    {selectedElement && <TreeMenu requestUpdate={requestUpdate}/>}
                 </StyledMenu>
             );
         default:

@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useState} from "react";
+import React from "react";
 import {Menu, Radio, Space} from "antd";
 import {useStore} from "../stores/common";
 import {TreeType} from "../types";
@@ -23,11 +23,14 @@ const radioStyle = {
     lineHeight: '30px',
 };
 
-const TreeMenu = () => {
+export interface TreeMenuProps {
+    requestUpdate: () => void;
+}
+
+const TreeMenu = ({requestUpdate}: TreeMenuProps) => {
 
     const updateElementById = useStore(state => state.updateElementById);
     const getSelectedElement = useStore(state => state.getSelectedElement);
-    const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
     const tree = getSelectedElement();
 
@@ -38,7 +41,7 @@ const TreeMenu = () => {
                          onChange={(e) => {
                              if (tree) {
                                  updateElementById(tree.id, {name: e.target.value});
-                                 setUpdateFlag(!updateFlag);
+                                 requestUpdate();
                              }
                          }}
             >

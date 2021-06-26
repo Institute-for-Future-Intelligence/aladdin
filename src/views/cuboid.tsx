@@ -36,7 +36,7 @@ const Cuboid = ({
     cy = -cy; // we want positive y to point north
 
     const setCommonStore = useStore(state => state.set);
-    const shadowEnabled = useStore(state => state.shadowEnabled);
+    const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const moveHandleType = useStore(state => state.moveHandleType);
     const resizeHandleType = useStore(state => state.resizeHandleType);
     const {gl: {domElement}} = useThree();

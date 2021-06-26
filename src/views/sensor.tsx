@@ -30,7 +30,7 @@ const Sensor = ({
     cy = -cy; // we want positive y to point north
 
     const setCommonStore = useStore(state => state.set);
-    const shadowEnabled = useStore(state => state.shadowEnabled);
+    const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const getElementById = useStore(state => state.getElementById);
     const {gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);

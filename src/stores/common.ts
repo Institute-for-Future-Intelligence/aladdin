@@ -20,6 +20,8 @@ import {TreeModel} from "../models/TreeModel";
 import {SensorModel} from "../models/SensorModel";
 import {FoundationModel} from "../models/FoundationModel";
 import {CuboidModel} from "../models/CuboidModel";
+import {DefaultViewState} from "./DefaultViewState";
+import {ViewState} from "../views/ViewState";
 
 enableMapSet();
 
@@ -27,6 +29,7 @@ export interface CommonStoreState {
     set: (fn: (state: CommonStoreState) => void) => void;
     world: WorldModel;
     elements: ElementModel[];
+    viewState: ViewState;
 
     showGroundPanel: boolean;
     showHeliodonPanel: boolean;
@@ -36,12 +39,10 @@ export interface CommonStoreState {
     autoRotate: boolean;
 
     grid: boolean;
-    axes: boolean;
     groundImage: boolean;
     groundColor: string;
     theme: string;
     heliodon: boolean;
-    shadowEnabled: boolean;
     address: string;
     latitude: number;
     longitude: number;
@@ -86,18 +87,19 @@ export interface CommonStoreState {
 export const useStore = create<CommonStoreState>(devtools(persist((
     set,
     get,
-    api,
 ) => {
 
     const immerSet: CommonStoreState['set'] = fn => set(produce(fn));
     const defaultWorldModel = new DefaultWorldModel();
     const defaultElements = defaultWorldModel.getElements();
+    const defaultViewState = new DefaultViewState();
 
     return {
 
         set: immerSet,
         world: defaultWorldModel,
         elements: defaultElements,
+        viewState: defaultViewState,
 
         showGroundPanel: false,
         showHeliodonPanel: false,
@@ -107,12 +109,10 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         autoRotate: false,
 
         grid: false,
-        axes: true,
         groundImage: false,
         groundColor: 'forestgreen',
         theme: 'Default',
         heliodon: false,
-        shadowEnabled: true,
 
         address: 'Natick, MA',
         latitude: 42.2844063,

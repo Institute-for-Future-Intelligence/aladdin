@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useState} from "react";
+import React from "react";
 import {Menu, Radio, Space} from "antd";
 import {HumanName} from "../types";
 import JackImage from "../resources/jack.png";
@@ -36,11 +36,14 @@ const radioStyle = {
     lineHeight: '30px',
 };
 
-const HumanMenu = () => {
+export interface HumanMenuProps {
+    requestUpdate: () => void;
+}
+
+const HumanMenu = ({requestUpdate}: HumanMenuProps) => {
 
     const updateElementById = useStore(state => state.updateElementById);
     const getSelectedElement = useStore(state => state.getSelectedElement);
-    const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
     const human = getSelectedElement();
 
@@ -51,7 +54,7 @@ const HumanMenu = () => {
                          onChange={(e) => {
                              if (human) {
                                  updateElementById(human.id, {name: e.target.value});
-                                 setUpdateFlag(!updateFlag);
+                                 requestUpdate();
                              }
                          }}
             >

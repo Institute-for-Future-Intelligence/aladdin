@@ -38,7 +38,7 @@ const Tree = ({
     cy = -cy; // we want positive y to point north
 
     const setCommonStore = useStore(state => state.set);
-    const shadowEnabled = useStore(state => state.shadowEnabled);
+    const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const [hovered, setHovered] = useState(false);
     const meshRef = useRef<Mesh>(null!);
     const {gl: {domElement}} = useThree();
