@@ -5,9 +5,9 @@
 import create from 'zustand';
 import {devtools, persist} from 'zustand/middleware';
 import produce, {enableMapSet} from 'immer';
-import {WorldModel} from "../models/worldModel";
-import {ElementModel} from "../models/elementModel";
-import {WeatherModel} from "../models/weatherModel";
+import {WorldModel} from "../models/WorldModel";
+import {ElementModel} from "../models/ElementModel";
+import {WeatherModel} from "../models/WeatherModel";
 import weather from '../resources/weather.csv';
 import Papa from "papaparse";
 import {Util} from "../Util";
@@ -15,11 +15,11 @@ import {DatumEntry, MoveHandleType, ObjectType, ResizeHandleType} from "../types
 import {DefaultWorldModel} from "./DefaultWorldModel";
 import {Vector2, Vector3} from "three";
 import {ElementModelCloner} from "../models/ElementModelCloner";
-import {HumanModel} from "../models/humanModel";
-import {TreeModel} from "../models/treeModel";
-import {SensorModel} from "../models/sensorModel";
-import {FoundationModel} from "../models/foundationModel";
-import {CuboidModel} from "../models/cuboidModel";
+import {HumanModel} from "../models/HumanModel";
+import {TreeModel} from "../models/TreeModel";
+import {SensorModel} from "../models/SensorModel";
+import {FoundationModel} from "../models/FoundationModel";
+import {CuboidModel} from "../models/CuboidModel";
 
 enableMapSet();
 

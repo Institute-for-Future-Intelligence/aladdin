@@ -6,7 +6,7 @@ import React, {useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
 import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
-import {SensorModel} from "../models/sensorModel";
+import {SensorModel} from "../models/SensorModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS} from "../constants";
 

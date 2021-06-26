@@ -26,7 +26,7 @@ import JuroImage from "../resources/juro.png";
 import {DoubleSide, Mesh, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {HumanModel} from "../models/humanModel";
+import {HumanModel} from "../models/HumanModel";
 import {Billboard, Sphere} from "@react-three/drei";
 import {MOVE_HANDLE_RADIUS} from "../constants";
 import {HumanName} from "../types";

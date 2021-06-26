@@ -2,16 +2,16 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import {ElementModel} from "../models/elementModel";
+import {ElementModel} from "../models/ElementModel";
 import {HumanName, ObjectType} from "../types";
-import {FoundationModel} from "../models/foundationModel";
-import {CuboidModel} from "../models/cuboidModel";
-import {SensorModel} from "../models/sensorModel";
+import {FoundationModel} from "../models/FoundationModel";
+import {CuboidModel} from "../models/CuboidModel";
+import {SensorModel} from "../models/SensorModel";
 import {Vector3} from "three";
-import {WorldModel} from "../models/worldModel";
-import {GroundModel} from "../models/groundModel";
-import {HumanModel} from "../models/humanModel";
-import {TreeModel} from "../models/treeModel";
+import {WorldModel} from "../models/WorldModel";
+import {GroundModel} from "../models/GroundModel";
+import {HumanModel} from "../models/HumanModel";
+import {TreeModel} from "../models/TreeModel";
 
 export class DefaultWorldModel implements WorldModel {
 

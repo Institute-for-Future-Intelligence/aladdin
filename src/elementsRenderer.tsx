@@ -7,13 +7,13 @@ import Foundation from "./views/foundation";
 import Sensor from "./views/sensor";
 import Cuboid from "./views/cuboid";
 import {ObjectType} from "./types";
-import {FoundationModel} from "./models/foundationModel";
-import {SensorModel} from "./models/sensorModel";
-import {CuboidModel} from "./models/cuboidModel";
+import {FoundationModel} from "./models/FoundationModel";
+import {SensorModel} from "./models/SensorModel";
+import {CuboidModel} from "./models/CuboidModel";
 import {useStore} from "./stores/common";
-import {HumanModel} from "./models/humanModel";
+import {HumanModel} from "./models/HumanModel";
 import Human from "./views/human";
-import {TreeModel} from "./models/treeModel";
+import {TreeModel} from "./models/TreeModel";
 import Tree from "./views/tree";
 
 const ElementsRenderer: React.FC = () => {

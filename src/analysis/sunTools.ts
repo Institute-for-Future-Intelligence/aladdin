@@ -5,7 +5,7 @@
 import {Util} from "../Util";
 import {Vector3} from "three";
 import {AirMass, ASHRAE_C, SOLAR_CONSTANT} from "./analysisConstants";
-import {GroundModel} from "../models/groundModel";
+import {GroundModel} from "../models/GroundModel";
 
 export const TILT_ANGLE = 23.45 / 180.0 * Math.PI;
 

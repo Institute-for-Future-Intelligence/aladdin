@@ -7,11 +7,12 @@ import styled from "styled-components";
 import 'antd/dist/antd.css';
 import {useStore} from "./stores/common";
 import {useWorker} from "@koale/useworker";
-import {Menu, Checkbox, Radio} from 'antd';
+import {Menu, Checkbox, Radio, Space} from 'antd';
 import {ObjectType, Theme} from "./types";
 import ReshapeElementMenu from "./components/reshapeElementMenu";
 import HumanMenu from "./components/humanMenu";
 import TreeMenu from "./components/treeMenu";
+import NumericInput from "react-numeric-input";
 
 // TODO: Reduce the space between menu items
 const StyledMenu = styled(Menu)`
@@ -46,6 +47,7 @@ const ContextMenu = ({
                      }: ContextMenuProps) => {
 
     const setCommonStore = useStore(state => state.set);
+    const world = useStore(state => state.world);
     const updateElementById = useStore(state => state.updateElementById);
     const axes = useStore(state => state.axes);
     const grid = useStore(state => state.grid);
@@ -210,6 +212,9 @@ const ContextMenu = ({
         default:
             return (
                 <StyledMenu>
+                    <Menu.Item key={'ground-paste'} onClick={pasteElement}>
+                        Paste
+                    </Menu.Item>
                     <Menu.Item key={'ground-grid'}>
                         <Checkbox checked={grid} onChange={(e) => {
                             setCommonStore(state => {
@@ -228,8 +233,23 @@ const ContextMenu = ({
                             Ground Settings
                         </Checkbox>
                     </Menu.Item>
-                    <Menu.Item key={'ground-paste'} onClick={pasteElement}>
-                        Paste
+                    <Menu.Item key={'ground-albedo'}>
+                        <Space style={{width: '60px'}}>Albedo:</Space>
+                        <NumericInput min={0.05}
+                                      max={1}
+                                      precision={2}
+                                      value={world.ground.albedo}
+                                      step={0.01}
+                                      size={5}
+                                      onChange={(e) => {
+                                          if (e) {
+                                              setCommonStore(state => {
+                                                  state.world.ground.albedo = e;
+                                              });
+                                              //setUpdateFlag(!updateFlag);
+                                          }
+                                      }}
+                        />
                     </Menu.Item>
                 </StyledMenu>
             );

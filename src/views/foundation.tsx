@@ -6,7 +6,7 @@ import React, {useMemo, useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
 import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
-import {FoundationModel} from "../models/foundationModel";
+import {FoundationModel} from "../models/FoundationModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {ActionType, MoveHandleType, ResizeHandleType} from "../types";
 import {

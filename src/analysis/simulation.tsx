@@ -11,7 +11,7 @@ import {DatumEntry, ObjectType} from "../types";
 import {Util} from "../Util";
 import {AirMass} from "./analysisConstants";
 import {MONTHS} from "../constants";
-import {SensorModel} from "../models/sensorModel";
+import {SensorModel} from "../models/SensorModel";
 
 export interface SimulationProps {
 

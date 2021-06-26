@@ -9,9 +9,7 @@ import 'antd/dist/antd.css';
 import styled from "styled-components";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faUndoAlt} from '@fortawesome/free-solid-svg-icons';
-import {faRedoAlt} from '@fortawesome/free-solid-svg-icons';
-import {faSave} from '@fortawesome/free-solid-svg-icons';
+import {faUndoAlt, faRedoAlt, faSave, faDownload} from '@fortawesome/free-solid-svg-icons';
 
 const LeftContainer = styled.div`
   position: fixed;
@@ -61,6 +59,10 @@ const MainToolBar = ({orbitControls}: MainToolBarProps) => {
 
     };
 
+    const download = () => {
+
+    };
+
     return (
         <>
             <LeftContainer>
@@ -96,21 +98,27 @@ const MainToolBar = ({orbitControls}: MainToolBarProps) => {
                         <FontAwesomeIcon title={'Undo'}
                                          icon={faUndoAlt}
                                          size={'3x'}
-                                         color={'#1E90FF'}
+                                         color={'#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={undo}/>
                         <FontAwesomeIcon title={'Redo'}
                                          icon={faRedoAlt}
                                          size={'3x'}
-                                         color={'#1E90FF'}
+                                         color={'#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={redo}/>
                         <FontAwesomeIcon title={'Save'}
                                          icon={faSave}
                                          size={'3x'}
-                                         color={'#1E90FF'}
+                                         color={'#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={save}/>
+                        <FontAwesomeIcon title={'Download'}
+                                         icon={faDownload}
+                                         size={'3x'}
+                                         color={'#666666'}
+                                         style={{paddingRight: '12px', cursor: 'pointer'}}
+                                         onClick={download}/>
                     </div>
                     <div>
                         <Button type="primary" title={'Sign In'} onClick={signIn}>Sign in</Button>

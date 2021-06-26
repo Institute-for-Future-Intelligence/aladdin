@@ -21,7 +21,7 @@ import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {Billboard, Sphere} from "@react-three/drei";
 import {MOVE_HANDLE_RADIUS} from "../constants";
-import {TreeModel} from "../models/treeModel";
+import {TreeModel} from "../models/TreeModel";
 import {ShedTreeType, TreeType} from "../types";
 
 const Tree = ({

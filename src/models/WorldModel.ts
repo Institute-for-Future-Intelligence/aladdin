@@ -3,7 +3,7 @@
  */
 
 import {Vector3} from "three";
-import {GroundModel} from "./groundModel";
+import {GroundModel} from "./GroundModel";
 
 export interface WorldModel {
 

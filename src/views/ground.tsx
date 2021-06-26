@@ -7,7 +7,7 @@ import {Plane} from "@react-three/drei";
 import {useStore} from "../stores/common";
 import {DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3} from "three";
 import {IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType} from "../types";
-import {ElementModel} from "../models/elementModel";
+import {ElementModel} from "../models/ElementModel";
 import {useThree} from "@react-three/fiber";
 import {MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS} from "../constants";
 import {Util} from "../Util";

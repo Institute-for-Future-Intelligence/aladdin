@@ -2,13 +2,13 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import {HumanModel} from "./humanModel";
+import {HumanModel} from "./HumanModel";
 import {ObjectType} from "../types";
 import {MathUtils} from "three";
-import {TreeModel} from "./treeModel";
-import {SensorModel} from "./sensorModel";
-import {FoundationModel} from "./foundationModel";
-import {CuboidModel} from "./cuboidModel";
+import {TreeModel} from "./TreeModel";
+import {SensorModel} from "./SensorModel";
+import {FoundationModel} from "./FoundationModel";
+import {CuboidModel} from "./CuboidModel";
 
 export class ElementModelCloner {
 
