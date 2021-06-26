@@ -59,6 +59,7 @@ const Header = styled.div`
 export interface DailyLightSensorPanelProps {
 
     city: string | null;
+    requestUpdate: () => void;
 
     [key: string]: any;
 
@@ -66,12 +67,13 @@ export interface DailyLightSensorPanelProps {
 
 const DailyLightSensorPanel = ({
                                    city,
+                                   requestUpdate,
                                    ...rest
                                }: DailyLightSensorPanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const sensorData = useStore(state => state.dailyLightSensorData);
-    const now = new Date(useStore(state => state.date));
+    const now = new Date(useStore(state => state.world.date));
     const [curPosition, setCurPosition] = useState({x: 0, y: 0});
 
     const responsiveHeight = 100;
@@ -109,8 +111,9 @@ const DailyLightSensorPanel = ({
                         <span style={{cursor: 'pointer'}}
                               onMouseDown={() => {
                                   setCommonStore((state) => {
-                                      state.showDailyLightSensorPanel = false;
+                                      state.viewState.showDailyLightSensorPanel = false;
                                   });
+                                  requestUpdate();
                               }}>
                             Close
                         </span>

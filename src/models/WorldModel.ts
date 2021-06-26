@@ -8,8 +8,14 @@ import {GroundModel} from "./GroundModel";
 export interface WorldModel {
 
     name: string;
+    date: string;
+    latitude: number;
+    longitude: number;
+    address: string;
     cameraPosition: Vector3;
     panCenter: Vector3;
     ground: GroundModel;
+
+    timesPerHour: number;
 
 }

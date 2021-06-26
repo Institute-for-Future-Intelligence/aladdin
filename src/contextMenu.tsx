@@ -53,10 +53,6 @@ const ContextMenu = ({
     const viewState = useStore(state => state.viewState);
     const updateElementById = useStore(state => state.updateElementById);
     const grid = useStore(state => state.grid);
-    const theme = useStore(state => state.theme);
-    const showHeliodonPanel = useStore(state => state.showHeliodonPanel);
-    const showGroundPanel = useStore(state => state.showGroundPanel);
-    const showWeatherPanel = useStore(state => state.showWeatherPanel);
     const clickObjectType = useStore(state => state.clickObjectType);
     const cutElementById = useStore(state => state.cutElementById);
     const copyElementById = useStore(state => state.copyElementById);
@@ -84,35 +80,38 @@ const ContextMenu = ({
                         <Checkbox checked={viewState.axes} onChange={(e) => {
                             setCommonStore(state => {
                                 state.viewState.axes = e.target.checked;
-                                requestUpdate();
                             });
+                            requestUpdate();
                         }}>
                             Axes
                         </Checkbox>
                     </Menu.Item>
                     <Menu.Item key={'heliodon-settings'}>
-                        <Checkbox checked={showHeliodonPanel} onChange={(e) => {
+                        <Checkbox checked={viewState.showHeliodonPanel} onChange={(e) => {
                             setCommonStore(state => {
-                                state.showHeliodonPanel = e.target.checked;
+                                state.viewState.showHeliodonPanel = e.target.checked;
                             });
+                            requestUpdate();
                         }}>
                             Heliodon Settings
                         </Checkbox>
                     </Menu.Item>
                     <Menu.Item key={'weather-data'}>
-                        <Checkbox checked={showWeatherPanel} onChange={(e) => {
+                        <Checkbox checked={viewState.showWeatherPanel} onChange={(e) => {
                             setCommonStore(state => {
-                                state.showWeatherPanel = e.target.checked;
+                                state.viewState.showWeatherPanel = e.target.checked;
                             });
+                            requestUpdate();
                         }}>
                             Weather Data
                         </Checkbox>
                     </Menu.Item>
                     <SubMenu key={'theme'} title={'Theme'}>
-                        <Radio.Group value={theme} style={{height: '135px'}} onChange={(e) => {
+                        <Radio.Group value={viewState.theme} style={{height: '135px'}} onChange={(e) => {
                             setCommonStore(state => {
-                                state.theme = e.target.value;
+                                state.viewState.theme = e.target.value;
                             });
+                            requestUpdate();
                         }}>
                             <Radio style={radioStyle} value={Theme.Default}>{Theme.Default}</Radio>
                             <Radio style={radioStyle} value={Theme.Desert}>{Theme.Desert}</Radio>
@@ -239,10 +238,11 @@ const ContextMenu = ({
                         </Checkbox>
                     </Menu.Item>
                     <Menu.Item key={'ground-settings'}>
-                        <Checkbox checked={showGroundPanel} onChange={(e) => {
+                        <Checkbox checked={viewState.showGroundPanel} onChange={(e) => {
                             setCommonStore(state => {
-                                state.showGroundPanel = e.target.checked;
+                                state.viewState.showGroundPanel = e.target.checked;
                             });
+                            requestUpdate();
                         }}>
                             Ground Settings
                         </Checkbox>

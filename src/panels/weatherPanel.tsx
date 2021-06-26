@@ -61,6 +61,7 @@ export interface WeatherPanelProps {
 
     city: string | null;
     graphs: GraphDataType[];
+    requestUpdate: () => void;
 
     [key: string]: any;
 
@@ -69,12 +70,13 @@ export interface WeatherPanelProps {
 const WeatherPanel = ({
                           city,
                           graphs,
+                          requestUpdate,
                           ...rest
                       }: WeatherPanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const getWeather = useStore(state => state.getWeather);
-    const now = useStore(state => state.date);
+    const now = useStore(state => state.world.date);
     const [curPosition, setCurPosition] = useState({x: 0, y: 0});
 
     const responsiveHeight = useMemo(() => {
@@ -157,8 +159,9 @@ const WeatherPanel = ({
                         <span style={{cursor: 'pointer'}}
                               onMouseDown={() => {
                                   setCommonStore((state) => {
-                                      state.showWeatherPanel = false;
+                                      state.viewState.showWeatherPanel = false;
                                   });
+                                  requestUpdate();
                               }}>
                             Close
                         </span>

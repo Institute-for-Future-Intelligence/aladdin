@@ -46,23 +46,9 @@ const App = () => {
     const loadWeatherData = useStore(state => state.loadWeatherData);
     const getClosestCity = useStore(state => state.getClosestCity);
 
-    const showGroundPanel = useStore(state => state.showGroundPanel);
-    const showHeliodonPanel = useStore(state => state.showHeliodonPanel);
-    const showWeatherPanel = useStore(state => state.showWeatherPanel);
-    const showDailyLightSensorPanel = useStore(state => state.showDailyLightSensorPanel);
-    const showYearlyLightSensorPanel = useStore(state => state.showYearlyLightSensorPanel);
-    const autoRotate = useStore(state => state.autoRotate);
-
     const grid = useStore(state => state.grid);
     const enableOrbitController = useStore(state => state.enableOrbitController);
-    const groundImage = useStore(state => state.groundImage);
-    const groundColor = useStore(state => state.groundColor);
-    const theme = useStore(state => state.theme);
-    const heliodon = useStore(state => state.heliodon);
-    const latitude = useStore(state => state.latitude);
-    const longitude = useStore(state => state.longitude);
     const weatherData = useStore(state => state.weatherData);
-    const now = new Date(useStore(state => state.date));
 
     const [updateFlag, setUpdateFlag] = useState<boolean>(false);
     const [hourAngle, setHourAngle] = useState<number>(0);
@@ -74,6 +60,7 @@ const App = () => {
     const [yearlyLightSensorDataFlag, setYearlyLightSensorDataFlag] = useState<boolean>(false);
     const [aboutUs, setAboutUs] = useState(false);
     const orbitControlsRef = useRef<OrbitControls>();
+    const now = new Date(world.date);
     const radius = 10;
 
     useEffect(() => {
@@ -81,13 +68,13 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        setSunlightDirection(computeSunLocation(radius, hourAngle, declinationAngle, Util.toRadians(latitude))
+        setSunlightDirection(computeSunLocation(radius, hourAngle, declinationAngle, Util.toRadians(world.latitude))
             .applyEuler(new Euler(-Math.PI / 2, 0, 0)));
-    }, [latitude, hourAngle, declinationAngle]);
+    }, [world.latitude, hourAngle, declinationAngle]);
 
     useEffect(() => {
-        setCity(getClosestCity(latitude, longitude));
-    }, [latitude, longitude, weatherData]);
+        setCity(getClosestCity(world.latitude, world.longitude));
+    }, [world.latitude, world.longitude, weatherData]);
 
     const nowString = now.toString();
     useMemo(() => {
@@ -114,20 +101,23 @@ const App = () => {
 
     const setGroundImage = (on: boolean) => {
         setCommonStore(state => {
-            state.groundImage = on;
+            state.viewState.groundImage = on;
         });
+        requestUpdate();
     };
 
     const setGroundColor = (color: string) => {
         setCommonStore(state => {
-            state.groundColor = color;
+            state.viewState.groundColor = color;
         });
+        requestUpdate();
     };
 
     const setHeliodon = (on: boolean) => {
         setCommonStore(state => {
-            state.heliodon = on;
+            state.viewState.heliodon = on;
         });
+        requestUpdate();
     };
 
     // animation state should not be persisted
@@ -141,74 +131,82 @@ const App = () => {
         d.setMonth(date.getMonth());
         d.setDate(date.getDate());
         setCommonStore(state => {
-            state.date = d.toString();
+            state.world.date = d.toString();
         });
+        requestUpdate();
     };
 
     const changeTime = (date: Date) => {
         const d = new Date(now);
         d.setHours(date.getHours(), date.getMinutes());
         setCommonStore(state => {
-            state.date = d.toString();
+            state.world.date = d.toString();
         });
+        requestUpdate();
     };
 
     const changeLatitude = (latitude: number) => {
         setCommonStore(state => {
-            state.latitude = latitude;
+            state.world.latitude = latitude;
         });
+        requestUpdate();
     };
 
     const changeLatitudeAndRemoveAddress = (latitude: number) => {
         setCommonStore(state => {
-            state.latitude = latitude;
-            state.address = '';
+            state.world.latitude = latitude;
+            state.world.address = '';
         });
+        requestUpdate();
     };
 
     const changeLongitude = (longitude: number) => {
         setCommonStore(state => {
-            state.longitude = longitude;
+            state.world.longitude = longitude;
         });
+        requestUpdate();
     };
 
     const changeMapZoom = (zoom: number) => {
         setCommonStore(state => {
-            state.mapZoom = zoom;
+            state.viewState.mapZoom = zoom;
         });
+        requestUpdate();
     };
 
     const changeMapTilt = (tilt: number) => {
         setCommonStore(state => {
-            state.mapTilt = tilt;
+            state.viewState.mapTilt = tilt;
         });
+        requestUpdate();
     };
 
     const changeMapType = (type: string) => {
         setCommonStore(state => {
-            state.mapType = type;
+            state.viewState.mapType = type;
         });
+        requestUpdate();
     };
 
     const sunAboveHorizon = sunlightDirection.y > 0;
 
     const collectDailyLightSensorData = () => {
         setCommonStore(state => {
-            state.timesPerHour = 20;
+            state.world.timesPerHour = 20;
         });
         setDailyLightSensorDataFlag(!dailyLightSensorDataFlag);
         setCommonStore(state => {
-            state.showDailyLightSensorPanel = true;
+            state.viewState.showDailyLightSensorPanel = true;
         });
     };
 
     const collectYearlyLightSensorData = async () => {
         setCommonStore(state => {
-            state.timesPerHour = 20;
+            state.world.timesPerHour = 20;
         });
         setYearlyLightSensorDataFlag(!yearlyLightSensorDataFlag);
         setCommonStore(state => {
-            state.showYearlyLightSensorPanel = true;
+            state.viewState.showYearlyLightSensorPanel = true;
         });
     };
 
@@ -260,11 +258,11 @@ const App = () => {
                 openAboutUs={openAboutUs}
                 requestUpdate={requestUpdate}
             />
-            <MainToolBar orbitControls={orbitControlsRef.current}/>
-            {showGroundPanel &&
+            <MainToolBar orbitControls={orbitControlsRef.current} requestUpdate={requestUpdate}/>
+            {viewState.showGroundPanel &&
             <GroundPanel grid={grid}
-                         groundImage={groundImage}
-                         groundColor={groundColor}
+                         groundImage={viewState.groundImage}
+                         groundColor={viewState.groundColor}
                          setGrid={setGrid}
                          setGroundImage={setGroundImage}
                          setGroundColor={setGroundColor}
@@ -273,22 +271,27 @@ const App = () => {
                          changeMapZoom={changeMapZoom}
                          changeMapTilt={changeMapTilt}
                          changeMapType={changeMapType}
+                         requestUpdate={requestUpdate}
             />}
-            {showHeliodonPanel &&
-            <HeliodonPanel latitude={latitude}
+            {viewState.showHeliodonPanel &&
+            <HeliodonPanel latitude={world.latitude}
                            date={now}
-                           heliodon={heliodon}
+                           heliodon={viewState.heliodon}
                            animateSun={animateSun}
                            changeDate={changeDate}
                            changeTime={changeTime}
                            changeLatitude={changeLatitudeAndRemoveAddress}
                            setHeliodon={setHeliodon}
                            setSunAnimation={setSunAnimation}
+                           requestUpdate={requestUpdate}
             />}
-            {showYearlyLightSensorPanel && <YearlyLightSensorPanel city={city}/>}
-            {showDailyLightSensorPanel && <DailyLightSensorPanel city={city}/>}
-            {showWeatherPanel &&
+            {viewState.showYearlyLightSensorPanel &&
+            <YearlyLightSensorPanel city={city} requestUpdate={requestUpdate}/>}
+            {viewState.showDailyLightSensorPanel &&
+            <DailyLightSensorPanel city={city} requestUpdate={requestUpdate}/>}
+            {viewState.showWeatherPanel &&
             <WeatherPanel city={city}
+                          requestUpdate={requestUpdate}
                           graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}
             />}
             {aboutUs && <About openAboutUs={openAboutUs}/>}
@@ -305,7 +308,7 @@ const App = () => {
                             style={{height: 'calc(100vh - 70px)', backgroundColor: 'black'}}>
                         <OrbitController
                             enabled={enableOrbitController}
-                            autoRotate={autoRotate}
+                            autoRotate={viewState.autoRotate}
                             panCenter={panCenter}
                             orbitControlsRef={orbitControlsRef}
                         />
@@ -337,15 +340,15 @@ const App = () => {
                                         yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}/>
                             {viewState.axes && <Axes/>}
                             <Ground/>
-                            {groundImage && <GroundImage/>}
-                            <Sky theme={theme} night={!sunAboveHorizon}/>
-                            {heliodon &&
+                            {viewState.groundImage && <GroundImage/>}
+                            <Sky theme={viewState.theme} night={!sunAboveHorizon}/>
+                            {viewState.heliodon &&
                             <Heliodon
                                 hourAngle={hourAngle}
                                 declinationAngle={declinationAngle}
                                 radius={radius}
                                 date={now}
-                                latitude={Util.toRadians(latitude)}
+                                latitude={Util.toRadians(world.latitude)}
                             />}
                         </Suspense>
                     </Canvas>

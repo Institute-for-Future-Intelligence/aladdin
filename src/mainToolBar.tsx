@@ -35,13 +35,13 @@ const RightContainer = styled.div`
 
 export interface MainToolBarProps {
     orbitControls?: OrbitControls;
+    requestUpdate: () => void;
 }
 
-const MainToolBar = ({orbitControls}: MainToolBarProps) => {
+const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
 
     const setCommonStore = useStore(state => state.set);
-    const autoRotate = useStore(state => state.autoRotate);
-    const heliodon = useStore(state => state.showHeliodonPanel);
+    const viewState = useStore(state => state.viewState);
 
     const signIn = () => {
 
@@ -69,19 +69,27 @@ const MainToolBar = ({orbitControls}: MainToolBarProps) => {
                 <Space direction='horizontal'>
                     <div>
                         <span style={{paddingRight: '10px'}}>Spin</span>
-                        <Switch title={'Spin view'} checked={autoRotate} onChange={(checked) => {
-                            setCommonStore((state) => {
-                                state.autoRotate = checked;
-                            });
-                        }}/>
+                        <Switch title={'Spin view'}
+                                checked={viewState.autoRotate}
+                                onChange={(checked) => {
+                                    setCommonStore((state) => {
+                                        state.viewState.autoRotate = checked;
+                                    });
+                                    requestUpdate();
+                                }}
+                        />
                     </div>
                     <div>
                         <span style={{paddingRight: '10px', paddingLeft: '10px'}}>Heliodon</span>
-                        <Switch title={'Show heliodon'} checked={heliodon} onChange={(checked) => {
-                            setCommonStore((state) => {
-                                state.showHeliodonPanel = checked;
-                            });
-                        }}/>
+                        <Switch title={'Show heliodon'}
+                                checked={viewState.showHeliodonPanel}
+                                onChange={(checked) => {
+                                    setCommonStore((state) => {
+                                        state.viewState.showHeliodonPanel = checked;
+                                    });
+                                    requestUpdate();
+                                }}
+                        />
                     </div>
                     <div>
                         <Button type="primary" title={'Reset view'} onClick={() => {

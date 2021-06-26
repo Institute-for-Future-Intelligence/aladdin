@@ -15,13 +15,12 @@ import {Util} from "../Util";
 const Ground = () => {
 
     const setCommonStore = useStore(state => state.set);
-    const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
+    const viewState = useStore(state => state.viewState);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const selectNone = useStore(state => state.selectNone);
     const moveHandleType = useStore(state => state.moveHandleType);
     const resizeHandleType = useStore(state => state.resizeHandleType);
     const resizeAnchor = useStore(state => state.resizeAnchor);
-    const groundColor = useStore(state => state.groundColor);
     const setElementPosition = useStore(state => state.setElementPosition);
     const setElementSize = useStore(state => state.setElementSize);
     const updateElement = useStore(state => state.updateElementById);
@@ -91,7 +90,7 @@ const Ground = () => {
                 <meshStandardMaterial attach="material" side={DoubleSide} opacity={0.1} color={'white'}/>
             </Plane>
             }
-            <Plane receiveShadow={shadowEnabled}
+            <Plane receiveShadow={viewState.shadowEnabled}
                    ref={groundPlaneRef}
                    name={'Ground'}
                    rotation={[-Math.PI / 2, 0, 0]}
@@ -282,7 +281,7 @@ const Ground = () => {
                        }
                    }}
             >
-                <meshStandardMaterial attach="material" color={groundColor}/>
+                <meshStandardMaterial attach="material" color={viewState.groundColor}/>
             </Plane>
         </>
     )

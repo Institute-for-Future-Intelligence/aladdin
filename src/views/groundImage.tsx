@@ -10,9 +10,9 @@ import {getMapImage} from "../helpers";
 
 const GroundImage = () => {
 
-    const latitude = useStore(state => state.latitude);
-    const longitude = useStore(state => state.longitude);
-    const mapZoom = useStore(state => state.mapZoom);
+    const latitude = useStore(state => state.world.latitude);
+    const longitude = useStore(state => state.world.longitude);
+    const mapZoom = useStore(state => state.viewState.mapZoom);
 
     const texture = useTexture(getMapImage(640, latitude, longitude, mapZoom));
 

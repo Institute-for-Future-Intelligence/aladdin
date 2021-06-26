@@ -30,16 +30,13 @@ const Maps = ({
                   setType,
               }: MapsProp) => {
 
-    const latitude = useStore(state => state.latitude);
-    const longitude = useStore(state => state.longitude);
-    const zoom = useStore(state => state.mapZoom);
-    const type = useStore(state => state.mapType);
-    const tilt = useStore(state => state.mapTilt);
+    const latitude = useStore(state => state.world.latitude);
+    const longitude = useStore(state => state.world.longitude);
+    const viewState = useStore(state => state.viewState);
     const [map, setMap] = useState<google.maps.Map | null>(null);
     const bounds = useRef<google.maps.LatLngBounds | null | undefined>();
     const cities = useRef<google.maps.LatLng[]>([]);
     const weatherData = useStore(state => state.weatherData);
-    const mapWeatherStations = useStore(state => state.mapWeatherStations);
     const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
     useEffect(() => {
@@ -72,7 +69,7 @@ const Maps = ({
     const onBoundsChanged = () => {
         if (map) {
             bounds.current = map.getBounds();
-            if (mapWeatherStations) {
+            if (viewState.mapWeatherStations) {
                 loadCities();
             }
         }
@@ -95,7 +92,7 @@ const Maps = ({
     const onZoomChanged = () => {
         if (map) {
             const z = map.getZoom();
-            if (z !== zoom) {
+            if (z !== viewState.mapZoom) {
                 setZoom?.(z);
             }
         }
@@ -104,7 +101,7 @@ const Maps = ({
     const onTiltChanged = () => {
         if (map) {
             const t = map.getTilt();
-            if (t !== tilt) {
+            if (t !== viewState.mapTilt) {
                 setTilt?.(t);
             }
         }
@@ -113,7 +110,7 @@ const Maps = ({
     const onMapTypeIdChanged = () => {
         if (map) {
             const typeId = map.getMapTypeId();
-            if (typeId !== type) {
+            if (typeId !== viewState.mapType) {
                 setType?.(typeId);
             }
         }
@@ -124,10 +121,10 @@ const Maps = ({
     return (
         <GoogleMap
             mapContainerStyle={containerStyle}
-            mapTypeId={type}
+            mapTypeId={viewState.mapType}
             center={latLng}
-            zoom={zoom}
-            tilt={tilt}
+            zoom={viewState.mapZoom}
+            tilt={viewState.mapTilt}
             onLoad={onLoad}
             onBoundsChanged={onBoundsChanged}
             onUnmount={onUnmount}
@@ -138,9 +135,9 @@ const Maps = ({
         >
             { /* Child components, such as markers, info windows, etc. */}
             <>
-                {mapWeatherStations &&
+                {viewState.mapWeatherStations &&
                 cities.current.map((c, index) => {
-                    const scale = 0.2 * zoom;
+                    const scale = 0.2 * viewState.mapZoom;
                     return (
                         <Marker
                             key={index}

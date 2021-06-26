@@ -30,16 +30,14 @@ const Simulation = ({
     const world = useStore(state => state.world);
     const elements = useStore(state => state.elements);
     const getWeather = useStore(state => state.getWeather);
-    const now = new Date(useStore(state => state.date));
-    const latitude = useStore(state => state.latitude);
-    const timesPerHour = useStore(state => state.timesPerHour);
     const setDailyLightSensorData = useStore(state => state.setDailyLightSensorData);
     const setYearlyLightSensorData = useStore(state => state.setYearlyLightSensorData);
     const {scene} = useThree();
     const weather = getWeather(city ?? 'Boston MA, USA');
     const elevation = city ? getWeather(city).elevation : 0;
-    const interval = 60 / timesPerHour;
+    const interval = 60 / world.timesPerHour;
     const ray = useMemo(() => new Raycaster(), []);
+    const now = new Date(world.date);
 
     useEffect(() => {
         if (elements && elements.length > 0) {
@@ -101,9 +99,9 @@ const Simulation = ({
         const dayOfYear = Util.dayOfYear(now);
         let count = 0;
         for (let i = 0; i < 24; i++) {
-            for (let j = 0; j < timesPerHour; j++) {
+            for (let j = 0; j < world.timesPerHour; j++) {
                 const cur = new Date(year, month, date, i, j * interval);
-                const sunDirection = getSunDirection(cur, latitude);
+                const sunDirection = getSunDirection(cur, world.latitude);
                 if (sunDirection.z > 0) {
                     // when the sun is out
                     count++;
@@ -123,7 +121,7 @@ const Simulation = ({
         // apply clearness and convert the unit of time step from minute to hour so that we get kWh
         const daylight = count * interval / 60;
         const clearness = weather.sunshineHours[month] / (30 * daylight);
-        return result.map(x => x * clearness / timesPerHour);
+        return result.map(x => x * clearness / world.timesPerHour);
     };
 
     const collectAllYearlyLightSensorData = () => {
@@ -159,9 +157,9 @@ const Simulation = ({
             let total = 0;
             let count = 0;
             for (let hour = 0; hour < 24; hour++) {
-                for (let step = 0; step < timesPerHour; step++) {
+                for (let step = 0; step < world.timesPerHour; step++) {
                     const cur = new Date(year, month, date, hour, step * interval);
-                    const sunDirection = getSunDirection(cur, latitude);
+                    const sunDirection = getSunDirection(cur, world.latitude);
                     if (sunDirection.z > 0) {
                         // when the sun is out
                         count++;
@@ -181,7 +179,7 @@ const Simulation = ({
             const daylight = count * interval / 60;
             const clearness = weather.sunshineHours[midMonth.getMonth()] / (30 * daylight);
             total *= clearness; // apply clearness
-            total /= timesPerHour; // convert the unit of timeStep from minute to hour so that we get kWh
+            total /= world.timesPerHour; // convert the unit of timeStep from minute to hour so that we get kWh
             data.push({
                 Month: MONTHS[month],
                 Daylight: daylight,

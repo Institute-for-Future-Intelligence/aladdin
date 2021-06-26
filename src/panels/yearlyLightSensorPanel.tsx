@@ -61,6 +61,7 @@ const Header = styled.div`
 export interface YearlyLightSensorPanelProps {
 
     city: string | null;
+    requestUpdate: () => void;
 
     [key: string]: any;
 
@@ -68,12 +69,13 @@ export interface YearlyLightSensorPanelProps {
 
 const YearlyLightSensorPanel = ({
                                     city,
+                                    requestUpdate,
                                     ...rest
                                 }: YearlyLightSensorPanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const sensorData = useStore(state => state.yearlyLightSensorData);
-    const now = useStore(state => state.date);
+    const now = useStore(state => state.world.date);
     const [curPosition, setCurPosition] = useState({x: 0, y: 0});
 
     const responsiveHeight = 100;
@@ -112,8 +114,9 @@ const YearlyLightSensorPanel = ({
                         <span style={{cursor: 'pointer'}}
                               onMouseDown={() => {
                                   setCommonStore((state) => {
-                                      state.showYearlyLightSensorPanel = false;
+                                      state.viewState.showYearlyLightSensorPanel = false;
                                   });
+                                  requestUpdate();
                               }}>
                             Close
                         </span>

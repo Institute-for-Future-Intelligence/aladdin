@@ -45,26 +45,26 @@ const MainMenu = ({
                   }: MainMenuProps) => {
 
     const setCommonStore = useStore(state => state.set);
-    const showGroundPanel = useStore(state => state.showGroundPanel);
-    const showWeatherPanel = useStore(state => state.showWeatherPanel);
     const viewState = useStore(state => state.viewState);
 
     const menu = (
         <Menu>
             <Menu.Item key={'ground-panel-check-box'}>
-                <Checkbox checked={showGroundPanel} onChange={(e) => {
+                <Checkbox checked={viewState.showGroundPanel} onChange={(e) => {
                     setCommonStore((state) => {
-                        state.showGroundPanel = e.target.checked;
+                        state.viewState.showGroundPanel = e.target.checked;
                     });
+                    requestUpdate();
                 }}>
                     Ground Settings
                 </Checkbox>
             </Menu.Item>
             <Menu.Item key={'weather-panel-check-box'}>
-                <Checkbox checked={showWeatherPanel} onChange={(e) => {
+                <Checkbox checked={viewState.showWeatherPanel} onChange={(e) => {
                     setCommonStore((state) => {
-                        state.showWeatherPanel = e.target.checked;
+                        state.viewState.showWeatherPanel = e.target.checked;
                     });
+                    requestUpdate();
                 }}>
                     Weather Data
                 </Checkbox>

@@ -16,11 +16,21 @@ import {TreeModel} from "../models/TreeModel";
 export class DefaultWorldModel implements WorldModel {
 
     name: string;
+    date: string;
     cameraPosition: Vector3;
     panCenter: Vector3;
     ground: GroundModel;
+    latitude: number;
+    longitude: number;
+    address: string;
+    timesPerHour: number;
 
     constructor() {
+
+        this.latitude = 42.2844063;
+        this.longitude = -71.3488548;
+        this.address = 'Natick, MA';
+        this.date = new Date(2021, 5, 22, 12).toString();
 
         this.name = 'default';
         this.ground = {
@@ -30,6 +40,8 @@ export class DefaultWorldModel implements WorldModel {
         };
         this.panCenter = new Vector3(0, 0, 0);
         this.cameraPosition = new Vector3(0, 0, 5);
+
+        this.timesPerHour = 20; // how many times per hour to collect data
 
     }
 

@@ -72,6 +72,7 @@ export interface GroundPanelProps {
     changeMapZoom?: (zoom: number) => void;
     changeMapTilt?: (tilt: number) => void;
     changeMapType?: (type: string) => void;
+    requestUpdate: () => void;
 }
 
 const GroundPanel = ({
@@ -86,14 +87,12 @@ const GroundPanel = ({
                          changeMapZoom,
                          changeMapTilt,
                          changeMapType,
+                         requestUpdate
                      }: GroundPanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
-    const latitude = useStore(state => state.latitude);
-    const longitude = useStore(state => state.longitude);
-    const mapZoom = useStore(state => state.mapZoom);
-    const mapWeatherStations = useStore(state => state.mapWeatherStations);
-    const address = useStore(state => state.address);
+    const world = useStore(state => state.world);
+    const viewState = useStore(state => state.viewState);
     const searchBox = useRef<google.maps.places.SearchBox>();
     const [curPosition, setCurPosition] = useState({x: 0, y: 0});
 
@@ -109,11 +108,12 @@ const GroundPanel = ({
             setCommonStore((state) => {
                 const geometry = places[0].geometry;
                 if (geometry) {
-                    state.latitude = geometry.location.lat();
-                    state.longitude = geometry.location.lng();
+                    state.world.latitude = geometry.location.lat();
+                    state.world.longitude = geometry.location.lng();
                 }
-                state.address = places[0].formatted_address as string;
+                state.world.address = places[0].formatted_address as string;
             });
+            requestUpdate();
         }
     };
 
@@ -123,8 +123,9 @@ const GroundPanel = ({
 
     const setMapWeatherStations = (on: boolean) => {
         setCommonStore(state => {
-            state.mapWeatherStations = on;
+            state.viewState.mapWeatherStations = on;
         });
+        requestUpdate();
     };
 
     const onDrag: DraggableEventHandler = (e, ui) => {
@@ -160,8 +161,9 @@ const GroundPanel = ({
                         <span style={{cursor: 'pointer'}}
                               onMouseDown={() => {
                                   setCommonStore((state) => {
-                                      state.showGroundPanel = false;
+                                      state.viewState.showGroundPanel = false;
                                   });
+                                  requestUpdate();
                               }}>
                             Close
                         </span>
@@ -190,7 +192,7 @@ const GroundPanel = ({
                                 <Space>
                                     <Space style={{width: '60px'}}>Stations:</Space>
                                     <Switch title={'Show weather stations'}
-                                            checked={mapWeatherStations}
+                                            checked={viewState.mapWeatherStations}
                                             onChange={(checked) => {
                                                 setMapWeatherStations(checked);
                                             }}
@@ -210,7 +212,7 @@ const GroundPanel = ({
                                                      onPlacesChanged={onPlacesChanged}>
                                     <input
                                         type="text"
-                                        placeholder={address}
+                                        placeholder={world.address}
                                         style={{
                                             boxSizing: `border-box`,
                                             border: `1px solid transparent`,
@@ -238,8 +240,8 @@ const GroundPanel = ({
                                           setTilt={changeMapTilt}
                                           setType={changeMapType}
                                     />
-                                    Coordinates: ({latitude.toFixed(4)}°, {longitude.toFixed(4)}°),
-                                    Zoom: {mapZoom}
+                                    Coordinates: ({world.latitude.toFixed(4)}°, {world.longitude.toFixed(4)}°),
+                                    Zoom: {viewState.mapZoom}
                                 </div>
                             </Space>
                             :

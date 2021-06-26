@@ -31,32 +31,14 @@ export interface CommonStoreState {
     elements: ElementModel[];
     viewState: ViewState;
 
-    showGroundPanel: boolean;
-    showHeliodonPanel: boolean;
-    showWeatherPanel: boolean;
-    showDailyLightSensorPanel: boolean;
-    showYearlyLightSensorPanel: boolean;
-    autoRotate: boolean;
-
-    grid: boolean;
-    groundImage: boolean;
-    groundColor: string;
-    theme: string;
-    heliodon: boolean;
-    address: string;
-    latitude: number;
-    longitude: number;
-    mapZoom: number;
-    mapType: string;
-    mapTilt: number;
-    mapWeatherStations: boolean;
-    date: string;
+    // we are not interested in saving the following data in a file
 
     weatherData: { [key: string]: WeatherModel };
     getWeather: (location: string) => WeatherModel;
     loadWeatherData: () => void;
     getClosestCity: (lat: number, lng: number) => string | null;
 
+    grid: boolean; // this should only show up when editing
     enableOrbitController: boolean;
     clickObjectType: ObjectType | null;
     moveHandleType: MoveHandleType | null;
@@ -76,7 +58,6 @@ export interface CommonStoreState {
     cutElementById: (id: string) => void;
     pasteElement: () => void;
 
-    timesPerHour: number;
     dailyLightSensorData: DatumEntry[];
     setDailyLightSensorData: (data: DatumEntry[]) => void;
     yearlyLightSensorData: DatumEntry[];
@@ -101,30 +82,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         elements: defaultElements,
         viewState: defaultViewState,
 
-        showGroundPanel: false,
-        showHeliodonPanel: false,
-        showWeatherPanel: false,
-        showDailyLightSensorPanel: false,
-        showYearlyLightSensorPanel: false,
-        autoRotate: false,
-
-        grid: false,
-        groundImage: false,
-        groundColor: 'forestgreen',
-        theme: 'Default',
-        heliodon: false,
-
-        address: 'Natick, MA',
-        latitude: 42.2844063,
-        longitude: -71.3488548,
-        mapZoom: 16,
-        mapType: 'roadmap',
-        mapTilt: 0,
-        mapWeatherStations: false,
-        date: new Date(2021, 5, 22, 12).toString(),
         weatherData: {},
-
-        timesPerHour: 20, // how many times per hour to collect data
 
         yearlyLightSensorData: [],
         setYearlyLightSensorData(data) {
@@ -139,6 +97,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
             });
         },
 
+        grid: false,
         enableOrbitController: true,
         clickObjectType: null,
         moveHandleType: null,
