@@ -7,6 +7,8 @@ import DefaultDaySkyImage from "../resources/daysky.jpg";
 import DefaultNightSkyImage from "../resources/nightsky.jpg";
 import DesertDaySkyImage from "../resources/desert.jpg";
 import DesertNightSkyImage from "../resources/desert-night.jpg";
+import ForestDaySkyImage from "../resources/forest.jpg";
+import ForestNightSkyImage from "../resources/forest-night.jpg";
 import GrasslandDaySkyImage from "../resources/grassland.jpg";
 import GrasslandNightSkyImage from "../resources/grassland-night.jpg";
 import {BackSide, Mesh, TextureLoader} from "three";
@@ -30,12 +32,31 @@ const Sky = ({
     const setCommonStore = useStore(state => state.set);
     const selectNone = useStore(state => state.selectNone);
     const meshRef = useRef<Mesh>(null!);
+
+    let scale = 1;
+    switch (theme) {
+        case 'Desert':
+            scale = 0.5;
+            break;
+        case 'Forest':
+            scale = 0.3;
+            break;
+        case 'Grassland':
+            scale = 0.2;
+            break;
+        default:
+            scale = 0.2;
+    }
+
     const texture = useMemo(() => {
         const loader = new TextureLoader();
         let texture;
         switch (theme) {
             case 'Desert':
                 texture = loader.load(night ? DesertNightSkyImage : DesertDaySkyImage);
+                break;
+            case 'Forest':
+                texture = loader.load(night ? ForestNightSkyImage : ForestDaySkyImage);
                 break;
             case 'Grassland':
                 texture = loader.load(night ? GrasslandNightSkyImage : GrasslandDaySkyImage);
@@ -65,7 +86,7 @@ const Sky = ({
             {...props}
             ref={meshRef}
             name={'Sky'}
-            scale={1}
+            scale={[1, scale, 1]}
             onContextMenu={(e) => {
                 clickSky(e);
             }}
@@ -73,7 +94,7 @@ const Sky = ({
                 clickSky(e);
             }}
         >
-            <sphereGeometry args={[900, 16, 16, 0, 2 * Math.PI, 0, Math.PI / 2 + 0.0001]}/>
+            <sphereGeometry args={[900, 16, 16, 0, 2 * Math.PI, 0, Math.PI / 2]}/>
             <meshBasicMaterial map={texture}
                                side={BackSide}
                                opacity={1}

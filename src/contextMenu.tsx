@@ -104,14 +104,15 @@ const ContextMenu = ({
                         </Checkbox>
                     </Menu.Item>
                     <SubMenu key={'theme'} title={'Theme'}>
-                        <Radio.Group value={theme} style={{height: '105px'}} onChange={(e) => {
+                        <Radio.Group value={theme} style={{height: '135px'}} onChange={(e) => {
                             setCommonStore(state => {
                                 state.theme = e.target.value;
                             });
                         }}>
-                            <Radio style={radioStyle} value={Theme.Default}>Default</Radio>
-                            <Radio style={radioStyle} value={Theme.Desert}>Desert</Radio>
-                            <Radio style={radioStyle} value={Theme.Grassland}>Grassland</Radio>
+                            <Radio style={radioStyle} value={Theme.Default}>{Theme.Default}</Radio>
+                            <Radio style={radioStyle} value={Theme.Desert}>{Theme.Desert}</Radio>
+                            <Radio style={radioStyle} value={Theme.Forest}>{Theme.Forest}</Radio>
+                            <Radio style={radioStyle} value={Theme.Grassland}>{Theme.Grassland}</Radio>
                         </Radio.Group>
                     </SubMenu>
                 </StyledMenu>);
