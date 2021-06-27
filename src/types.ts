@@ -26,6 +26,12 @@ export interface User {
     uid: string | null;
 }
 
+export interface CloudFileInfo {
+    readonly timestamp: number;
+    readonly fileName: string;
+    readonly owner: string;
+}
+
 export interface DatumEntry {
     [key: string]: number | undefined | string;
 }

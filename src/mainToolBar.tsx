@@ -13,8 +13,9 @@ import {faUndoAlt, faRedoAlt, faSave, faHome} from '@fortawesome/free-solid-svg-
 import {saveAs} from 'file-saver';
 import firebase from 'firebase';
 import About from "./about";
-import {visitHomepage} from "./helpers";
+import {showInfo, visitHomepage} from "./helpers";
 import {User} from "./types";
+import queryString from "querystring";
 
 const LeftContainer = styled.div`
   position: fixed;
@@ -55,6 +56,11 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
     const [downloadDialogVisible, setDownloadDialogVisible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [fileName, setFileName] = useState<string>('aladdin.json');
+    const [title, setTitle] = useState<string>('My Aladdin File');
+    const [titleDialogVisible, setTitleDialogVisible] = useState(false);
+    const [userId, setUserId] = useState<string | null>(null);
+
+    const query = queryString.parse(window.location.search);
 
     useEffect(() => {
         const config = {
@@ -84,9 +90,21 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                     }
                 });
             }
-            //loadInitialState(); // load the initial state after we recognize the user
+            init(); // load the initial state after we recognize the user
         });
     }, []);
+
+    const init = () => {
+        if (query.userid) {
+            setUserId(query.userid.toString());
+        }
+        if (query.title) {
+            setTitle(query.title.toString());
+        }
+        if (userId && title) {
+            openCloudFile(userId, title);
+        }
+    }
 
     const undo = () => {
     };
@@ -149,6 +167,40 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
     };
 
     const saveToCloud = () => {
+        setConfirmLoading(true);
+        if (user.email) {
+            let doc = firebase.firestore().collection("users").doc(user.email);
+            if (doc) {
+                const content = {world: world, elements: elements, view: viewState};
+                doc.collection("files").doc(title).set(content);
+            }
+        }
+        setConfirmLoading(false);
+        setTitleDialogVisible(false);
+    };
+
+    const openCloudFile = (userid: string, title: string) => {
+        if (userid) {
+            firebase.firestore()
+                .collection("users")
+                .doc(userid)
+                .collection("files")
+                .doc(title)
+                .get()
+                .then(doc => {
+                    const data = doc.data();
+                    if (data) {
+                        setCommonStore((state) => {
+                            state.world = data.world;
+                            state.viewState = data.view;
+                            state.elements = data.elements;
+                        });
+                        requestUpdate();
+                    } else {
+                        showInfo('Sorry, ' + title + ' was not found. It may have been deleted by its owner.');
+                    }
+                });
+        }
     };
 
     const gotoMyCloudFiles = () => {
@@ -174,6 +226,10 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
 
     const showDownloadDialog = () => {
         setDownloadDialogVisible(true);
+    };
+
+    const showTitleDialog = () => {
+        setTitleDialogVisible(true);
     };
 
     const writeLocalFile = () => {
@@ -254,6 +310,23 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                         setFileName(e.target.value);
                     }}/>
             </Modal>
+            <Modal
+                title="Save to the Cloud"
+                visible={titleDialogVisible}
+                onOk={saveToCloud}
+                confirmLoading={confirmLoading}
+                onCancel={() => {
+                    setTitleDialogVisible(false);
+                }}
+            >
+                <Input
+                    placeholder="Title"
+                    value={title}
+                    onPressEnter={saveToCloud}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setTitle(e.target.value);
+                    }}/>
+            </Modal>
             <LeftContainer>
                 <Space direction='horizontal'>
                     <div>
@@ -309,7 +382,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                                          size={'3x'}
                                          color={'#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
-                                         onClick={saveToCloud}/>
+                                         onClick={showTitleDialog}/>
                         <FontAwesomeIcon title={'Visit Aladdin homepage'}
                                          icon={faHome}
                                          size={'3x'}

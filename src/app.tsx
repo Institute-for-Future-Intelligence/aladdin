@@ -36,7 +36,6 @@ import DailyLightSensorPanel from "./panels/dailyLightSensorPanel";
 import Simulation from "./analysis/simulation";
 import MainToolBar from "./mainToolBar";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-import About from "./about";
 import Spinner from './components/spinner';
 
 const App = () => {
