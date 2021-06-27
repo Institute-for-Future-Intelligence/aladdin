@@ -83,11 +83,27 @@ const App = () => {
     }, [world.latitude, world.longitude, weatherData]);
 
     useEffect(() => {
+        // we have to cache the camera position in the state from the common store world camera.
         setCameraPosition(new Vector3(world.cameraPosition.x, world.cameraPosition.y, world.cameraPosition.z));
+        // we have to manually set the camera position
+        if (orbitControlsRef.current) {
+            orbitControlsRef.current.object.position.x = world.cameraPosition.x;
+            orbitControlsRef.current.object.position.y = world.cameraPosition.y;
+            orbitControlsRef.current.object.position.z = world.cameraPosition.z;
+            orbitControlsRef.current.update();
+        }
     }, [world.cameraPosition]);
 
     useEffect(() => {
+        // we have to cache the target position in the state from the common store world pan center.
         setPanCenter(new Vector3(world.panCenter.x, world.panCenter.y, world.panCenter.z));
+        if (orbitControlsRef.current) {
+            // we have to manually set the target position
+            orbitControlsRef.current.target.x = world.panCenter.x;
+            orbitControlsRef.current.target.y = world.panCenter.y;
+            orbitControlsRef.current.target.z = world.panCenter.z;
+            orbitControlsRef.current.update();
+        }
     }, [world.panCenter]);
 
     const nowString = now.toString();
@@ -230,7 +246,7 @@ const App = () => {
         />
     );
 
-    console.log('x', cameraPosition)
+    console.log('x')
 
     return (
         <div className="App">
