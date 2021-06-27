@@ -18,7 +18,7 @@ import {Euler, Vector3} from "three";
 import Heliodon from "./views/heliodon";
 import {Util} from "./Util";
 import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./analysis/sunTools";
-import aladdinLogo from './assets/aladdin-logo.png';
+import aladdinLogo from './assets/magic-lamp.png';
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from "./mainMenu";
 import GroundPanel from "./panels/groundPanel";
@@ -60,7 +60,6 @@ const App = () => {
     const [city, setCity] = useState<string | null>('Boston MA, USA');
     const [dailyLightSensorDataFlag, setDailyLightSensorDataFlag] = useState<boolean>(false);
     const [yearlyLightSensorDataFlag, setYearlyLightSensorDataFlag] = useState<boolean>(false);
-    const [aboutUs, setAboutUs] = useState(false);
     const [cameraPosition, setCameraPosition] = useState<Vector3>(new Vector3(0, 0, 5));
     const [panCenter, setPanCenter] = useState<Vector3>(new Vector3());
 
@@ -233,10 +232,6 @@ const App = () => {
         });
     };
 
-    const openAboutUs = (on: boolean) => {
-        setAboutUs(on);
-    };
-
     const contextMenu = (
         <ContextMenu
             city={city}
@@ -279,7 +274,6 @@ const App = () => {
             <MainMenu
                 collectDailyLightSensorData={collectDailyLightSensorData}
                 collectYearlyLightSensorData={collectYearlyLightSensorData}
-                openAboutUs={openAboutUs}
                 requestUpdate={requestUpdate}
             />
             <MainToolBar orbitControls={orbitControlsRef.current} requestUpdate={requestUpdate}/>
@@ -318,7 +312,6 @@ const App = () => {
                           requestUpdate={requestUpdate}
                           graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}
             />}
-            {aboutUs && <About openAboutUs={openAboutUs}/>}
             <Dropdown key={'canvas-context-menu'}
                       trigger={['contextMenu']}
                       overlay={contextMenu}

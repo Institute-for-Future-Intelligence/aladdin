@@ -29,7 +29,6 @@ export interface MainMenuProps {
 
     collectDailyLightSensorData: () => void;
     collectYearlyLightSensorData: () => void;
-    openAboutUs: (on: boolean) => void;
     requestUpdate: () => void;
 
     [key: string]: any;
@@ -39,7 +38,6 @@ export interface MainMenuProps {
 const MainMenu = ({
                       collectDailyLightSensorData,
                       collectYearlyLightSensorData,
-                      openAboutUs,
                       requestUpdate,
                       ...rest
                   }: MainMenuProps) => {
@@ -87,11 +85,6 @@ const MainMenu = ({
                     Collect Yearly Data
                 </Menu.Item>
             </SubMenu>
-            <Menu.Item key={'about-us'} onClick={() => {
-                openAboutUs(true);
-            }}>
-                About Us
-            </Menu.Item>
         </Menu>
     );
 

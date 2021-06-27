@@ -11,7 +11,7 @@ import {WeatherModel} from "../models/WeatherModel";
 import weather from '../resources/weather.csv';
 import Papa from "papaparse";
 import {Util} from "../Util";
-import {DatumEntry, MoveHandleType, ObjectType, ResizeHandleType} from "../types";
+import {DatumEntry, MoveHandleType, ObjectType, ResizeHandleType, User} from "../types";
 import {DefaultWorldModel} from "./DefaultWorldModel";
 import {Vector2, Vector3} from "three";
 import {ElementModelCloner} from "../models/ElementModelCloner";
@@ -30,6 +30,7 @@ export interface CommonStoreState {
     world: WorldModel;
     elements: ElementModel[];
     viewState: ViewState;
+    user: User;
 
     // we are not interested in saving the following data in a file
 
@@ -81,6 +82,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         world: defaultWorldModel,
         elements: defaultElements,
         viewState: defaultViewState,
+        user: {} as User,
 
         weatherData: {},
 

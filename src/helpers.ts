@@ -8,6 +8,10 @@ export const visitIFI = () => {
     window.open("https://intofuture.org", '_blank');
 };
 
+export const visitHomepage = () => {
+    window.open("https://intofuture.org/aladdin.html", '_blank');
+};
+
 export const getMapImage = (size: number, lat: number, lng: number, zoom: number) => {
     return "https://maps.googleapis.com/maps/api/staticmap?maptype=satellite&center=" + lat + "," + lng
         + "&zoom=" + zoom + "&size=" + size + "x" + size + "&scale=2&key=" + process.env.REACT_APP_MAPS_API_KEY;
