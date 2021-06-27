@@ -233,6 +233,7 @@ const ContextMenu = ({
                             setCommonStore(state => {
                                 state.grid = e.target.checked;
                             });
+                            requestUpdate();
                         }}>
                             Grid
                         </Checkbox>

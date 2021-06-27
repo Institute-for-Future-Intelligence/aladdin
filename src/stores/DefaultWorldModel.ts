@@ -7,7 +7,7 @@ import {HumanName, ObjectType} from "../types";
 import {FoundationModel} from "../models/FoundationModel";
 import {CuboidModel} from "../models/CuboidModel";
 import {SensorModel} from "../models/SensorModel";
-import {Vector3} from "three";
+import {MathUtils, Vector3} from "three";
 import {WorldModel} from "../models/WorldModel";
 import {GroundModel} from "../models/GroundModel";
 import {HumanModel} from "../models/HumanModel";
@@ -56,7 +56,7 @@ export class DefaultWorldModel implements WorldModel {
             lz: 0.1,
             normal: [0, 0, 1],
             rotation: [0, 0, 0],
-            id: 'f1'
+            id: MathUtils.generateUUID()
         } as FoundationModel;
         const e2 = {
             type: ObjectType.Cuboid,
@@ -68,7 +68,7 @@ export class DefaultWorldModel implements WorldModel {
             lz: 4,
             normal: [0, 0, 1],
             rotation: [0, Math.PI / 6, 0],
-            id: 'c1'
+            id: MathUtils.generateUUID()
         } as CuboidModel;
         const e3 = {
             type: ObjectType.Sensor,
@@ -79,7 +79,7 @@ export class DefaultWorldModel implements WorldModel {
             ly: 0.05,
             lz: 0.01,
             normal: [0, 0, 1],
-            id: 's1',
+            id: MathUtils.generateUUID(),
             showLabel: false,
             light: true,
             heatFlux: false
@@ -93,7 +93,7 @@ export class DefaultWorldModel implements WorldModel {
             ly: 0.05,
             lz: 0.01,
             normal: [0, 0, 1],
-            id: 's2',
+            id: MathUtils.generateUUID(),
             showLabel: false,
             light: true,
             heatFlux: false
@@ -107,7 +107,7 @@ export class DefaultWorldModel implements WorldModel {
             lz: 0.1,
             normal: [0, 0, 1],
             rotation: [0, Math.PI / 3, 0],
-            id: 'f2'
+            id: MathUtils.generateUUID()
         } as FoundationModel;
         elements.push(e1);
         elements.push(e2);
@@ -122,7 +122,7 @@ export class DefaultWorldModel implements WorldModel {
             cy: 4,
             normal: [1, 0, 0],
             rotation: [0, 0, 0],
-            id: 'human1'
+            id: MathUtils.generateUUID()
         } as HumanModel;
         const h2 = {
             type: ObjectType.Human,
@@ -131,7 +131,7 @@ export class DefaultWorldModel implements WorldModel {
             cy: 5,
             normal: [1, 0, 0],
             rotation: [0, 0, 0],
-            id: 'human2'
+            id: MathUtils.generateUUID()
         } as HumanModel;
         elements.push(h1);
         elements.push(h2);
@@ -146,7 +146,7 @@ export class DefaultWorldModel implements WorldModel {
             lz: 4,
             normal: [1, 0, 0],
             rotation: [0, 0, 0],
-            id: 'tree1'
+            id: MathUtils.generateUUID()
         } as TreeModel;
         const tree2 = {
             type: ObjectType.Tree,
@@ -158,7 +158,7 @@ export class DefaultWorldModel implements WorldModel {
             lz: 6,
             normal: [1, 0, 0],
             rotation: [0, 0, 0],
-            id: 'tree2'
+            id: MathUtils.generateUUID()
         } as TreeModel;
         elements.push(tree1);
         elements.push(tree2);

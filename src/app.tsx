@@ -37,6 +37,7 @@ import Simulation from "./analysis/simulation";
 import MainToolBar from "./mainToolBar";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import About from "./about";
+import Spinner from './components/spinner';
 
 const App = () => {
 
@@ -50,6 +51,7 @@ const App = () => {
     const enableOrbitController = useStore(state => state.enableOrbitController);
     const weatherData = useStore(state => state.weatherData);
 
+    const [loading, setLoading] = useState(true);
     const [updateFlag, setUpdateFlag] = useState<boolean>(false);
     const [hourAngle, setHourAngle] = useState<number>(0);
     const [declinationAngle, setDeclinationAngle] = useState<number>(0);
@@ -59,12 +61,16 @@ const App = () => {
     const [dailyLightSensorDataFlag, setDailyLightSensorDataFlag] = useState<boolean>(false);
     const [yearlyLightSensorDataFlag, setYearlyLightSensorDataFlag] = useState<boolean>(false);
     const [aboutUs, setAboutUs] = useState(false);
+    const [cameraPosition, setCameraPosition] = useState<Vector3>(new Vector3(0, 0, 5));
+    const [panCenter, setPanCenter] = useState<Vector3>(new Vector3());
+
     const orbitControlsRef = useRef<OrbitControls>();
     const now = new Date(world.date);
     const radius = 10;
 
     useEffect(() => {
         loadWeatherData();
+        setLoading(false);
     }, []);
 
     useEffect(() => {
@@ -76,6 +82,14 @@ const App = () => {
         setCity(getClosestCity(world.latitude, world.longitude));
     }, [world.latitude, world.longitude, weatherData]);
 
+    useEffect(() => {
+        setCameraPosition(new Vector3(world.cameraPosition.x, world.cameraPosition.y, world.cameraPosition.z));
+    }, [world.cameraPosition]);
+
+    useEffect(() => {
+        setPanCenter(new Vector3(world.panCenter.x, world.panCenter.y, world.panCenter.z));
+    }, [world.panCenter]);
+
     const nowString = now.toString();
     useMemo(() => {
         setHourAngle(computeHourAngle(now));
@@ -85,13 +99,6 @@ const App = () => {
     const requestUpdate = () => {
         setUpdateFlag(!updateFlag);
     };
-
-    const cameraPosition = new Vector3(0, 0, 5);
-    const panCenter = new Vector3();
-    if (world) {
-        cameraPosition.set(world.cameraPosition.x, world.cameraPosition.y, world.cameraPosition.z);
-        panCenter.set(world.panCenter.x, world.panCenter.y, world.panCenter.z);
-    }
 
     const setGrid = (on: boolean) => {
         setCommonStore(state => {
@@ -223,10 +230,11 @@ const App = () => {
         />
     );
 
-    console.log('x')
+    console.log('x', cameraPosition)
 
     return (
         <div className="App">
+            {loading && <Spinner/>}
             <div style={{
                 backgroundColor: 'lightblue',
                 height: '72px',
