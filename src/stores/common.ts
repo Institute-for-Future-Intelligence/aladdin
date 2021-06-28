@@ -22,6 +22,7 @@ import {FoundationModel} from "../models/FoundationModel";
 import {CuboidModel} from "../models/CuboidModel";
 import {DefaultViewState} from "./DefaultViewState";
 import {ViewState} from "../views/ViewState";
+import short from "short-uuid";
 
 enableMapSet();
 
@@ -31,6 +32,7 @@ export interface CommonStoreState {
     elements: ElementModel[];
     viewState: ViewState;
     user: User;
+    exportContent: () => {};
 
     // we are not interested in saving the following data in a file
 
@@ -83,6 +85,18 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         elements: defaultElements,
         viewState: defaultViewState,
         user: {} as User,
+        exportContent() {
+            const state = get();
+            return {
+                docid: short.generate(),
+                timestamp: new Date().getTime(),
+                owner: state.user.displayName,
+                email: state.user.email,
+                world: state.world,
+                elements: state.elements,
+                view: state.viewState
+            };
+        },
 
         weatherData: {},
 

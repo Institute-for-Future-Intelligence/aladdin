@@ -2,9 +2,10 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useStore} from "./stores/common";
-import {Avatar, Button, Dropdown, Input, Menu, Modal, Space, Switch} from 'antd';
+import {Avatar, Button, Dropdown, Input, Menu, Modal, Space, Switch, Table} from 'antd';
+import dayjs from 'dayjs';
 import 'antd/dist/antd.css';
 import styled from "styled-components";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
@@ -14,8 +15,12 @@ import {saveAs} from 'file-saver';
 import firebase from 'firebase';
 import About from "./about";
 import {showInfo, visitHomepage} from "./helpers";
-import {User} from "./types";
+import {CloudFileInfo, User} from "./types";
 import queryString from "querystring";
+import {HOME_URL} from "./constants";
+import {Util} from "./Util";
+
+const {Column} = Table;
 
 const LeftContainer = styled.div`
   position: fixed;
@@ -39,18 +44,63 @@ const RightContainer = styled.div`
   z-index: 9;
 `;
 
+const CloudFileContainer = styled.div`
+  position: fixed;
+  top: 80px;
+  right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  z-index: 9;
+`;
+
+const ColumnWrapper = styled.div`
+  background-color: #f8f8f8;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 600px;
+  height: 500px;
+  padding-bottom: 10px;
+  border: 2px solid gainsboro;
+  border-radius: 10px 10px 10px 10px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Header = styled.div`
+  border-radius: 10px 10px 0 0;
+  width: 100%;
+  height: 24px;
+  padding: 10px;
+  background-color: #e8e8e8;
+  color: #888;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+
+  svg.icon {
+    height: 16px;
+    width: 16px;
+    padding: 8px;
+    fill: #666;
+  }
+`;
+
 export interface MainToolBarProps {
     orbitControls?: OrbitControls;
+    canvas?: HTMLCanvasElement;
     requestUpdate: () => void;
 }
 
-const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
+const MainToolBar = ({orbitControls, canvas, requestUpdate}: MainToolBarProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
-    const world = useStore(state => state.world);
-    const elements = useStore(state => state.elements);
     const user = useStore(state => state.user);
+    const exportContent = useStore(state => state.exportContent);
 
     const [aboutUs, setAboutUs] = useState(false);
     const [downloadDialogVisible, setDownloadDialogVisible] = useState(false);
@@ -58,7 +108,8 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
     const [fileName, setFileName] = useState<string>('aladdin.json');
     const [title, setTitle] = useState<string>('My Aladdin File');
     const [titleDialogVisible, setTitleDialogVisible] = useState(false);
-    const [userId, setUserId] = useState<string | null>(null);
+    const [cloudFolderVisible, setCloudFolderVisible] = useState(false);
+    const cloudFiles = useRef<CloudFileInfo[] | void>();
 
     const query = queryString.parse(window.location.search);
 
@@ -95,14 +146,8 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
     }, []);
 
     const init = () => {
-        if (query.userid) {
-            setUserId(query.userid.toString());
-        }
-        if (query.title) {
-            setTitle(query.title.toString());
-        }
-        if (userId && title) {
-            openCloudFile(userId, title);
+        if (query.userid && query.title) {
+            openCloudFile(query.userid.toString(), query.title.toString());
         }
     }
 
@@ -171,8 +216,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
         if (user.email) {
             let doc = firebase.firestore().collection("users").doc(user.email);
             if (doc) {
-                const content = {world: world, elements: elements, view: viewState};
-                doc.collection("files").doc(title).set(content);
+                doc.collection("files").doc(title).set(exportContent());
             }
         }
         setConfirmLoading(false);
@@ -180,7 +224,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
     };
 
     const openCloudFile = (userid: string, title: string) => {
-        if (userid) {
+        if (userid && title) {
             firebase.firestore()
                 .collection("users")
                 .doc(userid)
@@ -203,7 +247,34 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
         }
     };
 
-    const gotoMyCloudFiles = () => {
+    const gotoMyCloudFiles = async () => {
+        if (user.email) {
+
+            // fetch owner's file information from the cloud
+            cloudFiles.current = await firebase.firestore()
+                .collection("users")
+                .doc(user.email)
+                .collection("files")
+                .get()
+                .then(querySnapshot => {
+                    const a: CloudFileInfo[] = [];
+                    querySnapshot.forEach(doc => {
+                        const data = doc.data();
+                        a.push({
+                            timestamp: data.timestamp,
+                            fileName: doc.id,
+                            email: data.email,
+                            owner: data.owner,
+                            uuid: data.docid,
+                        } as CloudFileInfo);
+                    });
+                    return a;
+                }).catch(error => {
+                    console.log("Error getting files:", error);
+                });
+
+            setCloudFolderVisible(true);
+        }
     };
 
     const openAboutUs = (on: boolean) => {
@@ -222,6 +293,9 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
     };
 
     const takeScreenshot = () => {
+        if (canvas) { // TODO
+            Util.saveImage("screenshot.png", canvas.toDataURL("image/png"));
+        }
     };
 
     const showDownloadDialog = () => {
@@ -234,8 +308,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
 
     const writeLocalFile = () => {
         setConfirmLoading(true);
-        const content = {world: world, elements: elements, view: viewState};
-        const blob = new Blob([JSON.stringify(content)], {type: "application/json"});
+        const blob = new Blob([JSON.stringify(exportContent())], {type: "application/json"});
         saveAs(blob, fileName);
         setConfirmLoading(false);
         setDownloadDialogVisible(false);
@@ -290,6 +363,20 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
             </Menu.Item>
         </Menu>
     );
+
+    const cloudFileArray: any[] = [];
+    if (cloudFiles.current) {
+        cloudFiles.current.forEach((f, i) => {
+            cloudFileArray.push({
+                key: i.toString(),
+                title: f.fileName,
+                time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm a'),
+                action: '',
+                email: f.email,
+                owner: f.owner
+            });
+        });
+    }
 
     return (
         <>
@@ -404,6 +491,43 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                 </Space>
             </RightContainer>
             {aboutUs && <About openAboutUs={openAboutUs}/>}
+            {cloudFolderVisible && cloudFiles.current &&
+            <CloudFileContainer>
+                <ColumnWrapper>
+                    <Header className='handle'>
+                        <span>My Cloud Files</span>
+                        <span style={{cursor: 'pointer'}}
+                              onMouseDown={() => {
+                                  setCloudFolderVisible(false);
+                              }}>
+                            Close
+                        </span>
+                    </Header>
+                    <Table style={{width: '100%'}}
+                           dataSource={cloudFileArray}
+                           pagination={{
+                               defaultPageSize: 10,
+                               showSizeChanger: true,
+                               pageSizeOptions: ['10', '50', '100']
+                           }}>
+                        <Column title="Title" dataIndex="title" key="title"/>
+                        <Column title="Owner" dataIndex="owner" key="owner"/>
+                        <Column title="Time" dataIndex="time" key="time"/>
+                        <Column
+                            title="Action"
+                            key="action"
+                            render={(text, record: any) => (
+                                <Space size="middle">
+                                    <a target="_blank" rel="noopener noreferrer"
+                                       href={HOME_URL + '?tmp=yes&userid=' + record.email + '&title=' + record.title}>Open</a>
+                                    <a>Delete</a>
+                                </Space>
+                            )}
+                        />
+                    </Table>
+                </ColumnWrapper>
+            </CloudFileContainer>
+            }
         </>
     );
 };

@@ -14,6 +14,7 @@ export interface OrbitControllerProps {
     autoRotate?: boolean;
     panCenter?: Vector3;
     orbitControlsRef?: React.MutableRefObject<OrbitControls | undefined>;
+    canvasRef?: React.MutableRefObject<HTMLCanvasElement | undefined>;
 
     [key: string]: any;
 }
@@ -26,6 +27,7 @@ const OrbitController = ({
                              autoRotate = false,
                              panCenter = new Vector3(),
                              orbitControlsRef,
+                             canvasRef
                          }: OrbitControllerProps) => {
 
     const setCommonStore = useStore(state => state.set);
@@ -43,6 +45,9 @@ const OrbitController = ({
             c.update();
             if (orbitControlsRef) {
                 orbitControlsRef.current = c;
+            }
+            if (canvasRef) {
+                canvasRef.current = domElement;
             }
         }
         return () => {

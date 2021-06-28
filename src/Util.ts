@@ -3,6 +3,7 @@
  */
 
 import {Euler, Vector2, Vector3} from "three";
+import html2canvas from "html2canvas";
 
 export class Util {
 
@@ -132,5 +133,25 @@ export class Util {
         const oneDay = 1000 * 60 * 60 * 24;
         return Math.floor(diff / oneDay);
     }
+
+    static saveImage(fileName: string, imgUrl: string): void {
+        let a = document.createElement('a') as HTMLAnchorElement;
+        a.download = fileName;
+        a.href = imgUrl;
+        a.click();
+    };
+
+    static async screenshot(root: string, name: string, options: {}) {
+        const source = window.document.getElementById(root);
+        if (source) {
+            const canvas = await html2canvas(source, {...options, removeContainer: true});
+            const a = document.createElement('a');
+            a.href = canvas.toDataURL('image/png', 1.0);
+            a.download = `${name}.png`;
+            a.click();
+        } else {
+            throw new Error(`Cannot find element with ID ${root}`);
+        }
+    };
 
 }

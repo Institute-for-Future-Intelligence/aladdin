@@ -63,6 +63,7 @@ const App = () => {
     const [panCenter, setPanCenter] = useState<Vector3>(new Vector3());
 
     const orbitControlsRef = useRef<OrbitControls>();
+    const canvasRef = useRef<HTMLCanvasElement>();
     const now = new Date(world.date);
     const radius = 10;
 
@@ -275,7 +276,9 @@ const App = () => {
                 collectYearlyLightSensorData={collectYearlyLightSensorData}
                 requestUpdate={requestUpdate}
             />
-            <MainToolBar orbitControls={orbitControlsRef.current} requestUpdate={requestUpdate}/>
+            <MainToolBar canvas={canvasRef.current}
+                         orbitControls={orbitControlsRef.current}
+                         requestUpdate={requestUpdate}/>
             {viewState.showGroundPanel &&
             <GroundPanel grid={grid}
                          groundImage={viewState.groundImage}
@@ -327,6 +330,7 @@ const App = () => {
                             autoRotate={viewState.autoRotate}
                             panCenter={panCenter}
                             orbitControlsRef={orbitControlsRef}
+                            canvasRef={canvasRef}
                         />
                         <Suspense fallback={null}>
                             <ElementsRenderer/>

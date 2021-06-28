@@ -30,6 +30,8 @@ export interface CloudFileInfo {
     readonly timestamp: number;
     readonly fileName: string;
     readonly owner: string;
+    readonly email: string;
+    readonly uuid: string;
 }
 
 export interface DatumEntry {
