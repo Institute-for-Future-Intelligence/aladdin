@@ -10,7 +10,15 @@ import 'antd/dist/antd.css';
 import styled from "styled-components";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faUndoAlt, faRedoAlt, faSave, faHome, faArrowAltCircleUp, faSun} from '@fortawesome/free-solid-svg-icons';
+import {
+    faUndoAlt,
+    faRedoAlt,
+    faSave,
+    faHome,
+    faArrowAltCircleUp,
+    faSun,
+    faUmbrellaBeach
+} from '@fortawesome/free-solid-svg-icons';
 import {faAsymmetrik} from "@fortawesome/free-brands-svg-icons";
 import firebase from 'firebase';
 import {showInfo, visitHomepage} from "./helpers";
@@ -102,6 +110,13 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
     const toggleAutoRotate = () => {
         setCommonStore((state) => {
             state.viewState.autoRotate = !state.viewState.autoRotate;
+        });
+        requestUpdate();
+    };
+
+    const toggleShadow = () => {
+        setCommonStore((state) => {
+            state.viewState.shadowEnabled = !state.viewState.shadowEnabled;
         });
         requestUpdate();
     };
@@ -246,16 +261,16 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
         setTitleDialogVisible(true);
     };
 
-     const avatarMenu = (
+    const avatarMenu = (
         <Menu>
-            <Menu.Item key="my-cloud-files">
-                <a onClick={gotoMyCloudFiles}>My Cloud Files</a>
+            <Menu.Item key="my-cloud-files" onClick={gotoMyCloudFiles}>
+                My Cloud Files
             </Menu.Item>
-            <Menu.Item key="account">
-                <a onClick={gotoAccountSettings}>Account Settings</a>
+            <Menu.Item key="account" onClick={gotoAccountSettings}>
+                Account Settings
             </Menu.Item>
-            <Menu.Item key="signOut">
-                <a onClick={signOut}>Sign Out</a>
+            <Menu.Item key="signOut" onClick={signOut}>
+                Sign Out
             </Menu.Item>
         </Menu>
     );
@@ -308,6 +323,12 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                                          color={'#aaaaaa'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={redo}/>
+                        <FontAwesomeIcon title={'Toggle shadow effect'}
+                                         icon={faUmbrellaBeach}
+                                         size={'3x'}
+                                         color={viewState.shadowEnabled ? '#666666' : '#999999'}
+                                         style={{paddingRight: '12px', cursor: 'pointer'}}
+                                         onClick={toggleShadow}/>
                         <FontAwesomeIcon title={'Reset view'}
                                          icon={faArrowAltCircleUp}
                                          size={'3x'}

@@ -106,11 +106,11 @@ const MainMenu = ({
 
     const menu = (
         <Menu>
-            <Menu.Item key="save-local-file">
-                <a onClick={showDownloadDialog}>Save to Download Folder</a>
+            <Menu.Item key="save-local-file" onClick={showDownloadDialog} style={{paddingLeft: '36px'}}>
+                Save to Download Folder
             </Menu.Item>
-            <Menu.Item key="open-local-file">
-                <a onClick={readLocalFile}>Open Local File</a>
+            <Menu.Item key="open-local-file" onClick={readLocalFile} style={{paddingLeft: '36px'}}>
+                Open Local File
             </Menu.Item>
             <Menu.Item key={'ground-panel-check-box'}>
                 <Checkbox checked={viewState.showGroundPanel} onChange={(e) => {
@@ -132,17 +132,7 @@ const MainMenu = ({
                     Weather Data
                 </Checkbox>
             </Menu.Item>
-            <Menu.Item key={'shadow-check-box'}>
-                <Checkbox checked={viewState.shadowEnabled} onChange={(e) => {
-                    setCommonStore((state) => {
-                        state.viewState.shadowEnabled = e.target.checked;
-                    });
-                    requestUpdate();
-                }}>
-                    Enable Shadow
-                </Checkbox>
-            </Menu.Item>
-            <SubMenu key={'sensors'} title={'Sensors'}>
+            <SubMenu key={'sensors'} title={'Sensors'} style={{paddingLeft: '24px'}}>
                 <Menu.Item key={'sensor-collect-daily-data'} onClick={collectDailyLightSensorData}>
                     Collect Daily Data
                 </Menu.Item>
@@ -150,11 +140,11 @@ const MainMenu = ({
                     Collect Yearly Data
                 </Menu.Item>
             </SubMenu>
-            <Menu.Item key="screenshot">
-                <a onClick={takeScreenshot}>Take Screenshot</a>
+            <Menu.Item key="screenshot" onClick={takeScreenshot} style={{paddingLeft: '36px'}}>
+                Take Screenshot
             </Menu.Item>
-            <Menu.Item key="about">
-                <a onClick={gotoAboutPage}>About Us</a>
+            <Menu.Item key="about" onClick={gotoAboutPage} style={{paddingLeft: '36px'}}>
+                About Us
             </Menu.Item>
         </Menu>
     );

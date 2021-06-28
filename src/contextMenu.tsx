@@ -52,7 +52,6 @@ const ContextMenu = ({
     const world = useStore(state => state.world);
     const viewState = useStore(state => state.viewState);
     const updateElementById = useStore(state => state.updateElementById);
-    const grid = useStore(state => state.grid);
     const clickObjectType = useStore(state => state.clickObjectType);
     const cutElementById = useStore(state => state.cutElementById);
     const copyElementById = useStore(state => state.copyElementById);
@@ -84,26 +83,6 @@ const ContextMenu = ({
                             requestUpdate();
                         }}>
                             Axes
-                        </Checkbox>
-                    </Menu.Item>
-                    <Menu.Item key={'heliodon-settings'}>
-                        <Checkbox checked={viewState.showHeliodonPanel} onChange={(e) => {
-                            setCommonStore(state => {
-                                state.viewState.showHeliodonPanel = e.target.checked;
-                            });
-                            requestUpdate();
-                        }}>
-                            Heliodon Settings
-                        </Checkbox>
-                    </Menu.Item>
-                    <Menu.Item key={'weather-data'}>
-                        <Checkbox checked={viewState.showWeatherPanel} onChange={(e) => {
-                            setCommonStore(state => {
-                                state.viewState.showWeatherPanel = e.target.checked;
-                            });
-                            requestUpdate();
-                        }}>
-                            Weather Data
                         </Checkbox>
                     </Menu.Item>
                     <SubMenu key={'theme'} title={'Theme'}>
@@ -228,26 +207,6 @@ const ContextMenu = ({
                     <Menu.Item key={'ground-paste'} onClick={pasteElement}>
                         Paste
                     </Menu.Item>
-                    <Menu.Item key={'ground-grid'}>
-                        <Checkbox checked={grid} onChange={(e) => {
-                            setCommonStore(state => {
-                                state.grid = e.target.checked;
-                            });
-                            requestUpdate();
-                        }}>
-                            Grid
-                        </Checkbox>
-                    </Menu.Item>
-                    <Menu.Item key={'ground-settings'}>
-                        <Checkbox checked={viewState.showGroundPanel} onChange={(e) => {
-                            setCommonStore(state => {
-                                state.viewState.showGroundPanel = e.target.checked;
-                            });
-                            requestUpdate();
-                        }}>
-                            Ground Settings
-                        </Checkbox>
-                    </Menu.Item>
                     <Menu.Item key={'ground-albedo'}>
                         <Space style={{width: '60px'}}>Albedo:</Space>
                         <NumericInput min={0.05}
@@ -261,7 +220,6 @@ const ContextMenu = ({
                                               setCommonStore(state => {
                                                   state.world.ground.albedo = e;
                                               });
-                                              //setUpdateFlag(!updateFlag);
                                           }
                                       }}
                         />

@@ -15,7 +15,7 @@ import ReactDraggable, {DraggableEventHandler} from "react-draggable";
 const Container = styled.div`
   position: fixed;
   top: 80px;
-  right: 10px;
+  left: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -26,7 +26,7 @@ const Container = styled.div`
 const ColumnWrapper = styled.div`
   background-color: #f8f8f8;
   position: absolute;
-  right: 0;
+  left: 0;
   top: 0;
   width: 500px;
   height: 500px;
