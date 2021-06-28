@@ -9,7 +9,7 @@ import Team from "./team";
 const Container = styled.div`
   position: absolute;
   top: 80px;
-  right: 10px;
+  left: 10px;
   display: flex;
   width: 600px;
   height: 400px;

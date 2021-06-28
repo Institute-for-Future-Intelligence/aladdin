@@ -4,36 +4,21 @@
 
 import React, {useEffect, useRef, useState} from 'react';
 import {useStore} from "./stores/common";
-import {Avatar, Button, Dropdown, Input, Menu, Modal, Space, Switch, Table} from 'antd';
+import {Avatar, Button, Dropdown, Input, Menu, Modal, Space} from 'antd';
 import dayjs from 'dayjs';
 import 'antd/dist/antd.css';
 import styled from "styled-components";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faUndoAlt, faRedoAlt, faSave, faHome} from '@fortawesome/free-solid-svg-icons';
-import {saveAs} from 'file-saver';
+import {faUndoAlt, faRedoAlt, faSave, faHome, faArrowAltCircleUp, faSun} from '@fortawesome/free-solid-svg-icons';
+import {faAsymmetrik} from "@fortawesome/free-brands-svg-icons";
 import firebase from 'firebase';
-import About from "./about";
 import {showInfo, visitHomepage} from "./helpers";
 import {CloudFileInfo, User} from "./types";
 import queryString from "querystring";
-import {HOME_URL} from "./constants";
-import {Util} from "./Util";
+import CloudFilePanel from "./panels/cloudFilePanel";
 
-const {Column} = Table;
-
-const LeftContainer = styled.div`
-  position: fixed;
-  top: 4px;
-  left: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
-  z-index: 9;
-`;
-
-const RightContainer = styled.div`
+const ButtonsContainer = styled.div`
   position: absolute;
   top: 4px;
   right: 10px;
@@ -42,73 +27,24 @@ const RightContainer = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 9;
-`;
-
-const CloudFileContainer = styled.div`
-  position: fixed;
-  top: 80px;
-  right: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
-  z-index: 9;
-`;
-
-const ColumnWrapper = styled.div`
-  background-color: #f8f8f8;
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 600px;
-  height: 500px;
-  padding-bottom: 10px;
-  border: 2px solid gainsboro;
-  border-radius: 10px 10px 10px 10px;
-  display: flex;
-  flex-direction: column;
-`;
-
-const Header = styled.div`
-  border-radius: 10px 10px 0 0;
-  width: 100%;
-  height: 24px;
-  padding: 10px;
-  background-color: #e8e8e8;
-  color: #888;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
 export interface MainToolBarProps {
     orbitControls?: OrbitControls;
-    canvas?: HTMLCanvasElement;
     requestUpdate: () => void;
 }
 
-const MainToolBar = ({orbitControls, canvas, requestUpdate}: MainToolBarProps) => {
+const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
     const user = useStore(state => state.user);
     const exportContent = useStore(state => state.exportContent);
+    const showCloudFilePanel = useStore(state => state.showCloudFilePanel);
 
-    const [aboutUs, setAboutUs] = useState(false);
-    const [downloadDialogVisible, setDownloadDialogVisible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
-    const [fileName, setFileName] = useState<string>('aladdin.json');
     const [title, setTitle] = useState<string>('My Aladdin File');
     const [titleDialogVisible, setTitleDialogVisible] = useState(false);
-    const [cloudFolderVisible, setCloudFolderVisible] = useState(false);
     const cloudFiles = useRef<CloudFileInfo[] | void>();
 
     const query = queryString.parse(window.location.search);
@@ -155,6 +91,26 @@ const MainToolBar = ({orbitControls, canvas, requestUpdate}: MainToolBarProps) =
     };
 
     const redo = () => {
+    };
+
+    const resetView = () => {
+        if (orbitControls) {
+            orbitControls.reset();
+        }
+    };
+
+    const toggleAutoRotate = () => {
+        setCommonStore((state) => {
+            state.viewState.autoRotate = !state.viewState.autoRotate;
+        });
+        requestUpdate();
+    };
+
+    const toggleHelidonPanel = () => {
+        setCommonStore((state) => {
+            state.viewState.showHeliodonPanel = !state.viewState.showHeliodonPanel;
+        });
+        requestUpdate();
     };
 
     const signIn = () => {
@@ -273,16 +229,10 @@ const MainToolBar = ({orbitControls, canvas, requestUpdate}: MainToolBarProps) =
                     console.log("Error getting files:", error);
                 });
 
-            setCloudFolderVisible(true);
+            setCommonStore((state) => {
+                state.showCloudFilePanel = true;
+            });
         }
-    };
-
-    const openAboutUs = (on: boolean) => {
-        setAboutUs(on);
-    };
-
-    const gotoAboutPage = () => {
-        openAboutUs(true);
     };
 
     const gotoHomepage = () => {
@@ -292,71 +242,17 @@ const MainToolBar = ({orbitControls, canvas, requestUpdate}: MainToolBarProps) =
     const gotoAccountSettings = () => {
     };
 
-    const takeScreenshot = () => {
-        if (canvas) { // TODO
-            Util.saveImage("screenshot.png", canvas.toDataURL("image/png"));
-        }
-    };
-
-    const showDownloadDialog = () => {
-        setDownloadDialogVisible(true);
-    };
-
     const showTitleDialog = () => {
         setTitleDialogVisible(true);
     };
 
-    const writeLocalFile = () => {
-        setConfirmLoading(true);
-        const blob = new Blob([JSON.stringify(exportContent())], {type: "application/json"});
-        saveAs(blob, fileName);
-        setConfirmLoading(false);
-        setDownloadDialogVisible(false);
-    };
-
-    const readLocalFile = () => {
-        const fileDialog = document.getElementById('file-dialog') as HTMLInputElement;
-        fileDialog.onchange = (e) => {
-            if (fileDialog.files && fileDialog.files.length > 0) {
-                let reader = new FileReader();
-                reader.readAsText(fileDialog.files[0]);
-                setFileName(fileDialog.files[0].name);
-                reader.onload = (e) => {
-                    if (reader.result) {
-                        const input = JSON.parse(reader.result.toString());
-                        setCommonStore((state) => {
-                            state.world = input.world;
-                            state.viewState = input.view;
-                            state.elements = input.elements;
-                        });
-                        requestUpdate();
-                    }
-                    fileDialog.value = '';
-                };
-            }
-        }
-        fileDialog.click();
-    };
-
-    const avatarMenu = (
+     const avatarMenu = (
         <Menu>
-            <Menu.Item key="save-local-file">
-                <a onClick={showDownloadDialog}>Save to Download Folder</a>
-            </Menu.Item>
-            <Menu.Item key="open-local-file">
-                <a onClick={readLocalFile}>Open Local File</a>
-            </Menu.Item>
             <Menu.Item key="my-cloud-files">
                 <a onClick={gotoMyCloudFiles}>My Cloud Files</a>
             </Menu.Item>
-            <Menu.Item key="screenshot">
-                <a onClick={takeScreenshot}>Take Screenshot</a>
-            </Menu.Item>
             <Menu.Item key="account">
                 <a onClick={gotoAccountSettings}>Account Settings</a>
-            </Menu.Item>
-            <Menu.Item key="about">
-                <a onClick={gotoAboutPage}>About Us</a>
             </Menu.Item>
             <Menu.Item key="signOut">
                 <a onClick={signOut}>Sign Out</a>
@@ -381,23 +277,6 @@ const MainToolBar = ({orbitControls, canvas, requestUpdate}: MainToolBarProps) =
     return (
         <>
             <Modal
-                title="Download as"
-                visible={downloadDialogVisible}
-                onOk={writeLocalFile}
-                confirmLoading={confirmLoading}
-                onCancel={() => {
-                    setDownloadDialogVisible(false);
-                }}
-            >
-                <Input
-                    placeholder="File name"
-                    value={fileName}
-                    onPressEnter={writeLocalFile}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setFileName(e.target.value);
-                    }}/>
-            </Modal>
-            <Modal
                 title="Save to the Cloud"
                 visible={titleDialogVisible}
                 onOk={saveToCloud}
@@ -414,42 +293,7 @@ const MainToolBar = ({orbitControls, canvas, requestUpdate}: MainToolBarProps) =
                         setTitle(e.target.value);
                     }}/>
             </Modal>
-            <LeftContainer>
-                <Space direction='horizontal'>
-                    <div>
-                        <span style={{paddingRight: '10px'}}>Spin</span>
-                        <Switch title={'Spin view'}
-                                checked={viewState.autoRotate}
-                                onChange={(checked) => {
-                                    setCommonStore((state) => {
-                                        state.viewState.autoRotate = checked;
-                                    });
-                                    requestUpdate();
-                                }}
-                        />
-                    </div>
-                    <div>
-                        <span style={{paddingRight: '10px', paddingLeft: '10px'}}>Heliodon</span>
-                        <Switch title={'Show heliodon'}
-                                checked={viewState.showHeliodonPanel}
-                                onChange={(checked) => {
-                                    setCommonStore((state) => {
-                                        state.viewState.showHeliodonPanel = checked;
-                                    });
-                                    requestUpdate();
-                                }}
-                        />
-                    </div>
-                    <div>
-                        <Button type="primary" title={'Reset view'} onClick={() => {
-                            if (orbitControls) {
-                                orbitControls.reset();
-                            }
-                        }}> Reset </Button>
-                    </div>
-                </Space>
-            </LeftContainer>
-            <RightContainer>
+            <ButtonsContainer>
                 <Space direction='horizontal'>
                     <div>
                         <FontAwesomeIcon title={'Undo'}
@@ -464,6 +308,24 @@ const MainToolBar = ({orbitControls, canvas, requestUpdate}: MainToolBarProps) =
                                          color={'#aaaaaa'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={redo}/>
+                        <FontAwesomeIcon title={'Reset view'}
+                                         icon={faArrowAltCircleUp}
+                                         size={'3x'}
+                                         color={'#666666'}
+                                         style={{paddingRight: '12px', cursor: 'pointer'}}
+                                         onClick={resetView}/>
+                        <FontAwesomeIcon title={'Auto rotate'}
+                                         icon={faAsymmetrik}
+                                         size={'3x'}
+                                         color={viewState.autoRotate ? 'antiquewhite' : '#666666'}
+                                         style={{paddingRight: '12px', cursor: 'pointer'}}
+                                         onClick={toggleAutoRotate}/>
+                        <FontAwesomeIcon title={'Show helidon panel'}
+                                         icon={faSun}
+                                         size={'3x'}
+                                         color={viewState.showHeliodonPanel ? 'goldenrod' : '#666666'}
+                                         style={{paddingRight: '12px', cursor: 'pointer'}}
+                                         onClick={toggleHelidonPanel}/>
                         <FontAwesomeIcon title={'Save file to the cloud'}
                                          icon={faSave}
                                          size={'3x'}
@@ -480,7 +342,8 @@ const MainToolBar = ({orbitControls, canvas, requestUpdate}: MainToolBarProps) =
                     <div>
                         {user.displayName ?
                             <Dropdown overlay={avatarMenu} trigger={['click']}>
-                                <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                                <a className="ant-dropdown-link" onClick={e => e.preventDefault()}
+                                   title={'Click to open menu'}>
                                     <Avatar size={32} src={user.photoURL} alt={user.displayName}/>
                                 </a>
                             </Dropdown>
@@ -489,44 +352,9 @@ const MainToolBar = ({orbitControls, canvas, requestUpdate}: MainToolBarProps) =
                         }
                     </div>
                 </Space>
-            </RightContainer>
-            {aboutUs && <About openAboutUs={openAboutUs}/>}
-            {cloudFolderVisible && cloudFiles.current &&
-            <CloudFileContainer>
-                <ColumnWrapper>
-                    <Header className='handle'>
-                        <span>My Cloud Files</span>
-                        <span style={{cursor: 'pointer'}}
-                              onMouseDown={() => {
-                                  setCloudFolderVisible(false);
-                              }}>
-                            Close
-                        </span>
-                    </Header>
-                    <Table style={{width: '100%'}}
-                           dataSource={cloudFileArray}
-                           pagination={{
-                               defaultPageSize: 10,
-                               showSizeChanger: true,
-                               pageSizeOptions: ['10', '50', '100']
-                           }}>
-                        <Column title="Title" dataIndex="title" key="title"/>
-                        <Column title="Owner" dataIndex="owner" key="owner"/>
-                        <Column title="Time" dataIndex="time" key="time"/>
-                        <Column
-                            title="Action"
-                            key="action"
-                            render={(text, record: any) => (
-                                <Space size="middle">
-                                    <a target="_blank" rel="noopener noreferrer"
-                                       href={HOME_URL + '?tmp=yes&userid=' + record.email + '&title=' + record.title}>Open</a>
-                                    <a>Delete</a>
-                                </Space>
-                            )}
-                        />
-                    </Table>
-                </ColumnWrapper>
-            </CloudFileContainer>
+            </ButtonsContainer>
+            {showCloudFilePanel && cloudFiles.current &&
+            <CloudFilePanel cloudFileArray={cloudFileArray} requestUpdate={requestUpdate}/>
             }
         </>
     );

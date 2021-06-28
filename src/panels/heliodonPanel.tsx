@@ -11,9 +11,9 @@ import 'antd/dist/antd.css';
 import ReactDraggable, {DraggableEventHandler} from "react-draggable";
 
 const Container = styled.div`
-  position: fixed;
+  position: absolute;
   top: 80px;
-  left: 10px;
+  right: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -24,7 +24,7 @@ const Container = styled.div`
 const ColumnWrapper = styled.div`
   background-color: #f8f8f8;
   position: absolute;
-  left: 0;
+  right: 0;
   top: 0;
   width: 640px;
   padding: 0;

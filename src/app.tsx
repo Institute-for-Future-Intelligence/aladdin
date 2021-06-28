@@ -18,7 +18,6 @@ import {Euler, Vector3} from "three";
 import Heliodon from "./views/heliodon";
 import {Util} from "./Util";
 import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./analysis/sunTools";
-import aladdinLogo from './assets/magic-lamp.png';
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from "./mainMenu";
 import GroundPanel from "./panels/groundPanel";
@@ -252,7 +251,6 @@ const App = () => {
                 paddingTop: '10px',
                 fontSize: '30px'
             }}>
-                <img alt='Aladdin Logo' src={aladdinLogo} height='50px' style={{verticalAlign: 'middle'}}/>
                 <span style={{paddingLeft: '20px', verticalAlign: 'middle'}}>Aladdin</span>
             </div>
             <div style={{
@@ -272,12 +270,12 @@ const App = () => {
                 &nbsp;&nbsp; Institute for Future Intelligence, &copy;{new Date().getFullYear()}. Version {VERSION}
             </div>
             <MainMenu
+                canvas={canvasRef.current}
                 collectDailyLightSensorData={collectDailyLightSensorData}
                 collectYearlyLightSensorData={collectYearlyLightSensorData}
                 requestUpdate={requestUpdate}
             />
-            <MainToolBar canvas={canvasRef.current}
-                         orbitControls={orbitControlsRef.current}
+            <MainToolBar orbitControls={orbitControlsRef.current}
                          requestUpdate={requestUpdate}/>
             {viewState.showGroundPanel &&
             <GroundPanel grid={grid}

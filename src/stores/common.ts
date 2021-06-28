@@ -47,6 +47,7 @@ export interface CommonStoreState {
     moveHandleType: MoveHandleType | null;
     resizeHandleType: ResizeHandleType | null;
     resizeAnchor: Vector2;
+    showCloudFilePanel: boolean;
     getSelectedElement: () => ElementModel | null;
     getElementById: (id: string) => ElementModel | null;
     selectNone: () => void;
@@ -119,6 +120,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         moveHandleType: null,
         resizeHandleType: null,
         resizeAnchor: new Vector2(),
+        showCloudFilePanel: false,
 
         getSelectedElement() {
             const elements = get().elements;
