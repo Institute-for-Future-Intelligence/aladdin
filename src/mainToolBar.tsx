@@ -50,6 +50,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
     const exportContent = useStore(state => state.exportContent);
     const showCloudFilePanel = useStore(state => state.showCloudFilePanel);
 
+    const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [title, setTitle] = useState<string>('My Aladdin File');
     const [titleDialogVisible, setTitleDialogVisible] = useState(false);
@@ -88,6 +89,23 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
             init(); // load the initial state after we recognize the user
         });
     }, []);
+
+    useEffect(() => {
+        if (cloudFiles.current) {
+            const arr: any[] = [];
+            cloudFiles.current.forEach((f, i) => {
+                arr.push({
+                    key: i.toString(),
+                    title: f.fileName,
+                    time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm a'),
+                    action: '',
+                    email: f.email,
+                    owner: f.owner
+                });
+            });
+            setCloudFileArray(arr);
+        }
+    }, [cloudFiles.current]);
 
     const init = () => {
         if (query.userid && query.title) {
@@ -220,7 +238,6 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
 
     const gotoMyCloudFiles = async () => {
         if (user.email) {
-
             // fetch owner's file information from the cloud
             cloudFiles.current = await firebase.firestore()
                 .collection("users")
@@ -250,6 +267,41 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
         }
     };
 
+    const deleteCloudFile = (userid: string, title: string) => {
+        firebase.firestore()
+            .collection("users")
+            .doc(userid)
+            .collection("files")
+            .doc(title)
+            .delete().then(() => {
+            setCloudFileArray(cloudFileArray.filter((e) => {
+                return e.email !== userid || e.title !== title;
+            }));
+        });
+    };
+
+    const renameCloudFile = (userid: string, oldTitle: string, newTitle: string) => {
+        const files = firebase.firestore()
+            .collection("users")
+            .doc(userid)
+            .collection("files");
+        files.doc(oldTitle).get().then(doc => {
+            if (doc && doc.exists) {
+                const data = doc.data();
+                if (data) {
+                    files.doc(newTitle).set(data).then(() => files.doc(oldTitle).delete());
+                }
+            }
+        });
+        for (const f of cloudFileArray) {
+            if (f.email === userid && f.title === oldTitle) {
+                f.title = newTitle;
+                break;
+            }
+        }
+        setCloudFileArray([...cloudFileArray]);
+    };
+
     const gotoHomepage = () => {
         visitHomepage();
     };
@@ -274,20 +326,6 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
             </Menu.Item>
         </Menu>
     );
-
-    const cloudFileArray: any[] = [];
-    if (cloudFiles.current) {
-        cloudFiles.current.forEach((f, i) => {
-            cloudFileArray.push({
-                key: i.toString(),
-                title: f.fileName,
-                time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm a'),
-                action: '',
-                email: f.email,
-                owner: f.owner
-            });
-        });
-    }
 
     return (
         <>
@@ -375,7 +413,11 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                 </Space>
             </ButtonsContainer>
             {showCloudFilePanel && cloudFiles.current &&
-            <CloudFilePanel cloudFileArray={cloudFileArray} requestUpdate={requestUpdate}/>
+            <CloudFilePanel
+                cloudFileArray={cloudFileArray}
+                deleteCloudFile={deleteCloudFile}
+                renameCloudFile={renameCloudFile}
+                requestUpdate={requestUpdate}/>
             }
         </>
     );

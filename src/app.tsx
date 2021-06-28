@@ -318,6 +318,7 @@ const App = () => {
             >
                 <div>
                     <Canvas shadows={true}
+                            gl={{preserveDrawingBuffer: true}}
                             camera={{
                                 position: cameraPosition,
                                 fov: 45,

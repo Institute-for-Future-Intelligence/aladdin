@@ -141,8 +141,8 @@ export class Util {
         a.click();
     };
 
-    static async screenshot(root: string, name: string, options: {}) {
-        const source = window.document.getElementById(root);
+    static async screenshot(elementId: string, name: string, options: {}) {
+        const source = window.document.getElementById(elementId);
         if (source) {
             const canvas = await html2canvas(source, {...options, removeContainer: true});
             const a = document.createElement('a');
@@ -150,7 +150,7 @@ export class Util {
             a.download = `${name}.png`;
             a.click();
         } else {
-            throw new Error(`Cannot find element with ID ${root}`);
+            throw new Error(`Cannot find element with ID ${elementId}`);
         }
     };
 

@@ -6,8 +6,11 @@ import React, {useState} from "react";
 import styled from "styled-components";
 import {useStore} from "../stores/common";
 import ReactDraggable, {DraggableEventHandler} from "react-draggable";
-import {Space, Table} from "antd";
+import {Input, Modal, Space, Table} from "antd";
 import {HOME_URL} from "../constants";
+import {ExclamationCircleOutlined} from "@ant-design/icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEdit, faFile, faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 
 const {Column} = Table;
 
@@ -27,7 +30,7 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 600px;
+  width: 640px;
   height: 500px;
   padding-bottom: 10px;
   border: 2px solid gainsboro;
@@ -58,16 +61,24 @@ const Header = styled.div`
 
 export interface CloudFilePanelProps {
     cloudFileArray: any[];
+    deleteCloudFile: (userid: string, title: string) => void;
+    renameCloudFile: (userid: string, oldTitle: string, newTitle: string) => void;
     requestUpdate: () => void;
 }
 
 const CloudFilePanel = ({
                             cloudFileArray,
+                            deleteCloudFile,
+                            renameCloudFile,
                             requestUpdate
                         }: CloudFilePanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const [curPosition, setCurPosition] = useState({x: 0, y: 0});
+    const [renameDialogVisible, setRenameDialogVisible] = useState(false);
+    const [oldTitle, setOldTitle] = useState<string>();
+    const [newTitle, setNewTitle] = useState<string>();
+    const [email, setEmail] = useState<string>();
 
     const onDrag: DraggableEventHandler = (e, ui) => {
         // TODO
@@ -85,55 +96,126 @@ const CloudFilePanel = ({
         // TODO
     };
 
+    const closePanel = () => {
+        setCommonStore((state) => {
+            state.showCloudFilePanel = false;
+        });
+        requestUpdate();
+    };
+
+    const deleteFile = (email: string, title: string) => {
+        Modal.confirm({
+            title: 'Do you really want to delete this document titled with "' + title + '"?',
+            icon: <ExclamationCircleOutlined/>,
+            okText: 'OK',
+            cancelText: 'Cancel',
+            onOk: () => {
+                deleteCloudFile(email, title);
+            }
+        });
+    };
+
+    const renameFile = () => {
+        if (email && oldTitle && newTitle) {
+            renameCloudFile(email, oldTitle, newTitle);
+        }
+        setRenameDialogVisible(false);
+    };
+
     return (
-        <ReactDraggable
-            handle={'.handle'}
-            bounds={'parent'}
-            axis='both'
-            position={curPosition}
-            onDrag={onDrag}
-            onStart={onDragStart}
-            onStop={onDragEnd}
-        >
-            <Container>
-                <ColumnWrapper>
-                    <Header className='handle'>
-                        <span>My Cloud Files</span>
-                        <span style={{cursor: 'pointer'}}
-                              onMouseDown={() => {
-                                  setCommonStore((state) => {
-                                      state.showCloudFilePanel = false;
-                                  });
-                                  requestUpdate();
-                              }}>
+        <>
+            <Modal
+                title="Rename"
+                visible={renameDialogVisible}
+                onOk={renameFile}
+                onCancel={() => {
+                    setRenameDialogVisible(false);
+                    setNewTitle(undefined);
+                }}
+            >
+                <Input
+                    placeholder="Title"
+                    value={newTitle ? newTitle : oldTitle}
+                    onPressEnter={renameFile}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setNewTitle(e.target.value);
+                    }}/>
+            </Modal>
+            <ReactDraggable
+                handle={'.handle'}
+                bounds={'parent'}
+                axis='both'
+                position={curPosition}
+                onDrag={onDrag}
+                onStart={onDragStart}
+                onStop={onDragEnd}
+            >
+                <Container>
+                    <ColumnWrapper>
+                        <Header className='handle'>
+                            <span>My Cloud Files</span>
+                            <span style={{cursor: 'pointer'}}
+                                  onMouseDown={() => {
+                                      closePanel();
+                                  }}
+                                  onTouchStart={() => {
+                                      closePanel();
+                                  }}
+                            >
                             Close
                         </span>
-                    </Header>
-                    <Table style={{width: '100%'}}
-                           dataSource={cloudFileArray}
-                           pagination={{
-                               defaultPageSize: 10,
-                               showSizeChanger: true,
-                               pageSizeOptions: ['10', '50', '100']
-                           }}>
-                        <Column title="Title" dataIndex="title" key="title"/>
-                        <Column title="Owner" dataIndex="owner" key="owner"/>
-                        <Column title="Time" dataIndex="time" key="time"/>
-                        <Column
-                            title="Action"
-                            key="action"
-                            render={(text, record: any) => (
-                                <Space size="middle">
-                                    <a target="_blank" rel="noopener noreferrer"
-                                       href={HOME_URL + '?tmp=yes&userid=' + record.email + '&title=' + record.title}>Open</a>
-                                    <a>Delete</a>
-                                </Space>
-                            )}
-                        />
-                    </Table>
-                </ColumnWrapper>
-            </Container>
-        </ReactDraggable>
+                        </Header>
+                        <Table style={{width: '100%'}}
+                               dataSource={cloudFileArray}
+                               pagination={{
+                                   defaultPageSize: 10,
+                                   showSizeChanger: true,
+                                   pageSizeOptions: ['10', '50', '100']
+                               }}>
+                            <Column title="Title" dataIndex="title" key="title"/>
+                            <Column title="Owner" dataIndex="owner" key="owner"/>
+                            <Column title="Time" dataIndex="time" key="time"/>
+                            <Column
+                                title="Action"
+                                key="action"
+                                render={(text, record: any) => (
+                                    <Space size="middle">
+                                        <a target="_blank" rel="noopener noreferrer"
+                                           href={HOME_URL + '?tmp=yes&userid=' + record.email + '&title=' + record.title}>
+                                            <FontAwesomeIcon title={'Open'}
+                                                             icon={faFile}
+                                                             size={'lg'}
+                                                             color={'#666666'}
+                                                             style={{cursor: 'pointer'}}/>
+                                        </a>
+                                        <FontAwesomeIcon title={'Delete'}
+                                                         icon={faTrashAlt}
+                                                         size={'lg'}
+                                                         color={'#666666'}
+                                                         style={{cursor: 'pointer'}}
+                                                         onClick={() => {
+                                                             deleteFile(record.email, record.title);
+                                                         }}
+                                        />
+                                        <FontAwesomeIcon title={'Rename'}
+                                                         icon={faEdit}
+                                                         size={'lg'}
+                                                         color={'#666666'}
+                                                         style={{cursor: 'pointer'}}
+                                                         onClick={() => {
+                                                             setOldTitle(record.title);
+                                                             setEmail(record.email);
+                                                             setRenameDialogVisible(true);
+                                                         }}
+                                        />
+                                    </Space>
+                                )}
+                            />
+                        </Table>
+                    </ColumnWrapper>
+                </Container>
+            </ReactDraggable>
+        </>
     )
 };
 
