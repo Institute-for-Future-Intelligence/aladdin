@@ -71,6 +71,12 @@ const ContextMenu = ({
         }
     };
 
+    const lockElement = (on: boolean) => {
+        if (selectedElement) {
+            updateElementById(selectedElement.id, {locked: on});
+        }
+    };
+
     switch (selectedElement ? selectedElement.type : clickObjectType) {
         case ObjectType.Sky:
             return (
@@ -102,20 +108,29 @@ const ContextMenu = ({
         case ObjectType.Foundation:
             return (
                 <StyledMenu>
-                    <Menu.Item key={'foundation-copy'} onClick={copyElement}>
+                    <Menu.Item key={'foundation-copy'} onClick={copyElement} style={{paddingLeft: '40px'}}>
                         Copy
                     </Menu.Item>
-                    <Menu.Item key={'foundation-cut'} onClick={cutElement}>
+                    <Menu.Item key={'foundation-cut'} onClick={cutElement} style={{paddingLeft: '40px'}}>
                         Cut
                     </Menu.Item>
-                    <Menu.Item key={'foundation-paste'} onClick={pasteElement}>
+                    <Menu.Item key={'foundation-paste'} onClick={pasteElement} style={{paddingLeft: '40px'}}>
                         Paste
+                    </Menu.Item>
+                    <Menu.Item key={'human-lock'}>
+                        <Checkbox checked={selectedElement?.locked} onChange={(e) => {
+                            lockElement(e.target.checked);
+                            requestUpdate();
+                        }}>
+                            Lock
+                        </Checkbox>
                     </Menu.Item>
                     {selectedElement &&
                     <ReshapeElementMenu
                         elementId={selectedElement.id}
                         name={'foundation'}
-                        requestUpdate={requestUpdate}/>
+                        requestUpdate={requestUpdate}
+                        style={{paddingLeft: '24px'}}/>
                     }
                 </StyledMenu>
             );
@@ -150,43 +165,68 @@ const ContextMenu = ({
         case ObjectType.Cuboid:
             return (
                 <StyledMenu>
-                    <Menu.Item key={'cuboid-copy'} onClick={copyElement}>
+                    <Menu.Item key={'cuboid-copy'} onClick={copyElement} style={{paddingLeft: '40px'}}>
                         Copy
                     </Menu.Item>
-                    <Menu.Item key={'cuboid-cut'} onClick={cutElement}>
+                    <Menu.Item key={'cuboid-cut'} onClick={cutElement} style={{paddingLeft: '40px'}}>
                         Cut
                     </Menu.Item>
-                    <Menu.Item key={'cuboid-paste'} onClick={pasteElement}>
+                    <Menu.Item key={'cuboid-paste'} onClick={pasteElement} style={{paddingLeft: '40px'}}>
                         Paste
+                    </Menu.Item>
+                    <Menu.Item key={'human-lock'}>
+                        <Checkbox checked={selectedElement?.locked} onChange={(e) => {
+                            lockElement(e.target.checked);
+                            requestUpdate();
+                        }}>
+                            Lock
+                        </Checkbox>
                     </Menu.Item>
                     {selectedElement &&
                     <ReshapeElementMenu
                         elementId={selectedElement.id}
                         name={'cuboid'}
-                        requestUpdate={requestUpdate}/>
+                        requestUpdate={requestUpdate}
+                        style={{paddingLeft: '24px'}}/>
                     }
                 </StyledMenu>
             );
         case ObjectType.Human:
             return (
                 <StyledMenu>
-                    <Menu.Item key={'human-copy'} onClick={copyElement}>
+                    <Menu.Item key={'human-copy'} onClick={copyElement} style={{paddingLeft: '40px'}}>
                         Copy
                     </Menu.Item>
-                    <Menu.Item key={'human-cut'} onClick={cutElement}>
+                    <Menu.Item key={'human-cut'} onClick={cutElement} style={{paddingLeft: '40px'}}>
                         Cut
                     </Menu.Item>
-                    {selectedElement && <HumanMenu requestUpdate={requestUpdate}/>}
+                    <Menu.Item key={'human-lock'}>
+                        <Checkbox checked={selectedElement?.locked} onChange={(e) => {
+                            lockElement(e.target.checked);
+                            requestUpdate();
+                        }}>
+                            Lock
+                        </Checkbox>
+                    </Menu.Item>
+                    {selectedElement && <HumanMenu requestUpdate={requestUpdate} style={{paddingLeft: '24px'}}/>}
                 </StyledMenu>
             );
         case ObjectType.Tree:
             return (
                 <StyledMenu style={{padding: 0, margin: 0}}>
-                    <Menu.Item key={'tree-copy'} onClick={copyElement}>
+                    <Menu.Item key={'tree-copy'} onClick={copyElement} style={{paddingLeft: '40px'}}>
                         Copy
                     </Menu.Item>
-                    <Menu.Item key={'tree-cut'} onClick={cutElement}>
+                    <Menu.Item key={'tree-cut'} onClick={cutElement} style={{paddingLeft: '40px'}}>
                         Cut
+                    </Menu.Item>
+                    <Menu.Item key={'tree-lock'}>
+                        <Checkbox checked={selectedElement?.locked} onChange={(e) => {
+                            lockElement(e.target.checked);
+                            requestUpdate();
+                        }}>
+                            Lock
+                        </Checkbox>
                     </Menu.Item>
                     {selectedElement &&
                     <ReshapeElementMenu elementId={selectedElement.id}
@@ -196,9 +236,10 @@ const ContextMenu = ({
                                         widthName={'Spread'}
                                         adjustLength={false}
                                         adjustAngle={false}
-                                        requestUpdate={requestUpdate}/>
+                                        requestUpdate={requestUpdate}
+                                        style={{paddingLeft: '24px'}}/>
                     }
-                    {selectedElement && <TreeMenu requestUpdate={requestUpdate}/>}
+                    {selectedElement && <TreeMenu requestUpdate={requestUpdate} style={{paddingLeft: '24px'}}/>}
                 </StyledMenu>
             );
         default:

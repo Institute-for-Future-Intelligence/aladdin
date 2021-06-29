@@ -20,6 +20,8 @@ export interface ReshapeElementMenuProps {
     adjustAngle?: boolean;
     widthName?: string;
     requestUpdate: () => void;
+
+    [key: string]: any;
 }
 
 const ReshapeElementMenu = ({
@@ -33,7 +35,8 @@ const ReshapeElementMenu = ({
                                 adjustHeight = true,
                                 adjustAngle = true,
                                 widthName = 'Width',
-                                requestUpdate
+                                requestUpdate,
+                                ...rest
                             }: ReshapeElementMenuProps) => {
 
     const setElementSize = useStore(state => state.setElementSize);
@@ -42,7 +45,7 @@ const ReshapeElementMenu = ({
     const element = getElementById(elementId);
 
     return (
-        <Menu key={name}>
+        <Menu key={name} {...rest}>
             {adjustWidth &&
             <Menu.Item key={name + '-lx'}>
                 <Space style={{width: '60px'}}>{widthName}:</Space>

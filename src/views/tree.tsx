@@ -32,6 +32,7 @@ const Tree = ({
                   lz,
                   name = TreeType.Pine,
                   selected = false,
+                  locked = false,
                   ...props
               }: TreeModel) => {
 
@@ -148,7 +149,7 @@ const Tree = ({
             </Billboard>
 
             {/* draw handle */}
-            {selected &&
+            {selected && !locked &&
             <Sphere
                 position={new Vector3(0, -lz / 2, 0)}
                 args={[MOVE_HANDLE_RADIUS * 2, 6, 6]}

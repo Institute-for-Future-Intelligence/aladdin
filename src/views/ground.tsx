@@ -131,7 +131,7 @@ const Ground = () => {
                        });
                    }}
                    onPointerMove={(e) => {
-                       if (grab && grab.type) {
+                       if (grab && grab.type && !grab.locked) {
                            const mouse = new Vector2();
                            mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
                            mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;

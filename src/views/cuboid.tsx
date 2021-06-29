@@ -31,6 +31,7 @@ const Cuboid = ({
                     lineColor = 'black',
                     lineWidth = 0.1,
                     selected = false,
+                    locked = false,
                 }: CuboidModel) => {
 
     cy = -cy; // we want positive y to point north
@@ -231,7 +232,7 @@ const Cuboid = ({
             }
 
             {/* draw handles */}
-            {selected &&
+            {selected && !locked &&
             <>
                 {/* resize handles */}
                 <Box ref={resizeHandleLLTopRef}

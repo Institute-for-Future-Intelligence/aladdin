@@ -163,9 +163,9 @@ const CloudFilePanel = ({
                         <Table style={{width: '100%'}}
                                dataSource={cloudFileArray}
                                pagination={{
-                                   defaultPageSize: 10,
+                                   defaultPageSize: 5,
                                    showSizeChanger: true,
-                                   pageSizeOptions: ['10', '50', '100']
+                                   pageSizeOptions: ['5', '10', '50']
                                }}>
                             <Column title="Title" dataIndex="title" key="title"/>
                             <Column title="Owner" dataIndex="owner" key="owner"/>

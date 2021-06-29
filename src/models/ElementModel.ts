@@ -16,6 +16,7 @@ export interface ElementModel {
     rotation: number[]; // Euler angle for the orientation
 
     selected?: boolean;
+    locked?: boolean;
     color?: string;
     lineColor?: string;
     lineWidth?: number;

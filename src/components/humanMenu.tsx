@@ -38,9 +38,14 @@ const radioStyle = {
 
 export interface HumanMenuProps {
     requestUpdate: () => void;
+
+    [key: string]: any;
 }
 
-const HumanMenu = ({requestUpdate}: HumanMenuProps) => {
+const HumanMenu = ({
+                       requestUpdate,
+                       ...rest
+                   }: HumanMenuProps) => {
 
     const updateElementById = useStore(state => state.updateElementById);
     const getSelectedElement = useStore(state => state.getSelectedElement);
@@ -48,7 +53,7 @@ const HumanMenu = ({requestUpdate}: HumanMenuProps) => {
     const human = getSelectedElement();
 
     return (
-        <SubMenu key={'person'} title={'Change Person'}>
+        <SubMenu key={'person'} title={'Change Person'}  {...rest}>
             <Radio.Group value={human?.name}
                          style={{height: '625px'}}
                          onChange={(e) => {

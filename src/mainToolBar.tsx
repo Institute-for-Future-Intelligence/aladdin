@@ -109,6 +109,8 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                     owner: f.owner
                 });
             });
+            arr.sort((a, b) => a.time.localeCompare(b.time));
+            arr.reverse();
             setCloudFileArray(arr);
         }
     }, [cloudFiles.current]);

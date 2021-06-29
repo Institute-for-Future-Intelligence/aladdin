@@ -25,9 +25,14 @@ const radioStyle = {
 
 export interface TreeMenuProps {
     requestUpdate: () => void;
+
+    [key: string]: any;
 }
 
-const TreeMenu = ({requestUpdate}: TreeMenuProps) => {
+const TreeMenu = ({
+                      requestUpdate,
+                      ...rest
+                  }: TreeMenuProps) => {
 
     const updateElementById = useStore(state => state.updateElementById);
     const getSelectedElement = useStore(state => state.getSelectedElement);
@@ -35,7 +40,7 @@ const TreeMenu = ({requestUpdate}: TreeMenuProps) => {
     const tree = getSelectedElement();
 
     return (
-        <SubMenu key={'type'} title={'Change Type'}>
+        <SubMenu key={'type'} title={'Change Type'} {...rest}>
             <Radio.Group value={tree?.name}
                          style={{height: '250px'}}
                          onChange={(e) => {

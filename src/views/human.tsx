@@ -37,6 +37,7 @@ const Human = ({
                    cy,
                    name = HumanName.Jack,
                    selected = false,
+                   locked = false,
                    ...props
                }: HumanModel) => {
 
@@ -227,7 +228,7 @@ const Human = ({
             </Billboard>
 
             {/* draw handle */}
-            {selected &&
+            {selected && !locked &&
             <Sphere
                 position={new Vector3(0, -height / 2, 0)}
                 args={[MOVE_HANDLE_RADIUS * 2, 6, 6]}

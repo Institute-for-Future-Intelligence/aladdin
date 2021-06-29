@@ -30,6 +30,7 @@ const Foundation = ({
                         color = 'gray',
                         lineColor = 'black',
                         lineWidth = 0.2,
+                        locked = false,
                         selected = false,
                     }: FoundationModel) => {
 
@@ -240,7 +241,7 @@ const Foundation = ({
             }
 
             {/* draw handles */}
-            {selected &&
+            {selected && !locked &&
             <>
                 {/* resize handles */}
                 <Box ref={resizeHandleLLRef}
@@ -445,7 +446,7 @@ const Foundation = ({
                 position={[0, hz + 0.2, 0]}
                 scale={[1, 0.2, 0.2]}/>
             }
-            {hoveredResizeHandleLL && <textSprite
+            {!locked && hoveredResizeHandleLL && <textSprite
                 name={'Label'}
                 text={'LL'}
                 fontSize={100}
@@ -454,7 +455,7 @@ const Foundation = ({
                 position={[-hx, hz + 0.2, -hy]}
                 scale={[0.2, 0.2, 0.2]}/>
             }
-            {hoveredResizeHandleUL && <textSprite
+            {!locked && hoveredResizeHandleUL && <textSprite
                 name={'Label'}
                 text={'UL'}
                 fontSize={100}
@@ -463,7 +464,7 @@ const Foundation = ({
                 position={[-hx, hz + 0.2, hy]}
                 scale={[0.2, 0.2, 0.2]}/>
             }
-            {hoveredResizeHandleLR && <textSprite
+            {!locked && hoveredResizeHandleLR && <textSprite
                 name={'Label'}
                 text={'LR'}
                 fontSize={100}
@@ -472,7 +473,7 @@ const Foundation = ({
                 position={[hx, hz + 0.2, -hy]}
                 scale={[0.2, 0.2, 0.2]}/>
             }
-            {hoveredResizeHandleUR && <textSprite
+            {!locked && hoveredResizeHandleUR && <textSprite
                 name={'Label'}
                 text={'UR'}
                 fontSize={100}
