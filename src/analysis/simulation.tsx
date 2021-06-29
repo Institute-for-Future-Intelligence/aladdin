@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useMemo} from "react";
+import React, {useEffect, useMemo, useRef} from "react";
 import {calculateDiffuseAndReflectedRadiation, calculatePeakRadiation, getSunDirection} from "./sunTools";
 import {Object3D, Raycaster, Vector3} from "three";
 import {useThree} from "@react-three/fiber";
@@ -14,11 +14,9 @@ import {MONTHS} from "../constants";
 import {SensorModel} from "../models/SensorModel";
 
 export interface SimulationProps {
-
     city: string | null;
     dailyLightSensorDataFlag: boolean;
     yearlyLightSensorDataFlag: boolean;
-
 }
 
 const Simulation = ({
@@ -38,16 +36,26 @@ const Simulation = ({
     const interval = 60 / world.timesPerHour;
     const ray = useMemo(() => new Raycaster(), []);
     const now = new Date(world.date);
+    const loadedDaily = useRef(false);
+    const loadedYearly = useRef(false);
 
     useEffect(() => {
-        if (elements && elements.length > 0) {
-            collectAllDailyLightSensorData();
+        if (loadedDaily.current) { // do not call on first render
+            if (elements && elements.length > 0) {
+                collectAllDailyLightSensorData();
+            }
+        } else {
+            loadedDaily.current = true;
         }
     }, [dailyLightSensorDataFlag]);
 
     useEffect(() => {
-        if (elements && elements.length > 0) {
-            collectAllYearlyLightSensorData();
+        if (loadedYearly.current) { // do not call on first render
+            if (elements && elements.length > 0) {
+                collectAllYearlyLightSensorData();
+            }
+        } else {
+            loadedYearly.current = true;
         }
     }, [yearlyLightSensorDataFlag]);
 
@@ -59,7 +67,7 @@ const Simulation = ({
             const components = content[0].children;
             const objects: Object3D[] = [];
             for (const c of components) {
-                objects.push(...c.children.filter(x => x.castShadow));
+                objects.push(...c.children.filter(x => x.userData['simulation']));
             }
             const intersects = ray.intersectObjects(objects);
             return intersects.length > 0;

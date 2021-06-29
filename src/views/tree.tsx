@@ -111,6 +111,7 @@ const Tree = ({
 
             <Billboard
                 uuid={id}
+                name={name}
                 castShadow={shadowEnabled}
                 args={[lx, lz]}
                 renderOrder={0}
@@ -121,7 +122,6 @@ const Tree = ({
                         alphaTest: 0.1
                     })
                 }
-                name={name}
             >
                 <meshBasicMaterial attach={'material'}
                                    map={texture}
@@ -133,7 +133,9 @@ const Tree = ({
             {/* interactive plane */}
             <Plane
                 ref={meshRef}
+                name={'Interaction Mesh'}
                 visible={false}
+                castShadow={false}
                 position={[0, -lz / 2 + 0.5, 0]}
                 args={[lx / 2, 1]}
                 onContextMenu={(e) => {
