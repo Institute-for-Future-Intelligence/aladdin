@@ -81,9 +81,10 @@ const HeliodonPanel = ({
                        }: HeliodonPanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
+    const viewState = useStore(state => state.viewState);
     const requestRef = useRef<number>(0);
     const previousFrameTime = useRef<number>(-1);
-    const [curPosition, setCurPosition] = useState({x: 0, y: 0});
+    const [curPosition, setCurPosition] = useState({x: viewState.heliodonPanelX, y: viewState.heliodonPanelY});
 
     useEffect(() => {
         requestRef.current = requestAnimationFrame(animate);
@@ -107,19 +108,21 @@ const HeliodonPanel = ({
     };
 
     const onDrag: DraggableEventHandler = (e, ui) => {
-        // TODO
-        setCurPosition({
-            x: ui.x,
-            y: ui.y,
-        });
-    };
-
-    const onDragStart: DraggableEventHandler = (e, ui) => {
-        // TODO
+        setCurPosition({x: ui.x, y: ui.y});
     };
 
     const onDragEnd: DraggableEventHandler = (e, ui) => {
-        // TODO
+        setCommonStore(state => {
+            state.viewState.heliodonPanelX = ui.x;
+            state.viewState.heliodonPanelY = ui.y;
+        });
+    };
+
+    const closePanel = () => {
+        setCommonStore((state) => {
+            state.viewState.showHeliodonPanel = false;
+        });
+        requestUpdate();
     };
 
     return (
@@ -129,7 +132,6 @@ const HeliodonPanel = ({
             axis='both'
             position={curPosition}
             onDrag={onDrag}
-            onStart={onDragStart}
             onStop={onDragEnd}
         >
             <Container>
@@ -137,11 +139,11 @@ const HeliodonPanel = ({
                     <Header className='handle'>
                         <span>Heliodon Settings</span>
                         <span style={{cursor: 'pointer'}}
+                              onTouchStart={() => {
+                                  closePanel();
+                              }}
                               onMouseDown={() => {
-                                  setCommonStore((state) => {
-                                      state.viewState.showHeliodonPanel = false;
-                                  });
-                                  requestUpdate();
+                                  closePanel();
                               }}>
                             Close
                         </span>

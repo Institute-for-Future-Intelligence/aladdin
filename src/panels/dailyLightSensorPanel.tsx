@@ -72,26 +72,32 @@ const DailyLightSensorPanel = ({
                                }: DailyLightSensorPanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
+    const viewState = useStore(state => state.viewState);
     const sensorData = useStore(state => state.dailyLightSensorData);
     const now = new Date(useStore(state => state.world.date));
-    const [curPosition, setCurPosition] = useState({x: 0, y: 0});
+    const [curPosition, setCurPosition] = useState({
+        x: viewState.dailyLightSensorPanelX,
+        y: viewState.dailyLightSensorPanelY
+    });
 
     const responsiveHeight = 100;
 
     const onDrag: DraggableEventHandler = (e, ui) => {
-        // TODO
-        setCurPosition({
-            x: ui.x,
-            y: ui.y,
-        });
-    };
-
-    const onDragStart: DraggableEventHandler = (e, ui) => {
-        // TODO
+        setCurPosition({x: ui.x, y: ui.y});
     };
 
     const onDragEnd: DraggableEventHandler = (e, ui) => {
-        // TODO
+        setCommonStore(state => {
+            state.viewState.dailyLightSensorPanelX = ui.x;
+            state.viewState.dailyLightSensorPanelY = ui.y;
+        });
+    };
+
+    const closePanel = () => {
+        setCommonStore((state) => {
+            state.viewState.showDailyLightSensorPanel = false;
+        });
+        requestUpdate();
     };
 
     return (
@@ -101,7 +107,6 @@ const DailyLightSensorPanel = ({
             axis='both'
             position={curPosition}
             onDrag={onDrag}
-            onStart={onDragStart}
             onStop={onDragEnd}
         >
             <Container>
@@ -109,11 +114,11 @@ const DailyLightSensorPanel = ({
                     <Header className='handle'>
                         <span>Light Sensor: {city} | {moment(now).format('MM/DD')}</span>
                         <span style={{cursor: 'pointer'}}
+                              onTouchStart={() => {
+                                  closePanel();
+                              }}
                               onMouseDown={() => {
-                                  setCommonStore((state) => {
-                                      state.viewState.showDailyLightSensorPanel = false;
-                                  });
-                                  requestUpdate();
+                                  closePanel();
                               }}>
                             Close
                         </span>

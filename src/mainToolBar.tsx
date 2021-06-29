@@ -402,7 +402,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                         {user.displayName ?
                             <Dropdown overlay={avatarMenu} trigger={['click']}>
                                 <a className="ant-dropdown-link" onClick={e => e.preventDefault()}
-                                   title={'Click to open menu'}>
+                                   title={'Click to access cloud tools'}>
                                     <Avatar size={32} src={user.photoURL} alt={user.displayName}/>
                                 </a>
                             </Dropdown>

@@ -94,7 +94,7 @@ const GroundPanel = ({
     const world = useStore(state => state.world);
     const viewState = useStore(state => state.viewState);
     const searchBox = useRef<google.maps.places.SearchBox>();
-    const [curPosition, setCurPosition] = useState({x: 0, y: 0});
+    const [curPosition, setCurPosition] = useState({x: viewState.groundPanelX, y: viewState.groundPanelY});
 
     const {isLoaded, loadError} = useJsApiLoader({
         id: 'google-map-script',
@@ -129,19 +129,21 @@ const GroundPanel = ({
     };
 
     const onDrag: DraggableEventHandler = (e, ui) => {
-        // TODO
-        setCurPosition({
-            x: ui.x,
-            y: ui.y,
-        });
-    };
-
-    const onDragStart: DraggableEventHandler = (e, ui) => {
-        // TODO
+        setCurPosition({x: ui.x, y: ui.y});
     };
 
     const onDragEnd: DraggableEventHandler = (e, ui) => {
-        // TODO
+        setCommonStore(state => {
+            state.viewState.groundPanelX = ui.x;
+            state.viewState.groundPanelY = ui.y;
+        });
+    };
+
+    const closePanel = () => {
+        setCommonStore((state) => {
+            state.viewState.showGroundPanel = false;
+        });
+        requestUpdate();
     };
 
     return (
@@ -151,7 +153,6 @@ const GroundPanel = ({
             axis='both'
             position={curPosition}
             onDrag={onDrag}
-            onStart={onDragStart}
             onStop={onDragEnd}
         >
             <Container>
@@ -159,11 +160,11 @@ const GroundPanel = ({
                     <Header className='handle'>
                         <span>Ground Settings</span>
                         <span style={{cursor: 'pointer'}}
+                              onTouchStart={() => {
+                                  closePanel();
+                              }}
                               onMouseDown={() => {
-                                  setCommonStore((state) => {
-                                      state.viewState.showGroundPanel = false;
-                                  });
-                                  requestUpdate();
+                                  closePanel();
                               }}>
                             Close
                         </span>

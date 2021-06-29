@@ -75,9 +75,10 @@ const WeatherPanel = ({
                       }: WeatherPanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
+    const viewState = useStore(state => state.viewState);
     const getWeather = useStore(state => state.getWeather);
     const now = useStore(state => state.world.date);
-    const [curPosition, setCurPosition] = useState({x: 0, y: 0});
+    const [curPosition, setCurPosition] = useState({x: viewState.weatherPanelX, y: viewState.weatherPanelY});
 
     const responsiveHeight = useMemo(() => {
         return graphs ? Math.floor(100 / graphs.length) : 100;
@@ -127,19 +128,21 @@ const WeatherPanel = ({
     const referenceX = MONTHS[Math.floor(Util.daysIntoYear(now) / 365 * 12)];
 
     const onDrag: DraggableEventHandler = (e, ui) => {
-        // TODO
-        setCurPosition({
-            x: ui.x,
-            y: ui.y,
-        });
-    };
-
-    const onDragStart: DraggableEventHandler = (e, ui) => {
-        // TODO
+        setCurPosition({x: ui.x, y: ui.y});
     };
 
     const onDragEnd: DraggableEventHandler = (e, ui) => {
-        // TODO
+        setCommonStore(state => {
+            state.viewState.weatherPanelX = ui.x;
+            state.viewState.weatherPanelY = ui.y;
+        });
+    };
+
+    const closePanel = () => {
+        setCommonStore((state) => {
+            state.viewState.showWeatherPanel = false;
+        });
+        requestUpdate();
     };
 
     return (
@@ -149,7 +152,6 @@ const WeatherPanel = ({
             axis='both'
             position={curPosition}
             onDrag={onDrag}
-            onStart={onDragStart}
             onStop={onDragEnd}
         >
             <Container>
@@ -157,11 +159,11 @@ const WeatherPanel = ({
                     <Header className='handle'>
                         <span>Weather: {city}</span>
                         <span style={{cursor: 'pointer'}}
+                              onTouchStart={() => {
+                                  closePanel();
+                              }}
                               onMouseDown={() => {
-                                  setCommonStore((state) => {
-                                      state.viewState.showWeatherPanel = false;
-                                  });
-                                  requestUpdate();
+                                  closePanel();
                               }}>
                             Close
                         </span>

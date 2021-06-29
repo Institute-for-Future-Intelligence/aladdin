@@ -74,27 +74,33 @@ const YearlyLightSensorPanel = ({
                                 }: YearlyLightSensorPanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
+    const viewState = useStore(state => state.viewState);
     const sensorData = useStore(state => state.yearlyLightSensorData);
     const now = useStore(state => state.world.date);
-    const [curPosition, setCurPosition] = useState({x: 0, y: 0});
+    const [curPosition, setCurPosition] = useState({
+        x: viewState.yearlyLightSensorPanelX,
+        y: viewState.yearlyLightSensorPanelY
+    });
 
     const responsiveHeight = 100;
     const referenceX = MONTHS[Math.floor(Util.daysIntoYear(now) / 365 * 12)];
 
     const onDrag: DraggableEventHandler = (e, ui) => {
-        // TODO
-        setCurPosition({
-            x: ui.x,
-            y: ui.y,
-        });
-    };
-
-    const onDragStart: DraggableEventHandler = (e, ui) => {
-        // TODO
+        setCurPosition({x: ui.x, y: ui.y});
     };
 
     const onDragEnd: DraggableEventHandler = (e, ui) => {
-        // TODO
+        setCommonStore(state => {
+            state.viewState.yearlyLightSensorPanelX = ui.x;
+            state.viewState.yearlyLightSensorPanelY = ui.y;
+        });
+    };
+
+    const closePanel = () => {
+        setCommonStore((state) => {
+            state.viewState.showYearlyLightSensorPanel = false;
+        });
+        requestUpdate();
     };
 
     return (
@@ -104,7 +110,6 @@ const YearlyLightSensorPanel = ({
             axis='both'
             position={curPosition}
             onDrag={onDrag}
-            onStart={onDragStart}
             onStop={onDragEnd}
         >
             <Container>
@@ -112,11 +117,11 @@ const YearlyLightSensorPanel = ({
                     <Header className='handle'>
                         <span>Light Sensor: {city}</span>
                         <span style={{cursor: 'pointer'}}
+                              onTouchStart={() => {
+                                  closePanel();
+                              }}
                               onMouseDown={() => {
-                                  setCommonStore((state) => {
-                                      state.viewState.showYearlyLightSensorPanel = false;
-                                  });
-                                  requestUpdate();
+                                  closePanel();
                               }}>
                             Close
                         </span>

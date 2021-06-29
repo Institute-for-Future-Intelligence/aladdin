@@ -18,6 +18,17 @@ export interface ViewState {
     showYearlyLightSensorPanel: boolean;
     autoRotate: boolean;
 
+    heliodonPanelX: number;
+    heliodonPanelY: number;
+    groundPanelX: number;
+    groundPanelY: number;
+    weatherPanelX: number;
+    weatherPanelY: number;
+    dailyLightSensorPanelX: number;
+    dailyLightSensorPanelY: number;
+    yearlyLightSensorPanelX: number;
+    yearlyLightSensorPanelY: number;
+
     mapZoom: number;
     mapType: string;
     mapTilt: number;
