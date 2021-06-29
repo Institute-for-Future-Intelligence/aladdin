@@ -17,7 +17,8 @@ import {
     faHome,
     faArrowAltCircleUp,
     faSun,
-    faUmbrellaBeach
+    faUmbrellaBeach,
+    faEraser
 } from '@fortawesome/free-solid-svg-icons';
 import {faAsymmetrik} from "@fortawesome/free-brands-svg-icons";
 import firebase from 'firebase';
@@ -25,6 +26,9 @@ import {showInfo, visitHomepage} from "./helpers";
 import {CloudFileInfo, User} from "./types";
 import queryString from "querystring";
 import CloudFilePanel from "./panels/cloudFilePanel";
+import Spinner from "./components/spinner";
+import AccountSettingsPanel from "./panels/accountSettingsPanel";
+import {ExclamationCircleOutlined} from "@ant-design/icons";
 
 const ButtonsContainer = styled.div`
   position: absolute;
@@ -48,10 +52,12 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
     const viewState = useStore(state => state.viewState);
     const user = useStore(state => state.user);
     const exportContent = useStore(state => state.exportContent);
+    const clearContent = useStore(state => state.clearContent);
     const showCloudFilePanel = useStore(state => state.showCloudFilePanel);
+    const showAccountSettingsPanel = useStore(state => state.showAccountSettingsPanel);
 
+    const [loading, setLoading] = useState(false);
     const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
-    const [confirmLoading, setConfirmLoading] = useState(false);
     const [title, setTitle] = useState<string>('My Aladdin File');
     const [titleDialogVisible, setTitleDialogVisible] = useState(false);
     const cloudFiles = useRef<CloudFileInfo[] | void>();
@@ -117,6 +123,18 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
     };
 
     const redo = () => {
+    };
+
+    const removeAllContent = () => {
+        Modal.confirm({
+            title: 'Do you really want to clear the content?',
+            icon: <ExclamationCircleOutlined/>,
+            okText: 'OK',
+            cancelText: 'Cancel',
+            onOk: () => {
+                clearContent();
+            }
+        });
     };
 
     const resetView = () => {
@@ -201,19 +219,26 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
     };
 
     const saveToCloud = () => {
-        setConfirmLoading(true);
+        setLoading(true);
         if (user.email) {
             let doc = firebase.firestore().collection("users").doc(user.email);
             if (doc) {
-                doc.collection("files").doc(title).set(exportContent());
+                doc.collection("files")
+                    .doc(title)
+                    .set(exportContent())
+                    .then(() => {
+                        setLoading(false)
+                    }).catch(error => {
+                    console.log("Error saving file:", error);
+                });
             }
         }
-        setConfirmLoading(false);
         setTitleDialogVisible(false);
     };
 
     const openCloudFile = (userid: string, title: string) => {
         if (userid && title) {
+            setLoading(true);
             firebase.firestore()
                 .collection("users")
                 .doc(userid)
@@ -229,15 +254,19 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                             state.elements = data.elements;
                         });
                         requestUpdate();
+                        setLoading(false);
                     } else {
                         showInfo('Sorry, ' + title + ' was not found. It may have been deleted by its owner.');
                     }
-                });
+                }).catch(error => {
+                console.log("Error opening file:", error);
+            });
         }
     };
 
     const gotoMyCloudFiles = async () => {
         if (user.email) {
+            setLoading(true);
             // fetch owner's file information from the cloud
             cloudFiles.current = await firebase.firestore()
                 .collection("users")
@@ -256,11 +285,11 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                             uuid: data.docid,
                         } as CloudFileInfo);
                     });
+                    setLoading(false);
                     return a;
                 }).catch(error => {
                     console.log("Error getting files:", error);
                 });
-
             setCommonStore((state) => {
                 state.showCloudFilePanel = true;
             });
@@ -277,6 +306,8 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
             setCloudFileArray(cloudFileArray.filter((e) => {
                 return e.email !== userid || e.title !== title;
             }));
+        }).catch(error => {
+            console.log("Error deleting file:", error);
         });
     };
 
@@ -292,6 +323,8 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                     files.doc(newTitle).set(data).then(() => files.doc(oldTitle).delete());
                 }
             }
+        }).catch(error => {
+            console.log("Error renaming file:", error);
         });
         for (const f of cloudFileArray) {
             if (f.email === userid && f.title === oldTitle) {
@@ -307,6 +340,9 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
     };
 
     const gotoAccountSettings = () => {
+        setCommonStore((state) => {
+            state.showAccountSettingsPanel = true;
+        });
     };
 
     const showTitleDialog = () => {
@@ -333,7 +369,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                 title="Save to the Cloud"
                 visible={titleDialogVisible}
                 onOk={saveToCloud}
-                confirmLoading={confirmLoading}
+                confirmLoading={loading}
                 onCancel={() => {
                     setTitleDialogVisible(false);
                 }}
@@ -346,6 +382,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                         setTitle(e.target.value);
                     }}/>
             </Modal>
+            {loading && <Spinner/>}
             <ButtonsContainer>
                 <Space direction='horizontal'>
                     <div>
@@ -361,6 +398,12 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                                          color={'#aaaaaa'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={redo}/>
+                        <FontAwesomeIcon title={'Clear'}
+                                         icon={faEraser}
+                                         size={'3x'}
+                                         color={'#666666'}
+                                         style={{paddingRight: '12px', cursor: 'pointer'}}
+                                         onClick={removeAllContent}/>
                         <FontAwesomeIcon title={'Toggle shadow effect'}
                                          icon={faUmbrellaBeach}
                                          size={'3x'}
@@ -415,8 +458,13 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
             {showCloudFilePanel && cloudFiles.current &&
             <CloudFilePanel
                 cloudFileArray={cloudFileArray}
+                openCloudFile={openCloudFile}
                 deleteCloudFile={deleteCloudFile}
                 renameCloudFile={renameCloudFile}
+                requestUpdate={requestUpdate}/>
+            }
+            {showAccountSettingsPanel &&
+            <AccountSettingsPanel
                 requestUpdate={requestUpdate}/>
             }
         </>

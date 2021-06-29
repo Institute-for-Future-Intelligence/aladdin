@@ -78,8 +78,8 @@ const YearlyLightSensorPanel = ({
     const sensorData = useStore(state => state.yearlyLightSensorData);
     const now = useStore(state => state.world.date);
     const [curPosition, setCurPosition] = useState({
-        x: viewState.yearlyLightSensorPanelX,
-        y: viewState.yearlyLightSensorPanelY
+        x: isNaN(viewState.yearlyLightSensorPanelX) ? 0 : viewState.yearlyLightSensorPanelX,
+        y: isNaN(viewState.yearlyLightSensorPanelY) ? 0 : viewState.yearlyLightSensorPanelY
     });
 
     const responsiveHeight = 100;

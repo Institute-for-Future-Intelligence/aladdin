@@ -9,8 +9,8 @@ import {Menu, Dropdown, Checkbox, Modal, Input} from 'antd';
 import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
 import {saveAs} from "file-saver";
-import {Util} from "./Util";
 import About from "./about";
+import {saveImage} from "./helpers";
 
 const {SubMenu} = Menu;
 
@@ -64,7 +64,7 @@ const MainMenu = ({
 
     const takeScreenshot = () => {
         if (canvas) { // TODO
-            Util.saveImage("screenshot.png", canvas.toDataURL("image/png"));
+            saveImage("screenshot.png", canvas.toDataURL("image/png"));
         }
     };
 
@@ -106,11 +106,11 @@ const MainMenu = ({
 
     const menu = (
         <Menu>
-            <Menu.Item key="save-local-file" onClick={showDownloadDialog} style={{paddingLeft: '36px'}}>
-                Save to Download Folder
-            </Menu.Item>
             <Menu.Item key="open-local-file" onClick={readLocalFile} style={{paddingLeft: '36px'}}>
                 Open Local File
+            </Menu.Item>
+            <Menu.Item key="save-local-file" onClick={showDownloadDialog} style={{paddingLeft: '36px'}}>
+                Save to Download Folder
             </Menu.Item>
             <Menu.Item key={'ground-panel-check-box'}>
                 <Checkbox checked={viewState.showGroundPanel} onChange={(e) => {

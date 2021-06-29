@@ -84,7 +84,10 @@ const HeliodonPanel = ({
     const viewState = useStore(state => state.viewState);
     const requestRef = useRef<number>(0);
     const previousFrameTime = useRef<number>(-1);
-    const [curPosition, setCurPosition] = useState({x: viewState.heliodonPanelX, y: viewState.heliodonPanelY});
+    const [curPosition, setCurPosition] = useState({
+        x: isNaN(viewState.heliodonPanelX) ? 0 : viewState.heliodonPanelX,
+        y: isNaN(viewState.heliodonPanelY) ? 0 : viewState.heliodonPanelY
+    });
 
     useEffect(() => {
         requestRef.current = requestAnimationFrame(animate);

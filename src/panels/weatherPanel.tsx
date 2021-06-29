@@ -78,7 +78,10 @@ const WeatherPanel = ({
     const viewState = useStore(state => state.viewState);
     const getWeather = useStore(state => state.getWeather);
     const now = useStore(state => state.world.date);
-    const [curPosition, setCurPosition] = useState({x: viewState.weatherPanelX, y: viewState.weatherPanelY});
+    const [curPosition, setCurPosition] = useState({
+        x: isNaN(viewState.weatherPanelX) ? 0 : viewState.weatherPanelX,
+        y: isNaN(viewState.weatherPanelY) ? 0 : viewState.weatherPanelY
+    });
 
     const responsiveHeight = useMemo(() => {
         return graphs ? Math.floor(100 / graphs.length) : 100;

@@ -94,7 +94,10 @@ const GroundPanel = ({
     const world = useStore(state => state.world);
     const viewState = useStore(state => state.viewState);
     const searchBox = useRef<google.maps.places.SearchBox>();
-    const [curPosition, setCurPosition] = useState({x: viewState.groundPanelX, y: viewState.groundPanelY});
+    const [curPosition, setCurPosition] = useState({
+        x: isNaN(viewState.groundPanelX) ? 0 : viewState.groundPanelX,
+        y: isNaN(viewState.groundPanelY) ? 0 : viewState.groundPanelY
+    });
 
     const {isLoaded, loadError} = useJsApiLoader({
         id: 'google-map-script',

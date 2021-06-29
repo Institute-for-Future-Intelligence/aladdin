@@ -76,8 +76,8 @@ const DailyLightSensorPanel = ({
     const sensorData = useStore(state => state.dailyLightSensorData);
     const now = new Date(useStore(state => state.world.date));
     const [curPosition, setCurPosition] = useState({
-        x: viewState.dailyLightSensorPanelX,
-        y: viewState.dailyLightSensorPanelY
+        x: isNaN(viewState.dailyLightSensorPanelX) ? 0 : viewState.dailyLightSensorPanelX,
+        y: isNaN(viewState.dailyLightSensorPanelY) ? 0 : viewState.dailyLightSensorPanelY
     });
 
     const responsiveHeight = 100;

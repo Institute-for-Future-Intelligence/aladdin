@@ -7,10 +7,12 @@ import styled from "styled-components";
 import {useStore} from "../stores/common";
 import ReactDraggable, {DraggableEventHandler} from "react-draggable";
 import {Input, Modal, Space, Table} from "antd";
-import {HOME_URL} from "../constants";
 import {ExclamationCircleOutlined} from "@ant-design/icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faFile, faTrashAlt} from "@fortawesome/free-regular-svg-icons";
+import {faLink} from "@fortawesome/free-solid-svg-icons";
+import {HOME_URL} from "../constants";
+import {copyTextToClipboard, showSuccess} from "../helpers";
 
 const {Column} = Table;
 
@@ -61,6 +63,7 @@ const Header = styled.div`
 
 export interface CloudFilePanelProps {
     cloudFileArray: any[];
+    openCloudFile: (userid: string, title: string) => void;
     deleteCloudFile: (userid: string, title: string) => void;
     renameCloudFile: (userid: string, oldTitle: string, newTitle: string) => void;
     requestUpdate: () => void;
@@ -68,6 +71,7 @@ export interface CloudFilePanelProps {
 
 const CloudFilePanel = ({
                             cloudFileArray,
+                            openCloudFile,
                             deleteCloudFile,
                             renameCloudFile,
                             requestUpdate
@@ -81,19 +85,11 @@ const CloudFilePanel = ({
     const [email, setEmail] = useState<string>();
 
     const onDrag: DraggableEventHandler = (e, ui) => {
-        // TODO
-        setCurPosition({
-            x: ui.x,
-            y: ui.y,
-        });
-    };
-
-    const onDragStart: DraggableEventHandler = (e, ui) => {
-        // TODO
+        setCurPosition({x: ui.x, y: ui.y});
     };
 
     const onDragEnd: DraggableEventHandler = (e, ui) => {
-        // TODO
+        // TODO: Should we save the position?
     };
 
     const closePanel = () => {
@@ -147,7 +143,6 @@ const CloudFilePanel = ({
                 axis='both'
                 position={curPosition}
                 onDrag={onDrag}
-                onStart={onDragStart}
                 onStop={onDragEnd}
             >
                 <Container>
@@ -180,14 +175,15 @@ const CloudFilePanel = ({
                                 key="action"
                                 render={(text, record: any) => (
                                     <Space size="middle">
-                                        <a target="_blank" rel="noopener noreferrer"
-                                           href={HOME_URL + '?tmp=yes&userid=' + record.email + '&title=' + record.title}>
-                                            <FontAwesomeIcon title={'Open'}
-                                                             icon={faFile}
-                                                             size={'lg'}
-                                                             color={'#666666'}
-                                                             style={{cursor: 'pointer'}}/>
-                                        </a>
+                                        <FontAwesomeIcon title={'Open'}
+                                                         icon={faFile}
+                                                         size={'lg'}
+                                                         color={'#666666'}
+                                                         style={{cursor: 'pointer'}}
+                                                         onClick={() => {
+                                                             openCloudFile(record.email, record.title);
+                                                         }}
+                                        />
                                         <FontAwesomeIcon title={'Delete'}
                                                          icon={faTrashAlt}
                                                          size={'lg'}
@@ -206,6 +202,17 @@ const CloudFilePanel = ({
                                                              setOldTitle(record.title);
                                                              setEmail(record.email);
                                                              setRenameDialogVisible(true);
+                                                         }}
+                                        />
+                                        <FontAwesomeIcon title={'Generate link'}
+                                                         icon={faLink}
+                                                         size={'lg'}
+                                                         color={'#666666'}
+                                                         style={{cursor: 'pointer'}}
+                                                         onClick={() => {
+                                                             let url = HOME_URL + '?client=web&userid=' + record.email + '&title=' + record.title;
+                                                             copyTextToClipboard(url);
+                                                             showSuccess('A link has been generated in the clip board.');
                                                          }}
                                         />
                                     </Space>

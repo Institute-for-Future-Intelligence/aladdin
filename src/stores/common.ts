@@ -33,6 +33,7 @@ export interface CommonStoreState {
     viewState: ViewState;
     user: User;
     exportContent: () => {};
+    clearContent: () => void;
 
     // we are not interested in saving the following data in a file
 
@@ -48,6 +49,7 @@ export interface CommonStoreState {
     resizeHandleType: ResizeHandleType | null;
     resizeAnchor: Vector2;
     showCloudFilePanel: boolean;
+    showAccountSettingsPanel: boolean;
     getSelectedElement: () => ElementModel | null;
     getElementById: (id: string) => ElementModel | null;
     selectNone: () => void;
@@ -98,6 +100,11 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 view: state.viewState
             };
         },
+        clearContent() {
+            immerSet((state: CommonStoreState) => {
+                state.elements = [];
+            });
+        },
 
         weatherData: {},
 
@@ -121,6 +128,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         resizeHandleType: null,
         resizeAnchor: new Vector2(),
         showCloudFilePanel: false,
+        showAccountSettingsPanel: false,
 
         getSelectedElement() {
             const elements = get().elements;
