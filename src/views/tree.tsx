@@ -19,7 +19,7 @@ import PineImage from "../resources/pine.png";
 import {DoubleSide, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {Billboard, Sphere} from "@react-three/drei";
+import {Billboard, Plane, Sphere} from "@react-three/drei";
 import {MOVE_HANDLE_RADIUS} from "../constants";
 import {TreeModel} from "../models/TreeModel";
 import {ShedTreeType, TreeType} from "../types";
@@ -113,7 +113,6 @@ const Tree = ({
                 uuid={id}
                 castShadow={shadowEnabled}
                 args={[lx, lz]}
-                ref={meshRef}
                 renderOrder={0}
                 customDepthMaterial={
                     new MeshDepthMaterial({
@@ -123,6 +122,20 @@ const Tree = ({
                     })
                 }
                 name={name}
+            >
+                <meshBasicMaterial attach={'material'}
+                                   map={texture}
+                                   opacity={1}
+                                   transparent={true}
+                                   side={DoubleSide}/>
+            </Billboard>
+
+            {/* interactive plane */}
+            <Plane
+                ref={meshRef}
+                visible={false}
+                position={[0, -lz / 2 + 0.5, 0]}
+                args={[lx / 2, 1]}
                 onContextMenu={(e) => {
                     selectMe(e);
                 }}
@@ -141,12 +154,8 @@ const Tree = ({
                     setHovered(false);
                 }}
             >
-                <meshBasicMaterial attach={'material'}
-                                   map={texture}
-                                   opacity={1}
-                                   transparent={true}
-                                   side={DoubleSide}/>
-            </Billboard>
+                <meshStandardMaterial attach="material" side={DoubleSide}/>
+            </Plane>
 
             {/* draw handle */}
             {selected && !locked &&

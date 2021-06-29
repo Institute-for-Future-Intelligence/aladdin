@@ -27,7 +27,8 @@ const OrbitController = ({
                              autoRotate = false,
                              panCenter = new Vector3(),
                              orbitControlsRef,
-                             canvasRef
+                             canvasRef,
+                             ...rest
                          }: OrbitControllerProps) => {
 
     const setCommonStore = useStore(state => state.set);
@@ -60,10 +61,14 @@ const OrbitController = ({
     const onInteractionEnd = () => {
         setCommonStore((state) => {
             const w = state.world;
-            // FIXME: why can't set function be used?
-            w.cameraPosition.x = camera.position.x;
-            w.cameraPosition.y = camera.position.y;
-            w.cameraPosition.z = camera.position.z;
+            // for some reason, a single click would trigger camera position to change
+            // to fix this, if the camera position doesn't change much, we do not save.
+            if (camera.position.dot(w.cameraPosition) < 0.99) {
+                // FIXME: why can't set function be used?
+                w.cameraPosition.x = camera.position.x;
+                w.cameraPosition.y = camera.position.y;
+                w.cameraPosition.z = camera.position.z;
+            }
             if (controls.current) {
                 w.panCenter.x = controls.current.target.x;
                 w.panCenter.y = controls.current.target.y;
