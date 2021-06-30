@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import Foundation from "./views/foundation";
 import Sensor from "./views/sensor";
 import Cuboid from "./views/cuboid";
@@ -15,23 +15,25 @@ import {HumanModel} from "./models/HumanModel";
 import Human from "./views/human";
 import {TreeModel} from "./models/TreeModel";
 import Tree from "./views/tree";
-import useKey from "./useKey";
+import {Box3, Group} from "three";
 
 const ElementsRenderer: React.FC = () => {
 
+    const setCommonStore = useStore(state => state.set);
     const elements = useStore(state => state.elements);
-    const cutElementById = useStore(state => state.cutElementById);
-    const getSelectedElement = useStore(state => state.getSelectedElement);
-    const selectedElement = getSelectedElement();
+    const groupRef = useRef<Group>();
 
-    if (useKey('Delete')) {
-        if (selectedElement) {
-            cutElementById(selectedElement.id);
+    useEffect(() => {
+        if (groupRef.current) {
+            const aabb = new Box3().setFromObject(groupRef.current);
+            setCommonStore(state => {
+                state.aabb = aabb;
+            });
         }
-    }
+    }, [elements]);
 
     return (
-        <group name={'Content'}>
+        <group name={'Content'} ref={groupRef}>
             {elements
                 .filter(e => e.type === ObjectType.Foundation)
                 .map(e => <Foundation key={e.id} {...e as FoundationModel}/>)}

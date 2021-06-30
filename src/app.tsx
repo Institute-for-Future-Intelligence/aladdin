@@ -29,13 +29,14 @@ import GroundImage from "./views/groundImage";
 import {Dropdown} from "antd";
 import ContextMenu from "./contextMenu";
 import WeatherPanel from "./panels/weatherPanel";
-import {GraphDataType} from "./types";
+import {GraphDataType, ObjectType} from "./types";
 import YearlyLightSensorPanel from "./panels/yearlyLightSensorPanel";
 import DailyLightSensorPanel from "./panels/dailyLightSensorPanel";
 import Simulation from "./analysis/simulation";
 import MainToolBar from "./mainToolBar";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import Spinner from './components/spinner';
+import useKey from "./useKey";
 
 const App = () => {
 
@@ -44,6 +45,10 @@ const App = () => {
     const viewState = useStore(state => state.viewState);
     const loadWeatherData = useStore(state => state.loadWeatherData);
     const getClosestCity = useStore(state => state.getClosestCity);
+    const getSelectedElement = useStore(state => state.getSelectedElement);
+    const deleteElementById = useStore(state => state.deleteElementById);
+    const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
+    const aabb = useStore(state => state.aabb);
 
     const grid = useStore(state => state.grid);
     const enableOrbitController = useStore(state => state.enableOrbitController);
@@ -60,11 +65,11 @@ const App = () => {
     const [yearlyLightSensorDataFlag, setYearlyLightSensorDataFlag] = useState<boolean>(false);
     const [cameraPosition, setCameraPosition] = useState<Vector3>(new Vector3(0, 0, 5));
     const [panCenter, setPanCenter] = useState<Vector3>(new Vector3());
+    const [heliodonRadius, setHeliodonRadius] = useState<number>(10);
 
     const orbitControlsRef = useRef<OrbitControls>();
     const canvasRef = useRef<HTMLCanvasElement>();
     const now = new Date(world.date);
-    const radius = 10;
 
     useEffect(() => {
         loadWeatherData();
@@ -72,9 +77,21 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        setSunlightDirection(computeSunLocation(radius, hourAngle, declinationAngle, Util.toRadians(world.latitude))
+        setSunlightDirection(computeSunLocation(heliodonRadius, hourAngle, declinationAngle, Util.toRadians(world.latitude))
             .applyEuler(new Euler(-Math.PI / 2, 0, 0)));
     }, [world.latitude, hourAngle, declinationAngle]);
+
+    useEffect(() => {
+        const min = aabb.min;
+        const max = aabb.max;
+        let r = Math.abs(min.x);
+        if (r < Math.abs(min.y)) r = Math.abs(min.y);
+        if (r < Math.abs(min.z)) r = Math.abs(min.z);
+        if (r < Math.abs(max.x)) r = Math.abs(max.x);
+        if (r < Math.abs(max.y)) r = Math.abs(max.y);
+        if (r < Math.abs(max.z)) r = Math.abs(max.z);
+        setHeliodonRadius(r * 1.5);
+    }, [aabb]);
 
     useEffect(() => {
         setCity(getClosestCity(world.latitude, world.longitude));
@@ -104,11 +121,27 @@ const App = () => {
         }
     }, [world.panCenter]);
 
+    useEffect(() => {
+        if (canvasRef.current) {
+            canvasRef.current.style.cursor = objectTypeToAdd === ObjectType.None ? 'default' : 'crosshair';
+        }
+    }, [objectTypeToAdd]);
+
     const nowString = now.toString();
     useMemo(() => {
         setHourAngle(computeHourAngle(now));
         setDeclinationAngle(computeDeclinationAngle(now));
     }, [nowString]);
+
+    if (useKey('Delete')) {
+        const selectedElement = getSelectedElement();
+        if (selectedElement) {
+            deleteElementById(selectedElement.id);
+            if (canvasRef.current) {
+                canvasRef.current.style.cursor = 'default'; // if an element is deleted but the cursor is not default
+            }
+        }
+    }
 
     const requestUpdate = () => {
         setUpdateFlag(!updateFlag);
@@ -141,7 +174,7 @@ const App = () => {
         requestUpdate();
     };
 
-    // animation state should not be persisted
+// animation state should not be persisted
     const setSunAnimation = (on: boolean) => {
         setAnimateSun(on);
     };
@@ -237,6 +270,7 @@ const App = () => {
             collectDailyLightSensorData={collectDailyLightSensorData}
             collectYearlyLightSensorData={collectYearlyLightSensorData}
             requestUpdate={requestUpdate}
+            canvas={canvasRef.current}
         />
     );
 
@@ -365,7 +399,7 @@ const App = () => {
                             <Heliodon
                                 hourAngle={hourAngle}
                                 declinationAngle={declinationAngle}
-                                radius={radius}
+                                radius={heliodonRadius}
                                 date={now}
                                 latitude={Util.toRadians(world.latitude)}
                             />}

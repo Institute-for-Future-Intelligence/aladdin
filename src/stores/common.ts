@@ -13,7 +13,7 @@ import Papa from "papaparse";
 import {Util} from "../Util";
 import {DatumEntry, MoveHandleType, ObjectType, ResizeHandleType, User} from "../types";
 import {DefaultWorldModel} from "./DefaultWorldModel";
-import {Vector2, Vector3} from "three";
+import {Box3, Vector2, Vector3} from "three";
 import {ElementModelCloner} from "../models/ElementModelCloner";
 import {HumanModel} from "../models/HumanModel";
 import {TreeModel} from "../models/TreeModel";
@@ -44,6 +44,7 @@ export interface CommonStoreState {
     getClosestCity: (lat: number, lng: number) => string | null;
 
     grid: boolean; // this should only show up when editing
+    aabb: Box3; // axis-aligned bounding box of elements
     enableOrbitController: boolean;
     clickObjectType: ObjectType | null;
     moveHandleType: MoveHandleType | null;
@@ -59,7 +60,6 @@ export interface CommonStoreState {
     setElementRotation: (id: string, x: number, y: number, z: number) => void;
     setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
 
-
     objectTypeToAdd: ObjectType;
     addElement: (position: Vector3) => void;
 
@@ -68,6 +68,7 @@ export interface CommonStoreState {
     copyElementById: (id: string) => void;
     cutElementById: (id: string) => void;
     pasteElement: () => void;
+    deleteElementById: (id: string) => void;
 
     dailyLightSensorData: DatumEntry[];
     setDailyLightSensorData: (data: DatumEntry[]) => void;
@@ -127,6 +128,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         },
 
         grid: false,
+        aabb: new Box3(),
         enableOrbitController: true,
         clickObjectType: null,
         moveHandleType: null,
@@ -251,6 +253,16 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                     if (e.id === id) {
                         Util.deleteElement(state.elements, e);
                         state.elementToPaste = e;
+                        break;
+                    }
+                }
+            });
+        },
+        deleteElementById(id) {
+            immerSet((state: CommonStoreState) => {
+                for (const e of state.elements) {
+                    if (e.id === id) {
+                        Util.deleteElement(state.elements, e);
                         break;
                     }
                 }

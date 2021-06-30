@@ -35,6 +35,7 @@ export interface ContextMenuProps {
     collectDailyLightSensorData: () => void;
     collectYearlyLightSensorData: () => void;
     requestUpdate: () => void;
+    canvas?: HTMLCanvasElement;
 
     [key: string]: any;
 
@@ -45,6 +46,7 @@ const ContextMenu = ({
                          collectDailyLightSensorData,
                          collectYearlyLightSensorData,
                          requestUpdate,
+                         canvas,
                          ...rest
                      }: ContextMenuProps) => {
 

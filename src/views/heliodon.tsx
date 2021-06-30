@@ -41,7 +41,7 @@ const Heliodon = ({
                       declinationAngle,
                       radius = 10,
                       date = new Date(),
-                      latitude = 42 / 180.0 * Math.PI,
+                      latitude = Util.toRadians(42),
                   }: HeliodonProps) => {
 
     useEffect(() => {
@@ -182,7 +182,7 @@ const Heliodon = ({
 
     return (
         <mesh rotation={new Euler(-Math.PI / 2, 0, 0)} name={'Heliodon'}>
-            {/* draw base */}
+            {/* draw base (FIXME: bufferGeometry does not get updated when position changes) */}
             <mesh>
                 <bufferGeometry attach='geometry'>
                     <bufferAttribute

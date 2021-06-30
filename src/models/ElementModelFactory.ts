@@ -18,6 +18,8 @@ export class ElementModelFactory {
             cx: x,
             cy: y,
             cz: z,
+            normal: [0, 0, 1],
+            rotation: [0, 0, 0],
             id: short.generate() as string
         } as HumanModel;
     }
@@ -31,6 +33,8 @@ export class ElementModelFactory {
             cz: z,
             lx: 3,
             lz: 4,
+            normal: [0, 0, 1],
+            rotation: [0, 0, 0],
             id: short.generate() as string
         } as TreeModel;
     }
@@ -44,6 +48,8 @@ export class ElementModelFactory {
             lx: 0.05,
             ly: 0.05,
             lz: 0.01,
+            normal: [0, 1, 0],
+            rotation: [0, 0, 0],
             id: short.generate() as string
         } as SensorModel;
     }
@@ -57,6 +63,8 @@ export class ElementModelFactory {
             lx: 2,
             ly: 2,
             lz: 4,
+            normal: [0, 1, 0],
+            rotation: [0, 0, 0],
             id: short.generate() as string
         } as CuboidModel;
     }

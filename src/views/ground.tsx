@@ -120,6 +120,9 @@ const Ground = () => {
                                selectNone();
                                if (objectTypeToAdd !== ObjectType.None) {
                                    addElement(e.intersections[0].point);
+                                   setCommonStore((state) => {
+                                       state.objectTypeToAdd = ObjectType.None;
+                                   });
                                }
                            } else {
                                setGrab(getSelectedElement());
