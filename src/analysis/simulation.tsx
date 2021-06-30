@@ -40,7 +40,7 @@ const Simulation = ({
     const loadedYearly = useRef(false);
 
     useEffect(() => {
-        if (loadedDaily.current) { // do not call on first render
+        if (loadedDaily.current) { // avoid calling on first render
             if (elements && elements.length > 0) {
                 collectAllDailyLightSensorData();
             }
@@ -50,7 +50,7 @@ const Simulation = ({
     }, [dailyLightSensorDataFlag]);
 
     useEffect(() => {
-        if (loadedYearly.current) { // do not call on first render
+        if (loadedYearly.current) { // avoid calling on first render
             if (elements && elements.length > 0) {
                 collectAllYearlyLightSensorData();
             }

@@ -15,10 +15,20 @@ import {HumanModel} from "./models/HumanModel";
 import Human from "./views/human";
 import {TreeModel} from "./models/TreeModel";
 import Tree from "./views/tree";
+import useKey from "./useKey";
 
 const ElementsRenderer: React.FC = () => {
 
     const elements = useStore(state => state.elements);
+    const cutElementById = useStore(state => state.cutElementById);
+    const getSelectedElement = useStore(state => state.getSelectedElement);
+    const selectedElement = getSelectedElement();
+
+    if (useKey('Delete')) {
+        if (selectedElement) {
+            cutElementById(selectedElement.id);
+        }
+    }
 
     return (
         <group name={'Content'}>
