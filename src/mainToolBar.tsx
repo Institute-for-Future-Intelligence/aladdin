@@ -104,13 +104,13 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                     key: i.toString(),
                     title: f.fileName,
                     time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm a'),
+                    timestamp: f.timestamp,
                     action: '',
                     email: f.email,
                     owner: f.owner
                 });
             });
-            arr.sort((a, b) => a.time.localeCompare(b.time));
-            arr.reverse();
+            arr.sort((a, b) => b.timestamp - a.timestamp);
             setCloudFileArray(arr);
         }
     }, [cloudFiles.current]);

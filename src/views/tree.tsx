@@ -19,10 +19,11 @@ import PineImage from "../resources/pine.png";
 import {DoubleSide, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {Billboard, Plane, Sphere} from "@react-three/drei";
+import {Billboard, Cone, Plane, Sphere} from "@react-three/drei";
 import {MOVE_HANDLE_RADIUS} from "../constants";
 import {TreeModel} from "../models/TreeModel";
 import {ShedTreeType, TreeType} from "../types";
+import {Util} from "../Util";
 
 const Tree = ({
                   id,
@@ -33,6 +34,7 @@ const Tree = ({
                   name = TreeType.Pine,
                   selected = false,
                   locked = false,
+                  showModel = false,
                   ...props
               }: TreeModel) => {
 
@@ -105,6 +107,22 @@ const Tree = ({
         }
     };
 
+    const theta = useMemo(() => {
+        switch (name) {
+            case TreeType.Elm:
+                return 0.78 * Math.PI;
+            case TreeType.Dogwood:
+                return 0.6 * Math.PI;
+            case TreeType.Maple:
+                return 0.65 * Math.PI;
+            case TreeType.Oak:
+                return 0.75 * Math.PI;
+            default:
+                return Math.PI * 0.7;
+        }
+    }, [name]);
+
+    // IMPORTANT: model mesh must use double side in order to intercept sunlight
     return (
         <group name={'Tree Group ' + id}
                position={[cx, lz / 2, cy]}>
@@ -129,6 +147,24 @@ const Tree = ({
                                    transparent={true}
                                    side={DoubleSide}/>
             </Billboard>
+
+            {/* simulation model */}
+            {name !== TreeType.Pine ?
+                <Sphere visible={showModel}
+                        userData={{simulation: true}}
+                        args={[lx / 2, 8, 8, 0, Util.TWO_PI, 0, theta]}
+                        scale={[1, lz / lx, 1]}>
+                    <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75}/>
+                </Sphere>
+                :
+                <Cone visible={showModel}
+                      userData={{simulation: true}}
+                      position={[0, lz * 0.1, 0]}
+                      args={[lx / 2, lz, 8, 8, true]}
+                      scale={[1, 1, 1]}>
+                    <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75}/>
+                </Cone>
+            }
 
             {/* interactive plane */}
             <Plane

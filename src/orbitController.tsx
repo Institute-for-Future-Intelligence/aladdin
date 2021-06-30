@@ -63,8 +63,10 @@ const OrbitController = ({
             const w = state.world;
             // for some reason, a single click would trigger camera position to change
             // to fix this, if the camera position doesn't change much, we do not save.
-            if (camera.position.dot(w.cameraPosition) < 0.99) {
-                // FIXME: why can't set function be used?
+            // FIXME: why can't set function be used with a proxy?
+            const v = new Vector3(w.cameraPosition.x, w.cameraPosition.y, w.cameraPosition.z);
+            const u = camera.position.clone();
+            if (Math.abs(u.normalize().dot(v.normalize())) < 0.99) {
                 w.cameraPosition.x = camera.position.x;
                 w.cameraPosition.y = camera.position.y;
                 w.cameraPosition.z = camera.position.z;

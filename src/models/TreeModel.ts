@@ -8,5 +8,6 @@ export interface TreeModel extends ElementModel {
 
     name: string;
     evergreen: boolean;
+    showModel: boolean;
 
 }

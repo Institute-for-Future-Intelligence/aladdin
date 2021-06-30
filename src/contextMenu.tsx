@@ -77,6 +77,12 @@ const ContextMenu = ({
         }
     };
 
+    const showTreeModel = (on: boolean) => {
+        if (selectedElement && selectedElement.type === ObjectType.Tree) {
+            updateElementById(selectedElement.id, {showModel: on});
+        }
+    };
+
     switch (selectedElement ? selectedElement.type : clickObjectType) {
         case ObjectType.Sky:
             return (
@@ -226,6 +232,15 @@ const ContextMenu = ({
                             requestUpdate();
                         }}>
                             Lock
+                        </Checkbox>
+                    </Menu.Item>
+                    <Menu.Item key={'tree-show-model'}>
+                        <Checkbox checked={selectedElement?.showModel && selectedElement.type === ObjectType.Tree}
+                                  onChange={(e) => {
+                                      showTreeModel(e.target.checked);
+                                      requestUpdate();
+                                  }}>
+                            Show Model
                         </Checkbox>
                     </Menu.Item>
                     {selectedElement &&
