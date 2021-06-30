@@ -90,7 +90,9 @@ const App = () => {
         if (r < Math.abs(max.x)) r = Math.abs(max.x);
         if (r < Math.abs(max.y)) r = Math.abs(max.y);
         if (r < Math.abs(max.z)) r = Math.abs(max.z);
-        setHeliodonRadius(r * 1.5);
+        if (!isNaN(r) && isFinite(r)) {
+            setHeliodonRadius(r * 1.5);
+        }
     }, [aabb]);
 
     useEffect(() => {
@@ -399,7 +401,7 @@ const App = () => {
                             <Heliodon
                                 hourAngle={hourAngle}
                                 declinationAngle={declinationAngle}
-                                radius={heliodonRadius}
+                                radius={Math.max(10, heliodonRadius)}
                                 date={now}
                                 latitude={Util.toRadians(world.latitude)}
                             />}

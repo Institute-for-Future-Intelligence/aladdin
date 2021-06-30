@@ -12,12 +12,15 @@ import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
     faArrowAltCircleUp,
+    faCube,
     faEraser,
-    faHome, faMousePointer,
+    faHome,
+    faMousePointer,
     faSave,
     faSun,
     faTree,
-    faUmbrellaBeach, faWalking,
+    faUmbrellaBeach,
+    faWalking,
 } from '@fortawesome/free-solid-svg-icons';
 import {faAsymmetrik} from "@fortawesome/free-brands-svg-icons";
 import firebase from 'firebase';
@@ -127,6 +130,12 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
     const redo = () => {
     };
 
+    const resetToSelectMode = () => {
+        setCommonStore(state => {
+            state.objectTypeToAdd = ObjectType.None;
+        });
+    };
+
     const removeAllContent = () => {
         Modal.confirm({
             title: 'Do you really want to clear the content?',
@@ -137,12 +146,14 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                 clearContent();
             }
         });
+        resetToSelectMode();
     };
 
     const resetView = () => {
         if (orbitControls) {
             orbitControls.reset();
         }
+        resetToSelectMode();
     };
 
     const toggleAutoRotate = () => {
@@ -150,6 +161,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
             state.viewState.autoRotate = !state.viewState.autoRotate;
         });
         requestUpdate();
+        resetToSelectMode();
     };
 
     const toggleShadow = () => {
@@ -157,6 +169,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
             state.viewState.shadowEnabled = !state.viewState.shadowEnabled;
         });
         requestUpdate();
+        resetToSelectMode();
     };
 
     const toggleHelidonPanel = () => {
@@ -164,6 +177,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
             state.viewState.showHeliodonPanel = !state.viewState.showHeliodonPanel;
         });
         requestUpdate();
+        resetToSelectMode();
     };
 
     const signIn = () => {
@@ -181,6 +195,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
         }).catch(error => {
             console.log("Error: ", error);
         });
+        resetToSelectMode();
     };
 
     const registerUser = async (user: User): Promise<any> => {
@@ -349,6 +364,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
 
     const showTitleDialog = () => {
         setTitleDialogVisible(true);
+        resetToSelectMode();
     };
 
     const avatarMenu = (
@@ -391,27 +407,33 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                         <FontAwesomeIcon title={'Select'}
                                          icon={faMousePointer}
                                          size={'3x'}
-                                         color={objectTypeToAdd === ObjectType.None ? 'white' : '#666666'}
+                                         color={objectTypeToAdd === ObjectType.None ? 'antiquewhite' : '#666666'}
+                                         style={{paddingRight: '12px', cursor: 'pointer'}}
+                                         onClick={resetToSelectMode}/>
+                        <FontAwesomeIcon title={'Add cuboid'}
+                                         icon={faCube}
+                                         size={'3x'}
+                                         color={objectTypeToAdd === ObjectType.Cuboid ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={() => {
                                              setCommonStore(state => {
-                                                 state.objectTypeToAdd = ObjectType.None;
+                                                 state.objectTypeToAdd = ObjectType.Cuboid;
                                              });
                                          }}/>
-                        <FontAwesomeIcon title={'Add Tree'}
+                        <FontAwesomeIcon title={'Add tree'}
                                          icon={faTree}
                                          size={'3x'}
-                                         color={objectTypeToAdd === ObjectType.Tree ? 'white' : '#666666'}
+                                         color={objectTypeToAdd === ObjectType.Tree ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={() => {
                                              setCommonStore(state => {
                                                  state.objectTypeToAdd = ObjectType.Tree;
                                              });
                                          }}/>
-                        <FontAwesomeIcon title={'Add People'}
+                        <FontAwesomeIcon title={'Add people'}
                                          icon={faWalking}
                                          size={'3x'}
-                                         color={objectTypeToAdd === ObjectType.Human ? 'white' : '#666666'}
+                                         color={objectTypeToAdd === ObjectType.Human ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={() => {
                                              setCommonStore(state => {
@@ -445,7 +467,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                         <FontAwesomeIcon title={'Show helidon panel'}
                                          icon={faSun}
                                          size={'3x'}
-                                         color={viewState.showHeliodonPanel ? 'goldenrod' : '#666666'}
+                                         color={viewState.showHeliodonPanel ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={toggleHelidonPanel}/>
                         <FontAwesomeIcon title={'Save file to the cloud'}
