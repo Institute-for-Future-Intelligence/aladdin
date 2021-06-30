@@ -369,7 +369,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
 
     const avatarMenu = (
         <Menu>
-            <Menu.Item key="my-cloud-files" onClick={showTitleDialog}>
+            <Menu.Item key="save-file-to-cloud" onClick={showTitleDialog}>
                 Save File to Cloud
             </Menu.Item>
             <Menu.Item key="my-cloud-files" onClick={gotoMyCloudFiles}>

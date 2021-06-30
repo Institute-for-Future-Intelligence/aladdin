@@ -60,18 +60,12 @@ const OrbitController = ({
 
     const onInteractionEnd = () => {
         setCommonStore((state) => {
-            const w = state.world;
-            // for some reason, a single click would trigger camera position to change
-            // to fix this, if the camera position doesn't change much, we do not save.
             // FIXME: why can't set function be used with a proxy?
-            const v = new Vector3(w.cameraPosition.x, w.cameraPosition.y, w.cameraPosition.z);
-            const u = camera.position.clone();
-            if (Math.abs(u.normalize().dot(v.normalize())) < 0.99) {
+            if (controls.current) {
+                const w = state.world;
                 w.cameraPosition.x = camera.position.x;
                 w.cameraPosition.y = camera.position.y;
                 w.cameraPosition.z = camera.position.z;
-            }
-            if (controls.current) {
                 w.panCenter.x = controls.current.target.x;
                 w.panCenter.y = controls.current.target.y;
                 w.panCenter.z = controls.current.target.z;
@@ -88,6 +82,7 @@ const OrbitController = ({
         }
     });
 
+    // do not enable damping, it messes up with rotation state persistence
     return (
         <orbitControls
             ref={controls}
@@ -97,7 +92,7 @@ const OrbitController = ({
             enableRotate={true}
             enablePan={true}
             enableZoom={true}
-            enableDamping={true}
+            enableDamping={false}
             target={panCenter}
             maxAzimuthAngle={Infinity}
             minAzimuthAngle={-Infinity}
