@@ -11,19 +11,18 @@ import styled from "styled-components";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
-    faUndoAlt,
-    faRedoAlt,
-    faSave,
-    faHome,
     faArrowAltCircleUp,
+    faEraser,
+    faHome, faMousePointer,
+    faSave,
     faSun,
-    faUmbrellaBeach,
-    faEraser
+    faTree,
+    faUmbrellaBeach, faWalking,
 } from '@fortawesome/free-solid-svg-icons';
 import {faAsymmetrik} from "@fortawesome/free-brands-svg-icons";
 import firebase from 'firebase';
 import {showInfo, visitHomepage} from "./helpers";
-import {CloudFileInfo, User} from "./types";
+import {CloudFileInfo, ObjectType, User} from "./types";
 import queryString from "querystring";
 import CloudFilePanel from "./panels/cloudFilePanel";
 import Spinner from "./components/spinner";
@@ -53,6 +52,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
     const user = useStore(state => state.user);
     const exportContent = useStore(state => state.exportContent);
     const clearContent = useStore(state => state.clearContent);
+    const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
     const showCloudFilePanel = useStore(state => state.showCloudFilePanel);
     const showAccountSettingsPanel = useStore(state => state.showAccountSettingsPanel);
 
@@ -388,18 +388,36 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
             <ButtonsContainer>
                 <Space direction='horizontal'>
                     <div>
-                        <FontAwesomeIcon title={'Undo'}
-                                         icon={faUndoAlt}
+                        <FontAwesomeIcon title={'Select'}
+                                         icon={faMousePointer}
                                          size={'3x'}
-                                         color={'#aaaaaa'}
+                                         color={objectTypeToAdd === ObjectType.None ? 'white' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
-                                         onClick={undo}/>
-                        <FontAwesomeIcon title={'Redo'}
-                                         icon={faRedoAlt}
+                                         onClick={() => {
+                                             setCommonStore(state => {
+                                                 state.objectTypeToAdd = ObjectType.None;
+                                             });
+                                         }}/>
+                        <FontAwesomeIcon title={'Add Tree'}
+                                         icon={faTree}
                                          size={'3x'}
-                                         color={'#aaaaaa'}
+                                         color={objectTypeToAdd === ObjectType.Tree ? 'white' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
-                                         onClick={redo}/>
+                                         onClick={() => {
+                                             setCommonStore(state => {
+                                                 state.objectTypeToAdd = ObjectType.Tree;
+                                             });
+                                         }}/>
+                        <FontAwesomeIcon title={'Add People'}
+                                         icon={faWalking}
+                                         size={'3x'}
+                                         color={objectTypeToAdd === ObjectType.Human ? 'white' : '#666666'}
+                                         style={{paddingRight: '12px', cursor: 'pointer'}}
+                                         onClick={() => {
+                                             setCommonStore(state => {
+                                                 state.objectTypeToAdd = ObjectType.Human;
+                                             });
+                                         }}/>
                         <FontAwesomeIcon title={'Clear'}
                                          icon={faEraser}
                                          size={'3x'}

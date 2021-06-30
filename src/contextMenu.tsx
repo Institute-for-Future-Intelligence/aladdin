@@ -153,6 +153,7 @@ const ContextMenu = ({
                         <Checkbox checked={!!selectedElement?.showLabel} onChange={(e) => {
                             if (selectedElement) {
                                 updateElementById(selectedElement.id, {showLabel: e.target.checked});
+                                requestUpdate();
                             }
                         }}>
                             Show Label

@@ -23,6 +23,7 @@ import {CuboidModel} from "../models/CuboidModel";
 import {DefaultViewState} from "./DefaultViewState";
 import {ViewState} from "../views/ViewState";
 import short from "short-uuid";
+import {ElementModelFactory} from "../models/ElementModelFactory";
 
 enableMapSet();
 
@@ -57,6 +58,10 @@ export interface CommonStoreState {
     setElementPosition: (id: string, x: number, y: number, z?: number) => void;
     setElementRotation: (id: string, x: number, y: number, z: number) => void;
     setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
+
+
+    objectTypeToAdd: ObjectType;
+    addElement: (position: Vector3) => void;
 
     pastePoint: Vector3;
     elementToPaste: ElementModel | null;
@@ -202,6 +207,28 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                         }
                         break;
                     }
+                }
+            });
+        },
+
+        objectTypeToAdd: ObjectType.None,
+        addElement(position) {
+            immerSet((state: CommonStoreState) => {
+                switch (state.objectTypeToAdd) {
+                    case ObjectType.Human:
+                        state.elements.push(ElementModelFactory.makeHuman(position.x, -position.z, position.y));
+                        break;
+                    case ObjectType.Tree:
+                        state.elements.push(ElementModelFactory.makeTree(position.x, -position.z, position.y));
+                        break;
+                    case ObjectType.Sensor:
+                        state.elements.push(ElementModelFactory.makeSensor(position.x, -position.z, position.y));
+                        break;
+                    case ObjectType.Foundation:
+                        break;
+                    case ObjectType.Cuboid:
+                        state.elements.push(ElementModelFactory.makeCuboid(position.x, -position.z));
+                        break;
                 }
             });
         },

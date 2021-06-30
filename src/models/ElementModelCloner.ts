@@ -4,11 +4,11 @@
 
 import {HumanModel} from "./HumanModel";
 import {ObjectType} from "../types";
-import {MathUtils} from "three";
 import {TreeModel} from "./TreeModel";
 import {SensorModel} from "./SensorModel";
 import {FoundationModel} from "./FoundationModel";
 import {CuboidModel} from "./CuboidModel";
+import short from "short-uuid";
 
 export class ElementModelCloner {
 
@@ -21,7 +21,7 @@ export class ElementModelCloner {
             cz: z,
             normal: [...human.normal],
             rotation: [...human.rotation],
-            id: MathUtils.generateUUID()
+            id: short.generate() as string
         } as HumanModel;
     }
 
@@ -36,14 +36,13 @@ export class ElementModelCloner {
             lz: tree.lz,
             normal: [...tree.normal],
             rotation: [...tree.rotation],
-            id: MathUtils.generateUUID()
+            id: short.generate() as string
         } as TreeModel;
     }
 
     static cloneSensor(sensor: SensorModel, x: number, y: number, z?: number) {
         return {
             type: ObjectType.Sensor,
-            name: sensor.name,
             cx: x,
             cy: y,
             cz: z,
@@ -51,8 +50,8 @@ export class ElementModelCloner {
             ly: sensor.ly,
             lz: sensor.lz,
             normal: [...sensor.normal],
-            id: MathUtils.generateUUID()
-        } as HumanModel;
+            id: short.generate() as string
+        } as SensorModel;
     }
 
     static cloneFoundation(foundation: FoundationModel, x: number, y: number) {
@@ -65,7 +64,7 @@ export class ElementModelCloner {
             lz: foundation.lz,
             normal: [...foundation.normal],
             rotation: [...foundation.rotation],
-            id: MathUtils.generateUUID()
+            id: short.generate() as string
         } as FoundationModel;
     }
 
@@ -80,7 +79,7 @@ export class ElementModelCloner {
             lz: cuboid.lz,
             normal: [...cuboid.normal],
             rotation: [...cuboid.rotation],
-            id: MathUtils.generateUUID()
+            id: short.generate() as string
         } as CuboidModel;
     }
 

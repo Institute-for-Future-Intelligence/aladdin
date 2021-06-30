@@ -24,6 +24,8 @@ const Ground = () => {
     const setElementPosition = useStore(state => state.setElementPosition);
     const setElementSize = useStore(state => state.setElementSize);
     const updateElement = useStore(state => state.updateElementById);
+    const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
+    const addElement = useStore(state => state.addElement);
     const [grab, setGrab] = useState<ElementModel | null>(null);
     const {camera, gl: {domElement}} = useThree();
     const groundPlaneRef = useRef<Mesh>();
@@ -116,6 +118,9 @@ const Ground = () => {
                                    state.clickObjectType = ObjectType.Ground;
                                });
                                selectNone();
+                               if (objectTypeToAdd !== ObjectType.None) {
+                                   addElement(e.intersections[0].point);
+                               }
                            } else {
                                setGrab(getSelectedElement());
                                setCommonStore((state) => {

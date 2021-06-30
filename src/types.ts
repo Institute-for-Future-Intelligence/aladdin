@@ -63,6 +63,7 @@ export enum ObjectType {
     Cuboid = 'Cuboid',
     Human = 'Human',
     Tree = 'Tree',
+    None = 'None'
 }
 
 export enum ActionType {
