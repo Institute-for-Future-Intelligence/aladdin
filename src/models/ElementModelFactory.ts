@@ -2,12 +2,13 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import short from "short-uuid";
 import {HumanModel} from "./HumanModel";
 import {HumanName, ObjectType, TreeType} from "../types";
 import {TreeModel} from "./TreeModel";
 import {SensorModel} from "./SensorModel";
 import {CuboidModel} from "./CuboidModel";
-import short from "short-uuid";
+import {FoundationModel} from "./FoundationModel";
 
 export class ElementModelFactory {
 
@@ -45,8 +46,8 @@ export class ElementModelFactory {
             cx: x,
             cy: y,
             cz: z,
-            lx: 0.05,
-            ly: 0.05,
+            lx: 0.1,
+            ly: 0.1,
             lz: 0.01,
             normal: [0, 1, 0],
             rotation: [0, 0, 0],
@@ -67,6 +68,20 @@ export class ElementModelFactory {
             rotation: [0, 0, 0],
             id: short.generate() as string
         } as CuboidModel;
+    }
+
+    static makeFoundation(x: number, y: number) {
+        return {
+            type: ObjectType.Foundation,
+            cx: x,
+            cy: y,
+            lx: 4,
+            ly: 4,
+            lz: 0.1,
+            normal: [0, 1, 0],
+            rotation: [0, 0, 0],
+            id: short.generate() as string
+        } as FoundationModel;
     }
 
 }

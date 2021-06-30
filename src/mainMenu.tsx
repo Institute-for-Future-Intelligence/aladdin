@@ -21,6 +21,7 @@ const StyledImage = styled.img`
   height: 40px;
   transition: 0.5s;
   opacity: 1;
+  cursor: pointer;
 
   &:hover {
     opacity: 0.5;

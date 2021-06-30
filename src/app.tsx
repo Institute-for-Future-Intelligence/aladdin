@@ -23,7 +23,7 @@ import MainMenu from "./mainMenu";
 import GroundPanel from "./panels/groundPanel";
 import HeliodonPanel from "./panels/heliodonPanel";
 import {VERSION} from "./constants";
-import {visitIFI} from "./helpers";
+import {visitHomepage, visitIFI} from "./helpers";
 import AcceptCookie from "./acceptCookie";
 import GroundImage from "./views/groundImage";
 import {Dropdown} from "antd";
@@ -287,7 +287,11 @@ const App = () => {
                 paddingTop: '10px',
                 fontSize: '30px'
             }}>
-                <span style={{paddingLeft: '20px', verticalAlign: 'middle'}}>Aladdin</span>
+                <span style={{paddingLeft: '20px', verticalAlign: 'middle', cursor: 'pointer'}}
+                      title={'Visit Aladdin homepage'}
+                      onClick={visitHomepage}>
+                    Aladdin
+                </span>
             </div>
             <div style={{
                 position: 'absolute',

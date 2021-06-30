@@ -2,13 +2,13 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import short from "short-uuid";
 import {HumanModel} from "./HumanModel";
 import {ObjectType} from "../types";
 import {TreeModel} from "./TreeModel";
 import {SensorModel} from "./SensorModel";
 import {FoundationModel} from "./FoundationModel";
 import {CuboidModel} from "./CuboidModel";
-import short from "short-uuid";
 
 export class ElementModelCloner {
 

@@ -14,10 +14,10 @@ import {
     faArrowAltCircleUp,
     faCube,
     faEraser,
-    faHome,
     faMousePointer,
-    faSave,
+    faSquare,
     faSun,
+    faTachometerAlt,
     faTree,
     faUmbrellaBeach,
     faWalking,
@@ -369,6 +369,9 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
 
     const avatarMenu = (
         <Menu>
+            <Menu.Item key="my-cloud-files" onClick={showTitleDialog}>
+                Save File to Cloud
+            </Menu.Item>
             <Menu.Item key="my-cloud-files" onClick={gotoMyCloudFiles}>
                 My Cloud Files
             </Menu.Item>
@@ -410,6 +413,16 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                                          color={objectTypeToAdd === ObjectType.None ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={resetToSelectMode}/>
+                        <FontAwesomeIcon title={'Add foundation'}
+                                         icon={faSquare}
+                                         size={'3x'}
+                                         color={objectTypeToAdd === ObjectType.Foundation ? 'antiquewhite' : '#666666'}
+                                         style={{paddingRight: '12px', cursor: 'pointer'}}
+                                         onClick={() => {
+                                             setCommonStore(state => {
+                                                 state.objectTypeToAdd = ObjectType.Foundation;
+                                             });
+                                         }}/>
                         <FontAwesomeIcon title={'Add cuboid'}
                                          icon={faCube}
                                          size={'3x'}
@@ -418,6 +431,16 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                                          onClick={() => {
                                              setCommonStore(state => {
                                                  state.objectTypeToAdd = ObjectType.Cuboid;
+                                             });
+                                         }}/>
+                        <FontAwesomeIcon title={'Add sensor'}
+                                         icon={faTachometerAlt}
+                                         size={'3x'}
+                                         color={objectTypeToAdd === ObjectType.Sensor ? 'antiquewhite' : '#666666'}
+                                         style={{paddingRight: '12px', cursor: 'pointer'}}
+                                         onClick={() => {
+                                             setCommonStore(state => {
+                                                 state.objectTypeToAdd = ObjectType.Sensor;
                                              });
                                          }}/>
                         <FontAwesomeIcon title={'Add tree'}
@@ -446,12 +469,6 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                                          color={'#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={removeAllContent}/>
-                        <FontAwesomeIcon title={'Toggle shadow effect'}
-                                         icon={faUmbrellaBeach}
-                                         size={'3x'}
-                                         color={viewState.shadowEnabled ? '#666666' : '#999999'}
-                                         style={{paddingRight: '12px', cursor: 'pointer'}}
-                                         onClick={toggleShadow}/>
                         <FontAwesomeIcon title={'Reset view'}
                                          icon={faArrowAltCircleUp}
                                          size={'3x'}
@@ -470,18 +487,12 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                                          color={viewState.showHeliodonPanel ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={toggleHelidonPanel}/>
-                        <FontAwesomeIcon title={'Save file to the cloud'}
-                                         icon={faSave}
+                        <FontAwesomeIcon title={'Toggle shadow effect'}
+                                         icon={faUmbrellaBeach}
                                          size={'3x'}
-                                         color={'#666666'}
+                                         color={viewState.shadowEnabled ? '#666666' : '#999999'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
-                                         onClick={showTitleDialog}/>
-                        <FontAwesomeIcon title={'Visit Aladdin homepage'}
-                                         icon={faHome}
-                                         size={'3x'}
-                                         color={'#666666'}
-                                         style={{paddingRight: '12px', cursor: 'pointer'}}
-                                         onClick={gotoHomepage}/>
+                                         onClick={toggleShadow}/>
                     </div>
                     <div>
                         {user.displayName ?

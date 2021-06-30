@@ -227,6 +227,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                         state.elements.push(ElementModelFactory.makeSensor(position.x, -position.z, position.y));
                         break;
                     case ObjectType.Foundation:
+                        state.elements.push(ElementModelFactory.makeFoundation(position.x, -position.z));
                         break;
                     case ObjectType.Cuboid:
                         state.elements.push(ElementModelFactory.makeCuboid(position.x, -position.z));
