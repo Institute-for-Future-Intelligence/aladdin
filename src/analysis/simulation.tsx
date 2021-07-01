@@ -98,7 +98,7 @@ const Simulation = ({
     }
 
     const collectDailyLightSensorData = (sensor: SensorModel) => {
-        const position = new Vector3(sensor.cx, sensor.cy, sensor.cz);
+        const position = new Vector3(sensor.cx + sensor.parent.cx, sensor.cy + sensor.parent.cy, sensor.cz + sensor.parent.cz);
         const normal = new Vector3(sensor.normal[0], sensor.normal[1], sensor.normal[2]);
         const result = new Array(24).fill(0);
         const year = now.getFullYear();
@@ -155,7 +155,7 @@ const Simulation = ({
 
     const collectYearlyLightSensorData = (sensor: SensorModel) => {
         const data = [];
-        const position = new Vector3(sensor.cx, sensor.cy, sensor.cz);
+        const position = new Vector3(sensor.cx + sensor.parent.cx, sensor.cy + sensor.parent.cy, sensor.cz + sensor.parent.cz);
         const normal = new Vector3(sensor.normal[0], sensor.normal[1], sensor.normal[2]);
         const year = now.getFullYear();
         const date = 15;

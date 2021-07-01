@@ -28,11 +28,6 @@ const Sensor = ({
                     heatFlux = false,
                 }: SensorModel) => {
 
-    cy = -cy; // we want positive y to point north
-    if (parent) {
-        cz = parent.cz + parent.lz / 2;
-    }
-
     const setCommonStore = useStore(state => state.set);
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const getElementById = useStore(state => state.getElementById);
@@ -40,6 +35,16 @@ const Sensor = ({
     const [hovered, setHovered] = useState(false);
     const baseRef = useRef<Mesh>();
     const handleRef = useRef<Mesh>();
+
+    if (parent) {
+        const p = getElementById(parent.id);
+        if(p) {
+            cz = p.cz + p.lz / 2;
+            cx += p.cx;
+            cy += p.cy;
+        }
+    }
+    cy = -cy; // we want positive y to point north
 
     const hx = lx / 2;
     const hy = ly / 2;

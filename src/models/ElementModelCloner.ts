@@ -62,6 +62,7 @@ export class ElementModelCloner {
             type: ObjectType.Foundation,
             cx: x,
             cy: y,
+            cz: foundation.cz,
             lx: foundation.lx,
             ly: foundation.ly,
             lz: foundation.lz,

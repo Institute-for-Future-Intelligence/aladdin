@@ -265,7 +265,6 @@ const ContextMenu = ({
         default:
             const treeCount = countElementsByType(ObjectType.Tree);
             const humanCount = countElementsByType(ObjectType.Human);
-            const sensorCount = countElementsByType(ObjectType.Sensor);
             return (
                 <StyledMenu>
                     <Menu.Item key={'ground-paste'} onClick={pasteElement}>
@@ -296,19 +295,6 @@ const ContextMenu = ({
                         });
                     }}>
                         Remove All Trees
-                    </Menu.Item>}
-                    {sensorCount > 0 && <Menu.Item key={'ground-remove-all-sensors'} onClick={() => {
-                        Modal.confirm({
-                            title: 'Do you really want to remove all ' + sensorCount + ' sensors?',
-                            icon: <ExclamationCircleOutlined/>,
-                            okText: 'OK',
-                            cancelText: 'Cancel',
-                            onOk: () => {
-                                removeElementsByType(ObjectType.Sensor);
-                            }
-                        });
-                    }}>
-                        Remove All Sensors
                     </Menu.Item>}
                     <Menu.Item key={'ground-albedo'}>
                         <Space style={{width: '60px'}}>Albedo:</Space>

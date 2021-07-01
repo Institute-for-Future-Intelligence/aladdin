@@ -276,6 +276,17 @@ const App = () => {
         />
     );
 
+    // only these elements are allowed to be on the ground
+    const legalOnGround = () => {
+        const type = getSelectedElement()?.type;
+        return (
+            type === ObjectType.Foundation ||
+            type === ObjectType.Cuboid ||
+            type === ObjectType.Tree ||
+            type === ObjectType.Human
+        );
+    };
+
     console.log('x')
 
     return (
@@ -390,7 +401,7 @@ const App = () => {
                                 shadowCameraTop={100}
                                 shadowCameraBottom={-100}
                             />
-                            {(grid || !enableOrbitController) &&
+                            {(grid || !enableOrbitController) && legalOnGround() &&
                             <gridHelper name={'Grid'} args={[100, 100, 'gray', 'gray']}/>
                             }
                             <Compass/>

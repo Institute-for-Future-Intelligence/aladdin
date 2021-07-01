@@ -67,7 +67,7 @@ export class DefaultWorldModel implements WorldModel {
             type: ObjectType.Sensor,
             cx: 0,
             cy: 0,
-            cz: 0,
+            cz: 0.105,
             lx: 0.1,
             ly: 0.1,
             lz: 0.01,

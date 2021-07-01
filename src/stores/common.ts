@@ -219,6 +219,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
 
         objectTypeToAdd: ObjectType.None,
         addElement(parent: ElementModel | GroundModel, position) {
+            // position is in three.js coordinate system (y and z are swapped)
             immerSet((state: CommonStoreState) => {
                 switch (state.objectTypeToAdd) {
                     case ObjectType.Human:
@@ -231,7 +232,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                         break;
                     case ObjectType.Sensor:
                         state.elements.push(ElementModelFactory.makeSensor
-                        (parent as ElementModel, position.x, -position.z, position.y));
+                        (parent as ElementModel, position.x - parent.cx, -position.z - parent.cy, position.y - parent.cz));
                         break;
                     case ObjectType.Foundation:
                         state.elements.push(ElementModelFactory.makeFoundation
@@ -390,7 +391,10 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         'world',
         'elements',
         'viewState',
-        'user'
+        'user',
+        'weatherData',
+        'dailyLightSensorData',
+        'yearlyLightSensorData'
     ]
 })));
 

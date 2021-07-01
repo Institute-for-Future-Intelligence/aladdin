@@ -21,7 +21,7 @@ export class ElementModelFactory {
             cx: x,
             cy: y,
             cz: z,
-            normal: [0, 0, 1],
+            normal: [0, 1, 0],
             rotation: [0, 0, 0],
             parent: parent,
             id: short.generate() as string
@@ -37,7 +37,7 @@ export class ElementModelFactory {
             cz: z,
             lx: 3,
             lz: 4,
-            normal: [0, 0, 1],
+            normal: [0, 1, 0],
             rotation: [0, 0, 0],
             parent: parent,
             id: short.generate() as string
@@ -54,7 +54,7 @@ export class ElementModelFactory {
             ly: 0.1,
             lz: 0.01,
             showLabel: true,
-            normal: [0, 1, 0],
+            normal: [0, 0, 1],
             rotation: [0, 0, 0],
             parent: parent,
             id: short.generate() as string
@@ -70,7 +70,7 @@ export class ElementModelFactory {
             lx: 2,
             ly: 2,
             lz: 4,
-            normal: [0, 1, 0],
+            normal: [0, 0, 1],
             rotation: [0, 0, 0],
             parent: parent,
             id: short.generate() as string
@@ -86,7 +86,7 @@ export class ElementModelFactory {
             lx: 4,
             ly: 4,
             lz: 0.1,
-            normal: [0, 1, 0],
+            normal: [0, 0, 1],
             rotation: [0, 0, 0],
             parent: parent,
             id: short.generate() as string

@@ -4,7 +4,7 @@
 
 import React, {useMemo, useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
-import {Mesh, Vector3} from "three";
+import {Mesh, Raycaster, Vector2, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {FoundationModel} from "../models/FoundationModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
@@ -36,15 +36,19 @@ const Foundation = ({
                     }: FoundationModel) => {
 
     cy = -cy; // we want positive y to point north
+    const maxLxLy = Math.max(lx, ly);
 
     const setCommonStore = useStore(state => state.set);
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const moveHandleType = useStore(state => state.moveHandleType);
     const resizeHandleType = useStore(state => state.resizeHandleType);
+    const getSelectedElement = useStore(state => state.getSelectedElement);
     const getElementById = useStore(state => state.getElementById);
     const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
     const addElement = useStore(state => state.addElement);
-    const {gl: {domElement}} = useThree();
+    const setElementPosition = useStore(state => state.setElementPosition);
+
+    const {camera, gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
     const [hoveredResizeHandleLL, setHoveredResizeHandleLL] = useState(false);
     const [hoveredResizeHandleUL, setHoveredResizeHandleUL] = useState(false);
@@ -52,6 +56,7 @@ const Foundation = ({
     const [hoveredResizeHandleUR, setHoveredResizeHandleUR] = useState(false);
     const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
     const [grab, setGrab] = useState<ElementModel | null>(null);
+    const [showGrid, setShowGrid] = useState<boolean>(false);
     const baseRef = useRef<Mesh>();
     const resizeHandleLLRef = useRef<Mesh>();
     const resizeHandleULRef = useRef<Mesh>();
@@ -61,6 +66,7 @@ const Foundation = ({
     const moveHandleUpperRef = useRef<Mesh>();
     const moveHandleLeftRef = useRef<Mesh>();
     const moveHandleRightRef = useRef<Mesh>();
+    const ray = useMemo(() => new Raycaster(), []);
 
     const elementModel = getElementById(id);
     const wireframe = true;
@@ -186,20 +192,66 @@ const Foundation = ({
                  }}
                  onPointerDown={(e) => {
                      selectMe(e, ActionType.Select);
-                     if (legalOnFoundation(objectTypeToAdd) && elementModel) {
-                         addElement(elementModel, e.intersections[0].point);
-                         setCommonStore(state => {
-                             state.objectTypeToAdd = ObjectType.None;
-                         });
+                     const selectedElement = getSelectedElement();
+                     if (selectedElement === elementModel) {
+                         // no child of this foundation is clicked
+                         if (legalOnFoundation(objectTypeToAdd) && elementModel) {
+                             setShowGrid(true);
+                             addElement(elementModel, e.intersections[0].point);
+                             setCommonStore(state => {
+                                 state.objectTypeToAdd = ObjectType.None;
+                             });
+                         }
+                     } else {
+                         // a child of this foundation is clicked
+                         if (selectedElement) {
+                             if (legalOnFoundation(selectedElement.type as ObjectType)) {
+                                 setShowGrid(true);
+                                 setGrab(selectedElement);
+                                 setCommonStore((state) => {
+                                     state.enableOrbitController = false;
+                                 });
+                             }
+                         }
                      }
                  }}
                  onPointerUp={(e) => {
+                     setGrab(null);
+                     setShowGrid(false);
+                     setCommonStore((state) => {
+                         state.enableOrbitController = true;
+                     });
                  }}
                  onPointerMove={(e) => {
+                     if (grab && grab.type && !grab.locked) {
+                         const mouse = new Vector2();
+                         mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
+                         mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
+                         ray.setFromCamera(mouse, camera);
+                         let intersects;
+                         switch (grab.type) {
+                             case ObjectType.Sensor:
+                                 if (baseRef.current) {
+                                     intersects = ray.intersectObjects([baseRef.current]);
+                                     if (intersects.length > 0) {
+                                         const p = intersects[0].point;
+                                         setElementPosition(grab.id, p.x - cx, -p.z + cy);
+                                     }
+                                 }
+                                 break;
+                         }
+                     }
                  }}
             >
                 <meshStandardMaterial attach="material" color={color}/>
             </Box>
+
+            {showGrid &&
+            <gridHelper name={'Foundation Grid'}
+                        position={[0, lz, 0]}
+                        scale={[lx / maxLxLy, 1, ly / maxLxLy]}
+                        args={[maxLxLy, 50, 'gray', 'gray']}/>
+            }
 
             {(wireframe && !selected) &&
             <>
