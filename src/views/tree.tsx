@@ -166,10 +166,10 @@ const Tree = ({
                 </Cone>
             }
 
-            {/* interactive plane */}
-            <Plane
+            {/* billboard for interactions (don't use a plane as it may become unselected at some angle) */}
+            <Billboard
                 ref={meshRef}
-                name={'Interaction Mesh'}
+                name={'Interaction Billboard'}
                 visible={false}
                 castShadow={false}
                 position={[0, -lz / 2 + 0.5, 0]}
@@ -192,14 +192,14 @@ const Tree = ({
                     setHovered(false);
                 }}
             >
-                <meshStandardMaterial attach="material" side={DoubleSide}/>
-            </Plane>
+                <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.5}/>
+            </Billboard>
 
             {/* draw handle */}
             {selected && !locked &&
             <Sphere
                 position={new Vector3(0, -lz / 2, 0)}
-                args={[MOVE_HANDLE_RADIUS * 2, 6, 6]}
+                args={[MOVE_HANDLE_RADIUS * 4, 6, 6]}
                 name={'Handle'}
                 renderOrder={2}
                 onPointerDown={(e) => {
