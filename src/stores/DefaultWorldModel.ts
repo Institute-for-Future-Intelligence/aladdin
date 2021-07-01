@@ -81,7 +81,7 @@ export class DefaultWorldModel implements WorldModel {
             lz: 0.01,
             normal: [0, 0, 1],
             id: short.generate() as string,
-            showLabel: false,
+            showLabel: true,
             light: true,
             heatFlux: false
         } as SensorModel;
@@ -95,7 +95,7 @@ export class DefaultWorldModel implements WorldModel {
             lz: 0.01,
             normal: [0, 0, 1],
             id: short.generate() as string,
-            showLabel: false,
+            showLabel: true,
             light: true,
             heatFlux: false
         } as SensorModel;

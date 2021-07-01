@@ -49,6 +49,7 @@ export class ElementModelFactory {
             lx: 0.1,
             ly: 0.1,
             lz: 0.01,
+            showLabel: true,
             normal: [0, 1, 0],
             rotation: [0, 0, 0],
             id: short.generate() as string

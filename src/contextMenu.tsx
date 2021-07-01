@@ -6,13 +6,13 @@ import React from 'react';
 import styled from "styled-components";
 import 'antd/dist/antd.css';
 import {useStore} from "./stores/common";
-import {useWorker} from "@koale/useworker";
-import {Menu, Checkbox, Radio, Space} from 'antd';
+import {Checkbox, Menu, Modal, Radio, Space} from 'antd';
 import {ObjectType, Theme} from "./types";
 import ReshapeElementMenu from "./components/reshapeElementMenu";
 import HumanMenu from "./components/humanMenu";
 import TreeMenu from "./components/treeMenu";
 import NumericInput from "react-numeric-input";
+import {ExclamationCircleOutlined} from "@ant-design/icons";
 
 // TODO: Reduce the space between menu items
 const StyledMenu = styled(Menu)`
@@ -56,6 +56,8 @@ const ContextMenu = ({
     const updateElementById = useStore(state => state.updateElementById);
     const clickObjectType = useStore(state => state.clickObjectType);
     const cutElementById = useStore(state => state.cutElementById);
+    const countElementsByType = useStore(state => state.countElementsByType);
+    const removeElementsByType = useStore(state => state.removeElementsByType);
     const copyElementById = useStore(state => state.copyElementById);
     const pasteElement = useStore(state => state.pasteElement);
     const getSelectedElement = useStore(state => state.getSelectedElement);
@@ -261,11 +263,53 @@ const ContextMenu = ({
                 </StyledMenu>
             );
         default:
+            const treeCount = countElementsByType(ObjectType.Tree);
+            const humanCount = countElementsByType(ObjectType.Human);
+            const sensorCount = countElementsByType(ObjectType.Sensor);
             return (
                 <StyledMenu>
                     <Menu.Item key={'ground-paste'} onClick={pasteElement}>
                         Paste
                     </Menu.Item>
+                    {humanCount > 0 && <Menu.Item key={'ground-remove-all-humans'} onClick={() => {
+                        Modal.confirm({
+                            title: 'Do you really want to remove all ' + humanCount + ' people?',
+                            icon: <ExclamationCircleOutlined/>,
+                            okText: 'OK',
+                            cancelText: 'Cancel',
+                            onOk: () => {
+                                removeElementsByType(ObjectType.Human);
+                            }
+                        });
+                    }}>
+                        Remove All People
+                    </Menu.Item>}
+                    {treeCount > 0 && <Menu.Item key={'ground-remove-all-trees'} onClick={() => {
+                        Modal.confirm({
+                            title: 'Do you really want to remove all ' + treeCount + ' trees?',
+                            icon: <ExclamationCircleOutlined/>,
+                            okText: 'OK',
+                            cancelText: 'Cancel',
+                            onOk: () => {
+                                removeElementsByType(ObjectType.Tree);
+                            }
+                        });
+                    }}>
+                        Remove All Trees
+                    </Menu.Item>}
+                    {sensorCount > 0 && <Menu.Item key={'ground-remove-all-sensors'} onClick={() => {
+                        Modal.confirm({
+                            title: 'Do you really want to remove all ' + sensorCount + ' sensors?',
+                            icon: <ExclamationCircleOutlined/>,
+                            okText: 'OK',
+                            cancelText: 'Cancel',
+                            onOk: () => {
+                                removeElementsByType(ObjectType.Sensor);
+                            }
+                        });
+                    }}>
+                        Remove All Sensors
+                    </Menu.Item>}
                     <Menu.Item key={'ground-albedo'}>
                         <Space style={{width: '60px'}}>Albedo:</Space>
                         <NumericInput min={0.05}

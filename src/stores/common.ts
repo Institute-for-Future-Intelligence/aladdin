@@ -67,6 +67,8 @@ export interface CommonStoreState {
     cutElementById: (id: string) => void;
     pasteElement: () => void;
     deleteElementById: (id: string) => void;
+    countElementsByType: (type: ObjectType) => number;
+    removeElementsByType: (type: ObjectType) => void;
 
     dailyLightSensorData: DatumEntry[];
     setDailyLightSensorData: (data: DatumEntry[]) => void;
@@ -264,6 +266,22 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                     }
                 }
             });
+        },
+        removeElementsByType(type: ObjectType) {
+            immerSet((state: CommonStoreState) => {
+                state.elements = state.elements.filter((x) => x.type !== type);
+            });
+        },
+        countElementsByType(type: ObjectType) {
+            let count = 0;
+            immerSet((state: CommonStoreState) => {
+                for (const e of state.elements) {
+                    if (e.type === type) {
+                        count++;
+                    }
+                }
+            });
+            return count;
         },
         pasteElement() {
             immerSet((state: CommonStoreState) => {

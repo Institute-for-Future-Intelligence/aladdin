@@ -285,9 +285,10 @@ const App = () => {
                 backgroundColor: 'lightblue',
                 height: '72px',
                 paddingTop: '10px',
+                textAlign: 'start',
                 fontSize: '30px'
             }}>
-                <span style={{paddingLeft: '20px', verticalAlign: 'middle', cursor: 'pointer'}}
+                <span style={{paddingLeft: '100px', verticalAlign: 'middle', cursor: 'pointer'}}
                       title={'Visit Aladdin homepage'}
                       onClick={visitHomepage}>
                     Aladdin
