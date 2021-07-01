@@ -235,7 +235,7 @@ const Foundation = ({
                                      intersects = ray.intersectObjects([baseRef.current]);
                                      if (intersects.length > 0) {
                                          const p = intersects[0].point;
-                                         setElementPosition(grabRef.current.id, p.x - cx, -p.z + cy);
+                                         setElementPosition(grabRef.current.id, (p.x - cx) / lx, (-p.z + cy) / ly);
                                      }
                                  }
                                  break;

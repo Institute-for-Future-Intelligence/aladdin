@@ -38,10 +38,10 @@ const Sensor = ({
 
     if (parent) {
         const p = getElementById(parent.id);
-        if(p) {
+        if (p) {
             cz = p.cz + p.lz / 2;
-            cx += p.cx;
-            cy += p.cy;
+            cx = p.cx + cx * p.lx;
+            cy = p.cy + cy * p.ly;
         }
     }
     cy = -cy; // we want positive y to point north

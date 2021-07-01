@@ -231,8 +231,12 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                         (state.world.ground, position.x, -position.z, position.y));
                         break;
                     case ObjectType.Sensor:
-                        state.elements.push(ElementModelFactory.makeSensor
-                        (parent as ElementModel, position.x - parent.cx, -position.z - parent.cy, position.y - parent.cz));
+                        state.elements.push(ElementModelFactory.makeSensor(
+                            parent as ElementModel,
+                            (position.x - parent.cx) / parent.lx,
+                            (-position.z - parent.cy) / parent.ly,
+                            (position.y - parent.cz) / parent.lz
+                        ));
                         break;
                     case ObjectType.Foundation:
                         state.elements.push(ElementModelFactory.makeFoundation

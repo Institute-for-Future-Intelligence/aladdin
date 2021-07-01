@@ -27,6 +27,7 @@ const Simulation = ({
 
     const world = useStore(state => state.world);
     const elements = useStore(state => state.elements);
+    const getElementById = useStore(state => state.getElementById);
     const getWeather = useStore(state => state.getWeather);
     const setDailyLightSensorData = useStore(state => state.setDailyLightSensorData);
     const setYearlyLightSensorData = useStore(state => state.setYearlyLightSensorData);
@@ -98,7 +99,14 @@ const Simulation = ({
     }
 
     const collectDailyLightSensorData = (sensor: SensorModel) => {
-        const position = new Vector3(sensor.cx + sensor.parent.cx, sensor.cy + sensor.parent.cy, sensor.cz + sensor.parent.cz);
+        // why are the properties of parents cached here?
+        const parent = getElementById(sensor.parent.id);
+        if (!parent) throw new Error('parent of sensor does not exist');
+        const position = new Vector3(
+            parent.cx + sensor.cx * parent.lx,
+            parent.cy + sensor.cy * parent.ly,
+            parent.cz + sensor.cz * parent.lz
+        );
         const normal = new Vector3(sensor.normal[0], sensor.normal[1], sensor.normal[2]);
         const result = new Array(24).fill(0);
         const year = now.getFullYear();
@@ -155,7 +163,14 @@ const Simulation = ({
 
     const collectYearlyLightSensorData = (sensor: SensorModel) => {
         const data = [];
-        const position = new Vector3(sensor.cx + sensor.parent.cx, sensor.cy + sensor.parent.cy, sensor.cz + sensor.parent.cz);
+        // why are the properties of parents cached here?
+        const parent = getElementById(sensor.parent.id);
+        if (!parent) throw new Error('parent of sensor does not exist');
+        const position = new Vector3(
+            parent.cx + sensor.cx * parent.lx,
+            parent.cy + sensor.cy * parent.ly,
+            parent.cz + sensor.cz * parent.lz
+        );
         const normal = new Vector3(sensor.normal[0], sensor.normal[1], sensor.normal[2]);
         const year = now.getFullYear();
         const date = 15;
