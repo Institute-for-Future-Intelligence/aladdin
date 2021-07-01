@@ -45,15 +45,11 @@ const ButtonsContainer = styled.div`
 
 export interface MainToolBarProps {
     orbitControls?: OrbitControls;
-    objectTypeToAdd: ObjectType;
-    setObjectTypeToAdd: (objectTypeToAdd: ObjectType) => void;
     requestUpdate: () => void;
 }
 
 const MainToolBar = ({
                          orbitControls,
-                         objectTypeToAdd,
-                         setObjectTypeToAdd,
                          requestUpdate
                      }: MainToolBarProps) => {
 
@@ -64,6 +60,7 @@ const MainToolBar = ({
     const clearContent = useStore(state => state.clearContent);
     const showCloudFilePanel = useStore(state => state.showCloudFilePanel);
     const showAccountSettingsPanel = useStore(state => state.showAccountSettingsPanel);
+    const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
 
     const [loading, setLoading] = useState(false);
     const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
@@ -131,7 +128,9 @@ const MainToolBar = ({
     }
 
     const resetToSelectMode = () => {
-        setObjectTypeToAdd(ObjectType.None);
+        setCommonStore(state => {
+            state.objectTypeToAdd = ObjectType.None;
+        });
     };
 
     const removeAllContent = () => {
@@ -413,7 +412,9 @@ const MainToolBar = ({
                                          color={objectTypeToAdd === ObjectType.Foundation ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={() => {
-                                             setObjectTypeToAdd(ObjectType.Foundation);
+                                             setCommonStore(state => {
+                                                 state.objectTypeToAdd = ObjectType.Foundation;
+                                             });
                                          }}/>
                         <FontAwesomeIcon title={'Add cuboid'}
                                          icon={faCube}
@@ -421,7 +422,9 @@ const MainToolBar = ({
                                          color={objectTypeToAdd === ObjectType.Cuboid ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={() => {
-                                             setObjectTypeToAdd(ObjectType.Cuboid);
+                                             setCommonStore(state => {
+                                                 state.objectTypeToAdd = ObjectType.Cuboid;
+                                             });
                                          }}/>
                         <FontAwesomeIcon title={'Add sensor'}
                                          icon={faTachometerAlt}
@@ -429,7 +432,9 @@ const MainToolBar = ({
                                          color={objectTypeToAdd === ObjectType.Sensor ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={() => {
-                                             setObjectTypeToAdd(ObjectType.Sensor);
+                                             setCommonStore(state => {
+                                                 state.objectTypeToAdd = ObjectType.Sensor;
+                                             });
                                          }}/>
                         <FontAwesomeIcon title={'Add tree'}
                                          icon={faTree}
@@ -437,7 +442,9 @@ const MainToolBar = ({
                                          color={objectTypeToAdd === ObjectType.Tree ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={() => {
-                                             setObjectTypeToAdd(ObjectType.Tree);
+                                             setCommonStore(state => {
+                                                 state.objectTypeToAdd = ObjectType.Tree;
+                                             });
                                          }}/>
                         <FontAwesomeIcon title={'Add people'}
                                          icon={faWalking}
@@ -445,7 +452,9 @@ const MainToolBar = ({
                                          color={objectTypeToAdd === ObjectType.Human ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={() => {
-                                             setObjectTypeToAdd(ObjectType.Human);
+                                             setCommonStore(state => {
+                                                 state.objectTypeToAdd = ObjectType.Human;
+                                             });
                                          }}/>
                         <FontAwesomeIcon title={'Clear'}
                                          icon={faEraser}

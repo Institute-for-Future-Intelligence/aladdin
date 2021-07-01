@@ -14,6 +14,8 @@ import {HumanModel} from "../models/HumanModel";
 import {TreeModel} from "../models/TreeModel";
 import short from 'short-uuid';
 
+// default scene
+
 export class DefaultWorldModel implements WorldModel {
 
     name: string;
@@ -48,21 +50,41 @@ export class DefaultWorldModel implements WorldModel {
 
     getElements() {
         const elements: ElementModel[] = [];
-        const e1 = {
+        const foundation = {
             type: ObjectType.Foundation,
             cx: 0,
             cy: 0,
-            lx: 2,
+            cz: 0.05,
+            lx: 4,
             ly: 3,
             lz: 0.1,
             normal: [0, 0, 1],
             rotation: [0, 0, 0],
             id: short.generate() as string
         } as FoundationModel;
-        const e2 = {
+        const sensor = {
+            type: ObjectType.Sensor,
+            cx: 0,
+            cy: 0,
+            cz: 0,
+            lx: 0.1,
+            ly: 0.1,
+            lz: 0.01,
+            parent: foundation,
+            normal: [0, 0, 1],
+            rotation: [0, 0, 0],
+            id: short.generate() as string,
+            showLabel: true,
+            light: true,
+            heatFlux: false
+        } as SensorModel;
+        elements.push(foundation);
+        elements.push(sensor);
+
+        const cuboid = {
             type: ObjectType.Cuboid,
             cx: 0,
-            cy: 3,
+            cy: 5,
             cz: 2,
             lx: 2,
             ly: 2,
@@ -71,78 +93,35 @@ export class DefaultWorldModel implements WorldModel {
             rotation: [0, Math.PI / 6, 0],
             id: short.generate() as string
         } as CuboidModel;
-        const e3 = {
-            type: ObjectType.Sensor,
-            cx: 2,
-            cy: 5,
-            cz: 0,
-            lx: 0.05,
-            ly: 0.05,
-            lz: 0.01,
-            normal: [0, 0, 1],
-            id: short.generate() as string,
-            showLabel: true,
-            light: true,
-            heatFlux: false
-        } as SensorModel;
-        const e4 = {
-            type: ObjectType.Sensor,
-            cx: 0,
-            cy: 5,
-            cz: 0,
-            lx: 0.05,
-            ly: 0.05,
-            lz: 0.01,
-            normal: [0, 0, 1],
-            id: short.generate() as string,
-            showLabel: true,
-            light: true,
-            heatFlux: false
-        } as SensorModel;
-        const e5 = {
-            type: ObjectType.Foundation,
-            cx: 4,
-            cy: 0,
-            lx: 2,
-            ly: 3,
-            lz: 0.1,
-            normal: [0, 0, 1],
-            rotation: [0, Math.PI / 3, 0],
-            id: short.generate() as string
-        } as FoundationModel;
-        elements.push(e1);
-        elements.push(e2);
-        elements.push(e3);
-        elements.push(e4);
-        elements.push(e5);
+        elements.push(cuboid);
 
-        const h1 = {
+        const man = {
             type: ObjectType.Human,
             name: HumanName.Jack,
-            cx: 4,
-            cy: 4,
+            cx: 2,
+            cy: 2,
             normal: [1, 0, 0],
             rotation: [0, 0, 0],
             id: short.generate() as string
         } as HumanModel;
-        const h2 = {
+        const woman = {
             type: ObjectType.Human,
             name: HumanName.Jill,
-            cx: 5,
-            cy: 5,
+            cx: -2,
+            cy: 2,
             normal: [1, 0, 0],
             rotation: [0, 0, 0],
             id: short.generate() as string
         } as HumanModel;
-        elements.push(h1);
-        elements.push(h2);
+        elements.push(man);
+        elements.push(woman);
 
         const tree1 = {
             type: ObjectType.Tree,
             name: 'Dogwood',
             evergreen: false,
-            cx: -5,
-            cy: -6,
+            cx: 5,
+            cy: 5,
             lx: 3,
             lz: 4,
             normal: [1, 0, 0],

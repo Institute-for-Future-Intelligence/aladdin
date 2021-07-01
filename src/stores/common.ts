@@ -29,14 +29,15 @@ enableMapSet();
 
 export interface CommonStoreState {
     set: (fn: (state: CommonStoreState) => void) => void;
+
+    // only the following four properties are persisted (see the whitelist at the end)
     world: WorldModel;
     elements: ElementModel[];
     viewState: ViewState;
     user: User;
+
     exportContent: () => {};
     clearContent: () => void;
-
-    // we are not interested in saving the following data in a file
 
     weatherData: { [key: string]: WeatherModel };
     getWeather: (location: string) => WeatherModel;
@@ -59,7 +60,9 @@ export interface CommonStoreState {
     setElementPosition: (id: string, x: number, y: number, z?: number) => void;
     setElementRotation: (id: string, x: number, y: number, z: number) => void;
     setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
-    addElement: (objectTypeToAdd: ObjectType, position: Vector3) => void;
+
+    objectTypeToAdd: ObjectType;
+    addElement: (parent: ElementModel | undefined, position: Vector3) => void;
 
     pastePoint: Vector3;
     elementToPaste: ElementModel | null;
@@ -212,9 +215,11 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 }
             });
         },
-        addElement(objectTypeToAdd, position) {
+
+        objectTypeToAdd: ObjectType.None,
+        addElement(parent: ElementModel | undefined, position) {
             immerSet((state: CommonStoreState) => {
-                switch (objectTypeToAdd) {
+                switch (state.objectTypeToAdd) {
                     case ObjectType.Human:
                         state.elements.push(ElementModelFactory.makeHuman(position.x, -position.z, position.y));
                         break;
@@ -222,7 +227,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                         state.elements.push(ElementModelFactory.makeTree(position.x, -position.z, position.y));
                         break;
                     case ObjectType.Sensor:
-                        state.elements.push(ElementModelFactory.makeSensor(position.x, -position.z, position.y));
+                        state.elements.push(ElementModelFactory.makeSensor(parent, position.x, -position.z, position.y));
                         break;
                     case ObjectType.Foundation:
                         state.elements.push(ElementModelFactory.makeFoundation(position.x, -position.z));
@@ -373,5 +378,13 @@ export const useStore = create<CommonStoreState>(devtools(persist((
             return city;
         }
     };
-}, {name: 'aladdin-storage'})));
+}, {
+    name: 'aladdin-storage',
+    whitelist: [
+        'world',
+        'elements',
+        'viewState',
+        'user'
+    ]
+})));
 

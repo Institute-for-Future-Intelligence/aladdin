@@ -48,6 +48,7 @@ const App = () => {
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const deleteElementById = useStore(state => state.deleteElementById);
     const aabb = useStore(state => state.aabb);
+    const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
 
     const grid = useStore(state => state.grid);
     const enableOrbitController = useStore(state => state.enableOrbitController);
@@ -65,7 +66,6 @@ const App = () => {
     const [cameraPosition, setCameraPosition] = useState<Vector3>(new Vector3(0, 0, 5));
     const [panCenter, setPanCenter] = useState<Vector3>(new Vector3());
     const [heliodonRadius, setHeliodonRadius] = useState<number>(10);
-    const [objectTypeToAdd, setObjectTypeToAdd] = useState<ObjectType>(ObjectType.None);
 
     const orbitControlsRef = useRef<OrbitControls>();
     const canvasRef = useRef<HTMLCanvasElement>();
@@ -317,8 +317,6 @@ const App = () => {
                 requestUpdate={requestUpdate}
             />
             <MainToolBar orbitControls={orbitControlsRef.current}
-                         objectTypeToAdd={objectTypeToAdd}
-                         setObjectTypeToAdd={setObjectTypeToAdd}
                          requestUpdate={requestUpdate}/>
             {viewState.showGroundPanel &&
             <GroundPanel grid={grid}
@@ -401,9 +399,7 @@ const App = () => {
                                         dailyLightSensorDataFlag={dailyLightSensorDataFlag}
                                         yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}/>
                             {viewState.axes && <Axes/>}
-                            <Ground objectTypeToAdd={objectTypeToAdd}
-                                    setObjectTypeToAdd={setObjectTypeToAdd}
-                            />
+                            <Ground/>
                             {viewState.groundImage && <GroundImage/>}
                             <Sky theme={viewState.theme} night={!sunAboveHorizon}/>
                             {viewState.heliodon &&

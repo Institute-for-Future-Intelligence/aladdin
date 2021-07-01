@@ -181,6 +181,7 @@ const GroundPanel = ({
                                             checked={grid}
                                             onChange={(checked) => {
                                                 setGrid?.(checked);
+                                                requestUpdate();
                                             }}
                                     />
                                 </Space>

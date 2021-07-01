@@ -8,7 +8,7 @@ import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {FoundationModel} from "../models/FoundationModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {ActionType, MoveHandleType, ResizeHandleType} from "../types";
+import {ActionType, MoveHandleType, ObjectType, ResizeHandleType} from "../types";
 import {
     HIGHLIGHT_HANDLE_COLOR,
     MOVE_HANDLE_COLOR,
@@ -18,6 +18,7 @@ import {
     RESIZE_HANDLE_SIZE
 } from "../constants";
 import {Util} from "../Util";
+import {ElementModel} from "../models/ElementModel";
 
 const Foundation = ({
                         id,
@@ -40,6 +41,9 @@ const Foundation = ({
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const moveHandleType = useStore(state => state.moveHandleType);
     const resizeHandleType = useStore(state => state.resizeHandleType);
+    const getElementById = useStore(state => state.getElementById);
+    const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
+    const addElement = useStore(state => state.addElement);
     const {gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
     const [hoveredResizeHandleLL, setHoveredResizeHandleLL] = useState(false);
@@ -47,6 +51,7 @@ const Foundation = ({
     const [hoveredResizeHandleLR, setHoveredResizeHandleLR] = useState(false);
     const [hoveredResizeHandleUR, setHoveredResizeHandleUR] = useState(false);
     const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
+    const [grab, setGrab] = useState<ElementModel | null>(null);
     const baseRef = useRef<Mesh>();
     const resizeHandleLLRef = useRef<Mesh>();
     const resizeHandleULRef = useRef<Mesh>();
@@ -57,6 +62,7 @@ const Foundation = ({
     const moveHandleLeftRef = useRef<Mesh>();
     const moveHandleRightRef = useRef<Mesh>();
 
+    const elementModel = getElementById(id);
     const wireframe = true;
     const handleLift = MOVE_HANDLE_RADIUS / 2;
     const hx = lx / 2;
@@ -173,6 +179,12 @@ const Foundation = ({
                  }}
                  onPointerDown={(e) => {
                      selectMe(e, ActionType.Select);
+                     if (objectTypeToAdd !== ObjectType.None && elementModel) {
+                         addElement(elementModel, e.intersections[0].point);
+                         setCommonStore(state => {
+                             state.objectTypeToAdd = ObjectType.None;
+                         });
+                     }
                  }}
                  onPointerUp={(e) => {
                  }}

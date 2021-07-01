@@ -9,6 +9,7 @@ import {TreeModel} from "./TreeModel";
 import {SensorModel} from "./SensorModel";
 import {CuboidModel} from "./CuboidModel";
 import {FoundationModel} from "./FoundationModel";
+import {ElementModel} from "./ElementModel";
 
 export class ElementModelFactory {
 
@@ -40,7 +41,7 @@ export class ElementModelFactory {
         } as TreeModel;
     }
 
-    static makeSensor(x: number, y: number, z?: number) {
+    static makeSensor(parent: ElementModel | undefined, x: number, y: number, z?: number) {
         return {
             type: ObjectType.Sensor,
             cx: x,
@@ -52,6 +53,7 @@ export class ElementModelFactory {
             showLabel: true,
             normal: [0, 1, 0],
             rotation: [0, 0, 0],
+            parent: parent,
             id: short.generate() as string
         } as SensorModel;
     }
@@ -76,6 +78,7 @@ export class ElementModelFactory {
             type: ObjectType.Foundation,
             cx: x,
             cy: y,
+            cz: 0.05,
             lx: 4,
             ly: 4,
             lz: 0.1,

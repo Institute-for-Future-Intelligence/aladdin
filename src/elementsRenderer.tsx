@@ -17,7 +17,10 @@ import {TreeModel} from "./models/TreeModel";
 import Tree from "./views/tree";
 import {Box3, Group} from "three";
 
-const ElementsRenderer: React.FC = () => {
+export interface ElementsRendererProps {
+}
+
+const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const elements = useStore(state => state.elements);

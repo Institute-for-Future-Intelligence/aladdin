@@ -15,6 +15,7 @@ export interface ElementModel {
     normal: number[]; // normal vector of this element's primary surface if applicable
     rotation: number[]; // Euler angle for the orientation
 
+    parent?: ElementModel | undefined;
     selected?: boolean;
     locked?: boolean;
     color?: string;

@@ -23,11 +23,15 @@ const Sensor = ({
                     lineWidth = 0.1,
                     selected = false,
                     showLabel = false,
+                    parent,
                     light = true,
                     heatFlux = false,
                 }: SensorModel) => {
 
     cy = -cy; // we want positive y to point north
+    if (parent) {
+        cz = parent.cz + parent.lz / 2;
+    }
 
     const setCommonStore = useStore(state => state.set);
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
@@ -64,7 +68,7 @@ const Sensor = ({
     return (
 
         <group name={'Sensor Group ' + id}
-               position={[cx, hz, cy]}>
+               position={[cx, cz + hz, cy]}>
 
             {/* draw rectangle (too small to cast shadow) */}
             <Box receiveShadow={shadowEnabled}

@@ -13,19 +13,15 @@ import {MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS} from "../constants";
 import {Util} from "../Util";
 
 export interface GroundProps {
-    objectTypeToAdd: ObjectType;
-    setObjectTypeToAdd: (objectTypeToAdd: ObjectType) => void;
 }
 
-const Ground = ({
-                    objectTypeToAdd = ObjectType.None,
-                    setObjectTypeToAdd
-                }: GroundProps) => {
+const Ground = ({}: GroundProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const selectNone = useStore(state => state.selectNone);
+    const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
     const moveHandleType = useStore(state => state.moveHandleType);
     const resizeHandleType = useStore(state => state.resizeHandleType);
     const resizeAnchor = useStore(state => state.resizeAnchor);
@@ -125,9 +121,16 @@ const Ground = ({
                                    state.clickObjectType = ObjectType.Ground;
                                });
                                selectNone();
-                               if (objectTypeToAdd !== ObjectType.None) {
-                                   addElement(objectTypeToAdd, e.intersections[0].point);
-                                   setObjectTypeToAdd(ObjectType.None);
+                               if (
+                                   objectTypeToAdd === ObjectType.Foundation ||
+                                   objectTypeToAdd === ObjectType.Cuboid ||
+                                   objectTypeToAdd === ObjectType.Tree ||
+                                   objectTypeToAdd === ObjectType.Human
+                               ) {
+                                   addElement(undefined, e.intersections[0].point);
+                                   setCommonStore(state => {
+                                       state.objectTypeToAdd = ObjectType.None;
+                                   });
                                }
                            } else {
                                setGrab(getSelectedElement());
@@ -153,7 +156,6 @@ const Ground = ({
                            switch (grab.type) {
                                case ObjectType.Human:
                                case ObjectType.Tree:
-                               case ObjectType.Sensor:
                                    if (groundPlaneRef.current) {
                                        intersects = ray.intersectObjects([groundPlaneRef.current]);
                                        if (intersects.length > 0) {
