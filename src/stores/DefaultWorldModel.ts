@@ -40,7 +40,7 @@ export class DefaultWorldModel implements WorldModel {
             albedo: 0.3,
             thermalDiffusivity: 0.05,
             snowReflectionFactors: new Array(12).fill(0)
-        };
+        } as GroundModel;
         this.panCenter = new Vector3(0, 0, 0);
         this.cameraPosition = new Vector3(0, 0, 5);
 
@@ -60,6 +60,7 @@ export class DefaultWorldModel implements WorldModel {
             lz: 0.1,
             normal: [0, 0, 1],
             rotation: [0, 0, 0],
+            parent: this.ground,
             id: short.generate() as string
         } as FoundationModel;
         const sensor = {
@@ -91,6 +92,7 @@ export class DefaultWorldModel implements WorldModel {
             lz: 4,
             normal: [0, 0, 1],
             rotation: [0, Math.PI / 6, 0],
+            parent: this.ground,
             id: short.generate() as string
         } as CuboidModel;
         elements.push(cuboid);
@@ -102,6 +104,7 @@ export class DefaultWorldModel implements WorldModel {
             cy: 2,
             normal: [1, 0, 0],
             rotation: [0, 0, 0],
+            parent: this.ground,
             id: short.generate() as string
         } as HumanModel;
         const woman = {
@@ -111,6 +114,7 @@ export class DefaultWorldModel implements WorldModel {
             cy: 2,
             normal: [1, 0, 0],
             rotation: [0, 0, 0],
+            parent: this.ground,
             id: short.generate() as string
         } as HumanModel;
         elements.push(man);
@@ -126,6 +130,7 @@ export class DefaultWorldModel implements WorldModel {
             lz: 4,
             normal: [1, 0, 0],
             rotation: [0, 0, 0],
+            parent: this.ground,
             id: short.generate() as string
         } as TreeModel;
         const tree2 = {
@@ -138,6 +143,7 @@ export class DefaultWorldModel implements WorldModel {
             lz: 6,
             normal: [1, 0, 0],
             rotation: [0, 0, 0],
+            parent: this.ground,
             id: short.generate() as string
         } as TreeModel;
         elements.push(tree1);

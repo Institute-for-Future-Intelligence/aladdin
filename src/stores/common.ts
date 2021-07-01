@@ -24,6 +24,7 @@ import {DefaultViewState} from "./DefaultViewState";
 import {ViewState} from "../views/ViewState";
 import short from "short-uuid";
 import {ElementModelFactory} from "../models/ElementModelFactory";
+import {GroundModel} from "../models/GroundModel";
 
 enableMapSet();
 
@@ -62,7 +63,7 @@ export interface CommonStoreState {
     setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
 
     objectTypeToAdd: ObjectType;
-    addElement: (parent: ElementModel | undefined, position: Vector3) => void;
+    addElement: (parent: ElementModel | GroundModel, position: Vector3) => void;
 
     pastePoint: Vector3;
     elementToPaste: ElementModel | null;
@@ -217,23 +218,28 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         },
 
         objectTypeToAdd: ObjectType.None,
-        addElement(parent: ElementModel | undefined, position) {
+        addElement(parent: ElementModel | GroundModel, position) {
             immerSet((state: CommonStoreState) => {
                 switch (state.objectTypeToAdd) {
                     case ObjectType.Human:
-                        state.elements.push(ElementModelFactory.makeHuman(position.x, -position.z, position.y));
+                        state.elements.push(ElementModelFactory.makeHuman
+                        (state.world.ground, position.x, -position.z, position.y));
                         break;
                     case ObjectType.Tree:
-                        state.elements.push(ElementModelFactory.makeTree(position.x, -position.z, position.y));
+                        state.elements.push(ElementModelFactory.makeTree
+                        (state.world.ground, position.x, -position.z, position.y));
                         break;
                     case ObjectType.Sensor:
-                        state.elements.push(ElementModelFactory.makeSensor(parent, position.x, -position.z, position.y));
+                        state.elements.push(ElementModelFactory.makeSensor
+                        (parent as ElementModel, position.x, -position.z, position.y));
                         break;
                     case ObjectType.Foundation:
-                        state.elements.push(ElementModelFactory.makeFoundation(position.x, -position.z));
+                        state.elements.push(ElementModelFactory.makeFoundation
+                        (state.world.ground, position.x, -position.z));
                         break;
                     case ObjectType.Cuboid:
-                        state.elements.push(ElementModelFactory.makeCuboid(position.x, -position.z));
+                        state.elements.push(ElementModelFactory.makeCuboid
+                        (state.world.ground, position.x, -position.z));
                         break;
                 }
             });

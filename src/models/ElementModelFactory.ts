@@ -10,10 +10,11 @@ import {SensorModel} from "./SensorModel";
 import {CuboidModel} from "./CuboidModel";
 import {FoundationModel} from "./FoundationModel";
 import {ElementModel} from "./ElementModel";
+import {GroundModel} from "./GroundModel";
 
 export class ElementModelFactory {
 
-    static makeHuman(x: number, y: number, z?: number) {
+    static makeHuman(parent: GroundModel, x: number, y: number, z?: number) {
         return {
             type: ObjectType.Human,
             name: HumanName.Jack,
@@ -22,11 +23,12 @@ export class ElementModelFactory {
             cz: z,
             normal: [0, 0, 1],
             rotation: [0, 0, 0],
+            parent: parent,
             id: short.generate() as string
         } as HumanModel;
     }
 
-    static makeTree(x: number, y: number, z?: number) {
+    static makeTree(parent: GroundModel, x: number, y: number, z?: number) {
         return {
             type: ObjectType.Tree,
             name: TreeType.Dogwood,
@@ -37,11 +39,12 @@ export class ElementModelFactory {
             lz: 4,
             normal: [0, 0, 1],
             rotation: [0, 0, 0],
+            parent: parent,
             id: short.generate() as string
         } as TreeModel;
     }
 
-    static makeSensor(parent: ElementModel | undefined, x: number, y: number, z?: number) {
+    static makeSensor(parent: ElementModel, x: number, y: number, z?: number) {
         return {
             type: ObjectType.Sensor,
             cx: x,
@@ -58,7 +61,7 @@ export class ElementModelFactory {
         } as SensorModel;
     }
 
-    static makeCuboid(x: number, y: number) {
+    static makeCuboid(parent: GroundModel, x: number, y: number) {
         return {
             type: ObjectType.Cuboid,
             cx: x,
@@ -69,11 +72,12 @@ export class ElementModelFactory {
             lz: 4,
             normal: [0, 1, 0],
             rotation: [0, 0, 0],
+            parent: parent,
             id: short.generate() as string
         } as CuboidModel;
     }
 
-    static makeFoundation(x: number, y: number) {
+    static makeFoundation(parent: GroundModel, x: number, y: number) {
         return {
             type: ObjectType.Foundation,
             cx: x,
@@ -84,6 +88,7 @@ export class ElementModelFactory {
             lz: 0.1,
             normal: [0, 1, 0],
             rotation: [0, 0, 0],
+            parent: parent,
             id: short.generate() as string
         } as FoundationModel;
     }

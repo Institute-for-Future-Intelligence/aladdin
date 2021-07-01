@@ -21,6 +21,7 @@ export class ElementModelCloner {
             cz: z,
             normal: [...human.normal],
             rotation: [...human.rotation],
+            parent: human.parent,
             id: short.generate() as string
         } as HumanModel;
     }
@@ -36,6 +37,7 @@ export class ElementModelCloner {
             lz: tree.lz,
             normal: [...tree.normal],
             rotation: [...tree.rotation],
+            parent: tree.parent,
             id: short.generate() as string
         } as TreeModel;
     }
@@ -50,6 +52,7 @@ export class ElementModelCloner {
             ly: sensor.ly,
             lz: sensor.lz,
             normal: [...sensor.normal],
+            parent: sensor.parent,
             id: short.generate() as string
         } as SensorModel;
     }
@@ -64,6 +67,7 @@ export class ElementModelCloner {
             lz: foundation.lz,
             normal: [...foundation.normal],
             rotation: [...foundation.rotation],
+            parent: foundation.parent,
             id: short.generate() as string
         } as FoundationModel;
     }
@@ -79,6 +83,7 @@ export class ElementModelCloner {
             lz: cuboid.lz,
             normal: [...cuboid.normal],
             rotation: [...cuboid.rotation],
+            parent: cuboid.parent,
             id: short.generate() as string
         } as CuboidModel;
     }

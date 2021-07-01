@@ -12,12 +12,10 @@ import {useThree} from "@react-three/fiber";
 import {MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS} from "../constants";
 import {Util} from "../Util";
 
-export interface GroundProps {
-}
-
-const Ground = ({}: GroundProps) => {
+const Ground = () => {
 
     const setCommonStore = useStore(state => state.set);
+    const groundModel = useStore(state => state.world.ground);
     const viewState = useStore(state => state.viewState);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const selectNone = useStore(state => state.selectNone);
@@ -83,6 +81,16 @@ const Ground = ({}: GroundProps) => {
         }
     }
 
+    // only these elements are allowed to be on the ground
+    const legalOnGround = (type: ObjectType) => {
+        return (
+            type === ObjectType.Foundation ||
+            type === ObjectType.Cuboid ||
+            type === ObjectType.Tree ||
+            type === ObjectType.Human
+        );
+    };
+
     return (
         <>
             {grab && intersectionPlaneType !== IntersectionPlaneType.Ground &&
@@ -121,22 +129,22 @@ const Ground = ({}: GroundProps) => {
                                    state.clickObjectType = ObjectType.Ground;
                                });
                                selectNone();
-                               if (
-                                   objectTypeToAdd === ObjectType.Foundation ||
-                                   objectTypeToAdd === ObjectType.Cuboid ||
-                                   objectTypeToAdd === ObjectType.Tree ||
-                                   objectTypeToAdd === ObjectType.Human
-                               ) {
-                                   addElement(undefined, e.intersections[0].point);
+                               if (legalOnGround(objectTypeToAdd)) {
+                                   addElement(groundModel, e.intersections[0].point);
                                    setCommonStore(state => {
                                        state.objectTypeToAdd = ObjectType.None;
                                    });
                                }
                            } else {
-                               setGrab(getSelectedElement());
-                               setCommonStore((state) => {
-                                   state.enableOrbitController = false;
-                               });
+                               const selectedElement = getSelectedElement();
+                               if (selectedElement) {
+                                   if (legalOnGround(selectedElement.type as ObjectType)) {
+                                       setGrab(selectedElement);
+                                       setCommonStore((state) => {
+                                           state.enableOrbitController = false;
+                                       });
+                                   }
+                               }
                            }
                        }
                    }}

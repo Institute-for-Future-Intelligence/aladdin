@@ -150,6 +150,13 @@ const Foundation = ({
         domElement.style.cursor = 'default';
     };
 
+    // only these elements are allowed to be on the foundation
+    const legalOnFoundation = (type: ObjectType) => {
+        return (
+            type === ObjectType.Sensor
+        );
+    };
+
     return (
 
         <group name={'Foundation Group ' + id}
@@ -179,7 +186,7 @@ const Foundation = ({
                  }}
                  onPointerDown={(e) => {
                      selectMe(e, ActionType.Select);
-                     if (objectTypeToAdd !== ObjectType.None && elementModel) {
+                     if (legalOnFoundation(objectTypeToAdd) && elementModel) {
                          addElement(elementModel, e.intersections[0].point);
                          setCommonStore(state => {
                              state.objectTypeToAdd = ObjectType.None;
