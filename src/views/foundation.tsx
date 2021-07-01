@@ -55,9 +55,9 @@ const Foundation = ({
     const [hoveredResizeHandleLR, setHoveredResizeHandleLR] = useState(false);
     const [hoveredResizeHandleUR, setHoveredResizeHandleUR] = useState(false);
     const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
-    const [grab, setGrab] = useState<ElementModel | null>(null);
     const [showGrid, setShowGrid] = useState<boolean>(false);
     const baseRef = useRef<Mesh>();
+    const grabRef = useRef<ElementModel | null>(null);
     const resizeHandleLLRef = useRef<Mesh>();
     const resizeHandleULRef = useRef<Mesh>();
     const resizeHandleLRRef = useRef<Mesh>();
@@ -207,7 +207,7 @@ const Foundation = ({
                          if (selectedElement) {
                              if (legalOnFoundation(selectedElement.type as ObjectType)) {
                                  setShowGrid(true);
-                                 setGrab(selectedElement);
+                                 grabRef.current = selectedElement;
                                  setCommonStore((state) => {
                                      state.enableOrbitController = false;
                                  });
@@ -216,26 +216,26 @@ const Foundation = ({
                      }
                  }}
                  onPointerUp={(e) => {
-                     setGrab(null);
+                     grabRef.current = null;
                      setShowGrid(false);
                      setCommonStore((state) => {
                          state.enableOrbitController = true;
                      });
                  }}
                  onPointerMove={(e) => {
-                     if (grab && grab.type && !grab.locked) {
+                     if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
                          const mouse = new Vector2();
                          mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
                          mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
                          ray.setFromCamera(mouse, camera);
                          let intersects;
-                         switch (grab.type) {
+                         switch (grabRef.current.type) {
                              case ObjectType.Sensor:
                                  if (baseRef.current) {
                                      intersects = ray.intersectObjects([baseRef.current]);
                                      if (intersects.length > 0) {
                                          const p = intersects[0].point;
-                                         setElementPosition(grab.id, p.x - cx, -p.z + cy);
+                                         setElementPosition(grabRef.current.id, p.x - cx, -p.z + cy);
                                      }
                                  }
                                  break;
