@@ -47,7 +47,6 @@ const App = () => {
     const getClosestCity = useStore(state => state.getClosestCity);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const deleteElementById = useStore(state => state.deleteElementById);
-    const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
     const aabb = useStore(state => state.aabb);
 
     const grid = useStore(state => state.grid);
@@ -66,6 +65,7 @@ const App = () => {
     const [cameraPosition, setCameraPosition] = useState<Vector3>(new Vector3(0, 0, 5));
     const [panCenter, setPanCenter] = useState<Vector3>(new Vector3());
     const [heliodonRadius, setHeliodonRadius] = useState<number>(10);
+    const [objectTypeToAdd, setObjectTypeToAdd] = useState<ObjectType>(ObjectType.None);
 
     const orbitControlsRef = useRef<OrbitControls>();
     const canvasRef = useRef<HTMLCanvasElement>();
@@ -78,7 +78,7 @@ const App = () => {
 
     useEffect(() => {
         setSunlightDirection(computeSunLocation(heliodonRadius, hourAngle, declinationAngle, Util.toRadians(world.latitude))
-            .applyEuler(new Euler(-Math.PI / 2, 0, 0)));
+            .applyEuler(new Euler(-Util.HALF_PI, 0, 0)));
     }, [world.latitude, hourAngle, declinationAngle]);
 
     useEffect(() => {
@@ -91,7 +91,7 @@ const App = () => {
         if (r < Math.abs(max.y)) r = Math.abs(max.y);
         if (r < Math.abs(max.z)) r = Math.abs(max.z);
         if (!isNaN(r) && isFinite(r)) {
-            setHeliodonRadius(r * 1.5);
+            setHeliodonRadius(r * 1.25); // make it 25% larger than the bounding box
         }
     }, [aabb]);
 
@@ -176,7 +176,7 @@ const App = () => {
         requestUpdate();
     };
 
-// animation state should not be persisted
+    // animation state should not be persisted
     const setSunAnimation = (on: boolean) => {
         setAnimateSun(on);
     };
@@ -316,6 +316,8 @@ const App = () => {
                 requestUpdate={requestUpdate}
             />
             <MainToolBar orbitControls={orbitControlsRef.current}
+                         objectTypeToAdd={objectTypeToAdd}
+                         setObjectTypeToAdd={setObjectTypeToAdd}
                          requestUpdate={requestUpdate}/>
             {viewState.showGroundPanel &&
             <GroundPanel grid={grid}
@@ -398,7 +400,9 @@ const App = () => {
                                         dailyLightSensorDataFlag={dailyLightSensorDataFlag}
                                         yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}/>
                             {viewState.axes && <Axes/>}
-                            <Ground/>
+                            <Ground objectTypeToAdd={objectTypeToAdd}
+                                    setObjectTypeToAdd={setObjectTypeToAdd}
+                            />
                             {viewState.groundImage && <GroundImage/>}
                             <Sky theme={viewState.theme} night={!sunAboveHorizon}/>
                             {viewState.heliodon &&

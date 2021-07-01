@@ -59,9 +59,7 @@ export interface CommonStoreState {
     setElementPosition: (id: string, x: number, y: number, z?: number) => void;
     setElementRotation: (id: string, x: number, y: number, z: number) => void;
     setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
-
-    objectTypeToAdd: ObjectType;
-    addElement: (position: Vector3) => void;
+    addElement: (objectTypeToAdd: ObjectType, position: Vector3) => void;
 
     pastePoint: Vector3;
     elementToPaste: ElementModel | null;
@@ -212,11 +210,9 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 }
             });
         },
-
-        objectTypeToAdd: ObjectType.None,
-        addElement(position) {
+        addElement(objectTypeToAdd, position) {
             immerSet((state: CommonStoreState) => {
-                switch (state.objectTypeToAdd) {
+                switch (objectTypeToAdd) {
                     case ObjectType.Human:
                         state.elements.push(ElementModelFactory.makeHuman(position.x, -position.z, position.y));
                         break;

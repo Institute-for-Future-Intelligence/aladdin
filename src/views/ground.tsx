@@ -12,7 +12,15 @@ import {useThree} from "@react-three/fiber";
 import {MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS} from "../constants";
 import {Util} from "../Util";
 
-const Ground = () => {
+export interface GroundProps {
+    objectTypeToAdd: ObjectType;
+    setObjectTypeToAdd: (objectTypeToAdd: ObjectType) => void;
+}
+
+const Ground = ({
+                    objectTypeToAdd = ObjectType.None,
+                    setObjectTypeToAdd
+                }: GroundProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
@@ -24,7 +32,6 @@ const Ground = () => {
     const setElementPosition = useStore(state => state.setElementPosition);
     const setElementSize = useStore(state => state.setElementSize);
     const updateElement = useStore(state => state.updateElementById);
-    const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
     const addElement = useStore(state => state.addElement);
     const [grab, setGrab] = useState<ElementModel | null>(null);
     const {camera, gl: {domElement}} = useThree();
@@ -119,10 +126,8 @@ const Ground = () => {
                                });
                                selectNone();
                                if (objectTypeToAdd !== ObjectType.None) {
-                                   addElement(e.intersections[0].point);
-                                   setCommonStore((state) => {
-                                       state.objectTypeToAdd = ObjectType.None;
-                                   });
+                                   addElement(objectTypeToAdd, e.intersections[0].point);
+                                   setObjectTypeToAdd(ObjectType.None);
                                }
                            } else {
                                setGrab(getSelectedElement());

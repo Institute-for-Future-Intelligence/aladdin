@@ -45,17 +45,23 @@ const ButtonsContainer = styled.div`
 
 export interface MainToolBarProps {
     orbitControls?: OrbitControls;
+    objectTypeToAdd: ObjectType;
+    setObjectTypeToAdd: (objectTypeToAdd: ObjectType) => void;
     requestUpdate: () => void;
 }
 
-const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
+const MainToolBar = ({
+                         orbitControls,
+                         objectTypeToAdd,
+                         setObjectTypeToAdd,
+                         requestUpdate
+                     }: MainToolBarProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
     const user = useStore(state => state.user);
     const exportContent = useStore(state => state.exportContent);
     const clearContent = useStore(state => state.clearContent);
-    const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
     const showCloudFilePanel = useStore(state => state.showCloudFilePanel);
     const showAccountSettingsPanel = useStore(state => state.showAccountSettingsPanel);
 
@@ -124,16 +130,8 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
         }
     }
 
-    const undo = () => {
-    };
-
-    const redo = () => {
-    };
-
     const resetToSelectMode = () => {
-        setCommonStore(state => {
-            state.objectTypeToAdd = ObjectType.None;
-        });
+        setObjectTypeToAdd(ObjectType.None);
     };
 
     const removeAllContent = () => {
@@ -352,10 +350,6 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
         setCloudFileArray([...cloudFileArray]);
     };
 
-    const gotoHomepage = () => {
-        visitHomepage();
-    };
-
     const gotoAccountSettings = () => {
         setCommonStore((state) => {
             state.showAccountSettingsPanel = true;
@@ -419,9 +413,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                                          color={objectTypeToAdd === ObjectType.Foundation ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={() => {
-                                             setCommonStore(state => {
-                                                 state.objectTypeToAdd = ObjectType.Foundation;
-                                             });
+                                             setObjectTypeToAdd(ObjectType.Foundation);
                                          }}/>
                         <FontAwesomeIcon title={'Add cuboid'}
                                          icon={faCube}
@@ -429,9 +421,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                                          color={objectTypeToAdd === ObjectType.Cuboid ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={() => {
-                                             setCommonStore(state => {
-                                                 state.objectTypeToAdd = ObjectType.Cuboid;
-                                             });
+                                             setObjectTypeToAdd(ObjectType.Cuboid);
                                          }}/>
                         <FontAwesomeIcon title={'Add sensor'}
                                          icon={faTachometerAlt}
@@ -439,9 +429,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                                          color={objectTypeToAdd === ObjectType.Sensor ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={() => {
-                                             setCommonStore(state => {
-                                                 state.objectTypeToAdd = ObjectType.Sensor;
-                                             });
+                                             setObjectTypeToAdd(ObjectType.Sensor);
                                          }}/>
                         <FontAwesomeIcon title={'Add tree'}
                                          icon={faTree}
@@ -449,9 +437,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                                          color={objectTypeToAdd === ObjectType.Tree ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={() => {
-                                             setCommonStore(state => {
-                                                 state.objectTypeToAdd = ObjectType.Tree;
-                                             });
+                                             setObjectTypeToAdd(ObjectType.Tree);
                                          }}/>
                         <FontAwesomeIcon title={'Add people'}
                                          icon={faWalking}
@@ -459,9 +445,7 @@ const MainToolBar = ({orbitControls, requestUpdate}: MainToolBarProps) => {
                                          color={objectTypeToAdd === ObjectType.Human ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={() => {
-                                             setCommonStore(state => {
-                                                 state.objectTypeToAdd = ObjectType.Human;
-                                             });
+                                             setObjectTypeToAdd(ObjectType.Human);
                                          }}/>
                         <FontAwesomeIcon title={'Clear'}
                                          icon={faEraser}
