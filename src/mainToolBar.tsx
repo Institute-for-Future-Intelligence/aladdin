@@ -19,12 +19,13 @@ import {
     faSun,
     faTachometerAlt,
     faTree,
-    faUmbrellaBeach,
     faWalking,
 } from '@fortawesome/free-solid-svg-icons';
 import {faAsymmetrik} from "@fortawesome/free-brands-svg-icons";
+import SolarPanelImage from "./resources/solar-panel.png";
+import ShadowImage from "./resources/shadow.png";
 import firebase from 'firebase';
-import {showInfo, visitHomepage} from "./helpers";
+import {showInfo} from "./helpers";
 import {CloudFileInfo, ObjectType, User} from "./types";
 import queryString from "querystring";
 import CloudFilePanel from "./panels/cloudFilePanel";
@@ -436,6 +437,24 @@ const MainToolBar = ({
                                                  state.objectTypeToAdd = ObjectType.Sensor;
                                              });
                                          }}/>
+                        <img title={'Add solar panel'}
+                             alt={'Solar panel'}
+                             src={SolarPanelImage}
+                             height={56}
+                             width={40}
+                             style={{
+                                 paddingRight: '12px',
+                                 paddingBottom: '20px',
+                                 filter: objectTypeToAdd === ObjectType.SolarPanel ?
+                                     'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)' : '',
+                                 cursor: 'pointer',
+                                 verticalAlign: 'middle'
+                             }}
+                             onClick={() => {
+                                 setCommonStore(state => {
+                                     state.objectTypeToAdd = ObjectType.SolarPanel;
+                                 });
+                             }}/>
                         <FontAwesomeIcon title={'Add tree'}
                                          icon={faTree}
                                          size={'3x'}
@@ -480,19 +499,30 @@ const MainToolBar = ({
                                          color={viewState.showHeliodonPanel ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={toggleHelidonPanel}/>
-                        <FontAwesomeIcon title={'Toggle shadow effect'}
-                                         icon={faUmbrellaBeach}
-                                         size={'3x'}
-                                         color={viewState.shadowEnabled ? '#666666' : '#999999'}
-                                         style={{paddingRight: '12px', cursor: 'pointer'}}
-                                         onClick={toggleShadow}/>
+                        <img title={'Show shadow effect'}
+                             alt={'Shadow effect'}
+                             src={ShadowImage}
+                             height={48}
+                             width={36}
+                             style={{
+                                 paddingRight: '2px',
+                                 paddingBottom: '20px',
+                                 filter: viewState.shadowEnabled ? '' :
+                                     'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)',
+                                 cursor: 'pointer',
+                                 verticalAlign: 'middle'
+                             }}
+                             onClick={toggleShadow}/>
                     </div>
-                    <div>
+                    <div style={{verticalAlign: 'middle', paddingBottom: '20px'}}>
                         {user.displayName ?
                             <Dropdown overlay={avatarMenu} trigger={['click']}>
                                 <a className="ant-dropdown-link" onClick={e => e.preventDefault()}
                                    title={'Click to access cloud tools'}>
-                                    <Avatar size={32} src={user.photoURL} alt={user.displayName}/>
+                                    <Avatar
+                                        size={32}
+                                        src={user.photoURL}
+                                        alt={user.displayName}/>
                                 </a>
                             </Dropdown>
                             :

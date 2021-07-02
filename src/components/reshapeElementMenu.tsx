@@ -7,6 +7,7 @@ import {Menu, Space} from "antd";
 import NumericInput from "react-numeric-input";
 import {Util} from "../Util";
 import {useStore} from "../stores/common";
+import {ObjectType} from "../types";
 
 export interface ReshapeElementMenuProps {
     elementId: string;
@@ -42,6 +43,7 @@ const ReshapeElementMenu = ({
     const setElementSize = useStore(state => state.setElementSize);
     const setElementRotation = useStore(state => state.setElementRotation);
     const getElementById = useStore(state => state.getElementById);
+    const updateElementById = useStore(state => state.updateElementById);
     const element = getElementById(elementId);
 
     return (
@@ -95,6 +97,14 @@ const ReshapeElementMenu = ({
                               onChange={(e) => {
                                   if (element) {
                                       setElementSize(element.id, element.lx, element.ly, e ?? 0.1);
+                                      // the following objects stand on the ground and should raise their z coordinates
+                                      if (
+                                          element.type === ObjectType.Human ||
+                                          element.type === ObjectType.Tree ||
+                                          element.type === ObjectType.Foundation ||
+                                          element.type === ObjectType.Cuboid) {
+                                          updateElementById(element.id, {cz: (e ?? 0.1) / 2});
+                                      }
                                       requestUpdate();
                                   }
                               }}
