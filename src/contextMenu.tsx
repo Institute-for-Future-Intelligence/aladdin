@@ -58,6 +58,8 @@ const ContextMenu = ({
     const cutElementById = useStore(state => state.cutElementById);
     const countElementsByType = useStore(state => state.countElementsByType);
     const removeElementsByType = useStore(state => state.removeElementsByType);
+    const countAllChildElementsByType = useStore(state => state.countAllChildElementsByType);
+    const removeAllChildElementsByType = useStore(state => state.removeAllChildElementsByType);
     const copyElementById = useStore(state => state.copyElementById);
     const pasteElement = useStore(state => state.pasteElement);
     const getSelectedElement = useStore(state => state.getSelectedElement);
@@ -116,6 +118,7 @@ const ContextMenu = ({
                     </SubMenu>
                 </StyledMenu>);
         case ObjectType.Foundation:
+            const sensorCount = selectedElement ? countAllChildElementsByType(selectedElement.id, ObjectType.Sensor) : 0;
             return (
                 <StyledMenu>
                     <Menu.Item key={'foundation-copy'} onClick={copyElement} style={{paddingLeft: '40px'}}>
@@ -135,6 +138,27 @@ const ContextMenu = ({
                             Lock
                         </Checkbox>
                     </Menu.Item>
+                    {sensorCount > 0 &&
+                    <SubMenu key={'clear'} title={'Clear'} style={{paddingLeft: '24px'}}>
+                        {sensorCount > 0 &&
+                        <Menu.Item key={'remove-all-sensors'} onClick={() => {
+                            Modal.confirm({
+                                title: 'Do you really want to remove all the ' + sensorCount + ' sensors on this foundation?',
+                                icon: <ExclamationCircleOutlined/>,
+                                okText: 'OK',
+                                cancelText: 'Cancel',
+                                onOk: () => {
+                                    if (selectedElement) {
+                                        removeAllChildElementsByType(selectedElement.id, ObjectType.Sensor);
+                                    }
+                                }
+                            });
+                        }}>
+                            Remove All Sensors
+                        </Menu.Item>
+                        }
+                    </SubMenu>
+                    }
                     {selectedElement &&
                     <ReshapeElementMenu
                         elementId={selectedElement.id}

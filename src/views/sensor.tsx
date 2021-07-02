@@ -9,6 +9,7 @@ import {useStore} from "../stores/common";
 import {SensorModel} from "../models/SensorModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS} from "../constants";
+import {ObjectType} from "../types";
 
 const Sensor = ({
                     id,
@@ -39,9 +40,15 @@ const Sensor = ({
     if (parent) {
         const p = getElementById(parent.id);
         if (p) {
-            cz = p.cz + p.lz / 2;
-            cx = p.cx + cx * p.lx;
-            cy = p.cy + cy * p.ly;
+            switch (p.type) {
+                case ObjectType.Foundation:
+                    cz = p.cz + p.lz / 2;
+                    cx = p.cx + cx * p.lx;
+                    cy = p.cy + cy * p.ly;
+                    break;
+                case ObjectType.Cuboid:
+                    break;
+            }
         }
     }
     cy = -cy; // we want positive y to point north

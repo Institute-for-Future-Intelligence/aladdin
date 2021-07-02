@@ -193,7 +193,7 @@ const Foundation = ({
                  onPointerDown={(e) => {
                      selectMe(e, ActionType.Select);
                      const selectedElement = getSelectedElement();
-                     if (selectedElement?.id === elementModel?.id) {
+                     if (selectedElement?.id === id) {
                          // no child of this foundation is clicked
                          if (legalOnFoundation(objectTypeToAdd) && elementModel) {
                              setShowGrid(true);

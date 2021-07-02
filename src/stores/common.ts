@@ -73,6 +73,8 @@ export interface CommonStoreState {
     deleteElementById: (id: string) => void;
     countElementsByType: (type: ObjectType) => number;
     removeElementsByType: (type: ObjectType) => void;
+    countAllChildElementsByType: (parentId: string, type: ObjectType) => number;
+    removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
 
     dailyLightSensorData: DatumEntry[];
     setDailyLightSensorData: (data: DatumEntry[]) => void;
@@ -283,6 +285,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 }
             });
         },
+
         removeElementsByType(type: ObjectType) {
             immerSet((state: CommonStoreState) => {
                 state.elements = state.elements.filter((x) => x.type !== type);
@@ -299,6 +302,24 @@ export const useStore = create<CommonStoreState>(devtools(persist((
             });
             return count;
         },
+
+        removeAllChildElementsByType(parentId: string, type: ObjectType) {
+            immerSet((state: CommonStoreState) => {
+                state.elements = state.elements.filter((x) => (x.type !== type || x.parent.id !== parentId));
+            });
+        },
+        countAllChildElementsByType(parentId: string, type: ObjectType) {
+            let count = 0;
+            immerSet((state: CommonStoreState) => {
+                for (const e of state.elements) {
+                    if (e.type === type && e.parent.id === parentId) {
+                        count++;
+                    }
+                }
+            });
+            return count;
+        },
+
         pasteElement() {
             immerSet((state: CommonStoreState) => {
                 if (state.elementToPaste) {
