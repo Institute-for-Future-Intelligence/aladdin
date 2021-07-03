@@ -299,7 +299,7 @@ const App = () => {
                 textAlign: 'start',
                 fontSize: '30px'
             }}>
-                <span style={{paddingLeft: '100px', verticalAlign: 'middle', cursor: 'pointer'}}
+                <span style={{marginLeft: '120px', verticalAlign: 'middle', cursor: 'pointer'}}
                       title={'Visit Aladdin homepage'}
                       onClick={visitHomepage}>
                     Aladdin

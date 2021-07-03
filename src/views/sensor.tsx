@@ -4,12 +4,13 @@
 
 import React, {useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
-import {Mesh, Vector3} from "three";
+import {Euler, Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {SensorModel} from "../models/SensorModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS} from "../constants";
 import {ObjectType} from "../types";
+import {Util} from "../Util";
 
 const Sensor = ({
                     id,
@@ -19,6 +20,8 @@ const Sensor = ({
                     lx = 1,
                     ly = 1,
                     lz = 0.1,
+                    rotation = [0, 0, 0],
+                    normal = [0, 0, 1],
                     color = 'white',
                     lineColor = 'black',
                     lineWidth = 0.1,
@@ -43,10 +46,30 @@ const Sensor = ({
             switch (p.type) {
                 case ObjectType.Foundation:
                     cz = p.cz + p.lz / 2;
-                    cx = p.cx + cx * p.lx;
-                    cy = p.cy + cy * p.ly;
+                    if (Util.isZero(rotation[1])) {
+                        cx = p.cx + cx * p.lx;
+                        cy = p.cy + cy * p.ly;
+                    } else {
+                        // we must rotate the real length, not normalized length
+                        const v = new Vector3(cx * p.lx, cy * p.ly, 0);
+                        v.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, rotation[1]);
+                        cx = p.cx + v.x;
+                        cy = p.cy + v.y;
+                    }
                     break;
                 case ObjectType.Cuboid:
+                    if (Util.isZero(rotation[1])) {
+                        cx = p.cx + cx * p.lx;
+                        cy = p.cy + cy * p.ly;
+                        cz = p.cz + cz * p.lz;
+                    } else {
+                        // we must rotate the real length, not normalized length
+                        const v = new Vector3(cx * p.lx, cy * p.ly, cz * p.lz);
+                        v.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, rotation[1]);
+                        cx = p.cx + v.x;
+                        cy = p.cy + v.y;
+                        cz = p.cz + v.z;
+                    }
                     break;
             }
         }
@@ -77,9 +100,16 @@ const Sensor = ({
         }
     };
 
+    const topFace = Util.isSame(Util.arrayToVector3(normal), Util.UNIT_VECTOR_POS_Z);
+    const euler = topFace ?
+        new Euler(0, rotation[1], 0)
+        :
+        new Euler(0, rotation[1] + Math.PI / 2, Math.PI / 2);
+
     return (
 
         <group name={'Sensor Group ' + id}
+               rotation={euler}
                position={[cx, cz + hz, cy]}>
 
             {/* draw rectangle (too small to cast shadow) */}

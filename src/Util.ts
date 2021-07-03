@@ -3,6 +3,7 @@
  */
 
 import {Euler, Vector2, Vector3} from "three";
+import {ElementModel} from "./models/ElementModel";
 
 export class Util {
 
@@ -30,6 +31,14 @@ export class Util {
         return new Vector3(0, 0, -1);
     }
 
+    static isSame(u: Vector3, v: Vector3) {
+        return (
+            Math.abs(u.x - v.x) < Util.ZERO_TOLERANCE &&
+            Math.abs(u.y - v.y) < Util.ZERO_TOLERANCE &&
+            Math.abs(u.z - v.z) < Util.ZERO_TOLERANCE
+        );
+    }
+
     static isZero(x: number) {
         return Math.abs(x) < Util.ZERO_TOLERANCE;
     }
@@ -44,6 +53,11 @@ export class Util {
 
     static get TWO_PI() {
         return Math.PI * 2;
+    }
+
+    static arrayToVector3(arr: number[]): Vector3 {
+        if (arr.length !== 3) throw new Error('array must have three elements');
+        return new Vector3(arr[0], arr[1], arr[2]);
     }
 
     static copyVector(to: Vector3, from: Vector3) {
@@ -94,6 +108,38 @@ export class Util {
     // convert the coordinates from the view system to the model system
     static viewToModel(v: Vector3) {
         return new Vector3(v.x, -v.z, v.y);
+    }
+
+    static relativeCoordinates(x: number, y: number, z: number, parent: ElementModel) {
+        return {
+            x: (x - parent.cx) / parent.lx,
+            y: (y - parent.cy) / parent.ly,
+            z: (z - parent.cz) / parent.lz
+        };
+    }
+
+    static absoluteCoordinates(x: number, y: number, z: number, parent: ElementModel) {
+        return {
+            x: parent.cx + x * parent.lx,
+            y: parent.cy + y * parent.ly,
+            z: parent.cz + z * parent.lz,
+        };
+    }
+
+    static relativeVector3(x: number, y: number, z: number, parent: ElementModel) {
+        return new Vector3(
+            (x - parent.cx) / parent.lx,
+            (y - parent.cy) / parent.ly,
+            (z - parent.cz) / parent.lz
+        );
+    }
+
+    static absoluteVector3(x: number, y: number, z: number, parent: ElementModel) {
+        return new Vector3(
+            parent.cx + x * parent.lx,
+            parent.cy + y * parent.ly,
+            parent.cz + z * parent.lz
+        );
     }
 
     static toRadians(degrees: number) {

@@ -63,7 +63,7 @@ export interface CommonStoreState {
     setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
 
     objectTypeToAdd: ObjectType;
-    addElement: (parent: ElementModel | GroundModel, position: Vector3) => void;
+    addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => void;
 
     pastePoint: Vector3;
     elementToPaste: ElementModel | null;
@@ -195,11 +195,11 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         setElementRotation(id, x, y, z) {
             immerSet((state: CommonStoreState) => {
                 for (let [i, e] of state.elements.entries()) {
-                    if (e.id === id) {
-                        state.elements[i].rotation[0] = x;
-                        state.elements[i].rotation[1] = y;
-                        state.elements[i].rotation[2] = z;
-                        break;
+                    if (e.id === id || (e.parent && e.parent.id === id)) {
+                        const elem = state.elements[i];
+                        elem.rotation[0] = x;
+                        elem.rotation[1] = y;
+                        elem.rotation[2] = z;
                     }
                 }
             });
@@ -220,33 +220,34 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         },
 
         objectTypeToAdd: ObjectType.None,
-        addElement(parent: ElementModel | GroundModel, position) {
+        addElement(parent: ElementModel | GroundModel, position, normal) {
             // position is in three.js coordinate system (y and z are swapped)
             immerSet((state: CommonStoreState) => {
+                const m = Util.viewToModel(position);
                 switch (state.objectTypeToAdd) {
                     case ObjectType.Human:
-                        state.elements.push(ElementModelFactory.makeHuman
-                        (state.world.ground, position.x, -position.z, position.y));
+                        state.elements.push(ElementModelFactory.makeHuman(state.world.ground, m.x, m.y, m.z));
                         break;
                     case ObjectType.Tree:
-                        state.elements.push(ElementModelFactory.makeTree
-                        (state.world.ground, position.x, -position.z, position.y));
+                        state.elements.push(ElementModelFactory.makeTree(state.world.ground, m.x, m.y, m.z));
                         break;
                     case ObjectType.Sensor:
+                        const parentModel = parent as ElementModel;
+                        const relativeCoordinates = Util.relativeCoordinates(m.x, m.y, m.z, parentModel);
                         state.elements.push(ElementModelFactory.makeSensor(
-                            parent as ElementModel,
-                            (position.x - parent.cx) / parent.lx,
-                            (-position.z - parent.cy) / parent.ly,
-                            (position.y - parent.cz) / parent.lz
+                            parentModel,
+                            relativeCoordinates.x,
+                            relativeCoordinates.y,
+                            relativeCoordinates.z,
+                            normal,
+                            parent.rotation
                         ));
                         break;
                     case ObjectType.Foundation:
-                        state.elements.push(ElementModelFactory.makeFoundation
-                        (state.world.ground, position.x, -position.z));
+                        state.elements.push(ElementModelFactory.makeFoundation(state.world.ground, m.x, m.y));
                         break;
                     case ObjectType.Cuboid:
-                        state.elements.push(ElementModelFactory.makeCuboid
-                        (state.world.ground, position.x, -position.z));
+                        state.elements.push(ElementModelFactory.makeCuboid(state.world.ground, m.x, m.y));
                         break;
                 }
             });

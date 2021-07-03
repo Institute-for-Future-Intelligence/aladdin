@@ -11,6 +11,7 @@ import {CuboidModel} from "./CuboidModel";
 import {FoundationModel} from "./FoundationModel";
 import {ElementModel} from "./ElementModel";
 import {GroundModel} from "./GroundModel";
+import {Vector3} from "three";
 
 export class ElementModelFactory {
 
@@ -44,7 +45,7 @@ export class ElementModelFactory {
         } as TreeModel;
     }
 
-    static makeSensor(parent: ElementModel, x: number, y: number, z?: number) {
+    static makeSensor(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: []) {
         return {
             type: ObjectType.Sensor,
             cx: x,
@@ -54,8 +55,8 @@ export class ElementModelFactory {
             ly: 0.1,
             lz: 0.01,
             showLabel: true,
-            normal: [0, 0, 1],
-            rotation: [0, 0, 0],
+            normal: normal ? [normal.x, normal.y, normal.z] : [0, 0, 1],
+            rotation: rotation ? rotation : [0, 0, 0],
             parent: parent,
             id: short.generate() as string
         } as SensorModel;

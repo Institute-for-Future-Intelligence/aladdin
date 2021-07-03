@@ -118,7 +118,7 @@ const ContextMenu = ({
                     </SubMenu>
                 </StyledMenu>);
         case ObjectType.Foundation:
-            const sensorCount = selectedElement ? countAllChildElementsByType(selectedElement.id, ObjectType.Sensor) : 0;
+            const sensorCountFoundation = selectedElement ? countAllChildElementsByType(selectedElement.id, ObjectType.Sensor) : 0;
             return (
                 <StyledMenu>
                     <Menu.Item key={'foundation-copy'} onClick={copyElement} style={{paddingLeft: '40px'}}>
@@ -138,12 +138,12 @@ const ContextMenu = ({
                             Lock
                         </Checkbox>
                     </Menu.Item>
-                    {sensorCount > 0 &&
+                    {sensorCountFoundation > 0 &&
                     <SubMenu key={'clear'} title={'Clear'} style={{paddingLeft: '24px'}}>
-                        {sensorCount > 0 &&
+                        {sensorCountFoundation > 0 &&
                         <Menu.Item key={'remove-all-sensors'} onClick={() => {
                             Modal.confirm({
-                                title: 'Do you really want to remove all the ' + sensorCount + ' sensors on this foundation?',
+                                title: 'Do you really want to remove all the ' + sensorCountFoundation + ' sensors on this foundation?',
                                 icon: <ExclamationCircleOutlined/>,
                                 okText: 'OK',
                                 cancelText: 'Cancel',
@@ -198,6 +198,7 @@ const ContextMenu = ({
                 </StyledMenu>
             );
         case ObjectType.Cuboid:
+            const sensorCountCuboid = selectedElement ? countAllChildElementsByType(selectedElement.id, ObjectType.Sensor) : 0;
             return (
                 <StyledMenu>
                     <Menu.Item key={'cuboid-copy'} onClick={copyElement} style={{paddingLeft: '40px'}}>
@@ -217,6 +218,27 @@ const ContextMenu = ({
                             Lock
                         </Checkbox>
                     </Menu.Item>
+                    {sensorCountCuboid > 0 &&
+                    <SubMenu key={'clear'} title={'Clear'} style={{paddingLeft: '24px'}}>
+                        {sensorCountCuboid > 0 &&
+                        <Menu.Item key={'remove-all-sensors'} onClick={() => {
+                            Modal.confirm({
+                                title: 'Do you really want to remove all the ' + sensorCountCuboid + ' sensors on this cuboid?',
+                                icon: <ExclamationCircleOutlined/>,
+                                okText: 'OK',
+                                cancelText: 'Cancel',
+                                onOk: () => {
+                                    if (selectedElement) {
+                                        removeAllChildElementsByType(selectedElement.id, ObjectType.Sensor);
+                                    }
+                                }
+                            });
+                        }}>
+                            Remove All Sensors
+                        </Menu.Item>
+                        }
+                    </SubMenu>
+                    }
                     {selectedElement &&
                     <ReshapeElementMenu
                         elementId={selectedElement.id}

@@ -102,12 +102,11 @@ const Simulation = ({
         // why are the properties of parents cached here?
         const parent = getElementById(sensor.parent.id);
         if (!parent) throw new Error('parent of sensor does not exist');
-        const position = new Vector3(
-            parent.cx + sensor.cx * parent.lx,
-            parent.cy + sensor.cy * parent.ly,
-            parent.cz + sensor.cz * parent.lz
-        );
-        const normal = new Vector3(sensor.normal[0], sensor.normal[1], sensor.normal[2]);
+        const position = Util.absoluteVector3(sensor.cx, sensor.cy, sensor.cz, parent);
+        const normal = Util.arrayToVector3(sensor.normal);
+        if (normal) {
+            normal.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, sensor.parent.rotation[1]);
+        }
         const result = new Array(24).fill(0);
         const year = now.getFullYear();
         const month = now.getMonth();
@@ -166,12 +165,8 @@ const Simulation = ({
         // why are the properties of parents cached here?
         const parent = getElementById(sensor.parent.id);
         if (!parent) throw new Error('parent of sensor does not exist');
-        const position = new Vector3(
-            parent.cx + sensor.cx * parent.lx,
-            parent.cy + sensor.cy * parent.ly,
-            parent.cz + sensor.cz * parent.lz
-        );
-        const normal = new Vector3(sensor.normal[0], sensor.normal[1], sensor.normal[2]);
+        const position = Util.absoluteVector3(sensor.cx, sensor.cy, sensor.cz, parent);
+        const normal = Util.arrayToVector3(sensor.normal);
         const year = now.getFullYear();
         const date = 15;
         for (let month = 0; month < 12; month++) {

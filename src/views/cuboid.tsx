@@ -8,7 +8,7 @@ import {Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {CuboidModel} from "../models/CuboidModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {ActionType, MoveHandleType, ResizeHandleType} from "../types";
+import {ActionType, MoveHandleType, ObjectType, ResizeHandleType} from "../types";
 import {
     RESIZE_HANDLE_SIZE,
     MOVE_HANDLE_OFFSET,
@@ -18,6 +18,7 @@ import {
     MOVE_HANDLE_COLOR
 } from "../constants";
 import {Util} from "../Util";
+import {ElementModel} from "../models/ElementModel";
 
 const Cuboid = ({
                     id,
@@ -40,11 +41,21 @@ const Cuboid = ({
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const moveHandleType = useStore(state => state.moveHandleType);
     const resizeHandleType = useStore(state => state.resizeHandleType);
+    const getElementById = useStore(state => state.getElementById);
+    const getSelectedElement = useStore(state => state.getSelectedElement);
+    const addElement = useStore(state => state.addElement);
+    const setElementPosition = useStore(state => state.setElementPosition);
+    const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
+
     const {gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
     const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
+    const [showGrid, setShowGrid] = useState<boolean>(false);
 
+    const elementModel = getElementById(id);
     const baseRef = useRef<Mesh>();
+    const grabRef = useRef<ElementModel | null>(null);
+    const faceNormalRef = useRef<Vector3 | null>(null);
     const resizeHandleLLTopRef = useRef<Mesh>();
     const resizeHandleULTopRef = useRef<Mesh>();
     const resizeHandleLRTopRef = useRef<Mesh>();
@@ -82,8 +93,9 @@ const Cuboid = ({
         // We must check if there is really a first intersection, onPointerDown does not guarantee it
         // onPointerDown listener for an object can still fire an event even when the object is behind another one
         if (e.intersections.length > 0) {
-            const intersected = e.intersections[0].object === e.eventObject;
-            if (intersected) {
+            const intersection = e.intersections[0];
+            if (intersection.object === e.eventObject) {
+                faceNormalRef.current = intersection.face ? intersection.face.normal : null;
                 setCommonStore((state) => {
                     for (const e of state.elements) {
                         e.selected = e.id === id;
@@ -131,6 +143,13 @@ const Cuboid = ({
         domElement.style.cursor = 'default';
     };
 
+    // only these elements are allowed to be on the cuboid
+    const legalOnCuboid = (type: ObjectType) => {
+        return (
+            type === ObjectType.Sensor
+        );
+    };
+
     return (
 
         <group name={'Cuboid Group ' + id}
@@ -147,6 +166,30 @@ const Cuboid = ({
                  name={'Cuboid'}
                  onPointerDown={(e) => {
                      selectMe(e, ActionType.Select);
+                     const selectedElement = getSelectedElement();
+                     if (selectedElement?.id === id) {
+                         // no child of this cuboid is clicked
+                         if (legalOnCuboid(objectTypeToAdd) && elementModel) {
+                             setShowGrid(true);
+                             const intersection = e.intersections[0];
+                             let normal = intersection.face ? Util.viewToModel(intersection.face.normal) : undefined;
+                             addElement(elementModel, intersection.point, normal);
+                             setCommonStore(state => {
+                                 state.objectTypeToAdd = ObjectType.None;
+                             });
+                         }
+                     } else {
+                         // a child of this cuboid is clicked
+                         if (selectedElement) {
+                             if (legalOnCuboid(selectedElement.type as ObjectType)) {
+                                 setShowGrid(true);
+                                 grabRef.current = selectedElement;
+                                 setCommonStore((state) => {
+                                     state.enableOrbitController = false;
+                                 });
+                             }
+                         }
+                     }
                  }}
                  onContextMenu={(e) => {
                      selectMe(e, ActionType.Select);
