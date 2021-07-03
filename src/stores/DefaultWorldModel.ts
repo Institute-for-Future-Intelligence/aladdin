@@ -91,7 +91,7 @@ export class DefaultWorldModel implements WorldModel {
             ly: 2,
             lz: 4,
             normal: [0, 0, 1],
-            rotation: [0, Math.PI / 6, 0],
+            rotation: [0, 0, Math.PI / 6],
             parent: this.ground,
             id: short.generate() as string
         } as CuboidModel;

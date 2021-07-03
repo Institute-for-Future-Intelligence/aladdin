@@ -35,13 +35,13 @@ const Ground = () => {
     const ray = useMemo(() => new Raycaster(), []);
     const cosAngle = useMemo(() => {
         if (grabRef.current) {
-            return Math.cos(grabRef.current.rotation[1]);
+            return Math.cos(grabRef.current.rotation[2]);
         }
         return 1;
     }, [grabRef.current?.rotation]);
     const sinAngle = useMemo(() => {
         if (grabRef.current) {
-            return Math.sin(grabRef.current.rotation[1]);
+            return Math.sin(grabRef.current.rotation[2]);
         }
         return 0;
     }, [grabRef.current?.rotation]);

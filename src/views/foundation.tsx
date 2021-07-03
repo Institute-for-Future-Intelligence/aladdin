@@ -11,7 +11,8 @@ import {ThreeEvent, useThree} from "@react-three/fiber";
 import {ActionType, MoveHandleType, ObjectType, ResizeHandleType} from "../types";
 import {
     HIGHLIGHT_HANDLE_COLOR,
-    MOVE_HANDLE_COLOR,
+    MOVE_HANDLE_COLOR_1,
+    MOVE_HANDLE_COLOR_2,
     MOVE_HANDLE_OFFSET,
     MOVE_HANDLE_RADIUS,
     RESIZE_HANDLE_COLOR,
@@ -79,12 +80,12 @@ const Foundation = ({
     const positionLR = useMemo(() => new Vector3(hx, hz, -hy), [hx, hy, hz]);
     const positionUR = useMemo(() => new Vector3(hx, hz, hy), [hx, hy, hz]);
 
-    const cosAngle = useMemo(() => {
-        return Math.cos(rotation[1]);
-    }, [rotation]);
-    const sinAngle = useMemo(() => {
-        return Math.sin(rotation[1]);
-    }, [rotation]);
+    // const cosAngle = useMemo(() => {
+    //     return Math.cos(rotation[2]);
+    // }, [rotation]);
+    // const sinAngle = useMemo(() => {
+    //     return Math.sin(rotation[2]);
+    // }, [rotation]);
 
     const selectMe = (e: ThreeEvent<MouseEvent>, action: ActionType) => {
         // We must check if there is really a first intersection, onPointerDown does not guarantee it
@@ -167,7 +168,7 @@ const Foundation = ({
 
         <group name={'Foundation Group ' + id}
                position={[cx, hz, cy]}
-               rotation={Util.getEuler(rotation)}>
+               rotation={Util.getEulerInView(rotation)}>
 
             {/* draw rectangle */}
             <Box castShadow={shadowEnabled}
@@ -178,6 +179,10 @@ const Foundation = ({
                  args={[lx, lz, ly]}
                  onContextMenu={(e) => {
                      selectMe(e, ActionType.Select);
+                     setCommonStore((state) => {
+                         Util.copyVector(state.pastePoint, e.intersections[0].point);
+                         state.clickObjectType = ObjectType.Foundation;
+                     });
                  }}
                  onPointerOver={(e) => {
                      if (e.intersections.length > 0) {
@@ -234,8 +239,11 @@ const Foundation = ({
                                  if (baseRef.current) {
                                      intersects = ray.intersectObjects([baseRef.current]);
                                      if (intersects.length > 0) {
-                                         const p = intersects[0].point;
-                                         setElementPosition(grabRef.current.id, (p.x - cx) / lx, (-p.z + cy) / ly);
+                                         let p = Util.viewToModel(intersects[0].point);
+                                         if (elementModel) {
+                                             p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
+                                         }
+                                         setElementPosition(grabRef.current.id, p.x, p.y);
                                      }
                                  }
                                  break;
@@ -435,7 +443,7 @@ const Foundation = ({
                         attach="material"
                         color={
                             hoveredHandle === MoveHandleType.Lower ||
-                            moveHandleType === MoveHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                            moveHandleType === MoveHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR_2
                         }
                     />
                 </Sphere>
@@ -457,7 +465,7 @@ const Foundation = ({
                         attach="material"
                         color={
                             hoveredHandle === MoveHandleType.Upper ||
-                            moveHandleType === MoveHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                            moveHandleType === MoveHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR_2
                         }
                     />
                 </Sphere>
@@ -479,7 +487,7 @@ const Foundation = ({
                         attach="material"
                         color={
                             hoveredHandle === MoveHandleType.Left ||
-                            moveHandleType === MoveHandleType.Left ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                            moveHandleType === MoveHandleType.Left ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR_1
                         }
                     />
                 </Sphere>
@@ -501,7 +509,7 @@ const Foundation = ({
                         attach="material"
                         color={
                             hoveredHandle === MoveHandleType.Right ||
-                            moveHandleType === MoveHandleType.Right ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                            moveHandleType === MoveHandleType.Right ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR_1
                         }
                     />
                 </Sphere>

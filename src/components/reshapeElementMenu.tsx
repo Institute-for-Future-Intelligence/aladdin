@@ -117,7 +117,7 @@ const ReshapeElementMenu = ({
                 <NumericInput min={0}
                               max={360}
                               precision={1}
-                              value={element ? Util.toDegrees(element.rotation[1]).toFixed(1) : 0}
+                              value={element ? Util.toDegrees(element.rotation[2]).toFixed(1) : 0}
                               size={5}
                               format={(a) => a + '°'}
                               onChange={(e) => {
@@ -125,8 +125,8 @@ const ReshapeElementMenu = ({
                                       setElementRotation(
                                           element.id,
                                           element.rotation[0],
-                                          Util.toRadians(e ?? 0),
-                                          element.rotation[2]
+                                          element.rotation[1],
+                                          Util.toRadians(e ?? 0)
                                       );
                                       requestUpdate();
                                   }

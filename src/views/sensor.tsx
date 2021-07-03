@@ -46,26 +46,26 @@ const Sensor = ({
             switch (p.type) {
                 case ObjectType.Foundation:
                     cz = p.cz + p.lz / 2;
-                    if (Util.isZero(rotation[1])) {
+                    if (Util.isZero(rotation[2])) {
                         cx = p.cx + cx * p.lx;
                         cy = p.cy + cy * p.ly;
                     } else {
                         // we must rotate the real length, not normalized length
                         const v = new Vector3(cx * p.lx, cy * p.ly, 0);
-                        v.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, rotation[1]);
+                        v.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, rotation[2]);
                         cx = p.cx + v.x;
                         cy = p.cy + v.y;
                     }
                     break;
                 case ObjectType.Cuboid:
-                    if (Util.isZero(rotation[1])) {
+                    if (Util.isZero(rotation[2])) {
                         cx = p.cx + cx * p.lx;
                         cy = p.cy + cy * p.ly;
                         cz = p.cz + cz * p.lz;
                     } else {
                         // we must rotate the real length, not normalized length
                         const v = new Vector3(cx * p.lx, cy * p.ly, cz * p.lz);
-                        v.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, rotation[1]);
+                        v.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, rotation[2]);
                         cx = p.cx + v.x;
                         cy = p.cy + v.y;
                         cz = p.cz + v.z;
@@ -102,9 +102,9 @@ const Sensor = ({
 
     const topFace = Util.isSame(Util.arrayToVector3(normal), Util.UNIT_VECTOR_POS_Z);
     const euler = topFace ?
-        new Euler(0, rotation[1], 0)
+        new Euler(0, rotation[2], 0)
         :
-        new Euler(0, rotation[1] + Math.PI / 2, Math.PI / 2);
+        new Euler(0, rotation[2] + Math.PI / 2, Math.PI / 2);
 
     return (
 

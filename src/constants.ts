@@ -39,6 +39,8 @@ export const MOVE_HANDLE_OFFSET = 0.12;
 export const MOVE_HANDLE_RADIUS = 0.1;
 export const RESIZE_HANDLE_SIZE = 0.16;
 
-export const MOVE_HANDLE_COLOR = 'orange';
+export const MOVE_HANDLE_COLOR_1 = 'orange';
+export const MOVE_HANDLE_COLOR_2 = 'orchid';
+export const MOVE_HANDLE_COLOR_3 = 'pink';
 export const RESIZE_HANDLE_COLOR = 'white';
 export const HIGHLIGHT_HANDLE_COLOR = 'red';

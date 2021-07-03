@@ -82,17 +82,6 @@ export class Util {
         v.y = y;
     }
 
-    static setEuler(v: Euler, x: number, y: number, z: number) {
-        v.x = x;
-        v.y = y;
-        v.z = z;
-    }
-
-    static getEuler(v: number[]) {
-        if (v.length !== 3) throw new Error(v + ' must be an array with three elements.');
-        return new Euler(v[0], v[1], v[2]);
-    }
-
     static deleteElement(a: any[], e: any) {
         const i = a.indexOf(e, 0);
         if (i > -1) {
@@ -110,36 +99,33 @@ export class Util {
         return new Vector3(v.x, -v.z, v.y);
     }
 
+    static getEulerInView(v: number[]) {
+        if (v.length !== 3) throw new Error(v + ' must be an array with three elements.');
+        return new Euler(v[0], v[2], v[1]);
+    }
+
+    static setEuler(v: Euler, x: number, y: number, z: number) {
+        v.x = x;
+        v.y = y;
+        v.z = z;
+    }
+
     static relativeCoordinates(x: number, y: number, z: number, parent: ElementModel) {
-        return {
-            x: (x - parent.cx) / parent.lx,
-            y: (y - parent.cy) / parent.ly,
-            z: (z - parent.cz) / parent.lz
-        };
+        const v = new Vector3(x - parent.cx, y - parent.cy, z - parent.cz);
+        v.applyEuler(new Euler().fromArray(parent.rotation.map(x => -x)));
+        v.x /= parent.lx;
+        v.y /= parent.ly;
+        v.z /= parent.lz;
+        return v;
     }
 
     static absoluteCoordinates(x: number, y: number, z: number, parent: ElementModel) {
-        return {
-            x: parent.cx + x * parent.lx,
-            y: parent.cy + y * parent.ly,
-            z: parent.cz + z * parent.lz,
-        };
-    }
-
-    static relativeVector3(x: number, y: number, z: number, parent: ElementModel) {
-        return new Vector3(
-            (x - parent.cx) / parent.lx,
-            (y - parent.cy) / parent.ly,
-            (z - parent.cz) / parent.lz
-        );
-    }
-
-    static absoluteVector3(x: number, y: number, z: number, parent: ElementModel) {
-        return new Vector3(
-            parent.cx + x * parent.lx,
-            parent.cy + y * parent.ly,
-            parent.cz + z * parent.lz
-        );
+        const v = new Vector3(x * parent.lx, y * parent.ly, z * parent.lz);
+        v.applyEuler(new Euler().fromArray(parent.rotation));
+        v.x += parent.cx;
+        v.y += parent.cy;
+        v.z += parent.cz;
+        return v;
     }
 
     static toRadians(degrees: number) {

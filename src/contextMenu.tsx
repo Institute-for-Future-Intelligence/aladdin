@@ -154,7 +154,7 @@ const ContextMenu = ({
                                 }
                             });
                         }}>
-                            Remove All Sensors
+                            Remove All {sensorCountFoundation} Sensors
                         </Menu.Item>
                         }
                     </SubMenu>
@@ -234,7 +234,7 @@ const ContextMenu = ({
                                 }
                             });
                         }}>
-                            Remove All Sensors
+                            Remove All {sensorCountCuboid} Sensors
                         </Menu.Item>
                         }
                     </SubMenu>
@@ -265,7 +265,8 @@ const ContextMenu = ({
                             Lock
                         </Checkbox>
                     </Menu.Item>
-                    {selectedElement && <HumanMenu requestUpdate={requestUpdate} style={{paddingLeft: '24px'}}/>}
+                    {selectedElement &&
+                    <HumanMenu key={'humans'} requestUpdate={requestUpdate} style={{paddingLeft: '24px'}}/>}
                 </StyledMenu>
             );
         case ObjectType.Tree:
@@ -305,7 +306,8 @@ const ContextMenu = ({
                                         requestUpdate={requestUpdate}
                                         style={{paddingLeft: '24px'}}/>
                     }
-                    {selectedElement && <TreeMenu requestUpdate={requestUpdate} style={{paddingLeft: '24px'}}/>}
+                    {selectedElement &&
+                    <TreeMenu key={'trees'} requestUpdate={requestUpdate} style={{paddingLeft: '24px'}}/>}
                 </StyledMenu>
             );
         default:
@@ -327,7 +329,7 @@ const ContextMenu = ({
                             }
                         });
                     }}>
-                        Remove All People
+                        Remove All {humanCount} People
                     </Menu.Item>}
                     {treeCount > 0 && <Menu.Item key={'ground-remove-all-trees'} onClick={() => {
                         Modal.confirm({
@@ -340,7 +342,7 @@ const ContextMenu = ({
                             }
                         });
                     }}>
-                        Remove All Trees
+                        Remove All {treeCount} Trees
                     </Menu.Item>}
                     <Menu.Item key={'ground-albedo'}>
                         <Space style={{width: '60px'}}>Albedo:</Space>

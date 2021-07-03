@@ -15,7 +15,9 @@ import {
     MOVE_HANDLE_RADIUS,
     HIGHLIGHT_HANDLE_COLOR,
     RESIZE_HANDLE_COLOR,
-    MOVE_HANDLE_COLOR
+    MOVE_HANDLE_COLOR_1,
+    MOVE_HANDLE_COLOR_2,
+    MOVE_HANDLE_COLOR_3
 } from "../constants";
 import {Util} from "../Util";
 import {ElementModel} from "../models/ElementModel";
@@ -154,7 +156,7 @@ const Cuboid = ({
 
         <group name={'Cuboid Group ' + id}
                position={[cx, hz, cy]}
-               rotation={Util.getEuler(rotation)}>
+               rotation={Util.getEulerInView(rotation)}>
 
             {/* draw rectangular cuboid */}
             <Box castShadow={shadowEnabled}
@@ -487,7 +489,7 @@ const Cuboid = ({
                         attach="material"
                         color={
                             hoveredHandle === MoveHandleType.Lower ||
-                            moveHandleType === MoveHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                            moveHandleType === MoveHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR_2
                         }
                     />
                 </Sphere>
@@ -509,7 +511,7 @@ const Cuboid = ({
                         attach="material"
                         color={
                             hoveredHandle === MoveHandleType.Upper ||
-                            moveHandleType === MoveHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                            moveHandleType === MoveHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR_2
                         }
                     />
                 </Sphere>
@@ -531,7 +533,7 @@ const Cuboid = ({
                         attach="material"
                         color={
                             hoveredHandle === MoveHandleType.Left ||
-                            moveHandleType === MoveHandleType.Left ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                            moveHandleType === MoveHandleType.Left ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR_1
                         }
                     />
                 </Sphere>
@@ -553,7 +555,7 @@ const Cuboid = ({
                         attach="material"
                         color={
                             hoveredHandle === MoveHandleType.Right ||
-                            moveHandleType === MoveHandleType.Right ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                            moveHandleType === MoveHandleType.Right ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR_1
                         }
                     />
                 </Sphere>
@@ -575,7 +577,7 @@ const Cuboid = ({
                         attach="material"
                         color={
                             hoveredHandle === MoveHandleType.Top ||
-                            moveHandleType === MoveHandleType.Top ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR
+                            moveHandleType === MoveHandleType.Top ? HIGHLIGHT_HANDLE_COLOR : MOVE_HANDLE_COLOR_3
                         }
                     />
                 </Sphere>
