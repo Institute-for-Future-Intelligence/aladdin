@@ -4,7 +4,7 @@
 
 import React, {useMemo, useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
-import {Euler, Mesh, Vector3} from "three";
+import {Euler, Face, Mesh, Raycaster, Vector2, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {CuboidModel} from "../models/CuboidModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
@@ -47,12 +47,14 @@ const Cuboid = ({
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const addElement = useStore(state => state.addElement);
     const setElementPosition = useStore(state => state.setElementPosition);
+    const setElementNormal = useStore(state => state.setElementNormal);
     const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
 
-    const {gl: {domElement}} = useThree();
+    const {camera, gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
     const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
     const [showGrid, setShowGrid] = useState<boolean>(false);
+    const ray = useMemo(() => new Raycaster(), []);
 
     const elementModel = getElementById(id);
     const baseRef = useRef<Mesh>();
@@ -155,6 +157,41 @@ const Cuboid = ({
         );
     };
 
+    const setupGridHelper = (face: Face) => {
+        faceNormalRef.current = face.normal;
+        if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_Y)) {
+            // top face in view coordinate system
+            gridLength.current = Math.max(lx, ly);
+            gridPositionRef.current = new Vector3(0, hz, 0);
+            gridRotationRef.current = new Euler(0, 0, 0);
+            gridScale.current = new Vector3(lx / gridLength.current, 1, ly / gridLength.current);
+        } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_X)) {
+            // east face in view coordinate system
+            gridLength.current = Math.max(ly, lz);
+            gridPositionRef.current = new Vector3(hx, 0, 0);
+            gridRotationRef.current = new Euler(0, 0, Util.HALF_PI);
+            gridScale.current = new Vector3(1, lz / gridLength.current, ly / gridLength.current);
+        } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_NEG_X)) {
+            // west face in view coordinate system
+            gridLength.current = Math.max(ly, lz);
+            gridPositionRef.current = new Vector3(-hx, 0, 0);
+            gridRotationRef.current = new Euler(0, 0, Util.HALF_PI);
+            gridScale.current = new Vector3(1, lz / gridLength.current, ly / gridLength.current);
+        } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_Z)) {
+            // south face in the view coordinate system
+            gridLength.current = Math.max(lx, lz);
+            gridPositionRef.current = new Vector3(0, 0, hy);
+            gridRotationRef.current = new Euler(Util.HALF_PI, 0, 0);
+            gridScale.current = new Vector3(lx / gridLength.current, lz / gridLength.current, 1);
+        } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_NEG_Z)) {
+            // north face in the view coordinate system
+            gridLength.current = Math.max(lx, lz);
+            gridPositionRef.current = new Vector3(0, 0, -hy);
+            gridRotationRef.current = new Euler(Util.HALF_PI, 0, 0);
+            gridScale.current = new Vector3(lx / gridLength.current, lz / gridLength.current, 1);
+        }
+    };
+
     return (
 
         <group name={'Cuboid Group ' + id}
@@ -196,38 +233,7 @@ const Cuboid = ({
                                      }
                                  }
                                  if (face) {
-                                     faceNormalRef.current = face.normal;
-                                     if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_Y)) {
-                                         // top face in view coordinate system
-                                         gridLength.current = Math.max(lx, ly);
-                                         gridPositionRef.current.set(0, hz, 0);
-                                         gridRotationRef.current.set(0, 0, 0);
-                                         gridScale.current.set(lx / gridLength.current, 1, ly / gridLength.current);
-                                     } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_X)) {
-                                         // east face in view coordinate system
-                                         gridLength.current = Math.max(ly, lz);
-                                         gridPositionRef.current.set(hx, 0, 0);
-                                         gridRotationRef.current.set(0, 0, Util.HALF_PI);
-                                         gridScale.current.set(1, lz / gridLength.current, ly / gridLength.current);
-                                     } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_NEG_X)) {
-                                         // west face in view coordinate system
-                                         gridLength.current = Math.max(ly, lz);
-                                         gridPositionRef.current.set(-hx, 0, 0);
-                                         gridRotationRef.current.set(0, 0, Util.HALF_PI);
-                                         gridScale.current.set(1, lz / gridLength.current, ly / gridLength.current);
-                                     } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_Z)) {
-                                         // south face in the view coordinate system
-                                         gridLength.current = Math.max(lx, lz);
-                                         gridPositionRef.current.set(0, 0, hy);
-                                         gridRotationRef.current.set(Util.HALF_PI, 0, 0);
-                                         gridScale.current.set(lx / gridLength.current, lz / gridLength.current, 1);
-                                     } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_NEG_Z)) {
-                                         // north face in the view coordinate system
-                                         gridLength.current = Math.max(lx, lz);
-                                         gridPositionRef.current.set(0, 0, -hy);
-                                         gridRotationRef.current.set(Util.HALF_PI, 0, 0);
-                                         gridScale.current.set(lx / gridLength.current, lz / gridLength.current, 1);
-                                     }
+                                     setupGridHelper(face);
                                  }
                                  setCommonStore((state) => {
                                      state.enableOrbitController = false;
@@ -243,8 +249,45 @@ const Cuboid = ({
                          state.enableOrbitController = true;
                      });
                  }}
+                 onPointerMove={(e) => {
+                     if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
+                         const mouse = new Vector2();
+                         mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
+                         mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
+                         ray.setFromCamera(mouse, camera);
+                         let intersects;
+                         switch (grabRef.current.type) {
+                             case ObjectType.Sensor:
+                                 if (baseRef.current) {
+                                     intersects = ray.intersectObjects([baseRef.current]);
+                                     if (intersects.length > 0) {
+                                         let p = Util.viewToModel(intersects[0].point);
+                                         const face = intersects[0].face;
+                                         if (face) {
+                                             setupGridHelper(face);
+                                             const n = Util.viewToModel(face.normal);
+                                             setElementNormal(grabRef.current.id, n.x, n.y, n.z);
+                                         }
+                                         if (elementModel) {
+                                             p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
+                                         }
+                                         setElementPosition(grabRef.current.id, p.x, p.y, p.z);
+                                     }
+                                 }
+                                 break;
+                         }
+                     }
+                 }}
                  onContextMenu={(e) => {
                      selectMe(e, ActionType.Select);
+                     setCommonStore((state) => {
+                         Util.copyVector(state.pastePoint, e.intersections[0].point);
+                         const face = e.intersections[0].face;
+                         if (face) {
+                             state.pasteNormal = face.normal.clone();
+                         }
+                         state.clickObjectType = ObjectType.Cuboid;
+                     });
                  }}
                  onPointerOver={(e) => {
                      if (e.intersections.length > 0) {

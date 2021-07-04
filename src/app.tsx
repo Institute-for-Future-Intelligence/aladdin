@@ -23,7 +23,7 @@ import MainMenu from "./mainMenu";
 import GroundPanel from "./panels/groundPanel";
 import HeliodonPanel from "./panels/heliodonPanel";
 import {VERSION} from "./constants";
-import {visitHomepage, visitIFI} from "./helpers";
+import {showInfo, visitHomepage, visitIFI} from "./helpers";
 import AcceptCookie from "./acceptCookie";
 import GroundImage from "./views/groundImage";
 import {Dropdown} from "antd";
@@ -49,6 +49,7 @@ const App = () => {
     const deleteElementById = useStore(state => state.deleteElementById);
     const aabb = useStore(state => state.aabb);
     const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
+    const countElementsByType = useStore(state => state.countElementsByType);
 
     const grid = useStore(state => state.grid);
     const enableOrbitController = useStore(state => state.enableOrbitController);
@@ -247,6 +248,11 @@ const App = () => {
     const sunAboveHorizon = sunlightDirection.y > 0;
 
     const collectDailyLightSensorData = () => {
+        const sensorCount = countElementsByType(ObjectType.Sensor);
+        if (sensorCount === 0) {
+            showInfo('There is no sensor for collecting data.');
+            return;
+        }
         setCommonStore(state => {
             state.world.timesPerHour = 20;
         });
@@ -257,6 +263,11 @@ const App = () => {
     };
 
     const collectYearlyLightSensorData = async () => {
+        const sensorCount = countElementsByType(ObjectType.Sensor);
+        if (sensorCount === 0) {
+            showInfo('There is no sensor for collecting data.');
+            return;
+        }
         setCommonStore(state => {
             state.world.timesPerHour = 20;
         });

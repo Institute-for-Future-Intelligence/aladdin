@@ -60,6 +60,10 @@ export class Util {
         return new Vector3(arr[0], arr[1], arr[2]);
     }
 
+    static vector3ToArray(v: Vector3): number[] {
+        return [v.x, v.y, v.z];
+    }
+
     static copyVector(to: Vector3, from: Vector3) {
         to.x = from.x;
         to.y = from.y;

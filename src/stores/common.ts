@@ -15,11 +15,6 @@ import {DatumEntry, MoveHandleType, ObjectType, ResizeHandleType, User} from "..
 import {DefaultWorldModel} from "./DefaultWorldModel";
 import {Box3, Vector2, Vector3} from "three";
 import {ElementModelCloner} from "../models/ElementModelCloner";
-import {HumanModel} from "../models/HumanModel";
-import {TreeModel} from "../models/TreeModel";
-import {SensorModel} from "../models/SensorModel";
-import {FoundationModel} from "../models/FoundationModel";
-import {CuboidModel} from "../models/CuboidModel";
 import {DefaultViewState} from "./DefaultViewState";
 import {ViewState} from "../views/ViewState";
 import short from "short-uuid";
@@ -60,12 +55,14 @@ export interface CommonStoreState {
     updateElementById: (id: string, element: Partial<ElementModel>) => void;
     setElementPosition: (id: string, x: number, y: number, z?: number) => void;
     setElementRotation: (id: string, x: number, y: number, z: number) => void;
+    setElementNormal: (id: string, x: number, y: number, z: number) => void;
     setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
 
     objectTypeToAdd: ObjectType;
     addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => void;
 
     pastePoint: Vector3;
+    pasteNormal: Vector3;
     elementToPaste: ElementModel[];
     copyElementById: (id: string) => void;
     cutElementById: (id: string) => void;
@@ -204,6 +201,18 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 }
             });
         },
+        setElementNormal(id, x, y, z) {
+            immerSet((state: CommonStoreState) => {
+                for (let [i, e] of state.elements.entries()) {
+                    if (e.id === id || (e.parent && e.parent.id === id)) {
+                        const elem = state.elements[i];
+                        elem.normal[0] = x;
+                        elem.normal[1] = y;
+                        elem.normal[2] = z;
+                    }
+                }
+            });
+        },
         setElementSize(id, lx, ly, lz?) {
             immerSet((state: CommonStoreState) => {
                 for (let [i, e] of state.elements.entries()) {
@@ -255,6 +264,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
 
         elementToPaste: [],
         pastePoint: new Vector3(),
+        pasteNormal: new Vector3(0, 0, 1),
         copyElementById(id) {
             immerSet((state: CommonStoreState) => {
                 for (const e of state.elements) {
@@ -335,6 +345,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                     }
                     const e = ElementModelCloner.clone(state.elementToPaste[0], m.x, m.y, m.z);
                     if (e) {
+                        e.normal = Util.vector3ToArray(Util.viewToModel(state.pasteNormal));
                         state.elements.push(e);
                     }
                     if (state.elementToPaste.length > 1) {

@@ -12,6 +12,7 @@ import {FoundationModel} from "./FoundationModel";
 import {ElementModel} from "./ElementModel";
 import {GroundModel} from "./GroundModel";
 import {Vector3} from "three";
+import {Util} from "../Util";
 
 export class ElementModelFactory {
 
@@ -54,8 +55,8 @@ export class ElementModelFactory {
             lx: 0.1,
             ly: 0.1,
             lz: 0.01,
-            showLabel: true,
-            normal: normal ? [normal.x, normal.y, normal.z] : [0, 0, 1],
+            showLabel: false,
+            normal: normal ? Util.vector3ToArray(normal) : [0, 0, 1],
             rotation: rotation ? rotation : [0, 0, 0],
             parent: parent,
             id: short.generate() as string
