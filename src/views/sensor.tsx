@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useRef, useState} from "react";
+import React, {useMemo, useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
 import {Euler, Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
@@ -100,11 +100,26 @@ const Sensor = ({
         }
     };
 
-    const topFace = Util.isSame(Util.arrayToVector3(normal), Util.UNIT_VECTOR_POS_Z);
-    const euler = topFace ?
-        new Euler(0, rotation[2], 0)
-        :
-        new Euler(0, rotation[2] + Math.PI / 2, Math.PI / 2);
+    const euler = useMemo(() => {
+        const v = Util.arrayToVector3(normal);
+        if (Util.isSame(v, Util.UNIT_VECTOR_POS_Z)) {
+            // top face in model coordinate system
+            return new Euler(0, rotation[2], 0);
+        } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_X)) {
+            // east face in model coordinate system
+            return new Euler(0, rotation[2], Util.HALF_PI);
+        } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_X)) {
+            // west face in model coordinate system
+            return new Euler(0, rotation[2], Util.HALF_PI);
+        } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_Y)) {
+            // south face in the model coordinate system
+            return new Euler(0, rotation[2] + Util.HALF_PI, Util.HALF_PI);
+        } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_Y)) {
+            // north face in the model coordinate system
+            return new Euler(0, rotation[2] + Util.HALF_PI, Util.HALF_PI);
+        }
+        return new Euler(0, rotation[2], 0);
+    }, [normal, rotation]);
 
     return (
 
