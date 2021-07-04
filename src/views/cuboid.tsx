@@ -4,7 +4,7 @@
 
 import React, {useMemo, useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
-import {Mesh, Vector3} from "three";
+import {Euler, Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {CuboidModel} from "../models/CuboidModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
@@ -57,7 +57,11 @@ const Cuboid = ({
     const elementModel = getElementById(id);
     const baseRef = useRef<Mesh>();
     const grabRef = useRef<ElementModel | null>(null);
-    const faceNormalRef = useRef<Vector3 | null>(null);
+    const faceNormalRef = useRef<Vector3>(Util.UNIT_VECTOR_POS_Z);
+    const gridLength = useRef<number>(10);
+    const gridPositionRef = useRef<Vector3>(new Vector3(0, 0, 0));
+    const gridRotationRef = useRef<Euler>(new Euler(0, 0, 0));
+    const gridScale = useRef<Vector3>(new Vector3(1, 1, 1));
     const resizeHandleLLTopRef = useRef<Mesh>();
     const resizeHandleULTopRef = useRef<Mesh>();
     const resizeHandleLRTopRef = useRef<Mesh>();
@@ -97,7 +101,6 @@ const Cuboid = ({
         if (e.intersections.length > 0) {
             const intersection = e.intersections[0];
             if (intersection.object === e.eventObject) {
-                faceNormalRef.current = intersection.face ? intersection.face.normal : null;
                 setCommonStore((state) => {
                     for (const e of state.elements) {
                         e.selected = e.id === id;
@@ -174,8 +177,7 @@ const Cuboid = ({
                          if (legalOnCuboid(objectTypeToAdd) && elementModel) {
                              setShowGrid(true);
                              const intersection = e.intersections[0];
-                             let normal = intersection.face ? Util.viewToModel(intersection.face.normal) : undefined;
-                             addElement(elementModel, intersection.point, normal);
+                             addElement(elementModel, intersection.point, intersection.face?.normal);
                              setCommonStore(state => {
                                  state.objectTypeToAdd = ObjectType.None;
                              });
@@ -186,12 +188,60 @@ const Cuboid = ({
                              if (legalOnCuboid(selectedElement.type as ObjectType)) {
                                  setShowGrid(true);
                                  grabRef.current = selectedElement;
+                                 let face;
+                                 for (const x of e.intersections) {
+                                     if (x.object === baseRef.current) {
+                                         face = x.face;
+                                         break;
+                                     }
+                                 }
+                                 if (face) {
+                                     faceNormalRef.current = face.normal;
+                                     if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_Y)) {
+                                         // top face in view coordinate system
+                                         gridLength.current = Math.max(lx, ly);
+                                         gridPositionRef.current.set(0, hz, 0);
+                                         gridRotationRef.current.set(0, 0, 0);
+                                         gridScale.current.set(lx / gridLength.current, 1, ly / gridLength.current);
+                                     } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_X)) {
+                                         // east face in view coordinate system
+                                         gridLength.current = Math.max(ly, lz);
+                                         gridPositionRef.current.set(hx, 0, 0);
+                                         gridRotationRef.current.set(0, 0, Util.HALF_PI);
+                                         gridScale.current.set(1, lz / gridLength.current, ly / gridLength.current);
+                                     } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_NEG_X)) {
+                                         // west face in view coordinate system
+                                         gridLength.current = Math.max(ly, lz);
+                                         gridPositionRef.current.set(-hx, 0, 0);
+                                         gridRotationRef.current.set(0, 0, Util.HALF_PI);
+                                         gridScale.current.set(1, lz / gridLength.current, ly / gridLength.current);
+                                     } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_Z)) {
+                                         // south face in the view coordinate system
+                                         gridLength.current = Math.max(lx, lz);
+                                         gridPositionRef.current.set(0, 0, hy);
+                                         gridRotationRef.current.set(Util.HALF_PI, 0, 0);
+                                         gridScale.current.set(lx / gridLength.current, lz / gridLength.current, 1);
+                                     } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_NEG_Z)) {
+                                         // north face in the view coordinate system
+                                         gridLength.current = Math.max(lx, lz);
+                                         gridPositionRef.current.set(0, 0, -hy);
+                                         gridRotationRef.current.set(Util.HALF_PI, 0, 0);
+                                         gridScale.current.set(lx / gridLength.current, lz / gridLength.current, 1);
+                                     }
+                                 }
                                  setCommonStore((state) => {
                                      state.enableOrbitController = false;
                                  });
                              }
                          }
                      }
+                 }}
+                 onPointerUp={(e) => {
+                     grabRef.current = null;
+                     setShowGrid(false);
+                     setCommonStore((state) => {
+                         state.enableOrbitController = true;
+                     });
                  }}
                  onContextMenu={(e) => {
                      selectMe(e, ActionType.Select);
@@ -210,6 +260,14 @@ const Cuboid = ({
             >
                 <meshStandardMaterial attach="material" color={color}/>
             </Box>
+
+            {showGrid &&
+            <gridHelper name={'Cuboid Grid'}
+                        position={gridPositionRef.current}
+                        rotation={gridRotationRef.current}
+                        scale={gridScale.current}
+                        args={[gridLength.current, 20, 'gray', 'gray']}/>
+            }
 
             {!selected &&
             <>

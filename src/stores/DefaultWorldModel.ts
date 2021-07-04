@@ -90,6 +90,7 @@ export class DefaultWorldModel implements WorldModel {
             lx: 2,
             ly: 2,
             lz: 4,
+            color: 'gray',
             normal: [0, 0, 1],
             rotation: [0, 0, Math.PI / 6],
             parent: this.ground,

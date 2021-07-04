@@ -8,6 +8,7 @@ import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 import {Euler, FontLoader, Mesh, MeshBasicMaterial, TextGeometryParameters, Vector3} from "three";
 import compassObj from '../assets/compass.obj';
 import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
+import {Util} from "../Util";
 
 export interface CompassProps {
     scale?: number;
@@ -40,7 +41,7 @@ const Compass = ({
             {...props}
             ref={mesh}
             name={'Compass'}
-            rotation={new Euler(-Math.PI / 2, 0, 0)}
+            rotation={new Euler(-Util.HALF_PI, 0, 0)}
         >
             <mesh position={[-0.001, 0.02, 0]} material={textMaterial}>
                 <textGeometry args={['N', textGeometryParams]}/>

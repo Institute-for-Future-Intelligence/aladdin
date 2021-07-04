@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import styled from "styled-components";
 import 'antd/dist/antd.css';
 import {useStore} from "./stores/common";
@@ -13,6 +13,7 @@ import HumanMenu from "./components/humanMenu";
 import TreeMenu from "./components/treeMenu";
 import NumericInput from "react-numeric-input";
 import {ExclamationCircleOutlined} from "@ant-design/icons";
+import {PhotoshopPicker} from 'react-color';
 
 // TODO: Reduce the space between menu items
 const StyledMenu = styled(Menu)`
@@ -64,6 +65,7 @@ const ContextMenu = ({
     const pasteElement = useStore(state => state.pasteElement);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const selectedElement = getSelectedElement();
+    const [colorPickerVisible, setColorPickerVisible] = useState(true);
 
     const copyElement = () => {
         if (selectedElement) {
@@ -130,7 +132,7 @@ const ContextMenu = ({
                     <Menu.Item key={'foundation-paste'} onClick={pasteElement} style={{paddingLeft: '40px'}}>
                         Paste
                     </Menu.Item>
-                    <Menu.Item key={'human-lock'}>
+                    <Menu.Item key={'foundation-lock'}>
                         <Checkbox checked={selectedElement?.locked} onChange={(e) => {
                             lockElement(e.target.checked);
                             requestUpdate();
@@ -210,7 +212,7 @@ const ContextMenu = ({
                     <Menu.Item key={'cuboid-paste'} onClick={pasteElement} style={{paddingLeft: '40px'}}>
                         Paste
                     </Menu.Item>
-                    <Menu.Item key={'human-lock'}>
+                    <Menu.Item key={'cuboid-lock'}>
                         <Checkbox checked={selectedElement?.locked} onChange={(e) => {
                             lockElement(e.target.checked);
                             requestUpdate();
@@ -218,6 +220,14 @@ const ContextMenu = ({
                             Lock
                         </Checkbox>
                     </Menu.Item>
+                    <SubMenu key={'color'} title={'Color'} style={{paddingLeft: '24px'}}
+                             onTitleMouseEnter={() => setColorPickerVisible(true)}>
+                        {colorPickerVisible &&
+                        <PhotoshopPicker color={selectedElement?.color}
+                                         onAccept={() => setColorPickerVisible(false)}
+                                         onCancel={() => setColorPickerVisible(false)}
+                        />}
+                    </SubMenu>
                     {sensorCountCuboid > 0 &&
                     <SubMenu key={'clear'} title={'Clear'} style={{paddingLeft: '24px'}}>
                         {sensorCountCuboid > 0 &&

@@ -239,7 +239,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                             relativeCoordinates.x,
                             relativeCoordinates.y,
                             relativeCoordinates.z,
-                            normal,
+                            normal ? Util.viewToModel(normal) : undefined,
                             parent.rotation
                         ));
                         break;
