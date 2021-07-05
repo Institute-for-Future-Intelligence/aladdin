@@ -16,6 +16,7 @@ export class DefaultViewState implements ViewState {
     showGroundPanel: boolean;
     showHeliodonPanel: boolean;
     showWeatherPanel: boolean;
+    showStickyNotePanel: boolean;
     showDailyLightSensorPanel: boolean;
     showYearlyLightSensorPanel: boolean;
     autoRotate: boolean;
@@ -26,6 +27,8 @@ export class DefaultViewState implements ViewState {
     groundPanelY: number;
     weatherPanelX: number;
     weatherPanelY: number;
+    stickyNotePanelX: number;
+    stickyNotePanelY: number;
     dailyLightSensorPanelX: number;
     dailyLightSensorPanelY: number;
     yearlyLightSensorPanelX: number;
@@ -48,6 +51,7 @@ export class DefaultViewState implements ViewState {
         this.showGroundPanel = false;
         this.showHeliodonPanel = false;
         this.showWeatherPanel = false;
+        this.showStickyNotePanel = false;
         this.showDailyLightSensorPanel = false;
         this.showYearlyLightSensorPanel = false;
         this.autoRotate = false;
@@ -58,6 +62,8 @@ export class DefaultViewState implements ViewState {
         this.groundPanelY = 0;
         this.weatherPanelX = 0;
         this.weatherPanelY = 0;
+        this.stickyNotePanelX = 0;
+        this.stickyNotePanelY = 0;
         this.dailyLightSensorPanelX = 0;
         this.dailyLightSensorPanelY = 0;
         this.yearlyLightSensorPanelX = 0;

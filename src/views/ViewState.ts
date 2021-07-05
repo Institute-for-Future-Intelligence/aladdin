@@ -14,6 +14,7 @@ export interface ViewState {
     showGroundPanel: boolean;
     showHeliodonPanel: boolean;
     showWeatherPanel: boolean;
+    showStickyNotePanel: boolean;
     showDailyLightSensorPanel: boolean;
     showYearlyLightSensorPanel: boolean;
     autoRotate: boolean;
@@ -24,6 +25,8 @@ export interface ViewState {
     groundPanelY: number;
     weatherPanelX: number;
     weatherPanelY: number;
+    stickyNotePanelX: number;
+    stickyNotePanelY: number;
     dailyLightSensorPanelX: number;
     dailyLightSensorPanelY: number;
     yearlyLightSensorPanelX: number;

@@ -30,6 +30,7 @@ export interface CommonStoreState {
     world: WorldModel;
     elements: ElementModel[];
     viewState: ViewState;
+    notes: string[];
     user: User;
 
     exportContent: () => {};
@@ -98,6 +99,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         world: defaultWorldModel,
         elements: defaultElements,
         viewState: defaultViewState,
+        notes: [],
         user: {} as User,
         exportContent() {
             const state = get();
@@ -108,7 +110,8 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 email: state.user.email,
                 world: state.world,
                 elements: state.elements,
-                view: state.viewState
+                view: state.viewState,
+                notes: state.notes
             };
         },
         clearContent() {
@@ -433,6 +436,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         'world',
         'elements',
         'viewState',
+        'notes',
         'user',
         'weatherData',
         'sensorLabels',

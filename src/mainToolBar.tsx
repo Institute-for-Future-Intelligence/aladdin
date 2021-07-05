@@ -267,6 +267,7 @@ const MainToolBar = ({
                             state.world = data.world;
                             state.viewState = data.view;
                             state.elements = data.elements;
+                            state.notes = data.notes ?? [];
                         });
                         requestUpdate();
                         setLoading(false);

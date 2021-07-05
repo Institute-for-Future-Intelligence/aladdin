@@ -95,6 +95,7 @@ const MainMenu = ({
                             state.world = input.world;
                             state.viewState = input.view;
                             state.elements = input.elements;
+                            state.notes = input.notes ?? [];
                         });
                         requestUpdate();
                     }
@@ -131,6 +132,16 @@ const MainMenu = ({
                     requestUpdate();
                 }}>
                     Weather Data
+                </Checkbox>
+            </Menu.Item>
+            <Menu.Item key={'sticky-note-panel-check-box'}>
+                <Checkbox checked={viewState.showStickyNotePanel} onChange={(e) => {
+                    setCommonStore((state) => {
+                        state.viewState.showStickyNotePanel = e.target.checked;
+                    });
+                    requestUpdate();
+                }}>
+                    Sticky Note
                 </Checkbox>
             </Menu.Item>
             <SubMenu key={'sensors'} title={'Sensors'} style={{paddingLeft: '24px'}}>

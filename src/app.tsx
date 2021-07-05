@@ -37,6 +37,7 @@ import MainToolBar from "./mainToolBar";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import Spinner from './components/spinner';
 import useKey from "./useKey";
+import StickyNotePanel from "./panels/stickyNotePanel";
 
 const App = () => {
 
@@ -372,6 +373,9 @@ const App = () => {
             <WeatherPanel city={city}
                           requestUpdate={requestUpdate}
                           graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}
+            />}
+            {viewState.showStickyNotePanel &&
+            <StickyNotePanel requestUpdate={requestUpdate}
             />}
             <Dropdown key={'canvas-context-menu'}
                       trigger={['contextMenu']}
