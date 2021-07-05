@@ -83,11 +83,28 @@ const HeliodonPanel = ({
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
     const requestRef = useRef<number>(0);
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const wOffset = containerRef.current ? containerRef.current.clientWidth + 40 : 680;
+    const hOffset = containerRef.current ? containerRef.current?.clientHeight + 100 : 250;
     const previousFrameTime = useRef<number>(-1);
     const [curPosition, setCurPosition] = useState({
-        x: isNaN(viewState.heliodonPanelX) ? 0 : viewState.heliodonPanelX,
-        y: isNaN(viewState.heliodonPanelY) ? 0 : viewState.heliodonPanelY
+        x: isNaN(viewState.heliodonPanelX) ? 0 : Math.max(viewState.heliodonPanelX, wOffset - window.innerWidth),
+        y: isNaN(viewState.heliodonPanelY) ? 0 : Math.min(viewState.heliodonPanelY, window.innerHeight - hOffset)
     });
+
+    // when the window is resized
+    useEffect(() => {
+        const handleResize = () => {
+            setCurPosition({
+                x: Math.max(viewState.heliodonPanelX, wOffset - window.innerWidth),
+                y: Math.min(viewState.heliodonPanelY, window.innerHeight - hOffset)
+            });
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        }
+    }, []);
 
     useEffect(() => {
         requestRef.current = requestAnimationFrame(animate);
@@ -111,13 +128,16 @@ const HeliodonPanel = ({
     };
 
     const onDrag: DraggableEventHandler = (e, ui) => {
-        setCurPosition({x: ui.x, y: ui.y});
+        setCurPosition({
+            x: Math.max(ui.x, wOffset - window.innerWidth),
+            y: Math.min(ui.y, window.innerHeight - hOffset)
+        });
     };
 
     const onDragEnd: DraggableEventHandler = (e, ui) => {
         setCommonStore(state => {
-            state.viewState.heliodonPanelX = ui.x;
-            state.viewState.heliodonPanelY = ui.y;
+            state.viewState.heliodonPanelX = Math.max(ui.x, wOffset - window.innerWidth);
+            state.viewState.heliodonPanelY = Math.min(ui.y, window.innerHeight - hOffset);
         });
     };
 
@@ -138,7 +158,7 @@ const HeliodonPanel = ({
             onStop={onDragEnd}
         >
             <Container>
-                <ColumnWrapper>
+                <ColumnWrapper ref={containerRef}>
                     <Header className='handle'>
                         <span>Heliodon Settings</span>
                         <span style={{cursor: 'pointer'}}
