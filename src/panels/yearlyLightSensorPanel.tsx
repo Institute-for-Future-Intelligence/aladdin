@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import LineGraph from '../components/lineGraph';
 import styled from "styled-components";
 import {useStore} from "../stores/common";
@@ -82,22 +82,42 @@ const YearlyLightSensorPanel = ({
     const [daylightGraph, setDaylightGraph] = useState(true);
     const [clearnessGraph, setClearnessGraph] = useState(true);
     const [radiationGraph, setRadiationGraph] = useState(true);
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
+    const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 540;
+    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
     const [curPosition, setCurPosition] = useState({
-        x: isNaN(viewState.yearlyLightSensorPanelX) ? 0 : viewState.yearlyLightSensorPanelX,
-        y: isNaN(viewState.yearlyLightSensorPanelY) ? 0 : viewState.yearlyLightSensorPanelY
+        x: isNaN(viewState.yearlyLightSensorPanelX) ? 0 : Math.max(viewState.yearlyLightSensorPanelX, wOffset - window.innerWidth),
+        y: isNaN(viewState.yearlyLightSensorPanelY) ? 0 : Math.min(viewState.yearlyLightSensorPanelY, window.innerHeight - hOffset)
     });
 
     const responsiveHeight = 100;
     const referenceX = MONTHS[Math.floor(Util.daysIntoYear(now) / 365 * 12)];
 
+    // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
+    useEffect(() => {
+        const handleResize = () => {
+            setCurPosition({
+                x: Math.max(viewState.yearlyLightSensorPanelX, wOffset - window.innerWidth),
+                y: Math.min(viewState.yearlyLightSensorPanelY, window.innerHeight - hOffset)
+            });
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        }
+    }, []);
+
     const onDrag: DraggableEventHandler = (e, ui) => {
-        setCurPosition({x: ui.x, y: ui.y});
+        setCurPosition({
+            x: Math.max(ui.x, wOffset - window.innerWidth),
+            y: Math.min(ui.y, window.innerHeight - hOffset)
+        });
     };
 
     const onDragEnd: DraggableEventHandler = (e, ui) => {
         setCommonStore(state => {
-            state.viewState.yearlyLightSensorPanelX = ui.x;
-            state.viewState.yearlyLightSensorPanelY = ui.y;
+            state.viewState.yearlyLightSensorPanelX = Math.max(ui.x, wOffset - window.innerWidth);
+            state.viewState.yearlyLightSensorPanelY = Math.min(ui.y, window.innerHeight - hOffset);
         });
     };
 
@@ -118,7 +138,7 @@ const YearlyLightSensorPanel = ({
             onStop={onDragEnd}
         >
             <Container>
-                <ColumnWrapper>
+                <ColumnWrapper ref={wrapperRef}>
                     <Header className='handle'>
                         <span>Light Sensor: {city}</span>
                         <span style={{cursor: 'pointer'}}

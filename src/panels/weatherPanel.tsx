@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import BarGraph from "../components/barGraph";
 import LineGraph from '../components/lineGraph';
 import {GraphDataType} from "../types";
@@ -78,10 +78,27 @@ const WeatherPanel = ({
     const viewState = useStore(state => state.viewState);
     const getWeather = useStore(state => state.getWeather);
     const now = useStore(state => state.world.date);
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
+    const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 540;
+    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
     const [curPosition, setCurPosition] = useState({
-        x: isNaN(viewState.weatherPanelX) ? 0 : viewState.weatherPanelX,
-        y: isNaN(viewState.weatherPanelY) ? 0 : viewState.weatherPanelY
+        x: isNaN(viewState.weatherPanelX) ? 0 : Math.min(viewState.weatherPanelX, window.innerWidth - wOffset),
+        y: isNaN(viewState.weatherPanelY) ? 0 : Math.min(viewState.weatherPanelY, window.innerHeight - hOffset)
     });
+
+    // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
+    useEffect(() => {
+        const handleResize = () => {
+            setCurPosition({
+                x: Math.min(viewState.weatherPanelX, window.innerWidth - wOffset),
+                y: Math.min(viewState.weatherPanelY, window.innerHeight - hOffset)
+            });
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        }
+    }, []);
 
     const responsiveHeight = useMemo(() => {
         return graphs ? Math.floor(100 / graphs.length) : 100;
@@ -131,13 +148,16 @@ const WeatherPanel = ({
     const referenceX = MONTHS[Math.floor(Util.daysIntoYear(now) / 365 * 12)];
 
     const onDrag: DraggableEventHandler = (e, ui) => {
-        setCurPosition({x: ui.x, y: ui.y});
+        setCurPosition({
+            x: Math.min(ui.x, window.innerWidth - wOffset),
+            y: Math.min(ui.y, window.innerHeight - hOffset)
+        });
     };
 
     const onDragEnd: DraggableEventHandler = (e, ui) => {
         setCommonStore(state => {
-            state.viewState.weatherPanelX = ui.x;
-            state.viewState.weatherPanelY = ui.y;
+            state.viewState.weatherPanelX = Math.min(ui.x, window.innerWidth - wOffset);
+            state.viewState.weatherPanelY = Math.min(ui.y, window.innerHeight - hOffset);
         });
     };
 
@@ -158,7 +178,7 @@ const WeatherPanel = ({
             onStop={onDragEnd}
         >
             <Container>
-                <ColumnWrapper>
+                <ColumnWrapper ref={wrapperRef}>
                     <Header className='handle'>
                         <span>Weather: {city}</span>
                         <span style={{cursor: 'pointer'}}

@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useStore} from "../stores/common";
 import styled from 'styled-components';
 import {Space, Switch} from "antd";
@@ -94,10 +94,27 @@ const GroundPanel = ({
     const world = useStore(state => state.world);
     const viewState = useStore(state => state.viewState);
     const searchBox = useRef<google.maps.places.SearchBox>();
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
+    const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 460;
+    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 40 : 600;
     const [curPosition, setCurPosition] = useState({
-        x: isNaN(viewState.groundPanelX) ? 0 : viewState.groundPanelX,
-        y: isNaN(viewState.groundPanelY) ? 0 : viewState.groundPanelY
+        x: isNaN(viewState.groundPanelX) ? 0 : Math.min(viewState.groundPanelX, window.innerWidth - wOffset),
+        y: isNaN(viewState.groundPanelY) ? 0 : Math.min(viewState.groundPanelY, window.innerHeight - hOffset)
     });
+
+    // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
+    useEffect(() => {
+        const handleResize = () => {
+            setCurPosition({
+                x: Math.min(viewState.groundPanelX, window.innerWidth - wOffset),
+                y: Math.min(viewState.groundPanelY, window.innerHeight - hOffset)
+            });
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        }
+    }, []);
 
     const {isLoaded, loadError} = useJsApiLoader({
         id: 'google-map-script',
@@ -132,13 +149,16 @@ const GroundPanel = ({
     };
 
     const onDrag: DraggableEventHandler = (e, ui) => {
-        setCurPosition({x: ui.x, y: ui.y});
+        setCurPosition({
+            x: Math.min(ui.x, window.innerWidth - wOffset),
+            y: Math.min(ui.y, window.innerHeight - hOffset)
+        });
     };
 
     const onDragEnd: DraggableEventHandler = (e, ui) => {
         setCommonStore(state => {
-            state.viewState.groundPanelX = ui.x;
-            state.viewState.groundPanelY = ui.y;
+            state.viewState.groundPanelX = Math.min(ui.x, window.innerWidth - wOffset);
+            state.viewState.groundPanelY = Math.min(ui.y, window.innerHeight - hOffset);
         });
     };
 
@@ -159,7 +179,7 @@ const GroundPanel = ({
             onStop={onDragEnd}
         >
             <Container>
-                <ColumnWrapper>
+                <ColumnWrapper ref={wrapperRef}>
                     <Header className='handle'>
                         <span>Ground Settings</span>
                         <span style={{cursor: 'pointer'}}

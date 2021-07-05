@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import LineGraph from '../components/lineGraph';
 import styled from "styled-components";
 import {useStore} from "../stores/common";
@@ -76,21 +76,41 @@ const DailyLightSensorPanel = ({
     const sensorLabels = useStore(state => state.sensorLabels);
     const sensorData = useStore(state => state.dailyLightSensorData);
     const now = new Date(useStore(state => state.world.date));
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
+    const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
+    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 400;
     const [curPosition, setCurPosition] = useState({
-        x: isNaN(viewState.dailyLightSensorPanelX) ? 0 : viewState.dailyLightSensorPanelX,
-        y: isNaN(viewState.dailyLightSensorPanelY) ? 0 : viewState.dailyLightSensorPanelY
+        x: isNaN(viewState.dailyLightSensorPanelX) ? 0 : Math.max(viewState.dailyLightSensorPanelX, wOffset - window.innerWidth),
+        y: isNaN(viewState.dailyLightSensorPanelY) ? 0 : Math.min(viewState.dailyLightSensorPanelY, window.innerHeight - hOffset)
     });
 
     const responsiveHeight = 100;
 
+    // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
+    useEffect(() => {
+        const handleResize = () => {
+            setCurPosition({
+                x: Math.max(viewState.dailyLightSensorPanelX, wOffset - window.innerWidth),
+                y: Math.min(viewState.dailyLightSensorPanelY, window.innerHeight - hOffset)
+            });
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        }
+    }, []);
+
     const onDrag: DraggableEventHandler = (e, ui) => {
-        setCurPosition({x: ui.x, y: ui.y});
+        setCurPosition({
+            x: Math.max(ui.x, wOffset - window.innerWidth),
+            y: Math.min(ui.y, window.innerHeight - hOffset)
+        });
     };
 
     const onDragEnd: DraggableEventHandler = (e, ui) => {
         setCommonStore(state => {
-            state.viewState.dailyLightSensorPanelX = ui.x;
-            state.viewState.dailyLightSensorPanelY = ui.y;
+            state.viewState.dailyLightSensorPanelX = Math.max(ui.x, wOffset - window.innerWidth);
+            state.viewState.dailyLightSensorPanelY = Math.min(ui.y, window.innerHeight - hOffset);
         });
     };
 
@@ -111,7 +131,7 @@ const DailyLightSensorPanel = ({
             onStop={onDragEnd}
         >
             <Container>
-                <ColumnWrapper>
+                <ColumnWrapper ref={wrapperRef}>
                     <Header className='handle'>
                         <span>Light Sensor: {city} | {moment(now).format('MM/DD')}</span>
                         <span style={{cursor: 'pointer'}}

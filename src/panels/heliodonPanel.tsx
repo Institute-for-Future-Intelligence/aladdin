@@ -83,16 +83,16 @@ const HeliodonPanel = ({
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
     const requestRef = useRef<number>(0);
-    const containerRef = useRef<HTMLDivElement | null>(null);
-    const wOffset = containerRef.current ? containerRef.current.clientWidth + 40 : 680;
-    const hOffset = containerRef.current ? containerRef.current?.clientHeight + 100 : 250;
     const previousFrameTime = useRef<number>(-1);
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
+    const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 680;
+    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 250;
     const [curPosition, setCurPosition] = useState({
         x: isNaN(viewState.heliodonPanelX) ? 0 : Math.max(viewState.heliodonPanelX, wOffset - window.innerWidth),
         y: isNaN(viewState.heliodonPanelY) ? 0 : Math.min(viewState.heliodonPanelY, window.innerHeight - hOffset)
     });
 
-    // when the window is resized
+    // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
     useEffect(() => {
         const handleResize = () => {
             setCurPosition({
@@ -158,7 +158,7 @@ const HeliodonPanel = ({
             onStop={onDragEnd}
         >
             <Container>
-                <ColumnWrapper ref={containerRef}>
+                <ColumnWrapper ref={wrapperRef}>
                     <Header className='handle'>
                         <span>Heliodon Settings</span>
                         <span style={{cursor: 'pointer'}}
