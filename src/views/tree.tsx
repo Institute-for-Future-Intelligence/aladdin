@@ -19,10 +19,10 @@ import PineImage from "../resources/pine.png";
 import {DoubleSide, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {Billboard, Cone, Plane, Sphere} from "@react-three/drei";
+import {Billboard, Cone, Sphere} from "@react-three/drei";
 import {MOVE_HANDLE_RADIUS} from "../constants";
 import {TreeModel} from "../models/TreeModel";
-import {ShedTreeType, TreeType} from "../types";
+import {TreeType} from "../types";
 import {Util} from "../Util";
 
 const Tree = ({
@@ -41,56 +41,43 @@ const Tree = ({
     cy = -cy; // we want positive y to point north
 
     const setCommonStore = useStore(state => state.set);
+    const world = useStore(state => state.world);
+    const now = new Date(world.date);
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const [hovered, setHovered] = useState(false);
     const meshRef = useRef<Mesh>(null!);
     const {gl: {domElement}} = useThree();
+
+    const month = now.getMonth();
+    const shedLeaves = month < 4 || month > 10; // TODO: This needs to depend on location
 
     const texture = useMemo(() => {
         const loader = new TextureLoader();
         let texture;
         switch (name) {
             case TreeType.Cottonwood:
-                texture = loader.load(CottonwoodImage);
-                break;
-            case ShedTreeType.Cottonwood:
-                texture = loader.load(CottonwoodShedImage);
+                texture = loader.load(shedLeaves ? CottonwoodShedImage : CottonwoodImage);
                 break;
             case TreeType.Dogwood:
-                texture = loader.load(DogwoodImage);
-                break;
-            case ShedTreeType.Dogwood:
-                texture = loader.load(DogwoodShedImage);
+                texture = loader.load(shedLeaves ? DogwoodShedImage : DogwoodImage);
                 break;
             case TreeType.Elm:
-                texture = loader.load(ElmImage);
-                break;
-            case ShedTreeType.Elm:
-                texture = loader.load(ElmShedImage);
+                texture = loader.load(shedLeaves ? ElmShedImage : ElmImage);
                 break;
             case TreeType.Linden:
-                texture = loader.load(LindenImage);
-                break;
-            case ShedTreeType.Linden:
-                texture = loader.load(LindenShedImage);
+                texture = loader.load(shedLeaves ? LindenShedImage : LindenImage);
                 break;
             case TreeType.Maple:
-                texture = loader.load(MapleImage);
-                break;
-            case ShedTreeType.Maple:
-                texture = loader.load(MapleShedImage);
+                texture = loader.load(shedLeaves ? MapleShedImage : MapleImage);
                 break;
             case TreeType.Oak:
-                texture = loader.load(OakImage);
-                break;
-            case ShedTreeType.Oak:
-                texture = loader.load(OakShedImage);
+                texture = loader.load(shedLeaves ? OakShedImage : OakImage);
                 break;
             default:
                 texture = loader.load(PineImage);
         }
         return texture;
-    }, [name]);
+    }, [name, world.date]);
 
     const selectMe = (e: ThreeEvent<MouseEvent>) => {
         // We must check if there is really a first intersection, onPointerDown does not guarantee it
@@ -151,7 +138,7 @@ const Tree = ({
             {/* simulation model */}
             {name !== TreeType.Pine ?
                 <Sphere visible={showModel}
-                        userData={{simulation: true}}
+                        userData={{simulation: !shedLeaves}}
                         args={[lx / 2, 8, 8, 0, Util.TWO_PI, 0, theta]}
                         scale={[1, lz / lx, 1]}>
                     <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75}/>

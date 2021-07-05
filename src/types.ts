@@ -108,15 +108,6 @@ export enum TreeType {
     Pine = 'Pine'
 }
 
-export enum ShedTreeType {
-    Cottonwood = 'Cottonwood Shed',
-    Dogwood = 'Dogwood Shed',
-    Elm = 'Elm Shed',
-    Linden = 'Linden Shed',
-    Maple = 'Maple Shed',
-    Oak = 'Oak Shed',
-}
-
 export enum HumanName {
     Jack = 'Jack',
     Jade = 'Jade',

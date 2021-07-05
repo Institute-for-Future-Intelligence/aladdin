@@ -114,6 +114,16 @@ const MainMenu = ({
             <Menu.Item key="save-local-file" onClick={showDownloadDialog} style={{paddingLeft: '36px'}}>
                 Save to Download Folder
             </Menu.Item>
+            <Menu.Item key={'info-panel-check-box'}>
+                <Checkbox checked={viewState.showInfoPanel} onChange={(e) => {
+                    setCommonStore((state) => {
+                        state.viewState.showInfoPanel = e.target.checked;
+                    });
+                    requestUpdate();
+                }}>
+                    Information Panel
+                </Checkbox>
+            </Menu.Item>
             <Menu.Item key={'ground-panel-check-box'}>
                 <Checkbox checked={viewState.showGroundPanel} onChange={(e) => {
                     setCommonStore((state) => {

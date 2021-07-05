@@ -158,6 +158,10 @@ export class Util {
         return Math.acos(Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(Math.abs(lng1 - lng2)));
     }
 
+    static minutesIntoDay(date: Date) {
+        return date.getHours() * 60 + date.getMinutes();
+    }
+
     static daysIntoYear(date: string) {
         return Util.dayOfYear(new Date(date));
     }
@@ -167,6 +171,10 @@ export class Util {
         const diff = date.getTime() - start.getTime();
         const oneDay = 1000 * 60 * 60 * 24;
         return Math.floor(diff / oneDay);
+    }
+
+    static daysOfMonth(month: number, year: number) {
+        return new Date(year, month + 1, 0).getDate();
     }
 
     static fahrenheitToCelsius(temp: number) {

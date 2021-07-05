@@ -38,6 +38,7 @@ import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import Spinner from './components/spinner';
 import useKey from "./useKey";
 import StickyNotePanel from "./panels/stickyNotePanel";
+import InfoPanel from "./panels/infoPanel";
 
 const App = () => {
 
@@ -307,9 +308,10 @@ const App = () => {
                 height: '72px',
                 paddingTop: '10px',
                 textAlign: 'start',
+                userSelect: 'none',
                 fontSize: '30px'
             }}>
-                <span style={{marginLeft: '120px', verticalAlign: 'middle', cursor: 'pointer'}}
+                <span style={{marginLeft: '120px', verticalAlign: 'middle', cursor: 'pointer', userSelect: 'none'}}
                       title={'Visit Aladdin homepage'}
                       onClick={visitHomepage}>
                     Aladdin
@@ -321,7 +323,8 @@ const App = () => {
                 left: '10px',
                 zIndex: 999,
                 fontSize: '12px',
-                color: 'white'
+                userSelect: 'none',
+                color: 'antiquewhite'
             }}>
                 <img alt='IFI Logo'
                      src={ifiLogo}
@@ -377,6 +380,7 @@ const App = () => {
             {viewState.showStickyNotePanel &&
             <StickyNotePanel requestUpdate={requestUpdate}
             />}
+            {viewState.showInfoPanel && <InfoPanel city={city} daytime={sunAboveHorizon}/>}
             <Dropdown key={'canvas-context-menu'}
                       trigger={['contextMenu']}
                       overlay={contextMenu}
