@@ -15,13 +15,13 @@ import {
     faCube,
     faEraser,
     faMousePointer,
-    faSquare,
     faSun,
     faTachometerAlt,
     faTree,
     faWalking,
 } from '@fortawesome/free-solid-svg-icons';
 import {faAsymmetrik} from "@fortawesome/free-brands-svg-icons";
+import FoundationImage from "./resources/foundation.png";
 import SolarPanelImage from "./resources/solar-panel.png";
 import ShadowImage from "./resources/shadow.png";
 import firebase from 'firebase';
@@ -407,17 +407,30 @@ const MainToolBar = ({
                                          size={'3x'}
                                          color={objectTypeToAdd === ObjectType.None ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
-                                         onClick={resetToSelectMode}/>
-                        <FontAwesomeIcon title={'Add foundation'}
-                                         icon={faSquare}
-                                         size={'3x'}
-                                         color={objectTypeToAdd === ObjectType.Foundation ? 'antiquewhite' : '#666666'}
-                                         style={{paddingRight: '12px', cursor: 'pointer'}}
-                                         onClick={() => {
-                                             setCommonStore(state => {
-                                                 state.objectTypeToAdd = ObjectType.Foundation;
-                                             });
-                                         }}/>
+                                         onClick={resetToSelectMode}
+                        />
+                        <img title={'Add foundation'}
+                             alt={'Foundation'}
+                             src={FoundationImage}
+                             height={56}
+                             width={48}
+                             style={{
+                                 paddingRight: '12px',
+                                 paddingBottom: '20px',
+                                 // CSS filter generator of color: https://codepen.io/sosuke/pen/Pjoqqp
+                                 filter: objectTypeToAdd === ObjectType.Foundation ?
+                                     'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)'
+                                     :
+                                     'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)',
+                                 cursor: 'pointer',
+                                 verticalAlign: 'middle'
+                             }}
+                             onClick={() => {
+                                 setCommonStore(state => {
+                                     state.objectTypeToAdd = ObjectType.Foundation;
+                                 });
+                             }}
+                        />
                         <FontAwesomeIcon title={'Add cuboid'}
                                          icon={faCube}
                                          size={'3x'}
@@ -427,7 +440,8 @@ const MainToolBar = ({
                                              setCommonStore(state => {
                                                  state.objectTypeToAdd = ObjectType.Cuboid;
                                              });
-                                         }}/>
+                                         }}
+                        />
                         <FontAwesomeIcon title={'Add sensor'}
                                          icon={faTachometerAlt}
                                          size={'3x'}
@@ -437,17 +451,20 @@ const MainToolBar = ({
                                              setCommonStore(state => {
                                                  state.objectTypeToAdd = ObjectType.Sensor;
                                              });
-                                         }}/>
+                                         }}
+                        />
                         <img title={'Add solar panel'}
                              alt={'Solar panel'}
                              src={SolarPanelImage}
                              height={56}
-                             width={40}
+                             width={48}
                              style={{
                                  paddingRight: '12px',
                                  paddingBottom: '20px',
                                  filter: objectTypeToAdd === ObjectType.SolarPanel ?
-                                     'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)' : '',
+                                     'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)'
+                                     :
+                                     'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)',
                                  cursor: 'pointer',
                                  verticalAlign: 'middle'
                              }}
@@ -455,7 +472,8 @@ const MainToolBar = ({
                                  setCommonStore(state => {
                                      state.objectTypeToAdd = ObjectType.SolarPanel;
                                  });
-                             }}/>
+                             }}
+                        />
                         <FontAwesomeIcon title={'Add tree'}
                                          icon={faTree}
                                          size={'3x'}
@@ -465,7 +483,8 @@ const MainToolBar = ({
                                              setCommonStore(state => {
                                                  state.objectTypeToAdd = ObjectType.Tree;
                                              });
-                                         }}/>
+                                         }}
+                        />
                         <FontAwesomeIcon title={'Add people'}
                                          icon={faWalking}
                                          size={'3x'}
@@ -475,31 +494,36 @@ const MainToolBar = ({
                                              setCommonStore(state => {
                                                  state.objectTypeToAdd = ObjectType.Human;
                                              });
-                                         }}/>
+                                         }}
+                        />
                         <FontAwesomeIcon title={'Clear'}
                                          icon={faEraser}
                                          size={'3x'}
                                          color={'#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
-                                         onClick={removeAllContent}/>
+                                         onClick={removeAllContent}
+                        />
                         <FontAwesomeIcon title={'Reset view'}
                                          icon={faArrowAltCircleUp}
                                          size={'3x'}
                                          color={'#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
-                                         onClick={resetView}/>
+                                         onClick={resetView}
+                        />
                         <FontAwesomeIcon title={'Auto rotate'}
                                          icon={faAsymmetrik}
                                          size={'3x'}
                                          color={viewState.autoRotate ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
-                                         onClick={toggleAutoRotate}/>
+                                         onClick={toggleAutoRotate}
+                        />
                         <FontAwesomeIcon title={'Show helidon panel'}
                                          icon={faSun}
                                          size={'3x'}
                                          color={viewState.showHeliodonPanel ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
-                                         onClick={toggleHelidonPanel}/>
+                                         onClick={toggleHelidonPanel}
+                        />
                         <img title={'Show shadow effect'}
                              alt={'Shadow effect'}
                              src={ShadowImage}
@@ -508,12 +532,15 @@ const MainToolBar = ({
                              style={{
                                  paddingRight: '2px',
                                  paddingBottom: '20px',
-                                 filter: viewState.shadowEnabled ? '' :
+                                 filter: viewState.shadowEnabled ?
+                                     'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)'
+                                     :
                                      'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)',
                                  cursor: 'pointer',
                                  verticalAlign: 'middle'
                              }}
-                             onClick={toggleShadow}/>
+                             onClick={toggleShadow}
+                        />
                     </div>
                     <div style={{verticalAlign: 'middle', paddingBottom: '20px'}}>
                         {user.displayName ?
