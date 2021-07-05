@@ -29,6 +29,7 @@ const Simulation = ({
     const elements = useStore(state => state.elements);
     const getElementById = useStore(state => state.getElementById);
     const getWeather = useStore(state => state.getWeather);
+    const setSensorLabels = useStore(state => state.setSensorLabels);
     const setDailyLightSensorData = useStore(state => state.setDailyLightSensorData);
     const setYearlyLightSensorData = useStore(state => state.setYearlyLightSensorData);
     const {scene} = useThree();
@@ -79,9 +80,11 @@ const Simulation = ({
     const collectAllDailyLightSensorData = () => {
         const map = new Map<string, number[]>();
         let index = 0;
+        const labels = [];
         for (const e of elements) {
             if (e.type === ObjectType.Sensor) {
                 map.set('Radiation' + (index + 1), collectDailyLightSensorData(e as SensorModel));
+                labels.push(e.label ? e.label : 'Radiation' + (index + 1));
                 index++;
             }
         }
@@ -91,11 +94,12 @@ const Simulation = ({
             datum['Hour'] = i;
             for (let k = 1; k <= index; k++) {
                 const key = 'Radiation' + k;
-                datum[key] = map.get(key)?.[i];
+                datum[labels[k - 1]] = map.get(key)?.[i];
             }
             data.push(datum);
         }
         setDailyLightSensorData(data);
+        setSensorLabels(labels);
     }
 
     const collectDailyLightSensorData = (sensor: SensorModel) => {
@@ -140,9 +144,13 @@ const Simulation = ({
 
     const collectAllYearlyLightSensorData = () => {
         const resultArr = [];
+        const labels = [];
+        let index = 0;
         for (const e of elements) {
             if (e.type === ObjectType.Sensor) {
                 resultArr.push(collectYearlyLightSensorData(e as SensorModel));
+                labels.push(e.label ? e.label : 'Radiation' + (index + 1));
+                index++;
             }
         }
         const results = [];
@@ -152,11 +160,12 @@ const Simulation = ({
             for (const [i, a] of resultArr.entries()) {
                 r['Daylight'] = a[month].Daylight;
                 r['Clearness'] = a[month].Clearness;
-                r['Radiation' + (i + 1)] = a[month].Radiation;
+                r[labels[i]] = a[month].Radiation;
             }
             results.push(r);
         }
         setYearlyLightSensorData(results);
+        setSensorLabels(labels);
     }
 
     const collectYearlyLightSensorData = (sensor: SensorModel) => {

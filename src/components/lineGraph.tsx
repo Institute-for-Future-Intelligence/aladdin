@@ -23,6 +23,7 @@ import {CurveType} from "recharts/types/shape/Curve";
 export interface LineGraphProps {
     type: GraphDataType;
     dataSource: DatumEntry[];
+    labels?: string[];
     height: number;
     labelX?: string,
     labelY?: string,
@@ -41,6 +42,7 @@ export interface LineGraphProps {
 const LineGraph = ({
                        type,
                        dataSource,
+                       labels,
                        height,
                        labelX,
                        labelY,
@@ -96,7 +98,7 @@ const LineGraph = ({
                     break;
                 case GraphDataType.DailyRadiationSensorData:
                 case GraphDataType.YearlyRadiationSensorData:
-                    name = 'Radiation' + (i + 1);
+                    name = labels ? labels[i] : 'Radiation' + (i + 1);
                     break;
             }
             const opacity = legendDataKey === null ? 1 : (legendDataKey === name ? 1 : 0.25);

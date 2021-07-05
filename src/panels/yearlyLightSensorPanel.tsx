@@ -11,6 +11,7 @@ import {MONTHS} from "../constants";
 import {Util} from "../Util";
 import BarGraph from "../components/barGraph";
 import ReactDraggable, {DraggableEventHandler} from "react-draggable";
+import {Space, Switch} from "antd";
 
 const Container = styled.div`
   position: fixed;
@@ -76,7 +77,11 @@ const YearlyLightSensorPanel = ({
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
     const sensorData = useStore(state => state.yearlyLightSensorData);
+    const sensorLabels = useStore(state => state.sensorLabels);
     const now = useStore(state => state.world.date);
+    const [daylightGraph, setDaylightGraph] = useState(true);
+    const [clearnessGraph, setClearnessGraph] = useState(true);
+    const [radiationGraph, setRadiationGraph] = useState(true);
     const [curPosition, setCurPosition] = useState({
         x: isNaN(viewState.yearlyLightSensorPanelX) ? 0 : viewState.yearlyLightSensorPanelX,
         y: isNaN(viewState.yearlyLightSensorPanelY) ? 0 : viewState.yearlyLightSensorPanelY
@@ -126,6 +131,36 @@ const YearlyLightSensorPanel = ({
                             Close
                         </span>
                     </Header>
+                    <Space style={{alignSelf: 'center', padding: '10px'}}>
+                        <Space>
+                            <Switch title={'Show daylight results'}
+                                    checked={daylightGraph}
+                                    onChange={(checked) => {
+                                        setDaylightGraph(checked);
+                                        requestUpdate();
+                                    }}
+                            />Daylight
+                        </Space>
+                        <Space>
+                            <Switch title={'Show sky clearness results'}
+                                    checked={clearnessGraph}
+                                    onChange={(checked) => {
+                                        setClearnessGraph(checked);
+                                        requestUpdate();
+                                    }}
+                            />Clearness
+                        </Space>
+                        <Space>
+                            <Switch title={'Show average daily solar radiation'}
+                                    checked={radiationGraph}
+                                    onChange={(checked) => {
+                                        setRadiationGraph(checked);
+                                        requestUpdate();
+                                    }}
+                            />Radiation
+                        </Space>
+                    </Space>
+                    {daylightGraph &&
                     <LineGraph
                         type={GraphDataType.DaylightData}
                         dataSource={sensorData.map(e => ({Month: e.Month, Daylight: e.Daylight}))}
@@ -139,6 +174,8 @@ const YearlyLightSensorPanel = ({
                         referenceX={referenceX}
                         {...rest}
                     />
+                    }
+                    {clearnessGraph &&
                     <BarGraph
                         type={GraphDataType.ClearnessData}
                         dataSource={sensorData.map(e => ({Month: e.Month, Clearness: e.Clearness}))}
@@ -153,9 +190,12 @@ const YearlyLightSensorPanel = ({
                         color={'#66CDAA'}
                         {...rest}
                     />
+                    }
+                    {radiationGraph &&
                     <LineGraph
                         type={GraphDataType.YearlyRadiationSensorData}
                         dataSource={sensorData.map(({Daylight, Clearness, ...item}) => item)}
+                        labels={sensorLabels}
                         height={responsiveHeight}
                         labelX={'Month'}
                         labelY={'Radiation'}
@@ -166,6 +206,7 @@ const YearlyLightSensorPanel = ({
                         referenceX={referenceX}
                         {...rest}
                     />
+                    }
                 </ColumnWrapper>
             </Container>
         </ReactDraggable>

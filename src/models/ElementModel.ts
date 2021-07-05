@@ -23,6 +23,7 @@ export interface ElementModel {
     color?: string;
     lineColor?: string;
     lineWidth?: number;
+    label?: string;
     showLabel?: boolean;
 
     [key: string]: any;

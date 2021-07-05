@@ -6,7 +6,7 @@ import React, {useState} from 'react';
 import styled from "styled-components";
 import 'antd/dist/antd.css';
 import {useStore} from "./stores/common";
-import {Checkbox, Menu, Modal, Radio, Space} from 'antd';
+import {Checkbox, Input, Menu, Modal, Radio, Space} from 'antd';
 import {ObjectType, Theme} from "./types";
 import ReshapeElementMenu from "./components/reshapeElementMenu";
 import HumanMenu from "./components/humanMenu";
@@ -33,8 +33,6 @@ const radioStyle = {
 export interface ContextMenuProps {
 
     city: string | null;
-    collectDailyLightSensorData: () => void;
-    collectYearlyLightSensorData: () => void;
     requestUpdate: () => void;
     canvas?: HTMLCanvasElement;
 
@@ -44,8 +42,6 @@ export interface ContextMenuProps {
 
 const ContextMenu = ({
                          city,
-                         collectDailyLightSensorData,
-                         collectYearlyLightSensorData,
                          requestUpdate,
                          canvas,
                          ...rest
@@ -55,6 +51,7 @@ const ContextMenu = ({
     const world = useStore(state => state.world);
     const viewState = useStore(state => state.viewState);
     const updateElementById = useStore(state => state.updateElementById);
+    const getElementById = useStore(state => state.getElementById);
     const clickObjectType = useStore(state => state.clickObjectType);
     const cutElementById = useStore(state => state.cutElementById);
     const countElementsByType = useStore(state => state.countElementsByType);
@@ -173,30 +170,31 @@ const ContextMenu = ({
         case ObjectType.Sensor:
             return (
                 <StyledMenu>
-                    <Menu.Item key={'sensor-copy'} onClick={copyElement}>
+                    <Menu.Item key={'sensor-copy'} onClick={copyElement} style={{paddingLeft: '40px'}}>
                         Copy
                     </Menu.Item>
-                    <Menu.Item key={'sensor-cut'} onClick={cutElement}>
+                    <Menu.Item key={'sensor-cut'} onClick={cutElement} style={{paddingLeft: '40px'}}>
                         Cut
                     </Menu.Item>
-                    <Menu.Item key={'sensor-light'}>
+                    <Menu.Item key={'sensor-label-text'} style={{paddingLeft: '40px'}}>
+                        <Input addonBefore='Label:'
+                               value={selectedElement ? selectedElement.label : 'Sensor'}
+                               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                   if (selectedElement) {
+                                       updateElementById(selectedElement.id, {label: e.target.value});
+                                   }
+                               }}
+                        />
+                    </Menu.Item>
+                    <Menu.Item key={'sensor-show-label'}>
                         <Checkbox checked={!!selectedElement?.showLabel} onChange={(e) => {
                             if (selectedElement) {
                                 updateElementById(selectedElement.id, {showLabel: e.target.checked});
-                                requestUpdate();
                             }
                         }}>
-                            Show Label
+                            Keep Showing Label
                         </Checkbox>
                     </Menu.Item>
-                    <SubMenu key={'analysis'} title={'Analysis'}>
-                        <Menu.Item key={'sensor-collect-daily-data'} onClick={collectDailyLightSensorData}>
-                            Collect Daily Data
-                        </Menu.Item>
-                        <Menu.Item key={'sensor-collect-yearly-data'} onClick={collectYearlyLightSensorData}>
-                            Collect Yearly Data
-                        </Menu.Item>
-                    </SubMenu>
                 </StyledMenu>
             );
         case ObjectType.Cuboid:

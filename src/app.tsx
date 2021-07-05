@@ -280,8 +280,6 @@ const App = () => {
     const contextMenu = (
         <ContextMenu
             city={city}
-            collectDailyLightSensorData={collectDailyLightSensorData}
-            collectYearlyLightSensorData={collectYearlyLightSensorData}
             requestUpdate={requestUpdate}
             canvas={canvasRef.current}
         />

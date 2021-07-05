@@ -121,6 +121,27 @@ const Sensor = ({
         return new Euler(0, rotation[2], 0);
     }, [normal, rotation]);
 
+    const spritePosition = useMemo(() => {
+        const v = Util.arrayToVector3(normal);
+        if (Util.isSame(v, Util.UNIT_VECTOR_POS_Z)) {
+            // top face in model coordinate system
+            return new Vector3(0, lz + 0.2, 0);
+        } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_X)) {
+            // east face in model coordinate system
+            return new Vector3(0, -0.2, 0);
+        } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_X)) {
+            // west face in model coordinate system
+            return new Vector3(0, 0.2, 0);
+        } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_Y)) {
+            // south face in the model coordinate system
+            return new Vector3(0, -0.2, 0);
+        } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_Y)) {
+            // north face in the model coordinate system
+            return new Vector3(0, 0.2, 0);
+        }
+        return new Vector3(0, lz + 0.2, 0);
+    }, [normal]);
+
     return (
 
         <group name={'Sensor Group ' + id}
@@ -230,12 +251,12 @@ const Sensor = ({
             {(hovered || showLabel) && !selected &&
             <textSprite
                 name={'Label'}
-                text={'Sensor'}
+                text={element?.label ? element.label : 'Sensor'}
                 fontSize={90}
                 fontFace={'Times Roman'}
                 textHeight={1}
                 scale={[0.5, 0.2, 0.2]}
-                position={[0, lz + 0.2, 0]}
+                position={spritePosition}
             />
             }
         </group>

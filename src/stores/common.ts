@@ -77,6 +77,8 @@ export interface CommonStoreState {
     setDailyLightSensorData: (data: DatumEntry[]) => void;
     yearlyLightSensorData: DatumEntry[];
     setYearlyLightSensorData: (data: DatumEntry[]) => void;
+    sensorLabels: string[];
+    setSensorLabels: (labels: string[]) => void;
 
 }
 
@@ -127,6 +129,12 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         setDailyLightSensorData(data) {
             immerSet((state: CommonStoreState) => {
                 state.dailyLightSensorData = [...data];
+            });
+        },
+        sensorLabels: [],
+        setSensorLabels(labels) {
+            immerSet((state: CommonStoreState) => {
+                state.sensorLabels = [...labels];
             });
         },
 
@@ -427,6 +435,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         'viewState',
         'user',
         'weatherData',
+        'sensorLabels',
         'dailyLightSensorData',
         'yearlyLightSensorData'
     ]

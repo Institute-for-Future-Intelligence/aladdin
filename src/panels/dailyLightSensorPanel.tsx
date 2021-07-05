@@ -73,6 +73,7 @@ const DailyLightSensorPanel = ({
 
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
+    const sensorLabels = useStore(state => state.sensorLabels);
     const sensorData = useStore(state => state.dailyLightSensorData);
     const now = new Date(useStore(state => state.world.date));
     const [curPosition, setCurPosition] = useState({
@@ -126,6 +127,7 @@ const DailyLightSensorPanel = ({
                     <LineGraph
                         type={GraphDataType.DailyRadiationSensorData}
                         dataSource={sensorData}
+                        labels={sensorLabels}
                         height={responsiveHeight}
                         labelX={'Hour'}
                         labelY={'Radiation'}
