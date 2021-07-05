@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.7d17f7a7.chunk.css",
-    "main.js": "/aladdin/static/js/main.be8358ad.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.be8358ad.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.2e4c4ae0.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.2e4c4ae0.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.717d9f71.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.717d9f71.js.map",
     "static/css/2.c5b6f512.chunk.css": "/aladdin/static/css/2.c5b6f512.chunk.css",
-    "static/js/2.a3c65b62.chunk.js": "/aladdin/static/js/2.a3c65b62.chunk.js",
-    "static/js/2.a3c65b62.chunk.js.map": "/aladdin/static/js/2.a3c65b62.chunk.js.map",
+    "static/js/2.8bab0e4f.chunk.js": "/aladdin/static/js/2.8bab0e4f.chunk.js",
+    "static/js/2.8bab0e4f.chunk.js.map": "/aladdin/static/js/2.8bab0e4f.chunk.js.map",
     "static/js/3.311afeac.chunk.js": "/aladdin/static/js/3.311afeac.chunk.js",
     "static/js/3.311afeac.chunk.js.map": "/aladdin/static/js/3.311afeac.chunk.js.map",
     "index.html": "/aladdin/index.html",
     "static/css/2.c5b6f512.chunk.css.map": "/aladdin/static/css/2.c5b6f512.chunk.css.map",
     "static/css/main.7d17f7a7.chunk.css.map": "/aladdin/static/css/main.7d17f7a7.chunk.css.map",
-    "static/js/2.a3c65b62.chunk.js.LICENSE.txt": "/aladdin/static/js/2.a3c65b62.chunk.js.LICENSE.txt",
+    "static/js/2.8bab0e4f.chunk.js.LICENSE.txt": "/aladdin/static/js/2.8bab0e4f.chunk.js.LICENSE.txt",
     "static/media/compass.7ded737e.obj": "/aladdin/static/media/compass.7ded737e.obj",
     "static/media/cottonwood.581e0938.png": "/aladdin/static/media/cottonwood.581e0938.png",
     "static/media/cottonwood_shed.9c316396.png": "/aladdin/static/media/cottonwood_shed.9c316396.png",
@@ -48,8 +48,8 @@
   "entrypoints": [
     "static/js/runtime-main.717d9f71.js",
     "static/css/2.c5b6f512.chunk.css",
-    "static/js/2.a3c65b62.chunk.js",
+    "static/js/2.8bab0e4f.chunk.js",
     "static/css/main.7d17f7a7.chunk.css",
-    "static/js/main.be8358ad.chunk.js"
+    "static/js/main.2e4c4ae0.chunk.js"
   ]
 }
