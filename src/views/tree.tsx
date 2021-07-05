@@ -35,6 +35,7 @@ const Tree = ({
                   selected = false,
                   locked = false,
                   showModel = false,
+                  evergreen = false,
                   ...props
               }: TreeModel) => {
 
@@ -49,29 +50,29 @@ const Tree = ({
     const {gl: {domElement}} = useThree();
 
     const month = now.getMonth();
-    const shedLeaves = month < 4 || month > 10; // TODO: This needs to depend on location
+    const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
 
     const texture = useMemo(() => {
         const loader = new TextureLoader();
         let texture;
         switch (name) {
             case TreeType.Cottonwood:
-                texture = loader.load(shedLeaves ? CottonwoodShedImage : CottonwoodImage);
+                texture = loader.load(noLeaves ? CottonwoodShedImage : CottonwoodImage);
                 break;
             case TreeType.Dogwood:
-                texture = loader.load(shedLeaves ? DogwoodShedImage : DogwoodImage);
+                texture = loader.load(noLeaves ? DogwoodShedImage : DogwoodImage);
                 break;
             case TreeType.Elm:
-                texture = loader.load(shedLeaves ? ElmShedImage : ElmImage);
+                texture = loader.load(noLeaves ? ElmShedImage : ElmImage);
                 break;
             case TreeType.Linden:
-                texture = loader.load(shedLeaves ? LindenShedImage : LindenImage);
+                texture = loader.load(noLeaves ? LindenShedImage : LindenImage);
                 break;
             case TreeType.Maple:
-                texture = loader.load(shedLeaves ? MapleShedImage : MapleImage);
+                texture = loader.load(noLeaves ? MapleShedImage : MapleImage);
                 break;
             case TreeType.Oak:
-                texture = loader.load(shedLeaves ? OakShedImage : OakImage);
+                texture = loader.load(noLeaves ? OakShedImage : OakImage);
                 break;
             default:
                 texture = loader.load(PineImage);
@@ -138,7 +139,7 @@ const Tree = ({
             {/* simulation model */}
             {name !== TreeType.Pine ?
                 <Sphere visible={showModel}
-                        userData={{simulation: !shedLeaves}}
+                        userData={{simulation: !noLeaves}}
                         args={[lx / 2, 8, 8, 0, Util.TWO_PI, 0, theta]}
                         scale={[1, lz / lx, 1]}>
                     <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75}/>

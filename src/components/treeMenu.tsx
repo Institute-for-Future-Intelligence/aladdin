@@ -45,7 +45,10 @@ const TreeMenu = ({
                          style={{height: '250px'}}
                          onChange={(e) => {
                              if (tree) {
-                                 updateElementById(tree.id, {name: e.target.value});
+                                 updateElementById(tree.id, {
+                                     name: e.target.value,
+                                     evergreen: e.target.value === TreeType.Pine
+                                 });
                                  requestUpdate();
                              }
                          }}
