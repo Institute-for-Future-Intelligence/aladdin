@@ -52,7 +52,8 @@ const Heliodon = ({
 
     const nRibLines = 5;
 
-    const [basePositions, baseNormals, baseColors, tickPoints] = useMemo(() => {
+    const [baseGeometry, tickPoints] = useMemo(() => {
+        const geometry = new BufferGeometry();
         const basePoints: Vector3[] = [];
         const tickPoints: Vector3[] = [];
         const step = Math.PI * 2 / BASE_DIVISIONS;
@@ -100,7 +101,11 @@ const Heliodon = ({
             baseColors[j + 2] = c;
         }
 
-        return [basePositions, baseNormals, baseColors, tickPoints];
+        geometry.setAttribute('position', new BufferAttribute(basePositions, 3));
+        geometry.setAttribute('normal', new BufferAttribute(baseNormals, 3));
+        geometry.setAttribute('color', new BufferAttribute(baseColors, 3));
+
+        return [geometry, tickPoints];
     }, [radius]);
 
     const sunPathPoints = useMemo(() => {
@@ -181,35 +186,19 @@ const Heliodon = ({
     }, [latitude, radius]);
 
     return (
-        <mesh rotation={new Euler(-Math.PI / 2, 0, 0)} name={'Heliodon'}>
-            {/* draw base (FIXME: bufferGeometry does not get updated when position changes) */}
-            <mesh>
-                <bufferGeometry attach='geometry'>
-                    <bufferAttribute
-                        attachObject={["attributes", "position"]}
-                        count={basePositions.length / 3}
-                        array={basePositions}
-                        itemSize={3}
-                    />
-                    <bufferAttribute
-                        attachObject={["attributes", "normal"]}
-                        count={baseNormals.length / 3}
-                        array={baseNormals}
-                        itemSize={3}
-                    />
-                    <bufferAttribute
-                        attachObject={["attributes", "color"]}
-                        count={baseColors.length / 3}
-                        array={baseColors}
-                        itemSize={3}
-                    />
-                </bufferGeometry>
-                <meshBasicMaterial side={DoubleSide}
-                                   vertexColors={true}
-                                   polygonOffset={true}
-                                   polygonOffsetFactor={-0.7}
-                                   polygonOffsetUnits={-2}/>
-            </mesh>
+        <mesh rotation={new Euler(-Util.HALF_PI, 0, 0)} name={'Heliodon'}>
+            {/* draw base */}
+            <mesh
+                args={[baseGeometry,
+                    new MeshBasicMaterial({
+                        side: DoubleSide,
+                        vertexColors: true,
+                        polygonOffset: true,
+                        polygonOffsetFactor: -0.7,
+                        polygonOffsetUnits: -2
+                    })
+                ]}
+            />
             <lineSegments
                 args={[new BufferGeometry().setFromPoints(tickPoints),
                     new MeshBasicMaterial({color: 0x000000})]}/>
