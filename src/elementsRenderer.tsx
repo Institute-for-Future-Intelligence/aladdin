@@ -38,20 +38,22 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
     return (
         <group name={'Content'} ref={groupRef}>
             {elements
-                .filter(e => e.type === ObjectType.Foundation)
-                .map(e => <Foundation key={e.id} {...e as FoundationModel}/>)}
-            {elements
-                .filter(e => e.type === ObjectType.Sensor)
-                .map(e => <Sensor key={e.id} {...e as SensorModel}/>)}
-            {elements
-                .filter(e => e.type === ObjectType.Cuboid)
-                .map(e => <Cuboid key={e.id} {...e as CuboidModel}/>)}
-            {elements
-                .filter(e => e.type === ObjectType.Human)
-                .map(e => <Human key={e.id} {...e as HumanModel}/>)}
-            {elements
-                .filter(e => e.type === ObjectType.Tree)
-                .map(e => <Tree key={e.id} {...e as TreeModel}/>)}
+                .map(e => {
+                        switch (e.type) {
+                            case ObjectType.Foundation:
+                                return <Foundation key={e.id} {...e as FoundationModel}/>
+                            case ObjectType.Sensor:
+                                return <Sensor key={e.id} {...e as SensorModel}/>
+                            case ObjectType.Cuboid:
+                                return <Cuboid key={e.id} {...e as CuboidModel}/>
+                            case ObjectType.Human:
+                                return <Human key={e.id} {...e as HumanModel}/>
+                            case ObjectType.Tree:
+                                return <Tree key={e.id} {...e as TreeModel}/>
+                        }
+                    }
+                )
+            }
         </group>
     );
 };
