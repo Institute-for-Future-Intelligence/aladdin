@@ -234,4 +234,4 @@ const YearlyLightSensorPanel = ({
 
 };
 
-export default YearlyLightSensorPanel;
+export default React.memo(YearlyLightSensorPanel);

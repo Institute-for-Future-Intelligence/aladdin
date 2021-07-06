@@ -24,4 +24,4 @@ const GroundImage = () => {
     )
 };
 
-export default GroundImage;
+export default React.memo(GroundImage);

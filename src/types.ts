@@ -98,6 +98,14 @@ export enum IntersectionPlaneType {
     Ground = 'Ground',
 }
 
+export enum TrackerType {
+    NO_TRACKER = 0,
+    HORIZONTAL_SINGLE_AXIS_TRACKER = 1,
+    ALTAZIMUTH_DUAL_AXIS_TRACKER = 2,
+    VERTICAL_SINGLE_AXIS_TRACKER = 3,
+    TILTED_SINGLE_AXIS_TRACKER = 4
+}
+
 export enum TreeType {
     Cottonwood = 'Cottonwood',
     Dogwood = 'Dogwood',

@@ -249,4 +249,4 @@ const Heliodon = ({
 
 };
 
-export default Heliodon;
+export default React.memo(Heliodon);

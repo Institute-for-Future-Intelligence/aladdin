@@ -47,11 +47,13 @@ const ButtonsContainer = styled.div`
 
 export interface MainToolBarProps {
     orbitControls?: OrbitControls;
+    setFrameLoop: (frameLoop: 'always' | 'demand' | 'never') => void;
     requestUpdate: () => void;
 }
 
 const MainToolBar = ({
                          orbitControls,
+                         setFrameLoop,
                          requestUpdate
                      }: MainToolBarProps) => {
 
@@ -158,6 +160,7 @@ const MainToolBar = ({
     const toggleAutoRotate = () => {
         setCommonStore((state) => {
             state.viewState.autoRotate = !state.viewState.autoRotate;
+            setFrameLoop(state.viewState.autoRotate ? 'always' : 'demand');
         });
         requestUpdate();
         resetToSelectMode();
@@ -576,4 +579,4 @@ const MainToolBar = ({
     );
 };
 
-export default MainToolBar;
+export default React.memo(MainToolBar);

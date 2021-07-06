@@ -234,4 +234,4 @@ const WeatherPanel = ({
 
 };
 
-export default WeatherPanel;
+export default React.memo(WeatherPanel);

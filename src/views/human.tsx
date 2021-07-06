@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useMemo, useRef, useState} from "react";
+import React, {memo, useMemo, useRef, useState} from "react";
 import JackImage from "../resources/jack.png";
 import JadeImage from "../resources/jade.png";
 import JaneImage from "../resources/jane.png";
@@ -262,4 +262,4 @@ const Human = ({
     )
 };
 
-export default Human;
+export default memo(Human);

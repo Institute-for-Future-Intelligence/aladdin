@@ -375,4 +375,4 @@ const ContextMenu = ({
 
 };
 
-export default ContextMenu;
+export default React.memo(ContextMenu);

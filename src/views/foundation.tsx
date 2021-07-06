@@ -566,4 +566,4 @@ const Foundation = ({
     )
 };
 
-export default Foundation;
+export default React.memo(Foundation);

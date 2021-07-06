@@ -198,4 +198,4 @@ const MainMenu = ({
     );
 };
 
-export default MainMenu;
+export default React.memo(MainMenu);

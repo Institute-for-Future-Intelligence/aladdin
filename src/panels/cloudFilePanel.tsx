@@ -246,4 +246,4 @@ const CloudFilePanel = ({
     )
 };
 
-export default CloudFilePanel;
+export default React.memo(CloudFilePanel);

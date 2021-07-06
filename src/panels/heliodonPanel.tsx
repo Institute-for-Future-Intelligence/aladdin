@@ -222,4 +222,4 @@ const HeliodonPanel = ({
     );
 };
 
-export default HeliodonPanel;
+export default React.memo(HeliodonPanel);

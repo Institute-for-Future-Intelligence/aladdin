@@ -103,4 +103,4 @@ const Sky = ({
     )
 };
 
-export default Sky;
+export default React.memo(Sky);

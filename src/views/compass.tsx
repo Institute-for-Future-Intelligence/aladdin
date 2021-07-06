@@ -60,4 +60,4 @@ const Compass = ({
     );
 };
 
-export default Compass;
+export default React.memo(Compass);

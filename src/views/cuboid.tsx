@@ -701,4 +701,4 @@ const Cuboid = ({
     )
 };
 
-export default Cuboid;
+export default React.memo(Cuboid);

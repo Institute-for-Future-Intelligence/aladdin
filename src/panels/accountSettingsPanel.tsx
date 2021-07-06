@@ -130,4 +130,4 @@ const AccountSettingsPanel = ({
     )
 };
 
-export default AccountSettingsPanel;
+export default React.memo(AccountSettingsPanel);

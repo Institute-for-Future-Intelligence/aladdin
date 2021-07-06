@@ -114,4 +114,4 @@ const InfoPanel = ({city, daytime}: InfoPanelProps) => {
     )
 };
 
-export default InfoPanel;
+export default React.memo(InfoPanel);

@@ -32,13 +32,17 @@ const OrbitController = ({
                          }: OrbitControllerProps) => {
 
     const setCommonStore = useStore(state => state.set);
-    const {camera, gl: {domElement}} = useThree();
+    const {camera, gl: {domElement}, gl, scene} = useThree();
     // Ref to the controls, so that we can update them on every frame using useFrame
     const controls = useRef<OrbitControls>(null);
 
     useEffect(() => {
         const c = controls.current;
+        const render = ()=>{
+            gl.render(scene, camera);
+        }
         if (c) {
+            c.addEventListener('change', render);
             if (panCenter) {
                 c.target.set(panCenter.x, panCenter.y, panCenter.z);
             }
@@ -54,6 +58,7 @@ const OrbitController = ({
         return () => {
             if (c) {
                 c.removeEventListener('end', onInteractionEnd);
+                c.removeEventListener('change', render);
             }
         }
     }, []);

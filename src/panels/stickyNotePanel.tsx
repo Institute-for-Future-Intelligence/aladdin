@@ -39,7 +39,7 @@ const Header = styled.div`
   width: 100%;
   height: 24px;
   padding: 10px;
-  background-color: #fff740;
+  background-color: #e8e8e8;
   color: #888;
   display: flex;
   justify-content: space-between;
@@ -164,4 +164,4 @@ const StickyNotePanel = ({
     )
 };
 
-export default StickyNotePanel;
+export default React.memo(StickyNotePanel);

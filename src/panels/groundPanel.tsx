@@ -284,4 +284,4 @@ const GroundPanel = ({
     );
 };
 
-export default GroundPanel;
+export default React.memo(GroundPanel);

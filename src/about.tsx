@@ -46,4 +46,4 @@ const About = ({openAboutUs}: AboutProps) => {
 
 };
 
-export default About;
+export default React.memo(About);

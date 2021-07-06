@@ -95,4 +95,4 @@ const Team = ({top, height, color}: TeamProps) => {
     </div>
 };
 
-export default Team;
+export default React.memo(Team);

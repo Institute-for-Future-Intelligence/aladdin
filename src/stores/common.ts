@@ -9,6 +9,7 @@ import {WorldModel} from "../models/WorldModel";
 import {ElementModel} from "../models/ElementModel";
 import {WeatherModel} from "../models/WeatherModel";
 import weather from '../resources/weather.csv';
+import pvmodules from '../resources/pvmodules.csv';
 import Papa from "papaparse";
 import {Util} from "../Util";
 import {DatumEntry, MoveHandleType, ObjectType, ResizeHandleType, User} from "../types";
@@ -20,6 +21,7 @@ import {ViewState} from "../views/ViewState";
 import short from "short-uuid";
 import {ElementModelFactory} from "../models/ElementModelFactory";
 import {GroundModel} from "../models/GroundModel";
+import {PvModel} from "../models/PvModel";
 
 enableMapSet();
 
@@ -40,6 +42,10 @@ export interface CommonStoreState {
     getWeather: (location: string) => WeatherModel;
     loadWeatherData: () => void;
     getClosestCity: (lat: number, lng: number) => string | null;
+
+    pvModules: { [key: string]: PvModel };
+    getPvModule: (name: string) => PvModel;
+    loadPvModules: () => void;
 
     grid: boolean; // this should only show up when editing
     aabb: Box3; // axis-aligned bounding box of elements
@@ -119,8 +125,6 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 state.elements = [];
             });
         },
-
-        weatherData: {},
 
         yearlyLightSensorData: [],
         setYearlyLightSensorData(data) {
@@ -368,6 +372,37 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 }
             });
         },
+
+        pvModules: {},
+
+        loadPvModules() {
+            const data: PvModel[] = [];
+            Papa.parse(pvmodules, {
+                download: true,
+                complete: function (results) {
+                    for (const row of results.data) {
+                        if (Array.isArray(row) && row.length > 1) {
+                            console.log(row)
+                            const lows: number[] = [];
+                            // const pv = {
+                            //     city: row[0].trim(),
+                            // } as PvModel;
+                            // data.push(wm);
+                        }
+                    }
+                    immerSet((state: CommonStoreState) => {
+                        for (const row of data) {
+                            state.pvModules[row.name] = row;
+                        }
+                    });
+                }
+            });
+        },
+        getPvModule(name: string) {
+            return get().pvModules[name];
+        },
+
+        weatherData: {},
 
         loadWeatherData() {
             const data: WeatherModel[] = [];

@@ -27,4 +27,4 @@ const Axes = ({lineWidth = 1, endPoint = 1000}: AxesProps) => {
     )
 };
 
-export default Axes;
+export default React.memo(Axes);

@@ -263,4 +263,4 @@ const Sensor = ({
     )
 };
 
-export default Sensor;
+export default React.memo(Sensor);

@@ -166,4 +166,4 @@ const DailyLightSensorPanel = ({
 
 };
 
-export default DailyLightSensorPanel;
+export default React.memo(DailyLightSensorPanel);

@@ -314,4 +314,4 @@ const Ground = () => {
     )
 };
 
-export default Ground;
+export default React.memo(Ground);

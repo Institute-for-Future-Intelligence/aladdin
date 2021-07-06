@@ -219,4 +219,4 @@ const Tree = ({
     )
 };
 
-export default Tree;
+export default React.memo(Tree);
