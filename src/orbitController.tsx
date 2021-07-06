@@ -33,12 +33,17 @@ const OrbitController = ({
 
     const setCommonStore = useStore(state => state.set);
     const {camera, gl: {domElement}, gl, scene} = useThree();
+    const setThree = useThree(state => state.set);
     // Ref to the controls, so that we can update them on every frame using useFrame
     const controls = useRef<OrbitControls>(null);
 
     useEffect(() => {
+        setThree({frameloop: autoRotate ? 'always' : 'demand'});
+    }, [autoRotate]);
+
+    useEffect(() => {
         const c = controls.current;
-        const render = ()=>{
+        const render = () => {
             gl.render(scene, camera);
         }
         if (c) {

@@ -58,7 +58,6 @@ const App = () => {
     const weatherData = useStore(state => state.weatherData);
 
     const [loading, setLoading] = useState(true);
-    const [frameLoop, setFrameLoop] = useState<'always' | 'demand' | 'never'>('always');
     const [updateFlag, setUpdateFlag] = useState<boolean>(false);
     const [hourAngle, setHourAngle] = useState<number>(0);
     const [declinationAngle, setDeclinationAngle] = useState<number>(0);
@@ -342,7 +341,6 @@ const App = () => {
                 requestUpdate={requestUpdate}
             />
             <MainToolBar orbitControls={orbitControlsRef.current}
-                         setFrameLoop={setFrameLoop}
                          requestUpdate={requestUpdate}/>
             {viewState.showGroundPanel &&
             <GroundPanel grid={grid}
@@ -390,7 +388,7 @@ const App = () => {
                 <div>
                     <Canvas shadows={true}
                             gl={{preserveDrawingBuffer: true}}
-                            frameloop={frameLoop}
+                            frameloop={'demand'}
                             camera={{
                                 position: cameraPosition,
                                 fov: 45,
