@@ -256,13 +256,26 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                         state.elements.push(ElementModelFactory.makeTree(state.world.ground, m.x, m.y, m.z));
                         break;
                     case ObjectType.Sensor:
-                        const parentModel = parent as ElementModel;
-                        const relativeCoordinates = Util.relativeCoordinates(m.x, m.y, m.z, parentModel);
+                        const sensorParentModel = parent as ElementModel;
+                        const sensorRelativeCoordinates = Util.relativeCoordinates(m.x, m.y, m.z, sensorParentModel);
                         state.elements.push(ElementModelFactory.makeSensor(
-                            parentModel,
-                            relativeCoordinates.x,
-                            relativeCoordinates.y,
-                            relativeCoordinates.z,
+                            sensorParentModel,
+                            sensorRelativeCoordinates.x,
+                            sensorRelativeCoordinates.y,
+                            sensorRelativeCoordinates.z,
+                            normal ? Util.viewToModel(normal) : undefined,
+                            parent.rotation
+                        ));
+                        break;
+                    case ObjectType.SolarPanel:
+                        const solarPanelParentModel = parent as ElementModel;
+                        const solarPanelRelativeCoordinates = Util.relativeCoordinates(m.x, m.y, m.z, solarPanelParentModel);
+                        state.elements.push(ElementModelFactory.makeSolarPanel(
+                            solarPanelParentModel,
+                            state.getPvModule('SPR-X21-335-BLK'),
+                            solarPanelRelativeCoordinates.x,
+                            solarPanelRelativeCoordinates.y,
+                            solarPanelRelativeCoordinates.z,
                             normal ? Util.viewToModel(normal) : undefined,
                             parent.rotation
                         ));
@@ -374,25 +387,43 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         },
 
         pvModules: {},
-
         loadPvModules() {
-            const data: PvModel[] = [];
+            const pvModels: PvModel[] = [];
             Papa.parse(pvmodules, {
                 download: true,
                 complete: function (results) {
                     for (const row of results.data) {
                         if (Array.isArray(row) && row.length > 1) {
-                            console.log(row)
-                            const lows: number[] = [];
-                            // const pv = {
-                            //     city: row[0].trim(),
-                            // } as PvModel;
-                            // data.push(wm);
+                            const pv = {
+                                name: row[0].trim(),
+                                brand: row[1].trim(),
+                                cellType: row[2].trim(),
+                                efficiency: parseFloat(row[3].trim()),
+                                length: parseFloat(row[4].trim()),
+                                nominalLength: parseFloat(row[5].trim()),
+                                width: parseFloat(row[6].trim()),
+                                nominalWidth: parseFloat(row[7].trim()),
+                                thickness: parseFloat(row[8].trim()),
+                                m: parseFloat(row[9].trim()),
+                                n: parseFloat(row[10].trim()),
+                                pmax: parseFloat(row[11].trim()),
+                                vmpp: parseFloat(row[12].trim()),
+                                impp: parseFloat(row[13].trim()),
+                                voc: parseFloat(row[14].trim()),
+                                isc: parseFloat(row[15].trim()),
+                                pmaxTC: parseFloat(row[16].trim()),
+                                noct: parseFloat(row[17].trim()),
+                                weight: parseFloat(row[18].trim()),
+                                color: row[19].trim(),
+                                shadeTolerance: row[20].trim(),
+                                price: parseFloat(row[21].trim())
+                            } as PvModel;
+                            pvModels.push(pv);
                         }
                     }
                     immerSet((state: CommonStoreState) => {
-                        for (const row of data) {
-                            state.pvModules[row.name] = row;
+                        for (const model of pvModels) {
+                            state.pvModules[model.name] = model;
                         }
                     });
                 }
@@ -403,7 +434,6 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         },
 
         weatherData: {},
-
         loadWeatherData() {
             const data: WeatherModel[] = [];
             Papa.parse(weather, {

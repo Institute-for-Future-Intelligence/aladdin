@@ -2,17 +2,19 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import {HumanName, ObjectType, Orientation, TrackerType, TreeType} from "../types";
 import short from "short-uuid";
+import {Vector3} from "three";
+import {Util} from "../Util";
+import {GroundModel} from "./GroundModel";
+import {ElementModel} from "./ElementModel";
 import {HumanModel} from "./HumanModel";
-import {HumanName, ObjectType, TreeType} from "../types";
 import {TreeModel} from "./TreeModel";
 import {SensorModel} from "./SensorModel";
 import {CuboidModel} from "./CuboidModel";
 import {FoundationModel} from "./FoundationModel";
-import {ElementModel} from "./ElementModel";
-import {GroundModel} from "./GroundModel";
-import {Vector3} from "three";
-import {Util} from "../Util";
+import {SolarPanelModel} from "./SolarPanelModel";
+import {PvModel} from "./PvModel";
 
 export class ElementModelFactory {
 
@@ -61,6 +63,38 @@ export class ElementModelFactory {
             parent: parent,
             id: short.generate() as string
         } as SensorModel;
+    }
+
+    static makeSolarPanel(parent: ElementModel,
+                          pvModel: PvModel,
+                          x: number,
+                          y: number,
+                          z?: number,
+                          normal?: Vector3,
+                          rotation?: []) {
+        return {
+            type: ObjectType.SolarPanel,
+            pvModel: pvModel,
+            trackerType: TrackerType.NO_TRACKER,
+            baseHeight: 1,
+            relativeAzimuth: 0,
+            titleAngle: 0,
+            orientation: Orientation.portrait,
+            drawSunBeam: false,
+            poleSpacingX: 4,
+            poleSpacingY: 2,
+            cx: x,
+            cy: y,
+            cz: z,
+            lx: 0.99,
+            ly: 1.65,
+            lz: 0.05,
+            showLabel: false,
+            normal: normal ? Util.vector3ToArray(normal) : [0, 0, 1],
+            rotation: rotation ? rotation : [0, 0, 0],
+            parent: parent,
+            id: short.generate() as string
+        } as SolarPanelModel;
     }
 
     static makeCuboid(parent: GroundModel, x: number, y: number) {

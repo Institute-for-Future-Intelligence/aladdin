@@ -3,19 +3,21 @@
  */
 
 import React, {useEffect, useRef} from 'react';
-import Foundation from "./views/foundation";
-import Sensor from "./views/sensor";
-import Cuboid from "./views/cuboid";
+import {useStore} from "./stores/common";
+import {Box3, Group} from "three";
 import {ObjectType} from "./types";
 import {FoundationModel} from "./models/FoundationModel";
+import Foundation from "./views/foundation";
 import {SensorModel} from "./models/SensorModel";
+import Sensor from "./views/sensor";
 import {CuboidModel} from "./models/CuboidModel";
-import {useStore} from "./stores/common";
+import Cuboid from "./views/cuboid";
 import {HumanModel} from "./models/HumanModel";
 import Human from "./views/human";
 import {TreeModel} from "./models/TreeModel";
 import Tree from "./views/tree";
-import {Box3, Group} from "three";
+import {SolarPanelModel} from "./models/SolarPanelModel";
+import SolarPanel from "./views/solarPanel";
 
 export interface ElementsRendererProps {
 }
@@ -50,6 +52,8 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
                                 return <Human key={e.id} {...e as HumanModel}/>
                             case ObjectType.Tree:
                                 return <Tree key={e.id} {...e as TreeModel}/>
+                            case ObjectType.SolarPanel:
+                                return <SolarPanel key={e.id} {...e as SolarPanelModel}/>
                         }
                     }
                 )

@@ -47,6 +47,7 @@ const App = () => {
     const viewState = useStore(state => state.viewState);
     const loadWeatherData = useStore(state => state.loadWeatherData);
     const getClosestCity = useStore(state => state.getClosestCity);
+    const loadPvModules = useStore(state => state.loadPvModules);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const deleteElementById = useStore(state => state.deleteElementById);
     const aabb = useStore(state => state.aabb);
@@ -76,6 +77,7 @@ const App = () => {
 
     useEffect(() => {
         loadWeatherData();
+        loadPvModules();
         setLoading(false);
     }, []);
 

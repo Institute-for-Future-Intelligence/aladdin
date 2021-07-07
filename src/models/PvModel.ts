@@ -17,6 +17,7 @@ export interface PvModel {
     n: number;
     pmax: number;
     vmpp: number;
+    impp: number;
     voc: number;
     isc: number;
     pmaxTC: number;

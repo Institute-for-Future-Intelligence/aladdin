@@ -98,6 +98,11 @@ export enum IntersectionPlaneType {
     Ground = 'Ground',
 }
 
+export enum Orientation {
+    portrait = 0,
+    landscape = 1
+}
+
 export enum TrackerType {
     NO_TRACKER = 0,
     HORIZONTAL_SINGLE_AXIS_TRACKER = 1,

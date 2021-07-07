@@ -3,20 +3,20 @@
  */
 
 import {ElementModel} from "./ElementModel";
-import {TrackerType} from "../types";
+import {Orientation, TrackerType} from "../types";
+import {PvModel} from "./PvModel";
 
 export interface SolarPanelModel extends ElementModel {
 
-    // a number in (0, 1) (backward compatibility, should use pvModuleSpecs.getCellEfficiency)
-    efficiency: number;
-
-    temperatureCoefficientPmax: number; // backward compatibility, should use pvModuleSpecs.getPmaxTc
-    nominalOperatingCellTemperature :number; // backward compatibility, should use pvModuleSpecs.getNoct
-
+    pvModel: PvModel;
     baseHeight: number;
     relativeAzimuth: number;
     titleAngle: number;
     monthlyTiltAngles: number[]; // seasonally adjusted tilt angles
     trackerType: TrackerType;
+    orientation: Orientation;
+    drawSunBeam: boolean;
+    poleSpacingX: number;
+    poleSpacingY: number;
 
 }

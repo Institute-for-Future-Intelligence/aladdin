@@ -160,7 +160,8 @@ const Foundation = ({
     // only these elements are allowed to be on the foundation
     const legalOnFoundation = (type: ObjectType) => {
         return (
-            type === ObjectType.Sensor
+            type === ObjectType.Sensor ||
+            type === ObjectType.SolarPanel
         );
     };
 
