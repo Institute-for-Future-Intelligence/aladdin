@@ -14,6 +14,8 @@ import TreeMenu from "./components/treeMenu";
 import NumericInput from "react-numeric-input";
 import {ExclamationCircleOutlined} from "@ant-design/icons";
 import {PhotoshopPicker} from 'react-color';
+import {CheckboxChangeEvent} from "antd/es/checkbox";
+import PvModelMenu from "./components/pvModelMenu";
 
 // TODO: Reduce the space between menu items
 const StyledMenu = styled(Menu)`
@@ -79,6 +81,18 @@ const ContextMenu = ({
     const lockElement = (on: boolean) => {
         if (selectedElement) {
             updateElementById(selectedElement.id, {locked: on});
+        }
+    };
+
+    const changeElementLabelText = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (selectedElement) {
+            updateElementById(selectedElement.id, {label: e.target.value});
+        }
+    };
+
+    const showElementLabel = (e: CheckboxChangeEvent) => {
+        if (selectedElement) {
+            updateElementById(selectedElement.id, {showLabel: e.target.checked});
         }
     };
 
@@ -179,19 +193,37 @@ const ContextMenu = ({
                     <Menu.Item key={'sensor-label-text'} style={{paddingLeft: '40px'}}>
                         <Input addonBefore='Label:'
                                value={selectedElement ? selectedElement.label : 'Sensor'}
-                               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                   if (selectedElement) {
-                                       updateElementById(selectedElement.id, {label: e.target.value});
-                                   }
-                               }}
+                               onChange={changeElementLabelText}
                         />
                     </Menu.Item>
                     <Menu.Item key={'sensor-show-label'}>
-                        <Checkbox checked={!!selectedElement?.showLabel} onChange={(e) => {
-                            if (selectedElement) {
-                                updateElementById(selectedElement.id, {showLabel: e.target.checked});
-                            }
-                        }}>
+                        <Checkbox checked={!!selectedElement?.showLabel} onChange={showElementLabel}>
+                            Keep Showing Label
+                        </Checkbox>
+                    </Menu.Item>
+                </StyledMenu>
+            );
+        case ObjectType.SolarPanel:
+            return (
+                <StyledMenu>
+                    <Menu.Item key={'solar-panel-copy'} onClick={copyElement} style={{paddingLeft: '40px'}}>
+                        Copy
+                    </Menu.Item>
+                    <Menu.Item key={'solar-panel-cut'} onClick={cutElement} style={{paddingLeft: '40px'}}>
+                        Cut
+                    </Menu.Item>
+                    {selectedElement &&
+                    <PvModelMenu key={'solar-panel-modules'}
+                                 requestUpdate={requestUpdate}
+                                 style={{paddingLeft: '24px'}}/>}
+                    <Menu.Item key={'solar-panel-label-text'} style={{paddingLeft: '40px'}}>
+                        <Input addonBefore='Label:'
+                               value={selectedElement ? selectedElement.label : 'Solar Panel'}
+                               onChange={changeElementLabelText}
+                        />
+                    </Menu.Item>
+                    <Menu.Item key={'solar-panel-show-label'}>
+                        <Checkbox checked={!!selectedElement?.showLabel} onChange={showElementLabel}>
                             Keep Showing Label
                         </Checkbox>
                     </Menu.Item>

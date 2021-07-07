@@ -89,6 +89,7 @@ export class ElementModelFactory {
             lx: 0.99,
             ly: 1.65,
             lz: 0.05,
+            label: 'Solar Panel',
             showLabel: false,
             normal: normal ? Util.vector3ToArray(normal) : [0, 0, 1],
             rotation: rotation ? rotation : [0, 0, 0],

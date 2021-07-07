@@ -4,24 +4,27 @@
 
 import React, {useMemo, useRef, useState} from "react";
 import {Box, Line, Sphere} from "@react-three/drei";
-import {DoubleSide, Euler, Mesh, MeshBasicMaterial, MeshStandardMaterial, TextureLoader, Vector3} from "three";
+import {Euler, Mesh, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS} from "../constants";
+import {MOVE_HANDLE_RADIUS} from "../constants";
 import {ObjectType, Orientation} from "../types";
 import {Util} from "../Util";
 import {SolarPanelModel} from "../models/SolarPanelModel";
 import SolarPanelBlueLandscapeImage from "../resources/solar-panel-blue-landscape.png";
 import SolarPanelBluePortraitImage from "../resources/solar-panel-blue-portrait.png";
+import SolarPanelBlackLandscapeImage from "../resources/solar-panel-black-landscape.png";
+import SolarPanelBlackPortraitImage from "../resources/solar-panel-black-portrait.png";
 
 const SolarPanel = ({
                         id,
+                        pvModel,
                         cx,
                         cy,
                         cz,
-                        lx = 0.99,
-                        ly = 1.65,
-                        lz = 0.1,
+                        lx,
+                        ly,
+                        lz,
                         rotation = [0, 0, 0],
                         normal = [0, 0, 1],
                         color = 'white',
@@ -76,6 +79,9 @@ const SolarPanel = ({
         }
     }
     cy = -cy; // we want positive y to point north
+    lx = pvModel.nominalWidth;
+    ly = pvModel.nominalLength;
+    lz = pvModel.thickness;
 
     const hx = lx / 2;
     const hy = ly / 2;
@@ -91,13 +97,15 @@ const SolarPanel = ({
         let texture;
         switch (orientation) {
             case Orientation.portrait:
-                texture = loader.load(SolarPanelBluePortraitImage);
+                texture = loader.load(pvModel.color === 'Blue' ?
+                    SolarPanelBluePortraitImage : SolarPanelBlackPortraitImage);
                 break;
             default:
-                texture = loader.load(SolarPanelBlueLandscapeImage);
+                texture = loader.load(pvModel.color === 'Blue' ?
+                    SolarPanelBlueLandscapeImage : SolarPanelBlackLandscapeImage);
         }
         return texture;
-    }, [orientation]);
+    }, [orientation, pvModel.color]);
 
     const selectMe = (e: ThreeEvent<MouseEvent>) => {
         // We must check if there is really a first intersection, onPointerDown does not guarantee it
@@ -156,28 +164,20 @@ const SolarPanel = ({
         return new Vector3(0, lz + 0.2, 0);
     }, [normal]);
 
-    const materials = [
-        new MeshStandardMaterial({color: color}),
-        new MeshStandardMaterial({color: color}),
-        new MeshStandardMaterial({map: texture}),
-        new MeshStandardMaterial({color: color}),
-        new MeshStandardMaterial({color: color}),
-        new MeshStandardMaterial({color: color})
-    ];
-
     return (
 
-        <group name={'Sensor Group ' + id}
+        <group name={'Solar Panel Group ' + id}
                rotation={euler}
                position={[cx, cz + hz, cy]}>
 
-            {/* draw rectangle (too small to cast shadow) */}
+            {/* draw panel */}
             <Box receiveShadow={shadowEnabled}
-                 material={materials}
+                 castShadow={shadowEnabled}
+                 userData={{simulation: true}}
                  uuid={id}
                  ref={baseRef}
                  args={[lx, lz, ly]}
-                 name={'Sensor'}
+                 name={'Solar Panel'}
                  onPointerDown={(e) => {
                      selectMe(e);
                  }}
@@ -197,7 +197,14 @@ const SolarPanel = ({
                      setHovered(false);
                      domElement.style.cursor = 'default';
                  }}
-            />
+            >
+                <meshStandardMaterial attachArray="material" color={color}/>
+                <meshStandardMaterial attachArray="material" color={color}/>
+                <meshStandardMaterial attachArray="material" map={texture}/>
+                <meshStandardMaterial attachArray="material" color={color}/>
+                <meshStandardMaterial attachArray="material" color={color}/>
+                <meshStandardMaterial attachArray="material" color={color}/>
+            </Box>
 
             {!selected &&
             <>
