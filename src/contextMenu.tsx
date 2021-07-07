@@ -15,7 +15,6 @@ import NumericInput from "react-numeric-input";
 import {ExclamationCircleOutlined} from "@ant-design/icons";
 import {PhotoshopPicker} from 'react-color';
 import {CheckboxChangeEvent} from "antd/es/checkbox";
-import PvModelMenu from "./components/pvModelMenu";
 
 // TODO: Reduce the space between menu items
 const StyledMenu = styled(Menu)`
@@ -35,8 +34,9 @@ const radioStyle = {
 export interface ContextMenuProps {
 
     city: string | null;
-    requestUpdate: () => void;
     canvas?: HTMLCanvasElement;
+    setPvDialogVisible: (visible: boolean) => void;
+    requestUpdate: () => void;
 
     [key: string]: any;
 
@@ -44,8 +44,9 @@ export interface ContextMenuProps {
 
 const ContextMenu = ({
                          city,
-                         requestUpdate,
                          canvas,
+                         setPvDialogVisible,
+                         requestUpdate,
                          ...rest
                      }: ContextMenuProps) => {
 
@@ -53,7 +54,6 @@ const ContextMenu = ({
     const world = useStore(state => state.world);
     const viewState = useStore(state => state.viewState);
     const updateElementById = useStore(state => state.updateElementById);
-    const getElementById = useStore(state => state.getElementById);
     const clickObjectType = useStore(state => state.clickObjectType);
     const cutElementById = useStore(state => state.cutElementById);
     const countElementsByType = useStore(state => state.countElementsByType);
@@ -213,9 +213,15 @@ const ContextMenu = ({
                         Cut
                     </Menu.Item>
                     {selectedElement &&
-                    <PvModelMenu key={'solar-panel-modules'}
-                                 requestUpdate={requestUpdate}
-                                 style={{paddingLeft: '24px'}}/>}
+                    <Menu.Item key={'solar-panel-change'}
+                               onClick={() => {
+                                   setPvDialogVisible(true);
+                                   requestUpdate();
+                               }}
+                               style={{paddingLeft: '40px'}}>
+                        Select a PV Model...
+                    </Menu.Item>
+                    }
                     <Menu.Item key={'solar-panel-label-text'} style={{paddingLeft: '40px'}}>
                         <Input addonBefore='Label:'
                                value={selectedElement ? selectedElement.label : 'Solar Panel'}

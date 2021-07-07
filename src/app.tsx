@@ -26,7 +26,7 @@ import {VERSION} from "./constants";
 import {showInfo, visitHomepage, visitIFI} from "./helpers";
 import AcceptCookie from "./acceptCookie";
 import GroundImage from "./views/groundImage";
-import {Dropdown} from "antd";
+import {Dropdown, Input, Modal} from "antd";
 import ContextMenu from "./contextMenu";
 import WeatherPanel from "./panels/weatherPanel";
 import {GraphDataType, ObjectType} from "./types";
@@ -39,6 +39,7 @@ import Spinner from './components/spinner';
 import useKey from "./useKey";
 import StickyNotePanel from "./panels/stickyNotePanel";
 import InfoPanel from "./panels/infoPanel";
+import PvModelPanel from "./panels/PvModelPanel";
 
 const App = () => {
 
@@ -70,6 +71,7 @@ const App = () => {
     const [cameraPosition, setCameraPosition] = useState<Vector3>(new Vector3(0, 0, 5));
     const [panCenter, setPanCenter] = useState<Vector3>(new Vector3());
     const [heliodonRadius, setHeliodonRadius] = useState<number>(10);
+    const [pvModelDialogVisible, setPvModelDialogVisible] = useState<boolean>(false);
 
     const orbitControlsRef = useRef<OrbitControls>();
     const canvasRef = useRef<HTMLCanvasElement>();
@@ -284,8 +286,9 @@ const App = () => {
     const contextMenu = (
         <ContextMenu
             city={city}
-            requestUpdate={requestUpdate}
             canvas={canvasRef.current}
+            setPvDialogVisible={setPvModelDialogVisible}
+            requestUpdate={requestUpdate}
         />
     );
 
@@ -344,6 +347,19 @@ const App = () => {
             />
             <MainToolBar orbitControls={orbitControlsRef.current}
                          requestUpdate={requestUpdate}/>
+            <Modal
+                width={600}
+                visible={pvModelDialogVisible}
+                title="Solar Panel Specs"
+                onOk={() => {
+                    setPvModelDialogVisible(false);
+                }}
+                onCancel={() => {
+                    setPvModelDialogVisible(false);
+                }}
+            >
+                <PvModelPanel requestUpdate={requestUpdate}/>
+            </Modal>
             {viewState.showGroundPanel &&
             <GroundPanel grid={grid}
                          groundImage={viewState.groundImage}

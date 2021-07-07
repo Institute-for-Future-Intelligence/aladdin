@@ -3,7 +3,7 @@
  */
 
 import React, {useMemo, useRef, useState} from "react";
-import {Box, Line, Sphere} from "@react-three/drei";
+import {Box, Cylinder, Line, Sphere} from "@react-three/drei";
 import {Euler, Mesh, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
@@ -25,6 +25,12 @@ const SolarPanel = ({
                         lx,
                         ly,
                         lz,
+                        titleAngle,
+                        relativeAzimuth,
+                        poleHeight,
+                        poleRadius,
+                        poleSpacingX,
+                        poleSpacingY,
                         rotation = [0, 0, 0],
                         normal = [0, 0, 1],
                         color = 'white',
@@ -79,6 +85,7 @@ const SolarPanel = ({
         }
     }
     cy = -cy; // we want positive y to point north
+    cz = poleHeight + lz / 2;
     lx = pvModel.nominalWidth;
     ly = pvModel.nominalLength;
     lz = pvModel.thickness;
@@ -177,6 +184,7 @@ const SolarPanel = ({
                  uuid={id}
                  ref={baseRef}
                  args={[lx, lz, ly]}
+                 rotation={[titleAngle, relativeAzimuth, 0]}
                  name={'Solar Panel'}
                  onPointerDown={(e) => {
                      selectMe(e);
@@ -206,8 +214,16 @@ const SolarPanel = ({
                 <meshStandardMaterial attachArray="material" color={color}/>
             </Box>
 
+            {/* draw pole */}
+            {poleHeight > 0 &&
+            <Cylinder args={[poleRadius, poleRadius, poleHeight, 6, 2]}
+                      position={[0, -poleHeight / 2, 0]}>
+                <meshStandardMaterial attach="material" color={color}/>
+            </Cylinder>
+            }
+
             {!selected &&
-            <>
+            <group rotation={[titleAngle, relativeAzimuth, 0]}>
                 {/* draw wireframe lines upper face */}
                 <Line points={[positionLL, positionLR]}
                       name={'Line LL-LR Upper Face'}
@@ -261,7 +277,7 @@ const SolarPanel = ({
                       name={'Line UR-UR Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-            </>
+            </group>
             }
 
             {/* draw handle */}
