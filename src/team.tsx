@@ -60,6 +60,7 @@ const Team = ({top, height, color}: TeamProps) => {
                     <td>
                         <h3 style={{color: color}}>Software</h3>
                         Charles Xie<br/>
+                        Xiaotong Ding<br/>
                     </td>
                     <td>
                         <h3 style={{color: color}}>Content</h3>

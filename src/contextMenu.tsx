@@ -9,8 +9,8 @@ import {useStore} from "./stores/common";
 import {Checkbox, Input, Menu, Modal, Radio, Select, Space} from 'antd';
 import {ObjectType, Orientation, Theme, TrackerType} from "./types";
 import ReshapeElementMenu from "./components/reshapeElementMenu";
-import HumanMenu from "./components/humanMenu";
-import TreeMenu from "./components/treeMenu";
+import HumanSelection from "./components/humanSelection";
+import TreeSelection from "./components/treeSelection";
 import NumericInput from "react-numeric-input";
 import {ExclamationCircleOutlined} from "@ant-design/icons";
 import {PhotoshopPicker} from 'react-color';
@@ -430,8 +430,10 @@ const ContextMenu = ({
                             Lock
                         </Checkbox>
                     </Menu.Item>
-                    {selectedElement &&
-                    <HumanMenu key={'humans'} requestUpdate={requestUpdate} style={{paddingLeft: '24px'}}/>}
+                    <Menu.Item key={'human-change-person'} style={{paddingLeft: '40px'}}>
+                        <Space style={{width: '120px'}}>Change Person: </Space>
+                        <HumanSelection key={'trees'} requestUpdate={requestUpdate}/>
+                    </Menu.Item>
                 </StyledMenu>
             );
         case ObjectType.Tree:
@@ -460,6 +462,10 @@ const ContextMenu = ({
                             Show Model
                         </Checkbox>
                     </Menu.Item>
+                    <Menu.Item key={'tree-change-type'} style={{paddingLeft: '40px'}}>
+                        <Space style={{width: '60px'}}>Type: </Space>
+                        <TreeSelection key={'trees'} requestUpdate={requestUpdate}/>
+                    </Menu.Item>
                     {selectedElement &&
                     <ReshapeElementMenu elementId={selectedElement.id}
                                         name={'tree'}
@@ -471,8 +477,6 @@ const ContextMenu = ({
                                         requestUpdate={requestUpdate}
                                         style={{paddingLeft: '24px'}}/>
                     }
-                    {selectedElement &&
-                    <TreeMenu key={'trees'} requestUpdate={requestUpdate} style={{paddingLeft: '24px'}}/>}
                 </StyledMenu>
             );
         default:
