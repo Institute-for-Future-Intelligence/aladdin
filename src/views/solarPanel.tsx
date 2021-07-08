@@ -25,7 +25,7 @@ const SolarPanel = ({
                         lx,
                         ly,
                         lz,
-                        titleAngle,
+                        tiltAngle,
                         relativeAzimuth,
                         poleHeight,
                         poleRadius,
@@ -184,7 +184,7 @@ const SolarPanel = ({
                  uuid={id}
                  ref={baseRef}
                  args={[lx, lz, ly]}
-                 rotation={[titleAngle, relativeAzimuth, 0]}
+                 rotation={[tiltAngle, relativeAzimuth, 0]}
                  name={'Solar Panel'}
                  onPointerDown={(e) => {
                      selectMe(e);
@@ -223,7 +223,7 @@ const SolarPanel = ({
             }
 
             {!selected &&
-            <group rotation={[titleAngle, relativeAzimuth, 0]}>
+            <group rotation={[tiltAngle, relativeAzimuth, 0]}>
                 {/* draw wireframe lines upper face */}
                 <Line points={[positionLL, positionLR]}
                       name={'Line LL-LR Upper Face'}
@@ -308,4 +308,6 @@ const SolarPanel = ({
     )
 };
 
-export default React.memo(SolarPanel);
+// this one may not use React.memo as it needs to move with its parent.
+// there may be a way to notify a memorized component when its parent changes
+export default SolarPanel;

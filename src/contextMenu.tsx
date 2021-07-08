@@ -15,6 +15,8 @@ import NumericInput from "react-numeric-input";
 import {ExclamationCircleOutlined} from "@ant-design/icons";
 import {PhotoshopPicker} from 'react-color';
 import {CheckboxChangeEvent} from "antd/es/checkbox";
+import {Util} from "./Util";
+import {SolarPanelModel} from "./models/SolarPanelModel";
 
 // TODO: Reduce the space between menu items
 const StyledMenu = styled(Menu)`
@@ -204,6 +206,7 @@ const ContextMenu = ({
                 </StyledMenu>
             );
         case ObjectType.SolarPanel:
+            const solarPanel = selectedElement as SolarPanelModel;
             return (
                 <StyledMenu>
                     <Menu.Item key={'solar-panel-copy'} onClick={copyElement} style={{paddingLeft: '40px'}}>
@@ -212,7 +215,6 @@ const ContextMenu = ({
                     <Menu.Item key={'solar-panel-cut'} onClick={cutElement} style={{paddingLeft: '40px'}}>
                         Cut
                     </Menu.Item>
-                    {selectedElement &&
                     <Menu.Item key={'solar-panel-change'}
                                onClick={() => {
                                    setPvDialogVisible(true);
@@ -221,7 +223,38 @@ const ContextMenu = ({
                                style={{paddingLeft: '40px'}}>
                         Select a PV Model...
                     </Menu.Item>
-                    }
+                    <Menu.Item key={'solar-panel-tilt-angle'} style={{paddingLeft: '40px'}}>
+                        <Space style={{width: '150px', paddingRight: '10px'}}>Tilt Angle: </Space>
+                        <NumericInput min={-90}
+                                      max={90}
+                                      precision={1}
+                                      value={Util.toDegrees(solarPanel.tiltAngle)}
+                                      size={5}
+                                      format={(a) => a + '°'}
+                                      onChange={(e) => {
+                                          if (solarPanel) {
+                                              updateElementById(solarPanel.id, {tiltAngle: Util.toRadians(e ?? 0)});
+                                              requestUpdate();
+                                          }
+                                      }}
+                        />
+                    </Menu.Item>
+                    <Menu.Item key={'solar-panel-relative-azimuth'} style={{paddingLeft: '40px'}}>
+                        <Space style={{width: '150px', paddingRight: '10px'}}>Relative Azimuth: </Space>
+                        <NumericInput min={0}
+                                      max={360}
+                                      precision={1}
+                                      value={Util.toDegrees(solarPanel.relativeAzimuth)}
+                                      size={5}
+                                      format={(a) => a + '°'}
+                                      onChange={(e) => {
+                                          if (solarPanel) {
+                                              updateElementById(solarPanel.id, {relativeAzimuth: Util.toRadians(e ?? 0)});
+                                              requestUpdate();
+                                          }
+                                      }}
+                        />
+                    </Menu.Item>
                     <Menu.Item key={'solar-panel-label-text'} style={{paddingLeft: '40px'}}>
                         <Input addonBefore='Label:'
                                value={selectedElement ? selectedElement.label : 'Solar Panel'}

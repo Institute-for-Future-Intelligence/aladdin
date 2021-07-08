@@ -77,7 +77,7 @@ export class ElementModelFactory {
             pvModel: pvModel,
             trackerType: TrackerType.NO_TRACKER,
             relativeAzimuth: 0,
-            titleAngle: 0,
+            tiltAngle: 0,
             orientation: Orientation.portrait,
             drawSunBeam: false,
             poleHeight: 1,

@@ -263,4 +263,6 @@ const Sensor = ({
     )
 };
 
-export default React.memo(Sensor);
+// this one may not use React.memo as it needs to move with its parent.
+// there may be a way to notify a memorized component when its parent changes
+export default Sensor;

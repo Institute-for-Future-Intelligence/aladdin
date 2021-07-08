@@ -237,6 +237,7 @@ const Foundation = ({
                          let intersects;
                          switch (grabRef.current.type) {
                              case ObjectType.Sensor:
+                             case ObjectType.SolarPanel:
                                  if (baseRef.current) {
                                      intersects = ray.intersectObjects([baseRef.current]);
                                      if (intersects.length > 0) {

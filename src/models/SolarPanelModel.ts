@@ -9,8 +9,8 @@ import {PvModel} from "./PvModel";
 export interface SolarPanelModel extends ElementModel {
 
     pvModel: PvModel;
-    relativeAzimuth: number;
-    titleAngle: number;
+    relativeAzimuth: number; // in radian
+    tiltAngle: number; // in radian
     monthlyTiltAngles: number[]; // seasonally adjusted tilt angles
     trackerType: TrackerType;
     orientation: Orientation;
