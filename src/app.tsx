@@ -405,7 +405,11 @@ const App = () => {
             >
                 <div>
                     <Canvas shadows={true}
-                            gl={{preserveDrawingBuffer: true}}
+                            gl={{
+                                preserveDrawingBuffer: true,
+                                // save for future use to solve z-fight, this may decreace the performace
+                                // logarithmicDepthBuffer: true, 
+                            }}
                             frameloop={'demand'}
                             camera={{
                                 position: cameraPosition,

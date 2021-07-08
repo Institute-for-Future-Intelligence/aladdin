@@ -17,9 +17,9 @@ const GroundImage = () => {
     const texture = useTexture(getMapImage(640, latitude, longitude, mapZoom));
 
     return (
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} renderOrder={-1}>
             <planeBufferGeometry args={[100, 100]}/>
-            <meshStandardMaterial attach="material" side={DoubleSide} map={texture} opacity={1}/>
+            <meshStandardMaterial attach="material" depthTest={false} side={DoubleSide} map={texture} opacity={1}/>
         </mesh>
     )
 };

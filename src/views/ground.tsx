@@ -111,8 +111,9 @@ const Ground = () => {
                    ref={groundPlaneRef}
                    name={'Ground'}
                    rotation={[-Math.PI / 2, 0, 0]}
-                   position={[0, -0.01, 0]}
+                   position={[0, 0, 0]}
                    args={[10000, 10000]}
+                   renderOrder={-2}
                    onContextMenu={(e) => {
                        if (e.intersections.length > 0) {
                            const groundClicked = e.intersections[0].object === groundPlaneRef.current;
@@ -310,7 +311,7 @@ const Ground = () => {
                        }
                    }}
             >
-                <meshStandardMaterial attach="material" color={viewState.groundColor}/>
+                <meshStandardMaterial attach="material" depthTest={false} color={viewState.groundColor}/>
             </Plane>
         </>
     )
