@@ -7,7 +7,7 @@ import styled from "styled-components";
 import 'antd/dist/antd.css';
 import {useStore} from "./stores/common";
 import {Checkbox, Input, Menu, Modal, Radio, Select, Space} from 'antd';
-import {ObjectType, Orientation, Theme} from "./types";
+import {ObjectType, Orientation, Theme, TrackerType} from "./types";
 import ReshapeElementMenu from "./components/reshapeElementMenu";
 import HumanMenu from "./components/humanMenu";
 import TreeMenu from "./components/treeMenu";
@@ -276,6 +276,66 @@ const ContextMenu = ({
                                       onChange={(e) => {
                                           if (solarPanel) {
                                               updateElementById(solarPanel.id, {relativeAzimuth: Util.toRadians(e ?? 0)});
+                                              requestUpdate();
+                                          }
+                                      }}
+                        />
+                    </Menu.Item>
+                    <Menu.Item key={'solar-panel-tracker'} style={{paddingLeft: '40px'}}>
+                        <Space style={{width: '150px'}}>Tracker: </Space>
+                        <Select style={{width: '120px'}}
+                                value={solarPanel.trackerType}
+                                onChange={(value) => {
+                                    if (solarPanel) {
+                                        updateElementById(solarPanel.id, {trackerType: value});
+                                        requestUpdate();
+                                    }
+                                }}
+                        >
+                            <Option key={'NONE'}
+                                    value={TrackerType.NO_TRACKER}
+                                    title={'No tracker'}>
+                                None
+                            </Option>)
+                            <Option key={'HSAT'}
+                                    value={TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER}
+                                    title={'Horizontal single axis tracker'}>
+                                HSAT
+                            </Option>)
+                            <Option key={'VSAT'}
+                                    value={TrackerType.VERTICAL_SINGLE_AXIS_TRACKER}
+                                    title={'Vertical single axis tracker'}>
+                                VSAT
+                            </Option>)
+                            <Option key={'TSAT'}
+                                    value={TrackerType.TILTED_SINGLE_AXIS_TRACKER}
+                                    title={'Tilted single axis tracker'}>
+                                TSAT
+                            </Option>)
+                            <Option key={'AADAT'}
+                                    value={TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER}
+                                    title={'Altazimuth single axis tracker'}>
+                                AADAT
+                            </Option>)
+                        </Select>
+                    </Menu.Item>
+                    <Menu.Item key={'solar-panel-pole-height'} style={{paddingLeft: '40px'}}>
+                        <Space style={{width: '150px'}}>Pole Height: </Space>
+                        <NumericInput min={0}
+                                      max={5}
+                                      style={{
+                                          input: {
+                                              width: '120px'
+                                          }
+                                      }}
+                                      step={0.1}
+                                      precision={1}
+                                      value={solarPanel.poleHeight}
+                                      size={5}
+                                      format={(a) => a + ' m'}
+                                      onChange={(e) => {
+                                          if (solarPanel) {
+                                              updateElementById(solarPanel.id, {poleHeight: e});
                                               requestUpdate();
                                           }
                                       }}

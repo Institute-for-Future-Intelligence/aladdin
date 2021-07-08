@@ -127,6 +127,7 @@ const Ground = () => {
                        }
                    }}
                    onPointerDown={(e) => {
+                       if (e.button === 2) return; // ignore right-click
                        if (e.intersections.length > 0) {
                            const groundClicked = e.intersections[0].object === groundPlaneRef.current;
                            if (groundClicked) {

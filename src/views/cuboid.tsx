@@ -207,6 +207,7 @@ const Cuboid = ({
                  args={[lx, lz, ly]}
                  name={'Cuboid'}
                  onPointerDown={(e) => {
+                     if (e.button === 2) return; // ignore right-click
                      selectMe(e, ActionType.Select);
                      const selectedElement = getSelectedElement();
                      if (selectedElement?.id === id) {

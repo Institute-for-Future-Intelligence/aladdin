@@ -192,6 +192,7 @@ const SolarPanel = ({
                  rotation={[tiltAngle, relativeAzimuth, 0]}
                  name={'Solar Panel'}
                  onPointerDown={(e) => {
+                     if (e.button === 2) return; // ignore right-click
                      selectMe(e);
                  }}
                  onContextMenu={(e) => {

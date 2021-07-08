@@ -91,6 +91,7 @@ const Sky = ({
                 clickSky(e);
             }}
             onClick={(e) => {
+                if (e.button === 2) return; // ignore right-click
                 clickSky(e);
             }}
         >

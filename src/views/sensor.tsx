@@ -155,6 +155,7 @@ const Sensor = ({
                  args={[lx, lz, ly]}
                  name={'Sensor'}
                  onPointerDown={(e) => {
+                     if (e.button === 2) return; // ignore right-click
                      selectMe(e);
                  }}
                  onContextMenu={(e) => {

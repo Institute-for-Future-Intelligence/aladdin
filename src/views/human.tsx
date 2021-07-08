@@ -206,6 +206,7 @@ const Human = ({
                     selectMe(e);
                 }}
                 onPointerDown={(e) => {
+                    if (e.button === 2) return; // ignore right-click
                     selectMe(e);
                 }}
                 onPointerOver={(e) => {
