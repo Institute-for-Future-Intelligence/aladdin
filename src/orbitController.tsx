@@ -2,12 +2,13 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useMemo, useRef} from "react";
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import {useFrame, useThree} from "@react-three/fiber";
 import {useStore} from "./stores/common";
 import {Util} from "./Util";
 import {Vector3} from "three";
+import {WORKSPACE_SIZE} from "./constants";
 
 export interface OrbitControllerProps {
     enabled?: boolean;
@@ -36,6 +37,8 @@ const OrbitController = ({
     const setThree = useThree(state => state.set);
     // Ref to the controls, so that we can update them on every frame using useFrame
     const controls = useRef<OrbitControls>(null);
+    const minPan = useMemo(() => new Vector3(-WORKSPACE_SIZE / 2, 0, -WORKSPACE_SIZE / 2), []);
+    const maxPan = useMemo(() => new Vector3(WORKSPACE_SIZE / 2, WORKSPACE_SIZE / 8, WORKSPACE_SIZE / 2), []);
 
     useEffect(() => {
         setThree({frameloop: autoRotate ? 'always' : 'demand'});
@@ -44,6 +47,9 @@ const OrbitController = ({
     useEffect(() => {
         const c = controls.current;
         const render = () => {
+            if (c) {
+                c.target.clamp(minPan, maxPan);
+            }
             gl.render(scene, camera);
         }
         if (c) {

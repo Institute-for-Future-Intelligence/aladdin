@@ -22,7 +22,7 @@ import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from "./mainMenu";
 import GroundPanel from "./panels/groundPanel";
 import HeliodonPanel from "./panels/heliodonPanel";
-import {VERSION} from "./constants";
+import {VERSION, WORKSPACE_SIZE} from "./constants";
 import {showInfo, visitHomepage, visitIFI} from "./helpers";
 import AcceptCookie from "./acceptCookie";
 import GroundImage from "./views/groundImage";
@@ -405,11 +405,7 @@ const App = () => {
             >
                 <div>
                     <Canvas shadows={true}
-                            gl={{
-                                preserveDrawingBuffer: true,
-                                // save for future use to solve z-fight, this may decreace the performace
-                                // logarithmicDepthBuffer: true, 
-                            }}
+                            gl={{preserveDrawingBuffer: true}}
                             frameloop={'demand'}
                             camera={{
                                 position: cameraPosition,
@@ -442,7 +438,7 @@ const App = () => {
                                 shadowCameraBottom={-100}
                             />
                             {(grid || !enableOrbitController) && legalOnGround() &&
-                            <gridHelper name={'Grid'} args={[100, 100, 'gray', 'gray']}/>
+                            <gridHelper name={'Grid'} args={[WORKSPACE_SIZE, WORKSPACE_SIZE, 'gray', 'gray']}/>
                             }
                             <Compass/>
                             {/*<Obj/>*/}

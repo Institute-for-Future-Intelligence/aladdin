@@ -35,6 +35,8 @@ export const MONTHS = [
     'Dec'
 ];
 
+export const WORKSPACE_SIZE = 100;
+
 export const MOVE_HANDLE_OFFSET = 0.12;
 export const MOVE_HANDLE_RADIUS = 0.1;
 export const RESIZE_HANDLE_SIZE = 0.16;

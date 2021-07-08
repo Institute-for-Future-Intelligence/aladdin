@@ -341,16 +341,27 @@ const ContextMenu = ({
                                       }}
                         />
                     </Menu.Item>
-                    <Menu.Item key={'solar-panel-label-text'} style={{paddingLeft: '40px'}}>
-                        <Input addonBefore='Label:'
-                               value={selectedElement ? selectedElement.label : 'Solar Panel'}
-                               onChange={changeElementLabelText}
-                        />
+                    <Menu.Item key={'solar-panel-draw-sun-beam'}>
+                        <Checkbox checked={!!solarPanel?.drawSunBeam}
+                                  onChange={(e) => {
+                                      if (solarPanel) {
+                                          updateElementById(solarPanel.id, {drawSunBeam: e.target.checked});
+                                          requestUpdate();
+                                      }
+                                  }}>
+                            Draw Sun Beam
+                        </Checkbox>
                     </Menu.Item>
                     <Menu.Item key={'solar-panel-show-label'}>
                         <Checkbox checked={!!selectedElement?.showLabel} onChange={showElementLabel}>
                             Keep Showing Label
                         </Checkbox>
+                    </Menu.Item>
+                    <Menu.Item key={'solar-panel-label-text'} style={{paddingLeft: '40px'}}>
+                        <Input addonBefore='Label:'
+                               value={selectedElement ? selectedElement.label : 'Solar Panel'}
+                               onChange={changeElementLabelText}
+                        />
                     </Menu.Item>
                 </StyledMenu>
             );
