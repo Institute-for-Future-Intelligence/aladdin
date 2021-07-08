@@ -121,6 +121,7 @@ const Ground = () => {
                                setCommonStore((state) => {
                                    Util.copyVector(state.pastePoint, e.intersections[0].point);
                                    state.clickObjectType = ObjectType.Ground;
+                                   state.pasteNormal = Util.UNIT_VECTOR_POS_Y;
                                });
                            }
                        }

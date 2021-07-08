@@ -26,7 +26,7 @@ import {VERSION} from "./constants";
 import {showInfo, visitHomepage, visitIFI} from "./helpers";
 import AcceptCookie from "./acceptCookie";
 import GroundImage from "./views/groundImage";
-import {Dropdown, Input, Modal} from "antd";
+import {Dropdown, Modal} from "antd";
 import ContextMenu from "./contextMenu";
 import WeatherPanel from "./panels/weatherPanel";
 import {GraphDataType, ObjectType} from "./types";
@@ -39,7 +39,7 @@ import Spinner from './components/spinner';
 import useKey from "./useKey";
 import StickyNotePanel from "./panels/stickyNotePanel";
 import InfoPanel from "./panels/infoPanel";
-import PvModelPanel from "./panels/PvModelPanel";
+import PvModelPanel from "./panels/pvModelPanel";
 
 const App = () => {
 

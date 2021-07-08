@@ -183,6 +183,7 @@ const Foundation = ({
                      setCommonStore((state) => {
                          Util.copyVector(state.pastePoint, e.intersections[0].point);
                          state.clickObjectType = ObjectType.Foundation;
+                         state.pasteNormal = Util.UNIT_VECTOR_POS_Y;
                      });
                  }}
                  onPointerOver={(e) => {

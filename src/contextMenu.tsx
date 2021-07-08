@@ -6,8 +6,8 @@ import React, {useState} from 'react';
 import styled from "styled-components";
 import 'antd/dist/antd.css';
 import {useStore} from "./stores/common";
-import {Checkbox, Input, Menu, Modal, Radio, Space} from 'antd';
-import {ObjectType, Theme} from "./types";
+import {Checkbox, Input, Menu, Modal, Radio, Select, Space} from 'antd';
+import {ObjectType, Orientation, Theme} from "./types";
 import ReshapeElementMenu from "./components/reshapeElementMenu";
 import HumanMenu from "./components/humanMenu";
 import TreeMenu from "./components/treeMenu";
@@ -25,6 +25,7 @@ const StyledMenu = styled(Menu)`
 `;
 
 const {SubMenu} = StyledMenu;
+const {Option} = Select;
 
 const radioStyle = {
     display: 'block',
@@ -223,10 +224,30 @@ const ContextMenu = ({
                                style={{paddingLeft: '40px'}}>
                         Select a PV Model...
                     </Menu.Item>
+                    <Menu.Item key={'solar-panel-orientation'} style={{paddingLeft: '40px'}}>
+                        <Space style={{width: '150px'}}>Orientation: </Space>
+                        <Select style={{width: '120px'}}
+                                value={solarPanel.orientation}
+                                onChange={(value) => {
+                                    if (solarPanel) {
+                                        updateElementById(solarPanel.id, {orientation: value});
+                                        requestUpdate();
+                                    }
+                                }}
+                        >
+                            <Option key={'Portrait'} value={Orientation.portrait}>Portrait</Option>)
+                            <Option key={'Landscape'} value={Orientation.landscape}>Landscape</Option>)
+                        </Select>
+                    </Menu.Item>
                     <Menu.Item key={'solar-panel-tilt-angle'} style={{paddingLeft: '40px'}}>
-                        <Space style={{width: '150px', paddingRight: '10px'}}>Tilt Angle: </Space>
+                        <Space style={{width: '150px'}}>Tilt Angle: </Space>
                         <NumericInput min={-90}
                                       max={90}
+                                      style={{
+                                          input: {
+                                              width: '120px'
+                                          }
+                                      }}
                                       precision={1}
                                       value={Util.toDegrees(solarPanel.tiltAngle)}
                                       size={5}
@@ -240,9 +261,14 @@ const ContextMenu = ({
                         />
                     </Menu.Item>
                     <Menu.Item key={'solar-panel-relative-azimuth'} style={{paddingLeft: '40px'}}>
-                        <Space style={{width: '150px', paddingRight: '10px'}}>Relative Azimuth: </Space>
+                        <Space style={{width: '150px'}}>Relative Azimuth: </Space>
                         <NumericInput min={0}
                                       max={360}
+                                      style={{
+                                          input: {
+                                              width: '120px'
+                                          }
+                                      }}
                                       precision={1}
                                       value={Util.toDegrees(solarPanel.relativeAzimuth)}
                                       size={5}

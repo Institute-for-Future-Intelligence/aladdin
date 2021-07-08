@@ -99,8 +99,8 @@ export enum IntersectionPlaneType {
 }
 
 export enum Orientation {
-    portrait = 0,
-    landscape = 1
+    portrait = 'Portrait',
+    landscape = 'Landscape'
 }
 
 export enum TrackerType {

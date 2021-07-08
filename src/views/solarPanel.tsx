@@ -86,8 +86,13 @@ const SolarPanel = ({
     }
     cy = -cy; // we want positive y to point north
     cz = poleHeight + lz / 2;
-    lx = pvModel.nominalWidth;
-    ly = pvModel.nominalLength;
+    if (orientation === Orientation.portrait) {
+        lx = pvModel.nominalWidth;
+        ly = pvModel.nominalLength;
+    } else {
+        lx = pvModel.nominalLength;
+        ly = pvModel.nominalWidth;
+    }
     lz = pvModel.thickness;
 
     const hx = lx / 2;

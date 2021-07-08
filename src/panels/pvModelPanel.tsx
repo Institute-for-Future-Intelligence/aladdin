@@ -8,6 +8,8 @@ import {SolarPanelModel} from "../models/SolarPanelModel";
 import {Row, Select, Col, Input} from "antd";
 import {SolarPanelNominalSize} from "../models/SolarPanelNominalSize";
 
+const {Option} = Select;
+
 export interface PvModelPanelProps {
     requestUpdate: () => void;
 }
@@ -21,8 +23,6 @@ const PvModelPanel = ({
     const pvModules = useStore(state => state.pvModules);
 
     const solarPanel = getSelectedElement() as SolarPanelModel;
-
-    const {Option} = Select;
 
     const panelSizeString =
         solarPanel.pvModel.nominalWidth.toFixed(2) + "m × " +
@@ -106,25 +106,6 @@ const PvModelPanel = ({
                     >
                         <Option key={'Black'} value={'Black'}>Black</Option>)
                         <Option key={'Blue'} value={'Blue'}>Blue</Option>)
-                    </Select>
-                </Col>
-            </Row>
-            <Row gutter={16} style={{paddingBottom: '10px'}}>
-                <Col className="gutter-row" span={14}>
-                    Orientation:
-                </Col>
-                <Col className="gutter-row" span={10}>
-                    <Select disabled={true}
-                            style={{width: '100%'}}
-                            value={solarPanel.orientation}
-                            onChange={(value) => {
-                                if (solarPanel) {
-                                    // TODO
-                                }
-                            }}
-                    >
-                        <Option key={'Portrait'} value={'Portrait'}>Portrait</Option>)
-                        <Option key={'Landscape'} value={'Landscape'}>Landscape</Option>)
                     </Select>
                 </Col>
             </Row>

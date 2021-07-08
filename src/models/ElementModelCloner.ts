@@ -10,6 +10,7 @@ import {SensorModel} from "./SensorModel";
 import {FoundationModel} from "./FoundationModel";
 import {CuboidModel} from "./CuboidModel";
 import {ElementModel} from "./ElementModel";
+import {SolarPanelModel} from "./SolarPanelModel";
 
 export class ElementModelCloner {
 
@@ -21,6 +22,8 @@ export class ElementModelCloner {
                 return ElementModelCloner.cloneTree(e as TreeModel, x, y, z);
             case ObjectType.Sensor:
                 return ElementModelCloner.cloneSensor(e as SensorModel, x, y, z);
+            case ObjectType.SolarPanel:
+                return ElementModelCloner.cloneSolarPanel(e as SolarPanelModel, x, y, z);
             case ObjectType.Foundation:
                 return ElementModelCloner.cloneFoundation(e as FoundationModel, x, y);
             case ObjectType.Cuboid:
@@ -74,6 +77,31 @@ export class ElementModelCloner {
             parent: sensor.parent,
             id: short.generate() as string
         } as SensorModel;
+    }
+
+    private static cloneSolarPanel(solarPanel: SolarPanelModel, x: number, y: number, z?: number) {
+        return {
+            type: ObjectType.SolarPanel,
+            pvModel: {...solarPanel.pvModel},
+            cx: x,
+            cy: y,
+            cz: z,
+            lx: solarPanel.lx,
+            ly: solarPanel.ly,
+            lz: solarPanel.lz,
+            tiltAngle: solarPanel.tiltAngle,
+            relativeAzimuth: solarPanel.relativeAzimuth,
+            orientation: solarPanel.orientation,
+            poleRadius: solarPanel.poleRadius,
+            poleHeight: solarPanel.poleHeight,
+            poleSpacingX: solarPanel.poleSpacingX,
+            poleSpacingY: solarPanel.poleSpacingY,
+            showLabel: solarPanel.showLabel,
+            normal: [...solarPanel.normal],
+            rotation: solarPanel.parent ? [...solarPanel.parent.rotation] : [0, 0, 0],
+            parent: solarPanel.parent,
+            id: short.generate() as string
+        } as SolarPanelModel;
     }
 
     private static cloneFoundation(foundation: FoundationModel, x: number, y: number) {
