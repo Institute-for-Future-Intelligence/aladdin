@@ -212,12 +212,14 @@ const ContextMenu = ({
                     <Menu.Item key={'sensor-cut'} onClick={cutElement} style={{paddingLeft: '40px'}}>
                         Cut
                     </Menu.Item>
-                    <Menu.Item key={'sensor-label-text'} style={{paddingLeft: '40px'}}>
-                        <Input addonBefore='Label:'
-                               value={selectedElement ? selectedElement.label : 'Sensor'}
-                               onChange={changeElementLabelText}
-                        />
-                    </Menu.Item>
+                    <Menu>
+                        <Menu.Item key={'sensor-label-text'} style={{paddingLeft: '40px'}}>
+                            <Input addonBefore='Label:'
+                                value={selectedElement ? selectedElement.label : 'Sensor'}
+                                onChange={changeElementLabelText}
+                            />
+                        </Menu.Item>
+                    </Menu>
                     <Menu.Item key={'sensor-show-label'}>
                         <Checkbox checked={!!selectedElement?.showLabel} onChange={showElementLabel}>
                             Keep Showing Label
@@ -235,153 +237,156 @@ const ContextMenu = ({
                     <Menu.Item key={'solar-panel-cut'} onClick={cutElement} style={{paddingLeft: '40px'}}>
                         Cut
                     </Menu.Item>
+
                     <Menu.Item key={'solar-panel-change'}
-                               onClick={() => {
-                                   setPvDialogVisible(true);
-                                   requestUpdate();
-                               }}
-                               style={{paddingLeft: '40px'}}>
+                        onClick={() => {
+                            setPvDialogVisible(true);
+                            requestUpdate();
+                        }}
+                        style={{paddingLeft: '40px'}}>
                         Select a PV Model...
                     </Menu.Item>
-                    <Menu.Item key={'solar-panel-orientation'} style={{paddingLeft: '40px'}}>
-                        <Space style={{width: '150px'}}>Orientation: </Space>
-                        <Select style={{width: '120px'}}
-                                value={solarPanel.orientation}
-                                onChange={(value) => {
-                                    if (solarPanel) {
-                                        updateElementById(solarPanel.id, {orientation: value});
-                                        requestUpdate();
-                                    }
-                                }}
-                        >
-                            <Option key={'Portrait'} value={Orientation.portrait}>Portrait</Option>)
-                            <Option key={'Landscape'} value={Orientation.landscape}>Landscape</Option>)
-                        </Select>
-                    </Menu.Item>
-                    <Menu.Item key={'solar-panel-tilt-angle'} style={{paddingLeft: '40px'}}>
-                        <Space style={{width: '150px'}}>Tilt Angle: </Space>
-                        <NumericInput min={-90}
-                                      max={90}
-                                      style={{
-                                          input: {
-                                              width: '120px'
-                                          }
-                                      }}
-                                      precision={1}
-                                      value={Util.toDegrees(solarPanel.tiltAngle)}
-                                      size={5}
-                                      format={(a) => a + '°'}
-                                      onChange={(e) => {
-                                          if (solarPanel) {
-                                              updateElementById(solarPanel.id, {tiltAngle: Util.toRadians(e ?? 0)});
-                                              requestUpdate();
-                                          }
-                                      }}
-                        />
-                    </Menu.Item>
-                    <Menu.Item key={'solar-panel-relative-azimuth'} style={{paddingLeft: '40px'}}>
-                        <Space style={{width: '150px'}}>Relative Azimuth: </Space>
-                        <NumericInput min={0}
-                                      max={360}
-                                      style={{
-                                          input: {
-                                              width: '120px'
-                                          }
-                                      }}
-                                      precision={1}
-                                      value={Util.toDegrees(solarPanel.relativeAzimuth)}
-                                      size={5}
-                                      format={(a) => a + '°'}
-                                      onChange={(e) => {
-                                          if (solarPanel) {
-                                              updateElementById(solarPanel.id, {relativeAzimuth: Util.toRadians(e ?? 0)});
-                                              requestUpdate();
-                                          }
-                                      }}
-                        />
-                    </Menu.Item>
-                    <Menu.Item key={'solar-panel-tracker'} style={{paddingLeft: '40px'}}>
-                        <Space style={{width: '150px'}}>Tracker: </Space>
-                        <Select style={{width: '120px'}}
-                                value={solarPanel.trackerType}
-                                onChange={(value) => {
-                                    if (solarPanel) {
-                                        updateElementById(solarPanel.id, {trackerType: value});
-                                        requestUpdate();
-                                    }
-                                }}
-                        >
-                            <Option key={'NONE'}
-                                    value={TrackerType.NO_TRACKER}
-                                    title={'No tracker'}>
-                                None
-                            </Option>)
-                            <Option key={'HSAT'}
-                                    value={TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER}
-                                    title={'Horizontal single axis tracker'}>
-                                HSAT
-                            </Option>)
-                            <Option key={'VSAT'}
-                                    value={TrackerType.VERTICAL_SINGLE_AXIS_TRACKER}
-                                    title={'Vertical single axis tracker'}>
-                                VSAT
-                            </Option>)
-                            <Option key={'TSAT'}
-                                    value={TrackerType.TILTED_SINGLE_AXIS_TRACKER}
-                                    title={'Tilted single axis tracker'}>
-                                TSAT
-                            </Option>)
-                            <Option key={'AADAT'}
-                                    value={TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER}
-                                    title={'Altazimuth single axis tracker'}>
-                                AADAT
-                            </Option>)
-                        </Select>
-                    </Menu.Item>
-                    <Menu.Item key={'solar-panel-pole-height'} style={{paddingLeft: '40px'}}>
-                        <Space style={{width: '150px'}}>Pole Height: </Space>
-                        <NumericInput min={0}
-                                      max={5}
-                                      style={{
-                                          input: {
-                                              width: '120px'
-                                          }
-                                      }}
-                                      step={0.1}
-                                      precision={1}
-                                      value={solarPanel.poleHeight}
-                                      size={5}
-                                      format={(a) => a + ' m'}
-                                      onChange={(e) => {
-                                          if (solarPanel) {
-                                              updateElementById(solarPanel.id, {poleHeight: e});
-                                              requestUpdate();
-                                          }
-                                      }}
-                        />
-                    </Menu.Item>
-                    <Menu.Item key={'solar-panel-draw-sun-beam'}>
-                        <Checkbox checked={!!solarPanel?.drawSunBeam}
-                                  onChange={(e) => {
-                                      if (solarPanel) {
-                                          updateElementById(solarPanel.id, {drawSunBeam: e.target.checked});
-                                          requestUpdate();
-                                      }
-                                  }}>
-                            Draw Sun Beam
-                        </Checkbox>
-                    </Menu.Item>
-                    <Menu.Item key={'solar-panel-show-label'}>
-                        <Checkbox checked={!!selectedElement?.showLabel} onChange={showElementLabel}>
-                            Keep Showing Label
-                        </Checkbox>
-                    </Menu.Item>
-                    <Menu.Item key={'solar-panel-label-text'} style={{paddingLeft: '40px'}}>
-                        <Input addonBefore='Label:'
-                               value={selectedElement ? selectedElement.label : 'Solar Panel'}
-                               onChange={changeElementLabelText}
-                        />
-                    </Menu.Item>
+                    <Menu>
+                        <Menu.Item key={'solar-panel-orientation'} style={{paddingLeft: '40px'}}>
+                            <Space style={{width: '150px'}}>Orientation: </Space>
+                            <Select style={{width: '120px'}}
+                                    value={solarPanel.orientation}
+                                    onChange={(value) => {
+                                        if (solarPanel) {
+                                            updateElementById(solarPanel.id, {orientation: value});
+                                            requestUpdate();
+                                        }
+                                    }}
+                            >
+                                <Option key={'Portrait'} value={Orientation.portrait}>Portrait</Option>)
+                                <Option key={'Landscape'} value={Orientation.landscape}>Landscape</Option>)
+                            </Select>
+                        </Menu.Item>
+                        <Menu.Item key={'solar-panel-tilt-angle'} style={{paddingLeft: '40px'}}>
+                            <Space style={{width: '150px'}}>Tilt Angle: </Space>
+                            <NumericInput min={-90}
+                                        max={90}
+                                        style={{
+                                            input: {
+                                                width: '120px'
+                                            }
+                                        }}
+                                        precision={1}
+                                        value={Util.toDegrees(solarPanel.tiltAngle)}
+                                        size={5}
+                                        format={(a) => a + '°'}
+                                        onChange={(e) => {
+                                            if (solarPanel) {
+                                                updateElementById(solarPanel.id, {tiltAngle: Util.toRadians(e ?? 0)});
+                                                requestUpdate();
+                                            }
+                                        }}
+                            />
+                        </Menu.Item>
+                        <Menu.Item key={'solar-panel-relative-azimuth'} style={{paddingLeft: '40px'}}>
+                            <Space style={{width: '150px'}}>Relative Azimuth: </Space>
+                            <NumericInput min={0}
+                                        max={360}
+                                        style={{
+                                            input: {
+                                                width: '120px'
+                                            }
+                                        }}
+                                        precision={1}
+                                        value={Util.toDegrees(solarPanel.relativeAzimuth)}
+                                        size={5}
+                                        format={(a) => a + '°'}
+                                        onChange={(e) => {
+                                            if (solarPanel) {
+                                                updateElementById(solarPanel.id, {relativeAzimuth: Util.toRadians(e ?? 0)});
+                                                requestUpdate();
+                                            }
+                                        }}
+                            />
+                        </Menu.Item>
+                        <Menu.Item key={'solar-panel-tracker'} style={{paddingLeft: '40px'}}>
+                            <Space style={{width: '150px'}}>Tracker: </Space>
+                            <Select style={{width: '120px'}}
+                                    value={solarPanel.trackerType}
+                                    onChange={(value) => {
+                                        if (solarPanel) {
+                                            updateElementById(solarPanel.id, {trackerType: value});
+                                            requestUpdate();
+                                        }
+                                    }}
+                            >
+                                <Option key={'NONE'}
+                                        value={TrackerType.NO_TRACKER}
+                                        title={'No tracker'}>
+                                    None
+                                </Option>)
+                                <Option key={'HSAT'}
+                                        value={TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER}
+                                        title={'Horizontal single axis tracker'}>
+                                    HSAT
+                                </Option>)
+                                <Option key={'VSAT'}
+                                        value={TrackerType.VERTICAL_SINGLE_AXIS_TRACKER}
+                                        title={'Vertical single axis tracker'}>
+                                    VSAT
+                                </Option>)
+                                <Option key={'TSAT'}
+                                        value={TrackerType.TILTED_SINGLE_AXIS_TRACKER}
+                                        title={'Tilted single axis tracker'}>
+                                    TSAT
+                                </Option>)
+                                <Option key={'AADAT'}
+                                        value={TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER}
+                                        title={'Altazimuth single axis tracker'}>
+                                    AADAT
+                                </Option>)
+                            </Select>
+                        </Menu.Item>
+                        <Menu.Item key={'solar-panel-pole-height'} style={{paddingLeft: '40px'}}>
+                            <Space style={{width: '150px'}}>Pole Height: </Space>
+                            <NumericInput min={0}
+                                        max={5}
+                                        style={{
+                                            input: {
+                                                width: '120px'
+                                            }
+                                        }}
+                                        step={0.1}
+                                        precision={1}
+                                        value={solarPanel.poleHeight}
+                                        size={5}
+                                        format={(a) => a + ' m'}
+                                        onChange={(e) => {
+                                            if (solarPanel) {
+                                                updateElementById(solarPanel.id, {poleHeight: e});
+                                                requestUpdate();
+                                            }
+                                        }}
+                            />
+                        </Menu.Item>
+                        <Menu.Item key={'solar-panel-draw-sun-beam'}>
+                            <Checkbox checked={!!solarPanel?.drawSunBeam}
+                                    onChange={(e) => {
+                                        if (solarPanel) {
+                                            updateElementById(solarPanel.id, {drawSunBeam: e.target.checked});
+                                            requestUpdate();
+                                        }
+                                    }}>
+                                Draw Sun Beam
+                            </Checkbox>
+                        </Menu.Item>
+                        <Menu.Item key={'solar-panel-show-label'}>
+                            <Checkbox checked={!!selectedElement?.showLabel} onChange={showElementLabel}>
+                                Keep Showing Label
+                            </Checkbox>
+                        </Menu.Item>
+                        <Menu.Item key={'solar-panel-label-text'} style={{paddingLeft: '40px'}}>
+                            <Input addonBefore='Label:'
+                                value={selectedElement ? selectedElement.label : 'Solar Panel'}
+                                onChange={changeElementLabelText}
+                            />
+                        </Menu.Item>
+                    </Menu>
                 </StyledMenu>
             );
         case ObjectType.Cuboid:
@@ -460,10 +465,12 @@ const ContextMenu = ({
                             Lock
                         </Checkbox>
                     </Menu.Item>
-                    <Menu.Item key={'human-change-person'} style={{paddingLeft: '40px'}}>
-                        <Space style={{width: '120px'}}>Change Person: </Space>
-                        <HumanSelection key={'trees'} requestUpdate={requestUpdate}/>
-                    </Menu.Item>
+                    <Menu>
+                        <Menu.Item key={'human-change-person'} style={{paddingLeft: '40px'}}>
+                            <Space style={{width: '120px'}}>Change Person: </Space>
+                            <HumanSelection key={'trees'} requestUpdate={requestUpdate}/>
+                        </Menu.Item>
+                    </Menu>
                 </StyledMenu>
             );
         case ObjectType.Tree:
@@ -492,10 +499,12 @@ const ContextMenu = ({
                             Show Model
                         </Checkbox>
                     </Menu.Item>
-                    <Menu.Item key={'tree-change-type'} style={{paddingLeft: '40px'}}>
-                        <Space style={{width: '60px'}}>Type: </Space>
-                        <TreeSelection key={'trees'} requestUpdate={requestUpdate}/>
-                    </Menu.Item>
+                    <Menu>
+                        <Menu.Item key={'tree-change-type'} style={{paddingLeft: '40px'}}>
+                            <Space style={{width: '60px'}}>Type: </Space>
+                            <TreeSelection key={'trees'} requestUpdate={requestUpdate}/>
+                        </Menu.Item>
+                    </Menu>
                     {selectedElement &&
                     <ReshapeElementMenu elementId={selectedElement.id}
                                         name={'tree'}
@@ -543,23 +552,25 @@ const ContextMenu = ({
                     }}>
                         Remove All {treeCount} Trees
                     </Menu.Item>}
-                    <Menu.Item key={'ground-albedo'}>
-                        <Space style={{width: '60px'}}>Albedo:</Space>
-                        <NumericInput min={0.05}
-                                      max={1}
-                                      precision={2}
-                                      value={world.ground.albedo}
-                                      step={0.01}
-                                      size={5}
-                                      onChange={(e) => {
-                                          if (e) {
-                                              setCommonStore(state => {
-                                                  state.world.ground.albedo = e;
-                                              });
-                                          }
-                                      }}
-                        />
-                    </Menu.Item>
+                    <Menu>
+                        <Menu.Item key={'ground-albedo'}>
+                            <Space style={{width: '60px'}}>Albedo:</Space>
+                            <NumericInput min={0.05}
+                                        max={1}
+                                        precision={2}
+                                        value={world.ground.albedo}
+                                        step={0.01}
+                                        size={5}
+                                        onChange={(e) => {
+                                            if (e) {
+                                                setCommonStore(state => {
+                                                    state.world.ground.albedo = e;
+                                                });
+                                            }
+                                        }}
+                            />
+                        </Menu.Item>
+                    </Menu>
                 </StyledMenu>
             );
     }
