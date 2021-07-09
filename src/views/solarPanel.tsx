@@ -4,11 +4,11 @@
 
 import React, {useMemo, useRef, useState} from "react";
 import {Box, Cone, Cylinder, Line, Sphere} from "@react-three/drei";
-import {BufferGeometry, EllipseCurve, Euler, Mesh, Object3D, TextureLoader, Vector3} from "three";
+import {Euler, Mesh, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {MOVE_HANDLE_RADIUS} from "../constants";
-import {ObjectType, Orientation} from "../types";
+import {HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS, RESIZE_HANDLE_COLOR, RESIZE_HANDLE_SIZE} from "../constants";
+import {ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType} from "../types";
 import {Util} from "../Util";
 import {SolarPanelModel} from "../models/SolarPanelModel";
 import SolarPanelBlueLandscapeImage from "../resources/solar-panel-blue-landscape.png";
@@ -16,7 +16,6 @@ import SolarPanelBluePortraitImage from "../resources/solar-panel-blue-portrait.
 import SolarPanelBlackLandscapeImage from "../resources/solar-panel-black-landscape.png";
 import SolarPanelBlackPortraitImage from "../resources/solar-panel-black-portrait.png";
 import {getSunDirection} from "../analysis/sunTools";
-import {Line2} from "three/examples/jsm/lines/Line2";
 
 const SolarPanel = ({
                         id,
@@ -41,6 +40,7 @@ const SolarPanel = ({
                         lineWidth = 0.1,
                         selected = false,
                         showLabel = false,
+                        locked = false,
                         parent,
                         orientation = Orientation.portrait,
                     }: SolarPanelModel) => {
@@ -49,10 +49,20 @@ const SolarPanel = ({
     const world = useStore(state => state.world);
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const getElementById = useStore(state => state.getElementById);
+    const resizeHandleType = useStore(state => state.resizeHandleType);
     const {gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
+    const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
+    const [hoveredResizeHandleLower, setHoveredResizeHandleLower] = useState(false);
+    const [hoveredResizeHandleUpper, setHoveredResizeHandleUpper] = useState(false);
+    const [hoveredResizeHandleLeft, setHoveredResizeHandleLeft] = useState(false);
+    const [hoveredResizeHandleRight, setHoveredResizeHandleRight] = useState(false);
     const baseRef = useRef<Mesh>();
-    const handleRef = useRef<Mesh>();
+    const moveHandleRef = useRef<Mesh>();
+    const resizeHandleLowerRef = useRef<Mesh>();
+    const resizeHandleUpperRef = useRef<Mesh>();
+    const resizeHandleLeftRef = useRef<Mesh>();
+    const resizeHandleRightRef = useRef<Mesh>();
 
     if (parent) {
         const p = getElementById(parent.id);
@@ -123,7 +133,7 @@ const SolarPanel = ({
         return texture;
     }, [orientation, pvModel.color]);
 
-    const selectMe = (e: ThreeEvent<MouseEvent>) => {
+    const selectMe = (e: ThreeEvent<MouseEvent>, action: ActionType) => {
         // We must check if there is really a first intersection, onPointerDown does not guarantee it
         // onPointerDown listener for an object can still fire an event even when the object is behind another one
         if (e.intersections.length > 0) {
@@ -132,6 +142,19 @@ const SolarPanel = ({
                 setCommonStore((state) => {
                     for (const e of state.elements) {
                         e.selected = e.id === id;
+                    }
+                    switch (action) {
+                        case ActionType.Move:
+                            state.moveHandleType = e.eventObject.name as MoveHandleType;
+                            state.resizeHandleType = null;
+                            break;
+                        case ActionType.Resize:
+                            state.resizeHandleType = e.eventObject.name as ResizeHandleType;
+                            state.moveHandleType = null;
+                            break;
+                        default:
+                            state.moveHandleType = null;
+                            state.resizeHandleType = null;
                     }
                 });
             }
@@ -180,6 +203,48 @@ const SolarPanel = ({
         return new Vector3(0, lz + 0.2, 0);
     }, [normal]);
 
+    const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType) => {
+        if (e.intersections.length > 0) {
+            const intersected = e.intersections[0].object === e.eventObject;
+            if (intersected) {
+                setHoveredHandle(handle);
+                if ( // unfortunately, I cannot find a way to tell the type of an enum variable
+                    handle === ResizeHandleType.Upper ||
+                    handle === ResizeHandleType.Lower ||
+                    handle === ResizeHandleType.Left ||
+                    handle === ResizeHandleType.Right
+                ) {
+                    domElement.style.cursor = 'move';
+                } else {
+                    domElement.style.cursor = 'pointer';
+                }
+                switch (handle) {
+                    case ResizeHandleType.Lower:
+                        setHoveredResizeHandleLower(true);
+                        break;
+                    case ResizeHandleType.Upper:
+                        setHoveredResizeHandleUpper(true);
+                        break;
+                    case ResizeHandleType.Left:
+                        setHoveredResizeHandleLeft(true);
+                        break;
+                    case ResizeHandleType.Right:
+                        setHoveredResizeHandleRight(true);
+                        break;
+                }
+            }
+        }
+    };
+
+    const noHoverHandle = () => {
+        setHoveredHandle(null);
+        setHoveredResizeHandleLower(false);
+        setHoveredResizeHandleUpper(false);
+        setHoveredResizeHandleLeft(false);
+        setHoveredResizeHandleRight(false);
+        domElement.style.cursor = 'default';
+    };
+
     const sunDirection = useMemo(() => {
         return Util.modelToView(getSunDirection(new Date(world.date), world.latitude));
     }, [world.date, world.latitude]);
@@ -207,10 +272,10 @@ const SolarPanel = ({
                  name={'Solar Panel'}
                  onPointerDown={(e) => {
                      if (e.button === 2) return; // ignore right-click
-                     selectMe(e);
+                     selectMe(e, ActionType.Select);
                  }}
                  onContextMenu={(e) => {
-                     selectMe(e);
+                     selectMe(e, ActionType.Select);
                  }}
                  onPointerOver={(e) => {
                      if (e.intersections.length > 0) {
@@ -333,19 +398,119 @@ const SolarPanel = ({
             </group>
             }
 
-            {/* draw handle */}
-            {selected &&
+            {/* draw move handle */}
+            {selected && !locked &&
             <Sphere
-                ref={handleRef}
+                ref={moveHandleRef}
                 position={new Vector3(0, 0, 0)}
                 args={[MOVE_HANDLE_RADIUS, 6, 6]}
                 name={'Handle'}
                 onPointerDown={(e) => {
-                    selectMe(e);
+                    selectMe(e, ActionType.Move);
                 }}>
                 <meshStandardMaterial attach="material" color={'orange'}/>
             </Sphere>
             }
+
+            {/*draw resize handles */}
+            {selected && !locked &&
+            <group rotation={[tiltAngle, relativeAzimuth, 0]}>
+                <Box ref={resizeHandleLowerRef}
+                     position={[(positionLL.x + positionLR.x) / 2, positionLL.y, positionLL.z]}
+                     args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
+                     name={ResizeHandleType.Lower}
+                     onPointerDown={(e) => {
+                         selectMe(e, ActionType.Resize);
+                     }}
+                     onPointerOver={(e) => {
+                         hoverHandle(e, ResizeHandleType.Lower);
+                     }}
+                     onPointerOut={(e) => {
+                         noHoverHandle();
+                     }}
+                >
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === ResizeHandleType.Lower ||
+                            resizeHandleType === ResizeHandleType.Lower ?
+                                HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                        }
+                    />
+                </Box>
+                <Box ref={resizeHandleUpperRef}
+                     position={[(positionUL.x + positionUR.x) / 2, positionUL.y, positionUL.z]}
+                     args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
+                     name={ResizeHandleType.Upper}
+                     onPointerDown={(e) => {
+                         selectMe(e, ActionType.Resize);
+                     }}
+                     onPointerOver={(e) => {
+                         hoverHandle(e, ResizeHandleType.Upper);
+                     }}
+                     onPointerOut={(e) => {
+                         noHoverHandle();
+                     }}
+                >
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === ResizeHandleType.Upper ||
+                            resizeHandleType === ResizeHandleType.Upper ?
+                                HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                        }
+                    />
+                </Box>
+                <Box ref={resizeHandleLeftRef}
+                     position={[positionLL.x, positionLL.y, (positionLL.z + positionUL.z) / 2]}
+                     args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
+                     name={ResizeHandleType.Left}
+                     onPointerDown={(e) => {
+                         selectMe(e, ActionType.Resize);
+                     }}
+                     onPointerOver={(e) => {
+                         hoverHandle(e, ResizeHandleType.Left);
+                     }}
+                     onPointerOut={(e) => {
+                         noHoverHandle();
+                     }}
+                >
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === ResizeHandleType.Left ||
+                            resizeHandleType === ResizeHandleType.Left ?
+                                HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                        }
+                    />
+                </Box>
+                <Box ref={resizeHandleRightRef}
+                     position={[positionLR.x, positionLR.y, (positionLR.z + positionUR.z) / 2]}
+                     args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
+                     name={ResizeHandleType.Right}
+                     onPointerDown={(e) => {
+                         selectMe(e, ActionType.Resize);
+                     }}
+                     onPointerOver={(e) => {
+                         hoverHandle(e, ResizeHandleType.Right);
+                     }}
+                     onPointerOut={(e) => {
+                         noHoverHandle();
+                     }}
+                >
+                    <meshStandardMaterial
+                        attach="material"
+                        color={
+                            hoveredHandle === ResizeHandleType.Right ||
+                            resizeHandleType === ResizeHandleType.Right ?
+                                HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                        }
+                    />
+                </Box>
+            </group>
+            }
+
+            {/*draw label */}
             {(hovered || showLabel) && !selected &&
             <textSprite
                 name={'Label'}

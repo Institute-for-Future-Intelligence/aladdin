@@ -90,6 +90,10 @@ export enum ResizeHandleType {
     UpperLeftTop = 'Resize Handle Upper Left Top',
     LowerRightTop = 'Resize Handle Lower Right Top',
     UpperRightTop = 'Resize Handle Upper Right Top',
+    Lower = 'Resize Handle Lower',
+    Upper = 'Resize Handle Upper',
+    Left = 'Resize Handle Left',
+    Right = 'Resize Handle Right',
 }
 
 export enum IntersectionPlaneType {
