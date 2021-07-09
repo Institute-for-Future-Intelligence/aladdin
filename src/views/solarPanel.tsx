@@ -3,8 +3,8 @@
  */
 
 import React, {useMemo, useRef, useState} from "react";
-import {Box, Cylinder, Line, Sphere} from "@react-three/drei";
-import {Euler, Mesh, TextureLoader, Vector3} from "three";
+import {Box, Cone, Cylinder, Line, Sphere} from "@react-three/drei";
+import {BufferGeometry, EllipseCurve, Euler, Mesh, Object3D, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {MOVE_HANDLE_RADIUS} from "../constants";
@@ -16,6 +16,7 @@ import SolarPanelBluePortraitImage from "../resources/solar-panel-blue-portrait.
 import SolarPanelBlackLandscapeImage from "../resources/solar-panel-black-landscape.png";
 import SolarPanelBlackPortraitImage from "../resources/solar-panel-black-portrait.png";
 import {getSunDirection} from "../analysis/sunTools";
+import {Line2} from "three/examples/jsm/lines/Line2";
 
 const SolarPanel = ({
                         id,
@@ -180,8 +181,14 @@ const SolarPanel = ({
     }, [normal]);
 
     const sunDirection = useMemo(() => {
-        return Util.modelToView(getSunDirection(new Date(world.date), world.latitude)).multiplyScalar(100);
+        return Util.modelToView(getSunDirection(new Date(world.date), world.latitude));
     }, [world.date, world.latitude]);
+
+    const relativeEuler = new Euler(tiltAngle, relativeAzimuth, 0);
+    const normalVector = useMemo(() => {
+        const v = new Vector3();
+        return drawSunBeam ? Util.modelToView(v.fromArray(normal)).applyEuler(relativeEuler) : v;
+    }, [drawSunBeam, normal, relativeEuler]);
 
     return (
 
@@ -196,7 +203,7 @@ const SolarPanel = ({
                  uuid={id}
                  ref={baseRef}
                  args={[lx, lz, ly]}
-                 rotation={[tiltAngle, relativeAzimuth, 0]}
+                 rotation={relativeEuler}
                  name={'Solar Panel'}
                  onPointerDown={(e) => {
                      if (e.button === 2) return; // ignore right-click
@@ -229,17 +236,44 @@ const SolarPanel = ({
 
             {/* draw pole */}
             {poleHeight > 0 &&
-            <Cylinder args={[poleRadius, poleRadius, poleHeight, 6, 2]}
-                      position={[0, -poleHeight / 2, 0]}>
+            <Cylinder castShadow={shadowEnabled}
+                      args={[poleRadius, poleRadius, poleHeight, 6, 2]}
+                      position={[0, -poleHeight / 2 - lz / 2, 0]}>
                 <meshStandardMaterial attach="material" color={color}/>
             </Cylinder>
             }
 
             {/*draw sun beam*/}
-            {drawSunBeam && sunDirection.y > 0 && <Line points={[[0, 0, 0], sunDirection]}
-                                                        name={'Sun Beam'}
-                                                        lineWidth={0.5}
-                                                        color={'white'}/>}
+            {drawSunBeam && sunDirection.y > 0 &&
+            <group>
+                <Line points={[[0, 0, 0], sunDirection.clone().multiplyScalar(100)]}
+                      name={'Sun Beam'}
+                      lineWidth={0.5}
+                      color={'white'}/>
+                <Line points={[[0, 0, 0], normalVector.clone().multiplyScalar(0.75)]}
+                      name={'Normal Vector'}
+                      lineWidth={0.5}
+                      color={'white'}/>
+                <Line points={[sunDirection.clone().multiplyScalar(0.5), normalVector.clone().multiplyScalar(0.5)]}
+                      name={'Angle'}
+                      lineWidth={0.5}
+                      color={'white'}/>
+                <textSprite
+                    name={'Angle Value'}
+                    text={Util.toDegrees(sunDirection.angleTo(normalVector)).toFixed(1) + '°'}
+                    fontSize={20}
+                    fontFace={'Times Roman'}
+                    textHeight={0.1}
+                    position={sunDirection.clone().multiplyScalar(0.75).add(normalVector.clone().multiplyScalar(0.75)).multiplyScalar(0.5)}
+                />
+                <Cone args={[0.04, 0.2, 4, 2]}
+                      name={'Normal Vector Arrow Head'}
+                      rotation={relativeEuler}
+                      position={normalVector.clone().multiplyScalar(0.75)}>
+                    <meshStandardMaterial attach="material" color={'white'}/>
+                </Cone>
+            </group>
+            }
 
             {!selected &&
             <group rotation={[tiltAngle, relativeAzimuth, 0]}>
@@ -316,10 +350,9 @@ const SolarPanel = ({
             <textSprite
                 name={'Label'}
                 text={element?.label ? element.label : 'Solar Panel'}
-                fontSize={90}
+                fontSize={20}
                 fontFace={'Times Roman'}
-                textHeight={1}
-                scale={[0.8, 0.2, 0.2]}
+                textHeight={0.2}
                 position={spritePosition}
             />
             }

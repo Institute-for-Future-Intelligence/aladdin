@@ -524,47 +524,42 @@ const Foundation = ({
             {(hovered && !selected) && <textSprite
                 name={'Label'}
                 text={'Foundation'}
-                fontSize={90}
+                fontSize={20}
                 fontFace={'Times Roman'}
-                textHeight={1}
-                position={[0, hz + 0.2, 0]}
-                scale={[1, 0.2, 0.2]}/>
+                textHeight={0.2}
+                position={[0, hz + 0.2, 0]}/>
             }
             {!locked && hoveredResizeHandleLL && <textSprite
                 name={'Label'}
                 text={'LL'}
-                fontSize={100}
+                fontSize={20}
                 fontFace={'Times Roman'}
-                textHeight={1}
-                position={[-hx, hz + 0.2, -hy]}
-                scale={[0.2, 0.2, 0.2]}/>
+                textHeight={0.2}
+                position={[-hx, hz + 0.2, -hy]}/>
             }
             {!locked && hoveredResizeHandleUL && <textSprite
                 name={'Label'}
                 text={'UL'}
-                fontSize={100}
+                fontSize={20}
                 fontFace={'Times Roman'}
-                textHeight={1}
-                position={[-hx, hz + 0.2, hy]}
-                scale={[0.2, 0.2, 0.2]}/>
+                textHeight={0.2}
+                position={[-hx, hz + 0.2, hy]}/>
             }
             {!locked && hoveredResizeHandleLR && <textSprite
                 name={'Label'}
                 text={'LR'}
-                fontSize={100}
+                fontSize={20}
                 fontFace={'Times Roman'}
-                textHeight={1}
-                position={[hx, hz + 0.2, -hy]}
-                scale={[0.2, 0.2, 0.2]}/>
+                textHeight={0.2}
+                position={[hx, hz + 0.2, -hy]}/>
             }
             {!locked && hoveredResizeHandleUR && <textSprite
                 name={'Label'}
                 text={'UR'}
-                fontSize={100}
+                fontSize={20}
                 fontFace={'Times Roman'}
-                textHeight={1}
-                position={[hx, hz + 0.2, hy]}
-                scale={[0.2, 0.2, 0.2]}/>
+                textHeight={0.2}
+                position={[hx, hz + 0.2, hy]}/>
             }
 
         </group>

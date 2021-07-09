@@ -690,10 +690,9 @@ const Cuboid = ({
             <textSprite
                 name={'Label'}
                 text={'Box'}
-                fontSize={90}
+                fontSize={20}
                 fontFace={'Times Roman'}
-                textHeight={1}
-                scale={[0.4, 0.2, 0.2]}
+                textHeight={0.2}
                 position={[0, hz + 0.2, 0]}
             />
             }

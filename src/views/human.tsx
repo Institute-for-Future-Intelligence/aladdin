@@ -252,10 +252,9 @@ const Human = ({
             <textSprite
                 name={'Label'}
                 text={name}
-                fontSize={90}
+                fontSize={20}
                 fontFace={'Times Roman'}
-                textHeight={1}
-                scale={[0.5, 0.2, 0.2]}
+                textHeight={0.2}
                 position={[0, height / 2 + 0.4, 0]}
             />
             }

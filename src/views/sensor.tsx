@@ -254,10 +254,9 @@ const Sensor = ({
             <textSprite
                 name={'Label'}
                 text={element?.label ? element.label : 'Sensor'}
-                fontSize={90}
+                fontSize={20}
                 fontFace={'Times Roman'}
-                textHeight={1}
-                scale={[0.5, 0.2, 0.2]}
+                textHeight={0.2}
                 position={spritePosition}
             />
             }
