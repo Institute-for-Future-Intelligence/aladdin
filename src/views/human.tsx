@@ -202,6 +202,7 @@ const Human = ({
                 args={[width, height]}
                 ref={meshRef}
                 name={name}
+                userData={{aabb: true}}
                 onContextMenu={(e) => {
                     selectMe(e);
                 }}

@@ -22,6 +22,7 @@ import {SolarPanelModel} from "./models/SolarPanelModel";
 const StyledMenu = styled(Menu)`
   padding: 0;
   margin: 0;
+  tab-index: 0;
 `;
 
 const {SubMenu} = StyledMenu;
@@ -135,6 +136,7 @@ const ContextMenu = ({
                 </StyledMenu>);
         case ObjectType.Foundation:
             const sensorCountFoundation = selectedElement ? countAllChildElementsByType(selectedElement.id, ObjectType.Sensor) : 0;
+            const solarPanelCountFoundation = selectedElement ? countAllChildElementsByType(selectedElement.id, ObjectType.SolarPanel) : 0;
             return (
                 <StyledMenu>
                     <Menu.Item key={'foundation-copy'} onClick={copyElement} style={{paddingLeft: '40px'}}>
@@ -154,7 +156,7 @@ const ContextMenu = ({
                             Lock
                         </Checkbox>
                     </Menu.Item>
-                    {sensorCountFoundation > 0 &&
+                    {(sensorCountFoundation > 0 || solarPanelCountFoundation > 0) &&
                     <SubMenu key={'clear'} title={'Clear'} style={{paddingLeft: '24px'}}>
                         {sensorCountFoundation > 0 &&
                         <Menu.Item key={'remove-all-sensors'} onClick={() => {
@@ -171,6 +173,23 @@ const ContextMenu = ({
                             });
                         }}>
                             Remove All {sensorCountFoundation} Sensors
+                        </Menu.Item>
+                        }
+                        {solarPanelCountFoundation > 0 &&
+                        <Menu.Item key={'remove-all-solar-panels'} onClick={() => {
+                            Modal.confirm({
+                                title: 'Do you really want to remove all the ' + solarPanelCountFoundation + ' solar panels on this foundation?',
+                                icon: <ExclamationCircleOutlined/>,
+                                okText: 'OK',
+                                cancelText: 'Cancel',
+                                onOk: () => {
+                                    if (selectedElement) {
+                                        removeAllChildElementsByType(selectedElement.id, ObjectType.SolarPanel);
+                                    }
+                                }
+                            });
+                        }}>
+                            Remove All {solarPanelCountFoundation} Solar Panels
                         </Menu.Item>
                         }
                     </SubMenu>

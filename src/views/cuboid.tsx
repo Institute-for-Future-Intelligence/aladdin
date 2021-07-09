@@ -201,7 +201,7 @@ const Cuboid = ({
             {/* draw rectangular cuboid */}
             <Box castShadow={shadowEnabled}
                  receiveShadow={shadowEnabled}
-                 userData={{simulation: true}}
+                 userData={{simulation: true, aabb: true}}
                  uuid={id}
                  ref={baseRef}
                  args={[lx, lz, ly]}

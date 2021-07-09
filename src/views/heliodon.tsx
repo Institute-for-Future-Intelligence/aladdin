@@ -210,10 +210,10 @@ const Heliodon = ({
                         .filter(a => a.length > 3)
                         .map((a, index) => {
                             return <Line key={index}
-                                        opacity={index === 0 || index === nRibLines ? 1 : 0.5}
-                                        lineWidth={index === 0 || index === nRibLines ? 1 : 0.5}
-                                        points={a}
-                                        color={'#999'}/>;
+                                         opacity={index === 0 || index === nRibLines ? 1 : 0.5}
+                                         lineWidth={index === 0 || index === nRibLines ? 1 : 0.5}
+                                         points={a}
+                                         color={'#999'}/>;
                         })
                     }
                     <mesh
@@ -229,7 +229,7 @@ const Heliodon = ({
                     />
                     <mesh
                         position={sunPosition}
-                        args={[new SphereGeometry(0.25, 20, 20),
+                        args={[new SphereGeometry(0.05 * radius, 10, 10),
                             new MeshBasicMaterial({color: 0xffffff00})
                         ]}
                     />
@@ -237,11 +237,11 @@ const Heliodon = ({
             </mesh>
             {/* use this plane to hide the uneven edge */}
             <Drei_Plane
-                rotation={[-Math.PI / 2, 0, 0]}
+                rotation={[-Util.HALF_PI, 0, 0]}
                 position={[0, 0, 0]}
                 args={[10000, 10000]}
             >
-                <meshBasicMaterial transparent={true} opacity={0} />
+                <meshBasicMaterial transparent={true} opacity={0}/>
             </Drei_Plane>
         </group>
     );

@@ -4,7 +4,7 @@
 
 import React, {useEffect, useRef} from 'react';
 import {useStore} from "./stores/common";
-import {Box3, Group} from "three";
+import {Box3, Group, Vector3} from "three";
 import {ObjectType} from "./types";
 import {FoundationModel} from "./models/FoundationModel";
 import Foundation from "./views/foundation";
@@ -30,10 +30,24 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
 
     useEffect(() => {
         if (groupRef.current) {
-            const aabb = new Box3().setFromObject(groupRef.current);
-            setCommonStore(state => {
-                state.aabb = aabb;
-            });
+            const boxes = [];
+            for (const group of groupRef.current.children) {
+                const children = group.children.filter(x => x.userData['aabb']);
+                for (const c of children) {
+                    boxes.push(new Box3().setFromObject(c));
+                }
+            }
+            if (boxes.length > 0) {
+                const min = new Vector3();
+                const max = new Vector3();
+                for (const box of boxes) {
+                    min.min(box.min);
+                    max.max(box.max);
+                }
+                setCommonStore(state => {
+                    state.aabb = new Box3(min, max);
+                });
+            }
         }
     }, [elements]);
 

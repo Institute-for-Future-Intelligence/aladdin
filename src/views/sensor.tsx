@@ -151,6 +151,7 @@ const Sensor = ({
             {/* draw rectangle (too small to cast shadow) */}
             <Box receiveShadow={shadowEnabled}
                  uuid={id}
+                 userData={{aabb: true}}
                  ref={baseRef}
                  args={[lx, lz, ly]}
                  name={'Sensor'}

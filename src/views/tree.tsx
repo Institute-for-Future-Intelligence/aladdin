@@ -118,6 +118,7 @@ const Tree = ({
             <Billboard
                 uuid={id}
                 name={name}
+                userData={{aabb: true}}
                 castShadow={shadowEnabled}
                 args={[lx, lz]}
                 renderOrder={0}

@@ -175,6 +175,7 @@ const Foundation = ({
             <Box castShadow={shadowEnabled}
                  receiveShadow={shadowEnabled}
                  uuid={id}
+                 userData={{aabb: true}}
                  ref={baseRef}
                  name={'Foundation'}
                  args={[lx, lz, ly]}

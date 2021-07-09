@@ -15,6 +15,7 @@ import SolarPanelBlueLandscapeImage from "../resources/solar-panel-blue-landscap
 import SolarPanelBluePortraitImage from "../resources/solar-panel-blue-portrait.png";
 import SolarPanelBlackLandscapeImage from "../resources/solar-panel-black-landscape.png";
 import SolarPanelBlackPortraitImage from "../resources/solar-panel-black-portrait.png";
+import {getSunDirection} from "../analysis/sunTools";
 
 const SolarPanel = ({
                         id,
@@ -31,6 +32,7 @@ const SolarPanel = ({
                         poleRadius,
                         poleSpacingX,
                         poleSpacingY,
+                        drawSunBeam,
                         rotation = [0, 0, 0],
                         normal = [0, 0, 1],
                         color = 'white',
@@ -43,6 +45,7 @@ const SolarPanel = ({
                     }: SolarPanelModel) => {
 
     const setCommonStore = useStore(state => state.set);
+    const world = useStore(state => state.world);
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const getElementById = useStore(state => state.getElementById);
     const {gl: {domElement}} = useThree();
@@ -85,7 +88,7 @@ const SolarPanel = ({
         }
     }
     cy = -cy; // we want positive y to point north
-    cz = poleHeight + lz / 2;
+    cz = poleHeight + lz / 2 + parent.lz;
     if (orientation === Orientation.portrait) {
         lx = pvModel.nominalWidth;
         ly = pvModel.nominalLength;
@@ -176,6 +179,10 @@ const SolarPanel = ({
         return new Vector3(0, lz + 0.2, 0);
     }, [normal]);
 
+    const sunDirection = useMemo(() => {
+        return Util.modelToView(getSunDirection(new Date(world.date), world.latitude)).multiplyScalar(100);
+    }, [world.date, world.latitude]);
+
     return (
 
         <group name={'Solar Panel Group ' + id}
@@ -185,7 +192,7 @@ const SolarPanel = ({
             {/* draw panel */}
             <Box receiveShadow={shadowEnabled}
                  castShadow={shadowEnabled}
-                 userData={{simulation: true}}
+                 userData={{simulation: true, aabb: true}}
                  uuid={id}
                  ref={baseRef}
                  args={[lx, lz, ly]}
@@ -227,6 +234,12 @@ const SolarPanel = ({
                 <meshStandardMaterial attach="material" color={color}/>
             </Cylinder>
             }
+
+            {/*draw sun beam*/}
+            {drawSunBeam && sunDirection.y > 0 && <Line points={[[0, 0, 0], sunDirection]}
+                                                        name={'Sun Beam'}
+                                                        lineWidth={0.5}
+                                                        color={'white'}/>}
 
             {!selected &&
             <group rotation={[tiltAngle, relativeAzimuth, 0]}>
