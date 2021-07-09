@@ -6,7 +6,7 @@ import React, {useState} from 'react';
 import styled from "styled-components";
 import 'antd/dist/antd.css';
 import {useStore} from "./stores/common";
-import {Checkbox, Input, Menu, Modal, Radio, Select, Space} from 'antd';
+import {Checkbox, Dropdown, Input, Menu, Modal, Radio, Select, Space} from 'antd';
 import {ObjectType, Orientation, Theme, TrackerType} from "./types";
 import ReshapeElementMenu from "./components/reshapeElementMenu";
 import HumanSelection from "./components/humanSelection";
@@ -566,4 +566,22 @@ const ContextMenu = ({
 
 };
 
-export default React.memo(ContextMenu);
+const DropdownContextMenu: React.FC<ContextMenuProps> = ({
+    children,
+    city,
+    canvas,
+    setPvDialogVisible,
+    requestUpdate,
+    ...rest
+}) => {
+
+    return (
+        <Dropdown key={'canvas-context-menu'}
+            trigger={['contextMenu']}
+            overlay={ContextMenu({city, canvas, setPvDialogVisible, requestUpdate})}>
+                {children}
+        </Dropdown>
+    )
+}
+
+export default React.memo(DropdownContextMenu);

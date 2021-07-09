@@ -26,8 +26,8 @@ import {VERSION, WORKSPACE_SIZE} from "./constants";
 import {showInfo, visitHomepage, visitIFI} from "./helpers";
 import AcceptCookie from "./acceptCookie";
 import GroundImage from "./views/groundImage";
-import {Dropdown, Modal} from "antd";
-import ContextMenu from "./contextMenu";
+import {Modal} from "antd";
+import DropdownContextMenu from "./contextMenu";
 import WeatherPanel from "./panels/weatherPanel";
 import {GraphDataType, ObjectType} from "./types";
 import YearlyLightSensorPanel from "./panels/yearlyLightSensorPanel";
@@ -283,15 +283,6 @@ const App = () => {
         });
     };
 
-    const contextMenu = (
-        <ContextMenu
-            city={city}
-            canvas={canvasRef.current}
-            setPvDialogVisible={setPvModelDialogVisible}
-            requestUpdate={requestUpdate}
-        />
-    );
-
     // only these elements are allowed to be on the ground
     const legalOnGround = () => {
         const type = getSelectedElement()?.type;
@@ -399,9 +390,11 @@ const App = () => {
             <StickyNotePanel requestUpdate={requestUpdate}
             />}
             {viewState.showInfoPanel && <InfoPanel city={city} daytime={sunAboveHorizon}/>}
-            <Dropdown key={'canvas-context-menu'}
-                      trigger={['contextMenu']}
-                      overlay={contextMenu}
+            <DropdownContextMenu 
+                city={city}
+                canvas={canvasRef.current}
+                setPvDialogVisible={setPvModelDialogVisible}
+                requestUpdate={requestUpdate}
             >
                 <div>
                     <Canvas shadows={true}
@@ -460,7 +453,7 @@ const App = () => {
                         </Suspense>
                     </Canvas>
                 </div>
-            </Dropdown>
+            </DropdownContextMenu>
             <AcceptCookie/>
         </div>
     );
