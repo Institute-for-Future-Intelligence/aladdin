@@ -8,7 +8,7 @@ import {Mesh, Raycaster, Vector2, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {FoundationModel} from "../models/FoundationModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {ActionType, MoveHandleType, ObjectType, ResizeHandleType} from "../types";
+import {ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType} from "../types";
 import {
     HIGHLIGHT_HANDLE_COLOR,
     MOVE_HANDLE_COLOR_1,
@@ -20,6 +20,7 @@ import {
 } from "../constants";
 import {Util} from "../Util";
 import {ElementModel} from "../models/ElementModel";
+import {SolarPanelModel} from "../models/SolarPanelModel";
 
 const Foundation = ({
                         id,
@@ -43,11 +44,13 @@ const Foundation = ({
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const moveHandleType = useStore(state => state.moveHandleType);
     const resizeHandleType = useStore(state => state.resizeHandleType);
+    const resizeAnchor = useStore(state => state.resizeAnchor);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const getElementById = useStore(state => state.getElementById);
     const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
     const addElement = useStore(state => state.addElement);
     const setElementPosition = useStore(state => state.setElementPosition);
+    const setElementSize = useStore(state => state.setElementSize);
 
     const {camera, gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
@@ -240,15 +243,84 @@ const Foundation = ({
                          let intersects;
                          switch (grabRef.current.type) {
                              case ObjectType.Sensor:
-                             case ObjectType.SolarPanel:
                                  if (baseRef.current) {
                                      intersects = ray.intersectObjects([baseRef.current]);
                                      if (intersects.length > 0) {
-                                         let p = Util.viewToModel(intersects[0].point);
-                                         if (elementModel) {
-                                             p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
+                                         let p = intersects[0].point;
+                                         if (moveHandleType) {
+                                             p = Util.viewToModel(p);
+                                             if (elementModel) {
+                                                 p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
+                                             }
+                                             setElementPosition(grabRef.current.id, p.x, p.y);
                                          }
-                                         setElementPosition(grabRef.current.id, p.x, p.y);
+                                     }
+                                 }
+                                 break;
+                             case ObjectType.SolarPanel:
+                                 if (baseRef.current) {
+                                     const solarPanel = grabRef.current as SolarPanelModel;
+                                     intersects = ray.intersectObjects([baseRef.current]);
+                                     if (intersects.length > 0) {
+                                         let p = intersects[0].point;
+                                         if (moveHandleType) {
+                                             p = Util.viewToModel(p);
+                                             if (elementModel) {
+                                                 p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
+                                             }
+                                             setElementPosition(solarPanel.id, p.x, p.y);
+                                         } else if (resizeHandleType) {
+                                             switch (resizeHandleType) {
+                                                 case ResizeHandleType.Lower:
+                                                     let dyl = Math.abs(resizeAnchor.y - p.z);
+                                                     if (solarPanel.orientation === Orientation.portrait) {
+                                                         const ny = Math.round(dyl / solarPanel.pvModel.length);
+                                                         dyl = ny * solarPanel.pvModel.length;
+                                                     } else {
+                                                         const ny = Math.round(dyl / solarPanel.pvModel.width);
+                                                         dyl = ny * solarPanel.pvModel.width;
+                                                     }
+                                                     setElementSize(solarPanel.id, solarPanel.lx, dyl);
+                                                     setElementPosition(solarPanel.id, solarPanel.cx, (-p.z - dyl / 2 + cy) / ly);
+                                                     break;
+                                                 case ResizeHandleType.Upper:
+                                                     let dyu = Math.abs(resizeAnchor.y - p.z);
+                                                     if (solarPanel.orientation === Orientation.portrait) {
+                                                         const ny = Math.round(dyu / solarPanel.pvModel.length);
+                                                         dyu = ny * solarPanel.pvModel.length;
+                                                     } else {
+                                                         const ny = Math.round(dyu / solarPanel.pvModel.width);
+                                                         dyu = ny * solarPanel.pvModel.width;
+                                                     }
+                                                     setElementSize(solarPanel.id, solarPanel.lx, dyu);
+                                                     setElementPosition(solarPanel.id, solarPanel.cx, (-p.z + dyu / 2 + cy) / ly);
+                                                     break;
+                                                 case ResizeHandleType.Left:
+                                                     let dxl = Math.abs(resizeAnchor.x - p.x);
+                                                     if (solarPanel.orientation === Orientation.portrait) {
+                                                         const nx = Math.round(dxl / solarPanel.pvModel.width);
+                                                         dxl = nx * solarPanel.pvModel.width;
+                                                     } else {
+                                                         const nx = Math.round(dxl / solarPanel.pvModel.length);
+                                                         dxl = nx * solarPanel.pvModel.length;
+                                                     }
+                                                     setElementSize(solarPanel.id, dxl, solarPanel.ly);
+                                                     setElementPosition(solarPanel.id, (p.x + dxl / 2 - cx) / lx, solarPanel.cy);
+                                                     break;
+                                                 case ResizeHandleType.Right:
+                                                     let dxr = Math.abs(resizeAnchor.x - p.x);
+                                                     if (solarPanel.orientation === Orientation.portrait) {
+                                                         const nx = Math.round(dxr / solarPanel.pvModel.width);
+                                                         dxr = nx * solarPanel.pvModel.width;
+                                                     } else {
+                                                         const nx = Math.round(dxr / solarPanel.pvModel.length);
+                                                         dxr = nx * solarPanel.pvModel.length;
+                                                     }
+                                                     setElementSize(solarPanel.id, dxr, solarPanel.ly);
+                                                     setElementPosition(solarPanel.id, (p.x - dxr / 2 - cx) / lx, solarPanel.cy);
+                                                     break;
+                                             }
+                                         }
                                      }
                                  }
                                  break;

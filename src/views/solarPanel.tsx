@@ -2,12 +2,17 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useMemo, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {Box, Cone, Cylinder, Line, Sphere} from "@react-three/drei";
-import {Euler, Mesh, TextureLoader, Vector3} from "three";
+import {Euler, Mesh, RepeatWrapping, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS, RESIZE_HANDLE_COLOR, RESIZE_HANDLE_SIZE} from "../constants";
+import {
+    HIGHLIGHT_HANDLE_COLOR,
+    MOVE_HANDLE_RADIUS,
+    RESIZE_HANDLE_COLOR,
+    RESIZE_HANDLE_SIZE
+} from "../constants";
 import {ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType} from "../types";
 import {Util} from "../Util";
 import {SolarPanelModel} from "../models/SolarPanelModel";
@@ -53,10 +58,8 @@ const SolarPanel = ({
     const {gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
     const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
-    const [hoveredResizeHandleLower, setHoveredResizeHandleLower] = useState(false);
-    const [hoveredResizeHandleUpper, setHoveredResizeHandleUpper] = useState(false);
-    const [hoveredResizeHandleLeft, setHoveredResizeHandleLeft] = useState(false);
-    const [hoveredResizeHandleRight, setHoveredResizeHandleRight] = useState(false);
+    const [nx, setNx] = useState(1);
+    const [ny, setNy] = useState(1);
     const baseRef = useRef<Mesh>();
     const moveHandleRef = useRef<Mesh>();
     const resizeHandleLowerRef = useRef<Mesh>();
@@ -100,13 +103,6 @@ const SolarPanel = ({
     }
     cy = -cy; // we want positive y to point north
     cz = poleHeight + lz / 2 + parent.lz;
-    if (orientation === Orientation.portrait) {
-        lx = pvModel.nominalWidth;
-        ly = pvModel.nominalLength;
-    } else {
-        lx = pvModel.nominalLength;
-        ly = pvModel.nominalWidth;
-    }
     lz = pvModel.thickness;
 
     const hx = lx / 2;
@@ -118,20 +114,38 @@ const SolarPanel = ({
     const positionUR = new Vector3(hx, hz, hy);
     const element = getElementById(id);
 
+    useEffect(() => {
+        if (orientation === Orientation.portrait) {
+            setNx(Math.max(1, Math.round(lx / pvModel.width)));
+            setNy(Math.max(1, Math.round(ly / pvModel.length)));
+        } else {
+            setNx(Math.max(1, Math.round(lx / pvModel.length)));
+            setNy(Math.max(1, Math.round(ly / pvModel.width)));
+        }
+    }, [orientation, pvModel, lx, ly]);
+
     const texture = useMemo(() => {
         const loader = new TextureLoader();
         let texture;
         switch (orientation) {
             case Orientation.portrait:
                 texture = loader.load(pvModel.color === 'Blue' ?
-                    SolarPanelBluePortraitImage : SolarPanelBlackPortraitImage);
+                    SolarPanelBluePortraitImage : SolarPanelBlackPortraitImage, (texture) => {
+                    texture.wrapS = texture.wrapT = RepeatWrapping;
+                    texture.offset.set(0, 0);
+                    texture.repeat.set(nx, ny);
+                });
                 break;
             default:
                 texture = loader.load(pvModel.color === 'Blue' ?
-                    SolarPanelBlueLandscapeImage : SolarPanelBlackLandscapeImage);
+                    SolarPanelBlueLandscapeImage : SolarPanelBlackLandscapeImage, (texture) => {
+                    texture.wrapS = texture.wrapT = RepeatWrapping;
+                    texture.offset.set(0, 0);
+                    texture.repeat.set(nx, ny);
+                });
         }
         return texture;
-    }, [orientation, pvModel.color]);
+    }, [orientation, pvModel.color, nx, ny]);
 
     const selectMe = (e: ThreeEvent<MouseEvent>, action: ActionType) => {
         // We must check if there is really a first intersection, onPointerDown does not guarantee it
@@ -218,30 +232,12 @@ const SolarPanel = ({
                 } else {
                     domElement.style.cursor = 'pointer';
                 }
-                switch (handle) {
-                    case ResizeHandleType.Lower:
-                        setHoveredResizeHandleLower(true);
-                        break;
-                    case ResizeHandleType.Upper:
-                        setHoveredResizeHandleUpper(true);
-                        break;
-                    case ResizeHandleType.Left:
-                        setHoveredResizeHandleLeft(true);
-                        break;
-                    case ResizeHandleType.Right:
-                        setHoveredResizeHandleRight(true);
-                        break;
-                }
             }
         }
     };
 
     const noHoverHandle = () => {
         setHoveredHandle(null);
-        setHoveredResizeHandleLower(false);
-        setHoveredResizeHandleUpper(false);
-        setHoveredResizeHandleLeft(false);
-        setHoveredResizeHandleRight(false);
         domElement.style.cursor = 'default';
     };
 
@@ -412,7 +408,7 @@ const SolarPanel = ({
             </Sphere>
             }
 
-            {/*draw resize handles */}
+            {/* draw resize handles */}
             {selected && !locked &&
             <group rotation={[tiltAngle, relativeAzimuth, 0]}>
                 <Box ref={resizeHandleLowerRef}
@@ -421,6 +417,9 @@ const SolarPanel = ({
                      name={ResizeHandleType.Lower}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
+                         setCommonStore(state => {
+                             Util.setVector2(state.resizeAnchor, cx, cy + hy);
+                         });
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.Lower);
@@ -444,6 +443,9 @@ const SolarPanel = ({
                      name={ResizeHandleType.Upper}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
+                         setCommonStore(state => {
+                             Util.setVector2(state.resizeAnchor, cx, cy - hy);
+                         });
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.Upper);
@@ -467,6 +469,9 @@ const SolarPanel = ({
                      name={ResizeHandleType.Left}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
+                         setCommonStore(state => {
+                             Util.setVector2(state.resizeAnchor, cx + hx, cy);
+                         });
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.Left);
@@ -490,6 +495,9 @@ const SolarPanel = ({
                      name={ResizeHandleType.Right}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
+                         setCommonStore(state => {
+                             Util.setVector2(state.resizeAnchor, cx - hx, cy);
+                         });
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.Right);
