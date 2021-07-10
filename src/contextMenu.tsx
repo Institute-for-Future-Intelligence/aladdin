@@ -6,12 +6,11 @@ import React, {useState} from 'react';
 import styled from "styled-components";
 import 'antd/dist/antd.css';
 import {useStore} from "./stores/common";
-import {Checkbox, Dropdown, Input, Menu, Modal, Radio, Select, Space} from 'antd';
+import {Checkbox, Dropdown, Input, InputNumber, Menu, Modal, Radio, Select, Space} from 'antd';
 import {ObjectType, Orientation, Theme, TrackerType} from "./types";
 import ReshapeElementMenu from "./components/reshapeElementMenu";
 import HumanSelection from "./components/humanSelection";
 import TreeSelection from "./components/treeSelection";
-import NumericInput from "react-numeric-input";
 import {ExclamationCircleOutlined} from "@ant-design/icons";
 import {PhotoshopPicker} from 'react-color';
 import {CheckboxChangeEvent} from "antd/es/checkbox";
@@ -215,8 +214,8 @@ const ContextMenu = ({
                     <Menu>
                         <Menu.Item key={'sensor-label-text'} style={{paddingLeft: '40px'}}>
                             <Input addonBefore='Label:'
-                                value={selectedElement ? selectedElement.label : 'Sensor'}
-                                onChange={changeElementLabelText}
+                                   value={selectedElement ? selectedElement.label : 'Sensor'}
+                                   onChange={changeElementLabelText}
                             />
                         </Menu.Item>
                     </Menu>
@@ -239,11 +238,11 @@ const ContextMenu = ({
                     </Menu.Item>
 
                     <Menu.Item key={'solar-panel-change'}
-                        onClick={() => {
-                            setPvDialogVisible(true);
-                            requestUpdate();
-                        }}
-                        style={{paddingLeft: '40px'}}>
+                               onClick={() => {
+                                   setPvDialogVisible(true);
+                                   requestUpdate();
+                               }}
+                               style={{paddingLeft: '40px'}}>
                         Select a PV Model...
                     </Menu.Item>
                     <Menu>
@@ -264,44 +263,36 @@ const ContextMenu = ({
                         </Menu.Item>
                         <Menu.Item key={'solar-panel-tilt-angle'} style={{paddingLeft: '40px'}}>
                             <Space style={{width: '150px'}}>Tilt Angle: </Space>
-                            <NumericInput min={-90}
-                                        max={90}
-                                        style={{
-                                            input: {
-                                                width: '120px'
-                                            }
-                                        }}
-                                        precision={1}
-                                        value={Util.toDegrees(solarPanel.tiltAngle)}
-                                        size={5}
-                                        format={(a) => a + '°'}
-                                        onChange={(e) => {
-                                            if (solarPanel) {
-                                                updateElementById(solarPanel.id, {tiltAngle: Util.toRadians(e ?? 0)});
-                                                requestUpdate();
-                                            }
-                                        }}
+                            <InputNumber min={-90}
+                                         max={90}
+                                         style={{width: 120}}
+                                         precision={1}
+                                         value={Util.toDegrees(solarPanel.tiltAngle)}
+                                         step={1}
+                                         formatter={(a) => a + '°'}
+                                         onChange={(e) => {
+                                             if (solarPanel) {
+                                                 updateElementById(solarPanel.id, {tiltAngle: Util.toRadians(e ?? 0)});
+                                                 requestUpdate();
+                                             }
+                                         }}
                             />
                         </Menu.Item>
                         <Menu.Item key={'solar-panel-relative-azimuth'} style={{paddingLeft: '40px'}}>
                             <Space style={{width: '150px'}}>Relative Azimuth: </Space>
-                            <NumericInput min={0}
-                                        max={360}
-                                        style={{
-                                            input: {
-                                                width: '120px'
-                                            }
-                                        }}
-                                        precision={1}
-                                        value={Util.toDegrees(solarPanel.relativeAzimuth)}
-                                        size={5}
-                                        format={(a) => a + '°'}
-                                        onChange={(e) => {
-                                            if (solarPanel) {
-                                                updateElementById(solarPanel.id, {relativeAzimuth: Util.toRadians(e ?? 0)});
-                                                requestUpdate();
-                                            }
-                                        }}
+                            <InputNumber min={0}
+                                         max={360}
+                                         style={{width: 120}}
+                                         precision={1}
+                                         value={Util.toDegrees(solarPanel.relativeAzimuth)}
+                                         step={1}
+                                         formatter={(a) => a + '°'}
+                                         onChange={(e) => {
+                                             if (solarPanel) {
+                                                 updateElementById(solarPanel.id, {relativeAzimuth: Util.toRadians(e ?? 0)});
+                                                 requestUpdate();
+                                             }
+                                         }}
                             />
                         </Menu.Item>
                         <Menu.Item key={'solar-panel-tracker'} style={{paddingLeft: '40px'}}>
@@ -344,34 +335,29 @@ const ContextMenu = ({
                         </Menu.Item>
                         <Menu.Item key={'solar-panel-pole-height'} style={{paddingLeft: '40px'}}>
                             <Space style={{width: '150px'}}>Pole Height: </Space>
-                            <NumericInput min={0}
-                                        max={5}
-                                        style={{
-                                            input: {
-                                                width: '120px'
-                                            }
-                                        }}
-                                        step={0.1}
-                                        precision={1}
-                                        value={solarPanel.poleHeight}
-                                        size={5}
-                                        format={(a) => a + ' m'}
-                                        onChange={(e) => {
-                                            if (solarPanel) {
-                                                updateElementById(solarPanel.id, {poleHeight: e});
-                                                requestUpdate();
-                                            }
-                                        }}
+                            <InputNumber min={0}
+                                         max={5}
+                                         style={{width: 120}}
+                                         step={0.1}
+                                         precision={1}
+                                         value={solarPanel.poleHeight}
+                                         formatter={(a) => a + ' m'}
+                                         onChange={(e) => {
+                                             if (solarPanel) {
+                                                 updateElementById(solarPanel.id, {poleHeight: e});
+                                                 requestUpdate();
+                                             }
+                                         }}
                             />
                         </Menu.Item>
                         <Menu.Item key={'solar-panel-draw-sun-beam'}>
                             <Checkbox checked={!!solarPanel?.drawSunBeam}
-                                    onChange={(e) => {
-                                        if (solarPanel) {
-                                            updateElementById(solarPanel.id, {drawSunBeam: e.target.checked});
-                                            requestUpdate();
-                                        }
-                                    }}>
+                                      onChange={(e) => {
+                                          if (solarPanel) {
+                                              updateElementById(solarPanel.id, {drawSunBeam: e.target.checked});
+                                              requestUpdate();
+                                          }
+                                      }}>
                                 Draw Sun Beam
                             </Checkbox>
                         </Menu.Item>
@@ -382,8 +368,8 @@ const ContextMenu = ({
                         </Menu.Item>
                         <Menu.Item key={'solar-panel-label-text'} style={{paddingLeft: '40px'}}>
                             <Input addonBefore='Label:'
-                                value={selectedElement ? selectedElement.label : 'Solar Panel'}
-                                onChange={changeElementLabelText}
+                                   value={selectedElement ? selectedElement.label : 'Solar Panel'}
+                                   onChange={changeElementLabelText}
                             />
                         </Menu.Item>
                     </Menu>
@@ -555,19 +541,18 @@ const ContextMenu = ({
                     <Menu>
                         <Menu.Item key={'ground-albedo'}>
                             <Space style={{width: '60px'}}>Albedo:</Space>
-                            <NumericInput min={0.05}
-                                        max={1}
-                                        precision={2}
-                                        value={world.ground.albedo}
-                                        step={0.01}
-                                        size={5}
-                                        onChange={(e) => {
-                                            if (e) {
-                                                setCommonStore(state => {
-                                                    state.world.ground.albedo = e;
-                                                });
-                                            }
-                                        }}
+                            <InputNumber min={0.05}
+                                         max={1}
+                                         step={0.01}
+                                         precision={2}
+                                         value={world.ground.albedo}
+                                         onChange={(e) => {
+                                             if (e) {
+                                                 setCommonStore(state => {
+                                                     state.world.ground.albedo = e;
+                                                 });
+                                             }
+                                         }}
                             />
                         </Menu.Item>
                     </Menu>
@@ -578,19 +563,19 @@ const ContextMenu = ({
 };
 
 const DropdownContextMenu: React.FC<ContextMenuProps> = ({
-    children,
-    city,
-    canvas,
-    setPvDialogVisible,
-    requestUpdate,
-    ...rest
-}) => {
+                                                             children,
+                                                             city,
+                                                             canvas,
+                                                             setPvDialogVisible,
+                                                             requestUpdate,
+                                                             ...rest
+                                                         }) => {
 
     return (
         <Dropdown key={'canvas-context-menu'}
-            trigger={['contextMenu']}
-            overlay={ContextMenu({city, canvas, setPvDialogVisible, requestUpdate})}>
-                {children}
+                  trigger={['contextMenu']}
+                  overlay={ContextMenu({city, canvas, setPvDialogVisible, requestUpdate})}>
+            {children}
         </Dropdown>
     )
 }
