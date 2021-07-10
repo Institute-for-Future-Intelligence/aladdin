@@ -27,7 +27,7 @@ import {DoubleSide, Mesh, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {HumanModel} from "../models/HumanModel";
-import {Billboard, Sphere} from "@react-three/drei";
+import {Billboard, Sphere, useTexture} from "@react-three/drei";
 import {MOVE_HANDLE_RADIUS} from "../constants";
 import {HumanName} from "../types";
 
@@ -47,72 +47,73 @@ const Human = ({
     const [hovered, setHovered] = useState(false);
     const meshRef = useRef<Mesh>(null!);
     const {gl: {domElement}} = useThree();
-    const texture = useMemo(() => {
-        const loader = new TextureLoader();
+    const textureImg = useMemo(() => {
         let texture;
         switch (name) {
             case HumanName.Jade:
-                texture = loader.load(JadeImage);
+                texture = JadeImage;
                 break;
             case HumanName.Jane:
-                texture = loader.load(JaneImage);
+                texture = JaneImage;
                 break;
             case HumanName.Jaye:
-                texture = loader.load(JayeImage);
+                texture = JayeImage;
                 break;
             case HumanName.Jean:
-                texture = loader.load(JeanImage);
+                texture = JeanImage;
                 break;
             case HumanName.Jedi:
-                texture = loader.load(JediImage);
+                texture = JediImage;
                 break;
             case HumanName.Jeff:
-                texture = loader.load(JeffImage);
+                texture = JeffImage;
                 break;
             case HumanName.Jena:
-                texture = loader.load(JenaImage);
+                texture = JenaImage;
                 break;
             case HumanName.Jeni:
-                texture = loader.load(JeniImage);
+                texture = JeniImage;
                 break;
             case HumanName.Jess:
-                texture = loader.load(JessImage);
+                texture = JessImage;
                 break;
             case HumanName.Jett:
-                texture = loader.load(JettImage);
+                texture = JettImage;
                 break;
             case HumanName.Jill:
-                texture = loader.load(JillImage);
+                texture = JillImage;
                 break;
             case HumanName.Joan:
-                texture = loader.load(JoanImage);
+                texture = JoanImage;
                 break;
             case HumanName.Joel:
-                texture = loader.load(JoelImage);
+                texture = JoelImage;
                 break;
             case HumanName.John:
-                texture = loader.load(JohnImage);
+                texture = JohnImage;
                 break;
             case HumanName.Jose:
-                texture = loader.load(JoseImage);
+                texture = JoseImage;
                 break;
             case HumanName.Judd:
-                texture = loader.load(JuddImage);
+                texture = JuddImage;
                 break;
             case HumanName.Judy:
-                texture = loader.load(JudyImage);
+                texture = JudyImage;
                 break;
             case HumanName.June:
-                texture = loader.load(JuneImage);
+                texture = JuneImage;
                 break;
             case HumanName.Juro:
-                texture = loader.load(JuroImage);
+                texture = JuroImage;
                 break;
             default:
-                texture = loader.load(JackImage);
+                texture = JackImage;
         }
         return texture;
     }, [name]);
+
+    const texture = useTexture(textureImg);
 
     const width = useMemo(() => {
         switch (name) {

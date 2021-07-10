@@ -412,8 +412,9 @@ const App = () => {
                             orbitControlsRef={orbitControlsRef}
                             canvasRef={canvasRef}
                         />
+
+                        <ElementsRenderer/>
                         <Suspense fallback={null}>
-                            <ElementsRenderer/>
                             <ambientLight intensity={0.25} name={'Ambient Light'}/>
                             <directionalLight
                                 name={'Directional Light'}

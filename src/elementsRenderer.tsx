@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useRef} from 'react';
+import React, {Suspense, useEffect, useRef} from 'react';
 import {useStore} from "./stores/common";
 import {Box3, Group, Vector3} from "three";
 import {ObjectType} from "./types";
@@ -63,9 +63,17 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
                             case ObjectType.Cuboid:
                                 return <Cuboid key={e.id} {...e as CuboidModel}/>
                             case ObjectType.Human:
-                                return <Human key={e.id} {...e as HumanModel}/>
+                                return (
+                                    <Suspense key={e.id} fallback={null}>
+                                        <Human {...e as HumanModel} />
+                                    </Suspense>
+                                )
                             case ObjectType.Tree:
-                                return <Tree key={e.id} {...e as TreeModel}/>
+                                return (
+                                    <Suspense key={e.id} fallback={null}>
+                                        <Tree {...e as TreeModel} />
+                                    </Suspense>
+                                )
                             case ObjectType.SolarPanel:
                                 return <SolarPanel key={e.id} {...e as SolarPanelModel}/>
                         }

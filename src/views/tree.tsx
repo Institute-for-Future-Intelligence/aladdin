@@ -19,7 +19,7 @@ import PineImage from "../resources/pine.png";
 import {DoubleSide, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {Billboard, Cone, Sphere} from "@react-three/drei";
+import {Billboard, Cone, Sphere, useTexture} from "@react-three/drei";
 import {MOVE_HANDLE_RADIUS} from "../constants";
 import {TreeModel} from "../models/TreeModel";
 import {TreeType} from "../types";
@@ -52,33 +52,34 @@ const Tree = ({
     const month = now.getMonth();
     const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
 
-    const texture = useMemo(() => {
-        const loader = new TextureLoader();
+    const textureImg = useMemo(() => {
         let texture;
         switch (name) {
             case TreeType.Cottonwood:
-                texture = loader.load(noLeaves ? CottonwoodShedImage : CottonwoodImage);
+                texture = (noLeaves ? CottonwoodShedImage : CottonwoodImage);
                 break;
             case TreeType.Dogwood:
-                texture = loader.load(noLeaves ? DogwoodShedImage : DogwoodImage);
+                texture = (noLeaves ? DogwoodShedImage : DogwoodImage);
                 break;
             case TreeType.Elm:
-                texture = loader.load(noLeaves ? ElmShedImage : ElmImage);
+                texture = (noLeaves ? ElmShedImage : ElmImage);
                 break;
             case TreeType.Linden:
-                texture = loader.load(noLeaves ? LindenShedImage : LindenImage);
+                texture = (noLeaves ? LindenShedImage : LindenImage);
                 break;
             case TreeType.Maple:
-                texture = loader.load(noLeaves ? MapleShedImage : MapleImage);
+                texture = (noLeaves ? MapleShedImage : MapleImage);
                 break;
             case TreeType.Oak:
-                texture = loader.load(noLeaves ? OakShedImage : OakImage);
+                texture = (noLeaves ? OakShedImage : OakImage);
                 break;
             default:
-                texture = loader.load(PineImage);
+                texture = (PineImage);
         }
         return texture;
     }, [name, world.date]);
+
+    const texture = useTexture(textureImg);
 
     const customDepthMaterial = new MeshDepthMaterial({
         depthPacking: RGBADepthPacking,
