@@ -222,11 +222,7 @@ const Human = ({
                     setHovered(false);
                 }}
             >
-                <meshBasicMaterial attach={'material'}
-                                   map={texture}
-                                   opacity={1}
-                                   transparent={true}
-                                   side={DoubleSide}/>
+                <meshBasicMaterial map={texture} alphaTest={0.5} side={DoubleSide}/>
             </Billboard>
 
             {/* draw handle */}

@@ -80,6 +80,12 @@ const Tree = ({
         return texture;
     }, [name, world.date]);
 
+    const customDepthMaterial = new MeshDepthMaterial({
+        depthPacking: RGBADepthPacking,
+        map: texture,
+        alphaTest: 0.1,
+    })
+
     const selectMe = (e: ThreeEvent<MouseEvent>) => {
         // We must check if there is really a first intersection, onPointerDown does not guarantee it
         // onPointerDown listener for an object can still fire an event even when the object is behind another one
@@ -115,26 +121,18 @@ const Tree = ({
         <group name={'Tree Group ' + id}
                position={[cx, lz / 2, cy]}>
 
-            <Billboard
-                uuid={id}
-                name={name}
-                userData={{aabb: true}}
-                castShadow={shadowEnabled}
+            <Billboard uuid={id} name={name} args={[lx, lz]} userData={{aabb: true}} >
+                <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
+            </Billboard>
+            
+            {/* cast shadow */}
+            <Billboard 
                 args={[lx, lz]}
-                renderOrder={0}
-                customDepthMaterial={
-                    new MeshDepthMaterial({
-                        depthPacking: RGBADepthPacking,
-                        map: texture,
-                        alphaTest: 0.1
-                    })
-                }
+                castShadow={shadowEnabled}
+                follow={false}
+                customDepthMaterial={customDepthMaterial}
             >
-                <meshBasicMaterial attach={'material'}
-                                   map={texture}
-                                   opacity={1}
-                                   transparent={true}
-                                   side={DoubleSide}/>
+                <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0} depthTest={false} />
             </Billboard>
 
             {/* simulation model */}
@@ -160,7 +158,6 @@ const Tree = ({
                 ref={meshRef}
                 name={'Interaction Billboard'}
                 visible={false}
-                castShadow={false}
                 position={[0, -lz / 2 + 0.5, 0]}
                 args={[lx / 2, 1]}
                 onContextMenu={(e) => {
@@ -181,9 +178,7 @@ const Tree = ({
                 onPointerOut={(e) => {
                     setHovered(false);
                 }}
-            >
-                <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.5}/>
-            </Billboard>
+            />
 
             {/* draw handle */}
             {selected && !locked &&
