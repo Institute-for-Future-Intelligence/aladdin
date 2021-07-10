@@ -3,8 +3,8 @@
  */
 
 import React, {useEffect, useMemo, useRef, useState} from "react";
-import {Box, Cone, Cylinder, Line, Sphere, useTexture} from "@react-three/drei";
-import {Euler, Mesh, RepeatWrapping, Vector3} from "three";
+import {Box, Cone, Cylinder, Line, Sphere} from "@react-three/drei";
+import {Euler, Mesh, RepeatWrapping, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {
@@ -124,19 +124,28 @@ const SolarPanel = ({
         }
     }, [orientation, pvModel, lx, ly]);
 
-    const textureImg = useMemo(() => {
+    const texture = useMemo(() => {
+        const loader = new TextureLoader();
+        let texture;
         switch (orientation) {
             case Orientation.portrait:
-                return pvModel.color === 'Blue' ? SolarPanelBluePortraitImage : SolarPanelBlackPortraitImage;
+                texture = loader.load(pvModel.color === 'Blue' ?
+                    SolarPanelBluePortraitImage : SolarPanelBlackPortraitImage, (texture) => {
+                    texture.wrapS = texture.wrapT = RepeatWrapping;
+                    texture.offset.set(0, 0);
+                    texture.repeat.set(nx, ny);
+                });
+                break;
             default:
-                return pvModel.color === 'Blue' ? SolarPanelBlueLandscapeImage : SolarPanelBlackLandscapeImage;
+                texture = loader.load(pvModel.color === 'Blue' ?
+                    SolarPanelBlueLandscapeImage : SolarPanelBlackLandscapeImage, (texture) => {
+                    texture.wrapS = texture.wrapT = RepeatWrapping;
+                    texture.offset.set(0, 0);
+                    texture.repeat.set(nx, ny);
+                });
         }
-    }, [orientation, pvModel.color]);
-
-    const texture = useTexture(textureImg);
-    texture.wrapS = texture.wrapT = RepeatWrapping;
-    texture.offset.set(0, 0);
-    texture.repeat.set(nx, ny);
+        return texture;
+    }, [orientation, pvModel.color, nx, ny]);
 
     const selectMe = (e: ThreeEvent<MouseEvent>, action: ActionType) => {
         // We must check if there is really a first intersection, onPointerDown does not guarantee it

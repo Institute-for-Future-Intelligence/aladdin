@@ -228,6 +228,8 @@ const ContextMenu = ({
             );
         case ObjectType.SolarPanel:
             const solarPanel = selectedElement as SolarPanelModel;
+            const dx = solarPanel.orientation === Orientation.portrait ? solarPanel.pvModel.width : solarPanel.pvModel.length;
+            const dy = solarPanel.orientation === Orientation.portrait ? solarPanel.pvModel.length : solarPanel.pvModel.width;
             return (
                 <StyledMenu>
                     <Menu.Item key={'solar-panel-copy'} onClick={copyElement} style={{paddingLeft: '40px'}}>
@@ -243,7 +245,7 @@ const ContextMenu = ({
                                    requestUpdate();
                                }}
                                style={{paddingLeft: '40px'}}>
-                        Select a PV Model...
+                        Change PV Model {'(' + solarPanel.pvModel.name + ')'}...
                     </Menu.Item>
                     <Menu>
                         <Menu.Item key={'solar-panel-orientation'} style={{paddingLeft: '40px'}}>
@@ -252,14 +254,61 @@ const ContextMenu = ({
                                     value={solarPanel.orientation}
                                     onChange={(value) => {
                                         if (solarPanel) {
-                                            updateElementById(solarPanel.id, {orientation: value});
+                                            updateElementById(solarPanel.id,
+                                                {
+                                                    orientation: value,
+                                                    lx: solarPanel.ly,
+                                                    ly: solarPanel.lx
+                                                });
                                             requestUpdate();
                                         }
                                     }}
                             >
-                                <Option key={'Portrait'} value={Orientation.portrait}>Portrait</Option>)
-                                <Option key={'Landscape'} value={Orientation.landscape}>Landscape</Option>)
+                                <Option key={Orientation.portrait} value={Orientation.portrait}>
+                                    {Orientation.portrait}
+                                </Option>)
+                                <Option key={Orientation.landscape} value={Orientation.landscape}>
+                                    {Orientation.landscape}
+                                </Option>)
                             </Select>
+                        </Menu.Item>
+                        <Menu.Item key={'solar-panel-width'} style={{paddingLeft: '40px'}}>
+                            <Space
+                                style={{width: '150px'}}>{'Width (' + Math.round(solarPanel.lx / dx) + ' panels):'}
+                            </Space>
+                            <InputNumber min={dx}
+                                         max={100 * dx}
+                                         step={dx}
+                                         style={{width: 120}}
+                                         precision={2}
+                                         value={solarPanel.lx}
+                                         formatter={(a) => a + ' m'}
+                                         onChange={(value) => {
+                                             if (solarPanel) {
+                                                 updateElementById(solarPanel.id, {lx: value ?? 1});
+                                                 requestUpdate();
+                                             }
+                                         }}
+                            />
+                        </Menu.Item>
+                        <Menu.Item key={'solar-panel-length'} style={{paddingLeft: '40px'}}>
+                            <Space
+                                style={{width: '150px'}}>{'Length (' + Math.round(solarPanel.ly / dy) + ' panels):'}
+                            </Space>
+                            <InputNumber min={dy}
+                                         max={100 * dy}
+                                         step={dy}
+                                         style={{width: 120}}
+                                         precision={2}
+                                         value={solarPanel.ly}
+                                         formatter={(a) => a + ' m'}
+                                         onChange={(value) => {
+                                             if (solarPanel) {
+                                                 updateElementById(solarPanel.id, {ly: value ?? 2});
+                                                 requestUpdate();
+                                             }
+                                         }}
+                            />
                         </Menu.Item>
                         <Menu.Item key={'solar-panel-tilt-angle'} style={{paddingLeft: '40px'}}>
                             <Space style={{width: '150px'}}>Tilt Angle: </Space>
@@ -270,9 +319,9 @@ const ContextMenu = ({
                                          value={Util.toDegrees(solarPanel.tiltAngle)}
                                          step={1}
                                          formatter={(a) => a + '°'}
-                                         onChange={(e) => {
+                                         onChange={(value) => {
                                              if (solarPanel) {
-                                                 updateElementById(solarPanel.id, {tiltAngle: Util.toRadians(e ?? 0)});
+                                                 updateElementById(solarPanel.id, {tiltAngle: Util.toRadians(value ?? 0)});
                                                  requestUpdate();
                                              }
                                          }}
@@ -287,9 +336,9 @@ const ContextMenu = ({
                                          value={Util.toDegrees(solarPanel.relativeAzimuth)}
                                          step={1}
                                          formatter={(a) => a + '°'}
-                                         onChange={(e) => {
+                                         onChange={(value) => {
                                              if (solarPanel) {
-                                                 updateElementById(solarPanel.id, {relativeAzimuth: Util.toRadians(e ?? 0)});
+                                                 updateElementById(solarPanel.id, {relativeAzimuth: Util.toRadians(value ?? 0)});
                                                  requestUpdate();
                                              }
                                          }}
@@ -546,10 +595,10 @@ const ContextMenu = ({
                                          step={0.01}
                                          precision={2}
                                          value={world.ground.albedo}
-                                         onChange={(e) => {
-                                             if (e) {
+                                         onChange={(value) => {
+                                             if (value) {
                                                  setCommonStore(state => {
-                                                     state.world.ground.albedo = e;
+                                                     state.world.ground.albedo = value;
                                                  });
                                              }
                                          }}

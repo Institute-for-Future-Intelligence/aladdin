@@ -58,29 +58,25 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
                 .map(e => {
                         switch (e.type) {
                             case ObjectType.Foundation:
-                                return <Foundation key={e.id} {...e as FoundationModel}/>
+                                return <Foundation key={e.id} {...e as FoundationModel}/>;
                             case ObjectType.Sensor:
-                                return <Sensor key={e.id} {...e as SensorModel}/>
+                                return <Sensor key={e.id} {...e as SensorModel}/>;
                             case ObjectType.Cuboid:
-                                return <Cuboid key={e.id} {...e as CuboidModel}/>
+                                return <Cuboid key={e.id} {...e as CuboidModel}/>;
                             case ObjectType.Human:
                                 return (
                                     <Suspense key={e.id} fallback={null}>
                                         <Human {...e as HumanModel} />
                                     </Suspense>
-                                )
+                                );
                             case ObjectType.Tree:
                                 return (
                                     <Suspense key={e.id} fallback={null}>
                                         <Tree {...e as TreeModel} />
                                     </Suspense>
-                                )
+                                );
                             case ObjectType.SolarPanel:
-                                return (
-                                    <Suspense key={e.id} fallback={null}>
-                                        <SolarPanel {...e as SolarPanelModel} />
-                                    </Suspense>
-                                )
+                                return <SolarPanel {...e as SolarPanelModel} />;
                         }
                     }
                 )
