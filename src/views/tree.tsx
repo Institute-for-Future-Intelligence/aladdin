@@ -16,7 +16,7 @@ import MapleShedImage from "../resources/maple_shed.png";
 import OakImage from "../resources/oak.png";
 import OakShedImage from "../resources/oak_shed.png";
 import PineImage from "../resources/pine.png";
-import {DoubleSide, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3} from "three";
+import {DoubleSide, Mesh, MeshDepthMaterial, RGBADepthPacking, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {Billboard, Cone, Sphere, useTexture} from "@react-three/drei";
@@ -53,30 +53,22 @@ const Tree = ({
     const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
 
     const textureImg = useMemo(() => {
-        let texture;
         switch (name) {
             case TreeType.Cottonwood:
-                texture = (noLeaves ? CottonwoodShedImage : CottonwoodImage);
-                break;
+                return (noLeaves ? CottonwoodShedImage : CottonwoodImage);
             case TreeType.Dogwood:
-                texture = (noLeaves ? DogwoodShedImage : DogwoodImage);
-                break;
+                return (noLeaves ? DogwoodShedImage : DogwoodImage);
             case TreeType.Elm:
-                texture = (noLeaves ? ElmShedImage : ElmImage);
-                break;
+                return (noLeaves ? ElmShedImage : ElmImage);
             case TreeType.Linden:
-                texture = (noLeaves ? LindenShedImage : LindenImage);
-                break;
+                return (noLeaves ? LindenShedImage : LindenImage);
             case TreeType.Maple:
-                texture = (noLeaves ? MapleShedImage : MapleImage);
-                break;
+                return (noLeaves ? MapleShedImage : MapleImage);
             case TreeType.Oak:
-                texture = (noLeaves ? OakShedImage : OakImage);
-                break;
+                return (noLeaves ? OakShedImage : OakImage);
             default:
-                texture = (PineImage);
+                return PineImage;
         }
-        return texture;
     }, [name, world.date]);
 
     const texture = useTexture(textureImg);
@@ -122,18 +114,18 @@ const Tree = ({
         <group name={'Tree Group ' + id}
                position={[cx, lz / 2, cy]}>
 
-            <Billboard uuid={id} name={name} args={[lx, lz]} userData={{aabb: true}} >
-                <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
+            <Billboard uuid={id} name={name} args={[lx, lz]} userData={{aabb: true}}>
+                <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5}/>
             </Billboard>
-            
+
             {/* cast shadow */}
-            <Billboard 
+            <Billboard
                 args={[lx, lz]}
                 castShadow={shadowEnabled}
                 follow={false}
                 customDepthMaterial={customDepthMaterial}
             >
-                <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0} depthTest={false} />
+                <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0} depthTest={false}/>
             </Billboard>
 
             {/* simulation model */}

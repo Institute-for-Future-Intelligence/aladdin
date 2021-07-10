@@ -23,7 +23,7 @@ import JuddImage from "../resources/judd.png";
 import JudyImage from "../resources/judy.png";
 import JuneImage from "../resources/june.png";
 import JuroImage from "../resources/juro.png";
-import {DoubleSide, Mesh, TextureLoader, Vector3} from "three";
+import {DoubleSide, Mesh, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {HumanModel} from "../models/HumanModel";
@@ -47,70 +47,50 @@ const Human = ({
     const [hovered, setHovered] = useState(false);
     const meshRef = useRef<Mesh>(null!);
     const {gl: {domElement}} = useThree();
+
     const textureImg = useMemo(() => {
-        let texture;
         switch (name) {
             case HumanName.Jade:
-                texture = JadeImage;
-                break;
+                return JadeImage;
             case HumanName.Jane:
-                texture = JaneImage;
-                break;
+                return JaneImage;
             case HumanName.Jaye:
-                texture = JayeImage;
-                break;
+                return JayeImage;
             case HumanName.Jean:
-                texture = JeanImage;
-                break;
+                return JeanImage;
             case HumanName.Jedi:
-                texture = JediImage;
-                break;
+                return JediImage;
             case HumanName.Jeff:
-                texture = JeffImage;
-                break;
+                return JeffImage;
             case HumanName.Jena:
-                texture = JenaImage;
-                break;
+                return JenaImage;
             case HumanName.Jeni:
-                texture = JeniImage;
-                break;
+                return JeniImage;
             case HumanName.Jess:
-                texture = JessImage;
-                break;
+                return JessImage;
             case HumanName.Jett:
-                texture = JettImage;
-                break;
+                return JettImage;
             case HumanName.Jill:
-                texture = JillImage;
-                break;
+                return JillImage;
             case HumanName.Joan:
-                texture = JoanImage;
-                break;
+                return JoanImage;
             case HumanName.Joel:
-                texture = JoelImage;
-                break;
+                return JoelImage;
             case HumanName.John:
-                texture = JohnImage;
-                break;
+                return JohnImage;
             case HumanName.Jose:
-                texture = JoseImage;
-                break;
+                return JoseImage;
             case HumanName.Judd:
-                texture = JuddImage;
-                break;
+                return JuddImage;
             case HumanName.Judy:
-                texture = JudyImage;
-                break;
+                return JudyImage;
             case HumanName.June:
-                texture = JuneImage;
-                break;
+                return JuneImage;
             case HumanName.Juro:
-                texture = JuroImage;
-                break;
+                return JuroImage;
             default:
-                texture = JackImage;
+                return JackImage;
         }
-        return texture;
     }, [name]);
 
     const texture = useTexture(textureImg);
