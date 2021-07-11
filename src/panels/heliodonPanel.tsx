@@ -5,7 +5,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useStore} from "../stores/common";
 import styled from 'styled-components';
-import {Space, Switch, Slider, DatePicker, TimePicker} from "antd";
+import {DatePicker, Slider, Space, Switch, TimePicker} from "antd";
 import moment from 'moment';
 import 'antd/dist/antd.css';
 import ReactDraggable, {DraggableEventHandler} from "react-draggable";

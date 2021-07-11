@@ -12,9 +12,10 @@ export interface SolarPanelModel extends ElementModel {
     relativeAzimuth: number; // in radian
     tiltAngle: number; // in radian
     monthlyTiltAngles: number[]; // seasonally adjusted tilt angles
-    trackerType: TrackerType;
     orientation: Orientation;
     drawSunBeam: boolean;
+
+    trackerType: TrackerType;
 
     poleHeight: number;
     poleRadius: number;

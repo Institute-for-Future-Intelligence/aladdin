@@ -4,11 +4,11 @@
 
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {Box, Cone, Cylinder, Line, Sphere} from "@react-three/drei";
-import {Euler, Mesh, RepeatWrapping, TextureLoader, Vector3} from "three";
+import {Euler, Mesh, Quaternion, RepeatWrapping, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS, RESIZE_HANDLE_COLOR, RESIZE_HANDLE_SIZE} from "../constants";
-import {ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType} from "../types";
+import {ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, TrackerType} from "../types";
 import {Util} from "../Util";
 import {SolarPanelModel} from "../models/SolarPanelModel";
 import SolarPanelBlueLandscapeImage from "../resources/solar-panel-blue-landscape.png";
@@ -28,6 +28,7 @@ const SolarPanel = ({
                         lz,
                         tiltAngle,
                         relativeAzimuth,
+                        trackerType = TrackerType.NO_TRACKER,
                         poleHeight,
                         poleRadius,
                         poleSpacing,
@@ -248,7 +249,25 @@ const SolarPanel = ({
     const rot = getElementById(parent.id)?.rotation[2];
     const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(Util.UNIT_VECTOR_POS_Y, -rot) : sunDirection;
 
-    const relativeEuler = new Euler(tiltAngle, relativeAzimuth, 0);
+    const relativeEuler = useMemo(() => {
+        if (sunDirection.y > 0) {
+            switch (trackerType) {
+                case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
+                    const qrotAADAT = new Quaternion().setFromUnitVectors(Util.UNIT_VECTOR_POS_Y, rotatedSunDirection);
+                    return new Euler().setFromQuaternion(qrotAADAT);
+                case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
+                    const qrotHSAT = new Quaternion().setFromUnitVectors(Util.UNIT_VECTOR_POS_Y,
+                        new Vector3(rotatedSunDirection.x, rotatedSunDirection.y, 0).normalize());
+                    return new Euler().setFromQuaternion(qrotHSAT);
+                case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
+                    const a = new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize();
+                    const dot = Util.UNIT_VECTOR_POS_Z.dot(a);
+                    return new Euler(tiltAngle, Math.acos(dot), 0);
+            }
+        }
+        return new Euler(tiltAngle, relativeAzimuth, 0, 'YXZ');
+    }, [trackerType, world.date, tiltAngle, relativeAzimuth]);
+
     const normalVector = useMemo(() => {
         const v = new Vector3();
         return drawSunBeam ? Util.modelToView(v.fromArray(normal)).applyEuler(relativeEuler) : v;
@@ -360,7 +379,7 @@ const SolarPanel = ({
             }
 
             {!selected &&
-            <group rotation={[tiltAngle, relativeAzimuth, 0]}>
+            <group rotation={relativeEuler}>
                 {/* draw wireframe lines upper face */}
                 <Line points={[positionLL, positionLR]}
                       name={'Line LL-LR Upper Face'}
@@ -433,7 +452,7 @@ const SolarPanel = ({
 
             {/* draw resize handles */}
             {selected && !locked &&
-            <group rotation={[tiltAngle, relativeAzimuth, 0]}>
+            <group rotation={relativeEuler}>
                 <Box ref={resizeHandleLowerRef}
                      position={[(positionLL.x + positionLR.x) / 2, positionLL.y, positionLL.z]}
                      args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}

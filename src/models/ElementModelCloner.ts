@@ -89,6 +89,7 @@ export class ElementModelCloner {
             lx: solarPanel.lx,
             ly: solarPanel.ly,
             lz: solarPanel.lz,
+            trackerType: solarPanel.trackerType,
             tiltAngle: solarPanel.tiltAngle,
             relativeAzimuth: solarPanel.relativeAzimuth,
             orientation: solarPanel.orientation,
