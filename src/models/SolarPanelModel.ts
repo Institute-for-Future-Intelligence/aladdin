@@ -18,7 +18,6 @@ export interface SolarPanelModel extends ElementModel {
 
     poleHeight: number;
     poleRadius: number;
-    poleSpacingX: number;
-    poleSpacingY: number;
+    poleSpacing: number;
 
 }

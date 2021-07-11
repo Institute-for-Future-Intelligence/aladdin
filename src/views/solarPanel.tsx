@@ -30,8 +30,7 @@ const SolarPanel = ({
                         relativeAzimuth,
                         poleHeight,
                         poleRadius,
-                        poleSpacingX,
-                        poleSpacingY,
+                        poleSpacing,
                         drawSunBeam,
                         rotation = [0, 0, 0],
                         normal = [0, 0, 1],
@@ -257,13 +256,13 @@ const SolarPanel = ({
 
     const poles: Vector3[] = [];
     const poleZ = -poleHeight / 2 - lz / 2;
-    const poleNx = Math.floor(0.5 * lx / poleSpacingX);
-    const poleNy = Math.floor(0.5 * ly / poleSpacingY);
+    const poleNx = Math.floor(0.5 * lx / poleSpacing);
+    const poleNy = Math.floor(0.5 * ly / poleSpacing);
     const sinTilt = 0.5 * Math.sin(tiltAngle);
     for (let ix = -poleNx; ix <= poleNx; ix++) {
         for (let iy = -poleNy; iy <= poleNy; iy++) {
-            const xi = poleSpacingX * ix;
-            const yi = poleSpacingY * iy;
+            const xi = poleSpacing * ix;
+            const yi = poleSpacing * iy;
             poles.push(new Vector3(xi, poleZ - sinTilt * yi, yi));
         }
     }

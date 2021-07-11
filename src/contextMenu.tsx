@@ -405,6 +405,23 @@ const ContextMenu = ({
                                          }}
                             />
                         </Menu.Item>
+                        <Menu.Item key={'solar-panel-pole-spacing'} style={{paddingLeft: '40px'}}>
+                            <Space style={{width: '150px'}}>Pole Spacing: </Space>
+                            <InputNumber min={2}
+                                         max={10}
+                                         step={1}
+                                         style={{width: 120}}
+                                         precision={0}
+                                         value={solarPanel.poleSpacing}
+                                         formatter={(a) => Number(a).toFixed(0) + ' m'}
+                                         onChange={(value) => {
+                                             if (solarPanel) {
+                                                 updateElementById(solarPanel.id, {poleSpacing: value ?? 1});
+                                                 requestUpdate();
+                                             }
+                                         }}
+                            />
+                        </Menu.Item>
                         <Menu.Item key={'solar-panel-draw-sun-beam'}>
                             <Checkbox checked={!!solarPanel?.drawSunBeam}
                                       onChange={(e) => {
