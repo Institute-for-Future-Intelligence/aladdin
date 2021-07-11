@@ -7,6 +7,7 @@ import {useStore} from "../stores/common";
 import {SolarPanelModel} from "../models/SolarPanelModel";
 import {Row, Select, Col, Input} from "antd";
 import {SolarPanelNominalSize} from "../models/SolarPanelNominalSize";
+import {Orientation} from "../types";
 
 const {Option} = Select;
 
@@ -20,6 +21,7 @@ const PvModelPanel = ({
 
     const updateElementById = useStore(state => state.updateElementById);
     const getSelectedElement = useStore(state => state.getSelectedElement);
+    const setElementSize = useStore(state => state.setElementSize);
     const pvModules = useStore(state => state.pvModules);
 
     const solarPanel = getSelectedElement() as SolarPanelModel;
@@ -42,6 +44,17 @@ const PvModelPanel = ({
                             value={solarPanel.pvModel.name}
                             onChange={(value) => {
                                 if (solarPanel) {
+                                    if (solarPanel.orientation === Orientation.portrait) {
+                                        // calculate the current x-y layout
+                                        const nx = Math.max(1, Math.round(solarPanel.lx / solarPanel.pvModel.width));
+                                        const ny = Math.max(1, Math.round(solarPanel.ly / solarPanel.pvModel.length));
+                                        setElementSize(solarPanel.id, nx * pvModules[value].width, ny * pvModules[value].length);
+                                    } else {
+                                        // calculate the current x-y layout
+                                        const nx = Math.max(1, Math.round(solarPanel.lx / solarPanel.pvModel.length));
+                                        const ny = Math.max(1, Math.round(solarPanel.ly / solarPanel.pvModel.width));
+                                        setElementSize(solarPanel.id, nx * pvModules[value].length, ny * pvModules[value].width);
+                                    }
                                     updateElementById(solarPanel.id, {pvModel: pvModules[value]});
                                     requestUpdate();
                                 }

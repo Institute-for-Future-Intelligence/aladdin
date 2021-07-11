@@ -57,6 +57,7 @@ const ContextMenu = ({
     const world = useStore(state => state.world);
     const viewState = useStore(state => state.viewState);
     const updateElementById = useStore(state => state.updateElementById);
+    const setElementSize = useStore(state => state.setElementSize);
     const clickObjectType = useStore(state => state.clickObjectType);
     const cutElementById = useStore(state => state.cutElementById);
     const countElementsByType = useStore(state => state.countElementsByType);
@@ -238,7 +239,6 @@ const ContextMenu = ({
                     <Menu.Item key={'solar-panel-cut'} onClick={cutElement} style={{paddingLeft: '40px'}}>
                         Cut
                     </Menu.Item>
-
                     <Menu.Item key={'solar-panel-change'}
                                onClick={() => {
                                    setPvDialogVisible(true);
@@ -254,6 +254,17 @@ const ContextMenu = ({
                                     value={solarPanel.orientation}
                                     onChange={(value) => {
                                         if (solarPanel) {
+                                            if (value === Orientation.portrait) {
+                                                // calculate the current x-y layout
+                                                const nx = Math.max(1, Math.round(solarPanel.lx / solarPanel.pvModel.width));
+                                                const ny = Math.max(1, Math.round(solarPanel.ly / solarPanel.pvModel.length));
+                                                setElementSize(solarPanel.id, nx * solarPanel.pvModel.width, ny * solarPanel.pvModel.length);
+                                            } else {
+                                                // calculate the current x-y layout
+                                                const nx = Math.max(1, Math.round(solarPanel.lx / solarPanel.pvModel.length));
+                                                const ny = Math.max(1, Math.round(solarPanel.ly / solarPanel.pvModel.width));
+                                                setElementSize(solarPanel.id, nx * solarPanel.pvModel.length, ny * solarPanel.pvModel.width);
+                                            }
                                             updateElementById(solarPanel.id, {orientation: value});
                                             requestUpdate();
                                         }
