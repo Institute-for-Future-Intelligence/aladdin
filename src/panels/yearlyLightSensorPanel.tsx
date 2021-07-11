@@ -11,7 +11,7 @@ import {MONTHS} from "../constants";
 import {Util} from "../Util";
 import BarGraph from "../components/barGraph";
 import ReactDraggable, {DraggableEventHandler} from "react-draggable";
-import {Space, Switch} from "antd";
+import {Button, Space, Switch} from "antd";
 
 const Container = styled.div`
   position: fixed;
@@ -63,6 +63,7 @@ export interface YearlyLightSensorPanelProps {
 
     city: string | null;
     requestUpdate: () => void;
+    collectYearlyLightSensorData: () => void;
 
     [key: string]: any;
 
@@ -71,6 +72,7 @@ export interface YearlyLightSensorPanelProps {
 const YearlyLightSensorPanel = ({
                                     city,
                                     requestUpdate,
+                                    collectYearlyLightSensorData,
                                     ...rest
                                 }: YearlyLightSensorPanelProps) => {
 
@@ -178,6 +180,11 @@ const YearlyLightSensorPanel = ({
                                         requestUpdate();
                                     }}
                             />Radiation
+                        </Space>
+                        <Space>
+                            <Button type="primary" onClick={collectYearlyLightSensorData}>
+                                Update
+                            </Button>
                         </Space>
                     </Space>
                     {daylightGraph &&

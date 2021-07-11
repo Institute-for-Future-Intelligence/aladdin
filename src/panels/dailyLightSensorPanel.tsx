@@ -9,6 +9,7 @@ import {useStore} from "../stores/common";
 import {GraphDataType} from "../types";
 import moment from "moment";
 import ReactDraggable, {DraggableEventHandler} from 'react-draggable';
+import {Button, Space} from "antd";
 
 const Container = styled.div`
   position: fixed;
@@ -27,7 +28,7 @@ const ColumnWrapper = styled.div`
   right: 0;
   top: 0;
   width: 600px;
-  height: 300px;
+  height: 360px;
   padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
@@ -60,6 +61,7 @@ export interface DailyLightSensorPanelProps {
 
     city: string | null;
     requestUpdate: () => void;
+    collectDailyLightSensorData: () => void;
 
     [key: string]: any;
 
@@ -68,6 +70,7 @@ export interface DailyLightSensorPanelProps {
 const DailyLightSensorPanel = ({
                                    city,
                                    requestUpdate,
+                                   collectDailyLightSensorData,
                                    ...rest
                                }: DailyLightSensorPanelProps) => {
 
@@ -78,7 +81,7 @@ const DailyLightSensorPanel = ({
     const now = new Date(useStore(state => state.world.date));
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
-    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 400;
+    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 460;
     const [curPosition, setCurPosition] = useState({
         x: isNaN(viewState.dailyLightSensorPanelX) ? 0 : Math.max(viewState.dailyLightSensorPanelX, wOffset - window.innerWidth),
         y: isNaN(viewState.dailyLightSensorPanelY) ? 0 : Math.min(viewState.dailyLightSensorPanelY, window.innerHeight - hOffset)
@@ -159,6 +162,11 @@ const DailyLightSensorPanel = ({
                         referenceX={now.getHours()}
                         {...rest}
                     />
+                    <Space style={{alignSelf: 'center'}}>
+                        <Button type="primary" onClick={collectDailyLightSensorData}>
+                            Update
+                        </Button>
+                    </Space>
                 </ColumnWrapper>
             </Container>
         </ReactDraggable>

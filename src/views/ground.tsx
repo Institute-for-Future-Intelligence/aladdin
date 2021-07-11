@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useMemo, useRef, useState} from "react";
+import React, {useMemo, useRef} from "react";
 import {Plane} from "@react-three/drei";
 import {useStore} from "../stores/common";
 import {DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3} from "three";
@@ -147,9 +147,11 @@ const Ground = () => {
                                if (selectedElement) {
                                    if (legalOnGround(selectedElement.type as ObjectType)) {
                                        grabRef.current = selectedElement;
-                                       setCommonStore((state) => {
-                                           state.enableOrbitController = false;
-                                       });
+                                       if (selectedElement.type !== ObjectType.Foundation) { //TODO: This may not be needed
+                                           setCommonStore((state) => {
+                                               state.enableOrbitController = false;
+                                           });
+                                       }
                                    }
                                }
                            }
@@ -210,8 +212,7 @@ const Ground = () => {
                                                        setElementPosition(grabRef.current.id, x0, y0);
                                                        break;
                                                }
-                                           }
-                                           if (resizeHandleType) {
+                                           } else if (resizeHandleType) {
                                                const lx = Math.abs(resizeAnchor.x - p.x);
                                                const ly = Math.abs(resizeAnchor.y - p.z);
                                                const dx = Math.abs(lx * cosAngle - ly * sinAngle) / 2;

@@ -378,9 +378,15 @@ const App = () => {
                            requestUpdate={requestUpdate}
             />}
             {viewState.showYearlyLightSensorPanel &&
-            <YearlyLightSensorPanel city={city} requestUpdate={requestUpdate}/>}
+            <YearlyLightSensorPanel city={city}
+                                    collectYearlyLightSensorData={collectYearlyLightSensorData}
+                                    requestUpdate={requestUpdate}
+            />}
             {viewState.showDailyLightSensorPanel &&
-            <DailyLightSensorPanel city={city} requestUpdate={requestUpdate}/>}
+            <DailyLightSensorPanel city={city}
+                                   collectDailyLightSensorData={collectDailyLightSensorData}
+                                   requestUpdate={requestUpdate}
+            />}
             {viewState.showWeatherPanel &&
             <WeatherPanel city={city}
                           requestUpdate={requestUpdate}
@@ -390,7 +396,7 @@ const App = () => {
             <StickyNotePanel requestUpdate={requestUpdate}
             />}
             {viewState.showInfoPanel && <InfoPanel city={city} daytime={sunAboveHorizon}/>}
-            <DropdownContextMenu 
+            <DropdownContextMenu
                 city={city}
                 canvas={canvasRef.current}
                 setPvDialogVisible={setPvModelDialogVisible}

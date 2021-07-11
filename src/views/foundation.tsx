@@ -104,14 +104,17 @@ const Foundation = ({
                         case ActionType.Move:
                             state.moveHandleType = e.eventObject.name as MoveHandleType;
                             state.resizeHandleType = null;
+                            state.enableOrbitController = false;
                             break;
                         case ActionType.Resize:
                             state.resizeHandleType = e.eventObject.name as ResizeHandleType;
                             state.moveHandleType = null;
+                            state.enableOrbitController = false;
                             break;
                         default:
                             state.moveHandleType = null;
                             state.resizeHandleType = null;
+                            state.enableOrbitController = true;
                     }
                 });
             }

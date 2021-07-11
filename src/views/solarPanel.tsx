@@ -260,9 +260,9 @@ const SolarPanel = ({
                         new Vector3(rotatedSunDirection.x, rotatedSunDirection.y, 0).normalize());
                     return new Euler().setFromQuaternion(qrotHSAT);
                 case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
-                    const a = new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize();
-                    const dot = Util.UNIT_VECTOR_POS_Z.dot(a);
-                    return new Euler(tiltAngle, Math.acos(dot), 0);
+                    const v2d = new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize();
+                    const dot = Util.UNIT_VECTOR_POS_Z.dot(v2d);
+                    return new Euler(tiltAngle, Math.sign(v2d.x) * Math.acos(dot), 0, 'YXZ');
             }
         }
         return new Euler(tiltAngle, relativeAzimuth, 0, 'YXZ');
