@@ -254,12 +254,7 @@ const ContextMenu = ({
                                     value={solarPanel.orientation}
                                     onChange={(value) => {
                                         if (solarPanel) {
-                                            updateElementById(solarPanel.id,
-                                                {
-                                                    orientation: value,
-                                                    lx: solarPanel.ly,
-                                                    ly: solarPanel.lx
-                                                });
+                                            updateElementById(solarPanel.id, {orientation: value});
                                             requestUpdate();
                                         }
                                     }}
@@ -282,7 +277,7 @@ const ContextMenu = ({
                                          style={{width: 120}}
                                          precision={2}
                                          value={solarPanel.lx}
-                                         formatter={(a) => a + ' m'}
+                                         formatter={(a) => Number(a).toFixed(2) + ' m'}
                                          onChange={(value) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {lx: value ?? 1});
@@ -301,7 +296,7 @@ const ContextMenu = ({
                                          style={{width: 120}}
                                          precision={2}
                                          value={solarPanel.ly}
-                                         formatter={(a) => a + ' m'}
+                                         formatter={(a) => Number(a).toFixed(2) + ' m'}
                                          onChange={(value) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {ly: value ?? 2});
@@ -318,7 +313,7 @@ const ContextMenu = ({
                                          precision={1}
                                          value={Util.toDegrees(solarPanel.tiltAngle)}
                                          step={1}
-                                         formatter={(a) => a + '°'}
+                                         formatter={(a) => Number(a).toFixed(1) + '°'}
                                          onChange={(value) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {tiltAngle: Util.toRadians(value ?? 0)});
@@ -335,7 +330,7 @@ const ContextMenu = ({
                                          precision={1}
                                          value={Util.toDegrees(solarPanel.relativeAzimuth)}
                                          step={1}
-                                         formatter={(a) => a + '°'}
+                                         formatter={(a) => Number(a).toFixed(1) + '°'}
                                          onChange={(value) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {relativeAzimuth: Util.toRadians(value ?? 0)});
@@ -390,7 +385,7 @@ const ContextMenu = ({
                                          step={0.1}
                                          precision={1}
                                          value={solarPanel.poleHeight}
-                                         formatter={(a) => a + ' m'}
+                                         formatter={(a) => Number(a).toFixed(1) + ' m'}
                                          onChange={(e) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {poleHeight: e});

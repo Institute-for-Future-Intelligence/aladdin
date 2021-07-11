@@ -7,12 +7,7 @@ import {Box, Cone, Cylinder, Line, Sphere} from "@react-three/drei";
 import {Euler, Mesh, RepeatWrapping, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {
-    HIGHLIGHT_HANDLE_COLOR,
-    MOVE_HANDLE_RADIUS,
-    RESIZE_HANDLE_COLOR,
-    RESIZE_HANDLE_SIZE
-} from "../constants";
+import {HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS, RESIZE_HANDLE_COLOR, RESIZE_HANDLE_SIZE} from "../constants";
 import {ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType} from "../types";
 import {Util} from "../Util";
 import {SolarPanelModel} from "../models/SolarPanelModel";
@@ -104,6 +99,13 @@ const SolarPanel = ({
     cy = -cy; // we want positive y to point north
     cz = poleHeight + lz / 2 + parent.lz;
     lz = pvModel.thickness;
+
+    // deal with a single solar panel
+    if (pvModel.width && ly === pvModel.length && orientation === Orientation.landscape) {
+        const tmp = lx;
+        lx = ly;
+        ly = tmp;
+    }
 
     const hx = lx / 2;
     const hy = ly / 2;
@@ -244,12 +246,27 @@ const SolarPanel = ({
     const sunDirection = useMemo(() => {
         return Util.modelToView(getSunDirection(new Date(world.date), world.latitude));
     }, [world.date, world.latitude]);
+    const rot = getElementById(parent.id)?.rotation[2];
+    const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(Util.UNIT_VECTOR_POS_Y, -rot) : sunDirection;
 
     const relativeEuler = new Euler(tiltAngle, relativeAzimuth, 0);
     const normalVector = useMemo(() => {
         const v = new Vector3();
         return drawSunBeam ? Util.modelToView(v.fromArray(normal)).applyEuler(relativeEuler) : v;
     }, [drawSunBeam, normal, relativeEuler]);
+
+    const poles: Vector3[] = [];
+    const poleZ = -poleHeight / 2 - lz / 2;
+    const poleNx = Math.floor(0.5 * lx / poleSpacingX);
+    const poleNy = Math.floor(0.5 * ly / poleSpacingY);
+    const sinTilt = 0.5 * Math.sin(tiltAngle);
+    for (let ix = -poleNx; ix <= poleNx; ix++) {
+        for (let iy = -poleNy; iy <= poleNy; iy++) {
+            const xi = poleSpacingX * ix;
+            const yi = poleSpacingY * iy;
+            poles.push(new Vector3(xi, poleZ - sinTilt * yi, yi));
+        }
+    }
 
     return (
 
@@ -295,37 +312,44 @@ const SolarPanel = ({
                 <meshStandardMaterial attachArray="material" color={color}/>
             </Box>
 
-            {/* draw pole */}
+            {/* draw poles */}
             {poleHeight > 0 &&
-            <Cylinder castShadow={shadowEnabled}
-                      args={[poleRadius, poleRadius, poleHeight, 6, 2]}
-                      position={[0, -poleHeight / 2 - lz / 2, 0]}>
-                <meshStandardMaterial attach="material" color={color}/>
-            </Cylinder>
+            poles.map(p => {
+                return (
+                    <Cylinder castShadow={shadowEnabled}
+                              receiveShadow={shadowEnabled}
+                              args={[poleRadius, poleRadius, poleHeight + (p.y - poleZ) * 2 + lz, 6, 2]}
+                              position={p}>
+                        <meshStandardMaterial attach="material" color={color}/>
+                    </Cylinder>
+                );
+            })
             }
 
             {/*draw sun beam*/}
             {drawSunBeam && sunDirection.y > 0 &&
             <group>
-                <Line points={[[0, 0, 0], sunDirection.clone().multiplyScalar(100)]}
-                      name={'Sun Beam'}
-                      lineWidth={0.5}
-                      color={'white'}/>
+                <Line
+                    points={[[0, 0, 0], rotatedSunDirection.clone().multiplyScalar(100)]}
+                    name={'Sun Beam'}
+                    lineWidth={0.5}
+                    color={'white'}/>
                 <Line points={[[0, 0, 0], normalVector.clone().multiplyScalar(0.75)]}
                       name={'Normal Vector'}
                       lineWidth={0.5}
                       color={'white'}/>
-                <Line points={[sunDirection.clone().multiplyScalar(0.5), normalVector.clone().multiplyScalar(0.5)]}
-                      name={'Angle'}
-                      lineWidth={0.5}
-                      color={'white'}/>
+                <Line
+                    points={[rotatedSunDirection.clone().multiplyScalar(0.5), normalVector.clone().multiplyScalar(0.5)]}
+                    name={'Angle'}
+                    lineWidth={0.5}
+                    color={'white'}/>
                 <textSprite
                     name={'Angle Value'}
-                    text={Util.toDegrees(sunDirection.angleTo(normalVector)).toFixed(1) + '°'}
+                    text={Util.toDegrees(rotatedSunDirection.angleTo(normalVector)).toFixed(1) + '°'}
                     fontSize={20}
                     fontFace={'Times Roman'}
                     textHeight={0.1}
-                    position={sunDirection.clone().multiplyScalar(0.75).add(normalVector.clone().multiplyScalar(0.75)).multiplyScalar(0.5)}
+                    position={rotatedSunDirection.clone().multiplyScalar(0.75).add(normalVector.clone().multiplyScalar(0.75)).multiplyScalar(0.5)}
                 />
                 <Cone args={[0.04, 0.2, 4, 2]}
                       name={'Normal Vector Arrow Head'}

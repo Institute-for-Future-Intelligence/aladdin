@@ -55,7 +55,7 @@ const ReshapeElementMenu = ({
                              step={0.5}
                              precision={1}
                              value={element ? element.lx.toFixed(1) : 1}
-                             formatter={(x) => x + ' m'}
+                             formatter={(x) => Number(x).toFixed(1) + ' m'}
                              onChange={(value) => {
                                  if (element && value) {
                                      setElementSize(element.id, value as number, element.ly);
@@ -73,7 +73,7 @@ const ReshapeElementMenu = ({
                              step={0.5}
                              precision={1}
                              value={element ? element.ly.toFixed(1) : 1}
-                             formatter={(y) => y + ' m'}
+                             formatter={(y) =>  Number(y).toFixed(1) + ' m'}
                              onChange={(value) => {
                                  if (element && value) {
                                      setElementSize(element.id, element.lx, value as number);
@@ -88,10 +88,10 @@ const ReshapeElementMenu = ({
                 <Space style={{width: '60px'}}>Height:</Space>
                 <InputNumber min={0.1.toString()}
                              max={maxHeight.toString()}
-                             step={0.5}
+                             step={0.1}
                              precision={1}
                              value={element ? element.lz.toFixed(1) : 0.1}
-                             formatter={(h) => h + ' m'}
+                             formatter={(h) =>  Number(h).toFixed(1) + ' m'}
                              onChange={(value) => {
                                  if (element && value) {
                                      setElementSize(element.id, element.lx, element.ly, value as number);
@@ -117,7 +117,7 @@ const ReshapeElementMenu = ({
                              step={1}
                              precision={1}
                              value={element ? Util.toDegrees(element.rotation[2]).toFixed(1) : 0}
-                             formatter={(a) => a + '°'}
+                             formatter={(a) =>  Number(a).toFixed(1) + '°'}
                              onChange={(value) => {
                                  if (element && value !== null) {
                                      setElementRotation(
