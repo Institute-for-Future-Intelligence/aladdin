@@ -71,7 +71,7 @@ const InfoPanel = ({city, daytime}: InfoPanelProps) => {
         }
     }, [city, world.date]);
 
-    const color = daytime ? 'gray' : 'antiquewhite';
+    const color = daytime ? 'navajowhite' : 'antiquewhite';
 
     return (
         <Container>

@@ -130,7 +130,7 @@ const Tree = ({
 
             {/* simulation model */}
             {name !== TreeType.Pine ?
-                <Sphere visible={showModel}
+                <Sphere visible={showModel && !noLeaves}
                         userData={{simulation: !noLeaves}}
                         args={[lx / 2, 8, 8, 0, Util.TWO_PI, 0, theta]}
                         scale={[1, lz / lx, 1]}>

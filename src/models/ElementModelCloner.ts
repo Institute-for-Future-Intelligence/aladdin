@@ -129,6 +129,7 @@ export class ElementModelCloner {
             lx: cuboid.lx,
             ly: cuboid.ly,
             lz: cuboid.lz,
+            color: cuboid.color,
             normal: [...cuboid.normal],
             rotation: [...cuboid.rotation],
             parent: cuboid.parent,
