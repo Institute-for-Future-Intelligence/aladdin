@@ -70,13 +70,9 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
                                     </Suspense>
                                 );
                             case ObjectType.Tree:
-                                return (
-                                    <Suspense key={e.id} fallback={null}>
-                                        <Tree {...e as TreeModel} />
-                                    </Suspense>
-                                );
+                                return <Tree key={e.id} {...e as TreeModel} />;
                             case ObjectType.SolarPanel:
-                                return <SolarPanel {...e as SolarPanelModel} />;
+                                return <SolarPanel key={e.id} {...e as SolarPanelModel} />;
                         }
                     }
                 )

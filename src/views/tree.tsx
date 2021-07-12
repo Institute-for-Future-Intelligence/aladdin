@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {useMemo, useRef, useState} from "react";
 import CottonwoodImage from "../resources/cottonwood.png";
 import CottonwoodShedImage from "../resources/cottonwood_shed.png";
 import DogwoodImage from "../resources/dogwood.png";
@@ -16,10 +16,10 @@ import MapleShedImage from "../resources/maple_shed.png";
 import OakImage from "../resources/oak.png";
 import OakShedImage from "../resources/oak_shed.png";
 import PineImage from "../resources/pine.png";
-import {DoubleSide, Mesh, MeshDepthMaterial, RGBADepthPacking, Vector3} from "three";
+import {DoubleSide, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {Billboard, Cone, Sphere, useTexture} from "@react-three/drei";
+import {Billboard, Cone, Sphere} from "@react-three/drei";
 import {MOVE_HANDLE_RADIUS} from "../constants";
 import {TreeModel} from "../models/TreeModel";
 import {TreeType} from "../types";
@@ -48,6 +48,7 @@ const Tree = ({
     const [hovered, setHovered] = useState(false);
     const meshRef = useRef<Mesh>(null!);
     const {gl: {domElement}, camera} = useThree();
+    const [updateFlag, setUpdateFlag] = useState(false);
 
     const month = now.getMonth();
     const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
@@ -58,26 +59,34 @@ const Tree = ({
     const cameraX = camera.position.x;
     const cameraZ = camera.position.z;
 
-    const textureImg = useMemo(() => {
+    const texture = useMemo(() => {
+        let textureImg;
         switch (name) {
             case TreeType.Cottonwood:
-                return noLeaves ? CottonwoodShedImage : CottonwoodImage;
+                textureImg = noLeaves ? CottonwoodShedImage : CottonwoodImage;
+                break;
             case TreeType.Dogwood:
-                return noLeaves ? DogwoodShedImage : DogwoodImage;
+                textureImg = noLeaves ? DogwoodShedImage : DogwoodImage;
+                break;
             case TreeType.Elm:
-                return noLeaves ? ElmShedImage : ElmImage;
+                textureImg = noLeaves ? ElmShedImage : ElmImage;
+                break;
             case TreeType.Linden:
-                return noLeaves ? LindenShedImage : LindenImage;
+                textureImg = noLeaves ? LindenShedImage : LindenImage;
+                break;
             case TreeType.Maple:
-                return noLeaves ? MapleShedImage : MapleImage;
+                textureImg = noLeaves ? MapleShedImage : MapleImage;
+                break;
             case TreeType.Oak:
-                return noLeaves ? OakShedImage : OakImage;
+                textureImg = noLeaves ? OakShedImage : OakImage;
+                break;
             default:
-                return PineImage;
+                textureImg = PineImage;
         }
+        return new TextureLoader().load(textureImg, (texture) => {
+            setUpdateFlag(!updateFlag);
+        });
     }, [name, world.date]);
-
-    const texture = useTexture(textureImg);
 
     const customDepthMaterial = new MeshDepthMaterial({
         depthPacking: RGBADepthPacking,
@@ -120,10 +129,10 @@ const Tree = ({
         <group name={'Tree Group ' + id}
                position={[cx, lz / 2, cy]}>
 
-            <Billboard 
-                uuid={id} 
-                name={name} 
-                args={[lx, lz]} 
+            <Billboard
+                uuid={id}
+                name={name}
+                args={[lx, lz]}
                 userData={{aabb: true}}
                 follow={false}
                 rotation={[0, Math.atan2(cameraX, cameraZ), 0]}
@@ -137,7 +146,7 @@ const Tree = ({
                 castShadow={shadowEnabled}
                 follow={false}
                 customDepthMaterial={customDepthMaterial}
-                rotation={[0, Math.atan2(sunlightX, sunlightZ), 0]} 
+                rotation={[0, Math.atan2(sunlightX, sunlightZ), 0]}
             >
                 <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0} depthTest={false}/>
             </Billboard>
