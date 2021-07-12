@@ -20,9 +20,10 @@ import {SolarPanelModel} from "./models/SolarPanelModel";
 import SolarPanel from "./views/solarPanel";
 
 export interface ElementsRendererProps {
+    sunlightDirection: Vector3;
 }
 
-const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererProps) => {
+const ElementsRenderer: React.FC<ElementsRendererProps> = ({sunlightDirection}: ElementsRendererProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
@@ -72,7 +73,7 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
                             case ObjectType.Tree:
                                 return (
                                     <Suspense key={e.id} fallback={null}>
-                                        <Tree {...e as TreeModel} />
+                                        <Tree {...e as TreeModel} sunlightDirection={sunlightDirection} />
                                     </Suspense>
                                 );
                             case ObjectType.SolarPanel:

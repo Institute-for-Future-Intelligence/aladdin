@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useMemo, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import CottonwoodImage from "../resources/cottonwood.png";
 import CottonwoodShedImage from "../resources/cottonwood_shed.png";
 import DogwoodImage from "../resources/dogwood.png";
@@ -36,6 +36,7 @@ const Tree = ({
                   locked = false,
                   showModel = false,
                   evergreen = false,
+                  sunlightDirection,
                   ...props
               }: TreeModel) => {
 
@@ -47,10 +48,15 @@ const Tree = ({
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const [hovered, setHovered] = useState(false);
     const meshRef = useRef<Mesh>(null!);
-    const {gl: {domElement}} = useThree();
+    const {gl: {domElement}, camera} = useThree();
 
     const month = now.getMonth();
     const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
+
+    const sunlightX = sunlightDirection.x;
+    const sunlightZ = sunlightDirection.z;
+    const cameraX = camera.position.x;
+    const cameraZ = camera.position.z
 
     const textureImg = useMemo(() => {
         switch (name) {
@@ -114,7 +120,14 @@ const Tree = ({
         <group name={'Tree Group ' + id}
                position={[cx, lz / 2, cy]}>
 
-            <Billboard uuid={id} name={name} args={[lx, lz]} userData={{aabb: true}}>
+            <Billboard 
+                uuid={id} 
+                name={name} 
+                args={[lx, lz]} 
+                userData={{aabb: true}}
+                follow={false}
+                rotation={[0, Math.atan2(cameraX, cameraZ), 0]}
+            >
                 <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5}/>
             </Billboard>
 
@@ -124,6 +137,7 @@ const Tree = ({
                 castShadow={shadowEnabled}
                 follow={false}
                 customDepthMaterial={customDepthMaterial}
+                rotation={[0, Math.atan2(sunlightX, sunlightZ), 0]} 
             >
                 <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0} depthTest={false}/>
             </Billboard>

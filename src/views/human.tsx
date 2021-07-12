@@ -46,7 +46,12 @@ const Human = ({
     const setCommonStore = useStore(state => state.set);
     const [hovered, setHovered] = useState(false);
     const meshRef = useRef<Mesh>(null!);
-    const {gl: {domElement}} = useThree();
+    const {gl: {domElement}, camera} = useThree();
+    
+    // have to add this to listen to world(camera) change, this is better than memo's shallow campare
+    useStore(state => state.world); 
+    const cameraX = camera.position.x;
+    const cameraZ = camera.position.z;
 
     const textureImg = useMemo(() => {
         switch (name) {
@@ -184,6 +189,8 @@ const Human = ({
                 ref={meshRef}
                 name={name}
                 userData={{aabb: true}}
+                follow={false}
+                rotation={[0, Math.atan2(cameraX, cameraZ), 0]}
                 onContextMenu={(e) => {
                     selectMe(e);
                 }}
