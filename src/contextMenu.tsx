@@ -12,7 +12,7 @@ import ReshapeElementMenu from "./components/reshapeElementMenu";
 import HumanSelection from "./components/humanSelection";
 import TreeSelection from "./components/treeSelection";
 import {ExclamationCircleOutlined} from "@ant-design/icons";
-import {PhotoshopPicker} from 'react-color';
+import {ColorResult, CompactPicker} from 'react-color';
 import {CheckboxChangeEvent} from "antd/es/checkbox";
 import {Util} from "./Util";
 import {SolarPanelModel} from "./models/SolarPanelModel";
@@ -106,6 +106,12 @@ const ContextMenu = ({
         }
     };
 
+    const changeElementColor = (colorResult: ColorResult) => {
+        if (selectedElement) {
+            updateElementById(selectedElement.id, {color: colorResult.hex});
+        }
+    };
+
     switch (selectedElement ? selectedElement.type : clickObjectType) {
         case ObjectType.Sky:
             return (
@@ -194,6 +200,10 @@ const ContextMenu = ({
                         }
                     </SubMenu>
                     }
+                    <SubMenu key={'color'} title={'Color'} style={{paddingLeft: '24px'}}>
+                        {colorPickerVisible &&
+                        <CompactPicker color={selectedElement?.color} onChangeComplete={changeElementColor}/>}
+                    </SubMenu>
                     {selectedElement &&
                     <ReshapeElementMenu
                         elementId={selectedElement.id}
@@ -468,13 +478,9 @@ const ContextMenu = ({
                             Lock
                         </Checkbox>
                     </Menu.Item>
-                    <SubMenu key={'color'} title={'Color'} style={{paddingLeft: '24px'}}
-                             onTitleMouseEnter={() => setColorPickerVisible(true)}>
+                    <SubMenu key={'color'} title={'Color'} style={{paddingLeft: '24px'}}>
                         {colorPickerVisible &&
-                        <PhotoshopPicker color={selectedElement?.color}
-                                         onAccept={() => setColorPickerVisible(false)}
-                                         onCancel={() => setColorPickerVisible(false)}
-                        />}
+                        <CompactPicker color={selectedElement?.color} onChangeComplete={changeElementColor}/>}
                     </SubMenu>
                     {sensorCountCuboid > 0 &&
                     <SubMenu key={'clear'} title={'Clear'} style={{paddingLeft: '24px'}}>

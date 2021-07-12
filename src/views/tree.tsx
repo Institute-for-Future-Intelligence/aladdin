@@ -55,17 +55,17 @@ const Tree = ({
     const textureImg = useMemo(() => {
         switch (name) {
             case TreeType.Cottonwood:
-                return (noLeaves ? CottonwoodShedImage : CottonwoodImage);
+                return noLeaves ? CottonwoodShedImage : CottonwoodImage;
             case TreeType.Dogwood:
-                return (noLeaves ? DogwoodShedImage : DogwoodImage);
+                return noLeaves ? DogwoodShedImage : DogwoodImage;
             case TreeType.Elm:
-                return (noLeaves ? ElmShedImage : ElmImage);
+                return noLeaves ? ElmShedImage : ElmImage;
             case TreeType.Linden:
-                return (noLeaves ? LindenShedImage : LindenImage);
+                return noLeaves ? LindenShedImage : LindenImage;
             case TreeType.Maple:
-                return (noLeaves ? MapleShedImage : MapleImage);
+                return noLeaves ? MapleShedImage : MapleImage;
             case TreeType.Oak:
-                return (noLeaves ? OakShedImage : OakImage);
+                return noLeaves ? OakShedImage : OakImage;
             default:
                 return PineImage;
         }

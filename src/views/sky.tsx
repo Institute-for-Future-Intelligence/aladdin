@@ -11,10 +11,11 @@ import ForestDaySkyImage from "../resources/forest.jpg";
 import ForestNightSkyImage from "../resources/forest-night.jpg";
 import GrasslandDaySkyImage from "../resources/grassland.jpg";
 import GrasslandNightSkyImage from "../resources/grassland-night.jpg";
-import {BackSide, Mesh, TextureLoader} from "three";
+import {BackSide, Mesh} from "three";
 import {useStore} from "../stores/common";
 import {ObjectType} from "../types";
 import {ThreeEvent} from "@react-three/fiber";
+import {useTexture} from "@react-three/drei";
 
 export interface SkyProps {
     theme?: string,
@@ -48,24 +49,20 @@ const Sky = ({
             scale = 0.2;
     }
 
-    const texture = useMemo(() => {
-        const loader = new TextureLoader();
-        let texture;
+    const textureImg = useMemo(() => {
         switch (theme) {
             case 'Desert':
-                texture = loader.load(night ? DesertNightSkyImage : DesertDaySkyImage);
-                break;
+                return night ? DesertNightSkyImage : DesertDaySkyImage;
             case 'Forest':
-                texture = loader.load(night ? ForestNightSkyImage : ForestDaySkyImage);
-                break;
+                return night ? ForestNightSkyImage : ForestDaySkyImage;
             case 'Grassland':
-                texture = loader.load(night ? GrasslandNightSkyImage : GrasslandDaySkyImage);
-                break;
+                return night ? GrasslandNightSkyImage : GrasslandDaySkyImage;
             default:
-                texture = loader.load(night ? DefaultNightSkyImage : DefaultDaySkyImage);
+                return night ? DefaultNightSkyImage : DefaultDaySkyImage;
         }
-        return texture;
     }, [theme, night]);
+
+    const texture = useTexture(textureImg);
 
     const clickSky = (e: ThreeEvent<MouseEvent>) => {
         // We must check if there is really a first intersection, onClick does not guarantee it
