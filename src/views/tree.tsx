@@ -36,7 +36,6 @@ const Tree = ({
                   locked = false,
                   showModel = false,
                   evergreen = false,
-                  sunlightDirection,
                   ...props
               }: TreeModel) => {
 
@@ -53,10 +52,11 @@ const Tree = ({
     const month = now.getMonth();
     const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
 
+    const sunlightDirection = useStore(state => state.sunlightDirection);
     const sunlightX = sunlightDirection.x;
     const sunlightZ = sunlightDirection.z;
     const cameraX = camera.position.x;
-    const cameraZ = camera.position.z
+    const cameraZ = camera.position.z;
 
     const textureImg = useMemo(() => {
         switch (name) {

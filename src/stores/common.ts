@@ -87,6 +87,8 @@ export interface CommonStoreState {
     sensorLabels: string[];
     setSensorLabels: (labels: string[]) => void;
 
+    sunlightDirection: Vector3;
+    setSunlightDirection: (vector: Vector3) => void;
 }
 
 export const useStore = create<CommonStoreState>(devtools(persist((
@@ -493,6 +495,13 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 }
             }
             return city;
+        },
+
+        sunlightDirection: new Vector3(0, 2, 2),
+        setSunlightDirection(vector: Vector3) {
+            immerSet((state: CommonStoreState) => {
+                state.sunlightDirection = vector;
+            });
         }
     };
 }, {

@@ -59,11 +59,13 @@ const App = () => {
     const enableOrbitController = useStore(state => state.enableOrbitController);
     const weatherData = useStore(state => state.weatherData);
 
+    const sunlightDirection = useStore(state => state.sunlightDirection);
+    const setSunlightDirection = useStore(state => state.setSunlightDirection);
+
     const [loading, setLoading] = useState(true);
     const [updateFlag, setUpdateFlag] = useState<boolean>(false);
     const [hourAngle, setHourAngle] = useState<number>(0);
     const [declinationAngle, setDeclinationAngle] = useState<number>(0);
-    const [sunlightDirection, setSunlightDirection] = useState<Vector3>(new Vector3(0, 2, 2));
     const [animateSun, setAnimateSun] = useState<boolean>(false);
     const [city, setCity] = useState<string | null>('Boston MA, USA');
     const [dailyLightSensorDataFlag, setDailyLightSensorDataFlag] = useState<boolean>(false);
@@ -419,7 +421,7 @@ const App = () => {
                             canvasRef={canvasRef}
                         />
 
-                        <ElementsRenderer sunlightDirection={sunlightDirection} />
+                        <ElementsRenderer />
                         <Suspense fallback={null}>
                             <ambientLight intensity={0.25} name={'Ambient Light'}/>
                             <directionalLight
