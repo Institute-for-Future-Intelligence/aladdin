@@ -240,6 +240,7 @@ const Heliodon = ({
                 rotation={[-Util.HALF_PI, 0, 0]}
                 position={[0, 0, 0]}
                 args={[10000, 10000]}
+                renderOrder={-1}
             >
                 <meshBasicMaterial transparent={true} opacity={0}/>
             </Drei_Plane>

@@ -77,7 +77,7 @@ const App = () => {
 
     const orbitControlsRef = useRef<OrbitControls>();
     const canvasRef = useRef<HTMLCanvasElement>();
-    const now = new Date(world.date);
+    const now = useMemo(() => new Date(world.date), [world.date]);
 
     useEffect(() => {
         loadWeatherData();

@@ -16,7 +16,7 @@ import MapleShedImage from "../resources/maple_shed.png";
 import OakImage from "../resources/oak.png";
 import OakShedImage from "../resources/oak_shed.png";
 import PineImage from "../resources/pine.png";
-import {DoubleSide, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3} from "three";
+import {DoubleSide, Euler, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {Billboard, Cone, Sphere} from "@react-three/drei";
@@ -50,7 +50,7 @@ const Tree = ({
     const {gl: {domElement}, camera} = useThree();
     const [updateFlag, setUpdateFlag] = useState(false);
 
-    const month = now.getMonth();
+    const month = now.getMonth() + 1;
     const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
 
     const sunlightDirection = useStore(state => state.sunlightDirection);
@@ -86,7 +86,7 @@ const Tree = ({
         return new TextureLoader().load(textureImg, (texture) => {
             setUpdateFlag(!updateFlag);
         });
-    }, [name, world.date]);
+    }, [name, noLeaves]);
 
     const customDepthMaterial = new MeshDepthMaterial({
         depthPacking: RGBADepthPacking,
@@ -124,6 +124,14 @@ const Tree = ({
         }
     }, [name]);
 
+    const solidTreeRotation = useMemo(() => {
+        return new Euler(0, Math.atan2(cameraX, cameraZ), 0);
+    }, [cameraX, cameraZ]);
+
+    const shadowTreeRotation = useMemo(() => {
+        return new Euler(0, Math.atan2(sunlightX, sunlightZ), 0);
+    }, [sunlightX, sunlightZ]);
+
     // IMPORTANT: model mesh must use double side in order to intercept sunlight
     return (
         <group name={'Tree Group ' + id}
@@ -135,7 +143,7 @@ const Tree = ({
                 args={[lx, lz]}
                 userData={{aabb: true}}
                 follow={false}
-                rotation={[0, Math.atan2(cameraX, cameraZ), 0]}
+                rotation={solidTreeRotation}
             >
                 <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5}/>
             </Billboard>
@@ -147,7 +155,7 @@ const Tree = ({
                 castShadow={shadowEnabled}
                 follow={false}
                 customDepthMaterial={customDepthMaterial}
-                rotation={[0, Math.atan2(sunlightX, sunlightZ), 0]}
+                rotation={shadowTreeRotation} 
             >
                 <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0} depthTest={false}/>
             </Billboard>

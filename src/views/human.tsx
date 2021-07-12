@@ -23,7 +23,7 @@ import JuddImage from "../resources/judd.png";
 import JudyImage from "../resources/judy.png";
 import JuneImage from "../resources/june.png";
 import JuroImage from "../resources/juro.png";
-import {DoubleSide, Mesh, TextureLoader, Vector3} from "three";
+import {DoubleSide, Euler, Mesh, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {HumanModel} from "../models/HumanModel";
@@ -186,6 +186,10 @@ const Human = ({
         }
     }, [name]);
 
+    const rotation = useMemo(() => {
+        return new Euler(0, Math.atan2(cameraX, cameraZ), 0);
+    }, [cameraX, cameraZ])
+
     const selectMe = (e: ThreeEvent<MouseEvent>) => {
         // We must check if there is really a first intersection, onPointerDown does not guarantee it
         // onPointerDown listener for an object can still fire an event even when the object is behind another one
@@ -212,7 +216,7 @@ const Human = ({
                 name={name}
                 userData={{aabb: true}}
                 follow={false}
-                rotation={[0, Math.atan2(cameraX, cameraZ), 0]}
+                rotation={rotation}
                 onContextMenu={(e) => {
                     selectMe(e);
                 }}
