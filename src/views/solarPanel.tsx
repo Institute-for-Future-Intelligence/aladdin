@@ -55,6 +55,7 @@ const SolarPanel = ({
     const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
     const [nx, setNx] = useState(1);
     const [ny, setNy] = useState(1);
+    const [updateFlag, setUpdateFlag] = useState(false);
     const baseRef = useRef<Mesh>();
     const moveHandleRef = useRef<Mesh>();
     const resizeHandleLowerRef = useRef<Mesh>();
@@ -136,6 +137,7 @@ const SolarPanel = ({
                     texture.wrapS = texture.wrapT = RepeatWrapping;
                     texture.offset.set(0, 0);
                     texture.repeat.set(nx, ny);
+                    setUpdateFlag(!updateFlag);
                 });
                 break;
             default:
@@ -144,6 +146,7 @@ const SolarPanel = ({
                     texture.wrapS = texture.wrapT = RepeatWrapping;
                     texture.offset.set(0, 0);
                     texture.repeat.set(nx, ny);
+                    setUpdateFlag(!updateFlag);
                 });
         }
         return texture;
