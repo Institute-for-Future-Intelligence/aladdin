@@ -86,7 +86,7 @@ const App = () => {
     useEffect(() => {
         setSunlightDirection(computeSunLocation(heliodonRadius, hourAngle, declinationAngle, Util.toRadians(world.latitude))
             .applyEuler(new Euler(-Util.HALF_PI, 0, 0)));
-    }, [world.latitude, hourAngle, declinationAngle]);
+    }, [world.latitude, hourAngle, declinationAngle, heliodonRadius]);
 
     useEffect(() => {
         const min = aabb.min;
@@ -425,7 +425,7 @@ const App = () => {
                             <directionalLight
                                 name={'Directional Light'}
                                 color='white'
-                                position={[sunlightDirection.x, sunlightDirection.y, sunlightDirection.z]}
+                                position={sunlightDirection}
                                 intensity={sunAboveHorizon ? 0.5 : 0}
                                 castShadow
                                 shadow-mapSize-height={4096}
