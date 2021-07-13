@@ -28,7 +28,7 @@ const ColumnWrapper = styled.div`
   right: 0;
   top: 0;
   width: 600px;
-  height: 360px;
+  height: 400px;
   padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
@@ -57,34 +57,33 @@ const Header = styled.div`
   }
 `;
 
-export interface DailyLightSensorPanelProps {
+export interface DailyPvYieldPanelProps {
 
     city: string | null;
     requestUpdate: () => void;
-    collectDailyLightSensorData: () => void;
+    analyzeDailyPvYield: () => void;
 
     [key: string]: any;
 
 }
 
-const DailyLightSensorPanel = ({
-                                   city,
-                                   requestUpdate,
-                                   collectDailyLightSensorData,
-                                   ...rest
-                               }: DailyLightSensorPanelProps) => {
+const DailyPvYieldPanel = ({
+                               city,
+                               requestUpdate,
+                               analyzeDailyPvYield,
+                               ...rest
+                           }: DailyPvYieldPanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
-    const sensorLabels = useStore(state => state.sensorLabels);
-    const sensorData = useStore(state => state.dailyLightSensorData);
+    const dailyYield = useStore(state => state.dailyPvYield);
     const now = new Date(useStore(state => state.world.date));
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
-    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 460;
+    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;
     const [curPosition, setCurPosition] = useState({
-        x: isNaN(viewState.dailyLightSensorPanelX) ? 0 : Math.max(viewState.dailyLightSensorPanelX, wOffset - window.innerWidth),
-        y: isNaN(viewState.dailyLightSensorPanelY) ? 0 : Math.min(viewState.dailyLightSensorPanelY, window.innerHeight - hOffset)
+        x: isNaN(viewState.dailyPvYieldPanelX) ? 0 : Math.max(viewState.dailyPvYieldPanelX, wOffset - window.innerWidth),
+        y: isNaN(viewState.dailyPvYieldPanelY) ? 0 : Math.min(viewState.dailyPvYieldPanelY, window.innerHeight - hOffset)
     });
 
     const responsiveHeight = 100;
@@ -93,8 +92,8 @@ const DailyLightSensorPanel = ({
     useEffect(() => {
         const handleResize = () => {
             setCurPosition({
-                x: Math.max(viewState.dailyLightSensorPanelX, wOffset - window.innerWidth),
-                y: Math.min(viewState.dailyLightSensorPanelY, window.innerHeight - hOffset)
+                x: Math.max(viewState.dailyPvYieldPanelX, wOffset - window.innerWidth),
+                y: Math.min(viewState.dailyPvYieldPanelY, window.innerHeight - hOffset)
             });
         };
         window.addEventListener('resize', handleResize);
@@ -112,14 +111,14 @@ const DailyLightSensorPanel = ({
 
     const onDragEnd: DraggableEventHandler = (e, ui) => {
         setCommonStore(state => {
-            state.viewState.dailyLightSensorPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-            state.viewState.dailyLightSensorPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+            state.viewState.dailyPvYieldPanelX = Math.max(ui.x, wOffset - window.innerWidth);
+            state.viewState.dailyPvYieldPanelY = Math.min(ui.y, window.innerHeight - hOffset);
         });
     };
 
     const closePanel = () => {
         setCommonStore((state) => {
-            state.viewState.showDailyLightSensorPanel = false;
+            state.viewState.showDailyPvYieldPanel = false;
         });
         requestUpdate();
     };
@@ -136,7 +135,7 @@ const DailyLightSensorPanel = ({
             <Container>
                 <ColumnWrapper ref={wrapperRef}>
                     <Header className='handle'>
-                        <span>Light Sensor: Weather Data from {city} | {moment(now).format('MM/DD')}</span>
+                        <span>Solar Panel Daily Yield: Weather Data from {city} | {moment(now).format('MM/DD')}</span>
                         <span style={{cursor: 'pointer'}}
                               onTouchStart={() => {
                                   closePanel();
@@ -148,9 +147,8 @@ const DailyLightSensorPanel = ({
                         </span>
                     </Header>
                     <LineGraph
-                        type={GraphDataType.DailyRadiationSensorData}
-                        dataSource={sensorData}
-                        labels={sensorLabels}
+                        type={GraphDataType.DailyPvYield}
+                        dataSource={dailyYield}
                         height={responsiveHeight}
                         labelX={'Hour'}
                         labelY={'Radiation'}
@@ -163,7 +161,7 @@ const DailyLightSensorPanel = ({
                         {...rest}
                     />
                     <Space style={{alignSelf: 'center'}}>
-                        <Button type="primary" onClick={collectDailyLightSensorData}>
+                        <Button type="primary" onClick={analyzeDailyPvYield}>
                             Update
                         </Button>
                     </Space>
@@ -174,4 +172,4 @@ const DailyLightSensorPanel = ({
 
 };
 
-export default React.memo(DailyLightSensorPanel);
+export default React.memo(DailyPvYieldPanel);

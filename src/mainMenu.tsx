@@ -32,6 +32,9 @@ export interface MainMenuProps {
 
     collectDailyLightSensorData: () => void;
     collectYearlyLightSensorData: () => void;
+    analyzePvDailyYield: () => void;
+    analyzePvYearlyYield: () => void;
+
     canvas?: HTMLCanvasElement;
     requestUpdate: () => void;
 
@@ -42,6 +45,8 @@ export interface MainMenuProps {
 const MainMenu = ({
                       collectDailyLightSensorData,
                       collectYearlyLightSensorData,
+                      analyzePvDailyYield,
+                      analyzePvYearlyYield,
                       canvas,
                       requestUpdate,
                       ...rest
@@ -160,6 +165,14 @@ const MainMenu = ({
                 </Menu.Item>
                 <Menu.Item key={'sensor-collect-yearly-data'} onClick={collectYearlyLightSensorData}>
                     Collect Yearly Data
+                </Menu.Item>
+            </SubMenu>
+            <SubMenu key={'solar-panels'} title={'Solar Panels'} style={{paddingLeft: '24px'}}>
+                <Menu.Item key={'solar-panel-daily-yield'} onClick={analyzePvDailyYield}>
+                    Analyze Daily Yield
+                </Menu.Item>
+                <Menu.Item key={'solar-panel-yearly-yield'} onClick={analyzePvYearlyYield}>
+                    Analyze Yearly Yield
                 </Menu.Item>
             </SubMenu>
             <Menu.Item key="screenshot" onClick={takeScreenshot} style={{paddingLeft: '36px'}}>

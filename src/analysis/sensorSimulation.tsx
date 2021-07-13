@@ -13,17 +13,17 @@ import {AirMass} from "./analysisConstants";
 import {MONTHS} from "../constants";
 import {SensorModel} from "../models/SensorModel";
 
-export interface SimulationProps {
+export interface SensorSimulationProps {
     city: string | null;
     dailyLightSensorDataFlag: boolean;
     yearlyLightSensorDataFlag: boolean;
 }
 
-const Simulation = ({
-                        city,
-                        dailyLightSensorDataFlag,
-                        yearlyLightSensorDataFlag,
-                    }: SimulationProps) => {
+const SensorSimulation = ({
+                              city,
+                              dailyLightSensorDataFlag,
+                              yearlyLightSensorDataFlag,
+                          }: SensorSimulationProps) => {
 
     const world = useStore(state => state.world);
     const elements = useStore(state => state.elements);
@@ -222,4 +222,4 @@ const Simulation = ({
 
 };
 
-export default Simulation;
+export default SensorSimulation;

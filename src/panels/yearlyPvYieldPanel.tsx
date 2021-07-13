@@ -7,8 +7,9 @@ import LineGraph from '../components/lineGraph';
 import styled from "styled-components";
 import {useStore} from "../stores/common";
 import {GraphDataType} from "../types";
-import moment from "moment";
-import ReactDraggable, {DraggableEventHandler} from 'react-draggable';
+import {MONTHS} from "../constants";
+import {Util} from "../Util";
+import ReactDraggable, {DraggableEventHandler} from "react-draggable";
 import {Button, Space} from "antd";
 
 const Container = styled.div`
@@ -28,7 +29,7 @@ const ColumnWrapper = styled.div`
   right: 0;
   top: 0;
   width: 600px;
-  height: 360px;
+  height: 400px;
   padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
@@ -57,44 +58,44 @@ const Header = styled.div`
   }
 `;
 
-export interface DailyLightSensorPanelProps {
+export interface YearlyPvYieldPanelProps {
 
     city: string | null;
     requestUpdate: () => void;
-    collectDailyLightSensorData: () => void;
+    analyzeYearlyPvYield: () => void;
 
     [key: string]: any;
 
 }
 
-const DailyLightSensorPanel = ({
-                                   city,
-                                   requestUpdate,
-                                   collectDailyLightSensorData,
-                                   ...rest
-                               }: DailyLightSensorPanelProps) => {
+const YearlyPvYieldPanel = ({
+                                city,
+                                requestUpdate,
+                                analyzeYearlyPvYield,
+                                ...rest
+                            }: YearlyPvYieldPanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
-    const sensorLabels = useStore(state => state.sensorLabels);
-    const sensorData = useStore(state => state.dailyLightSensorData);
-    const now = new Date(useStore(state => state.world.date));
+    const yearlyYield = useStore(state => state.yearlyPvYield);
+    const now = useStore(state => state.world.date);
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
-    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 460;
+    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;
     const [curPosition, setCurPosition] = useState({
-        x: isNaN(viewState.dailyLightSensorPanelX) ? 0 : Math.max(viewState.dailyLightSensorPanelX, wOffset - window.innerWidth),
-        y: isNaN(viewState.dailyLightSensorPanelY) ? 0 : Math.min(viewState.dailyLightSensorPanelY, window.innerHeight - hOffset)
+        x: isNaN(viewState.yearlyPvYieldPanelX) ? 0 : Math.max(viewState.yearlyPvYieldPanelX, wOffset - window.innerWidth),
+        y: isNaN(viewState.yearlyPvYieldPanelY) ? 0 : Math.min(viewState.yearlyPvYieldPanelY, window.innerHeight - hOffset)
     });
 
     const responsiveHeight = 100;
+    const referenceX = MONTHS[Math.floor(Util.daysIntoYear(now) / 365 * 12)];
 
     // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
     useEffect(() => {
         const handleResize = () => {
             setCurPosition({
-                x: Math.max(viewState.dailyLightSensorPanelX, wOffset - window.innerWidth),
-                y: Math.min(viewState.dailyLightSensorPanelY, window.innerHeight - hOffset)
+                x: Math.max(viewState.yearlyPvYieldPanelX, wOffset - window.innerWidth),
+                y: Math.min(viewState.yearlyPvYieldPanelY, window.innerHeight - hOffset)
             });
         };
         window.addEventListener('resize', handleResize);
@@ -112,14 +113,14 @@ const DailyLightSensorPanel = ({
 
     const onDragEnd: DraggableEventHandler = (e, ui) => {
         setCommonStore(state => {
-            state.viewState.dailyLightSensorPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-            state.viewState.dailyLightSensorPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+            state.viewState.yearlyPvYieldPanelX = Math.max(ui.x, wOffset - window.innerWidth);
+            state.viewState.yearlyPvYieldPanelY = Math.min(ui.y, window.innerHeight - hOffset);
         });
     };
 
     const closePanel = () => {
         setCommonStore((state) => {
-            state.viewState.showDailyLightSensorPanel = false;
+            state.viewState.showYearlyPvYieldPanel = false;
         });
         requestUpdate();
     };
@@ -136,7 +137,7 @@ const DailyLightSensorPanel = ({
             <Container>
                 <ColumnWrapper ref={wrapperRef}>
                     <Header className='handle'>
-                        <span>Light Sensor: Weather Data from {city} | {moment(now).format('MM/DD')}</span>
+                        <span>Solar Panel Yearly Yield: Weather Data from {city}</span>
                         <span style={{cursor: 'pointer'}}
                               onTouchStart={() => {
                                   closePanel();
@@ -148,22 +149,20 @@ const DailyLightSensorPanel = ({
                         </span>
                     </Header>
                     <LineGraph
-                        type={GraphDataType.DailyRadiationSensorData}
-                        dataSource={sensorData}
-                        labels={sensorLabels}
+                        type={GraphDataType.YearlyPvYeild}
+                        dataSource={yearlyYield.map(({Daylight, Clearness, ...item}) => item)}
                         height={responsiveHeight}
-                        labelX={'Hour'}
+                        labelX={'Month'}
                         labelY={'Radiation'}
                         unitY={'kWh/m²/day'}
                         yMin={0}
-                        curveType={'linear'}
+                        curveType={'natural'}
                         fractionDigits={2}
-                        symbolCount={24}
-                        referenceX={now.getHours()}
+                        referenceX={referenceX}
                         {...rest}
                     />
                     <Space style={{alignSelf: 'center'}}>
-                        <Button type="primary" onClick={collectDailyLightSensorData}>
+                        <Button type="primary" onClick={analyzeYearlyPvYield}>
                             Update
                         </Button>
                     </Space>
@@ -174,4 +173,4 @@ const DailyLightSensorPanel = ({
 
 };
 
-export default React.memo(DailyLightSensorPanel);
+export default React.memo(YearlyPvYieldPanel);

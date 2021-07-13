@@ -87,6 +87,11 @@ export interface CommonStoreState {
     sensorLabels: string[];
     setSensorLabels: (labels: string[]) => void;
 
+    dailyPvYield: DatumEntry[];
+    setDailyPvYield: (data: DatumEntry[]) => void;
+    yearlyPvYield: DatumEntry[];
+    setYearlyPvYield: (data: DatumEntry[]) => void;
+
     sunlightDirection: Vector3;
     setSunlightDirection: (vector: Vector3) => void;
 }
@@ -144,6 +149,19 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         setSensorLabels(labels) {
             immerSet((state: CommonStoreState) => {
                 state.sensorLabels = [...labels];
+            });
+        },
+
+        yearlyPvYield: [],
+        setYearlyPvYield(data) {
+            immerSet((state: CommonStoreState) => {
+                state.yearlyPvYield = [...data];
+            });
+        },
+        dailyPvYield: [],
+        setDailyPvYield(data) {
+            immerSet((state: CommonStoreState) => {
+                state.dailyPvYield = [...data];
             });
         },
 

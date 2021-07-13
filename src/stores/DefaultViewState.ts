@@ -20,6 +20,8 @@ export class DefaultViewState implements ViewState {
     showInfoPanel: boolean;
     showDailyLightSensorPanel: boolean;
     showYearlyLightSensorPanel: boolean;
+    showDailyPvYieldPanel: boolean;
+    showYearlyPvYieldPanel: boolean;
     autoRotate: boolean;
 
     heliodonPanelX: number;
@@ -34,6 +36,10 @@ export class DefaultViewState implements ViewState {
     dailyLightSensorPanelY: number;
     yearlyLightSensorPanelX: number;
     yearlyLightSensorPanelY: number;
+    dailyPvYieldPanelX: number;
+    dailyPvYieldPanelY: number;
+    yearlyPvYieldPanelX: number;
+    yearlyPvYieldPanelY: number;
 
     mapZoom: number;
     mapType: string;
@@ -56,6 +62,8 @@ export class DefaultViewState implements ViewState {
         this.showInfoPanel = true;
         this.showDailyLightSensorPanel = false;
         this.showYearlyLightSensorPanel = false;
+        this.showDailyPvYieldPanel = false;
+        this.showYearlyPvYieldPanel = false;
         this.autoRotate = false;
 
         this.heliodonPanelX = 0;
@@ -70,6 +78,10 @@ export class DefaultViewState implements ViewState {
         this.dailyLightSensorPanelY = 0;
         this.yearlyLightSensorPanelX = 0;
         this.yearlyLightSensorPanelY = 0;
+        this.dailyPvYieldPanelX = 0;
+        this.dailyPvYieldPanelY = 0;
+        this.yearlyPvYieldPanelX = 0;
+        this.yearlyPvYieldPanelY = 0;
 
         this.mapZoom = 16;
         this.mapType = 'roadmap';

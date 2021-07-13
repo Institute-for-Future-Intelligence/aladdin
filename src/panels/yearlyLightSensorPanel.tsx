@@ -142,7 +142,7 @@ const YearlyLightSensorPanel = ({
             <Container>
                 <ColumnWrapper ref={wrapperRef}>
                     <Header className='handle'>
-                        <span>Light Sensor: {city}</span>
+                        <span>Light Sensor: Weather Data from {city}</span>
                         <span style={{cursor: 'pointer'}}
                               onTouchStart={() => {
                                   closePanel();

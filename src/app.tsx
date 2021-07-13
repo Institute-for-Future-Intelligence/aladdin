@@ -5,19 +5,20 @@
  */
 
 import React, {Suspense, useEffect, useMemo, useRef, useState} from 'react';
+import {useStore} from "./stores/common";
+import useKey from "./useKey";
 import './app.css';
+import {Util} from "./Util";
+import {Euler, Vector3} from "three";
 import {Canvas} from '@react-three/fiber';
 import OrbitController from "./orbitController";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import Sky from "./views/sky";
 import Axes from "./views/axes";
 import Compass from "./views/compass";
 import ElementsRenderer from "./elementsRenderer";
 import Ground from "./views/ground";
-import {useStore} from "./stores/common";
-import {Euler, Vector3} from "three";
 import Heliodon from "./views/heliodon";
-import {Util} from "./Util";
-import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./analysis/sunTools";
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from "./mainMenu";
 import GroundPanel from "./panels/groundPanel";
@@ -30,16 +31,18 @@ import {Modal} from "antd";
 import DropdownContextMenu from "./contextMenu";
 import WeatherPanel from "./panels/weatherPanel";
 import {GraphDataType, ObjectType} from "./types";
+import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./analysis/sunTools";
+import SensorSimulation from "./analysis/sensorSimulation";
+import SolarPanelSimulation from "./analysis/solarPanelSimulation";
 import YearlyLightSensorPanel from "./panels/yearlyLightSensorPanel";
 import DailyLightSensorPanel from "./panels/dailyLightSensorPanel";
-import Simulation from "./analysis/simulation";
 import MainToolBar from "./mainToolBar";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import Spinner from './components/spinner';
-import useKey from "./useKey";
 import StickyNotePanel from "./panels/stickyNotePanel";
 import InfoPanel from "./panels/infoPanel";
 import PvModelPanel from "./panels/pvModelPanel";
+import YearlyPvYieldPanel from "./panels/yearlyPvYieldPanel";
+import DailyPvYieldPanel from "./panels/dailyPvYieldPanel";
 
 const App = () => {
 
@@ -70,6 +73,8 @@ const App = () => {
     const [city, setCity] = useState<string | null>('Boston MA, USA');
     const [dailyLightSensorDataFlag, setDailyLightSensorDataFlag] = useState<boolean>(false);
     const [yearlyLightSensorDataFlag, setYearlyLightSensorDataFlag] = useState<boolean>(false);
+    const [pvDailyYieldFlag, setPvDailyYieldFlag] = useState<boolean>(false);
+    const [pvYearlyYieldFlag, setPvYearlyYieldFlag] = useState<boolean>(false);
     const [cameraPosition, setCameraPosition] = useState<Vector3>(new Vector3(0, 0, 5));
     const [panCenter, setPanCenter] = useState<Vector3>(new Vector3());
     const [heliodonRadius, setHeliodonRadius] = useState<number>(10);
@@ -285,6 +290,36 @@ const App = () => {
         });
     };
 
+    const analyzeDailyPvYield = () => {
+        const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
+        if (solarPanelCount === 0) {
+            showInfo('There is no solar panel for analysis.');
+            return;
+        }
+        setCommonStore(state => {
+            state.world.timesPerHour = 4;
+        });
+        setPvDailyYieldFlag(!pvDailyYieldFlag);
+        setCommonStore(state => {
+            state.viewState.showDailyPvYieldPanel = true;
+        });
+    };
+
+    const analyzeYearlyPvYield = () => {
+        const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
+        if (solarPanelCount === 0) {
+            showInfo('There is no solar panel for analysis.');
+            return;
+        }
+        setCommonStore(state => {
+            state.world.timesPerHour = 4;
+        });
+        setPvYearlyYieldFlag(!pvYearlyYieldFlag);
+        setCommonStore(state => {
+            state.viewState.showYearlyPvYieldPanel = true;
+        });
+    };
+
     // only these elements are allowed to be on the ground
     const legalOnGround = () => {
         const type = getSelectedElement()?.type;
@@ -336,6 +371,8 @@ const App = () => {
                 canvas={canvasRef.current}
                 collectDailyLightSensorData={collectDailyLightSensorData}
                 collectYearlyLightSensorData={collectYearlyLightSensorData}
+                analyzePvDailyYield={analyzeDailyPvYield}
+                analyzePvYearlyYield={analyzeYearlyPvYield}
                 requestUpdate={requestUpdate}
             />
             <MainToolBar orbitControls={orbitControlsRef.current}
@@ -388,6 +425,16 @@ const App = () => {
             <DailyLightSensorPanel city={city}
                                    collectDailyLightSensorData={collectDailyLightSensorData}
                                    requestUpdate={requestUpdate}
+            />}
+            {viewState.showYearlyPvYieldPanel &&
+            <YearlyPvYieldPanel city={city}
+                                analyzeYearlyPvYield={analyzeYearlyPvYield}
+                                requestUpdate={requestUpdate}
+            />}
+            {viewState.showDailyPvYieldPanel &&
+            <DailyPvYieldPanel city={city}
+                               analyzeDailyPvYield={analyzeDailyPvYield}
+                               requestUpdate={requestUpdate}
             />}
             {viewState.showWeatherPanel &&
             <WeatherPanel city={city}
@@ -444,9 +491,12 @@ const App = () => {
                             }
                             <Compass/>
                             {/*<Obj/>*/}
-                            <Simulation city={city}
-                                        dailyLightSensorDataFlag={dailyLightSensorDataFlag}
-                                        yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}/>
+                            <SensorSimulation city={city}
+                                              dailyLightSensorDataFlag={dailyLightSensorDataFlag}
+                                              yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}/>
+                            <SolarPanelSimulation city={city}
+                                                  pvDailyYieldFlag={pvDailyYieldFlag}
+                                                  pvYearlyYieldFlag={pvYearlyYieldFlag}/>
                             {viewState.axes && <Axes/>}
                             <Ground/>
                             {viewState.groundImage && <GroundImage/>}

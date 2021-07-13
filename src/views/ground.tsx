@@ -53,7 +53,7 @@ const Ground = () => {
         if (moveHandleType === MoveHandleType.Top) {
             intersectionPlaneType = IntersectionPlaneType.Horizontal;
             Util.setVector(intersectionPlanePosition, grabRef.current.cx, grabRef.current.lz + MOVE_HANDLE_OFFSET, -grabRef.current.cy);
-            Util.setEuler(intersectionPlaneAngle, -Math.PI / 2, 0, 0);
+            Util.setEuler(intersectionPlaneAngle, -Util.HALF_PI, 0, 0);
         } else if (
             moveHandleType === MoveHandleType.Left || moveHandleType === MoveHandleType.Right ||
             moveHandleType === MoveHandleType.Lower || moveHandleType === MoveHandleType.Upper ||
@@ -61,7 +61,7 @@ const Ground = () => {
             resizeHandleType === ResizeHandleType.LowerRight || resizeHandleType === ResizeHandleType.UpperRight) {
             intersectionPlaneType = IntersectionPlaneType.Horizontal;
             Util.setVector(intersectionPlanePosition, grabRef.current.cx, MOVE_HANDLE_RADIUS, -grabRef.current.cy);
-            Util.setEuler(intersectionPlaneAngle, -Math.PI / 2, 0, 0);
+            Util.setEuler(intersectionPlaneAngle, -Util.HALF_PI, 0, 0);
         } else if (resizeHandleType === ResizeHandleType.LowerLeftTop) {
             intersectionPlaneType = IntersectionPlaneType.Vertical;
             Util.setVector(intersectionPlanePosition,
@@ -101,16 +101,17 @@ const Ground = () => {
             <Plane
                 ref={intersectionPlaneRef}
                 visible={false}
+                name={'Intersection Plane'}
                 rotation={intersectionPlaneAngle}
                 position={intersectionPlanePosition}
                 args={[1000, 1000]}>
-                <meshStandardMaterial attach="material" side={DoubleSide} opacity={0.1} color={'white'}/>
+                <meshStandardMaterial attach="material" side={DoubleSide}/>
             </Plane>
             }
             <Plane receiveShadow={viewState.shadowEnabled}
                    ref={groundPlaneRef}
                    name={'Ground'}
-                   rotation={[-Math.PI / 2, 0, 0]}
+                   rotation={[-Util.HALF_PI, 0, 0]}
                    position={[0, 0, 0]}
                    args={[10000, 10000]}
                    renderOrder={-2}

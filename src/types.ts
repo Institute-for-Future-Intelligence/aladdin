@@ -46,6 +46,8 @@ export enum GraphDataType {
     ClearnessData = 4,
     YearlyRadiationSensorData = 5,
     DailyRadiationSensorData = 6,
+    YearlyPvYeild = 7,
+    DailyPvYield = 8,
 }
 
 export enum Theme {
