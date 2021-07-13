@@ -335,9 +335,11 @@ const SolarPanel = ({
 
             {/* draw poles */}
             {poleHeight > 0 &&
-            poles.map(p => {
+            poles.map((p, i) => {
                 return (
-                    <Cylinder castShadow={shadowEnabled}
+                    <Cylinder key={i}
+                              name={'Pole ' + i}
+                              castShadow={shadowEnabled}
                               receiveShadow={shadowEnabled}
                               args={[poleRadius, poleRadius, poleHeight + (p.y - poleZ) * 2 + lz, 6, 2]}
                               position={p}>
