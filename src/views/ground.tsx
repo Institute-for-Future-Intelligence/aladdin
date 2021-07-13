@@ -52,36 +52,60 @@ const Ground = () => {
     if (grabRef.current) {
         if (moveHandleType === MoveHandleType.Top) {
             intersectionPlaneType = IntersectionPlaneType.Horizontal;
-            Util.setVector(intersectionPlanePosition, grabRef.current.cx, grabRef.current.lz + MOVE_HANDLE_OFFSET, -grabRef.current.cy);
-            Util.setEuler(intersectionPlaneAngle, -Util.HALF_PI, 0, 0);
+            intersectionPlanePosition.set(
+                grabRef.current.cx,
+                grabRef.current.lz + MOVE_HANDLE_OFFSET,
+                -grabRef.current.cy
+            );
+            intersectionPlaneAngle.set(-Util.HALF_PI, 0, 0);
         } else if (
-            moveHandleType === MoveHandleType.Left || moveHandleType === MoveHandleType.Right ||
-            moveHandleType === MoveHandleType.Lower || moveHandleType === MoveHandleType.Upper ||
-            resizeHandleType === ResizeHandleType.LowerLeft || resizeHandleType === ResizeHandleType.UpperLeft ||
-            resizeHandleType === ResizeHandleType.LowerRight || resizeHandleType === ResizeHandleType.UpperRight) {
+            moveHandleType === MoveHandleType.Left ||
+            moveHandleType === MoveHandleType.Right ||
+            moveHandleType === MoveHandleType.Lower ||
+            moveHandleType === MoveHandleType.Upper ||
+            resizeHandleType === ResizeHandleType.LowerLeft ||
+            resizeHandleType === ResizeHandleType.UpperLeft ||
+            resizeHandleType === ResizeHandleType.LowerRight ||
+            resizeHandleType === ResizeHandleType.UpperRight) {
             intersectionPlaneType = IntersectionPlaneType.Horizontal;
-            Util.setVector(intersectionPlanePosition, grabRef.current.cx, MOVE_HANDLE_RADIUS, -grabRef.current.cy);
-            Util.setEuler(intersectionPlaneAngle, -Util.HALF_PI, 0, 0);
+            intersectionPlanePosition.set(
+                grabRef.current.cx,
+                MOVE_HANDLE_RADIUS,
+                -grabRef.current.cy
+            );
+            intersectionPlaneAngle.set(-Util.HALF_PI, 0, 0);
         } else if (resizeHandleType === ResizeHandleType.LowerLeftTop) {
             intersectionPlaneType = IntersectionPlaneType.Vertical;
-            Util.setVector(intersectionPlanePosition,
-                grabRef.current.cx - grabRef.current.lx / 2, 0, -grabRef.current.cy - grabRef.current.ly / 2);
-            Util.setEuler(intersectionPlaneAngle, 0, 0, 0);
+            intersectionPlanePosition.set(
+                grabRef.current.cx - grabRef.current.lx / 2,
+                0,
+                -grabRef.current.cy - grabRef.current.ly / 2
+            );
+            intersectionPlaneAngle.set(0, 0, 0);
         } else if (resizeHandleType === ResizeHandleType.UpperLeftTop) {
             intersectionPlaneType = IntersectionPlaneType.Vertical;
-            Util.setVector(intersectionPlanePosition,
-                grabRef.current.cx - grabRef.current.lx / 2, 0, -grabRef.current.cy + grabRef.current.ly / 2);
-            Util.setEuler(intersectionPlaneAngle, 0, 0, 0);
+            intersectionPlanePosition.set(
+                grabRef.current.cx - grabRef.current.lx / 2,
+                0,
+                -grabRef.current.cy + grabRef.current.ly / 2
+            );
+            intersectionPlaneAngle.set(0, 0, 0);
         } else if (resizeHandleType === ResizeHandleType.LowerRightTop) {
             intersectionPlaneType = IntersectionPlaneType.Vertical;
-            Util.setVector(intersectionPlanePosition,
-                grabRef.current.cx + grabRef.current.lx / 2, 0, -grabRef.current.cy - grabRef.current.ly / 2);
-            Util.setEuler(intersectionPlaneAngle, 0, 0, 0);
+            intersectionPlanePosition.set(
+                grabRef.current.cx + grabRef.current.lx / 2,
+                0,
+                -grabRef.current.cy - grabRef.current.ly / 2
+            );
+            intersectionPlaneAngle.set(0, 0, 0);
         } else if (resizeHandleType === ResizeHandleType.UpperRightTop) {
             intersectionPlaneType = IntersectionPlaneType.Vertical;
-            Util.setVector(intersectionPlanePosition,
-                grabRef.current.cx + grabRef.current.lx / 2, 0, -grabRef.current.cy + grabRef.current.ly / 2);
-            Util.setEuler(intersectionPlaneAngle, 0, 0, 0);
+            intersectionPlanePosition.set(
+                grabRef.current.cx + grabRef.current.lx / 2,
+                0,
+                -grabRef.current.cy + grabRef.current.ly / 2
+            );
+            intersectionPlaneAngle.set(0, 0, 0);
         }
     }
 
@@ -121,7 +145,7 @@ const Ground = () => {
                            if (groundClicked) {
                                selectNone();
                                setCommonStore((state) => {
-                                   Util.copyVector(state.pastePoint, e.intersections[0].point);
+                                   state.pastePoint.copy(e.intersections[0].point);
                                    state.clickObjectType = ObjectType.Ground;
                                    state.pasteNormal = Util.UNIT_VECTOR_POS_Y;
                                });
@@ -148,7 +172,8 @@ const Ground = () => {
                                if (selectedElement) {
                                    if (legalOnGround(selectedElement.type as ObjectType)) {
                                        grabRef.current = selectedElement;
-                                       if (selectedElement.type !== ObjectType.Foundation) { //TODO: This may not be needed
+                                       if (selectedElement.type !== ObjectType.Foundation &&
+                                           selectedElement.type !== ObjectType.Cuboid) {
                                            setCommonStore((state) => {
                                                state.enableOrbitController = false;
                                            });

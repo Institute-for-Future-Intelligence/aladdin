@@ -101,7 +101,7 @@ const Sensor = ({
     };
 
     const euler = useMemo(() => {
-        const v = Util.arrayToVector3(normal);
+        const v = new Vector3().fromArray(normal);
         if (Util.isSame(v, Util.UNIT_VECTOR_POS_Z)) {
             // top face in model coordinate system
             return new Euler(0, rotation[2], 0);
@@ -122,7 +122,7 @@ const Sensor = ({
     }, [normal, rotation]);
 
     const spritePosition = useMemo(() => {
-        const v = Util.arrayToVector3(normal);
+        const v = new Vector3().fromArray(normal);
         if (Util.isSame(v, Util.UNIT_VECTOR_POS_Z)) {
             // top face in model coordinate system
             return new Vector3(0, lz + 0.2, 0);

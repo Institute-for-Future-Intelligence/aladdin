@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import {Euler, Vector2, Vector3} from "three";
+import {Euler, Vector3} from "three";
 import {ElementModel} from "./models/ElementModel";
 
 export class Util {
@@ -55,37 +55,6 @@ export class Util {
         return Math.PI * 2;
     }
 
-    static arrayToVector3(arr: number[]): Vector3 {
-        if (arr.length !== 3) throw new Error('array must have three elements');
-        return new Vector3(arr[0], arr[1], arr[2]);
-    }
-
-    static vector3ToArray(v: Vector3): number[] {
-        return [v.x, v.y, v.z];
-    }
-
-    static copyVector(to: Vector3, from: Vector3) {
-        to.x = from.x;
-        to.y = from.y;
-        to.z = from.z;
-    }
-
-    static setVector(v: Vector3, x: number, y: number, z: number) {
-        v.x = x;
-        v.y = y;
-        v.z = z;
-    }
-
-    static copyVector2(to: Vector2, from: Vector2) {
-        to.x = from.x;
-        to.y = from.y;
-    }
-
-    static setVector2(v: Vector2, x: number, y: number) {
-        v.x = x;
-        v.y = y;
-    }
-
     static deleteElement(a: any[], e: any) {
         const i = a.indexOf(e, 0);
         if (i > -1) {
@@ -106,12 +75,6 @@ export class Util {
     static getEulerInView(v: number[]) {
         if (v.length !== 3) throw new Error(v + ' must be an array with three elements.');
         return new Euler(v[0], v[2], v[1]);
-    }
-
-    static setEuler(v: Euler, x: number, y: number, z: number) {
-        v.x = x;
-        v.y = y;
-        v.z = z;
     }
 
     static relativeCoordinates(x: number, y: number, z: number, parent: ElementModel) {

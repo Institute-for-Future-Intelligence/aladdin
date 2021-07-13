@@ -111,14 +111,17 @@ const Cuboid = ({
                         case ActionType.Move:
                             state.moveHandleType = e.eventObject.name as MoveHandleType;
                             state.resizeHandleType = null;
+                            state.enableOrbitController = false;
                             break;
                         case ActionType.Resize:
                             state.resizeHandleType = e.eventObject.name as ResizeHandleType;
                             state.moveHandleType = null;
+                            state.enableOrbitController = false;
                             break;
                         default:
                             state.moveHandleType = null;
                             state.resizeHandleType = null;
+                            state.enableOrbitController = true;
                     }
                 });
             }
@@ -282,7 +285,7 @@ const Cuboid = ({
                  onContextMenu={(e) => {
                      selectMe(e, ActionType.Select);
                      setCommonStore((state) => {
-                         Util.copyVector(state.pastePoint, e.intersections[0].point);
+                         state.pastePoint.copy(e.intersections[0].point);
                          const face = e.intersections[0].face;
                          if (face) {
                              state.pasteNormal = face.normal.clone();
@@ -478,7 +481,7 @@ const Cuboid = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx + hx, cy + hy);
+                             state.resizeAnchor.set(cx + hx, cy + hy);
                          });
                      }}
                      onPointerOver={(e) => {
@@ -503,7 +506,7 @@ const Cuboid = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx + hx, cy - hy);
+                             state.resizeAnchor.set(cx + hx, cy - hy);
                          });
                      }}
                      onPointerOver={(e) => {
@@ -528,7 +531,7 @@ const Cuboid = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx - hx, cy + hy);
+                             state.resizeAnchor.set(cx - hx, cy + hy);
                          });
                      }}
                      onPointerOver={(e) => {
@@ -553,7 +556,7 @@ const Cuboid = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx - hx, cy - hy);
+                             state.resizeAnchor.set(cx - hx, cy - hy);
                          });
                      }}
                      onPointerOver={(e) => {

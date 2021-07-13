@@ -107,7 +107,7 @@ const SensorSimulation = ({
         const parent = getElementById(sensor.parent.id);
         if (!parent) throw new Error('parent of sensor does not exist');
         const position = Util.absoluteCoordinates(sensor.cx, sensor.cy, sensor.cz, parent);
-        const normal = Util.arrayToVector3(sensor.normal);
+        const normal = new Vector3().fromArray(sensor.normal);
         // TODO: right now we assume a parent rotation is always around the z-axis
         normal.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, parent.rotation[2]);
         const result = new Array(24).fill(0);
@@ -174,7 +174,7 @@ const SensorSimulation = ({
         const parent = getElementById(sensor.parent.id);
         if (!parent) throw new Error('parent of sensor does not exist');
         const position = Util.absoluteCoordinates(sensor.cx, sensor.cy, sensor.cz, parent);
-        const normal = Util.arrayToVector3(sensor.normal);
+        const normal = new Vector3().fromArray(sensor.normal);
         // TODO: right now we assume a parent rotation is always around the z-axis
         normal.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, parent.rotation[2]);
         const year = now.getFullYear();

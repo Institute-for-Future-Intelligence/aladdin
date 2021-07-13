@@ -11,25 +11,24 @@ import {DatumEntry, ObjectType} from "../types";
 import {Util} from "../Util";
 import {AirMass} from "./analysisConstants";
 import {MONTHS} from "../constants";
-import {SensorModel} from "../models/SensorModel";
+import {SolarPanelModel} from "../models/SolarPanelModel";
 
 export interface SolarPanelSimulationProps {
     city: string | null;
-    pvDailyYieldFlag: boolean;
-    pvYearlyYieldFlag: boolean;
+    dailyPvYieldFlag: boolean;
+    yearlyPvYieldFlag: boolean;
 }
 
 const SolarPanelSimulation = ({
                                   city,
-                                  pvDailyYieldFlag,
-                                  pvYearlyYieldFlag,
+                                  dailyPvYieldFlag,
+                                  yearlyPvYieldFlag,
                               }: SolarPanelSimulationProps) => {
 
     const world = useStore(state => state.world);
     const elements = useStore(state => state.elements);
     const getElementById = useStore(state => state.getElementById);
     const getWeather = useStore(state => state.getWeather);
-    const setSensorLabels = useStore(state => state.setSensorLabels);
     const setPvDailyYield = useStore(state => state.setDailyPvYield);
     const setPvYearlyYield = useStore(state => state.setYearlyPvYield);
     const {scene} = useThree();
@@ -44,22 +43,22 @@ const SolarPanelSimulation = ({
     useEffect(() => {
         if (loadedDaily.current) { // avoid calling on first render
             if (elements && elements.length > 0) {
-                collectAllDailyLightSensorData();
+                getDailyYieldForAllSolarPanels();
             }
         } else {
             loadedDaily.current = true;
         }
-    }, [pvDailyYieldFlag]);
+    }, [dailyPvYieldFlag]);
 
     useEffect(() => {
         if (loadedYearly.current) { // avoid calling on first render
             if (elements && elements.length > 0) {
-                collectAllYearlyLightSensorData();
+                getYearlyYieldForAllSolarPanels();
             }
         } else {
             loadedYearly.current = true;
         }
-    }, [pvYearlyYieldFlag]);
+    }, [yearlyPvYieldFlag]);
 
     const inShadow = (time: Date, position: Vector3, sunDirection: Vector3) => {
         // convert the position and direction from physics model to the coordinate system of three.js
@@ -77,13 +76,13 @@ const SolarPanelSimulation = ({
         return false;
     };
 
-    const collectAllDailyLightSensorData = () => {
+    const getDailyYieldForAllSolarPanels = () => {
         const map = new Map<string, number[]>();
         let index = 0;
         const labels = [];
         for (const e of elements) {
-            if (e.type === ObjectType.Sensor) {
-                map.set('Radiation' + (index + 1), collectDailyLightSensorData(e as SensorModel));
+            if (e.type === ObjectType.SolarPanel) {
+                map.set('Radiation' + (index + 1), getDailyYield(e as SolarPanelModel));
                 labels.push(e.label ? e.label : 'Radiation' + (index + 1));
                 index++;
             }
@@ -99,15 +98,14 @@ const SolarPanelSimulation = ({
             data.push(datum);
         }
         setPvDailyYield(data);
-        setSensorLabels(labels);
     }
 
-    const collectDailyLightSensorData = (sensor: SensorModel) => {
+    const getDailyYield = (panel: SolarPanelModel) => {
         // why are the properties of parents cached here?
-        const parent = getElementById(sensor.parent.id);
-        if (!parent) throw new Error('parent of sensor does not exist');
-        const position = Util.absoluteCoordinates(sensor.cx, sensor.cy, sensor.cz, parent);
-        const normal = Util.arrayToVector3(sensor.normal);
+        const parent = getElementById(panel.parent.id);
+        if (!parent) throw new Error('parent of solar panel does not exist');
+        const position = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+        const normal = new Vector3().fromArray(panel.normal);
         // TODO: right now we assume a parent rotation is always around the z-axis
         normal.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, parent.rotation[2]);
         const result = new Array(24).fill(0);
@@ -142,13 +140,13 @@ const SolarPanelSimulation = ({
         return result.map(x => x * clearness / world.timesPerHour);
     };
 
-    const collectAllYearlyLightSensorData = () => {
+    const getYearlyYieldForAllSolarPanels = () => {
         const resultArr = [];
         const labels = [];
         let index = 0;
         for (const e of elements) {
-            if (e.type === ObjectType.Sensor) {
-                resultArr.push(collectYearlyLightSensorData(e as SensorModel));
+            if (e.type === ObjectType.SolarPanel) {
+                resultArr.push(getYearlyPvYield(e as SolarPanelModel));
                 labels.push(e.label ? e.label : 'Radiation' + (index + 1));
                 index++;
             }
@@ -158,23 +156,20 @@ const SolarPanelSimulation = ({
             const r: DatumEntry = {};
             r['Month'] = MONTHS[month];
             for (const [i, a] of resultArr.entries()) {
-                r['Daylight'] = a[month].Daylight;
-                r['Clearness'] = a[month].Clearness;
                 r[labels[i]] = a[month].Radiation;
             }
             results.push(r);
         }
         setPvYearlyYield(results);
-        setSensorLabels(labels);
     }
 
-    const collectYearlyLightSensorData = (sensor: SensorModel) => {
+    const getYearlyPvYield = (panel: SolarPanelModel) => {
         const data = [];
         // why are the properties of parents cached here?
-        const parent = getElementById(sensor.parent.id);
-        if (!parent) throw new Error('parent of sensor does not exist');
-        const position = Util.absoluteCoordinates(sensor.cx, sensor.cy, sensor.cz, parent);
-        const normal = Util.arrayToVector3(sensor.normal);
+        const parent = getElementById(panel.parent.id);
+        if (!parent) throw new Error('parent of solar panel does not exist');
+        const position = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+        const normal = new Vector3().fromArray(panel.normal);
         // TODO: right now we assume a parent rotation is always around the z-axis
         normal.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, parent.rotation[2]);
         const year = now.getFullYear();

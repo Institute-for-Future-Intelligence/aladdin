@@ -393,7 +393,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                     }
                     const e = ElementModelCloner.clone(state.elementToPaste[0], m.x, m.y, m.z);
                     if (e) {
-                        e.normal = Util.vector3ToArray(Util.viewToModel(state.pasteNormal));
+                        e.normal = Util.viewToModel(state.pasteNormal).toArray();
                         state.elements.push(e);
                     }
                     if (state.elementToPaste.length > 1) {

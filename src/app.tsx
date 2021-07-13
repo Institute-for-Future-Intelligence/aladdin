@@ -495,8 +495,8 @@ const App = () => {
                                               dailyLightSensorDataFlag={dailyLightSensorDataFlag}
                                               yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}/>
                             <SolarPanelSimulation city={city}
-                                                  pvDailyYieldFlag={pvDailyYieldFlag}
-                                                  pvYearlyYieldFlag={pvYearlyYieldFlag}/>
+                                                  dailyPvYieldFlag={pvDailyYieldFlag}
+                                                  yearlyPvYieldFlag={pvYearlyYieldFlag}/>
                             {viewState.axes && <Axes/>}
                             <Ground/>
                             {viewState.groundImage && <GroundImage/>}

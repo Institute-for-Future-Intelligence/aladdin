@@ -181,7 +181,7 @@ const SolarPanel = ({
     };
 
     const euler = useMemo(() => {
-        const v = Util.arrayToVector3(normal);
+        const v = new Vector3().fromArray(normal);
         if (Util.isSame(v, Util.UNIT_VECTOR_POS_Z)) {
             // top face in model coordinate system
             return new Euler(0, rotation[2], 0);
@@ -202,7 +202,7 @@ const SolarPanel = ({
     }, [normal, rotation]);
 
     const spritePosition = useMemo(() => {
-        const v = Util.arrayToVector3(normal);
+        const v = new Vector3().fromArray(normal);
         if (Util.isSame(v, Util.UNIT_VECTOR_POS_Z)) {
             // top face in model coordinate system
             return new Vector3(0, lz + 0.2, 0);
@@ -465,7 +465,7 @@ const SolarPanel = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx, cy + hy);
+                             state.resizeAnchor.set(cx, cy + hy);
                          });
                      }}
                      onPointerOver={(e) => {
@@ -491,7 +491,7 @@ const SolarPanel = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx, cy - hy);
+                             state.resizeAnchor.set(cx, cy - hy);
                          });
                      }}
                      onPointerOver={(e) => {
@@ -517,7 +517,7 @@ const SolarPanel = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx + hx, cy);
+                             state.resizeAnchor.set(cx + hx, cy);
                          });
                      }}
                      onPointerOver={(e) => {
@@ -543,7 +543,7 @@ const SolarPanel = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx - hx, cy);
+                             state.resizeAnchor.set(cx - hx, cy);
                          });
                      }}
                      onPointerOver={(e) => {

@@ -58,7 +58,7 @@ export class ElementModelFactory {
             ly: 0.1,
             lz: 0.01,
             showLabel: false,
-            normal: normal ? Util.vector3ToArray(normal) : [0, 0, 1],
+            normal: normal ? normal.toArray() : [0, 0, 1],
             rotation: rotation ? rotation : [0, 0, 0],
             parent: parent,
             id: short.generate() as string
@@ -91,7 +91,7 @@ export class ElementModelFactory {
             lz: pvModel.thickness,
             label: 'Solar Panel',
             showLabel: false,
-            normal: normal ? Util.vector3ToArray(normal) : [0, 0, 1],
+            normal: normal ? normal.toArray() : [0, 0, 1],
             rotation: rotation ? rotation : [0, 0, 0],
             parent: parent,
             id: short.generate() as string

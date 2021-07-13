@@ -188,7 +188,7 @@ const Foundation = ({
                  onContextMenu={(e) => {
                      selectMe(e, ActionType.Select);
                      setCommonStore((state) => {
-                         Util.copyVector(state.pastePoint, e.intersections[0].point);
+                         state.pastePoint.copy(e.intersections[0].point);
                          state.clickObjectType = ObjectType.Foundation;
                          state.pasteNormal = Util.UNIT_VECTOR_POS_Y;
                      });
@@ -410,7 +410,7 @@ const Foundation = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx + hx, cy + hy);
+                             state.resizeAnchor.set(cx + hx, cy + hy);
                          });
                      }}
                      onPointerOver={(e) => {
@@ -435,7 +435,7 @@ const Foundation = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx + hx, cy - hy);
+                             state.resizeAnchor.set(cx + hx, cy - hy);
                          });
                      }}
                      onPointerOver={(e) => {
@@ -460,7 +460,7 @@ const Foundation = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx - hx, cy + hy);
+                             state.resizeAnchor.set(cx - hx, cy + hy);
                          });
                      }}
                      onPointerOver={(e) => {
@@ -485,7 +485,7 @@ const Foundation = ({
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
                          setCommonStore(state => {
-                             Util.setVector2(state.resizeAnchor, cx - hx, cy - hy);
+                             state.resizeAnchor.set(cx - hx, cy - hy);
                          });
                      }}
                      onPointerOver={(e) => {
