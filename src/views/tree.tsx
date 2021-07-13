@@ -143,6 +143,7 @@ const Tree = ({
             {/* cast shadow */}
             <Billboard
                 args={[lx, lz]}
+                name={name + ' Shadow Billboard'}
                 castShadow={shadowEnabled}
                 follow={false}
                 customDepthMaterial={customDepthMaterial}
@@ -155,12 +156,14 @@ const Tree = ({
             {name !== TreeType.Pine ?
                 <Sphere visible={showModel && !noLeaves}
                         userData={{simulation: !noLeaves}}
+                        name={name + ' Model'}
                         args={[lx / 2, 8, 8, 0, Util.TWO_PI, 0, theta]}
                         scale={[1, lz / lx, 1]}>
                     <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75}/>
                 </Sphere>
                 :
                 <Cone visible={showModel}
+                      name={name + ' Model'}
                       userData={{simulation: true}}
                       position={[0, lz * 0.1, 0]}
                       args={[lx / 2, lz, 8, 8, true]}

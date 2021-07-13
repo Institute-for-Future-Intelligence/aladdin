@@ -23,11 +23,11 @@ import JuddImage from "../resources/judd.png";
 import JudyImage from "../resources/judy.png";
 import JuneImage from "../resources/june.png";
 import JuroImage from "../resources/juro.png";
-import {DoubleSide, Mesh, Vector3} from "three";
+import {DoubleSide, Mesh, TextureLoader, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {HumanModel} from "../models/HumanModel";
-import {Billboard, Sphere, useTexture} from "@react-three/drei";
+import {Billboard, Sphere} from "@react-three/drei";
 import {MOVE_HANDLE_RADIUS} from "../constants";
 import {HumanName} from "../types";
 
@@ -45,60 +45,82 @@ const Human = ({
 
     const setCommonStore = useStore(state => state.set);
     const [hovered, setHovered] = useState(false);
+    const [updateFlag, setUpdateFlag] = useState(false);
     const meshRef = useRef<Mesh>(null!);
     const {gl: {domElement}, camera} = useThree();
-    
+
     // have to add this to listen to world(camera) change, this is better than memo's shallow campare
-    useStore(state => state.world); 
+    useStore(state => state.world);
     const cameraX = camera.position.x;
     const cameraZ = camera.position.z;
 
-    const textureImg = useMemo(() => {
+    const texture = useMemo(() => {
+        let textureImg;
         switch (name) {
             case HumanName.Jade:
-                return JadeImage;
+                textureImg = JadeImage;
+                break;
             case HumanName.Jane:
-                return JaneImage;
+                textureImg = JaneImage;
+                break;
             case HumanName.Jaye:
-                return JayeImage;
+                textureImg = JayeImage;
+                break;
             case HumanName.Jean:
-                return JeanImage;
+                textureImg = JeanImage;
+                break;
             case HumanName.Jedi:
-                return JediImage;
+                textureImg = JediImage;
+                break;
             case HumanName.Jeff:
-                return JeffImage;
+                textureImg = JeffImage;
+                break;
             case HumanName.Jena:
-                return JenaImage;
+                textureImg = JenaImage;
+                break;
             case HumanName.Jeni:
-                return JeniImage;
+                textureImg = JeniImage;
+                break;
             case HumanName.Jess:
-                return JessImage;
+                textureImg = JessImage;
+                break;
             case HumanName.Jett:
-                return JettImage;
+                textureImg = JettImage;
+                break;
             case HumanName.Jill:
-                return JillImage;
+                textureImg = JillImage;
+                break;
             case HumanName.Joan:
-                return JoanImage;
+                textureImg = JoanImage;
+                break;
             case HumanName.Joel:
-                return JoelImage;
+                textureImg = JoelImage;
+                break;
             case HumanName.John:
-                return JohnImage;
+                textureImg = JohnImage;
+                break;
             case HumanName.Jose:
-                return JoseImage;
+                textureImg = JoseImage;
+                break;
             case HumanName.Judd:
-                return JuddImage;
+                textureImg = JuddImage;
+                break;
             case HumanName.Judy:
-                return JudyImage;
+                textureImg = JudyImage;
+                break;
             case HumanName.June:
-                return JuneImage;
+                textureImg = JuneImage;
+                break;
             case HumanName.Juro:
-                return JuroImage;
+                textureImg = JuroImage;
+                break;
             default:
-                return JackImage;
+                textureImg = JackImage;
         }
+        return new TextureLoader().load(textureImg, (texture) => {
+            setUpdateFlag(!updateFlag);
+        });
     }, [name]);
-
-    const texture = useTexture(textureImg);
 
     const width = useMemo(() => {
         switch (name) {

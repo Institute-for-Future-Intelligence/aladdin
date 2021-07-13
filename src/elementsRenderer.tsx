@@ -64,15 +64,11 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
                             case ObjectType.Cuboid:
                                 return <Cuboid key={e.id} {...e as CuboidModel}/>;
                             case ObjectType.Human:
-                                return (
-                                    <Suspense key={e.id} fallback={null}>
-                                        <Human {...e as HumanModel} />
-                                    </Suspense>
-                                );
+                                return <Human key={e.id} {...e as HumanModel}/>;
                             case ObjectType.Tree:
-                                return <Tree key={e.id} {...e as TreeModel} />;
+                                return <Tree key={e.id} {...e as TreeModel}/>;
                             case ObjectType.SolarPanel:
-                                return <SolarPanel key={e.id} {...e as SolarPanelModel} />;
+                                return <SolarPanel key={e.id} {...e as SolarPanelModel}/>;
                         }
                     }
                 )
