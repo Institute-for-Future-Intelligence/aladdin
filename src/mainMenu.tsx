@@ -5,7 +5,7 @@
 import React, {useState} from 'react';
 import {useStore} from "./stores/common";
 import styled from 'styled-components';
-import {Menu, Dropdown, Checkbox, Modal, Input} from 'antd';
+import {Menu, Dropdown, Checkbox, Modal, Input, Space, InputNumber} from 'antd';
 import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
 import {saveAs} from "file-saver";
@@ -57,6 +57,7 @@ const MainMenu = ({
                   }: MainMenuProps) => {
 
     const setCommonStore = useStore(state => state.set);
+    const world = useStore(state => state.world);
     const viewState = useStore(state => state.viewState);
     const exportContent = useStore(state => state.exportContent);
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -164,38 +165,93 @@ const MainMenu = ({
                 </Checkbox>
             </Menu.Item>
             <SubMenu key={'sensors'} title={'Sensors'} style={{paddingLeft: '24px'}}>
-                <Menu.Item key={'sensor-collect-daily-data'} onClick={collectDailyLightSensorData}>
-                    Collect Daily Data
-                </Menu.Item>
-                <Menu.Item key={'sensor-collect-yearly-data'} onClick={collectYearlyLightSensorData}>
-                    Collect Yearly Data
-                </Menu.Item>
+                <Menu>
+                    <Menu.Item key={'sensor-simulation-sampling-frequency'}>
+                        <Space style={{width: '150px'}}>Sampling Frequency: </Space>
+                        <InputNumber min={1}
+                                     max={60}
+                                     step={1}
+                                     style={{width: 60}}
+                                     precision={0}
+                                     value={world.timesPerHour}
+                                     formatter={(a) => Number(a).toFixed(0)}
+                                     onChange={(value) => {
+                                         setCommonStore((state) => {
+                                             state.world.timesPerHour = value;
+                                         });
+                                     }}
+                        />
+                        <Space style={{paddingLeft: '10px'}}>Times per Hour</Space>
+                    </Menu.Item>
+                    <Menu.Item key={'sensor-collect-daily-data'} onClick={collectDailyLightSensorData}>
+                        Collect Daily Data
+                    </Menu.Item>
+                    <Menu.Item key={'sensor-collect-yearly-data'} onClick={collectYearlyLightSensorData}>
+                        Collect Yearly Data
+                    </Menu.Item>
+                </Menu>
             </SubMenu>
             <SubMenu key={'solar-panels'} title={'Solar Panels'} style={{paddingLeft: '24px'}}>
-                <Menu.Item key={'solar-panel-daily-yield-only-total'} onClick={() => {
-                    setPvDailyIndividualOutputs(false);
-                    analyzePvDailyYield();
-                }}>
-                    Analyze Daily Yield and Report Only Total
-                </Menu.Item>
-                <Menu.Item key={'solar-panel-daily-yield-individual'} onClick={() => {
-                    setPvDailyIndividualOutputs(true);
-                    analyzePvDailyYield();
-                }}>
-                    Analyze Daily Yield also Report Individual Outputs
-                </Menu.Item>
-                <Menu.Item key={'solar-panel-yearly-yield-only-total'} onClick={() => {
-                    setPvYearlyIndividualOutputs(false);
-                    analyzePvYearlyYield();
-                }}>
-                    Analyze Yearly Yield and Report Only Total
-                </Menu.Item>
-                <Menu.Item key={'solar-panel-yearly-yield-individual'} onClick={() => {
-                    setPvYearlyIndividualOutputs(true);
-                    analyzePvYearlyYield();
-                }}>
-                    Analyze Yearly Yield also Report Individual Outputs
-                </Menu.Item>
+                <Menu>
+                    <Menu.Item key={'solar-panel-simulation-sampling-frequency'}>
+                        <Space style={{width: '150px'}}>Sampling Frequency: </Space>
+                        <InputNumber min={1}
+                                     max={60}
+                                     step={1}
+                                     style={{width: 60}}
+                                     precision={0}
+                                     value={world.timesPerHour}
+                                     formatter={(a) => Number(a).toFixed(0)}
+                                     onChange={(value) => {
+                                         setCommonStore((state) => {
+                                             state.world.timesPerHour = value;
+                                         });
+                                     }}
+                        />
+                        <Space style={{paddingLeft: '10px'}}>Times per Hour</Space>
+                    </Menu.Item>
+                    <Menu.Item key={'solar-panel-simulation-grid-cell-size'}>
+                        <Space style={{width: '150px'}}>Grid Cell Size: </Space>
+                        <InputNumber min={0.1}
+                                     max={5}
+                                     step={0.1}
+                                     style={{width: 60}}
+                                     precision={1}
+                                     value={world.solarPanelGridCellSize ?? 0.5}
+                                     formatter={(a) => Number(a).toFixed(1)}
+                                     onChange={(value) => {
+                                         setCommonStore((state) => {
+                                             state.world.solarPanelGridCellSize = value;
+                                         });
+                                     }}
+                        />
+                        <Space style={{paddingLeft: '10px'}}>m</Space>
+                    </Menu.Item>
+                    <Menu.Item key={'solar-panel-daily-yield-only-total'} onClick={() => {
+                        setPvDailyIndividualOutputs(false);
+                        analyzePvDailyYield();
+                    }}>
+                        Analyze Daily Yield and Report Only Total
+                    </Menu.Item>
+                    <Menu.Item key={'solar-panel-daily-yield-individual'} onClick={() => {
+                        setPvDailyIndividualOutputs(true);
+                        analyzePvDailyYield();
+                    }}>
+                        Analyze Daily Yield also Report Individual Outputs
+                    </Menu.Item>
+                    <Menu.Item key={'solar-panel-yearly-yield-only-total'} onClick={() => {
+                        setPvYearlyIndividualOutputs(false);
+                        analyzePvYearlyYield();
+                    }}>
+                        Analyze Yearly Yield and Report Only Total
+                    </Menu.Item>
+                    <Menu.Item key={'solar-panel-yearly-yield-individual'} onClick={() => {
+                        setPvYearlyIndividualOutputs(true);
+                        analyzePvYearlyYield();
+                    }}>
+                        Analyze Yearly Yield also Report Individual Outputs
+                    </Menu.Item>
+                </Menu>
             </SubMenu>
             <Menu.Item key="screenshot" onClick={takeScreenshot} style={{paddingLeft: '36px'}}>
                 Take Screenshot

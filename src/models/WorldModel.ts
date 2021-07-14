@@ -17,5 +17,6 @@ export interface WorldModel {
     ground: GroundModel;
 
     timesPerHour: number;
+    solarPanelGridCellSize: number;
 
 }

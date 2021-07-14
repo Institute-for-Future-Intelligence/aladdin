@@ -10,6 +10,8 @@ import {GraphDataType} from "../types";
 import moment from "moment";
 import ReactDraggable, {DraggableEventHandler} from 'react-draggable';
 import {Button, Space, Switch} from "antd";
+import {screenshot} from "../helpers";
+import {ReloadOutlined, SaveOutlined} from '@ant-design/icons';
 
 const Container = styled.div`
   position: fixed;
@@ -128,6 +130,9 @@ const DailyPvYieldPanel = ({
         requestUpdate();
     };
 
+    const labelX = 'Hour';
+    const labelY = 'Yield per Hour';
+
     return (
         <ReactDraggable
             handle={'.handle'}
@@ -156,8 +161,8 @@ const DailyPvYieldPanel = ({
                         dataSource={dailyYield}
                         labels={solarPanelLabels}
                         height={responsiveHeight}
-                        labelX={'Hour'}
-                        labelY={'Yield per Hour'}
+                        labelX={labelX}
+                        labelY={labelY}
                         unitY={'kWh'}
                         yMin={0}
                         curveType={'linear'}
@@ -173,10 +178,19 @@ const DailyPvYieldPanel = ({
                                     setIndividualOutputs(checked);
                                     analyzeDailyPvYield();
                                 }}
-                        />Individual Outputs
-                        <Button type="primary" onClick={analyzeDailyPvYield}>
-                            Update
-                        </Button>
+                        />Details
+                        <Button type="default"
+                                icon={<ReloadOutlined/>}
+                                title={'Update'}
+                                onClick={analyzeDailyPvYield}
+                        />
+                        <Button type="default"
+                                icon={<SaveOutlined/>}
+                                title={'Save as image'}
+                                onClick={() => {
+                                    screenshot('line-graph-' + labelX + '-' + labelY, 'daily-pv-yield', {});
+                                }}
+                        />
                     </Space>
                 </ColumnWrapper>
             </Container>

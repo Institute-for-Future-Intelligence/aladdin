@@ -11,6 +11,8 @@ import {MONTHS} from "../constants";
 import {Util} from "../Util";
 import ReactDraggable, {DraggableEventHandler} from "react-draggable";
 import {Button, Space, Switch} from "antd";
+import {screenshot} from "../helpers";
+import {ReloadOutlined, SaveOutlined} from '@ant-design/icons';
 
 const Container = styled.div`
   position: fixed;
@@ -130,6 +132,9 @@ const YearlyPvYieldPanel = ({
         requestUpdate();
     };
 
+    const labelX = 'Month';
+    const labelY = 'Yield';
+
     return (
         <ReactDraggable
             handle={'.handle'}
@@ -158,8 +163,8 @@ const YearlyPvYieldPanel = ({
                         dataSource={yearlyYield.map(({Daylight, Clearness, ...item}) => item)}
                         labels={solarPanelLabels}
                         height={responsiveHeight}
-                        labelX={'Month'}
-                        labelY={'Yield'}
+                        labelX={labelX}
+                        labelY={labelY}
                         unitY={'kWh'}
                         yMin={0}
                         curveType={'natural'}
@@ -174,10 +179,19 @@ const YearlyPvYieldPanel = ({
                                     setIndividualOutputs(checked);
                                     analyzeYearlyPvYield();
                                 }}
-                        />Individual Outputs
-                        <Button type="primary" onClick={analyzeYearlyPvYield}>
-                            Update
-                        </Button>
+                        />Details
+                        <Button type="default"
+                                icon={<ReloadOutlined/>}
+                                title={'Update'}
+                                onClick={analyzeYearlyPvYield}
+                        />
+                        <Button type="default"
+                                icon={<SaveOutlined/>}
+                                title={'Save as image'}
+                                onClick={() => {
+                                    screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-pv-yield', {});
+                                }}
+                        />
                     </Space>
                 </ColumnWrapper>
             </Container>

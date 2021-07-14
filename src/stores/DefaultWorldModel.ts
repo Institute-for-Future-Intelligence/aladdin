@@ -27,6 +27,7 @@ export class DefaultWorldModel implements WorldModel {
     longitude: number;
     address: string;
     timesPerHour: number;
+    solarPanelGridCellSize: number;
 
     constructor() {
 
@@ -45,6 +46,7 @@ export class DefaultWorldModel implements WorldModel {
         this.cameraPosition = new Vector3(0, 0, 5);
 
         this.timesPerHour = 20; // how many times per hour to collect data
+        this.solarPanelGridCellSize = 0.5;
 
     }
 

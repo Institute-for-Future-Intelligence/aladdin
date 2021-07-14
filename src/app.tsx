@@ -268,9 +268,6 @@ const App = () => {
             showInfo('There is no sensor for collecting data.');
             return;
         }
-        setCommonStore(state => {
-            state.world.timesPerHour = 20;
-        });
         setDailyLightSensorDataFlag(!dailyLightSensorDataFlag);
         setCommonStore(state => {
             state.viewState.showDailyLightSensorPanel = true;
@@ -283,9 +280,6 @@ const App = () => {
             showInfo('There is no sensor for collecting data.');
             return;
         }
-        setCommonStore(state => {
-            state.world.timesPerHour = 20;
-        });
         setYearlyLightSensorDataFlag(!yearlyLightSensorDataFlag);
         setCommonStore(state => {
             state.viewState.showYearlyLightSensorPanel = true;
@@ -298,9 +292,6 @@ const App = () => {
             showInfo('There is no solar panel for analysis.');
             return;
         }
-        setCommonStore(state => {
-            state.world.timesPerHour = 4;
-        });
         setPvDailyYieldFlag(!pvDailyYieldFlag);
         setCommonStore(state => {
             state.viewState.showDailyPvYieldPanel = true;
@@ -313,9 +304,6 @@ const App = () => {
             showInfo('There is no solar panel for analysis.');
             return;
         }
-        setCommonStore(state => {
-            state.world.timesPerHour = 4;
-        });
         setPvYearlyYieldFlag(!pvYearlyYieldFlag);
         setCommonStore(state => {
             state.viewState.showYearlyPvYieldPanel = true;

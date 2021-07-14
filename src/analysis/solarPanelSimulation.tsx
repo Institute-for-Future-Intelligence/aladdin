@@ -54,6 +54,7 @@ const SolarPanelSimulation = ({
     const loadedYearly = useRef(false);
     const inverterEfficiency = 0.95;
     const dustLoss = 0.05;
+    const cellSize = world.solarPanelGridCellSize;
 
     useEffect(() => {
         if (loadedDaily.current) { // avoid calling on first render
@@ -161,14 +162,14 @@ const SolarPanelSimulation = ({
             lx = panel.lx;
             ly = panel.ly * Math.cos(panel.tiltAngle);
             lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
-            nx = panel.pvModel.m;
-            ny = panel.pvModel.n;
+            nx = Math.max(1, Math.round(panel.lx / cellSize));
+            ny = Math.max(1, Math.round(panel.ly / cellSize));
         } else {
             lx = panel.ly;
             ly = panel.lx * Math.cos(panel.tiltAngle);
             lz = panel.lx * Math.abs(Math.sin(panel.tiltAngle));
-            nx = panel.pvModel.n;
-            ny = panel.pvModel.m;
+            nx = Math.max(1, Math.round(panel.ly / cellSize));
+            ny = Math.max(1, Math.round(panel.lx / cellSize));
         }
         const dx = lx / nx;
         const dy = ly / ny;
@@ -277,14 +278,14 @@ const SolarPanelSimulation = ({
             lx = panel.lx;
             ly = panel.ly * Math.cos(panel.tiltAngle);
             lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
-            nx = panel.pvModel.m;
-            ny = panel.pvModel.n;
+            nx = Math.max(1, Math.round(panel.lx / cellSize));
+            ny = Math.max(1, Math.round(panel.ly / cellSize));
         } else {
             lx = panel.ly;
             ly = panel.lx * Math.cos(panel.tiltAngle);
             lz = panel.lx * Math.abs(Math.sin(panel.tiltAngle));
-            nx = panel.pvModel.n;
-            ny = panel.pvModel.m;
+            nx = Math.max(1, Math.round(panel.ly / cellSize));
+            ny = Math.max(1, Math.round(panel.lx / cellSize));
         }
         const dx = lx / nx;
         const dy = ly / ny;
