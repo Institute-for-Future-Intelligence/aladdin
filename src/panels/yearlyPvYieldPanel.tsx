@@ -153,8 +153,8 @@ const YearlyPvYieldPanel = ({
                         dataSource={yearlyYield.map(({Daylight, Clearness, ...item}) => item)}
                         height={responsiveHeight}
                         labelX={'Month'}
-                        labelY={'Radiation'}
-                        unitY={'kWh/m²/day'}
+                        labelY={'Yield'}
+                        unitY={'kWh'}
                         yMin={0}
                         curveType={'natural'}
                         fractionDigits={2}

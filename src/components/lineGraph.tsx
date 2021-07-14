@@ -100,6 +100,10 @@ const LineGraph = ({
                 case GraphDataType.YearlyRadiationSensorData:
                     name = (labels && labels[i]) ? labels[i] : 'Radiation' + (i + 1);
                     break;
+                case GraphDataType.DailyPvYield:
+                case GraphDataType.YearlyPvYeild:
+                    name = (labels && labels[i]) ? labels[i] : 'Solar Panel';
+                    break;
             }
             const opacity = legendDataKey === null ? 1 : (legendDataKey === name ? 1 : 0.25);
             const symbol = createSymbol(

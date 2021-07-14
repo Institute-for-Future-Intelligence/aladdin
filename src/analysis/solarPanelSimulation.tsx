@@ -15,12 +15,14 @@ import {SolarPanelModel} from "../models/SolarPanelModel";
 
 export interface SolarPanelSimulationProps {
     city: string | null;
+    individualOutput?: boolean;
     dailyPvYieldFlag: boolean;
     yearlyPvYieldFlag: boolean;
 }
 
 const SolarPanelSimulation = ({
                                   city,
+                                  individualOutput = false,
                                   dailyPvYieldFlag,
                                   yearlyPvYieldFlag,
                               }: SolarPanelSimulationProps) => {
@@ -60,7 +62,7 @@ const SolarPanelSimulation = ({
         }
     }, [yearlyPvYieldFlag]);
 
-    const inShadow = (time: Date, position: Vector3, sunDirection: Vector3) => {
+    const inShadow = (panelId: string, time: Date, position: Vector3, sunDirection: Vector3) => {
         // convert the position and direction from physics model to the coordinate system of three.js
         ray.set(Util.modelToView(position), Util.modelToView(sunDirection));
         const content = scene.children.filter(c => c.name === 'Content');
@@ -68,7 +70,7 @@ const SolarPanelSimulation = ({
             const components = content[0].children;
             const objects: Object3D[] = [];
             for (const c of components) {
-                objects.push(...c.children.filter(x => x.userData['simulation']));
+                objects.push(...c.children.filter(x => (x.userData['simulation'] && x.uuid !== panelId)));
             }
             const intersects = ray.intersectObjects(objects);
             return intersects.length > 0;
@@ -76,28 +78,57 @@ const SolarPanelSimulation = ({
         return false;
     };
 
+    const getPanelEfficiency = (temperature: number, panel: SolarPanelModel) => {
+        let e = panel.pvModel.efficiency;
+        if (panel.pvModel.cellType === 'Monocrystalline') {
+            e *= 0.95; // assuming that the packing density factor of semi-round cells is 0.95
+        }
+        return e * (1 + panel.pvModel.pmaxTC * (temperature - 25));
+    }
+
     const getDailyYieldForAllSolarPanels = () => {
-        const map = new Map<string, number[]>();
-        let index = 0;
-        const labels = [];
-        for (const e of elements) {
-            if (e.type === ObjectType.SolarPanel) {
-                map.set('Radiation' + (index + 1), getDailyYield(e as SolarPanelModel));
-                labels.push(e.label ? e.label : 'Radiation' + (index + 1));
-                index++;
+        if (individualOutput) {
+            const map = new Map<string, number[]>();
+            let index = 0;
+            const labels = [];
+            for (const e of elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                    const output = getDailyYield(e as SolarPanelModel);
+                    map.set('Solar Panel' + (index + 1), output);
+                    labels.push(e.label ? e.label : 'Solar Panel' + (index + 1));
+                    index++;
+                }
             }
-        }
-        const data = [];
-        for (let i = 0; i < 24; i++) {
-            const datum: DatumEntry = {};
-            datum['Hour'] = i;
-            for (let k = 1; k <= index; k++) {
-                const key = 'Radiation' + k;
-                datum[labels[k - 1]] = map.get(key)?.[i];
+            const data = [];
+            for (let i = 0; i < 24; i++) {
+                const datum: DatumEntry = {};
+                datum['Hour'] = i;
+                for (let k = 1; k <= index; k++) {
+                    const key = 'Solar Panel' + k;
+                    datum[labels[k - 1]] = map.get(key)?.[i];
+                }
+                data.push(datum);
             }
-            data.push(datum);
+            setPvDailyYield(data);
+        } else {
+            const total = new Array(24).fill(0);
+            for (const e of elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                    const output = getDailyYield(e as SolarPanelModel);
+                    for (let i = 0; i < 24; i++) {
+                        total[i] += output[i];
+                    }
+                }
+            }
+            const data = [];
+            for (let i = 0; i < 24; i++) {
+                const datum: DatumEntry = {};
+                datum['Hour'] = i;
+                datum['Solar Panel'] = total[i];
+                data.push(datum);
+            }
+            setPvDailyYield(data);
         }
-        setPvDailyYield(data);
     }
 
     const getDailyYield = (panel: SolarPanelModel) => {
@@ -124,7 +155,7 @@ const SolarPanelSimulation = ({
                     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
                     const dot = normal.dot(sunDirection);
                     if (dot > 0) {
-                        if (!inShadow(cur, position, sunDirection)) {
+                        if (!inShadow(panel.id, cur, position, sunDirection)) {
                             // direct radiation
                             result[i] += dot * peakRadiation;
                         }
@@ -137,30 +168,54 @@ const SolarPanelSimulation = ({
         // apply clearness and convert the unit of time step from minute to hour so that we get kWh
         const daylight = count * interval / 60;
         const clearness = weather.sunshineHours[month] / (30 * daylight);
-        return result.map(x => x * clearness / world.timesPerHour);
+        const inverterEfficiency = 0.95;
+        const dustLoss = 0.05;
+        const factor = panel.lx * panel.ly * getPanelEfficiency(25, panel) * inverterEfficiency * (1 - dustLoss);
+        return result.map(x => x * factor * clearness / world.timesPerHour);
     };
 
     const getYearlyYieldForAllSolarPanels = () => {
-        const resultArr = [];
-        const labels = [];
-        let index = 0;
-        for (const e of elements) {
-            if (e.type === ObjectType.SolarPanel) {
-                resultArr.push(getYearlyPvYield(e as SolarPanelModel));
-                labels.push(e.label ? e.label : 'Radiation' + (index + 1));
-                index++;
+        if (individualOutput) {
+            const resultArr = [];
+            const labels = [];
+            let index = 0;
+            for (const e of elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                    resultArr.push(getYearlyPvYield(e as SolarPanelModel));
+                    labels.push(e.label ? e.label : 'Solar Panel' + (index + 1));
+                    index++;
+                }
             }
-        }
-        const results = [];
-        for (let month = 0; month < 12; month++) {
-            const r: DatumEntry = {};
-            r['Month'] = MONTHS[month];
-            for (const [i, a] of resultArr.entries()) {
-                r[labels[i]] = a[month].Radiation;
+            const results = [];
+            for (let month = 0; month < 12; month++) {
+                const r: DatumEntry = {};
+                r['Month'] = MONTHS[month];
+                for (const [i, a] of resultArr.entries()) {
+                    r[labels[i]] = a[month].Yield;
+                }
+                results.push(r);
             }
-            results.push(r);
+            setPvYearlyYield(results);
+        } else {
+            const resultArr = [];
+            for (const e of elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                    resultArr.push(getYearlyPvYield(e as SolarPanelModel));
+                }
+            }
+            const results = [];
+            for (let month = 0; month < 12; month++) {
+                const r: DatumEntry = {};
+                r['Month'] = MONTHS[month];
+                let total = 0;
+                for (const result of resultArr) {
+                    total += result[month].Yield as number;
+                }
+                r['Solar Panel'] = total;
+                results.push(r);
+            }
+            setPvYearlyYield(results);
         }
-        setPvYearlyYield(results);
     }
 
     const getYearlyPvYield = (panel: SolarPanelModel) => {
@@ -177,7 +232,7 @@ const SolarPanelSimulation = ({
         for (let month = 0; month < 12; month++) {
             const midMonth = new Date(year, month, date);
             const dayOfYear = Util.dayOfYear(midMonth);
-            let total = 0;
+            let dailyYield = 0;
             let count = 0;
             for (let hour = 0; hour < 24; hour++) {
                 for (let step = 0; step < world.timesPerHour; step++) {
@@ -189,26 +244,21 @@ const SolarPanelSimulation = ({
                         const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
                         const dot = normal.dot(sunDirection);
                         if (dot > 0) {
-                            if (!inShadow(cur, position, sunDirection)) {
+                            if (!inShadow(panel.id, cur, position, sunDirection)) {
                                 // direct radiation
-                                total += dot * peakRadiation;
+                                dailyYield += dot * peakRadiation;
                             }
                         }
                         // indirect radiation
-                        total += calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
+                        dailyYield += calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
                     }
                 }
             }
             const daylight = count * interval / 60;
             const clearness = weather.sunshineHours[midMonth.getMonth()] / (30 * daylight);
-            total *= clearness; // apply clearness
-            total /= world.timesPerHour; // convert the unit of timeStep from minute to hour so that we get kWh
-            data.push({
-                Month: MONTHS[month],
-                Daylight: daylight,
-                Clearness: clearness * 100,
-                Radiation: total
-            } as DatumEntry);
+            dailyYield *= clearness; // apply clearness
+            dailyYield /= world.timesPerHour; // convert the unit of timeStep from minute to hour so that we get kWh
+            data.push({Month: MONTHS[month], Yield: dailyYield} as DatumEntry);
         }
         return data;
     };
