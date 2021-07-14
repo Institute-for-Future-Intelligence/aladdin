@@ -75,6 +75,8 @@ const App = () => {
     const [yearlyLightSensorDataFlag, setYearlyLightSensorDataFlag] = useState<boolean>(false);
     const [pvDailyYieldFlag, setPvDailyYieldFlag] = useState<boolean>(false);
     const [pvYearlyYieldFlag, setPvYearlyYieldFlag] = useState<boolean>(false);
+    const [pvDailyIndividualOutputs, setPvDailyIndividualOutputs] = useState<boolean>(false);
+    const [pvYearlyIndividualOutputs, setPvYearlyIndividualOutputs] = useState<boolean>(false);
     const [cameraPosition, setCameraPosition] = useState<Vector3>(new Vector3(0, 0, 5));
     const [panCenter, setPanCenter] = useState<Vector3>(new Vector3());
     const [heliodonRadius, setHeliodonRadius] = useState<number>(10);
@@ -371,7 +373,9 @@ const App = () => {
                 canvas={canvasRef.current}
                 collectDailyLightSensorData={collectDailyLightSensorData}
                 collectYearlyLightSensorData={collectYearlyLightSensorData}
+                setPvDailyIndividualOutputs={setPvDailyIndividualOutputs}
                 analyzePvDailyYield={analyzeDailyPvYield}
+                setPvYearlyIndividualOutputs={setPvYearlyIndividualOutputs}
                 analyzePvYearlyYield={analyzeYearlyPvYield}
                 requestUpdate={requestUpdate}
             />
@@ -428,11 +432,15 @@ const App = () => {
             />}
             {viewState.showYearlyPvYieldPanel &&
             <YearlyPvYieldPanel city={city}
+                                individualOutputs={pvYearlyIndividualOutputs}
+                                setIndividualOutputs={setPvYearlyIndividualOutputs}
                                 analyzeYearlyPvYield={analyzeYearlyPvYield}
                                 requestUpdate={requestUpdate}
             />}
             {viewState.showDailyPvYieldPanel &&
             <DailyPvYieldPanel city={city}
+                               individualOutputs={pvDailyIndividualOutputs}
+                               setIndividualOutputs={setPvDailyIndividualOutputs}
                                analyzeDailyPvYield={analyzeDailyPvYield}
                                requestUpdate={requestUpdate}
             />}
@@ -495,6 +503,8 @@ const App = () => {
                                               dailyLightSensorDataFlag={dailyLightSensorDataFlag}
                                               yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}/>
                             <SolarPanelSimulation city={city}
+                                                  dailyIndividualOutputs={pvDailyIndividualOutputs}
+                                                  yearlyIndividualOutputs={pvYearlyIndividualOutputs}
                                                   dailyPvYieldFlag={pvDailyYieldFlag}
                                                   yearlyPvYieldFlag={pvYearlyYieldFlag}/>
                             {viewState.axes && <Axes/>}

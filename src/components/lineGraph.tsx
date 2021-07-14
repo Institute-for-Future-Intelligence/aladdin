@@ -102,7 +102,7 @@ const LineGraph = ({
                     break;
                 case GraphDataType.DailyPvYield:
                 case GraphDataType.YearlyPvYeild:
-                    name = (labels && labels[i]) ? labels[i] : 'Solar Panel';
+                    name = i === lineCount - 1 ? 'Total' : ((labels && labels[i]) ? labels[i] : 'Panel' + (i + 1));
                     break;
             }
             const opacity = legendDataKey === null ? 1 : (legendDataKey === name ? 1 : 0.25);

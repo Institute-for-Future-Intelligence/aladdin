@@ -32,7 +32,9 @@ export interface MainMenuProps {
 
     collectDailyLightSensorData: () => void;
     collectYearlyLightSensorData: () => void;
+    setPvDailyIndividualOutputs: (b: boolean) => void;
     analyzePvDailyYield: () => void;
+    setPvYearlyIndividualOutputs: (b: boolean) => void;
     analyzePvYearlyYield: () => void;
 
     canvas?: HTMLCanvasElement;
@@ -45,7 +47,9 @@ export interface MainMenuProps {
 const MainMenu = ({
                       collectDailyLightSensorData,
                       collectYearlyLightSensorData,
+                      setPvDailyIndividualOutputs,
                       analyzePvDailyYield,
+                      setPvYearlyIndividualOutputs,
                       analyzePvYearlyYield,
                       canvas,
                       requestUpdate,
@@ -168,11 +172,29 @@ const MainMenu = ({
                 </Menu.Item>
             </SubMenu>
             <SubMenu key={'solar-panels'} title={'Solar Panels'} style={{paddingLeft: '24px'}}>
-                <Menu.Item key={'solar-panel-daily-yield'} onClick={analyzePvDailyYield}>
-                    Analyze Daily Yield
+                <Menu.Item key={'solar-panel-daily-yield-only-total'} onClick={() => {
+                    setPvDailyIndividualOutputs(false);
+                    analyzePvDailyYield();
+                }}>
+                    Analyze Daily Yield and Report Only Total
                 </Menu.Item>
-                <Menu.Item key={'solar-panel-yearly-yield'} onClick={analyzePvYearlyYield}>
-                    Analyze Yearly Yield
+                <Menu.Item key={'solar-panel-daily-yield-individual'} onClick={() => {
+                    setPvDailyIndividualOutputs(true);
+                    analyzePvDailyYield();
+                }}>
+                    Analyze Daily Yield also Report Individual Outputs
+                </Menu.Item>
+                <Menu.Item key={'solar-panel-yearly-yield-only-total'} onClick={() => {
+                    setPvYearlyIndividualOutputs(false);
+                    analyzePvYearlyYield();
+                }}>
+                    Analyze Yearly Yield and Report Only Total
+                </Menu.Item>
+                <Menu.Item key={'solar-panel-yearly-yield-individual'} onClick={() => {
+                    setPvYearlyIndividualOutputs(true);
+                    analyzePvYearlyYield();
+                }}>
+                    Analyze Yearly Yield also Report Individual Outputs
                 </Menu.Item>
             </SubMenu>
             <Menu.Item key="screenshot" onClick={takeScreenshot} style={{paddingLeft: '36px'}}>

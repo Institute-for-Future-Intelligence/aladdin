@@ -10,7 +10,7 @@ import {GraphDataType} from "../types";
 import {MONTHS} from "../constants";
 import {Util} from "../Util";
 import ReactDraggable, {DraggableEventHandler} from "react-draggable";
-import {Button, Space} from "antd";
+import {Button, Space, Switch} from "antd";
 
 const Container = styled.div`
   position: fixed;
@@ -62,6 +62,8 @@ export interface YearlyPvYieldPanelProps {
 
     city: string | null;
     requestUpdate: () => void;
+    individualOutputs: boolean;
+    setIndividualOutputs: (b: boolean) => void;
     analyzeYearlyPvYield: () => void;
 
     [key: string]: any;
@@ -71,6 +73,8 @@ export interface YearlyPvYieldPanelProps {
 const YearlyPvYieldPanel = ({
                                 city,
                                 requestUpdate,
+                                individualOutputs = false,
+                                setIndividualOutputs,
                                 analyzeYearlyPvYield,
                                 ...rest
                             }: YearlyPvYieldPanelProps) => {
@@ -78,6 +82,7 @@ const YearlyPvYieldPanel = ({
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
     const yearlyYield = useStore(state => state.yearlyPvYield);
+    const solarPanelLabels = useStore(state => state.solarPanelLabels);
     const now = useStore(state => state.world.date);
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
@@ -151,6 +156,7 @@ const YearlyPvYieldPanel = ({
                     <LineGraph
                         type={GraphDataType.YearlyPvYeild}
                         dataSource={yearlyYield.map(({Daylight, Clearness, ...item}) => item)}
+                        labels={solarPanelLabels}
                         height={responsiveHeight}
                         labelX={'Month'}
                         labelY={'Yield'}
@@ -162,6 +168,13 @@ const YearlyPvYieldPanel = ({
                         {...rest}
                     />
                     <Space style={{alignSelf: 'center'}}>
+                        <Switch title={'Show outputs of individual solar panels'}
+                                checked={individualOutputs}
+                                onChange={(checked) => {
+                                    setIndividualOutputs(checked);
+                                    analyzeYearlyPvYield();
+                                }}
+                        />Individual Outputs
                         <Button type="primary" onClick={analyzeYearlyPvYield}>
                             Update
                         </Button>

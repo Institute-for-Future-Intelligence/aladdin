@@ -9,7 +9,7 @@ import {useStore} from "../stores/common";
 import {GraphDataType} from "../types";
 import moment from "moment";
 import ReactDraggable, {DraggableEventHandler} from 'react-draggable';
-import {Button, Space} from "antd";
+import {Button, Space, Switch} from "antd";
 
 const Container = styled.div`
   position: fixed;
@@ -61,6 +61,8 @@ export interface DailyPvYieldPanelProps {
 
     city: string | null;
     requestUpdate: () => void;
+    individualOutputs: boolean;
+    setIndividualOutputs: (b: boolean) => void;
     analyzeDailyPvYield: () => void;
 
     [key: string]: any;
@@ -70,6 +72,8 @@ export interface DailyPvYieldPanelProps {
 const DailyPvYieldPanel = ({
                                city,
                                requestUpdate,
+                               individualOutputs = false,
+                               setIndividualOutputs,
                                analyzeDailyPvYield,
                                ...rest
                            }: DailyPvYieldPanelProps) => {
@@ -77,6 +81,7 @@ const DailyPvYieldPanel = ({
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
     const dailyYield = useStore(state => state.dailyPvYield);
+    const solarPanelLabels = useStore(state => state.solarPanelLabels);
     const now = new Date(useStore(state => state.world.date));
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
@@ -149,6 +154,7 @@ const DailyPvYieldPanel = ({
                     <LineGraph
                         type={GraphDataType.DailyPvYield}
                         dataSource={dailyYield}
+                        labels={solarPanelLabels}
                         height={responsiveHeight}
                         labelX={'Hour'}
                         labelY={'Yield per Hour'}
@@ -161,6 +167,13 @@ const DailyPvYieldPanel = ({
                         {...rest}
                     />
                     <Space style={{alignSelf: 'center'}}>
+                        <Switch title={'Show outputs of individual solar panels'}
+                                checked={individualOutputs}
+                                onChange={(checked) => {
+                                    setIndividualOutputs(checked);
+                                    analyzeDailyPvYield();
+                                }}
+                        />Individual Outputs
                         <Button type="primary" onClick={analyzeDailyPvYield}>
                             Update
                         </Button>

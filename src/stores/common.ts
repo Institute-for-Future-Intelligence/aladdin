@@ -91,6 +91,8 @@ export interface CommonStoreState {
     setDailyPvYield: (data: DatumEntry[]) => void;
     yearlyPvYield: DatumEntry[];
     setYearlyPvYield: (data: DatumEntry[]) => void;
+    solarPanelLabels: string[];
+    setSolarPanelLabels: (labels: string[]) => void;
 
     sunlightDirection: Vector3;
     setSunlightDirection: (vector: Vector3) => void;
@@ -162,6 +164,12 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         setDailyPvYield(data) {
             immerSet((state: CommonStoreState) => {
                 state.dailyPvYield = [...data];
+            });
+        },
+        solarPanelLabels: [],
+        setSolarPanelLabels(labels) {
+            immerSet((state: CommonStoreState) => {
+                state.solarPanelLabels = [...labels];
             });
         },
 
@@ -532,6 +540,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         'user',
         'weatherData',
         'sensorLabels',
+        'solarPanelLabels',
         'dailyLightSensorData',
         'yearlyLightSensorData'
     ]

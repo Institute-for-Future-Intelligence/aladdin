@@ -83,9 +83,9 @@ const SensorSimulation = ({
         const labels = [];
         for (const e of elements) {
             if (e.type === ObjectType.Sensor) {
-                map.set('Radiation' + (index + 1), collectDailyLightSensorData(e as SensorModel));
-                labels.push(e.label ? e.label : 'Radiation' + (index + 1));
                 index++;
+                map.set('Radiation' + index, collectDailyLightSensorData(e as SensorModel));
+                labels.push(e.label ? e.label : 'Radiation' + index);
             }
         }
         const data = [];
@@ -149,8 +149,8 @@ const SensorSimulation = ({
         for (const e of elements) {
             if (e.type === ObjectType.Sensor) {
                 resultArr.push(collectYearlyLightSensorData(e as SensorModel));
-                labels.push(e.label ? e.label : 'Radiation' + (index + 1));
                 index++;
+                labels.push(e.label ? e.label : 'Radiation' + index);
             }
         }
         const results = [];
