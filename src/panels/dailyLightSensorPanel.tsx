@@ -10,6 +10,8 @@ import {GraphDataType} from "../types";
 import moment from "moment";
 import ReactDraggable, {DraggableEventHandler} from 'react-draggable';
 import {Button, Space} from "antd";
+import {ReloadOutlined, SaveOutlined} from '@ant-design/icons';
+import {screenshot} from "../helpers";
 
 const Container = styled.div`
   position: fixed;
@@ -124,6 +126,9 @@ const DailyLightSensorPanel = ({
         requestUpdate();
     };
 
+    const labelX = 'Hour';
+    const labelY = 'Radiation';
+
     return (
         <ReactDraggable
             handle={'.handle'}
@@ -152,8 +157,8 @@ const DailyLightSensorPanel = ({
                         dataSource={sensorData}
                         labels={sensorLabels}
                         height={responsiveHeight}
-                        labelX={'Hour'}
-                        labelY={'Radiation'}
+                        labelX={labelX}
+                        labelY={labelY}
                         unitY={'kWh/m²/day'}
                         yMin={0}
                         curveType={'linear'}
@@ -163,9 +168,18 @@ const DailyLightSensorPanel = ({
                         {...rest}
                     />
                     <Space style={{alignSelf: 'center'}}>
-                        <Button type="primary" onClick={collectDailyLightSensorData}>
-                            Update
-                        </Button>
+                        <Button type="default"
+                                icon={<ReloadOutlined/>}
+                                title={'Update'}
+                                onClick={collectDailyLightSensorData}
+                        />
+                        <Button type="default"
+                                icon={<SaveOutlined/>}
+                                title={'Save as image'}
+                                onClick={() => {
+                                    screenshot('line-graph-' + labelX + '-' + labelY, 'daily-light-sensor', {});
+                                }}
+                        />
                     </Space>
                 </ColumnWrapper>
             </Container>

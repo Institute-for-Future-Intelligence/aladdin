@@ -7,7 +7,7 @@ import {useStore} from "../stores/common";
 import {SolarPanelModel} from "../models/SolarPanelModel";
 import {Row, Select, Col, Input} from "antd";
 import {SolarPanelNominalSize} from "../models/SolarPanelNominalSize";
-import {Orientation} from "../types";
+import {Orientation, ShadeTolerance} from "../types";
 
 const {Option} = Select;
 
@@ -129,7 +129,7 @@ const PvModelPanel = ({
                 <Col className="gutter-row" span={10}>
                     <Input disabled={true}
                            style={{width: '100%'}}
-                           value={solarPanel.pvModel.efficiency}
+                           value={100 * solarPanel.pvModel.efficiency}
                            onChange={(value) => {
                                if (solarPanel) {
                                    // TODO
@@ -184,9 +184,15 @@ const PvModelPanel = ({
                                 }
                             }}
                     >
-                        <Option key={'High'} value={'High'}>High</Option>)
-                        <Option key={'None'} value={'None'}>None</Option>)
-                        <Option key={'Partial'} value={'Partial'}>Partial</Option>)
+                        <Option key={ShadeTolerance.HIGH} value={ShadeTolerance.HIGH}>
+                            {ShadeTolerance.HIGH}
+                        </Option>)
+                        <Option key={ShadeTolerance.NONE} value={ShadeTolerance.NONE}>
+                            {ShadeTolerance.NONE}
+                        </Option>)
+                        <Option key={ShadeTolerance.PARTIAL} value={ShadeTolerance.PARTIAL}>
+                            {ShadeTolerance.PARTIAL}
+                        </Option>)
                     </Select>
                 </Col>
             </Row>

@@ -2,16 +2,17 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useMemo, useRef} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {calculateDiffuseAndReflectedRadiation, calculatePeakRadiation, getSunDirection} from "./sunTools";
 import {Euler, Object3D, Raycaster, Vector3} from "three";
 import {useThree} from "@react-three/fiber";
 import {useStore} from "../stores/common";
-import {DatumEntry, ObjectType, Orientation} from "../types";
+import {DatumEntry, ObjectType, Orientation, ShadeTolerance} from "../types";
 import {Util} from "../Util";
 import {AirMass} from "./analysisConstants";
 import {MONTHS} from "../constants";
 import {SolarPanelModel} from "../models/SolarPanelModel";
+import {computeOutsideTemperature, getOutsideTemperatureAtMinute} from "./heatTools";
 
 const getPanelEfficiency = (temperature: number, panel: SolarPanelModel) => {
     let e = panel.pvModel.efficiency;
@@ -41,9 +42,11 @@ const SolarPanelSimulation = ({
     const elements = useStore(state => state.elements);
     const getElementById = useStore(state => state.getElementById);
     const getWeather = useStore(state => state.getWeather);
+    const weatherData = useStore(state => state.weatherData);
     const setPvDailyYield = useStore(state => state.setDailyPvYield);
     const setPvYearlyYield = useStore(state => state.setYearlyPvYield);
     const setSolarPanelLabels = useStore(state => state.setSolarPanelLabels);
+    const [currentTemperature, setCurrentTemperature] = useState<number>(20);
     const {scene} = useThree();
     const weather = getWeather(city ?? 'Boston MA, USA');
     const elevation = city ? getWeather(city).elevation : 0;
@@ -75,6 +78,17 @@ const SolarPanelSimulation = ({
             loadedYearly.current = true;
         }
     }, [yearlyPvYieldFlag]);
+
+    useEffect(() => {
+        if (city) {
+            const weather = weatherData[city];
+            if (weather) {
+                const t = computeOutsideTemperature(now, weather.lowestTemperatures, weather.highestTemperatures);
+                const c = getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(now));
+                setCurrentTemperature(c);
+            }
+        }
+    }, [city, world.date]);
 
     const inShadow = (panelId: string, time: Date, position: Vector3, sunDirection: Vector3) => {
         // convert the position and direction from physics model to the coordinate system of three.js
@@ -157,7 +171,7 @@ const SolarPanelSimulation = ({
         const date = now.getDate();
         const dayOfYear = Util.dayOfYear(now);
         let count = 0;
-        let lx, ly, lz, nx, ny;
+        let lx, ly, lz, nx: number, ny: number;
         if (panel.orientation === Orientation.portrait) {
             lx = panel.lx;
             ly = panel.ly * Math.cos(panel.tiltAngle);
@@ -178,6 +192,7 @@ const SolarPanelSimulation = ({
         const y0 = center.y - ly / 2;
         const z0 = panel.poleHeight + center.z - lz / 2;
         const v = new Vector3();
+        const cellOutputs = Array.from(Array(nx), () => new Array(ny));
         for (let i = 0; i < 24; i++) {
             for (let j = 0; j < world.timesPerHour; j++) {
                 const currentTime = new Date(year, month, date, i, j * interval);
@@ -186,29 +201,90 @@ const SolarPanelSimulation = ({
                     // when the sun is out
                     count++;
                     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+                    const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
                     const dot = normal.dot(sunDirection);
-                    let s = 0;
-                    if (dot > 0) {
-                        for (let ix = 0; ix < nx; ix++) {
-                            for (let iy = 0; iy < ny; iy++) {
-                                v.set(x0 + ix * dx, y0 + iy * dy, z0 + iy * dz);
+                    for (let kx = 0; kx < nx; kx++) {
+                        for (let ky = 0; ky < ny; ky++) {
+                            cellOutputs[kx][ky] = indirectRadiation;
+                            if (dot > 0) {
+                                v.set(x0 + kx * dx, y0 + ky * dy, z0 + ky * dz);
                                 if (!inShadow(panel.id, currentTime, v, sunDirection)) {
                                     // direct radiation
-                                    s += dot * peakRadiation;
+                                    cellOutputs[kx][ky] += dot * peakRadiation;
                                 }
                             }
                         }
                     }
-                    // indirect radiation
-                    const t = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
-                    result[i] += s / (nx * ny) + t;
+                    // we must consider cell wiring and distributed efficiency
+                    // Nice demo at: https://www.youtube.com/watch?v=UNPJapaZlCU
+                    let sum = 0;
+                    switch (panel.pvModel.shadeTolerance) {
+                        case ShadeTolerance.NONE:
+                            // all the cells are connected in a single series,
+                            // so the total output is determined by the minimum
+                            let min1 = Number.MAX_VALUE;
+                            for (let kx = 0; kx < nx; kx++) {
+                                for (let ky = 0; ky < ny; ky++) {
+                                    const c = cellOutputs[kx][ky];
+                                    if (c < min1) {
+                                        min1 = c;
+                                    }
+                                }
+                            }
+                            sum = min1 * nx * ny;
+                            break;
+                        case ShadeTolerance.PARTIAL:
+                            // assuming each panel uses a diode bypass to connect two columns of cells
+                            let min2 = Number.MAX_VALUE;
+                            if (panel.orientation === Orientation.portrait) { // e.g., nx = 6, ny = 10
+                                for (let kx = 0; kx < nx; kx++) {
+                                    if (kx % 2 === 0) { // reset min every two columns of cells
+                                        min2 = Number.MAX_VALUE;
+                                    }
+                                    for (let ky = 0; ky < ny; ky++) {
+                                        const c = cellOutputs[kx][ky];
+                                        if (c < min2) {
+                                            min2 = c;
+                                        }
+                                    }
+                                    if (kx % 2 === 1) {
+                                        sum += min2 * ny * 2;
+                                    }
+                                }
+                            } else { // landscape, e.g., nx = 10, ny = 6
+                                for (let ky = 0; ky < ny; ky++) {
+                                    if (ky % 2 === 0) { // reset min every two columns of cells
+                                        min2 = Number.MAX_VALUE;
+                                    }
+                                    for (let kx = 0; kx < nx; kx++) {
+                                        const c = cellOutputs[kx][ky];
+                                        if (c < min2) {
+                                            min2 = c;
+                                        }
+                                    }
+                                    if (ky % 2 === 1) {
+                                        sum += min2 * nx * 2;
+                                    }
+                                }
+                            }
+                            break;
+                        default:
+                            // this probably is too idealized
+                            for (let kx = 0; kx < nx; kx++) {
+                                for (let ky = 0; ky < ny; ky++) {
+                                    sum += cellOutputs[kx][ky];
+                                }
+                            }
+                            break;
+                    }
+                    result[i] += sum / (nx * ny);
                 }
             }
         }
         // apply clearness and convert the unit of time step from minute to hour so that we get kWh
         const daylight = count * interval / 60;
         const clearness = weather.sunshineHours[month] / (30 * daylight);
-        const factor = panel.lx * panel.ly * getPanelEfficiency(25, panel) * inverterEfficiency * (1 - dustLoss);
+        const factor = panel.lx * panel.ly * getPanelEfficiency(currentTemperature, panel) * inverterEfficiency * (1 - dustLoss);
         return result.map(x => x * factor * clearness / world.timesPerHour);
     };
 
@@ -310,9 +386,9 @@ const SolarPanelSimulation = ({
                         const dot = normal.dot(sunDirection);
                         let s = 0;
                         if (dot > 0) {
-                            for (let ix = 0; ix < nx; ix++) {
-                                for (let iy = 0; iy < ny; iy++) {
-                                    v.set(x0 + ix * dx, y0 + iy * dy, z0 + iy * dz);
+                            for (let kx = 0; kx < nx; kx++) {
+                                for (let ky = 0; ky < ny; ky++) {
+                                    v.set(x0 + kx * dx, y0 + ky * dy, z0 + ky * dz);
                                     if (!inShadow(panel.id, currentTime, v, sunDirection)) {
                                         // direct radiation
                                         s += dot * peakRadiation;
@@ -328,7 +404,7 @@ const SolarPanelSimulation = ({
             }
             const daylight = count * interval / 60;
             const clearness = weather.sunshineHours[midMonth.getMonth()] / (30 * daylight);
-            const factor = panel.lx * panel.ly * getPanelEfficiency(25, panel) * inverterEfficiency * (1 - dustLoss);
+            const factor = panel.lx * panel.ly * getPanelEfficiency(currentTemperature, panel) * inverterEfficiency * (1 - dustLoss);
             dailyYield *= clearness * factor;
             dailyYield /= world.timesPerHour; // convert the unit of timeStep from minute to hour so that we get kWh
             data.push({Month: MONTHS[month], Yield: dailyYield} as DatumEntry);

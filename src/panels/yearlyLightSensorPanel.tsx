@@ -12,6 +12,8 @@ import {Util} from "../Util";
 import BarGraph from "../components/barGraph";
 import ReactDraggable, {DraggableEventHandler} from "react-draggable";
 import {Button, Space, Switch} from "antd";
+import {ReloadOutlined, SaveOutlined} from '@ant-design/icons';
+import {screenshot} from "../helpers";
 
 const Container = styled.div`
   position: fixed;
@@ -130,6 +132,9 @@ const YearlyLightSensorPanel = ({
         requestUpdate();
     };
 
+    const labelX = 'Month';
+    const labelY = 'Radiation';
+
     return (
         <ReactDraggable
             handle={'.handle'}
@@ -182,9 +187,18 @@ const YearlyLightSensorPanel = ({
                             />Radiation
                         </Space>
                         <Space>
-                            <Button type="primary" onClick={collectYearlyLightSensorData}>
-                                Update
-                            </Button>
+                            <Button type="default"
+                                    icon={<ReloadOutlined/>}
+                                    title={'Update'}
+                                    onClick={collectYearlyLightSensorData}
+                            />
+                            <Button type="default"
+                                    icon={<SaveOutlined/>}
+                                    title={'Save as image'}
+                                    onClick={() => {
+                                        screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-light-sensor', {});
+                                    }}
+                            />
                         </Space>
                     </Space>
                     {daylightGraph &&
@@ -224,8 +238,8 @@ const YearlyLightSensorPanel = ({
                         dataSource={sensorData.map(({Daylight, Clearness, ...item}) => item)}
                         labels={sensorLabels}
                         height={responsiveHeight}
-                        labelX={'Month'}
-                        labelY={'Radiation'}
+                        labelX={labelX}
+                        labelY={labelY}
                         unitY={'kWh/m²/day'}
                         yMin={0}
                         curveType={'natural'}

@@ -117,6 +117,12 @@ export enum TrackerType {
     TILTED_SINGLE_AXIS_TRACKER = 'TSAT'
 }
 
+export enum ShadeTolerance {
+    NONE = 'None',
+    HIGH = 'High',
+    PARTIAL = 'Partial'
+}
+
 export enum TreeType {
     Cottonwood = 'Cottonwood',
     Dogwood = 'Dogwood',
