@@ -230,9 +230,13 @@ const SolarPanelSimulation = ({
                                 normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qrotHSAT)));
                                 break;
                             case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
-                                const v2d = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
-                                const az = Math.acos(Util.UNIT_VECTOR_POS_Y.dot(v2d)) * Math.sign(v2d.x);
-                                normal.copy(ori.applyEuler(new Euler(panel.tiltAngle, az + rot, 0, 'XYZ')));
+                                if (Math.abs(panel.tiltAngle) > 0.001) {
+                                    const v2d = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
+                                    const az = Math.acos(Util.UNIT_VECTOR_POS_Y.dot(v2d)) * Math.sign(v2d.x);
+                                    ori.applyAxisAngle(Util.UNIT_VECTOR_POS_X, panel.tiltAngle);
+                                    ori.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, az + rot);
+                                    normal.copy(ori);
+                                }
                                 break;
                             case TrackerType.TILTED_SINGLE_AXIS_TRACKER:
                                 // TODO
@@ -452,9 +456,13 @@ const SolarPanelSimulation = ({
                                     normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qrotHSAT)));
                                     break;
                                 case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
-                                    const v2d = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
-                                    const az = Math.acos(Util.UNIT_VECTOR_POS_Y.dot(v2d)) * Math.sign(v2d.x);
-                                    normal.copy(ori.applyEuler(new Euler(panel.tiltAngle, az + rot, 0, 'XYZ')));
+                                    if (Math.abs(panel.tiltAngle) > 0.001) {
+                                        const v2d = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
+                                        const az = Math.acos(Util.UNIT_VECTOR_POS_Y.dot(v2d)) * Math.sign(v2d.x);
+                                        ori.applyAxisAngle(Util.UNIT_VECTOR_POS_X, panel.tiltAngle);
+                                        ori.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, az + rot);
+                                        normal.copy(ori);
+                                    }
                                     break;
                                 case TrackerType.TILTED_SINGLE_AXIS_TRACKER:
                                     // TODO
