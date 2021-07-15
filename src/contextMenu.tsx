@@ -386,11 +386,6 @@ const ContextMenu = ({
                                         title={'Vertical single axis tracker'}>
                                     VSAT
                                 </Option>)
-                                <Option key={'TSAT'}
-                                        value={TrackerType.TILTED_SINGLE_AXIS_TRACKER}
-                                        title={'Tilted single axis tracker'}>
-                                    TSAT
-                                </Option>)
                                 <Option key={'AADAT'}
                                         value={TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER}
                                         title={'Altazimuth single axis tracker'}>

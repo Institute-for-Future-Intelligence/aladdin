@@ -4,10 +4,10 @@
 
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {calculateDiffuseAndReflectedRadiation, calculatePeakRadiation, getSunDirection} from "./sunTools";
-import {Euler, Object3D, Raycaster, Vector3} from "three";
+import {Euler, Object3D, Quaternion, Raycaster, Vector3} from "three";
 import {useThree} from "@react-three/fiber";
 import {useStore} from "../stores/common";
-import {DatumEntry, Discretization, ObjectType, Orientation, ShadeTolerance} from "../types";
+import {DatumEntry, Discretization, ObjectType, Orientation, ShadeTolerance, TrackerType} from "../types";
 import {Util} from "../Util";
 import {AirMass} from "./analysisConstants";
 import {MONTHS} from "../constants";
@@ -57,7 +57,7 @@ const SolarPanelSimulation = ({
     const loadedYearly = useRef(false);
     const inverterEfficiency = 0.95;
     const dustLoss = 0.05;
-    const cellSize = world.solarPanelGridCellSize?? 0.25;
+    const cellSize = world.solarPanelGridCellSize ?? 0.25;
 
     useEffect(() => {
         if (loadedDaily.current) { // avoid calling on first render
@@ -131,7 +131,6 @@ const SolarPanelSimulation = ({
                     const key = 'Panel' + k;
                     datum[labels[k - 1]] = map.get(key)?.[i];
                 }
-                datum['Total'] = total[i];
                 data.push(datum);
             }
             setPvDailyYield(data);
@@ -160,9 +159,10 @@ const SolarPanelSimulation = ({
         if (!parent) throw new Error('parent of solar panel does not exist');
         const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
         const normal = new Vector3().fromArray(panel.normal);
-        if (Math.abs(panel.tiltAngle) > 0.001) {
+        const originalNormal = normal.clone();
+        if (Math.abs(panel.tiltAngle) > 0.001 && panel.trackerType === TrackerType.NO_TRACKER) {
             // TODO: right now we assume a parent rotation is always around the z-axis
-            normal.applyEuler(new Euler(panel.tiltAngle, panel.relativeAzimuth + parent.rotation[2], 0, 'XYZ'));
+            normal.applyEuler(new Euler(panel.tiltAngle, panel.relativeAzimuth + parent.rotation[2], 0, 'XYZ'))
         }
         const result = new Array(24).fill(0);
         const year = now.getFullYear();
@@ -215,6 +215,30 @@ const SolarPanelSimulation = ({
                 const sunDirection = getSunDirection(currentTime, world.latitude);
                 if (sunDirection.z > 0) {
                     // when the sun is out
+                    if (panel.trackerType !== TrackerType.NO_TRACKER) { // dynamic angles
+                        const rot = parent.rotation[2];
+                        const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(Util.UNIT_VECTOR_POS_Z, -rot) : sunDirection.clone();
+                        const ori = originalNormal.clone();
+                        switch (panel.trackerType) {
+                            case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
+                                const qrotAADAT = new Quaternion().setFromUnitVectors(Util.UNIT_VECTOR_POS_Z, rotatedSunDirection);
+                                normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qrotAADAT)));
+                                break;
+                            case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
+                                const qrotHSAT = new Quaternion().setFromUnitVectors(Util.UNIT_VECTOR_POS_Z,
+                                    new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize());
+                                normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qrotHSAT)));
+                                break;
+                            case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
+                                const v2d = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
+                                const az = Math.acos(Util.UNIT_VECTOR_POS_Y.dot(v2d)) * Math.sign(v2d.x);
+                                normal.copy(ori.applyEuler(new Euler(panel.tiltAngle, az + rot, 0, 'XYZ')));
+                                break;
+                            case TrackerType.TILTED_SINGLE_AXIS_TRACKER:
+                                // TODO
+                                break;
+                        }
+                    }
                     count++;
                     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
                     const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
@@ -320,12 +344,9 @@ const SolarPanelSimulation = ({
             for (let month = 0; month < 12; month++) {
                 const r: DatumEntry = {};
                 r['Month'] = MONTHS[month];
-                let total = 0;
                 for (const [i, a] of resultArr.entries()) {
-                    r[labels[i]] = a[month].Yield;
-                    total += a[month].Yield as number;
+                    r[labels[i]] = (a[month].Yield as number) * 30;
                 }
-                r['Total'] = total * 30;
                 results.push(r);
             }
             setPvYearlyYield(results);
@@ -359,7 +380,8 @@ const SolarPanelSimulation = ({
         if (!parent) throw new Error('parent of solar panel does not exist');
         const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
         const normal = new Vector3().fromArray(panel.normal);
-        if (Math.abs(panel.tiltAngle) > 0.001) {
+        const originalNormal = normal.clone();
+        if (Math.abs(panel.tiltAngle) > 0.001 && panel.trackerType === TrackerType.NO_TRACKER) {
             // TODO: right now we assume a parent rotation is always around the z-axis
             normal.applyEuler(new Euler(panel.tiltAngle, panel.relativeAzimuth + parent.rotation[2], 0, 'XYZ'));
         }
@@ -415,6 +437,30 @@ const SolarPanelSimulation = ({
                     const sunDirection = getSunDirection(currentTime, world.latitude);
                     if (sunDirection.z > 0) {
                         // when the sun is out
+                        if (panel.trackerType !== TrackerType.NO_TRACKER) { // dynamic angles
+                            const rot = parent.rotation[2];
+                            const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(Util.UNIT_VECTOR_POS_Z, -rot) : sunDirection.clone();
+                            const ori = originalNormal.clone();
+                            switch (panel.trackerType) {
+                                case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
+                                    const qrotAADAT = new Quaternion().setFromUnitVectors(Util.UNIT_VECTOR_POS_Z, rotatedSunDirection);
+                                    normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qrotAADAT)));
+                                    break;
+                                case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
+                                    const qrotHSAT = new Quaternion().setFromUnitVectors(Util.UNIT_VECTOR_POS_Z,
+                                        new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize());
+                                    normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qrotHSAT)));
+                                    break;
+                                case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
+                                    const v2d = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
+                                    const az = Math.acos(Util.UNIT_VECTOR_POS_Y.dot(v2d)) * Math.sign(v2d.x);
+                                    normal.copy(ori.applyEuler(new Euler(panel.tiltAngle, az + rot, 0, 'XYZ')));
+                                    break;
+                                case TrackerType.TILTED_SINGLE_AXIS_TRACKER:
+                                    // TODO
+                                    break;
+                            }
+                        }
                         count++;
                         const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
                         const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);

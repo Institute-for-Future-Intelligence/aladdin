@@ -101,7 +101,13 @@ const YearlyPvYieldPanel = ({
     useEffect(() => {
         let s = 0;
         for (const datum of yearlyYield) {
-            s += datum['Total'] as number;
+            for (const prop in datum) {
+                if (datum.hasOwnProperty(prop)) {
+                    if (prop !== 'Month') {
+                        s += datum[prop] as number;
+                    }
+                }
+            }
         }
         setSum(s);
     }, [yearlyYield]);
@@ -183,13 +189,14 @@ const YearlyPvYieldPanel = ({
                     />
                     <Space style={{alignSelf: 'center'}}>
                         <Space>Yearly Total: {sum.toFixed(2)} kWh</Space>
+                        Details:
                         <Switch title={'Show outputs of individual solar panels'}
                                 checked={individualOutputs}
                                 onChange={(checked) => {
                                     setIndividualOutputs(checked);
                                     analyzeYearlyPvYield();
                                 }}
-                        />Details
+                        />
                         <Button type="default"
                                 icon={<ReloadOutlined/>}
                                 title={'Update'}

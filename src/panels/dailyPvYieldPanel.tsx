@@ -99,7 +99,13 @@ const DailyPvYieldPanel = ({
     useEffect(() => {
         let s = 0;
         for (const datum of dailyYield) {
-            s += datum['Total'] as number;
+            for (const prop in datum) {
+                if (datum.hasOwnProperty(prop)) {
+                    if (prop !== 'Hour') {
+                        s += datum[prop] as number;
+                    }
+                }
+            }
         }
         setSum(s);
     }, [dailyYield]);
@@ -182,13 +188,14 @@ const DailyPvYieldPanel = ({
                     />
                     <Space style={{alignSelf: 'center'}}>
                         <Space>Daily Total: {sum.toFixed(2)} kWh</Space>
+                        Details:
                         <Switch title={'Show outputs of individual solar panels'}
                                 checked={individualOutputs}
                                 onChange={(checked) => {
                                     setIndividualOutputs(checked);
                                     analyzeDailyPvYield();
                                 }}
-                        />Details
+                        />
                         <Button type="default"
                                 icon={<ReloadOutlined/>}
                                 title={'Update'}
