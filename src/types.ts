@@ -123,6 +123,11 @@ export enum ShadeTolerance {
     PARTIAL = 'Partial'
 }
 
+export enum Discretization {
+    EXACT = 'Exact',
+    APPROXIMATE = 'Approximate'
+}
+
 export enum TreeType {
     Cottonwood = 'Cottonwood',
     Dogwood = 'Dogwood',

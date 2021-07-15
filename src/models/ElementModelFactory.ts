@@ -89,7 +89,6 @@ export class ElementModelFactory {
             lx: pvModel.width,
             ly: pvModel.length,
             lz: pvModel.thickness,
-            label: 'Solar Panel',
             showLabel: false,
             normal: normal ? normal.toArray() : [0, 0, 1],
             rotation: rotation ? rotation : [0, 0, 0],

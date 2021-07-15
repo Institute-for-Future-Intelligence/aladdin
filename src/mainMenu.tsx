@@ -5,14 +5,16 @@
 import React, {useState} from 'react';
 import {useStore} from "./stores/common";
 import styled from 'styled-components';
-import {Menu, Dropdown, Checkbox, Modal, Input, Space, InputNumber} from 'antd';
+import {Checkbox, Dropdown, Input, InputNumber, Menu, Modal, Select, Space} from 'antd';
 import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
 import {saveAs} from "file-saver";
 import About from "./about";
 import {saveImage} from "./helpers";
+import {Discretization} from "./types";
 
 const {SubMenu} = Menu;
+const {Option} = Select;
 
 const StyledImage = styled.img`
   position: absolute;
@@ -210,6 +212,25 @@ const MainMenu = ({
                         />
                         <Space style={{paddingLeft: '10px'}}>Times per Hour</Space>
                     </Menu.Item>
+                    <Menu.Item key={'solar-panel-discretization'}>
+                        <Space style={{width: '150px'}}>Panel Discretization: </Space>
+                        <Select style={{width: '150px'}}
+                                value={world.discretization ?? Discretization.EXACT}
+                                onChange={(value) => {
+                                    setCommonStore(state => {
+                                        state.world.discretization = value;
+                                    });
+                                }}
+                        >
+                            <Option key={Discretization.EXACT} value={Discretization.EXACT}>
+                                {Discretization.EXACT}
+                            </Option>)
+                            <Option key={Discretization.APPROXIMATE} value={Discretization.APPROXIMATE}>
+                                {Discretization.APPROXIMATE}
+                            </Option>)
+                        </Select>
+                    </Menu.Item>
+                    {world.discretization === Discretization.APPROXIMATE &&
                     <Menu.Item key={'solar-panel-simulation-grid-cell-size'}>
                         <Space style={{width: '150px'}}>Grid Cell Size: </Space>
                         <InputNumber min={0.1}
@@ -227,6 +248,7 @@ const MainMenu = ({
                         />
                         <Space style={{paddingLeft: '10px'}}>m</Space>
                     </Menu.Item>
+                    }
                     <Menu.Item key={'solar-panel-daily-yield-only-total'} onClick={() => {
                         setPvDailyIndividualOutputs(false);
                         analyzePvDailyYield();

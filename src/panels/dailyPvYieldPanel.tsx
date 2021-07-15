@@ -92,8 +92,17 @@ const DailyPvYieldPanel = ({
         x: isNaN(viewState.dailyPvYieldPanelX) ? 0 : Math.max(viewState.dailyPvYieldPanelX, wOffset - window.innerWidth),
         y: isNaN(viewState.dailyPvYieldPanelY) ? 0 : Math.min(viewState.dailyPvYieldPanelY, window.innerHeight - hOffset)
     });
+    const [sum, setSum] = useState(0);
 
     const responsiveHeight = 100;
+
+    useEffect(() => {
+        let s = 0;
+        for (const datum of dailyYield) {
+            s += datum['Total'] as number;
+        }
+        setSum(s);
+    }, [dailyYield]);
 
     // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
     useEffect(() => {
@@ -172,6 +181,7 @@ const DailyPvYieldPanel = ({
                         {...rest}
                     />
                     <Space style={{alignSelf: 'center'}}>
+                        <Space>Daily Total: {sum.toFixed(2)} kWh</Space>
                         <Switch title={'Show outputs of individual solar panels'}
                                 checked={individualOutputs}
                                 onChange={(checked) => {

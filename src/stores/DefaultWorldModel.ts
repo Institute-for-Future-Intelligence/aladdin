@@ -3,7 +3,7 @@
  */
 
 import {ElementModel} from "../models/ElementModel";
-import {HumanName, ObjectType} from "../types";
+import {Discretization, HumanName, ObjectType} from "../types";
 import {FoundationModel} from "../models/FoundationModel";
 import {CuboidModel} from "../models/CuboidModel";
 import {SensorModel} from "../models/SensorModel";
@@ -28,6 +28,7 @@ export class DefaultWorldModel implements WorldModel {
     address: string;
     timesPerHour: number;
     solarPanelGridCellSize: number;
+    discretization: Discretization;
 
     constructor() {
 
@@ -47,6 +48,7 @@ export class DefaultWorldModel implements WorldModel {
 
         this.timesPerHour = 20; // how many times per hour to collect data
         this.solarPanelGridCellSize = 0.5;
+        this.discretization = Discretization.EXACT;
 
     }
 

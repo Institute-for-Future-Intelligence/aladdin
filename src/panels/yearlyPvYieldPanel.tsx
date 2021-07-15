@@ -93,9 +93,18 @@ const YearlyPvYieldPanel = ({
         x: isNaN(viewState.yearlyPvYieldPanelX) ? 0 : Math.max(viewState.yearlyPvYieldPanelX, wOffset - window.innerWidth),
         y: isNaN(viewState.yearlyPvYieldPanelY) ? 0 : Math.min(viewState.yearlyPvYieldPanelY, window.innerHeight - hOffset)
     });
+    const [sum, setSum] = useState(0);
 
     const responsiveHeight = 100;
     const referenceX = MONTHS[Math.floor(Util.daysIntoYear(now) / 365 * 12)];
+
+    useEffect(() => {
+        let s = 0;
+        for (const datum of yearlyYield) {
+            s += datum['Total'] as number;
+        }
+        setSum(s);
+    }, [yearlyYield]);
 
     // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
     useEffect(() => {
@@ -173,6 +182,7 @@ const YearlyPvYieldPanel = ({
                         {...rest}
                     />
                     <Space style={{alignSelf: 'center'}}>
+                        <Space>Yearly Total: {sum.toFixed(2)} kWh</Space>
                         <Switch title={'Show outputs of individual solar panels'}
                                 checked={individualOutputs}
                                 onChange={(checked) => {

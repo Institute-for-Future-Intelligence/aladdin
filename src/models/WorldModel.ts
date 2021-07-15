@@ -4,6 +4,7 @@
 
 import {Vector3} from "three";
 import {GroundModel} from "./GroundModel";
+import {Discretization} from "../types";
 
 export interface WorldModel {
 
@@ -18,5 +19,6 @@ export interface WorldModel {
 
     timesPerHour: number;
     solarPanelGridCellSize: number;
+    discretization: Discretization;
 
 }

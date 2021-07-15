@@ -7,7 +7,7 @@ import {calculateDiffuseAndReflectedRadiation, calculatePeakRadiation, getSunDir
 import {Euler, Object3D, Raycaster, Vector3} from "three";
 import {useThree} from "@react-three/fiber";
 import {useStore} from "../stores/common";
-import {DatumEntry, ObjectType, Orientation, ShadeTolerance} from "../types";
+import {DatumEntry, Discretization, ObjectType, Orientation, ShadeTolerance} from "../types";
 import {Util} from "../Util";
 import {AirMass} from "./analysisConstants";
 import {MONTHS} from "../constants";
@@ -57,7 +57,7 @@ const SolarPanelSimulation = ({
     const loadedYearly = useRef(false);
     const inverterEfficiency = 0.95;
     const dustLoss = 0.05;
-    const cellSize = world.solarPanelGridCellSize;
+    const cellSize = world.solarPanelGridCellSize?? 0.25;
 
     useEffect(() => {
         if (loadedDaily.current) { // avoid calling on first render
@@ -141,7 +141,6 @@ const SolarPanelSimulation = ({
             for (const e of elements) {
                 if (e.type === ObjectType.SolarPanel) {
                     const output = getDailyYield(e as SolarPanelModel);
-                    //console.log(output.reduce((sum, x) => sum + x));
                     for (let i = 0; i < 24; i++) {
                         total[i] += output[i];
                     }
@@ -172,18 +171,35 @@ const SolarPanelSimulation = ({
         const dayOfYear = Util.dayOfYear(now);
         let count = 0;
         let lx, ly, lz, nx: number, ny: number;
-        if (panel.orientation === Orientation.portrait) {
+        if (world.discretization === Discretization.EXACT) {
             lx = panel.lx;
             ly = panel.ly * Math.cos(panel.tiltAngle);
             lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
-            nx = Math.max(1, Math.round(panel.lx / cellSize));
-            ny = Math.max(1, Math.round(panel.ly / cellSize));
+            if (panel.orientation === Orientation.portrait) {
+                nx = Math.max(1, Math.round(panel.lx / panel.pvModel.width));
+                ny = Math.max(1, Math.round(panel.ly / panel.pvModel.length));
+                nx *= panel.pvModel.n;
+                ny *= panel.pvModel.m;
+            } else {
+                nx = Math.max(1, Math.round(panel.lx / panel.pvModel.length));
+                ny = Math.max(1, Math.round(panel.ly / panel.pvModel.width));
+                nx *= panel.pvModel.m;
+                ny *= panel.pvModel.n;
+            }
         } else {
-            lx = panel.ly;
-            ly = panel.lx * Math.cos(panel.tiltAngle);
-            lz = panel.lx * Math.abs(Math.sin(panel.tiltAngle));
-            nx = Math.max(1, Math.round(panel.ly / cellSize));
-            ny = Math.max(1, Math.round(panel.lx / cellSize));
+            lx = panel.lx;
+            ly = panel.ly * Math.cos(panel.tiltAngle);
+            lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
+            if (panel.orientation === Orientation.portrait) {
+                nx = Math.max(2, Math.round(panel.lx / cellSize));
+                ny = Math.max(2, Math.round(panel.ly / cellSize));
+            } else {
+                nx = Math.max(2, Math.round(panel.ly / cellSize));
+                ny = Math.max(2, Math.round(panel.lx / cellSize));
+            }
+            // nx and ny must be even (for circuit simulation)
+            if (nx % 2 !== 0) nx += 1;
+            if (ny % 2 !== 0) ny += 1;
         }
         const dx = lx / nx;
         const dy = ly / ny;
@@ -309,7 +325,7 @@ const SolarPanelSimulation = ({
                     r[labels[i]] = a[month].Yield;
                     total += a[month].Yield as number;
                 }
-                r['Total'] = total;
+                r['Total'] = total * 30;
                 results.push(r);
             }
             setPvYearlyYield(results);
@@ -329,7 +345,7 @@ const SolarPanelSimulation = ({
                 for (const result of resultArr) {
                     total += result[month].Yield as number;
                 }
-                r['Total'] = total;
+                r['Total'] = total * 30;
                 results.push(r);
             }
             setPvYearlyYield(results);
@@ -349,19 +365,36 @@ const SolarPanelSimulation = ({
         }
         const year = now.getFullYear();
         const date = 15;
-        let lx, ly, lz, nx, ny;
-        if (panel.orientation === Orientation.portrait) {
+        let lx, ly, lz, nx: number, ny: number;
+        if (world.discretization === Discretization.EXACT) {
             lx = panel.lx;
             ly = panel.ly * Math.cos(panel.tiltAngle);
             lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
-            nx = Math.max(1, Math.round(panel.lx / cellSize));
-            ny = Math.max(1, Math.round(panel.ly / cellSize));
+            if (panel.orientation === Orientation.portrait) {
+                nx = Math.max(1, Math.round(panel.lx / panel.pvModel.width));
+                ny = Math.max(1, Math.round(panel.ly / panel.pvModel.length));
+                nx *= panel.pvModel.n;
+                ny *= panel.pvModel.m;
+            } else {
+                nx = Math.max(1, Math.round(panel.lx / panel.pvModel.length));
+                ny = Math.max(1, Math.round(panel.ly / panel.pvModel.width));
+                nx *= panel.pvModel.m;
+                ny *= panel.pvModel.n;
+            }
         } else {
-            lx = panel.ly;
-            ly = panel.lx * Math.cos(panel.tiltAngle);
-            lz = panel.lx * Math.abs(Math.sin(panel.tiltAngle));
-            nx = Math.max(1, Math.round(panel.ly / cellSize));
-            ny = Math.max(1, Math.round(panel.lx / cellSize));
+            lx = panel.lx;
+            ly = panel.ly * Math.cos(panel.tiltAngle);
+            lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
+            if (panel.orientation === Orientation.portrait) {
+                nx = Math.max(2, Math.round(panel.lx / cellSize));
+                ny = Math.max(2, Math.round(panel.ly / cellSize));
+            } else {
+                nx = Math.max(2, Math.round(panel.ly / cellSize));
+                ny = Math.max(2, Math.round(panel.lx / cellSize));
+            }
+            // nx and ny must be even (for circuit simulation)
+            if (nx % 2 !== 0) nx += 1;
+            if (ny % 2 !== 0) ny += 1;
         }
         const dx = lx / nx;
         const dy = ly / ny;
@@ -370,6 +403,7 @@ const SolarPanelSimulation = ({
         const y0 = center.y - ly / 2;
         const z0 = panel.poleHeight + center.z - lz / 2;
         const v = new Vector3();
+        const cellOutputs = Array.from(Array(nx), () => new Array(ny));
         for (let month = 0; month < 12; month++) {
             const midMonth = new Date(year, month, date);
             const dayOfYear = Util.dayOfYear(midMonth);
@@ -383,22 +417,83 @@ const SolarPanelSimulation = ({
                         // when the sun is out
                         count++;
                         const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-                        const dot = normal.dot(sunDirection);
-                        let s = 0;
-                        if (dot > 0) {
-                            for (let kx = 0; kx < nx; kx++) {
-                                for (let ky = 0; ky < ny; ky++) {
+                        const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
+                        for (let kx = 0; kx < nx; kx++) {
+                            for (let ky = 0; ky < ny; ky++) {
+                                cellOutputs[kx][ky] = indirectRadiation;
+                                const dot = normal.dot(sunDirection);
+                                if (dot > 0) {
                                     v.set(x0 + kx * dx, y0 + ky * dy, z0 + ky * dz);
                                     if (!inShadow(panel.id, currentTime, v, sunDirection)) {
                                         // direct radiation
-                                        s += dot * peakRadiation;
+                                        cellOutputs[kx][ky] += dot * peakRadiation;
                                     }
                                 }
                             }
                         }
-                        // indirect radiation
-                        const t = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
-                        dailyYield += s / (nx * ny) + t;
+                        // we must consider cell wiring and distributed efficiency
+                        // Nice demo at: https://www.youtube.com/watch?v=UNPJapaZlCU
+                        let sum = 0;
+                        switch (panel.pvModel.shadeTolerance) {
+                            case ShadeTolerance.NONE:
+                                // all the cells are connected in a single series,
+                                // so the total output is determined by the minimum
+                                let min1 = Number.MAX_VALUE;
+                                for (let kx = 0; kx < nx; kx++) {
+                                    for (let ky = 0; ky < ny; ky++) {
+                                        const c = cellOutputs[kx][ky];
+                                        if (c < min1) {
+                                            min1 = c;
+                                        }
+                                    }
+                                }
+                                sum = min1 * nx * ny;
+                                break;
+                            case ShadeTolerance.PARTIAL:
+                                // assuming each panel uses a diode bypass to connect two columns of cells
+                                let min2 = Number.MAX_VALUE;
+                                if (panel.orientation === Orientation.portrait) { // e.g., nx = 6, ny = 10
+                                    for (let kx = 0; kx < nx; kx++) {
+                                        if (kx % 2 === 0) { // reset min every two columns of cells
+                                            min2 = Number.MAX_VALUE;
+                                        }
+                                        for (let ky = 0; ky < ny; ky++) {
+                                            const c = cellOutputs[kx][ky];
+                                            if (c < min2) {
+                                                min2 = c;
+                                            }
+                                        }
+                                        if (kx % 2 === 1) {
+                                            sum += min2 * ny * 2;
+                                        }
+                                    }
+                                } else { // landscape, e.g., nx = 10, ny = 6
+                                    for (let ky = 0; ky < ny; ky++) {
+                                        if (ky % 2 === 0) { // reset min every two columns of cells
+                                            min2 = Number.MAX_VALUE;
+                                        }
+                                        for (let kx = 0; kx < nx; kx++) {
+                                            const c = cellOutputs[kx][ky];
+                                            if (c < min2) {
+                                                min2 = c;
+                                            }
+                                        }
+                                        if (ky % 2 === 1) {
+                                            sum += min2 * nx * 2;
+                                        }
+                                    }
+                                }
+                                break;
+                            default:
+                                // this probably is too idealized
+                                for (let kx = 0; kx < nx; kx++) {
+                                    for (let ky = 0; ky < ny; ky++) {
+                                        sum += cellOutputs[kx][ky];
+                                    }
+                                }
+                                break;
+                        }
+                        dailyYield += sum / (nx * ny);
                     }
                 }
             }
