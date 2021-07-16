@@ -32,6 +32,7 @@ const OrbitController = ({
                              ...rest
                          }: OrbitControllerProps) => {
 
+    const world = useStore(state => state.world);
     const setCommonStore = useStore(state => state.set);
     const setCameraPosition = useStore(state => state.setCameraPosition);
     const {camera, gl: {domElement}, gl, scene} = useThree();
@@ -40,6 +41,22 @@ const OrbitController = ({
     const controls = useRef<OrbitControls>(null);
     const minPan = useMemo(() => new Vector3(-WORKSPACE_SIZE / 2, 0, -WORKSPACE_SIZE / 2), []);
     const maxPan = useMemo(() => new Vector3(WORKSPACE_SIZE / 2, WORKSPACE_SIZE / 8, WORKSPACE_SIZE / 2), []);
+
+    useEffect(() => {
+        // we have to manually set the camera position
+        if (controls.current) {
+            controls.current.object.position.copy(world.cameraPosition);
+            controls.current.update();
+        }
+    }, [world.cameraPosition]);
+
+    useEffect(() => {
+        // we have to manually set the target position
+        if (controls.current) {
+            controls.current.target.copy(world.panCenter);
+            controls.current.update();
+        }
+    }, [world.panCenter]);
 
     useEffect(() => {
         setThree({frameloop: autoRotate ? 'always' : 'demand'});

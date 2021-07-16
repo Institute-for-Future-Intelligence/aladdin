@@ -69,7 +69,9 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({heliodonRadius}: Ele
                             case ObjectType.Tree:
                                 return <Tree key={e.id} {...e as TreeModel}/>;
                             case ObjectType.SolarPanel:
-                                return <SolarPanel key={e.id} sunBeamLength={heliodonRadius} {...e as SolarPanelModel}/>;
+                                return <SolarPanel key={e.id}
+                                                   sunBeamLength={Math.max(100, heliodonRadius)}
+                                                   {...e as SolarPanelModel}/>;
                         }
                     }
                 )
