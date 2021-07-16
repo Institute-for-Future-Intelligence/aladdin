@@ -33,6 +33,7 @@ const SolarPanel = ({
                         poleRadius,
                         poleSpacing,
                         drawSunBeam,
+                        sunBeamLength = 100,
                         rotation = [0, 0, 0],
                         normal = [0, 0, 1],
                         color = 'white',
@@ -281,13 +282,19 @@ const SolarPanel = ({
     const poleNx = Math.floor(0.5 * lx / poleSpacing);
     const poleNy = Math.floor(0.5 * ly / poleSpacing);
     const sinTilt = 0.5 * Math.sin(tiltAngle);
+    const cosAz = Math.cos(-relativeAzimuth) * poleSpacing;
+    const sinAz = Math.sin(-relativeAzimuth) * poleSpacing;
     for (let ix = -poleNx; ix <= poleNx; ix++) {
         for (let iy = -poleNy; iy <= poleNy; iy++) {
-            const xi = poleSpacing * ix;
-            const yi = poleSpacing * iy;
-            poles.push(new Vector3(xi, poleZ - sinTilt * yi, yi));
+            const xi = ix * cosAz - iy * sinAz;
+            const yi = ix * sinAz + iy * cosAz;
+            poles.push(new Vector3(xi, poleZ - sinTilt * poleSpacing * iy, yi));
         }
     }
+
+    const ratio = Math.max(1, Math.max(lx, ly) / 8);
+    const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
+    const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
 
     return (
 
@@ -353,7 +360,7 @@ const SolarPanel = ({
             {drawSunBeam && sunDirection.y > 0 &&
             <group>
                 <Line
-                    points={[[0, 0, 0], rotatedSunDirection.clone().multiplyScalar(100)]}
+                    points={[[0, 0, 0], rotatedSunDirection.clone().multiplyScalar(sunBeamLength)]}
                     name={'Sun Beam'}
                     lineWidth={0.5}
                     color={'white'}/>
@@ -446,7 +453,7 @@ const SolarPanel = ({
             <Sphere
                 ref={moveHandleRef}
                 position={new Vector3(0, 0, 0)}
-                args={[MOVE_HANDLE_RADIUS, 6, 6]}
+                args={[moveHandleSize, 6, 6]}
                 name={'Handle'}
                 onPointerDown={(e) => {
                     selectMe(e, ActionType.Move);
@@ -460,7 +467,7 @@ const SolarPanel = ({
             <group rotation={relativeEuler}>
                 <Box ref={resizeHandleLowerRef}
                      position={[(positionLL.x + positionLR.x) / 2, positionLL.y, positionLL.z]}
-                     args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.Lower}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
@@ -486,7 +493,7 @@ const SolarPanel = ({
                 </Box>
                 <Box ref={resizeHandleUpperRef}
                      position={[(positionUL.x + positionUR.x) / 2, positionUL.y, positionUL.z]}
-                     args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.Upper}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
@@ -512,7 +519,7 @@ const SolarPanel = ({
                 </Box>
                 <Box ref={resizeHandleLeftRef}
                      position={[positionLL.x, positionLL.y, (positionLL.z + positionUL.z) / 2]}
-                     args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.Left}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
@@ -538,7 +545,7 @@ const SolarPanel = ({
                 </Box>
                 <Box ref={resizeHandleRightRef}
                      position={[positionLR.x, positionLR.y, (positionLR.z + positionUR.z) / 2]}
-                     args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.Right}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);

@@ -464,7 +464,7 @@ const App = () => {
                             canvasRef={canvasRef}
                         />
 
-                        <ElementsRenderer/>
+                        <ElementsRenderer heliodonRadius={heliodonRadius}/>
                         <Suspense fallback={null}>
                             <ambientLight intensity={0.25} name={'Ambient Light'}/>
                             <directionalLight

@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {Suspense, useEffect, useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {useStore} from "./stores/common";
 import {Box3, Group, Vector3} from "three";
 import {ObjectType} from "./types";
@@ -20,9 +20,10 @@ import {SolarPanelModel} from "./models/SolarPanelModel";
 import SolarPanel from "./views/solarPanel";
 
 export interface ElementsRendererProps {
+    heliodonRadius: number;
 }
 
-const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererProps) => {
+const ElementsRenderer: React.FC<ElementsRendererProps> = ({heliodonRadius}: ElementsRendererProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
@@ -68,7 +69,7 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
                             case ObjectType.Tree:
                                 return <Tree key={e.id} {...e as TreeModel}/>;
                             case ObjectType.SolarPanel:
-                                return <SolarPanel key={e.id} {...e as SolarPanelModel}/>;
+                                return <SolarPanel key={e.id} sunBeamLength={heliodonRadius} {...e as SolarPanelModel}/>;
                         }
                     }
                 )
