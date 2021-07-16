@@ -50,15 +50,29 @@ const ReshapeElementMenu = ({
             {adjustWidth &&
             <Menu.Item key={name + '-lx'}>
                 <Space style={{width: '60px'}}>{widthName}:</Space>
-                <InputNumber min={0.1.toString()} // FIXME: Why can't it accept 0.1 here? (It is fine in contextMenu)
-                             max={maxWidth.toString()}
+                <InputNumber min={0.1}
+                             max={maxWidth}
                              step={0.5}
                              precision={1}
-                             value={element ? element.lx.toFixed(1) : 1}
+                             value={element?.lx ?? 1}
                              formatter={(x) => Number(x).toFixed(1) + ' m'}
-                             onChange={(value) => {
-                                 if (element && value) {
-                                     setElementSize(element.id, value as number, element.ly);
+                             onChange={value => {
+                                 if (element) {
+                                     setElementSize(element.id, value, element.ly);
+                                     requestUpdate();
+                                 }
+                             }}
+                             onPressEnter={(event) => {
+                                 if (element) {
+                                     const text = (event.target as HTMLInputElement).value;
+                                     let value;
+                                     try {
+                                         value = parseFloat(text.endsWith('m') ? text.substring(0, text.length - 1).trim() : text);
+                                     } catch (err) {
+                                         console.log(err);
+                                         return;
+                                     }
+                                     setElementSize(element.id, value, element.ly);
                                      requestUpdate();
                                  }
                              }}
@@ -68,15 +82,29 @@ const ReshapeElementMenu = ({
             {adjustLength &&
             <Menu.Item key={name + '-ly'}>
                 <Space style={{width: '60px'}}>Length:</Space>
-                <InputNumber min={0.1.toString()}
-                             max={maxLength.toString()}
+                <InputNumber min={0.1}
+                             max={maxLength}
                              step={0.5}
                              precision={1}
-                             value={element ? element.ly.toFixed(1) : 1}
-                             formatter={(y) =>  Number(y).toFixed(1) + ' m'}
+                             value={element?.ly ?? 1}
+                             formatter={(y) => Number(y).toFixed(1) + ' m'}
                              onChange={(value) => {
                                  if (element && value) {
-                                     setElementSize(element.id, element.lx, value as number);
+                                     setElementSize(element.id, element.lx, value);
+                                     requestUpdate();
+                                 }
+                             }}
+                             onPressEnter={(event) => {
+                                 if (element) {
+                                     const text = (event.target as HTMLInputElement).value;
+                                     let value;
+                                     try {
+                                         value = parseFloat(text.endsWith('m') ? text.substring(0, text.length - 1).trim() : text);
+                                     } catch (err) {
+                                         console.log(err);
+                                         return;
+                                     }
+                                     setElementSize(element.id, element.lx, value);
                                      requestUpdate();
                                  }
                              }}
@@ -86,22 +114,45 @@ const ReshapeElementMenu = ({
             {adjustHeight &&
             <Menu.Item key={name + '-lz'}>
                 <Space style={{width: '60px'}}>Height:</Space>
-                <InputNumber min={0.1.toString()}
-                             max={maxHeight.toString()}
+                <InputNumber min={0.1}
+                             max={maxHeight}
                              step={0.1}
                              precision={1}
-                             value={element ? element.lz.toFixed(1) : 0.1}
-                             formatter={(h) =>  Number(h).toFixed(1) + ' m'}
+                             value={element?.lz ?? 0.1}
+                             formatter={(h) => Number(h).toFixed(1) + ' m'}
                              onChange={(value) => {
+                                 console.log(value)
                                  if (element && value) {
-                                     setElementSize(element.id, element.lx, element.ly, value as number);
+                                     setElementSize(element.id, element.lx, element.ly, value);
                                      // the following objects stand on the ground and should raise their z coordinates
                                      if (
                                          element.type === ObjectType.Human ||
                                          element.type === ObjectType.Tree ||
                                          element.type === ObjectType.Foundation ||
                                          element.type === ObjectType.Cuboid) {
-                                         updateElementById(element.id, {cz: (value as number) / 2});
+                                         updateElementById(element.id, {cz: value / 2});
+                                     }
+                                     requestUpdate();
+                                 }
+                             }}
+                             onPressEnter={(event) => {
+                                 if (element) {
+                                     const text = (event.target as HTMLInputElement).value;
+                                     let value;
+                                     try {
+                                         value = parseFloat(text.endsWith('m') ? text.substring(0, text.length - 1).trim() : text);
+                                     } catch (err) {
+                                         console.log(err);
+                                         return;
+                                     }
+                                     setElementSize(element.id, element.lx, element.ly, value);
+                                     // the following objects stand on the ground and should raise their z coordinates
+                                     if (
+                                         element.type === ObjectType.Human ||
+                                         element.type === ObjectType.Tree ||
+                                         element.type === ObjectType.Foundation ||
+                                         element.type === ObjectType.Cuboid) {
+                                         updateElementById(element.id, {cz: value / 2});
                                      }
                                      requestUpdate();
                                  }
@@ -113,18 +164,37 @@ const ReshapeElementMenu = ({
             <Menu.Item key={name + '-angle'}>
                 <Space style={{width: '60px'}}>Angle:</Space>
                 <InputNumber min={0}
-                             max={360.0.toString()}
+                             max={360}
                              step={1}
                              precision={1}
-                             value={element ? Util.toDegrees(element.rotation[2]).toFixed(1) : 0}
-                             formatter={(a) =>  Number(a).toFixed(1) + '°'}
+                             value={element ? Util.toDegrees(element.rotation[2]) : 0}
+                             formatter={(a) => Number(a).toFixed(1) + '°'}
                              onChange={(value) => {
                                  if (element && value !== null) {
                                      setElementRotation(
                                          element.id,
                                          element.rotation[0],
                                          element.rotation[1],
-                                         Util.toRadians(typeof value === 'string' ? parseFloat(value) : value)
+                                         Util.toRadians(value)
+                                     );
+                                     requestUpdate();
+                                 }
+                             }}
+                             onPressEnter={(event) => {
+                                 if (element) {
+                                     const text = (event.target as HTMLInputElement).value;
+                                     let value;
+                                     try {
+                                         value = parseFloat(text.endsWith('°') ? text.substring(0, text.length - 1).trim() : text);
+                                     } catch (err) {
+                                         console.log(err);
+                                         return;
+                                     }
+                                     setElementRotation(
+                                         element.id,
+                                         element.rotation[0],
+                                         element.rotation[1],
+                                         Util.toRadians(value)
                                      );
                                      requestUpdate();
                                  }

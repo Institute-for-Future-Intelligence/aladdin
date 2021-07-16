@@ -40,7 +40,7 @@ const Cuboid = ({
     cy = -cy; // we want positive y to point north
 
     const setCommonStore = useStore(state => state.set);
-    const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
+    const viewState = useStore(state => state.viewState);
     const moveHandleType = useStore(state => state.moveHandleType);
     const resizeHandleType = useStore(state => state.resizeHandleType);
     const getElementById = useStore(state => state.getElementById);
@@ -195,6 +195,10 @@ const Cuboid = ({
         }
     };
 
+    const ratio = Math.max(1, Math.max(lx, ly) / 8);
+    const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
+    const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
+
     return (
 
         <group name={'Cuboid Group ' + id}
@@ -202,8 +206,8 @@ const Cuboid = ({
                rotation={Util.getEulerInView(rotation)}>
 
             {/* draw rectangular cuboid */}
-            <Box castShadow={shadowEnabled}
-                 receiveShadow={shadowEnabled}
+            <Box castShadow={viewState.shadowEnabled}
+                 receiveShadow={viewState.shadowEnabled}
                  userData={{simulation: true, aabb: true}}
                  uuid={id}
                  ref={baseRef}
@@ -388,7 +392,7 @@ const Cuboid = ({
                 {/* resize handles */}
                 <Box ref={resizeHandleLLTopRef}
                      name={ResizeHandleType.LowerLeftTop}
-                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={positionLLTop}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
@@ -410,7 +414,7 @@ const Cuboid = ({
                 </Box>
                 <Box ref={resizeHandleULTopRef}
                      name={ResizeHandleType.UpperLeftTop}
-                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={positionULTop}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
@@ -432,7 +436,7 @@ const Cuboid = ({
                 </Box>
                 <Box ref={resizeHandleLRTopRef}
                      name={ResizeHandleType.LowerRightTop}
-                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={positionLRTop}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
@@ -454,7 +458,7 @@ const Cuboid = ({
                 </Box>
                 <Box ref={resizeHandleURTopRef}
                      name={ResizeHandleType.UpperRightTop}
-                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={positionURTop}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
@@ -476,7 +480,7 @@ const Cuboid = ({
                 </Box>
                 <Box ref={resizeHandleLLBotRef}
                      name={ResizeHandleType.LowerLeft}
-                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={new Vector3(-hx, RESIZE_HANDLE_SIZE / 2 - hz, -hy)}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
@@ -501,7 +505,7 @@ const Cuboid = ({
                 </Box>
                 <Box ref={resizeHandleULBotRef}
                      name={ResizeHandleType.UpperLeft}
-                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={new Vector3(-hx, RESIZE_HANDLE_SIZE / 2 - hz, hy)}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
@@ -526,7 +530,7 @@ const Cuboid = ({
                 </Box>
                 <Box ref={resizeHandleLRBotRef}
                      name={ResizeHandleType.LowerRight}
-                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={new Vector3(hx, RESIZE_HANDLE_SIZE / 2 - hz, -hy)}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
@@ -551,7 +555,7 @@ const Cuboid = ({
                 </Box>
                 <Box ref={resizeHandleURBotRef}
                      name={ResizeHandleType.UpperRight}
-                     args={[RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={new Vector3(hx, RESIZE_HANDLE_SIZE / 2 - hz, hy)}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
@@ -577,7 +581,7 @@ const Cuboid = ({
 
                 {/* move handles */}
                 <Sphere ref={moveHandleLowerFaceRef}
-                        args={[MOVE_HANDLE_RADIUS, 6, 6]}
+                        args={[moveHandleSize, 6, 6]}
                         name={MoveHandleType.Lower}
                         position={positionLowerFace}
                         onPointerDown={(e) => {
@@ -599,7 +603,7 @@ const Cuboid = ({
                     />
                 </Sphere>
                 <Sphere ref={moveHandleUpperFaceRef}
-                        args={[MOVE_HANDLE_RADIUS, 6, 6]}
+                        args={[moveHandleSize, 6, 6]}
                         name={MoveHandleType.Upper}
                         position={positionUpperFace}
                         onPointerDown={(e) => {
@@ -621,7 +625,7 @@ const Cuboid = ({
                     />
                 </Sphere>
                 <Sphere ref={moveHandleLeftFaceRef}
-                        args={[MOVE_HANDLE_RADIUS, 6, 6]}
+                        args={[moveHandleSize, 6, 6]}
                         name={MoveHandleType.Left}
                         position={positionLeftFace}
                         onPointerDown={(e) => {
@@ -643,7 +647,7 @@ const Cuboid = ({
                     />
                 </Sphere>
                 <Sphere ref={moveHandleRightFaceRef}
-                        args={[MOVE_HANDLE_RADIUS, 6, 6]}
+                        args={[moveHandleSize, 6, 6]}
                         name={MoveHandleType.Right}
                         position={positionRightFace}
                         onPointerDown={(e) => {
@@ -665,7 +669,7 @@ const Cuboid = ({
                     />
                 </Sphere>
                 <Sphere ref={moveHandleTopFaceRef}
-                        args={[MOVE_HANDLE_RADIUS, 6, 6]}
+                        args={[moveHandleSize, 6, 6]}
                         name={MoveHandleType.Top}
                         position={positionTopFace}
                         onPointerDown={(e) => {
