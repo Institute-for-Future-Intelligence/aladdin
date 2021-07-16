@@ -68,7 +68,7 @@ const ContextMenu = ({
     const pasteElement = useStore(state => state.pasteElement);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const selectedElement = getSelectedElement();
-    const [colorPickerVisible, setColorPickerVisible] = useState(true);
+    const [labelText, setLabelText] = useState<string>(selectedElement?.label ?? '');
 
     const copyElement = () => {
         if (selectedElement) {
@@ -88,9 +88,9 @@ const ContextMenu = ({
         }
     };
 
-    const changeElementLabelText = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const updateElementLabelText = () => {
         if (selectedElement) {
-            updateElementById(selectedElement.id, {label: e.target.value});
+            updateElementById(selectedElement.id, {label: labelText});
         }
     };
 
@@ -201,8 +201,7 @@ const ContextMenu = ({
                     </SubMenu>
                     }
                     <SubMenu key={'color'} title={'Color'} style={{paddingLeft: '24px'}}>
-                        {colorPickerVisible &&
-                        <CompactPicker color={selectedElement?.color} onChangeComplete={changeElementColor}/>}
+                        <CompactPicker color={selectedElement?.color} onChangeComplete={changeElementColor}/>
                     </SubMenu>
                     {selectedElement &&
                     <ReshapeElementMenu
@@ -225,8 +224,10 @@ const ContextMenu = ({
                     <Menu>
                         <Menu.Item key={'sensor-label-text'} style={{paddingLeft: '40px'}}>
                             <Input addonBefore='Label:'
-                                   value={selectedElement ? selectedElement.label : 'Sensor'}
-                                   onChange={changeElementLabelText}
+                                   value={labelText}
+                                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
+                                   onPressEnter={updateElementLabelText}
+                                   onBlur={updateElementLabelText}
                             />
                         </Menu.Item>
                     </Menu>
@@ -445,8 +446,10 @@ const ContextMenu = ({
                         </Menu.Item>
                         <Menu.Item key={'solar-panel-label-text'} style={{paddingLeft: '40px'}}>
                             <Input addonBefore='Label:'
-                                   value={selectedElement ? selectedElement.label : 'Solar Panel'}
-                                   onChange={changeElementLabelText}
+                                   value={labelText}
+                                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
+                                   onPressEnter={updateElementLabelText}
+                                   onBlur={updateElementLabelText}
                             />
                         </Menu.Item>
                     </Menu>
@@ -474,8 +477,7 @@ const ContextMenu = ({
                         </Checkbox>
                     </Menu.Item>
                     <SubMenu key={'color'} title={'Color'} style={{paddingLeft: '24px'}}>
-                        {colorPickerVisible &&
-                        <CompactPicker color={selectedElement?.color} onChangeComplete={changeElementColor}/>}
+                        <CompactPicker color={selectedElement?.color} onChangeComplete={changeElementColor}/>
                     </SubMenu>
                     {sensorCountCuboid > 0 &&
                     <SubMenu key={'clear'} title={'Clear'} style={{paddingLeft: '24px'}}>

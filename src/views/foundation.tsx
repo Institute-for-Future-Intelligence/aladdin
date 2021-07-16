@@ -41,7 +41,7 @@ const Foundation = ({
     const maxLxLy = Math.max(lx, ly);
 
     const setCommonStore = useStore(state => state.set);
-    const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
+    const viewState = useStore(state => state.viewState);
     const moveHandleType = useStore(state => state.moveHandleType);
     const resizeHandleType = useStore(state => state.resizeHandleType);
     const resizeAnchor = useStore(state => state.resizeAnchor);
@@ -171,6 +171,12 @@ const Foundation = ({
         );
     };
 
+    const wireframeColor = viewState.groundImage ? 'white' : lineColor;
+    const wireframeWidth = viewState.groundImage ? lineWidth * 2 : lineWidth;
+    const ratio = Math.max(1, Math.max(lx, ly) / 8);
+    const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
+    const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
+
     return (
 
         <group name={'Foundation Group ' + id}
@@ -178,8 +184,8 @@ const Foundation = ({
                rotation={Util.getEulerInView(rotation)}>
 
             {/* draw rectangle */}
-            <Box castShadow={shadowEnabled}
-                 receiveShadow={shadowEnabled}
+            <Box castShadow={viewState.shadowEnabled}
+                 receiveShadow={viewState.shadowEnabled}
                  uuid={id}
                  userData={{aabb: true}}
                  ref={baseRef}
@@ -331,7 +337,10 @@ const Foundation = ({
                      }
                  }}
             >
-                <meshStandardMaterial attach="material" color={color}/>
+                <meshStandardMaterial attach="material"
+                                      color={color}
+                                      transparent={viewState.groundImage}
+                                      opacity={viewState.groundImage ? 0.25 : 1}/>
             </Box>
 
             {showGrid &&
@@ -346,56 +355,56 @@ const Foundation = ({
                 {/* draw wireframe lines upper face */}
                 <Line points={[positionLL, positionLR]}
                       name={'Line LL-LR Upper Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
+                      lineWidth={wireframeWidth}
+                      color={wireframeColor}/>
                 <Line points={[positionLR, positionUR]}
                       name={'Line LR-UR Upper Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
+                      lineWidth={wireframeWidth}
+                      color={wireframeColor}/>
                 <Line points={[positionUR, positionUL]}
                       name={'Line UR-UL Upper Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
+                      lineWidth={wireframeWidth}
+                      color={wireframeColor}/>
                 <Line points={[positionUL, positionLL]}
                       name={'Line UL-LL Upper Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
+                      lineWidth={wireframeWidth}
+                      color={wireframeColor}/>
 
                 {/* draw wireframe lines lower face */}
                 <Line points={[[positionLL.x, -hz, positionLL.z], [positionLR.x, -hz, positionLR.z]]}
                       name={'Line LL-LR Lower Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
+                      lineWidth={wireframeWidth}
+                      color={wireframeColor}/>
                 <Line points={[[positionLR.x, -hz, positionLR.z], [positionUR.x, -hz, positionUR.z]]}
                       name={'Line LR-UR Lower Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
+                      lineWidth={wireframeWidth}
+                      color={wireframeColor}/>
                 <Line points={[[positionUR.x, -hz, positionUR.z], [positionUL.x, -hz, positionUL.z]]}
                       name={'Line UR-UL Lower Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
+                      lineWidth={wireframeWidth}
+                      color={wireframeColor}/>
                 <Line points={[[positionUL.x, -hz, positionUL.z], [positionLL.x, -hz, positionLL.z]]}
                       name={'Line UL-LL Lower Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
+                      lineWidth={wireframeWidth}
+                      color={wireframeColor}/>
 
                 {/* draw wireframe vertical lines */}
                 <Line points={[[positionLL.x, -hz, positionLL.z], positionLL]}
                       name={'Line LL-LL Vertical'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
+                      lineWidth={wireframeWidth}
+                      color={wireframeColor}/>
                 <Line points={[[positionLR.x, -hz, positionLR.z], positionLR]}
                       name={'Line LR-LR Vertical'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
+                      lineWidth={wireframeWidth}
+                      color={wireframeColor}/>
                 <Line points={[[positionUL.x, -hz, positionUL.z], positionUL]}
                       name={'Line UL-UL Vertical'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
+                      lineWidth={wireframeWidth}
+                      color={wireframeColor}/>
                 <Line points={[[positionUR.x, -hz, positionUR.z], positionUR]}
                       name={'Line UR-UR Vertical'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
+                      lineWidth={wireframeWidth}
+                      color={wireframeColor}/>
             </>
             }
 
@@ -405,7 +414,7 @@ const Foundation = ({
                 {/* resize handles */}
                 <Box ref={resizeHandleLLRef}
                      position={[positionLL.x, 0, positionLL.z]}
-                     args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.LowerLeft}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
@@ -430,7 +439,7 @@ const Foundation = ({
                 </Box>
                 <Box ref={resizeHandleULRef}
                      position={[positionUL.x, 0, positionUL.z]}
-                     args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.UpperLeft}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
@@ -455,7 +464,7 @@ const Foundation = ({
                 </Box>
                 <Box ref={resizeHandleLRRef}
                      position={[positionLR.x, 0, positionLR.z]}
-                     args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.LowerRight}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
@@ -480,7 +489,7 @@ const Foundation = ({
                 </Box>
                 <Box ref={resizeHandleURRef}
                      position={[positionUR.x, 0, positionUR.z]}
-                     args={[RESIZE_HANDLE_SIZE, lz * 1.2, RESIZE_HANDLE_SIZE]}
+                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.UpperRight}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
@@ -506,7 +515,7 @@ const Foundation = ({
 
                 {/* move handles */}
                 <Sphere ref={moveHandleLowerRef}
-                        args={[MOVE_HANDLE_RADIUS, 6, 6]}
+                        args={[moveHandleSize, 6, 6]}
                         position={[0, handleLift, -hy - MOVE_HANDLE_OFFSET]}
                         name={MoveHandleType.Lower}
                         onPointerDown={(e) => {
@@ -528,7 +537,7 @@ const Foundation = ({
                     />
                 </Sphere>
                 <Sphere ref={moveHandleUpperRef}
-                        args={[MOVE_HANDLE_RADIUS, 6, 6]}
+                        args={[moveHandleSize, 6, 6]}
                         position={[0, handleLift, hy + MOVE_HANDLE_OFFSET]}
                         name={MoveHandleType.Upper}
                         onPointerDown={(e) => {
@@ -550,7 +559,7 @@ const Foundation = ({
                     />
                 </Sphere>
                 <Sphere ref={moveHandleLeftRef}
-                        args={[MOVE_HANDLE_RADIUS, 6, 6]}
+                        args={[moveHandleSize, 6, 6]}
                         position={[-hx - MOVE_HANDLE_OFFSET, handleLift, 0]}
                         name={MoveHandleType.Left}
                         onPointerDown={(e) => {
@@ -572,7 +581,7 @@ const Foundation = ({
                     />
                 </Sphere>
                 <Sphere ref={moveHandleRightRef}
-                        args={[MOVE_HANDLE_RADIUS, 6, 6]}
+                        args={[moveHandleSize, 6, 6]}
                         position={[hx + MOVE_HANDLE_OFFSET, handleLift, 0]}
                         name={MoveHandleType.Right}
                         onPointerDown={(e) => {
