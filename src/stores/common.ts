@@ -96,6 +96,9 @@ export interface CommonStoreState {
 
     sunlightDirection: Vector3;
     setSunlightDirection: (vector: Vector3) => void;
+
+    cameraPosition: Vector3;
+    setCameraPosition: (vector: Vector3) => void;
 }
 
 export const useStore = create<CommonStoreState>(devtools(persist((
@@ -528,6 +531,13 @@ export const useStore = create<CommonStoreState>(devtools(persist((
             immerSet((state: CommonStoreState) => {
                 state.sunlightDirection = vector;
             });
+        },
+
+        cameraPosition: new Vector3(),
+        setCameraPosition(vector: Vector3) {
+            immerSet((state: CommonStoreState) => {
+                state.cameraPosition = vector;
+            })
         }
     };
 }, {
