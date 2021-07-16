@@ -340,7 +340,7 @@ const Foundation = ({
                 <meshStandardMaterial attach="material"
                                       color={color}
                                       transparent={viewState.groundImage}
-                                      opacity={viewState.groundImage ? 0.25 : 1}/>
+                                      opacity={viewState.groundImage ? 0.5 : 1}/>
             </Box>
 
             {showGrid &&

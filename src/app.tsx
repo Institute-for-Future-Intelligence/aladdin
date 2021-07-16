@@ -482,7 +482,7 @@ const App = () => {
                                 shadowCameraTop={100}
                                 shadowCameraBottom={-100}
                             />
-                            {(grid || !enableOrbitController) && legalOnGround() &&
+                            {(grid || !enableOrbitController) && legalOnGround() && !viewState.groundImage &&
                             <gridHelper name={'Grid'} args={[WORKSPACE_SIZE, WORKSPACE_SIZE, 'gray', 'gray']}/>
                             }
                             <Compass/>
