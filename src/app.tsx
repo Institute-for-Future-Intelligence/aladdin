@@ -405,7 +405,7 @@ const App = () => {
                         <OrbitController
                             enabled={enableOrbitController}
                             autoRotate={viewState.autoRotate}
-                            panCenter={new Vector3().copy(world.panCenter)}
+                            panCenter={world.panCenter}
                             orbitControlsRef={orbitControlsRef}
                             canvasRef={canvasRef}
                         />
