@@ -56,12 +56,9 @@ const Header = styled.div`
 const {TextArea} = Input;
 
 export interface StickyNotePanelProps {
-    requestUpdate: () => void;
 }
 
-const StickyNotePanel = ({
-                             requestUpdate
-                         }: StickyNotePanelProps) => {
+const StickyNotePanel = ({}: StickyNotePanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
@@ -107,7 +104,6 @@ const StickyNotePanel = ({
         setCommonStore((state) => {
             state.viewState.showStickyNotePanel = false;
         });
-        requestUpdate();
     };
 
     return (

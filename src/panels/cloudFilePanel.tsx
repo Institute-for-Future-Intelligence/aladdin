@@ -66,7 +66,6 @@ export interface CloudFilePanelProps {
     openCloudFile: (userid: string, title: string) => void;
     deleteCloudFile: (userid: string, title: string) => void;
     renameCloudFile: (userid: string, oldTitle: string, newTitle: string) => void;
-    requestUpdate: () => void;
 }
 
 const CloudFilePanel = ({
@@ -74,7 +73,6 @@ const CloudFilePanel = ({
                             openCloudFile,
                             deleteCloudFile,
                             renameCloudFile,
-                            requestUpdate
                         }: CloudFilePanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
@@ -116,7 +114,6 @@ const CloudFilePanel = ({
         setCommonStore((state) => {
             state.showCloudFilePanel = false;
         });
-        requestUpdate();
     };
 
     const deleteFile = (email: string, title: string) => {

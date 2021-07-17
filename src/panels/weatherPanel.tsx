@@ -61,7 +61,6 @@ export interface WeatherPanelProps {
 
     city: string | null;
     graphs: GraphDataType[];
-    requestUpdate: () => void;
 
     [key: string]: any;
 
@@ -70,7 +69,6 @@ export interface WeatherPanelProps {
 const WeatherPanel = ({
                           city,
                           graphs,
-                          requestUpdate,
                           ...rest
                       }: WeatherPanelProps) => {
 
@@ -165,7 +163,6 @@ const WeatherPanel = ({
         setCommonStore((state) => {
             state.viewState.showWeatherPanel = false;
         });
-        requestUpdate();
     };
 
     return (

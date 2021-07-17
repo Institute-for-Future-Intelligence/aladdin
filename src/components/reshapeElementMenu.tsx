@@ -19,7 +19,6 @@ export interface ReshapeElementMenuProps {
     adjustHeight?: boolean;
     adjustAngle?: boolean;
     widthName?: string;
-    requestUpdate: () => void;
 
     [key: string]: any;
 }
@@ -35,7 +34,6 @@ const ReshapeElementMenu = ({
                                 adjustHeight = true,
                                 adjustAngle = true,
                                 widthName = 'Width',
-                                requestUpdate,
                                 ...rest
                             }: ReshapeElementMenuProps) => {
 
@@ -59,7 +57,6 @@ const ReshapeElementMenu = ({
                              onChange={value => {
                                  if (element) {
                                      setElementSize(element.id, value, element.ly);
-                                     requestUpdate();
                                  }
                              }}
                              onPressEnter={(event) => {
@@ -73,7 +70,6 @@ const ReshapeElementMenu = ({
                                          return;
                                      }
                                      setElementSize(element.id, value, element.ly);
-                                     requestUpdate();
                                  }
                              }}
                 />
@@ -91,7 +87,6 @@ const ReshapeElementMenu = ({
                              onChange={(value) => {
                                  if (element && value) {
                                      setElementSize(element.id, element.lx, value);
-                                     requestUpdate();
                                  }
                              }}
                              onPressEnter={(event) => {
@@ -105,7 +100,6 @@ const ReshapeElementMenu = ({
                                          return;
                                      }
                                      setElementSize(element.id, element.lx, value);
-                                     requestUpdate();
                                  }
                              }}
                 />
@@ -132,7 +126,6 @@ const ReshapeElementMenu = ({
                                          element.type === ObjectType.Cuboid) {
                                          updateElementById(element.id, {cz: value / 2});
                                      }
-                                     requestUpdate();
                                  }
                              }}
                              onPressEnter={(event) => {
@@ -154,7 +147,6 @@ const ReshapeElementMenu = ({
                                          element.type === ObjectType.Cuboid) {
                                          updateElementById(element.id, {cz: value / 2});
                                      }
-                                     requestUpdate();
                                  }
                              }}
                 />
@@ -177,7 +169,6 @@ const ReshapeElementMenu = ({
                                          element.rotation[1],
                                          Util.toRadians(value)
                                      );
-                                     requestUpdate();
                                  }
                              }}
                              onPressEnter={(event) => {
@@ -196,7 +187,6 @@ const ReshapeElementMenu = ({
                                          element.rotation[1],
                                          Util.toRadians(value)
                                      );
-                                     requestUpdate();
                                  }
                              }}
                 />

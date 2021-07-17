@@ -47,12 +47,10 @@ const ButtonsContainer = styled.div`
 
 export interface MainToolBarProps {
     orbitControls?: OrbitControls;
-    requestUpdate: () => void;
 }
 
 const MainToolBar = ({
                          orbitControls,
-                         requestUpdate
                      }: MainToolBarProps) => {
 
     const setCommonStore = useStore(state => state.set);
@@ -159,7 +157,6 @@ const MainToolBar = ({
         setCommonStore((state) => {
             state.viewState.autoRotate = !state.viewState.autoRotate;
         });
-        requestUpdate();
         resetToSelectMode();
     };
 
@@ -167,7 +164,6 @@ const MainToolBar = ({
         setCommonStore((state) => {
             state.viewState.shadowEnabled = !state.viewState.shadowEnabled;
         });
-        requestUpdate();
         resetToSelectMode();
     };
 
@@ -175,7 +171,6 @@ const MainToolBar = ({
         setCommonStore((state) => {
             state.viewState.showHeliodonPanel = !state.viewState.showHeliodonPanel;
         });
-        requestUpdate();
         resetToSelectMode();
     };
 
@@ -270,7 +265,6 @@ const MainToolBar = ({
                             state.elements = data.elements;
                             state.notes = data.notes ?? [];
                         });
-                        requestUpdate();
                         setLoading(false);
                     } else {
                         showInfo('Sorry, ' + title + ' was not found. It may have been deleted by its owner.');
@@ -565,13 +559,9 @@ const MainToolBar = ({
                 cloudFileArray={cloudFileArray}
                 openCloudFile={openCloudFile}
                 deleteCloudFile={deleteCloudFile}
-                renameCloudFile={renameCloudFile}
-                requestUpdate={requestUpdate}/>
+                renameCloudFile={renameCloudFile}/>
             }
-            {showAccountSettingsPanel &&
-            <AccountSettingsPanel
-                requestUpdate={requestUpdate}/>
-            }
+            {showAccountSettingsPanel && <AccountSettingsPanel/>}
         </>
     );
 };

@@ -62,7 +62,6 @@ const Header = styled.div`
 export interface DailyLightSensorPanelProps {
 
     city: string | null;
-    requestUpdate: () => void;
     collectDailyLightSensorData: () => void;
 
     [key: string]: any;
@@ -71,7 +70,6 @@ export interface DailyLightSensorPanelProps {
 
 const DailyLightSensorPanel = ({
                                    city,
-                                   requestUpdate,
                                    collectDailyLightSensorData,
                                    ...rest
                                }: DailyLightSensorPanelProps) => {
@@ -123,7 +121,6 @@ const DailyLightSensorPanel = ({
         setCommonStore((state) => {
             state.viewState.showDailyLightSensorPanel = false;
         });
-        requestUpdate();
     };
 
     const labelX = 'Hour';

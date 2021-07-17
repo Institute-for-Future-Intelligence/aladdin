@@ -72,7 +72,6 @@ export interface GroundPanelProps {
     changeMapZoom?: (zoom: number) => void;
     changeMapTilt?: (tilt: number) => void;
     changeMapType?: (type: string) => void;
-    requestUpdate: () => void;
 }
 
 const GroundPanel = ({
@@ -87,7 +86,6 @@ const GroundPanel = ({
                          changeMapZoom,
                          changeMapTilt,
                          changeMapType,
-                         requestUpdate
                      }: GroundPanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
@@ -133,7 +131,6 @@ const GroundPanel = ({
                 }
                 state.world.address = places[0].formatted_address as string;
             });
-            requestUpdate();
         }
     };
 
@@ -145,7 +142,6 @@ const GroundPanel = ({
         setCommonStore(state => {
             state.viewState.mapWeatherStations = on;
         });
-        requestUpdate();
     };
 
     const onDrag: DraggableEventHandler = (e, ui) => {
@@ -166,7 +162,6 @@ const GroundPanel = ({
         setCommonStore((state) => {
             state.viewState.showGroundPanel = false;
         });
-        requestUpdate();
     };
 
     return (
@@ -201,7 +196,6 @@ const GroundPanel = ({
                                             checked={grid}
                                             onChange={(checked) => {
                                                 setGrid?.(checked);
-                                                requestUpdate();
                                             }}
                                     />
                                 </Space>

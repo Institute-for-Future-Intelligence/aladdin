@@ -66,7 +66,6 @@ const App = () => {
     const setSunlightDirection = useStore(state => state.setSunlightDirection);
 
     const [loading, setLoading] = useState(true);
-    const [updateFlag, setUpdateFlag] = useState<boolean>(false);
     const [hourAngle, setHourAngle] = useState<number>(0);
     const [declinationAngle, setDeclinationAngle] = useState<number>(0);
     const [animateSun, setAnimateSun] = useState<boolean>(false);
@@ -147,10 +146,6 @@ const App = () => {
         }
     }
 
-    const requestUpdate = () => {
-        setUpdateFlag(!updateFlag);
-    };
-
     const setGrid = (on: boolean) => {
         setCommonStore(state => {
             state.grid = on;
@@ -161,21 +156,18 @@ const App = () => {
         setCommonStore(state => {
             state.viewState.groundImage = on;
         });
-        requestUpdate();
     };
 
     const setGroundColor = (color: string) => {
         setCommonStore(state => {
             state.viewState.groundColor = color;
         });
-        requestUpdate();
     };
 
     const setHeliodon = (on: boolean) => {
         setCommonStore(state => {
             state.viewState.heliodon = on;
         });
-        requestUpdate();
     };
 
     // animation state should not be persisted
@@ -191,7 +183,6 @@ const App = () => {
         setCommonStore(state => {
             state.world.date = d.toString();
         });
-        requestUpdate();
     };
 
     const changeTime = (date: Date) => {
@@ -200,14 +191,12 @@ const App = () => {
         setCommonStore(state => {
             state.world.date = d.toString();
         });
-        requestUpdate();
     };
 
     const changeLatitude = (latitude: number) => {
         setCommonStore(state => {
             state.world.latitude = latitude;
         });
-        requestUpdate();
     };
 
     const changeLatitudeAndRemoveAddress = (latitude: number) => {
@@ -215,35 +204,30 @@ const App = () => {
             state.world.latitude = latitude;
             state.world.address = '';
         });
-        requestUpdate();
     };
 
     const changeLongitude = (longitude: number) => {
         setCommonStore(state => {
             state.world.longitude = longitude;
         });
-        requestUpdate();
     };
 
     const changeMapZoom = (zoom: number) => {
         setCommonStore(state => {
             state.viewState.mapZoom = zoom;
         });
-        requestUpdate();
     };
 
     const changeMapTilt = (tilt: number) => {
         setCommonStore(state => {
             state.viewState.mapTilt = tilt;
         });
-        requestUpdate();
     };
 
     const changeMapType = (type: string) => {
         setCommonStore(state => {
             state.viewState.mapType = type;
         });
-        requestUpdate();
     };
 
     const sunAboveHorizon = sunlightDirection.y > 0;
@@ -351,10 +335,8 @@ const App = () => {
                 analyzePvDailyYield={analyzeDailyPvYield}
                 setPvYearlyIndividualOutputs={setPvYearlyIndividualOutputs}
                 analyzePvYearlyYield={analyzeYearlyPvYield}
-                requestUpdate={requestUpdate}
             />
-            <MainToolBar orbitControls={orbitControlsRef.current}
-                         requestUpdate={requestUpdate}/>
+            <MainToolBar orbitControls={orbitControlsRef.current}/>
             <Modal
                 width={600}
                 visible={pvModelDialogVisible}
@@ -366,7 +348,7 @@ const App = () => {
                     setPvModelDialogVisible(false);
                 }}
             >
-                <PvModelPanel requestUpdate={requestUpdate}/>
+                <PvModelPanel/>
             </Modal>
             {viewState.showGroundPanel &&
             <GroundPanel grid={grid}
@@ -380,7 +362,6 @@ const App = () => {
                          changeMapZoom={changeMapZoom}
                          changeMapTilt={changeMapTilt}
                          changeMapType={changeMapType}
-                         requestUpdate={requestUpdate}
             />}
             {viewState.showHeliodonPanel &&
             <HeliodonPanel latitude={world.latitude}
@@ -392,46 +373,37 @@ const App = () => {
                            changeLatitude={changeLatitudeAndRemoveAddress}
                            setHeliodon={setHeliodon}
                            setSunAnimation={setSunAnimation}
-                           requestUpdate={requestUpdate}
             />}
             {viewState.showYearlyLightSensorPanel &&
             <YearlyLightSensorPanel city={city}
                                     collectYearlyLightSensorData={collectYearlyLightSensorData}
-                                    requestUpdate={requestUpdate}
             />}
             {viewState.showDailyLightSensorPanel &&
             <DailyLightSensorPanel city={city}
                                    collectDailyLightSensorData={collectDailyLightSensorData}
-                                   requestUpdate={requestUpdate}
             />}
             {viewState.showYearlyPvYieldPanel &&
             <YearlyPvYieldPanel city={city}
                                 individualOutputs={pvYearlyIndividualOutputs}
                                 setIndividualOutputs={setPvYearlyIndividualOutputs}
                                 analyzeYearlyPvYield={analyzeYearlyPvYield}
-                                requestUpdate={requestUpdate}
             />}
             {viewState.showDailyPvYieldPanel &&
             <DailyPvYieldPanel city={city}
                                individualOutputs={pvDailyIndividualOutputs}
                                setIndividualOutputs={setPvDailyIndividualOutputs}
                                analyzeDailyPvYield={analyzeDailyPvYield}
-                               requestUpdate={requestUpdate}
             />}
             {viewState.showWeatherPanel &&
             <WeatherPanel city={city}
-                          requestUpdate={requestUpdate}
                           graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}
             />}
-            {viewState.showStickyNotePanel &&
-            <StickyNotePanel requestUpdate={requestUpdate}
-            />}
+            {viewState.showStickyNotePanel && <StickyNotePanel/>}
             {viewState.showInfoPanel && <InfoPanel city={city} daytime={sunAboveHorizon}/>}
             <DropdownContextMenu
                 city={city}
                 canvas={canvasRef.current}
                 setPvDialogVisible={setPvModelDialogVisible}
-                requestUpdate={requestUpdate}
             >
                 <div>
                     <Canvas shadows={true}

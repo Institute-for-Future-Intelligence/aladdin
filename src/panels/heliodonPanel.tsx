@@ -64,7 +64,6 @@ export interface HeliodonPanelProps {
     changeLatitude?: (latitude: number) => void;
     changeDate?: (date: Date) => void;
     changeTime?: (date: Date) => void;
-    requestUpdate: () => void;
 }
 
 const HeliodonPanel = ({
@@ -77,7 +76,6 @@ const HeliodonPanel = ({
                            changeLatitude,
                            changeDate,
                            changeTime,
-                           requestUpdate
                        }: HeliodonPanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
@@ -145,7 +143,6 @@ const HeliodonPanel = ({
         setCommonStore((state) => {
             state.viewState.showHeliodonPanel = false;
         });
-        requestUpdate();
     };
 
     return (

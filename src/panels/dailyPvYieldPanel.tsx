@@ -62,7 +62,6 @@ const Header = styled.div`
 export interface DailyPvYieldPanelProps {
 
     city: string | null;
-    requestUpdate: () => void;
     individualOutputs: boolean;
     setIndividualOutputs: (b: boolean) => void;
     analyzeDailyPvYield: () => void;
@@ -73,7 +72,6 @@ export interface DailyPvYieldPanelProps {
 
 const DailyPvYieldPanel = ({
                                city,
-                               requestUpdate,
                                individualOutputs = false,
                                setIndividualOutputs,
                                analyzeDailyPvYield,
@@ -142,7 +140,6 @@ const DailyPvYieldPanel = ({
         setCommonStore((state) => {
             state.viewState.showDailyPvYieldPanel = false;
         });
-        requestUpdate();
     };
 
     const labelX = 'Hour';

@@ -64,7 +64,6 @@ const Header = styled.div`
 export interface YearlyLightSensorPanelProps {
 
     city: string | null;
-    requestUpdate: () => void;
     collectYearlyLightSensorData: () => void;
 
     [key: string]: any;
@@ -73,7 +72,6 @@ export interface YearlyLightSensorPanelProps {
 
 const YearlyLightSensorPanel = ({
                                     city,
-                                    requestUpdate,
                                     collectYearlyLightSensorData,
                                     ...rest
                                 }: YearlyLightSensorPanelProps) => {
@@ -129,7 +127,6 @@ const YearlyLightSensorPanel = ({
         setCommonStore((state) => {
             state.viewState.showYearlyLightSensorPanel = false;
         });
-        requestUpdate();
     };
 
     const labelX = 'Month';
@@ -164,7 +161,6 @@ const YearlyLightSensorPanel = ({
                                     checked={daylightGraph}
                                     onChange={(checked) => {
                                         setDaylightGraph(checked);
-                                        requestUpdate();
                                     }}
                             />Daylight
                         </Space>
@@ -173,7 +169,6 @@ const YearlyLightSensorPanel = ({
                                     checked={clearnessGraph}
                                     onChange={(checked) => {
                                         setClearnessGraph(checked);
-                                        requestUpdate();
                                     }}
                             />Clearness
                         </Space>
@@ -182,7 +177,6 @@ const YearlyLightSensorPanel = ({
                                     checked={radiationGraph}
                                     onChange={(checked) => {
                                         setRadiationGraph(checked);
-                                        requestUpdate();
                                     }}
                             />Radiation
                         </Space>

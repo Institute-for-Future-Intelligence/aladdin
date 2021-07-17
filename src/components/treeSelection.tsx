@@ -17,15 +17,10 @@ import PineImage from "../resources/pine.png";
 const {Option} = Select;
 
 export interface TreeSelectionProps {
-    requestUpdate: () => void;
-
     [key: string]: any;
 }
 
-const TreeSelection = ({
-                           requestUpdate,
-                           ...rest
-                       }: TreeSelectionProps) => {
+const TreeSelection = ({...rest}: TreeSelectionProps) => {
 
     const updateElementById = useStore(state => state.updateElementById);
     const getSelectedElement = useStore(state => state.getSelectedElement);
@@ -41,7 +36,6 @@ const TreeSelection = ({
                             name: value,
                             evergreen: value === TreeType.Pine
                         });
-                        requestUpdate();
                     }
                 }}
         >

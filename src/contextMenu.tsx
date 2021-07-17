@@ -39,7 +39,6 @@ export interface ContextMenuProps {
     city: string | null;
     canvas?: HTMLCanvasElement;
     setPvDialogVisible: (visible: boolean) => void;
-    requestUpdate: () => void;
 
     [key: string]: any;
 
@@ -49,7 +48,6 @@ const ContextMenu = ({
                          city,
                          canvas,
                          setPvDialogVisible,
-                         requestUpdate,
                          ...rest
                      }: ContextMenuProps) => {
 
@@ -121,7 +119,6 @@ const ContextMenu = ({
                             setCommonStore(state => {
                                 state.viewState.axes = e.target.checked;
                             });
-                            requestUpdate();
                         }}>
                             Axes
                         </Checkbox>
@@ -131,7 +128,6 @@ const ContextMenu = ({
                             setCommonStore(state => {
                                 state.viewState.theme = e.target.value;
                             });
-                            requestUpdate();
                         }}>
                             <Radio style={radioStyle} value={Theme.Default}>{Theme.Default}</Radio>
                             <Radio style={radioStyle} value={Theme.Desert}>{Theme.Desert}</Radio>
@@ -157,7 +153,6 @@ const ContextMenu = ({
                     <Menu.Item key={'foundation-lock'}>
                         <Checkbox checked={selectedElement?.locked} onChange={(e) => {
                             lockElement(e.target.checked);
-                            requestUpdate();
                         }}>
                             Lock
                         </Checkbox>
@@ -207,7 +202,6 @@ const ContextMenu = ({
                     <ReshapeElementMenu
                         elementId={selectedElement.id}
                         name={'foundation'}
-                        requestUpdate={requestUpdate}
                         style={{paddingLeft: '24px'}}/>
                     }
                 </StyledMenu>
@@ -253,7 +247,6 @@ const ContextMenu = ({
                     <Menu.Item key={'solar-panel-change'}
                                onClick={() => {
                                    setPvDialogVisible(true);
-                                   requestUpdate();
                                }}
                                style={{paddingLeft: '40px'}}>
                         Change PV Model {'(' + solarPanel.pvModel.name + ')'}...
@@ -277,7 +270,6 @@ const ContextMenu = ({
                                                 setElementSize(solarPanel.id, nx * solarPanel.pvModel.length, ny * solarPanel.pvModel.width);
                                             }
                                             updateElementById(solarPanel.id, {orientation: value});
-                                            requestUpdate();
                                         }
                                     }}
                             >
@@ -303,7 +295,6 @@ const ContextMenu = ({
                                          onChange={(value) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {lx: value ?? 1});
-                                                 requestUpdate();
                                              }
                                          }}
                             />
@@ -322,7 +313,6 @@ const ContextMenu = ({
                                          onChange={(value) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {ly: value ?? 2});
-                                                 requestUpdate();
                                              }
                                          }}
                             />
@@ -339,7 +329,6 @@ const ContextMenu = ({
                                          onChange={(value) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {tiltAngle: Util.toRadians(value ?? 0)});
-                                                 requestUpdate();
                                              }
                                          }}
                             />
@@ -356,7 +345,6 @@ const ContextMenu = ({
                                          onChange={(value) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {relativeAzimuth: Util.toRadians(value ?? 0)});
-                                                 requestUpdate();
                                              }
                                          }}
                             />
@@ -368,7 +356,6 @@ const ContextMenu = ({
                                     onChange={(value) => {
                                         if (solarPanel) {
                                             updateElementById(solarPanel.id, {trackerType: value});
-                                            requestUpdate();
                                         }
                                     }}
                             >
@@ -406,7 +393,6 @@ const ContextMenu = ({
                                          onChange={(e) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {poleHeight: e});
-                                                 requestUpdate();
                                              }
                                          }}
                             />
@@ -423,7 +409,6 @@ const ContextMenu = ({
                                          onChange={(value) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {poleSpacing: value ?? 1});
-                                                 requestUpdate();
                                              }
                                          }}
                             />
@@ -433,7 +418,6 @@ const ContextMenu = ({
                                       onChange={(e) => {
                                           if (solarPanel) {
                                               updateElementById(solarPanel.id, {drawSunBeam: e.target.checked});
-                                              requestUpdate();
                                           }
                                       }}>
                                 Draw Sun Beam
@@ -471,7 +455,6 @@ const ContextMenu = ({
                     <Menu.Item key={'cuboid-lock'}>
                         <Checkbox checked={selectedElement?.locked} onChange={(e) => {
                             lockElement(e.target.checked);
-                            requestUpdate();
                         }}>
                             Lock
                         </Checkbox>
@@ -504,7 +487,6 @@ const ContextMenu = ({
                     <ReshapeElementMenu
                         elementId={selectedElement.id}
                         name={'cuboid'}
-                        requestUpdate={requestUpdate}
                         style={{paddingLeft: '24px'}}/>
                     }
                 </StyledMenu>
@@ -521,7 +503,6 @@ const ContextMenu = ({
                     <Menu.Item key={'human-lock'}>
                         <Checkbox checked={selectedElement?.locked} onChange={(e) => {
                             lockElement(e.target.checked);
-                            requestUpdate();
                         }}>
                             Lock
                         </Checkbox>
@@ -529,7 +510,7 @@ const ContextMenu = ({
                     <Menu>
                         <Menu.Item key={'human-change-person'} style={{paddingLeft: '40px'}}>
                             <Space style={{width: '120px'}}>Change Person: </Space>
-                            <HumanSelection key={'trees'} requestUpdate={requestUpdate}/>
+                            <HumanSelection key={'humans'}/>
                         </Menu.Item>
                     </Menu>
                 </StyledMenu>
@@ -546,7 +527,6 @@ const ContextMenu = ({
                     <Menu.Item key={'tree-lock'}>
                         <Checkbox checked={selectedElement?.locked} onChange={(e) => {
                             lockElement(e.target.checked);
-                            requestUpdate();
                         }}>
                             Lock
                         </Checkbox>
@@ -555,7 +535,6 @@ const ContextMenu = ({
                         <Checkbox checked={selectedElement?.showModel && selectedElement.type === ObjectType.Tree}
                                   onChange={(e) => {
                                       showTreeModel(e.target.checked);
-                                      requestUpdate();
                                   }}>
                             Show Model
                         </Checkbox>
@@ -563,7 +542,7 @@ const ContextMenu = ({
                     <Menu>
                         <Menu.Item key={'tree-change-type'} style={{paddingLeft: '40px'}}>
                             <Space style={{width: '60px'}}>Type: </Space>
-                            <TreeSelection key={'trees'} requestUpdate={requestUpdate}/>
+                            <TreeSelection key={'trees'}/>
                         </Menu.Item>
                     </Menu>
                     {selectedElement &&
@@ -574,7 +553,6 @@ const ContextMenu = ({
                                         widthName={'Spread'}
                                         adjustLength={false}
                                         adjustAngle={false}
-                                        requestUpdate={requestUpdate}
                                         style={{paddingLeft: '24px'}}/>
                     }
                 </StyledMenu>
@@ -642,14 +620,13 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({
                                                              city,
                                                              canvas,
                                                              setPvDialogVisible,
-                                                             requestUpdate,
                                                              ...rest
                                                          }) => {
 
     return (
         <Dropdown key={'canvas-context-menu'}
                   trigger={['contextMenu']}
-                  overlay={ContextMenu({city, canvas, setPvDialogVisible, requestUpdate})}>
+                  overlay={ContextMenu({city, canvas, setPvDialogVisible})}>
             {children}
         </Dropdown>
     )

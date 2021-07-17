@@ -38,9 +38,7 @@ export interface MainMenuProps {
     analyzePvDailyYield: () => void;
     setPvYearlyIndividualOutputs: (b: boolean) => void;
     analyzePvYearlyYield: () => void;
-
     canvas?: HTMLCanvasElement;
-    requestUpdate: () => void;
 
     [key: string]: any;
 
@@ -54,7 +52,6 @@ const MainMenu = ({
                       setPvYearlyIndividualOutputs,
                       analyzePvYearlyYield,
                       canvas,
-                      requestUpdate,
                       ...rest
                   }: MainMenuProps) => {
 
@@ -109,7 +106,6 @@ const MainMenu = ({
                             state.elements = input.elements;
                             state.notes = input.notes ?? [];
                         });
-                        requestUpdate();
                     }
                     fileDialog.value = '';
                 };
@@ -131,7 +127,6 @@ const MainMenu = ({
                     setCommonStore((state) => {
                         state.viewState.showInfoPanel = e.target.checked;
                     });
-                    requestUpdate();
                 }}>
                     Information Panel
                 </Checkbox>
@@ -141,7 +136,6 @@ const MainMenu = ({
                     setCommonStore((state) => {
                         state.viewState.showGroundPanel = e.target.checked;
                     });
-                    requestUpdate();
                 }}>
                     Ground Settings
                 </Checkbox>
@@ -151,7 +145,6 @@ const MainMenu = ({
                     setCommonStore((state) => {
                         state.viewState.showWeatherPanel = e.target.checked;
                     });
-                    requestUpdate();
                 }}>
                     Weather Data
                 </Checkbox>
@@ -161,7 +154,6 @@ const MainMenu = ({
                     setCommonStore((state) => {
                         state.viewState.showStickyNotePanel = e.target.checked;
                     });
-                    requestUpdate();
                 }}>
                     Sticky Note
                 </Checkbox>

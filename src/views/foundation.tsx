@@ -255,14 +255,11 @@ const Foundation = ({
                                  if (baseRef.current) {
                                      intersects = ray.intersectObjects([baseRef.current]);
                                      if (intersects.length > 0) {
-                                         let p = intersects[0].point;
-                                         if (moveHandleType) {
-                                             p = Util.viewToModel(p);
-                                             if (elementModel) {
-                                                 p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
-                                             }
-                                             setElementPosition(grabRef.current.id, p.x, p.y);
+                                         let p = Util.viewToModel(intersects[0].point);
+                                         if (elementModel) {
+                                             p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
                                          }
+                                         setElementPosition(grabRef.current.id, p.x, p.y);
                                      }
                                  }
                                  break;

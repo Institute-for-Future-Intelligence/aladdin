@@ -30,15 +30,10 @@ import {useStore} from "../stores/common";
 const {Option} = Select;
 
 export interface HumanSelectionProps {
-    requestUpdate: () => void;
-
     [key: string]: any;
 }
 
-const HumanSelection = ({
-                            requestUpdate,
-                            ...rest
-                        }: HumanSelectionProps) => {
+const HumanSelection = ({...rest}: HumanSelectionProps) => {
 
     const updateElementById = useStore(state => state.updateElementById);
     const getSelectedElement = useStore(state => state.getSelectedElement);
@@ -51,7 +46,6 @@ const HumanSelection = ({
                 onChange={(value) => {
                     if (human) {
                         updateElementById(human.id, {name: value});
-                        requestUpdate();
                     }
                 }}
         >

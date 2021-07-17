@@ -12,12 +12,9 @@ import {Orientation, ShadeTolerance} from "../types";
 const {Option} = Select;
 
 export interface PvModelPanelProps {
-    requestUpdate: () => void;
 }
 
-const PvModelPanel = ({
-                          requestUpdate
-                      }: PvModelPanelProps) => {
+const PvModelPanel = ({}: PvModelPanelProps) => {
 
     const updateElementById = useStore(state => state.updateElementById);
     const getSelectedElement = useStore(state => state.getSelectedElement);
@@ -56,7 +53,6 @@ const PvModelPanel = ({
                                         setElementSize(solarPanel.id, nx * pvModules[value].length, ny * pvModules[value].width);
                                     }
                                     updateElementById(solarPanel.id, {pvModel: pvModules[value]});
-                                    requestUpdate();
                                 }
                             }}
                     >

@@ -63,7 +63,6 @@ const Header = styled.div`
 export interface YearlyPvYieldPanelProps {
 
     city: string | null;
-    requestUpdate: () => void;
     individualOutputs: boolean;
     setIndividualOutputs: (b: boolean) => void;
     analyzeYearlyPvYield: () => void;
@@ -74,7 +73,6 @@ export interface YearlyPvYieldPanelProps {
 
 const YearlyPvYieldPanel = ({
                                 city,
-                                requestUpdate,
                                 individualOutputs = false,
                                 setIndividualOutputs,
                                 analyzeYearlyPvYield,
@@ -144,7 +142,6 @@ const YearlyPvYieldPanel = ({
         setCommonStore((state) => {
             state.viewState.showYearlyPvYieldPanel = false;
         });
-        requestUpdate();
     };
 
     const labelX = 'Month';

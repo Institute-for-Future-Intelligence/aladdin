@@ -53,12 +53,9 @@ const Header = styled.div`
 `;
 
 export interface AccountSettingsPanelProps {
-    requestUpdate: () => void;
 }
 
-const AccountSettingsPanel = ({
-                                  requestUpdate
-                              }: AccountSettingsPanelProps) => {
+const AccountSettingsPanel = ({}: AccountSettingsPanelProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -95,7 +92,6 @@ const AccountSettingsPanel = ({
         setCommonStore((state) => {
             state.showAccountSettingsPanel = false;
         });
-        requestUpdate();
     };
 
     return (
