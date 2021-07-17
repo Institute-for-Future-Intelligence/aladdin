@@ -48,16 +48,18 @@ const ColumnWrapper = styled.div`
 
 export interface InfoPanelProps {
     city: string | null;
-    daytime: boolean;
 }
 
-const InfoPanel = ({city, daytime}: InfoPanelProps) => {
+const InfoPanel = ({city}: InfoPanelProps) => {
 
     const world = useStore(state => state.world);
     const weatherData = useStore(state => state.weatherData);
     const now = new Date(world.date);
     const [dailyTemperatures, setDailyTemperatures] = useState({low: 0, high: 20});
     const [currentTemperature, setCurrentTemperature] = useState<number>(10);
+
+    const sunlightDirection = useStore(state => state.sunlightDirection);
+    const daytime = sunlightDirection.y > 0;
 
     useEffect(() => {
         if (city) {

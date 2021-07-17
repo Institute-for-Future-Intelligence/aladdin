@@ -43,6 +43,7 @@ import InfoPanel from "./panels/infoPanel";
 import PvModelPanel from "./panels/pvModelPanel";
 import YearlyPvYieldPanel from "./panels/yearlyPvYieldPanel";
 import DailyPvYieldPanel from "./panels/dailyPvYieldPanel";
+import Lights from './lights';
 
 const App = () => {
 
@@ -132,8 +133,6 @@ const App = () => {
             }
         }
     }
-
-    const sunAboveHorizon = sunlightDirection.y > 0;
 
     const collectDailyLightSensorData = () => {
         const sensorCount = countElementsByType(ObjectType.Sensor);
@@ -254,7 +253,7 @@ const App = () => {
             {viewState.showMapPanel && <MapPanel/>}
             {viewState.showHeliodonPanel && <HeliodonPanel/>}
             {viewState.showStickyNotePanel && <StickyNotePanel/>}
-            {viewState.showInfoPanel && <InfoPanel city={city} daytime={sunAboveHorizon}/>}
+            {viewState.showInfoPanel && <InfoPanel city={city} />}
             {viewState.showWeatherPanel &&
             <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}/>}
             {viewState.showYearlyLightSensorPanel &&
@@ -298,25 +297,10 @@ const App = () => {
                             orbitControlsRef={orbitControlsRef}
                             canvasRef={canvasRef}
                         />
+                        <Lights />
 
                         <ElementsRenderer heliodonRadius={heliodonRadius}/>
                         <Suspense fallback={null}>
-                            <ambientLight intensity={0.25} name={'Ambient Light'}/>
-                            <directionalLight
-                                name={'Directional Light'}
-                                color='white'
-                                position={sunlightDirection}
-                                intensity={sunAboveHorizon ? 0.5 : 0}
-                                castShadow
-                                shadow-mapSize-height={4096}
-                                shadow-mapSize-width={4096}
-                                shadowCameraNear={1}
-                                shadowCameraFar={100}
-                                shadowCameraLeft={-100}
-                                shadowCameraRight={100}
-                                shadowCameraTop={100}
-                                shadowCameraBottom={-100}
-                            />
                             {(grid || !enableOrbitController) && legalOnGround() && !viewState.groundImage &&
                             <gridHelper name={'Grid'} args={[WORKSPACE_SIZE, WORKSPACE_SIZE, 'gray', 'gray']}/>
                             }
@@ -333,7 +317,7 @@ const App = () => {
                             {viewState.axes && <Axes/>}
                             <Ground/>
                             {viewState.groundImage && <GroundImage/>}
-                            <Sky theme={viewState.theme} night={!sunAboveHorizon}/>
+                            <Sky theme={viewState.theme} />
                             {viewState.heliodon &&
                             <Heliodon
                                 hourAngle={hourAngle}

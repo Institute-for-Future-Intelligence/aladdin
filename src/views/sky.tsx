@@ -19,20 +19,21 @@ import {useTexture} from "@react-three/drei";
 
 export interface SkyProps {
     theme?: string,
-    night?: boolean,
 
     [key: string]: any;
 }
 
 const Sky = ({
                  theme = 'Default',
-                 night = false,
                  ...props
              }: SkyProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const selectNone = useStore(state => state.selectNone);
     const meshRef = useRef<Mesh>(null!);
+
+    const sunlightDirection = useStore(state => state.sunlightDirection);
+    const night = sunlightDirection.y <= 0;
 
     let scale = 1;
     switch (theme) {
