@@ -20,10 +20,9 @@ import {SolarPanelModel} from "./models/SolarPanelModel";
 import SolarPanel from "./views/solarPanel";
 
 export interface ElementsRendererProps {
-    heliodonRadius: number;
 }
 
-const ElementsRenderer: React.FC<ElementsRendererProps> = ({heliodonRadius}: ElementsRendererProps) => {
+const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererProps) => {
 
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
@@ -69,9 +68,7 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({heliodonRadius}: Ele
                             case ObjectType.Tree:
                                 return <Tree key={e.id} {...e as TreeModel}/>;
                             case ObjectType.SolarPanel:
-                                return <SolarPanel key={e.id}
-                                                   sunBeamLength={Math.max(100, heliodonRadius)}
-                                                   {...e as SolarPanelModel}/>;
+                                return <SolarPanel key={e.id} {...e as SolarPanelModel}/>;
                         }
                     }
                 )

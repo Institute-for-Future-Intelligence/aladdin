@@ -31,7 +31,6 @@ import {Modal} from "antd";
 import DropdownContextMenu from "./contextMenu";
 import WeatherPanel from "./panels/weatherPanel";
 import {GraphDataType, ObjectType} from "./types";
-import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./analysis/sunTools";
 import SensorSimulation from "./analysis/sensorSimulation";
 import SolarPanelSimulation from "./analysis/solarPanelSimulation";
 import YearlyLightSensorPanel from "./panels/yearlyLightSensorPanel";
@@ -55,7 +54,6 @@ const App = () => {
     const loadPvModules = useStore(state => state.loadPvModules);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const deleteElementById = useStore(state => state.deleteElementById);
-    const aabb = useStore(state => state.aabb);
     const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
     const countElementsByType = useStore(state => state.countElementsByType);
 
@@ -63,12 +61,7 @@ const App = () => {
     const enableOrbitController = useStore(state => state.enableOrbitController);
     const weatherData = useStore(state => state.weatherData);
 
-    const sunlightDirection = useStore(state => state.sunlightDirection);
-    const setSunlightDirection = useStore(state => state.setSunlightDirection);
-
     const [loading, setLoading] = useState(true);
-    const [hourAngle, setHourAngle] = useState<number>(0);
-    const [declinationAngle, setDeclinationAngle] = useState<number>(0);
     const [city, setCity] = useState<string | null>('Boston MA, USA');
     const [dailyLightSensorDataFlag, setDailyLightSensorDataFlag] = useState<boolean>(false);
     const [yearlyLightSensorDataFlag, setYearlyLightSensorDataFlag] = useState<boolean>(false);
@@ -76,37 +69,16 @@ const App = () => {
     const [pvYearlyYieldFlag, setPvYearlyYieldFlag] = useState<boolean>(false);
     const [pvDailyIndividualOutputs, setPvDailyIndividualOutputs] = useState<boolean>(false);
     const [pvYearlyIndividualOutputs, setPvYearlyIndividualOutputs] = useState<boolean>(false);
-    const [heliodonRadius, setHeliodonRadius] = useState<number>(10);
     const [pvModelDialogVisible, setPvModelDialogVisible] = useState<boolean>(false);
 
     const orbitControlsRef = useRef<OrbitControls>();
     const canvasRef = useRef<HTMLCanvasElement>();
-    const now = useMemo(() => new Date(world.date), [world.date]);
 
     useEffect(() => {
         loadWeatherData();
         loadPvModules();
         setLoading(false);
     }, []);
-
-    useEffect(() => {
-        setSunlightDirection(computeSunLocation(heliodonRadius, hourAngle, declinationAngle, Util.toRadians(world.latitude))
-            .applyEuler(new Euler(-Util.HALF_PI, 0, 0)));
-    }, [world.latitude, hourAngle, declinationAngle, heliodonRadius]);
-
-    useEffect(() => {
-        const min = aabb.min;
-        const max = aabb.max;
-        let r = Math.abs(min.x);
-        if (r < Math.abs(min.y)) r = Math.abs(min.y);
-        if (r < Math.abs(min.z)) r = Math.abs(min.z);
-        if (r < Math.abs(max.x)) r = Math.abs(max.x);
-        if (r < Math.abs(max.y)) r = Math.abs(max.y);
-        if (r < Math.abs(max.z)) r = Math.abs(max.z);
-        if (!isNaN(r) && isFinite(r)) {
-            setHeliodonRadius(r * 1.25); // make it 25% larger than the bounding box
-        }
-    }, [aabb]);
 
     useEffect(() => {
         setCity(getClosestCity(world.latitude, world.longitude));
@@ -117,12 +89,6 @@ const App = () => {
             canvasRef.current.style.cursor = objectTypeToAdd === ObjectType.None ? 'default' : 'crosshair';
         }
     }, [objectTypeToAdd]);
-
-    const nowString = now.toString();
-    useMemo(() => {
-        setHourAngle(computeHourAngle(now));
-        setDeclinationAngle(computeDeclinationAngle(now));
-    }, [nowString]);
 
     if (useKey('Delete')) {
         const selectedElement = getSelectedElement();
@@ -236,7 +202,7 @@ const App = () => {
                 setPvYearlyIndividualOutputs={setPvYearlyIndividualOutputs}
                 analyzePvYearlyYield={analyzeYearlyPvYield}
             />
-            <MainToolBar orbitControls={orbitControlsRef.current} heliodonRadius={heliodonRadius}/>
+            <MainToolBar orbitControls={orbitControlsRef.current} />
             <Modal
                 width={600}
                 visible={pvModelDialogVisible}
@@ -299,12 +265,12 @@ const App = () => {
                         />
                         <Lights />
 
-                        <ElementsRenderer heliodonRadius={heliodonRadius}/>
+                        <ElementsRenderer />
                         <Suspense fallback={null}>
                             {(grid || !enableOrbitController) && legalOnGround() && !viewState.groundImage &&
                             <gridHelper name={'Grid'} args={[WORKSPACE_SIZE, WORKSPACE_SIZE, 'gray', 'gray']}/>
                             }
-                            <Compass/>
+                            <Compass />
                             {/*<Obj/>*/}
                             <SensorSimulation city={city}
                                               dailyLightSensorDataFlag={dailyLightSensorDataFlag}
@@ -317,15 +283,10 @@ const App = () => {
                             {viewState.axes && <Axes/>}
                             <Ground/>
                             {viewState.groundImage && <GroundImage/>}
+                            {viewState.heliodon && <Heliodon />}
+                        </Suspense>
+                        <Suspense fallback={null}>
                             <Sky theme={viewState.theme} />
-                            {viewState.heliodon &&
-                            <Heliodon
-                                hourAngle={hourAngle}
-                                declinationAngle={declinationAngle}
-                                radius={Math.max(10, heliodonRadius)}
-                                date={now}
-                                latitude={Util.toRadians(world.latitude)}
-                            />}
                         </Suspense>
                     </Canvas>
                 </div>

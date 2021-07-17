@@ -100,6 +100,9 @@ export interface CommonStoreState {
 
     cameraPosition: Vector3;
     setCameraPosition: (vector: Vector3) => void;
+
+    heliodonRadius: number;
+    setHeliodonRadius: (radius: number) => void;
 }
 
 export const useStore = create<CommonStoreState>(devtools(persist((
@@ -539,6 +542,13 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         setCameraPosition(vector: Vector3) {
             immerSet((state: CommonStoreState) => {
                 state.cameraPosition = vector.clone();
+            })
+        },
+
+        heliodonRadius: 10,
+        setHeliodonRadius(radius: number) {
+            immerSet((state: CommonStoreState) => {
+                state.heliodonRadius = radius;
             })
         }
     };

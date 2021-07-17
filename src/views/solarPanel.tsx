@@ -33,7 +33,6 @@ const SolarPanel = ({
                         poleRadius,
                         poleSpacing,
                         drawSunBeam,
-                        sunBeamLength = 100,
                         rotation = [0, 0, 0],
                         normal = [0, 0, 1],
                         color = 'white',
@@ -63,6 +62,9 @@ const SolarPanel = ({
     const resizeHandleUpperRef = useRef<Mesh>();
     const resizeHandleLeftRef = useRef<Mesh>();
     const resizeHandleRightRef = useRef<Mesh>();
+
+    const heliodonRadius = useStore(state => state.heliodonRadius);
+    const sunBeamLength = Math.max(100, heliodonRadius);
 
     if (parent) {
         const p = getElementById(parent.id);

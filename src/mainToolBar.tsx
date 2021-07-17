@@ -46,12 +46,10 @@ const ButtonsContainer = styled.div`
 `;
 
 export interface MainToolBarProps {
-    heliodonRadius: number;
     orbitControls?: OrbitControls;
 }
 
 const MainToolBar = ({
-                         heliodonRadius = 10,
                          orbitControls,
                      }: MainToolBarProps) => {
 
@@ -63,6 +61,7 @@ const MainToolBar = ({
     const showCloudFilePanel = useStore(state => state.showCloudFilePanel);
     const showAccountSettingsPanel = useStore(state => state.showAccountSettingsPanel);
     const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
+    const heliodonRadius = useStore(state => state.heliodonRadius);
 
     const [loading, setLoading] = useState(false);
     const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);

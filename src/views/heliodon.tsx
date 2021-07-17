@@ -3,7 +3,7 @@
  */
 
 import {Util} from "../Util";
-import React, {useEffect, useMemo} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {
     BufferAttribute,
     BufferGeometry,
@@ -17,17 +17,14 @@ import {
 } from "three";
 import {
     computeDeclinationAngle,
+    computeHourAngle,
     computeSunLocation,
     TILT_ANGLE
 } from "../analysis/sunTools";
 import {Line, Plane as Drei_Plane} from "@react-three/drei";
+import { useStore } from "../stores/common";
 
 export interface HeliodonProps {
-    radius: number;
-    hourAngle: number;
-    declinationAngle: number;
-    date: Date;
-    latitude: number; // in radian
 
     [key: string]: any;
 }
@@ -36,19 +33,48 @@ const HOUR_DIVISIONS = 96;
 const BASE_DIVISIONS = 72;
 const DECLINATION_DIVISIONS = 12;
 
-const Heliodon = ({
-                      hourAngle,
-                      declinationAngle,
-                      radius = 10,
-                      date = new Date(),
-                      latitude = Util.toRadians(42),
-                  }: HeliodonProps) => {
+const Heliodon = ({}: HeliodonProps) => {
+
+    const worldLatitude = useStore(state => state.world.latitude);
+    const worldDate = useStore(state => state.world.date);
+    const aabb = useStore(state => state.aabb);
+    const radius = useStore(state => state.heliodonRadius);
+    const setRadius = useStore(state => state.setHeliodonRadius);
+    const setSunlightDirection = useStore(state => state.setSunlightDirection);
+
+    const [hourAngle, setHourAngle] = useState<number>(0);
+    const [declinationAngle, setDeclinationAngle] = useState<number>(0);
+    const [latitude, setLatitude] = useState<number>(Util.toRadians(42));
 
     useEffect(() => {
-        return () => {
-            // remove listeners if any
+        setLatitude(Util.toRadians(worldLatitude));
+    }, [worldLatitude]);
+
+    useEffect(() => {
+        const date = new Date(worldDate);
+        setHourAngle(computeHourAngle(date));
+        setDeclinationAngle(computeDeclinationAngle(date));
+    }, [worldDate]);
+
+    useEffect(() => {
+        const min = aabb.min;
+        const max = aabb.max;
+        let r = Math.abs(min.x);
+        if (r < Math.abs(min.y)) r = Math.abs(min.y);
+        if (r < Math.abs(min.z)) r = Math.abs(min.z);
+        if (r < Math.abs(max.x)) r = Math.abs(max.x);
+        if (r < Math.abs(max.y)) r = Math.abs(max.y);
+        if (r < Math.abs(max.z)) r = Math.abs(max.z);
+        if (!isNaN(r) && isFinite(r)) {
+            setRadius(Math.max(10, r * 1.25)); // make it 25% larger than the bounding box
         }
-    }, [date, latitude]);
+    }, [aabb]);
+
+    useEffect(() => {
+        setSunlightDirection(computeSunLocation(radius, hourAngle, declinationAngle, Util.toRadians(worldLatitude))
+            .applyEuler(new Euler(-Util.HALF_PI, 0, 0)));
+    }, [worldLatitude, hourAngle, declinationAngle, radius]);
+
 
     const nRibLines = 5;
 
