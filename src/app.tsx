@@ -76,8 +76,6 @@ const App = () => {
     const [pvYearlyYieldFlag, setPvYearlyYieldFlag] = useState<boolean>(false);
     const [pvDailyIndividualOutputs, setPvDailyIndividualOutputs] = useState<boolean>(false);
     const [pvYearlyIndividualOutputs, setPvYearlyIndividualOutputs] = useState<boolean>(false);
-    const [cameraPosition, setCameraPosition] = useState<Vector3>(new Vector3(0, 0, 5));
-    const [panCenter, setPanCenter] = useState<Vector3>(new Vector3());
     const [heliodonRadius, setHeliodonRadius] = useState<number>(10);
     const [pvModelDialogVisible, setPvModelDialogVisible] = useState<boolean>(false);
 
@@ -113,16 +111,6 @@ const App = () => {
     useEffect(() => {
         setCity(getClosestCity(world.latitude, world.longitude));
     }, [world.latitude, world.longitude, weatherData]);
-
-    useEffect(() => {
-        // we have to cache the camera position in the state from the common store world camera.
-        setCameraPosition(new Vector3().copy(world.cameraPosition));
-    }, [world.cameraPosition]);
-
-    useEffect(() => {
-        // we have to cache the target position in the state from the common store world pan center.
-        setPanCenter(new Vector3().copy(world.panCenter));
-    }, [world.panCenter]);
 
     useEffect(() => {
         if (canvasRef.current) {
@@ -410,14 +398,14 @@ const App = () => {
                             gl={{preserveDrawingBuffer: true}}
                             frameloop={'demand'}
                             camera={{
-                                position: cameraPosition,
+                                position: world.cameraPosition,
                                 fov: 45,
                             }}
                             style={{height: 'calc(100vh - 70px)', backgroundColor: 'black'}}>
                         <OrbitController
                             enabled={enableOrbitController}
                             autoRotate={viewState.autoRotate}
-                            panCenter={panCenter}
+                            panCenter={new Vector3().copy(world.panCenter)}
                             orbitControlsRef={orbitControlsRef}
                             canvasRef={canvasRef}
                         />

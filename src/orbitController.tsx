@@ -66,9 +66,6 @@ const OrbitController = ({
         const c = controls.current;
         if (c) {
             c.addEventListener('change', render);
-            if (panCenter) {
-                c.target.set(panCenter.x, panCenter.y, panCenter.z);
-            }
             c.addEventListener('end', onInteractionEnd);
             c.update();
             if (orbitControlsRef) {
@@ -97,7 +94,7 @@ const OrbitController = ({
     const onInteractionEnd = () => {
         setCommonStore((state) => {
             // FIXME: why can't set function be used with a proxy?
-            // Using set will crash it in run time.
+            // Using set or copy will result in crash in run time.
             if (controls.current) {
                 const w = state.world;
                 w.cameraPosition.x = camera.position.x;
