@@ -163,7 +163,6 @@ const App = () => {
         const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
         if (solarPanelCount === 0) {
             showInfo('There is no solar panel for analysis.');
-            return;
         }
         setPvDailyYieldFlag(!pvDailyYieldFlag);
         setCommonStore(state => {
@@ -175,7 +174,6 @@ const App = () => {
         const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
         if (solarPanelCount === 0) {
             showInfo('There is no solar panel for analysis.');
-            return;
         }
         setPvYearlyYieldFlag(!pvYearlyYieldFlag);
         setCommonStore(state => {

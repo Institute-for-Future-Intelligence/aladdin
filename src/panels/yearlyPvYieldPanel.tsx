@@ -6,13 +6,13 @@ import React, {useEffect, useRef, useState} from 'react';
 import LineGraph from '../components/lineGraph';
 import styled from "styled-components";
 import {useStore} from "../stores/common";
-import {GraphDataType} from "../types";
+import {GraphDataType, ObjectType} from "../types";
 import {MONTHS} from "../constants";
 import {Util} from "../Util";
 import ReactDraggable, {DraggableEventHandler} from "react-draggable";
 import {Button, Space, Switch} from "antd";
 import {screenshot} from "../helpers";
-import {ReloadOutlined, SaveOutlined} from '@ant-design/icons';
+import {ReloadOutlined, SaveOutlined, UnorderedListOutlined} from '@ant-design/icons';
 
 const Container = styled.div`
   position: fixed;
@@ -83,6 +83,7 @@ const YearlyPvYieldPanel = ({
     const viewState = useStore(state => state.viewState);
     const yearlyYield = useStore(state => state.yearlyPvYield);
     const solarPanelLabels = useStore(state => state.solarPanelLabels);
+    const countElementsByType = useStore(state => state.countElementsByType);
     const now = useStore(state => state.world.date);
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
@@ -147,6 +148,13 @@ const YearlyPvYieldPanel = ({
         });
     };
 
+    const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
+    useEffect(() => {
+        if (solarPanelCount < 2 && individualOutputs) {
+            setIndividualOutputs(false);
+        }
+    }, [solarPanelCount]);
+
     const labelX = 'Month';
     const labelY = 'Yield';
     let totalTooltip = '';
@@ -194,7 +202,7 @@ const YearlyPvYieldPanel = ({
                         {...rest}
                     />
                     <Space style={{alignSelf: 'center'}}>
-                        {individualOutputs ?
+                        {individualOutputs && solarPanelCount > 1 ?
                             <Space title={totalTooltip}
                                    style={{cursor: 'pointer', border: '2px solid #ccc', padding: '4px'}}>
                                 Hover for breakdown
@@ -204,14 +212,17 @@ const YearlyPvYieldPanel = ({
                                 Yearly Total: {sum.toFixed(2)} kWh
                             </Space>
                         }
-                        Details:
+                        {solarPanelCount > 1 &&
                         <Switch title={'Show outputs of individual solar panels'}
+                                checkedChildren={<UnorderedListOutlined/>}
+                                unCheckedChildren={<UnorderedListOutlined/>}
                                 checked={individualOutputs}
                                 onChange={(checked) => {
                                     setIndividualOutputs(checked);
                                     analyzeYearlyPvYield();
                                 }}
                         />
+                        }
                         <Button type="default"
                                 icon={<ReloadOutlined/>}
                                 title={'Update'}

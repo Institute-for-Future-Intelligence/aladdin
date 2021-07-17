@@ -6,12 +6,12 @@ import React, {useEffect, useRef, useState} from 'react';
 import LineGraph from '../components/lineGraph';
 import styled from "styled-components";
 import {useStore} from "../stores/common";
-import {GraphDataType} from "../types";
+import {GraphDataType, ObjectType} from "../types";
 import moment from "moment";
 import ReactDraggable, {DraggableEventHandler} from 'react-draggable';
 import {Button, Space, Switch} from "antd";
 import {screenshot} from "../helpers";
-import {ReloadOutlined, SaveOutlined} from '@ant-design/icons';
+import {ReloadOutlined, SaveOutlined, UnorderedListOutlined} from '@ant-design/icons';
 
 const Container = styled.div`
   position: fixed;
@@ -80,6 +80,7 @@ const DailyPvYieldPanel = ({
 
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
+    const countElementsByType = useStore(state => state.countElementsByType);
     const dailyYield = useStore(state => state.dailyPvYield);
     const solarPanelLabels = useStore(state => state.solarPanelLabels);
     const now = new Date(useStore(state => state.world.date));
@@ -145,6 +146,13 @@ const DailyPvYieldPanel = ({
         });
     };
 
+    const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
+    useEffect(() => {
+        if (solarPanelCount < 2 && individualOutputs) {
+            setIndividualOutputs(false);
+        }
+    }, [solarPanelCount]);
+
     const labelX = 'Hour';
     const labelY = 'Yield per Hour';
     let totalTooltip = '';
@@ -193,7 +201,7 @@ const DailyPvYieldPanel = ({
                         {...rest}
                     />
                     <Space style={{alignSelf: 'center'}}>
-                        {individualOutputs ?
+                        {individualOutputs && solarPanelCount > 1 ?
                             <Space title={totalTooltip}
                                    style={{cursor: 'pointer', border: '2px solid #ccc', padding: '4px'}}>
                                 Hover for breakdown
@@ -203,14 +211,17 @@ const DailyPvYieldPanel = ({
                                 Daily Total: {sum.toFixed(2)} kWh
                             </Space>
                         }
-                        Details:
+                        {solarPanelCount > 1 &&
                         <Switch title={'Show outputs of individual solar panels'}
+                                checkedChildren={<UnorderedListOutlined/>}
+                                unCheckedChildren={<UnorderedListOutlined/>}
                                 checked={individualOutputs}
                                 onChange={(checked) => {
                                     setIndividualOutputs(checked);
                                     analyzeDailyPvYield();
                                 }}
                         />
+                        }
                         <Button type="default"
                                 icon={<ReloadOutlined/>}
                                 title={'Update'}
