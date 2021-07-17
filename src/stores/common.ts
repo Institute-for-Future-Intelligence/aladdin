@@ -529,14 +529,14 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         sunlightDirection: new Vector3(0, 2, 2),
         setSunlightDirection(vector: Vector3) {
             immerSet((state: CommonStoreState) => {
-                state.sunlightDirection = vector;
+                state.sunlightDirection = vector.clone();
             });
         },
 
         cameraPosition: new Vector3(),
         setCameraPosition(vector: Vector3) {
             immerSet((state: CommonStoreState) => {
-                state.cameraPosition = vector;
+                state.cameraPosition = vector.clone();
             })
         }
     };

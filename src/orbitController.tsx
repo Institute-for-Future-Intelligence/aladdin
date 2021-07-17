@@ -43,7 +43,7 @@ const OrbitController = ({
     const maxPan = useMemo(() => new Vector3(WORKSPACE_SIZE / 2, WORKSPACE_SIZE / 8, WORKSPACE_SIZE / 2), []);
 
     useEffect(() => {
-        // we have to manually set the camera position
+        // we have to manually set the camera position when loading a state from a file (as world is reconstructed)
         if (controls.current) {
             controls.current.object.position.copy(world.cameraPosition);
             controls.current.update();
@@ -51,7 +51,7 @@ const OrbitController = ({
     }, [world.cameraPosition]);
 
     useEffect(() => {
-        // we have to manually set the target position
+        // we have to manually set the target position when loading a state from a file (as world is reconstructed)
         if (controls.current) {
             controls.current.target.copy(world.panCenter);
             controls.current.update();
@@ -91,12 +91,13 @@ const OrbitController = ({
             controls.current.target.clamp(minPan, maxPan);
         }
         gl.render(scene, camera);
-        setCameraPosition(new Vector3(camera.position.x, camera.position.y, camera.position.z));
+        setCameraPosition(camera.position);
     };
 
     const onInteractionEnd = () => {
         setCommonStore((state) => {
             // FIXME: why can't set function be used with a proxy?
+            // Using set will crash it in run time.
             if (controls.current) {
                 const w = state.world;
                 w.cameraPosition.x = camera.position.x;
