@@ -91,16 +91,19 @@ const DailyPvYieldPanel = ({
         y: isNaN(viewState.dailyPvYieldPanelY) ? 0 : Math.min(viewState.dailyPvYieldPanelY, window.innerHeight - hOffset)
     });
     const [sum, setSum] = useState(0);
+    const panelSumRef = useRef(new Map<string, number>());
 
     const responsiveHeight = 100;
 
     useEffect(() => {
         let s = 0;
+        panelSumRef.current.clear();
         for (const datum of dailyYield) {
             for (const prop in datum) {
                 if (datum.hasOwnProperty(prop)) {
                     if (prop !== 'Hour') {
                         s += datum[prop] as number;
+                        panelSumRef.current.set(prop, (panelSumRef.current.get(prop) ?? 0) + (datum[prop] as number));
                     }
                 }
             }
@@ -144,6 +147,12 @@ const DailyPvYieldPanel = ({
 
     const labelX = 'Hour';
     const labelY = 'Yield per Hour';
+    let totalTooltip = '';
+    if (individualOutputs) {
+        panelSumRef.current.forEach((value, key) => totalTooltip += key + ': ' + value.toFixed(2) + '\n');
+        totalTooltip += '——————————\n';
+        totalTooltip += 'Total: ' + sum.toFixed(2) + ' kWh';
+    }
 
     return (
         <ReactDraggable
@@ -184,7 +193,16 @@ const DailyPvYieldPanel = ({
                         {...rest}
                     />
                     <Space style={{alignSelf: 'center'}}>
-                        <Space>Daily Total: {sum.toFixed(2)} kWh</Space>
+                        {individualOutputs ?
+                            <Space title={totalTooltip}
+                                   style={{cursor: 'pointer', border: '2px solid #ccc', padding: '4px'}}>
+                                Hover for breakdown
+                            </Space>
+                            :
+                            <Space style={{cursor: 'default'}}>
+                                Daily Total: {sum.toFixed(2)} kWh
+                            </Space>
+                        }
                         Details:
                         <Switch title={'Show outputs of individual solar panels'}
                                 checked={individualOutputs}

@@ -60,37 +60,12 @@ const Header = styled.div`
   }
 `;
 
-export interface GroundPanelProps {
-    grid: boolean;
-    groundImage: boolean;
-    groundColor: string;
-    setGrid?: (on: boolean) => void;
-    setGroundImage?: (on: boolean) => void;
-    setGroundColor?: (color: string) => void;
-    changeLatitude?: (latitude: number) => void;
-    changeLongitude?: (longitude: number) => void;
-    changeMapZoom?: (zoom: number) => void;
-    changeMapTilt?: (tilt: number) => void;
-    changeMapType?: (type: string) => void;
-}
-
-const GroundPanel = ({
-                         grid,
-                         groundImage,
-                         groundColor,
-                         setGrid,
-                         setGroundImage,
-                         setGroundColor,
-                         changeLatitude,
-                         changeLongitude,
-                         changeMapZoom,
-                         changeMapTilt,
-                         changeMapType,
-                     }: GroundPanelProps) => {
+const GroundPanel = () => {
 
     const setCommonStore = useStore(state => state.set);
     const world = useStore(state => state.world);
     const viewState = useStore(state => state.viewState);
+    const grid = useStore(state => state.grid);
     const searchBox = useRef<google.maps.places.SearchBox>();
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 460;
@@ -195,16 +170,20 @@ const GroundPanel = ({
                                     <Switch title={'Show ground grid'}
                                             checked={grid}
                                             onChange={(checked) => {
-                                                setGrid?.(checked);
+                                                setCommonStore(state => {
+                                                    state.grid = checked;
+                                                });
                                             }}
                                     />
                                 </Space>
                                 <Space>
                                     <Space style={{width: '60px'}}>Image:</Space>
                                     <Switch title={'Show ground image'}
-                                            checked={groundImage}
+                                            checked={viewState.groundImage}
                                             onChange={(checked) => {
-                                                setGroundImage?.(checked);
+                                                setCommonStore(state => {
+                                                    state.viewState.groundImage = checked;
+                                                });
                                             }}
                                     />
                                 </Space>
@@ -219,8 +198,10 @@ const GroundPanel = ({
                                 </Space>
                             </Space>
                             <div>Ground Color<br/>
-                                <CompactPicker color={groundColor} onChangeComplete={(colorResult) => {
-                                    setGroundColor?.(colorResult.hex);
+                                <CompactPicker color={viewState.groundColor} onChangeComplete={(colorResult) => {
+                                    setCommonStore(state => {
+                                        state.viewState.groundColor = (colorResult.hex);
+                                    });
                                 }}/>
                             </div>
                         </Space>
@@ -253,12 +234,7 @@ const GroundPanel = ({
                         {isLoaded ?
                             <Space>
                                 <div>
-                                    <Maps setLatitude={changeLatitude}
-                                          setLongitude={changeLongitude}
-                                          setZoom={changeMapZoom}
-                                          setTilt={changeMapTilt}
-                                          setType={changeMapType}
-                                    />
+                                    <Maps/>
                                     Coordinates: ({world.latitude.toFixed(4)}°, {world.longitude.toFixed(4)}°),
                                     Zoom: {viewState.mapZoom}
                                 </div>

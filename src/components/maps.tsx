@@ -6,30 +6,15 @@ import React, {memo, useCallback, useEffect, useRef, useState} from "react";
 import {GoogleMap, Marker} from '@react-google-maps/api';
 import {useStore} from "../stores/common";
 
-export interface MapsProp {
-
-    setLatitude?: (value: number) => void;
-    setLongitude?: (value: number) => void;
-    setZoom?: (value: number) => void;
-    setTilt?: (value: number) => void;
-    setType?: (value: string) => void;
-
-}
-
 const containerStyle = {
     border: '1px solid',
     width: '400px',
     height: '400px'
 };
 
-const Maps = ({
-                  setLatitude,
-                  setLongitude,
-                  setZoom,
-                  setTilt,
-                  setType,
-              }: MapsProp) => {
+const Maps = () => {
 
+    const setCommonStore = useStore(state => state.set);
     const latitude = useStore(state => state.world.latitude);
     const longitude = useStore(state => state.world.longitude);
     const viewState = useStore(state => state.viewState);
@@ -80,11 +65,15 @@ const Maps = ({
             const center = map.getCenter();
             const lat = center.lat();
             if (lat !== latitude) {
-                setLatitude?.(lat);
+                setCommonStore(state => {
+                    state.world.latitude = lat;
+                });
             }
             const lng = center.lng();
             if (lng !== longitude) {
-                setLongitude?.(lng);
+                setCommonStore(state => {
+                    state.world.longitude = lng;
+                });
             }
         }
     };
@@ -93,7 +82,9 @@ const Maps = ({
         if (map) {
             const z = map.getZoom();
             if (z !== viewState.mapZoom) {
-                setZoom?.(z);
+                setCommonStore(state => {
+                    state.viewState.mapZoom = z;
+                });
             }
         }
     };
@@ -102,7 +93,9 @@ const Maps = ({
         if (map) {
             const t = map.getTilt();
             if (t !== viewState.mapTilt) {
-                setTilt?.(t);
+                setCommonStore(state => {
+                    state.viewState.mapTilt = t;
+                });
             }
         }
     };
@@ -111,7 +104,9 @@ const Maps = ({
         if (map) {
             const typeId = map.getMapTypeId();
             if (typeId !== viewState.mapType) {
-                setType?.(typeId);
+                setCommonStore(state => {
+                    state.viewState.mapType = typeId;
+                });
             }
         }
     };

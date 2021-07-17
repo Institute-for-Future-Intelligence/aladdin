@@ -9,7 +9,7 @@ import {useStore} from "./stores/common";
 import useKey from "./useKey";
 import './app.css';
 import {Util} from "./Util";
-import {Euler, Vector3} from "three";
+import {Euler} from "three";
 import {Canvas} from '@react-three/fiber';
 import OrbitController from "./orbitController";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
@@ -68,7 +68,6 @@ const App = () => {
     const [loading, setLoading] = useState(true);
     const [hourAngle, setHourAngle] = useState<number>(0);
     const [declinationAngle, setDeclinationAngle] = useState<number>(0);
-    const [animateSun, setAnimateSun] = useState<boolean>(false);
     const [city, setCity] = useState<string | null>('Boston MA, USA');
     const [dailyLightSensorDataFlag, setDailyLightSensorDataFlag] = useState<boolean>(false);
     const [yearlyLightSensorDataFlag, setYearlyLightSensorDataFlag] = useState<boolean>(false);
@@ -133,90 +132,6 @@ const App = () => {
             }
         }
     }
-
-    const setGrid = (on: boolean) => {
-        setCommonStore(state => {
-            state.grid = on;
-        });
-    };
-
-    const setGroundImage = (on: boolean) => {
-        setCommonStore(state => {
-            state.viewState.groundImage = on;
-        });
-    };
-
-    const setGroundColor = (color: string) => {
-        setCommonStore(state => {
-            state.viewState.groundColor = color;
-        });
-    };
-
-    const setHeliodon = (on: boolean) => {
-        setCommonStore(state => {
-            state.viewState.heliodon = on;
-        });
-    };
-
-    // animation state should not be persisted
-    const setSunAnimation = (on: boolean) => {
-        setAnimateSun(on);
-    };
-
-    const changeDate = (date: Date) => {
-        const d = new Date(now);
-        d.setFullYear(date.getFullYear());
-        d.setMonth(date.getMonth());
-        d.setDate(date.getDate());
-        setCommonStore(state => {
-            state.world.date = d.toString();
-        });
-    };
-
-    const changeTime = (date: Date) => {
-        const d = new Date(now);
-        d.setHours(date.getHours(), date.getMinutes());
-        setCommonStore(state => {
-            state.world.date = d.toString();
-        });
-    };
-
-    const changeLatitude = (latitude: number) => {
-        setCommonStore(state => {
-            state.world.latitude = latitude;
-        });
-    };
-
-    const changeLatitudeAndRemoveAddress = (latitude: number) => {
-        setCommonStore(state => {
-            state.world.latitude = latitude;
-            state.world.address = '';
-        });
-    };
-
-    const changeLongitude = (longitude: number) => {
-        setCommonStore(state => {
-            state.world.longitude = longitude;
-        });
-    };
-
-    const changeMapZoom = (zoom: number) => {
-        setCommonStore(state => {
-            state.viewState.mapZoom = zoom;
-        });
-    };
-
-    const changeMapTilt = (tilt: number) => {
-        setCommonStore(state => {
-            state.viewState.mapTilt = tilt;
-        });
-    };
-
-    const changeMapType = (type: string) => {
-        setCommonStore(state => {
-            state.viewState.mapType = type;
-        });
-    };
 
     const sunAboveHorizon = sunlightDirection.y > 0;
 
@@ -338,30 +253,12 @@ const App = () => {
             >
                 <PvModelPanel/>
             </Modal>
-            {viewState.showGroundPanel &&
-            <GroundPanel grid={grid}
-                         groundImage={viewState.groundImage}
-                         groundColor={viewState.groundColor}
-                         setGrid={setGrid}
-                         setGroundImage={setGroundImage}
-                         setGroundColor={setGroundColor}
-                         changeLatitude={changeLatitude}
-                         changeLongitude={changeLongitude}
-                         changeMapZoom={changeMapZoom}
-                         changeMapTilt={changeMapTilt}
-                         changeMapType={changeMapType}
-            />}
-            {viewState.showHeliodonPanel &&
-            <HeliodonPanel latitude={world.latitude}
-                           date={now}
-                           heliodon={viewState.heliodon}
-                           animateSun={animateSun}
-                           changeDate={changeDate}
-                           changeTime={changeTime}
-                           changeLatitude={changeLatitudeAndRemoveAddress}
-                           setHeliodon={setHeliodon}
-                           setSunAnimation={setSunAnimation}
-            />}
+            {viewState.showGroundPanel && <GroundPanel/>}
+            {viewState.showHeliodonPanel && <HeliodonPanel/>}
+            {viewState.showStickyNotePanel && <StickyNotePanel/>}
+            {viewState.showInfoPanel && <InfoPanel city={city} daytime={sunAboveHorizon}/>}
+            {viewState.showWeatherPanel &&
+            <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}/>}
             {viewState.showYearlyLightSensorPanel &&
             <YearlyLightSensorPanel city={city}
                                     collectYearlyLightSensorData={collectYearlyLightSensorData}
@@ -382,12 +279,6 @@ const App = () => {
                                setIndividualOutputs={setPvDailyIndividualOutputs}
                                analyzeDailyPvYield={analyzeDailyPvYield}
             />}
-            {viewState.showWeatherPanel &&
-            <WeatherPanel city={city}
-                          graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}
-            />}
-            {viewState.showStickyNotePanel && <StickyNotePanel/>}
-            {viewState.showInfoPanel && <InfoPanel city={city} daytime={sunAboveHorizon}/>}
             <DropdownContextMenu
                 city={city}
                 canvas={canvasRef.current}

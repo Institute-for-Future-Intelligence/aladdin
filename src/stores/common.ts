@@ -49,6 +49,7 @@ export interface CommonStoreState {
 
     grid: boolean; // this should only show up when editing
     aabb: Box3; // axis-aligned bounding box of elements
+    animateSun: boolean;
     enableOrbitController: boolean;
     clickObjectType: ObjectType | null;
     moveHandleType: MoveHandleType | null;
@@ -178,6 +179,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
 
         grid: false,
         aabb: new Box3(),
+        animateSun: false,
         enableOrbitController: true,
         clickObjectType: null,
         moveHandleType: null,

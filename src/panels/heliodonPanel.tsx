@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useStore} from "../stores/common";
 import styled from 'styled-components';
 import {DatePicker, Slider, Space, Switch, TimePicker} from "antd";
@@ -54,32 +54,12 @@ const Header = styled.div`
   }
 `;
 
-export interface HeliodonPanelProps {
-    heliodon: boolean;
-    latitude: number;
-    date: Date;
-    animateSun?: boolean;
-    setHeliodon?: (on: boolean) => void;
-    setSunAnimation?: (on: boolean) => void;
-    changeLatitude?: (latitude: number) => void;
-    changeDate?: (date: Date) => void;
-    changeTime?: (date: Date) => void;
-}
-
-const HeliodonPanel = ({
-                           heliodon,
-                           latitude,
-                           date,
-                           animateSun,
-                           setHeliodon,
-                           setSunAnimation,
-                           changeLatitude,
-                           changeDate,
-                           changeTime,
-                       }: HeliodonPanelProps) => {
+const HeliodonPanel = () => {
 
     const setCommonStore = useStore(state => state.set);
+    const world = useStore(state => state.world);
     const viewState = useStore(state => state.viewState);
+    const animateSun = useStore(state => state.animateSun);
     const requestRef = useRef<number>(0);
     const previousFrameTime = useRef<number>(-1);
     const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -89,6 +69,7 @@ const HeliodonPanel = ({
         x: isNaN(viewState.heliodonPanelX) ? 0 : Math.max(viewState.heliodonPanelX, wOffset - window.innerWidth),
         y: isNaN(viewState.heliodonPanelY) ? 0 : Math.min(viewState.heliodonPanelY, window.innerHeight - hOffset)
     });
+    const date = useMemo(() => new Date(world.date), [world.date]);
 
     // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
     useEffect(() => {
@@ -119,10 +100,20 @@ const HeliodonPanel = ({
                 const day = date.getDate();
                 date.setHours(date.getHours(), date.getMinutes() + 15);
                 date.setDate(day)
-                changeTime?.(date);
+                changeTime(date);
                 previousFrameTime.current = currentFrameTime;
             }
+        } else {
+            cancelAnimationFrame(requestRef.current);
         }
+    };
+
+    const changeTime = (time: Date) => {
+        const d = new Date(date);
+        d.setHours(time.getHours(), time.getMinutes());
+        setCommonStore(state => {
+            state.world.date = d.toString();
+        });
     };
 
     const onDrag: DraggableEventHandler = (e, ui) => {
@@ -171,21 +162,34 @@ const HeliodonPanel = ({
                     <Space style={{padding: '20px'}} align={'baseline'} size={20}>
                         <div>
                             Show<br/>
-                            <Switch checked={heliodon} onChange={(checked) => {
-                                setHeliodon?.(checked);
+                            <Switch checked={viewState.heliodon} onChange={(checked) => {
+                                setCommonStore(state => {
+                                    state.viewState.heliodon = checked;
+                                });
                             }}/>
                         </div>
                         <div>
                             Animate<br/>
                             <Switch checked={animateSun} onChange={(checked) => {
-                                setSunAnimation?.(checked);
+                                setCommonStore(state => {
+                                    state.animateSun = checked;
+                                });
                             }}/>
                         </div>
                         <div>
                             Date<br/>
                             <DatePicker value={moment(date)}
                                         onChange={(moment) => {
-                                            if (moment) changeDate?.(moment.toDate());
+                                            if (moment) {
+                                                const day = new Date(date);
+                                                const m = moment.toDate();
+                                                day.setFullYear(m.getFullYear());
+                                                day.setMonth(m.getMonth());
+                                                day.setDate(m.getDate());
+                                                setCommonStore(state => {
+                                                    state.world.date = day.toString();
+                                                });
+                                            }
                                         }}
                             />
                         </div>
@@ -199,16 +203,19 @@ const HeliodonPanel = ({
                             />
                         </div>
                         <div>
-                            Latitude: {latitude.toFixed(4)}°
+                            Latitude: {world.latitude.toFixed(4)}°
                             <Slider
                                 style={{width: '150px'}}
                                 marks={{'-90': '-90°', 0: '0°', 90: '90°'}}
                                 min={-90}
                                 max={90}
                                 tooltipVisible={false}
-                                defaultValue={latitude}
+                                defaultValue={world.latitude}
                                 onChange={(value: number) => {
-                                    changeLatitude?.(value);
+                                    setCommonStore(state => {
+                                        state.world.latitude = value;
+                                        state.world.address = '';
+                                    });
                                 }}
                             />
                         </div>
