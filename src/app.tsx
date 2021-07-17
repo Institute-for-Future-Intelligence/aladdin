@@ -21,7 +21,7 @@ import Ground from "./views/ground";
 import Heliodon from "./views/heliodon";
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from "./mainMenu";
-import GroundPanel from "./panels/groundPanel";
+import MapPanel from "./panels/mapPanel";
 import HeliodonPanel from "./panels/heliodonPanel";
 import {VERSION, WORKSPACE_SIZE} from "./constants";
 import {showInfo, visitHomepage, visitIFI} from "./helpers";
@@ -237,7 +237,7 @@ const App = () => {
                 setPvYearlyIndividualOutputs={setPvYearlyIndividualOutputs}
                 analyzePvYearlyYield={analyzeYearlyPvYield}
             />
-            <MainToolBar orbitControls={orbitControlsRef.current}/>
+            <MainToolBar orbitControls={orbitControlsRef.current} heliodonRadius={heliodonRadius}/>
             <Modal
                 width={600}
                 visible={pvModelDialogVisible}
@@ -251,7 +251,7 @@ const App = () => {
             >
                 <PvModelPanel/>
             </Modal>
-            {viewState.showGroundPanel && <GroundPanel/>}
+            {viewState.showMapPanel && <MapPanel/>}
             {viewState.showHeliodonPanel && <HeliodonPanel/>}
             {viewState.showStickyNotePanel && <StickyNotePanel/>}
             {viewState.showInfoPanel && <InfoPanel city={city} daytime={sunAboveHorizon}/>}

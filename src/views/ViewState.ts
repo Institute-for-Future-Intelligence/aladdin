@@ -11,7 +11,7 @@ export interface ViewState {
     groundImage: boolean;
     groundColor: string;
 
-    showGroundPanel: boolean;
+    showMapPanel: boolean;
     showHeliodonPanel: boolean;
     showWeatherPanel: boolean;
     showStickyNotePanel: boolean;
@@ -24,8 +24,8 @@ export interface ViewState {
 
     heliodonPanelX: number;
     heliodonPanelY: number;
-    groundPanelX: number;
-    groundPanelY: number;
+    mapPanelX: number;
+    mapPanelY: number;
     weatherPanelX: number;
     weatherPanelY: number;
     stickyNotePanelX: number;

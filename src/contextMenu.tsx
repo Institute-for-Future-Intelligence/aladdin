@@ -609,6 +609,13 @@ const ContextMenu = ({
                             />
                         </Menu.Item>
                     </Menu>
+                    <SubMenu key={'ground-color'} title={'Color'}>
+                        <CompactPicker color={viewState.groundColor} onChangeComplete={(colorResult) => {
+                            setCommonStore(state => {
+                                state.viewState.groundColor = (colorResult.hex);
+                            });
+                        }}/>
+                    </SubMenu>
                 </StyledMenu>
             );
     }
@@ -622,7 +629,6 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({
                                                              setPvDialogVisible,
                                                              ...rest
                                                          }) => {
-
     return (
         <Dropdown key={'canvas-context-menu'}
                   trigger={['contextMenu']}

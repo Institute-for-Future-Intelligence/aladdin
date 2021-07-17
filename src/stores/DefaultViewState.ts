@@ -13,7 +13,7 @@ export class DefaultViewState implements ViewState {
     groundImage: boolean;
     groundColor: string;
 
-    showGroundPanel: boolean;
+    showMapPanel: boolean;
     showHeliodonPanel: boolean;
     showWeatherPanel: boolean;
     showStickyNotePanel: boolean;
@@ -26,8 +26,8 @@ export class DefaultViewState implements ViewState {
 
     heliodonPanelX: number;
     heliodonPanelY: number;
-    groundPanelX: number;
-    groundPanelY: number;
+    mapPanelX: number;
+    mapPanelY: number;
     weatherPanelX: number;
     weatherPanelY: number;
     stickyNotePanelX: number;
@@ -55,7 +55,7 @@ export class DefaultViewState implements ViewState {
         this.groundImage = false;
         this.groundColor = 'forestgreen';
 
-        this.showGroundPanel = false;
+        this.showMapPanel = false;
         this.showHeliodonPanel = false;
         this.showWeatherPanel = false;
         this.showStickyNotePanel = false;
@@ -68,8 +68,8 @@ export class DefaultViewState implements ViewState {
 
         this.heliodonPanelX = 0;
         this.heliodonPanelY = 0;
-        this.groundPanelX = 0;
-        this.groundPanelY = 0;
+        this.mapPanelX = 0;
+        this.mapPanelY = 0;
         this.weatherPanelX = 0;
         this.weatherPanelY = 0;
         this.stickyNotePanelX = 0;

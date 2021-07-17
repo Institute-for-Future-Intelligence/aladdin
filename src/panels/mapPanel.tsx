@@ -6,7 +6,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useStore} from "../stores/common";
 import styled from 'styled-components';
 import {Space, Switch} from "antd";
-import {CompactPicker} from 'react-color';
 import Maps from "../components/maps";
 import {StandaloneSearchBox, useJsApiLoader} from "@react-google-maps/api";
 import {Libraries} from "@react-google-maps/api/dist/utils/make-load-script-url";
@@ -32,7 +31,7 @@ const ColumnWrapper = styled.div`
   position: absolute;
   left: 0;
   top: 0;
-  width: 420px;
+  width: 500px;
   padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
@@ -60,27 +59,26 @@ const Header = styled.div`
   }
 `;
 
-const GroundPanel = () => {
+const MapPanel = () => {
 
     const setCommonStore = useStore(state => state.set);
     const world = useStore(state => state.world);
     const viewState = useStore(state => state.viewState);
-    const grid = useStore(state => state.grid);
     const searchBox = useRef<google.maps.places.SearchBox>();
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 460;
     const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 40 : 600;
     const [curPosition, setCurPosition] = useState({
-        x: isNaN(viewState.groundPanelX) ? 0 : Math.min(viewState.groundPanelX, window.innerWidth - wOffset),
-        y: isNaN(viewState.groundPanelY) ? 0 : Math.min(viewState.groundPanelY, window.innerHeight - hOffset)
+        x: isNaN(viewState.mapPanelX) ? 0 : Math.min(viewState.mapPanelX, window.innerWidth - wOffset),
+        y: isNaN(viewState.mapPanelY) ? 0 : Math.min(viewState.mapPanelY, window.innerHeight - hOffset)
     });
 
     // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
     useEffect(() => {
         const handleResize = () => {
             setCurPosition({
-                x: Math.min(viewState.groundPanelX, window.innerWidth - wOffset),
-                y: Math.min(viewState.groundPanelY, window.innerHeight - hOffset)
+                x: Math.min(viewState.mapPanelX, window.innerWidth - wOffset),
+                y: Math.min(viewState.mapPanelY, window.innerHeight - hOffset)
             });
         };
         window.addEventListener('resize', handleResize);
@@ -128,14 +126,14 @@ const GroundPanel = () => {
 
     const onDragEnd: DraggableEventHandler = (e, ui) => {
         setCommonStore(state => {
-            state.viewState.groundPanelX = Math.min(ui.x, window.innerWidth - wOffset);
-            state.viewState.groundPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+            state.viewState.mapPanelX = Math.min(ui.x, window.innerWidth - wOffset);
+            state.viewState.mapPanelY = Math.min(ui.y, window.innerHeight - hOffset);
         });
     };
 
     const closePanel = () => {
         setCommonStore((state) => {
-            state.viewState.showGroundPanel = false;
+            state.viewState.showMapPanel = false;
         });
     };
 
@@ -151,7 +149,7 @@ const GroundPanel = () => {
             <Container>
                 <ColumnWrapper ref={wrapperRef}>
                     <Header className='handle'>
-                        <span>Ground Settings</span>
+                        <span>Map</span>
                         <span style={{cursor: 'pointer'}}
                               onTouchStart={() => {
                                   closePanel();
@@ -163,47 +161,25 @@ const GroundPanel = () => {
                         </span>
                     </Header>
                     <Space direction={'vertical'}>
-                        <Space style={{padding: '20px'}} align={'center'} size={20}>
-                            <Space direction={'vertical'}>
-                                <Space>
-                                    <Space style={{width: '60px'}}>Grid:</Space>
-                                    <Switch title={'Show ground grid'}
-                                            checked={grid}
-                                            onChange={(checked) => {
-                                                setCommonStore(state => {
-                                                    state.grid = checked;
-                                                });
-                                            }}
-                                    />
-                                </Space>
-                                <Space>
-                                    <Space style={{width: '60px'}}>Image:</Space>
-                                    <Switch title={'Show ground image'}
-                                            checked={viewState.groundImage}
-                                            onChange={(checked) => {
-                                                setCommonStore(state => {
-                                                    state.viewState.groundImage = checked;
-                                                });
-                                            }}
-                                    />
-                                </Space>
-                                <Space>
-                                    <Space style={{width: '60px'}}>Stations:</Space>
-                                    <Switch title={'Show weather stations'}
-                                            checked={viewState.mapWeatherStations}
-                                            onChange={(checked) => {
-                                                setMapWeatherStations(checked);
-                                            }}
-                                    />
-                                </Space>
+                        <Space style={{paddingTop: '10px'}} align={'center'} size={20}>
+                            <Space direction={'horizontal'}>
+                                <Space>Image on Ground:</Space>
+                                <Switch title={'Show ground image'}
+                                        checked={viewState.groundImage}
+                                        onChange={(checked) => {
+                                            setCommonStore(state => {
+                                                state.viewState.groundImage = checked;
+                                            });
+                                        }}
+                                />
+                                <Space>Stations on Map:</Space>
+                                <Switch title={'Show weather stations'}
+                                        checked={viewState.mapWeatherStations}
+                                        onChange={(checked) => {
+                                            setMapWeatherStations(checked);
+                                        }}
+                                />
                             </Space>
-                            <div>Ground Color<br/>
-                                <CompactPicker color={viewState.groundColor} onChangeComplete={(colorResult) => {
-                                    setCommonStore(state => {
-                                        state.viewState.groundColor = (colorResult.hex);
-                                    });
-                                }}/>
-                            </div>
                         </Space>
                         {isLoaded &&
                         <Space>
@@ -216,7 +192,7 @@ const GroundPanel = () => {
                                         style={{
                                             boxSizing: `border-box`,
                                             border: `1px solid transparent`,
-                                            width: `400px`,
+                                            width: `480px`,
                                             height: `32px`,
                                             padding: `0 12px`,
                                             borderRadius: `3px`,
@@ -235,8 +211,10 @@ const GroundPanel = () => {
                             <Space>
                                 <div>
                                     <Maps/>
-                                    Coordinates: ({world.latitude.toFixed(4)}°, {world.longitude.toFixed(4)}°),
-                                    Zoom: {viewState.mapZoom}
+                                    <p style={{paddingTop: '10px'}}>
+                                        Coordinates: ({world.latitude.toFixed(4)}°, {world.longitude.toFixed(4)}°),
+                                        Zoom: {viewState.mapZoom}
+                                    </p>
                                 </div>
                             </Space>
                             :
@@ -254,4 +232,4 @@ const GroundPanel = () => {
     );
 };
 
-export default React.memo(GroundPanel);
+export default React.memo(MapPanel);

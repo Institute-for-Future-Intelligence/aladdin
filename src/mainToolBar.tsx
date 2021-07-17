@@ -46,10 +46,12 @@ const ButtonsContainer = styled.div`
 `;
 
 export interface MainToolBarProps {
+    heliodonRadius: number;
     orbitControls?: OrbitControls;
 }
 
 const MainToolBar = ({
+                         heliodonRadius = 10,
                          orbitControls,
                      }: MainToolBarProps) => {
 
@@ -148,7 +150,11 @@ const MainToolBar = ({
 
     const resetView = () => {
         if (orbitControls) {
-            orbitControls.reset();
+            // I don't know why the reset method results in a black screen.
+            // So we are resetting it here to a predictable position.
+            orbitControls.object.position.set(0, Math.min(50, heliodonRadius * 4), 0);
+            orbitControls.target.set(0, 0, 0);
+            orbitControls.update();
         }
         resetToSelectMode();
     };

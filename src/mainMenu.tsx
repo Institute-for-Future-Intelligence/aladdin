@@ -116,161 +116,157 @@ const MainMenu = ({
 
     const menu = (
         <Menu>
-            <Menu.Item key="open-local-file" onClick={readLocalFile} style={{paddingLeft: '36px'}}>
-                Open Local File
-            </Menu.Item>
-            <Menu.Item key="save-local-file" onClick={showDownloadDialog} style={{paddingLeft: '36px'}}>
-                Save to Download Folder
-            </Menu.Item>
-            <Menu.Item key={'info-panel-check-box'}>
-                <Checkbox checked={viewState.showInfoPanel} onChange={(e) => {
-                    setCommonStore((state) => {
-                        state.viewState.showInfoPanel = e.target.checked;
-                    });
-                }}>
-                    Information Panel
-                </Checkbox>
-            </Menu.Item>
-            <Menu.Item key={'ground-panel-check-box'}>
-                <Checkbox checked={viewState.showGroundPanel} onChange={(e) => {
-                    setCommonStore((state) => {
-                        state.viewState.showGroundPanel = e.target.checked;
-                    });
-                }}>
-                    Ground Settings
-                </Checkbox>
-            </Menu.Item>
-            <Menu.Item key={'weather-panel-check-box'}>
-                <Checkbox checked={viewState.showWeatherPanel} onChange={(e) => {
-                    setCommonStore((state) => {
-                        state.viewState.showWeatherPanel = e.target.checked;
-                    });
-                }}>
-                    Weather Data
-                </Checkbox>
-            </Menu.Item>
-            <Menu.Item key={'sticky-note-panel-check-box'}>
-                <Checkbox checked={viewState.showStickyNotePanel} onChange={(e) => {
-                    setCommonStore((state) => {
-                        state.viewState.showStickyNotePanel = e.target.checked;
-                    });
-                }}>
-                    Sticky Note
-                </Checkbox>
-            </Menu.Item>
-            <SubMenu key={'sensors'} title={'Sensors'} style={{paddingLeft: '24px'}}>
-                <Menu>
-                    <Menu.Item key={'sensor-simulation-sampling-frequency'}>
-                        <Space style={{width: '150px'}}>Sampling Frequency: </Space>
-                        <InputNumber min={1}
-                                     max={60}
-                                     step={1}
-                                     style={{width: 60}}
-                                     precision={0}
-                                     value={world.timesPerHour}
-                                     formatter={(a) => Number(a).toFixed(0)}
-                                     onChange={(value) => {
-                                         setCommonStore((state) => {
-                                             state.world.timesPerHour = value;
-                                         });
-                                     }}
-                        />
-                        <Space style={{paddingLeft: '10px'}}>Times per Hour</Space>
-                    </Menu.Item>
-                    <Menu.Item key={'sensor-collect-daily-data'} onClick={collectDailyLightSensorData}>
-                        Collect Daily Data
-                    </Menu.Item>
-                    <Menu.Item key={'sensor-collect-yearly-data'} onClick={collectYearlyLightSensorData}>
-                        Collect Yearly Data
-                    </Menu.Item>
-                </Menu>
+            <SubMenu key={'file'} title={'File'}>
+                <Menu.Item key="open-local-file" onClick={readLocalFile}>
+                    Open Local File
+                </Menu.Item>
+                <Menu.Item key="save-local-file" onClick={showDownloadDialog}>
+                    Save to Download Folder
+                </Menu.Item>
+                <Menu.Item key="screenshot" onClick={takeScreenshot}>
+                    Take Screenshot
+                </Menu.Item>
             </SubMenu>
-            <SubMenu key={'solar-panels'} title={'Solar Panels'} style={{paddingLeft: '24px'}}>
-                <Menu>
-                    <Menu.Item key={'solar-panel-simulation-sampling-frequency'}>
-                        <Space style={{width: '150px'}}>Sampling Frequency: </Space>
-                        <InputNumber min={1}
-                                     max={60}
-                                     step={1}
-                                     style={{width: 60}}
-                                     precision={0}
-                                     value={world.timesPerHour}
-                                     formatter={(a) => Number(a).toFixed(0)}
-                                     onChange={(value) => {
-                                         setCommonStore((state) => {
-                                             state.world.timesPerHour = value;
-                                         });
-                                     }}
-                        />
-                        <Space style={{paddingLeft: '10px'}}>Times per Hour</Space>
-                    </Menu.Item>
-                    <Menu.Item key={'solar-panel-discretization'}>
-                        <Space style={{width: '150px'}}>Panel Discretization: </Space>
-                        <Select style={{width: '150px'}}
-                                value={world.discretization ?? Discretization.EXACT}
-                                onChange={(value) => {
-                                    setCommonStore(state => {
-                                        state.world.discretization = value;
-                                    });
-                                }}
-                        >
-                            <Option key={Discretization.EXACT} value={Discretization.EXACT}>
-                                {Discretization.EXACT}
-                            </Option>)
-                            <Option key={Discretization.APPROXIMATE} value={Discretization.APPROXIMATE}>
-                                {Discretization.APPROXIMATE}
-                            </Option>)
-                        </Select>
-                    </Menu.Item>
-                    {world.discretization === Discretization.APPROXIMATE &&
-                    <Menu.Item key={'solar-panel-simulation-grid-cell-size'}>
-                        <Space style={{width: '150px'}}>Grid Cell Size: </Space>
-                        <InputNumber min={0.1}
-                                     max={5}
-                                     step={0.1}
-                                     style={{width: 60}}
-                                     precision={1}
-                                     value={world.solarPanelGridCellSize ?? 0.5}
-                                     formatter={(a) => Number(a).toFixed(1)}
-                                     onChange={(value) => {
-                                         setCommonStore((state) => {
-                                             state.world.solarPanelGridCellSize = value;
-                                         });
-                                     }}
-                        />
-                        <Space style={{paddingLeft: '10px'}}>m</Space>
-                    </Menu.Item>
-                    }
-                    <Menu.Item key={'solar-panel-daily-yield-only-total'} onClick={() => {
-                        setPvDailyIndividualOutputs(false);
-                        analyzePvDailyYield();
+            <SubMenu key={'view'} title={'View'}>
+                <Menu.Item key={'info-panel-check-box'}>
+                    <Checkbox checked={viewState.showInfoPanel} onChange={(e) => {
+                        setCommonStore((state) => {
+                            state.viewState.showInfoPanel = e.target.checked;
+                        });
                     }}>
-                        Analyze Daily Yield and Report Only Total
-                    </Menu.Item>
-                    <Menu.Item key={'solar-panel-daily-yield-individual'} onClick={() => {
-                        setPvDailyIndividualOutputs(true);
-                        analyzePvDailyYield();
+                        Site Information
+                    </Checkbox>
+                </Menu.Item>
+                <Menu.Item key={'map-panel-check-box'}>
+                    <Checkbox checked={viewState.showMapPanel} onChange={(e) => {
+                        setCommonStore((state) => {
+                            state.viewState.showMapPanel = e.target.checked;
+                        });
                     }}>
-                        Analyze Daily Yield also Report Individual Outputs
-                    </Menu.Item>
-                    <Menu.Item key={'solar-panel-yearly-yield-only-total'} onClick={() => {
-                        setPvYearlyIndividualOutputs(false);
-                        analyzePvYearlyYield();
+                        Map
+                    </Checkbox>
+                </Menu.Item>
+                <Menu.Item key={'weather-panel-check-box'}>
+                    <Checkbox checked={viewState.showWeatherPanel} onChange={(e) => {
+                        setCommonStore((state) => {
+                            state.viewState.showWeatherPanel = e.target.checked;
+                        });
                     }}>
-                        Analyze Yearly Yield and Report Only Total
-                    </Menu.Item>
-                    <Menu.Item key={'solar-panel-yearly-yield-individual'} onClick={() => {
-                        setPvYearlyIndividualOutputs(true);
-                        analyzePvYearlyYield();
+                        Weather Data
+                    </Checkbox>
+                </Menu.Item>
+                <Menu.Item key={'sticky-note-panel-check-box'}>
+                    <Checkbox checked={viewState.showStickyNotePanel} onChange={(e) => {
+                        setCommonStore((state) => {
+                            state.viewState.showStickyNotePanel = e.target.checked;
+                        });
                     }}>
-                        Analyze Yearly Yield also Report Individual Outputs
-                    </Menu.Item>
-                </Menu>
+                        Sticky Note
+                    </Checkbox>
+                </Menu.Item>
             </SubMenu>
-            <Menu.Item key="screenshot" onClick={takeScreenshot} style={{paddingLeft: '36px'}}>
-                Take Screenshot
-            </Menu.Item>
-            <Menu.Item key="about" onClick={gotoAboutPage} style={{paddingLeft: '36px'}}>
+            <SubMenu key={'sensors'} title={'Sensors'}>
+                <Menu.Item key={'sensor-collect-daily-data'} onClick={collectDailyLightSensorData}>
+                    Collect Daily Data
+                </Menu.Item>
+                <Menu.Item key={'sensor-collect-yearly-data'} onClick={collectYearlyLightSensorData}>
+                    Collect Yearly Data
+                </Menu.Item>
+                <SubMenu key={'sensor-simulation-options'} title={'Options'}>
+                    <Menu>
+                        <Menu.Item key={'sensor-simulation-sampling-frequency'}>
+                            <Space style={{width: '150px'}}>Sampling Frequency: </Space>
+                            <InputNumber min={1}
+                                         max={60}
+                                         step={1}
+                                         style={{width: 60}}
+                                         precision={0}
+                                         value={world.timesPerHour}
+                                         formatter={(a) => Number(a).toFixed(0)}
+                                         onChange={(value) => {
+                                             setCommonStore((state) => {
+                                                 state.world.timesPerHour = value;
+                                             });
+                                         }}
+                            />
+                            <Space style={{paddingLeft: '10px'}}>Times per Hour</Space>
+                        </Menu.Item>
+                    </Menu>
+                </SubMenu>
+            </SubMenu>
+            <SubMenu key={'solar-panels'} title={'Solar Panels'}>
+                <Menu.Item key={'solar-panel-daily-yield'} onClick={() => {
+                    setPvDailyIndividualOutputs(false);
+                    analyzePvDailyYield();
+                }}>
+                    Analyze Daily Yield
+                </Menu.Item>
+                <Menu.Item key={'solar-panel-yearly-yield'} onClick={() => {
+                    setPvYearlyIndividualOutputs(false);
+                    analyzePvYearlyYield();
+                }}>
+                    Analyze Yearly Yield
+                </Menu.Item>
+                <SubMenu key={'solar-panel-simulation-options'} title={'Options'}>
+                    <Menu>
+                        <Menu.Item key={'solar-panel-simulation-sampling-frequency'}>
+                            <Space style={{width: '150px'}}>Sampling Frequency: </Space>
+                            <InputNumber min={1}
+                                         max={60}
+                                         step={1}
+                                         style={{width: 60}}
+                                         precision={0}
+                                         value={world.timesPerHour}
+                                         formatter={(a) => Number(a).toFixed(0)}
+                                         onChange={(value) => {
+                                             setCommonStore((state) => {
+                                                 state.world.timesPerHour = value;
+                                             });
+                                         }}
+                            />
+                            <Space style={{paddingLeft: '10px'}}>Times per Hour</Space>
+                        </Menu.Item>
+                        <Menu.Item key={'solar-panel-discretization'}>
+                            <Space style={{width: '150px'}}>Panel Discretization: </Space>
+                            <Select style={{width: '165px'}}
+                                    value={world.discretization ?? Discretization.EXACT}
+                                    onChange={(value) => {
+                                        setCommonStore(state => {
+                                            state.world.discretization = value;
+                                        });
+                                    }}
+                            >
+                                <Option key={Discretization.EXACT} value={Discretization.EXACT}>
+                                    {Discretization.EXACT}
+                                </Option>)
+                                <Option key={Discretization.APPROXIMATE} value={Discretization.APPROXIMATE}>
+                                    {Discretization.APPROXIMATE}
+                                </Option>)
+                            </Select>
+                        </Menu.Item>
+                        {world.discretization === Discretization.APPROXIMATE &&
+                        <Menu.Item key={'solar-panel-simulation-grid-cell-size'}>
+                            <Space style={{width: '150px'}}>Grid Cell Size: </Space>
+                            <InputNumber min={0.1}
+                                         max={5}
+                                         step={0.1}
+                                         style={{width: 60}}
+                                         precision={1}
+                                         value={world.solarPanelGridCellSize ?? 0.5}
+                                         formatter={(a) => Number(a).toFixed(1)}
+                                         onChange={(value) => {
+                                             setCommonStore((state) => {
+                                                 state.world.solarPanelGridCellSize = value;
+                                             });
+                                         }}
+                            />
+                            <Space style={{paddingLeft: '10px'}}>m</Space>
+                        </Menu.Item>
+                        }
+                    </Menu>
+                </SubMenu>
+            </SubMenu>
+            <Menu.Item key="about" onClick={gotoAboutPage}>
                 About Us
             </Menu.Item>
         </Menu>

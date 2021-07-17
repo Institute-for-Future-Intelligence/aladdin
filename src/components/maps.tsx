@@ -2,14 +2,14 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {memo, useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {GoogleMap, Marker} from '@react-google-maps/api';
 import {useStore} from "../stores/common";
 
 const containerStyle = {
     border: '1px solid',
-    width: '400px',
-    height: '400px'
+    width: '480px',
+    height: '480px'
 };
 
 const Maps = () => {
@@ -151,4 +151,4 @@ const Maps = () => {
     );
 };
 
-export default memo(Maps);
+export default React.memo(Maps);
