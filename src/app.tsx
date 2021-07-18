@@ -44,11 +44,13 @@ import YearlyPvYieldPanel from "./panels/yearlyPvYieldPanel";
 import DailyPvYieldPanel from "./panels/dailyPvYieldPanel";
 import Lights from './lights';
 import Grid from './grid';
+import CameraController from './cameraController';
 
 const App = () => {
 
     const setCommonStore = useStore(state => state.set);
-    const world = useStore(state => state.world);
+    const worldLatitude = useStore(state => state.world.latitude);
+    const worldLongitude = useStore(state => state.world.longitude);
     const viewState = useStore(state => state.viewState);
     const loadWeatherData = useStore(state => state.loadWeatherData);
     const getClosestCity = useStore(state => state.getClosestCity);
@@ -80,8 +82,8 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        setCity(getClosestCity(world.latitude, world.longitude));
-    }, [world.latitude, world.longitude, weatherData]);
+        setCity(getClosestCity(worldLatitude, worldLongitude));
+    }, [worldLatitude, worldLongitude, weatherData]);
 
     useEffect(() => {
         if (canvasRef.current) {
@@ -239,11 +241,8 @@ const App = () => {
                     <Canvas shadows={true}
                             gl={{preserveDrawingBuffer: true}}
                             frameloop={'demand'}
-                            camera={{
-                                position: world.cameraPosition,
-                                fov: 45,
-                            }}
                             style={{height: 'calc(100vh - 70px)', backgroundColor: 'black'}}>
+                        <CameraController />
                         <OrbitController
                             orbitControlsRef={orbitControlsRef}
                             canvasRef={canvasRef}
@@ -252,21 +251,22 @@ const App = () => {
 
                         <ElementsRenderer />
                         <Grid />
-                        <Suspense fallback={null}>
-                            <Compass />
-                            {/*<Obj/>*/}
-                            <SensorSimulation city={city}
+                        {viewState.axes && <Axes/>}
+                        {viewState.heliodon && <Heliodon />}
+
+                        <SensorSimulation city={city}
                                               dailyLightSensorDataFlag={dailyLightSensorDataFlag}
                                               yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}/>
-                            <SolarPanelSimulation city={city}
-                                                  dailyIndividualOutputs={pvDailyIndividualOutputs}
-                                                  yearlyIndividualOutputs={pvYearlyIndividualOutputs}
-                                                  dailyPvYieldFlag={pvDailyYieldFlag}
-                                                  yearlyPvYieldFlag={pvYearlyYieldFlag}/>
-                            {viewState.axes && <Axes/>}
+                        <SolarPanelSimulation city={city}
+                                                dailyIndividualOutputs={pvDailyIndividualOutputs}
+                                                yearlyIndividualOutputs={pvYearlyIndividualOutputs}
+                                                dailyPvYieldFlag={pvDailyYieldFlag}
+                                                yearlyPvYieldFlag={pvYearlyYieldFlag}/>
+                        <Suspense fallback={null}>
+                            <Compass />
                             <Ground/>
                             {viewState.groundImage && <GroundImage/>}
-                            {viewState.heliodon && <Heliodon />}
+                            {/* <Obj/> */}
                         </Suspense>
                         <Suspense fallback={null}>
                             <Sky theme={viewState.theme} />
