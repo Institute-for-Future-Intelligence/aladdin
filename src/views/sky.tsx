@@ -35,20 +35,18 @@ const Sky = ({
     const sunlightDirection = useStore(state => state.sunlightDirection);
     const night = sunlightDirection.y <= 0;
 
-    let scale = 1;
-    switch (theme) {
-        case 'Desert':
-            scale = 0.5;
-            break;
-        case 'Forest':
-            scale = 0.3;
-            break;
-        case 'Grassland':
-            scale = 0.2;
-            break;
-        default:
-            scale = 0.2;
-    }
+    const scale = useMemo(() => {
+        switch (theme) {
+            case 'Desert':
+                return 0.5;
+            case 'Forest':
+                return 0.3;
+            case 'Grassland':
+                return 0.2;
+            default:
+                return 0.2;
+        }
+    }, [theme]);
 
     const textureImg = useMemo(() => {
         switch (theme) {
