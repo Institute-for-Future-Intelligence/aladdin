@@ -56,8 +56,13 @@ const MainMenu = ({
                   }: MainMenuProps) => {
 
     const setCommonStore = useStore(state => state.set);
-    const world = useStore(state => state.world);
-    const viewState = useStore(state => state.viewState);
+    const timesPerHour = useStore(state => state.world.timesPerHour);
+    const discretization = useStore(state => state.world.discretization);
+    const solarPanelGridCellSize = useStore(state => state.world.solarPanelGridCellSize);
+    const showInfoPanel = useStore(state => state.viewState.showInfoPanel);
+    const showMapPanel = useStore(state => state.viewState.showMapPanel);
+    const showWeatherPanel = useStore(state => state.viewState.showWeatherPanel);
+    const showStickyNotePanel = useStore(state => state.viewState.showStickyNotePanel);
     const exportContent = useStore(state => state.exportContent);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [fileName, setFileName] = useState<string>('aladdin.json');
@@ -129,7 +134,7 @@ const MainMenu = ({
             </SubMenu>
             <SubMenu key={'view'} title={'View'}>
                 <Menu.Item key={'info-panel-check-box'}>
-                    <Checkbox checked={viewState.showInfoPanel} onChange={(e) => {
+                    <Checkbox checked={showInfoPanel} onChange={(e) => {
                         setCommonStore((state) => {
                             state.viewState.showInfoPanel = e.target.checked;
                         });
@@ -138,7 +143,7 @@ const MainMenu = ({
                     </Checkbox>
                 </Menu.Item>
                 <Menu.Item key={'map-panel-check-box'}>
-                    <Checkbox checked={viewState.showMapPanel} onChange={(e) => {
+                    <Checkbox checked={showMapPanel} onChange={(e) => {
                         setCommonStore((state) => {
                             state.viewState.showMapPanel = e.target.checked;
                         });
@@ -147,7 +152,7 @@ const MainMenu = ({
                     </Checkbox>
                 </Menu.Item>
                 <Menu.Item key={'weather-panel-check-box'}>
-                    <Checkbox checked={viewState.showWeatherPanel} onChange={(e) => {
+                    <Checkbox checked={showWeatherPanel} onChange={(e) => {
                         setCommonStore((state) => {
                             state.viewState.showWeatherPanel = e.target.checked;
                         });
@@ -156,7 +161,7 @@ const MainMenu = ({
                     </Checkbox>
                 </Menu.Item>
                 <Menu.Item key={'sticky-note-panel-check-box'}>
-                    <Checkbox checked={viewState.showStickyNotePanel} onChange={(e) => {
+                    <Checkbox checked={showStickyNotePanel} onChange={(e) => {
                         setCommonStore((state) => {
                             state.viewState.showStickyNotePanel = e.target.checked;
                         });
@@ -181,7 +186,7 @@ const MainMenu = ({
                                          step={1}
                                          style={{width: 60}}
                                          precision={0}
-                                         value={world.timesPerHour}
+                                         value={timesPerHour}
                                          formatter={(a) => Number(a).toFixed(0)}
                                          onChange={(value) => {
                                              setCommonStore((state) => {
@@ -216,7 +221,7 @@ const MainMenu = ({
                                          step={1}
                                          style={{width: 60}}
                                          precision={0}
-                                         value={world.timesPerHour}
+                                         value={timesPerHour}
                                          formatter={(a) => Number(a).toFixed(0)}
                                          onChange={(value) => {
                                              setCommonStore((state) => {
@@ -229,7 +234,7 @@ const MainMenu = ({
                         <Menu.Item key={'solar-panel-discretization'}>
                             <Space style={{width: '150px'}}>Panel Discretization: </Space>
                             <Select style={{width: '165px'}}
-                                    value={world.discretization ?? Discretization.EXACT}
+                                    value={discretization ?? Discretization.EXACT}
                                     onChange={(value) => {
                                         setCommonStore(state => {
                                             state.world.discretization = value;
@@ -244,7 +249,7 @@ const MainMenu = ({
                                 </Option>)
                             </Select>
                         </Menu.Item>
-                        {world.discretization === Discretization.APPROXIMATE &&
+                        {discretization === Discretization.APPROXIMATE &&
                         <Menu.Item key={'solar-panel-simulation-grid-cell-size'}>
                             <Space style={{width: '150px'}}>Grid Cell Size: </Space>
                             <InputNumber min={0.1}
@@ -252,7 +257,7 @@ const MainMenu = ({
                                          step={0.1}
                                          style={{width: 60}}
                                          precision={1}
-                                         value={world.solarPanelGridCellSize ?? 0.5}
+                                         value={solarPanelGridCellSize ?? 0.5}
                                          formatter={(a) => Number(a).toFixed(1)}
                                          onChange={(value) => {
                                              setCommonStore((state) => {

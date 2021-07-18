@@ -52,9 +52,12 @@ export interface InfoPanelProps {
 
 const InfoPanel = ({city}: InfoPanelProps) => {
 
-    const world = useStore(state => state.world);
+    const world_date = useStore(state => state.world.date);
+    const address = useStore(state => state.world.address);
+    const latitude = useStore(state => state.world.latitude);
+    const longitude = useStore(state => state.world.longitude);
     const weatherData = useStore(state => state.weatherData);
-    const now = new Date(world.date);
+    const now = new Date(world_date);
     const [dailyTemperatures, setDailyTemperatures] = useState({low: 0, high: 20});
     const [currentTemperature, setCurrentTemperature] = useState<number>(10);
 
@@ -71,7 +74,7 @@ const InfoPanel = ({city}: InfoPanelProps) => {
                 setCurrentTemperature(c);
             }
         }
-    }, [city, world.date]);
+    }, [city, world_date]);
 
     const color = daytime ? 'navajowhite' : 'antiquewhite';
 
@@ -86,9 +89,9 @@ const InfoPanel = ({city}: InfoPanelProps) => {
                                      style={{paddingLeft: '10px'}}
                     />
                     {
-                        (world.address ? world.address : '') + ' (' +
-                        Math.abs(world.latitude).toFixed(2) + '° ' + (world.latitude > 0 ? 'N' : 'S') + ', ' +
-                        Math.abs(world.longitude).toFixed(2) + '° ' + (world.longitude > 0 ? 'E' : 'W') + ')'
+                        (address ?? '') + ' (' +
+                        Math.abs(latitude).toFixed(2) + '° ' + (latitude > 0 ? 'N' : 'S') + ', ' +
+                        Math.abs(longitude).toFixed(2) + '° ' + (longitude > 0 ? 'E' : 'W') + ')'
                     }
                     <FontAwesomeIcon title={'Date'}
                                      icon={faCalendarDay}

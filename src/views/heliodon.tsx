@@ -66,7 +66,8 @@ const Heliodon = ({}: HeliodonProps) => {
         if (r < Math.abs(max.y)) r = Math.abs(max.y);
         if (r < Math.abs(max.z)) r = Math.abs(max.z);
         if (!isNaN(r) && isFinite(r)) {
-            setRadius(Math.max(10, r * 1.25)); // make it 25% larger than the bounding box
+            // have to round this, otherwise the result is different even if nothing moved.
+            setRadius(Math.round(Math.max(10, r * 1.25))); // make it 25% larger than the bounding box
         }
     }, [aabb]);
 

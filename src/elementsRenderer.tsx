@@ -25,7 +25,7 @@ export interface ElementsRendererProps {
 const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererProps) => {
 
     const setCommonStore = useStore(state => state.set);
-    const viewState = useStore(state => state.viewState);
+    const heliodon = useStore(state => state.viewState.heliodon);
     const elements = useStore(state => state.elements);
     const groupRef = useRef<Group>();
 
@@ -50,7 +50,7 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
                 });
             }
         }
-    }, [elements, viewState.heliodon]);
+    }, [elements, heliodon]);
 
     return (
         <group name={'Content'} ref={groupRef}>
@@ -77,4 +77,4 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
     );
 };
 
-export default ElementsRenderer;
+export default React.memo(ElementsRenderer);

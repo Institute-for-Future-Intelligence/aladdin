@@ -50,7 +50,7 @@ const Human = ({
     const {gl: {domElement}, camera} = useThree();
 
     // have to add this to listen to world(camera) change, this is better than memo's shallow campare
-    useStore(state => state.world);
+    useStore(state => state.world.cameraPosition);
     const cameraX = camera.position.x;
     const cameraZ = camera.position.z;
 
