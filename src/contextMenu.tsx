@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from "styled-components";
 import 'antd/dist/antd.css';
 import {useStore} from "./stores/common";
@@ -67,6 +67,10 @@ const ContextMenu = ({
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const selectedElement = getSelectedElement();
     const [labelText, setLabelText] = useState<string>(selectedElement?.label ?? '');
+
+    useEffect(() => {
+        setLabelText(selectedElement?.label ?? '');
+    }, [selectedElement]);
 
     const copyElement = () => {
         if (selectedElement) {
