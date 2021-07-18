@@ -57,7 +57,8 @@ const Header = styled.div`
 const HeliodonPanel = () => {
 
     const setCommonStore = useStore(state => state.set);
-    const world = useStore(state => state.world);
+    const world_date = useStore(state => state.world.date);
+    const latitude = useStore(state => state.world.latitude);
     const viewState = useStore(state => state.viewState);
     const animateSun = useStore(state => state.animateSun);
     const requestRef = useRef<number>(0);
@@ -69,7 +70,7 @@ const HeliodonPanel = () => {
         x: isNaN(viewState.heliodonPanelX) ? 0 : Math.max(viewState.heliodonPanelX, wOffset - window.innerWidth),
         y: isNaN(viewState.heliodonPanelY) ? 0 : Math.min(viewState.heliodonPanelY, window.innerHeight - hOffset)
     });
-    const date = useMemo(() => new Date(world.date), [world.date]);
+    const date = useMemo(() => new Date(world_date), [world_date]);
 
     // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
     useEffect(() => {
@@ -203,14 +204,14 @@ const HeliodonPanel = () => {
                             />
                         </div>
                         <div>
-                            Latitude: {world.latitude.toFixed(4)}°
+                            Latitude: {latitude.toFixed(4)}°
                             <Slider
                                 style={{width: '150px'}}
                                 marks={{'-90': '-90°', 0: '0°', 90: '90°'}}
                                 min={-90}
                                 max={90}
                                 tooltipVisible={false}
-                                defaultValue={world.latitude}
+                                defaultValue={latitude}
                                 onChange={(value: number) => {
                                     setCommonStore(state => {
                                         state.world.latitude = value;

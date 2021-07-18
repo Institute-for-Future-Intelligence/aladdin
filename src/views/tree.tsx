@@ -42,8 +42,8 @@ const Tree = ({
     cy = -cy; // we want positive y to point north
 
     const setCommonStore = useStore(state => state.set);
-    const world = useStore(state => state.world);
-    const now = new Date(world.date);
+    const date = useStore(state => state.world.date);
+    const now = new Date(date);
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const [hovered, setHovered] = useState(false);
     const meshRef = useRef<Mesh>(null!);
@@ -53,6 +53,7 @@ const Tree = ({
     const month = now.getMonth() + 1;
     const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
 
+    useStore(state => state.world.cameraPosition);
     const sunlightDirection = useStore(state => state.sunlightDirection);
     const sunlightX = sunlightDirection.x;
     const sunlightZ = sunlightDirection.z;

@@ -19,14 +19,12 @@ import {useTexture} from "@react-three/drei";
 
 export interface SkyProps {
     theme?: string,
-    night?: boolean,
 
     [key: string]: any;
 }
 
 const Sky = ({
                  theme = 'Default',
-                 night = false,
                  ...props
              }: SkyProps) => {
 
@@ -34,18 +32,23 @@ const Sky = ({
     const selectNone = useStore(state => state.selectNone);
     const meshRef = useRef<Mesh>(null!);
 
-    const scale = useMemo(() => {
-        switch (theme) {
-            case 'Desert':
-                return 0.5;
-            case 'Forest':
-                return 0.3;
-            case 'Grassland':
-                return 0.2;
-            default:
-                return 0.2;
-        }
-    }, [theme]);
+    const sunlightDirection = useStore(state => state.sunlightDirection);
+    const night = sunlightDirection.y <= 0;
+
+    let scale = 1;
+    switch (theme) {
+        case 'Desert':
+            scale = 0.5;
+            break;
+        case 'Forest':
+            scale = 0.3;
+            break;
+        case 'Grassland':
+            scale = 0.2;
+            break;
+        default:
+            scale = 0.2;
+    }
 
     const textureImg = useMemo(() => {
         switch (theme) {
@@ -90,7 +93,7 @@ const Sky = ({
                 clickSky(e);
             }}
         >
-            <sphereGeometry args={[900, 16, 8, 0, 2 * Math.PI, 0, Math.PI / 2]}/>
+            <sphereGeometry args={[900, 16, 16, 0, 2 * Math.PI, 0, Math.PI / 2]}/>
             <meshBasicMaterial map={texture}
                                side={BackSide}
                                opacity={1}

@@ -46,23 +46,24 @@ const ButtonsContainer = styled.div`
 `;
 
 export interface MainToolBarProps {
-    heliodonRadius: number;
     orbitControls?: OrbitControls;
 }
 
 const MainToolBar = ({
-                         heliodonRadius = 10,
                          orbitControls,
                      }: MainToolBarProps) => {
 
     const setCommonStore = useStore(state => state.set);
-    const viewState = useStore(state => state.viewState);
+    const autoRotate = useStore(state => state.viewState.autoRotate);
+    const showHeliodonPanel = useStore(state => state.viewState.showHeliodonPanel);
+    const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const user = useStore(state => state.user);
     const exportContent = useStore(state => state.exportContent);
     const clearContent = useStore(state => state.clearContent);
     const showCloudFilePanel = useStore(state => state.showCloudFilePanel);
     const showAccountSettingsPanel = useStore(state => state.showAccountSettingsPanel);
     const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
+    const heliodonRadius = useStore(state => state.heliodonRadius);
 
     const [loading, setLoading] = useState(false);
     const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
@@ -514,14 +515,14 @@ const MainToolBar = ({
                         <FontAwesomeIcon title={'Auto rotate'}
                                          icon={faAsymmetrik}
                                          size={'3x'}
-                                         color={viewState.autoRotate ? 'antiquewhite' : '#666666'}
+                                         color={autoRotate ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={toggleAutoRotate}
                         />
                         <FontAwesomeIcon title={'Show helidon panel'}
                                          icon={faSun}
                                          size={'3x'}
-                                         color={viewState.showHeliodonPanel ? 'antiquewhite' : '#666666'}
+                                         color={showHeliodonPanel ? 'antiquewhite' : '#666666'}
                                          style={{paddingRight: '12px', cursor: 'pointer'}}
                                          onClick={toggleHelidonPanel}
                         />
@@ -533,7 +534,7 @@ const MainToolBar = ({
                              style={{
                                  paddingRight: '2px',
                                  paddingBottom: '20px',
-                                 filter: viewState.shadowEnabled ?
+                                 filter: shadowEnabled ?
                                      'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)'
                                      :
                                      'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)',

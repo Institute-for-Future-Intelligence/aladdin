@@ -62,23 +62,30 @@ const Header = styled.div`
 const MapPanel = () => {
 
     const setCommonStore = useStore(state => state.set);
-    const world = useStore(state => state.world);
-    const viewState = useStore(state => state.viewState);
+    const address = useStore(state => state.world.address);
+    const latitude = useStore(state => state.world.latitude);
+    const longitude = useStore(state => state.world.longitude);
+    const mapPanelX = useStore(state => state.viewState.mapPanelX);
+    const mapPanelY = useStore(state => state.viewState.mapPanelY);
+    const groundImage = useStore(state => state.viewState.groundImage);
+    const mapWeatherStations = useStore(state => state.viewState.mapWeatherStations);
+    const mapZoom = useStore(state => state.viewState.mapZoom);
+
     const searchBox = useRef<google.maps.places.SearchBox>();
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 460;
     const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 40 : 600;
     const [curPosition, setCurPosition] = useState({
-        x: isNaN(viewState.mapPanelX) ? 0 : Math.min(viewState.mapPanelX, window.innerWidth - wOffset),
-        y: isNaN(viewState.mapPanelY) ? 0 : Math.min(viewState.mapPanelY, window.innerHeight - hOffset)
+        x: isNaN(mapPanelX) ? 0 : Math.min(mapPanelX, window.innerWidth - wOffset),
+        y: isNaN(mapPanelY) ? 0 : Math.min(mapPanelY, window.innerHeight - hOffset)
     });
 
     // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
     useEffect(() => {
         const handleResize = () => {
             setCurPosition({
-                x: Math.min(viewState.mapPanelX, window.innerWidth - wOffset),
-                y: Math.min(viewState.mapPanelY, window.innerHeight - hOffset)
+                x: Math.min(mapPanelX, window.innerWidth - wOffset),
+                y: Math.min(mapPanelY, window.innerHeight - hOffset)
             });
         };
         window.addEventListener('resize', handleResize);
@@ -165,7 +172,7 @@ const MapPanel = () => {
                             <Space direction={'horizontal'}>
                                 <Space>Image on Ground:</Space>
                                 <Switch title={'Show ground image'}
-                                        checked={viewState.groundImage}
+                                        checked={groundImage}
                                         onChange={(checked) => {
                                             setCommonStore(state => {
                                                 state.viewState.groundImage = checked;
@@ -174,7 +181,7 @@ const MapPanel = () => {
                                 />
                                 <Space>Stations on Map:</Space>
                                 <Switch title={'Show weather stations'}
-                                        checked={viewState.mapWeatherStations}
+                                        checked={mapWeatherStations}
                                         onChange={(checked) => {
                                             setMapWeatherStations(checked);
                                         }}
@@ -188,7 +195,7 @@ const MapPanel = () => {
                                                      onPlacesChanged={onPlacesChanged}>
                                     <input
                                         type="text"
-                                        placeholder={world.address}
+                                        placeholder={address}
                                         style={{
                                             boxSizing: `border-box`,
                                             border: `1px solid transparent`,
@@ -212,8 +219,8 @@ const MapPanel = () => {
                                 <div>
                                     <Maps/>
                                     <p style={{paddingTop: '10px'}}>
-                                        Coordinates: ({world.latitude.toFixed(4)}°, {world.longitude.toFixed(4)}°),
-                                        Zoom: {viewState.mapZoom}
+                                        Coordinates: ({latitude.toFixed(4)}°, {longitude.toFixed(4)}°),
+                                        Zoom: {mapZoom}
                                     </p>
                                 </div>
                             </Space>

@@ -33,7 +33,6 @@ const SolarPanel = ({
                         poleRadius,
                         poleSpacing,
                         drawSunBeam,
-                        sunBeamLength = 100,
                         rotation = [0, 0, 0],
                         normal = [0, 0, 1],
                         color = 'white',
@@ -47,7 +46,8 @@ const SolarPanel = ({
                     }: SolarPanelModel) => {
 
     const setCommonStore = useStore(state => state.set);
-    const world = useStore(state => state.world);
+    const date = useStore(state => state.world.date);
+    const latitude = useStore(state => state.world.latitude);
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const getElementById = useStore(state => state.getElementById);
     const resizeHandleType = useStore(state => state.resizeHandleType);
@@ -63,6 +63,11 @@ const SolarPanel = ({
     const resizeHandleUpperRef = useRef<Mesh>();
     const resizeHandleLeftRef = useRef<Mesh>();
     const resizeHandleRightRef = useRef<Mesh>();
+
+    const heliodonRadius = useStore(state => state.heliodonRadius);
+    const sunBeamLength = Math.max(100, heliodonRadius);
+
+    console.log('solar panel')
 
     if (parent) {
         const p = getElementById(parent.id);
@@ -248,8 +253,8 @@ const SolarPanel = ({
     };
 
     const sunDirection = useMemo(() => {
-        return Util.modelToView(getSunDirection(new Date(world.date), world.latitude));
-    }, [world.date, world.latitude]);
+        return Util.modelToView(getSunDirection(new Date(date), latitude));
+    }, [date, latitude]);
     const rot = getElementById(parent.id)?.rotation[2];
     const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(Util.UNIT_VECTOR_POS_Y, -rot) : sunDirection;
 
@@ -270,7 +275,7 @@ const SolarPanel = ({
             }
         }
         return new Euler(tiltAngle, relativeAzimuth, 0, 'YXZ');
-    }, [trackerType, world.date, tiltAngle, relativeAzimuth]);
+    }, [trackerType, date, tiltAngle, relativeAzimuth]);
 
     const normalVector = useMemo(() => {
         const v = new Vector3();

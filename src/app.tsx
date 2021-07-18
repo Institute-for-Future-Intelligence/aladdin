@@ -31,7 +31,6 @@ import {Modal} from "antd";
 import DropdownContextMenu from "./contextMenu";
 import WeatherPanel from "./panels/weatherPanel";
 import {GraphDataType, ObjectType} from "./types";
-import {computeDeclinationAngle, computeHourAngle, computeSunLocation} from "./analysis/sunTools";
 import SensorSimulation from "./analysis/sensorSimulation";
 import SolarPanelSimulation from "./analysis/solarPanelSimulation";
 import YearlyLightSensorPanel from "./panels/yearlyLightSensorPanel";
@@ -43,31 +42,27 @@ import InfoPanel from "./panels/infoPanel";
 import PvModelPanel from "./panels/pvModelPanel";
 import YearlyPvYieldPanel from "./panels/yearlyPvYieldPanel";
 import DailyPvYieldPanel from "./panels/dailyPvYieldPanel";
+import Lights from './lights';
+import Grid from './grid';
+import CameraController from './cameraController';
 
 const App = () => {
 
     const setCommonStore = useStore(state => state.set);
-    const world = useStore(state => state.world);
+    const worldLatitude = useStore(state => state.world.latitude);
+    const worldLongitude = useStore(state => state.world.longitude);
     const viewState = useStore(state => state.viewState);
     const loadWeatherData = useStore(state => state.loadWeatherData);
     const getClosestCity = useStore(state => state.getClosestCity);
     const loadPvModules = useStore(state => state.loadPvModules);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const deleteElementById = useStore(state => state.deleteElementById);
-    const aabb = useStore(state => state.aabb);
     const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
     const countElementsByType = useStore(state => state.countElementsByType);
 
-    const grid = useStore(state => state.grid);
-    const enableOrbitController = useStore(state => state.enableOrbitController);
     const weatherData = useStore(state => state.weatherData);
 
-    const sunlightDirection = useStore(state => state.sunlightDirection);
-    const setSunlightDirection = useStore(state => state.setSunlightDirection);
-
     const [loading, setLoading] = useState(true);
-    const [hourAngle, setHourAngle] = useState<number>(0);
-    const [declinationAngle, setDeclinationAngle] = useState<number>(0);
     const [city, setCity] = useState<string | null>('Boston MA, USA');
     const [dailyLightSensorDataFlag, setDailyLightSensorDataFlag] = useState<boolean>(false);
     const [yearlyLightSensorDataFlag, setYearlyLightSensorDataFlag] = useState<boolean>(false);
@@ -75,12 +70,10 @@ const App = () => {
     const [pvYearlyYieldFlag, setPvYearlyYieldFlag] = useState<boolean>(false);
     const [pvDailyIndividualOutputs, setPvDailyIndividualOutputs] = useState<boolean>(false);
     const [pvYearlyIndividualOutputs, setPvYearlyIndividualOutputs] = useState<boolean>(false);
-    const [heliodonRadius, setHeliodonRadius] = useState<number>(10);
     const [pvModelDialogVisible, setPvModelDialogVisible] = useState<boolean>(false);
 
     const orbitControlsRef = useRef<OrbitControls>();
     const canvasRef = useRef<HTMLCanvasElement>();
-    const now = useMemo(() => new Date(world.date), [world.date]);
 
     useEffect(() => {
         loadWeatherData();
@@ -89,39 +82,14 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        setSunlightDirection(computeSunLocation(heliodonRadius, hourAngle, declinationAngle, Util.toRadians(world.latitude))
-            .applyEuler(new Euler(-Util.HALF_PI, 0, 0)));
-    }, [world.latitude, hourAngle, declinationAngle, heliodonRadius]);
-
-    useEffect(() => {
-        const min = aabb.min;
-        const max = aabb.max;
-        let r = Math.abs(min.x);
-        if (r < Math.abs(min.y)) r = Math.abs(min.y);
-        if (r < Math.abs(min.z)) r = Math.abs(min.z);
-        if (r < Math.abs(max.x)) r = Math.abs(max.x);
-        if (r < Math.abs(max.y)) r = Math.abs(max.y);
-        if (r < Math.abs(max.z)) r = Math.abs(max.z);
-        if (!isNaN(r) && isFinite(r)) {
-            setHeliodonRadius(r * 1.25); // make it 25% larger than the bounding box
-        }
-    }, [aabb]);
-
-    useEffect(() => {
-        setCity(getClosestCity(world.latitude, world.longitude));
-    }, [world.latitude, world.longitude, weatherData]);
+        setCity(getClosestCity(worldLatitude, worldLongitude));
+    }, [worldLatitude, worldLongitude, weatherData]);
 
     useEffect(() => {
         if (canvasRef.current) {
             canvasRef.current.style.cursor = objectTypeToAdd === ObjectType.None ? 'default' : 'crosshair';
         }
     }, [objectTypeToAdd]);
-
-    const nowString = now.toString();
-    useMemo(() => {
-        setHourAngle(computeHourAngle(now));
-        setDeclinationAngle(computeDeclinationAngle(now));
-    }, [nowString]);
 
     if (useKey('Delete')) {
         const selectedElement = getSelectedElement();
@@ -132,8 +100,6 @@ const App = () => {
             }
         }
     }
-
-    const sunAboveHorizon = sunlightDirection.y > 0;
 
     const collectDailyLightSensorData = () => {
         const sensorCount = countElementsByType(ObjectType.Sensor);
@@ -181,17 +147,6 @@ const App = () => {
         });
     };
 
-    // only these elements are allowed to be on the ground
-    const legalOnGround = () => {
-        const type = getSelectedElement()?.type;
-        return (
-            type === ObjectType.Foundation ||
-            type === ObjectType.Cuboid ||
-            type === ObjectType.Tree ||
-            type === ObjectType.Human
-        );
-    };
-
     console.log('x')
 
     return (
@@ -237,7 +192,7 @@ const App = () => {
                 setPvYearlyIndividualOutputs={setPvYearlyIndividualOutputs}
                 analyzePvYearlyYield={analyzeYearlyPvYield}
             />
-            <MainToolBar orbitControls={orbitControlsRef.current} heliodonRadius={heliodonRadius}/>
+            <MainToolBar orbitControls={orbitControlsRef.current} />
             <Modal
                 width={600}
                 visible={pvModelDialogVisible}
@@ -254,7 +209,7 @@ const App = () => {
             {viewState.showMapPanel && <MapPanel/>}
             {viewState.showHeliodonPanel && <HeliodonPanel/>}
             {viewState.showStickyNotePanel && <StickyNotePanel/>}
-            {viewState.showInfoPanel && <InfoPanel city={city} daytime={sunAboveHorizon}/>}
+            {viewState.showInfoPanel && <InfoPanel city={city} />}
             {viewState.showWeatherPanel &&
             <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}/>}
             {viewState.showYearlyLightSensorPanel &&
@@ -286,62 +241,35 @@ const App = () => {
                     <Canvas shadows={true}
                             gl={{preserveDrawingBuffer: true}}
                             frameloop={'demand'}
-                            camera={{
-                                position: world.cameraPosition,
-                                fov: 45,
-                            }}
                             style={{height: 'calc(100vh - 70px)', backgroundColor: 'black'}}>
+                        <CameraController />
                         <OrbitController
-                            enabled={enableOrbitController}
-                            autoRotate={viewState.autoRotate}
-                            panCenter={world.panCenter}
                             orbitControlsRef={orbitControlsRef}
                             canvasRef={canvasRef}
                         />
+                        <Lights />
 
-                        <ElementsRenderer heliodonRadius={heliodonRadius}/>
-                        <Suspense fallback={null}>
-                            <ambientLight intensity={0.25} name={'Ambient Light'}/>
-                            <directionalLight
-                                name={'Directional Light'}
-                                color='white'
-                                position={sunlightDirection}
-                                intensity={sunAboveHorizon ? 0.5 : 0}
-                                castShadow
-                                shadow-mapSize-height={4096}
-                                shadow-mapSize-width={4096}
-                                shadowCameraNear={1}
-                                shadowCameraFar={100}
-                                shadowCameraLeft={-100}
-                                shadowCameraRight={100}
-                                shadowCameraTop={100}
-                                shadowCameraBottom={-100}
-                            />
-                            {(grid || !enableOrbitController) && legalOnGround() && !viewState.groundImage &&
-                            <gridHelper name={'Grid'} args={[WORKSPACE_SIZE, WORKSPACE_SIZE, 'gray', 'gray']}/>
-                            }
-                            <Compass/>
-                            {/*<Obj/>*/}
-                            <SensorSimulation city={city}
+                        <ElementsRenderer />
+                        <Grid />
+                        {viewState.axes && <Axes/>}
+                        {viewState.heliodon && <Heliodon />}
+
+                        <SensorSimulation city={city}
                                               dailyLightSensorDataFlag={dailyLightSensorDataFlag}
                                               yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}/>
-                            <SolarPanelSimulation city={city}
-                                                  dailyIndividualOutputs={pvDailyIndividualOutputs}
-                                                  yearlyIndividualOutputs={pvYearlyIndividualOutputs}
-                                                  dailyPvYieldFlag={pvDailyYieldFlag}
-                                                  yearlyPvYieldFlag={pvYearlyYieldFlag}/>
-                            {viewState.axes && <Axes/>}
+                        <SolarPanelSimulation city={city}
+                                                dailyIndividualOutputs={pvDailyIndividualOutputs}
+                                                yearlyIndividualOutputs={pvYearlyIndividualOutputs}
+                                                dailyPvYieldFlag={pvDailyYieldFlag}
+                                                yearlyPvYieldFlag={pvYearlyYieldFlag}/>
+                        <Suspense fallback={null}>
+                            <Compass />
                             <Ground/>
                             {viewState.groundImage && <GroundImage/>}
-                            <Sky theme={viewState.theme} night={!sunAboveHorizon}/>
-                            {viewState.heliodon &&
-                            <Heliodon
-                                hourAngle={hourAngle}
-                                declinationAngle={declinationAngle}
-                                radius={Math.max(10, heliodonRadius)}
-                                date={now}
-                                latitude={Util.toRadians(world.latitude)}
-                            />}
+                            {/* <Obj/> */}
+                        </Suspense>
+                        <Suspense fallback={null}>
+                            <Sky theme={viewState.theme} />
                         </Suspense>
                     </Canvas>
                 </div>

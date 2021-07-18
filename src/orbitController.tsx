@@ -11,9 +11,6 @@ import {Vector3} from "three";
 import {WORKSPACE_SIZE} from "./constants";
 
 export interface OrbitControllerProps {
-    enabled?: boolean;
-    autoRotate?: boolean;
-    panCenter?: Vector3;
     orbitControlsRef?: React.MutableRefObject<OrbitControls | undefined>;
     canvasRef?: React.MutableRefObject<HTMLCanvasElement | undefined>;
 
@@ -24,17 +21,18 @@ export interface OrbitControllerProps {
 // We need these to setup the OrbitControls class.
 // https://threejs.org/docs/#examples/en/controls/OrbitControls
 const OrbitController = ({
-                             enabled = true,
-                             autoRotate = false,
-                             panCenter = new Vector3(),
                              orbitControlsRef,
                              canvasRef,
                              ...rest
                          }: OrbitControllerProps) => {
 
-    const world = useStore(state => state.world);
+    const cameraPosition = useStore(state => state.world.cameraPosition);
+    const panCenter = useStore(state => state.world.panCenter);
+    const enableOrbitController = useStore(state => state.enableOrbitController);
+    const autoRotate = useStore(state => state.viewState.autoRotate);
     const setCommonStore = useStore(state => state.set);
     const setCameraPosition = useStore(state => state.setCameraPosition);
+
     const {camera, gl: {domElement}, gl, scene} = useThree();
     const setThree = useThree(state => state.set);
     // Ref to the controls, so that we can update them on every frame using useFrame
@@ -45,18 +43,18 @@ const OrbitController = ({
     useEffect(() => {
         // we have to manually set the camera position when loading a state from a file (as world is reconstructed)
         if (controls.current) {
-            controls.current.object.position.copy(world.cameraPosition);
+            controls.current.object.position.copy(cameraPosition);
             controls.current.update();
         }
-    }, [world.cameraPosition]);
+    }, [cameraPosition]);
 
     useEffect(() => {
         // we have to manually set the target position when loading a state from a file (as world is reconstructed)
         if (controls.current) {
-            controls.current.target.copy(world.panCenter);
+            controls.current.target.copy(panCenter);
             controls.current.update();
         }
-    }, [world.panCenter]);
+    }, [panCenter]);
 
     useEffect(() => {
         setThree({frameloop: autoRotate ? 'always' : 'demand'});
@@ -122,7 +120,7 @@ const OrbitController = ({
             ref={controls}
             args={[camera, domElement]}
             autoRotate={autoRotate}
-            enabled={enabled}
+            enabled={enableOrbitController}
             enableRotate={true}
             enablePan={true}
             enableZoom={true}
