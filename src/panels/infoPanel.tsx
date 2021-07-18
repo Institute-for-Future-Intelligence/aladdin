@@ -102,9 +102,9 @@ const InfoPanel = ({city, daytime}: InfoPanelProps) => {
                                      style={{paddingLeft: '10px'}}
                     />
                     {dailyTemperatures ?
+                        currentTemperature.toFixed(1) + '°C (' +
                         'Low: ' + dailyTemperatures.low.toFixed(1) + '°C, ' +
-                        'High: ' + dailyTemperatures.high.toFixed(1) + '°C, ' +
-                        'Now: ' + currentTemperature.toFixed(1) + '°C'
+                        'High: ' + dailyTemperatures.high.toFixed(1) + '°C)'
                         :
                         ''
                     }
