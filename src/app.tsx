@@ -43,6 +43,7 @@ import PvModelPanel from "./panels/pvModelPanel";
 import YearlyPvYieldPanel from "./panels/yearlyPvYieldPanel";
 import DailyPvYieldPanel from "./panels/dailyPvYieldPanel";
 import Lights from './lights';
+import Grid from './grid';
 
 const App = () => {
 
@@ -57,8 +58,6 @@ const App = () => {
     const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
     const countElementsByType = useStore(state => state.countElementsByType);
 
-    const grid = useStore(state => state.grid);
-    const enableOrbitController = useStore(state => state.enableOrbitController);
     const weatherData = useStore(state => state.weatherData);
 
     const [loading, setLoading] = useState(true);
@@ -144,17 +143,6 @@ const App = () => {
         setCommonStore(state => {
             state.viewState.showYearlyPvYieldPanel = true;
         });
-    };
-
-    // only these elements are allowed to be on the ground
-    const legalOnGround = () => {
-        const type = getSelectedElement()?.type;
-        return (
-            type === ObjectType.Foundation ||
-            type === ObjectType.Cuboid ||
-            type === ObjectType.Tree ||
-            type === ObjectType.Human
-        );
     };
 
     console.log('x')
@@ -257,19 +245,14 @@ const App = () => {
                             }}
                             style={{height: 'calc(100vh - 70px)', backgroundColor: 'black'}}>
                         <OrbitController
-                            enabled={enableOrbitController}
-                            autoRotate={viewState.autoRotate}
-                            panCenter={world.panCenter}
                             orbitControlsRef={orbitControlsRef}
                             canvasRef={canvasRef}
                         />
                         <Lights />
 
                         <ElementsRenderer />
+                        <Grid />
                         <Suspense fallback={null}>
-                            {(grid || !enableOrbitController) && legalOnGround() && !viewState.groundImage &&
-                            <gridHelper name={'Grid'} args={[WORKSPACE_SIZE, WORKSPACE_SIZE, 'gray', 'gray']}/>
-                            }
                             <Compass />
                             {/*<Obj/>*/}
                             <SensorSimulation city={city}
