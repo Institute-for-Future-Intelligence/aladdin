@@ -227,7 +227,9 @@ const CloudFilePanel = ({
                                                          color={'#666666'}
                                                          style={{cursor: 'pointer'}}
                                                          onClick={() => {
-                                                             let url = HOME_URL + '?client=web&userid=' + record.email + '&title=' + record.title;
+                                                             let url = HOME_URL + '?client=web&userid=' +
+                                                                 encodeURIComponent(record.email) + '&title=' +
+                                                                 encodeURIComponent(record.title);
                                                              copyTextToClipboard(url);
                                                              showSuccess('A link has been generated in the clip board.');
                                                          }}
