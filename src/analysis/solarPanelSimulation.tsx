@@ -4,7 +4,7 @@
 
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {calculateDiffuseAndReflectedRadiation, calculatePeakRadiation, getSunDirection} from "./sunTools";
-import {Euler, Object3D, Quaternion, Raycaster, Vector3} from "three";
+import {Euler, Intersection, Object3D, Quaternion, Raycaster, Vector3} from "three";
 import {useThree} from "@react-three/fiber";
 import {useStore} from "../stores/common";
 import {DatumEntry, Discretization, ObjectType, Orientation, ShadeTolerance, TrackerType} from "../types";
@@ -58,6 +58,8 @@ const SolarPanelSimulation = ({
     const inverterEfficiency = 0.95;
     const dustLoss = 0.05;
     const cellSize = world.solarPanelGridCellSize ?? 0.25;
+    const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
+    const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
 
     useEffect(() => {
         if (loadedDaily.current) { // avoid calling on first render
@@ -96,12 +98,13 @@ const SolarPanelSimulation = ({
         const content = scene.children.filter(c => c.name === 'Content');
         if (content.length > 0) {
             const components = content[0].children;
-            const objects: Object3D[] = [];
+            objectsRef.current.length = 0;
             for (const c of components) {
-                objects.push(...c.children.filter(x => (x.userData['simulation'] && x.uuid !== panelId)));
+                objectsRef.current.push(...c.children.filter(x => (x.userData['simulation'] && x.uuid !== panelId)));
             }
-            const intersects = ray.intersectObjects(objects);
-            return intersects.length > 0;
+            intersectionsRef.current.length = 0;
+            ray.intersectObjects(objectsRef.current, false, intersectionsRef.current);
+            return intersectionsRef.current.length > 0;
         }
         return false;
     };
