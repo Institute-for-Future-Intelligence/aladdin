@@ -79,8 +79,9 @@ const Heliodon = ({}: HeliodonProps) => {
 
     const nRibLines = 5;
 
-    const [baseGeometry, tickPoints] = useMemo(() => {
-        const geometry = new BufferGeometry();
+    const [baseGeometry, lineGeometry] = useMemo(() => {
+        const baseGeometry = new BufferGeometry();
+        const lineGeometry = new BufferGeometry();
         const basePoints: Vector3[] = [];
         const tickPoints: Vector3[] = [];
         const step = Util.TWO_PI / BASE_DIVISIONS;
@@ -128,11 +129,12 @@ const Heliodon = ({}: HeliodonProps) => {
             baseColors[j + 2] = c;
         }
 
-        geometry.setAttribute('position', new BufferAttribute(basePositions, 3));
-        geometry.setAttribute('normal', new BufferAttribute(baseNormals, 3));
-        geometry.setAttribute('color', new BufferAttribute(baseColors, 3));
+        baseGeometry.setAttribute('position', new BufferAttribute(basePositions, 3));
+        baseGeometry.setAttribute('normal', new BufferAttribute(baseNormals, 3));
+        baseGeometry.setAttribute('color', new BufferAttribute(baseColors, 3));
+        lineGeometry.setFromPoints(tickPoints);
 
-        return [geometry, tickPoints];
+        return [baseGeometry, lineGeometry];
     }, [radius]);
 
     const sunPathPoints = useMemo(() => {
@@ -218,20 +220,20 @@ const Heliodon = ({}: HeliodonProps) => {
             <group>
                 <mesh rotation={new Euler(-Util.HALF_PI, 0, 0)} name={'Heliodon'}>
                     {/* draw base */}
-                    <mesh
-                        args={[baseGeometry,
-                            new MeshBasicMaterial({
-                                side: DoubleSide,
-                                vertexColors: true,
-                                polygonOffset: true,
-                                polygonOffsetFactor: -0.7,
-                                polygonOffsetUnits: -2
-                            })
-                        ]}
-                    />
-                    <lineSegments
-                        args={[new BufferGeometry().setFromPoints(tickPoints),
-                            new MeshBasicMaterial({color: 0x000000})]}/>
+                    <mesh>
+                        <bufferGeometry {...baseGeometry} />
+                        <meshBasicMaterial 
+                            side={DoubleSide} 
+                            vertexColors 
+                            polygonOffset 
+                            polygonOffsetFactor={-0.7} 
+                            polygonOffsetUnits={-2}  
+                        />
+                    </mesh>
+                    <lineSegments>
+                        <bufferGeometry {...lineGeometry} />
+                        <meshBasicMaterial color={0x000000} />
+                    </lineSegments>
                     {/* draw sun path*/}
                     <mesh>
                         {sunPathPoints.length > 3 && <Line lineWidth={2} points={sunPathPoints} color={'yellow'}/>}
@@ -245,23 +247,19 @@ const Heliodon = ({}: HeliodonProps) => {
                                              color={'#999'}/>;
                             })
                         }
-                        <mesh
-                            args={[sunbeltGeometry,
-                                new MeshBasicMaterial({
-                                    side: DoubleSide,
-                                    color: new Color(1, 1, 0),
-                                    transparent: true,
-                                    opacity: 0.5,
-                                    clippingPlanes: [new Plane(Util.UNIT_VECTOR_POS_Y, 0)]
-                                })
-                            ]}
-                        />
-                        <mesh
-                            position={sunPosition}
-                            args={[new SphereGeometry(0.05 * radius, 10, 10),
-                                new MeshBasicMaterial({color: 0xffffff00})
-                            ]}
-                        />
+                        <mesh args={[sunbeltGeometry]}>
+                            <meshBasicMaterial
+                                    side={DoubleSide}
+                                    color={[1, 1, 0]}
+                                    transparent
+                                    opacity={0.5}
+                                    clippingPlanes={[new Plane(Util.UNIT_VECTOR_POS_Y, 0)]}
+                            />
+                        </mesh>
+                        <mesh position={sunPosition}>
+                            <sphereGeometry args={[0.05 * radius, 10, 10]} />
+                            <meshBasicMaterial color={0xffffff00} />
+                        </mesh>
                     </mesh>
                 </mesh>
                 {/* use this plane to hide the uneven edge */}
