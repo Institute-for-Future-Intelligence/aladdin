@@ -67,8 +67,6 @@ const SolarPanel = ({
     const heliodonRadius = useStore(state => state.heliodonRadius);
     const sunBeamLength = Math.max(100, heliodonRadius);
 
-    console.log('solar panel')
-
     if (parent) {
         const p = getElementById(parent.id);
         if (p) {

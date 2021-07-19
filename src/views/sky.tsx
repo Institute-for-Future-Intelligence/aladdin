@@ -91,7 +91,7 @@ const Sky = ({
                 clickSky(e);
             }}
         >
-            <sphereGeometry args={[900, 16, 16, 0, 2 * Math.PI, 0, Math.PI / 2]}/>
+            <sphereGeometry args={[900, 16, 8, 0, 2 * Math.PI, 0, Math.PI / 2]}/>
             <meshBasicMaterial map={texture}
                                side={BackSide}
                                opacity={1}
