@@ -52,12 +52,12 @@ export interface InfoPanelProps {
 
 const InfoPanel = ({city}: InfoPanelProps) => {
 
-    const world_date = useStore(state => state.world.date);
+    const dateString = useStore(state => state.world.date);
     const address = useStore(state => state.world.address);
     const latitude = useStore(state => state.world.latitude);
     const longitude = useStore(state => state.world.longitude);
     const weatherData = useStore(state => state.weatherData);
-    const now = new Date(world_date);
+    const now = new Date(dateString);
     const [dailyTemperatures, setDailyTemperatures] = useState({low: 0, high: 20});
     const [currentTemperature, setCurrentTemperature] = useState<number>(10);
 
@@ -74,7 +74,7 @@ const InfoPanel = ({city}: InfoPanelProps) => {
                 setCurrentTemperature(c);
             }
         }
-    }, [city, world_date]);
+    }, [city, dateString]);
 
     const color = daytime ? 'navajowhite' : 'antiquewhite';
 

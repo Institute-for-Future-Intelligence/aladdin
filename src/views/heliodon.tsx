@@ -22,7 +22,7 @@ import {
     TILT_ANGLE
 } from "../analysis/sunTools";
 import {Line, Plane as Drei_Plane} from "@react-three/drei";
-import { useStore } from "../stores/common";
+import {useStore} from "../stores/common";
 
 export interface HeliodonProps {
 
@@ -36,7 +36,7 @@ const DECLINATION_DIVISIONS = 12;
 const Heliodon = ({}: HeliodonProps) => {
 
     const worldLatitude = useStore(state => state.world.latitude);
-    const worldDate = useStore(state => state.world.date);
+    const dateString = useStore(state => state.world.date);
     const aabb = useStore(state => state.aabb);
     const radius = useStore(state => state.heliodonRadius);
     const heliodon = useStore(state => state.viewState.heliodon);
@@ -52,10 +52,10 @@ const Heliodon = ({}: HeliodonProps) => {
     }, [worldLatitude]);
 
     useEffect(() => {
-        const date = new Date(worldDate);
+        const date = new Date(dateString);
         setHourAngle(computeHourAngle(date));
         setDeclinationAngle(computeDeclinationAngle(date));
-    }, [worldDate]);
+    }, [dateString]);
 
     useEffect(() => {
         const min = aabb.min;
@@ -77,14 +77,13 @@ const Heliodon = ({}: HeliodonProps) => {
             .applyEuler(new Euler(-Util.HALF_PI, 0, 0)));
     }, [worldLatitude, hourAngle, declinationAngle, radius]);
 
-
     const nRibLines = 5;
 
     const [baseGeometry, tickPoints] = useMemo(() => {
         const geometry = new BufferGeometry();
         const basePoints: Vector3[] = [];
         const tickPoints: Vector3[] = [];
-        const step = Math.PI * 2 / BASE_DIVISIONS;
+        const step = Util.TWO_PI / BASE_DIVISIONS;
         let counter = 0;
         for (let angle = 0; angle < Util.TWO_PI + step / 2.0; angle += step) {
             const theta = Math.min(angle, Util.TWO_PI);
@@ -240,10 +239,10 @@ const Heliodon = ({}: HeliodonProps) => {
                             .filter(a => a.length > 3)
                             .map((a, index) => {
                                 return <Line key={index}
-                                            opacity={index === 0 || index === nRibLines ? 1 : 0.5}
-                                            lineWidth={index === 0 || index === nRibLines ? 1 : 0.5}
-                                            points={a}
-                                            color={'#999'}/>;
+                                             opacity={index === 0 || index === nRibLines ? 1 : 0.5}
+                                             lineWidth={index === 0 || index === nRibLines ? 1 : 0.5}
+                                             points={a}
+                                             color={'#999'}/>;
                             })
                         }
                         <mesh
@@ -275,7 +274,7 @@ const Heliodon = ({}: HeliodonProps) => {
                     <meshBasicMaterial transparent={true} opacity={0}/>
                 </Drei_Plane>
             </group>
-        }
+            }
         </React.Fragment>
     );
 

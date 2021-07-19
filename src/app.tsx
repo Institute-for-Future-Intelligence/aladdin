@@ -4,12 +4,10 @@
  * @author Charles Xie
  */
 
-import React, {Suspense, useEffect, useMemo, useRef, useState} from 'react';
+import React, {Suspense, useEffect, useRef, useState} from 'react';
 import {useStore} from "./stores/common";
 import useKey from "./useKey";
 import './app.css';
-import {Util} from "./Util";
-import {Euler} from "three";
 import {Canvas} from '@react-three/fiber';
 import OrbitController from "./orbitController";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
@@ -23,7 +21,7 @@ import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from "./mainMenu";
 import MapPanel from "./panels/mapPanel";
 import HeliodonPanel from "./panels/heliodonPanel";
-import {VERSION, WORKSPACE_SIZE} from "./constants";
+import {VERSION} from "./constants";
 import {showInfo, visitHomepage, visitIFI} from "./helpers";
 import AcceptCookie from "./acceptCookie";
 import GroundImage from "./views/groundImage";
@@ -192,7 +190,7 @@ const App = () => {
                 setPvYearlyIndividualOutputs={setPvYearlyIndividualOutputs}
                 analyzePvYearlyYield={analyzeYearlyPvYield}
             />
-            <MainToolBar orbitControls={orbitControlsRef.current} />
+            <MainToolBar orbitControls={orbitControlsRef.current}/>
             <Modal
                 width={600}
                 visible={pvModelDialogVisible}
@@ -209,7 +207,7 @@ const App = () => {
             {viewState.showMapPanel && <MapPanel/>}
             {viewState.showHeliodonPanel && <HeliodonPanel/>}
             {viewState.showStickyNotePanel && <StickyNotePanel/>}
-            {viewState.showInfoPanel && <InfoPanel city={city} />}
+            {viewState.showInfoPanel && <InfoPanel city={city}/>}
             {viewState.showWeatherPanel &&
             <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}/>}
             {viewState.showYearlyLightSensorPanel &&
@@ -242,34 +240,34 @@ const App = () => {
                             gl={{preserveDrawingBuffer: true}}
                             frameloop={'demand'}
                             style={{height: 'calc(100vh - 70px)', backgroundColor: 'black'}}>
-                        <CameraController />
+                        <CameraController/>
                         <OrbitController
                             orbitControlsRef={orbitControlsRef}
                             canvasRef={canvasRef}
                         />
-                        <Lights />
+                        <Lights/>
 
-                        <ElementsRenderer />
-                        <Grid />
-                        <Heliodon />
+                        <ElementsRenderer/>
+                        <Grid/>
+                        <Heliodon/>
                         {viewState.axes && <Axes/>}
 
                         <SensorSimulation city={city}
-                                              dailyLightSensorDataFlag={dailyLightSensorDataFlag}
-                                              yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}/>
+                                          dailyLightSensorDataFlag={dailyLightSensorDataFlag}
+                                          yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}/>
                         <SolarPanelSimulation city={city}
-                                                dailyIndividualOutputs={pvDailyIndividualOutputs}
-                                                yearlyIndividualOutputs={pvYearlyIndividualOutputs}
-                                                dailyPvYieldFlag={pvDailyYieldFlag}
-                                                yearlyPvYieldFlag={pvYearlyYieldFlag}/>
+                                              dailyIndividualOutputs={pvDailyIndividualOutputs}
+                                              yearlyIndividualOutputs={pvYearlyIndividualOutputs}
+                                              dailyPvYieldFlag={pvDailyYieldFlag}
+                                              yearlyPvYieldFlag={pvYearlyYieldFlag}/>
                         <Suspense fallback={null}>
-                            <Compass />
+                            <Compass/>
                             <Ground/>
                             {viewState.groundImage && <GroundImage/>}
                             {/* <Obj/> */}
                         </Suspense>
                         <Suspense fallback={null}>
-                            <Sky theme={viewState.theme} />
+                            <Sky theme={viewState.theme}/>
                         </Suspense>
                     </Canvas>
                 </div>
