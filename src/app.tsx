@@ -251,8 +251,8 @@ const App = () => {
 
                         <ElementsRenderer />
                         <Grid />
+                        <Heliodon />
                         {viewState.axes && <Axes/>}
-                        {viewState.heliodon && <Heliodon />}
 
                         <SensorSimulation city={city}
                                               dailyLightSensorDataFlag={dailyLightSensorDataFlag}

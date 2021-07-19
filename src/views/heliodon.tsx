@@ -39,6 +39,7 @@ const Heliodon = ({}: HeliodonProps) => {
     const worldDate = useStore(state => state.world.date);
     const aabb = useStore(state => state.aabb);
     const radius = useStore(state => state.heliodonRadius);
+    const heliodon = useStore(state => state.viewState.heliodon);
     const setRadius = useStore(state => state.setHeliodonRadius);
     const setSunlightDirection = useStore(state => state.setSunlightDirection);
 
@@ -213,65 +214,69 @@ const Heliodon = ({}: HeliodonProps) => {
     }, [latitude, radius]);
 
     return (
-        <group>
-            <mesh rotation={new Euler(-Util.HALF_PI, 0, 0)} name={'Heliodon'}>
-                {/* draw base */}
-                <mesh
-                    args={[baseGeometry,
-                        new MeshBasicMaterial({
-                            side: DoubleSide,
-                            vertexColors: true,
-                            polygonOffset: true,
-                            polygonOffsetFactor: -0.7,
-                            polygonOffsetUnits: -2
-                        })
-                    ]}
-                />
-                <lineSegments
-                    args={[new BufferGeometry().setFromPoints(tickPoints),
-                        new MeshBasicMaterial({color: 0x000000})]}/>
-                {/* draw sun path*/}
-                <mesh>
-                    {sunPathPoints.length > 3 && <Line lineWidth={2} points={sunPathPoints} color={'yellow'}/>}
-                    {pointArraySunPaths
-                        .filter(a => a.length > 3)
-                        .map((a, index) => {
-                            return <Line key={index}
-                                         opacity={index === 0 || index === nRibLines ? 1 : 0.5}
-                                         lineWidth={index === 0 || index === nRibLines ? 1 : 0.5}
-                                         points={a}
-                                         color={'#999'}/>;
-                        })
-                    }
+        <React.Fragment>
+            {heliodon &&
+            <group>
+                <mesh rotation={new Euler(-Util.HALF_PI, 0, 0)} name={'Heliodon'}>
+                    {/* draw base */}
                     <mesh
-                        args={[sunbeltGeometry,
+                        args={[baseGeometry,
                             new MeshBasicMaterial({
                                 side: DoubleSide,
-                                color: new Color(1, 1, 0),
-                                transparent: true,
-                                opacity: 0.5,
-                                clippingPlanes: [new Plane(Util.UNIT_VECTOR_POS_Y, 0)]
+                                vertexColors: true,
+                                polygonOffset: true,
+                                polygonOffsetFactor: -0.7,
+                                polygonOffsetUnits: -2
                             })
                         ]}
                     />
-                    <mesh
-                        position={sunPosition}
-                        args={[new SphereGeometry(0.05 * radius, 10, 10),
-                            new MeshBasicMaterial({color: 0xffffff00})
-                        ]}
-                    />
+                    <lineSegments
+                        args={[new BufferGeometry().setFromPoints(tickPoints),
+                            new MeshBasicMaterial({color: 0x000000})]}/>
+                    {/* draw sun path*/}
+                    <mesh>
+                        {sunPathPoints.length > 3 && <Line lineWidth={2} points={sunPathPoints} color={'yellow'}/>}
+                        {pointArraySunPaths
+                            .filter(a => a.length > 3)
+                            .map((a, index) => {
+                                return <Line key={index}
+                                            opacity={index === 0 || index === nRibLines ? 1 : 0.5}
+                                            lineWidth={index === 0 || index === nRibLines ? 1 : 0.5}
+                                            points={a}
+                                            color={'#999'}/>;
+                            })
+                        }
+                        <mesh
+                            args={[sunbeltGeometry,
+                                new MeshBasicMaterial({
+                                    side: DoubleSide,
+                                    color: new Color(1, 1, 0),
+                                    transparent: true,
+                                    opacity: 0.5,
+                                    clippingPlanes: [new Plane(Util.UNIT_VECTOR_POS_Y, 0)]
+                                })
+                            ]}
+                        />
+                        <mesh
+                            position={sunPosition}
+                            args={[new SphereGeometry(0.05 * radius, 10, 10),
+                                new MeshBasicMaterial({color: 0xffffff00})
+                            ]}
+                        />
+                    </mesh>
                 </mesh>
-            </mesh>
-            {/* use this plane to hide the uneven edge */}
-            <Drei_Plane
-                rotation={[-Util.HALF_PI, 0, 0]}
-                position={[0, 0, 0]}
-                args={[10000, 10000]}
-                renderOrder={-1}
-            >
-                <meshBasicMaterial transparent={true} opacity={0}/>
-            </Drei_Plane>
-        </group>
+                {/* use this plane to hide the uneven edge */}
+                <Drei_Plane
+                    rotation={[-Util.HALF_PI, 0, 0]}
+                    position={[0, 0, 0]}
+                    args={[10000, 10000]}
+                    renderOrder={-1}
+                >
+                    <meshBasicMaterial transparent={true} opacity={0}/>
+                </Drei_Plane>
+            </group>
+        }
+        </React.Fragment>
     );
 
 };
