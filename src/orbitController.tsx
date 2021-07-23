@@ -4,7 +4,7 @@
 
 import React, {useEffect, useMemo, useRef} from "react";
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
-import {useFrame, useThree} from "@react-three/fiber";
+import {Camera, useFrame, useThree} from "@react-three/fiber";
 import {useStore} from "./stores/common";
 import {Util} from "./Util";
 import {Vector3} from "three";
@@ -31,7 +31,6 @@ const OrbitController = ({
     const enableOrbitController = useStore(state => state.enableOrbitController);
     const autoRotate = useStore(state => state.viewState.autoRotate);
     const setCommonStore = useStore(state => state.set);
-    const setCameraPosition = useStore(state => state.setCameraPosition);
 
     const {camera, gl: {domElement}, gl, scene} = useThree();
     const setThree = useThree(state => state.set);
@@ -61,6 +60,9 @@ const OrbitController = ({
     }, [autoRotate]);
 
     useEffect(() => {
+        setCommonStore(state => {
+            state.cameraDirection = getCameraDirection(camera);
+        });
         const c = controls.current;
         if (c) {
             c.addEventListener('change', render);
@@ -81,12 +83,22 @@ const OrbitController = ({
         }
     }, []);
 
+    const getCameraDirection = (cam: Camera) => {
+        const dir = new Vector3().subVectors(cam.localToWorld(new Vector3(0, 1, 0)), cam.position)
+        if(dir.x == 0 && dir.z == 0) {
+            cam.getWorldDirection(dir);
+        }
+        return dir;
+    }
+
     const render = () => {
         if (controls.current) {
             controls.current.target.clamp(minPan, maxPan);
         }
         gl.render(scene, camera);
-        setCameraPosition(camera.position);
+        setCommonStore(state => {
+            state.cameraDirection = getCameraDirection(camera);
+        });
     };
 
     const onInteractionEnd = () => {

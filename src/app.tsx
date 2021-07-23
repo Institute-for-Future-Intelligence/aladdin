@@ -13,7 +13,6 @@ import OrbitController from "./orbitController";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import Sky from "./views/sky";
 import Axes from "./views/axes";
-import Compass from "./views/compass";
 import ElementsRenderer from "./elementsRenderer";
 import Ground from "./views/ground";
 import Heliodon from "./views/heliodon";
@@ -43,6 +42,7 @@ import DailyPvYieldPanel from "./panels/dailyPvYieldPanel";
 import Lights from './lights';
 import Grid from './grid';
 import CameraController from './cameraController';
+import CompassContainer from './compassContainer';
 
 const App = () => {
 
@@ -261,7 +261,6 @@ const App = () => {
                                               dailyPvYieldFlag={pvDailyYieldFlag}
                                               yearlyPvYieldFlag={pvYearlyYieldFlag}/>
                         <Suspense fallback={null}>
-                            <Compass/>
                             <Ground/>
                             {viewState.groundImage && <GroundImage/>}
                             {/* <Obj/> */}
@@ -272,6 +271,7 @@ const App = () => {
                     </Canvas>
                 </div>
             </DropdownContextMenu>
+            <CompassContainer />
             <AcceptCookie/>
         </div>
     );
