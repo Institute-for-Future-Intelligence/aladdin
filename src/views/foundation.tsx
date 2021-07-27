@@ -415,9 +415,12 @@ const Foundation = ({
                      name={ResizeHandleType.LowerLeft}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
-                         setCommonStore(state => {
-                             state.resizeAnchor.set(cx + hx, cy + hy);
-                         });
+                         if(resizeHandleLLRef.current) {
+                             setCommonStore(state => {
+                                const anchor = resizeHandleLLRef.current!.localToWorld(new Vector3(lx, 0, ly));
+                                state.resizeAnchor.set(anchor.x, anchor.z);
+                             });
+                         }
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.LowerLeft);
@@ -440,9 +443,12 @@ const Foundation = ({
                      name={ResizeHandleType.UpperLeft}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
-                         setCommonStore(state => {
-                             state.resizeAnchor.set(cx + hx, cy - hy);
-                         });
+                         if(resizeHandleULRef.current) {
+                            setCommonStore(state => {
+                               const anchor = resizeHandleULRef.current!.localToWorld(new Vector3(lx, 0, -ly));
+                               state.resizeAnchor.set(anchor.x, anchor.z);
+                            });
+                        }
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.UpperLeft);
@@ -465,9 +471,12 @@ const Foundation = ({
                      name={ResizeHandleType.LowerRight}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
-                         setCommonStore(state => {
-                             state.resizeAnchor.set(cx - hx, cy + hy);
-                         });
+                         if(resizeHandleLRRef.current) {
+                            setCommonStore(state => {
+                               const anchor = resizeHandleLRRef.current!.localToWorld(new Vector3(-lx, 0, ly));
+                               state.resizeAnchor.set(anchor.x, anchor.z);
+                            });
+                        }
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.LowerRight);
@@ -490,9 +499,12 @@ const Foundation = ({
                      name={ResizeHandleType.UpperRight}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
-                         setCommonStore(state => {
-                             state.resizeAnchor.set(cx - hx, cy - hy);
-                         });
+                         if(resizeHandleURRef.current) {
+                            setCommonStore(state => {
+                               const anchor = resizeHandleURRef.current!.localToWorld(new Vector3(-lx, 0, -ly));
+                               state.resizeAnchor.set(anchor.x, anchor.z);
+                            });
+                        }
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.UpperRight);

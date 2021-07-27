@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useMemo, useRef} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {Plane} from "@react-three/drei";
 import {useStore} from "../stores/common";
 import {DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3} from "three";
@@ -32,6 +32,7 @@ const Ground = () => {
     const intersectionPlaneRef = useRef<Mesh>();
     const grabRef = useRef<ElementModel | null>(null);
 
+    const [rotationAngle, setRotationAngle] = useState(0);
     const ray = useMemo(() => new Raycaster(), []);
     const cosAngle = useMemo(() => {
         if (grabRef.current) {
@@ -44,6 +45,11 @@ const Ground = () => {
             return Math.sin(grabRef.current.rotation[2]);
         }
         return 0;
+    }, [grabRef.current?.rotation]);
+    useEffect(() => {
+        if(grabRef.current) {
+            setRotationAngle(grabRef.current.rotation[2]);
+        }
     }, [grabRef.current?.rotation]);
 
     let intersectionPlaneType = IntersectionPlaneType.Ground;
@@ -118,6 +124,17 @@ const Ground = () => {
             type === ObjectType.Human
         );
     };
+
+    const handleResize = (p: Vector3) => {
+        const P = new Vector2(p.x, p.z);
+        const R = resizeAnchor.distanceTo(P);
+        const angle = Math.atan2(P.x-resizeAnchor.x, P.y-resizeAnchor.y) - rotationAngle;
+        const lx = Math.abs(R * Math.sin(angle));
+        const ly = Math.abs(R * Math.cos(angle));
+        const c = new Vector2().addVectors(P, resizeAnchor).divideScalar(2);
+        setElementSize(grabRef.current!.id, lx, ly);
+        setElementPosition(grabRef.current!.id, c.x, -c.y);
+    }
 
     return (
         <>
@@ -239,25 +256,7 @@ const Ground = () => {
                                                        break;
                                                }
                                            } else if (resizeHandleType) {
-                                               const lx = Math.abs(resizeAnchor.x - p.x);
-                                               const ly = Math.abs(resizeAnchor.y - p.z);
-                                               const dx = Math.abs(lx * cosAngle - ly * sinAngle) / 2;
-                                               const dy = Math.abs(lx * sinAngle + ly * cosAngle) / 2;
-                                               setElementSize(grabRef.current.id, lx, ly);
-                                               switch (resizeHandleType) {
-                                                   case ResizeHandleType.LowerLeft:
-                                                       setElementPosition(grabRef.current.id, p.x + dx, -p.z - dy);
-                                                       break;
-                                                   case ResizeHandleType.UpperLeft:
-                                                       setElementPosition(grabRef.current.id, p.x + dx, -p.z + dy);
-                                                       break;
-                                                   case ResizeHandleType.LowerRight:
-                                                       setElementPosition(grabRef.current.id, p.x - dx, -p.z - dy);
-                                                       break;
-                                                   case ResizeHandleType.UpperRight:
-                                                       setElementPosition(grabRef.current.id, p.x - dx, -p.z + dy);
-                                                       break;
-                                               }
+                                                handleResize(p);
                                            }
                                        }
                                    }
@@ -300,23 +299,7 @@ const Ground = () => {
                                                    }
                                                }
                                                if (resizeHandleType) {
-                                                   const lx = Math.max(Math.abs(resizeAnchor.x - p.x), 0.5);
-                                                   const ly = Math.max(Math.abs(resizeAnchor.y - p.z), 0.5);
-                                                   setElementSize(grabRef.current.id, lx, ly);
-                                                   switch (resizeHandleType) {
-                                                       case ResizeHandleType.LowerLeft:
-                                                           setElementPosition(grabRef.current.id, p.x + lx / 2, -p.z - ly / 2);
-                                                           break;
-                                                       case ResizeHandleType.UpperLeft:
-                                                           setElementPosition(grabRef.current.id, p.x + lx / 2, -p.z + ly / 2);
-                                                           break;
-                                                       case ResizeHandleType.LowerRight:
-                                                           setElementPosition(grabRef.current.id, p.x - lx / 2, -p.z - ly / 2);
-                                                           break;
-                                                       case ResizeHandleType.UpperRight:
-                                                           setElementPosition(grabRef.current.id, p.x - lx / 2, -p.z + ly / 2);
-                                                           break;
-                                                   }
+                                                    handleResize(p);
                                                }
                                            }
                                        } else if (intersectionPlaneType === IntersectionPlaneType.Vertical) {

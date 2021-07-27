@@ -484,9 +484,12 @@ const Cuboid = ({
                      position={new Vector3(-hx, RESIZE_HANDLE_SIZE / 2 - hz, -hy)}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
-                         setCommonStore(state => {
-                             state.resizeAnchor.set(cx + hx, cy + hy);
-                         });
+                         if(resizeHandleLLBotRef.current) {
+                            setCommonStore(state => {
+                               const anchor = resizeHandleLLBotRef.current!.localToWorld(new Vector3(lx, 0, ly));
+                               state.resizeAnchor.set(anchor.x, anchor.z);
+                            });
+                        }
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.LowerLeft);
@@ -509,9 +512,12 @@ const Cuboid = ({
                      position={new Vector3(-hx, RESIZE_HANDLE_SIZE / 2 - hz, hy)}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
-                         setCommonStore(state => {
-                             state.resizeAnchor.set(cx + hx, cy - hy);
-                         });
+                         if(resizeHandleULBotRef.current) {
+                            setCommonStore(state => {
+                               const anchor = resizeHandleULBotRef.current!.localToWorld(new Vector3(lx, 0, -ly));
+                               state.resizeAnchor.set(anchor.x, anchor.z);
+                            });
+                        }
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.UpperLeft);
@@ -534,9 +540,12 @@ const Cuboid = ({
                      position={new Vector3(hx, RESIZE_HANDLE_SIZE / 2 - hz, -hy)}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
-                         setCommonStore(state => {
-                             state.resizeAnchor.set(cx - hx, cy + hy);
-                         });
+                         if(resizeHandleLRBotRef.current) {
+                            setCommonStore(state => {
+                               const anchor = resizeHandleLRBotRef.current!.localToWorld(new Vector3(-lx, 0, ly));
+                               state.resizeAnchor.set(anchor.x, anchor.z);
+                            });
+                        }
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.LowerRight);
@@ -559,9 +568,12 @@ const Cuboid = ({
                      position={new Vector3(hx, RESIZE_HANDLE_SIZE / 2 - hz, hy)}
                      onPointerDown={(e) => {
                          selectMe(e, ActionType.Resize);
-                         setCommonStore(state => {
-                             state.resizeAnchor.set(cx - hx, cy - hy);
-                         });
+                         if(resizeHandleURBotRef.current) {
+                            setCommonStore(state => {
+                               const anchor = resizeHandleURBotRef.current!.localToWorld(new Vector3(-lx, 0, -ly));
+                               state.resizeAnchor.set(anchor.x, anchor.z);
+                            });
+                        }
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.UpperRight);
