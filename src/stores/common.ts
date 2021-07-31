@@ -12,7 +12,7 @@ import weather from '../resources/weather.csv';
 import pvmodules from '../resources/pvmodules.csv';
 import Papa from "papaparse";
 import {Util} from "../Util";
-import {DatumEntry, MoveHandleType, ObjectType, ResizeHandleType, User} from "../types";
+import {DatumEntry, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType, User} from "../types";
 import {DefaultWorldModel} from "./DefaultWorldModel";
 import {Box3, Vector2, Vector3} from "three";
 import {ElementModelCloner} from "../models/ElementModelCloner";
@@ -54,6 +54,7 @@ export interface CommonStoreState {
     clickObjectType: ObjectType | null;
     moveHandleType: MoveHandleType | null;
     resizeHandleType: ResizeHandleType | null;
+    rotateHandleType: RotateHandleType | null;
     resizeAnchor: Vector2;
     showCloudFilePanel: boolean;
     showAccountSettingsPanel: boolean;
@@ -186,6 +187,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         clickObjectType: null,
         moveHandleType: null,
         resizeHandleType: null,
+        rotateHandleType: null,
         resizeAnchor: new Vector2(),
         showCloudFilePanel: false,
         showAccountSettingsPanel: false,

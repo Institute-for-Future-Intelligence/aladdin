@@ -6,9 +6,9 @@ import React, {useEffect, useMemo, useRef, useState} from "react";
 import {Plane} from "@react-three/drei";
 import {useStore} from "../stores/common";
 import {DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3} from "three";
-import {IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType} from "../types";
+import {IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType} from "../types";
 import {ElementModel} from "../models/ElementModel";
-import {useThree} from "@react-three/fiber";
+import {ThreeEvent, useThree} from "@react-three/fiber";
 import {MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS} from "../constants";
 import {Util} from "../Util";
 
@@ -22,9 +22,11 @@ const Ground = () => {
     const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
     const moveHandleType = useStore(state => state.moveHandleType);
     const resizeHandleType = useStore(state => state.resizeHandleType);
+    const rotateHandleType = useStore(state => state.rotateHandleType);
     const resizeAnchor = useStore(state => state.resizeAnchor);
     const setElementPosition = useStore(state => state.setElementPosition);
     const setElementSize = useStore(state => state.setElementSize);
+    const setElementRotation = useStore(state => state.setElementRotation);
     const updateElement = useStore(state => state.updateElementById);
     const addElement = useStore(state => state.addElement);
     const {camera, gl: {domElement}} = useThree();
@@ -72,7 +74,9 @@ const Ground = () => {
             resizeHandleType === ResizeHandleType.LowerLeft ||
             resizeHandleType === ResizeHandleType.UpperLeft ||
             resizeHandleType === ResizeHandleType.LowerRight ||
-            resizeHandleType === ResizeHandleType.UpperRight) {
+            resizeHandleType === ResizeHandleType.UpperRight ||
+            rotateHandleType === RotateHandleType.Lower ||
+            rotateHandleType === RotateHandleType.Upper) {
             intersectionPlaneType = IntersectionPlaneType.Horizontal;
             intersectionPlanePosition.set(
                 grabRef.current.cx,
@@ -115,6 +119,132 @@ const Ground = () => {
         }
     }
 
+    const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
+        if (e.intersections.length > 0) {
+            const groundClicked = e.intersections[0].object === groundPlaneRef.current;
+            if (groundClicked) {
+                selectNone();
+                setCommonStore((state) => {
+                    state.pastePoint.copy(e.intersections[0].point);
+                    state.clickObjectType = ObjectType.Ground;
+                    state.pasteNormal = Util.UNIT_VECTOR_POS_Y;
+                });
+            }
+        }
+    };
+
+    const handlePointerUp = (e: ThreeEvent<PointerEvent>) => {
+        grabRef.current = null;
+        setCommonStore((state) => {
+            state.moveHandleType = null;
+            state.resizeHandleType = null;
+            state.rotateHandleType = null;
+            state.enableOrbitController = true;
+        });
+    };
+
+    const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
+        if (e.button === 2) return; // ignore right-click
+        if (e.intersections.length > 0) {
+            const groundClicked = e.intersections[0].object === groundPlaneRef.current;
+            if (groundClicked) {
+                setCommonStore((state) => {
+                    state.clickObjectType = ObjectType.Ground;
+                });
+                selectNone();
+                if (legalOnGround(objectTypeToAdd)) {
+                    addElement(groundModel, e.intersections[0].point);
+                    setCommonStore(state => {
+                        state.objectTypeToAdd = ObjectType.None;
+                    });
+                }
+            } else {
+                const selectedElement = getSelectedElement();
+                if (selectedElement) {
+                    if (legalOnGround(selectedElement.type as ObjectType)) {
+                        grabRef.current = selectedElement;
+                        if (selectedElement.type !== ObjectType.Foundation &&
+                            selectedElement.type !== ObjectType.Cuboid) {
+                            setCommonStore((state) => {
+                                state.enableOrbitController = false;
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
+        if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
+            const mouse = new Vector2();
+            mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
+            mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
+            ray.setFromCamera(mouse, camera);
+            let intersects;
+            switch (grabRef.current.type) {
+                case ObjectType.Human:
+                case ObjectType.Tree:
+                    if (groundPlaneRef.current) {
+                        intersects = ray.intersectObjects([groundPlaneRef.current]);
+                        if (intersects.length > 0) {
+                            const p = intersects[0].point;
+                            setElementPosition(grabRef.current.id, p.x, -p.z);
+                        }
+                    }
+                    break;
+                case ObjectType.Foundation:
+                    if (intersectionPlaneRef.current) {
+                        intersects = ray.intersectObjects([intersectionPlaneRef.current]);
+                        if (intersects.length > 0) {
+                            const p = intersects[0].point;
+                            if (moveHandleType) {
+                                 handleMove(p);
+                            } else if (resizeHandleType) {
+                                 handleResize(p);
+                            } else if (rotateHandleType) {
+                                 handleRotate(p);
+                            }
+                        }
+                    }
+                    break;
+                case ObjectType.Cuboid:
+                    if (intersectionPlaneRef.current) {
+                        if (intersectionPlaneType === IntersectionPlaneType.Horizontal) {
+                            intersects = ray.intersectObjects([intersectionPlaneRef.current]);
+                            if (intersects.length > 0) {
+                                const p = intersects[0].point;
+                                if (moveHandleType) {
+                                    if (moveHandleType === MoveHandleType.Top) {
+                                        setElementPosition(grabRef.current.id, p.x, -p.z);
+                                    } else {
+                                         handleMove(p);
+                                    }
+                                } else if (resizeHandleType) {
+                                     handleResize(p);
+                                } else if (rotateHandleType) {
+                                     handleRotate(p);
+                                }
+                            }
+                        } else if (intersectionPlaneType === IntersectionPlaneType.Vertical) {
+                            if (
+                                resizeHandleType === ResizeHandleType.LowerLeftTop ||
+                                resizeHandleType === ResizeHandleType.UpperLeftTop ||
+                                resizeHandleType === ResizeHandleType.LowerRightTop ||
+                                resizeHandleType === ResizeHandleType.UpperRightTop) {
+                                intersects = ray.intersectObjects([intersectionPlaneRef.current]);
+                                if (intersects.length > 0) {
+                                    const p = intersects[0].point;
+                                    updateElement(grabRef.current.id, {lz: Math.max(1, p.y)});
+                                }
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+
     // only these elements are allowed to be on the ground
     const legalOnGround = (type: ObjectType) => {
         return (
@@ -136,6 +266,43 @@ const Ground = () => {
         setElementPosition(grabRef.current!.id, c.x, -c.y);
     }
 
+    const handleRotate = (p: Vector3) => {
+        const element = getSelectedElement();
+        if(element) {
+            const {cx, cy} = element;
+            const rotation = Math.atan2(cx - p.x, -cy - p.z) + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
+            setElementRotation(grabRef.current!.id, 0, 0, rotation);
+        }
+    }
+
+    const handleMove = (p: Vector3) => {
+        let x0, y0;
+        const hx = grabRef.current!.lx / 2 + MOVE_HANDLE_OFFSET;
+        const hy = grabRef.current!.ly / 2 + MOVE_HANDLE_OFFSET;
+        switch (moveHandleType) {
+            case MoveHandleType.Lower:
+                x0 = p.x + sinAngle * hy;
+                y0 = -p.z - cosAngle * hy;
+                setElementPosition(grabRef.current!.id, x0, y0);
+                break;
+            case MoveHandleType.Upper:
+                x0 = p.x - sinAngle * hy;
+                y0 = -p.z + cosAngle * hy;
+                setElementPosition(grabRef.current!.id, x0, y0);
+                break;
+            case MoveHandleType.Left:
+                x0 = p.x + cosAngle * hx;
+                y0 = -p.z + sinAngle * hx;
+                setElementPosition(grabRef.current!.id, x0, y0);
+                break;
+            case MoveHandleType.Right:
+                x0 = p.x - cosAngle * hx;
+                y0 = -p.z - sinAngle * hx;
+                setElementPosition(grabRef.current!.id, x0, y0);
+                break;
+        }
+    }
+
     return (
         <>
             {grabRef.current && intersectionPlaneType !== IntersectionPlaneType.Ground &&
@@ -145,8 +312,9 @@ const Ground = () => {
                 name={'Intersection Plane'}
                 rotation={intersectionPlaneAngle}
                 position={intersectionPlanePosition}
-                args={[1000, 1000]}>
-                <meshStandardMaterial attach="material" side={DoubleSide}/>
+                args={[1000, 1000]}
+            >
+                <meshStandardMaterial side={DoubleSide}/>
             </Plane>
             }
             <Plane receiveShadow={viewState.shadowEnabled}
@@ -156,172 +324,12 @@ const Ground = () => {
                    position={[0, 0, 0]}
                    args={[10000, 10000]}
                    renderOrder={-2}
-                   onContextMenu={(e) => {
-                       if (e.intersections.length > 0) {
-                           const groundClicked = e.intersections[0].object === groundPlaneRef.current;
-                           if (groundClicked) {
-                               selectNone();
-                               setCommonStore((state) => {
-                                   state.pastePoint.copy(e.intersections[0].point);
-                                   state.clickObjectType = ObjectType.Ground;
-                                   state.pasteNormal = Util.UNIT_VECTOR_POS_Y;
-                               });
-                           }
-                       }
-                   }}
-                   onPointerDown={(e) => {
-                       if (e.button === 2) return; // ignore right-click
-                       if (e.intersections.length > 0) {
-                           const groundClicked = e.intersections[0].object === groundPlaneRef.current;
-                           if (groundClicked) {
-                               setCommonStore((state) => {
-                                   state.clickObjectType = ObjectType.Ground;
-                               });
-                               selectNone();
-                               if (legalOnGround(objectTypeToAdd)) {
-                                   addElement(groundModel, e.intersections[0].point);
-                                   setCommonStore(state => {
-                                       state.objectTypeToAdd = ObjectType.None;
-                                   });
-                               }
-                           } else {
-                               const selectedElement = getSelectedElement();
-                               if (selectedElement) {
-                                   if (legalOnGround(selectedElement.type as ObjectType)) {
-                                       grabRef.current = selectedElement;
-                                       if (selectedElement.type !== ObjectType.Foundation &&
-                                           selectedElement.type !== ObjectType.Cuboid) {
-                                           setCommonStore((state) => {
-                                               state.enableOrbitController = false;
-                                           });
-                                       }
-                                   }
-                               }
-                           }
-                       }
-                   }}
-                   onPointerUp={(e) => {
-                       grabRef.current = null;
-                       setCommonStore((state) => {
-                           state.enableOrbitController = true;
-                       });
-                   }}
-                   onPointerMove={(e) => {
-                       if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
-                           const mouse = new Vector2();
-                           mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
-                           mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
-                           ray.setFromCamera(mouse, camera);
-                           let intersects;
-                           switch (grabRef.current.type) {
-                               case ObjectType.Human:
-                               case ObjectType.Tree:
-                                   if (groundPlaneRef.current) {
-                                       intersects = ray.intersectObjects([groundPlaneRef.current]);
-                                       if (intersects.length > 0) {
-                                           const p = intersects[0].point;
-                                           setElementPosition(grabRef.current.id, p.x, -p.z);
-                                       }
-                                   }
-                                   break;
-                               case ObjectType.Foundation:
-                                   if (intersectionPlaneRef.current) {
-                                       intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-                                       if (intersects.length > 0) {
-                                           const p = intersects[0].point;
-                                           if (moveHandleType) {
-                                               let x0, y0;
-                                               const hx = grabRef.current.lx / 2 + MOVE_HANDLE_OFFSET;
-                                               const hy = grabRef.current.ly / 2 + MOVE_HANDLE_OFFSET;
-                                               switch (moveHandleType) {
-                                                   case MoveHandleType.Lower:
-                                                       x0 = p.x + sinAngle * hy;
-                                                       y0 = -p.z - cosAngle * hy;
-                                                       setElementPosition(grabRef.current.id, x0, y0);
-                                                       break;
-                                                   case MoveHandleType.Upper:
-                                                       x0 = p.x - sinAngle * hy;
-                                                       y0 = -p.z + cosAngle * hy;
-                                                       setElementPosition(grabRef.current.id, x0, y0);
-                                                       break;
-                                                   case MoveHandleType.Left:
-                                                       x0 = p.x + cosAngle * hx;
-                                                       y0 = -p.z + sinAngle * hx;
-                                                       setElementPosition(grabRef.current.id, x0, y0);
-                                                       break;
-                                                   case MoveHandleType.Right:
-                                                       x0 = p.x - cosAngle * hx;
-                                                       y0 = -p.z - sinAngle * hx;
-                                                       setElementPosition(grabRef.current.id, x0, y0);
-                                                       break;
-                                               }
-                                           } else if (resizeHandleType) {
-                                                handleResize(p);
-                                           }
-                                       }
-                                   }
-                                   break;
-                               case ObjectType.Cuboid:
-                                   if (intersectionPlaneRef.current) {
-                                       if (intersectionPlaneType === IntersectionPlaneType.Horizontal) {
-                                           intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-                                           if (intersects.length > 0) {
-                                               const p = intersects[0].point;
-                                               if (moveHandleType) {
-                                                   if (moveHandleType === MoveHandleType.Top) {
-                                                       setElementPosition(grabRef.current.id, p.x, -p.z);
-                                                   } else {
-                                                       let x0, y0;
-                                                       const hx = grabRef.current.lx / 2 + MOVE_HANDLE_OFFSET;
-                                                       const hy = grabRef.current.ly / 2 + MOVE_HANDLE_OFFSET;
-                                                       switch (moveHandleType) {
-                                                           case MoveHandleType.Lower:
-                                                               x0 = p.x + sinAngle * hy;
-                                                               y0 = -p.z - cosAngle * hy;
-                                                               setElementPosition(grabRef.current.id, x0, y0);
-                                                               break;
-                                                           case MoveHandleType.Upper:
-                                                               x0 = p.x - sinAngle * hy;
-                                                               y0 = -p.z + cosAngle * hy;
-                                                               setElementPosition(grabRef.current.id, x0, y0);
-                                                               break;
-                                                           case MoveHandleType.Left:
-                                                               x0 = p.x + cosAngle * hx;
-                                                               y0 = -p.z + sinAngle * hx;
-                                                               setElementPosition(grabRef.current.id, x0, y0);
-                                                               break;
-                                                           case MoveHandleType.Right:
-                                                               x0 = p.x - cosAngle * hx;
-                                                               y0 = -p.z - sinAngle * hx;
-                                                               setElementPosition(grabRef.current.id, x0, y0);
-                                                               break;
-                                                       }
-                                                   }
-                                               }
-                                               if (resizeHandleType) {
-                                                    handleResize(p);
-                                               }
-                                           }
-                                       } else if (intersectionPlaneType === IntersectionPlaneType.Vertical) {
-                                           if (
-                                               resizeHandleType === ResizeHandleType.LowerLeftTop ||
-                                               resizeHandleType === ResizeHandleType.UpperLeftTop ||
-                                               resizeHandleType === ResizeHandleType.LowerRightTop ||
-                                               resizeHandleType === ResizeHandleType.UpperRightTop) {
-                                               intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-                                               if (intersects.length > 0) {
-                                                   const p = intersects[0].point;
-                                                   updateElement(grabRef.current.id, {lz: Math.max(1, p.y)});
-                                               }
-                                           }
-                                       }
-                                   }
-                                   break;
-                           }
-                       }
-                   }}
+                   onContextMenu={handleContextMenu}
+                   onPointerDown={handlePointerDown}
+                   onPointerUp={handlePointerUp}
+                   onPointerMove={handlePointerMove}
             >
-                <meshStandardMaterial attach="material" depthTest={false} color={viewState.groundColor}/>
+                <meshStandardMaterial depthTest={false} color={viewState.groundColor}/>
             </Plane>
         </>
     )

@@ -3,12 +3,12 @@
  */
 
 import React, {useMemo, useRef, useState} from "react";
-import {Box, Line, Sphere} from "@react-three/drei";
+import {Box, Line, Plane, Sphere} from "@react-three/drei";
 import {Euler, Face, Mesh, Raycaster, Vector2, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {CuboidModel} from "../models/CuboidModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {ActionType, MoveHandleType, ObjectType, ResizeHandleType} from "../types";
+import {ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType} from "../types";
 import {
     RESIZE_HANDLE_SIZE,
     MOVE_HANDLE_OFFSET,
@@ -21,6 +21,7 @@ import {
 } from "../constants";
 import {Util} from "../Util";
 import {ElementModel} from "../models/ElementModel";
+import RotateHandle from "../components/rotateHandle";
 
 const Cuboid = ({
                     id,
@@ -42,6 +43,7 @@ const Cuboid = ({
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
     const moveHandleType = useStore(state => state.moveHandleType);
+    const rotateHandleType = useStore(state => state.rotateHandleType);
     const resizeHandleType = useStore(state => state.resizeHandleType);
     const getElementById = useStore(state => state.getElementById);
     const getSelectedElement = useStore(state => state.getSelectedElement);
@@ -52,7 +54,7 @@ const Cuboid = ({
 
     const {camera, gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
-    const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
+    const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
     const [showGrid, setShowGrid] = useState<boolean>(false);
     const ray = useMemo(() => new Raycaster(), []);
 
@@ -77,6 +79,8 @@ const Cuboid = ({
     const moveHandleLeftFaceRef = useRef<Mesh>();
     const moveHandleRightFaceRef = useRef<Mesh>();
     const moveHandleTopFaceRef = useRef<Mesh>();
+    const rotationHandleLRef = useRef<Mesh>();
+    const rotationHandleURef = useRef<Mesh>();
 
     const hx = lx / 2;
     const hy = ly / 2;
@@ -111,11 +115,19 @@ const Cuboid = ({
                         case ActionType.Move:
                             state.moveHandleType = e.eventObject.name as MoveHandleType;
                             state.resizeHandleType = null;
+                            state.rotateHandleType = null;
                             state.enableOrbitController = false;
                             break;
                         case ActionType.Resize:
                             state.resizeHandleType = e.eventObject.name as ResizeHandleType;
                             state.moveHandleType = null;
+                            state.rotateHandleType = null;
+                            state.enableOrbitController = false;
+                            break;
+                        case ActionType.Rotate:
+                            state.rotateHandleType = e.eventObject.name as RotateHandleType;
+                            state.moveHandleType = null;
+                            state.resizeHandleType = null;
                             state.enableOrbitController = false;
                             break;
                         default:
@@ -128,7 +140,7 @@ const Cuboid = ({
         }
     };
 
-    const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType) => {
+    const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
         if (e.intersections.length > 0) {
             const intersected = e.intersections[0].object === e.eventObject;
             if (intersected) {
@@ -138,7 +150,9 @@ const Cuboid = ({
                     handle === MoveHandleType.Upper ||
                     handle === MoveHandleType.Lower ||
                     handle === MoveHandleType.Left ||
-                    handle === MoveHandleType.Right
+                    handle === MoveHandleType.Right ||
+                    handle === RotateHandleType.Upper ||
+                    handle === RotateHandleType.Lower
                 ) {
                     domElement.style.cursor = 'move';
                 } else {
@@ -702,6 +716,58 @@ const Cuboid = ({
                         }
                     />
                 </Sphere>
+            
+                {/* rotate handles */}
+                <group ref={rotationHandleLRef}
+                    position={[0, RESIZE_HANDLE_SIZE / 2 - hz, Math.min(-1.2*hy, -hy-0.75)]}
+                    scale={ratio}
+                    name={RotateHandleType.Lower}
+                >
+                    <RotateHandle color={
+                        hoveredHandle === RotateHandleType.Lower || 
+                        rotateHandleType === RotateHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR} 
+                    />
+                    <Plane name={RotateHandleType.Lower} 
+                        args={[0.35, 0.35]} 
+                        position={[0, 0.05, 0]}
+                        rotation={[-Math.PI/2, 0, 0]}
+                        visible={false}
+                        onPointerDown={(e) => {
+                            selectMe(e, ActionType.Rotate);
+                        }}
+                        onPointerOver={(e) => {
+                            hoverHandle(e, RotateHandleType.Lower);
+                        }}
+                        onPointerOut={(e) => {
+                            noHoverHandle();
+                        }}
+                    />
+                </group>
+                <group ref={rotationHandleURef}
+                    position={[0, RESIZE_HANDLE_SIZE / 2 - hz, Math.max(1.2*hy, hy+0.75)]}
+                    scale={ratio}
+                    name={RotateHandleType.Upper}
+                >
+                    <RotateHandle color={
+                        hoveredHandle === RotateHandleType.Upper || 
+                        rotateHandleType === RotateHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR} 
+                    />
+                    <Plane name={RotateHandleType.Upper} 
+                        args={[0.35, 0.35]}
+                        position={[0, 0.05, 0]}
+                        rotation={[-Math.PI/2, 0, 0]}
+                        visible={false}
+                        onPointerDown={(e) => {
+                            selectMe(e, ActionType.Rotate);
+                        }}
+                        onPointerOver={(e) => {
+                            hoverHandle(e, RotateHandleType.Upper);
+                        }}
+                        onPointerOut={(e) => {
+                            noHoverHandle();
+                        }}
+                    />
+                </group>
             </>
             }
 

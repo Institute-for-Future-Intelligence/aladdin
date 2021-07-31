@@ -155,11 +155,11 @@ const ReshapeElementMenu = ({
             {adjustAngle &&
             <Menu.Item key={name + '-angle'}>
                 <Space style={{width: '60px'}}>Angle:</Space>
-                <InputNumber min={0}
+                <InputNumber min={-360}
                              max={360}
                              step={1}
                              precision={1}
-                             value={element ? Util.toDegrees(element.rotation[2]) : 0}
+                             value={element ? -Util.toDegrees(element.rotation[2]) : 0}
                              formatter={(a) => Number(a).toFixed(1) + '°'}
                              onChange={(value) => {
                                  if (element && value !== null) {
@@ -167,7 +167,7 @@ const ReshapeElementMenu = ({
                                          element.id,
                                          element.rotation[0],
                                          element.rotation[1],
-                                         Util.toRadians(value)
+                                         Util.toRadians(-value)
                                      );
                                  }
                              }}
@@ -185,7 +185,7 @@ const ReshapeElementMenu = ({
                                          element.id,
                                          element.rotation[0],
                                          element.rotation[1],
-                                         Util.toRadians(value)
+                                         Util.toRadians(-value)
                                      );
                                  }
                              }}

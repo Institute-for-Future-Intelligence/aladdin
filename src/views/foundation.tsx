@@ -3,12 +3,12 @@
  */
 
 import React, {useMemo, useRef, useState} from "react";
-import {Box, Line, Sphere} from "@react-three/drei";
+import {Box, Line, Sphere, Plane} from "@react-three/drei";
 import {Mesh, Raycaster, Vector2, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {FoundationModel} from "../models/FoundationModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
-import {ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType} from "../types";
+import {ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType} from "../types";
 import {
     HIGHLIGHT_HANDLE_COLOR,
     MOVE_HANDLE_COLOR_1,
@@ -21,6 +21,7 @@ import {
 import {Util} from "../Util";
 import {ElementModel} from "../models/ElementModel";
 import {SolarPanelModel} from "../models/SolarPanelModel";
+import RotateHandle from "../components/rotateHandle";
 
 const Foundation = ({
                         id,
@@ -44,6 +45,7 @@ const Foundation = ({
     const viewState = useStore(state => state.viewState);
     const moveHandleType = useStore(state => state.moveHandleType);
     const resizeHandleType = useStore(state => state.resizeHandleType);
+    const rotateHandleType = useStore(state => state.rotateHandleType);
     const resizeAnchor = useStore(state => state.resizeAnchor);
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const getElementById = useStore(state => state.getElementById);
@@ -58,7 +60,7 @@ const Foundation = ({
     const [hoveredResizeHandleUL, setHoveredResizeHandleUL] = useState(false);
     const [hoveredResizeHandleLR, setHoveredResizeHandleLR] = useState(false);
     const [hoveredResizeHandleUR, setHoveredResizeHandleUR] = useState(false);
-    const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
+    const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
     const [showGrid, setShowGrid] = useState<boolean>(false);
     const baseRef = useRef<Mesh>();
     const grabRef = useRef<ElementModel | null>(null);
@@ -70,6 +72,8 @@ const Foundation = ({
     const moveHandleUpperRef = useRef<Mesh>();
     const moveHandleLeftRef = useRef<Mesh>();
     const moveHandleRightRef = useRef<Mesh>();
+    const rotationHandleURef = useRef<Mesh>();
+    const rotationHandleLRef = useRef<Mesh>();
     const ray = useMemo(() => new Raycaster(), []);
 
     const elementModel = getElementById(id);
@@ -104,16 +108,25 @@ const Foundation = ({
                         case ActionType.Move:
                             state.moveHandleType = e.eventObject.name as MoveHandleType;
                             state.resizeHandleType = null;
+                            state.rotateHandleType = null;
                             state.enableOrbitController = false;
                             break;
                         case ActionType.Resize:
                             state.resizeHandleType = e.eventObject.name as ResizeHandleType;
                             state.moveHandleType = null;
+                            state.rotateHandleType = null;
+                            state.enableOrbitController = false;
+                            break;
+                        case ActionType.Rotate:
+                            state.rotateHandleType = e.eventObject.name as RotateHandleType;
+                            state.moveHandleType = null;
+                            state.resizeHandleType = null;
                             state.enableOrbitController = false;
                             break;
                         default:
                             state.moveHandleType = null;
                             state.resizeHandleType = null;
+                            state.rotateHandleType = null;
                             state.enableOrbitController = true;
                     }
                 });
@@ -121,7 +134,7 @@ const Foundation = ({
         }
     };
 
-    const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType) => {
+    const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
         if (e.intersections.length > 0) {
             const intersected = e.intersections[0].object === e.eventObject;
             if (intersected) {
@@ -130,7 +143,9 @@ const Foundation = ({
                     handle === MoveHandleType.Upper ||
                     handle === MoveHandleType.Lower ||
                     handle === MoveHandleType.Left ||
-                    handle === MoveHandleType.Right
+                    handle === MoveHandleType.Right ||
+                    handle === RotateHandleType.Lower ||
+                    handle === RotateHandleType.Upper
                 ) {
                     domElement.style.cursor = 'move';
                 } else {
@@ -611,6 +626,52 @@ const Foundation = ({
                         }
                     />
                 </Sphere>
+            
+                {/* rotation handle */}
+                <group ref={rotationHandleLRef}
+                    position={[0, 0, Math.min(-1.2*hy, -hy-0.75)]}
+                    scale={ratio}
+                    name={RotateHandleType.Lower}
+                >
+                    <RotateHandle color={
+                        hoveredHandle === RotateHandleType.Lower || 
+                        rotateHandleType === RotateHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR} 
+                    />
+                    <Plane name={RotateHandleType.Lower} args={[0.35, 0.35]} rotation={[-Math.PI/2, 0, 0]}
+                        visible={false}
+                        onPointerDown={(e) => {
+                            selectMe(e, ActionType.Rotate);
+                        }}
+                        onPointerOver={(e) => {
+                            hoverHandle(e, RotateHandleType.Lower);
+                        }}
+                        onPointerOut={(e) => {
+                            noHoverHandle();
+                        }}
+                    />
+                </group>
+                <group ref={rotationHandleURef}
+                    position={[0, 0, Math.max(1.2*hy, hy+0.75)]}
+                    scale={ratio}
+                    name={RotateHandleType.Upper}
+                >
+                    <RotateHandle color={
+                        hoveredHandle === RotateHandleType.Upper || 
+                        rotateHandleType === RotateHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR} 
+                    />
+                    <Plane name={RotateHandleType.Upper} args={[0.35, 0.35]} rotation={[-Math.PI/2, 0, 0]}
+                        visible={false}
+                        onPointerDown={(e) => {
+                            selectMe(e, ActionType.Rotate);
+                        }}
+                        onPointerOver={(e) => {
+                            hoverHandle(e, RotateHandleType.Upper);
+                        }}
+                        onPointerOut={(e) => {
+                            noHoverHandle();
+                        }}
+                    />
+                </group>
             </>
             }
 

@@ -73,6 +73,7 @@ export enum ActionType {
     Select = 'Select',
     Move = 'Move',
     Resize = 'Resize',
+    Rotate = 'Rotate',
 }
 
 export enum MoveHandleType {
@@ -96,6 +97,11 @@ export enum ResizeHandleType {
     Upper = 'Resize Handle Upper',
     Left = 'Resize Handle Left',
     Right = 'Resize Handle Right',
+}
+
+export enum RotateHandleType {
+    Lower = 'Rotate Handle Lower',
+    Upper = 'Rotate Handle Upper',
 }
 
 export enum IntersectionPlaneType {
