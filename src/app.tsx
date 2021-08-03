@@ -248,7 +248,6 @@ const App = () => {
                         <Lights/>
 
                         <ElementsRenderer/>
-                        <Grid/>
                         <Heliodon/>
                         {viewState.axes && <Axes/>}
 
@@ -262,6 +261,7 @@ const App = () => {
                                               yearlyPvYieldFlag={pvYearlyYieldFlag}/>
                         <Suspense fallback={null}>
                             <Ground/>
+                            <Grid/>
                             {viewState.groundImage && <GroundImage/>}
                             {/* <Obj/> */}
                         </Suspense>

@@ -128,6 +128,7 @@ const Foundation = ({
                             state.resizeHandleType = null;
                             state.rotateHandleType = null;
                             state.enableOrbitController = true;
+                            state.selectedElementAngle = e.object.parent?.rotation.y ?? 0;
                     }
                 });
             }

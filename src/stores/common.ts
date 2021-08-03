@@ -103,6 +103,8 @@ export interface CommonStoreState {
 
     heliodonRadius: number;
     setHeliodonRadius: (radius: number) => void;
+
+    selectedElementAngle: number;
 }
 
 export const useStore = create<CommonStoreState>(devtools(persist((
@@ -251,6 +253,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                         elem.rotation[2] = z;
                     }
                 }
+                state.selectedElementAngle = z;
             });
         },
         setElementNormal(id, x, y, z) {
@@ -546,7 +549,9 @@ export const useStore = create<CommonStoreState>(devtools(persist((
             immerSet((state: CommonStoreState) => {
                 state.heliodonRadius = radius;
             })
-        }
+        },
+
+        selectedElementAngle: 0,
     };
 }, {
     name: 'aladdin-storage',

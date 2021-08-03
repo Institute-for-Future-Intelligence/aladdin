@@ -134,6 +134,7 @@ const Cuboid = ({
                             state.moveHandleType = null;
                             state.resizeHandleType = null;
                             state.enableOrbitController = true;
+                            state.selectedElementAngle = e.object.parent?.rotation.y ?? 0;
                     }
                 });
             }
