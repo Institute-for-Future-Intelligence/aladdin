@@ -32,9 +32,9 @@ const Sensor = ({
                     heatFlux = false,
                 }: SensorModel) => {
 
-    const setCommonStore = useStore(state => state.set);
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const getElementById = useStore(state => state.getElementById);
+    const selectMe = useStore(state => state.selectMe);
     const {gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
     const baseRef = useRef<Mesh>();
@@ -84,21 +84,6 @@ const Sensor = ({
     const positionLR = new Vector3(hx, hz, -hy);
     const positionUR = new Vector3(hx, hz, hy);
     const element = getElementById(id);
-
-    const selectMe = (e: ThreeEvent<MouseEvent>) => {
-        // We must check if there is really a first intersection, onPointerDown does not guarantee it
-        // onPointerDown listener for an object can still fire an event even when the object is behind another one
-        if (e.intersections.length > 0) {
-            const intersected = e.intersections[0].object === e.eventObject;
-            if (intersected) {
-                setCommonStore((state) => {
-                    for (const e of state.elements) {
-                        e.selected = e.id === id;
-                    }
-                });
-            }
-        }
-    };
 
     const euler = useMemo(() => {
         const v = new Vector3().fromArray(normal);
@@ -157,10 +142,10 @@ const Sensor = ({
                  name={'Sensor'}
                  onPointerDown={(e) => {
                      if (e.button === 2) return; // ignore right-click
-                     selectMe(e);
+                     selectMe(id, e);
                  }}
                  onContextMenu={(e) => {
-                     selectMe(e);
+                     selectMe(id, e);
                  }}
                  onPointerOver={(e) => {
                      if (e.intersections.length > 0) {
@@ -245,7 +230,7 @@ const Sensor = ({
                 args={[MOVE_HANDLE_RADIUS, 6, 6]}
                 name={'Handle'}
                 onPointerDown={(e) => {
-                    selectMe(e);
+                    selectMe(id, e);
                 }}>
                 <meshStandardMaterial attach="material" color={'orange'}/>
             </Sphere>

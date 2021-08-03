@@ -53,6 +53,7 @@ const Foundation = ({
     const addElement = useStore(state => state.addElement);
     const setElementPosition = useStore(state => state.setElementPosition);
     const setElementSize = useStore(state => state.setElementSize);
+    const selectMe = useStore(state => state.selectMe);
 
     const {camera, gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
@@ -93,47 +94,6 @@ const Foundation = ({
     // const sinAngle = useMemo(() => {
     //     return Math.sin(rotation[2]);
     // }, [rotation]);
-
-    const selectMe = (e: ThreeEvent<MouseEvent>, action: ActionType) => {
-        // We must check if there is really a first intersection, onPointerDown does not guarantee it
-        // onPointerDown listener for an object can still fire an event even when the object is behind another one
-        if (e.intersections.length > 0) {
-            const intersected = e.intersections[0].object === e.eventObject;
-            if (intersected) {
-                setCommonStore((state) => {
-                    for (const e of state.elements) {
-                        e.selected = e.id === id;
-                    }
-                    switch (action) {
-                        case ActionType.Move:
-                            state.moveHandleType = e.eventObject.name as MoveHandleType;
-                            state.resizeHandleType = null;
-                            state.rotateHandleType = null;
-                            state.enableOrbitController = false;
-                            break;
-                        case ActionType.Resize:
-                            state.resizeHandleType = e.eventObject.name as ResizeHandleType;
-                            state.moveHandleType = null;
-                            state.rotateHandleType = null;
-                            state.enableOrbitController = false;
-                            break;
-                        case ActionType.Rotate:
-                            state.rotateHandleType = e.eventObject.name as RotateHandleType;
-                            state.moveHandleType = null;
-                            state.resizeHandleType = null;
-                            state.enableOrbitController = false;
-                            break;
-                        default:
-                            state.moveHandleType = null;
-                            state.resizeHandleType = null;
-                            state.rotateHandleType = null;
-                            state.enableOrbitController = true;
-                            state.selectedElementAngle = e.object.parent?.rotation.y ?? 0;
-                    }
-                });
-            }
-        }
-    };
 
     const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
         if (e.intersections.length > 0) {
@@ -208,7 +168,7 @@ const Foundation = ({
                  name={'Foundation'}
                  args={[lx, lz, ly]}
                  onContextMenu={(e) => {
-                     selectMe(e, ActionType.Select);
+                     selectMe(id, e, ActionType.Select);
                      setCommonStore((state) => {
                          state.pastePoint.copy(e.intersections[0].point);
                          state.clickObjectType = ObjectType.Foundation;
@@ -228,7 +188,7 @@ const Foundation = ({
                  }}
                  onPointerDown={(e) => {
                      if (e.button === 2) return; // ignore right-click
-                     selectMe(e, ActionType.Select);
+                     selectMe(id, e, ActionType.Select);
                      const selectedElement = getSelectedElement();
                      if (selectedElement?.id === id) {
                          // no child of this foundation is clicked
@@ -430,7 +390,7 @@ const Foundation = ({
                      args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.LowerLeft}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                          if(resizeHandleLLRef.current) {
                              setCommonStore(state => {
                                 const anchor = resizeHandleLLRef.current!.localToWorld(new Vector3(lx, 0, ly));
@@ -458,7 +418,7 @@ const Foundation = ({
                      args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.UpperLeft}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                          if(resizeHandleULRef.current) {
                             setCommonStore(state => {
                                const anchor = resizeHandleULRef.current!.localToWorld(new Vector3(lx, 0, -ly));
@@ -486,7 +446,7 @@ const Foundation = ({
                      args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.LowerRight}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                          if(resizeHandleLRRef.current) {
                             setCommonStore(state => {
                                const anchor = resizeHandleLRRef.current!.localToWorld(new Vector3(-lx, 0, ly));
@@ -514,7 +474,7 @@ const Foundation = ({
                      args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.UpperRight}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                          if(resizeHandleURRef.current) {
                             setCommonStore(state => {
                                const anchor = resizeHandleURRef.current!.localToWorld(new Vector3(-lx, 0, -ly));
@@ -544,7 +504,7 @@ const Foundation = ({
                         position={[0, handleLift, -hy - MOVE_HANDLE_OFFSET]}
                         name={MoveHandleType.Lower}
                         onPointerDown={(e) => {
-                            selectMe(e, ActionType.Move);
+                            selectMe(id, e, ActionType.Move);
                         }}
                         onPointerOver={(e) => {
                             hoverHandle(e, MoveHandleType.Lower);
@@ -566,7 +526,7 @@ const Foundation = ({
                         position={[0, handleLift, hy + MOVE_HANDLE_OFFSET]}
                         name={MoveHandleType.Upper}
                         onPointerDown={(e) => {
-                            selectMe(e, ActionType.Move);
+                            selectMe(id, e, ActionType.Move);
                         }}
                         onPointerOver={(e) => {
                             hoverHandle(e, MoveHandleType.Upper);
@@ -588,7 +548,7 @@ const Foundation = ({
                         position={[-hx - MOVE_HANDLE_OFFSET, handleLift, 0]}
                         name={MoveHandleType.Left}
                         onPointerDown={(e) => {
-                            selectMe(e, ActionType.Move);
+                            selectMe(id, e, ActionType.Move);
                         }}
                         onPointerOver={(e) => {
                             hoverHandle(e, MoveHandleType.Left);
@@ -610,7 +570,7 @@ const Foundation = ({
                         position={[hx + MOVE_HANDLE_OFFSET, handleLift, 0]}
                         name={MoveHandleType.Right}
                         onPointerDown={(e) => {
-                            selectMe(e, ActionType.Move);
+                            selectMe(id, e, ActionType.Move);
                         }}
                         onPointerOver={(e) => {
                             hoverHandle(e, MoveHandleType.Right);
@@ -641,7 +601,7 @@ const Foundation = ({
                     <Plane name={RotateHandleType.Lower} args={[0.35, 0.35]} rotation={[-Math.PI/2, 0, 0]}
                         visible={false}
                         onPointerDown={(e) => {
-                            selectMe(e, ActionType.Rotate);
+                            selectMe(id, e, ActionType.Rotate);
                         }}
                         onPointerOver={(e) => {
                             hoverHandle(e, RotateHandleType.Lower);
@@ -663,7 +623,7 @@ const Foundation = ({
                     <Plane name={RotateHandleType.Upper} args={[0.35, 0.35]} rotation={[-Math.PI/2, 0, 0]}
                         visible={false}
                         onPointerDown={(e) => {
-                            selectMe(e, ActionType.Rotate);
+                            selectMe(id, e, ActionType.Rotate);
                         }}
                         onPointerOver={(e) => {
                             hoverHandle(e, RotateHandleType.Upper);

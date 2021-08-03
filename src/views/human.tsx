@@ -43,7 +43,7 @@ const Human = ({
 
     cy = -cy; // we want positive y to point north
 
-    const setCommonStore = useStore(state => state.set);
+    const selectMe = useStore(state => state.selectMe);
     const [hovered, setHovered] = useState(false);
     const [updateFlag, setUpdateFlag] = useState(false);
     const meshRef = useRef<Mesh>(null!);
@@ -190,21 +190,6 @@ const Human = ({
         return new Euler(0, Math.atan2(cameraX, cameraZ), 0);
     }, [cameraX, cameraZ])
 
-    const selectMe = (e: ThreeEvent<MouseEvent>) => {
-        // We must check if there is really a first intersection, onPointerDown does not guarantee it
-        // onPointerDown listener for an object can still fire an event even when the object is behind another one
-        if (e.intersections.length > 0) {
-            const intersected = e.intersections[0].object === e.eventObject;
-            if (intersected) {
-                setCommonStore((state) => {
-                    for (const e of state.elements) {
-                        e.selected = e.id === id;
-                    }
-                });
-            }
-        }
-    };
-
     return (
         <group name={'Human Group ' + id}
                position={[cx, height / 2, cy]}>
@@ -218,11 +203,11 @@ const Human = ({
                 follow={false}
                 rotation={rotation}
                 onContextMenu={(e) => {
-                    selectMe(e);
+                    selectMe(id, e);
                 }}
                 onPointerDown={(e) => {
                     if (e.button === 2) return; // ignore right-click
-                    selectMe(e);
+                    selectMe(id, e);
                 }}
                 onPointerOver={(e) => {
                     if (e.intersections.length > 0) {
@@ -246,7 +231,7 @@ const Human = ({
                 args={[MOVE_HANDLE_RADIUS * 4, 6, 6]}
                 name={'Handle'}
                 onPointerDown={(e) => {
-                    selectMe(e);
+                    selectMe(id, e);
                 }}
                 onPointerOver={(e) => {
                     domElement.style.cursor = 'move';

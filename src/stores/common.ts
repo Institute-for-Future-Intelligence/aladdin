@@ -12,7 +12,7 @@ import weather from '../resources/weather.csv';
 import pvmodules from '../resources/pvmodules.csv';
 import Papa from "papaparse";
 import {Util} from "../Util";
-import {DatumEntry, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType, User} from "../types";
+import {ActionType, DatumEntry, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType, User} from "../types";
 import {DefaultWorldModel} from "./DefaultWorldModel";
 import {Box3, Vector2, Vector3} from "three";
 import {ElementModelCloner} from "../models/ElementModelCloner";
@@ -22,6 +22,7 @@ import short from "short-uuid";
 import {ElementModelFactory} from "../models/ElementModelFactory";
 import {GroundModel} from "../models/GroundModel";
 import {PvModel} from "../models/PvModel";
+import { ThreeEvent } from '@react-three/fiber';
 
 enableMapSet();
 
@@ -60,6 +61,7 @@ export interface CommonStoreState {
     showAccountSettingsPanel: boolean;
     getSelectedElement: () => ElementModel | null;
     getElementById: (id: string) => ElementModel | null;
+    selectMe: (id: string, e: ThreeEvent<MouseEvent>, action?: ActionType) => void;
     selectNone: () => void;
     updateElementById: (id: string, element: Partial<ElementModel>) => void;
     setElementPosition: (id: string, x: number, y: number, z?: number) => void;
@@ -218,6 +220,48 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                     e.selected = false;
                 }
             });
+        },
+        selectMe(id, e, action) {
+            if (e.intersections.length > 0) {
+                const intersected = e.intersections[0].object === e.eventObject;
+                if (intersected) {
+                    immerSet((state) => {
+                        for (const e of state.elements) {
+                            e.selected = e.id === id;
+                        }
+                        if(action) {
+                            switch (action) {
+                                case ActionType.Move:
+                                    state.moveHandleType = e.eventObject.name as MoveHandleType;
+                                    state.resizeHandleType = null;
+                                    state.rotateHandleType = null;
+                                    state.enableOrbitController = false;
+                                    break;
+                                case ActionType.Resize:
+                                    state.resizeHandleType = e.eventObject.name as ResizeHandleType;
+                                    state.moveHandleType = null;
+                                    state.rotateHandleType = null;
+                                    state.enableOrbitController = false;
+                                    break;
+                                case ActionType.Rotate:
+                                    state.rotateHandleType = e.eventObject.name as RotateHandleType;
+                                    state.moveHandleType = null;
+                                    state.resizeHandleType = null;
+                                    state.enableOrbitController = false;
+                                    break;
+                                case ActionType.Select:
+                                    state.selectedElementAngle = e.object.parent?.rotation.y ?? 0;
+                                    break;
+                                default:
+                                    state.moveHandleType = null;
+                                    state.resizeHandleType = null;
+                                    state.rotateHandleType = null;
+                                    state.enableOrbitController = true;
+                            }
+                        }
+                    });
+                }
+            }
         },
         updateElementById(id, newProps) {
             immerSet((state: CommonStoreState) => {

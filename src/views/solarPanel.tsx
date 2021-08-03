@@ -50,6 +50,7 @@ const SolarPanel = ({
     const latitude = useStore(state => state.world.latitude);
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const getElementById = useStore(state => state.getElementById);
+    const selectMe = useStore(state => state.selectMe);
     const resizeHandleType = useStore(state => state.resizeHandleType);
     const {gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
@@ -155,34 +156,6 @@ const SolarPanel = ({
         }
         return texture;
     }, [orientation, pvModel.color, nx, ny]);
-
-    const selectMe = (e: ThreeEvent<MouseEvent>, action: ActionType) => {
-        // We must check if there is really a first intersection, onPointerDown does not guarantee it
-        // onPointerDown listener for an object can still fire an event even when the object is behind another one
-        if (e.intersections.length > 0) {
-            const intersected = e.intersections[0].object === e.eventObject;
-            if (intersected) {
-                setCommonStore((state) => {
-                    for (const e of state.elements) {
-                        e.selected = e.id === id;
-                    }
-                    switch (action) {
-                        case ActionType.Move:
-                            state.moveHandleType = e.eventObject.name as MoveHandleType;
-                            state.resizeHandleType = null;
-                            break;
-                        case ActionType.Resize:
-                            state.resizeHandleType = e.eventObject.name as ResizeHandleType;
-                            state.moveHandleType = null;
-                            break;
-                        default:
-                            state.moveHandleType = null;
-                            state.resizeHandleType = null;
-                    }
-                });
-            }
-        }
-    };
 
     const euler = useMemo(() => {
         const v = new Vector3().fromArray(normal);
@@ -316,10 +289,10 @@ const SolarPanel = ({
                  name={'Solar Panel'}
                  onPointerDown={(e) => {
                      if (e.button === 2) return; // ignore right-click
-                     selectMe(e, ActionType.Select);
+                     selectMe(id, e, ActionType.Select);
                  }}
                  onContextMenu={(e) => {
-                     selectMe(e, ActionType.Select);
+                     selectMe(id, e, ActionType.Select);
                  }}
                  onPointerOver={(e) => {
                      if (e.intersections.length > 0) {
@@ -459,7 +432,7 @@ const SolarPanel = ({
                 args={[moveHandleSize, 6, 6]}
                 name={'Handle'}
                 onPointerDown={(e) => {
-                    selectMe(e, ActionType.Move);
+                    selectMe(id, e, ActionType.Move);
                 }}>
                 <meshStandardMaterial attach="material" color={'orange'}/>
             </Sphere>
@@ -473,7 +446,7 @@ const SolarPanel = ({
                      args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.Lower}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                          setCommonStore(state => {
                              state.resizeAnchor.set(cx, cy + hy);
                          });
@@ -499,7 +472,7 @@ const SolarPanel = ({
                      args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.Upper}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                          setCommonStore(state => {
                              state.resizeAnchor.set(cx, cy - hy);
                          });
@@ -525,7 +498,7 @@ const SolarPanel = ({
                      args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.Left}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                          setCommonStore(state => {
                              state.resizeAnchor.set(cx + hx, cy);
                          });
@@ -551,7 +524,7 @@ const SolarPanel = ({
                      args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
                      name={ResizeHandleType.Right}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                          setCommonStore(state => {
                              state.resizeAnchor.set(cx - hx, cy);
                          });

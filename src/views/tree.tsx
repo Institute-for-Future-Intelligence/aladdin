@@ -41,10 +41,10 @@ const Tree = ({
 
     cy = -cy; // we want positive y to point north
 
-    const setCommonStore = useStore(state => state.set);
     const date = useStore(state => state.world.date);
     const now = new Date(date);
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
+    const selectMe = useStore(state => state.selectMe);
     const [hovered, setHovered] = useState(false);
     const meshRef = useRef<Mesh>(null!);
     const {gl: {domElement}, camera} = useThree();
@@ -94,21 +94,6 @@ const Tree = ({
         map: texture,
         alphaTest: 0.1,
     })
-
-    const selectMe = (e: ThreeEvent<MouseEvent>) => {
-        // We must check if there is really a first intersection, onPointerDown does not guarantee it
-        // onPointerDown listener for an object can still fire an event even when the object is behind another one
-        if (e.intersections.length > 0) {
-            const intersected = e.intersections[0].object === e.eventObject;
-            if (intersected) {
-                setCommonStore((state) => {
-                    for (const e of state.elements) {
-                        e.selected = e.id === id;
-                    }
-                });
-            }
-        }
-    };
 
     const theta = useMemo(() => {
         switch (name) {
@@ -189,11 +174,11 @@ const Tree = ({
                 position={[0, -lz / 2 + 0.5, 0]}
                 args={[lx / 2, 1]}
                 onContextMenu={(e) => {
-                    selectMe(e);
+                    selectMe(id, e);
                 }}
                 onPointerDown={(e) => {
                     if (e.button === 2) return; // ignore right-click
-                    selectMe(e);
+                    selectMe(id, e);
                 }}
                 onPointerOver={(e) => {
                     if (e.intersections.length > 0) {
@@ -216,7 +201,7 @@ const Tree = ({
                 name={'Handle'}
                 renderOrder={2}
                 onPointerDown={(e) => {
-                    selectMe(e);
+                    selectMe(id, e);
                 }}
                 onPointerOver={(e) => {
                     domElement.style.cursor = 'move';

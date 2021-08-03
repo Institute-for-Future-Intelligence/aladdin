@@ -51,6 +51,7 @@ const Cuboid = ({
     const setElementPosition = useStore(state => state.setElementPosition);
     const setElementNormal = useStore(state => state.setElementNormal);
     const objectTypeToAdd = useStore(state => state.objectTypeToAdd);
+    const selectMe = useStore(state => state.selectMe);
 
     const {camera, gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
@@ -100,46 +101,6 @@ const Cuboid = ({
     const positionLeftFace = useMemo(() => new Vector3(-hx - MOVE_HANDLE_OFFSET, handleLift - hz, 0), [hx, hz]);
     const positionRightFace = useMemo(() => new Vector3(hx + MOVE_HANDLE_OFFSET, handleLift - hz, 0), [hx, hz]);
     const positionTopFace = useMemo(() => new Vector3(0, hz + MOVE_HANDLE_OFFSET, 0), [hz]);
-
-    const selectMe = (e: ThreeEvent<MouseEvent>, action: ActionType) => {
-        // We must check if there is really a first intersection, onPointerDown does not guarantee it
-        // onPointerDown listener for an object can still fire an event even when the object is behind another one
-        if (e.intersections.length > 0) {
-            const intersection = e.intersections[0];
-            if (intersection.object === e.eventObject) {
-                setCommonStore((state) => {
-                    for (const e of state.elements) {
-                        e.selected = e.id === id;
-                    }
-                    switch (action) {
-                        case ActionType.Move:
-                            state.moveHandleType = e.eventObject.name as MoveHandleType;
-                            state.resizeHandleType = null;
-                            state.rotateHandleType = null;
-                            state.enableOrbitController = false;
-                            break;
-                        case ActionType.Resize:
-                            state.resizeHandleType = e.eventObject.name as ResizeHandleType;
-                            state.moveHandleType = null;
-                            state.rotateHandleType = null;
-                            state.enableOrbitController = false;
-                            break;
-                        case ActionType.Rotate:
-                            state.rotateHandleType = e.eventObject.name as RotateHandleType;
-                            state.moveHandleType = null;
-                            state.resizeHandleType = null;
-                            state.enableOrbitController = false;
-                            break;
-                        default:
-                            state.moveHandleType = null;
-                            state.resizeHandleType = null;
-                            state.enableOrbitController = true;
-                            state.selectedElementAngle = e.object.parent?.rotation.y ?? 0;
-                    }
-                });
-            }
-        }
-    };
 
     const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
         if (e.intersections.length > 0) {
@@ -230,7 +191,7 @@ const Cuboid = ({
                  name={'Cuboid'}
                  onPointerDown={(e) => {
                      if (e.button === 2) return; // ignore right-click
-                     selectMe(e, ActionType.Select);
+                     selectMe(id, e, ActionType.Select);
                      const selectedElement = getSelectedElement();
                      if (selectedElement?.id === id) {
                          // no child of this cuboid is clicked
@@ -302,7 +263,7 @@ const Cuboid = ({
                      }
                  }}
                  onContextMenu={(e) => {
-                     selectMe(e, ActionType.Select);
+                     selectMe(id, e, ActionType.Select);
                      setCommonStore((state) => {
                          state.pastePoint.copy(e.intersections[0].point);
                          const face = e.intersections[0].face;
@@ -410,7 +371,7 @@ const Cuboid = ({
                      args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={positionLLTop}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.LowerLeftTop);
@@ -432,7 +393,7 @@ const Cuboid = ({
                      args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={positionULTop}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.UpperLeftTop);
@@ -454,7 +415,7 @@ const Cuboid = ({
                      args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={positionLRTop}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.LowerRightTop);
@@ -476,7 +437,7 @@ const Cuboid = ({
                      args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={positionURTop}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                      }}
                      onPointerOver={(e) => {
                          hoverHandle(e, ResizeHandleType.UpperRightTop);
@@ -498,7 +459,7 @@ const Cuboid = ({
                      args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={new Vector3(-hx, RESIZE_HANDLE_SIZE / 2 - hz, -hy)}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                          if(resizeHandleLLBotRef.current) {
                             setCommonStore(state => {
                                const anchor = resizeHandleLLBotRef.current!.localToWorld(new Vector3(lx, 0, ly));
@@ -526,7 +487,7 @@ const Cuboid = ({
                      args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={new Vector3(-hx, RESIZE_HANDLE_SIZE / 2 - hz, hy)}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                          if(resizeHandleULBotRef.current) {
                             setCommonStore(state => {
                                const anchor = resizeHandleULBotRef.current!.localToWorld(new Vector3(lx, 0, -ly));
@@ -554,7 +515,7 @@ const Cuboid = ({
                      args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={new Vector3(hx, RESIZE_HANDLE_SIZE / 2 - hz, -hy)}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                          if(resizeHandleLRBotRef.current) {
                             setCommonStore(state => {
                                const anchor = resizeHandleLRBotRef.current!.localToWorld(new Vector3(-lx, 0, ly));
@@ -582,7 +543,7 @@ const Cuboid = ({
                      args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
                      position={new Vector3(hx, RESIZE_HANDLE_SIZE / 2 - hz, hy)}
                      onPointerDown={(e) => {
-                         selectMe(e, ActionType.Resize);
+                         selectMe(id, e, ActionType.Resize);
                          if(resizeHandleURBotRef.current) {
                             setCommonStore(state => {
                                const anchor = resizeHandleURBotRef.current!.localToWorld(new Vector3(-lx, 0, -ly));
@@ -612,7 +573,7 @@ const Cuboid = ({
                         name={MoveHandleType.Lower}
                         position={positionLowerFace}
                         onPointerDown={(e) => {
-                            selectMe(e, ActionType.Move);
+                            selectMe(id, e, ActionType.Move);
                         }}
                         onPointerOver={(e) => {
                             hoverHandle(e, MoveHandleType.Lower);
@@ -634,7 +595,7 @@ const Cuboid = ({
                         name={MoveHandleType.Upper}
                         position={positionUpperFace}
                         onPointerDown={(e) => {
-                            selectMe(e, ActionType.Move);
+                            selectMe(id, e, ActionType.Move);
                         }}
                         onPointerOver={(e) => {
                             hoverHandle(e, MoveHandleType.Upper);
@@ -656,7 +617,7 @@ const Cuboid = ({
                         name={MoveHandleType.Left}
                         position={positionLeftFace}
                         onPointerDown={(e) => {
-                            selectMe(e, ActionType.Move);
+                            selectMe(id, e, ActionType.Move);
                         }}
                         onPointerOver={(e) => {
                             hoverHandle(e, MoveHandleType.Left);
@@ -678,7 +639,7 @@ const Cuboid = ({
                         name={MoveHandleType.Right}
                         position={positionRightFace}
                         onPointerDown={(e) => {
-                            selectMe(e, ActionType.Move);
+                            selectMe(id, e, ActionType.Move);
                         }}
                         onPointerOver={(e) => {
                             hoverHandle(e, MoveHandleType.Right);
@@ -700,7 +661,7 @@ const Cuboid = ({
                         name={MoveHandleType.Top}
                         position={positionTopFace}
                         onPointerDown={(e) => {
-                            selectMe(e, ActionType.Move);
+                            selectMe(id, e, ActionType.Move);
                         }}
                         onPointerOver={(e) => {
                             hoverHandle(e, MoveHandleType.Top);
@@ -734,7 +695,7 @@ const Cuboid = ({
                         rotation={[-Math.PI/2, 0, 0]}
                         visible={false}
                         onPointerDown={(e) => {
-                            selectMe(e, ActionType.Rotate);
+                            selectMe(id, e, ActionType.Rotate);
                         }}
                         onPointerOver={(e) => {
                             hoverHandle(e, RotateHandleType.Lower);
@@ -759,7 +720,7 @@ const Cuboid = ({
                         rotation={[-Math.PI/2, 0, 0]}
                         visible={false}
                         onPointerDown={(e) => {
-                            selectMe(e, ActionType.Rotate);
+                            selectMe(id, e, ActionType.Rotate);
                         }}
                         onPointerOver={(e) => {
                             hoverHandle(e, RotateHandleType.Upper);
