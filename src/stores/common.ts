@@ -102,6 +102,7 @@ export interface CommonStoreState {
     setSunlightDirection: (vector: Vector3) => void;
 
     cameraDirection: Vector3;
+    getCameraDirection: () => Vector3;
 
     heliodonRadius: number;
     setHeliodonRadius: (radius: number) => void;
@@ -223,39 +224,30 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         },
         selectMe(id, e, action) {
             if (e.intersections.length > 0) {
-                const intersected = e.intersections[0].object === e.eventObject;
-                if (intersected) {
+                if (e.intersections[0].object === e.eventObject) {
                     immerSet((state) => {
                         for (const e of state.elements) {
                             e.selected = e.id === id;
                         }
                         if(action) {
+                            state.moveHandleType = null;
+                            state.resizeHandleType = null;
+                            state.rotateHandleType = null;
+                            state.enableOrbitController = false;
                             switch (action) {
                                 case ActionType.Move:
                                     state.moveHandleType = e.eventObject.name as MoveHandleType;
-                                    state.resizeHandleType = null;
-                                    state.rotateHandleType = null;
-                                    state.enableOrbitController = false;
                                     break;
                                 case ActionType.Resize:
                                     state.resizeHandleType = e.eventObject.name as ResizeHandleType;
-                                    state.moveHandleType = null;
-                                    state.rotateHandleType = null;
-                                    state.enableOrbitController = false;
                                     break;
                                 case ActionType.Rotate:
                                     state.rotateHandleType = e.eventObject.name as RotateHandleType;
-                                    state.moveHandleType = null;
-                                    state.resizeHandleType = null;
-                                    state.enableOrbitController = false;
                                     break;
                                 case ActionType.Select:
                                     state.selectedElementAngle = e.object.parent?.rotation.y ?? 0;
                                     break;
                                 default:
-                                    state.moveHandleType = null;
-                                    state.resizeHandleType = null;
-                                    state.rotateHandleType = null;
                                     state.enableOrbitController = true;
                             }
                         }
@@ -587,6 +579,9 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         },
 
         cameraDirection: new Vector3(),
+        getCameraDirection() {
+            return get().cameraDirection;
+        },
 
         heliodonRadius: 10,
         setHeliodonRadius(radius: number) {

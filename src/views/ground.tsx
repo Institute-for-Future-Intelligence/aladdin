@@ -29,6 +29,7 @@ const Ground = () => {
     const setElementRotation = useStore(state => state.setElementRotation);
     const updateElement = useStore(state => state.updateElementById);
     const addElement = useStore(state => state.addElement);
+    const getCameraDirection = useStore(state => state.getCameraDirection);
     const {camera, gl: {domElement}} = useThree();
     const groundPlaneRef = useRef<Mesh>();
     const intersectionPlaneRef = useRef<Mesh>();
@@ -48,16 +49,40 @@ const Ground = () => {
         }
         return 0;
     }, [grabRef.current?.rotation]);
+    const elementProps = useMemo(() => {
+        if(grabRef.current) {
+            const {lx, ly} = grabRef.current;
+            const d = Math.sqrt(Math.pow(lx / 2, 2) + Math.pow(ly / 2, 2));
+            const sinB = ly / 2 / d;
+            const cosB = lx / 2 / d;
+            const sinB_A = sinB * cosAngle - cosB * sinAngle;
+            const cosB_A = cosB * cosAngle + sinB * sinAngle;
+            const dx = d * cosB_A;
+            const dy = d * sinB_A;
+            return {dx, dy};
+        }
+        return {dx: 0, dy: 0};
+    }, [grabRef.current?.lx, grabRef.current?.ly]);
     useEffect(() => {
         if(grabRef.current) {
             setRotationAngle(grabRef.current.rotation[2]);
         }
     }, [grabRef.current?.rotation]);
+    
+    useEffect(() => {
+        window.addEventListener('pointerup', handlePointerUp);
+        return (() => {
+            window.removeEventListener('pointerup', handlePointerUp);
+        })
+    }, [])
 
     let intersectionPlaneType = IntersectionPlaneType.Ground;
     const intersectionPlanePosition = useMemo(() => new Vector3(), []);
     const intersectionPlaneAngle = useMemo(() => new Euler(), []);
+
     if (grabRef.current) {
+        const v = getCameraDirection();
+        const rotation = Math.atan2(v.x, v.z);
         if (moveHandleType === MoveHandleType.Top) {
             intersectionPlaneType = IntersectionPlaneType.Horizontal;
             intersectionPlanePosition.set(
@@ -87,35 +112,35 @@ const Ground = () => {
         } else if (resizeHandleType === ResizeHandleType.LowerLeftTop) {
             intersectionPlaneType = IntersectionPlaneType.Vertical;
             intersectionPlanePosition.set(
-                grabRef.current.cx - grabRef.current.lx / 2,
+                grabRef.current.cx - elementProps.dx,
                 0,
-                -grabRef.current.cy - grabRef.current.ly / 2
+                -grabRef.current.cy - elementProps.dy
             );
-            intersectionPlaneAngle.set(0, 0, 0);
+            intersectionPlaneAngle.set(0, rotation, 0);
         } else if (resizeHandleType === ResizeHandleType.UpperLeftTop) {
             intersectionPlaneType = IntersectionPlaneType.Vertical;
             intersectionPlanePosition.set(
-                grabRef.current.cx - grabRef.current.lx / 2,
+                grabRef.current.cx - elementProps.dy,
                 0,
-                -grabRef.current.cy + grabRef.current.ly / 2
+                -grabRef.current.cy + elementProps.dx
             );
-            intersectionPlaneAngle.set(0, 0, 0);
+            intersectionPlaneAngle.set(0, rotation, 0);
         } else if (resizeHandleType === ResizeHandleType.LowerRightTop) {
             intersectionPlaneType = IntersectionPlaneType.Vertical;
             intersectionPlanePosition.set(
-                grabRef.current.cx + grabRef.current.lx / 2,
+                grabRef.current.cx + elementProps.dy,
                 0,
-                -grabRef.current.cy - grabRef.current.ly / 2
+                -grabRef.current.cy - elementProps.dx
             );
-            intersectionPlaneAngle.set(0, 0, 0);
+            intersectionPlaneAngle.set(0, rotation, 0);
         } else if (resizeHandleType === ResizeHandleType.UpperRightTop) {
             intersectionPlaneType = IntersectionPlaneType.Vertical;
             intersectionPlanePosition.set(
-                grabRef.current.cx + grabRef.current.lx / 2,
+                grabRef.current.cx + elementProps.dx,
                 0,
-                -grabRef.current.cy + grabRef.current.ly / 2
+                -grabRef.current.cy + elementProps.dy
             );
-            intersectionPlaneAngle.set(0, 0, 0);
+            intersectionPlaneAngle.set(0, rotation, 0);
         }
     }
 
@@ -133,7 +158,7 @@ const Ground = () => {
         }
     };
 
-    const handlePointerUp = (e: ThreeEvent<PointerEvent>) => {
+    const handlePointerUp = () => {
         grabRef.current = null;
         setCommonStore((state) => {
             state.moveHandleType = null;
@@ -175,7 +200,7 @@ const Ground = () => {
         }
     };
 
-    const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
+    const handleGroudPointerMove = (e: ThreeEvent<PointerEvent>) => {
         if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
             const mouse = new Vector2();
             mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
@@ -226,21 +251,34 @@ const Ground = () => {
                                      handleRotate(p);
                                 }
                             }
-                        } else if (intersectionPlaneType === IntersectionPlaneType.Vertical) {
-                            if (
-                                resizeHandleType === ResizeHandleType.LowerLeftTop ||
-                                resizeHandleType === ResizeHandleType.UpperLeftTop ||
-                                resizeHandleType === ResizeHandleType.LowerRightTop ||
-                                resizeHandleType === ResizeHandleType.UpperRightTop) {
-                                intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-                                if (intersects.length > 0) {
-                                    const p = intersects[0].point;
-                                    updateElement(grabRef.current.id, {lz: Math.max(1, p.y)});
-                                }
-                            }
-                        }
+                        } 
                     }
                     break;
+            }
+        }
+    }
+
+    const handleIntersectionPointerMove = (e: ThreeEvent<PointerEvent>) => {
+        if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
+            const mouse = new Vector2();
+            mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
+            mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
+            ray.setFromCamera(mouse, camera);
+            let intersects;
+            if (grabRef.current.type === ObjectType.Cuboid && 
+                intersectionPlaneRef.current &&
+                intersectionPlaneType === IntersectionPlaneType.Vertical) {
+                if (
+                    resizeHandleType === ResizeHandleType.LowerLeftTop ||
+                    resizeHandleType === ResizeHandleType.UpperLeftTop ||
+                    resizeHandleType === ResizeHandleType.LowerRightTop ||
+                    resizeHandleType === ResizeHandleType.UpperRightTop) {
+                    intersects = ray.intersectObjects([intersectionPlaneRef.current]);
+                    if (intersects.length > 0) {
+                        const p = intersects[0].point;
+                        updateElement(grabRef.current.id, {lz: Math.max(1, p.y)});
+                    }
+                }
             }
         }
     }
@@ -309,10 +347,11 @@ const Ground = () => {
             <Plane
                 ref={intersectionPlaneRef}
                 visible={false}
-                name={'Intersection Plane'}
+                name={'Groud Intersection Plane'}
                 rotation={intersectionPlaneAngle}
                 position={intersectionPlanePosition}
                 args={[1000, 1000]}
+                onPointerMove={handleIntersectionPointerMove}
             >
                 <meshStandardMaterial side={DoubleSide}/>
             </Plane>
@@ -326,8 +365,7 @@ const Ground = () => {
                    renderOrder={-2}
                    onContextMenu={handleContextMenu}
                    onPointerDown={handlePointerDown}
-                   onPointerUp={handlePointerUp}
-                   onPointerMove={handlePointerMove}
+                   onPointerMove={handleGroudPointerMove}
             >
                 <meshStandardMaterial depthTest={false} color={viewState.groundColor}/>
             </Plane>

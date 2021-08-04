@@ -108,6 +108,7 @@ export enum IntersectionPlaneType {
     Horizontal = 'Horizontal',
     Vertical = 'Vertical',
     Ground = 'Ground',
+    Sky = 'Sky',
 }
 
 export enum Orientation {
