@@ -36,6 +36,8 @@ const Sky = ({
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const updateElement = useStore(state => state.updateElementById);
     const getCameraDirection = useStore(state => state.getCameraDirection);
+    const getResizeHandlePosition = useStore(state => state.getResizeHandlePosition);
+
     const resizeHandleType = useStore(state => state.resizeHandleType);
     const sunlightDirection = useStore(state => state.sunlightDirection);
 
@@ -46,72 +48,17 @@ const Sky = ({
     const ray = useMemo(() => new Raycaster(), []);
 
     const night = sunlightDirection.y <= 0;
-    const cosAngle = useMemo(() => {
-        if (grabRef.current) {
-            return Math.cos(grabRef.current.rotation[2]);
-        }
-        return 1;
-    }, [grabRef.current?.rotation]);
-    const sinAngle = useMemo(() => {
-        if (grabRef.current) {
-            return Math.sin(grabRef.current.rotation[2]);
-        }
-        return 0;
-    }, [grabRef.current?.rotation]);
-    const elementProps = useMemo(() => {
-        if(grabRef.current) {
-            const {lx, ly} = grabRef.current;
-            const d = Math.sqrt(Math.pow(lx / 2, 2) + Math.pow(ly / 2, 2));
-            const sinB = ly / 2 / d;
-            const cosB = lx / 2 / d;
-            const sinB_A = sinB * cosAngle - cosB * sinAngle;
-            const cosB_A = cosB * cosAngle + sinB * sinAngle;
-            const dx = d * cosB_A;
-            const dy = d * sinB_A;
-            return {dx, dy};
-        }
-        return {dx: 0, dy: 0};
-    }, [grabRef.current?.lx, grabRef.current?.ly]);
 
     let intersectionPlaneType = IntersectionPlaneType.Sky;
     const intersectionPlanePosition = useMemo(() => new Vector3(), []);
     const intersectionPlaneAngle = useMemo(() => new Euler(), []);
-    if (grabRef.current) {
-        const v = getCameraDirection();
-        const rotation = Math.atan2(v.x, v.z);
-        if (resizeHandleType === ResizeHandleType.LowerLeftTop) {
-            intersectionPlaneType = IntersectionPlaneType.Vertical;
-            intersectionPlanePosition.set(
-                grabRef.current.cx - elementProps.dx, 
-                0, 
-                -grabRef.current.cy - elementProps.dy
-            );
-            intersectionPlaneAngle.set(0, rotation, 0);
-        } else if (resizeHandleType === ResizeHandleType.UpperLeftTop) {
-            intersectionPlaneType = IntersectionPlaneType.Vertical;
-            intersectionPlanePosition.set(
-                grabRef.current.cx - elementProps.dy,
-                0,
-                -grabRef.current.cy + elementProps.dx
-            );
-            intersectionPlaneAngle.set(0, rotation, 0);
-        } else if (resizeHandleType === ResizeHandleType.LowerRightTop) {
-            intersectionPlaneType = IntersectionPlaneType.Vertical;
-            intersectionPlanePosition.set(
-                grabRef.current.cx + elementProps.dy,
-                0,
-                -grabRef.current.cy - elementProps.dx
-            );
-            intersectionPlaneAngle.set(0, rotation, 0);
-        } else if (resizeHandleType === ResizeHandleType.UpperRightTop) {
-            intersectionPlaneType = IntersectionPlaneType.Vertical;
-            intersectionPlanePosition.set(
-                grabRef.current.cx + elementProps.dx,
-                0,
-                -grabRef.current.cy + elementProps.dy
-            );
-            intersectionPlaneAngle.set(0, rotation, 0);
-        }
+    if (grabRef.current && resizeHandleType) {
+        intersectionPlaneType = IntersectionPlaneType.Vertical;
+        const handlePosition = getResizeHandlePosition(grabRef.current, resizeHandleType);
+        const cameraPostion = getCameraDirection();
+        const rotation = Math.atan2(cameraPostion.x, cameraPostion.z);
+        intersectionPlanePosition.set(handlePosition.x, 0, handlePosition.z);
+        intersectionPlaneAngle.set(0, rotation, 0);
     }
 
     const scale = useMemo(() => {
@@ -210,10 +157,6 @@ const Sky = ({
                 name={'Sky'}
                 scale={[1, scale, 1]}
                 onContextMenu={(e) => {
-                    clickSky(e);
-                }}
-                onClick={(e) => {
-                    if (e.button === 2) return; // ignore right-click
                     clickSky(e);
                 }}
                 onPointerDown={(e) => {

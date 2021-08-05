@@ -30,12 +30,19 @@ const Ground = () => {
     const updateElement = useStore(state => state.updateElementById);
     const addElement = useStore(state => state.addElement);
     const getCameraDirection = useStore(state => state.getCameraDirection);
+    const getResizeHandlePosition = useStore(state => state.getResizeHandlePosition);
     const {camera, gl: {domElement}} = useThree();
     const groundPlaneRef = useRef<Mesh>();
     const intersectionPlaneRef = useRef<Mesh>();
     const grabRef = useRef<ElementModel | null>(null);
 
-    const [rotationAngle, setRotationAngle] = useState(0);
+    useEffect(() => {
+        window.addEventListener('pointerup', handlePointerUp);
+        return (() => {
+            window.removeEventListener('pointerup', handlePointerUp);
+        })
+    }, [])
+
     const ray = useMemo(() => new Raycaster(), []);
     const cosAngle = useMemo(() => {
         if (grabRef.current) {
@@ -49,40 +56,12 @@ const Ground = () => {
         }
         return 0;
     }, [grabRef.current?.rotation]);
-    const elementProps = useMemo(() => {
-        if(grabRef.current) {
-            const {lx, ly} = grabRef.current;
-            const d = Math.sqrt(Math.pow(lx / 2, 2) + Math.pow(ly / 2, 2));
-            const sinB = ly / 2 / d;
-            const cosB = lx / 2 / d;
-            const sinB_A = sinB * cosAngle - cosB * sinAngle;
-            const cosB_A = cosB * cosAngle + sinB * sinAngle;
-            const dx = d * cosB_A;
-            const dy = d * sinB_A;
-            return {dx, dy};
-        }
-        return {dx: 0, dy: 0};
-    }, [grabRef.current?.lx, grabRef.current?.ly]);
-    useEffect(() => {
-        if(grabRef.current) {
-            setRotationAngle(grabRef.current.rotation[2]);
-        }
-    }, [grabRef.current?.rotation]);
     
-    useEffect(() => {
-        window.addEventListener('pointerup', handlePointerUp);
-        return (() => {
-            window.removeEventListener('pointerup', handlePointerUp);
-        })
-    }, [])
-
     let intersectionPlaneType = IntersectionPlaneType.Ground;
     const intersectionPlanePosition = useMemo(() => new Vector3(), []);
     const intersectionPlaneAngle = useMemo(() => new Euler(), []);
 
     if (grabRef.current) {
-        const v = getCameraDirection();
-        const rotation = Math.atan2(v.x, v.z);
         if (moveHandleType === MoveHandleType.Top) {
             intersectionPlaneType = IntersectionPlaneType.Horizontal;
             intersectionPlanePosition.set(
@@ -109,39 +88,14 @@ const Ground = () => {
                 -grabRef.current.cy
             );
             intersectionPlaneAngle.set(-Util.HALF_PI, 0, 0);
-        } else if (resizeHandleType === ResizeHandleType.LowerLeftTop) {
+        } else if (resizeHandleType) {
             intersectionPlaneType = IntersectionPlaneType.Vertical;
-            intersectionPlanePosition.set(
-                grabRef.current.cx - elementProps.dx,
-                0,
-                -grabRef.current.cy - elementProps.dy
-            );
+            const handlePosition = getResizeHandlePosition(grabRef.current, resizeHandleType);
+            const cameraPostion = getCameraDirection();
+            const rotation = Math.atan2(cameraPostion.x, cameraPostion.z);
+            intersectionPlanePosition.set(handlePosition.x, 0, handlePosition.z);
             intersectionPlaneAngle.set(0, rotation, 0);
-        } else if (resizeHandleType === ResizeHandleType.UpperLeftTop) {
-            intersectionPlaneType = IntersectionPlaneType.Vertical;
-            intersectionPlanePosition.set(
-                grabRef.current.cx - elementProps.dy,
-                0,
-                -grabRef.current.cy + elementProps.dx
-            );
-            intersectionPlaneAngle.set(0, rotation, 0);
-        } else if (resizeHandleType === ResizeHandleType.LowerRightTop) {
-            intersectionPlaneType = IntersectionPlaneType.Vertical;
-            intersectionPlanePosition.set(
-                grabRef.current.cx + elementProps.dy,
-                0,
-                -grabRef.current.cy - elementProps.dx
-            );
-            intersectionPlaneAngle.set(0, rotation, 0);
-        } else if (resizeHandleType === ResizeHandleType.UpperRightTop) {
-            intersectionPlaneType = IntersectionPlaneType.Vertical;
-            intersectionPlanePosition.set(
-                grabRef.current.cx + elementProps.dx,
-                0,
-                -grabRef.current.cy + elementProps.dy
-            );
-            intersectionPlaneAngle.set(0, rotation, 0);
-        }
+        } 
     }
 
     const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
@@ -296,7 +250,7 @@ const Ground = () => {
     const handleResize = (p: Vector3) => {
         const P = new Vector2(p.x, p.z);
         const R = resizeAnchor.distanceTo(P);
-        const angle = Math.atan2(P.x-resizeAnchor.x, P.y-resizeAnchor.y) - rotationAngle;
+        const angle = Math.atan2(P.x-resizeAnchor.x, P.y-resizeAnchor.y) - grabRef.current!.rotation[2];
         const lx = Math.abs(R * Math.sin(angle));
         const ly = Math.abs(R * Math.cos(angle));
         const c = new Vector2().addVectors(P, resizeAnchor).divideScalar(2);

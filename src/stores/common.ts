@@ -60,6 +60,7 @@ export interface CommonStoreState {
     showCloudFilePanel: boolean;
     showAccountSettingsPanel: boolean;
     getSelectedElement: () => ElementModel | null;
+    getResizeHandlePosition: (e: ElementModel, type: ResizeHandleType) => Vector3;
     getElementById: (id: string) => ElementModel | null;
     selectMe: (id: string, e: ThreeEvent<MouseEvent>, action?: ActionType) => void;
     selectNone: () => void;
@@ -205,6 +206,29 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 }
             }
             return null;
+        },
+        getResizeHandlePosition(e: ElementModel, type: ResizeHandleType) {
+            const {cx, cy, cz, lx, ly, rotation} = e;
+            const d = Math.sqrt(Math.pow(lx / 2, 2) + Math.pow(ly / 2, 2));
+            const sinA = Math.sin(rotation[2]);
+            const cosA = Math.cos(rotation[2]);
+            const sinB = ly / 2 / d;
+            const cosB = lx / 2 / d;
+            const dx1 = d * (cosB * cosA + sinB * sinA);
+            const dy1 = d * (sinB * cosA - cosB * sinA);
+            const dx2 = d * (cosB * cosA - sinB * sinA);
+            const dy2 = d * (sinB * cosA + cosB * sinA);
+            switch(type) {
+                case ResizeHandleType.LowerLeftTop:
+                    return new Vector3(cx-dx1, cz, -cy-dy1);
+                case ResizeHandleType.LowerRightTop:
+                    return new Vector3(cx+dx2, cz, -cy-dy2);
+                case ResizeHandleType.UpperLeftTop:
+                    return new Vector3(cx-dx2, cz, -cy+dy2);
+                case ResizeHandleType.UpperRightTop:
+                    return new Vector3(cx+dx1, cz, -cy+dy1);
+            }
+            return new Vector3();
         },
         getElementById(id: string) {
             const elements = get().elements;
