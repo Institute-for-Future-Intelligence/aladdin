@@ -109,6 +109,7 @@ export interface CommonStoreState {
     setHeliodonRadius: (radius: number) => void;
 
     selectedElementAngle: number;
+    selectedElementHeight: number;
 }
 
 export const useStore = create<CommonStoreState>(devtools(persist((
@@ -251,7 +252,13 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 if (e.intersections[0].object === e.eventObject) {
                     immerSet((state) => {
                         for (const e of state.elements) {
-                            e.selected = e.id === id;
+                            if(e.id === id) {
+                                e.selected = true;
+                                state.selectedElementHeight = e.lz;
+                            }
+                            else {
+                                e.selected = false;
+                            }
                         }
                         if(action) {
                             state.moveHandleType = null;
@@ -284,6 +291,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                 for (let [i, e] of state.elements.entries()) {
                     if (e.id === id) {
                         state.elements[i] = {...e, ...newProps};
+                        state.selectedElementHeight = newProps.lz ?? 0;
                         break;
                     }
                 }
@@ -336,6 +344,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                         state.elements[i].ly = ly;
                         if (lz) {
                             state.elements[i].lz = lz;
+                            state.selectedElementHeight = lz;
                         }
                         break;
                     }
@@ -615,6 +624,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         },
 
         selectedElementAngle: 0,
+        selectedElementHeight: 0,
     };
 }, {
     name: 'aladdin-storage',
