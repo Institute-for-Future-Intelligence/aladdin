@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useMemo, useRef, useState} from "react";
+import React, {useCallback, useMemo, useRef, useState} from "react";
 import {Box, Line, Plane, Sphere} from "@react-three/drei";
 import {Euler, Face, Mesh, Raycaster, Vector2, Vector3} from "three";
 import {useStore} from "../stores/common";
@@ -80,8 +80,6 @@ const Cuboid = ({
     const moveHandleLeftFaceRef = useRef<Mesh>();
     const moveHandleRightFaceRef = useRef<Mesh>();
     const moveHandleTopFaceRef = useRef<Mesh>();
-    const rotationHandleLRef = useRef<Mesh>();
-    const rotationHandleURef = useRef<Mesh>();
 
     const hx = lx / 2;
     const hy = ly / 2;
@@ -102,7 +100,7 @@ const Cuboid = ({
     const positionRightFace = useMemo(() => new Vector3(hx + MOVE_HANDLE_OFFSET, handleLift - hz, 0), [hx, hz]);
     const positionTopFace = useMemo(() => new Vector3(0, hz + MOVE_HANDLE_OFFSET, 0), [hz]);
 
-    const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
+    const hoverHandle = useCallback((e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
         if (e.intersections.length > 0) {
             const intersected = e.intersections[0].object === e.eventObject;
             if (intersected) {
@@ -122,12 +120,12 @@ const Cuboid = ({
                 }
             }
         }
-    };
+    }, []);
 
-    const noHoverHandle = () => {
+    const noHoverHandle = useCallback(() => {
         setHoveredHandle(null);
         domElement.style.cursor = 'default';
-    };
+    }, []);
 
     // only these elements are allowed to be on the cuboid
     const legalOnCuboid = (type: ObjectType) => {
@@ -174,6 +172,12 @@ const Cuboid = ({
     const ratio = Math.max(1, Math.max(lx, ly) / 8);
     const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
     const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
+    const lowerRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
+        return [0, RESIZE_HANDLE_SIZE / 2 - hz, Math.min(-1.2*hy, -hy-0.75)];
+    }, [hy, hz]);
+    const upperRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
+        return [0, RESIZE_HANDLE_SIZE / 2 - hz, Math.max(1.2*hy, hy+0.75)];
+    }, [hy, hz]);
 
     return (
 
@@ -680,56 +684,26 @@ const Cuboid = ({
                 </Sphere>
             
                 {/* rotate handles */}
-                <group ref={rotationHandleLRef}
-                    position={[0, RESIZE_HANDLE_SIZE / 2 - hz, Math.min(-1.2*hy, -hy-0.75)]}
-                    scale={ratio}
-                    name={RotateHandleType.Lower}
-                >
-                    <RotateHandle color={
-                        hoveredHandle === RotateHandleType.Lower || 
-                        rotateHandleType === RotateHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR} 
-                    />
-                    <Plane name={RotateHandleType.Lower} 
-                        args={[0.35, 0.35]} 
-                        position={[0, 0.05, 0]}
-                        rotation={[-Math.PI/2, 0, 0]}
-                        visible={false}
-                        onPointerDown={(e) => {
-                            selectMe(id, e, ActionType.Rotate);
-                        }}
-                        onPointerOver={(e) => {
-                            hoverHandle(e, RotateHandleType.Lower);
-                        }}
-                        onPointerOut={(e) => {
-                            noHoverHandle();
-                        }}
-                    />
-                </group>
-                <group ref={rotationHandleURef}
-                    position={[0, RESIZE_HANDLE_SIZE / 2 - hz, Math.max(1.2*hy, hy+0.75)]}
-                    scale={ratio}
-                    name={RotateHandleType.Upper}
-                >
-                    <RotateHandle color={
-                        hoveredHandle === RotateHandleType.Upper || 
-                        rotateHandleType === RotateHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR} 
-                    />
-                    <Plane name={RotateHandleType.Upper} 
-                        args={[0.35, 0.35]}
-                        position={[0, 0.05, 0]}
-                        rotation={[-Math.PI/2, 0, 0]}
-                        visible={false}
-                        onPointerDown={(e) => {
-                            selectMe(id, e, ActionType.Rotate);
-                        }}
-                        onPointerOver={(e) => {
-                            hoverHandle(e, RotateHandleType.Upper);
-                        }}
-                        onPointerOut={(e) => {
-                            noHoverHandle();
-                        }}
-                    />
-                </group>
+                <RotateHandle 
+                    id={id} 
+                    position={lowerRotateHandlePosition}
+                    color={hoveredHandle === RotateHandleType.Lower || 
+                        rotateHandleType === RotateHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
+                    ratio={ratio}
+                    handleType={RotateHandleType.Lower}
+                    hoverHandle={hoverHandle}
+                    noHoverHandle={noHoverHandle}
+                />
+                <RotateHandle 
+                    id={id} 
+                    position={upperRotateHandlePosition}
+                    color={hoveredHandle === RotateHandleType.Upper || 
+                        rotateHandleType === RotateHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
+                    ratio={ratio}
+                    handleType={RotateHandleType.Upper}
+                    hoverHandle={hoverHandle}
+                    noHoverHandle={noHoverHandle}
+                />
             </>
             }
 
