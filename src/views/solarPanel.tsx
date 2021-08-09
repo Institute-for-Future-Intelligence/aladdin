@@ -8,7 +8,7 @@ import {Euler, Mesh, Quaternion, RepeatWrapping, TextureLoader, Vector3} from "t
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS, RESIZE_HANDLE_COLOR, RESIZE_HANDLE_SIZE} from "../constants";
-import {ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, TrackerType} from "../types";
+import {ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType, TrackerType} from "../types";
 import {Util} from "../Util";
 import {SolarPanelModel} from "../models/SolarPanelModel";
 import SolarPanelBlueLandscapeImage from "../resources/solar-panel-blue-landscape.png";
@@ -16,6 +16,8 @@ import SolarPanelBluePortraitImage from "../resources/solar-panel-blue-portrait.
 import SolarPanelBlackLandscapeImage from "../resources/solar-panel-black-landscape.png";
 import SolarPanelBlackPortraitImage from "../resources/solar-panel-black-portrait.png";
 import {getSunDirection} from "../analysis/sunTools";
+import RotateHandle from "../components/rotateHandle";
+
 
 const SolarPanel = ({
                         id,
@@ -44,7 +46,6 @@ const SolarPanel = ({
                         parent,
                         orientation = Orientation.portrait,
                     }: SolarPanelModel) => {
-
     const setCommonStore = useStore(state => state.set);
     const date = useStore(state => state.world.date);
     const latitude = useStore(state => state.world.latitude);
@@ -52,9 +53,10 @@ const SolarPanel = ({
     const getElementById = useStore(state => state.getElementById);
     const selectMe = useStore(state => state.selectMe);
     const resizeHandleType = useStore(state => state.resizeHandleType);
+    const rotateHandleType = useStore(state => state.rotateHandleType);
     const {gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
-    const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
+    const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
     const [nx, setNx] = useState(1);
     const [ny, setNy] = useState(1);
     const [updateFlag, setUpdateFlag] = useState(false);
@@ -199,7 +201,10 @@ const SolarPanel = ({
         return new Vector3(0, lz + 0.2, 0);
     }, [normal]);
 
-    const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType) => {
+    const hoverHandle = (
+        e: ThreeEvent<MouseEvent>, 
+        handle: MoveHandleType | ResizeHandleType | RotateHandleType
+        ) => {
         if (e.intersections.length > 0) {
             const intersected = e.intersections[0].object === e.eventObject;
             if (intersected) {
@@ -208,7 +213,9 @@ const SolarPanel = ({
                     handle === ResizeHandleType.Upper ||
                     handle === ResizeHandleType.Lower ||
                     handle === ResizeHandleType.Left ||
-                    handle === ResizeHandleType.Right
+                    handle === ResizeHandleType.Right ||
+                    handle === RotateHandleType.Lower ||
+                    handle === RotateHandleType.Upper
                 ) {
                     domElement.style.cursor = 'move';
                 } else {
@@ -246,7 +253,7 @@ const SolarPanel = ({
             }
         }
         return new Euler(tiltAngle, relativeAzimuth, 0, 'YXZ');
-    }, [trackerType, date, tiltAngle, relativeAzimuth]);
+    }, [trackerType, sunDirection, tiltAngle, relativeAzimuth]);
 
     const normalVector = useMemo(() => {
         const v = new Vector3();
@@ -276,45 +283,257 @@ const SolarPanel = ({
 
         <group name={'Solar Panel Group ' + id}
                rotation={euler}
-               position={[cx, cz + hz, cy]}>
+               position={[cx, cz + hz, cy]}
+        >
 
-            {/* draw panel */}
-            <Box receiveShadow={shadowEnabled}
-                 castShadow={shadowEnabled}
-                 userData={{simulation: true, aabb: true}}
-                 uuid={id}
-                 ref={baseRef}
-                 args={[lx, lz, ly]}
-                 rotation={relativeEuler}
-                 name={'Solar Panel'}
-                 onPointerDown={(e) => {
-                     if (e.button === 2) return; // ignore right-click
-                     selectMe(id, e, ActionType.Select);
-                 }}
-                 onContextMenu={(e) => {
-                     selectMe(id, e, ActionType.Select);
-                 }}
-                 onPointerOver={(e) => {
-                     if (e.intersections.length > 0) {
-                         const intersected = e.intersections[0].object === baseRef.current;
-                         if (intersected) {
-                             setHovered(true);
-                             domElement.style.cursor = 'move';
-                         }
-                     }
-                 }}
-                 onPointerOut={(e) => {
-                     setHovered(false);
-                     domElement.style.cursor = 'default';
-                 }}
-            >
-                <meshStandardMaterial attachArray="material" color={color}/>
-                <meshStandardMaterial attachArray="material" color={color}/>
-                <meshStandardMaterial attachArray="material" map={texture}/>
-                <meshStandardMaterial attachArray="material" color={color}/>
-                <meshStandardMaterial attachArray="material" color={color}/>
-                <meshStandardMaterial attachArray="material" color={color}/>
-            </Box>
+            <group rotation={relativeEuler}>
+                {/* draw panel */}
+                <Box receiveShadow={shadowEnabled}
+                    castShadow={shadowEnabled}
+                    userData={{simulation: true, aabb: true}}
+                    uuid={id}
+                    ref={baseRef}
+                    args={[lx, lz, ly]}
+                    name={'Solar Panel'}
+                    onPointerDown={(e) => {
+                        if (e.button === 2) return; // ignore right-click
+                        selectMe(id, e, ActionType.Select);
+                    }}
+                    onContextMenu={(e) => {
+                        selectMe(id, e, ActionType.Select);
+                    }}
+                    onPointerOver={(e) => {
+                        if (e.intersections.length > 0) {
+                            const intersected = e.intersections[0].object === baseRef.current;
+                            if (intersected) {
+                                setHovered(true);
+                                domElement.style.cursor = 'move';
+                            }
+                        }
+                    }}
+                    onPointerOut={(e) => {
+                        setHovered(false);
+                        domElement.style.cursor = 'default';
+                    }}
+                >
+                    <meshStandardMaterial attachArray="material" color={color}/>
+                    <meshStandardMaterial attachArray="material" color={color}/>
+                    <meshStandardMaterial attachArray="material" map={texture}/>
+                    <meshStandardMaterial attachArray="material" color={color}/>
+                    <meshStandardMaterial attachArray="material" color={color}/>
+                    <meshStandardMaterial attachArray="material" color={color}/>
+                </Box>
+
+
+                {selected && !locked &&
+                <>
+                    {/* draw move handle */}
+                    <Sphere
+                        ref={moveHandleRef}
+                        position={new Vector3(0, 0, 0)}
+                        args={[moveHandleSize, 6, 6]}
+                        name={'Handle'}
+                        onPointerDown={(e) => {
+                            selectMe(id, e, ActionType.Move);
+                        }}>
+                        <meshStandardMaterial attach="material" color={'orange'}/>
+                    </Sphere>
+
+                    {/* draw resize handles */}
+                    <group>
+                        <Box ref={resizeHandleLowerRef}
+                            position={[(positionLL.x + positionLR.x) / 2, positionLL.y, positionLL.z]}
+                            args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
+                            name={ResizeHandleType.Lower}
+                            onPointerDown={(e) => {
+                                selectMe(id, e, ActionType.Resize);
+                                setCommonStore(state => {
+                                    state.resizeAnchor.set(cx, cy + hy);
+                                });
+                            }}
+                            onPointerOver={(e) => {
+                                hoverHandle(e, ResizeHandleType.Lower);
+                            }}
+                            onPointerOut={(e) => {
+                                noHoverHandle();
+                            }}
+                        >
+                            <meshStandardMaterial
+                                attach="material"
+                                color={
+                                    hoveredHandle === ResizeHandleType.Lower ||
+                                    resizeHandleType === ResizeHandleType.Lower ?
+                                        HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                                }
+                            />
+                        </Box>
+                        <Box ref={resizeHandleUpperRef}
+                            position={[(positionUL.x + positionUR.x) / 2, positionUL.y, positionUL.z]}
+                            args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
+                            name={ResizeHandleType.Upper}
+                            onPointerDown={(e) => {
+                                selectMe(id, e, ActionType.Resize);
+                                setCommonStore(state => {
+                                    state.resizeAnchor.set(cx, cy - hy);
+                                });
+                            }}
+                            onPointerOver={(e) => {
+                                hoverHandle(e, ResizeHandleType.Upper);
+                            }}
+                            onPointerOut={(e) => {
+                                noHoverHandle();
+                            }}
+                        >
+                            <meshStandardMaterial
+                                attach="material"
+                                color={
+                                    hoveredHandle === ResizeHandleType.Upper ||
+                                    resizeHandleType === ResizeHandleType.Upper ?
+                                        HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                                }
+                            />
+                        </Box>
+                        <Box ref={resizeHandleLeftRef}
+                            position={[positionLL.x, positionLL.y, (positionLL.z + positionUL.z) / 2]}
+                            args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
+                            name={ResizeHandleType.Left}
+                            onPointerDown={(e) => {
+                                selectMe(id, e, ActionType.Resize);
+                                setCommonStore(state => {
+                                    state.resizeAnchor.set(cx + hx, cy);
+                                });
+                            }}
+                            onPointerOver={(e) => {
+                                hoverHandle(e, ResizeHandleType.Left);
+                            }}
+                            onPointerOut={(e) => {
+                                noHoverHandle();
+                            }}
+                        >
+                            <meshStandardMaterial
+                                attach="material"
+                                color={
+                                    hoveredHandle === ResizeHandleType.Left ||
+                                    resizeHandleType === ResizeHandleType.Left ?
+                                        HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                                }
+                            />
+                        </Box>
+                        <Box ref={resizeHandleRightRef}
+                            position={[positionLR.x, positionLR.y, (positionLR.z + positionUR.z) / 2]}
+                            args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
+                            name={ResizeHandleType.Right}
+                            onPointerDown={(e) => {
+                                selectMe(id, e, ActionType.Resize);
+                                setCommonStore(state => {
+                                    state.resizeAnchor.set(cx - hx, cy);
+                                });
+                            }}
+                            onPointerOver={(e) => {
+                                hoverHandle(e, ResizeHandleType.Right);
+                            }}
+                            onPointerOut={(e) => {
+                                noHoverHandle();
+                            }}
+                        >
+                            <meshStandardMaterial
+                                attach="material"
+                                color={
+                                    hoveredHandle === ResizeHandleType.Right ||
+                                    resizeHandleType === ResizeHandleType.Right ?
+                                        HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
+                                }
+                            />
+                        </Box>
+                    </group>
+
+                </>
+                }
+
+                {!selected &&
+                <group>
+                    {/* draw wireframe lines upper face */}
+                    <Line points={[positionLL, positionLR]}
+                        name={'Line LL-LR Upper Face'}
+                        lineWidth={lineWidth}
+                        color={lineColor}/>
+                    <Line points={[positionLR, positionUR]}
+                        name={'Line LR-UR Upper Face'}
+                        lineWidth={lineWidth}
+                        color={lineColor}/>
+                    <Line points={[positionUR, positionUL]}
+                        name={'Line UR-UL Upper Face'}
+                        lineWidth={lineWidth}
+                        color={lineColor}/>
+                    <Line points={[positionUL, positionLL]}
+                        name={'Line UL-LL Upper Face'}
+                        lineWidth={lineWidth}
+                        color={lineColor}/>
+
+                    {/* draw wireframe lines lower face */}
+                    <Line points={[[positionLL.x, -hz, positionLL.z], [positionLR.x, -hz, positionLR.z]]}
+                        name={'Line LL-LR Lower Face'}
+                        lineWidth={lineWidth}
+                        color={lineColor}/>
+                    <Line points={[[positionLR.x, -hz, positionLR.z], [positionUR.x, -hz, positionUR.z]]}
+                        name={'Line LR-UR Lower Face'}
+                        lineWidth={lineWidth}
+                        color={lineColor}/>
+                    <Line points={[[positionUR.x, -hz, positionUR.z], [positionUL.x, -hz, positionUL.z]]}
+                        name={'Line UR-UL Lower Face'}
+                        lineWidth={lineWidth}
+                        color={lineColor}/>
+                    <Line points={[[positionUL.x, -hz, positionUL.z], [positionLL.x, -hz, positionLL.z]]}
+                        name={'Line UL-LL Lower Face'}
+                        lineWidth={lineWidth}
+                        color={lineColor}/>
+
+                    {/* draw wireframe vertical lines */}
+                    <Line points={[[positionLL.x, -hz, positionLL.z], positionLL]}
+                        name={'Line LL-LL Vertical'}
+                        lineWidth={lineWidth}
+                        color={lineColor}/>
+                    <Line points={[[positionLR.x, -hz, positionLR.z], positionLR]}
+                        name={'Line LR-LR Vertical'}
+                        lineWidth={lineWidth}
+                        color={lineColor}/>
+                    <Line points={[[positionUL.x, -hz, positionUL.z], positionUL]}
+                        name={'Line UL-UL Vertical'}
+                        lineWidth={lineWidth}
+                        color={lineColor}/>
+                    <Line points={[[positionUR.x, -hz, positionUR.z], positionUR]}
+                        name={'Line UR-UR Vertical'}
+                        lineWidth={lineWidth}
+                        color={lineColor}/>
+                </group>
+                }
+                
+            </group>
+
+            {/* draw rotate handles */}
+            <group position={[0,-poleHeight,0]} rotation={[0, relativeEuler.y, 0]}>
+                {/* rotate handles */}
+                <RotateHandle
+                        id={id}
+                        position={[0,0,-ly]}
+                        color={hoveredHandle === RotateHandleType.Upper || 
+                            rotateHandleType === RotateHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
+                        ratio={1}
+                        handleType={RotateHandleType.Upper}
+                        hoverHandle={hoverHandle}
+                        noHoverHandle={noHoverHandle}
+                    />
+                    <RotateHandle
+                        id={id}
+                        position={[0,0,ly]}
+                        color={hoveredHandle === RotateHandleType.Lower || 
+                            rotateHandleType === RotateHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
+                        ratio={1}
+                        handleType={RotateHandleType.Lower}
+                        hoverHandle={hoverHandle}
+                        noHoverHandle={noHoverHandle}
+                    />
+            </group>
 
             {/* draw poles */}
             {poleHeight > 0 &&
@@ -363,188 +582,6 @@ const SolarPanel = ({
                       position={normalVector.clone().multiplyScalar(0.75)}>
                     <meshStandardMaterial attach="material" color={'white'}/>
                 </Cone>
-            </group>
-            }
-
-            {!selected &&
-            <group rotation={relativeEuler}>
-                {/* draw wireframe lines upper face */}
-                <Line points={[positionLL, positionLR]}
-                      name={'Line LL-LR Upper Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
-                <Line points={[positionLR, positionUR]}
-                      name={'Line LR-UR Upper Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
-                <Line points={[positionUR, positionUL]}
-                      name={'Line UR-UL Upper Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
-                <Line points={[positionUL, positionLL]}
-                      name={'Line UL-LL Upper Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
-
-                {/* draw wireframe lines lower face */}
-                <Line points={[[positionLL.x, -hz, positionLL.z], [positionLR.x, -hz, positionLR.z]]}
-                      name={'Line LL-LR Lower Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
-                <Line points={[[positionLR.x, -hz, positionLR.z], [positionUR.x, -hz, positionUR.z]]}
-                      name={'Line LR-UR Lower Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
-                <Line points={[[positionUR.x, -hz, positionUR.z], [positionUL.x, -hz, positionUL.z]]}
-                      name={'Line UR-UL Lower Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
-                <Line points={[[positionUL.x, -hz, positionUL.z], [positionLL.x, -hz, positionLL.z]]}
-                      name={'Line UL-LL Lower Face'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
-
-                {/* draw wireframe vertical lines */}
-                <Line points={[[positionLL.x, -hz, positionLL.z], positionLL]}
-                      name={'Line LL-LL Vertical'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
-                <Line points={[[positionLR.x, -hz, positionLR.z], positionLR]}
-                      name={'Line LR-LR Vertical'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
-                <Line points={[[positionUL.x, -hz, positionUL.z], positionUL]}
-                      name={'Line UL-UL Vertical'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
-                <Line points={[[positionUR.x, -hz, positionUR.z], positionUR]}
-                      name={'Line UR-UR Vertical'}
-                      lineWidth={lineWidth}
-                      color={lineColor}/>
-            </group>
-            }
-
-            {/* draw move handle */}
-            {selected && !locked &&
-            <Sphere
-                ref={moveHandleRef}
-                position={new Vector3(0, 0, 0)}
-                args={[moveHandleSize, 6, 6]}
-                name={'Handle'}
-                onPointerDown={(e) => {
-                    selectMe(id, e, ActionType.Move);
-                }}>
-                <meshStandardMaterial attach="material" color={'orange'}/>
-            </Sphere>
-            }
-
-            {/* draw resize handles */}
-            {selected && !locked &&
-            <group rotation={relativeEuler}>
-                <Box ref={resizeHandleLowerRef}
-                     position={[(positionLL.x + positionLR.x) / 2, positionLL.y, positionLL.z]}
-                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
-                     name={ResizeHandleType.Lower}
-                     onPointerDown={(e) => {
-                         selectMe(id, e, ActionType.Resize);
-                         setCommonStore(state => {
-                             state.resizeAnchor.set(cx, cy + hy);
-                         });
-                     }}
-                     onPointerOver={(e) => {
-                         hoverHandle(e, ResizeHandleType.Lower);
-                     }}
-                     onPointerOut={(e) => {
-                         noHoverHandle();
-                     }}
-                >
-                    <meshStandardMaterial
-                        attach="material"
-                        color={
-                            hoveredHandle === ResizeHandleType.Lower ||
-                            resizeHandleType === ResizeHandleType.Lower ?
-                                HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
-                        }
-                    />
-                </Box>
-                <Box ref={resizeHandleUpperRef}
-                     position={[(positionUL.x + positionUR.x) / 2, positionUL.y, positionUL.z]}
-                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
-                     name={ResizeHandleType.Upper}
-                     onPointerDown={(e) => {
-                         selectMe(id, e, ActionType.Resize);
-                         setCommonStore(state => {
-                             state.resizeAnchor.set(cx, cy - hy);
-                         });
-                     }}
-                     onPointerOver={(e) => {
-                         hoverHandle(e, ResizeHandleType.Upper);
-                     }}
-                     onPointerOut={(e) => {
-                         noHoverHandle();
-                     }}
-                >
-                    <meshStandardMaterial
-                        attach="material"
-                        color={
-                            hoveredHandle === ResizeHandleType.Upper ||
-                            resizeHandleType === ResizeHandleType.Upper ?
-                                HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
-                        }
-                    />
-                </Box>
-                <Box ref={resizeHandleLeftRef}
-                     position={[positionLL.x, positionLL.y, (positionLL.z + positionUL.z) / 2]}
-                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
-                     name={ResizeHandleType.Left}
-                     onPointerDown={(e) => {
-                         selectMe(id, e, ActionType.Resize);
-                         setCommonStore(state => {
-                             state.resizeAnchor.set(cx + hx, cy);
-                         });
-                     }}
-                     onPointerOver={(e) => {
-                         hoverHandle(e, ResizeHandleType.Left);
-                     }}
-                     onPointerOut={(e) => {
-                         noHoverHandle();
-                     }}
-                >
-                    <meshStandardMaterial
-                        attach="material"
-                        color={
-                            hoveredHandle === ResizeHandleType.Left ||
-                            resizeHandleType === ResizeHandleType.Left ?
-                                HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
-                        }
-                    />
-                </Box>
-                <Box ref={resizeHandleRightRef}
-                     position={[positionLR.x, positionLR.y, (positionLR.z + positionUR.z) / 2]}
-                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
-                     name={ResizeHandleType.Right}
-                     onPointerDown={(e) => {
-                         selectMe(id, e, ActionType.Resize);
-                         setCommonStore(state => {
-                             state.resizeAnchor.set(cx - hx, cy);
-                         });
-                     }}
-                     onPointerOver={(e) => {
-                         hoverHandle(e, ResizeHandleType.Right);
-                     }}
-                     onPointerOut={(e) => {
-                         noHoverHandle();
-                     }}
-                >
-                    <meshStandardMaterial
-                        attach="material"
-                        color={
-                            hoveredHandle === ResizeHandleType.Right ||
-                            resizeHandleType === ResizeHandleType.Right ?
-                                HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
-                        }
-                    />
-                </Box>
             </group>
             }
 

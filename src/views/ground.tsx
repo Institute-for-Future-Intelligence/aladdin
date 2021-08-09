@@ -259,12 +259,9 @@ const Ground = () => {
     }
 
     const handleRotate = (p: Vector3) => {
-        const element = getSelectedElement();
-        if(element) {
-            const {cx, cy} = element;
-            const rotation = Math.atan2(cx - p.x, -cy - p.z) + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
-            setElementRotation(grabRef.current!.id, 0, 0, rotation);
-        }
+        const {cx, cy} = grabRef.current!;
+        const rotation = Math.atan2(cx - p.x, -cy - p.z) + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
+        setElementRotation(grabRef.current!.id, 0, 0, rotation);
     }
 
     const handleMove = (p: Vector3) => {

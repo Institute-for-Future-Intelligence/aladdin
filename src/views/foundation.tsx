@@ -53,6 +53,8 @@ const Foundation = ({
     const addElement = useStore(state => state.addElement);
     const setElementPosition = useStore(state => state.setElementPosition);
     const setElementSize = useStore(state => state.setElementSize);
+    const setElementRotation = useStore(state => state.setElementRotation);
+    const updateElementById = useStore(state => state.updateElementById);
     const selectMe = useStore(state => state.selectMe);
 
     const {camera, gl: {domElement}} = useThree();
@@ -249,13 +251,13 @@ const Foundation = ({
                                      const solarPanel = grabRef.current as SolarPanelModel;
                                      intersects = ray.intersectObjects([baseRef.current]);
                                      if (intersects.length > 0) {
-                                         let p = intersects[0].point;
+                                         let p = intersects[0].point; //World coordinate
                                          if (moveHandleType) {
                                              p = Util.viewToModel(p);
                                              if (elementModel) {
                                                  p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
                                              }
-                                             setElementPosition(solarPanel.id, p.x, p.y);
+                                             setElementPosition(solarPanel.id, p.x, p.y); //Relative coordinate
                                          } else if (resizeHandleType) {
                                              switch (resizeHandleType) {
                                                  case ResizeHandleType.Lower:
@@ -306,6 +308,19 @@ const Foundation = ({
                                                      setElementSize(solarPanel.id, dxr, solarPanel.ly);
                                                      setElementPosition(solarPanel.id, (p.x - dxr / 2 - cx) / lx, solarPanel.cy);
                                                      break;
+                                             }
+                                         } else if (rotateHandleType) {
+                                             const curr = grabRef.current;
+                                             const parent = getElementById(curr.parent.id);
+                                             if(parent) {
+                                                 const pr = parent.rotation[2]; //parent rotation
+                                                 const pc = new Vector2(parent.cx, parent.cy); //world parent center
+                                                 const cc = new Vector2(parent.lx * curr.cx, parent.ly * curr.cy) //local current center
+                                                    .rotateAround(new Vector2(0,0), pr); //add parent rotation
+                                                 const wc = new Vector2().addVectors(cc, pc); //world current center
+                                                 const rotation = -pr + Math.atan2(p.x-wc.x, p.z+wc.y) 
+                                                    + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
+                                                 updateElementById(grabRef.current.id, {relativeAzimuth: rotation});
                                              }
                                          }
                                      }

@@ -126,7 +126,7 @@ const PolarGrid = ({element}: {element: ElementModel}) => {
                 {/* shown angle */}
                 <group rotation={[0, _angle, 0]}>
                     <mesh position={[-0.5, 0, -radius*0.9]} rotation={[-Util.HALF_PI, 0, 0]}>
-                        <textGeometry args={[`${Math.abs(Math.floor(_angle/Math.PI*180))}`, textGeometryParams]} />
+                        <textGeometry args={[`${Math.abs(Math.floor(_angle/Math.PI*180))}°`, textGeometryParams]} />
                     </mesh>
                 </group>
 
@@ -138,7 +138,7 @@ const PolarGrid = ({element}: {element: ElementModel}) => {
                     return (
                         <group key={i} rotation={[0, times*Math.PI/12, 0]}>
                             <mesh position={[offset, 0, -radius*1.05]} rotation={[-Util.HALF_PI, 0, 0]}>
-                                <textGeometry args={[`${15*absTimes}`, textGeometryParams]} />
+                                <textGeometry args={[`${15*absTimes}°`, textGeometryParams]} />
                             </mesh>
                         </group>
                     );
