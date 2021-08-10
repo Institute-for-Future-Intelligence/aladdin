@@ -40,7 +40,7 @@ import PvModelPanel from "./panels/pvModelPanel";
 import YearlyPvYieldPanel from "./panels/yearlyPvYieldPanel";
 import DailyPvYieldPanel from "./panels/dailyPvYieldPanel";
 import Lights from './lights';
-import Grid from './grid';
+import {Grid} from './grid';
 import CameraController from './cameraController';
 import CompassContainer from './compassContainer';
 

@@ -511,6 +511,7 @@ const SolarPanel = ({
             </group>
 
             {/* draw rotate handles */}
+            {selected && !locked && trackerType === TrackerType.NO_TRACKER &&
             <group position={[0,-poleHeight,0]} rotation={[0, relativeEuler.y, 0]}>
                 {/* rotate handles */}
                 <RotateHandle
@@ -534,6 +535,7 @@ const SolarPanel = ({
                         noHoverHandle={noHoverHandle}
                     />
             </group>
+            }
 
             {/* draw poles */}
             {poleHeight > 0 &&

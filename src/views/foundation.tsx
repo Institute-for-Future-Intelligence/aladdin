@@ -22,6 +22,7 @@ import {Util} from "../Util";
 import {ElementModel} from "../models/ElementModel";
 import {SolarPanelModel} from "../models/SolarPanelModel";
 import RotateHandle from "../components/rotateHandle";
+import {PolarGrid} from "../grid";
 
 const Foundation = ({
                         id,
@@ -53,9 +54,9 @@ const Foundation = ({
     const addElement = useStore(state => state.addElement);
     const setElementPosition = useStore(state => state.setElementPosition);
     const setElementSize = useStore(state => state.setElementSize);
-    const setElementRotation = useStore(state => state.setElementRotation);
     const updateElementById = useStore(state => state.updateElementById);
     const selectMe = useStore(state => state.selectMe);
+    const element = getSelectedElement();
 
     const {camera, gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
@@ -320,7 +321,11 @@ const Foundation = ({
                                                  const wc = new Vector2().addVectors(cc, pc); //world current center
                                                  const rotation = -pr + Math.atan2(p.x-wc.x, p.z+wc.y) 
                                                     + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
-                                                 updateElementById(grabRef.current.id, {relativeAzimuth: rotation});
+                                                 const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0; // make sure angle is between -PI to PI
+                                                 updateElementById(grabRef.current.id, {relativeAzimuth: rotation + offset});
+                                                 setCommonStore(state => {
+                                                     state.selectedElementAngle = rotation + offset;
+                                                 });
                                              }
                                          }
                                      }
@@ -336,12 +341,16 @@ const Foundation = ({
                                       opacity={viewState.groundImage ? 0.25 : 1}/>
             </Box>
 
-            {showGrid && !viewState.groundImage &&
-            <gridHelper name={'Foundation Grid'}
+            {showGrid && !viewState.groundImage && (
+                <>
+                    {rotateHandleType && element && <PolarGrid element={element} />}
+                    {moveHandleType && 
+                    <gridHelper name={'Foundation Grid'}
                         position={[0, lz, 0]}
                         scale={[lx / maxLxLy, 1, ly / maxLxLy]}
-                        args={[maxLxLy, 50, 'gray', 'gray']}/>
-            }
+                        args={[maxLxLy, 50, 'gray', 'gray']}/>}
+                </>
+            )}
 
             {(wireframe && !selected) &&
             <>
@@ -632,6 +641,8 @@ const Foundation = ({
             </>
             }
 
+            {/* text */}
+            <>
             {(hovered && !selected) && <textSprite
                 name={'Label'}
                 text={'Foundation'}
@@ -672,6 +683,7 @@ const Foundation = ({
                 textHeight={0.2}
                 position={[hx, hz + 0.2, hy]}/>
             }
+            </>
 
         </group>
     )

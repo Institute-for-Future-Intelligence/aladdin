@@ -339,8 +339,8 @@ const ContextMenu = ({
                         </Menu.Item>
                         <Menu.Item key={'solar-panel-relative-azimuth'} style={{paddingLeft: '40px'}}>
                             <Space style={{width: '150px'}}>Relative Azimuth: </Space>
-                            <InputNumber min={0}
-                                         max={360}
+                            <InputNumber min={-180}
+                                         max={180}
                                          style={{width: 120}}
                                          precision={1}
                                          value={Util.toDegrees(solarPanel.relativeAzimuth)}

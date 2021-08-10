@@ -14,7 +14,7 @@ import {useStore} from "./stores/common";
 import {ObjectType, ResizeHandleType} from "./types";
 import { ElementModel } from "./models/ElementModel";
 
-const Grid = () => {
+export const Grid = () => {
 
     const grid = useStore((state) => state.grid);
     const enableOrbitController = useStore((state) => state.enableOrbitController);
@@ -72,19 +72,34 @@ const Grid = () => {
     );
 };
 
-const PolarGrid = ({element}: {element: ElementModel}) => {
+export const PolarGrid = ({element}: {element: ElementModel}) => {
 
     const rotateHandle = useStore(state => state.rotateHandleType);
     const angle = useStore(state => state.selectedElementAngle);
+    const getElementById = useStore(state => state.getElementById);
 
     const [position, setPosition] = useState<Vector3>();
     const [radius, setRadius] = useState<number>(10);
 
     useEffect(() => {
         if(rotateHandle) {
-            const {cx, cy, lx, ly} = element;
-            setPosition(new Vector3(cx, 0, -cy));
-            setRadius(Math.max(7, Math.sqrt(Math.pow(lx/2, 2) + Math.pow(ly/2, 2)) * 1.5));
+            const {cx, cy, lx, ly, type, parent} = element;
+            switch(type) {
+                case 'Solar Panel':
+                    const currParent = getElementById(parent.id);
+                    if(currParent) {
+                        const rcx = cx * currParent.lx;
+                        const rcy = cy * currParent.ly;
+                        setPosition(new Vector3(rcx, currParent.lz, -rcy));
+                    }
+                    break;
+                case 'Foundation':
+                    setPosition(new Vector3(cx, 0, -cy));
+                    break;
+                default:
+                    setPosition(new Vector3(cx, 0.2, -cy));
+            }
+            setRadius(Math.max(5, Math.sqrt(Math.pow(lx/2, 2) + Math.pow(ly/2, 2)) * 1.5));
         }
     }, [rotateHandle]);
     
@@ -96,7 +111,6 @@ const PolarGrid = ({element}: {element: ElementModel}) => {
         size: fontSize,
     } as TextGeometryParameters;
 
-    const _angle = angle > Math.PI ? angle - Math.PI * 2 : angle;
     const scale = new Array(25).fill(0);
 
     const getOffset = (i: number) => {
@@ -117,16 +131,16 @@ const PolarGrid = ({element}: {element: ElementModel}) => {
             <group position={position} name={'Polar Grid'}>
                 <polarGridHelper args={[radius, 24, 6]} />
                 <Ring
-                    args={[radius*0.98, radius, 24, 1, Math.PI/2, _angle]}
+                    args={[radius*0.98, radius, 24, 1, Math.PI/2, angle]}
                     rotation={[-Util.HALF_PI, 0, 0]}
                 >
                     <meshBasicMaterial side={DoubleSide} color={'yellow'} />
                 </Ring>
 
                 {/* shown angle */}
-                <group rotation={[0, _angle, 0]}>
+                <group rotation={[0, angle, 0]}>
                     <mesh position={[-0.5, 0, -radius*0.9]} rotation={[-Util.HALF_PI, 0, 0]}>
-                        <textGeometry args={[`${Math.abs(Math.floor(_angle/Math.PI*180))}°`, textGeometryParams]} />
+                        <textGeometry args={[`${Math.abs(Math.floor(angle/Math.PI*180))}°`, textGeometryParams]} />
                     </mesh>
                 </group>
 
@@ -147,9 +161,9 @@ const PolarGrid = ({element}: {element: ElementModel}) => {
             }
         </>
     )
-}
+};
 
-const VerticalScale = ({element}: {element: ElementModel}) => {
+export const VerticalScale = ({element}: {element: ElementModel}) => {
 
     const getResizeHandlePosition = useStore(state => state.getResizeHandlePosition);
     const getCameraDirection = useStore(state => state.getCameraDirection);
@@ -211,6 +225,6 @@ const VerticalScale = ({element}: {element: ElementModel}) => {
             }
         </>
     )
-}
+};
 
 export default React.memo(Grid);
