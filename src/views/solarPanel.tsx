@@ -3,8 +3,8 @@
  */
 
 import React, {useEffect, useMemo, useRef, useState} from "react";
-import {Box, Cone, Cylinder, Line, Sphere} from "@react-three/drei";
-import {Euler, Mesh, Quaternion, RepeatWrapping, TextureLoader, Vector3} from "three";
+import {Box, Cone, Cylinder, Line, Ring, Sphere} from "@react-three/drei";
+import {DoubleSide, Euler, Mesh, Quaternion, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS, RESIZE_HANDLE_COLOR, RESIZE_HANDLE_SIZE} from "../constants";
@@ -52,9 +52,10 @@ const SolarPanel = ({
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
     const getElementById = useStore(state => state.getElementById);
     const selectMe = useStore(state => state.selectMe);
+    const updateElementById = useStore(state => state.updateElementById);
     const resizeHandleType = useStore(state => state.resizeHandleType);
     const rotateHandleType = useStore(state => state.rotateHandleType);
-    const {gl: {domElement}} = useThree();
+    const {gl: {domElement}, camera} = useThree();
     const [hovered, setHovered] = useState(false);
     const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
     const [nx, setNx] = useState(1);
@@ -66,6 +67,9 @@ const SolarPanel = ({
     const resizeHandleUpperRef = useRef<Mesh>();
     const resizeHandleLeftRef = useRef<Mesh>();
     const resizeHandleRightRef = useRef<Mesh>();
+    const tiltHandleRef = useRef<Mesh>();
+    const pointerDown = useRef<boolean>(false);
+    const ray = useMemo(() => new Raycaster(), []);
 
     const heliodonRadius = useStore(state => state.heliodonRadius);
     const sunBeamLength = Math.max(100, heliodonRadius);
@@ -133,6 +137,20 @@ const SolarPanel = ({
             setNy(Math.max(1, Math.round(ly / pvModel.width)));
         }
     }, [orientation, pvModel, lx, ly]);
+
+    useEffect(() => {
+        const handlePointerUp = () => {
+            setCommonStore((state) => {
+                state.enableOrbitController = true;
+            });
+            pointerDown.current = false;
+            setShowTiltAngle(false);
+        }
+        window.addEventListener('pointerup', handlePointerUp);
+        return (() => {
+            window.removeEventListener('pointerup', handlePointerUp);
+        })
+    }, [])
 
     const texture = useMemo(() => {
         const loader = new TextureLoader();
@@ -210,12 +228,14 @@ const SolarPanel = ({
             if (intersected) {
                 setHoveredHandle(handle);
                 if ( // unfortunately, I cannot find a way to tell the type of an enum variable
+                    handle === MoveHandleType.Top ||
                     handle === ResizeHandleType.Upper ||
                     handle === ResizeHandleType.Lower ||
                     handle === ResizeHandleType.Left ||
                     handle === ResizeHandleType.Right ||
                     handle === RotateHandleType.Lower ||
-                    handle === RotateHandleType.Upper
+                    handle === RotateHandleType.Upper ||
+                    handle === RotateHandleType.Tilt
                 ) {
                     domElement.style.cursor = 'move';
                 } else {
@@ -278,6 +298,10 @@ const SolarPanel = ({
     const ratio = Math.max(1, Math.max(lx, ly) / 8);
     const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
     const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
+    const tiltHandleSize = ly * 2 / 3;
+
+    const degree = new Array(13).fill(0);
+    const [showTiltAngle, setShowTiltAngle] = useState(false);
 
     return (
 
@@ -324,7 +348,7 @@ const SolarPanel = ({
                     <meshStandardMaterial attachArray="material" color={color}/>
                 </Box>
 
-
+                {/* move & resize handles */}
                 {selected && !locked &&
                 <>
                     {/* draw move handle */}
@@ -333,6 +357,12 @@ const SolarPanel = ({
                         position={new Vector3(0, 0, 0)}
                         args={[moveHandleSize, 6, 6]}
                         name={'Handle'}
+                        onPointerOver={(e) => {
+                            hoverHandle(e, MoveHandleType.Top);
+                        }}
+                        onPointerOut={(e) => {
+                            noHoverHandle();
+                        }}
                         onPointerDown={(e) => {
                             selectMe(id, e, ActionType.Move);
                         }}>
@@ -450,6 +480,7 @@ const SolarPanel = ({
                 </>
                 }
 
+                {/* wireframe */}
                 {!selected &&
                 <group>
                     {/* draw wireframe lines upper face */}
@@ -507,7 +538,6 @@ const SolarPanel = ({
                         color={lineColor}/>
                 </group>
                 }
-                
             </group>
 
             {/* draw rotate handles */}
@@ -515,26 +545,122 @@ const SolarPanel = ({
             <group position={[0,-poleHeight,0]} rotation={[0, relativeEuler.y, 0]}>
                 {/* rotate handles */}
                 <RotateHandle
-                        id={id}
-                        position={[0,0,-ly]}
-                        color={hoveredHandle === RotateHandleType.Upper || 
-                            rotateHandleType === RotateHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
-                        ratio={1}
-                        handleType={RotateHandleType.Upper}
-                        hoverHandle={hoverHandle}
-                        noHoverHandle={noHoverHandle}
-                    />
-                    <RotateHandle
-                        id={id}
-                        position={[0,0,ly]}
-                        color={hoveredHandle === RotateHandleType.Lower || 
-                            rotateHandleType === RotateHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
-                        ratio={1}
-                        handleType={RotateHandleType.Lower}
-                        hoverHandle={hoverHandle}
-                        noHoverHandle={noHoverHandle}
-                    />
+                    id={id}
+                    position={[0,0,-ly]}
+                    color={hoveredHandle === RotateHandleType.Upper || 
+                        rotateHandleType === RotateHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
+                    ratio={ratio}
+                    handleType={RotateHandleType.Upper}
+                    hoverHandle={hoverHandle}
+                    noHoverHandle={noHoverHandle}
+                />
+                <RotateHandle
+                    id={id}
+                    position={[0,0,ly]}
+                    color={hoveredHandle === RotateHandleType.Lower || 
+                        rotateHandleType === RotateHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
+                    ratio={ratio}
+                    handleType={RotateHandleType.Lower}
+                    hoverHandle={hoverHandle}
+                    noHoverHandle={noHoverHandle}
+                />
             </group>
+            }
+
+            {/* draw tilt handles */}
+            {selected && !locked && trackerType === TrackerType.NO_TRACKER &&
+            <>
+                {/* ring handles */}
+                <Ring name={RotateHandleType.Tilt}
+                    args={[tiltHandleSize, 1.1*tiltHandleSize, 18, 2, 0, Math.PI]} 
+                    rotation={[0, relativeEuler.y + Math.PI/2, 0]}
+                    onPointerOver={(e) => {
+                        hoverHandle(e, RotateHandleType.Tilt);
+                    }}
+                    onPointerOut={(e) => {
+                        noHoverHandle();
+                    }}
+                    onPointerDown={(e) => {
+                        setShowTiltAngle(true);
+                        if(hoveredHandle) {
+                            setCommonStore((state) => {
+                                state.enableOrbitController = false;
+                            });
+                            pointerDown.current = true;
+                        }
+                    }}
+                >
+                    <meshStandardMaterial side={DoubleSide} 
+                        color={hoveredHandle === RotateHandleType.Tilt || showTiltAngle ?
+                            HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
+                    />
+                </Ring>
+                {/* pointer */}
+                <Line points={[[0,tiltHandleSize,0], [0,showTiltAngle ? 1.75*tiltHandleSize : 1.1*tiltHandleSize,0]]}
+                    rotation={new Euler(tiltAngle, relativeEuler.y, 0, 'YXZ')}
+                    lineWidth={1}
+                />
+                {/* intersection plane */}
+                {showTiltAngle && <>
+                <Ring ref={tiltHandleRef}
+                    name={'Solar panel tilt handle'}
+                    args={[tiltHandleSize, 2*tiltHandleSize, 18, 2, 0, Math.PI]}
+                    rotation={[0, relativeEuler.y + Math.PI/2, 0]}
+                    onPointerMove={(e) => {
+                        if(pointerDown.current) {
+                            const mouse = new Vector2();
+                            mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
+                            mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
+                            ray.setFromCamera(mouse, camera);
+                            if(tiltHandleRef.current) {
+                                const intersects = ray.intersectObjects([tiltHandleRef.current]);
+                                if(intersects.length > 0) {
+                                    const p = intersects[0].point;
+                                    const parent = tiltHandleRef.current.parent;
+                                    if(parent) {
+                                        const ov = parent.position; // rotate point in world coordinate
+                                        const cv = new Vector3().subVectors(p, ov); 
+                                        const wr = relativeAzimuth + rotation[2]; 
+                                        const sign = wr % Math.PI === 0 ? 
+                                            Math.sign(cv.z) * Math.sign(Math.cos(wr)) : 
+                                            Math.sign(cv.x) * Math.sign(Math.sin(wr));
+                                        const angle = cv.angleTo(new Vector3(0,1,0)) * sign;
+                                        updateElementById(id, {tiltAngle: angle});
+                                    }
+                                }
+                            }
+                        }
+                    }}
+                >
+                    <meshStandardMaterial depthTest={false} transparent={true} opacity={0.5} side={DoubleSide}/>
+                </Ring>
+                {/* scale */}
+                {degree.map((e, i) => {
+                    return (
+                        <group key={i} rotation={new Euler(Math.PI/12*i - Math.PI/2, relativeEuler.y, 0, 'YXZ')}>
+                            <Line points={[[0,1.8*tiltHandleSize,0], [0,2*tiltHandleSize,0]]} color={'white'} transparent={true} opacity={0.5} />
+                            <textSprite
+                                text={`${Math.abs(i*15-90)}°`}
+                                fontSize={20*tiltHandleSize}
+                                fontFace={'Times Roman'}
+                                textHeight={0.15*tiltHandleSize}
+                                position={[0,1.6*tiltHandleSize,0]}
+                            />
+                        </group>
+                    )
+                })}
+                {/* show current degree */}
+                <group rotation={new Euler(tiltAngle, relativeEuler.y,0, 'YXZ')}>
+                    <textSprite
+                        text={`${Math.abs(Math.floor(tiltAngle/Math.PI*180))}°`}
+                        fontSize={20*tiltHandleSize}
+                        fontFace={'Times Roman'}
+                        textHeight={0.2*tiltHandleSize}
+                        position={[0,0.75*tiltHandleSize,0]}
+                    />
+                </group>
+                </>}
+            </>
             }
 
             {/* draw poles */}

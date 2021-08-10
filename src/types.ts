@@ -102,6 +102,7 @@ export enum ResizeHandleType {
 export enum RotateHandleType {
     Lower = 'Rotate Handle Lower',
     Upper = 'Rotate Handle Upper',
+    Tilt = 'Rotate Handle Tilt',
 }
 
 export enum IntersectionPlaneType {
