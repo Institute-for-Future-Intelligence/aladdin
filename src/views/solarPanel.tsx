@@ -377,9 +377,12 @@ const SolarPanel = ({
                             name={ResizeHandleType.Lower}
                             onPointerDown={(e) => {
                                 selectMe(id, e, ActionType.Resize);
-                                setCommonStore(state => {
-                                    state.resizeAnchor.set(cx, cy + hy);
-                                });
+                                if(resizeHandleLeftRef.current) {
+                                    setCommonStore(state => {
+                                        const anchor = resizeHandleLowerRef.current!.localToWorld(new Vector3(0, 0, ly));
+                                        state.resizeAnchor.set(anchor.x, anchor.z);
+                                    });
+                                }
                             }}
                             onPointerOver={(e) => {
                                 hoverHandle(e, ResizeHandleType.Lower);
@@ -403,9 +406,12 @@ const SolarPanel = ({
                             name={ResizeHandleType.Upper}
                             onPointerDown={(e) => {
                                 selectMe(id, e, ActionType.Resize);
-                                setCommonStore(state => {
-                                    state.resizeAnchor.set(cx, cy - hy);
-                                });
+                                if(resizeHandleLeftRef.current) {
+                                    setCommonStore(state => {
+                                        const anchor = resizeHandleUpperRef.current!.localToWorld(new Vector3(0, 0, -ly));
+                                        state.resizeAnchor.set(anchor.x, anchor.z);
+                                    });
+                                }
                             }}
                             onPointerOver={(e) => {
                                 hoverHandle(e, ResizeHandleType.Upper);
@@ -429,9 +435,12 @@ const SolarPanel = ({
                             name={ResizeHandleType.Left}
                             onPointerDown={(e) => {
                                 selectMe(id, e, ActionType.Resize);
-                                setCommonStore(state => {
-                                    state.resizeAnchor.set(cx + hx, cy);
-                                });
+                                if(resizeHandleLeftRef.current) {
+                                    setCommonStore(state => {
+                                        const anchor = resizeHandleLeftRef.current!.localToWorld(new Vector3(lx, 0, 0));
+                                        state.resizeAnchor.set(anchor.x, anchor.z);
+                                    });
+                                }
                             }}
                             onPointerOver={(e) => {
                                 hoverHandle(e, ResizeHandleType.Left);
@@ -455,9 +464,12 @@ const SolarPanel = ({
                             name={ResizeHandleType.Right}
                             onPointerDown={(e) => {
                                 selectMe(id, e, ActionType.Resize);
-                                setCommonStore(state => {
-                                    state.resizeAnchor.set(cx - hx, cy);
-                                });
+                                if(resizeHandleLeftRef.current) {
+                                    setCommonStore(state => {
+                                        const anchor = resizeHandleRightRef.current!.localToWorld(new Vector3(-lx, 0, 0));
+                                        state.resizeAnchor.set(anchor.x, anchor.z);
+                                    });
+                                }
                             }}
                             onPointerOver={(e) => {
                                 hoverHandle(e, ResizeHandleType.Right);
