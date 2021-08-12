@@ -2,9 +2,9 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useCallback, useMemo, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {Box, Line, Sphere, Plane} from "@react-three/drei";
-import {Mesh, Raycaster, Vector2, Vector3} from "three";
+import {DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3} from "three";
 import {useStore} from "../stores/common";
 import {FoundationModel} from "../models/FoundationModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
@@ -23,6 +23,7 @@ import {ElementModel} from "../models/ElementModel";
 import {SolarPanelModel} from "../models/SolarPanelModel";
 import RotateHandle from "../components/rotateHandle";
 import {PolarGrid} from "../grid";
+import rotateHandle from "../components/rotateHandle";
 
 const Foundation = ({
                         id,
@@ -56,7 +57,6 @@ const Foundation = ({
     const setElementSize = useStore(state => state.setElementSize);
     const updateElementById = useStore(state => state.updateElementById);
     const selectMe = useStore(state => state.selectMe);
-    const element = getSelectedElement();
 
     const {camera, gl: {domElement}} = useThree();
     const [hovered, setHovered] = useState(false);
@@ -68,6 +68,7 @@ const Foundation = ({
     const [showGrid, setShowGrid] = useState<boolean>(false);
     const baseRef = useRef<Mesh>();
     const grabRef = useRef<ElementModel | null>(null);
+    const intersecPlaneRef = useRef<Mesh>();
     const resizeHandleLLRef = useRef<Mesh>();
     const resizeHandleULRef = useRef<Mesh>();
     const resizeHandleLRRef = useRef<Mesh>();
@@ -95,6 +96,14 @@ const Foundation = ({
     // const sinAngle = useMemo(() => {
     //     return Math.sin(rotation[2]);
     // }, [rotation]);
+
+    const intersectionPlanePosition = useMemo(() => new Vector3(), []);
+    const intersectionPlaneRotation = useMemo(() => new Euler(), []);
+
+    if(grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
+        intersectionPlanePosition.set(0, grabRef.current.poleHeight, 0);
+        intersectionPlaneRotation.set(-Math.PI/2, 0, 0);
+    }
 
     const hoverHandle = useCallback((e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
         if (e.intersections.length > 0) {
@@ -247,135 +256,7 @@ const Foundation = ({
                                          setElementPosition(grabRef.current.id, p.x, p.y);
                                      }
                                  }
-                                 break;
-                             case ObjectType.SolarPanel:
-                                 if (baseRef.current) {
-                                     const solarPanel = grabRef.current as SolarPanelModel;
-                                     intersects = ray.intersectObjects([baseRef.current]);
-                                     if (intersects.length > 0) {
-                                         let p = intersects[0].point; //World coordinate
-                                         if (moveHandleType) {
-                                             p = Util.viewToModel(p);
-                                             if (elementModel) {
-                                                 p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
-                                             }
-                                             setElementPosition(solarPanel.id, p.x, p.y); //Relative coordinate
-                                         } else if (resizeHandleType) {
-                                             switch (resizeHandleType) {
-                                                 case ResizeHandleType.Lower:
-                                                    {const wp = new Vector2(p.x, p.z); 
-                                                    const d = wp.distanceTo(resizeAnchor);
-                                                    const angle = solarPanel.relativeAzimuth + rotation[2]; // world panel azimuth
-                                                    const rp = new Vector2().subVectors(wp, resizeAnchor);  // relative vector from anchor to pointer
-                                                    const theta = angle + rp.angle() + Math.PI / 2;
-                                                    let dyl = d * Math.cos(theta);
-                                                    if (solarPanel.orientation === Orientation.portrait) {
-                                                            const nx = Math.max(1, Math.ceil((dyl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length));
-                                                            dyl = nx * solarPanel.pvModel.length;
-                                                    } else {
-                                                            const nx = Math.max(1, Math.ceil((dyl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width));
-                                                            dyl = nx * solarPanel.pvModel.width;
-                                                    }
-                                                    setElementSize(solarPanel.id, solarPanel.lx, dyl);
-
-                                                    const wcx = resizeAnchor.x - dyl * Math.sin(angle) / 2;
-                                                    const wcy = resizeAnchor.y - dyl * Math.cos(angle) / 2;
-                                                    const wc = new Vector2(wcx, wcy);   // world panel center
-                                                    const wbc = new Vector2(cx, cy);    // world foundation center
-                                                    const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), rotation[2]);
-                                                    setElementPosition(solarPanel.id, rc.x/lx, -rc.y/ly);}
-                                                    break;
-                                                 case ResizeHandleType.Upper:
-                                                    {const wp = new Vector2(p.x, p.z);
-                                                    const d = wp.distanceTo(resizeAnchor);
-                                                    const angle = solarPanel.relativeAzimuth + rotation[2];
-                                                    const rp = new Vector2().subVectors(wp, resizeAnchor);
-                                                    const theta = angle + rp.angle() - Math.PI / 2;
-                                                    let dyl = d * Math.cos(theta);
-                                                    if (solarPanel.orientation === Orientation.portrait) {
-                                                        const nx = Math.max(1, Math.ceil((dyl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length));
-                                                        dyl = nx * solarPanel.pvModel.length;
-                                                    } else {
-                                                            const nx = Math.max(1, Math.ceil((dyl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width));
-                                                            dyl = nx * solarPanel.pvModel.width;
-                                                    }
-                                                    setElementSize(solarPanel.id, solarPanel.lx, dyl);
-
-                                                    const wcx = resizeAnchor.x + dyl * Math.sin(angle) / 2;
-                                                    const wcy = resizeAnchor.y + dyl * Math.cos(angle) / 2;
-                                                    const wc = new Vector2(wcx, wcy);
-                                                    const wbc = new Vector2(cx, cy);
-                                                    const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), rotation[2]);
-                                                    setElementPosition(solarPanel.id, rc.x/lx, -rc.y/ly);}
-                                                     break;
-                                                 case ResizeHandleType.Left:
-                                                    {const wp = new Vector2(p.x, p.z);
-                                                    const d = wp.distanceTo(resizeAnchor);
-                                                    const angle = solarPanel.relativeAzimuth + rotation[2];
-                                                    const rp = new Vector2().subVectors(wp, resizeAnchor);
-                                                    const theta = rp.angle() + angle + Math.PI;
-                                                    let dxl = d * Math.cos(theta);
-                                                    if (solarPanel.orientation === Orientation.portrait) {
-                                                        const nx = Math.max(1, Math.ceil((dxl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width));
-                                                        dxl = nx * solarPanel.pvModel.width;
-                                                } else {
-                                                        const nx = Math.max(1, Math.ceil((dxl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length));
-                                                        dxl = nx * solarPanel.pvModel.length;
-                                                }
-                                                    setElementSize(solarPanel.id, dxl, solarPanel.ly);
-
-                                                    const wcx = resizeAnchor.x - dxl * Math.cos(angle) / 2;
-                                                    const wcy = resizeAnchor.y + dxl * Math.sin(angle) / 2;
-                                                    const wc = new Vector2(wcx, wcy);
-                                                    const wbc = new Vector2(cx, cy);
-                                                    const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), rotation[2]);
-                                                    setElementPosition(solarPanel.id, rc.x/lx, -rc.y/ly);}
-                                                    break;
-                                                 case ResizeHandleType.Right:
-                                                    {const wp = new Vector2(p.x, p.z);
-                                                    const d = wp.distanceTo(resizeAnchor);
-                                                    const angle = solarPanel.relativeAzimuth + rotation[2];
-                                                    const rp = new Vector2().subVectors(wp, resizeAnchor);
-                                                    const theta = angle + rp.angle();
-                                                    let dxl = d * Math.cos(theta);
-                                                    if (solarPanel.orientation === Orientation.portrait) {
-                                                            const nx = Math.max(1, Math.ceil((dxl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width));
-                                                            dxl = nx * solarPanel.pvModel.width;
-                                                    } else {
-                                                            const nx = Math.max(1, Math.ceil((dxl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length));
-                                                            dxl = nx * solarPanel.pvModel.length;
-                                                    }
-                                                    setElementSize(solarPanel.id, dxl, solarPanel.ly);
-
-                                                    const wcx = resizeAnchor.x + dxl * Math.cos(angle) / 2;
-                                                    const wcy = resizeAnchor.y - dxl * Math.sin(angle) / 2;
-                                                    const wc = new Vector2(wcx, wcy);
-                                                    const wbc = new Vector2(cx, cy);
-                                                    const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), rotation[2]);
-                                                    setElementPosition(solarPanel.id, rc.x/lx, -rc.y/ly);}
-                                                    break;
-                                             }
-                                         } else if (rotateHandleType) {
-                                             const curr = grabRef.current;
-                                             const parent = getElementById(curr.parent.id);
-                                             if(parent) {
-                                                 const pr = parent.rotation[2]; //parent rotation
-                                                 const pc = new Vector2(parent.cx, parent.cy); //world parent center
-                                                 const cc = new Vector2(parent.lx * curr.cx, parent.ly * curr.cy) //local current center
-                                                    .rotateAround(new Vector2(0,0), pr); //add parent rotation
-                                                 const wc = new Vector2().addVectors(cc, pc); //world current center
-                                                 const rotation = -pr + Math.atan2(p.x-wc.x, p.z+wc.y) 
-                                                    + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
-                                                 const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0; // make sure angle is between -PI to PI
-                                                 updateElementById(grabRef.current.id, {relativeAzimuth: rotation + offset});
-                                                 setCommonStore(state => {
-                                                     state.selectedElementAngle = rotation + offset;
-                                                 });
-                                             }
-                                         }
-                                     }
-                                 }
-                                 break;
+                             break;
                          }
                      }
                  }}
@@ -386,9 +267,161 @@ const Foundation = ({
                                       opacity={viewState.groundImage ? 0.25 : 1}/>
             </Box>
 
+            {/* intersection plane */}
+            {grabRef.current?.type === ObjectType.SolarPanel && !grabRef.current.locked &&
+            <Plane 
+                ref={intersecPlaneRef}
+                position={intersectionPlanePosition}
+                rotation={intersectionPlaneRotation}
+                args={[lx, ly]}
+                visible={false}
+                onPointerMove={(e) => {
+                    if(grabRef.current) {
+                        const mouse = new Vector2();
+                        mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
+                        mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
+                        ray.setFromCamera(mouse, camera);
+                        let intersects;
+                        if (intersecPlaneRef.current) {
+                            const solarPanel = grabRef.current as SolarPanelModel;
+                            intersects = ray.intersectObjects([intersecPlaneRef.current]);
+                            if (intersects.length > 0) {
+                                let p = intersects[0].point; //World coordinate
+                                if (moveHandleType) {
+                                    p = Util.viewToModel(p);
+                                    if (elementModel) {
+                                        p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
+                                    }
+                                    setElementPosition(solarPanel.id, p.x, p.y); //Relative coordinate
+                                } else if (rotateHandleType) {
+                                    const parent = getElementById(solarPanel.parent.id);
+                                    if(parent) {
+                                        const pr = parent.rotation[2]; //parent rotation
+                                        const pc = new Vector2(parent.cx, parent.cy); //world parent center
+                                        const cc = new Vector2(parent.lx * solarPanel.cx, parent.ly * solarPanel.cy) //local current center
+                                           .rotateAround(new Vector2(0,0), pr); //add parent rotation
+                                        const wc = new Vector2().addVectors(cc, pc); //world current center
+                                        const rotation = -pr + Math.atan2(p.x-wc.x, p.z+wc.y) 
+                                           + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
+                                        const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0; // make sure angle is between -PI to PI
+                                        updateElementById(solarPanel.id, {relativeAzimuth: rotation + offset});
+                                        setCommonStore(state => {
+                                            state.selectedElementAngle = rotation + offset;
+                                        });
+                                    }
+                                } else if (resizeHandleType) {
+                                    switch (resizeHandleType) {
+                                        case ResizeHandleType.Lower:
+                                           {const wp = new Vector2(p.x, p.z); 
+                                           const d = wp.distanceTo(resizeAnchor);
+                                           const angle = solarPanel.relativeAzimuth + rotation[2]; // world panel azimuth
+                                           const rp = new Vector2().subVectors(wp, resizeAnchor);  // relative vector from anchor to pointer
+                                           const theta = angle + rp.angle() + Math.PI / 2;
+                                           let dyl = d * Math.cos(theta);
+                                           if (solarPanel.orientation === Orientation.portrait) {
+                                                   const nx = Math.max(1, Math.ceil((dyl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length));
+                                                   dyl = nx * solarPanel.pvModel.length;
+                                           } else {
+                                                   const nx = Math.max(1, Math.ceil((dyl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width));
+                                                   dyl = nx * solarPanel.pvModel.width;
+                                           }
+                                           setElementSize(solarPanel.id, solarPanel.lx, dyl);
+
+                                           const wcx = resizeAnchor.x - dyl * Math.sin(angle) / 2;
+                                           const wcy = resizeAnchor.y - dyl * Math.cos(angle) / 2;
+                                           const wc = new Vector2(wcx, wcy);   // world panel center
+                                           const wbc = new Vector2(cx, cy);    // world foundation center
+                                           const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), rotation[2]);
+                                           setElementPosition(solarPanel.id, rc.x/lx, -rc.y/ly);}
+                                           break;
+                                        case ResizeHandleType.Upper:
+                                           {const wp = new Vector2(p.x, p.z);
+                                           const d = wp.distanceTo(resizeAnchor);
+                                           const angle = solarPanel.relativeAzimuth + rotation[2];
+                                           const rp = new Vector2().subVectors(wp, resizeAnchor);
+                                           const theta = angle + rp.angle() - Math.PI / 2;
+                                           let dyl = d * Math.cos(theta);
+                                           if (solarPanel.orientation === Orientation.portrait) {
+                                               const nx = Math.max(1, Math.ceil((dyl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length));
+                                               dyl = nx * solarPanel.pvModel.length;
+                                           } else {
+                                                   const nx = Math.max(1, Math.ceil((dyl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width));
+                                                   dyl = nx * solarPanel.pvModel.width;
+                                           }
+                                           setElementSize(solarPanel.id, solarPanel.lx, dyl);
+
+                                           const wcx = resizeAnchor.x + dyl * Math.sin(angle) / 2;
+                                           const wcy = resizeAnchor.y + dyl * Math.cos(angle) / 2;
+                                           const wc = new Vector2(wcx, wcy);
+                                           const wbc = new Vector2(cx, cy);
+                                           const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), rotation[2]);
+                                           setElementPosition(solarPanel.id, rc.x/lx, -rc.y/ly);}
+                                            break;
+                                        case ResizeHandleType.Left:
+                                           {const wp = new Vector2(p.x, p.z);
+                                           const d = wp.distanceTo(resizeAnchor);
+                                           const angle = solarPanel.relativeAzimuth + rotation[2];
+                                           const rp = new Vector2().subVectors(wp, resizeAnchor);
+                                           const theta = rp.angle() + angle + Math.PI;
+                                           let dxl = d * Math.cos(theta);
+                                           if (solarPanel.orientation === Orientation.portrait) {
+                                               const nx = Math.max(1, Math.ceil((dxl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width));
+                                               dxl = nx * solarPanel.pvModel.width;
+                                       } else {
+                                               const nx = Math.max(1, Math.ceil((dxl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length));
+                                               dxl = nx * solarPanel.pvModel.length;
+                                       }
+                                           setElementSize(solarPanel.id, dxl, solarPanel.ly);
+
+                                           const wcx = resizeAnchor.x - dxl * Math.cos(angle) / 2;
+                                           const wcy = resizeAnchor.y + dxl * Math.sin(angle) / 2;
+                                           const wc = new Vector2(wcx, wcy);
+                                           const wbc = new Vector2(cx, cy);
+                                           const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), rotation[2]);
+                                           setElementPosition(solarPanel.id, rc.x/lx, -rc.y/ly);}
+                                           break;
+                                        case ResizeHandleType.Right:
+                                           {const wp = new Vector2(p.x, p.z);
+                                           const d = wp.distanceTo(resizeAnchor);
+                                           const angle = solarPanel.relativeAzimuth + rotation[2];
+                                           const rp = new Vector2().subVectors(wp, resizeAnchor);
+                                           const theta = angle + rp.angle();
+                                           let dxl = d * Math.cos(theta);
+                                           if (solarPanel.orientation === Orientation.portrait) {
+                                                   const nx = Math.max(1, Math.ceil((dxl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width));
+                                                   dxl = nx * solarPanel.pvModel.width;
+                                           } else {
+                                                   const nx = Math.max(1, Math.ceil((dxl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length));
+                                                   dxl = nx * solarPanel.pvModel.length;
+                                           }
+                                           setElementSize(solarPanel.id, dxl, solarPanel.ly);
+
+                                           const wcx = resizeAnchor.x + dxl * Math.cos(angle) / 2;
+                                           const wcy = resizeAnchor.y - dxl * Math.sin(angle) / 2;
+                                           const wc = new Vector2(wcx, wcy);
+                                           const wbc = new Vector2(cx, cy);
+                                           const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), rotation[2]);
+                                           setElementPosition(solarPanel.id, rc.x/lx, -rc.y/ly);}
+                                           break;
+                                    }
+                                } 
+                            }
+                        }
+                    }
+                }}
+                onPointerUp={(e) => {
+                    grabRef.current = null;
+                    setShowGrid(false);
+                    setCommonStore((state) => {
+                        state.enableOrbitController = true;
+                    });
+                }}
+            />}
+
             {showGrid && !viewState.groundImage && (
                 <>
-                    {rotateHandleType && element && <PolarGrid element={element} />}
+                    {rotateHandleType && grabRef.current?.type === ObjectType.SolarPanel && 
+                    <PolarGrid element={grabRef.current} height={grabRef.current.poleHeight} />}
                     {moveHandleType && 
                     <gridHelper name={'Foundation Grid'}
                         position={[0, lz, 0]}
