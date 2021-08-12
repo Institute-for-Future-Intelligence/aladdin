@@ -277,6 +277,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                                     break;
                                 case ActionType.Select:
                                     state.selectedElementAngle = e.object.parent?.rotation.y ?? 0;
+                                    state.enableOrbitController = true;
                                     break;
                                 default:
                                     state.enableOrbitController = true;

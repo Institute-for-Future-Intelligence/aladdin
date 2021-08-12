@@ -40,20 +40,20 @@ const RotateHandle = ({
         <group position={position} scale={ratio} name={handleType}>
             <group>
                 <Torus
-                    args={[0.15, 0.05, 8, 12, (3 / 2) * Math.PI]}
+                    args={[0.15, 0.05, 6, 8, (3 / 2) * Math.PI]}
                     rotation={[Math.PI / 2, 0, Math.PI / 2]}
                 >
                     {rotationHandleLMesh}
                 </Torus>
                 <Cone
-                    args={[0.1, 0.1, 10]}
+                    args={[0.1, 0.1, 6]}
                     rotation={[Math.PI / 2, 0, 0]}
                     position={[0.15, 0, 0.05]}
                 >
                     {rotationHandleLMesh}
                 </Cone>
                 <Circle
-                    args={[0.05]}
+                    args={[0.05, 6]}
                     rotation={[0, Math.PI / 2, 0]}
                     position={[0, 0, 0.15]}
                 >

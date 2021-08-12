@@ -653,7 +653,7 @@ const SolarPanel = ({
                         <group key={i} rotation={new Euler(Math.PI/12*i - Math.PI/2, relativeEuler.y, 0, 'YXZ')}>
                             <Line points={[[0,1.8*tiltHandleSize,0], [0,2*tiltHandleSize,0]]} color={'white'} transparent={true} opacity={0.5} />
                             <textSprite
-                                text={`${Math.abs(i*15-90)}°`}
+                                text={`${i*15-90}°`}
                                 fontSize={20*tiltHandleSize}
                                 fontFace={'Times Roman'}
                                 textHeight={0.15*tiltHandleSize}
@@ -665,7 +665,7 @@ const SolarPanel = ({
                 {/* show current degree */}
                 <group rotation={new Euler(tiltAngle, relativeEuler.y,0, 'YXZ')}>
                     <textSprite
-                        text={`${Math.abs(Math.floor(tiltAngle/Math.PI*180))}°`}
+                        text={`${Math.floor(tiltAngle/Math.PI*180)}°`}
                         fontSize={20*tiltHandleSize}
                         fontFace={'Times Roman'}
                         textHeight={0.2*tiltHandleSize}

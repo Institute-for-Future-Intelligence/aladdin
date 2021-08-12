@@ -153,12 +153,13 @@ const Foundation = ({
     const ratio = Math.max(1, Math.max(lx, ly) / 8);
     const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
     const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
+    const rotateHandleSize = 0.6 * ratio;
 
     const lowerRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
-        return [0, 0, Math.min(-1.2*hy, -hy-0.75)];
+        return [0, 0, -hy-rotateHandleSize];
     }, [hy]);
     const upperRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
-        return [0, 0, Math.max(1.2*hy, hy+0.75)];
+        return [0, 0, hy+rotateHandleSize];
     }, [hy]);
 
     return (
@@ -667,7 +668,7 @@ const Foundation = ({
                     position={lowerRotateHandlePosition}
                     color={hoveredHandle === RotateHandleType.Lower || 
                         rotateHandleType === RotateHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
-                    ratio={ratio}
+                    ratio={rotateHandleSize}
                     handleType={RotateHandleType.Lower}
                     hoverHandle={hoverHandle}
                     noHoverHandle={noHoverHandle}
@@ -677,7 +678,7 @@ const Foundation = ({
                     position={upperRotateHandlePosition}
                     color={hoveredHandle === RotateHandleType.Upper || 
                         rotateHandleType === RotateHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
-                    ratio={ratio}
+                    ratio={rotateHandleSize}
                     handleType={RotateHandleType.Upper}
                     hoverHandle={hoverHandle}
                     noHoverHandle={noHoverHandle}
