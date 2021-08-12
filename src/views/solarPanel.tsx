@@ -298,7 +298,8 @@ const SolarPanel = ({
     const ratio = Math.max(1, Math.max(lx, ly) / 8);
     const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
     const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
-    const tiltHandleSize = ly * 2 / 3;
+    const rotateHandleSize = ratio * 2 / 3;
+    const tiltHandleSize = ratio * 2 / 3;
 
     const degree = new Array(13).fill(0);
     const [showTiltAngle, setShowTiltAngle] = useState(false);
@@ -558,20 +559,20 @@ const SolarPanel = ({
                 {/* rotate handles */}
                 <RotateHandle
                     id={id}
-                    position={[0,0,-ly]}
+                    position={[0,poleHeight,-ly/2-rotateHandleSize/2]}
                     color={hoveredHandle === RotateHandleType.Upper || 
                         rotateHandleType === RotateHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
-                    ratio={ratio}
+                    ratio={rotateHandleSize}
                     handleType={RotateHandleType.Upper}
                     hoverHandle={hoverHandle}
                     noHoverHandle={noHoverHandle}
                 />
                 <RotateHandle
                     id={id}
-                    position={[0,0,ly]}
+                    position={[0,poleHeight,ly/2+rotateHandleSize/2]}
                     color={hoveredHandle === RotateHandleType.Lower || 
                         rotateHandleType === RotateHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
-                    ratio={ratio}
+                    ratio={rotateHandleSize}
                     handleType={RotateHandleType.Lower}
                     hoverHandle={hoverHandle}
                     noHoverHandle={noHoverHandle}
@@ -607,13 +608,8 @@ const SolarPanel = ({
                             HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
                     />
                 </Ring>
-                {/* pointer */}
-                <Line points={[[0,tiltHandleSize,0], [0,showTiltAngle ? 1.75*tiltHandleSize : 1.1*tiltHandleSize,0]]}
-                    rotation={new Euler(tiltAngle, relativeEuler.y, 0, 'YXZ')}
-                    lineWidth={1}
-                />
-                {/* intersection plane */}
                 {showTiltAngle && <>
+                {/* intersection plane */}
                 <Ring ref={tiltHandleRef}
                     name={'Solar panel tilt handle'}
                     args={[tiltHandleSize, 2*tiltHandleSize, 18, 2, 0, Math.PI]}
@@ -646,6 +642,11 @@ const SolarPanel = ({
                 >
                     <meshStandardMaterial depthTest={false} transparent={true} opacity={0.5} side={DoubleSide}/>
                 </Ring>
+                {/* pointer */}
+                <Line points={[[0,tiltHandleSize,0], [0,1.75*tiltHandleSize,0]]}
+                    rotation={new Euler(tiltAngle, relativeEuler.y, 0, 'YXZ')}
+                    lineWidth={1}
+                />
                 {/* scale */}
                 {degree.map((e, i) => {
                     return (

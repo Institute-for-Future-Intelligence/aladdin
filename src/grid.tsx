@@ -72,7 +72,7 @@ export const Grid = () => {
     );
 };
 
-export const PolarGrid = ({element}: {element: ElementModel}) => {
+export const PolarGrid = ({element, height}: {element: ElementModel, height?: number}) => {
 
     const rotateHandle = useStore(state => state.rotateHandleType);
     const angle = useStore(state => state.selectedElementAngle);
@@ -90,7 +90,7 @@ export const PolarGrid = ({element}: {element: ElementModel}) => {
                     if(currParent) {
                         const rcx = cx * currParent.lx;
                         const rcy = cy * currParent.ly;
-                        setPosition(new Vector3(rcx, currParent.lz, -rcy));
+                        setPosition(new Vector3(rcx, height ?? currParent.lz, -rcy));
                     }
                     break;
                 case 'Foundation':

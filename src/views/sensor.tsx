@@ -9,7 +9,7 @@ import {useStore} from "../stores/common";
 import {SensorModel} from "../models/SensorModel";
 import {ThreeEvent, useThree} from "@react-three/fiber";
 import {HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS} from "../constants";
-import {ObjectType} from "../types";
+import {ActionType, ObjectType} from "../types";
 import {Util} from "../Util";
 
 const Sensor = ({
@@ -230,7 +230,7 @@ const Sensor = ({
                 args={[MOVE_HANDLE_RADIUS, 6, 6]}
                 name={'Handle'}
                 onPointerDown={(e) => {
-                    selectMe(id, e);
+                    selectMe(id, e, ActionType.Move);
                 }}>
                 <meshStandardMaterial attach="material" color={'orange'}/>
             </Sphere>
