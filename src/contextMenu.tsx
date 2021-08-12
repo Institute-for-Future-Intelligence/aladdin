@@ -67,6 +67,7 @@ const ContextMenu = ({
     const getSelectedElement = useStore(state => state.getSelectedElement);
     const selectedElement = getSelectedElement();
     const [labelText, setLabelText] = useState<string>(selectedElement?.label ?? '');
+    const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
     useEffect(() => {
         setLabelText(selectedElement?.label ?? '');
@@ -87,30 +88,35 @@ const ContextMenu = ({
     const lockElement = (on: boolean) => {
         if (selectedElement) {
             updateElementById(selectedElement.id, {locked: on});
+            setUpdateFlag(!updateFlag);
         }
     };
 
     const updateElementLabelText = () => {
         if (selectedElement) {
             updateElementById(selectedElement.id, {label: labelText});
+            setUpdateFlag(!updateFlag);
         }
     };
 
     const showElementLabel = (e: CheckboxChangeEvent) => {
         if (selectedElement) {
             updateElementById(selectedElement.id, {showLabel: e.target.checked});
+            setUpdateFlag(!updateFlag);
         }
     };
 
     const showTreeModel = (on: boolean) => {
         if (selectedElement && selectedElement.type === ObjectType.Tree) {
             updateElementById(selectedElement.id, {showModel: on});
+            setUpdateFlag(!updateFlag);
         }
     };
 
     const changeElementColor = (colorResult: ColorResult) => {
         if (selectedElement) {
             updateElementById(selectedElement.id, {color: colorResult.hex});
+            setUpdateFlag(!updateFlag);
         }
     };
 
@@ -274,6 +280,7 @@ const ContextMenu = ({
                                                 setElementSize(solarPanel.id, nx * solarPanel.pvModel.length, ny * solarPanel.pvModel.width);
                                             }
                                             updateElementById(solarPanel.id, {orientation: value});
+                                            setUpdateFlag(!updateFlag);
                                         }
                                     }}
                             >
@@ -299,6 +306,7 @@ const ContextMenu = ({
                                          onChange={(value) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {lx: value ?? 1});
+                                                 setUpdateFlag(!updateFlag);
                                              }
                                          }}
                             />
@@ -317,6 +325,7 @@ const ContextMenu = ({
                                          onChange={(value) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {ly: value ?? 2});
+                                                 setUpdateFlag(!updateFlag);
                                              }
                                          }}
                             />
@@ -333,6 +342,7 @@ const ContextMenu = ({
                                          onChange={(value) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {tiltAngle: Util.toRadians(value ?? 0)});
+                                                 setUpdateFlag(!updateFlag);
                                              }
                                          }}
                             />
@@ -349,6 +359,7 @@ const ContextMenu = ({
                                          onChange={(value) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {relativeAzimuth: Util.toRadians(value ?? 0)});
+                                                 setUpdateFlag(!updateFlag);
                                              }
                                          }}
                             />
@@ -360,6 +371,7 @@ const ContextMenu = ({
                                     onChange={(value) => {
                                         if (solarPanel) {
                                             updateElementById(solarPanel.id, {trackerType: value});
+                                            setUpdateFlag(!updateFlag);
                                         }
                                     }}
                             >
@@ -397,6 +409,7 @@ const ContextMenu = ({
                                          onChange={(e) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {poleHeight: e});
+                                                 setUpdateFlag(!updateFlag);
                                              }
                                          }}
                             />
@@ -413,6 +426,7 @@ const ContextMenu = ({
                                          onChange={(value) => {
                                              if (solarPanel) {
                                                  updateElementById(solarPanel.id, {poleSpacing: value ?? 1});
+                                                 setUpdateFlag(!updateFlag);
                                              }
                                          }}
                             />
@@ -422,6 +436,7 @@ const ContextMenu = ({
                                       onChange={(e) => {
                                           if (solarPanel) {
                                               updateElementById(solarPanel.id, {drawSunBeam: e.target.checked});
+                                              setUpdateFlag(!updateFlag);
                                           }
                                       }}>
                                 Draw Sun Beam

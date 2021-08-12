@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React from "react";
+import React, {useState} from "react";
 import {InputNumber, Menu, Space} from "antd";
 import {Util} from "../Util";
 import {useStore} from "../stores/common";
@@ -42,6 +42,7 @@ const ReshapeElementMenu = ({
     const getElementById = useStore(state => state.getElementById);
     const updateElementById = useStore(state => state.updateElementById);
     const element = getElementById(elementId);
+    const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
     return (
         <Menu key={name} {...rest}>
@@ -57,6 +58,7 @@ const ReshapeElementMenu = ({
                              onChange={value => {
                                  if (element) {
                                      setElementSize(element.id, value, element.ly);
+                                     setUpdateFlag(!updateFlag);
                                  }
                              }}
                              onPressEnter={(event) => {
@@ -70,6 +72,7 @@ const ReshapeElementMenu = ({
                                          return;
                                      }
                                      setElementSize(element.id, value, element.ly);
+                                     setUpdateFlag(!updateFlag);
                                  }
                              }}
                 />
@@ -87,6 +90,7 @@ const ReshapeElementMenu = ({
                              onChange={(value) => {
                                  if (element && value) {
                                      setElementSize(element.id, element.lx, value);
+                                     setUpdateFlag(!updateFlag);
                                  }
                              }}
                              onPressEnter={(event) => {
@@ -100,6 +104,7 @@ const ReshapeElementMenu = ({
                                          return;
                                      }
                                      setElementSize(element.id, element.lx, value);
+                                     setUpdateFlag(!updateFlag);
                                  }
                              }}
                 />
@@ -115,7 +120,6 @@ const ReshapeElementMenu = ({
                              value={element?.lz ?? 0.1}
                              formatter={(h) => Number(h).toFixed(1) + ' m'}
                              onChange={(value) => {
-                                 console.log(value)
                                  if (element && value) {
                                      setElementSize(element.id, element.lx, element.ly, value);
                                      // the following objects stand on the ground and should raise their z coordinates
@@ -126,6 +130,7 @@ const ReshapeElementMenu = ({
                                          element.type === ObjectType.Cuboid) {
                                          updateElementById(element.id, {cz: value / 2});
                                      }
+                                     setUpdateFlag(!updateFlag);
                                  }
                              }}
                              onPressEnter={(event) => {
@@ -147,6 +152,7 @@ const ReshapeElementMenu = ({
                                          element.type === ObjectType.Cuboid) {
                                          updateElementById(element.id, {cz: value / 2});
                                      }
+                                     setUpdateFlag(!updateFlag);
                                  }
                              }}
                 />
@@ -169,6 +175,7 @@ const ReshapeElementMenu = ({
                                          element.rotation[1],
                                          Util.toRadians(-value)
                                      );
+                                     setUpdateFlag(!updateFlag);
                                  }
                              }}
                              onPressEnter={(event) => {
@@ -187,6 +194,7 @@ const ReshapeElementMenu = ({
                                          element.rotation[1],
                                          Util.toRadians(-value)
                                      );
+                                     setUpdateFlag(!updateFlag);
                                  }
                              }}
                 />
