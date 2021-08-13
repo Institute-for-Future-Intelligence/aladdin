@@ -142,7 +142,7 @@ const Sensor = ({
                  name={'Sensor'}
                  onPointerDown={(e) => {
                      if (e.button === 2) return; // ignore right-click
-                     selectMe(id, e);
+                     selectMe(id, e, ActionType.Move);
                  }}
                  onContextMenu={(e) => {
                      selectMe(id, e);

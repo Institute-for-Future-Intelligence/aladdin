@@ -422,7 +422,7 @@ const Foundation = ({
                 <>
                     {rotateHandleType && grabRef.current?.type === ObjectType.SolarPanel && 
                     <PolarGrid element={grabRef.current} height={grabRef.current.poleHeight} />}
-                    {moveHandleType && 
+                    {(moveHandleType || resizeHandleType) && 
                     <gridHelper name={'Foundation Grid'}
                         position={[0, lz, 0]}
                         scale={[lx / maxLxLy, 1, ly / maxLxLy]}
