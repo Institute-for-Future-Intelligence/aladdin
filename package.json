@@ -46,7 +46,13 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "postinstall": "husky install"
+  },
+  "lint-staged": {
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -71,14 +77,17 @@
     "@types/googlemaps": "^3.43.3",
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
+    "@types/papaparse": "^5.2.5",
     "@types/react": "^17.0.0",
     "@types/react-color": "^3.0.4",
     "@types/react-dom": "^17.0.0",
     "@types/react-infinite-scroller": "^1.2.1",
+    "@types/react-numeric-input": "^2.2.3",
     "@types/styled-components": "^5.1.9",
     "@types/three": "^0.128.0",
-    "@types/papaparse": "^5.2.5",
-    "@types/react-numeric-input": "^2.2.3",
-    "gh-pages": "^3.2.0"
+    "gh-pages": "^3.2.0",
+    "husky": "^7.0.1",
+    "lint-staged": "^11.1.2",
+    "prettier": "^2.3.2"
   }
 }
