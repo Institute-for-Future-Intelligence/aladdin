@@ -41,8 +41,6 @@ const Human = ({
                    ...props
                }: HumanModel) => {
 
-    cy = -cy; // we want positive y to point north
-
     const selectMe = useStore(state => state.selectMe);
     const [hovered, setHovered] = useState(false);
     const [updateFlag, setUpdateFlag] = useState(false);
@@ -50,9 +48,9 @@ const Human = ({
     const {gl: {domElement}, camera} = useThree();
 
     // have to add this to listen to world(camera) change, this is better than memo's shallow campare
-    useStore(state => state.world.cameraPosition);
+    useStore(state => state.cameraDirection);
     const cameraX = camera.position.x;
-    const cameraZ = camera.position.z;
+    const cameraY = camera.position.y;
 
     const texture = useMemo(() => {
         let textureImg;
@@ -187,12 +185,12 @@ const Human = ({
     }, [name]);
 
     const rotation = useMemo(() => {
-        return new Euler(0, Math.atan2(cameraX, cameraZ), 0);
-    }, [cameraX, cameraZ])
+        return new Euler(Math.PI/2, -Math.atan2(cameraX-cx, cameraY-cy), 0);
+    }, [cameraX, cameraY, cx, cy])
 
     return (
         <group name={'Human Group ' + id}
-               position={[cx, height / 2, cy]}>
+               position={[cx, cy, height / 2]}>
 
             <Billboard
                 uuid={id}
@@ -227,7 +225,7 @@ const Human = ({
             {/* draw handle */}
             {selected && !locked &&
             <Sphere
-                position={new Vector3(0, -height / 2, 0)}
+                position={new Vector3(0, 0, -height / 2)}
                 args={[MOVE_HANDLE_RADIUS * 4, 6, 6]}
                 name={'Handle'}
                 onPointerDown={(e) => {
@@ -250,7 +248,7 @@ const Human = ({
                 fontSize={20}
                 fontFace={'Times Roman'}
                 textHeight={0.2}
-                position={[0, height / 2 + 0.4, 0]}
+                position={[0, 0, height / 2 + 0.4]}
             />
             }
 

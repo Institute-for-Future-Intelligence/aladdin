@@ -32,12 +32,13 @@ const OrbitController = ({
     const autoRotate = useStore(state => state.viewState.autoRotate);
     const setCommonStore = useStore(state => state.set);
 
-    const {camera, gl: {domElement}, gl, scene} = useThree();
+    const {camera, gl, scene} = useThree();
+    camera.up.set(0,0,1);
     const setThree = useThree(state => state.set);
     // Ref to the controls, so that we can update them on every frame using useFrame
     const controls = useRef<OrbitControls>(null);
-    const minPan = useMemo(() => new Vector3(-WORKSPACE_SIZE / 2, 0, -WORKSPACE_SIZE / 2), []);
-    const maxPan = useMemo(() => new Vector3(WORKSPACE_SIZE / 2, WORKSPACE_SIZE / 8, WORKSPACE_SIZE / 2), []);
+    const minPan = useMemo(() => new Vector3(-WORKSPACE_SIZE / 2, -WORKSPACE_SIZE / 2, 0), []);
+    const maxPan = useMemo(() => new Vector3(WORKSPACE_SIZE / 2, WORKSPACE_SIZE / 2, WORKSPACE_SIZE / 8), []);
 
     useEffect(() => {
         // we have to manually set the camera position when loading a state from a file (as world is reconstructed)
@@ -72,7 +73,7 @@ const OrbitController = ({
                 orbitControlsRef.current = c;
             }
             if (canvasRef) {
-                canvasRef.current = domElement;
+                canvasRef.current = gl.domElement;
             }
         }
         return () => {
@@ -84,8 +85,8 @@ const OrbitController = ({
     }, []);
 
     const getCameraDirection = (cam: Camera) => {
-        const dir = new Vector3().subVectors(cam.localToWorld(new Vector3(0, 1, 0)), cam.position)
-        if(dir.x == 0 && dir.z == 0) {
+        const dir = new Vector3().subVectors(cam.localToWorld(new Vector3(0, 0, 1)), cam.position)
+        if(dir.x == 0 && dir.y == 0) {
             cam.getWorldDirection(dir);
         }
         return dir;
@@ -130,7 +131,7 @@ const OrbitController = ({
     return (
         <orbitControls
             ref={controls}
-            args={[camera, domElement]}
+            args={[camera, gl.domElement]}
             autoRotate={autoRotate}
             enabled={enableOrbitController}
             enableRotate={true}

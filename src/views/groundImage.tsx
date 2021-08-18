@@ -36,7 +36,7 @@ const GroundImage = () => {
     const scale = MERCATOR_PROJECTION_SCALE_CONSTANT * Math.cos(Util.toRadians(latitude)) * zoomScale;
 
     return (
-        <mesh rotation={[-Util.HALF_PI, 0, 0]}
+        <mesh rotation={[0, 0, 0]}
               position={[0, 0, 0]}
               renderOrder={-1}
               scale={[scale, scale, 1]}>

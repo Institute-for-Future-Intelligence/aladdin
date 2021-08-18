@@ -73,8 +73,7 @@ const Heliodon = ({}: HeliodonProps) => {
     }, [aabb]);
 
     useEffect(() => {
-        setSunlightDirection(computeSunLocation(radius, hourAngle, declinationAngle, Util.toRadians(worldLatitude))
-            .applyEuler(new Euler(-Util.HALF_PI, 0, 0)));
+        setSunlightDirection(computeSunLocation(radius, hourAngle, declinationAngle, Util.toRadians(worldLatitude)));
     }, [worldLatitude, hourAngle, declinationAngle, radius]);
 
     const nRibLines = 5;
@@ -218,7 +217,7 @@ const Heliodon = ({}: HeliodonProps) => {
         <React.Fragment>
             {heliodon &&
             <group>
-                <mesh rotation={new Euler(-Util.HALF_PI, 0, 0)} name={'Heliodon'}>
+                <mesh rotation={new Euler(0, 0, 0)} name={'Heliodon'}>
                     {/* draw base */}
                     <mesh>
                         <bufferGeometry {...baseGeometry} />
@@ -264,8 +263,6 @@ const Heliodon = ({}: HeliodonProps) => {
                 </mesh>
                 {/* use this plane to hide the uneven edge */}
                 <Drei_Plane
-                    rotation={[-Util.HALF_PI, 0, 0]}
-                    position={[0, 0, 0]}
                     args={[10000, 10000]}
                     renderOrder={-1}
                 >

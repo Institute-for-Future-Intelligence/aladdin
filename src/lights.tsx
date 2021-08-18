@@ -16,7 +16,7 @@ const Lights = () => {
                 name={"Directional Light"}
                 color="white"
                 position={sunlightDirection}
-                intensity={sunlightDirection.y > 0 ? 0.5 : 0}
+                intensity={sunlightDirection.z > 0 ? 0.5 : 0}
                 castShadow
                 shadow-mapSize-height={4096}
                 shadow-mapSize-width={4096}

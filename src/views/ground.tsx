@@ -66,10 +66,10 @@ const Ground = () => {
             intersectionPlaneType = IntersectionPlaneType.Horizontal;
             intersectionPlanePosition.set(
                 grabRef.current.cx,
-                grabRef.current.lz + MOVE_HANDLE_OFFSET,
-                -grabRef.current.cy
+                grabRef.current.cy,
+                grabRef.current.lz + MOVE_HANDLE_OFFSET
             );
-            intersectionPlaneAngle.set(-Util.HALF_PI, 0, 0);
+            intersectionPlaneAngle.set(0, 0, 0);
         } else if (
             moveHandleType === MoveHandleType.Left ||
             moveHandleType === MoveHandleType.Right ||
@@ -84,17 +84,17 @@ const Ground = () => {
             intersectionPlaneType = IntersectionPlaneType.Horizontal;
             intersectionPlanePosition.set(
                 grabRef.current.cx,
-                MOVE_HANDLE_RADIUS,
-                -grabRef.current.cy
+                grabRef.current.cy,
+                MOVE_HANDLE_RADIUS
             );
-            intersectionPlaneAngle.set(-Util.HALF_PI, 0, 0);
+            intersectionPlaneAngle.set(0, 0, 0);
         } else if (resizeHandleType) {
             intersectionPlaneType = IntersectionPlaneType.Vertical;
             const handlePosition = getResizeHandlePosition(grabRef.current, resizeHandleType);
-            const cameraPostion = getCameraDirection();
-            const rotation = Math.atan2(cameraPostion.x, cameraPostion.z);
-            intersectionPlanePosition.set(handlePosition.x, 0, handlePosition.z);
-            intersectionPlaneAngle.set(0, rotation, 0);
+            const cameraDir = getCameraDirection();
+            const rotation = -Math.atan2(cameraDir.x, cameraDir.y);
+            intersectionPlanePosition.set(handlePosition.x, handlePosition.y, 0);
+            intersectionPlaneAngle.set(-Math.PI/2, 0, rotation,'ZXY');
         } 
     }
 
@@ -168,7 +168,7 @@ const Ground = () => {
                         intersects = ray.intersectObjects([groundPlaneRef.current]);
                         if (intersects.length > 0) {
                             const p = intersects[0].point;
-                            setElementPosition(grabRef.current.id, p.x, -p.z);
+                            setElementPosition(grabRef.current.id, p.x, p.y);
                         }
                     }
                     break;
@@ -195,7 +195,7 @@ const Ground = () => {
                                 const p = intersects[0].point;
                                 if (moveHandleType) {
                                     if (moveHandleType === MoveHandleType.Top) {
-                                        setElementPosition(grabRef.current.id, p.x, -p.z);
+                                        setElementPosition(grabRef.current.id, p.x, p.y);
                                     } else {
                                          handleMove(p);
                                     }
@@ -230,7 +230,7 @@ const Ground = () => {
                     intersects = ray.intersectObjects([intersectionPlaneRef.current]);
                     if (intersects.length > 0) {
                         const p = intersects[0].point;
-                        updateElement(grabRef.current.id, {lz: Math.max(1, p.y)});
+                        updateElement(grabRef.current.id, {lz: Math.max(1, p.z)});
                     }
                 }
             }
@@ -248,19 +248,19 @@ const Ground = () => {
     };
 
     const handleResize = (p: Vector3) => {
-        const P = new Vector2(p.x, p.z);
+        const P = new Vector2(p.x, p.y);
         const R = resizeAnchor.distanceTo(P);
-        const angle = Math.atan2(P.x-resizeAnchor.x, P.y-resizeAnchor.y) - grabRef.current!.rotation[2];
+        const angle = Math.atan2(P.x-resizeAnchor.x, P.y-resizeAnchor.y) + grabRef.current!.rotation[2];
         const lx = Math.abs(R * Math.sin(angle));
         const ly = Math.abs(R * Math.cos(angle));
         const c = new Vector2().addVectors(P, resizeAnchor).divideScalar(2);
         setElementSize(grabRef.current!.id, lx, ly);
-        setElementPosition(grabRef.current!.id, c.x, -c.y);
+        setElementPosition(grabRef.current!.id, c.x, c.y);
     }
 
     const handleRotate = (p: Vector3) => {
         const {cx, cy} = grabRef.current!;
-        const rotation = Math.atan2(cx - p.x, -cy - p.z) + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
+        const rotation = Math.atan2(cx - p.x, p.y - cy) + (rotateHandleType === RotateHandleType.Upper ? 0 : Math.PI);
         const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0;
         setElementRotation(grabRef.current!.id, 0, 0, rotation + offset);
     }
@@ -270,24 +270,24 @@ const Ground = () => {
         const hx = grabRef.current!.lx / 2 + MOVE_HANDLE_OFFSET;
         const hy = grabRef.current!.ly / 2 + MOVE_HANDLE_OFFSET;
         switch (moveHandleType) {
-            case MoveHandleType.Lower:
+            case MoveHandleType.Upper:
                 x0 = p.x + sinAngle * hy;
-                y0 = -p.z - cosAngle * hy;
+                y0 = p.y - cosAngle * hy;
                 setElementPosition(grabRef.current!.id, x0, y0);
                 break;
-            case MoveHandleType.Upper:
+            case MoveHandleType.Lower:
                 x0 = p.x - sinAngle * hy;
-                y0 = -p.z + cosAngle * hy;
+                y0 = p.y + cosAngle * hy;
                 setElementPosition(grabRef.current!.id, x0, y0);
                 break;
             case MoveHandleType.Left:
                 x0 = p.x + cosAngle * hx;
-                y0 = -p.z + sinAngle * hx;
+                y0 = p.y + sinAngle * hx;
                 setElementPosition(grabRef.current!.id, x0, y0);
                 break;
             case MoveHandleType.Right:
                 x0 = p.x - cosAngle * hx;
-                y0 = -p.z - sinAngle * hx;
+                y0 = p.y - sinAngle * hx;
                 setElementPosition(grabRef.current!.id, x0, y0);
                 break;
         }
@@ -311,7 +311,7 @@ const Ground = () => {
             <Plane receiveShadow={viewState.shadowEnabled}
                    ref={groundPlaneRef}
                    name={'Ground'}
-                   rotation={[-Util.HALF_PI, 0, 0]}
+                   rotation={[0, 0, 0]}
                    position={[0, 0, 0]}
                    args={[10000, 10000]}
                    renderOrder={-2}

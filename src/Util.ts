@@ -62,21 +62,6 @@ export class Util {
         }
     }
 
-    // convert the coordinates from the model system to the view system
-    static modelToView(v: Vector3) {
-        return new Vector3(v.x, v.z, -v.y);
-    }
-
-    // convert the coordinates from the view system to the model system
-    static viewToModel(v: Vector3) {
-        return new Vector3(v.x, -v.z, v.y);
-    }
-
-    static getEulerInView(v: number[]) {
-        if (v.length !== 3) throw new Error(v + ' must be an array with three elements.');
-        return new Euler(v[0], v[2], v[1]);
-    }
-
     static relativeCoordinates(x: number, y: number, z: number, parent: ElementModel) {
         const v = new Vector3(x - parent.cx, y - parent.cy, z - parent.cz);
         v.applyEuler(new Euler().fromArray(parent.rotation.map(x => -x)));

@@ -74,71 +74,48 @@ const Sensor = ({
             }
         }
     }
-    cy = -cy; // we want positive y to point north
-
     const hx = lx / 2;
     const hy = ly / 2;
     const hz = lz / 2;
-    const positionLL = new Vector3(-hx, hz, -hy);
-    const positionUL = new Vector3(-hx, hz, hy);
-    const positionLR = new Vector3(hx, hz, -hy);
-    const positionUR = new Vector3(hx, hz, hy);
+    const positionLL = new Vector3(-hx, -hy, hz);
+    const positionUL = new Vector3(-hx, hy, hz);
+    const positionLR = new Vector3(hx, -hy, hz);
+    const positionUR = new Vector3(hx, hy, hz);
     const element = getElementById(id);
 
     const euler = useMemo(() => {
         const v = new Vector3().fromArray(normal);
         if (Util.isSame(v, Util.UNIT_VECTOR_POS_Z)) {
             // top face in model coordinate system
-            return new Euler(0, rotation[2], 0);
+            return new Euler(0, 0, rotation[2]);
         } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_X)) {
             // east face in model coordinate system
-            return new Euler(0, rotation[2], Util.HALF_PI);
+            return new Euler(0, Util.HALF_PI, rotation[2], 'ZXY');
         } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_X)) {
             // west face in model coordinate system
-            return new Euler(0, rotation[2], Util.HALF_PI);
+            return new Euler(0, -Util.HALF_PI, rotation[2], 'ZXY');
         } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_Y)) {
             // south face in the model coordinate system
-            return new Euler(0, rotation[2] + Util.HALF_PI, Util.HALF_PI);
+            return new Euler(-Util.HALF_PI, 0, rotation[2], 'ZXY');
         } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_Y)) {
             // north face in the model coordinate system
-            return new Euler(0, rotation[2] + Util.HALF_PI, Util.HALF_PI);
+            return new Euler(Util.HALF_PI, 0, rotation[2], 'ZXY');
         }
-        return new Euler(0, rotation[2], 0);
+        return new Euler(0, 0, rotation[2]);
     }, [normal, rotation]);
-
-    const spritePosition = useMemo(() => {
-        const v = new Vector3().fromArray(normal);
-        if (Util.isSame(v, Util.UNIT_VECTOR_POS_Z)) {
-            // top face in model coordinate system
-            return new Vector3(0, lz + 0.2, 0);
-        } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_X)) {
-            // east face in model coordinate system
-            return new Vector3(0, -0.2, 0);
-        } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_X)) {
-            // west face in model coordinate system
-            return new Vector3(0, 0.2, 0);
-        } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_Y)) {
-            // south face in the model coordinate system
-            return new Vector3(0, -0.2, 0);
-        } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_Y)) {
-            // north face in the model coordinate system
-            return new Vector3(0, 0.2, 0);
-        }
-        return new Vector3(0, lz + 0.2, 0);
-    }, [normal]);
 
     return (
 
         <group name={'Sensor Group ' + id}
                rotation={euler}
-               position={[cx, cz + hz, cy]}>
+               position={[cx, cy, cz + hz]}>
 
             {/* draw rectangle (too small to cast shadow) */}
             <Box receiveShadow={shadowEnabled}
                  uuid={id}
                  userData={{aabb: true}}
                  ref={baseRef}
-                 args={[lx, lz, ly]}
+                 args={[lx, ly, lz]}
                  name={'Sensor'}
                  onPointerDown={(e) => {
                      if (e.button === 2) return; // ignore right-click
@@ -185,37 +162,37 @@ const Sensor = ({
                       color={lineColor}/>
 
                 {/* draw wireframe lines lower face */}
-                <Line points={[[positionLL.x, -hz, positionLL.z], [positionLR.x, -hz, positionLR.z]]}
+                <Line points={[[positionLL.x, positionLL.y, -hz], [positionLR.x, positionLR.y, -hz]]}
                       name={'Line LL-LR Lower Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionLR.x, -hz, positionLR.z], [positionUR.x, -hz, positionUR.z]]}
+                <Line points={[[positionLR.x, positionLR.y, -hz], [positionUR.x, positionUR.y, -hz]]}
                       name={'Line LR-UR Lower Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUR.x, -hz, positionUR.z], [positionUL.x, -hz, positionUL.z]]}
+                <Line points={[[positionUR.x, positionUR.y, -hz], [positionUL.x, positionUL.y, -hz]]}
                       name={'Line UR-UL Lower Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUL.x, -hz, positionUL.z], [positionLL.x, -hz, positionLL.z]]}
+                <Line points={[[positionUL.x, positionUL.y, -hz], [positionLL.x, positionLL.y, -hz]]}
                       name={'Line UL-LL Lower Face'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
 
                 {/* draw wireframe vertical lines */}
-                <Line points={[[positionLL.x, -hz, positionLL.z], positionLL]}
+                <Line points={[[positionLL.x, positionLL.y, -hz], positionLL]}
                       name={'Line LL-LL Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionLR.x, -hz, positionLR.z], positionLR]}
+                <Line points={[[positionLR.x, positionLR.y, -hz], positionLR]}
                       name={'Line LR-LR Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUL.x, -hz, positionUL.z], positionUL]}
+                <Line points={[[positionUL.x, positionUL.y, -hz], positionUL]}
                       name={'Line UL-UL Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
-                <Line points={[[positionUR.x, -hz, positionUR.z], positionUR]}
+                <Line points={[[positionUR.x, positionUR.y, -hz], positionUR]}
                       name={'Line UR-UR Vertical'}
                       lineWidth={lineWidth}
                       color={lineColor}/>
@@ -242,7 +219,7 @@ const Sensor = ({
                 fontSize={20}
                 fontFace={'Times Roman'}
                 textHeight={0.2}
-                position={spritePosition}
+                position={[0, 0, lz + 0.2]}
             />
             }
         </group>

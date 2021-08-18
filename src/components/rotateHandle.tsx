@@ -37,7 +37,7 @@ const RotateHandle = ({
     const selectMe = useStore((state) => state.selectMe);
     const rotationHandleLMesh = <meshStandardMaterial color={color} />;
     return (
-        <group position={position} scale={ratio} name={handleType}>
+        <group position={position} rotation={[Math.PI/2,0,0]} scale={ratio} name={handleType}>
             <group>
                 <Torus
                     args={[0.15, 0.05, 6, 8, (3 / 2) * Math.PI]}

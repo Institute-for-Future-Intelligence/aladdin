@@ -44,7 +44,7 @@ export class DefaultWorldModel implements WorldModel {
             snowReflectionFactors: new Array(12).fill(0)
         } as GroundModel;
         this.panCenter = new Vector3(0, 0, 0);
-        this.cameraPosition = new Vector3(0, 0, 5);
+        this.cameraPosition = new Vector3(0, -5, 0);
 
         this.timesPerHour = 20; // how many times per hour to collect data
         this.solarPanelGridCellSize = 0.5;

@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useCallback, useMemo, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {Box, Line, Plane, Sphere} from "@react-three/drei";
 import {Euler, Face, Mesh, Raycaster, Vector2, Vector3} from "three";
 import {useStore} from "../stores/common";
@@ -38,8 +38,6 @@ const Cuboid = ({
                     locked = false,
                 }: CuboidModel) => {
 
-    cy = -cy; // we want positive y to point north
-
     const setCommonStore = useStore(state => state.set);
     const viewState = useStore(state => state.viewState);
     const moveHandleType = useStore(state => state.moveHandleType);
@@ -57,6 +55,7 @@ const Cuboid = ({
     const [hovered, setHovered] = useState(false);
     const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
     const [showGrid, setShowGrid] = useState<boolean>(false);
+    const [normal, setNormal] = useState<Vector3>();
     const ray = useMemo(() => new Raycaster(), []);
 
     const elementModel = getElementById(id);
@@ -84,21 +83,35 @@ const Cuboid = ({
     const hx = lx / 2;
     const hy = ly / 2;
     const hz = lz / 2;
-    const positionLLTop = useMemo(() => new Vector3(-hx, hz, -hy), [hx, hy, hz]);
-    const positionULTop = useMemo(() => new Vector3(-hx, hz, hy), [hx, hy, hz]);
-    const positionLRTop = useMemo(() => new Vector3(hx, hz, -hy), [hx, hy, hz]);
-    const positionURTop = useMemo(() => new Vector3(hx, hz, hy), [hx, hy, hz]);
-    const positionLLBot = useMemo(() => new Vector3(-hx, -hz, -hy), [hx, hy, hz]);
-    const positionULBot = useMemo(() => new Vector3(-hx, -hz, hy), [hx, hy, hz]);
-    const positionLRBot = useMemo(() => new Vector3(hx, -hz, -hy), [hx, hy, hz]);
-    const positionURBot = useMemo(() => new Vector3(hx, -hz, hy), [hx, hy, hz]);
+    const positionLLTop = useMemo(() => new Vector3(-hx, -hy, hz), [hx, hy, hz]);
+    const positionULTop = useMemo(() => new Vector3(-hx, hy, hz), [hx, hy, hz]);
+    const positionLRTop = useMemo(() => new Vector3(hx, -hy, hz), [hx, hy, hz]);
+    const positionURTop = useMemo(() => new Vector3(hx, hy, hz), [hx, hy, hz]);
+    const positionLLBot = useMemo(() => new Vector3(-hx, -hy, -hz), [hx, hy, hz]);
+    const positionULBot = useMemo(() => new Vector3(-hx, hy, -hz), [hx, hy, hz]);
+    const positionLRBot = useMemo(() => new Vector3(hx, -hy, -hz), [hx, hy, hz]);
+    const positionURBot = useMemo(() => new Vector3(hx, hy, -hz), [hx, hy, hz]);
 
     const handleLift = MOVE_HANDLE_RADIUS;
-    const positionLowerFace = useMemo(() => new Vector3(0, handleLift - hz, -hy - MOVE_HANDLE_OFFSET), [hy, hz]);
-    const positionUpperFace = useMemo(() => new Vector3(0, handleLift - hz, hy + MOVE_HANDLE_OFFSET), [hy, hz]);
-    const positionLeftFace = useMemo(() => new Vector3(-hx - MOVE_HANDLE_OFFSET, handleLift - hz, 0), [hx, hz]);
-    const positionRightFace = useMemo(() => new Vector3(hx + MOVE_HANDLE_OFFSET, handleLift - hz, 0), [hx, hz]);
-    const positionTopFace = useMemo(() => new Vector3(0, hz + MOVE_HANDLE_OFFSET, 0), [hz]);
+    const positionLowerFace = useMemo(() => new Vector3(0, -hy - MOVE_HANDLE_OFFSET, handleLift - hz), [hy, hz]);
+    const positionUpperFace = useMemo(() => new Vector3(0, hy + MOVE_HANDLE_OFFSET, handleLift - hz), [hy, hz]);
+    const positionLeftFace = useMemo(() => new Vector3(-hx - MOVE_HANDLE_OFFSET, 0, handleLift - hz), [hx, hz]);
+    const positionRightFace = useMemo(() => new Vector3(hx + MOVE_HANDLE_OFFSET, 0, handleLift - hz), [hx, hz]);
+    const positionTopFace = useMemo(() => new Vector3(0, 0, hz + MOVE_HANDLE_OFFSET), [hz]);
+
+    useEffect(() => {
+        const handlePointerUp = () => {
+            grabRef.current = null;
+            setShowGrid(false);
+            setCommonStore((state) => {
+                state.enableOrbitController = true;
+            });
+        }
+        window.addEventListener('pointerup', handlePointerUp);
+        return (() => {
+            window.removeEventListener('poinerup', handlePointerUp);
+        })
+    }, [])
 
     const hoverHandle = useCallback((e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
         if (e.intersections.length > 0) {
@@ -134,38 +147,37 @@ const Cuboid = ({
         );
     };
 
-    const setupGridHelper = (face: Face) => {
-        faceNormalRef.current = face.normal;
-        if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_Y)) {
-            // top face in view coordinate system
+    const setupGridHelper = (face: Vector3) => {
+        faceNormalRef.current = face;
+        if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_Z)) {
             gridLength.current = Math.max(lx, ly);
-            gridPositionRef.current = new Vector3(0, hz, 0);
-            gridRotationRef.current = new Euler(0, 0, 0);
+            gridPositionRef.current = new Vector3(0, 0, hz);
+            gridRotationRef.current = new Euler(Math.PI/2, 0, 0);
             gridScale.current = new Vector3(lx / gridLength.current, 1, ly / gridLength.current);
         } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_X)) {
             // east face in view coordinate system
             gridLength.current = Math.max(ly, lz);
             gridPositionRef.current = new Vector3(hx, 0, 0);
             gridRotationRef.current = new Euler(0, 0, Util.HALF_PI);
-            gridScale.current = new Vector3(1, lz / gridLength.current, ly / gridLength.current);
+            gridScale.current = new Vector3(ly / gridLength.current, 1, lz / gridLength.current);
         } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_NEG_X)) {
             // west face in view coordinate system
             gridLength.current = Math.max(ly, lz);
             gridPositionRef.current = new Vector3(-hx, 0, 0);
-            gridRotationRef.current = new Euler(0, 0, Util.HALF_PI);
-            gridScale.current = new Vector3(1, lz / gridLength.current, ly / gridLength.current);
-        } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_Z)) {
+            gridRotationRef.current = new Euler(0, 0, -Util.HALF_PI);
+            gridScale.current = new Vector3(ly / gridLength.current, 1, lz / gridLength.current);
+        } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_NEG_Y)) {
             // south face in the view coordinate system
             gridLength.current = Math.max(lx, lz);
-            gridPositionRef.current = new Vector3(0, 0, hy);
-            gridRotationRef.current = new Euler(Util.HALF_PI, 0, 0);
-            gridScale.current = new Vector3(lx / gridLength.current, lz / gridLength.current, 1);
-        } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_NEG_Z)) {
+            gridPositionRef.current = new Vector3(0, -hy, 0);
+            gridRotationRef.current = new Euler(0, 0, 0);
+            gridScale.current = new Vector3(lx / gridLength.current, 1, lz / gridLength.current);
+        } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_Y)) {
             // north face in the view coordinate system
             gridLength.current = Math.max(lx, lz);
-            gridPositionRef.current = new Vector3(0, 0, -hy);
-            gridRotationRef.current = new Euler(Util.HALF_PI, 0, 0);
-            gridScale.current = new Vector3(lx / gridLength.current, lz / gridLength.current, 1);
+            gridPositionRef.current = new Vector3(0, hy, 0);
+            gridRotationRef.current = new Euler(0, 0, 0);
+            gridScale.current = new Vector3(lx / gridLength.current, 1, lz / gridLength.current);
         }
     };
 
@@ -173,17 +185,17 @@ const Cuboid = ({
     const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
     const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
     const lowerRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
-        return [0, RESIZE_HANDLE_SIZE / 2 - hz, Math.min(-1.2*hy, -hy-0.75)];
+        return [0, Math.min(-1.2*hy, -hy-0.75), RESIZE_HANDLE_SIZE / 2 - hz];
     }, [hy, hz]);
     const upperRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
-        return [0, RESIZE_HANDLE_SIZE / 2 - hz, Math.max(1.2*hy, hy+0.75)];
+        return [0, Math.max(1.2*hy, hy+0.75), RESIZE_HANDLE_SIZE / 2 - hz];
     }, [hy, hz]);
 
     return (
 
         <group name={'Cuboid Group ' + id}
-               position={[cx, hz, cy]}
-               rotation={Util.getEulerInView(rotation)}>
+               position={[cx, cy, hz]}
+               rotation={[0, 0, rotation[2]]}>
 
             {/* draw rectangular cuboid */}
             <Box castShadow={viewState.shadowEnabled}
@@ -191,7 +203,7 @@ const Cuboid = ({
                  userData={{simulation: true, aabb: true}}
                  uuid={id}
                  ref={baseRef}
-                 args={[lx, lz, ly]}
+                 args={[lx, ly, lz]}
                  name={'Cuboid'}
                  onPointerDown={(e) => {
                      if (e.button === 2) return; // ignore right-click
@@ -221,7 +233,10 @@ const Cuboid = ({
                                      }
                                  }
                                  if (face) {
-                                     setupGridHelper(face);
+                                     setupGridHelper(face.normal);
+                                     if (!normal || !normal.equals(face.normal)) {
+                                         setNormal(face.normal); 
+                                     }
                                  }
                                  setCommonStore((state) => {
                                      state.enableOrbitController = false;
@@ -229,13 +244,6 @@ const Cuboid = ({
                              }
                          }
                      }
-                 }}
-                 onPointerUp={(e) => {
-                     grabRef.current = null;
-                     setShowGrid(false);
-                     setCommonStore((state) => {
-                         state.enableOrbitController = true;
-                     });
                  }}
                  onPointerMove={(e) => {
                      if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
@@ -249,11 +257,13 @@ const Cuboid = ({
                                  if (baseRef.current) {
                                      intersects = ray.intersectObjects([baseRef.current]);
                                      if (intersects.length > 0) {
-                                         let p = Util.viewToModel(intersects[0].point);
+                                         let p = intersects[0].point;
                                          const face = intersects[0].face;
                                          if (face) {
-                                             setupGridHelper(face);
-                                             const n = Util.viewToModel(face.normal);
+                                             const n = face.normal;
+                                             if(normal && !normal.equals(n))
+                                             setNormal(n);
+                                             setupGridHelper(n);
                                              setElementNormal(grabRef.current.id, n.x, n.y, n.z);
                                          }
                                          if (elementModel) {
@@ -461,13 +471,13 @@ const Cuboid = ({
                 <Box ref={resizeHandleLLBotRef}
                      name={ResizeHandleType.LowerLeft}
                      args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-                     position={new Vector3(-hx, RESIZE_HANDLE_SIZE / 2 - hz, -hy)}
+                     position={new Vector3(-hx, -hy, RESIZE_HANDLE_SIZE / 2 - hz)}
                      onPointerDown={(e) => {
                          selectMe(id, e, ActionType.Resize);
                          if(resizeHandleLLBotRef.current) {
                             setCommonStore(state => {
-                               const anchor = resizeHandleLLBotRef.current!.localToWorld(new Vector3(lx, 0, ly));
-                               state.resizeAnchor.set(anchor.x, anchor.z);
+                               const anchor = resizeHandleLLBotRef.current!.localToWorld(new Vector3(lx, ly, 0));
+                               state.resizeAnchor.set(anchor.x, anchor.y);
                             });
                         }
                      }}
@@ -489,13 +499,13 @@ const Cuboid = ({
                 <Box ref={resizeHandleULBotRef}
                      name={ResizeHandleType.UpperLeft}
                      args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-                     position={new Vector3(-hx, RESIZE_HANDLE_SIZE / 2 - hz, hy)}
+                     position={new Vector3(-hx, hy, RESIZE_HANDLE_SIZE / 2 - hz)}
                      onPointerDown={(e) => {
                          selectMe(id, e, ActionType.Resize);
                          if(resizeHandleULBotRef.current) {
                             setCommonStore(state => {
-                               const anchor = resizeHandleULBotRef.current!.localToWorld(new Vector3(lx, 0, -ly));
-                               state.resizeAnchor.set(anchor.x, anchor.z);
+                               const anchor = resizeHandleULBotRef.current!.localToWorld(new Vector3(lx, -ly, 0));
+                               state.resizeAnchor.set(anchor.x, anchor.y);
                             });
                         }
                      }}
@@ -517,13 +527,13 @@ const Cuboid = ({
                 <Box ref={resizeHandleLRBotRef}
                      name={ResizeHandleType.LowerRight}
                      args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-                     position={new Vector3(hx, RESIZE_HANDLE_SIZE / 2 - hz, -hy)}
+                     position={new Vector3(hx, -hy, RESIZE_HANDLE_SIZE / 2 - hz)}
                      onPointerDown={(e) => {
                          selectMe(id, e, ActionType.Resize);
                          if(resizeHandleLRBotRef.current) {
                             setCommonStore(state => {
-                               const anchor = resizeHandleLRBotRef.current!.localToWorld(new Vector3(-lx, 0, ly));
-                               state.resizeAnchor.set(anchor.x, anchor.z);
+                               const anchor = resizeHandleLRBotRef.current!.localToWorld(new Vector3(-lx, ly, 0));
+                               state.resizeAnchor.set(anchor.x, anchor.y);
                             });
                         }
                      }}
@@ -545,13 +555,13 @@ const Cuboid = ({
                 <Box ref={resizeHandleURBotRef}
                      name={ResizeHandleType.UpperRight}
                      args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-                     position={new Vector3(hx, RESIZE_HANDLE_SIZE / 2 - hz, hy)}
+                     position={new Vector3(hx, hy, RESIZE_HANDLE_SIZE / 2 - hz)}
                      onPointerDown={(e) => {
                          selectMe(id, e, ActionType.Resize);
                          if(resizeHandleURBotRef.current) {
                             setCommonStore(state => {
-                               const anchor = resizeHandleURBotRef.current!.localToWorld(new Vector3(-lx, 0, -ly));
-                               state.resizeAnchor.set(anchor.x, anchor.z);
+                               const anchor = resizeHandleURBotRef.current!.localToWorld(new Vector3(-lx, -ly, 0));
+                               state.resizeAnchor.set(anchor.x, anchor.y);
                             });
                         }
                      }}
@@ -714,7 +724,7 @@ const Cuboid = ({
                 fontSize={20}
                 fontFace={'Times Roman'}
                 textHeight={0.2}
-                position={[0, hz + 0.2, 0]}
+                position={[0, 0, hz + 0.2]}
             />
             }
 

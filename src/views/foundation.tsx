@@ -40,7 +40,6 @@ const Foundation = ({
                         selected = false,
                     }: FoundationModel) => {
 
-    cy = -cy; // we want positive y to point north
     const maxLxLy = Math.max(lx, ly);
 
     const setCommonStore = useStore(state => state.set);
@@ -85,10 +84,10 @@ const Foundation = ({
     const hx = lx / 2;
     const hy = ly / 2;
     const hz = lz / 2;
-    const positionLL = useMemo(() => new Vector3(-hx, hz, -hy), [hx, hy, hz]);
-    const positionUL = useMemo(() => new Vector3(-hx, hz, hy), [hx, hy, hz]);
-    const positionLR = useMemo(() => new Vector3(hx, hz, -hy), [hx, hy, hz]);
-    const positionUR = useMemo(() => new Vector3(hx, hz, hy), [hx, hy, hz]);
+    const positionLL = useMemo(() => new Vector3(-hx, -hy, hz), [hx, hy, hz]);
+    const positionUL = useMemo(() => new Vector3(-hx, hy, hz), [hx, hy, hz]);
+    const positionLR = useMemo(() => new Vector3(hx, -hy, hz), [hx, hy, hz]);
+    const positionUR = useMemo(() => new Vector3(hx, hy, hz), [hx, hy, hz]);
 
     // const cosAngle = useMemo(() => {
     //     return Math.cos(rotation[2]);
@@ -101,8 +100,8 @@ const Foundation = ({
     const intersectionPlaneRotation = useMemo(() => new Euler(), []);
 
     if(grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
-        intersectionPlanePosition.set(0, grabRef.current.poleHeight, 0);
-        intersectionPlaneRotation.set(-Math.PI/2, 0, 0);
+        intersectionPlanePosition.set(0, 0, grabRef.current.poleHeight);
+        intersectionPlaneRotation.set(0, 0, 0);
     }
 
     const hoverHandle = useCallback((e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
@@ -165,17 +164,16 @@ const Foundation = ({
     const rotateHandleSize = 0.6 * ratio;
 
     const lowerRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
-        return [0, 0, -hy-rotateHandleSize];
+        return [0, -hy-rotateHandleSize, 0];
     }, [hy]);
     const upperRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
-        return [0, 0, hy+rotateHandleSize];
+        return [0, hy+rotateHandleSize, 0];
     }, [hy]);
 
     return (
-
         <group name={'Foundation Group ' + id}
-               position={[cx, hz, cy]}
-               rotation={Util.getEulerInView(rotation)}>
+               position={[cx, cy, hz]}
+               rotation={[0, 0, rotation[2]]}>
 
             {/* draw rectangle */}
             <Box castShadow={viewState.shadowEnabled}
@@ -184,7 +182,7 @@ const Foundation = ({
                  userData={{aabb: true}}
                  ref={baseRef}
                  name={'Foundation'}
-                 args={[lx, lz, ly]}
+                 args={[lx, ly, lz]}
                  onContextMenu={(e) => {
                      selectMe(id, e, ActionType.Select);
                      setCommonStore((state) => {
@@ -249,7 +247,7 @@ const Foundation = ({
                                  if (baseRef.current) {
                                      intersects = ray.intersectObjects([baseRef.current]);
                                      if (intersects.length > 0) {
-                                         let p = Util.viewToModel(intersects[0].point);
+                                         let p = intersects[0].point;
                                          if (elementModel) {
                                              p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
                                          }
@@ -287,11 +285,8 @@ const Foundation = ({
                             intersects = ray.intersectObjects([intersecPlaneRef.current]);
                             if (intersects.length > 0) {
                                 let p = intersects[0].point; //World coordinate
-                                if (moveHandleType) {
-                                    p = Util.viewToModel(p);
-                                    if (elementModel) {
-                                        p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
-                                    }
+                                if (moveHandleType && elementModel) {
+                                    p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
                                     setElementPosition(solarPanel.id, p.x, p.y); //Relative coordinate
                                 } else if (rotateHandleType) {
                                     const parent = getElementById(solarPanel.parent.id);
@@ -301,7 +296,7 @@ const Foundation = ({
                                         const cc = new Vector2(parent.lx * solarPanel.cx, parent.ly * solarPanel.cy) //local current center
                                            .rotateAround(new Vector2(0,0), pr); //add parent rotation
                                         const wc = new Vector2().addVectors(cc, pc); //world current center
-                                        const rotation = -pr + Math.atan2(p.x-wc.x, p.z+wc.y) 
+                                        const rotation = -pr + Math.atan2(-p.x+wc.x, p.y-wc.y) 
                                            + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
                                         const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0; // make sure angle is between -PI to PI
                                         updateElementById(solarPanel.id, {relativeAzimuth: rotation + offset});
@@ -312,11 +307,11 @@ const Foundation = ({
                                 } else if (resizeHandleType) {
                                     switch (resizeHandleType) {
                                         case ResizeHandleType.Lower:
-                                           {const wp = new Vector2(p.x, p.z); 
+                                           {const wp = new Vector2(p.x, p.y); 
                                            const d = wp.distanceTo(resizeAnchor);
                                            const angle = solarPanel.relativeAzimuth + rotation[2]; // world panel azimuth
                                            const rp = new Vector2().subVectors(wp, resizeAnchor);  // relative vector from anchor to pointer
-                                           const theta = angle + rp.angle() + Math.PI / 2;
+                                           const theta = -angle + rp.angle() + Math.PI / 2;
                                            let dyl = d * Math.cos(theta);
                                            if (solarPanel.orientation === Orientation.portrait) {
                                                    const nx = Math.max(1, Math.ceil((dyl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length));
@@ -327,19 +322,19 @@ const Foundation = ({
                                            }
                                            setElementSize(solarPanel.id, solarPanel.lx, dyl);
 
-                                           const wcx = resizeAnchor.x - dyl * Math.sin(angle) / 2;
+                                           const wcx = resizeAnchor.x + dyl * Math.sin(angle) / 2;
                                            const wcy = resizeAnchor.y - dyl * Math.cos(angle) / 2;
                                            const wc = new Vector2(wcx, wcy);   // world panel center
                                            const wbc = new Vector2(cx, cy);    // world foundation center
-                                           const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), rotation[2]);
-                                           setElementPosition(solarPanel.id, rc.x/lx, -rc.y/ly);}
+                                           const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), -rotation[2]);
+                                           setElementPosition(solarPanel.id, rc.x/lx, rc.y/ly);}
                                            break;
                                         case ResizeHandleType.Upper:
-                                           {const wp = new Vector2(p.x, p.z);
+                                           {const wp = new Vector2(p.x, p.y);
                                            const d = wp.distanceTo(resizeAnchor);
                                            const angle = solarPanel.relativeAzimuth + rotation[2];
                                            const rp = new Vector2().subVectors(wp, resizeAnchor);
-                                           const theta = angle + rp.angle() - Math.PI / 2;
+                                           const theta = -angle + rp.angle() - Math.PI / 2;
                                            let dyl = d * Math.cos(theta);
                                            if (solarPanel.orientation === Orientation.portrait) {
                                                const nx = Math.max(1, Math.ceil((dyl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length));
@@ -350,19 +345,19 @@ const Foundation = ({
                                            }
                                            setElementSize(solarPanel.id, solarPanel.lx, dyl);
 
-                                           const wcx = resizeAnchor.x + dyl * Math.sin(angle) / 2;
+                                           const wcx = resizeAnchor.x - dyl * Math.sin(angle) / 2;
                                            const wcy = resizeAnchor.y + dyl * Math.cos(angle) / 2;
                                            const wc = new Vector2(wcx, wcy);
                                            const wbc = new Vector2(cx, cy);
-                                           const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), rotation[2]);
-                                           setElementPosition(solarPanel.id, rc.x/lx, -rc.y/ly);}
+                                           const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), -rotation[2]);
+                                           setElementPosition(solarPanel.id, rc.x/lx, rc.y/ly);}
                                             break;
                                         case ResizeHandleType.Left:
-                                           {const wp = new Vector2(p.x, p.z);
+                                           {const wp = new Vector2(p.x, p.y);
                                            const d = wp.distanceTo(resizeAnchor);
                                            const angle = solarPanel.relativeAzimuth + rotation[2];
                                            const rp = new Vector2().subVectors(wp, resizeAnchor);
-                                           const theta = rp.angle() + angle + Math.PI;
+                                           const theta = rp.angle() - angle + Math.PI;
                                            let dxl = d * Math.cos(theta);
                                            if (solarPanel.orientation === Orientation.portrait) {
                                                const nx = Math.max(1, Math.ceil((dxl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width));
@@ -374,18 +369,18 @@ const Foundation = ({
                                            setElementSize(solarPanel.id, dxl, solarPanel.ly);
 
                                            const wcx = resizeAnchor.x - dxl * Math.cos(angle) / 2;
-                                           const wcy = resizeAnchor.y + dxl * Math.sin(angle) / 2;
+                                           const wcy = resizeAnchor.y - dxl * Math.sin(angle) / 2;
                                            const wc = new Vector2(wcx, wcy);
                                            const wbc = new Vector2(cx, cy);
-                                           const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), rotation[2]);
-                                           setElementPosition(solarPanel.id, rc.x/lx, -rc.y/ly);}
+                                           const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), -rotation[2]);
+                                           setElementPosition(solarPanel.id, rc.x/lx, rc.y/ly);}
                                            break;
                                         case ResizeHandleType.Right:
-                                           {const wp = new Vector2(p.x, p.z);
+                                           {const wp = new Vector2(p.x, p.y);
                                            const d = wp.distanceTo(resizeAnchor);
                                            const angle = solarPanel.relativeAzimuth + rotation[2];
                                            const rp = new Vector2().subVectors(wp, resizeAnchor);
-                                           const theta = angle + rp.angle();
+                                           const theta = -angle + rp.angle();
                                            let dxl = d * Math.cos(theta);
                                            if (solarPanel.orientation === Orientation.portrait) {
                                                    const nx = Math.max(1, Math.ceil((dxl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width));
@@ -397,11 +392,11 @@ const Foundation = ({
                                            setElementSize(solarPanel.id, dxl, solarPanel.ly);
 
                                            const wcx = resizeAnchor.x + dxl * Math.cos(angle) / 2;
-                                           const wcy = resizeAnchor.y - dxl * Math.sin(angle) / 2;
+                                           const wcy = resizeAnchor.y + dxl * Math.sin(angle) / 2;
                                            const wc = new Vector2(wcx, wcy);
                                            const wbc = new Vector2(cx, cy);
-                                           const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), rotation[2]);
-                                           setElementPosition(solarPanel.id, rc.x/lx, -rc.y/ly);}
+                                           const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0,0), -rotation[2]);
+                                           setElementPosition(solarPanel.id, rc.x/lx, rc.y/ly);}
                                            break;
                                     }
                                 } 
@@ -424,7 +419,8 @@ const Foundation = ({
                     <PolarGrid element={grabRef.current} height={grabRef.current.poleHeight} />}
                     {(moveHandleType || resizeHandleType) && 
                     <gridHelper name={'Foundation Grid'}
-                        position={[0, lz, 0]}
+                        rotation={[Math.PI/2, 0, 0]}
+                        position={[0, 0, lz]}
                         scale={[lx / maxLxLy, 1, ly / maxLxLy]}
                         args={[maxLxLy, 50, 'gray', 'gray']}/>}
                 </>
@@ -451,37 +447,37 @@ const Foundation = ({
                       color={wireframeColor}/>
 
                 {/* draw wireframe lines lower face */}
-                <Line points={[[positionLL.x, -hz, positionLL.z], [positionLR.x, -hz, positionLR.z]]}
+                <Line points={[[positionLL.x, positionLL.y, -hz], [positionLR.x, positionLR.y, -hz]]}
                       name={'Line LL-LR Lower Face'}
                       lineWidth={wireframeWidth}
                       color={wireframeColor}/>
-                <Line points={[[positionLR.x, -hz, positionLR.z], [positionUR.x, -hz, positionUR.z]]}
+                <Line points={[[positionLR.x, positionLR.y, -hz], [positionUR.x, positionUR.y, -hz]]}
                       name={'Line LR-UR Lower Face'}
                       lineWidth={wireframeWidth}
                       color={wireframeColor}/>
-                <Line points={[[positionUR.x, -hz, positionUR.z], [positionUL.x, -hz, positionUL.z]]}
+                <Line points={[[positionUR.x, positionUR.y, -hz], [positionUL.x, positionUL.y, -hz]]}
                       name={'Line UR-UL Lower Face'}
                       lineWidth={wireframeWidth}
                       color={wireframeColor}/>
-                <Line points={[[positionUL.x, -hz, positionUL.z], [positionLL.x, -hz, positionLL.z]]}
+                <Line points={[[positionUL.x, positionUL.y, -hz], [positionLL.x, positionLL.y, -hz]]}
                       name={'Line UL-LL Lower Face'}
                       lineWidth={wireframeWidth}
                       color={wireframeColor}/>
 
                 {/* draw wireframe vertical lines */}
-                <Line points={[[positionLL.x, -hz, positionLL.z], positionLL]}
+                <Line points={[[positionLL.x, positionLL.y, -hz], positionLL]}
                       name={'Line LL-LL Vertical'}
                       lineWidth={wireframeWidth}
                       color={wireframeColor}/>
-                <Line points={[[positionLR.x, -hz, positionLR.z], positionLR]}
+                <Line points={[[positionLR.x, positionLR.y, -hz], positionLR]}
                       name={'Line LR-LR Vertical'}
                       lineWidth={wireframeWidth}
                       color={wireframeColor}/>
-                <Line points={[[positionUL.x, -hz, positionUL.z], positionUL]}
+                <Line points={[[positionUL.x, positionUL.y, -hz], positionUL]}
                       name={'Line UL-UL Vertical'}
                       lineWidth={wireframeWidth}
                       color={wireframeColor}/>
-                <Line points={[[positionUR.x, -hz, positionUR.z], positionUR]}
+                <Line points={[[positionUR.x, positionUR.y, -hz], positionUR]}
                       name={'Line UR-UR Vertical'}
                       lineWidth={wireframeWidth}
                       color={wireframeColor}/>
@@ -493,15 +489,15 @@ const Foundation = ({
             <>
                 {/* resize handles */}
                 <Box ref={resizeHandleLLRef}
-                     position={[positionLL.x, 0, positionLL.z]}
-                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
+                     position={[positionLL.x, positionLL.y, 0]}
+                     args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                      name={ResizeHandleType.LowerLeft}
                      onPointerDown={(e) => {
                          selectMe(id, e, ActionType.Resize);
                          if(resizeHandleLLRef.current) {
                              setCommonStore(state => {
-                                const anchor = resizeHandleLLRef.current!.localToWorld(new Vector3(lx, 0, ly));
-                                state.resizeAnchor.set(anchor.x, anchor.z);
+                                const anchor = resizeHandleLLRef.current!.localToWorld(new Vector3(lx, ly, 0));
+                                state.resizeAnchor.set(anchor.x, anchor.y);
                              });
                          }
                      }}
@@ -521,15 +517,15 @@ const Foundation = ({
                     />
                 </Box>
                 <Box ref={resizeHandleULRef}
-                     position={[positionUL.x, 0, positionUL.z]}
-                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
+                     position={[positionUL.x, positionUL.y, 0]}
+                     args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                      name={ResizeHandleType.UpperLeft}
                      onPointerDown={(e) => {
                          selectMe(id, e, ActionType.Resize);
                          if(resizeHandleULRef.current) {
                             setCommonStore(state => {
-                               const anchor = resizeHandleULRef.current!.localToWorld(new Vector3(lx, 0, -ly));
-                               state.resizeAnchor.set(anchor.x, anchor.z);
+                               const anchor = resizeHandleULRef.current!.localToWorld(new Vector3(lx, -ly, 0));
+                               state.resizeAnchor.set(anchor.x, anchor.y);
                             });
                         }
                      }}
@@ -549,15 +545,15 @@ const Foundation = ({
                     />
                 </Box>
                 <Box ref={resizeHandleLRRef}
-                     position={[positionLR.x, 0, positionLR.z]}
-                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
+                     position={[positionLR.x, positionLR.y, 0]}
+                     args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                      name={ResizeHandleType.LowerRight}
                      onPointerDown={(e) => {
                          selectMe(id, e, ActionType.Resize);
                          if(resizeHandleLRRef.current) {
                             setCommonStore(state => {
-                               const anchor = resizeHandleLRRef.current!.localToWorld(new Vector3(-lx, 0, ly));
-                               state.resizeAnchor.set(anchor.x, anchor.z);
+                               const anchor = resizeHandleLRRef.current!.localToWorld(new Vector3(-lx, ly, 0));
+                               state.resizeAnchor.set(anchor.x, anchor.y);
                             });
                         }
                      }}
@@ -577,15 +573,15 @@ const Foundation = ({
                     />
                 </Box>
                 <Box ref={resizeHandleURRef}
-                     position={[positionUR.x, 0, positionUR.z]}
-                     args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
+                     position={[positionUR.x, positionUR.y, 0]}
+                     args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                      name={ResizeHandleType.UpperRight}
                      onPointerDown={(e) => {
                          selectMe(id, e, ActionType.Resize);
                          if(resizeHandleURRef.current) {
                             setCommonStore(state => {
-                               const anchor = resizeHandleURRef.current!.localToWorld(new Vector3(-lx, 0, -ly));
-                               state.resizeAnchor.set(anchor.x, anchor.z);
+                               const anchor = resizeHandleURRef.current!.localToWorld(new Vector3(-lx, -ly, 0));
+                               state.resizeAnchor.set(anchor.x, anchor.y);
                             });
                         }
                      }}
@@ -608,7 +604,7 @@ const Foundation = ({
                 {/* move handles */}
                 <Sphere ref={moveHandleLowerRef}
                         args={[moveHandleSize, 6, 6]}
-                        position={[0, handleLift, -hy - MOVE_HANDLE_OFFSET]}
+                        position={[0, -hy - MOVE_HANDLE_OFFSET, handleLift]}
                         name={MoveHandleType.Lower}
                         onPointerDown={(e) => {
                             selectMe(id, e, ActionType.Move);
@@ -630,7 +626,7 @@ const Foundation = ({
                 </Sphere>
                 <Sphere ref={moveHandleUpperRef}
                         args={[moveHandleSize, 6, 6]}
-                        position={[0, handleLift, hy + MOVE_HANDLE_OFFSET]}
+                        position={[0, hy + MOVE_HANDLE_OFFSET, handleLift]}
                         name={MoveHandleType.Upper}
                         onPointerDown={(e) => {
                             selectMe(id, e, ActionType.Move);
@@ -674,7 +670,7 @@ const Foundation = ({
                 </Sphere>
                 <Sphere ref={moveHandleRightRef}
                         args={[moveHandleSize, 6, 6]}
-                        position={[hx + MOVE_HANDLE_OFFSET, handleLift, 0]}
+                        position={[hx + MOVE_HANDLE_OFFSET, 0, handleLift]}
                         name={MoveHandleType.Right}
                         onPointerDown={(e) => {
                             selectMe(id, e, ActionType.Move);
@@ -727,7 +723,7 @@ const Foundation = ({
                 fontSize={20}
                 fontFace={'Times Roman'}
                 textHeight={0.2}
-                position={[0, hz + 0.2, 0]}/>
+                position={[0, 0, hz + 0.2]}/>
             }
             {!locked && hoveredResizeHandleLL && <textSprite
                 name={'Label'}
@@ -735,7 +731,7 @@ const Foundation = ({
                 fontSize={20}
                 fontFace={'Times Roman'}
                 textHeight={0.2}
-                position={[-hx, hz + 0.2, -hy]}/>
+                position={[-hx, -hy, hz + 0.2]}/>
             }
             {!locked && hoveredResizeHandleUL && <textSprite
                 name={'Label'}
@@ -743,7 +739,7 @@ const Foundation = ({
                 fontSize={20}
                 fontFace={'Times Roman'}
                 textHeight={0.2}
-                position={[-hx, hz + 0.2, hy]}/>
+                position={[-hx, hy, hz + 0.2]}/>
             }
             {!locked && hoveredResizeHandleLR && <textSprite
                 name={'Label'}
@@ -751,7 +747,7 @@ const Foundation = ({
                 fontSize={20}
                 fontFace={'Times Roman'}
                 textHeight={0.2}
-                position={[hx, hz + 0.2, -hy]}/>
+                position={[hx, -hy, hz + 0.2]}/>
             }
             {!locked && hoveredResizeHandleUR && <textSprite
                 name={'Label'}
@@ -759,7 +755,7 @@ const Foundation = ({
                 fontSize={20}
                 fontFace={'Times Roman'}
                 textHeight={0.2}
-                position={[hx, hz + 0.2, hy]}/>
+                position={[hx, hy, hz + 0.2]}/>
             }
             </>
 

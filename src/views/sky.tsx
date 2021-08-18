@@ -47,7 +47,7 @@ const Sky = ({
     const intersectionPlaneRef = useRef<Mesh>();
     const ray = useMemo(() => new Raycaster(), []);
 
-    const night = sunlightDirection.y <= 0;
+    const night = sunlightDirection.z <= 0;
 
     let intersectionPlaneType = IntersectionPlaneType.Sky;
     const intersectionPlanePosition = useMemo(() => new Vector3(), []);
@@ -55,10 +55,10 @@ const Sky = ({
     if (grabRef.current && resizeHandleType) {
         intersectionPlaneType = IntersectionPlaneType.Vertical;
         const handlePosition = getResizeHandlePosition(grabRef.current, resizeHandleType);
-        const cameraPostion = getCameraDirection();
-        const rotation = Math.atan2(cameraPostion.x, cameraPostion.z);
-        intersectionPlanePosition.set(handlePosition.x, 0, handlePosition.z);
-        intersectionPlaneAngle.set(0, rotation, 0);
+        const cameraDir = getCameraDirection();
+        const rotation = -Math.atan2(cameraDir.x, cameraDir.y);
+        intersectionPlanePosition.set(handlePosition.x, handlePosition.y, 0);
+        intersectionPlaneAngle.set(-Math.PI/2, 0, rotation,'ZXY');
     }
 
     const scale = useMemo(() => {
@@ -143,7 +143,7 @@ const Sky = ({
                     intersects = ray.intersectObjects([intersectionPlaneRef.current]);
                     if (intersects.length > 0) {
                         const p = intersects[0].point;
-                        updateElement(grabRef.current.id, {lz: Math.max(1, p.y)});
+                        updateElement(grabRef.current.id, {lz: Math.max(1, p.z)});
                     }
             }
         }
@@ -163,6 +163,7 @@ const Sky = ({
                     if (e.button === 2) return; // ignore right-click
                     clickSky(e);
                 }}
+                rotation={[Math.PI/2, 0, 0]} 
             >
                 <sphereGeometry args={[900, 16, 8, 0, 2 * Math.PI, 0, Math.PI / 2]}/>
                 <meshBasicMaterial map={texture}

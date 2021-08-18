@@ -153,7 +153,7 @@ const MainToolBar = ({
         if (orbitControls) {
             // I don't know why the reset method results in a black screen.
             // So we are resetting it here to a predictable position.
-            orbitControls.object.position.set(0, Math.min(50, heliodonRadius * 4), 0);
+            orbitControls.object.position.set(0, 0, Math.min(50, heliodonRadius * 4));
             orbitControls.target.set(0, 0, 0);
             orbitControls.update();
         }

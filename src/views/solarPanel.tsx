@@ -108,7 +108,6 @@ const SolarPanel = ({
             }
         }
     }
-    cy = -cy; // we want positive y to point north
     cz = poleHeight + lz / 2 + parent.lz;
     lz = pvModel.thickness;
 
@@ -122,10 +121,10 @@ const SolarPanel = ({
     const hx = lx / 2;
     const hy = ly / 2;
     const hz = lz / 2;
-    const positionLL = new Vector3(-hx, hz, -hy);
-    const positionUL = new Vector3(-hx, hz, hy);
-    const positionLR = new Vector3(hx, hz, -hy);
-    const positionUR = new Vector3(hx, hz, hy);
+    const positionLL = new Vector3(-hx, -hy, hz);
+    const positionUL = new Vector3(-hx, hy, hz);
+    const positionLR = new Vector3(hx, -hy, hz);
+    const positionUR = new Vector3(hx, hy, hz);
     const element = getElementById(id);
 
     useEffect(() => {
@@ -181,43 +180,22 @@ const SolarPanel = ({
         const v = new Vector3().fromArray(normal);
         if (Util.isSame(v, Util.UNIT_VECTOR_POS_Z)) {
             // top face in model coordinate system
-            return new Euler(0, rotation[2], 0);
+            return new Euler(0, 0, rotation[2]);
         } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_X)) {
             // east face in model coordinate system
-            return new Euler(0, rotation[2], Util.HALF_PI);
+            return new Euler(0, Util.HALF_PI, rotation[2]);
         } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_X)) {
             // west face in model coordinate system
-            return new Euler(0, rotation[2], Util.HALF_PI);
+            return new Euler(0, Util.HALF_PI, rotation[2]);
         } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_Y)) {
             // south face in the model coordinate system
-            return new Euler(0, rotation[2] + Util.HALF_PI, Util.HALF_PI);
+            return new Euler(0, Util.HALF_PI, rotation[2] + Util.HALF_PI);
         } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_Y)) {
             // north face in the model coordinate system
-            return new Euler(0, rotation[2] + Util.HALF_PI, Util.HALF_PI);
+            return new Euler(0, Util.HALF_PI, rotation[2] + Util.HALF_PI);
         }
-        return new Euler(0, rotation[2], 0);
+        return new Euler(0, 0, rotation[2]);
     }, [normal, rotation]);
-
-    const spritePosition = useMemo(() => {
-        const v = new Vector3().fromArray(normal);
-        if (Util.isSame(v, Util.UNIT_VECTOR_POS_Z)) {
-            // top face in model coordinate system
-            return new Vector3(0, lz + 0.2, 0);
-        } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_X)) {
-            // east face in model coordinate system
-            return new Vector3(0, -0.2, 0);
-        } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_X)) {
-            // west face in model coordinate system
-            return new Vector3(0, 0.2, 0);
-        } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_Y)) {
-            // south face in the model coordinate system
-            return new Vector3(0, -0.2, 0);
-        } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_Y)) {
-            // north face in the model coordinate system
-            return new Vector3(0, 0.2, 0);
-        }
-        return new Vector3(0, lz + 0.2, 0);
-    }, [normal]);
 
     const hoverHandle = (
         e: ThreeEvent<MouseEvent>, 
@@ -251,33 +229,33 @@ const SolarPanel = ({
     };
 
     const sunDirection = useMemo(() => {
-        return Util.modelToView(getSunDirection(new Date(date), latitude));
+        return getSunDirection(new Date(date), latitude);
     }, [date, latitude]);
     const rot = getElementById(parent.id)?.rotation[2];
-    const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(Util.UNIT_VECTOR_POS_Y, -rot) : sunDirection;
+    const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(Util.UNIT_VECTOR_POS_Z, -rot) : sunDirection;
 
     const relativeEuler = useMemo(() => {
-        if (sunDirection.y > 0) {
+        if (sunDirection.z > 0) {
             switch (trackerType) {
                 case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
-                    const qrotAADAT = new Quaternion().setFromUnitVectors(Util.UNIT_VECTOR_POS_Y, rotatedSunDirection);
+                    const qrotAADAT = new Quaternion().setFromUnitVectors(Util.UNIT_VECTOR_POS_Z, rotatedSunDirection);
                     return new Euler().setFromQuaternion(qrotAADAT);
                 case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
-                    const qrotHSAT = new Quaternion().setFromUnitVectors(Util.UNIT_VECTOR_POS_Y,
-                        new Vector3(rotatedSunDirection.x, rotatedSunDirection.y, 0).normalize());
+                    const qrotHSAT = new Quaternion().setFromUnitVectors(Util.UNIT_VECTOR_POS_Z,
+                        new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize());
                     return new Euler().setFromQuaternion(qrotHSAT);
                 case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
                     const v2d = new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize();
                     const dot = Util.UNIT_VECTOR_POS_Z.dot(v2d);
-                    return new Euler(tiltAngle, Math.sign(v2d.x) * Math.acos(dot), 0, 'YXZ');
+                    return new Euler(tiltAngle, 0, Math.sign(v2d.x) * Math.acos(dot), 'ZXY');
             }
         }
-        return new Euler(tiltAngle, relativeAzimuth, 0, 'YXZ');
+        return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
     }, [trackerType, sunDirection, tiltAngle, relativeAzimuth]);
 
     const normalVector = useMemo(() => {
         const v = new Vector3();
-        return drawSunBeam ? Util.modelToView(v.fromArray(normal)).applyEuler(relativeEuler) : v;
+        return drawSunBeam ? v.fromArray(normal).applyEuler(relativeEuler) : v;
     }, [drawSunBeam, normal, relativeEuler]);
 
     const poles: Vector3[] = [];
@@ -285,13 +263,13 @@ const SolarPanel = ({
     const poleNx = Math.floor(0.5 * lx / poleSpacing);
     const poleNy = Math.floor(0.5 * ly / poleSpacing);
     const sinTilt = 0.5 * Math.sin(tiltAngle);
-    const cosAz = Math.cos(-relativeAzimuth) * poleSpacing;
-    const sinAz = Math.sin(-relativeAzimuth) * poleSpacing;
+    const cosAz = Math.cos(relativeAzimuth) * poleSpacing;
+    const sinAz = Math.sin(relativeAzimuth) * poleSpacing;
     for (let ix = -poleNx; ix <= poleNx; ix++) {
         for (let iy = -poleNy; iy <= poleNy; iy++) {
             const xi = ix * cosAz - iy * sinAz;
             const yi = ix * sinAz + iy * cosAz;
-            poles.push(new Vector3(xi, poleZ - sinTilt * poleSpacing * iy, yi));
+            poles.push(new Vector3(xi, yi, poleZ + sinTilt * poleSpacing * iy));
         }
     }
 
@@ -308,7 +286,7 @@ const SolarPanel = ({
 
         <group name={'Solar Panel Group ' + id}
                rotation={euler}
-               position={[cx, cz + hz, cy]}
+               position={[cx, cy, cz + hz]}
         >
 
             <group rotation={relativeEuler}>
@@ -319,6 +297,7 @@ const SolarPanel = ({
                     uuid={id}
                     ref={baseRef}
                     args={[lx, lz, ly]}
+                    rotation={[Math.PI/2, 0, 0]}
                     name={'Solar Panel'}
                     onPointerDown={(e) => {
                         if (e.button === 2) return; // ignore right-click
@@ -374,14 +353,14 @@ const SolarPanel = ({
                     <group>
                         <Box ref={resizeHandleLowerRef}
                             position={[(positionLL.x + positionLR.x) / 2, positionLL.y, positionLL.z]}
-                            args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
+                            args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                             name={ResizeHandleType.Lower}
                             onPointerDown={(e) => {
                                 selectMe(id, e, ActionType.Resize);
                                 if(resizeHandleLeftRef.current) {
                                     setCommonStore(state => {
-                                        const anchor = resizeHandleLowerRef.current!.localToWorld(new Vector3(0, 0, ly));
-                                        state.resizeAnchor.set(anchor.x, anchor.z);
+                                        const anchor = resizeHandleLowerRef.current!.localToWorld(new Vector3(0, ly, 0));
+                                        state.resizeAnchor.set(anchor.x, anchor.y);
                                     });
                                 }
                             }}
@@ -403,14 +382,14 @@ const SolarPanel = ({
                         </Box>
                         <Box ref={resizeHandleUpperRef}
                             position={[(positionUL.x + positionUR.x) / 2, positionUL.y, positionUL.z]}
-                            args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
+                            args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                             name={ResizeHandleType.Upper}
                             onPointerDown={(e) => {
                                 selectMe(id, e, ActionType.Resize);
                                 if(resizeHandleLeftRef.current) {
                                     setCommonStore(state => {
-                                        const anchor = resizeHandleUpperRef.current!.localToWorld(new Vector3(0, 0, -ly));
-                                        state.resizeAnchor.set(anchor.x, anchor.z);
+                                        const anchor = resizeHandleUpperRef.current!.localToWorld(new Vector3(0, -ly, 0));
+                                        state.resizeAnchor.set(anchor.x, anchor.y);
                                     });
                                 }
                             }}
@@ -431,15 +410,15 @@ const SolarPanel = ({
                             />
                         </Box>
                         <Box ref={resizeHandleLeftRef}
-                            position={[positionLL.x, positionLL.y, (positionLL.z + positionUL.z) / 2]}
-                            args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
+                            position={[positionLL.x, (positionLL.y + positionUL.y) / 2, positionLL.z]}
+                            args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                             name={ResizeHandleType.Left}
                             onPointerDown={(e) => {
                                 selectMe(id, e, ActionType.Resize);
                                 if(resizeHandleLeftRef.current) {
                                     setCommonStore(state => {
                                         const anchor = resizeHandleLeftRef.current!.localToWorld(new Vector3(lx, 0, 0));
-                                        state.resizeAnchor.set(anchor.x, anchor.z);
+                                        state.resizeAnchor.set(anchor.x, anchor.y);
                                     });
                                 }
                             }}
@@ -460,15 +439,15 @@ const SolarPanel = ({
                             />
                         </Box>
                         <Box ref={resizeHandleRightRef}
-                            position={[positionLR.x, positionLR.y, (positionLR.z + positionUR.z) / 2]}
-                            args={[resizeHandleSize, lz * 1.2, resizeHandleSize]}
+                            position={[positionLR.x, (positionLR.y + positionUR.y) / 2, positionLR.z]}
+                            args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                             name={ResizeHandleType.Right}
                             onPointerDown={(e) => {
                                 selectMe(id, e, ActionType.Resize);
                                 if(resizeHandleLeftRef.current) {
                                     setCommonStore(state => {
                                         const anchor = resizeHandleRightRef.current!.localToWorld(new Vector3(-lx, 0, 0));
-                                        state.resizeAnchor.set(anchor.x, anchor.z);
+                                        state.resizeAnchor.set(anchor.x, anchor.y);
                                     });
                                 }
                             }}
@@ -515,37 +494,37 @@ const SolarPanel = ({
                         color={lineColor}/>
 
                     {/* draw wireframe lines lower face */}
-                    <Line points={[[positionLL.x, -hz, positionLL.z], [positionLR.x, -hz, positionLR.z]]}
+                    <Line points={[[positionLL.x, positionLL.y, -hz], [positionLR.x, positionLR.y, -hz]]}
                         name={'Line LL-LR Lower Face'}
                         lineWidth={lineWidth}
                         color={lineColor}/>
-                    <Line points={[[positionLR.x, -hz, positionLR.z], [positionUR.x, -hz, positionUR.z]]}
+                    <Line points={[[positionLR.x, positionLR.y, -hz], [positionUR.x, positionUR.y, -hz]]}
                         name={'Line LR-UR Lower Face'}
                         lineWidth={lineWidth}
                         color={lineColor}/>
-                    <Line points={[[positionUR.x, -hz, positionUR.z], [positionUL.x, -hz, positionUL.z]]}
+                    <Line points={[[positionUR.x, positionUR.y, -hz], [positionUL.x, positionUL.y, -hz]]}
                         name={'Line UR-UL Lower Face'}
                         lineWidth={lineWidth}
                         color={lineColor}/>
-                    <Line points={[[positionUL.x, -hz, positionUL.z], [positionLL.x, -hz, positionLL.z]]}
+                    <Line points={[[positionUL.x, positionUL.y, -hz], [positionLL.x, positionLL.y, -hz]]}
                         name={'Line UL-LL Lower Face'}
                         lineWidth={lineWidth}
                         color={lineColor}/>
 
                     {/* draw wireframe vertical lines */}
-                    <Line points={[[positionLL.x, -hz, positionLL.z], positionLL]}
+                    <Line points={[[positionLL.x, positionLL.y, -hz], positionLL]}
                         name={'Line LL-LL Vertical'}
                         lineWidth={lineWidth}
                         color={lineColor}/>
-                    <Line points={[[positionLR.x, -hz, positionLR.z], positionLR]}
+                    <Line points={[[positionLR.x, positionLR.y, -hz], positionLR]}
                         name={'Line LR-LR Vertical'}
                         lineWidth={lineWidth}
                         color={lineColor}/>
-                    <Line points={[[positionUL.x, -hz, positionUL.z], positionUL]}
+                    <Line points={[[positionUL.x, positionUL.y, -hz], positionUL]}
                         name={'Line UL-UL Vertical'}
                         lineWidth={lineWidth}
                         color={lineColor}/>
-                    <Line points={[[positionUR.x, -hz, positionUR.z], positionUR]}
+                    <Line points={[[positionUR.x, positionUR.y, -hz], positionUR]}
                         name={'Line UR-UR Vertical'}
                         lineWidth={lineWidth}
                         color={lineColor}/>
@@ -555,11 +534,11 @@ const SolarPanel = ({
 
             {/* draw rotate handles */}
             {selected && !locked && trackerType === TrackerType.NO_TRACKER &&
-            <group position={[0,-poleHeight,0]} rotation={[0, relativeEuler.y, 0]}>
+            <group position={[0, 0, -poleHeight]} rotation={[0, 0, relativeEuler.z]}>
                 {/* rotate handles */}
                 <RotateHandle
                     id={id}
-                    position={[0,poleHeight,-ly/2-rotateHandleSize/2]}
+                    position={[0, -ly/2-rotateHandleSize/2, poleHeight]}
                     color={hoveredHandle === RotateHandleType.Upper || 
                         rotateHandleType === RotateHandleType.Upper ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
                     ratio={rotateHandleSize}
@@ -569,7 +548,7 @@ const SolarPanel = ({
                 />
                 <RotateHandle
                     id={id}
-                    position={[0,poleHeight,ly/2+rotateHandleSize/2]}
+                    position={[0, ly/2+rotateHandleSize/2, poleHeight]}
                     color={hoveredHandle === RotateHandleType.Lower || 
                         rotateHandleType === RotateHandleType.Lower ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR}
                     ratio={rotateHandleSize}
@@ -585,8 +564,8 @@ const SolarPanel = ({
             <>
                 {/* ring handles */}
                 <Ring name={RotateHandleType.Tilt}
-                    args={[tiltHandleSize, 1.1*tiltHandleSize, 18, 2, 0, Math.PI]} 
-                    rotation={[0, relativeEuler.y + Math.PI/2, 0]}
+                    args={[tiltHandleSize, 1.1*tiltHandleSize, 18, 2, -Math.PI/2, Math.PI]} 
+                    rotation={[0, -Math.PI/2, relativeEuler.z, 'ZXY']}
                     onPointerOver={(e) => {
                         hoverHandle(e, RotateHandleType.Tilt);
                     }}
@@ -612,8 +591,8 @@ const SolarPanel = ({
                 {/* intersection plane */}
                 <Ring ref={tiltHandleRef}
                     name={'Solar panel tilt handle'}
-                    args={[tiltHandleSize, 2*tiltHandleSize, 18, 2, 0, Math.PI]}
-                    rotation={[0, relativeEuler.y + Math.PI/2, 0]}
+                    args={[tiltHandleSize, 2*tiltHandleSize, 18, 2, -Math.PI/2, Math.PI]}
+                    rotation={[0, -Math.PI/2, relativeEuler.z, 'ZXY']}
                     onPointerMove={(e) => {
                         if(pointerDown.current) {
                             const mouse = new Vector2();
@@ -630,9 +609,9 @@ const SolarPanel = ({
                                         const cv = new Vector3().subVectors(p, ov); 
                                         const wr = relativeAzimuth + rotation[2]; 
                                         const sign = wr % Math.PI === 0 ? 
-                                            Math.sign(cv.z) * Math.sign(Math.cos(wr)) : 
+                                            Math.sign(-cv.y) * Math.sign(Math.cos(wr)) : 
                                             Math.sign(cv.x) * Math.sign(Math.sin(wr));
-                                        const angle = cv.angleTo(new Vector3(0,1,0)) * sign;
+                                        const angle = cv.angleTo(new Vector3(0,0,1)) * sign;
                                         updateElementById(id, {tiltAngle: angle});
                                     }
                                 }
@@ -643,33 +622,33 @@ const SolarPanel = ({
                     <meshStandardMaterial depthTest={false} transparent={true} opacity={0.5} side={DoubleSide}/>
                 </Ring>
                 {/* pointer */}
-                <Line points={[[0,tiltHandleSize,0], [0,1.75*tiltHandleSize,0]]}
-                    rotation={new Euler(tiltAngle, relativeEuler.y, 0, 'YXZ')}
+                <Line points={[[0,0,tiltHandleSize], [0,0,1.75*tiltHandleSize]]}
+                    rotation={new Euler(tiltAngle, 0, relativeEuler.z, 'ZXY')}
                     lineWidth={1}
                 />
                 {/* scale */}
                 {degree.map((e, i) => {
                     return (
-                        <group key={i} rotation={new Euler(Math.PI/12*i - Math.PI/2, relativeEuler.y, 0, 'YXZ')}>
-                            <Line points={[[0,1.8*tiltHandleSize,0], [0,2*tiltHandleSize,0]]} color={'white'} transparent={true} opacity={0.5} />
+                        <group key={i} rotation={new Euler(Math.PI/12*i - Math.PI/2, 0, relativeEuler.z, 'ZXY')}>
+                            <Line points={[[0,0,1.8*tiltHandleSize], [0,0,2*tiltHandleSize]]} color={'white'} transparent={true} opacity={0.5} />
                             <textSprite
                                 text={`${i*15-90}°`}
                                 fontSize={20*tiltHandleSize}
                                 fontFace={'Times Roman'}
                                 textHeight={0.15*tiltHandleSize}
-                                position={[0,1.6*tiltHandleSize,0]}
+                                position={[0,0,1.6*tiltHandleSize]}
                             />
                         </group>
                     )
                 })}
                 {/* show current degree */}
-                <group rotation={new Euler(tiltAngle, relativeEuler.y,0, 'YXZ')}>
+                <group rotation={new Euler(tiltAngle, 0, relativeEuler.z, 'ZXY')}>
                     <textSprite
                         text={`${Math.floor(tiltAngle/Math.PI*180)}°`}
                         fontSize={20*tiltHandleSize}
                         fontFace={'Times Roman'}
                         textHeight={0.2*tiltHandleSize}
-                        position={[0,0.75*tiltHandleSize,0]}
+                        position={[0,0,0.75*tiltHandleSize]}
                     />
                 </group>
                 </>}
@@ -684,8 +663,9 @@ const SolarPanel = ({
                               name={'Pole ' + i}
                               castShadow={shadowEnabled}
                               receiveShadow={shadowEnabled}
-                              args={[poleRadius, poleRadius, poleHeight + (p.y - poleZ) * 2 + lz, 6, 2]}
-                              position={p}>
+                              args={[poleRadius, poleRadius, poleHeight + (p.z - poleZ) * 2 + lz, 6, 2]}
+                              position={p}
+                              rotation={[Math.PI/2, 0, 0]}>
                         <meshStandardMaterial attach="material" color={color}/>
                     </Cylinder>
                 );
@@ -693,7 +673,7 @@ const SolarPanel = ({
             }
 
             {/*draw sun beam*/}
-            {drawSunBeam && sunDirection.y > 0 &&
+            {drawSunBeam && sunDirection.z > 0 &&
             <group>
                 <Line
                     points={[[0, 0, 0], rotatedSunDirection.clone().multiplyScalar(sunBeamLength)]}
@@ -717,12 +697,15 @@ const SolarPanel = ({
                     textHeight={0.1}
                     position={rotatedSunDirection.clone().multiplyScalar(0.75).add(normalVector.clone().multiplyScalar(0.75)).multiplyScalar(0.5)}
                 />
-                <Cone args={[0.04, 0.2, 4, 2]}
-                      name={'Normal Vector Arrow Head'}
-                      rotation={relativeEuler}
-                      position={normalVector.clone().multiplyScalar(0.75)}>
-                    <meshStandardMaterial attach="material" color={'white'}/>
-                </Cone>
+                <group rotation={relativeEuler}>
+                    <Cone args={[0.04, 0.2, 4, 2]}
+                        name={'Normal Vector Arrow Head'}
+                        rotation={[Math.PI/2, 0, 0]}
+                        position={[0, 0, 0.75]}>
+                        <meshStandardMaterial attach="material" color={'white'}/>
+                    </Cone>
+                </group>
+
             </group>
             }
 
@@ -734,7 +717,7 @@ const SolarPanel = ({
                 fontSize={20}
                 fontFace={'Times Roman'}
                 textHeight={0.2}
-                position={spritePosition}
+                position={[0, 0, lz+0.2]}
             />
             }
         </group>

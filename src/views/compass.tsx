@@ -34,8 +34,8 @@ const Compass = ({ ...props }: CompassProps) => {
     const PI = Math.PI;
 
     const cameraDirection = useStore(state => state.cameraDirection);
-    const dirc_X_Z = cameraDirection.setY(0);
-    const rotationZ = -PI*17/18 - Math.atan2(dirc_X_Z.x, dirc_X_Z.z);
+    const dirc_X_Y = cameraDirection.setZ(0);
+    const rotationZ = -PI*17/18 + Math.atan2(dirc_X_Y.x, dirc_X_Y.y);
 
     return (
         <mesh {...props} ref={mesh} name={"Compass"} rotation={[-PI/3, 0, rotationZ]}>

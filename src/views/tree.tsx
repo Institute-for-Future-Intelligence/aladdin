@@ -39,8 +39,6 @@ const Tree = ({
                   ...props
               }: TreeModel) => {
 
-    cy = -cy; // we want positive y to point north
-
     const date = useStore(state => state.world.date);
     const now = new Date(date);
     const shadowEnabled = useStore(state => state.viewState.shadowEnabled);
@@ -53,12 +51,12 @@ const Tree = ({
     const month = now.getMonth() + 1;
     const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
 
-    useStore(state => state.world.cameraPosition);
+    useStore(state => state.cameraDirection);
     const sunlightDirection = useStore(state => state.sunlightDirection);
     const sunlightX = sunlightDirection.x;
-    const sunlightZ = sunlightDirection.z;
+    const sunlightZ = sunlightDirection.y;
     const cameraX = camera.position.x;
-    const cameraZ = camera.position.z;
+    const cameraZ = camera.position.y;
 
     const texture = useMemo(() => {
         let textureImg;
@@ -111,17 +109,17 @@ const Tree = ({
     }, [name]);
 
     const solidTreeRotation = useMemo(() => {
-        return new Euler(0, Math.atan2(cameraX, cameraZ), 0);
-    }, [cameraX, cameraZ]);
+        return new Euler(Math.PI/2, -Math.atan2(cameraX-cx, cameraZ-cy), 0);
+    }, [cameraX, cameraZ, cx, cy]);
 
     const shadowTreeRotation = useMemo(() => {
-        return new Euler(0, Math.atan2(sunlightX, sunlightZ), 0);
+        return new Euler(Math.PI/2, -Math.atan2(sunlightX, sunlightZ), 0);
     }, [sunlightX, sunlightZ]);
 
     // IMPORTANT: model mesh must use double side in order to intercept sunlight
     return (
         <group name={'Tree Group ' + id}
-               position={[cx, lz / 2, cy]}>
+               position={[cx, cy, lz / 2]}>
 
             <Billboard
                 uuid={id}
@@ -159,7 +157,7 @@ const Tree = ({
                 <Cone visible={showModel}
                       name={name + ' Model'}
                       userData={{simulation: true}}
-                      position={[0, lz * 0.1, 0]}
+                      position={[0, 0, lz * 0.1]}
                       args={[lx / 2, lz, 8, 8, true]}
                       scale={[1, 1, 1]}>
                     <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75}/>
@@ -171,7 +169,7 @@ const Tree = ({
                 ref={meshRef}
                 name={'Interaction Billboard'}
                 visible={false}
-                position={[0, -lz / 2 + 0.5, 0]}
+                position={[0, 0, -lz / 2 + 0.5]}
                 args={[lx / 2, 1]}
                 onContextMenu={(e) => {
                     selectMe(id, e);
@@ -196,7 +194,7 @@ const Tree = ({
             {/* draw handle */}
             {selected && !locked &&
             <Sphere
-                position={new Vector3(0, -lz / 2, 0)}
+                position={new Vector3(0, 0, -lz / 2)}
                 args={[MOVE_HANDLE_RADIUS * 4, 6, 6]}
                 name={'Handle'}
                 renderOrder={2}
@@ -220,7 +218,7 @@ const Tree = ({
                 fontSize={20}
                 fontFace={'Times Roman'}
                 textHeight={0.2}
-                position={[0, lz / 2 + 0.4, 0]}
+                position={[0, 0, lz / 2 + 0.4]}
             />
             }
 

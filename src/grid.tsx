@@ -63,7 +63,8 @@ export const Grid = () => {
         <React.Fragment>
             {(grid || !enableOrbitController) && legalOnGround() && !viewStateGroundImage && (
                 <>
-                    {(showGrid || moveHandleType) && <gridHelper name={"Grid"} args={[WORKSPACE_SIZE, WORKSPACE_SIZE, "gray", "gray"]} />}
+                    {(showGrid || moveHandleType) && 
+                    <gridHelper rotation={[Math.PI/2, 0, 0]} name={"Grid"} args={[WORKSPACE_SIZE, WORKSPACE_SIZE, "gray", "gray"]} />}
                     {rotateHandleType && element && <PolarGrid element={element} />}
                     {showScale && element && <VerticalScale element={element} />}
                 </>
@@ -90,14 +91,14 @@ export const PolarGrid = ({element, height}: {element: ElementModel, height?: nu
                     if(currParent) {
                         const rcx = cx * currParent.lx;
                         const rcy = cy * currParent.ly;
-                        setPosition(new Vector3(rcx, height ?? currParent.lz, -rcy));
+                        setPosition(new Vector3(rcx, rcy, height ?? currParent.lz));
                     }
                     break;
                 case 'Foundation':
-                    setPosition(new Vector3(cx, 0, -cy));
+                    setPosition(new Vector3(cx, cy, 0));
                     break;
                 default:
-                    setPosition(new Vector3(cx, 0.2, -cy));
+                    setPosition(new Vector3(cx, cy, 0.2));
             }
             setRadius(Math.max(5, Math.sqrt(Math.pow(lx/2, 2) + Math.pow(ly/2, 2)) * 1.5));
         }
@@ -128,7 +129,7 @@ export const PolarGrid = ({element, height}: {element: ElementModel, height?: nu
     return (
         <>
             {position && 
-            <group position={position} name={'Polar Grid'}>
+            <group position={position} rotation={[Math.PI/2,0,0]} name={'Polar Grid'}>
                 <polarGridHelper args={[radius, 24, 6]} />
                 <Ring
                     args={[radius*0.98, radius, 24, 1, Math.PI/2, angle]}
@@ -186,8 +187,9 @@ export const VerticalScale = ({element}: {element: ElementModel}) => {
         if(resizeHandleType) {
             const handlePos = getResizeHandlePosition(element, resizeHandleType);
             const cameraDir = getCameraDirection();
-            setPostion(new Vector3(handlePos.x, 0, handlePos.z));
-            setRotation(new Euler(0, Math.atan2(cameraDir.x, cameraDir.z) - Math.PI, 0))
+            const rotation = -Math.atan2(cameraDir.x, cameraDir.y) + Math.PI;
+            setPostion(new Vector3(handlePos.x, handlePos.y, 0));
+            setRotation(new Euler(Math.PI/2, 0, rotation,'ZXY'))
         }
     }, [resizeHandleType]);
 

@@ -210,26 +210,25 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         },
         getResizeHandlePosition(e: ElementModel, type: ResizeHandleType) {
             const {cx, cy, cz, lx, ly, rotation} = e;
-            const d = Math.sqrt(Math.pow(lx / 2, 2) + Math.pow(ly / 2, 2));
-            const sinA = Math.sin(rotation[2]);
-            const cosA = Math.cos(rotation[2]);
-            const sinB = ly / 2 / d;
-            const cosB = lx / 2 / d;
-            const dx1 = d * (cosB * cosA + sinB * sinA);
-            const dy1 = d * (sinB * cosA - cosB * sinA);
-            const dx2 = d * (cosB * cosA - sinB * sinA);
-            const dy2 = d * (sinB * cosA + cosB * sinA);
+            const p = new Vector3();
+            const v = new Vector2();
             switch(type) {
                 case ResizeHandleType.LowerLeftTop:
-                    return new Vector3(cx-dx1, cz, -cy-dy1);
+                    v.set(-lx/2, -ly/2);
+                    break;
                 case ResizeHandleType.LowerRightTop:
-                    return new Vector3(cx+dx2, cz, -cy-dy2);
+                    v.set(lx/2, -ly/2);
+                    break;
                 case ResizeHandleType.UpperLeftTop:
-                    return new Vector3(cx-dx2, cz, -cy+dy2);
+                    v.set(-lx/2, ly/2);
+                    break;
                 case ResizeHandleType.UpperRightTop:
-                    return new Vector3(cx+dx1, cz, -cy+dy1);
+                    v.set(lx/2, ly/2);
+                    break;
             }
-            return new Vector3();
+            v.rotateAround(new Vector2(0, 0), rotation[2]);
+            p.set(cx + v.x, cy + v.y, cz);
+            return p;
         },
         getElementById(id: string) {
             const elements = get().elements;
@@ -276,7 +275,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                                     state.rotateHandleType = e.eventObject.name as RotateHandleType;
                                     break;
                                 case ActionType.Select:
-                                    state.selectedElementAngle = e.object.parent?.rotation.y ?? 0;
+                                    state.selectedElementAngle = e.object.parent?.rotation.z ?? 0;
                                     state.enableOrbitController = true;
                                     break;
                                 default:
@@ -355,9 +354,8 @@ export const useStore = create<CommonStoreState>(devtools(persist((
 
         objectTypeToAdd: ObjectType.None,
         addElement(parent: ElementModel | GroundModel, position, normal) {
-            // position is in three.js coordinate system (y and z are swapped)
             immerSet((state: CommonStoreState) => {
-                const m = Util.viewToModel(position);
+                const m = position;
                 switch (state.objectTypeToAdd) {
                     case ObjectType.Human:
                         state.elements.push(ElementModelFactory.makeHuman(state.world.ground, m.x, m.y, m.z));
@@ -373,7 +371,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                             sensorRelativeCoordinates.x,
                             sensorRelativeCoordinates.y,
                             sensorRelativeCoordinates.z,
-                            normal ? Util.viewToModel(normal) : undefined,
+                            normal,
                             parent.rotation
                         ));
                         break;
@@ -386,7 +384,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                             solarPanelRelativeCoordinates.x,
                             solarPanelRelativeCoordinates.y,
                             solarPanelRelativeCoordinates.z,
-                            normal ? Util.viewToModel(normal) : undefined,
+                            normal,
                             parent.rotation
                         ));
                         break;
@@ -474,7 +472,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
         pasteElement() {
             immerSet((state: CommonStoreState) => {
                 if (state.elementToPaste.length > 0) {
-                    let m = Util.viewToModel(state.pastePoint);
+                    let m = state.pastePoint;
                     const newParent = state.getSelectedElement();
                     const oldParent = state.elementToPaste[0].parent;
                     if (newParent && oldParent && !('albedo' in oldParent)) { // Warning: we use albedo to check type
@@ -483,7 +481,7 @@ export const useStore = create<CommonStoreState>(devtools(persist((
                     }
                     const e = ElementModelCloner.clone(state.elementToPaste[0], m.x, m.y, m.z);
                     if (e) {
-                        e.normal = Util.viewToModel(state.pasteNormal).toArray();
+                        e.normal = state.pasteNormal.toArray();
                         state.elements.push(e);
                     }
                     if (state.elementToPaste.length > 1) {
