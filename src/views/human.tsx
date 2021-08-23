@@ -27,7 +27,7 @@ import { DoubleSide, Euler, Mesh, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { HumanModel } from '../models/HumanModel';
-import { Billboard, Sphere } from '@react-three/drei';
+import { Billboard, Plane, Sphere } from '@react-three/drei';
 import { MOVE_HANDLE_RADIUS } from '../constants';
 import { HumanName } from '../types';
 
@@ -194,7 +194,6 @@ const Human = ({
     <group name={'Human Group ' + id} position={[cx, cy, height / 2]}>
       <Billboard
         uuid={id}
-        args={[width, height]}
         ref={meshRef}
         name={name}
         userData={{ aabb: true }}
@@ -219,7 +218,9 @@ const Human = ({
           setHovered(false);
         }}
       >
-        <meshBasicMaterial map={texture} alphaTest={0.5} side={DoubleSide} />
+        <Plane args={[width, height]}>
+          <meshBasicMaterial map={texture} alphaTest={0.5} side={DoubleSide} />
+        </Plane>
       </Billboard>
 
       {/* draw handle */}

@@ -27,7 +27,7 @@ import {
 } from 'three';
 import { useStore } from '../stores/common';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { Billboard, Cone, Sphere } from '@react-three/drei';
+import { Billboard, Cone, Plane, Sphere } from '@react-three/drei';
 import { MOVE_HANDLE_RADIUS } from '../constants';
 import { TreeModel } from '../models/TreeModel';
 import { TreeType } from '../types';
@@ -132,24 +132,26 @@ const Tree = ({
       <Billboard
         uuid={id}
         name={name}
-        args={[lx, lz]}
         userData={{ aabb: true }}
         follow={false}
         rotation={solidTreeRotation}
       >
-        <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
+        <Plane args={[lx, lz]}>
+          <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
+        </Plane>
       </Billboard>
 
       {/* cast shadow */}
       <Billboard
-        args={[lx, lz]}
         name={name + ' Shadow Billboard'}
         castShadow={shadowEnabled}
         follow={false}
         customDepthMaterial={customDepthMaterial}
         rotation={shadowTreeRotation}
       >
-        <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0} depthTest={false} />
+        <Plane args={[lx, lz]}>
+          <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0} depthTest={false} />
+        </Plane>
       </Billboard>
 
       {/* simulation model */}
@@ -192,7 +194,6 @@ const Tree = ({
         name={'Interaction Billboard'}
         visible={false}
         position={[0, 0, -lz / 2 + 0.5]}
-        args={[lx / 2, 1]}
         onContextMenu={(e) => {
           selectMe(id, e);
         }}
@@ -211,7 +212,9 @@ const Tree = ({
         onPointerOut={(e) => {
           setHovered(false);
         }}
-      />
+      >
+        <Plane args={[lx / 2, 1]} />
+      </Billboard>
 
       {/* draw handle */}
       {selected && !locked && (
