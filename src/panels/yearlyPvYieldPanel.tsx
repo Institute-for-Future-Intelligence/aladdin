@@ -2,17 +2,17 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import LineGraph from '../components/lineGraph';
-import styled from "styled-components";
-import {useStore} from "../stores/common";
-import {GraphDataType, ObjectType} from "../types";
-import {MONTHS} from "../constants";
-import {Util} from "../Util";
-import ReactDraggable, {DraggableEventHandler} from "react-draggable";
-import {Button, Space, Switch} from "antd";
-import {screenshot} from "../helpers";
-import {ReloadOutlined, SaveOutlined, UnorderedListOutlined} from '@ant-design/icons';
+import styled from 'styled-components';
+import { useStore } from '../stores/common';
+import { GraphDataType, ObjectType } from '../types';
+import { MONTHS } from '../constants';
+import { Util } from '../Util';
+import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
+import { Button, Space, Switch } from 'antd';
+import { screenshot } from '../helpers';
+import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 
 const Container = styled.div`
   position: fixed;
@@ -61,186 +61,196 @@ const Header = styled.div`
 `;
 
 export interface YearlyPvYieldPanelProps {
+  city: string | null;
+  individualOutputs: boolean;
+  setIndividualOutputs: (b: boolean) => void;
+  analyzeYearlyPvYield: () => void;
 
-    city: string | null;
-    individualOutputs: boolean;
-    setIndividualOutputs: (b: boolean) => void;
-    analyzeYearlyPvYield: () => void;
-
-    [key: string]: any;
-
+  [key: string]: any;
 }
 
 const YearlyPvYieldPanel = ({
-                                city,
-                                individualOutputs = false,
-                                setIndividualOutputs,
-                                analyzeYearlyPvYield,
-                                ...rest
-                            }: YearlyPvYieldPanelProps) => {
+  city,
+  individualOutputs = false,
+  setIndividualOutputs,
+  analyzeYearlyPvYield,
+  ...rest
+}: YearlyPvYieldPanelProps) => {
+  const setCommonStore = useStore((state) => state.set);
+  const viewState = useStore((state) => state.viewState);
+  const yearlyYield = useStore((state) => state.yearlyPvYield);
+  const solarPanelLabels = useStore((state) => state.solarPanelLabels);
+  const countElementsByType = useStore((state) => state.countElementsByType);
+  const now = useStore((state) => state.world.date);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;
+  const [curPosition, setCurPosition] = useState({
+    x: isNaN(viewState.yearlyPvYieldPanelX)
+      ? 0
+      : Math.max(viewState.yearlyPvYieldPanelX, wOffset - window.innerWidth),
+    y: isNaN(viewState.yearlyPvYieldPanelY)
+      ? 0
+      : Math.min(viewState.yearlyPvYieldPanelY, window.innerHeight - hOffset),
+  });
+  const [sum, setSum] = useState(0);
+  const panelSumRef = useRef(new Map<string, number>());
 
-    const setCommonStore = useStore(state => state.set);
-    const viewState = useStore(state => state.viewState);
-    const yearlyYield = useStore(state => state.yearlyPvYield);
-    const solarPanelLabels = useStore(state => state.solarPanelLabels);
-    const countElementsByType = useStore(state => state.countElementsByType);
-    const now = useStore(state => state.world.date);
-    const wrapperRef = useRef<HTMLDivElement | null>(null);
-    const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
-    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;
-    const [curPosition, setCurPosition] = useState({
-        x: isNaN(viewState.yearlyPvYieldPanelX) ? 0 : Math.max(viewState.yearlyPvYieldPanelX, wOffset - window.innerWidth),
-        y: isNaN(viewState.yearlyPvYieldPanelY) ? 0 : Math.min(viewState.yearlyPvYieldPanelY, window.innerHeight - hOffset)
-    });
-    const [sum, setSum] = useState(0);
-    const panelSumRef = useRef(new Map<string, number>());
+  const responsiveHeight = 100;
+  const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
 
-    const responsiveHeight = 100;
-    const referenceX = MONTHS[Math.floor(Util.daysIntoYear(now) / 365 * 12)];
-
-    useEffect(() => {
-        let s = 0;
-        panelSumRef.current.clear();
-        for (const datum of yearlyYield) {
-            for (const prop in datum) {
-                if (datum.hasOwnProperty(prop)) {
-                    if (prop !== 'Month') {
-                        s += datum[prop] as number;
-                        panelSumRef.current.set(prop, (panelSumRef.current.get(prop) ?? 0) + (datum[prop] as number));
-                    }
-                }
-            }
+  useEffect(() => {
+    let s = 0;
+    panelSumRef.current.clear();
+    for (const datum of yearlyYield) {
+      for (const prop in datum) {
+        if (datum.hasOwnProperty(prop)) {
+          if (prop !== 'Month') {
+            s += datum[prop] as number;
+            panelSumRef.current.set(
+              prop,
+              (panelSumRef.current.get(prop) ?? 0) + (datum[prop] as number),
+            );
+          }
         }
-        setSum(s);
-    }, [yearlyYield]);
-
-    // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
-    useEffect(() => {
-        const handleResize = () => {
-            setCurPosition({
-                x: Math.max(viewState.yearlyPvYieldPanelX, wOffset - window.innerWidth),
-                y: Math.min(viewState.yearlyPvYieldPanelY, window.innerHeight - hOffset)
-            });
-        };
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        }
-    }, []);
-
-    const onDrag: DraggableEventHandler = (e, ui) => {
-        setCurPosition({
-            x: Math.max(ui.x, wOffset - window.innerWidth),
-            y: Math.min(ui.y, window.innerHeight - hOffset)
-        });
-    };
-
-    const onDragEnd: DraggableEventHandler = (e, ui) => {
-        setCommonStore(state => {
-            state.viewState.yearlyPvYieldPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-            state.viewState.yearlyPvYieldPanelY = Math.min(ui.y, window.innerHeight - hOffset);
-        });
-    };
-
-    const closePanel = () => {
-        setCommonStore((state) => {
-            state.viewState.showYearlyPvYieldPanel = false;
-        });
-    };
-
-    const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
-    useEffect(() => {
-        if (solarPanelCount < 2 && individualOutputs) {
-            setIndividualOutputs(false);
-        }
-    }, [solarPanelCount]);
-
-    const labelX = 'Month';
-    const labelY = 'Yield';
-    let totalTooltip = '';
-    if (individualOutputs) {
-        panelSumRef.current.forEach((value, key) => totalTooltip += key + ': ' + value.toFixed(2) + '\n');
-        totalTooltip += '——————————\n';
-        totalTooltip += 'Total: ' + sum.toFixed(2) + ' kWh';
+      }
     }
+    setSum(s);
+  }, [yearlyYield]);
 
-    return (
-        <ReactDraggable
-            handle={'.handle'}
-            bounds={'parent'}
-            axis='both'
-            position={curPosition}
-            onDrag={onDrag}
-            onStop={onDragEnd}
-        >
-            <Container>
-                <ColumnWrapper ref={wrapperRef}>
-                    <Header className='handle'>
-                        <span>Solar Panel Yearly Yield: Weather Data from {city}</span>
-                        <span style={{cursor: 'pointer'}}
-                              onTouchStart={() => {
-                                  closePanel();
-                              }}
-                              onMouseDown={() => {
-                                  closePanel();
-                              }}>
-                            Close
-                        </span>
-                    </Header>
-                    <LineGraph
-                        type={GraphDataType.YearlyPvYeild}
-                        dataSource={yearlyYield.map(({Daylight, Clearness, ...item}) => item)}
-                        labels={solarPanelLabels}
-                        height={responsiveHeight}
-                        labelX={labelX}
-                        labelY={labelY}
-                        unitY={'kWh'}
-                        yMin={0}
-                        curveType={'natural'}
-                        fractionDigits={2}
-                        referenceX={referenceX}
-                        {...rest}
-                    />
-                    <Space style={{alignSelf: 'center'}}>
-                        {individualOutputs && solarPanelCount > 1 ?
-                            <Space title={totalTooltip}
-                                   style={{cursor: 'pointer', border: '2px solid #ccc', padding: '4px'}}>
-                                Hover for breakdown
-                            </Space>
-                            :
-                            <Space>
-                                Yearly Total: {sum.toFixed(2)} kWh
-                            </Space>
-                        }
-                        {solarPanelCount > 1 &&
-                        <Switch title={'Show outputs of individual solar panels'}
-                                checkedChildren={<UnorderedListOutlined/>}
-                                unCheckedChildren={<UnorderedListOutlined/>}
-                                checked={individualOutputs}
-                                onChange={(checked) => {
-                                    setIndividualOutputs(checked);
-                                    analyzeYearlyPvYield();
-                                }}
-                        />
-                        }
-                        <Button type="default"
-                                icon={<ReloadOutlined/>}
-                                title={'Update'}
-                                onClick={analyzeYearlyPvYield}
-                        />
-                        <Button type="default"
-                                icon={<SaveOutlined/>}
-                                title={'Save as image'}
-                                onClick={() => {
-                                    screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-pv-yield', {});
-                                }}
-                        />
-                    </Space>
-                </ColumnWrapper>
-            </Container>
-        </ReactDraggable>
+  // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
+  useEffect(() => {
+    const handleResize = () => {
+      setCurPosition({
+        x: Math.max(viewState.yearlyPvYieldPanelX, wOffset - window.innerWidth),
+        y: Math.min(viewState.yearlyPvYieldPanelY, window.innerHeight - hOffset),
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const onDrag: DraggableEventHandler = (e, ui) => {
+    setCurPosition({
+      x: Math.max(ui.x, wOffset - window.innerWidth),
+      y: Math.min(ui.y, window.innerHeight - hOffset),
+    });
+  };
+
+  const onDragEnd: DraggableEventHandler = (e, ui) => {
+    setCommonStore((state) => {
+      state.viewState.yearlyPvYieldPanelX = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.yearlyPvYieldPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+    });
+  };
+
+  const closePanel = () => {
+    setCommonStore((state) => {
+      state.viewState.showYearlyPvYieldPanel = false;
+    });
+  };
+
+  const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
+  useEffect(() => {
+    if (solarPanelCount < 2 && individualOutputs) {
+      setIndividualOutputs(false);
+    }
+  }, [solarPanelCount]);
+
+  const labelX = 'Month';
+  const labelY = 'Yield';
+  let totalTooltip = '';
+  if (individualOutputs) {
+    panelSumRef.current.forEach(
+      (value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'),
     );
+    totalTooltip += '——————————\n';
+    totalTooltip += 'Total: ' + sum.toFixed(2) + ' kWh';
+  }
 
+  return (
+    <ReactDraggable
+      handle={'.handle'}
+      bounds={'parent'}
+      axis="both"
+      position={curPosition}
+      onDrag={onDrag}
+      onStop={onDragEnd}
+    >
+      <Container>
+        <ColumnWrapper ref={wrapperRef}>
+          <Header className="handle">
+            <span>Solar Panel Yearly Yield: Weather Data from {city}</span>
+            <span
+              style={{ cursor: 'pointer' }}
+              onTouchStart={() => {
+                closePanel();
+              }}
+              onMouseDown={() => {
+                closePanel();
+              }}
+            >
+              Close
+            </span>
+          </Header>
+          <LineGraph
+            type={GraphDataType.YearlyPvYeild}
+            dataSource={yearlyYield.map(({ Daylight, Clearness, ...item }) => item)}
+            labels={solarPanelLabels}
+            height={responsiveHeight}
+            labelX={labelX}
+            labelY={labelY}
+            unitY={'kWh'}
+            yMin={0}
+            curveType={'natural'}
+            fractionDigits={2}
+            referenceX={referenceX}
+            {...rest}
+          />
+          <Space style={{ alignSelf: 'center' }}>
+            {individualOutputs && solarPanelCount > 1 ? (
+              <Space
+                title={totalTooltip}
+                style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}
+              >
+                Hover for breakdown
+              </Space>
+            ) : (
+              <Space>Yearly Total: {sum.toFixed(2)} kWh</Space>
+            )}
+            {solarPanelCount > 1 && (
+              <Switch
+                title={'Show outputs of individual solar panels'}
+                checkedChildren={<UnorderedListOutlined />}
+                unCheckedChildren={<UnorderedListOutlined />}
+                checked={individualOutputs}
+                onChange={(checked) => {
+                  setIndividualOutputs(checked);
+                  analyzeYearlyPvYield();
+                }}
+              />
+            )}
+            <Button
+              type="default"
+              icon={<ReloadOutlined />}
+              title={'Update'}
+              onClick={analyzeYearlyPvYield}
+            />
+            <Button
+              type="default"
+              icon={<SaveOutlined />}
+              title={'Save as image'}
+              onClick={() => {
+                screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-pv-yield', {});
+              }}
+            />
+          </Space>
+        </ColumnWrapper>
+      </Container>
+    </ReactDraggable>
+  );
 };
 
 export default React.memo(YearlyPvYieldPanel);

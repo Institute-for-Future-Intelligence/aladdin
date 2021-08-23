@@ -2,15 +2,15 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useRef, useState} from 'react';
-import {useStore} from "../stores/common";
+import React, { useEffect, useRef, useState } from 'react';
+import { useStore } from '../stores/common';
 import styled from 'styled-components';
-import {Space, Switch} from "antd";
-import Maps from "../components/maps";
-import {StandaloneSearchBox, useJsApiLoader} from "@react-google-maps/api";
-import {Libraries} from "@react-google-maps/api/dist/utils/make-load-script-url";
+import { Space, Switch } from 'antd';
+import Maps from '../components/maps';
+import { StandaloneSearchBox, useJsApiLoader } from '@react-google-maps/api';
+import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
 import Spinner from '../components/spinner';
-import ReactDraggable, {DraggableEventHandler} from "react-draggable";
+import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import 'antd/dist/antd.css';
 
 const libraries = ['places'] as Libraries;
@@ -60,183 +60,184 @@ const Header = styled.div`
 `;
 
 const MapPanel = () => {
+  const setCommonStore = useStore((state) => state.set);
+  const address = useStore((state) => state.world.address);
+  const latitude = useStore((state) => state.world.latitude);
+  const longitude = useStore((state) => state.world.longitude);
+  const mapPanelX = useStore((state) => state.viewState.mapPanelX);
+  const mapPanelY = useStore((state) => state.viewState.mapPanelY);
+  const groundImage = useStore((state) => state.viewState.groundImage);
+  const mapWeatherStations = useStore((state) => state.viewState.mapWeatherStations);
+  const mapZoom = useStore((state) => state.viewState.mapZoom);
 
-    const setCommonStore = useStore(state => state.set);
-    const address = useStore(state => state.world.address);
-    const latitude = useStore(state => state.world.latitude);
-    const longitude = useStore(state => state.world.longitude);
-    const mapPanelX = useStore(state => state.viewState.mapPanelX);
-    const mapPanelY = useStore(state => state.viewState.mapPanelY);
-    const groundImage = useStore(state => state.viewState.groundImage);
-    const mapWeatherStations = useStore(state => state.viewState.mapWeatherStations);
-    const mapZoom = useStore(state => state.viewState.mapZoom);
+  const searchBox = useRef<google.maps.places.SearchBox>();
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 460;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 40 : 600;
+  const [curPosition, setCurPosition] = useState({
+    x: isNaN(mapPanelX) ? 0 : Math.min(mapPanelX, window.innerWidth - wOffset),
+    y: isNaN(mapPanelY) ? 0 : Math.min(mapPanelY, window.innerHeight - hOffset),
+  });
 
-    const searchBox = useRef<google.maps.places.SearchBox>();
-    const wrapperRef = useRef<HTMLDivElement | null>(null);
-    const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 460;
-    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 40 : 600;
-    const [curPosition, setCurPosition] = useState({
-        x: isNaN(mapPanelX) ? 0 : Math.min(mapPanelX, window.innerWidth - wOffset),
-        y: isNaN(mapPanelY) ? 0 : Math.min(mapPanelY, window.innerHeight - hOffset)
-    });
+  // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
+  useEffect(() => {
+    const handleResize = () => {
+      setCurPosition({
+        x: Math.min(mapPanelX, window.innerWidth - wOffset),
+        y: Math.min(mapPanelY, window.innerHeight - hOffset),
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
-    // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
-    useEffect(() => {
-        const handleResize = () => {
-            setCurPosition({
-                x: Math.min(mapPanelX, window.innerWidth - wOffset),
-                y: Math.min(mapPanelY, window.innerHeight - hOffset)
-            });
-        };
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
+  const { isLoaded, loadError } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY as string,
+    libraries: libraries,
+  });
+
+  const onPlacesChanged = () => {
+    const places = searchBox.current?.getPlaces();
+    if (places && places.length > 0) {
+      setCommonStore((state) => {
+        const geometry = places[0].geometry;
+        if (geometry) {
+          state.world.latitude = geometry.location.lat();
+          state.world.longitude = geometry.location.lng();
         }
-    }, []);
+        state.world.address = places[0].formatted_address as string;
+      });
+    }
+  };
 
-    const {isLoaded, loadError} = useJsApiLoader({
-        id: 'google-map-script',
-        googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY as string,
-        libraries: libraries
+  const onLoad = (s: google.maps.places.SearchBox) => {
+    searchBox.current = s;
+  };
+
+  const setMapWeatherStations = (on: boolean) => {
+    setCommonStore((state) => {
+      state.viewState.mapWeatherStations = on;
     });
+  };
 
-    const onPlacesChanged = () => {
-        const places = searchBox.current?.getPlaces();
-        if (places && places.length > 0) {
-            setCommonStore((state) => {
-                const geometry = places[0].geometry;
-                if (geometry) {
-                    state.world.latitude = geometry.location.lat();
-                    state.world.longitude = geometry.location.lng();
-                }
-                state.world.address = places[0].formatted_address as string;
-            });
-        }
-    };
+  const onDrag: DraggableEventHandler = (e, ui) => {
+    setCurPosition({
+      x: Math.min(ui.x, window.innerWidth - wOffset),
+      y: Math.min(ui.y, window.innerHeight - hOffset),
+    });
+  };
 
-    const onLoad = (s: google.maps.places.SearchBox) => {
-        searchBox.current = s;
-    };
+  const onDragEnd: DraggableEventHandler = (e, ui) => {
+    setCommonStore((state) => {
+      state.viewState.mapPanelX = Math.min(ui.x, window.innerWidth - wOffset);
+      state.viewState.mapPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+    });
+  };
 
-    const setMapWeatherStations = (on: boolean) => {
-        setCommonStore(state => {
-            state.viewState.mapWeatherStations = on;
-        });
-    };
+  const closePanel = () => {
+    setCommonStore((state) => {
+      state.viewState.showMapPanel = false;
+    });
+  };
 
-    const onDrag: DraggableEventHandler = (e, ui) => {
-        setCurPosition({
-            x: Math.min(ui.x, window.innerWidth - wOffset),
-            y: Math.min(ui.y, window.innerHeight - hOffset)
-        });
-    };
-
-    const onDragEnd: DraggableEventHandler = (e, ui) => {
-        setCommonStore(state => {
-            state.viewState.mapPanelX = Math.min(ui.x, window.innerWidth - wOffset);
-            state.viewState.mapPanelY = Math.min(ui.y, window.innerHeight - hOffset);
-        });
-    };
-
-    const closePanel = () => {
-        setCommonStore((state) => {
-            state.viewState.showMapPanel = false;
-        });
-    };
-
-    return (
-        <ReactDraggable
-            handle={'.handle'}
-            bounds={'parent'}
-            axis='both'
-            position={curPosition}
-            onDrag={onDrag}
-            onStop={onDragEnd}
-        >
-            <Container>
-                <ColumnWrapper ref={wrapperRef}>
-                    <Header className='handle'>
-                        <span>Map</span>
-                        <span style={{cursor: 'pointer'}}
-                              onTouchStart={() => {
-                                  closePanel();
-                              }}
-                              onMouseDown={() => {
-                                  closePanel();
-                              }}>
-                            Close
-                        </span>
-                    </Header>
-                    <Space direction={'vertical'}>
-                        <Space style={{paddingTop: '10px'}} align={'center'} size={20}>
-                            <Space direction={'horizontal'}>
-                                <Space>Image on Ground:</Space>
-                                <Switch title={'Show ground image'}
-                                        checked={groundImage}
-                                        onChange={(checked) => {
-                                            setCommonStore(state => {
-                                                state.viewState.groundImage = checked;
-                                            });
-                                        }}
-                                />
-                                <Space>Stations on Map:</Space>
-                                <Switch title={'Show weather stations'}
-                                        checked={mapWeatherStations}
-                                        onChange={(checked) => {
-                                            setMapWeatherStations(checked);
-                                        }}
-                                />
-                            </Space>
-                        </Space>
-                        {isLoaded &&
-                        <Space>
-                            <div>
-                                <StandaloneSearchBox onLoad={onLoad}
-                                                     onPlacesChanged={onPlacesChanged}>
-                                    <input
-                                        type="text"
-                                        placeholder={address}
-                                        style={{
-                                            boxSizing: `border-box`,
-                                            border: `1px solid transparent`,
-                                            width: `480px`,
-                                            height: `32px`,
-                                            padding: `0 12px`,
-                                            borderRadius: `3px`,
-                                            boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
-                                            fontSize: `14px`,
-                                            outline: `none`,
-                                            textOverflow: `ellipses`,
-                                            position: "relative"
-                                        }}
-                                    />
-                                </StandaloneSearchBox>
-                            </div>
-                        </Space>
-                        }
-                        {isLoaded ?
-                            <Space>
-                                <div>
-                                    <Maps/>
-                                    <p style={{paddingTop: '10px'}}>
-                                        Coordinates: ({latitude.toFixed(4)}°, {longitude.toFixed(4)}°),
-                                        Zoom: {mapZoom}
-                                    </p>
-                                </div>
-                            </Space>
-                            :
-                            <Spinner/>
-                        }
-                        {loadError &&
-                        <Space>
-                            <div>Map cannot be loaded right now, sorry.</div>
-                        </Space>
-                        }
-                    </Space>
-                </ColumnWrapper>
-            </Container>
-        </ReactDraggable>
-    );
+  return (
+    <ReactDraggable
+      handle={'.handle'}
+      bounds={'parent'}
+      axis="both"
+      position={curPosition}
+      onDrag={onDrag}
+      onStop={onDragEnd}
+    >
+      <Container>
+        <ColumnWrapper ref={wrapperRef}>
+          <Header className="handle">
+            <span>Map</span>
+            <span
+              style={{ cursor: 'pointer' }}
+              onTouchStart={() => {
+                closePanel();
+              }}
+              onMouseDown={() => {
+                closePanel();
+              }}
+            >
+              Close
+            </span>
+          </Header>
+          <Space direction={'vertical'}>
+            <Space style={{ paddingTop: '10px' }} align={'center'} size={20}>
+              <Space direction={'horizontal'}>
+                <Space>Image on Ground:</Space>
+                <Switch
+                  title={'Show ground image'}
+                  checked={groundImage}
+                  onChange={(checked) => {
+                    setCommonStore((state) => {
+                      state.viewState.groundImage = checked;
+                    });
+                  }}
+                />
+                <Space>Stations on Map:</Space>
+                <Switch
+                  title={'Show weather stations'}
+                  checked={mapWeatherStations}
+                  onChange={(checked) => {
+                    setMapWeatherStations(checked);
+                  }}
+                />
+              </Space>
+            </Space>
+            {isLoaded && (
+              <Space>
+                <div>
+                  <StandaloneSearchBox onLoad={onLoad} onPlacesChanged={onPlacesChanged}>
+                    <input
+                      type="text"
+                      placeholder={address}
+                      style={{
+                        boxSizing: `border-box`,
+                        border: `1px solid transparent`,
+                        width: `480px`,
+                        height: `32px`,
+                        padding: `0 12px`,
+                        borderRadius: `3px`,
+                        boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
+                        fontSize: `14px`,
+                        outline: `none`,
+                        textOverflow: `ellipses`,
+                        position: 'relative',
+                      }}
+                    />
+                  </StandaloneSearchBox>
+                </div>
+              </Space>
+            )}
+            {isLoaded ? (
+              <Space>
+                <div>
+                  <Maps />
+                  <p style={{ paddingTop: '10px' }}>
+                    Coordinates: ({latitude.toFixed(4)}°, {longitude.toFixed(4)}°), Zoom: {mapZoom}
+                  </p>
+                </div>
+              </Space>
+            ) : (
+              <Spinner />
+            )}
+            {loadError && (
+              <Space>
+                <div>Map cannot be loaded right now, sorry.</div>
+              </Space>
+            )}
+          </Space>
+        </ColumnWrapper>
+      </Container>
+    </ReactDraggable>
+  );
 };
 
 export default React.memo(MapPanel);

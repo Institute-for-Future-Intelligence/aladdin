@@ -2,15 +2,15 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useState} from "react";
-import {useStore} from "../stores/common";
-import styled from "styled-components";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCalendarDay, faCloudSunRain, faMapMarkerAlt} from "@fortawesome/free-solid-svg-icons";
-import {Space} from "antd";
-import {computeOutsideTemperature, getOutsideTemperatureAtMinute} from "../analysis/heatTools";
-import dayjs from "dayjs";
-import {Util} from "../Util";
+import React, { useEffect, useState } from 'react';
+import { useStore } from '../stores/common';
+import styled from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendarDay, faCloudSunRain, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { Space } from 'antd';
+import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from '../analysis/heatTools';
+import dayjs from 'dayjs';
+import { Util } from '../Util';
 
 const Container = styled.div`
   position: absolute;
@@ -47,76 +47,90 @@ const ColumnWrapper = styled.div`
 `;
 
 export interface InfoPanelProps {
-    city: string | null;
+  city: string | null;
 }
 
-const InfoPanel = ({city}: InfoPanelProps) => {
+const InfoPanel = ({ city }: InfoPanelProps) => {
+  const dateString = useStore((state) => state.world.date);
+  const address = useStore((state) => state.world.address);
+  const latitude = useStore((state) => state.world.latitude);
+  const longitude = useStore((state) => state.world.longitude);
+  const weatherData = useStore((state) => state.weatherData);
+  const now = new Date(dateString);
+  const [dailyTemperatures, setDailyTemperatures] = useState({ low: 0, high: 20 });
+  const [currentTemperature, setCurrentTemperature] = useState<number>(10);
 
-    const dateString = useStore(state => state.world.date);
-    const address = useStore(state => state.world.address);
-    const latitude = useStore(state => state.world.latitude);
-    const longitude = useStore(state => state.world.longitude);
-    const weatherData = useStore(state => state.weatherData);
-    const now = new Date(dateString);
-    const [dailyTemperatures, setDailyTemperatures] = useState({low: 0, high: 20});
-    const [currentTemperature, setCurrentTemperature] = useState<number>(10);
+  const sunlightDirection = useStore((state) => state.sunlightDirection);
+  const daytime = sunlightDirection.y > 0;
 
-    const sunlightDirection = useStore(state => state.sunlightDirection);
-    const daytime = sunlightDirection.y > 0;
+  useEffect(() => {
+    if (city) {
+      const weather = weatherData[city];
+      if (weather) {
+        const t = computeOutsideTemperature(
+          now,
+          weather.lowestTemperatures,
+          weather.highestTemperatures,
+        );
+        setDailyTemperatures(t);
+        const c = getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(now));
+        setCurrentTemperature(c);
+      }
+    }
+  }, [city, dateString]);
 
-    useEffect(() => {
-        if (city) {
-            const weather = weatherData[city];
-            if (weather) {
-                const t = computeOutsideTemperature(now, weather.lowestTemperatures, weather.highestTemperatures);
-                setDailyTemperatures(t);
-                const c = getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(now));
-                setCurrentTemperature(c);
-            }
-        }
-    }, [city, dateString]);
+  const color = daytime ? 'navajowhite' : 'antiquewhite';
 
-    const color = daytime ? 'navajowhite' : 'antiquewhite';
-
-    return (
-        <Container>
-            <ColumnWrapper>
-                <Space direction={'horizontal'} style={{color: color}}>
-                    <FontAwesomeIcon title={'Geo'}
-                                     icon={faMapMarkerAlt}
-                                     size={'3x'}
-                                     color={color}
-                                     style={{paddingLeft: '10px'}}
-                    />
-                    {
-                        (address ?? '') + ' (' +
-                        Math.abs(latitude).toFixed(2) + '° ' + (latitude > 0 ? 'N' : 'S') + ', ' +
-                        Math.abs(longitude).toFixed(2) + '° ' + (longitude > 0 ? 'E' : 'W') + ')'
-                    }
-                    <FontAwesomeIcon title={'Date'}
-                                     icon={faCalendarDay}
-                                     size={'3x'}
-                                     color={color}
-                                     style={{paddingLeft: '10px'}}
-                    />
-                    {dayjs(now).format('MM/DD hh:mm a')}
-                    <FontAwesomeIcon title={'Weather'}
-                                     icon={faCloudSunRain}
-                                     size={'3x'}
-                                     color={color}
-                                     style={{paddingLeft: '10px'}}
-                    />
-                    {dailyTemperatures ?
-                        currentTemperature.toFixed(1) + '°C (' +
-                        'Low: ' + dailyTemperatures.low.toFixed(1) + '°C, ' +
-                        'High: ' + dailyTemperatures.high.toFixed(1) + '°C)'
-                        :
-                        ''
-                    }
-                </Space>
-            </ColumnWrapper>
-        </Container>
-    )
+  return (
+    <Container>
+      <ColumnWrapper>
+        <Space direction={'horizontal'} style={{ color: color }}>
+          <FontAwesomeIcon
+            title={'Geo'}
+            icon={faMapMarkerAlt}
+            size={'3x'}
+            color={color}
+            style={{ paddingLeft: '10px' }}
+          />
+          {(address ?? '') +
+            ' (' +
+            Math.abs(latitude).toFixed(2) +
+            '° ' +
+            (latitude > 0 ? 'N' : 'S') +
+            ', ' +
+            Math.abs(longitude).toFixed(2) +
+            '° ' +
+            (longitude > 0 ? 'E' : 'W') +
+            ')'}
+          <FontAwesomeIcon
+            title={'Date'}
+            icon={faCalendarDay}
+            size={'3x'}
+            color={color}
+            style={{ paddingLeft: '10px' }}
+          />
+          {dayjs(now).format('MM/DD hh:mm a')}
+          <FontAwesomeIcon
+            title={'Weather'}
+            icon={faCloudSunRain}
+            size={'3x'}
+            color={color}
+            style={{ paddingLeft: '10px' }}
+          />
+          {dailyTemperatures
+            ? currentTemperature.toFixed(1) +
+              '°C (' +
+              'Low: ' +
+              dailyTemperatures.low.toFixed(1) +
+              '°C, ' +
+              'High: ' +
+              dailyTemperatures.high.toFixed(1) +
+              '°C)'
+            : ''}
+        </Space>
+      </ColumnWrapper>
+    </Container>
+  );
 };
 
 export default React.memo(InfoPanel);

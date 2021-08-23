@@ -2,15 +2,15 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import BarGraph from "../components/barGraph";
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import BarGraph from '../components/barGraph';
 import LineGraph from '../components/lineGraph';
-import {GraphDataType} from "../types";
-import styled from "styled-components";
-import {useStore} from "../stores/common";
-import {MONTHS} from "../constants";
-import {Util} from "../Util";
-import ReactDraggable, {DraggableEventHandler} from "react-draggable";
+import { GraphDataType } from '../types';
+import styled from 'styled-components';
+import { useStore } from '../stores/common';
+import { MONTHS } from '../constants';
+import { Util } from '../Util';
+import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 
 const Container = styled.div`
   position: fixed;
@@ -58,177 +58,171 @@ const Header = styled.div`
 `;
 
 export interface WeatherPanelProps {
+  city: string | null;
+  graphs: GraphDataType[];
 
-    city: string | null;
-    graphs: GraphDataType[];
-
-    [key: string]: any;
-
+  [key: string]: any;
 }
 
-const WeatherPanel = ({
-                          city,
-                          graphs,
-                          ...rest
-                      }: WeatherPanelProps) => {
+const WeatherPanel = ({ city, graphs, ...rest }: WeatherPanelProps) => {
+  const setCommonStore = useStore((state) => state.set);
+  const viewState = useStore((state) => state.viewState);
+  const getWeather = useStore((state) => state.getWeather);
+  const now = useStore((state) => state.world.date);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 540;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
+  const [curPosition, setCurPosition] = useState({
+    x: isNaN(viewState.weatherPanelX)
+      ? 0
+      : Math.min(viewState.weatherPanelX, window.innerWidth - wOffset),
+    y: isNaN(viewState.weatherPanelY)
+      ? 0
+      : Math.min(viewState.weatherPanelY, window.innerHeight - hOffset),
+  });
 
-    const setCommonStore = useStore(state => state.set);
-    const viewState = useStore(state => state.viewState);
-    const getWeather = useStore(state => state.getWeather);
-    const now = useStore(state => state.world.date);
-    const wrapperRef = useRef<HTMLDivElement | null>(null);
-    const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 540;
-    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
-    const [curPosition, setCurPosition] = useState({
-        x: isNaN(viewState.weatherPanelX) ? 0 : Math.min(viewState.weatherPanelX, window.innerWidth - wOffset),
-        y: isNaN(viewState.weatherPanelY) ? 0 : Math.min(viewState.weatherPanelY, window.innerHeight - hOffset)
-    });
+  // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
+  useEffect(() => {
+    const handleResize = () => {
+      setCurPosition({
+        x: Math.min(viewState.weatherPanelX, window.innerWidth - wOffset),
+        y: Math.min(viewState.weatherPanelY, window.innerHeight - hOffset),
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
-    // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
-    useEffect(() => {
-        const handleResize = () => {
-            setCurPosition({
-                x: Math.min(viewState.weatherPanelX, window.innerWidth - wOffset),
-                y: Math.min(viewState.weatherPanelY, window.innerHeight - hOffset)
-            });
-        };
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        }
-    }, []);
+  const responsiveHeight = useMemo(() => {
+    return graphs ? Math.floor(100 / graphs.length) : 100;
+  }, [graphs]);
 
-    const responsiveHeight = useMemo(() => {
-        return graphs ? Math.floor(100 / graphs.length) : 100;
-    }, [graphs]);
-
-    const getData = useMemo(() => {
-        if (!graphs) {
-            return;
-        }
-        const result: any = {};
-        if (city) {
-            const weather = getWeather(city);
-            if (weather) {
-                graphs.forEach(g => {
-                    result[g] = [];
-                    switch (g) {
-                        case GraphDataType.MonthlyTemperatures:
-                            for (let i = 0; i < 12; i++) {
-                                result[g].push(
-                                    {
-                                        Month: MONTHS[i],
-                                        Low: weather.lowestTemperatures[i],
-                                        High: weather.highestTemperatures[i]
-                                    }
-                                );
-                            }
-                            break;
-                        case GraphDataType.SunshineHours:
-                            for (let i = 0; i < 12; i++) {
-                                result[g].push(
-                                    {
-                                        Month: MONTHS[i],
-                                        Sunshine: weather.sunshineHours[i]
-                                    }
-                                );
-                            }
-                            break;
-                    }
+  const getData = useMemo(() => {
+    if (!graphs) {
+      return;
+    }
+    const result: any = {};
+    if (city) {
+      const weather = getWeather(city);
+      if (weather) {
+        graphs.forEach((g) => {
+          result[g] = [];
+          switch (g) {
+            case GraphDataType.MonthlyTemperatures:
+              for (let i = 0; i < 12; i++) {
+                result[g].push({
+                  Month: MONTHS[i],
+                  Low: weather.lowestTemperatures[i],
+                  High: weather.highestTemperatures[i],
                 });
-            }
-        }
-        return result;
-    }, [graphs, city]);
-
-    const yNames = ['Temperature', 'Temperature', 'Sunshine'];
-    const yUnits = ['°C', '°C', 'Hours'];
-    const referenceX = MONTHS[Math.floor(Util.daysIntoYear(now) / 365 * 12)];
-
-    const onDrag: DraggableEventHandler = (e, ui) => {
-        setCurPosition({
-            x: Math.min(ui.x, window.innerWidth - wOffset),
-            y: Math.min(ui.y, window.innerHeight - hOffset)
+              }
+              break;
+            case GraphDataType.SunshineHours:
+              for (let i = 0; i < 12; i++) {
+                result[g].push({
+                  Month: MONTHS[i],
+                  Sunshine: weather.sunshineHours[i],
+                });
+              }
+              break;
+          }
         });
-    };
+      }
+    }
+    return result;
+  }, [graphs, city]);
 
-    const onDragEnd: DraggableEventHandler = (e, ui) => {
-        setCommonStore(state => {
-            state.viewState.weatherPanelX = Math.min(ui.x, window.innerWidth - wOffset);
-            state.viewState.weatherPanelY = Math.min(ui.y, window.innerHeight - hOffset);
-        });
-    };
+  const yNames = ['Temperature', 'Temperature', 'Sunshine'];
+  const yUnits = ['°C', '°C', 'Hours'];
+  const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
 
-    const closePanel = () => {
-        setCommonStore((state) => {
-            state.viewState.showWeatherPanel = false;
-        });
-    };
+  const onDrag: DraggableEventHandler = (e, ui) => {
+    setCurPosition({
+      x: Math.min(ui.x, window.innerWidth - wOffset),
+      y: Math.min(ui.y, window.innerHeight - hOffset),
+    });
+  };
 
-    return (
-        <ReactDraggable
-            handle={'.handle'}
-            bounds={'parent'}
-            axis='both'
-            position={curPosition}
-            onDrag={onDrag}
-            onStop={onDragEnd}
-        >
-            <Container>
-                <ColumnWrapper ref={wrapperRef}>
-                    <Header className='handle'>
-                        <span>Weather: {city}</span>
-                        <span style={{cursor: 'pointer'}}
-                              onTouchStart={() => {
-                                  closePanel();
-                              }}
-                              onMouseDown={() => {
-                                  closePanel();
-                              }}>
-                            Close
-                        </span>
-                    </Header>
-                    <>
-                        {graphs.map(g => {
-                            if (g === GraphDataType.SunshineHours) {
-                                return (
-                                    <BarGraph
-                                        key={g}
-                                        type={g}
-                                        dataSource={getData[g]}
-                                        height={responsiveHeight}
-                                        labelX={'Month'}
-                                        labelY={yNames[g]}
-                                        unitY={yUnits[g]}
-                                        yMin={0}
-                                        fractionDigits={0}
-                                        referenceX={referenceX}
-                                        color={'#FFD700'}
-                                        {...rest}
-                                    />
-                                );
-                            }
-                            return (
-                                <LineGraph
-                                    key={g}
-                                    type={g}
-                                    dataSource={getData[g]}
-                                    height={responsiveHeight}
-                                    labelX={'Month'}
-                                    labelY={yNames[g]}
-                                    unitY={yUnits[g]}
-                                    fractionDigits={0}
-                                    referenceX={referenceX}
-                                    {...rest}
-                                />
-                            );
-                        })}
-                    </>
-                </ColumnWrapper>
-            </Container>
-        </ReactDraggable>
-    );
+  const onDragEnd: DraggableEventHandler = (e, ui) => {
+    setCommonStore((state) => {
+      state.viewState.weatherPanelX = Math.min(ui.x, window.innerWidth - wOffset);
+      state.viewState.weatherPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+    });
+  };
 
+  const closePanel = () => {
+    setCommonStore((state) => {
+      state.viewState.showWeatherPanel = false;
+    });
+  };
+
+  return (
+    <ReactDraggable
+      handle={'.handle'}
+      bounds={'parent'}
+      axis="both"
+      position={curPosition}
+      onDrag={onDrag}
+      onStop={onDragEnd}
+    >
+      <Container>
+        <ColumnWrapper ref={wrapperRef}>
+          <Header className="handle">
+            <span>Weather: {city}</span>
+            <span
+              style={{ cursor: 'pointer' }}
+              onTouchStart={() => {
+                closePanel();
+              }}
+              onMouseDown={() => {
+                closePanel();
+              }}
+            >
+              Close
+            </span>
+          </Header>
+          <>
+            {graphs.map((g) => {
+              if (g === GraphDataType.SunshineHours) {
+                return (
+                  <BarGraph
+                    key={g}
+                    type={g}
+                    dataSource={getData[g]}
+                    height={responsiveHeight}
+                    labelX={'Month'}
+                    labelY={yNames[g]}
+                    unitY={yUnits[g]}
+                    yMin={0}
+                    fractionDigits={0}
+                    referenceX={referenceX}
+                    color={'#FFD700'}
+                    {...rest}
+                  />
+                );
+              }
+              return (
+                <LineGraph
+                  key={g}
+                  type={g}
+                  dataSource={getData[g]}
+                  height={responsiveHeight}
+                  labelX={'Month'}
+                  labelY={yNames[g]}
+                  unitY={yUnits[g]}
+                  fractionDigits={0}
+                  referenceX={referenceX}
+                  {...rest}
+                />
+              );
+            })}
+          </>
+        </ColumnWrapper>
+      </Container>
+    </ReactDraggable>
+  );
 };
 
 export default React.memo(WeatherPanel);

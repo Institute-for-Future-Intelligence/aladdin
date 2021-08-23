@@ -27,18 +27,18 @@ export const Overlay = styled.div`
 `;
 
 export interface BlurredImgProps {
-    image: string;
+  image: string;
 
-    [key: string]: any;
+  [key: string]: any;
 }
 
-const BlurredImage = ({image, ...rest}: BlurredImgProps) => {
-    return (
-        <Container {...rest}>
-            <Blurred src={`data:image/jpeg;base64,${image}`}/>
-            <Overlay/>
-        </Container>
-    );
+const BlurredImage = ({ image, ...rest }: BlurredImgProps) => {
+  return (
+    <Container {...rest}>
+      <Blurred src={`data:image/jpeg;base64,${image}`} />
+      <Overlay />
+    </Container>
+  );
 };
 
 export default BlurredImage;

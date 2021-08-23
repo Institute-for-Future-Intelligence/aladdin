@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import {Spin} from 'antd';
+import { Spin } from 'antd';
 import styled from 'styled-components';
 
 export default styled(Spin)`

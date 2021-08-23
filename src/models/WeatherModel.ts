@@ -3,14 +3,12 @@
  */
 
 export interface WeatherModel {
-
-    city: string;
-    country: string;
-    latitude: number;
-    longitude: number;
-    elevation: number;
-    lowestTemperatures: number[];
-    highestTemperatures: number[];
-    sunshineHours: number[];
-
+  city: string;
+  country: string;
+  latitude: number;
+  longitude: number;
+  elevation: number;
+  lowestTemperatures: number[];
+  highestTemperatures: number[];
+  sunshineHours: number[];
 }

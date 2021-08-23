@@ -2,12 +2,10 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import {ElementModel} from "./ElementModel";
+import { ElementModel } from './ElementModel';
 
 export interface SensorModel extends ElementModel {
-
-    light: boolean;
-    heatFlux: boolean;
-    lit?: boolean;
-
+  light: boolean;
+  heatFlux: boolean;
+  lit?: boolean;
 }

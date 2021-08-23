@@ -3,13 +3,12 @@
  */
 
 export interface GroundModel {
+  albedo: number;
 
-    albedo: number;
+  // the larger the thermal diffusivity is, the more the ground temperature is affected by air temperature, unit: m^2/s
+  thermalDiffusivity: number;
 
-    // the larger the thermal diffusivity is, the more the ground temperature is affected by air temperature, unit: m^2/s
-    thermalDiffusivity: number;
+  snowReflectionFactors: number[];
 
-    snowReflectionFactors: number[];
-
-    [key: string]: any;
+  [key: string]: any;
 }

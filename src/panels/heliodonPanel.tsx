@@ -2,13 +2,13 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {useStore} from "../stores/common";
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useStore } from '../stores/common';
 import styled from 'styled-components';
-import {DatePicker, Slider, Space, Switch, TimePicker} from "antd";
+import { DatePicker, Slider, Space, Switch, TimePicker } from 'antd';
 import moment from 'moment';
 import 'antd/dist/antd.css';
-import ReactDraggable, {DraggableEventHandler} from "react-draggable";
+import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 
 const Container = styled.div`
   position: absolute;
@@ -55,176 +55,193 @@ const Header = styled.div`
 `;
 
 const HeliodonPanel = () => {
+  const setCommonStore = useStore((state) => state.set);
+  const dateString = useStore((state) => state.world.date);
+  const latitude = useStore((state) => state.world.latitude);
+  const viewState = useStore((state) => state.viewState);
+  const animateSun = useStore((state) => state.animateSun);
+  const requestRef = useRef<number>(0);
+  const previousFrameTime = useRef<number>(-1);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 680;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 250;
+  const [curPosition, setCurPosition] = useState({
+    x: isNaN(viewState.heliodonPanelX)
+      ? 0
+      : Math.max(viewState.heliodonPanelX, wOffset - window.innerWidth),
+    y: isNaN(viewState.heliodonPanelY)
+      ? 0
+      : Math.min(viewState.heliodonPanelY, window.innerHeight - hOffset),
+  });
+  const date = useMemo(() => new Date(dateString), [dateString]);
 
-    const setCommonStore = useStore(state => state.set);
-    const dateString = useStore(state => state.world.date);
-    const latitude = useStore(state => state.world.latitude);
-    const viewState = useStore(state => state.viewState);
-    const animateSun = useStore(state => state.animateSun);
-    const requestRef = useRef<number>(0);
-    const previousFrameTime = useRef<number>(-1);
-    const wrapperRef = useRef<HTMLDivElement | null>(null);
-    const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 680;
-    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 250;
-    const [curPosition, setCurPosition] = useState({
-        x: isNaN(viewState.heliodonPanelX) ? 0 : Math.max(viewState.heliodonPanelX, wOffset - window.innerWidth),
-        y: isNaN(viewState.heliodonPanelY) ? 0 : Math.min(viewState.heliodonPanelY, window.innerHeight - hOffset)
+  // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
+  useEffect(() => {
+    const handleResize = () => {
+      setCurPosition({
+        x: Math.max(viewState.heliodonPanelX, wOffset - window.innerWidth),
+        y: Math.min(viewState.heliodonPanelY, window.innerHeight - hOffset),
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    requestRef.current = requestAnimationFrame(animate);
+    return () => {
+      cancelAnimationFrame(requestRef.current);
+    };
+  }, [animateSun]);
+
+  const animate = () => {
+    if (animateSun) {
+      requestRef.current = requestAnimationFrame(animate);
+      const currentFrameTime = Date.now();
+      if (currentFrameTime - previousFrameTime.current > 100) {
+        const day = date.getDate();
+        date.setHours(date.getHours(), date.getMinutes() + 15);
+        date.setDate(day);
+        changeTime(date);
+        previousFrameTime.current = currentFrameTime;
+      }
+    } else {
+      cancelAnimationFrame(requestRef.current);
+    }
+  };
+
+  const changeTime = (time: Date) => {
+    const d = new Date(date);
+    d.setHours(time.getHours(), time.getMinutes());
+    setCommonStore((state) => {
+      state.world.date = d.toString();
     });
-    const date = useMemo(() => new Date(dateString), [dateString]);
+  };
 
-    // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
-    useEffect(() => {
-        const handleResize = () => {
-            setCurPosition({
-                x: Math.max(viewState.heliodonPanelX, wOffset - window.innerWidth),
-                y: Math.min(viewState.heliodonPanelY, window.innerHeight - hOffset)
-            });
-        };
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        }
-    }, []);
+  const onDrag: DraggableEventHandler = (e, ui) => {
+    setCurPosition({
+      x: Math.max(ui.x, wOffset - window.innerWidth),
+      y: Math.min(ui.y, window.innerHeight - hOffset),
+    });
+  };
 
-    useEffect(() => {
-        requestRef.current = requestAnimationFrame(animate);
-        return () => {
-            cancelAnimationFrame(requestRef.current);
-        }
-    }, [animateSun]);
+  const onDragEnd: DraggableEventHandler = (e, ui) => {
+    setCommonStore((state) => {
+      state.viewState.heliodonPanelX = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.heliodonPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+    });
+  };
 
-    const animate = () => {
-        if (animateSun) {
-            requestRef.current = requestAnimationFrame(animate);
-            const currentFrameTime = Date.now();
-            if (currentFrameTime - previousFrameTime.current > 100) {
-                const day = date.getDate();
-                date.setHours(date.getHours(), date.getMinutes() + 15);
-                date.setDate(day)
-                changeTime(date);
-                previousFrameTime.current = currentFrameTime;
-            }
-        } else {
-            cancelAnimationFrame(requestRef.current);
-        }
-    };
+  const closePanel = () => {
+    setCommonStore((state) => {
+      state.viewState.showHeliodonPanel = false;
+    });
+  };
 
-    const changeTime = (time: Date) => {
-        const d = new Date(date);
-        d.setHours(time.getHours(), time.getMinutes());
-        setCommonStore(state => {
-            state.world.date = d.toString();
-        });
-    };
-
-    const onDrag: DraggableEventHandler = (e, ui) => {
-        setCurPosition({
-            x: Math.max(ui.x, wOffset - window.innerWidth),
-            y: Math.min(ui.y, window.innerHeight - hOffset)
-        });
-    };
-
-    const onDragEnd: DraggableEventHandler = (e, ui) => {
-        setCommonStore(state => {
-            state.viewState.heliodonPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-            state.viewState.heliodonPanelY = Math.min(ui.y, window.innerHeight - hOffset);
-        });
-    };
-
-    const closePanel = () => {
-        setCommonStore((state) => {
-            state.viewState.showHeliodonPanel = false;
-        });
-    };
-
-    return (
-        <ReactDraggable
-            handle={'.handle'}
-            bounds={'parent'}
-            axis='both'
-            position={curPosition}
-            onDrag={onDrag}
-            onStop={onDragEnd}
-        >
-            <Container>
-                <ColumnWrapper ref={wrapperRef}>
-                    <Header className='handle'>
-                        <span>Heliodon Settings</span>
-                        <span style={{cursor: 'pointer'}}
-                              onTouchStart={() => {
-                                  closePanel();
-                              }}
-                              onMouseDown={() => {
-                                  closePanel();
-                              }}>
-                            Close
-                        </span>
-                    </Header>
-                    <Space style={{padding: '20px'}} align={'baseline'} size={20}>
-                        <div>
-                            Show<br/>
-                            <Switch checked={viewState.heliodon} onChange={(checked) => {
-                                setCommonStore(state => {
-                                    state.viewState.heliodon = checked;
-                                });
-                            }}/>
-                        </div>
-                        <div>
-                            Animate<br/>
-                            <Switch checked={animateSun} onChange={(checked) => {
-                                setCommonStore(state => {
-                                    state.animateSun = checked;
-                                });
-                            }}/>
-                        </div>
-                        <div>
-                            Date<br/>
-                            <DatePicker value={moment(date)}
-                                        onChange={(moment) => {
-                                            if (moment) {
-                                                const day = new Date(date);
-                                                const m = moment.toDate();
-                                                day.setFullYear(m.getFullYear());
-                                                day.setMonth(m.getMonth());
-                                                day.setDate(m.getDate());
-                                                setCommonStore(state => {
-                                                    state.world.date = day.toString();
-                                                });
-                                            }
-                                        }}
-                            />
-                        </div>
-                        <div>
-                            Time<br/>
-                            <TimePicker value={moment(date, 'HH:mm')}
-                                        format={'HH:mm'}
-                                        onChange={(moment) => {
-                                            if (moment) changeTime?.(moment.toDate());
-                                        }}
-                            />
-                        </div>
-                        <div>
-                            Latitude: {latitude.toFixed(4)}°
-                            <Slider
-                                style={{width: '150px'}}
-                                marks={{'-90': '-90°', 0: '0°', 90: '90°'}}
-                                min={-90}
-                                max={90}
-                                tooltipVisible={false}
-                                defaultValue={latitude}
-                                onChange={(value: number) => {
-                                    setCommonStore(state => {
-                                        state.world.latitude = value;
-                                        state.world.address = '';
-                                    });
-                                }}
-                            />
-                        </div>
-                    </Space>
-                </ColumnWrapper>
-            </Container>
-        </ReactDraggable>
-    );
+  return (
+    <ReactDraggable
+      handle={'.handle'}
+      bounds={'parent'}
+      axis="both"
+      position={curPosition}
+      onDrag={onDrag}
+      onStop={onDragEnd}
+    >
+      <Container>
+        <ColumnWrapper ref={wrapperRef}>
+          <Header className="handle">
+            <span>Heliodon Settings</span>
+            <span
+              style={{ cursor: 'pointer' }}
+              onTouchStart={() => {
+                closePanel();
+              }}
+              onMouseDown={() => {
+                closePanel();
+              }}
+            >
+              Close
+            </span>
+          </Header>
+          <Space style={{ padding: '20px' }} align={'baseline'} size={20}>
+            <div>
+              Show
+              <br />
+              <Switch
+                checked={viewState.heliodon}
+                onChange={(checked) => {
+                  setCommonStore((state) => {
+                    state.viewState.heliodon = checked;
+                  });
+                }}
+              />
+            </div>
+            <div>
+              Animate
+              <br />
+              <Switch
+                checked={animateSun}
+                onChange={(checked) => {
+                  setCommonStore((state) => {
+                    state.animateSun = checked;
+                  });
+                }}
+              />
+            </div>
+            <div>
+              Date
+              <br />
+              <DatePicker
+                value={moment(date)}
+                onChange={(moment) => {
+                  if (moment) {
+                    const day = new Date(date);
+                    const m = moment.toDate();
+                    day.setFullYear(m.getFullYear());
+                    day.setMonth(m.getMonth());
+                    day.setDate(m.getDate());
+                    setCommonStore((state) => {
+                      state.world.date = day.toString();
+                    });
+                  }
+                }}
+              />
+            </div>
+            <div>
+              Time
+              <br />
+              <TimePicker
+                value={moment(date, 'HH:mm')}
+                format={'HH:mm'}
+                onChange={(moment) => {
+                  if (moment) changeTime?.(moment.toDate());
+                }}
+              />
+            </div>
+            <div>
+              Latitude: {latitude.toFixed(4)}°
+              <Slider
+                style={{ width: '150px' }}
+                marks={{ '-90': '-90°', 0: '0°', 90: '90°' }}
+                min={-90}
+                max={90}
+                tooltipVisible={false}
+                defaultValue={latitude}
+                onChange={(value: number) => {
+                  setCommonStore((state) => {
+                    state.world.latitude = value;
+                    state.world.address = '';
+                  });
+                }}
+              />
+            </div>
+          </Space>
+        </ColumnWrapper>
+      </Container>
+    </ReactDraggable>
+  );
 };
 
 export default React.memo(HeliodonPanel);

@@ -4,7 +4,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import {Overlay} from "./blurredImage";
+import { Overlay } from './blurredImage';
 
 const Background = styled.img`
   filter: opacity(15%);
@@ -19,23 +19,27 @@ const Container = styled.div`
 `;
 
 export interface BackgroundProps {
-    image: string;
-    overlay: boolean;
+  image: string;
+  overlay: boolean;
 
-    [key: string]: any;
+  [key: string]: any;
 }
 
-const BackgroundImage = ({image, overlay, ...rest}: BackgroundProps) => {
-    if (overlay) {
-        return <Container {...rest}>
-            <Background src={`${image}`}/>
-            <Overlay/>
-        </Container>;
-    } else {
-        return <Container {...rest}>
-            <Background src={`${image}`}/>
-        </Container>;
-    }
+const BackgroundImage = ({ image, overlay, ...rest }: BackgroundProps) => {
+  if (overlay) {
+    return (
+      <Container {...rest}>
+        <Background src={`${image}`} />
+        <Overlay />
+      </Container>
+    );
+  } else {
+    return (
+      <Container {...rest}>
+        <Background src={`${image}`} />
+      </Container>
+    );
+  }
 };
 
 export default BackgroundImage;

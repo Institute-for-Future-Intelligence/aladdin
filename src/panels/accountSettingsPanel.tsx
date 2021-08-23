@@ -2,10 +2,10 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useRef, useState} from "react";
-import styled from "styled-components";
-import {useStore} from "../stores/common";
-import ReactDraggable, {DraggableEventHandler} from "react-draggable";
+import React, { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+import { useStore } from '../stores/common';
+import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 
 const Container = styled.div`
   position: fixed;
@@ -52,78 +52,77 @@ const Header = styled.div`
   }
 `;
 
-export interface AccountSettingsPanelProps {
-}
+export interface AccountSettingsPanelProps {}
 
 const AccountSettingsPanel = ({}: AccountSettingsPanelProps) => {
+  const setCommonStore = useStore((state) => state.set);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
+  const [curPosition, setCurPosition] = useState({ x: 0, y: 0 });
 
-    const setCommonStore = useStore(state => state.set);
-    const wrapperRef = useRef<HTMLDivElement | null>(null);
-    const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
-    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
-    const [curPosition, setCurPosition] = useState({x: 0, y: 0});
-
-    // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
-    useEffect(() => {
-        const handleResize = () => {
-            setCurPosition({
-                x: Math.max(0, wOffset - window.innerWidth),
-                y: Math.min(0, window.innerHeight - hOffset)
-            });
-        };
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        }
-    }, []);
-
-    const onDrag: DraggableEventHandler = (e, ui) => {
-        setCurPosition({
-            x: Math.max(ui.x, wOffset - window.innerWidth),
-            y: Math.min(ui.y, window.innerHeight - hOffset)
-        });
+  // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
+  useEffect(() => {
+    const handleResize = () => {
+      setCurPosition({
+        x: Math.max(0, wOffset - window.innerWidth),
+        y: Math.min(0, window.innerHeight - hOffset),
+      });
     };
-
-    const onDragEnd: DraggableEventHandler = (e, ui) => {
-        // TODO: Should we save the position?
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
     };
+  }, []);
 
-    const closePanel = () => {
-        setCommonStore((state) => {
-            state.showAccountSettingsPanel = false;
-        });
-    };
+  const onDrag: DraggableEventHandler = (e, ui) => {
+    setCurPosition({
+      x: Math.max(ui.x, wOffset - window.innerWidth),
+      y: Math.min(ui.y, window.innerHeight - hOffset),
+    });
+  };
 
-    return (
-        <>
-            <ReactDraggable
-                handle={'.handle'}
-                bounds={'parent'}
-                axis='both'
-                position={curPosition}
-                onDrag={onDrag}
-                onStop={onDragEnd}
-            >
-                <Container>
-                    <ColumnWrapper ref={wrapperRef}>
-                        <Header className='handle'>
-                            <span>My Account Settings</span>
-                            <span style={{cursor: 'pointer'}}
-                                  onMouseDown={() => {
-                                      closePanel();
-                                  }}
-                                  onTouchStart={() => {
-                                      closePanel();
-                                  }}
-                            >
-                            Close
-                        </span>
-                        </Header>
-                    </ColumnWrapper>
-                </Container>
-            </ReactDraggable>
-        </>
-    )
+  const onDragEnd: DraggableEventHandler = (e, ui) => {
+    // TODO: Should we save the position?
+  };
+
+  const closePanel = () => {
+    setCommonStore((state) => {
+      state.showAccountSettingsPanel = false;
+    });
+  };
+
+  return (
+    <>
+      <ReactDraggable
+        handle={'.handle'}
+        bounds={'parent'}
+        axis="both"
+        position={curPosition}
+        onDrag={onDrag}
+        onStop={onDragEnd}
+      >
+        <Container>
+          <ColumnWrapper ref={wrapperRef}>
+            <Header className="handle">
+              <span>My Account Settings</span>
+              <span
+                style={{ cursor: 'pointer' }}
+                onMouseDown={() => {
+                  closePanel();
+                }}
+                onTouchStart={() => {
+                  closePanel();
+                }}
+              >
+                Close
+              </span>
+            </Header>
+          </ColumnWrapper>
+        </Container>
+      </ReactDraggable>
+    </>
+  );
 };
 
 export default React.memo(AccountSettingsPanel);

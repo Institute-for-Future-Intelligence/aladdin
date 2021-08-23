@@ -4,7 +4,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import Team from "./team";
+import Team from './team';
 
 const Container = styled.div`
   position: absolute;
@@ -22,28 +22,29 @@ const Container = styled.div`
 `;
 
 export interface AboutProps {
-    openAboutUs: (on: boolean) => void;
+  openAboutUs: (on: boolean) => void;
 }
 
-const About = ({openAboutUs}: AboutProps) => {
-
-    return (
-        <Container>
-            <Team top={10} color={'antiquewhite'}/>
-            <div style={{
-                position: 'absolute',
-                fontSize: 'medium',
-                color: 'antiquewhite',
-                cursor: 'pointer',
-                bottom: '10px'
-            }} onMouseDown={() => {
-                openAboutUs(false);
-            }}>
-                Close
-            </div>
-        </Container>
-    );
-
+const About = ({ openAboutUs }: AboutProps) => {
+  return (
+    <Container>
+      <Team top={10} color={'antiquewhite'} />
+      <div
+        style={{
+          position: 'absolute',
+          fontSize: 'medium',
+          color: 'antiquewhite',
+          cursor: 'pointer',
+          bottom: '10px',
+        }}
+        onMouseDown={() => {
+          openAboutUs(false);
+        }}
+      >
+        Close
+      </div>
+    </Container>
+  );
 };
 
 export default React.memo(About);

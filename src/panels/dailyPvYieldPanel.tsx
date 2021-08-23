@@ -2,16 +2,16 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import LineGraph from '../components/lineGraph';
-import styled from "styled-components";
-import {useStore} from "../stores/common";
-import {GraphDataType, ObjectType} from "../types";
-import moment from "moment";
-import ReactDraggable, {DraggableEventHandler} from 'react-draggable';
-import {Button, Space, Switch} from "antd";
-import {screenshot} from "../helpers";
-import {ReloadOutlined, SaveOutlined, UnorderedListOutlined} from '@ant-design/icons';
+import styled from 'styled-components';
+import { useStore } from '../stores/common';
+import { GraphDataType, ObjectType } from '../types';
+import moment from 'moment';
+import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
+import { Button, Space, Switch } from 'antd';
+import { screenshot } from '../helpers';
+import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 
 const Container = styled.div`
   position: fixed;
@@ -60,186 +60,198 @@ const Header = styled.div`
 `;
 
 export interface DailyPvYieldPanelProps {
+  city: string | null;
+  individualOutputs: boolean;
+  setIndividualOutputs: (b: boolean) => void;
+  analyzeDailyPvYield: () => void;
 
-    city: string | null;
-    individualOutputs: boolean;
-    setIndividualOutputs: (b: boolean) => void;
-    analyzeDailyPvYield: () => void;
-
-    [key: string]: any;
-
+  [key: string]: any;
 }
 
 const DailyPvYieldPanel = ({
-                               city,
-                               individualOutputs = false,
-                               setIndividualOutputs,
-                               analyzeDailyPvYield,
-                               ...rest
-                           }: DailyPvYieldPanelProps) => {
+  city,
+  individualOutputs = false,
+  setIndividualOutputs,
+  analyzeDailyPvYield,
+  ...rest
+}: DailyPvYieldPanelProps) => {
+  const setCommonStore = useStore((state) => state.set);
+  const viewState = useStore((state) => state.viewState);
+  const countElementsByType = useStore((state) => state.countElementsByType);
+  const dailyYield = useStore((state) => state.dailyPvYield);
+  const solarPanelLabels = useStore((state) => state.solarPanelLabels);
+  const now = new Date(useStore((state) => state.world.date));
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;
+  const [curPosition, setCurPosition] = useState({
+    x: isNaN(viewState.dailyPvYieldPanelX)
+      ? 0
+      : Math.max(viewState.dailyPvYieldPanelX, wOffset - window.innerWidth),
+    y: isNaN(viewState.dailyPvYieldPanelY)
+      ? 0
+      : Math.min(viewState.dailyPvYieldPanelY, window.innerHeight - hOffset),
+  });
+  const [sum, setSum] = useState(0);
+  const panelSumRef = useRef(new Map<string, number>());
 
-    const setCommonStore = useStore(state => state.set);
-    const viewState = useStore(state => state.viewState);
-    const countElementsByType = useStore(state => state.countElementsByType);
-    const dailyYield = useStore(state => state.dailyPvYield);
-    const solarPanelLabels = useStore(state => state.solarPanelLabels);
-    const now = new Date(useStore(state => state.world.date));
-    const wrapperRef = useRef<HTMLDivElement | null>(null);
-    const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
-    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;
-    const [curPosition, setCurPosition] = useState({
-        x: isNaN(viewState.dailyPvYieldPanelX) ? 0 : Math.max(viewState.dailyPvYieldPanelX, wOffset - window.innerWidth),
-        y: isNaN(viewState.dailyPvYieldPanelY) ? 0 : Math.min(viewState.dailyPvYieldPanelY, window.innerHeight - hOffset)
-    });
-    const [sum, setSum] = useState(0);
-    const panelSumRef = useRef(new Map<string, number>());
+  const responsiveHeight = 100;
 
-    const responsiveHeight = 100;
-
-    useEffect(() => {
-        let s = 0;
-        panelSumRef.current.clear();
-        for (const datum of dailyYield) {
-            for (const prop in datum) {
-                if (datum.hasOwnProperty(prop)) {
-                    if (prop !== 'Hour') {
-                        s += datum[prop] as number;
-                        panelSumRef.current.set(prop, (panelSumRef.current.get(prop) ?? 0) + (datum[prop] as number));
-                    }
-                }
-            }
+  useEffect(() => {
+    let s = 0;
+    panelSumRef.current.clear();
+    for (const datum of dailyYield) {
+      for (const prop in datum) {
+        if (datum.hasOwnProperty(prop)) {
+          if (prop !== 'Hour') {
+            s += datum[prop] as number;
+            panelSumRef.current.set(
+              prop,
+              (panelSumRef.current.get(prop) ?? 0) + (datum[prop] as number),
+            );
+          }
         }
-        setSum(s);
-    }, [dailyYield]);
-
-    // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
-    useEffect(() => {
-        const handleResize = () => {
-            setCurPosition({
-                x: Math.max(viewState.dailyPvYieldPanelX, wOffset - window.innerWidth),
-                y: Math.min(viewState.dailyPvYieldPanelY, window.innerHeight - hOffset)
-            });
-        };
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        }
-    }, []);
-
-    const onDrag: DraggableEventHandler = (e, ui) => {
-        setCurPosition({
-            x: Math.max(ui.x, wOffset - window.innerWidth),
-            y: Math.min(ui.y, window.innerHeight - hOffset)
-        });
-    };
-
-    const onDragEnd: DraggableEventHandler = (e, ui) => {
-        setCommonStore(state => {
-            state.viewState.dailyPvYieldPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-            state.viewState.dailyPvYieldPanelY = Math.min(ui.y, window.innerHeight - hOffset);
-        });
-    };
-
-    const closePanel = () => {
-        setCommonStore((state) => {
-            state.viewState.showDailyPvYieldPanel = false;
-        });
-    };
-
-    const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
-    useEffect(() => {
-        if (solarPanelCount < 2 && individualOutputs) {
-            setIndividualOutputs(false);
-        }
-    }, [solarPanelCount]);
-
-    const labelX = 'Hour';
-    const labelY = 'Yield per Hour';
-    let totalTooltip = '';
-    if (individualOutputs) {
-        panelSumRef.current.forEach((value, key) => totalTooltip += key + ': ' + value.toFixed(2) + '\n');
-        totalTooltip += '——————————\n';
-        totalTooltip += 'Total: ' + sum.toFixed(2) + ' kWh';
+      }
     }
+    setSum(s);
+  }, [dailyYield]);
 
-    return (
-        <ReactDraggable
-            handle={'.handle'}
-            bounds={'parent'}
-            axis='both'
-            position={curPosition}
-            onDrag={onDrag}
-            onStop={onDragEnd}
-        >
-            <Container>
-                <ColumnWrapper ref={wrapperRef}>
-                    <Header className='handle'>
-                        <span>Solar Panel Daily Yield: Weather Data from {city} | {moment(now).format('MM/DD')}</span>
-                        <span style={{cursor: 'pointer'}}
-                              onTouchStart={() => {
-                                  closePanel();
-                              }}
-                              onMouseDown={() => {
-                                  closePanel();
-                              }}>
-                            Close
-                        </span>
-                    </Header>
-                    <LineGraph
-                        type={GraphDataType.DailyPvYield}
-                        dataSource={dailyYield}
-                        labels={solarPanelLabels}
-                        height={responsiveHeight}
-                        labelX={labelX}
-                        labelY={labelY}
-                        unitY={'kWh'}
-                        yMin={0}
-                        curveType={'linear'}
-                        fractionDigits={2}
-                        symbolCount={24}
-                        referenceX={now.getHours()}
-                        {...rest}
-                    />
-                    <Space style={{alignSelf: 'center'}}>
-                        {individualOutputs && solarPanelCount > 1 ?
-                            <Space title={totalTooltip}
-                                   style={{cursor: 'pointer', border: '2px solid #ccc', padding: '4px'}}>
-                                Hover for breakdown
-                            </Space>
-                            :
-                            <Space style={{cursor: 'default'}}>
-                                Daily Total: {sum.toFixed(2)} kWh
-                            </Space>
-                        }
-                        {solarPanelCount > 1 &&
-                        <Switch title={'Show outputs of individual solar panels'}
-                                checkedChildren={<UnorderedListOutlined/>}
-                                unCheckedChildren={<UnorderedListOutlined/>}
-                                checked={individualOutputs}
-                                onChange={(checked) => {
-                                    setIndividualOutputs(checked);
-                                    analyzeDailyPvYield();
-                                }}
-                        />
-                        }
-                        <Button type="default"
-                                icon={<ReloadOutlined/>}
-                                title={'Update'}
-                                onClick={analyzeDailyPvYield}
-                        />
-                        <Button type="default"
-                                icon={<SaveOutlined/>}
-                                title={'Save as image'}
-                                onClick={() => {
-                                    screenshot('line-graph-' + labelX + '-' + labelY, 'daily-pv-yield', {});
-                                }}
-                        />
-                    </Space>
-                </ColumnWrapper>
-            </Container>
-        </ReactDraggable>
+  // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
+  useEffect(() => {
+    const handleResize = () => {
+      setCurPosition({
+        x: Math.max(viewState.dailyPvYieldPanelX, wOffset - window.innerWidth),
+        y: Math.min(viewState.dailyPvYieldPanelY, window.innerHeight - hOffset),
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const onDrag: DraggableEventHandler = (e, ui) => {
+    setCurPosition({
+      x: Math.max(ui.x, wOffset - window.innerWidth),
+      y: Math.min(ui.y, window.innerHeight - hOffset),
+    });
+  };
+
+  const onDragEnd: DraggableEventHandler = (e, ui) => {
+    setCommonStore((state) => {
+      state.viewState.dailyPvYieldPanelX = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.dailyPvYieldPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+    });
+  };
+
+  const closePanel = () => {
+    setCommonStore((state) => {
+      state.viewState.showDailyPvYieldPanel = false;
+    });
+  };
+
+  const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
+  useEffect(() => {
+    if (solarPanelCount < 2 && individualOutputs) {
+      setIndividualOutputs(false);
+    }
+  }, [solarPanelCount]);
+
+  const labelX = 'Hour';
+  const labelY = 'Yield per Hour';
+  let totalTooltip = '';
+  if (individualOutputs) {
+    panelSumRef.current.forEach(
+      (value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'),
     );
+    totalTooltip += '——————————\n';
+    totalTooltip += 'Total: ' + sum.toFixed(2) + ' kWh';
+  }
 
+  return (
+    <ReactDraggable
+      handle={'.handle'}
+      bounds={'parent'}
+      axis="both"
+      position={curPosition}
+      onDrag={onDrag}
+      onStop={onDragEnd}
+    >
+      <Container>
+        <ColumnWrapper ref={wrapperRef}>
+          <Header className="handle">
+            <span>
+              Solar Panel Daily Yield: Weather Data from {city} | {moment(now).format('MM/DD')}
+            </span>
+            <span
+              style={{ cursor: 'pointer' }}
+              onTouchStart={() => {
+                closePanel();
+              }}
+              onMouseDown={() => {
+                closePanel();
+              }}
+            >
+              Close
+            </span>
+          </Header>
+          <LineGraph
+            type={GraphDataType.DailyPvYield}
+            dataSource={dailyYield}
+            labels={solarPanelLabels}
+            height={responsiveHeight}
+            labelX={labelX}
+            labelY={labelY}
+            unitY={'kWh'}
+            yMin={0}
+            curveType={'linear'}
+            fractionDigits={2}
+            symbolCount={24}
+            referenceX={now.getHours()}
+            {...rest}
+          />
+          <Space style={{ alignSelf: 'center' }}>
+            {individualOutputs && solarPanelCount > 1 ? (
+              <Space
+                title={totalTooltip}
+                style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}
+              >
+                Hover for breakdown
+              </Space>
+            ) : (
+              <Space style={{ cursor: 'default' }}>Daily Total: {sum.toFixed(2)} kWh</Space>
+            )}
+            {solarPanelCount > 1 && (
+              <Switch
+                title={'Show outputs of individual solar panels'}
+                checkedChildren={<UnorderedListOutlined />}
+                unCheckedChildren={<UnorderedListOutlined />}
+                checked={individualOutputs}
+                onChange={(checked) => {
+                  setIndividualOutputs(checked);
+                  analyzeDailyPvYield();
+                }}
+              />
+            )}
+            <Button
+              type="default"
+              icon={<ReloadOutlined />}
+              title={'Update'}
+              onClick={analyzeDailyPvYield}
+            />
+            <Button
+              type="default"
+              icon={<SaveOutlined />}
+              title={'Save as image'}
+              onClick={() => {
+                screenshot('line-graph-' + labelX + '-' + labelY, 'daily-pv-yield', {});
+              }}
+            />
+          </Space>
+        </ColumnWrapper>
+      </Container>
+    </ReactDraggable>
+  );
 };
 
 export default React.memo(DailyPvYieldPanel);

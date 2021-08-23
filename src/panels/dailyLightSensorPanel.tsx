@@ -2,16 +2,16 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import LineGraph from '../components/lineGraph';
-import styled from "styled-components";
-import {useStore} from "../stores/common";
-import {GraphDataType} from "../types";
-import moment from "moment";
-import ReactDraggable, {DraggableEventHandler} from 'react-draggable';
-import {Button, Space} from "antd";
-import {ReloadOutlined, SaveOutlined} from '@ant-design/icons';
-import {screenshot} from "../helpers";
+import styled from 'styled-components';
+import { useStore } from '../stores/common';
+import { GraphDataType } from '../types';
+import moment from 'moment';
+import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
+import { Button, Space } from 'antd';
+import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
+import { screenshot } from '../helpers';
 
 const Container = styled.div`
   position: fixed;
@@ -60,129 +60,135 @@ const Header = styled.div`
 `;
 
 export interface DailyLightSensorPanelProps {
+  city: string | null;
+  collectDailyLightSensorData: () => void;
 
-    city: string | null;
-    collectDailyLightSensorData: () => void;
-
-    [key: string]: any;
-
+  [key: string]: any;
 }
 
 const DailyLightSensorPanel = ({
-                                   city,
-                                   collectDailyLightSensorData,
-                                   ...rest
-                               }: DailyLightSensorPanelProps) => {
+  city,
+  collectDailyLightSensorData,
+  ...rest
+}: DailyLightSensorPanelProps) => {
+  const setCommonStore = useStore((state) => state.set);
+  const viewState = useStore((state) => state.viewState);
+  const sensorLabels = useStore((state) => state.sensorLabels);
+  const sensorData = useStore((state) => state.dailyLightSensorData);
+  const now = new Date(useStore((state) => state.world.date));
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 460;
+  const [curPosition, setCurPosition] = useState({
+    x: isNaN(viewState.dailyLightSensorPanelX)
+      ? 0
+      : Math.max(viewState.dailyLightSensorPanelX, wOffset - window.innerWidth),
+    y: isNaN(viewState.dailyLightSensorPanelY)
+      ? 0
+      : Math.min(viewState.dailyLightSensorPanelY, window.innerHeight - hOffset),
+  });
 
-    const setCommonStore = useStore(state => state.set);
-    const viewState = useStore(state => state.viewState);
-    const sensorLabels = useStore(state => state.sensorLabels);
-    const sensorData = useStore(state => state.dailyLightSensorData);
-    const now = new Date(useStore(state => state.world.date));
-    const wrapperRef = useRef<HTMLDivElement | null>(null);
-    const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
-    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 460;
-    const [curPosition, setCurPosition] = useState({
-        x: isNaN(viewState.dailyLightSensorPanelX) ? 0 : Math.max(viewState.dailyLightSensorPanelX, wOffset - window.innerWidth),
-        y: isNaN(viewState.dailyLightSensorPanelY) ? 0 : Math.min(viewState.dailyLightSensorPanelY, window.innerHeight - hOffset)
+  const responsiveHeight = 100;
+
+  // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
+  useEffect(() => {
+    const handleResize = () => {
+      setCurPosition({
+        x: Math.max(viewState.dailyLightSensorPanelX, wOffset - window.innerWidth),
+        y: Math.min(viewState.dailyLightSensorPanelY, window.innerHeight - hOffset),
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const onDrag: DraggableEventHandler = (e, ui) => {
+    setCurPosition({
+      x: Math.max(ui.x, wOffset - window.innerWidth),
+      y: Math.min(ui.y, window.innerHeight - hOffset),
     });
+  };
 
-    const responsiveHeight = 100;
+  const onDragEnd: DraggableEventHandler = (e, ui) => {
+    setCommonStore((state) => {
+      state.viewState.dailyLightSensorPanelX = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.dailyLightSensorPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+    });
+  };
 
-    // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
-    useEffect(() => {
-        const handleResize = () => {
-            setCurPosition({
-                x: Math.max(viewState.dailyLightSensorPanelX, wOffset - window.innerWidth),
-                y: Math.min(viewState.dailyLightSensorPanelY, window.innerHeight - hOffset)
-            });
-        };
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        }
-    }, []);
+  const closePanel = () => {
+    setCommonStore((state) => {
+      state.viewState.showDailyLightSensorPanel = false;
+    });
+  };
 
-    const onDrag: DraggableEventHandler = (e, ui) => {
-        setCurPosition({
-            x: Math.max(ui.x, wOffset - window.innerWidth),
-            y: Math.min(ui.y, window.innerHeight - hOffset)
-        });
-    };
+  const labelX = 'Hour';
+  const labelY = 'Radiation';
 
-    const onDragEnd: DraggableEventHandler = (e, ui) => {
-        setCommonStore(state => {
-            state.viewState.dailyLightSensorPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-            state.viewState.dailyLightSensorPanelY = Math.min(ui.y, window.innerHeight - hOffset);
-        });
-    };
-
-    const closePanel = () => {
-        setCommonStore((state) => {
-            state.viewState.showDailyLightSensorPanel = false;
-        });
-    };
-
-    const labelX = 'Hour';
-    const labelY = 'Radiation';
-
-    return (
-        <ReactDraggable
-            handle={'.handle'}
-            bounds={'parent'}
-            axis='both'
-            position={curPosition}
-            onDrag={onDrag}
-            onStop={onDragEnd}
-        >
-            <Container>
-                <ColumnWrapper ref={wrapperRef}>
-                    <Header className='handle'>
-                        <span>Light Sensor: Weather Data from {city} | {moment(now).format('MM/DD')}</span>
-                        <span style={{cursor: 'pointer'}}
-                              onTouchStart={() => {
-                                  closePanel();
-                              }}
-                              onMouseDown={() => {
-                                  closePanel();
-                              }}>
-                            Close
-                        </span>
-                    </Header>
-                    <LineGraph
-                        type={GraphDataType.DailyRadiationSensorData}
-                        dataSource={sensorData}
-                        labels={sensorLabels}
-                        height={responsiveHeight}
-                        labelX={labelX}
-                        labelY={labelY}
-                        unitY={'kWh/m²/day'}
-                        yMin={0}
-                        curveType={'linear'}
-                        fractionDigits={2}
-                        symbolCount={24}
-                        referenceX={now.getHours()}
-                        {...rest}
-                    />
-                    <Space style={{alignSelf: 'center'}}>
-                        <Button type="default"
-                                icon={<ReloadOutlined/>}
-                                title={'Update'}
-                                onClick={collectDailyLightSensorData}
-                        />
-                        <Button type="default"
-                                icon={<SaveOutlined/>}
-                                title={'Save as image'}
-                                onClick={() => {
-                                    screenshot('line-graph-' + labelX + '-' + labelY, 'daily-light-sensor', {});
-                                }}
-                        />
-                    </Space>
-                </ColumnWrapper>
-            </Container>
-        </ReactDraggable>
-    );
-
+  return (
+    <ReactDraggable
+      handle={'.handle'}
+      bounds={'parent'}
+      axis="both"
+      position={curPosition}
+      onDrag={onDrag}
+      onStop={onDragEnd}
+    >
+      <Container>
+        <ColumnWrapper ref={wrapperRef}>
+          <Header className="handle">
+            <span>
+              Light Sensor: Weather Data from {city} | {moment(now).format('MM/DD')}
+            </span>
+            <span
+              style={{ cursor: 'pointer' }}
+              onTouchStart={() => {
+                closePanel();
+              }}
+              onMouseDown={() => {
+                closePanel();
+              }}
+            >
+              Close
+            </span>
+          </Header>
+          <LineGraph
+            type={GraphDataType.DailyRadiationSensorData}
+            dataSource={sensorData}
+            labels={sensorLabels}
+            height={responsiveHeight}
+            labelX={labelX}
+            labelY={labelY}
+            unitY={'kWh/m²/day'}
+            yMin={0}
+            curveType={'linear'}
+            fractionDigits={2}
+            symbolCount={24}
+            referenceX={now.getHours()}
+            {...rest}
+          />
+          <Space style={{ alignSelf: 'center' }}>
+            <Button
+              type="default"
+              icon={<ReloadOutlined />}
+              title={'Update'}
+              onClick={collectDailyLightSensorData}
+            />
+            <Button
+              type="default"
+              icon={<SaveOutlined />}
+              title={'Save as image'}
+              onClick={() => {
+                screenshot('line-graph-' + labelX + '-' + labelY, 'daily-light-sensor', {});
+              }}
+            />
+          </Space>
+        </ColumnWrapper>
+      </Container>
+    </ReactDraggable>
+  );
 };
 
 export default React.memo(DailyLightSensorPanel);
