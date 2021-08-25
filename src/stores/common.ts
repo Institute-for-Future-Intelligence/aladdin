@@ -12,15 +12,7 @@ import weather from '../resources/weather.csv';
 import pvmodules from '../resources/pvmodules.csv';
 import Papa from 'papaparse';
 import { Util } from '../Util';
-import {
-  ActionType,
-  DatumEntry,
-  MoveHandleType,
-  ObjectType,
-  ResizeHandleType,
-  RotateHandleType,
-  User,
-} from '../types';
+import { ActionType, DatumEntry, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType, User } from '../types';
 import { DefaultWorldModel } from './DefaultWorldModel';
 import { Box3, Vector2, Vector3 } from 'three';
 import { ElementModelCloner } from '../models/ElementModelCloner';
@@ -61,12 +53,14 @@ export interface CommonStoreState {
   animateSun: boolean;
   enableOrbitController: boolean;
   clickObjectType: ObjectType | null;
+  contextMenuObjectType: ObjectType | null;
   moveHandleType: MoveHandleType | null;
   resizeHandleType: ResizeHandleType | null;
   rotateHandleType: RotateHandleType | null;
   resizeAnchor: Vector2;
   showCloudFilePanel: boolean;
   showAccountSettingsPanel: boolean;
+  selectedEmelent: ElementModel | null;
   getSelectedElement: () => ElementModel | null;
   getResizeHandlePosition: (e: ElementModel, type: ResizeHandleType) => Vector3;
   getElementById: (id: string) => ElementModel | null;
@@ -198,6 +192,7 @@ export const useStore = create<CommonStoreState>(
           animateSun: false,
           enableOrbitController: true,
           clickObjectType: null,
+          contextMenuObjectType: null,
           moveHandleType: null,
           resizeHandleType: null,
           rotateHandleType: null,
@@ -205,6 +200,7 @@ export const useStore = create<CommonStoreState>(
           showCloudFilePanel: false,
           showAccountSettingsPanel: false,
 
+          selectedEmelent: null,
           getSelectedElement() {
             const elements = get().elements;
             for (const e of elements) {
@@ -363,23 +359,14 @@ export const useStore = create<CommonStoreState>(
               const m = position;
               switch (state.objectTypeToAdd) {
                 case ObjectType.Human:
-                  state.elements.push(
-                    ElementModelFactory.makeHuman(state.world.ground, m.x, m.y, m.z),
-                  );
+                  state.elements.push(ElementModelFactory.makeHuman(state.world.ground, m.x, m.y, m.z));
                   break;
                 case ObjectType.Tree:
-                  state.elements.push(
-                    ElementModelFactory.makeTree(state.world.ground, m.x, m.y, m.z),
-                  );
+                  state.elements.push(ElementModelFactory.makeTree(state.world.ground, m.x, m.y, m.z));
                   break;
                 case ObjectType.Sensor:
                   const sensorParentModel = parent as ElementModel;
-                  const sensorRelativeCoordinates = Util.relativeCoordinates(
-                    m.x,
-                    m.y,
-                    m.z,
-                    sensorParentModel,
-                  );
+                  const sensorRelativeCoordinates = Util.relativeCoordinates(m.x, m.y, m.z, sensorParentModel);
                   state.elements.push(
                     ElementModelFactory.makeSensor(
                       sensorParentModel,
@@ -393,12 +380,7 @@ export const useStore = create<CommonStoreState>(
                   break;
                 case ObjectType.SolarPanel:
                   const solarPanelParentModel = parent as ElementModel;
-                  const solarPanelRelativeCoordinates = Util.relativeCoordinates(
-                    m.x,
-                    m.y,
-                    m.z,
-                    solarPanelParentModel,
-                  );
+                  const solarPanelRelativeCoordinates = Util.relativeCoordinates(m.x, m.y, m.z, solarPanelParentModel);
                   state.elements.push(
                     ElementModelFactory.makeSolarPanel(
                       solarPanelParentModel,
@@ -412,9 +394,7 @@ export const useStore = create<CommonStoreState>(
                   );
                   break;
                 case ObjectType.Foundation:
-                  state.elements.push(
-                    ElementModelFactory.makeFoundation(state.world.ground, m.x, m.y),
-                  );
+                  state.elements.push(ElementModelFactory.makeFoundation(state.world.ground, m.x, m.y));
                   break;
                 case ObjectType.Cuboid:
                   state.elements.push(ElementModelFactory.makeCuboid(state.world.ground, m.x, m.y));
@@ -449,16 +429,12 @@ export const useStore = create<CommonStoreState>(
                   state.elementToPaste.push(e);
                 }
               }
-              state.elements = state.elements.filter(
-                (e) => !(e.id === id || (e.parent && e.parent.id === id)),
-              );
+              state.elements = state.elements.filter((e) => !(e.id === id || (e.parent && e.parent.id === id)));
             });
           },
           deleteElementById(id) {
             immerSet((state: CommonStoreState) => {
-              state.elements = state.elements.filter(
-                (e) => !(e.id === id || (e.parent && e.parent.id === id)),
-              );
+              state.elements = state.elements.filter((e) => !(e.id === id || (e.parent && e.parent.id === id)));
             });
           },
 
@@ -481,9 +457,7 @@ export const useStore = create<CommonStoreState>(
 
           removeAllChildElementsByType(parentId: string, type: ObjectType) {
             immerSet((state: CommonStoreState) => {
-              state.elements = state.elements.filter(
-                (x) => x.type !== type || x.parent.id !== parentId,
-              );
+              state.elements = state.elements.filter((x) => x.type !== type || x.parent.id !== parentId);
             });
           },
           countAllChildElementsByType(parentId: string, type: ObjectType) {

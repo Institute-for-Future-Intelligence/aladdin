@@ -8,13 +8,7 @@ import { Euler, Face, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { CuboidModel } from '../models/CuboidModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import {
-  ActionType,
-  MoveHandleType,
-  ObjectType,
-  ResizeHandleType,
-  RotateHandleType,
-} from '../types';
+import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import {
   RESIZE_HANDLE_SIZE,
   MOVE_HANDLE_OFFSET,
@@ -61,9 +55,7 @@ const Cuboid = ({
     gl: { domElement },
   } = useThree();
   const [hovered, setHovered] = useState(false);
-  const [hoveredHandle, setHoveredHandle] = useState<
-    MoveHandleType | ResizeHandleType | RotateHandleType | null
-  >(null);
+  const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const [normal, setNormal] = useState<Vector3>();
   const ray = useMemo(() => new Raycaster(), []);
@@ -103,22 +95,10 @@ const Cuboid = ({
   const positionURBot = useMemo(() => new Vector3(hx, hy, -hz), [hx, hy, hz]);
 
   const handleLift = MOVE_HANDLE_RADIUS;
-  const positionLowerFace = useMemo(
-    () => new Vector3(0, -hy - MOVE_HANDLE_OFFSET, handleLift - hz),
-    [hy, hz],
-  );
-  const positionUpperFace = useMemo(
-    () => new Vector3(0, hy + MOVE_HANDLE_OFFSET, handleLift - hz),
-    [hy, hz],
-  );
-  const positionLeftFace = useMemo(
-    () => new Vector3(-hx - MOVE_HANDLE_OFFSET, 0, handleLift - hz),
-    [hx, hz],
-  );
-  const positionRightFace = useMemo(
-    () => new Vector3(hx + MOVE_HANDLE_OFFSET, 0, handleLift - hz),
-    [hx, hz],
-  );
+  const positionLowerFace = useMemo(() => new Vector3(0, -hy - MOVE_HANDLE_OFFSET, handleLift - hz), [hy, hz]);
+  const positionUpperFace = useMemo(() => new Vector3(0, hy + MOVE_HANDLE_OFFSET, handleLift - hz), [hy, hz]);
+  const positionLeftFace = useMemo(() => new Vector3(-hx - MOVE_HANDLE_OFFSET, 0, handleLift - hz), [hx, hz]);
+  const positionRightFace = useMemo(() => new Vector3(hx + MOVE_HANDLE_OFFSET, 0, handleLift - hz), [hx, hz]);
   const positionTopFace = useMemo(() => new Vector3(0, 0, hz + MOVE_HANDLE_OFFSET), [hz]);
 
   useEffect(() => {
@@ -305,6 +285,12 @@ const Cuboid = ({
               state.pasteNormal = face.normal.clone();
             }
             state.clickObjectType = ObjectType.Cuboid;
+            if (e.intersections.length > 0) {
+              const intersected = e.intersections[0].object === baseRef.current;
+              if (intersected) {
+                state.contextMenuObjectType = ObjectType.Cuboid;
+              }
+            }
           });
         }}
         onPointerOver={(e) => {
@@ -436,8 +422,7 @@ const Cuboid = ({
             <meshStandardMaterial
               attach="material"
               color={
-                hoveredHandle === ResizeHandleType.LowerLeftTop ||
-                resizeHandleType === ResizeHandleType.LowerLeftTop
+                hoveredHandle === ResizeHandleType.LowerLeftTop || resizeHandleType === ResizeHandleType.LowerLeftTop
                   ? HIGHLIGHT_HANDLE_COLOR
                   : RESIZE_HANDLE_COLOR
               }
@@ -461,8 +446,7 @@ const Cuboid = ({
             <meshStandardMaterial
               attach="material"
               color={
-                hoveredHandle === ResizeHandleType.UpperLeftTop ||
-                resizeHandleType === ResizeHandleType.UpperLeftTop
+                hoveredHandle === ResizeHandleType.UpperLeftTop || resizeHandleType === ResizeHandleType.UpperLeftTop
                   ? HIGHLIGHT_HANDLE_COLOR
                   : RESIZE_HANDLE_COLOR
               }
@@ -486,8 +470,7 @@ const Cuboid = ({
             <meshStandardMaterial
               attach="material"
               color={
-                hoveredHandle === ResizeHandleType.LowerRightTop ||
-                resizeHandleType === ResizeHandleType.LowerRightTop
+                hoveredHandle === ResizeHandleType.LowerRightTop || resizeHandleType === ResizeHandleType.LowerRightTop
                   ? HIGHLIGHT_HANDLE_COLOR
                   : RESIZE_HANDLE_COLOR
               }
@@ -511,8 +494,7 @@ const Cuboid = ({
             <meshStandardMaterial
               attach="material"
               color={
-                hoveredHandle === ResizeHandleType.UpperRightTop ||
-                resizeHandleType === ResizeHandleType.UpperRightTop
+                hoveredHandle === ResizeHandleType.UpperRightTop || resizeHandleType === ResizeHandleType.UpperRightTop
                   ? HIGHLIGHT_HANDLE_COLOR
                   : RESIZE_HANDLE_COLOR
               }
@@ -542,8 +524,7 @@ const Cuboid = ({
             <meshStandardMaterial
               attach="material"
               color={
-                hoveredHandle === ResizeHandleType.LowerLeft ||
-                resizeHandleType === ResizeHandleType.LowerLeft
+                hoveredHandle === ResizeHandleType.LowerLeft || resizeHandleType === ResizeHandleType.LowerLeft
                   ? HIGHLIGHT_HANDLE_COLOR
                   : RESIZE_HANDLE_COLOR
               }
@@ -558,9 +539,7 @@ const Cuboid = ({
               selectMe(id, e, ActionType.Resize);
               if (resizeHandleULBotRef.current) {
                 setCommonStore((state) => {
-                  const anchor = resizeHandleULBotRef.current!.localToWorld(
-                    new Vector3(lx, -ly, 0),
-                  );
+                  const anchor = resizeHandleULBotRef.current!.localToWorld(new Vector3(lx, -ly, 0));
                   state.resizeAnchor.set(anchor.x, anchor.y);
                 });
               }
@@ -575,8 +554,7 @@ const Cuboid = ({
             <meshStandardMaterial
               attach="material"
               color={
-                hoveredHandle === ResizeHandleType.UpperLeft ||
-                resizeHandleType === ResizeHandleType.UpperLeft
+                hoveredHandle === ResizeHandleType.UpperLeft || resizeHandleType === ResizeHandleType.UpperLeft
                   ? HIGHLIGHT_HANDLE_COLOR
                   : RESIZE_HANDLE_COLOR
               }
@@ -591,9 +569,7 @@ const Cuboid = ({
               selectMe(id, e, ActionType.Resize);
               if (resizeHandleLRBotRef.current) {
                 setCommonStore((state) => {
-                  const anchor = resizeHandleLRBotRef.current!.localToWorld(
-                    new Vector3(-lx, ly, 0),
-                  );
+                  const anchor = resizeHandleLRBotRef.current!.localToWorld(new Vector3(-lx, ly, 0));
                   state.resizeAnchor.set(anchor.x, anchor.y);
                 });
               }
@@ -608,8 +584,7 @@ const Cuboid = ({
             <meshStandardMaterial
               attach="material"
               color={
-                hoveredHandle === ResizeHandleType.LowerRight ||
-                resizeHandleType === ResizeHandleType.LowerRight
+                hoveredHandle === ResizeHandleType.LowerRight || resizeHandleType === ResizeHandleType.LowerRight
                   ? HIGHLIGHT_HANDLE_COLOR
                   : RESIZE_HANDLE_COLOR
               }
@@ -624,9 +599,7 @@ const Cuboid = ({
               selectMe(id, e, ActionType.Resize);
               if (resizeHandleURBotRef.current) {
                 setCommonStore((state) => {
-                  const anchor = resizeHandleURBotRef.current!.localToWorld(
-                    new Vector3(-lx, -ly, 0),
-                  );
+                  const anchor = resizeHandleURBotRef.current!.localToWorld(new Vector3(-lx, -ly, 0));
                   state.resizeAnchor.set(anchor.x, anchor.y);
                 });
               }
@@ -641,8 +614,7 @@ const Cuboid = ({
             <meshStandardMaterial
               attach="material"
               color={
-                hoveredHandle === ResizeHandleType.UpperRight ||
-                resizeHandleType === ResizeHandleType.UpperRight
+                hoveredHandle === ResizeHandleType.UpperRight || resizeHandleType === ResizeHandleType.UpperRight
                   ? HIGHLIGHT_HANDLE_COLOR
                   : RESIZE_HANDLE_COLOR
               }
@@ -776,8 +748,7 @@ const Cuboid = ({
             id={id}
             position={lowerRotateHandlePosition}
             color={
-              hoveredHandle === RotateHandleType.Lower ||
-              rotateHandleType === RotateHandleType.Lower
+              hoveredHandle === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Lower
                 ? HIGHLIGHT_HANDLE_COLOR
                 : RESIZE_HANDLE_COLOR
             }
@@ -790,8 +761,7 @@ const Cuboid = ({
             id={id}
             position={upperRotateHandlePosition}
             color={
-              hoveredHandle === RotateHandleType.Upper ||
-              rotateHandleType === RotateHandleType.Upper
+              hoveredHandle === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Upper
                 ? HIGHLIGHT_HANDLE_COLOR
                 : RESIZE_HANDLE_COLOR
             }

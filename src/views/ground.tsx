@@ -6,13 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Plane } from '@react-three/drei';
 import { useStore } from '../stores/common';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
-import {
-  IntersectionPlaneType,
-  MoveHandleType,
-  ObjectType,
-  ResizeHandleType,
-  RotateHandleType,
-} from '../types';
+import { IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS } from '../constants';
@@ -72,11 +66,7 @@ const Ground = () => {
   if (grabRef.current) {
     if (moveHandleType === MoveHandleType.Top) {
       intersectionPlaneType = IntersectionPlaneType.Horizontal;
-      intersectionPlanePosition.set(
-        grabRef.current.cx,
-        grabRef.current.cy,
-        grabRef.current.lz + MOVE_HANDLE_OFFSET,
-      );
+      intersectionPlanePosition.set(grabRef.current.cx, grabRef.current.cy, grabRef.current.lz + MOVE_HANDLE_OFFSET);
       intersectionPlaneAngle.set(0, 0, 0);
     } else if (
       moveHandleType === MoveHandleType.Left ||
@@ -111,6 +101,7 @@ const Ground = () => {
         setCommonStore((state) => {
           state.pastePoint.copy(e.intersections[0].point);
           state.clickObjectType = ObjectType.Ground;
+          state.contextMenuObjectType = ObjectType.Ground;
           state.pasteNormal = Util.UNIT_VECTOR_POS_Y;
         });
       }
@@ -129,6 +120,9 @@ const Ground = () => {
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2) return; // ignore right-click
+    setCommonStore((state) => {
+      state.contextMenuObjectType = null;
+    });
     if (e.intersections.length > 0) {
       const groundClicked = e.intersections[0].object === groundPlaneRef.current;
       if (groundClicked) {
@@ -147,10 +141,7 @@ const Ground = () => {
         if (selectedElement) {
           if (legalOnGround(selectedElement.type as ObjectType)) {
             grabRef.current = selectedElement;
-            if (
-              selectedElement.type !== ObjectType.Foundation &&
-              selectedElement.type !== ObjectType.Cuboid
-            ) {
+            if (selectedElement.type !== ObjectType.Foundation && selectedElement.type !== ObjectType.Cuboid) {
               setCommonStore((state) => {
                 state.enableOrbitController = false;
               });
@@ -260,8 +251,7 @@ const Ground = () => {
   const handleResize = (p: Vector3) => {
     const P = new Vector2(p.x, p.y);
     const R = resizeAnchor.distanceTo(P);
-    const angle =
-      Math.atan2(P.x - resizeAnchor.x, P.y - resizeAnchor.y) + grabRef.current!.rotation[2];
+    const angle = Math.atan2(P.x - resizeAnchor.x, P.y - resizeAnchor.y) + grabRef.current!.rotation[2];
     const lx = Math.abs(R * Math.sin(angle));
     const ly = Math.abs(R * Math.cos(angle));
     const c = new Vector2().addVectors(P, resizeAnchor).divideScalar(2);
@@ -271,8 +261,7 @@ const Ground = () => {
 
   const handleRotate = (p: Vector3) => {
     const { cx, cy } = grabRef.current!;
-    const rotation =
-      Math.atan2(cx - p.x, p.y - cy) + (rotateHandleType === RotateHandleType.Upper ? 0 : Math.PI);
+    const rotation = Math.atan2(cx - p.x, p.y - cy) + (rotateHandleType === RotateHandleType.Upper ? 0 : Math.PI);
     const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0;
     setElementRotation(grabRef.current!.id, 0, 0, rotation + offset);
   };

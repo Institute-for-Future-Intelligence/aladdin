@@ -4,25 +4,10 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Cone, Cylinder, Line, Ring, Sphere } from '@react-three/drei';
-import {
-  DoubleSide,
-  Euler,
-  Mesh,
-  Quaternion,
-  Raycaster,
-  RepeatWrapping,
-  TextureLoader,
-  Vector2,
-  Vector3,
-} from 'three';
+import { DoubleSide, Euler, Mesh, Quaternion, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import {
-  HIGHLIGHT_HANDLE_COLOR,
-  MOVE_HANDLE_RADIUS,
-  RESIZE_HANDLE_COLOR,
-  RESIZE_HANDLE_SIZE,
-} from '../constants';
+import { HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS, RESIZE_HANDLE_COLOR, RESIZE_HANDLE_SIZE } from '../constants';
 import {
   ActionType,
   MoveHandleType,
@@ -82,9 +67,7 @@ const SolarPanel = ({
     camera,
   } = useThree();
   const [hovered, setHovered] = useState(false);
-  const [hoveredHandle, setHoveredHandle] = useState<
-    MoveHandleType | ResizeHandleType | RotateHandleType | null
-  >(null);
+  const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [nx, setNx] = useState(1);
   const [ny, setNy] = useState(1);
   const [updateFlag, setUpdateFlag] = useState(false);
@@ -228,10 +211,7 @@ const SolarPanel = ({
     return new Euler(0, 0, rotation[2]);
   }, [normal, rotation]);
 
-  const hoverHandle = (
-    e: ThreeEvent<MouseEvent>,
-    handle: MoveHandleType | ResizeHandleType | RotateHandleType,
-  ) => {
+  const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
     if (e.intersections.length > 0) {
       const intersected = e.intersections[0].object === e.eventObject;
       if (intersected) {
@@ -264,18 +244,13 @@ const SolarPanel = ({
     return getSunDirection(new Date(date), latitude);
   }, [date, latitude]);
   const rot = getElementById(parent.id)?.rotation[2];
-  const rotatedSunDirection = rot
-    ? sunDirection.clone().applyAxisAngle(Util.UNIT_VECTOR_POS_Z, -rot)
-    : sunDirection;
+  const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(Util.UNIT_VECTOR_POS_Z, -rot) : sunDirection;
 
   const relativeEuler = useMemo(() => {
     if (sunDirection.z > 0) {
       switch (trackerType) {
         case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
-          const qrotAADAT = new Quaternion().setFromUnitVectors(
-            Util.UNIT_VECTOR_POS_Z,
-            rotatedSunDirection,
-          );
+          const qrotAADAT = new Quaternion().setFromUnitVectors(Util.UNIT_VECTOR_POS_Z, rotatedSunDirection);
           return new Euler().setFromQuaternion(qrotAADAT);
         case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
           const qrotHSAT = new Quaternion().setFromUnitVectors(
@@ -340,6 +315,9 @@ const SolarPanel = ({
           }}
           onContextMenu={(e) => {
             selectMe(id, e, ActionType.Select);
+            setCommonStore((state) => {
+              state.contextMenuObjectType = ObjectType.SolarPanel;
+            });
           }}
           onPointerOver={(e) => {
             if (e.intersections.length > 0) {
@@ -396,9 +374,7 @@ const SolarPanel = ({
                   selectMe(id, e, ActionType.Resize);
                   if (resizeHandleLeftRef.current) {
                     setCommonStore((state) => {
-                      const anchor = resizeHandleLowerRef.current!.localToWorld(
-                        new Vector3(0, ly, 0),
-                      );
+                      const anchor = resizeHandleLowerRef.current!.localToWorld(new Vector3(0, ly, 0));
                       state.resizeAnchor.set(anchor.x, anchor.y);
                     });
                   }
@@ -413,8 +389,7 @@ const SolarPanel = ({
                 <meshStandardMaterial
                   attach="material"
                   color={
-                    hoveredHandle === ResizeHandleType.Lower ||
-                    resizeHandleType === ResizeHandleType.Lower
+                    hoveredHandle === ResizeHandleType.Lower || resizeHandleType === ResizeHandleType.Lower
                       ? HIGHLIGHT_HANDLE_COLOR
                       : RESIZE_HANDLE_COLOR
                   }
@@ -429,9 +404,7 @@ const SolarPanel = ({
                   selectMe(id, e, ActionType.Resize);
                   if (resizeHandleLeftRef.current) {
                     setCommonStore((state) => {
-                      const anchor = resizeHandleUpperRef.current!.localToWorld(
-                        new Vector3(0, -ly, 0),
-                      );
+                      const anchor = resizeHandleUpperRef.current!.localToWorld(new Vector3(0, -ly, 0));
                       state.resizeAnchor.set(anchor.x, anchor.y);
                     });
                   }
@@ -446,8 +419,7 @@ const SolarPanel = ({
                 <meshStandardMaterial
                   attach="material"
                   color={
-                    hoveredHandle === ResizeHandleType.Upper ||
-                    resizeHandleType === ResizeHandleType.Upper
+                    hoveredHandle === ResizeHandleType.Upper || resizeHandleType === ResizeHandleType.Upper
                       ? HIGHLIGHT_HANDLE_COLOR
                       : RESIZE_HANDLE_COLOR
                   }
@@ -462,9 +434,7 @@ const SolarPanel = ({
                   selectMe(id, e, ActionType.Resize);
                   if (resizeHandleLeftRef.current) {
                     setCommonStore((state) => {
-                      const anchor = resizeHandleLeftRef.current!.localToWorld(
-                        new Vector3(lx, 0, 0),
-                      );
+                      const anchor = resizeHandleLeftRef.current!.localToWorld(new Vector3(lx, 0, 0));
                       state.resizeAnchor.set(anchor.x, anchor.y);
                     });
                   }
@@ -479,8 +449,7 @@ const SolarPanel = ({
                 <meshStandardMaterial
                   attach="material"
                   color={
-                    hoveredHandle === ResizeHandleType.Left ||
-                    resizeHandleType === ResizeHandleType.Left
+                    hoveredHandle === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Left
                       ? HIGHLIGHT_HANDLE_COLOR
                       : RESIZE_HANDLE_COLOR
                   }
@@ -495,9 +464,7 @@ const SolarPanel = ({
                   selectMe(id, e, ActionType.Resize);
                   if (resizeHandleLeftRef.current) {
                     setCommonStore((state) => {
-                      const anchor = resizeHandleRightRef.current!.localToWorld(
-                        new Vector3(-lx, 0, 0),
-                      );
+                      const anchor = resizeHandleRightRef.current!.localToWorld(new Vector3(-lx, 0, 0));
                       state.resizeAnchor.set(anchor.x, anchor.y);
                     });
                   }
@@ -512,8 +479,7 @@ const SolarPanel = ({
                 <meshStandardMaterial
                   attach="material"
                   color={
-                    hoveredHandle === ResizeHandleType.Right ||
-                    resizeHandleType === ResizeHandleType.Right
+                    hoveredHandle === ResizeHandleType.Right || resizeHandleType === ResizeHandleType.Right
                       ? HIGHLIGHT_HANDLE_COLOR
                       : RESIZE_HANDLE_COLOR
                   }
@@ -627,8 +593,7 @@ const SolarPanel = ({
             id={id}
             position={[0, -ly / 2 - rotateHandleSize / 2, poleHeight]}
             color={
-              hoveredHandle === RotateHandleType.Upper ||
-              rotateHandleType === RotateHandleType.Upper
+              hoveredHandle === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Upper
                 ? HIGHLIGHT_HANDLE_COLOR
                 : RESIZE_HANDLE_COLOR
             }
@@ -641,8 +606,7 @@ const SolarPanel = ({
             id={id}
             position={[0, ly / 2 + rotateHandleSize / 2, poleHeight]}
             color={
-              hoveredHandle === RotateHandleType.Lower ||
-              rotateHandleType === RotateHandleType.Lower
+              hoveredHandle === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Lower
                 ? HIGHLIGHT_HANDLE_COLOR
                 : RESIZE_HANDLE_COLOR
             }
@@ -681,9 +645,7 @@ const SolarPanel = ({
             <meshStandardMaterial
               side={DoubleSide}
               color={
-                hoveredHandle === RotateHandleType.Tilt || showTiltAngle
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : RESIZE_HANDLE_COLOR
+                hoveredHandle === RotateHandleType.Tilt || showTiltAngle ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
               }
             />
           </Ring>
@@ -722,12 +684,7 @@ const SolarPanel = ({
                   }
                 }}
               >
-                <meshStandardMaterial
-                  depthTest={false}
-                  transparent={true}
-                  opacity={0.5}
-                  side={DoubleSide}
-                />
+                <meshStandardMaterial depthTest={false} transparent={true} opacity={0.5} side={DoubleSide} />
               </Ring>
               {/* pointer */}
               <Line
@@ -741,12 +698,7 @@ const SolarPanel = ({
               {/* scale */}
               {degree.map((e, i) => {
                 return (
-                  <group
-                    key={i}
-                    rotation={
-                      new Euler((Math.PI / 12) * i - Math.PI / 2, 0, relativeEuler.z, 'ZXY')
-                    }
-                  >
+                  <group key={i} rotation={new Euler((Math.PI / 12) * i - Math.PI / 2, 0, relativeEuler.z, 'ZXY')}>
                     <Line
                       points={[
                         [0, 0, 1.8 * tiltHandleSize],
@@ -815,10 +767,7 @@ const SolarPanel = ({
             color={'white'}
           />
           <Line
-            points={[
-              rotatedSunDirection.clone().multiplyScalar(0.5),
-              normalVector.clone().multiplyScalar(0.5),
-            ]}
+            points={[rotatedSunDirection.clone().multiplyScalar(0.5), normalVector.clone().multiplyScalar(0.5)]}
             name={'Angle'}
             lineWidth={0.5}
             color={'white'}

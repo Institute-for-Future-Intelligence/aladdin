@@ -8,14 +8,7 @@ import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { FoundationModel } from '../models/FoundationModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import {
-  ActionType,
-  MoveHandleType,
-  ObjectType,
-  Orientation,
-  ResizeHandleType,
-  RotateHandleType,
-} from '../types';
+import { ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType } from '../types';
 import {
   HIGHLIGHT_HANDLE_COLOR,
   MOVE_HANDLE_COLOR_1,
@@ -72,9 +65,7 @@ const Foundation = ({
   const [hoveredResizeHandleUL, setHoveredResizeHandleUL] = useState(false);
   const [hoveredResizeHandleLR, setHoveredResizeHandleLR] = useState(false);
   const [hoveredResizeHandleUR, setHoveredResizeHandleUR] = useState(false);
-  const [hoveredHandle, setHoveredHandle] = useState<
-    MoveHandleType | ResizeHandleType | RotateHandleType | null
-  >(null);
+  const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const baseRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
@@ -198,6 +189,12 @@ const Foundation = ({
           setCommonStore((state) => {
             state.pastePoint.copy(e.intersections[0].point);
             state.clickObjectType = ObjectType.Foundation;
+            if (e.intersections.length > 0) {
+              const intersected = e.intersections[0].object === baseRef.current;
+              if (intersected) {
+                state.contextMenuObjectType = ObjectType.Foundation;
+              }
+            }
             state.pasteNormal = Util.UNIT_VECTOR_POS_Y;
           });
         }}
@@ -214,6 +211,9 @@ const Foundation = ({
         }}
         onPointerDown={(e) => {
           if (e.button === 2) return; // ignore right-click
+          setCommonStore((state) => {
+            state.contextMenuObjectType = null;
+          });
           selectMe(id, e, ActionType.Select);
           const selectedElement = getSelectedElement();
           if (selectedElement?.id === id) {
@@ -312,8 +312,7 @@ const Foundation = ({
                         -pr +
                         Math.atan2(-p.x + wc.x, p.y - wc.y) +
                         (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
-                      const offset =
-                        Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0; // make sure angle is between -PI to PI
+                      const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0; // make sure angle is between -PI to PI
                       updateElementById(solarPanel.id, { relativeAzimuth: rotation + offset });
                       setCommonStore((state) => {
                         state.selectedElementAngle = rotation + offset;
@@ -332,17 +331,13 @@ const Foundation = ({
                           if (solarPanel.orientation === Orientation.portrait) {
                             const nx = Math.max(
                               1,
-                              Math.ceil(
-                                (dyl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length,
-                              ),
+                              Math.ceil((dyl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length),
                             );
                             dyl = nx * solarPanel.pvModel.length;
                           } else {
                             const nx = Math.max(
                               1,
-                              Math.ceil(
-                                (dyl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width,
-                              ),
+                              Math.ceil((dyl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width),
                             );
                             dyl = nx * solarPanel.pvModel.width;
                           }
@@ -352,9 +347,7 @@ const Foundation = ({
                           const wcy = resizeAnchor.y - (dyl * Math.cos(angle)) / 2;
                           const wc = new Vector2(wcx, wcy); // world panel center
                           const wbc = new Vector2(cx, cy); // world foundation center
-                          const rc = new Vector2()
-                            .subVectors(wc, wbc)
-                            .rotateAround(new Vector2(0, 0), -rotation[2]);
+                          const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
                           setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
                         }
                         break;
@@ -369,17 +362,13 @@ const Foundation = ({
                           if (solarPanel.orientation === Orientation.portrait) {
                             const nx = Math.max(
                               1,
-                              Math.ceil(
-                                (dyl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length,
-                              ),
+                              Math.ceil((dyl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length),
                             );
                             dyl = nx * solarPanel.pvModel.length;
                           } else {
                             const nx = Math.max(
                               1,
-                              Math.ceil(
-                                (dyl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width,
-                              ),
+                              Math.ceil((dyl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width),
                             );
                             dyl = nx * solarPanel.pvModel.width;
                           }
@@ -389,9 +378,7 @@ const Foundation = ({
                           const wcy = resizeAnchor.y + (dyl * Math.cos(angle)) / 2;
                           const wc = new Vector2(wcx, wcy);
                           const wbc = new Vector2(cx, cy);
-                          const rc = new Vector2()
-                            .subVectors(wc, wbc)
-                            .rotateAround(new Vector2(0, 0), -rotation[2]);
+                          const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
                           setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
                         }
                         break;
@@ -406,17 +393,13 @@ const Foundation = ({
                           if (solarPanel.orientation === Orientation.portrait) {
                             const nx = Math.max(
                               1,
-                              Math.ceil(
-                                (dxl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width,
-                              ),
+                              Math.ceil((dxl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width),
                             );
                             dxl = nx * solarPanel.pvModel.width;
                           } else {
                             const nx = Math.max(
                               1,
-                              Math.ceil(
-                                (dxl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length,
-                              ),
+                              Math.ceil((dxl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length),
                             );
                             dxl = nx * solarPanel.pvModel.length;
                           }
@@ -426,9 +409,7 @@ const Foundation = ({
                           const wcy = resizeAnchor.y - (dxl * Math.sin(angle)) / 2;
                           const wc = new Vector2(wcx, wcy);
                           const wbc = new Vector2(cx, cy);
-                          const rc = new Vector2()
-                            .subVectors(wc, wbc)
-                            .rotateAround(new Vector2(0, 0), -rotation[2]);
+                          const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
                           setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
                         }
                         break;
@@ -443,17 +424,13 @@ const Foundation = ({
                           if (solarPanel.orientation === Orientation.portrait) {
                             const nx = Math.max(
                               1,
-                              Math.ceil(
-                                (dxl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width,
-                              ),
+                              Math.ceil((dxl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width),
                             );
                             dxl = nx * solarPanel.pvModel.width;
                           } else {
                             const nx = Math.max(
                               1,
-                              Math.ceil(
-                                (dxl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length,
-                              ),
+                              Math.ceil((dxl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length),
                             );
                             dxl = nx * solarPanel.pvModel.length;
                           }
@@ -463,9 +440,7 @@ const Foundation = ({
                           const wcy = resizeAnchor.y + (dxl * Math.sin(angle)) / 2;
                           const wc = new Vector2(wcx, wcy);
                           const wbc = new Vector2(cx, cy);
-                          const rc = new Vector2()
-                            .subVectors(wc, wbc)
-                            .rotateAround(new Vector2(0, 0), -rotation[2]);
+                          const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
                           setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
                         }
                         break;
@@ -624,8 +599,7 @@ const Foundation = ({
             <meshStandardMaterial
               attach="material"
               color={
-                hoveredHandle === ResizeHandleType.LowerLeft ||
-                resizeHandleType === ResizeHandleType.LowerLeft
+                hoveredHandle === ResizeHandleType.LowerLeft || resizeHandleType === ResizeHandleType.LowerLeft
                   ? HIGHLIGHT_HANDLE_COLOR
                   : RESIZE_HANDLE_COLOR
               }
@@ -655,8 +629,7 @@ const Foundation = ({
             <meshStandardMaterial
               attach="material"
               color={
-                hoveredHandle === ResizeHandleType.UpperLeft ||
-                resizeHandleType === ResizeHandleType.UpperLeft
+                hoveredHandle === ResizeHandleType.UpperLeft || resizeHandleType === ResizeHandleType.UpperLeft
                   ? HIGHLIGHT_HANDLE_COLOR
                   : RESIZE_HANDLE_COLOR
               }
@@ -686,8 +659,7 @@ const Foundation = ({
             <meshStandardMaterial
               attach="material"
               color={
-                hoveredHandle === ResizeHandleType.LowerRight ||
-                resizeHandleType === ResizeHandleType.LowerRight
+                hoveredHandle === ResizeHandleType.LowerRight || resizeHandleType === ResizeHandleType.LowerRight
                   ? HIGHLIGHT_HANDLE_COLOR
                   : RESIZE_HANDLE_COLOR
               }
@@ -717,8 +689,7 @@ const Foundation = ({
             <meshStandardMaterial
               attach="material"
               color={
-                hoveredHandle === ResizeHandleType.UpperRight ||
-                resizeHandleType === ResizeHandleType.UpperRight
+                hoveredHandle === ResizeHandleType.UpperRight || resizeHandleType === ResizeHandleType.UpperRight
                   ? HIGHLIGHT_HANDLE_COLOR
                   : RESIZE_HANDLE_COLOR
               }
@@ -828,8 +799,7 @@ const Foundation = ({
             id={id}
             position={lowerRotateHandlePosition}
             color={
-              hoveredHandle === RotateHandleType.Lower ||
-              rotateHandleType === RotateHandleType.Lower
+              hoveredHandle === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Lower
                 ? HIGHLIGHT_HANDLE_COLOR
                 : RESIZE_HANDLE_COLOR
             }
@@ -842,8 +812,7 @@ const Foundation = ({
             id={id}
             position={upperRotateHandlePosition}
             color={
-              hoveredHandle === RotateHandleType.Upper ||
-              rotateHandleType === RotateHandleType.Upper
+              hoveredHandle === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Upper
                 ? HIGHLIGHT_HANDLE_COLOR
                 : RESIZE_HANDLE_COLOR
             }

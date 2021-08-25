@@ -112,10 +112,7 @@ const Sky = ({ theme = 'Default', ...props }: SkyProps) => {
         if (selectedElement) {
           if (legalOnGround(selectedElement.type as ObjectType)) {
             grabRef.current = selectedElement;
-            if (
-              selectedElement.type !== ObjectType.Foundation &&
-              selectedElement.type !== ObjectType.Cuboid
-            ) {
+            if (selectedElement.type !== ObjectType.Foundation && selectedElement.type !== ObjectType.Cuboid) {
               setCommonStore((state) => {
                 state.enableOrbitController = false;
               });
@@ -159,10 +156,22 @@ const Sky = ({ theme = 'Default', ...props }: SkyProps) => {
         name={'Sky'}
         scale={[1, scale, 1]}
         onContextMenu={(e) => {
-          clickSky(e);
+          if (e.intersections.length > 0) {
+            const skyClicked = e.intersections[0].object === meshRef.current;
+            if (skyClicked) {
+              selectNone();
+              setCommonStore((state) => {
+                state.clickObjectType = ObjectType.Sky;
+                state.contextMenuObjectType = ObjectType.Sky;
+              });
+            }
+          }
         }}
         onPointerDown={(e) => {
           if (e.button === 2) return; // ignore right-click
+          setCommonStore((state) => {
+            state.contextMenuObjectType = null;
+          });
           clickSky(e);
         }}
         rotation={[Math.PI / 2, 0, 0]}

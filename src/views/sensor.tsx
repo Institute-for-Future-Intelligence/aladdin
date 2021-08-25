@@ -31,6 +31,7 @@ const Sensor = ({
   light = true,
   heatFlux = false,
 }: SensorModel) => {
+  const setCommonStore = useStore((state) => state.set);
   const shadowEnabled = useStore((state) => state.viewState.shadowEnabled);
   const getElementById = useStore((state) => state.getElementById);
   const selectMe = useStore((state) => state.selectMe);
@@ -121,6 +122,9 @@ const Sensor = ({
         }}
         onContextMenu={(e) => {
           selectMe(id, e);
+          setCommonStore((state) => {
+            state.contextMenuObjectType = ObjectType.Sensor;
+          });
         }}
         onPointerOver={(e) => {
           if (e.intersections.length > 0) {
@@ -136,10 +140,7 @@ const Sensor = ({
           domElement.style.cursor = 'default';
         }}
       >
-        <meshStandardMaterial
-          attach="material"
-          color={element?.lit ? HIGHLIGHT_HANDLE_COLOR : color}
-        />
+        <meshStandardMaterial attach="material" color={element?.lit ? HIGHLIGHT_HANDLE_COLOR : color} />
       </Box>
 
       {!selected && (

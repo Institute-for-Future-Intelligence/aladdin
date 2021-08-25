@@ -16,21 +16,13 @@ import MapleShedImage from '../resources/maple_shed.png';
 import OakImage from '../resources/oak.png';
 import OakShedImage from '../resources/oak_shed.png';
 import PineImage from '../resources/pine.png';
-import {
-  DoubleSide,
-  Euler,
-  Mesh,
-  MeshDepthMaterial,
-  RGBADepthPacking,
-  TextureLoader,
-  Vector3,
-} from 'three';
+import { DoubleSide, Euler, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { Billboard, Cone, Plane, Sphere } from '@react-three/drei';
 import { MOVE_HANDLE_RADIUS } from '../constants';
 import { TreeModel } from '../models/TreeModel';
-import { TreeType } from '../types';
+import { ObjectType, TreeType } from '../types';
 import { Util } from '../Util';
 
 const Tree = ({
@@ -46,6 +38,7 @@ const Tree = ({
   evergreen = false,
   ...props
 }: TreeModel) => {
+  const setCommonStore = useStore((state) => state.set);
   const date = useStore((state) => state.world.date);
   const now = new Date(date);
   const shadowEnabled = useStore((state) => state.viewState.shadowEnabled);
@@ -129,13 +122,7 @@ const Tree = ({
   // IMPORTANT: model mesh must use double side in order to intercept sunlight
   return (
     <group name={'Tree Group ' + id} position={[cx, cy, lz / 2]}>
-      <Billboard
-        uuid={id}
-        name={name}
-        userData={{ aabb: true }}
-        follow={false}
-        rotation={solidTreeRotation}
-      >
+      <Billboard uuid={id} name={name} userData={{ aabb: true }} follow={false} rotation={solidTreeRotation}>
         <Plane args={[lx, lz]}>
           <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
         </Plane>
@@ -163,12 +150,7 @@ const Tree = ({
           args={[lx / 2, 8, 8, 0, Util.TWO_PI, 0, theta]}
           scale={[1, lz / lx, 1]}
         >
-          <meshStandardMaterial
-            attach="material"
-            side={DoubleSide}
-            transparent={true}
-            opacity={0.75}
-          />
+          <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75} />
         </Sphere>
       ) : (
         <Cone
@@ -179,41 +161,36 @@ const Tree = ({
           args={[lx / 2, lz, 8, 8, true]}
           scale={[1, 1, 1]}
         >
-          <meshStandardMaterial
-            attach="material"
-            side={DoubleSide}
-            transparent={true}
-            opacity={0.75}
-          />
+          <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75} />
         </Cone>
       )}
 
       {/* billboard for interactions (don't use a plane as it may become unselected at some angle) */}
-      <Billboard
-        ref={meshRef}
-        name={'Interaction Billboard'}
-        visible={false}
-        position={[0, 0, -lz / 2 + 0.5]}
-        onContextMenu={(e) => {
-          selectMe(id, e);
-        }}
-        onPointerDown={(e) => {
-          if (e.button === 2) return; // ignore right-click
-          selectMe(id, e);
-        }}
-        onPointerOver={(e) => {
-          if (e.intersections.length > 0) {
-            const intersected = e.intersections[0].object === meshRef.current;
-            if (intersected) {
-              setHovered(true);
+      <Billboard ref={meshRef} name={'Interaction Billboard'} visible={false} position={[0, 0, -lz / 2 + 0.5]}>
+        <Plane
+          args={[lx / 2, 1]}
+          onContextMenu={(e) => {
+            selectMe(id, e);
+            setCommonStore((state) => {
+              state.contextMenuObjectType = ObjectType.Tree;
+            });
+          }}
+          onPointerDown={(e) => {
+            if (e.button === 2) return; // ignore right-click
+            selectMe(id, e);
+          }}
+          onPointerOver={(e) => {
+            if (e.intersections.length > 0) {
+              const intersected = e.intersections[0].object === meshRef.current;
+              if (intersected) {
+                setHovered(true);
+              }
             }
-          }
-        }}
-        onPointerOut={(e) => {
-          setHovered(false);
-        }}
-      >
-        <Plane args={[lx / 2, 1]} />
+          }}
+          onPointerOut={(e) => {
+            setHovered(false);
+          }}
+        />
       </Billboard>
 
       {/* draw handle */}

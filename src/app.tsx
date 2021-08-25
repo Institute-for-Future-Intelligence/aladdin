@@ -25,7 +25,7 @@ import { showInfo, visitHomepage, visitIFI } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
 import { Modal } from 'antd';
-import DropdownContextMenu from './contextMenu';
+import DropdownContextMenu from './components/contextMenu';
 import WeatherPanel from './panels/weatherPanel';
 import { GraphDataType, ObjectType } from './types';
 import SensorSimulation from './analysis/sensorSimulation';
@@ -84,8 +84,7 @@ const App = () => {
 
   useEffect(() => {
     if (canvasRef.current) {
-      canvasRef.current.style.cursor =
-        objectTypeToAdd === ObjectType.None ? 'default' : 'crosshair';
+      canvasRef.current.style.cursor = objectTypeToAdd === ObjectType.None ? 'default' : 'crosshair';
     }
   }, [objectTypeToAdd]);
 
@@ -192,8 +191,7 @@ const App = () => {
           title={'Go to Institute for Future Intelligence'}
           onClick={visitIFI}
         />
-        &nbsp;&nbsp; Institute for Future Intelligence, &copy;{new Date().getFullYear()}. Version{' '}
-        {VERSION}
+        &nbsp;&nbsp; Institute for Future Intelligence, &copy;{new Date().getFullYear()}. Version {VERSION}
       </div>
       <MainMenu
         canvas={canvasRef.current}
@@ -223,22 +221,13 @@ const App = () => {
       {viewState.showStickyNotePanel && <StickyNotePanel />}
       {viewState.showInfoPanel && <InfoPanel city={city} />}
       {viewState.showWeatherPanel && (
-        <WeatherPanel
-          city={city}
-          graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]}
-        />
+        <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]} />
       )}
       {viewState.showYearlyLightSensorPanel && (
-        <YearlyLightSensorPanel
-          city={city}
-          collectYearlyLightSensorData={collectYearlyLightSensorData}
-        />
+        <YearlyLightSensorPanel city={city} collectYearlyLightSensorData={collectYearlyLightSensorData} />
       )}
       {viewState.showDailyLightSensorPanel && (
-        <DailyLightSensorPanel
-          city={city}
-          collectDailyLightSensorData={collectDailyLightSensorData}
-        />
+        <DailyLightSensorPanel city={city} collectDailyLightSensorData={collectDailyLightSensorData} />
       )}
       {viewState.showYearlyPvYieldPanel && (
         <YearlyPvYieldPanel
@@ -256,11 +245,7 @@ const App = () => {
           analyzeDailyPvYield={analyzeDailyPvYield}
         />
       )}
-      <DropdownContextMenu
-        city={city}
-        canvas={canvasRef.current}
-        setPvDialogVisible={setPvModelDialogVisible}
-      >
+      <DropdownContextMenu setPvDialogVisible={setPvModelDialogVisible}>
         <div>
           <Canvas
             shadows={true}

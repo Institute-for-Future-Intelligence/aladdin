@@ -25,21 +25,14 @@ import JuneImage from '../resources/june.png';
 import JuroImage from '../resources/juro.png';
 import { DoubleSide, Euler, Mesh, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
-import { ThreeEvent, useThree } from '@react-three/fiber';
+import { useThree } from '@react-three/fiber';
 import { HumanModel } from '../models/HumanModel';
 import { Billboard, Plane, Sphere } from '@react-three/drei';
 import { MOVE_HANDLE_RADIUS } from '../constants';
-import { HumanName } from '../types';
+import { HumanName, ObjectType } from '../types';
 
-const Human = ({
-  id,
-  cx,
-  cy,
-  name = HumanName.Jack,
-  selected = false,
-  locked = false,
-  ...props
-}: HumanModel) => {
+const Human = ({ id, cx, cy, name = HumanName.Jack, selected = false, locked = false, ...props }: HumanModel) => {
+  const setCommonStore = useStore((state) => state.set);
   const selectMe = useStore((state) => state.selectMe);
   const [hovered, setHovered] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);
@@ -192,33 +185,31 @@ const Human = ({
 
   return (
     <group name={'Human Group ' + id} position={[cx, cy, height / 2]}>
-      <Billboard
-        uuid={id}
-        ref={meshRef}
-        name={name}
-        userData={{ aabb: true }}
-        follow={false}
-        rotation={rotation}
-        onContextMenu={(e) => {
-          selectMe(id, e);
-        }}
-        onPointerDown={(e) => {
-          if (e.button === 2) return; // ignore right-click
-          selectMe(id, e);
-        }}
-        onPointerOver={(e) => {
-          if (e.intersections.length > 0) {
-            const intersected = e.intersections[0].object === meshRef.current;
-            if (intersected) {
-              setHovered(true);
+      <Billboard uuid={id} ref={meshRef} name={name} userData={{ aabb: true }} follow={false} rotation={rotation}>
+        <Plane
+          args={[width, height]}
+          onContextMenu={(e) => {
+            selectMe(id, e);
+            setCommonStore((state) => {
+              state.contextMenuObjectType = ObjectType.Human;
+            });
+          }}
+          onPointerDown={(e) => {
+            if (e.button === 2) return; // ignore right-click
+            selectMe(id, e);
+          }}
+          onPointerOver={(e) => {
+            if (e.intersections.length > 0) {
+              const intersected = e.intersections[0].object === meshRef.current;
+              if (intersected) {
+                setHovered(true);
+              }
             }
-          }
-        }}
-        onPointerOut={(e) => {
-          setHovered(false);
-        }}
-      >
-        <Plane args={[width, height]}>
+          }}
+          onPointerOut={(e) => {
+            setHovered(false);
+          }}
+        >
           <meshBasicMaterial map={texture} alphaTest={0.5} side={DoubleSide} />
         </Plane>
       </Billboard>
