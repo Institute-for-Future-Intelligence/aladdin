@@ -149,6 +149,7 @@ const Tree = ({
           name={name + ' Model'}
           args={[lx / 2, 8, 8, 0, Util.TWO_PI, 0, theta]}
           scale={[1, lz / lx, 1]}
+          rotation={[Math.PI / 2, 0, 0]}
         >
           <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75} />
         </Sphere>
@@ -160,6 +161,7 @@ const Tree = ({
           position={[0, 0, lz * 0.1]}
           args={[lx / 2, lz, 8, 8, true]}
           scale={[1, 1, 1]}
+          rotation={[Math.PI / 2, 0, 0]}
         >
           <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75} />
         </Cone>

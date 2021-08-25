@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Select } from 'antd';
 import { useStore } from '../stores/common';
 import { TreeType } from '../types';
@@ -23,6 +23,7 @@ export interface TreeSelectionProps {
 const TreeSelection = ({ ...rest }: TreeSelectionProps) => {
   const updateElementById = useStore((state) => state.updateElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
   const tree = getSelectedElement();
 
@@ -36,46 +37,31 @@ const TreeSelection = ({ ...rest }: TreeSelectionProps) => {
             name: value,
             evergreen: value === TreeType.Pine,
           });
+          setUpdateFlag(!updateFlag);
         }
       }}
     >
       <Option key={TreeType.Cottonwood} value={TreeType.Cottonwood}>
-        <img
-          alt={TreeType.Cottonwood}
-          src={CottonwoodImage}
-          height={20}
-          style={{ paddingRight: '8px' }}
-        />{' '}
+        <img alt={TreeType.Cottonwood} src={CottonwoodImage} height={20} style={{ paddingRight: '8px' }} />{' '}
         {TreeType.Cottonwood}
       </Option>
       <Option key={TreeType.Dogwood} value={TreeType.Dogwood}>
-        <img
-          alt={TreeType.Dogwood}
-          src={DogwoodImage}
-          height={20}
-          style={{ paddingRight: '8px' }}
-        />{' '}
-        {TreeType.Dogwood}
+        <img alt={TreeType.Dogwood} src={DogwoodImage} height={20} style={{ paddingRight: '8px' }} /> {TreeType.Dogwood}
       </Option>
       <Option key={TreeType.Elm} value={TreeType.Elm}>
-        <img alt={TreeType.Elm} src={ElmImage} height={20} style={{ paddingRight: '8px' }} />{' '}
-        {TreeType.Elm}
+        <img alt={TreeType.Elm} src={ElmImage} height={20} style={{ paddingRight: '8px' }} /> {TreeType.Elm}
       </Option>
       <Option key={TreeType.Linden} value={TreeType.Linden}>
-        <img alt={TreeType.Linden} src={LindenImage} height={20} style={{ paddingRight: '8px' }} />{' '}
-        {TreeType.Linden}
+        <img alt={TreeType.Linden} src={LindenImage} height={20} style={{ paddingRight: '8px' }} /> {TreeType.Linden}
       </Option>
       <Option key={TreeType.Maple} value={TreeType.Maple}>
-        <img alt={TreeType.Maple} src={MapleImage} height={20} style={{ paddingRight: '8px' }} />{' '}
-        {TreeType.Maple}
+        <img alt={TreeType.Maple} src={MapleImage} height={20} style={{ paddingRight: '8px' }} /> {TreeType.Maple}
       </Option>
       <Option key={TreeType.Oak} value={TreeType.Oak}>
-        <img alt={TreeType.Oak} src={OakImage} height={20} style={{ paddingRight: '8px' }} />{' '}
-        {TreeType.Oak}
+        <img alt={TreeType.Oak} src={OakImage} height={20} style={{ paddingRight: '8px' }} /> {TreeType.Oak}
       </Option>
       <Option key={TreeType.Pine} value={TreeType.Pine}>
-        <img alt={TreeType.Pine} src={PineImage} height={20} style={{ paddingRight: '8px' }} />{' '}
-        {TreeType.Pine}
+        <img alt={TreeType.Pine} src={PineImage} height={20} style={{ paddingRight: '8px' }} /> {TreeType.Pine}
       </Option>
     </Select>
   );
