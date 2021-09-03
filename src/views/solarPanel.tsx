@@ -70,6 +70,7 @@ const SolarPanel = ({
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [nx, setNx] = useState(1);
   const [ny, setNy] = useState(1);
+  const [faceUp, setFaceUp] = useState<boolean>();
   const [updateFlag, setUpdateFlag] = useState(false);
   const baseRef = useRef<Mesh>();
   const moveHandleRef = useRef<Mesh>();
@@ -83,13 +84,14 @@ const SolarPanel = ({
 
   const heliodonRadius = useStore((state) => state.heliodonRadius);
   const sunBeamLength = Math.max(100, heliodonRadius);
+  const panelNormal = new Vector3().fromArray(normal);
 
   if (parent) {
     const p = getElementById(parent.id);
     if (p) {
       switch (p.type) {
         case ObjectType.Foundation:
-          cz = p.cz + p.lz / 2;
+          cz = poleHeight + lz / 2 + p.lz;
           if (Util.isZero(rotation[2])) {
             cx = p.cx + cx * p.lx;
             cy = p.cy + cy * p.ly;
@@ -105,20 +107,22 @@ const SolarPanel = ({
           if (Util.isZero(rotation[2])) {
             cx = p.cx + cx * p.lx;
             cy = p.cy + cy * p.ly;
-            cz = p.cz + cz * p.lz;
           } else {
             // we must rotate the real length, not normalized length
             const v = new Vector3(cx * p.lx, cy * p.ly, cz * p.lz);
             v.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, rotation[2]);
             cx = p.cx + v.x;
             cy = p.cy + v.y;
-            cz = p.cz + v.z;
+          }
+          if (Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z)) {
+            cz = poleHeight + lz / 2 + p.lz;
+          } else {
+            cz = p.cz + cz * p.lz;
           }
           break;
       }
     }
   }
-  cz = poleHeight + lz / 2 + parent.lz;
   lz = pvModel.thickness;
 
   // deal with a single solar panel
@@ -161,6 +165,10 @@ const SolarPanel = ({
     };
   }, []);
 
+  useEffect(() => {
+    setFaceUp(Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z));
+  }, [normal]);
+
   const texture = useMemo(() => {
     const loader = new TextureLoader();
     let texture;
@@ -191,22 +199,22 @@ const SolarPanel = ({
   }, [orientation, pvModel.color, nx, ny]);
 
   const euler = useMemo(() => {
-    const v = new Vector3().fromArray(normal);
+    const v = panelNormal;
     if (Util.isSame(v, Util.UNIT_VECTOR_POS_Z)) {
       // top face in model coordinate system
-      return new Euler(0, 0, rotation[2]);
+      return new Euler(0, 0, rotation[2], 'ZXY');
     } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_X)) {
       // east face in model coordinate system
-      return new Euler(0, Util.HALF_PI, rotation[2]);
+      return new Euler(Util.HALF_PI, 0, rotation[2] + Util.HALF_PI, 'ZXY');
     } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_X)) {
       // west face in model coordinate system
-      return new Euler(0, Util.HALF_PI, rotation[2]);
+      return new Euler(Util.HALF_PI, 0, rotation[2] - Util.HALF_PI, 'ZXY');
     } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_Y)) {
-      // south face in the model coordinate system
-      return new Euler(0, Util.HALF_PI, rotation[2] + Util.HALF_PI);
-    } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_Y)) {
       // north face in the model coordinate system
-      return new Euler(0, Util.HALF_PI, rotation[2] + Util.HALF_PI);
+      return new Euler(Util.HALF_PI, 0, rotation[2] + Math.PI, 'ZXY');
+    } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_Y)) {
+      // south face in the model coordinate system
+      return new Euler(Util.HALF_PI, 0, rotation[2], 'ZXY');
     }
     return new Euler(0, 0, rotation[2]);
   }, [normal, rotation]);
@@ -264,8 +272,12 @@ const SolarPanel = ({
           return new Euler(tiltAngle, 0, Math.sign(v2d.x) * Math.acos(dot), 'ZXY');
       }
     }
-    return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
-  }, [trackerType, sunDirection, tiltAngle, relativeAzimuth]);
+    if (Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z)) {
+      return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
+    } else {
+      return new Euler();
+    }
+  }, [trackerType, sunDirection, tiltAngle, relativeAzimuth, normal]);
 
   const normalVector = useMemo(() => {
     const v = new Vector3();
@@ -374,8 +386,8 @@ const SolarPanel = ({
                   selectMe(id, e, ActionType.Resize);
                   if (resizeHandleLeftRef.current) {
                     setCommonStore((state) => {
-                      const anchor = resizeHandleLowerRef.current!.localToWorld(new Vector3(0, ly, 0));
-                      state.resizeAnchor.set(anchor.x, anchor.y);
+                      const anchor = resizeHandleLowerRef.current!.localToWorld(new Vector3(0, ly, -positionLL.z));
+                      state.resizeAnchor.copy(anchor);
                     });
                   }
                 }}
@@ -404,8 +416,8 @@ const SolarPanel = ({
                   selectMe(id, e, ActionType.Resize);
                   if (resizeHandleLeftRef.current) {
                     setCommonStore((state) => {
-                      const anchor = resizeHandleUpperRef.current!.localToWorld(new Vector3(0, -ly, 0));
-                      state.resizeAnchor.set(anchor.x, anchor.y);
+                      const anchor = resizeHandleUpperRef.current!.localToWorld(new Vector3(0, -ly, -positionUL.z));
+                      state.resizeAnchor.copy(anchor);
                     });
                   }
                 }}
@@ -434,8 +446,8 @@ const SolarPanel = ({
                   selectMe(id, e, ActionType.Resize);
                   if (resizeHandleLeftRef.current) {
                     setCommonStore((state) => {
-                      const anchor = resizeHandleLeftRef.current!.localToWorld(new Vector3(lx, 0, 0));
-                      state.resizeAnchor.set(anchor.x, anchor.y);
+                      const anchor = resizeHandleLeftRef.current!.localToWorld(new Vector3(lx, 0, -positionLL.z));
+                      state.resizeAnchor.copy(anchor);
                     });
                   }
                 }}
@@ -464,8 +476,8 @@ const SolarPanel = ({
                   selectMe(id, e, ActionType.Resize);
                   if (resizeHandleLeftRef.current) {
                     setCommonStore((state) => {
-                      const anchor = resizeHandleRightRef.current!.localToWorld(new Vector3(-lx, 0, 0));
-                      state.resizeAnchor.set(anchor.x, anchor.y);
+                      const anchor = resizeHandleRightRef.current!.localToWorld(new Vector3(-lx, 0, -positionLR.z));
+                      state.resizeAnchor.copy(anchor);
                     });
                   }
                 }}
@@ -586,7 +598,7 @@ const SolarPanel = ({
       </group>
 
       {/* draw rotate handles */}
-      {selected && !locked && trackerType === TrackerType.NO_TRACKER && (
+      {selected && !locked && trackerType === TrackerType.NO_TRACKER && faceUp && (
         <group position={[0, 0, -poleHeight]} rotation={[0, 0, relativeEuler.z]}>
           {/* rotate handles */}
           <RotateHandle
@@ -619,7 +631,7 @@ const SolarPanel = ({
       )}
 
       {/* draw tilt handles */}
-      {selected && !locked && trackerType === TrackerType.NO_TRACKER && (
+      {selected && !locked && trackerType === TrackerType.NO_TRACKER && faceUp && (
         <>
           {/* ring handles */}
           <Ring
@@ -735,6 +747,7 @@ const SolarPanel = ({
 
       {/* draw poles */}
       {poleHeight > 0 &&
+        faceUp &&
         poles.map((p, i) => {
           return (
             <Cylinder

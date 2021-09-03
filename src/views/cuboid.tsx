@@ -8,7 +8,7 @@ import { Euler, Face, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { CuboidModel } from '../models/CuboidModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
+import { ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType } from '../types';
 import {
   RESIZE_HANDLE_SIZE,
   MOVE_HANDLE_OFFSET,
@@ -22,6 +22,7 @@ import {
 import { Util } from '../Util';
 import { ElementModel } from '../models/ElementModel';
 import RotateHandle from '../components/rotateHandle';
+import { PolarGrid } from 'src/grid';
 
 const Cuboid = ({
   id,
@@ -49,6 +50,9 @@ const Cuboid = ({
   const setElementNormal = useStore((state) => state.setElementNormal);
   const objectTypeToAdd = useStore((state) => state.objectTypeToAdd);
   const selectMe = useStore((state) => state.selectMe);
+  const updateElementById = useStore((state) => state.updateElementById);
+  const setElementSize = useStore((state) => state.setElementSize);
+  const resizeAnchor = useStore((state) => state.resizeAnchor);
 
   const {
     camera,
@@ -148,7 +152,7 @@ const Cuboid = ({
 
   // only these elements are allowed to be on the cuboid
   const legalOnCuboid = (type: ObjectType) => {
-    return type === ObjectType.Sensor;
+    return type === ObjectType.Sensor || type === ObjectType.SolarPanel;
   };
 
   const setupGridHelper = (face: Vector3) => {
@@ -253,26 +257,87 @@ const Cuboid = ({
             mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
             ray.setFromCamera(mouse, camera);
             let intersects;
-            switch (grabRef.current.type) {
-              case ObjectType.Sensor:
-                if (baseRef.current) {
-                  intersects = ray.intersectObjects([baseRef.current]);
-                  if (intersects.length > 0) {
-                    let p = intersects[0].point;
-                    const face = intersects[0].face;
-                    if (face) {
-                      const n = face.normal;
-                      if (normal && !normal.equals(n)) setNormal(n);
-                      setupGridHelper(n);
-                      setElementNormal(grabRef.current.id, n.x, n.y, n.z);
+            if (baseRef.current) {
+              intersects = ray.intersectObjects([baseRef.current]);
+              if (intersects.length > 0) {
+                let p = intersects[0].point;
+                const face = intersects[0].face;
+                if (moveHandleType && elementModel) {
+                  if (face) {
+                    const n = face.normal;
+                    if (normal && !normal.equals(n)) {
+                      setNormal(n);
                     }
-                    if (elementModel) {
-                      p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
-                    }
-                    setElementPosition(grabRef.current.id, p.x, p.y, p.z);
+                    setupGridHelper(n);
+                    setElementNormal(grabRef.current.id, n.x, n.y, n.z);
                   }
+                  if (elementModel) {
+                    p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
+                  }
+                  setElementPosition(grabRef.current.id, p.x, p.y, p.z);
+                } else if (rotateHandleType) {
+                  const parent = getElementById(grabRef.current.parent.id);
+                  if (parent) {
+                    const pr = parent.rotation[2]; //parent rotation
+                    const pc = new Vector2(parent.cx, parent.cy); //world parent center
+                    const cc = new Vector2(parent.lx * grabRef.current.cx, parent.ly * grabRef.current.cy) //local current center
+                      .rotateAround(new Vector2(0, 0), pr); //add parent rotation
+                    const wc = new Vector2().addVectors(cc, pc); //world current center
+                    const rotation =
+                      -pr +
+                      Math.atan2(-p.x + wc.x, p.y - wc.y) +
+                      (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
+                    const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0; // make sure angle is between -PI to PI
+                    updateElementById(grabRef.current.id, { relativeAzimuth: rotation + offset });
+                    setCommonStore((state) => {
+                      state.selectedElementAngle = rotation + offset;
+                    });
+                  }
+                } else if (resizeHandleType && elementModel) {
+                  const solarPanel = grabRef.current;
+                  const wp = new Vector3(p.x, p.y, p.z);
+                  const vd = new Vector3().subVectors(wp, resizeAnchor);
+                  const vh = new Vector3().subVectors(
+                    Util.absoluteCoordinates(solarPanel.cx, solarPanel.cy, solarPanel.cz, elementModel),
+                    resizeAnchor,
+                  );
+                  if (normal && normal.z === 1) {
+                    vh.setZ(0);
+                  }
+                  const vhd = vd.projectOnVector(vh);
+                  let d = vhd.length();
+                  if (solarPanel.orientation === Orientation.portrait) {
+                    if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
+                      const nx = Math.max(1, Math.ceil((d - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width));
+                      d = nx * solarPanel.pvModel.width;
+                      setElementSize(solarPanel.id, d, solarPanel.ly);
+                    } else {
+                      const ny = Math.max(
+                        1,
+                        Math.ceil((d - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length),
+                      );
+                      d = ny * solarPanel.pvModel.length;
+                      setElementSize(solarPanel.id, solarPanel.lx, d);
+                    }
+                  } else {
+                    if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
+                      const nx = Math.max(
+                        1,
+                        Math.ceil((d - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length),
+                      );
+                      d = nx * solarPanel.pvModel.length;
+                      setElementSize(solarPanel.id, d, solarPanel.ly);
+                    } else {
+                      const ny = Math.max(1, Math.ceil((d - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width));
+                      d = ny * solarPanel.pvModel.width;
+                      setElementSize(solarPanel.id, solarPanel.lx, d);
+                    }
+                  }
+                  const wc = new Vector3().addVectors(resizeAnchor, vhd.normalize().multiplyScalar(d / 2));
+                  const rc = Util.relativeCoordinates(wc.x, wc.y, wc.z, elementModel);
+                  setElementPosition(solarPanel.id, rc.x, rc.y, rc.z);
                 }
-                break;
+              }
             }
           }
         }}
@@ -309,13 +374,20 @@ const Cuboid = ({
       </Box>
 
       {showGrid && (
-        <gridHelper
-          name={'Cuboid Grid'}
-          position={gridPositionRef.current}
-          rotation={gridRotationRef.current}
-          scale={gridScale.current}
-          args={[gridLength.current, 20, 'gray', 'gray']}
-        />
+        <>
+          {(moveHandleType || resizeHandleType) && (
+            <gridHelper
+              name={'Cuboid Grid'}
+              position={gridPositionRef.current}
+              rotation={gridRotationRef.current}
+              scale={gridScale.current}
+              args={[gridLength.current, 20, 'gray', 'gray']}
+            />
+          )}
+          {rotateHandleType && grabRef.current && (
+            <PolarGrid element={grabRef.current} height={grabRef.current.poleHeight + hz} />
+          )}
+        </>
       )}
 
       {!selected && (
@@ -510,7 +582,7 @@ const Cuboid = ({
               if (resizeHandleLLBotRef.current) {
                 setCommonStore((state) => {
                   const anchor = resizeHandleLLBotRef.current!.localToWorld(new Vector3(lx, ly, 0));
-                  state.resizeAnchor.set(anchor.x, anchor.y);
+                  state.resizeAnchor.copy(anchor);
                 });
               }
             }}
@@ -540,7 +612,7 @@ const Cuboid = ({
               if (resizeHandleULBotRef.current) {
                 setCommonStore((state) => {
                   const anchor = resizeHandleULBotRef.current!.localToWorld(new Vector3(lx, -ly, 0));
-                  state.resizeAnchor.set(anchor.x, anchor.y);
+                  state.resizeAnchor.copy(anchor);
                 });
               }
             }}
@@ -570,7 +642,7 @@ const Cuboid = ({
               if (resizeHandleLRBotRef.current) {
                 setCommonStore((state) => {
                   const anchor = resizeHandleLRBotRef.current!.localToWorld(new Vector3(-lx, ly, 0));
-                  state.resizeAnchor.set(anchor.x, anchor.y);
+                  state.resizeAnchor.copy(anchor);
                 });
               }
             }}
@@ -600,7 +672,7 @@ const Cuboid = ({
               if (resizeHandleURBotRef.current) {
                 setCommonStore((state) => {
                   const anchor = resizeHandleURBotRef.current!.localToWorld(new Vector3(-lx, -ly, 0));
-                  state.resizeAnchor.set(anchor.x, anchor.y);
+                  state.resizeAnchor.copy(anchor);
                 });
               }
             }}

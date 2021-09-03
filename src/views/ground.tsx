@@ -231,7 +231,7 @@ const Ground = () => {
           intersects = ray.intersectObjects([intersectionPlaneRef.current]);
           if (intersects.length > 0) {
             const p = intersects[0].point;
-            updateElement(grabRef.current.id, { lz: Math.max(1, p.z) });
+            updateElement(grabRef.current.id, { cz: Math.max(0.5, p.z / 2), lz: Math.max(1, p.z) });
           }
         }
       }
@@ -250,11 +250,12 @@ const Ground = () => {
 
   const handleResize = (p: Vector3) => {
     const P = new Vector2(p.x, p.y);
-    const R = resizeAnchor.distanceTo(P);
+    const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
+    const R = resizeAnchor2D.distanceTo(P);
     const angle = Math.atan2(P.x - resizeAnchor.x, P.y - resizeAnchor.y) + grabRef.current!.rotation[2];
     const lx = Math.abs(R * Math.sin(angle));
     const ly = Math.abs(R * Math.cos(angle));
-    const c = new Vector2().addVectors(P, resizeAnchor).divideScalar(2);
+    const c = new Vector2().addVectors(P, resizeAnchor2D).divideScalar(2);
     setElementSize(grabRef.current!.id, lx, ly);
     setElementPosition(grabRef.current!.id, c.x, c.y);
   };

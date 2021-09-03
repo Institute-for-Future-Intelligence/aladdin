@@ -57,7 +57,7 @@ export interface CommonStoreState {
   moveHandleType: MoveHandleType | null;
   resizeHandleType: ResizeHandleType | null;
   rotateHandleType: RotateHandleType | null;
-  resizeAnchor: Vector2;
+  resizeAnchor: Vector3;
   showCloudFilePanel: boolean;
   showAccountSettingsPanel: boolean;
   selectedEmelent: ElementModel | null;
@@ -196,7 +196,7 @@ export const useStore = create<CommonStoreState>(
           moveHandleType: null,
           resizeHandleType: null,
           rotateHandleType: null,
-          resizeAnchor: new Vector2(),
+          resizeAnchor: new Vector3(),
           showCloudFilePanel: false,
           showAccountSettingsPanel: false,
 

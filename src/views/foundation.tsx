@@ -323,9 +323,10 @@ const Foundation = ({
                       case ResizeHandleType.Lower:
                         {
                           const wp = new Vector2(p.x, p.y);
-                          const d = wp.distanceTo(resizeAnchor);
+                          const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
+                          const d = wp.distanceTo(resizeAnchor2D);
                           const angle = solarPanel.relativeAzimuth + rotation[2]; // world panel azimuth
-                          const rp = new Vector2().subVectors(wp, resizeAnchor); // relative vector from anchor to pointer
+                          const rp = new Vector2().subVectors(wp, resizeAnchor2D); // relative vector from anchor to pointer
                           const theta = -angle + rp.angle() + Math.PI / 2;
                           let dyl = d * Math.cos(theta);
                           if (solarPanel.orientation === Orientation.portrait) {
@@ -354,9 +355,10 @@ const Foundation = ({
                       case ResizeHandleType.Upper:
                         {
                           const wp = new Vector2(p.x, p.y);
-                          const d = wp.distanceTo(resizeAnchor);
+                          const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
+                          const d = wp.distanceTo(resizeAnchor2D);
                           const angle = solarPanel.relativeAzimuth + rotation[2];
-                          const rp = new Vector2().subVectors(wp, resizeAnchor);
+                          const rp = new Vector2().subVectors(wp, resizeAnchor2D);
                           const theta = -angle + rp.angle() - Math.PI / 2;
                           let dyl = d * Math.cos(theta);
                           if (solarPanel.orientation === Orientation.portrait) {
@@ -385,9 +387,10 @@ const Foundation = ({
                       case ResizeHandleType.Left:
                         {
                           const wp = new Vector2(p.x, p.y);
-                          const d = wp.distanceTo(resizeAnchor);
+                          const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
+                          const d = wp.distanceTo(resizeAnchor2D);
                           const angle = solarPanel.relativeAzimuth + rotation[2];
-                          const rp = new Vector2().subVectors(wp, resizeAnchor);
+                          const rp = new Vector2().subVectors(wp, resizeAnchor2D);
                           const theta = rp.angle() - angle + Math.PI;
                           let dxl = d * Math.cos(theta);
                           if (solarPanel.orientation === Orientation.portrait) {
@@ -416,9 +419,10 @@ const Foundation = ({
                       case ResizeHandleType.Right:
                         {
                           const wp = new Vector2(p.x, p.y);
-                          const d = wp.distanceTo(resizeAnchor);
+                          const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
+                          const d = wp.distanceTo(resizeAnchor2D);
                           const angle = solarPanel.relativeAzimuth + rotation[2];
-                          const rp = new Vector2().subVectors(wp, resizeAnchor);
+                          const rp = new Vector2().subVectors(wp, resizeAnchor2D);
                           const theta = -angle + rp.angle();
                           let dxl = d * Math.cos(theta);
                           if (solarPanel.orientation === Orientation.portrait) {
@@ -585,7 +589,7 @@ const Foundation = ({
               if (resizeHandleLLRef.current) {
                 setCommonStore((state) => {
                   const anchor = resizeHandleLLRef.current!.localToWorld(new Vector3(lx, ly, 0));
-                  state.resizeAnchor.set(anchor.x, anchor.y);
+                  state.resizeAnchor.copy(anchor);
                 });
               }
             }}
@@ -615,7 +619,7 @@ const Foundation = ({
               if (resizeHandleULRef.current) {
                 setCommonStore((state) => {
                   const anchor = resizeHandleULRef.current!.localToWorld(new Vector3(lx, -ly, 0));
-                  state.resizeAnchor.set(anchor.x, anchor.y);
+                  state.resizeAnchor.copy(anchor);
                 });
               }
             }}
@@ -645,7 +649,7 @@ const Foundation = ({
               if (resizeHandleLRRef.current) {
                 setCommonStore((state) => {
                   const anchor = resizeHandleLRRef.current!.localToWorld(new Vector3(-lx, ly, 0));
-                  state.resizeAnchor.set(anchor.x, anchor.y);
+                  state.resizeAnchor.copy(anchor);
                 });
               }
             }}
@@ -675,7 +679,7 @@ const Foundation = ({
               if (resizeHandleURRef.current) {
                 setCommonStore((state) => {
                   const anchor = resizeHandleURRef.current!.localToWorld(new Vector3(-lx, -ly, 0));
-                  state.resizeAnchor.set(anchor.x, anchor.y);
+                  state.resizeAnchor.copy(anchor);
                 });
               }
             }}
