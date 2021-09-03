@@ -5,6 +5,7 @@ import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType, Orientation, TrackerType } from 'src/types';
 import { Util } from 'src/Util';
+import { Vector3 } from 'three';
 import { Copy, Cut } from '../menuItems';
 
 const { Option } = Select;
@@ -17,6 +18,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
   const [solarPanel, setSolarPanel] = useState<SolarPanelModel>();
   const [dx, setDx] = useState<number>(0);
   const [dy, setDy] = useState<number>(0);
+  const [panelNormal, setPanelNormal] = useState<Vector3>();
   const [labelText, setLabelText] = useState<string>('');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
@@ -26,6 +28,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
       setSolarPanel(element as SolarPanelModel);
       setDx(element.orientation === Orientation.portrait ? element.pvModel.width : element.pvModel.length);
       setDy(element.orientation === Orientation.portrait ? element.pvModel.length : element.pvModel.width);
+      setPanelNormal(new Vector3().fromArray(element.normal));
       setLabelText(element.label ?? '');
     }
   }, [element]);
@@ -129,122 +132,127 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                 }}
               />
             </Menu.Item>
-            <Menu.Item key={'solar-panel-tilt-angle'} style={{ paddingLeft: '40px' }}>
-              <Space style={{ width: '150px' }}>Tilt Angle: </Space>
-              <InputNumber
-                min={-90}
-                max={90}
-                style={{ width: 120 }}
-                precision={1}
-                value={Util.toDegrees(solarPanel.tiltAngle)}
-                step={1}
-                formatter={(a) => Number(a).toFixed(1) + '°'}
-                onChange={(value) => {
-                  if (solarPanel) {
-                    updateElementById(solarPanel.id, { tiltAngle: Util.toRadians(value ?? 0) });
-                    setUpdateFlag(!updateFlag);
-                  }
-                }}
-              />
-            </Menu.Item>
-            <Menu.Item key={'solar-panel-relative-azimuth'} style={{ paddingLeft: '40px' }}>
-              <Space style={{ width: '150px' }}>Relative Azimuth: </Space>
-              <InputNumber
-                min={-180}
-                max={180}
-                style={{ width: 120 }}
-                precision={1}
-                value={Util.toDegrees(solarPanel.relativeAzimuth)}
-                step={1}
-                formatter={(a) => Number(a).toFixed(1) + '°'}
-                onChange={(value) => {
-                  if (solarPanel) {
-                    updateElementById(solarPanel.id, {
-                      relativeAzimuth: Util.toRadians(value ?? 0),
-                    });
-                    setUpdateFlag(!updateFlag);
-                  }
-                }}
-              />
-            </Menu.Item>
-            <Menu.Item key={'solar-panel-tracker'} style={{ paddingLeft: '40px' }}>
-              <Space style={{ width: '150px' }}>Tracker: </Space>
-              <Select
-                style={{ width: '120px' }}
-                value={solarPanel.trackerType}
-                onChange={(value) => {
-                  if (solarPanel) {
-                    updateElementById(solarPanel.id, { trackerType: value });
-                    setUpdateFlag(!updateFlag);
-                  }
-                }}
-              >
-                <Option key={'NONE'} value={TrackerType.NO_TRACKER} title={'No tracker'}>
-                  None
-                </Option>
-                )
-                <Option
-                  key={'HSAT'}
-                  value={TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER}
-                  title={'Horizontal single axis tracker'}
-                >
-                  HSAT
-                </Option>
-                )
-                <Option
-                  key={'VSAT'}
-                  value={TrackerType.VERTICAL_SINGLE_AXIS_TRACKER}
-                  title={'Vertical single axis tracker'}
-                >
-                  VSAT
-                </Option>
-                )
-                <Option
-                  key={'AADAT'}
-                  value={TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER}
-                  title={'Altazimuth single axis tracker'}
-                >
-                  AADAT
-                </Option>
-                )
-              </Select>
-            </Menu.Item>
-            <Menu.Item key={'solar-panel-pole-height'} style={{ paddingLeft: '40px' }}>
-              <Space style={{ width: '150px' }}>Pole Height: </Space>
-              <InputNumber
-                min={0}
-                max={5}
-                style={{ width: 120 }}
-                step={0.1}
-                precision={1}
-                value={solarPanel.poleHeight}
-                formatter={(a) => Number(a).toFixed(1) + ' m'}
-                onChange={(e) => {
-                  if (solarPanel) {
-                    updateElementById(solarPanel.id, { poleHeight: e });
-                    setUpdateFlag(!updateFlag);
-                  }
-                }}
-              />
-            </Menu.Item>
-            <Menu.Item key={'solar-panel-pole-spacing'} style={{ paddingLeft: '40px' }}>
-              <Space style={{ width: '150px' }}>Pole Spacing: </Space>
-              <InputNumber
-                min={2}
-                max={10}
-                step={1}
-                style={{ width: 120 }}
-                precision={0}
-                value={solarPanel.poleSpacing}
-                formatter={(a) => Number(a).toFixed(0) + ' m'}
-                onChange={(value) => {
-                  if (solarPanel) {
-                    updateElementById(solarPanel.id, { poleSpacing: value ?? 1 });
-                    setUpdateFlag(!updateFlag);
-                  }
-                }}
-              />
-            </Menu.Item>
+            {panelNormal && Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z) && (
+              <>
+                <Menu.Item key={'solar-panel-tilt-angle'} style={{ paddingLeft: '40px' }}>
+                  <Space style={{ width: '150px' }}>Tilt Angle: </Space>
+                  <InputNumber
+                    min={-90}
+                    max={90}
+                    style={{ width: 120 }}
+                    precision={1}
+                    value={Util.toDegrees(solarPanel.tiltAngle)}
+                    step={1}
+                    formatter={(a) => Number(a).toFixed(1) + '°'}
+                    onChange={(value) => {
+                      if (solarPanel) {
+                        updateElementById(solarPanel.id, { tiltAngle: Util.toRadians(value ?? 0) });
+                        setUpdateFlag(!updateFlag);
+                      }
+                    }}
+                  />
+                </Menu.Item>
+                <Menu.Item key={'solar-panel-relative-azimuth'} style={{ paddingLeft: '40px' }}>
+                  <Space style={{ width: '150px' }}>Relative Azimuth: </Space>
+                  <InputNumber
+                    min={-180}
+                    max={180}
+                    style={{ width: 120 }}
+                    precision={1}
+                    value={Util.toDegrees(solarPanel.relativeAzimuth)}
+                    step={1}
+                    formatter={(a) => Number(a).toFixed(1) + '°'}
+                    onChange={(value) => {
+                      if (solarPanel) {
+                        updateElementById(solarPanel.id, {
+                          relativeAzimuth: Util.toRadians(value ?? 0),
+                        });
+                        setUpdateFlag(!updateFlag);
+                      }
+                    }}
+                  />
+                </Menu.Item>
+                <Menu.Item key={'solar-panel-tracker'} style={{ paddingLeft: '40px' }}>
+                  <Space style={{ width: '150px' }}>Tracker: </Space>
+                  <Select
+                    style={{ width: '120px' }}
+                    value={solarPanel.trackerType}
+                    onChange={(value) => {
+                      if (solarPanel) {
+                        updateElementById(solarPanel.id, { trackerType: value });
+                        setUpdateFlag(!updateFlag);
+                      }
+                    }}
+                  >
+                    <Option key={'NONE'} value={TrackerType.NO_TRACKER} title={'No tracker'}>
+                      None
+                    </Option>
+                    )
+                    <Option
+                      key={'HSAT'}
+                      value={TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER}
+                      title={'Horizontal single axis tracker'}
+                    >
+                      HSAT
+                    </Option>
+                    )
+                    <Option
+                      key={'VSAT'}
+                      value={TrackerType.VERTICAL_SINGLE_AXIS_TRACKER}
+                      title={'Vertical single axis tracker'}
+                    >
+                      VSAT
+                    </Option>
+                    )
+                    <Option
+                      key={'AADAT'}
+                      value={TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER}
+                      title={'Altazimuth single axis tracker'}
+                    >
+                      AADAT
+                    </Option>
+                    )
+                  </Select>
+                </Menu.Item>
+                <Menu.Item key={'solar-panel-pole-height'} style={{ paddingLeft: '40px' }}>
+                  <Space style={{ width: '150px' }}>Pole Height: </Space>
+                  <InputNumber
+                    min={0}
+                    max={5}
+                    style={{ width: 120 }}
+                    step={0.1}
+                    precision={1}
+                    value={solarPanel.poleHeight}
+                    formatter={(a) => Number(a).toFixed(1) + ' m'}
+                    onChange={(e) => {
+                      if (solarPanel) {
+                        updateElementById(solarPanel.id, { poleHeight: e });
+                        setUpdateFlag(!updateFlag);
+                      }
+                    }}
+                  />
+                </Menu.Item>
+                <Menu.Item key={'solar-panel-pole-spacing'} style={{ paddingLeft: '40px' }}>
+                  <Space style={{ width: '150px' }}>Pole Spacing: </Space>
+                  <InputNumber
+                    min={2}
+                    max={10}
+                    step={1}
+                    style={{ width: 120 }}
+                    precision={0}
+                    value={solarPanel.poleSpacing}
+                    formatter={(a) => Number(a).toFixed(0) + ' m'}
+                    onChange={(value) => {
+                      if (solarPanel) {
+                        updateElementById(solarPanel.id, { poleSpacing: value ?? 1 });
+                        setUpdateFlag(!updateFlag);
+                      }
+                    }}
+                  />
+                </Menu.Item>
+              </>
+            )}
+
             <Menu.Item key={'solar-panel-draw-sun-beam'}>
               <Checkbox
                 checked={!!solarPanel?.drawSunBeam}
