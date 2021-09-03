@@ -255,34 +255,36 @@ const SolarPanel = ({
   const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(Util.UNIT_VECTOR_POS_Z, -rot) : sunDirection;
 
   const relativeEuler = useMemo(() => {
-    if (sunDirection.z > 0) {
-      switch (trackerType) {
-        case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
-          const qrotAADAT = new Quaternion().setFromUnitVectors(Util.UNIT_VECTOR_POS_Z, rotatedSunDirection);
-          return new Euler().setFromQuaternion(qrotAADAT);
-        case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
-          const qrotHSAT = new Quaternion().setFromUnitVectors(
-            Util.UNIT_VECTOR_POS_Z,
-            new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
-          );
-          return new Euler().setFromQuaternion(qrotHSAT);
-        case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
-          const v2d = new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize();
-          const dot = Util.UNIT_VECTOR_POS_Z.dot(v2d);
-          return new Euler(tiltAngle, 0, Math.sign(v2d.x) * Math.acos(dot), 'ZXY');
-      }
-    }
     if (Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z)) {
+      if (sunDirection.z > 0) {
+        switch (trackerType) {
+          case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
+            const r = Math.sqrt(Math.pow(rotatedSunDirection.x, 2) + Math.pow(rotatedSunDirection.y, 2));
+            return new Euler(
+              Math.atan2(r, rotatedSunDirection.z),
+              0,
+              Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + Util.HALF_PI,
+              'ZXY',
+            );
+          case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
+            return new Euler(0, Math.atan2(rotatedSunDirection.x, rotatedSunDirection.z), 0, 'ZXY');
+          case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
+            return new Euler(0, 0, Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + Util.HALF_PI, 'ZXY');
+        }
+      }
       return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
-    } else {
-      return new Euler();
     }
+    return new Euler();
   }, [trackerType, sunDirection, tiltAngle, relativeAzimuth, normal]);
 
   const normalVector = useMemo(() => {
     const v = new Vector3();
-    return drawSunBeam ? v.fromArray(normal).applyEuler(relativeEuler) : v;
-  }, [drawSunBeam, normal, relativeEuler]);
+    return drawSunBeam
+      ? v
+          .fromArray(normal)
+          .applyEuler(new Euler(relativeEuler.x, relativeEuler.y, relativeEuler.z + rotation[2], 'ZXY'))
+      : v;
+  }, [drawSunBeam, normal, euler, relativeEuler]);
 
   const poles: Vector3[] = [];
   const poleZ = -poleHeight / 2 - lz / 2;
@@ -766,9 +768,9 @@ const SolarPanel = ({
 
       {/*draw sun beam*/}
       {drawSunBeam && sunDirection.z > 0 && (
-        <group>
+        <group rotation={[-euler.x, 0, -euler.z]}>
           <Line
-            points={[[0, 0, 0], rotatedSunDirection.clone().multiplyScalar(sunBeamLength)]}
+            points={[[0, 0, 0], sunDirection.clone().multiplyScalar(sunBeamLength)]}
             name={'Sun Beam'}
             lineWidth={0.5}
             color={'white'}
@@ -780,30 +782,28 @@ const SolarPanel = ({
             color={'white'}
           />
           <Line
-            points={[rotatedSunDirection.clone().multiplyScalar(0.5), normalVector.clone().multiplyScalar(0.5)]}
+            points={[sunDirection.clone().multiplyScalar(0.5), normalVector.clone().multiplyScalar(0.5)]}
             name={'Angle'}
             lineWidth={0.5}
             color={'white'}
           />
           <textSprite
             name={'Angle Value'}
-            text={Util.toDegrees(rotatedSunDirection.angleTo(normalVector)).toFixed(1) + '°'}
+            text={Util.toDegrees(sunDirection.angleTo(normalVector)).toFixed(1) + '°'}
             fontSize={20}
             fontFace={'Times Roman'}
             textHeight={0.1}
-            position={rotatedSunDirection
+            position={sunDirection
               .clone()
               .multiplyScalar(0.75)
               .add(normalVector.clone().multiplyScalar(0.75))
               .multiplyScalar(0.5)}
           />
-          <group rotation={relativeEuler}>
-            <Cone
-              args={[0.04, 0.2, 4, 2]}
-              name={'Normal Vector Arrow Head'}
-              rotation={[Math.PI / 2, 0, 0]}
-              position={[0, 0, 0.75]}
-            >
+          <group
+            position={normalVector.clone().multiplyScalar(0.75)}
+            rotation={[Math.PI / 2 + euler.x + relativeEuler.x, 0, euler.z + relativeEuler.z, 'ZXY']}
+          >
+            <Cone args={[0.04, 0.2, 4, 2]} name={'Normal Vector Arrow Head'} rotation={[0, 0, -relativeEuler.y]}>
               <meshStandardMaterial attach="material" color={'white'} />
             </Cone>
           </group>
