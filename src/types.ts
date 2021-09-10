@@ -61,6 +61,7 @@ export enum ObjectType {
   Sky = 'Sky',
   Ground = 'Ground',
   Foundation = 'Foundation',
+  Wall = 'Wall',
   Sensor = 'Sensor',
   SolarPanel = 'Solar Panel',
   Cuboid = 'Cuboid',

@@ -5,7 +5,6 @@
 import { HumanName, ObjectType, Orientation, TrackerType, TreeType } from '../types';
 import short from 'short-uuid';
 import { Vector3 } from 'three';
-import { Util } from '../Util';
 import { GroundModel } from './GroundModel';
 import { ElementModel } from './ElementModel';
 import { HumanModel } from './HumanModel';
@@ -15,6 +14,7 @@ import { CuboidModel } from './CuboidModel';
 import { FoundationModel } from './FoundationModel';
 import { SolarPanelModel } from './SolarPanelModel';
 import { PvModel } from './PvModel';
+import { WallModel } from './WallModel';
 
 export class ElementModelFactory {
   static makeHuman(parent: GroundModel, x: number, y: number, z?: number) {
@@ -47,14 +47,7 @@ export class ElementModelFactory {
     } as TreeModel;
   }
 
-  static makeSensor(
-    parent: ElementModel,
-    x: number,
-    y: number,
-    z?: number,
-    normal?: Vector3,
-    rotation?: [],
-  ) {
+  static makeSensor(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: []) {
     return {
       type: ObjectType.Sensor,
       cx: x,
@@ -136,5 +129,23 @@ export class ElementModelFactory {
       parent: parent,
       id: short.generate() as string,
     } as FoundationModel;
+  }
+
+  static makeWall(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: []) {
+    return {
+      type: ObjectType.Wall,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: 0,
+      ly: 0.25,
+      lz: 4,
+      relativeAngle: 0,
+      showLabel: false,
+      normal: normal ? normal.toArray() : [0, 0, 1],
+      rotation: [0, 0, 0],
+      parent: parent,
+      id: short.generate() as string,
+    } as WallModel;
   }
 }

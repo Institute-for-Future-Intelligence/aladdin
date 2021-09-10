@@ -9,7 +9,7 @@ export interface ElementModel {
   type: string;
   cx: number; // x coordinate of the center
   cy: number; // y coordinate of the center
-  cz: number; // y coordinate of the center
+  cz: number; // z coordinate of the center
   lx: number; // length in x direction
   ly: number; // length in y direction
   lz: number; // length in z direction

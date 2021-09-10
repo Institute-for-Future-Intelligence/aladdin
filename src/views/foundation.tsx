@@ -24,6 +24,7 @@ import { SolarPanelModel } from '../models/SolarPanelModel';
 import RotateHandle from '../components/rotateHandle';
 import { PolarGrid } from '../grid';
 import rotateHandle from '../components/rotateHandle';
+import { WallModel } from 'src/models/WallModel';
 
 const Foundation = ({
   id,
@@ -67,6 +68,9 @@ const Foundation = ({
   const [hoveredResizeHandleUR, setHoveredResizeHandleUR] = useState(false);
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [showGrid, setShowGrid] = useState<boolean>(false);
+  const [isBuildingWall, setIsBuildingWall] = useState(false);
+  const [buildingWallID, setBuildingWallID] = useState<string>();
+  const [wall, setWall] = useState<WallModel>();
   const baseRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
   const intersecPlaneRef = useRef<Mesh>();
@@ -97,6 +101,17 @@ const Foundation = ({
   // const sinAngle = useMemo(() => {
   //     return Math.sin(rotation[2]);
   // }, [rotation]);
+
+  useEffect(() => {
+    if (buildingWallID) {
+      const w = getElementById(buildingWallID) as WallModel;
+      if (w) {
+        setWall(w);
+      }
+    } else {
+      setWall(undefined);
+    }
+  }, [buildingWallID]);
 
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
   const intersectionPlaneRotation = useMemo(() => new Euler(), []);
@@ -156,7 +171,14 @@ const Foundation = ({
 
   // only these elements are allowed to be on the foundation
   const legalOnFoundation = (type: ObjectType) => {
-    return type === ObjectType.Sensor || type === ObjectType.SolarPanel;
+    switch (type) {
+      case ObjectType.Sensor:
+      case ObjectType.SolarPanel:
+      case ObjectType.Wall:
+        return true;
+      default:
+        return false;
+    }
   };
 
   const wireframeColor = viewState.groundImage ? 'white' : lineColor;
@@ -220,10 +242,23 @@ const Foundation = ({
             // no child of this foundation is clicked
             if (legalOnFoundation(objectTypeToAdd) && elementModel) {
               setShowGrid(true);
-              addElement(elementModel, e.intersections[0].point);
-              setCommonStore((state) => {
-                state.objectTypeToAdd = ObjectType.None;
-              });
+              if (objectTypeToAdd === ObjectType.Wall) {
+                if (isBuildingWall) {
+                  setCommonStore((state) => {
+                    state.objectTypeToAdd = ObjectType.None;
+                  });
+                  setIsBuildingWall(false);
+                } else {
+                  const wallID = addElement(elementModel, e.intersections[0].point);
+                  setIsBuildingWall(true);
+                  setBuildingWallID(wallID);
+                }
+              } else {
+                addElement(elementModel, e.intersections[0].point);
+                setCommonStore((state) => {
+                  state.objectTypeToAdd = ObjectType.None;
+                });
+              }
             }
           } else {
             // a child of this foundation is clicked
@@ -246,25 +281,38 @@ const Foundation = ({
           });
         }}
         onPointerMove={(e) => {
-          if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
-            const mouse = new Vector2();
-            mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
-            mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
-            ray.setFromCamera(mouse, camera);
-            let intersects;
-            switch (grabRef.current.type) {
-              case ObjectType.Sensor:
-                if (baseRef.current) {
-                  intersects = ray.intersectObjects([baseRef.current]);
-                  if (intersects.length > 0) {
-                    let p = intersects[0].point;
-                    if (elementModel) {
-                      p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
-                    }
-                    setElementPosition(grabRef.current.id, p.x, p.y);
-                  }
-                }
-                break;
+          if (!grabRef.current && !isBuildingWall) {
+            return;
+          }
+          const mouse = new Vector2();
+          mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
+          mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
+          ray.setFromCamera(mouse, camera);
+          if (baseRef.current && elementModel) {
+            const intersects = ray.intersectObjects([baseRef.current]);
+            let p = intersects[0].point;
+            if (grabRef.current && grabRef.current.type && !grabRef.current.locked && intersects.length > 0) {
+              switch (grabRef.current.type) {
+                case ObjectType.Sensor:
+                  p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
+                  setElementPosition(grabRef.current.id, p.x, p.y);
+                  break;
+                case ObjectType.Wall:
+                  break;
+              }
+            }
+            if (isBuildingWall && buildingWallID && wall) {
+              const startPoint = Util.wallAbsolutePosition(wall.cx, wall.cy, elementModel);
+              const lx = p.distanceTo(startPoint);
+              const absCenter = new Vector3().addVectors(p, startPoint).divideScalar(2);
+              const relativeCenter = Util.wallRelativePosition(absCenter.x, absCenter.y, elementModel);
+              const angle = Math.atan2(p.y - startPoint.y, p.x - startPoint.x) - elementModel.rotation[2];
+              updateElementById(buildingWallID, {
+                cx: relativeCenter.x,
+                cy: relativeCenter.y,
+                lx: lx,
+                relativeAngle: angle,
+              });
             }
           }
         }}

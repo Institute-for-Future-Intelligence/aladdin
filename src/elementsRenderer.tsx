@@ -18,6 +18,8 @@ import { TreeModel } from './models/TreeModel';
 import Tree from './views/tree';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import SolarPanel from './views/solarPanel';
+import { WallModel } from './models/WallModel';
+import Wall from './views/wall';
 
 export interface ElementsRendererProps {}
 
@@ -66,6 +68,8 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
             return <Tree key={e.id} {...(e as TreeModel)} />;
           case ObjectType.SolarPanel:
             return <SolarPanel key={e.id} {...(e as SolarPanelModel)} />;
+          case ObjectType.Wall:
+            return <Wall key={e.id} {...(e as WallModel)} />;
         }
       })}
     </group>

@@ -79,6 +79,23 @@ export class Util {
     return v;
   }
 
+  static wallAbsolutePosition(x: number, y: number, parent: ElementModel) {
+    const parentPos = new Vector3(parent.cx, parent.cy);
+    const v = new Vector3().addVectors(
+      parentPos,
+      new Vector3(x, y).applyAxisAngle(Util.UNIT_VECTOR_POS_Z, parent.rotation[2]),
+    );
+    return v;
+  }
+
+  static wallRelativePosition(x: number, y: number, parent: ElementModel) {
+    const parentPos = new Vector3(parent.cx, parent.cy);
+    const v = new Vector3()
+      .subVectors(new Vector3(x, y), parentPos)
+      .applyAxisAngle(Util.UNIT_VECTOR_POS_Z, -parent.rotation[2]);
+    return v;
+  }
+
   static toRadians(degrees: number) {
     return degrees * (Math.PI / 180);
   }
@@ -103,8 +120,7 @@ export class Util {
     lng2 = Util.toRadians(lng2);
     lat2 = Util.toRadians(lat2);
     return Math.acos(
-      Math.sin(lat1) * Math.sin(lat2) +
-        Math.cos(lat1) * Math.cos(lat2) * Math.cos(Math.abs(lng1 - lng2)),
+      Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(Math.abs(lng1 - lng2)),
     );
   }
 

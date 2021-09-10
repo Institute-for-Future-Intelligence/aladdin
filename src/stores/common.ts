@@ -73,7 +73,7 @@ export interface CommonStoreState {
   setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
 
   objectTypeToAdd: ObjectType;
-  addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => void;
+  addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => string;
 
   pastePoint: Vector3;
   pasteNormal: Vector3;
@@ -355,6 +355,7 @@ export const useStore = create<CommonStoreState>(
 
           objectTypeToAdd: ObjectType.None,
           addElement(parent: ElementModel | GroundModel, position, normal) {
+            let id = '';
             immerSet((state: CommonStoreState) => {
               const m = position;
               switch (state.objectTypeToAdd) {
@@ -399,8 +400,23 @@ export const useStore = create<CommonStoreState>(
                 case ObjectType.Cuboid:
                   state.elements.push(ElementModelFactory.makeCuboid(state.world.ground, m.x, m.y));
                   break;
+                case ObjectType.Wall:
+                  const wallParentModel = parent as ElementModel;
+                  const relativePos = Util.wallRelativePosition(m.x, m.y, wallParentModel);
+                  const wall = ElementModelFactory.makeWall(
+                    wallParentModel,
+                    relativePos.x,
+                    relativePos.y,
+                    relativePos.z,
+                    normal,
+                    parent.rotation,
+                  );
+                  state.elements.push(wall);
+                  id = wall.id;
+                  break;
               }
             });
+            return id;
           },
 
           elementToPaste: [],

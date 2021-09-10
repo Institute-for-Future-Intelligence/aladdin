@@ -477,6 +477,18 @@ const MainToolBar = ({ orbitControls }: MainToolBarProps) => {
               }}
             />
             <FontAwesomeIcon
+              title={'Add wall'}
+              icon={faCube}
+              size={'3x'}
+              color={objectTypeToAdd === ObjectType.Wall ? 'antiquewhite' : '#666666'}
+              style={{ paddingRight: '12px', cursor: 'pointer' }}
+              onClick={() => {
+                setCommonStore((state) => {
+                  state.objectTypeToAdd = ObjectType.Wall;
+                });
+              }}
+            />
+            <FontAwesomeIcon
               title={'Add sensor'}
               icon={faTachometerAlt}
               size={'3x'}
