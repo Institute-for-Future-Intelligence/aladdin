@@ -21,10 +21,10 @@ import {
 import { Util } from '../Util';
 import { ElementModel } from '../models/ElementModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import RotateHandle from '../components/rotateHandle';
 import { PolarGrid } from '../grid';
-import rotateHandle from '../components/rotateHandle';
 import { WallModel } from 'src/models/WallModel';
+import RotateHandle from '../components/rotateHandle';
+import WireFrame from 'src/components/wireFrame';
 
 const Foundation = ({
   id,
@@ -56,6 +56,7 @@ const Foundation = ({
   const setElementSize = useStore((state) => state.setElementSize);
   const updateElementById = useStore((state) => state.updateElementById);
   const selectMe = useStore((state) => state.selectMe);
+  const deleteElementById = useStore((state) => state.deleteElementById);
 
   const {
     camera,
@@ -68,9 +69,16 @@ const Foundation = ({
   const [hoveredResizeHandleUR, setHoveredResizeHandleUR] = useState(false);
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [showGrid, setShowGrid] = useState<boolean>(false);
-  const [isBuildingWall, setIsBuildingWall] = useState(false);
-  const [buildingWallID, setBuildingWallID] = useState<string>();
+
+  const buildingWallIDRef = useRef<string | null>(null);
+  const [buildingWallID, setBuildingWallID] = useState<string | null>(null);
   const [wall, setWall] = useState<WallModel>();
+  const [isSettingWallStartPoint, setIsSettingWallStartPoint] = useState(false);
+  const [isSettingWallEndPoint, setIsSettingWallEndPoint] = useState(false);
+  const [wallPoints, setWallPoints] = useState<Vector3[]>([]);
+  const [enableWallMagnet, setEnableWallMagnet] = useState(true);
+  const [magnetedPoint, setMagnetedPoint] = useState<Vector3>();
+
   const baseRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
   const intersecPlaneRef = useRef<Mesh>();
@@ -84,8 +92,7 @@ const Foundation = ({
   const moveHandleRightRef = useRef<Mesh>();
   const ray = useMemo(() => new Raycaster(), []);
 
-  const elementModel = getElementById(id);
-  const wireframe = true;
+  const elementModel = getElementById(id) as FoundationModel;
   const handleLift = MOVE_HANDLE_RADIUS / 2;
   const hx = lx / 2;
   const hy = ly / 2;
@@ -95,23 +102,45 @@ const Foundation = ({
   const positionLR = useMemo(() => new Vector3(hx, -hy, hz), [hx, hy, hz]);
   const positionUR = useMemo(() => new Vector3(hx, hy, hz), [hx, hy, hz]);
 
-  // const cosAngle = useMemo(() => {
-  //     return Math.cos(rotation[2]);
-  // }, [rotation]);
-  // const sinAngle = useMemo(() => {
-  //     return Math.sin(rotation[2]);
-  // }, [rotation]);
-
   useEffect(() => {
     if (buildingWallID) {
       const w = getElementById(buildingWallID) as WallModel;
       if (w) {
         setWall(w);
       }
-    } else {
-      setWall(undefined);
     }
   }, [buildingWallID]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case 'Shift':
+          setEnableWallMagnet(false);
+          break;
+        //  TODO: should change the way to save wall points(maybe a map) in case of deleting walls.
+        // case 'Escape':
+        //   console.log('esc', buildingWallIDRef.current)
+        //   if(buildingWallIDRef.current) {
+        //     deleteElementById(buildingWallIDRef.current);
+        //     setIsSettingWallStartPoint(false);
+        //     setIsSettingWallEndPoint(false);
+        //     setBuildingWallID(undefined);
+        //     setWall(undefined);
+        //     console.log('delet')
+        //   }
+        //   break;
+      }
+    };
+    const onKeyUp = () => {
+      setEnableWallMagnet(true);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+    };
+  }, []);
 
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
   const intersectionPlaneRotation = useMemo(() => new Euler(), []);
@@ -181,8 +210,22 @@ const Foundation = ({
     }
   };
 
-  const wireframeColor = viewState.groundImage ? 'white' : lineColor;
-  const wireframeWidth = viewState.groundImage ? lineWidth * 2 : lineWidth;
+  const findMagnetPoint = (wallPoints: Vector3[], pointer: Vector3, minDist: number) => {
+    let min = minDist;
+    let targetPoint: Vector3 | null = null;
+    for (let i = 0; i < wallPoints.length; i++) {
+      const point = wallPoints[i];
+      const dist = point.distanceTo(pointer);
+      if (dist < min) {
+        min = dist;
+        targetPoint = point;
+      } else {
+        setMagnetedPoint(undefined);
+      }
+    }
+    return targetPoint;
+  };
+
   const ratio = Math.max(1, Math.max(lx, ly) / 8);
   const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
@@ -238,31 +281,19 @@ const Foundation = ({
           });
           selectMe(id, e, ActionType.Select);
           const selectedElement = getSelectedElement();
+          // no child of this foundation is clicked
           if (selectedElement?.id === id) {
-            // no child of this foundation is clicked
             if (legalOnFoundation(objectTypeToAdd) && elementModel) {
               setShowGrid(true);
-              if (objectTypeToAdd === ObjectType.Wall) {
-                if (isBuildingWall) {
-                  setCommonStore((state) => {
-                    state.objectTypeToAdd = ObjectType.None;
-                  });
-                  setIsBuildingWall(false);
-                } else {
-                  const wallID = addElement(elementModel, e.intersections[0].point);
-                  setIsBuildingWall(true);
-                  setBuildingWallID(wallID);
-                }
-              } else {
-                addElement(elementModel, e.intersections[0].point);
-                setCommonStore((state) => {
-                  state.objectTypeToAdd = ObjectType.None;
-                });
-              }
+              addElement(elementModel, e.intersections[0].point);
+              setCommonStore((state) => {
+                state.objectTypeToAdd = ObjectType.None;
+              });
             }
-          } else {
-            // a child of this foundation is clicked
-            if (selectedElement) {
+          }
+          // a child of this foundation is clicked
+          else {
+            if (selectedElement && selectedElement.type !== ObjectType.Wall) {
               if (legalOnFoundation(selectedElement.type as ObjectType)) {
                 setShowGrid(true);
                 grabRef.current = selectedElement;
@@ -272,16 +303,42 @@ const Foundation = ({
               }
             }
           }
+          if (buildingWallID && baseRef.current) {
+            const intersects = ray.intersectObjects([baseRef.current]);
+            const pos = intersects[0].point;
+            if (magnetedPoint) {
+              setMagnetedPoint(undefined);
+            } else {
+              wallPoints.push(Util.wallRelativePosition(pos.x, pos.y, elementModel));
+            }
+            setWallPoints(wallPoints);
+            if (isSettingWallStartPoint) {
+              setIsSettingWallStartPoint(false);
+              setIsSettingWallEndPoint(true);
+            } else if (isSettingWallEndPoint) {
+              setCommonStore((state) => {
+                state.objectTypeToAdd = ObjectType.None;
+              });
+              setIsSettingWallEndPoint(false);
+              setBuildingWallID(null);
+              buildingWallIDRef.current = null;
+              setCommonStore((state) => {
+                state.buildingWallID = null;
+              });
+            }
+          }
         }}
         onPointerUp={(e) => {
           grabRef.current = null;
-          setShowGrid(false);
+          if (!buildingWallID) {
+            setShowGrid(false);
+          }
           setCommonStore((state) => {
             state.enableOrbitController = true;
           });
         }}
         onPointerMove={(e) => {
-          if (!grabRef.current && !isBuildingWall) {
+          if (!grabRef.current && !buildingWallID && objectTypeToAdd !== ObjectType.Wall) {
             return;
           }
           const mouse = new Vector2();
@@ -297,22 +354,52 @@ const Foundation = ({
                   p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
                   setElementPosition(grabRef.current.id, p.x, p.y);
                   break;
-                case ObjectType.Wall:
-                  break;
               }
             }
-            if (isBuildingWall && buildingWallID && wall) {
-              const startPoint = Util.wallAbsolutePosition(wall.cx, wall.cy, elementModel);
-              const lx = p.distanceTo(startPoint);
-              const absCenter = new Vector3().addVectors(p, startPoint).divideScalar(2);
-              const relativeCenter = Util.wallRelativePosition(absCenter.x, absCenter.y, elementModel);
-              const angle = Math.atan2(p.y - startPoint.y, p.x - startPoint.x) - elementModel.rotation[2];
-              updateElementById(buildingWallID, {
-                cx: relativeCenter.x,
-                cy: relativeCenter.y,
-                lx: lx,
-                relativeAngle: angle,
+            if (objectTypeToAdd === ObjectType.Wall) {
+              const wallID = addElement(elementModel, p);
+              setBuildingWallID(wallID);
+              buildingWallIDRef.current = wallID;
+              setCommonStore((state) => {
+                state.buildingWallID = wallID;
               });
+              setIsSettingWallStartPoint(true);
+              setShowGrid(true);
+              setCommonStore((state) => {
+                state.objectTypeToAdd = ObjectType.None;
+              });
+            }
+            if (buildingWallID) {
+              if (enableWallMagnet) {
+                const relativeP = Util.wallRelativePosition(p.x, p.y, elementModel);
+                const targetPoint = findMagnetPoint(wallPoints, relativeP, 0.5);
+                if (targetPoint) {
+                  setMagnetedPoint(targetPoint);
+                  p = Util.wallAbsolutePosition(targetPoint.x, targetPoint.y, elementModel);
+                }
+              }
+              if (isSettingWallStartPoint) {
+                const relativePos = Util.wallRelativePosition(p.x, p.y, elementModel);
+                const wall = updateElementById(buildingWallID, {
+                  cx: relativePos.x,
+                  cy: relativePos.y,
+                });
+                if (wall) {
+                  setWall(wall as WallModel);
+                }
+              } else if (isSettingWallEndPoint && wall) {
+                const startPoint = Util.wallAbsolutePosition(wall.cx, wall.cy, elementModel);
+                const lx = p.distanceTo(startPoint);
+                const absCenter = new Vector3().addVectors(p, startPoint).divideScalar(2);
+                const relativeCenter = Util.wallRelativePosition(absCenter.x, absCenter.y, elementModel);
+                const angle = Math.atan2(p.y - startPoint.y, p.x - startPoint.x) - elementModel.rotation[2];
+                updateElementById(buildingWallID, {
+                  cx: relativeCenter.x,
+                  cy: relativeCenter.y,
+                  lx: lx,
+                  relativeAngle: angle,
+                });
+              }
             }
           }
         }}
@@ -517,7 +604,7 @@ const Foundation = ({
           {rotateHandleType && grabRef.current?.type === ObjectType.SolarPanel && (
             <PolarGrid element={grabRef.current} height={grabRef.current.poleHeight} />
           )}
-          {(moveHandleType || resizeHandleType) && (
+          {(moveHandleType || resizeHandleType || buildingWallID) && (
             <gridHelper
               name={'Foundation Grid'}
               rotation={[Math.PI / 2, 0, 0]}
@@ -529,99 +616,8 @@ const Foundation = ({
         </>
       )}
 
-      {wireframe && !selected && (
-        <>
-          {/* draw wireframe lines upper face */}
-          <Line
-            points={[positionLL, positionLR]}
-            name={'Line LL-LR Upper Face'}
-            lineWidth={wireframeWidth}
-            color={wireframeColor}
-          />
-          <Line
-            points={[positionLR, positionUR]}
-            name={'Line LR-UR Upper Face'}
-            lineWidth={wireframeWidth}
-            color={wireframeColor}
-          />
-          <Line
-            points={[positionUR, positionUL]}
-            name={'Line UR-UL Upper Face'}
-            lineWidth={wireframeWidth}
-            color={wireframeColor}
-          />
-          <Line
-            points={[positionUL, positionLL]}
-            name={'Line UL-LL Upper Face'}
-            lineWidth={wireframeWidth}
-            color={wireframeColor}
-          />
-
-          {/* draw wireframe lines lower face */}
-          <Line
-            points={[
-              [positionLL.x, positionLL.y, -hz],
-              [positionLR.x, positionLR.y, -hz],
-            ]}
-            name={'Line LL-LR Lower Face'}
-            lineWidth={wireframeWidth}
-            color={wireframeColor}
-          />
-          <Line
-            points={[
-              [positionLR.x, positionLR.y, -hz],
-              [positionUR.x, positionUR.y, -hz],
-            ]}
-            name={'Line LR-UR Lower Face'}
-            lineWidth={wireframeWidth}
-            color={wireframeColor}
-          />
-          <Line
-            points={[
-              [positionUR.x, positionUR.y, -hz],
-              [positionUL.x, positionUL.y, -hz],
-            ]}
-            name={'Line UR-UL Lower Face'}
-            lineWidth={wireframeWidth}
-            color={wireframeColor}
-          />
-          <Line
-            points={[
-              [positionUL.x, positionUL.y, -hz],
-              [positionLL.x, positionLL.y, -hz],
-            ]}
-            name={'Line UL-LL Lower Face'}
-            lineWidth={wireframeWidth}
-            color={wireframeColor}
-          />
-
-          {/* draw wireframe vertical lines */}
-          <Line
-            points={[[positionLL.x, positionLL.y, -hz], positionLL]}
-            name={'Line LL-LL Vertical'}
-            lineWidth={wireframeWidth}
-            color={wireframeColor}
-          />
-          <Line
-            points={[[positionLR.x, positionLR.y, -hz], positionLR]}
-            name={'Line LR-LR Vertical'}
-            lineWidth={wireframeWidth}
-            color={wireframeColor}
-          />
-          <Line
-            points={[[positionUL.x, positionUL.y, -hz], positionUL]}
-            name={'Line UL-UL Vertical'}
-            lineWidth={wireframeWidth}
-            color={wireframeColor}
-          />
-          <Line
-            points={[[positionUR.x, positionUR.y, -hz], positionUR]}
-            name={'Line UR-UR Vertical'}
-            lineWidth={wireframeWidth}
-            color={wireframeColor}
-          />
-        </>
-      )}
+      {/* wireFrame */}
+      {!selected && <WireFrame args={[lx, ly, lz]} />}
 
       {/* draw handles */}
       {selected && !locked && (

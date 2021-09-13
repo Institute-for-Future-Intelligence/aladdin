@@ -23,6 +23,7 @@ import { ElementModelFactory } from '../models/ElementModelFactory';
 import { GroundModel } from '../models/GroundModel';
 import { PvModel } from '../models/PvModel';
 import { ThreeEvent } from '@react-three/fiber';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 enableMapSet();
 
@@ -66,7 +67,7 @@ export interface CommonStoreState {
   getElementById: (id: string) => ElementModel | null;
   selectMe: (id: string, e: ThreeEvent<MouseEvent>, action?: ActionType) => void;
   selectNone: () => void;
-  updateElementById: (id: string, element: Partial<ElementModel>) => void;
+  updateElementById: (id: string, element: Partial<ElementModel>) => ElementModel | null;
   setElementPosition: (id: string, x: number, y: number, z?: number) => void;
   setElementRotation: (id: string, x: number, y: number, z: number) => void;
   setElementNormal: (id: string, x: number, y: number, z: number) => void;
@@ -112,6 +113,8 @@ export interface CommonStoreState {
 
   selectedElementAngle: number;
   selectedElementHeight: number;
+
+  buildingWallID: string | null;
 }
 
 export const useStore = create<CommonStoreState>(
@@ -288,15 +291,18 @@ export const useStore = create<CommonStoreState>(
             }
           },
           updateElementById(id, newProps) {
+            let element: ElementModel | null = null;
             immerSet((state: CommonStoreState) => {
               for (let [i, e] of state.elements.entries()) {
                 if (e.id === id) {
                   state.elements[i] = { ...e, ...newProps };
                   state.selectedElementHeight = newProps.lz ?? 0;
+                  element = state.elements[i];
                   break;
                 }
               }
             });
+            return element;
           },
           setElementPosition(id, x, y, z?) {
             immerSet((state: CommonStoreState) => {
@@ -644,6 +650,8 @@ export const useStore = create<CommonStoreState>(
 
           selectedElementAngle: 0,
           selectedElementHeight: 0,
+
+          buildingWallID: null,
         };
       },
       {

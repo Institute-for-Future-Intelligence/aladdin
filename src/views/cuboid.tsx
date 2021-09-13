@@ -23,6 +23,7 @@ import { Util } from '../Util';
 import { ElementModel } from '../models/ElementModel';
 import RotateHandle from '../components/rotateHandle';
 import { PolarGrid } from 'src/grid';
+import WireFrame from 'src/components/wireFrame';
 
 const Cuboid = ({
   id,
@@ -390,87 +391,7 @@ const Cuboid = ({
         </>
       )}
 
-      {!selected && (
-        <>
-          {/* draw wireframe lines top */}
-          <Line
-            points={[positionLLTop, positionLRTop]}
-            name={'Line LL-LR Top'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[positionLRTop, positionURTop]}
-            name={'Line LR-UR Top'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[positionURTop, positionULTop]}
-            name={'Line UR-UL Top'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[positionULTop, positionLLTop]}
-            name={'Line UL-LL Top'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-
-          {/* draw wireframe lines lower face */}
-          <Line
-            points={[positionLLBot, positionLRBot]}
-            name={'Line LL-LR Bottom'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[positionLRBot, positionURBot]}
-            name={'Line LR-UR Bottom'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[positionURBot, positionULBot]}
-            name={'Line UR-UL Bottom'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[positionULBot, positionLLBot]}
-            name={'Line UL-LL Bottom'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-
-          {/* draw wireframe vertical lines */}
-          <Line
-            points={[positionLLBot, positionLLTop]}
-            name={'Line LL-LL Vertical'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[positionLRBot, positionLRTop]}
-            name={'Line LR-LR Vertical'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[positionULBot, positionULTop]}
-            name={'Line UL-UL Vertical'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[positionURBot, positionURTop]}
-            name={'Line UR-UR Vertical'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-        </>
-      )}
+      {!selected && <WireFrame args={[lx, ly, lz]} />}
 
       {/* draw handles */}
       {selected && !locked && (

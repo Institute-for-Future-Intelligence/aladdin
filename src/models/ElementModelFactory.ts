@@ -128,6 +128,7 @@ export class ElementModelFactory {
       rotation: [0, 0, 0],
       parent: parent,
       id: short.generate() as string,
+      wallPoints: [],
     } as FoundationModel;
   }
 

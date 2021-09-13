@@ -11,6 +11,7 @@ import { ThreeEvent, useThree } from '@react-three/fiber';
 import { HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS } from '../constants';
 import { ActionType, ObjectType } from '../types';
 import { Util } from '../Util';
+import WireFrame from 'src/components/wireFrame';
 
 const Sensor = ({
   id,
@@ -143,99 +144,8 @@ const Sensor = ({
         <meshStandardMaterial attach="material" color={element?.lit ? HIGHLIGHT_HANDLE_COLOR : color} />
       </Box>
 
-      {!selected && (
-        <>
-          {/* draw wireframe lines upper face */}
-          <Line
-            points={[positionLL, positionLR]}
-            name={'Line LL-LR Upper Face'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[positionLR, positionUR]}
-            name={'Line LR-UR Upper Face'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[positionUR, positionUL]}
-            name={'Line UR-UL Upper Face'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[positionUL, positionLL]}
-            name={'Line UL-LL Upper Face'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-
-          {/* draw wireframe lines lower face */}
-          <Line
-            points={[
-              [positionLL.x, positionLL.y, -hz],
-              [positionLR.x, positionLR.y, -hz],
-            ]}
-            name={'Line LL-LR Lower Face'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[
-              [positionLR.x, positionLR.y, -hz],
-              [positionUR.x, positionUR.y, -hz],
-            ]}
-            name={'Line LR-UR Lower Face'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[
-              [positionUR.x, positionUR.y, -hz],
-              [positionUL.x, positionUL.y, -hz],
-            ]}
-            name={'Line UR-UL Lower Face'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[
-              [positionUL.x, positionUL.y, -hz],
-              [positionLL.x, positionLL.y, -hz],
-            ]}
-            name={'Line UL-LL Lower Face'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-
-          {/* draw wireframe vertical lines */}
-          <Line
-            points={[[positionLL.x, positionLL.y, -hz], positionLL]}
-            name={'Line LL-LL Vertical'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[[positionLR.x, positionLR.y, -hz], positionLR]}
-            name={'Line LR-LR Vertical'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[[positionUL.x, positionUL.y, -hz], positionUL]}
-            name={'Line UL-UL Vertical'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-          <Line
-            points={[[positionUR.x, positionUR.y, -hz], positionUR]}
-            name={'Line UR-UR Vertical'}
-            lineWidth={lineWidth}
-            color={lineColor}
-          />
-        </>
-      )}
+      {/* wireFrame */}
+      {!selected && <WireFrame args={[lx, ly, lz]} />}
 
       {/* draw handle */}
       {selected && (
@@ -251,6 +161,7 @@ const Sensor = ({
           <meshStandardMaterial attach="material" color={'orange'} />
         </Sphere>
       )}
+
       {(hovered || showLabel) && !selected && (
         <textSprite
           name={'Label'}
