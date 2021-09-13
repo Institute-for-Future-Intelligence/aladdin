@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Mesh, Vector3 } from 'three';
 import { Box, Sphere } from '@react-three/drei';
 
-import { ActionType } from 'src/types';
+import { ActionType, ResizeHandleType } from 'src/types';
 import { Util } from 'src/Util';
 import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from '../constants';
 import { useStore } from 'src/stores/common';
@@ -31,15 +31,12 @@ const Wall = ({
 }: WallModel) => {
   const getElementById = useStore((state) => state.getElementById);
   const selectMe = useStore((state) => state.selectMe);
-
   const buildingWallID = useStore((state) => state.buildingWallID);
 
   const [wallAbsPosition, setWallAbsPosition] = useState<Vector3>();
   const [wallAbsAngle, setWallAbsAngle] = useState<number>();
 
   const baseRef = useRef<Mesh>();
-
-  const handleSize = 0.2;
 
   const p = getElementById(parent.id);
 
@@ -71,10 +68,10 @@ const Wall = ({
           {/* handles */}
           {(selected || buildingWallID === id) && (
             <>
-              <Sphere name={'Handle'} args={[handleSize]} position={[-lx / 2, 0, -lz / 2]} />
-              <Sphere name={'Handle'} args={[handleSize]} position={[lx / 2, 0, -lz / 2]} />
-              <Sphere name={'Handle'} args={[handleSize]} position={[-lx / 2, 0, lz / 2]} />
-              <Sphere name={'Handle'} args={[handleSize]} position={[lx / 2, 0, lz / 2]} />
+              <ResizeHandle args={[-lx / 2, 0, -lz / 2]} handleType={ResizeHandleType.LowerLeft} />
+              <ResizeHandle args={[lx / 2, 0, -lz / 2]} handleType={ResizeHandleType.LowerRight} />
+              <ResizeHandle args={[-lx / 2, 0, lz / 2]} handleType={ResizeHandleType.UpperLeft} />
+              <ResizeHandle args={[lx / 2, 0, lz / 2]} handleType={ResizeHandleType.UpperRight} />
             </>
           )}
 
@@ -83,6 +80,43 @@ const Wall = ({
         </group>
       )}
     </>
+  );
+};
+
+interface ResizeHandlesProps {
+  args: [x: number, y: number, z: number];
+  handleType: ResizeHandleType;
+  handleSize?: number;
+}
+const ResizeHandle = ({ args, handleType, handleSize = 0.2 }: ResizeHandlesProps) => {
+  const [x, y, z] = args;
+  const setCommonStore = useStore((state) => state.set);
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <Sphere
+      name={'Handle'}
+      args={[handleSize]}
+      position={[x, y, z]}
+      onPointerEnter={() => {
+        setHovered(true);
+      }}
+      onPointerLeave={() => {
+        setHovered(false);
+      }}
+      onPointerDown={() => {
+        setCommonStore((state) => {
+          state.enableOrbitController = false;
+        });
+      }}
+      onPointerUp={() => {
+        setCommonStore((state) => {
+          state.enableOrbitController = true;
+        });
+      }}
+    >
+      <meshStandardMaterial color={hovered ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR} />
+    </Sphere>
   );
 };
 

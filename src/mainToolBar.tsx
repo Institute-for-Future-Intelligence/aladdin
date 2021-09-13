@@ -24,6 +24,7 @@ import { faAsymmetrik } from '@fortawesome/free-brands-svg-icons';
 import FoundationImage from './resources/foundation.png';
 import SolarPanelImage from './resources/solar-panel.png';
 import ShadowImage from './resources/shadow.png';
+import WallImage from './resources/wall.png';
 import firebase from 'firebase';
 import { showInfo } from './helpers';
 import { CloudFileInfo, ObjectType, User } from './types';
@@ -464,6 +465,29 @@ const MainToolBar = ({ orbitControls }: MainToolBarProps) => {
                 });
               }}
             />
+            <img
+              title={'Add sall'}
+              alt={'Wall'}
+              src={WallImage}
+              height={56}
+              width={48}
+              style={{
+                paddingRight: '12px',
+                paddingBottom: '20px',
+                // CSS filter generator of color: https://codepen.io/sosuke/pen/Pjoqqp
+                filter:
+                  objectTypeToAdd === ObjectType.Wall
+                    ? 'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)'
+                    : 'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)',
+                cursor: 'pointer',
+                verticalAlign: 'middle',
+              }}
+              onClick={() => {
+                setCommonStore((state) => {
+                  state.objectTypeToAdd = ObjectType.Wall;
+                });
+              }}
+            />
             <FontAwesomeIcon
               title={'Add cuboid'}
               icon={faCube}
@@ -476,7 +500,7 @@ const MainToolBar = ({ orbitControls }: MainToolBarProps) => {
                 });
               }}
             />
-            <FontAwesomeIcon
+            {/* <FontAwesomeIcon
               title={'Add wall'}
               icon={faCube}
               size={'3x'}
@@ -487,7 +511,7 @@ const MainToolBar = ({ orbitControls }: MainToolBarProps) => {
                   state.objectTypeToAdd = ObjectType.Wall;
                 });
               }}
-            />
+            /> */}
             <FontAwesomeIcon
               title={'Add sensor'}
               icon={faTachometerAlt}
