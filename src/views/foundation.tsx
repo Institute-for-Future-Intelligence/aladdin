@@ -57,6 +57,8 @@ const Foundation = ({
   const updateElementById = useStore((state) => state.updateElementById);
   const selectMe = useStore((state) => state.selectMe);
   const deleteElementById = useStore((state) => state.deleteElementById);
+  const getInitialWallsID = useStore((state) => state.getInitialWallsID);
+  const deletedWallID = useStore((state) => state.deletedWallID);
 
   const {
     camera,
@@ -72,12 +74,13 @@ const Foundation = ({
 
   const buildingWallIDRef = useRef<string | null>(null);
   const [buildingWallID, setBuildingWallID] = useState<string | null>(null);
-  const [wall, setWall] = useState<WallModel>();
+  const [buildingWall, setBuildingWall] = useState<WallModel | null>(null);
   const [isSettingWallStartPoint, setIsSettingWallStartPoint] = useState(false);
   const [isSettingWallEndPoint, setIsSettingWallEndPoint] = useState(false);
-  const [wallPoints, setWallPoints] = useState<Vector3[]>([]);
   const [enableWallMagnet, setEnableWallMagnet] = useState(true);
-  const [magnetedPoint, setMagnetedPoint] = useState<Vector3>();
+  const [magnetedPoint, setMagnetedPoint] = useState<Vector3 | null>(null);
+  const [walls, setWalls] = useState<Set<string>>(new Set());
+  const [wallPoints, setWallPoints] = useState<Map<string, { startPoint: Vector3; endPoint: Vector3 }>>(new Map());
 
   const baseRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
@@ -103,10 +106,33 @@ const Foundation = ({
   const positionUR = useMemo(() => new Vector3(hx, hy, hz), [hx, hy, hz]);
 
   useEffect(() => {
+    const initialWallsID = getInitialWallsID(id);
+    for (const id of initialWallsID) {
+      walls.add(id);
+      const wall = getElementById(id) as WallModel;
+      if (wall) {
+        // wall.points are not vector3 type at run time
+        const startPoint = new Vector3(wall.startPoint.x, wall.startPoint.y);
+        const endPoint = new Vector3(wall.endPoint.x, wall.endPoint.y);
+        wallPoints.set(id, { startPoint, endPoint });
+      }
+    }
+    setWalls(walls);
+    setWallPoints(wallPoints);
+  }, []);
+
+  useEffect(() => {
+    if (deletedWallID) {
+      walls.delete(deletedWallID);
+      wallPoints.delete(deletedWallID);
+    }
+  }, [deletedWallID]);
+
+  useEffect(() => {
     if (buildingWallID) {
       const w = getElementById(buildingWallID) as WallModel;
       if (w) {
-        setWall(w);
+        setBuildingWall(w);
       }
     }
   }, [buildingWallID]);
@@ -117,18 +143,15 @@ const Foundation = ({
         case 'Shift':
           setEnableWallMagnet(false);
           break;
-        //  TODO: should change the way to save wall points(maybe a map) in case of deleting walls.
-        // case 'Escape':
-        //   console.log('esc', buildingWallIDRef.current)
-        //   if(buildingWallIDRef.current) {
-        //     deleteElementById(buildingWallIDRef.current);
-        //     setIsSettingWallStartPoint(false);
-        //     setIsSettingWallEndPoint(false);
-        //     setBuildingWallID(undefined);
-        //     setWall(undefined);
-        //     console.log('delet')
-        //   }
-        //   break;
+        case 'Escape':
+          if (buildingWallIDRef.current) {
+            deleteElementById(buildingWallIDRef.current);
+            setIsSettingWallStartPoint(false);
+            setIsSettingWallEndPoint(false);
+            setBuildingWallID(null);
+            setBuildingWall(null);
+          }
+          break;
       }
     };
     const onKeyUp = () => {
@@ -210,17 +233,26 @@ const Foundation = ({
     }
   };
 
-  const findMagnetPoint = (wallPoints: Vector3[], pointer: Vector3, minDist: number) => {
+  const findMagnetPoint = (
+    wallPoints: Map<string, { startPoint: Vector3; endPoint: Vector3 }>,
+    pointer: Vector3,
+    minDist: number,
+  ) => {
     let min = minDist;
     let targetPoint: Vector3 | null = null;
-    for (let i = 0; i < wallPoints.length; i++) {
-      const point = wallPoints[i];
-      const dist = point.distanceTo(pointer);
+
+    for (const [id, points] of wallPoints) {
+      const { startPoint, endPoint } = points;
+      const distStart = startPoint.distanceTo(pointer);
+      const distEnd = endPoint.distanceTo(pointer);
+      const flag = distStart <= distEnd;
+      const dist = flag ? distStart : distEnd;
+      const point = flag ? startPoint : endPoint;
       if (dist < min) {
         min = dist;
         targetPoint = point;
       } else {
-        setMagnetedPoint(undefined);
+        setMagnetedPoint(null);
       }
     }
     return targetPoint;
@@ -305,17 +337,22 @@ const Foundation = ({
           }
           if (buildingWallID && baseRef.current) {
             const intersects = ray.intersectObjects([baseRef.current]);
-            const pos = intersects[0].point;
+            let pos = intersects[0].point;
             if (magnetedPoint) {
-              setMagnetedPoint(undefined);
+              pos = magnetedPoint;
+              setMagnetedPoint(null);
             } else {
-              wallPoints.push(Util.wallRelativePosition(pos.x, pos.y, elementModel));
+              pos = Util.wallRelativePosition(pos.x, pos.y, elementModel);
             }
-            setWallPoints(wallPoints);
             if (isSettingWallStartPoint) {
+              setWallPoints(wallPoints.set(buildingWallID, { startPoint: pos, endPoint: new Vector3() }));
+              updateElementById(buildingWallID, { startPoint: pos });
               setIsSettingWallStartPoint(false);
               setIsSettingWallEndPoint(true);
             } else if (isSettingWallEndPoint) {
+              const startPoint = wallPoints.get(buildingWallID)?.startPoint ?? new Vector3();
+              setWallPoints(wallPoints.set(buildingWallID, { startPoint: startPoint, endPoint: pos }));
+              updateElementById(buildingWallID, { endPoint: pos });
               setCommonStore((state) => {
                 state.objectTypeToAdd = ObjectType.None;
               });
@@ -358,6 +395,7 @@ const Foundation = ({
             }
             if (objectTypeToAdd === ObjectType.Wall) {
               const wallID = addElement(elementModel, p);
+              setWalls(walls.add(wallID));
               setBuildingWallID(wallID);
               buildingWallIDRef.current = wallID;
               setCommonStore((state) => {
@@ -385,10 +423,10 @@ const Foundation = ({
                   cy: relativePos.y,
                 });
                 if (wall) {
-                  setWall(wall as WallModel);
+                  setBuildingWall(wall as WallModel);
                 }
-              } else if (isSettingWallEndPoint && wall) {
-                const startPoint = Util.wallAbsolutePosition(wall.cx, wall.cy, elementModel);
+              } else if (isSettingWallEndPoint && buildingWall) {
+                const startPoint = Util.wallAbsolutePosition(buildingWall.cx, buildingWall.cy, elementModel);
                 const lx = p.distanceTo(startPoint);
                 const absCenter = new Vector3().addVectors(p, startPoint).divideScalar(2);
                 const relativeCenter = Util.wallRelativePosition(absCenter.x, absCenter.y, elementModel);

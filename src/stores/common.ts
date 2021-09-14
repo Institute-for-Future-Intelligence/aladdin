@@ -24,6 +24,7 @@ import { GroundModel } from '../models/GroundModel';
 import { PvModel } from '../models/PvModel';
 import { ThreeEvent } from '@react-three/fiber';
 import { FoundationModel } from 'src/models/FoundationModel';
+import { WallModel } from 'src/models/WallModel';
 
 enableMapSet();
 
@@ -115,6 +116,8 @@ export interface CommonStoreState {
   selectedElementHeight: number;
 
   buildingWallID: string | null;
+  deletedWallID: string | null;
+  getInitialWallsID: (parentID: string) => string[];
 }
 
 export const useStore = create<CommonStoreState>(
@@ -652,6 +655,17 @@ export const useStore = create<CommonStoreState>(
           selectedElementHeight: 0,
 
           buildingWallID: null,
+          deletedWallID: null,
+          getInitialWallsID(parentID: string) {
+            const state = get();
+            const wallsID: string[] = [];
+            for (const e of state.elements) {
+              if (e.type === ObjectType.Wall && e.parent.id === parentID) {
+                wallsID.push(e.id);
+              }
+            }
+            return wallsID;
+          },
         };
       },
       {

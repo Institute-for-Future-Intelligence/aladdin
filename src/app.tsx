@@ -91,6 +91,11 @@ const App = () => {
   if (useKey('Delete')) {
     const selectedElement = getSelectedElement();
     if (selectedElement) {
+      if (selectedElement.type === ObjectType.Wall) {
+        setCommonStore((state) => {
+          state.deletedWallID = selectedElement.id;
+        });
+      }
       deleteElementById(selectedElement.id);
       if (canvasRef.current) {
         canvasRef.current.style.cursor = 'default'; // if an element is deleted but the cursor is not default

@@ -142,6 +142,8 @@ export class ElementModelFactory {
       ly: 0.25,
       lz: 4,
       relativeAngle: 0,
+      startPoint: new Vector3(),
+      endPoint: new Vector3(),
       showLabel: false,
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: [0, 0, 0],

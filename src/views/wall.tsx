@@ -29,9 +29,9 @@ const Wall = ({
   locked = false,
   selected = false,
 }: WallModel) => {
+  const buildingWallID = useStore((state) => state.buildingWallID);
   const getElementById = useStore((state) => state.getElementById);
   const selectMe = useStore((state) => state.selectMe);
-  const buildingWallID = useStore((state) => state.buildingWallID);
 
   const [wallAbsPosition, setWallAbsPosition] = useState<Vector3>();
   const [wallAbsAngle, setWallAbsAngle] = useState<number>();
