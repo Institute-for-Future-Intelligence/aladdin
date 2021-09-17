@@ -111,7 +111,7 @@ const Foundation = ({
       walls.add(id);
       const wall = getElementById(id) as WallModel;
       if (wall) {
-        // wall.points are not vector3 type at run time
+        // wall.points are not vector3 type at runtime
         const startPoint = new Vector3(wall.startPoint.x, wall.startPoint.y);
         const endPoint = new Vector3(wall.endPoint.x, wall.endPoint.y);
         wallPoints.set(id, { startPoint, endPoint });
@@ -242,6 +242,7 @@ const Foundation = ({
     let targetPoint: Vector3 | null = null;
 
     for (const [id, points] of wallPoints) {
+      if (id === buildingWallID || (grabRef.current && id === grabRef.current.id)) continue;
       const { startPoint, endPoint } = points;
       const distStart = startPoint.distanceTo(pointer);
       const distEnd = endPoint.distanceTo(pointer);
@@ -256,6 +257,16 @@ const Foundation = ({
       }
     }
     return targetPoint;
+  };
+
+  const transferCurrentPoint = (p: Vector3, elementModel: ElementModel) => {
+    const relativeP = Util.wallRelativePosition(p.x, p.y, elementModel);
+    const targetPoint = findMagnetPoint(wallPoints, relativeP, 0.5);
+    if (targetPoint) {
+      setMagnetedPoint(targetPoint);
+      p = Util.wallAbsolutePosition(targetPoint.x, targetPoint.y, elementModel);
+    }
+    return p;
   };
 
   const ratio = Math.max(1, Math.max(lx, ly) / 8);
@@ -325,13 +336,16 @@ const Foundation = ({
           }
           // a child of this foundation is clicked
           else {
-            if (selectedElement && selectedElement.type !== ObjectType.Wall) {
+            if (selectedElement) {
               if (legalOnFoundation(selectedElement.type as ObjectType)) {
-                setShowGrid(true);
                 grabRef.current = selectedElement;
-                setCommonStore((state) => {
-                  state.enableOrbitController = false;
-                });
+                setShowGrid(true);
+                // TODO: resizeHandleType === null ?
+                // if (resizeHandleType) {
+                //   setCommonStore((state) => {
+                //     state.enableOrbitController = false;
+                //   });
+                // }
               }
             }
           }
@@ -366,7 +380,15 @@ const Foundation = ({
           }
         }}
         onPointerUp={(e) => {
-          grabRef.current = null;
+          if (grabRef.current) {
+            const wall = getElementById(grabRef.current.id) as WallModel;
+            if (wall) {
+              const startPoint = wall.startPoint;
+              const endPoint = wall.endPoint;
+              setWallPoints(wallPoints.set(grabRef.current.id, { startPoint: startPoint, endPoint: endPoint }));
+            }
+            grabRef.current = null;
+          }
           if (!buildingWallID) {
             setShowGrid(false);
           }
@@ -391,6 +413,34 @@ const Foundation = ({
                   p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
                   setElementPosition(grabRef.current.id, p.x, p.y);
                   break;
+                case ObjectType.Wall:
+                  if (
+                    resizeHandleType &&
+                    (resizeHandleType === ResizeHandleType.LowerLeft ||
+                      resizeHandleType === ResizeHandleType.LowerRight)
+                  ) {
+                    if (enableWallMagnet) {
+                      p = transferCurrentPoint(p, elementModel);
+                    }
+                    const lx = p.distanceTo(resizeAnchor);
+                    const asbCenter = new Vector3().addVectors(p, resizeAnchor).divideScalar(2);
+                    const relativeCenter = Util.wallRelativePosition(asbCenter.x, asbCenter.y, elementModel);
+                    const angle =
+                      Math.atan2(p.y - resizeAnchor.y, p.x - resizeAnchor.x) -
+                      elementModel.rotation[2] +
+                      (resizeHandleType === ResizeHandleType.LowerLeft ? Math.PI : 0);
+                    const startPoint = Util.wallRelativePosition(resizeAnchor.x, resizeAnchor.y, elementModel);
+                    const endPoint = Util.wallRelativePosition(p.x, p.y, elementModel);
+                    updateElementById(grabRef.current.id, {
+                      cx: relativeCenter.x,
+                      cy: relativeCenter.y,
+                      lx: lx,
+                      relativeAngle: angle,
+                      startPoint: startPoint,
+                      endPoint: endPoint,
+                    });
+                  }
+                  break;
               }
             }
             if (objectTypeToAdd === ObjectType.Wall) {
@@ -409,12 +459,7 @@ const Foundation = ({
             }
             if (buildingWallID) {
               if (enableWallMagnet) {
-                const relativeP = Util.wallRelativePosition(p.x, p.y, elementModel);
-                const targetPoint = findMagnetPoint(wallPoints, relativeP, 0.5);
-                if (targetPoint) {
-                  setMagnetedPoint(targetPoint);
-                  p = Util.wallAbsolutePosition(targetPoint.x, targetPoint.y, elementModel);
-                }
+                p = transferCurrentPoint(p, elementModel);
               }
               if (isSettingWallStartPoint) {
                 const relativePos = Util.wallRelativePosition(p.x, p.y, elementModel);

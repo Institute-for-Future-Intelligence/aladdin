@@ -52,6 +52,7 @@ export interface MainToolBarProps {
 
 const MainToolBar = ({ orbitControls }: MainToolBarProps) => {
   const setCommonStore = useStore((state) => state.set);
+  const selectNone = useStore((state) => state.selectNone);
   const autoRotate = useStore((state) => state.viewState.autoRotate);
   const showHeliodonPanel = useStore((state) => state.viewState.showHeliodonPanel);
   const shadowEnabled = useStore((state) => state.viewState.shadowEnabled);
@@ -466,7 +467,7 @@ const MainToolBar = ({ orbitControls }: MainToolBarProps) => {
               }}
             />
             <img
-              title={'Add sall'}
+              title={'Add wall'}
               alt={'Wall'}
               src={WallImage}
               height={56}
@@ -486,6 +487,7 @@ const MainToolBar = ({ orbitControls }: MainToolBarProps) => {
                 setCommonStore((state) => {
                   state.objectTypeToAdd = ObjectType.Wall;
                 });
+                selectNone();
               }}
             />
             <FontAwesomeIcon
@@ -500,18 +502,6 @@ const MainToolBar = ({ orbitControls }: MainToolBarProps) => {
                 });
               }}
             />
-            {/* <FontAwesomeIcon
-              title={'Add wall'}
-              icon={faCube}
-              size={'3x'}
-              color={objectTypeToAdd === ObjectType.Wall ? 'antiquewhite' : '#666666'}
-              style={{ paddingRight: '12px', cursor: 'pointer' }}
-              onClick={() => {
-                setCommonStore((state) => {
-                  state.objectTypeToAdd = ObjectType.Wall;
-                });
-              }}
-            /> */}
             <FontAwesomeIcon
               title={'Add sensor'}
               icon={faTachometerAlt}

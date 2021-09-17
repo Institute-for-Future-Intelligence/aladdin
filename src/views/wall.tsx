@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Mesh, Vector3 } from 'three';
 import { Box, Sphere } from '@react-three/drei';
 
-import { ActionType, ResizeHandleType } from 'src/types';
+import { ActionType, ResizeHandleType as RType } from 'src/types';
 import { Util } from 'src/Util';
 import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from '../constants';
 import { useStore } from 'src/stores/common';
@@ -30,15 +30,17 @@ const Wall = ({
   selected = false,
 }: WallModel) => {
   const buildingWallID = useStore((state) => state.buildingWallID);
-  const getElementById = useStore((state) => state.getElementById);
-  const selectMe = useStore((state) => state.selectMe);
 
   const [wallAbsPosition, setWallAbsPosition] = useState<Vector3>();
   const [wallAbsAngle, setWallAbsAngle] = useState<number>();
 
   const baseRef = useRef<Mesh>();
 
+  const getElementById = useStore((state) => state.getElementById);
+  const selectMe = useStore((state) => state.selectMe);
+
   const p = getElementById(parent.id);
+  const highLight = lx === 0;
 
   useEffect(() => {
     if (p) {
@@ -60,23 +62,22 @@ const Wall = ({
               if (buildingWallID) return;
               selectMe(id, e, ActionType.Select);
             }}
-            onPointerUp={(e) => {}}
           >
             <meshStandardMaterial color={color} />
           </Box>
 
+          {/* wireFrame */}
+          {!selected && <WireFrame args={[lx, ly, lz]} />}
+
           {/* handles */}
           {(selected || buildingWallID === id) && (
             <>
-              <ResizeHandle args={[-lx / 2, 0, -lz / 2]} handleType={ResizeHandleType.LowerLeft} />
-              <ResizeHandle args={[lx / 2, 0, -lz / 2]} handleType={ResizeHandleType.LowerRight} />
-              <ResizeHandle args={[-lx / 2, 0, lz / 2]} handleType={ResizeHandleType.UpperLeft} />
-              <ResizeHandle args={[lx / 2, 0, lz / 2]} handleType={ResizeHandleType.UpperRight} />
+              <ResizeHandle args={[-lx / 2, 0, -lz / 2]} id={id} handleType={RType.LowerLeft} highLight={highLight} />
+              <ResizeHandle args={[lx / 2, 0, -lz / 2]} id={id} handleType={RType.LowerRight} highLight={highLight} />
+              <ResizeHandle args={[-lx / 2, 0, lz / 2]} id={id} handleType={RType.UpperLeft} highLight={highLight} />
+              <ResizeHandle args={[lx / 2, 0, lz / 2]} id={id} handleType={RType.UpperRight} highLight={highLight} />
             </>
           )}
-
-          {/* wireFrame */}
-          {!selected && <WireFrame args={[lx, ly, lz]} />}
         </group>
       )}
     </>
@@ -85,29 +86,51 @@ const Wall = ({
 
 interface ResizeHandlesProps {
   args: [x: number, y: number, z: number];
-  handleType: ResizeHandleType;
+  id: string;
+  handleType: RType;
+  highLight: boolean;
   handleSize?: number;
 }
-const ResizeHandle = ({ args, handleType, handleSize = 0.2 }: ResizeHandlesProps) => {
-  const [x, y, z] = args;
-  const setCommonStore = useStore((state) => state.set);
+const ResizeHandle = ({ args, id, handleType, highLight, handleSize = 0.2 }: ResizeHandlesProps) => {
+  const resizeHandleType = useStore((state) => state.resizeHandleType);
+  const buildingWallID = useStore((state) => state.buildingWallID);
+
   const [hovered, setHovered] = useState(false);
+
+  const handleRef = useRef<Mesh>(null);
+
+  const [x, y, z] = args;
+  const color = //handleType === RType.LowerRight ? 'blue' : 'white'
+    highLight ||
+    hovered ||
+    handleType === resizeHandleType ||
+    (buildingWallID && (handleType === RType.LowerRight || handleType === RType.UpperRight))
+      ? HIGHLIGHT_HANDLE_COLOR
+      : RESIZE_HANDLE_COLOR;
+
+  const setCommonStore = useStore((state) => state.set);
+  const selectMe = useStore((state) => state.selectMe);
 
   return (
     <Sphere
-      name={'Handle'}
+      name={handleType}
+      ref={handleRef}
       args={[handleSize]}
       position={[x, y, z]}
-      onPointerEnter={() => {
+      onPointerOver={() => {
         setHovered(true);
       }}
-      onPointerLeave={() => {
+      onPointerOut={() => {
         setHovered(false);
       }}
-      onPointerDown={() => {
-        setCommonStore((state) => {
-          state.enableOrbitController = false;
-        });
+      onPointerDown={(e) => {
+        selectMe(id, e, ActionType.Resize);
+        if (handleRef) {
+          setCommonStore((state) => {
+            const anchor = handleRef.current!.localToWorld(new Vector3(-x * 2, 0, 0));
+            state.resizeAnchor.copy(anchor);
+          });
+        }
       }}
       onPointerUp={() => {
         setCommonStore((state) => {
@@ -115,7 +138,7 @@ const ResizeHandle = ({ args, handleType, handleSize = 0.2 }: ResizeHandlesProps
         });
       }}
     >
-      <meshStandardMaterial color={hovered ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR} />
+      <meshStandardMaterial color={color} />
     </Sphere>
   );
 };
