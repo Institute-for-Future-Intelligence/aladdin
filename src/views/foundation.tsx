@@ -259,14 +259,14 @@ const Foundation = ({
     return targetPoint;
   };
 
-  const transferCurrentPoint = (p: Vector3, elementModel: ElementModel) => {
-    const relativeP = Util.wallRelativePosition(p.x, p.y, elementModel);
-    const targetPoint = findMagnetPoint(wallPoints, relativeP, 0.5);
-    if (targetPoint) {
-      setMagnetedPoint(targetPoint);
-      p = Util.wallAbsolutePosition(targetPoint.x, targetPoint.y, elementModel);
-    }
-    return p;
+  const stickToNormalGrid = (v: Vector3) => {
+    return new Vector3(Math.round(v.x), Math.round(v.y), v.z);
+  };
+
+  const stickToFineGrid = (v: Vector3) => {
+    const x = parseFloat((Math.floor(v.x / 0.2) * 0.2).toFixed(1));
+    const y = parseFloat((Math.floor(v.y / 0.2) * 0.2).toFixed(1));
+    return new Vector3(x, y, v.z);
   };
 
   const ratio = Math.max(1, Math.max(lx, ly) / 8);
@@ -352,11 +352,13 @@ const Foundation = ({
           if (buildingWallID && baseRef.current) {
             const intersects = ray.intersectObjects([baseRef.current]);
             let pos = intersects[0].point;
-            if (magnetedPoint) {
+            if (!enableWallMagnet) {
+              pos = stickToFineGrid(Util.wallRelativePosition(pos, elementModel));
+            } else if (magnetedPoint) {
               pos = magnetedPoint;
               setMagnetedPoint(null);
             } else {
-              pos = Util.wallRelativePosition(pos.x, pos.y, elementModel);
+              pos = stickToNormalGrid(Util.wallRelativePosition(pos, elementModel));
             }
             if (isSettingWallStartPoint) {
               setWallPoints(wallPoints.set(buildingWallID, { startPoint: pos, endPoint: new Vector3() }));
@@ -419,18 +421,27 @@ const Foundation = ({
                     (resizeHandleType === ResizeHandleType.LowerLeft ||
                       resizeHandleType === ResizeHandleType.LowerRight)
                   ) {
+                    p = Util.wallRelativePosition(p, elementModel);
                     if (enableWallMagnet) {
-                      p = transferCurrentPoint(p, elementModel);
+                      const targetPoint = findMagnetPoint(wallPoints, p, 1);
+                      if (targetPoint) {
+                        p = targetPoint;
+                        setMagnetedPoint(targetPoint);
+                      } else {
+                        p = stickToNormalGrid(p);
+                      }
+                    } else {
+                      p = stickToFineGrid(p);
                     }
-                    const lx = p.distanceTo(resizeAnchor);
-                    const asbCenter = new Vector3().addVectors(p, resizeAnchor).divideScalar(2);
-                    const relativeCenter = Util.wallRelativePosition(asbCenter.x, asbCenter.y, elementModel);
+                    const relativResizeAnchor = Util.wallRelativePosition(resizeAnchor, elementModel);
+                    const lx = p.distanceTo(relativResizeAnchor);
+                    const relativeCenter = new Vector3().addVectors(p, relativResizeAnchor).divideScalar(2);
                     const angle =
-                      Math.atan2(p.y - resizeAnchor.y, p.x - resizeAnchor.x) -
+                      Math.atan2(p.y - relativResizeAnchor.y, p.x - relativResizeAnchor.x) -
                       elementModel.rotation[2] +
                       (resizeHandleType === ResizeHandleType.LowerLeft ? Math.PI : 0);
-                    const startPoint = Util.wallRelativePosition(resizeAnchor.x, resizeAnchor.y, elementModel);
-                    const endPoint = Util.wallRelativePosition(p.x, p.y, elementModel);
+                    const startPoint = relativResizeAnchor;
+                    const endPoint = p;
                     updateElementById(grabRef.current.id, {
                       cx: relativeCenter.x,
                       cy: relativeCenter.y,
@@ -458,23 +469,30 @@ const Foundation = ({
               });
             }
             if (buildingWallID) {
+              p = Util.wallRelativePosition(p, elementModel);
               if (enableWallMagnet) {
-                p = transferCurrentPoint(p, elementModel);
+                const targetPoint = findMagnetPoint(wallPoints, p, 1);
+                if (targetPoint) {
+                  p = targetPoint;
+                  setMagnetedPoint(targetPoint);
+                } else {
+                  p = stickToNormalGrid(p);
+                }
+              } else {
+                p = stickToFineGrid(p);
               }
               if (isSettingWallStartPoint) {
-                const relativePos = Util.wallRelativePosition(p.x, p.y, elementModel);
                 const wall = updateElementById(buildingWallID, {
-                  cx: relativePos.x,
-                  cy: relativePos.y,
+                  cx: p.x,
+                  cy: p.y,
                 });
                 if (wall) {
                   setBuildingWall(wall as WallModel);
                 }
               } else if (isSettingWallEndPoint && buildingWall) {
-                const startPoint = Util.wallAbsolutePosition(buildingWall.cx, buildingWall.cy, elementModel);
+                const startPoint = new Vector3(buildingWall.cx, buildingWall.cy);
                 const lx = p.distanceTo(startPoint);
-                const absCenter = new Vector3().addVectors(p, startPoint).divideScalar(2);
-                const relativeCenter = Util.wallRelativePosition(absCenter.x, absCenter.y, elementModel);
+                const relativeCenter = new Vector3().addVectors(p, startPoint).divideScalar(2);
                 const angle = Math.atan2(p.y - startPoint.y, p.x - startPoint.x) - elementModel.rotation[2];
                 updateElementById(buildingWallID, {
                   cx: relativeCenter.x,
@@ -687,15 +705,7 @@ const Foundation = ({
           {rotateHandleType && grabRef.current?.type === ObjectType.SolarPanel && (
             <PolarGrid element={grabRef.current} height={grabRef.current.poleHeight} />
           )}
-          {(moveHandleType || resizeHandleType || buildingWallID) && (
-            <gridHelper
-              name={'Foundation Grid'}
-              rotation={[Math.PI / 2, 0, 0]}
-              position={[0, 0, lz]}
-              scale={[lx / maxLxLy, 1, ly / maxLxLy]}
-              args={[maxLxLy, 50, 'gray', 'gray']}
-            />
-          )}
+          {(moveHandleType || resizeHandleType || buildingWallID) && <FoundationGrid args={[lx, ly, lz]} />}
         </>
       )}
 
@@ -1011,5 +1021,59 @@ const Foundation = ({
     </group>
   );
 };
+
+const FoundationGrid = React.memo(({ args }: { args: [lx: number, ly: number, lz: number] }) => {
+  const lx = args[0] / 2;
+  const ly = args[1] / 2;
+  const lz = args[2] / 2;
+
+  const pointsX: number[] = [0];
+  const pointsY: number[] = [0];
+
+  const lineColor = 'white';
+  const lineWidth = 0.5;
+
+  for (let i = 1; i <= lx; i++) {
+    pointsX.push(i);
+    pointsX.push(-i);
+  }
+
+  for (let i = 1; i <= ly; i++) {
+    pointsY.push(i);
+    pointsY.push(-i);
+  }
+
+  return (
+    <group position={[0, 0, lz + 0.01]}>
+      {pointsX.map((value) => {
+        return (
+          <Line
+            key={value}
+            points={[
+              [value, -ly, 0],
+              [value, ly, 0],
+            ]}
+            color={lineColor}
+            lineWidth={lineWidth}
+            depthWrite={false}
+          />
+        );
+      })}
+      {pointsY.map((value) => {
+        return (
+          <Line
+            key={value}
+            points={[
+              [-lx, value, 0],
+              [lx, value, 0],
+            ]}
+            color={lineColor}
+            lineWidth={lineWidth}
+          />
+        );
+      })}
+    </group>
+  );
+});
 
 export default React.memo(Foundation);

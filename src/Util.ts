@@ -79,21 +79,21 @@ export class Util {
     return v;
   }
 
-  static wallAbsolutePosition(x: number, y: number, parent: ElementModel) {
+  static wallAbsolutePosition(v: Vector3, parent: ElementModel) {
     const parentPos = new Vector3(parent.cx, parent.cy);
-    const v = new Vector3().addVectors(
+    const vector = new Vector3().addVectors(
       parentPos,
-      new Vector3(x, y).applyAxisAngle(Util.UNIT_VECTOR_POS_Z, parent.rotation[2]),
+      new Vector3(v.x, v.y).applyAxisAngle(Util.UNIT_VECTOR_POS_Z, parent.rotation[2]),
     );
-    return v;
+    return vector;
   }
 
-  static wallRelativePosition(x: number, y: number, parent: ElementModel) {
+  static wallRelativePosition(v: Vector3, parent: ElementModel) {
     const parentPos = new Vector3(parent.cx, parent.cy);
-    const v = new Vector3()
-      .subVectors(new Vector3(x, y), parentPos)
+    const vector = new Vector3()
+      .subVectors(new Vector3(v.x, v.y), parentPos)
       .applyAxisAngle(Util.UNIT_VECTOR_POS_Z, -parent.rotation[2]);
-    return v;
+    return vector;
   }
 
   static toRadians(degrees: number) {

@@ -411,7 +411,7 @@ export const useStore = create<CommonStoreState>(
                   break;
                 case ObjectType.Wall:
                   const wallParentModel = parent as ElementModel;
-                  const relativePos = Util.wallRelativePosition(m.x, m.y, wallParentModel);
+                  const relativePos = Util.wallRelativePosition(new Vector3(m.x, m.y), wallParentModel);
                   const wall = ElementModelFactory.makeWall(
                     wallParentModel,
                     relativePos.x,

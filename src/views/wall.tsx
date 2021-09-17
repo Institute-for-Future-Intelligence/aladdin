@@ -44,7 +44,7 @@ const Wall = ({
 
   useEffect(() => {
     if (p) {
-      setWallAbsPosition(Util.wallAbsolutePosition(cx, cy, p).setZ(lz / 2 + p.lz));
+      setWallAbsPosition(Util.wallAbsolutePosition(new Vector3(cx, cy), p).setZ(lz / 2 + p.lz));
       setWallAbsAngle(p.rotation[2] + relativeAngle);
     }
   }, [cx, cy, p?.cx, p?.cy, p?.cz, p?.rotation]);
