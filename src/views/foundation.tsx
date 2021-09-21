@@ -165,6 +165,8 @@ const Foundation = ({
     };
   }, []);
 
+  useEffect(() => {}, []);
+
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
   const intersectionPlaneRotation = useMemo(() => new Euler(), []);
 
@@ -436,10 +438,11 @@ const Foundation = ({
                     const relativResizeAnchor = Util.wallRelativePosition(resizeAnchor, elementModel);
                     const lx = p.distanceTo(relativResizeAnchor);
                     const relativeCenter = new Vector3().addVectors(p, relativResizeAnchor).divideScalar(2);
-                    const angle =
+                    let angle =
                       Math.atan2(p.y - relativResizeAnchor.y, p.x - relativResizeAnchor.x) -
                       elementModel.rotation[2] +
                       (resizeHandleType === ResizeHandleType.LowerLeft ? Math.PI : 0);
+                    angle = angle >= 0 ? angle : Math.PI * 2 + angle;
                     const startPoint = relativResizeAnchor;
                     const endPoint = p;
                     updateElementById(grabRef.current.id, {
@@ -493,7 +496,8 @@ const Foundation = ({
                 const startPoint = new Vector3(buildingWall.cx, buildingWall.cy);
                 const lx = p.distanceTo(startPoint);
                 const relativeCenter = new Vector3().addVectors(p, startPoint).divideScalar(2);
-                const angle = Math.atan2(p.y - startPoint.y, p.x - startPoint.x) - elementModel.rotation[2];
+                let angle = Math.atan2(p.y - startPoint.y, p.x - startPoint.x) - elementModel.rotation[2];
+                angle = angle >= 0 ? angle : Math.PI * 2 + angle;
                 updateElementById(buildingWallID, {
                   cx: relativeCenter.x,
                   cy: relativeCenter.y,

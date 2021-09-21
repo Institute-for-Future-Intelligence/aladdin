@@ -2,9 +2,9 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Mesh, Vector3 } from 'three';
-import { Box, Sphere } from '@react-three/drei';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Mesh, RepeatWrapping, TextureLoader, Vector3 } from 'three';
+import { Box, Sphere, useTexture } from '@react-three/drei';
 
 import { ActionType, ResizeHandleType as RType } from 'src/types';
 import { Util } from 'src/Util';
@@ -12,6 +12,7 @@ import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from '../constants';
 import { useStore } from 'src/stores/common';
 import { WallModel } from 'src/models/WallModel';
 import WireFrame from 'src/components/wireFrame';
+import SolarPanelBluePortraitImage from '../resources/WallExteriorImage.png';
 
 const Wall = ({
   id,
@@ -30,6 +31,7 @@ const Wall = ({
   selected = false,
 }: WallModel) => {
   const buildingWallID = useStore((state) => state.buildingWallID);
+  const shadowEnabled = useStore((state) => state.viewState.shadowEnabled);
 
   const [wallAbsPosition, setWallAbsPosition] = useState<Vector3>();
   const [wallAbsAngle, setWallAbsAngle] = useState<number>();
@@ -49,25 +51,38 @@ const Wall = ({
     }
   }, [cx, cy, p?.cx, p?.cy, p?.cz, p?.rotation]);
 
+  const texture = useMemo(() => {
+    return new TextureLoader().load(SolarPanelBluePortraitImage);
+  }, []);
+
   return (
     <>
       {wallAbsPosition && wallAbsAngle !== undefined && (
         <group name={`Wall Group ${id}`} position={wallAbsPosition} rotation={[0, 0, wallAbsAngle]}>
           {/* wall body */}
+          {/* <group position={[0, ly / 2, 0]}> */}
           <Box
             name={'Wall'}
             ref={baseRef}
-            args={[lx, ly, lz]}
+            args={[lx - 0.001, ly, lz]}
+            receiveShadow={shadowEnabled}
+            castShadow={shadowEnabled}
             onPointerDown={(e) => {
               if (buildingWallID) return;
               selectMe(id, e, ActionType.Select);
             }}
           >
-            <meshStandardMaterial color={color} />
+            <meshStandardMaterial attachArray="material" color={'black'} />
+            <meshStandardMaterial attachArray="material" color={'black'} />
+            <meshStandardMaterial attachArray="material" color={'white'} />
+            <meshStandardMaterial attachArray="material" map={texture} />
+            <meshStandardMaterial attachArray="material" color={color} />
+            <meshStandardMaterial attachArray="material" color={color} />
           </Box>
+          {/* </group> */}
 
           {/* wireFrame */}
-          {!selected && <WireFrame args={[lx, ly, lz]} />}
+          {/* {!selected && <WireFrame args={[lx, ly, lz]} />} */}
 
           {/* handles */}
           {(selected || buildingWallID === id) && (
@@ -100,13 +115,13 @@ const ResizeHandle = ({ args, id, handleType, highLight, handleSize = 0.2 }: Res
   const handleRef = useRef<Mesh>(null);
 
   const [x, y, z] = args;
-  const color = //handleType === RType.LowerRight ? 'blue' : 'white'
-    highLight ||
-    hovered ||
-    handleType === resizeHandleType ||
-    (buildingWallID && (handleType === RType.LowerRight || handleType === RType.UpperRight))
-      ? HIGHLIGHT_HANDLE_COLOR
-      : RESIZE_HANDLE_COLOR;
+  const color = handleType === RType.UpperRight ? 'blue' : 'white';
+  // highLight ||
+  // hovered ||
+  // handleType === resizeHandleType ||
+  // (buildingWallID && (handleType === RType.LowerRight || handleType === RType.UpperRight))
+  //   ? HIGHLIGHT_HANDLE_COLOR
+  //   : RESIZE_HANDLE_COLOR;
 
   const setCommonStore = useStore((state) => state.set);
   const selectMe = useStore((state) => state.selectMe);
