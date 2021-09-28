@@ -169,3 +169,8 @@ export enum HumanName {
   June = 'June',
   Juro = 'Juro',
 }
+
+export enum WallSide {
+  Left = 'Left',
+  Right = 'Right',
+}

@@ -4,9 +4,19 @@
 
 import { Vector3 } from 'three';
 import { ElementModel } from './ElementModel';
+import { WallSide } from 'src/types';
 
 export interface WallModel extends ElementModel {
   relativeAngle: number;
-  startPoint: Vector3;
-  endPoint: Vector3;
+  leftPoint: Vector3;
+  rightPoint: Vector3;
+  leftJoints: JointProps[];
+  rightJoints: JointProps[];
+  leftOffset?: number;
+  rightOffset?: number;
+}
+
+export interface JointProps {
+  id: string;
+  side: WallSide;
 }

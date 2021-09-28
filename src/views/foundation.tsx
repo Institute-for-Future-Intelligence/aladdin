@@ -3,12 +3,20 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Line, Sphere, Plane } from '@react-three/drei';
-import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
+import { Box, Line, Sphere, Plane, Extrude } from '@react-three/drei';
+import { DoubleSide, Euler, Mesh, Raycaster, Shape, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { FoundationModel } from '../models/FoundationModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType } from '../types';
+import {
+  ActionType,
+  MoveHandleType,
+  ObjectType,
+  Orientation,
+  ResizeHandleType,
+  RotateHandleType,
+  WallSide,
+} from '../types';
 import {
   HIGHLIGHT_HANDLE_COLOR,
   MOVE_HANDLE_COLOR_1,
@@ -25,6 +33,16 @@ import { PolarGrid } from '../grid';
 import { WallModel } from 'src/models/WallModel';
 import RotateHandle from '../components/rotateHandle';
 import WireFrame from 'src/components/wireFrame';
+import SolarPanelBluePortraitImage from '../resources/WallExteriorImage.png';
+
+interface wallJoint {
+  id: string;
+  point: Vector3;
+  l: number;
+  height: number;
+  wallID: string;
+  wallSide: WallSide;
+}
 
 const Foundation = ({
   id,
@@ -79,8 +97,14 @@ const Foundation = ({
   const [isSettingWallEndPoint, setIsSettingWallEndPoint] = useState(false);
   const [enableWallMagnet, setEnableWallMagnet] = useState(true);
   const [magnetedPoint, setMagnetedPoint] = useState<Vector3 | null>(null);
-  const [walls, setWalls] = useState<Set<string>>(new Set());
-  const [wallPoints, setWallPoints] = useState<Map<string, { startPoint: Vector3; endPoint: Vector3 }>>(new Map());
+  // const [walls, setWalls] = useState<Set<string>>(new Set());
+  const [wallPoints, setWallPoints] = useState<Map<string, { leftPoint: Vector3; rightPoint: Vector3 }>>(new Map());
+  const [wallJointsMap, setWallJointsMap] = useState<Map<string, string>>(new Map());
+  const [wallJointsSet, setWallJointsSet] = useState<Set<string>>(new Set());
+  const [wallJointsArray, setWallJointsArray] = useState<wallJoint[]>([]);
+  const [mapUpdate, setMapUpdate] = useState(false);
+  // const [currentWallJointID, setCurrentWallJointID] = useState<string | null>(null);
+  // const [currentWallJointSide, setCurrentWallJointSide] = useState<string | null>(null);
 
   const baseRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
@@ -108,23 +132,38 @@ const Foundation = ({
   useEffect(() => {
     const initialWallsID = getInitialWallsID(id);
     for (const id of initialWallsID) {
-      walls.add(id);
+      // walls.add(id);
       const wall = getElementById(id) as WallModel;
       if (wall) {
         // wall.points are not vector3 type at runtime
-        const startPoint = new Vector3(wall.startPoint.x, wall.startPoint.y);
-        const endPoint = new Vector3(wall.endPoint.x, wall.endPoint.y);
-        wallPoints.set(id, { startPoint, endPoint });
+        const leftPoint = new Vector3(wall.leftPoint.x, wall.leftPoint.y);
+        const rightPoint = new Vector3(wall.rightPoint.x, wall.rightPoint.y);
+        wallPoints.set(id, { leftPoint, rightPoint });
       }
     }
-    setWalls(walls);
+    // setWalls(walls);
     setWallPoints(wallPoints);
   }, []);
 
   useEffect(() => {
     if (deletedWallID) {
-      walls.delete(deletedWallID);
+      // walls.delete(deletedWallID);
       wallPoints.delete(deletedWallID);
+
+      const joint = wallJointsMap.get(deletedWallID);
+      if (joint) {
+        wallJointsMap.delete(joint);
+        wallJointsMap.delete(deletedWallID);
+        const id = joint < deletedWallID ? joint + deletedWallID : deletedWallID + joint;
+        wallJointsSet.delete(id);
+        wallJointsArray.filter((v) => {
+          return v.id !== deletedWallID;
+        });
+        setWallJointsMap(wallJointsMap);
+        setWallJointsSet(wallJointsSet);
+        setWallJointsArray([...wallJointsArray]);
+        setMapUpdate(!mapUpdate);
+      }
     }
   }, [deletedWallID]);
 
@@ -150,6 +189,9 @@ const Foundation = ({
             setIsSettingWallEndPoint(false);
             setBuildingWallID(null);
             setBuildingWall(null);
+            setCommonStore((state) => {
+              state.buildingWallID = null;
+            });
           }
           break;
       }
@@ -165,7 +207,43 @@ const Foundation = ({
     };
   }, []);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    console.log('effect');
+    wallJointsSet.clear();
+    const array: wallJoint[] = [];
+    wallJointsMap.forEach((v, k, m) => {
+      const id = v <= k ? v + k : k + v;
+      if (!wallJointsSet.has(id)) {
+        const wall1 = getElementById(v) as WallModel;
+        const wall2 = getElementById(k) as WallModel;
+        const deltaAngle = Math.abs(wall2.relativeAngle - wall1.relativeAngle);
+        const a = Math.abs(Math.PI - deltaAngle);
+        const l1 = wall1.ly / Math.tan(a);
+        const l2 = wall2.ly / Math.tan(a);
+        const l = Math.max(l1, l2);
+        const height = Math.min(wall1.lz, wall2.lz);
+
+        let point: Vector3 | null = null;
+        let wallSide: WallSide | null = null;
+        if (isEuqal(wall1.leftPoint, wall2.rightPoint)) {
+          point = wall1.leftPoint;
+          wallSide = l1 > l2 ? WallSide.Left : WallSide.Right;
+        } else if (isEuqal(wall1.rightPoint, wall2.leftPoint)) {
+          point = wall1.rightPoint;
+          wallSide = l1 > l2 ? WallSide.Right : WallSide.Left;
+        }
+        wallJointsSet.add(id);
+        if (point && wallSide) {
+          array.push({ id, point, l, height, wallID: l1 > l2 ? wall1.id : wall2.id, wallSide });
+        }
+      }
+    });
+    setWallJointsSet(wallJointsSet);
+    setWallJointsArray(array);
+    console.log('effect: ', array);
+  }, [mapUpdate]);
+  console.log('++++++++++++', wallJointsMap);
+  console.log('++++++++++++', wallJointsArray);
 
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
   const intersectionPlaneRotation = useMemo(() => new Euler(), []);
@@ -174,6 +252,10 @@ const Foundation = ({
     intersectionPlanePosition.set(0, 0, grabRef.current.poleHeight);
     intersectionPlaneRotation.set(0, 0, 0);
   }
+
+  const isEuqal = (v1: Vector3, v2: Vector3) => {
+    return Math.abs(v1.x - v2.x) < 0.01 && Math.abs(v1.y - v2.y) < 0.01 && Math.abs(v1.z - v2.z) < 0.01;
+  };
 
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
@@ -236,29 +318,32 @@ const Foundation = ({
   };
 
   const findMagnetPoint = (
-    wallPoints: Map<string, { startPoint: Vector3; endPoint: Vector3 }>,
+    wallPoints: Map<string, { leftPoint: Vector3; rightPoint: Vector3 }>,
     pointer: Vector3,
     minDist: number,
   ) => {
     let min = minDist;
     let targetPoint: Vector3 | null = null;
-
+    let targetID: string | null = null;
+    let targetSide: WallSide | null = null;
     for (const [id, points] of wallPoints) {
       if (id === buildingWallID || (grabRef.current && id === grabRef.current.id)) continue;
-      const { startPoint, endPoint } = points;
-      const distStart = startPoint.distanceTo(pointer);
-      const distEnd = endPoint.distanceTo(pointer);
+      const { leftPoint, rightPoint } = points;
+      const distStart = leftPoint.distanceTo(pointer);
+      const distEnd = rightPoint.distanceTo(pointer);
       const flag = distStart <= distEnd;
       const dist = flag ? distStart : distEnd;
-      const point = flag ? startPoint : endPoint;
+      const point = flag ? leftPoint : rightPoint;
       if (dist < min) {
         min = dist;
         targetPoint = point;
+        targetID = id;
+        targetSide = flag ? WallSide.Left : WallSide.Right;
       } else {
         setMagnetedPoint(null);
       }
     }
-    return targetPoint;
+    return { targetID, targetPoint, targetSide };
   };
 
   const stickToNormalGrid = (v: Vector3) => {
@@ -282,6 +367,10 @@ const Foundation = ({
   const upperRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
     return [0, hy + rotateHandleSize, 0];
   }, [hy]);
+
+  const texture = useMemo(() => {
+    return new TextureLoader().load(SolarPanelBluePortraitImage);
+  }, []);
 
   return (
     <group name={'Foundation Group ' + id} position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
@@ -363,14 +452,14 @@ const Foundation = ({
               pos = stickToNormalGrid(Util.wallRelativePosition(pos, elementModel));
             }
             if (isSettingWallStartPoint) {
-              setWallPoints(wallPoints.set(buildingWallID, { startPoint: pos, endPoint: new Vector3() }));
-              updateElementById(buildingWallID, { startPoint: pos });
+              setWallPoints(wallPoints.set(buildingWallID, { leftPoint: pos, rightPoint: new Vector3() }));
+              updateElementById(buildingWallID, { leftPoint: pos });
               setIsSettingWallStartPoint(false);
               setIsSettingWallEndPoint(true);
             } else if (isSettingWallEndPoint) {
-              const startPoint = wallPoints.get(buildingWallID)?.startPoint ?? new Vector3();
-              setWallPoints(wallPoints.set(buildingWallID, { startPoint: startPoint, endPoint: pos }));
-              updateElementById(buildingWallID, { endPoint: pos });
+              const leftPoint = wallPoints.get(buildingWallID)?.leftPoint ?? new Vector3();
+              setWallPoints(wallPoints.set(buildingWallID, { leftPoint: leftPoint, rightPoint: pos }));
+              updateElementById(buildingWallID, { rightPoint: pos });
               setCommonStore((state) => {
                 state.objectTypeToAdd = ObjectType.None;
               });
@@ -387,9 +476,9 @@ const Foundation = ({
           if (grabRef.current) {
             const wall = getElementById(grabRef.current.id) as WallModel;
             if (wall) {
-              const startPoint = wall.startPoint;
-              const endPoint = wall.endPoint;
-              setWallPoints(wallPoints.set(grabRef.current.id, { startPoint: startPoint, endPoint: endPoint }));
+              const leftPoint = wall.leftPoint;
+              const rightPoint = wall.rightPoint;
+              setWallPoints(wallPoints.set(grabRef.current.id, { leftPoint: leftPoint, rightPoint: rightPoint }));
             }
             grabRef.current = null;
           }
@@ -424,8 +513,8 @@ const Foundation = ({
                       resizeHandleType === ResizeHandleType.LowerRight)
                   ) {
                     p = Util.wallRelativePosition(p, elementModel);
+                    let { targetID, targetPoint, targetSide } = findMagnetPoint(wallPoints, p, 1);
                     if (enableWallMagnet) {
-                      const targetPoint = findMagnetPoint(wallPoints, p, 1);
                       if (targetPoint) {
                         p = targetPoint;
                         setMagnetedPoint(targetPoint);
@@ -434,32 +523,329 @@ const Foundation = ({
                       }
                     } else {
                       p = stickToFineGrid(p);
+                      targetPoint = null;
                     }
+
                     const relativResizeAnchor = Util.wallRelativePosition(resizeAnchor, elementModel);
                     const lx = p.distanceTo(relativResizeAnchor);
                     const relativeCenter = new Vector3().addVectors(p, relativResizeAnchor).divideScalar(2);
                     let angle =
                       Math.atan2(p.y - relativResizeAnchor.y, p.x - relativResizeAnchor.x) -
-                      elementModel.rotation[2] +
                       (resizeHandleType === ResizeHandleType.LowerLeft ? Math.PI : 0);
-                    angle = angle >= 0 ? angle : Math.PI * 2 + angle;
-                    const startPoint = relativResizeAnchor;
-                    const endPoint = p;
+                    angle = angle >= 0 ? angle : (Math.PI * 2 + angle) % (Math.PI * 2);
+                    const leftPoint = resizeHandleType === ResizeHandleType.LowerLeft ? p : relativResizeAnchor;
+                    const rightPoint = resizeHandleType === ResizeHandleType.LowerLeft ? relativResizeAnchor : p;
+
                     updateElementById(grabRef.current.id, {
                       cx: relativeCenter.x,
                       cy: relativeCenter.y,
                       lx: lx,
                       relativeAngle: angle,
-                      startPoint: startPoint,
-                      endPoint: endPoint,
+                      leftPoint: leftPoint,
+                      rightPoint: rightPoint,
                     });
+
+                    if (targetID && targetPoint && targetSide) {
+                      const wall_1 = getElementById(targetID) as WallModel;
+                      const wall_2 = getElementById(grabRef.current.id) as WallModel;
+                      let deltaAngle = angle - wall_1.relativeAngle;
+
+                      if (targetSide === WallSide.Left && resizeHandleType === ResizeHandleType.LowerRight) {
+                        if ((deltaAngle >= 0 && deltaAngle < Math.PI) || deltaAngle < -Math.PI) {
+                          // gap
+                          console.log('1', deltaAngle);
+                          updateElementById(targetID, {
+                            leftOffset: 0,
+                            leftJoints: [{ id: grabRef.current.id, side: WallSide.Right }],
+                          });
+                          updateElementById(grabRef.current.id, {
+                            rightOffset: 0,
+                            rightJoints: [{ id: targetID, side: WallSide.Left }],
+                          });
+                          wallJointsMap.delete(wall_1.id);
+                          wallJointsMap.delete(wall_2.id);
+                          setWallJointsMap(wallJointsMap);
+                        } else if (
+                          (deltaAngle > Math.PI && deltaAngle < (Math.PI * 3) / 2) ||
+                          (deltaAngle > -Math.PI && deltaAngle < -Math.PI / 2)
+                        ) {
+                          console.log('2', deltaAngle);
+
+                          const a = deltaAngle - Math.PI;
+                          const l1 = wall_1.ly / Math.tan(a);
+                          const l2 = wall_2.ly / Math.tan(a);
+                          updateElementById(targetID, {
+                            leftOffset: l1,
+                            leftJoints: [{ id: grabRef.current.id, side: WallSide.Right }],
+                          });
+                          updateElementById(grabRef.current.id, {
+                            rightOffset: l2,
+                            rightJoints: [{ id: targetID, side: WallSide.Left }],
+                          });
+                          wallJointsMap.set(targetID, grabRef.current.id);
+                          wallJointsMap.set(grabRef.current.id, targetID);
+                          setWallJointsMap(wallJointsMap);
+                          setMapUpdate(!mapUpdate);
+                        } else {
+                          // do nothing
+                          console.log('3', deltaAngle);
+                          updateElementById(targetID, {
+                            leftOffset: 0,
+                            leftJoints: [{ id: grabRef.current.id, side: WallSide.Right }],
+                          });
+                          updateElementById(grabRef.current.id, {
+                            rightOffset: 0,
+                            rightJoints: [{ id: targetID, side: WallSide.Left }],
+                          });
+                          wallJointsMap.delete(wall_1.id);
+                          wallJointsMap.delete(wall_2.id);
+                          setWallJointsMap(wallJointsMap);
+                        }
+                      } else if (targetSide === WallSide.Right && resizeHandleType === ResizeHandleType.LowerLeft) {
+                        if ((deltaAngle > 0 && deltaAngle < Math.PI / 2) || deltaAngle < (-Math.PI / 2) * 3) {
+                          // do nothing
+                          console.log('4', deltaAngle);
+                          updateElementById(targetID, {
+                            rightJoints: [{ id: grabRef.current.id, side: WallSide.Left }],
+                          });
+                          updateElementById(grabRef.current.id, {
+                            leftJoints: [{ id: targetID, side: WallSide.Right }],
+                          });
+                          wallJointsMap.delete(wall_1.id);
+                          wallJointsMap.delete(wall_2.id);
+                          setWallJointsMap(wallJointsMap);
+                        } else if (
+                          (deltaAngle > Math.PI / 2 && deltaAngle < Math.PI) ||
+                          (deltaAngle > (-Math.PI / 2) * 3 && deltaAngle < -Math.PI / 2)
+                        ) {
+                          console.log('5', deltaAngle);
+                          const a = Math.PI - deltaAngle;
+                          const l1 = wall_1.ly / Math.tan(a);
+                          const l2 = wall_2.ly / Math.tan(a);
+                          updateElementById(targetID, {
+                            rightOffset: l1,
+                            rightJoints: [{ id: grabRef.current.id, side: WallSide.Left }],
+                          });
+                          updateElementById(grabRef.current.id, {
+                            leftOffset: l2,
+                            leftJoints: [{ id: targetID, side: WallSide.Right }],
+                          });
+                          wallJointsMap.set(targetID, grabRef.current.id);
+                          wallJointsMap.set(grabRef.current.id, targetID);
+                          setWallJointsMap(wallJointsMap);
+                          setMapUpdate(!mapUpdate);
+                        } else {
+                          // gap
+                          console.log('6', deltaAngle);
+                          updateElementById(targetID, {
+                            rightJoints: [{ id: grabRef.current.id, side: WallSide.Left }],
+                          });
+                          updateElementById(grabRef.current.id, {
+                            leftJoints: [{ id: targetID, side: WallSide.Right }],
+                          });
+                          wallJointsMap.delete(wall_1.id);
+                          wallJointsMap.delete(wall_2.id);
+                          setWallJointsMap(wallJointsMap);
+                        }
+                      }
+                    } else {
+                      const currentWall = getElementById(grabRef.current.id) as WallModel;
+                      if (currentWall.leftJoints.length > 0 && resizeHandleType === ResizeHandleType.LowerLeft) {
+                        const targetWallID = wallJointsMap.get(grabRef.current.id);
+                        const targetWall = getElementById(targetWallID ?? '') as WallModel;
+                        if (targetWallID && targetWall) {
+                          for (const joint of targetWall.rightJoints) {
+                            if (joint.id === grabRef.current.id) {
+                              updateElementById(targetWallID, { rightOffset: 0, rightJoints: [] });
+                              break;
+                            }
+                          }
+                        }
+                        updateElementById(grabRef.current.id, { leftOffset: 0, leftJoints: [] });
+                        wallJointsMap.delete(wallJointsMap.get(grabRef.current.id) as string);
+                        wallJointsMap.delete(grabRef.current.id);
+                        setWallJointsMap(wallJointsMap);
+                      } else if (
+                        currentWall.rightJoints.length > 0 &&
+                        resizeHandleType === ResizeHandleType.LowerRight
+                      ) {
+                        const targetWallID = wallJointsMap.get(grabRef.current.id);
+                        const targetWall = getElementById(targetWallID ?? '') as WallModel;
+                        if (targetWallID && targetWall) {
+                          for (const joint of targetWall.leftJoints) {
+                            if (joint.id === grabRef.current.id) {
+                              updateElementById(targetWallID, { leftOffset: 0, leftJoints: [] });
+                              break;
+                            }
+                          }
+                        }
+                        updateElementById(grabRef.current.id, { rightOffset: 0, rightJoints: [] });
+                        wallJointsMap.delete(wallJointsMap.get(grabRef.current.id) as string);
+                        wallJointsMap.delete(grabRef.current.id);
+                        setWallJointsMap(wallJointsMap);
+                      }
+                    }
+
+                    const currentWall = getElementById(grabRef.current.id) as WallModel;
+                    console.log('888', currentWall);
+                    if (resizeHandleType === ResizeHandleType.LowerRight && currentWall.leftJoints.length > 0) {
+                      const targetWall = getElementById(currentWall.leftJoints[0].id) as WallModel;
+                      const targetSide = currentWall.leftJoints[0].side;
+                      if (targetWall) {
+                        const deltaAngle = angle - targetWall.relativeAngle;
+                        if (targetSide === WallSide.Right) {
+                          if ((deltaAngle > 0 && deltaAngle < Math.PI / 2) || deltaAngle < (-Math.PI / 2) * 3) {
+                            // reset
+                            console.log('reset target right');
+                            updateElementById(targetWall.id, {
+                              rightOffset: 0,
+                            });
+                            updateElementById(grabRef.current.id, {
+                              leftOffset: 0,
+                            });
+                            const currID =
+                              currentWall.id <= targetWall.id
+                                ? currentWall.id + targetWall.id
+                                : targetWall.id + currentWall.id;
+                            const array = wallJointsArray.filter((v) => {
+                              return v.id !== currID;
+                            });
+                            setWallJointsArray(array);
+                            wallJointsMap.delete(currentWall.id);
+                            wallJointsMap.delete(targetWall.id);
+                            setWallJointsMap(wallJointsMap);
+                          } else if (
+                            (deltaAngle > Math.PI / 2 && deltaAngle < Math.PI) ||
+                            (deltaAngle > (-Math.PI / 2) * 3 && deltaAngle < -Math.PI)
+                          ) {
+                            console.log('target right');
+
+                            const a = Math.PI - deltaAngle;
+                            const l1 = targetWall.ly / Math.tan(a);
+                            const l2 = currentWall.ly / Math.tan(a);
+                            const currID =
+                              currentWall.id <= targetWall.id
+                                ? currentWall.id + targetWall.id
+                                : targetWall.id + currentWall.id;
+                            let hasJoint = false;
+                            for (const joint of wallJointsArray) {
+                              if (joint.id === currID) {
+                                joint.l = Math.max(l1, l2);
+                                hasJoint = true;
+                                break;
+                              }
+                            }
+                            if (!hasJoint) {
+                              updateElementById(targetWall.id, {
+                                rightOffset: l1,
+                                rightJoints: [{ id: grabRef.current.id, side: WallSide.Left }],
+                              });
+                              updateElementById(grabRef.current.id, {
+                                leftOffset: l2,
+                                leftJoints: [{ id: targetWall.id, side: WallSide.Right }],
+                              });
+                              wallJointsMap.set(targetWall.id, grabRef.current.id);
+                              wallJointsMap.set(grabRef.current.id, targetWall.id);
+                              setWallJointsMap(wallJointsMap);
+                              setMapUpdate(!mapUpdate);
+                            } else {
+                              updateElementById(targetWall.id, {
+                                rightOffset: l1,
+                              });
+                              updateElementById(grabRef.current.id, {
+                                leftOffset: l2,
+                              });
+                              setWallJointsArray([...wallJointsArray]);
+                            }
+                          } else {
+                            // gap
+                            console.log('gep target right');
+                            wallJointsMap.delete(currentWall.id);
+                            wallJointsMap.delete(targetWall.id);
+                            setWallJointsMap(wallJointsMap);
+                          }
+                        }
+                      }
+                    } else if (resizeHandleType === ResizeHandleType.LowerLeft && currentWall.rightJoints.length > 0) {
+                      const targetWall = getElementById(currentWall.rightJoints[0].id) as WallModel;
+                      const targetSide = currentWall.rightJoints[0].side;
+                      if (targetWall) {
+                        const deltaAngle = angle - targetWall.relativeAngle;
+                        if (targetSide === WallSide.Left) {
+                          if ((deltaAngle >= 0 && deltaAngle < Math.PI) || deltaAngle < -Math.PI) {
+                            // gap
+                            console.log('gap target left');
+                            wallJointsMap.delete(currentWall.id);
+                            wallJointsMap.delete(targetWall.id);
+                            setWallJointsMap(wallJointsMap);
+                          } else if (
+                            (deltaAngle > Math.PI && deltaAngle < (Math.PI * 3) / 2) ||
+                            (deltaAngle > -Math.PI && deltaAngle < -Math.PI / 2)
+                          ) {
+                            console.log('target left', deltaAngle);
+
+                            const a = deltaAngle - Math.PI;
+                            const l1 = targetWall.ly / Math.tan(a);
+                            const l2 = currentWall.ly / Math.tan(a);
+                            const currID =
+                              currentWall.id <= targetWall.id
+                                ? currentWall.id + targetWall.id
+                                : targetWall.id + currentWall.id;
+                            let hasJoint = false;
+                            for (const joint of wallJointsArray) {
+                              if (joint.id === currID) {
+                                joint.l = Math.max(l1, l2);
+                                hasJoint = true;
+                                break;
+                              }
+                            }
+                            if (!hasJoint) {
+                              updateElementById(targetWall.id, {
+                                leftOffset: l1,
+                                leftJoints: [{ id: grabRef.current.id, side: WallSide.Right }],
+                              });
+                              updateElementById(grabRef.current.id, {
+                                rightOffset: l2,
+                                rightJoints: [{ id: targetWall.id, side: WallSide.Left }],
+                              });
+                              wallJointsMap.set(targetWall.id, grabRef.current.id);
+                              wallJointsMap.set(grabRef.current.id, targetWall.id);
+                              setWallJointsMap(wallJointsMap);
+                              setMapUpdate(!mapUpdate);
+                            } else {
+                              updateElementById(targetWall.id, {
+                                leftOffset: l1,
+                              });
+                              updateElementById(grabRef.current.id, {
+                                rightOffset: l2,
+                              });
+                              setWallJointsArray([...wallJointsArray]);
+                            }
+                          } else {
+                            // reset
+                            console.log('reset target left');
+
+                            updateElementById(targetWall.id, {
+                              leftOffset: 0,
+                            });
+                            updateElementById(grabRef.current.id, {
+                              rightOffset: 0,
+                            });
+                            wallJointsMap.delete(targetWall.id);
+                            wallJointsMap.delete(grabRef.current.id);
+                            setWallJointsMap(wallJointsMap);
+                            setMapUpdate(!mapUpdate);
+                          }
+                        }
+                      }
+                    }
                   }
                   break;
               }
             }
             if (objectTypeToAdd === ObjectType.Wall) {
               const wallID = addElement(elementModel, p);
-              setWalls(walls.add(wallID));
+              // setWalls(walls.add(wallID));
               setBuildingWallID(wallID);
               buildingWallIDRef.current = wallID;
               setCommonStore((state) => {
@@ -474,7 +860,7 @@ const Foundation = ({
             if (buildingWallID) {
               p = Util.wallRelativePosition(p, elementModel);
               if (enableWallMagnet) {
-                const targetPoint = findMagnetPoint(wallPoints, p, 1);
+                const { targetID, targetPoint } = findMagnetPoint(wallPoints, p, 1);
                 if (targetPoint) {
                   p = targetPoint;
                   setMagnetedPoint(targetPoint);
@@ -493,10 +879,10 @@ const Foundation = ({
                   setBuildingWall(wall as WallModel);
                 }
               } else if (isSettingWallEndPoint && buildingWall) {
-                const startPoint = new Vector3(buildingWall.cx, buildingWall.cy);
-                const lx = p.distanceTo(startPoint);
-                const relativeCenter = new Vector3().addVectors(p, startPoint).divideScalar(2);
-                let angle = Math.atan2(p.y - startPoint.y, p.x - startPoint.x) - elementModel.rotation[2];
+                const leftPoint = new Vector3(buildingWall.cx, buildingWall.cy);
+                const lx = p.distanceTo(leftPoint);
+                const relativeCenter = new Vector3().addVectors(p, leftPoint).divideScalar(2);
+                let angle = Math.atan2(p.y - leftPoint.y, p.x - leftPoint.x);
                 angle = angle >= 0 ? angle : Math.PI * 2 + angle;
                 updateElementById(buildingWallID, {
                   cx: relativeCenter.x,
@@ -516,6 +902,38 @@ const Foundation = ({
           opacity={viewState.groundImage ? 0.25 : 1}
         />
       </Box>
+
+      {/* wall joints */}
+      {wallJointsArray.map((value, index) => {
+        const { point, l, height, wallID, wallSide } = value;
+
+        const wall = getElementById(wallID) as WallModel;
+        if (wall) {
+          const { cx, cy, lx, ly, relativeAngle } = wall;
+          const c = new Vector2(cx, cy);
+          const rx = wallSide === WallSide.Left ? -lx / 2 + l : lx / 2 - l;
+          const r1 = new Vector2(rx, ly).rotateAround(new Vector2(), relativeAngle);
+          const r2 = new Vector2(rx, 0).rotateAround(new Vector2(), relativeAngle);
+          const point1 = new Vector2().addVectors(c, r1);
+          const point2 = new Vector2().addVectors(c, r2);
+
+          const shape = new Shape();
+          shape.moveTo(point.x, point.y);
+          shape.lineTo(point1.x, point1.y);
+          shape.lineTo(point2.x, point2.y);
+          shape.lineTo(point.x, point.y);
+
+          const settings = {
+            depth: height + 0.05,
+            bevelEnabled: false,
+          };
+          return (
+            <Extrude key={index} args={[shape, settings]}>
+              <meshStandardMaterial attach="material" color="gray" />
+            </Extrude>
+          );
+        }
+      })}
 
       {/* intersection plane */}
       {grabRef.current?.type === ObjectType.SolarPanel && !grabRef.current.locked && (

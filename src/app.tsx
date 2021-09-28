@@ -43,6 +43,7 @@ import Lights from './lights';
 import { Grid } from './grid';
 import CameraController from './cameraController';
 import CompassContainer from './compassContainer';
+import { WallModel } from './models/WallModel';
 
 const App = () => {
   const setCommonStore = useStore((state) => state.set);
@@ -56,6 +57,8 @@ const App = () => {
   const deleteElementById = useStore((state) => state.deleteElementById);
   const objectTypeToAdd = useStore((state) => state.objectTypeToAdd);
   const countElementsByType = useStore((state) => state.countElementsByType);
+  const getElementById = useStore((state) => state.getElementById);
+  const updateElementById = useStore((state) => state.updateElementById);
 
   const weatherData = useStore((state) => state.weatherData);
 
@@ -92,6 +95,15 @@ const App = () => {
     const selectedElement = getSelectedElement();
     if (selectedElement) {
       if (selectedElement.type === ObjectType.Wall) {
+        const currentWall = selectedElement as WallModel;
+        if (currentWall.leftJoints.length > 0) {
+          const targetWall = getElementById(currentWall.leftJoints[0].id) as WallModel;
+          updateElementById(targetWall.id, { rightOffset: 0, rightJoints: [] });
+        }
+        if (currentWall.rightJoints.length > 0) {
+          const targetWall = getElementById(currentWall.rightJoints[0].id) as WallModel;
+          updateElementById(targetWall.id, { leftOffset: 0, leftJoints: [] });
+        }
         setCommonStore((state) => {
           state.deletedWallID = selectedElement.id;
         });
