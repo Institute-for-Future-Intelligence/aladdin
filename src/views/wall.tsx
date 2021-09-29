@@ -12,14 +12,14 @@ import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from '../constants';
 import { useStore } from 'src/stores/common';
 import { WallModel } from 'src/models/WallModel';
 import WireFrame from 'src/components/wireFrame';
-import SolarPanelBluePortraitImage from '../resources/WallExteriorImage.png';
+import WallExteriorImage from '../resources/WallExteriorImage.png';
 
 const Wall = ({
   id,
   cx,
   cy,
   lx = 1,
-  ly = 1,
+  ly = 0.5,
   lz = 4,
   relativeAngle,
   rotation = [0, 0, 0],
@@ -37,6 +37,7 @@ const Wall = ({
 
   const [wallAbsPosition, setWallAbsPosition] = useState<Vector3>();
   const [wallAbsAngle, setWallAbsAngle] = useState<number>();
+  const [length, setLength] = useState<number>(lx);
 
   const baseRef = useRef<Mesh>();
 
@@ -54,61 +55,52 @@ const Wall = ({
   }, [cx, cy, p?.cx, p?.cy, p?.cz, p?.rotation]);
 
   const texture = useMemo(() => {
-    return new TextureLoader().load(SolarPanelBluePortraitImage, (texture) => {
+    return new TextureLoader().load(WallExteriorImage, (texture) => {
       texture.wrapS = texture.wrapT = RepeatWrapping;
       texture.offset.set(0, 0);
       texture.repeat.set(lx / 4, 1);
     });
   }, []);
-  const texture2 = useMemo(() => {
-    return new TextureLoader().load(SolarPanelBluePortraitImage, (texture) => {
-      texture.wrapS = texture.wrapT = RepeatWrapping;
-      texture.offset.set(0, 0);
-      texture.repeat.set(ly / 4, 1);
-      texture.rotation = Math.PI / 2;
-    });
-  }, []);
-  const texture3 = useMemo(() => {
-    return new TextureLoader().load(SolarPanelBluePortraitImage, (texture) => {
-      texture.wrapS = texture.wrapT = RepeatWrapping;
-      texture.offset.set(0.077, 0);
-      texture.repeat.set(lx / 4, ly / 4);
-    });
-  }, []);
 
   useEffect(() => {
     texture.repeat.set(lx / 4, 1);
-    texture3.repeat.set(lx / 4, ly / 4);
   }, [lx]);
+
   useEffect(() => {
-    texture2.repeat.set(ly / 4, 1);
-  }, [ly]);
+    if (lx > Math.abs(leftOffset) ?? 0 + Math.abs(rightOffset) ?? 0) {
+      setLength(lx - leftOffset - rightOffset - 0.001);
+    } else {
+      setLength(lx);
+    }
+  }, [leftOffset, rightOffset, lx]);
 
   return (
     <>
       {wallAbsPosition && wallAbsAngle !== undefined && (
         <group name={`Wall Group ${id}`} position={wallAbsPosition} rotation={[0, 0, wallAbsAngle]}>
           {/* wall body */}
-          <group position={[leftOffset / 2 - rightOffset / 2, ly / 2, 0]}>
-            <Box
-              name={'Wall'}
-              ref={baseRef}
-              args={[lx - leftOffset - rightOffset - 0.001, ly, lz]}
-              receiveShadow={shadowEnabled}
-              castShadow={shadowEnabled}
-              onPointerDown={(e) => {
-                if (buildingWallID) return;
-                selectMe(id, e, ActionType.Select);
-              }}
-            >
-              <meshStandardMaterial attachArray="material" color={'white'} />
-              <meshStandardMaterial attachArray="material" color={'white'} />
-              <meshStandardMaterial attachArray="material" color={'white'} />
-              <meshStandardMaterial attachArray="material" map={texture} />
-              <meshStandardMaterial attachArray="material" color={'white'} />
-              <meshStandardMaterial attachArray="material" color={'white'} />
-            </Box>
-          </group>
+          {length && (
+            <group position={[leftOffset / 2 - rightOffset / 2, ly / 2, 0]}>
+              <Box
+                name={'Wall'}
+                ref={baseRef}
+                args={[lx - leftOffset - rightOffset - 0.001, ly, lz]}
+                receiveShadow={shadowEnabled}
+                castShadow={shadowEnabled}
+                onPointerDown={(e) => {
+                  if (buildingWallID) return;
+                  selectMe(id, e, ActionType.Select);
+                }}
+              >
+                <meshStandardMaterial attachArray="material" color={'white'} />
+                <meshStandardMaterial attachArray="material" color={'white'} />
+                <meshStandardMaterial attachArray="material" color={'white'} />
+                <meshStandardMaterial attachArray="material" map={texture} />
+                <meshStandardMaterial attachArray="material" color={'white'} />
+                <meshStandardMaterial attachArray="material" color={'white'} />
+              </Box>
+            </group>
+          )}
 
           {/* wireFrame */}
           {/* {!selected && <WireFrame args={[lx, ly, lz]} />} */}
@@ -144,13 +136,13 @@ const ResizeHandle = ({ args, id, handleType, highLight, handleSize = 0.4 }: Res
   const handleRef = useRef<Mesh>(null);
 
   const [x, y, z] = args;
-  const color = handleType === RType.UpperRight ? 'blue' : 'white';
-  // highLight ||
-  // hovered ||
-  // handleType === resizeHandleType ||
-  // (buildingWallID && (handleType === RType.LowerRight || handleType === RType.UpperRight))
-  //   ? HIGHLIGHT_HANDLE_COLOR
-  //   : RESIZE_HANDLE_COLOR;
+  const color = // handleType === RType.UpperRight ? 'blue' : 'white';
+    highLight ||
+    hovered ||
+    handleType === resizeHandleType ||
+    (buildingWallID && (handleType === RType.LowerRight || handleType === RType.UpperRight))
+      ? HIGHLIGHT_HANDLE_COLOR
+      : RESIZE_HANDLE_COLOR;
 
   const setCommonStore = useStore((state) => state.set);
   const selectMe = useStore((state) => state.selectMe);

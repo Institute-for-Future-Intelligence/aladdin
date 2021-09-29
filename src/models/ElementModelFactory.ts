@@ -139,7 +139,7 @@ export class ElementModelFactory {
       cy: y,
       cz: z,
       lx: 0,
-      ly: 1,
+      ly: 0.5,
       lz: 4,
       relativeAngle: 0,
       leftPoint: new Vector3(),

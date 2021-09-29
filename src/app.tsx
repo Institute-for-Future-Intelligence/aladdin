@@ -98,11 +98,15 @@ const App = () => {
         const currentWall = selectedElement as WallModel;
         if (currentWall.leftJoints.length > 0) {
           const targetWall = getElementById(currentWall.leftJoints[0].id) as WallModel;
-          updateElementById(targetWall.id, { rightOffset: 0, rightJoints: [] });
+          if (targetWall) {
+            updateElementById(targetWall.id, { rightOffset: 0, rightJoints: [] });
+          }
         }
         if (currentWall.rightJoints.length > 0) {
           const targetWall = getElementById(currentWall.rightJoints[0].id) as WallModel;
-          updateElementById(targetWall.id, { leftOffset: 0, leftJoints: [] });
+          if (targetWall) {
+            updateElementById(targetWall.id, { leftOffset: 0, leftJoints: [] });
+          }
         }
         setCommonStore((state) => {
           state.deletedWallID = selectedElement.id;
