@@ -131,10 +131,8 @@ const Foundation = ({
     for (const id of initialWallsID) {
       const wall = getElementById(id) as WallModel;
       if (wall) {
-        // const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1]);
-        // const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1]);
-        const leftPoint = new Vector3(wall.leftPoint.x, wall.leftPoint.y);
-        const rightPoint = new Vector3(wall.rightPoint.x, wall.rightPoint.y);
+        const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1]);
+        const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1]);
         wallPoints.set(id, { leftPoint, rightPoint });
 
         if (wall.leftJoints.length > 0) {
@@ -241,10 +239,10 @@ const Foundation = ({
           let point: Vector3 | null = null;
           let wallSide: WallSide | null = null;
           if (isEuqal(wall1.leftPoint, wall2.rightPoint)) {
-            point = new Vector3(wall1.leftPoint.x, wall1.leftPoint.y, wall1.leftPoint.z);
+            point = new Vector3(wall1.leftPoint[0], wall1.leftPoint[1], wall1.leftPoint[2]);
             wallSide = l1 > l2 ? WallSide.Left : WallSide.Right;
           } else if (isEuqal(wall1.rightPoint, wall2.leftPoint)) {
-            point = new Vector3(wall1.rightPoint.x, wall1.rightPoint.y, wall1.rightPoint.z);
+            point = new Vector3(wall1.rightPoint[0], wall1.rightPoint[1], wall1.rightPoint[2]);
             wallSide = l1 > l2 ? WallSide.Right : WallSide.Left;
           }
           wallJointsSet.add(id);
@@ -266,8 +264,8 @@ const Foundation = ({
     intersectionPlaneRotation.set(0, 0, 0);
   }
 
-  const isEuqal = (v1: Vector3, v2: Vector3) => {
-    return Math.abs(v1.x - v2.x) < 0.01 && Math.abs(v1.y - v2.y) < 0.01 && Math.abs(v1.z - v2.z) < 0.01;
+  const isEuqal = (v1: number[], v2: number[]) => {
+    return Math.abs(v1[0] - v2[0]) < 0.01 && Math.abs(v1[1] - v2[1]) < 0.01 && Math.abs(v1[2] - v2[2]) < 0.01;
   };
 
   const hoverHandle = useCallback(
@@ -470,13 +468,13 @@ const Foundation = ({
             }
             if (isSettingWallStartPoint) {
               setWallPoints(wallPoints.set(buildingWallID, { leftPoint: pos, rightPoint: new Vector3() }));
-              updateElementById(buildingWallID, { leftPoint: pos });
+              updateElementById(buildingWallID, { leftPoint: [pos.x, pos.y, pos.z] });
               setIsSettingWallStartPoint(false);
               setIsSettingWallEndPoint(true);
             } else if (isSettingWallEndPoint) {
               const leftPoint = wallPoints.get(buildingWallID)?.leftPoint ?? new Vector3();
               setWallPoints(wallPoints.set(buildingWallID, { leftPoint: leftPoint, rightPoint: pos }));
-              updateElementById(buildingWallID, { rightPoint: pos });
+              updateElementById(buildingWallID, { rightPoint: [pos.x, pos.y, pos.z] });
               setCommonStore((state) => {
                 state.objectTypeToAdd = ObjectType.None;
               });
@@ -493,8 +491,8 @@ const Foundation = ({
           if (grabRef.current) {
             const wall = getElementById(grabRef.current.id) as WallModel;
             if (wall) {
-              const leftPoint = new Vector3(wall.leftPoint.x, wall.leftPoint.y, wall.leftPoint.z);
-              const rightPoint = new Vector3(wall.rightPoint.x, wall.rightPoint.y, wall.rightPoint.z);
+              const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1], wall.leftPoint[2]);
+              const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1], wall.rightPoint[2]);
               setWallPoints(wallPoints.set(grabRef.current.id, { leftPoint: leftPoint, rightPoint: rightPoint }));
             }
             grabRef.current = null;
@@ -558,8 +556,8 @@ const Foundation = ({
                       cy: relativeCenter.y,
                       lx: lx,
                       relativeAngle: angle,
-                      leftPoint: leftPoint,
-                      rightPoint: rightPoint,
+                      leftPoint: [leftPoint.x, leftPoint.y, leftPoint.z],
+                      rightPoint: [rightPoint.x, rightPoint.y, rightPoint.z],
                     });
 
                     if (targetID && targetPoint && targetSide) {
@@ -948,7 +946,7 @@ const Foundation = ({
                   cy: relativeCenter.y,
                   lx: lx,
                   relativeAngle: angle,
-                  rightPoint: new Vector3().copy(p),
+                  rightPoint: [p.x, p.y, p.z],
                 });
 
                 if (buildingWall.leftJoints.length > 0) {

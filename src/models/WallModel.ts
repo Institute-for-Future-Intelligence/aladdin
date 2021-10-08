@@ -9,8 +9,8 @@ import { WindowModel } from './WindowModel';
 
 export interface WallModel extends ElementModel {
   relativeAngle: number;
-  leftPoint: Vector3;
-  rightPoint: Vector3;
+  leftPoint: number[];
+  rightPoint: number[];
   leftJoints: JointProps[];
   rightJoints: JointProps[];
   windows: WindowModel[];
