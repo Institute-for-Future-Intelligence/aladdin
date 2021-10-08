@@ -131,7 +131,8 @@ const Foundation = ({
     for (const id of initialWallsID) {
       const wall = getElementById(id) as WallModel;
       if (wall) {
-        // wall.points are not vector3 type at runtime
+        // const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1]);
+        // const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1]);
         const leftPoint = new Vector3(wall.leftPoint.x, wall.leftPoint.y);
         const rightPoint = new Vector3(wall.rightPoint.x, wall.rightPoint.y);
         wallPoints.set(id, { leftPoint, rightPoint });
@@ -240,10 +241,10 @@ const Foundation = ({
           let point: Vector3 | null = null;
           let wallSide: WallSide | null = null;
           if (isEuqal(wall1.leftPoint, wall2.rightPoint)) {
-            point = wall1.leftPoint;
+            point = new Vector3(wall1.leftPoint.x, wall1.leftPoint.y, wall1.leftPoint.z);
             wallSide = l1 > l2 ? WallSide.Left : WallSide.Right;
           } else if (isEuqal(wall1.rightPoint, wall2.leftPoint)) {
-            point = wall1.rightPoint;
+            point = new Vector3(wall1.rightPoint.x, wall1.rightPoint.y, wall1.rightPoint.z);
             wallSide = l1 > l2 ? WallSide.Right : WallSide.Left;
           }
           wallJointsSet.add(id);
@@ -492,8 +493,8 @@ const Foundation = ({
           if (grabRef.current) {
             const wall = getElementById(grabRef.current.id) as WallModel;
             if (wall) {
-              const leftPoint = wall.leftPoint;
-              const rightPoint = wall.rightPoint;
+              const leftPoint = new Vector3(wall.leftPoint.x, wall.leftPoint.y, wall.leftPoint.z);
+              const rightPoint = new Vector3(wall.rightPoint.x, wall.rightPoint.y, wall.rightPoint.z);
               setWallPoints(wallPoints.set(grabRef.current.id, { leftPoint: leftPoint, rightPoint: rightPoint }));
             }
             grabRef.current = null;
@@ -1152,7 +1153,8 @@ const Foundation = ({
           };
           return (
             <Extrude key={index} args={[shape, settings]}>
-              <meshStandardMaterial attachArray="material" color="white" />
+              {/* <meshStandardMaterial attachArray="material" color="white" /> */}
+              <meshStandardMaterial attachArray="material" map={texture} />
               <meshStandardMaterial attachArray="material" map={texture} />
             </Extrude>
           );

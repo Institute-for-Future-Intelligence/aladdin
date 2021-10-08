@@ -490,6 +490,30 @@ const MainToolBar = ({ orbitControls }: MainToolBarProps) => {
                 selectNone();
               }}
             />
+            <img
+              title={'Add window'}
+              alt={'Window'}
+              src={WallImage}
+              height={56}
+              width={48}
+              style={{
+                paddingRight: '12px',
+                paddingBottom: '20px',
+                // CSS filter generator of color: https://codepen.io/sosuke/pen/Pjoqqp
+                filter:
+                  objectTypeToAdd === ObjectType.Window
+                    ? 'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)'
+                    : 'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)',
+                cursor: 'pointer',
+                verticalAlign: 'middle',
+              }}
+              onClick={() => {
+                setCommonStore((state) => {
+                  state.objectTypeToAdd = ObjectType.Window;
+                });
+                selectNone();
+              }}
+            />
             <FontAwesomeIcon
               title={'Add cuboid'}
               icon={faCube}

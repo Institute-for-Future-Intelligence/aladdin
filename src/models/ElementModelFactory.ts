@@ -128,7 +128,6 @@ export class ElementModelFactory {
       rotation: [0, 0, 0],
       parent: parent,
       id: short.generate() as string,
-      wallPoints: [],
     } as FoundationModel;
   }
 
@@ -146,11 +145,30 @@ export class ElementModelFactory {
       rightPoint: new Vector3(),
       leftJoints: [],
       rightJoints: [],
+      windows: [],
       showLabel: false,
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: [0, 0, 0],
       parent: parent,
       id: short.generate() as string,
     } as WallModel;
+  }
+
+  static makeWindow(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: []) {
+    return {
+      type: ObjectType.Window,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: 1.5,
+      ly: parent.ly,
+      lz: 1.5,
+      selected: false,
+      showLabel: false,
+      normal: normal ? normal.toArray() : [0, 0, 1],
+      rotation: rotation ? rotation : [0, 0, 0],
+      parent: parent,
+      id: short.generate() as string,
+    } as SensorModel;
   }
 }

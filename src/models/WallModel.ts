@@ -5,6 +5,7 @@
 import { Vector3 } from 'three';
 import { ElementModel } from './ElementModel';
 import { WallSide } from 'src/types';
+import { WindowModel } from './WindowModel';
 
 export interface WallModel extends ElementModel {
   relativeAngle: number;
@@ -12,6 +13,7 @@ export interface WallModel extends ElementModel {
   rightPoint: Vector3;
   leftJoints: JointProps[];
   rightJoints: JointProps[];
+  windows: WindowModel[];
   leftOffset?: number;
   rightOffset?: number;
 }

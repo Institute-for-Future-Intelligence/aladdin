@@ -213,6 +213,13 @@ export const useStore = create<CommonStoreState>(
               if (e.selected) {
                 return e;
               }
+              if (e.type === ObjectType.Wall) {
+                for (const w of e.windows) {
+                  if (w.selected) {
+                    return w;
+                  }
+                }
+              }
             }
             return null;
           },
@@ -251,6 +258,11 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 e.selected = false;
+                if (e.type === ObjectType.Wall) {
+                  for (const w of e.windows) {
+                    w.selected = false;
+                  }
+                }
               }
             });
           },
@@ -261,9 +273,23 @@ export const useStore = create<CommonStoreState>(
                   for (const e of state.elements) {
                     if (e.id === id) {
                       e.selected = true;
+                      if (e.type === ObjectType.Wall) {
+                        for (const w of e.windows) {
+                          w.selected = false;
+                        }
+                      }
                       state.selectedElementHeight = e.lz;
                     } else {
                       e.selected = false;
+                      if (e.type === ObjectType.Wall) {
+                        for (const w of e.windows) {
+                          if (w.id === id) {
+                            w.selected = true;
+                          } else {
+                            w.selected = false;
+                          }
+                        }
+                      }
                     }
                   }
                   if (action) {
