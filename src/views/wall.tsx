@@ -150,6 +150,24 @@ const Wall = ({
   const [movingWindow, setMovingWindow] = useState<{ id: string; diff: Vector3 } | null>(null);
   const [resizingWindowID, setResizingWindowID] = useState<string | null>(null!);
 
+  const checkWallLoop = (id: string) => {
+    const startID = id;
+    const points: number[][] = [];
+
+    let wall = getElementById(id) as WallModel;
+    while (wall && wall.leftJoints.length > 0) {
+      const point = [...wall.leftPoint];
+      points.push(point);
+      const id = wall.leftJoints[0].id;
+      if (id === startID) {
+        return points;
+      } else {
+        wall = getElementById(id) as WallModel;
+      }
+    }
+    return null;
+  };
+
   return (
     <>
       {wallAbsPosition && wallAbsAngle !== undefined && (
@@ -157,6 +175,8 @@ const Wall = ({
           {/* wall body */}
           <mesh
             ref={wallRef}
+            castShadow
+            receiveShadow
             onPointerDown={(e) => {
               if (e.button === 2) return; // ignore right-click
               setCommonStore((state) => {
@@ -179,6 +199,21 @@ const Wall = ({
                   updateElementById(id, {
                     windows: [...elementModel.windows, window],
                   });
+                  setCommonStore((state) => {
+                    state.objectTypeToAdd = ObjectType.None;
+                  });
+                }
+                if (objectTypeToAdd === ObjectType.Roof) {
+                  const points = checkWallLoop(elementModel.id);
+                  if (points) {
+                    const parent = getElementById(elementModel.parent.id);
+                    if (parent) {
+                      const roof = ElementModelFactory.makeRoof(lz, parent, points);
+                      setCommonStore((state) => {
+                        state.elements.push(roof);
+                      });
+                    }
+                  }
                   setCommonStore((state) => {
                     state.objectTypeToAdd = ObjectType.None;
                   });
@@ -261,7 +296,7 @@ const Wall = ({
           {windows.map((window) => {
             const { id, cx, cz, lx, lz } = window;
             return (
-              <group key={id} name={`Window group ${id}`} position={[cx, 0, cz]}>
+              <group key={id} name={`Window group ${id}`} position={[cx, 0, cz]} castShadow receiveShadow>
                 <Plane
                   name={'window ' + id}
                   args={[lx, lz]}

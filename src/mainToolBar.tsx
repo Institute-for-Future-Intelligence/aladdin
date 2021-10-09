@@ -25,6 +25,8 @@ import FoundationImage from './resources/foundation.png';
 import SolarPanelImage from './resources/solar-panel.png';
 import ShadowImage from './resources/shadow.png';
 import WallImage from './resources/wall.png';
+import WindowImage from './resources/window.png';
+import RoofImage from './resources/roof.png';
 import firebase from 'firebase';
 import { showInfo } from './helpers';
 import { CloudFileInfo, ObjectType, User } from './types';
@@ -493,13 +495,12 @@ const MainToolBar = ({ orbitControls }: MainToolBarProps) => {
             <img
               title={'Add window'}
               alt={'Window'}
-              src={WallImage}
+              src={WindowImage}
               height={56}
               width={48}
               style={{
                 paddingRight: '12px',
                 paddingBottom: '20px',
-                // CSS filter generator of color: https://codepen.io/sosuke/pen/Pjoqqp
                 filter:
                   objectTypeToAdd === ObjectType.Window
                     ? 'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)'
@@ -510,6 +511,29 @@ const MainToolBar = ({ orbitControls }: MainToolBarProps) => {
               onClick={() => {
                 setCommonStore((state) => {
                   state.objectTypeToAdd = ObjectType.Window;
+                });
+                selectNone();
+              }}
+            />
+            <img
+              title={'Add roof'}
+              alt={'Roof'}
+              src={RoofImage}
+              height={56}
+              width={48}
+              style={{
+                paddingRight: '12px',
+                paddingBottom: '20px',
+                filter:
+                  objectTypeToAdd === ObjectType.Roof
+                    ? 'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)'
+                    : 'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)',
+                cursor: 'pointer',
+                verticalAlign: 'middle',
+              }}
+              onClick={() => {
+                setCommonStore((state) => {
+                  state.objectTypeToAdd = ObjectType.Roof;
                 });
                 selectNone();
               }}

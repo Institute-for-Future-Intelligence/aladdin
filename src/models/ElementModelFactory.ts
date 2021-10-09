@@ -15,6 +15,7 @@ import { FoundationModel } from './FoundationModel';
 import { SolarPanelModel } from './SolarPanelModel';
 import { PvModel } from './PvModel';
 import { WallModel } from './WallModel';
+import { RoofModel } from './RoofModel';
 
 export class ElementModelFactory {
   static makeHuman(parent: GroundModel, x: number, y: number, z?: number) {
@@ -139,7 +140,7 @@ export class ElementModelFactory {
       cz: z,
       lx: 0,
       ly: 0.5,
-      lz: 4,
+      lz: 8,
       relativeAngle: 0,
       leftPoint: [],
       rightPoint: [],
@@ -170,5 +171,24 @@ export class ElementModelFactory {
       parent: parent,
       id: short.generate() as string,
     } as SensorModel;
+  }
+
+  static makeRoof(cz: number, parent: ElementModel, points: number[][], normal?: Vector3, rotation?: []) {
+    return {
+      type: ObjectType.Roof,
+      cx: 0,
+      cy: 0,
+      cz: cz,
+      lx: 0,
+      ly: 0,
+      lz: 0.25,
+      points: points,
+      selected: false,
+      showLabel: false,
+      normal: normal ? normal.toArray() : [0, 0, 1],
+      rotation: rotation ? rotation : [0, 0, 0],
+      parent: parent,
+      id: short.generate() as string,
+    } as RoofModel;
   }
 }
