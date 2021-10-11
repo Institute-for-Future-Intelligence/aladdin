@@ -5,7 +5,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Line, Sphere, Plane, Extrude } from '@react-three/drei';
 import { Euler, Mesh, Raycaster, RepeatWrapping, Shape, TextureLoader, Vector2, Vector3 } from 'three';
-import { useStore } from '../stores/common';
+import { CommonStoreState, useStore } from '../stores/common';
 import { FoundationModel } from '../models/FoundationModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
@@ -34,6 +34,7 @@ import { WallModel } from 'src/models/WallModel';
 import RotateHandle from '../components/rotateHandle';
 import WireFrame from 'src/components/wireFrame';
 import WallExteriorImage from '../resources/WallExteriorImage.png';
+import * as Selector from 'src/stores/selector';
 
 interface wallJoint {
   id: string;
@@ -58,25 +59,28 @@ const Foundation = ({
   locked = false,
   selected = false,
 }: FoundationModel) => {
-  const maxLxLy = Math.max(lx, ly);
+  const getElementById = useStore(Selector.getElementById);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const getInitialWallsID = useStore(Selector.getInitialWallsID);
 
-  const setCommonStore = useStore((state) => state.set);
-  const viewState = useStore((state) => state.viewState);
+  const setCommonStore = useStore(Selector.set);
+  const setElementPosition = useStore(Selector.setElementPosition);
+  const setElementSize = useStore(Selector.setElementSize);
+
+  const updateElementById = useStore(Selector.updateElementById);
+  const deleteElementById = useStore(Selector.deleteElementById);
+  const selectMe = useStore(Selector.selectMe);
+  const addElement = useStore(Selector.addElement);
+
+  const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
+  const deletedWallID = useStore(Selector.deletedWallID);
+  const shadowEnabled = useStore(Selector.viewstate.shadowEnabled);
+  const groundImage = useStore(Selector.viewstate.groundImage);
+
   const moveHandleType = useStore((state) => state.moveHandleType);
   const resizeHandleType = useStore((state) => state.resizeHandleType);
   const rotateHandleType = useStore((state) => state.rotateHandleType);
   const resizeAnchor = useStore((state) => state.resizeAnchor);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
-  const getElementById = useStore((state) => state.getElementById);
-  const objectTypeToAdd = useStore((state) => state.objectTypeToAdd);
-  const addElement = useStore((state) => state.addElement);
-  const setElementPosition = useStore((state) => state.setElementPosition);
-  const setElementSize = useStore((state) => state.setElementSize);
-  const updateElementById = useStore((state) => state.updateElementById);
-  const selectMe = useStore((state) => state.selectMe);
-  const deleteElementById = useStore((state) => state.deleteElementById);
-  const getInitialWallsID = useStore((state) => state.getInitialWallsID);
-  const deletedWallID = useStore((state) => state.deletedWallID);
 
   const {
     camera,
@@ -391,8 +395,8 @@ const Foundation = ({
     <group name={'Foundation Group ' + id} position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
       {/* draw rectangle */}
       <Box
-        castShadow={viewState.shadowEnabled}
-        receiveShadow={viewState.shadowEnabled}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
         uuid={id}
         userData={{ aabb: true }}
         ref={baseRef}
@@ -1120,8 +1124,8 @@ const Foundation = ({
         <meshStandardMaterial
           attach="material"
           color={color}
-          transparent={viewState.groundImage}
-          opacity={viewState.groundImage ? 0.25 : 1}
+          transparent={groundImage}
+          opacity={groundImage ? 0.25 : 1}
         />
       </Box>
 
@@ -1346,7 +1350,7 @@ const Foundation = ({
         />
       )}
 
-      {showGrid && !viewState.groundImage && (
+      {showGrid && !groundImage && (
         <>
           {rotateHandleType && grabRef.current?.type === ObjectType.SolarPanel && (
             <PolarGrid element={grabRef.current} height={grabRef.current.poleHeight} />
