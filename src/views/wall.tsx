@@ -511,12 +511,14 @@ const ResizeHandle = ({ args, id, handleType, highLight, handleSize = 0.4 }: Res
   const setCommonStore = useStore((state) => state.set);
   const selectMe = useStore((state) => state.selectMe);
 
+  // https://github.com/mrdoob/three.js/issues/20220
+
   return (
     <Sphere
       name={handleType}
       ref={handleRef}
       args={[handleSize]}
-      position={[x, y, z]}
+      position={args}
       onPointerOver={() => {
         setHovered(true);
       }}

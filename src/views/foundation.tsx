@@ -460,6 +460,9 @@ const Foundation = ({
             }
           }
           if (buildingWallID && baseRef.current) {
+            setCommonStore((state) => {
+              state.enableOrbitController = false;
+            });
             const intersects = ray.intersectObjects([baseRef.current]);
             let pos = intersects[0].point;
             if (!enableWallMagnet) {
@@ -475,19 +478,6 @@ const Foundation = ({
               updateElementById(buildingWallID, { leftPoint: [pos.x, pos.y, pos.z] });
               setIsSettingWallStartPoint(false);
               setIsSettingWallEndPoint(true);
-            } else if (isSettingWallEndPoint) {
-              const leftPoint = wallPoints.get(buildingWallID)?.leftPoint ?? new Vector3();
-              setWallPoints(wallPoints.set(buildingWallID, { leftPoint: leftPoint, rightPoint: pos }));
-              updateElementById(buildingWallID, { rightPoint: [pos.x, pos.y, pos.z] });
-              setCommonStore((state) => {
-                state.objectTypeToAdd = ObjectType.None;
-              });
-              setIsSettingWallEndPoint(false);
-              setBuildingWallID(null);
-              buildingWallIDRef.current = null;
-              setCommonStore((state) => {
-                state.buildingWallID = null;
-              });
             }
           }
         }}
@@ -503,6 +493,32 @@ const Foundation = ({
           }
           if (!buildingWallID) {
             setShowGrid(false);
+          }
+          if (buildingWallID && baseRef.current) {
+            const intersects = ray.intersectObjects([baseRef.current]);
+            let pos = intersects[0].point;
+            if (!enableWallMagnet) {
+              pos = stickToFineGrid(Util.wallRelativePosition(pos, elementModel));
+            } else if (magnetedPoint) {
+              pos = magnetedPoint;
+              setMagnetedPoint(null);
+            } else {
+              pos = stickToNormalGrid(Util.wallRelativePosition(pos, elementModel));
+            }
+            if (isSettingWallEndPoint) {
+              const leftPoint = wallPoints.get(buildingWallID)?.leftPoint ?? new Vector3();
+              setWallPoints(wallPoints.set(buildingWallID, { leftPoint: leftPoint, rightPoint: pos }));
+              updateElementById(buildingWallID, { rightPoint: [pos.x, pos.y, pos.z] });
+              setCommonStore((state) => {
+                state.objectTypeToAdd = ObjectType.None;
+              });
+              setIsSettingWallEndPoint(false);
+              setBuildingWallID(null);
+              buildingWallIDRef.current = null;
+              setCommonStore((state) => {
+                state.buildingWallID = null;
+              });
+            }
           }
           setCommonStore((state) => {
             state.enableOrbitController = true;
@@ -896,14 +912,12 @@ const Foundation = ({
             }
             if (objectTypeToAdd === ObjectType.Wall) {
               const wallID = addElement(elementModel, p);
-              setBuildingWallID(wallID);
               buildingWallIDRef.current = wallID;
-              setCommonStore((state) => {
-                state.buildingWallID = wallID;
-              });
+              setBuildingWallID(wallID);
               setIsSettingWallStartPoint(true);
               setShowGrid(true);
               setCommonStore((state) => {
+                state.buildingWallID = wallID;
                 state.objectTypeToAdd = ObjectType.None;
               });
             }
