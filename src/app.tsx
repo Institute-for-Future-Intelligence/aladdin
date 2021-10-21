@@ -44,23 +44,22 @@ import { Grid } from './grid';
 import CameraController from './cameraController';
 import CompassContainer from './compassContainer';
 import { WallModel } from './models/WallModel';
+import * as Selector from 'src/stores/selector';
 
 const App = () => {
-  const setCommonStore = useStore((state) => state.set);
-  const worldLatitude = useStore((state) => state.world.latitude);
-  const worldLongitude = useStore((state) => state.world.longitude);
+  const setCommonStore = useStore(Selector.set);
+  const loadWeatherData = useStore(Selector.loadWeatherData);
+  const getClosestCity = useStore(Selector.getClosestCity);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const deleteElementById = useStore(Selector.deleteElementById);
+  const countElementsByType = useStore(Selector.countElementsByType);
+  const getElementById = useStore(Selector.getElementById);
+  const updateElementById = useStore(Selector.updateElementById);
+  const worldLatitude = useStore(Selector.world.latitude);
+  const worldLongitude = useStore(Selector.world.longitude);
+  const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const viewState = useStore((state) => state.viewState);
-  const loadWeatherData = useStore((state) => state.loadWeatherData);
-  const getClosestCity = useStore((state) => state.getClosestCity);
   const loadPvModules = useStore((state) => state.loadPvModules);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
-  const deleteElementById = useStore((state) => state.deleteElementById);
-  const objectTypeToAdd = useStore((state) => state.objectTypeToAdd);
-  const countElementsByType = useStore((state) => state.countElementsByType);
-  const getElementById = useStore((state) => state.getElementById);
-  const updateElementById = useStore((state) => state.updateElementById);
-
-  const weatherData = useStore((state) => state.weatherData);
 
   const [loading, setLoading] = useState(true);
   const [city, setCity] = useState<string | null>('Boston MA, USA');
@@ -83,7 +82,7 @@ const App = () => {
 
   useEffect(() => {
     setCity(getClosestCity(worldLatitude, worldLongitude));
-  }, [worldLatitude, worldLongitude, weatherData]);
+  }, [worldLatitude, worldLongitude]);
 
   useEffect(() => {
     if (canvasRef.current) {

@@ -28,4 +28,10 @@ export const objectTypeToAdd = (state: CommonStoreState) => state.objectTypeToAd
 
 export const deletedWallID = (state: CommonStoreState) => state.deletedWallID;
 
+export const loadWeatherData = (state: CommonStoreState) => state.loadWeatherData;
+export const getClosestCity = (state: CommonStoreState) => state.getClosestCity;
+export const countElementsByType = (state: CommonStoreState) => state.countElementsByType;
+
 export * as viewstate from './viewState';
+
+export * as world from './world';
