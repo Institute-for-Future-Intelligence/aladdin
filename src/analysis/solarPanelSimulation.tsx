@@ -3,22 +3,11 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  calculateDiffuseAndReflectedRadiation,
-  calculatePeakRadiation,
-  getSunDirection,
-} from './sunTools';
+import { calculateDiffuseAndReflectedRadiation, calculatePeakRadiation, getSunDirection } from './sunTools';
 import { Euler, Intersection, Object3D, Quaternion, Raycaster, Vector3 } from 'three';
 import { useThree } from '@react-three/fiber';
 import { useStore } from '../stores/common';
-import {
-  DatumEntry,
-  Discretization,
-  ObjectType,
-  Orientation,
-  ShadeTolerance,
-  TrackerType,
-} from '../types';
+import { DatumEntry, Discretization, ObjectType, Orientation, ShadeTolerance, TrackerType } from '../types';
 import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
 import { MONTHS } from '../constants';
@@ -97,29 +86,17 @@ const SolarPanelSimulation = ({
     if (city) {
       const weather = weatherData[city];
       if (weather) {
-        const t = computeOutsideTemperature(
-          now,
-          weather.lowestTemperatures,
-          weather.highestTemperatures,
-        );
+        const t = computeOutsideTemperature(now, weather.lowestTemperatures, weather.highestTemperatures);
         const c = getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(now));
         setCurrentTemperature(c);
       }
     }
   }, [city, world.date]);
 
-  const inShadow = (panelId: string, time: Date, position: Vector3, sunDirection: Vector3) => {
+  const inShadow = (content: Object3D[], panelId: string, position: Vector3, sunDirection: Vector3) => {
     // convert the position and direction from physics model to the coordinate system of three.js
     ray.set(position, sunDirection);
-    const content = scene.children.filter((c) => c.name === 'Content');
     if (content.length > 0) {
-      const components = content[0].children;
-      objectsRef.current.length = 0;
-      for (const c of components) {
-        objectsRef.current.push(
-          ...c.children.filter((x) => x.userData['simulation'] && x.uuid !== panelId),
-        );
-      }
       intersectionsRef.current.length = 0;
       ray.intersectObjects(objectsRef.current, false, intersectionsRef.current);
       return intersectionsRef.current.length > 0;
@@ -183,9 +160,7 @@ const SolarPanelSimulation = ({
     const originalNormal = normal.clone();
     if (Math.abs(panel.tiltAngle) > 0.001 && panel.trackerType === TrackerType.NO_TRACKER) {
       // TODO: right now we assume a parent rotation is always around the z-axis
-      normal.applyEuler(
-        new Euler(panel.tiltAngle, panel.relativeAzimuth + parent.rotation[2], 0, 'XYZ'),
-      );
+      normal.applyEuler(new Euler(panel.tiltAngle, panel.relativeAzimuth + parent.rotation[2], 0, 'XYZ'));
     }
     const result = new Array(24).fill(0);
     const year = now.getFullYear();
@@ -232,6 +207,14 @@ const SolarPanelSimulation = ({
     const z0 = panel.poleHeight + center.z - lz / 2;
     const v = new Vector3();
     const cellOutputs = Array.from(Array(nx), () => new Array(ny));
+    const content = scene.children.filter((c) => c.name === 'Content');
+    if (content.length > 0) {
+      const components = content[0].children;
+      objectsRef.current.length = 0;
+      for (const c of components) {
+        objectsRef.current.push(...c.children.filter((x) => x.userData['simulation'] && x.uuid !== panel.id));
+      }
+    }
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         const currentTime = new Date(year, month, date, i, j * interval);
@@ -247,10 +230,7 @@ const SolarPanelSimulation = ({
             const ori = originalNormal.clone();
             switch (panel.trackerType) {
               case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
-                const qrotAADAT = new Quaternion().setFromUnitVectors(
-                  Util.UNIT_VECTOR_POS_Z,
-                  rotatedSunDirection,
-                );
+                const qrotAADAT = new Quaternion().setFromUnitVectors(Util.UNIT_VECTOR_POS_Z, rotatedSunDirection);
                 normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qrotAADAT)));
                 break;
               case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
@@ -262,11 +242,7 @@ const SolarPanelSimulation = ({
                 break;
               case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
                 if (Math.abs(panel.tiltAngle) > 0.001) {
-                  const v2d = new Vector3(
-                    rotatedSunDirection.x,
-                    -rotatedSunDirection.y,
-                    0,
-                  ).normalize();
+                  const v2d = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
                   const az = Math.acos(Util.UNIT_VECTOR_POS_Y.dot(v2d)) * Math.sign(v2d.x);
                   ori.applyAxisAngle(Util.UNIT_VECTOR_POS_X, panel.tiltAngle);
                   ori.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, az + rot);
@@ -279,25 +255,15 @@ const SolarPanelSimulation = ({
             }
           }
           count++;
-          const peakRadiation = calculatePeakRadiation(
-            sunDirection,
-            dayOfYear,
-            elevation,
-            AirMass.SPHERE_MODEL,
-          );
-          const indirectRadiation = calculateDiffuseAndReflectedRadiation(
-            world.ground,
-            month,
-            normal,
-            peakRadiation,
-          );
+          const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+          const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
           const dot = normal.dot(sunDirection);
           for (let kx = 0; kx < nx; kx++) {
             for (let ky = 0; ky < ny; ky++) {
               cellOutputs[kx][ky] = indirectRadiation;
               if (dot > 0) {
                 v.set(x0 + kx * dx, y0 + ky * dy, z0 + ky * dz);
-                if (!inShadow(panel.id, currentTime, v, sunDirection)) {
+                if (!inShadow(content, panel.id, v, sunDirection)) {
                   // direct radiation
                   cellOutputs[kx][ky] += dot * peakRadiation;
                 }
@@ -378,11 +344,7 @@ const SolarPanelSimulation = ({
     const daylight = (count * interval) / 60;
     const clearness = weather.sunshineHours[month] / (30 * daylight);
     const factor =
-      panel.lx *
-      panel.ly *
-      getPanelEfficiency(currentTemperature, panel) *
-      inverterEfficiency *
-      (1 - dustLoss);
+      panel.lx * panel.ly * getPanelEfficiency(currentTemperature, panel) * inverterEfficiency * (1 - dustLoss);
     return result.map((x) => (x * factor * clearness) / world.timesPerHour);
   };
 
@@ -441,9 +403,7 @@ const SolarPanelSimulation = ({
     const originalNormal = normal.clone();
     if (Math.abs(panel.tiltAngle) > 0.001 && panel.trackerType === TrackerType.NO_TRACKER) {
       // TODO: right now we assume a parent rotation is always around the z-axis
-      normal.applyEuler(
-        new Euler(panel.tiltAngle, panel.relativeAzimuth + parent.rotation[2], 0, 'XYZ'),
-      );
+      normal.applyEuler(new Euler(panel.tiltAngle, panel.relativeAzimuth + parent.rotation[2], 0, 'XYZ'));
     }
     const year = now.getFullYear();
     const date = 15;
@@ -486,6 +446,14 @@ const SolarPanelSimulation = ({
     const z0 = panel.poleHeight + center.z - lz / 2;
     const v = new Vector3();
     const cellOutputs = Array.from(Array(nx), () => new Array(ny));
+    const content = scene.children.filter((c) => c.name === 'Content');
+    if (content.length > 0) {
+      const components = content[0].children;
+      objectsRef.current.length = 0;
+      for (const c of components) {
+        objectsRef.current.push(...c.children.filter((x) => x.userData['simulation'] && x.uuid !== panel.id));
+      }
+    }
     for (let month = 0; month < 12; month++) {
       const midMonth = new Date(year, month, date);
       const dayOfYear = Util.dayOfYear(midMonth);
@@ -506,10 +474,7 @@ const SolarPanelSimulation = ({
               const ori = originalNormal.clone();
               switch (panel.trackerType) {
                 case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
-                  const qrotAADAT = new Quaternion().setFromUnitVectors(
-                    Util.UNIT_VECTOR_POS_Z,
-                    rotatedSunDirection,
-                  );
+                  const qrotAADAT = new Quaternion().setFromUnitVectors(Util.UNIT_VECTOR_POS_Z, rotatedSunDirection);
                   normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qrotAADAT)));
                   break;
                 case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
@@ -521,11 +486,7 @@ const SolarPanelSimulation = ({
                   break;
                 case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
                   if (Math.abs(panel.tiltAngle) > 0.001) {
-                    const v2d = new Vector3(
-                      rotatedSunDirection.x,
-                      -rotatedSunDirection.y,
-                      0,
-                    ).normalize();
+                    const v2d = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
                     const az = Math.acos(Util.UNIT_VECTOR_POS_Y.dot(v2d)) * Math.sign(v2d.x);
                     ori.applyAxisAngle(Util.UNIT_VECTOR_POS_X, panel.tiltAngle);
                     ori.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, az + rot);
@@ -538,25 +499,15 @@ const SolarPanelSimulation = ({
               }
             }
             count++;
-            const peakRadiation = calculatePeakRadiation(
-              sunDirection,
-              dayOfYear,
-              elevation,
-              AirMass.SPHERE_MODEL,
-            );
-            const indirectRadiation = calculateDiffuseAndReflectedRadiation(
-              world.ground,
-              month,
-              normal,
-              peakRadiation,
-            );
+            const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+            const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
             for (let kx = 0; kx < nx; kx++) {
               for (let ky = 0; ky < ny; ky++) {
                 cellOutputs[kx][ky] = indirectRadiation;
                 const dot = normal.dot(sunDirection);
                 if (dot > 0) {
                   v.set(x0 + kx * dx, y0 + ky * dy, z0 + ky * dz);
-                  if (!inShadow(panel.id, currentTime, v, sunDirection)) {
+                  if (!inShadow(content, panel.id, v, sunDirection)) {
                     // direct radiation
                     cellOutputs[kx][ky] += dot * peakRadiation;
                   }
@@ -636,11 +587,7 @@ const SolarPanelSimulation = ({
       const daylight = (count * interval) / 60;
       const clearness = weather.sunshineHours[midMonth.getMonth()] / (30 * daylight);
       const factor =
-        panel.lx *
-        panel.ly *
-        getPanelEfficiency(currentTemperature, panel) *
-        inverterEfficiency *
-        (1 - dustLoss);
+        panel.lx * panel.ly * getPanelEfficiency(currentTemperature, panel) * inverterEfficiency * (1 - dustLoss);
       dailyYield *= clearness * factor;
       dailyYield /= world.timesPerHour; // convert the unit of timeStep from minute to hour so that we get kWh
       data.push({ Month: MONTHS[month], Yield: dailyYield } as DatumEntry);
@@ -651,4 +598,4 @@ const SolarPanelSimulation = ({
   return <></>;
 };
 
-export default SolarPanelSimulation;
+export default React.memo(SolarPanelSimulation);

@@ -3,11 +3,7 @@
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
-import {
-  calculateDiffuseAndReflectedRadiation,
-  calculatePeakRadiation,
-  getSunDirection,
-} from './sunTools';
+import { calculateDiffuseAndReflectedRadiation, calculatePeakRadiation, getSunDirection } from './sunTools';
 import { Object3D, Raycaster, Vector3 } from 'three';
 import { useThree } from '@react-three/fiber';
 import { useStore } from '../stores/common';
@@ -23,11 +19,7 @@ export interface SensorSimulationProps {
   yearlyLightSensorDataFlag: boolean;
 }
 
-const SensorSimulation = ({
-  city,
-  dailyLightSensorDataFlag,
-  yearlyLightSensorDataFlag,
-}: SensorSimulationProps) => {
+const SensorSimulation = ({ city, dailyLightSensorDataFlag, yearlyLightSensorDataFlag }: SensorSimulationProps) => {
   const world = useStore((state) => state.world);
   const elements = useStore((state) => state.elements);
   const getElementById = useStore((state) => state.getElementById);
@@ -66,16 +58,10 @@ const SensorSimulation = ({
     }
   }, [yearlyLightSensorDataFlag]);
 
-  const inShadow = (time: Date, position: Vector3, sunDirection: Vector3) => {
+  const inShadow = (content: Object3D[], objects: Object3D[], position: Vector3, sunDirection: Vector3) => {
     // convert the position and direction from physics model to the coordinate system of three.js
     ray.set(position, sunDirection);
-    const content = scene.children.filter((c) => c.name === 'Content');
     if (content.length > 0) {
-      const components = content[0].children;
-      const objects: Object3D[] = [];
-      for (const c of components) {
-        objects.push(...c.children.filter((x) => x.userData['simulation']));
-      }
       const intersects = ray.intersectObjects(objects);
       return intersects.length > 0;
     }
@@ -121,6 +107,14 @@ const SensorSimulation = ({
     const date = now.getDate();
     const dayOfYear = Util.dayOfYear(now);
     let count = 0;
+    const content = scene.children.filter((c) => c.name === 'Content');
+    const objects: Object3D[] = [];
+    if (content.length > 0) {
+      const components = content[0].children;
+      for (const c of components) {
+        objects.push(...c.children.filter((x) => x.userData['simulation']));
+      }
+    }
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         const cur = new Date(year, month, date, i, j * interval);
@@ -128,26 +122,16 @@ const SensorSimulation = ({
         if (sunDirection.z > 0) {
           // when the sun is out
           count++;
-          const peakRadiation = calculatePeakRadiation(
-            sunDirection,
-            dayOfYear,
-            elevation,
-            AirMass.SPHERE_MODEL,
-          );
+          const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
           const dot = normal.dot(sunDirection);
           if (dot > 0) {
-            if (!inShadow(cur, position, sunDirection)) {
+            if (!inShadow(content, objects, position, sunDirection)) {
               // direct radiation
               result[i] += dot * peakRadiation;
             }
           }
           // indirect radiation
-          result[i] += calculateDiffuseAndReflectedRadiation(
-            world.ground,
-            month,
-            normal,
-            peakRadiation,
-          );
+          result[i] += calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
         }
       }
     }
@@ -199,6 +183,14 @@ const SensorSimulation = ({
       const dayOfYear = Util.dayOfYear(midMonth);
       let total = 0;
       let count = 0;
+      const content = scene.children.filter((c) => c.name === 'Content');
+      const objects: Object3D[] = [];
+      if (content.length > 0) {
+        const components = content[0].children;
+        for (const c of components) {
+          objects.push(...c.children.filter((x) => x.userData['simulation']));
+        }
+      }
       for (let hour = 0; hour < 24; hour++) {
         for (let step = 0; step < world.timesPerHour; step++) {
           const cur = new Date(year, month, date, hour, step * interval);
@@ -206,26 +198,16 @@ const SensorSimulation = ({
           if (sunDirection.z > 0) {
             // when the sun is out
             count++;
-            const peakRadiation = calculatePeakRadiation(
-              sunDirection,
-              dayOfYear,
-              elevation,
-              AirMass.SPHERE_MODEL,
-            );
+            const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
             const dot = normal.dot(sunDirection);
             if (dot > 0) {
-              if (!inShadow(cur, position, sunDirection)) {
+              if (!inShadow(content, objects, position, sunDirection)) {
                 // direct radiation
                 total += dot * peakRadiation;
               }
             }
             // indirect radiation
-            total += calculateDiffuseAndReflectedRadiation(
-              world.ground,
-              month,
-              normal,
-              peakRadiation,
-            );
+            total += calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
           }
         }
       }
@@ -246,4 +228,4 @@ const SensorSimulation = ({
   return <></>;
 };
 
-export default SensorSimulation;
+export default React.memo(SensorSimulation);
