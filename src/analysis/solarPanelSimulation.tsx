@@ -151,6 +151,17 @@ const SolarPanelSimulation = ({
     }
   };
 
+  const getSimulationElement = (panelId: string, obj: Object3D, arr: Object3D[]) => {
+    if (obj.userData['simulation'] && obj.uuid !== panelId) {
+      arr.push(obj);
+    }
+    if (obj.children.length > 0) {
+      for (const c of obj.children) {
+        getSimulationElement(panelId, c, arr);
+      }
+    }
+  };
+
   const getDailyYield = (panel: SolarPanelModel) => {
     // why are the properties of parents cached here?
     const parent = getElementById(panel.parent.id);
@@ -212,7 +223,7 @@ const SolarPanelSimulation = ({
       const components = content[0].children;
       objectsRef.current.length = 0;
       for (const c of components) {
-        objectsRef.current.push(...c.children.filter((x) => x.userData['simulation'] && x.uuid !== panel.id));
+        getSimulationElement(panel.id, c, objectsRef.current);
       }
     }
     for (let i = 0; i < 24; i++) {

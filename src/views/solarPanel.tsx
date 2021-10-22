@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Cone, Cylinder, Line, Ring, Sphere } from '@react-three/drei';
+import { Box, Cone, Cylinder, Line, Plane, Ring, Sphere } from '@react-three/drei';
 import { DoubleSide, Euler, Mesh, Quaternion, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -318,7 +318,7 @@ const SolarPanel = ({
         <Box
           receiveShadow={shadowEnabled}
           castShadow={shadowEnabled}
-          userData={{ simulation: true, aabb: true }}
+          userData={{ aabb: true }}
           uuid={id}
           ref={baseRef}
           args={[lx, lz, ly]}
@@ -355,6 +355,19 @@ const SolarPanel = ({
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
         </Box>
+
+        {/* simulation panel */}
+        <Plane
+          name={'Solar Panel Simulation Plane'}
+          uuid={id}
+          args={[lx, ly]}
+          userData={{ simulation: true }}
+          receiveShadow={shadowEnabled}
+          castShadow={shadowEnabled}
+          visible={false}
+        >
+          <meshBasicMaterial side={DoubleSide} />
+        </Plane>
 
         {/* move & resize handles */}
         {selected && !locked && (
