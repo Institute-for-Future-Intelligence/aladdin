@@ -483,8 +483,9 @@ const Foundation = ({
         }}
         onPointerUp={(e) => {
           if (grabRef.current) {
-            const wall = getElementById(grabRef.current.id) as WallModel;
-            if (wall) {
+            const elem = getElementById(grabRef.current.id);
+            if (elem && elem.type === ObjectType.Wall) {
+              const wall = elem as WallModel;
               const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1], wall.leftPoint[2]);
               const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1], wall.rightPoint[2]);
               setWallPoints(wallPoints.set(grabRef.current.id, { leftPoint: leftPoint, rightPoint: rightPoint }));
