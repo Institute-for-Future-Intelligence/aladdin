@@ -104,6 +104,17 @@ const SolarPanelSimulation = ({
     return false;
   };
 
+  const getSimulationElement = (panelId: string, obj: Object3D, arr: Object3D[]) => {
+    if (obj.userData['simulation'] && obj.uuid !== panelId) {
+      arr.push(obj);
+    }
+    if (obj.children.length > 0) {
+      for (const c of obj.children) {
+        getSimulationElement(panelId, c, arr);
+      }
+    }
+  };
+
   const getDailyYieldForAllSolarPanels = () => {
     if (dailyIndividualOutputs) {
       const total = new Array(24).fill(0);
@@ -148,17 +159,6 @@ const SolarPanelSimulation = ({
         data.push({ Hour: i, Total: total[i] } as DatumEntry);
       }
       setPvDailyYield(data);
-    }
-  };
-
-  const getSimulationElement = (panelId: string, obj: Object3D, arr: Object3D[]) => {
-    if (obj.userData['simulation'] && obj.uuid !== panelId) {
-      arr.push(obj);
-    }
-    if (obj.children.length > 0) {
-      for (const c of obj.children) {
-        getSimulationElement(panelId, c, arr);
-      }
     }
   };
 
@@ -462,7 +462,7 @@ const SolarPanelSimulation = ({
       const components = content[0].children;
       objectsRef.current.length = 0;
       for (const c of components) {
-        objectsRef.current.push(...c.children.filter((x) => x.userData['simulation'] && x.uuid !== panel.id));
+        getSimulationElement(panel.id, c, objectsRef.current);
       }
     }
     for (let month = 0; month < 12; month++) {

@@ -68,6 +68,17 @@ const SensorSimulation = ({ city, dailyLightSensorDataFlag, yearlyLightSensorDat
     return false;
   };
 
+  const getSimulationElement = (panelId: string, obj: Object3D, arr: Object3D[]) => {
+    if (obj.userData['simulation'] && obj.uuid !== panelId) {
+      arr.push(obj);
+    }
+    if (obj.children.length > 0) {
+      for (const c of obj.children) {
+        getSimulationElement(panelId, c, arr);
+      }
+    }
+  };
+
   const collectAllDailyLightSensorData = () => {
     const map = new Map<string, number[]>();
     let index = 0;
@@ -112,7 +123,7 @@ const SensorSimulation = ({ city, dailyLightSensorDataFlag, yearlyLightSensorDat
     if (content.length > 0) {
       const components = content[0].children;
       for (const c of components) {
-        objects.push(...c.children.filter((x) => x.userData['simulation']));
+        getSimulationElement(sensor.id, c, objects);
       }
     }
     for (let i = 0; i < 24; i++) {
@@ -188,7 +199,7 @@ const SensorSimulation = ({ city, dailyLightSensorDataFlag, yearlyLightSensorDat
       if (content.length > 0) {
         const components = content[0].children;
         for (const c of components) {
-          objects.push(...c.children.filter((x) => x.userData['simulation']));
+          getSimulationElement(sensor.id, c, objects);
         }
       }
       for (let hour = 0; hour < 24; hour++) {
