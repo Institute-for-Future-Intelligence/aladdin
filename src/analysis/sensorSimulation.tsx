@@ -12,7 +12,7 @@ import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
 import { MONTHS } from '../constants';
 import { SensorModel } from '../models/SensorModel';
-
+import * as Selector from 'src/stores/selector';
 export interface SensorSimulationProps {
   city: string | null;
   dailyLightSensorDataFlag: boolean;
@@ -20,13 +20,14 @@ export interface SensorSimulationProps {
 }
 
 const SensorSimulation = ({ city, dailyLightSensorDataFlag, yearlyLightSensorDataFlag }: SensorSimulationProps) => {
-  const world = useStore((state) => state.world);
-  const elements = useStore((state) => state.elements);
-  const getElementById = useStore((state) => state.getElementById);
-  const getWeather = useStore((state) => state.getWeather);
-  const setSensorLabels = useStore((state) => state.setSensorLabels);
-  const setDailyLightSensorData = useStore((state) => state.setDailyLightSensorData);
-  const setYearlyLightSensorData = useStore((state) => state.setYearlyLightSensorData);
+  const world = useStore.getState().world;
+  const elements = useStore.getState().elements;
+  const getElementById = useStore(Selector.getElementById);
+  const getWeather = useStore(Selector.getWeather);
+  const setSensorLabels = useStore(Selector.setSensorLabels);
+  const setDailyLightSensorData = useStore(Selector.setDailyLightSensorData);
+  const setYearlyLightSensorData = useStore(Selector.setYearlyLightSensorData);
+
   const { scene } = useThree();
   const weather = getWeather(city ?? 'Boston MA, USA');
   const elevation = city ? getWeather(city).elevation : 0;

@@ -29,8 +29,24 @@ export const objectTypeToAdd = (state: CommonStoreState) => state.objectTypeToAd
 export const deletedWallID = (state: CommonStoreState) => state.deletedWallID;
 
 export const loadWeatherData = (state: CommonStoreState) => state.loadWeatherData;
+
 export const getClosestCity = (state: CommonStoreState) => state.getClosestCity;
+
 export const countElementsByType = (state: CommonStoreState) => state.countElementsByType;
+
+export const getWeather = (state: CommonStoreState) => state.getWeather;
+
+export const setPvDailyYield = (state: CommonStoreState) => state.setDailyPvYield;
+
+export const setPvYearlyYield = (state: CommonStoreState) => state.setYearlyPvYield;
+
+export const setSolarPanelLabels = (state: CommonStoreState) => state.setSolarPanelLabels;
+
+export const setSensorLabels = (state: CommonStoreState) => state.setSensorLabels;
+
+export const setDailyLightSensorData = (state: CommonStoreState) => state.setDailyLightSensorData;
+
+export const setYearlyLightSensorData = (state: CommonStoreState) => state.setYearlyLightSensorData;
 
 export * as viewstate from './viewState';
 

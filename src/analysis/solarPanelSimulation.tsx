@@ -13,6 +13,7 @@ import { AirMass } from './analysisConstants';
 import { MONTHS } from '../constants';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
+import * as Selector from 'src/stores/selector';
 
 const getPanelEfficiency = (temperature: number, panel: SolarPanelModel) => {
   let e = panel.pvModel.efficiency;
@@ -37,14 +38,15 @@ const SolarPanelSimulation = ({
   yearlyIndividualOutputs = false,
   yearlyPvYieldFlag,
 }: SolarPanelSimulationProps) => {
-  const world = useStore((state) => state.world);
-  const elements = useStore((state) => state.elements);
-  const getElementById = useStore((state) => state.getElementById);
-  const getWeather = useStore((state) => state.getWeather);
-  const weatherData = useStore((state) => state.weatherData);
-  const setPvDailyYield = useStore((state) => state.setDailyPvYield);
-  const setPvYearlyYield = useStore((state) => state.setYearlyPvYield);
-  const setSolarPanelLabels = useStore((state) => state.setSolarPanelLabels);
+  const world = useStore.getState().world;
+  const elements = useStore.getState().elements;
+  const weatherData = useStore.getState().weatherData;
+  const getElementById = useStore(Selector.getElementById);
+  const getWeather = useStore(Selector.getWeather);
+  const setPvDailyYield = useStore(Selector.setPvDailyYield);
+  const setPvYearlyYield = useStore(Selector.setPvYearlyYield);
+  const setSolarPanelLabels = useStore(Selector.setSolarPanelLabels);
+
   const [currentTemperature, setCurrentTemperature] = useState<number>(20);
   const { scene } = useThree();
   const weather = getWeather(city ?? 'Boston MA, USA');
