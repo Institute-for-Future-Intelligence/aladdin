@@ -65,12 +65,8 @@ const StickyNotePanel = ({}: StickyNotePanelProps) => {
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 440;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 400;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(viewState.stickyNotePanelX)
-      ? 0
-      : Math.min(viewState.stickyNotePanelX, window.innerWidth - wOffset),
-    y: isNaN(viewState.stickyNotePanelY)
-      ? 0
-      : Math.min(viewState.stickyNotePanelY, window.innerHeight - hOffset),
+    x: isNaN(viewState.stickyNotePanelX) ? 0 : Math.min(viewState.stickyNotePanelX, window.innerWidth - wOffset),
+    y: isNaN(viewState.stickyNotePanelY) ? 0 : Math.min(viewState.stickyNotePanelY, window.innerHeight - hOffset),
   });
   const [text, setText] = useState<string>(notes.length > 0 ? notes[0] : '');
 
@@ -87,6 +83,10 @@ const StickyNotePanel = ({}: StickyNotePanelProps) => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    setText(notes.length > 0 ? notes[0] : '');
+  }, [notes]);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({

@@ -1,0 +1,496 @@
+{
+  "docid": "1pX6wkpmsHBiDfQ6StpGwH",
+  "timestamp": 1635031980991,
+  "owner": "Charles Xie",
+  "email": "charles@intofuture.org",
+  "world": {
+    "timesPerHour": 20,
+    "address": "Natick, MA",
+    "name": "default",
+    "longitude": -71.3488548,
+    "cameraPosition": {
+      "x": 20.761152168612025,
+      "z": 5.920411348505233,
+      "y": -12.812289388981553
+    },
+    "latitude": 42.2844063,
+    "ground": {
+      "thermalDiffusivity": 0.05,
+      "albedo": 0.3,
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "panCenter": {
+      "x": -1.4744053085534197,
+      "y": 1.743145139432153,
+      "z": 0
+    },
+    "date": "Wed Sep 22 2021 14:00:00 GMT-0400 (Eastern Daylight Time)"
+  },
+  "elements": [
+    {
+      "lz": 0.1,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "cy": 0.03672476718970863,
+      "id": "iGgGyZAWhJDDrqTBSuKY6v",
+      "ly": 10.412088787523913,
+      "type": "Foundation",
+      "cx": -0.02675735166375759,
+      "selected": false,
+      "parent": {
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "albedo": 0.3,
+        "thermalDiffusivity": 0.05
+      },
+      "cz": 0.05,
+      "lx": 16.616755394628733
+    },
+    {
+      "pvModel": {
+        "m": 12,
+        "cellType": "Monocrystalline",
+        "pmax": 335,
+        "pmaxTC": -0.0029,
+        "name": "SPR-X21-335-BLK",
+        "nominalLength": 1.56,
+        "vmpp": 57.3,
+        "color": "Black",
+        "impp": 5.85,
+        "price": 800,
+        "weight": 18.6,
+        "length": 1.558,
+        "voc": 67.9,
+        "efficiency": 0.21,
+        "thickness": 0.046,
+        "n": 8,
+        "brand": "SunPower",
+        "width": 1.046,
+        "isc": 6.23,
+        "noct": 41.5,
+        "shadeTolerance": "High",
+        "nominalWidth": 1.05
+      },
+      "lz": 0.046,
+      "selected": false,
+      "cz": 0.5000000074505984,
+      "relativeAzimuth": 1.5707963267948966,
+      "parent": {
+        "cx": 0.3461664879944144,
+        "type": "Foundation",
+        "parent": {
+          "albedo": 0.3,
+          "thermalDiffusivity": 0.05,
+          "snowReflectionFactors": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "cy": -0.34231808311947165,
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "lx": 3.6787270769612537,
+        "cz": 0.05,
+        "lz": 0.1,
+        "selected": false,
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "ly": 3.59132314529206,
+        "id": "iGgGyZAWhJDDrqTBSuKY6v"
+      },
+      "cy": -0.10449299890247031,
+      "cx": -0.4024621157154061,
+      "poleRadius": 0.05,
+      "showLabel": true,
+      "lx": 1.046,
+      "label": "VSAT",
+      "tiltAngle": 0.5235987755982988,
+      "poleSpacing": 3,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "poleHeight": 1,
+      "trackerType": "VSAT",
+      "drawSunBeam": true,
+      "orientation": "Portrait",
+      "ly": 1.558,
+      "type": "Solar Panel",
+      "id": "dnMAS4xYMUhcSByeLwN5TX",
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "ly": 1.558,
+      "drawSunBeam": true,
+      "selected": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "id": "wc8yTNk8bcNL8vA26NKhEp",
+      "tiltAngle": 0,
+      "pvModel": {
+        "cellType": "Monocrystalline",
+        "name": "SPR-X21-335-BLK",
+        "efficiency": 0.21,
+        "isc": 6.23,
+        "noct": 41.5,
+        "thickness": 0.046,
+        "pmax": 335,
+        "price": 800,
+        "pmaxTC": -0.0029,
+        "voc": 67.9,
+        "brand": "SunPower",
+        "nominalLength": 1.56,
+        "vmpp": 57.3,
+        "length": 1.558,
+        "n": 8,
+        "color": "Black",
+        "m": 12,
+        "impp": 5.85,
+        "width": 1.046,
+        "weight": 18.6,
+        "shadeTolerance": "High",
+        "nominalWidth": 1.05
+      },
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "type": "Solar Panel",
+      "lz": 0.046,
+      "trackerType": "HSAT",
+      "lx": 1.046,
+      "label": "HSAT",
+      "parent": {
+        "lz": 0.1,
+        "type": "Foundation",
+        "selected": false,
+        "parent": {
+          "albedo": 0.3,
+          "snowReflectionFactors": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "thermalDiffusivity": 0.05
+        },
+        "cz": 0.05,
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "cx": 0.3461664879944144,
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "cy": -0.34231808311947165,
+        "id": "iGgGyZAWhJDDrqTBSuKY6v",
+        "lx": 3.6787270769612537,
+        "ly": 3.59132314529206
+      },
+      "cz": 0.5000000074505762,
+      "showLabel": true,
+      "cx": 0.13515302447733513,
+      "poleSpacing": 3,
+      "relativeAzimuth": 0,
+      "cy": -0.10573019166804135,
+      "orientation": "Portrait"
+    },
+    {
+      "lx": 1.046,
+      "poleSpacing": 3,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "orientation": "Portrait",
+      "pvModel": {
+        "impp": 5.85,
+        "efficiency": 0.21,
+        "color": "Black",
+        "cellType": "Monocrystalline",
+        "thickness": 0.046,
+        "name": "SPR-X21-335-BLK",
+        "noct": 41.5,
+        "n": 8,
+        "price": 800,
+        "shadeTolerance": "High",
+        "pmaxTC": -0.0029,
+        "m": 12,
+        "pmax": 335,
+        "vmpp": 57.3,
+        "isc": 6.23,
+        "nominalWidth": 1.05,
+        "voc": 67.9,
+        "weight": 18.6,
+        "brand": "SunPower",
+        "width": 1.046,
+        "length": 1.558,
+        "nominalLength": 1.56
+      },
+      "poleHeight": 1,
+      "showLabel": true,
+      "tiltAngle": 0.5235987755982988,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "selected": false,
+      "label": "AADAT",
+      "lz": 0.046,
+      "drawSunBeam": true,
+      "id": "r18XcJKcSLBW2tCEW6s74k",
+      "relativeAzimuth": 0,
+      "cy": -0.09709770433882582,
+      "type": "Solar Panel",
+      "trackerType": "AADAT",
+      "poleRadius": 0.05,
+      "parent": {
+        "lz": 0.1,
+        "cy": 0.10026300693800572,
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "parent": {
+          "albedo": 0.3,
+          "snowReflectionFactors": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "thermalDiffusivity": 0.05
+        },
+        "ly": 10.463409826510308,
+        "cz": 0.05,
+        "cx": 0.20430856668622233,
+        "selected": true,
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "id": "iGgGyZAWhJDDrqTBSuKY6v",
+        "lx": 11.263359619750194,
+        "type": "Foundation"
+      },
+      "cx": -0.13700106436587867,
+      "ly": 1.558,
+      "cz": 0.5000000074505806
+    },
+    {
+      "tiltAngle": 0.5235987755982988,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lz": 0.046,
+      "poleSpacing": 3,
+      "selected": false,
+      "cy": -0.11542091451120043,
+      "pvModel": {
+        "cellType": "Monocrystalline",
+        "pmaxTC": -0.0029,
+        "pmax": 335,
+        "name": "SPR-X21-335-BLK",
+        "vmpp": 57.3,
+        "brand": "SunPower",
+        "price": 800,
+        "m": 12,
+        "shadeTolerance": "High",
+        "width": 1.046,
+        "length": 1.558,
+        "color": "Black",
+        "nominalWidth": 1.05,
+        "n": 8,
+        "nominalLength": 1.56,
+        "isc": 6.23,
+        "voc": 67.9,
+        "efficiency": 0.21,
+        "noct": 41.5,
+        "weight": 18.6,
+        "thickness": 0.046,
+        "impp": 5.85
+      },
+      "parent": {
+        "parent": {
+          "albedo": 0.3,
+          "snowReflectionFactors": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "thermalDiffusivity": 0.05
+        },
+        "cx": 0.20430856668622233,
+        "cz": 0.05,
+        "lz": 0.1,
+        "cy": 0.10026300693800572,
+        "ly": 10.463409826510308,
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "type": "Foundation",
+        "lx": 11.263359619750194,
+        "id": "iGgGyZAWhJDDrqTBSuKY6v",
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "selected": true
+      },
+      "drawSunBeam": true,
+      "poleHeight": 1,
+      "lx": 1.046,
+      "relativeAzimuth": 0,
+      "trackerType": "None",
+      "cx": 0.4032836323996918,
+      "showLabel": true,
+      "id": "u4LjNU3fd3PVZ6QAX6aug1",
+      "ly": 1.558,
+      "poleRadius": 0.05,
+      "label": "Fixed",
+      "orientation": "Portrait",
+      "cz": 0.5000000074506161,
+      "type": "Solar Panel"
+    }
+  ],
+  "view": {
+    "weatherPanelX": 0,
+    "heliodonPanelY": 314,
+    "showStickyNotePanel": true,
+    "dailyPvYieldPanelX": 4,
+    "weatherPanelY": 0,
+    "dailyLightSensorPanelY": 525,
+    "mapZoom": 16,
+    "showHeliodonPanel": true,
+    "showWeatherPanel": false,
+    "yearlyLightSensorPanelY": 0,
+    "heliodonPanelX": -1241,
+    "theme": "Default",
+    "autoRotate": false,
+    "groundColor": "forestgreen",
+    "groundPanelY": 0,
+    "heliodon": false,
+    "axes": true,
+    "showDailyPvYieldPanel": true,
+    "mapWeatherStations": false,
+    "dailyPvYieldPanelY": 6,
+    "showGroundPanel": false,
+    "mapTilt": 0,
+    "yearlyLightSensorPanelX": 0,
+    "showYearlyPvYieldPanel": false,
+    "groundPanelX": 0,
+    "groundImage": false,
+    "dailyLightSensorPanelX": -1277,
+    "showInfoPanel": true,
+    "mapType": "roadmap",
+    "showYearlyLightSensorPanel": false,
+    "showDailyLightSensorPanel": false,
+    "shadowEnabled": true
+  },
+  "notes": [
+    "Solar trackers\n\nAs the sun moves across the sky, solar panels do not always face the sun. Solar trackers allow them to follow the sun like sunflowers to maximize their outputs. This model compares the outputs of solar panels driven by the horizontal single-axis tracker (HSAT), the vertical single-axis tracker (VSAT), and the altazimuth dual-axis trackers (AADAT), as well as that of a fixed solar panel. You can also animate the movement of the sun to see how the solar panels follow it."
+  ]
+}

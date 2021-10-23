@@ -1,0 +1,507 @@
+{
+  "docid": "hxYn7hZswdfqJrKybK8wsp",
+  "timestamp": 1635030516503,
+  "owner": "Charles Xie",
+  "email": "charles@intofuture.org",
+  "world": {
+    "date": "Tue Jun 22 2021 12:00:00 GMT-0400 (Eastern Daylight Time)",
+    "timesPerHour": 20,
+    "panCenter": {
+      "y": 1.6836126220437808,
+      "x": -4.330520829601653,
+      "z": 2.3435024396864037
+    },
+    "address": "Natick, MA",
+    "cameraPosition": {
+      "z": 4.043195145636411,
+      "y": 15.047724630303234,
+      "x": 13.226744328364124
+    },
+    "latitude": 42.2844063,
+    "longitude": -71.3488548,
+    "name": "default",
+    "ground": {
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "thermalDiffusivity": 0.05,
+      "albedo": 0.3
+    }
+  },
+  "elements": [
+    {
+      "parent": {
+        "thermalDiffusivity": 0.05,
+        "albedo": 0.3,
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "selected": false,
+      "cz": -0.00999999999999913,
+      "cx": -0.2955982837076121,
+      "type": "Human",
+      "id": "3NsNQgPftGsbYSoSRa2zV4",
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "cy": 3.9255960830681698,
+      "name": "Jack",
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "selected": false,
+      "parent": {
+        "thermalDiffusivity": 0.05,
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "albedo": 0.3
+      },
+      "cy": 4.081504375344256,
+      "name": "June",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "id": "xaNFgEDtpNwZNyUWnndg4x",
+      "cz": -0.009999999999999095,
+      "type": "Human",
+      "cx": 2.399220108700476
+    },
+    {
+      "cx": 0.20566332108722207,
+      "parent": {
+        "thermalDiffusivity": 0.05,
+        "albedo": 0.3,
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "color": "gray",
+      "cz": 2,
+      "type": "Cuboid",
+      "lz": 4,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "ly": 3.646712311386908,
+      "cy": 0.10935014088128625,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 2.2290047878920136,
+      "id": "2QtCNEmEF6Mcs3vbbR96ZT",
+      "selected": false
+    },
+    {
+      "ly": 0.1,
+      "selected": false,
+      "type": "Sensor",
+      "showLabel": true,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 0.01,
+      "parent": {
+        "cz": 2,
+        "cx": 0.20566332108722207,
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "color": "gray",
+        "id": "2QtCNEmEF6Mcs3vbbR96ZT",
+        "cy": 0.10935014088128625,
+        "ly": 3.646712311386908,
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "selected": true,
+        "type": "Cuboid",
+        "lz": 4,
+        "lx": 2.2290047878920136,
+        "parent": {
+          "snowReflectionFactors": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "albedo": 0.3,
+          "thermalDiffusivity": 0.05
+        }
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 0.1,
+      "cz": 0.5,
+      "cx": 0.03109721392634064,
+      "cy": 0.16878784903489202,
+      "id": "iqgmPt2Nm3r4bW8A7g6DJy",
+      "label": "Top"
+    },
+    {
+      "parent": {
+        "color": "gray",
+        "id": "2QtCNEmEF6Mcs3vbbR96ZT",
+        "selected": true,
+        "parent": {
+          "snowReflectionFactors": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "albedo": 0.3,
+          "thermalDiffusivity": 0.05
+        },
+        "cy": 0.10935014088128625,
+        "cz": 2,
+        "lz": 4,
+        "lx": 2.2290047878920136,
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "cx": 0.20566332108722207,
+        "type": "Cuboid",
+        "ly": 3.646712311386908
+      },
+      "label": "North",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "ly": 0.1,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "cy": 0.4999999988722325,
+      "type": "Sensor",
+      "showLabel": true,
+      "selected": false,
+      "id": "soQWet6PH9YYEVPLyKPtZ1",
+      "cz": -0.036155842645941405,
+      "lx": 0.1,
+      "lz": 0.01,
+      "cx": -0.0014535790327764226
+    },
+    {
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "cz": 0.012842850721372034,
+      "cy": -0.02894757303561696,
+      "ly": 0.1,
+      "lz": 0.01,
+      "label": "East",
+      "id": "g3pxtSA3CsXPiogBgtEeYs",
+      "lx": 0.1,
+      "showLabel": true,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parent": {
+        "type": "Cuboid",
+        "ly": 3.646712311386908,
+        "selected": true,
+        "cx": 0.20566332108722207,
+        "color": "gray",
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "cz": 2,
+        "id": "2QtCNEmEF6Mcs3vbbR96ZT",
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "cy": 0.10935014088128625,
+        "lx": 2.2290047878920136,
+        "parent": {
+          "snowReflectionFactors": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "thermalDiffusivity": 0.05,
+          "albedo": 0.3
+        },
+        "lz": 4
+      },
+      "type": "Sensor",
+      "cx": 0.5000000161579515,
+      "selected": false
+    },
+    {
+      "lz": 0.01,
+      "showLabel": true,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "cy": -0.4999999988722335,
+      "selected": false,
+      "id": "1GCXGRbm6nuTH23uA8Yngz",
+      "cx": 0.028086152131634783,
+      "parent": {
+        "parent": {
+          "snowReflectionFactors": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "thermalDiffusivity": 0.05,
+          "albedo": 0.3
+        },
+        "cy": 0.10935014088128625,
+        "lx": 2.2290047878920136,
+        "lz": 4,
+        "selected": false,
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "color": "gray",
+        "cx": 0.20566332108722207,
+        "cz": 2,
+        "id": "2QtCNEmEF6Mcs3vbbR96ZT",
+        "type": "Cuboid",
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "ly": 3.646712311386908
+      },
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "cz": -0.16060425332465766,
+      "ly": 0.1,
+      "type": "Sensor",
+      "label": "South",
+      "lx": 0.1
+    },
+    {
+      "selected": false,
+      "parent": {
+        "parent": {
+          "albedo": 0.3,
+          "snowReflectionFactors": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "thermalDiffusivity": 0.05
+        },
+        "lz": 4,
+        "ly": 3.646712311386908,
+        "cy": 0.10935014088128625,
+        "cz": 2,
+        "id": "2QtCNEmEF6Mcs3vbbR96ZT",
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "cx": 0.20566332108722207,
+        "color": "gray",
+        "type": "Cuboid",
+        "selected": false,
+        "lx": 2.2290047878920136,
+        "rotation": [
+          0,
+          0,
+          0
+        ]
+      },
+      "ly": 0.1,
+      "normal": [
+        -1,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "9Aqk7YM1qj7eBSDfhRzr51",
+      "cy": -0.0010171489984738787,
+      "label": "West",
+      "cz": 0.04694614030299604,
+      "cx": -0.5000000161579532,
+      "type": "Sensor",
+      "showLabel": true,
+      "lz": 0.01,
+      "lx": 0.1
+    }
+  ],
+  "view": {
+    "showDailyLightSensorPanel": true,
+    "showYearlyLightSensorPanel": false,
+    "autoRotate": false,
+    "showGroundPanel": false,
+    "yearlyLightSensorPanelY": 70,
+    "stickyNotePanelX": 6,
+    "mapType": "roadmap",
+    "weatherPanelY": 0,
+    "shadowEnabled": true,
+    "theme": "Default",
+    "stickyNotePanelY": 0,
+    "mapWeatherStations": false,
+    "groundColor": "forestgreen",
+    "heliodon": true,
+    "dailyLightSensorPanelX": -19,
+    "axes": true,
+    "showWeatherPanel": false,
+    "dailyLightSensorPanelY": 15,
+    "mapTilt": 0,
+    "heliodonPanelX": -1235,
+    "groundPanelY": 0,
+    "heliodonPanelY": 7,
+    "groundImage": false,
+    "mapZoom": 16,
+    "showStickyNotePanel": true,
+    "groundPanelX": 0,
+    "weatherPanelX": 0,
+    "yearlyLightSensorPanelX": -905,
+    "showHeliodonPanel": false
+  },
+  "notes": [
+    "Solar radiation to a box\n\nThis model shows the solar radiation the five sides (top, west, east, south, and north sides) of a box receives. There is a sensor on each side. Analyze the daily and annual sensor data to compare the solar radiation the five sides receive.\n\nYou can also change the day and the location to investigate the dependency of the results on these factors. "
+  ]
+}

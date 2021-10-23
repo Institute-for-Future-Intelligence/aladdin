@@ -1,0 +1,711 @@
+{
+  "docid": "cRb89YQQWJ4mShTH2WYCmf",
+  "timestamp": 1635033139564,
+  "owner": "Charles Xie",
+  "email": "charles@intofuture.org",
+  "world": {
+    "name": "default",
+    "date": "Tue Jun 22 2021 16:00:00 GMT-0400 (Eastern Daylight Time)",
+    "longitude": -110.9747108,
+    "panCenter": {
+      "y": -2.016961214651789,
+      "x": 32.49746995206247,
+      "z": 8.025937972069059
+    },
+    "cameraPosition": {
+      "z": 12.937279313063897,
+      "y": -57.68896178820135,
+      "x": 0.9869281512301704
+    },
+    "latitude": 32.2226066,
+    "ground": {
+      "albedo": 0.3,
+      "thermalDiffusivity": 0.05,
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "address": "Tucson, AZ, USA",
+    "timesPerHour": 20
+  },
+  "elements": [
+    {
+      "cz": 1.4502691440327642e-15,
+      "id": "2gPWTJVs8iqE6rVTtrnnd8",
+      "parent": {
+        "thermalDiffusivity": 0.05,
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "albedo": 0.3
+      },
+      "name": "Jack",
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "cy": -31.35396312047363,
+      "type": "Human",
+      "cx": 6.607841476408449,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "selected": false
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lz": 24,
+      "lx": 36,
+      "color": "gray",
+      "cz": 12,
+      "selected": false,
+      "id": "5437SFtFqSx2YBCwkTr9pR",
+      "parent": {
+        "thermalDiffusivity": 0.05,
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "albedo": 0.3
+      },
+      "cy": -11.558489831681165,
+      "ly": 18,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "cx": 14.97174844787697,
+      "type": "Cuboid"
+    },
+    {
+      "ly": 2,
+      "cz": 2,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "selected": false,
+      "cx": -4.402898230351792,
+      "parent": {
+        "thermalDiffusivity": 0.05,
+        "albedo": 0.3,
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "cy": -12.168934050865687,
+      "id": "aVvzhfQYWoiEmZmecKaTXb",
+      "color": "gray",
+      "lx": 2,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "type": "Cuboid",
+      "lz": 4
+    },
+    {
+      "parent": {
+        "thermalDiffusivity": 0.05,
+        "albedo": 0.3,
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "ly": 17.026616933032848,
+      "cy": -28.827610434247095,
+      "cz": 0.05,
+      "lz": 0.1,
+      "selected": false,
+      "lx": 36.16252356452459,
+      "type": "Foundation",
+      "id": "dqxcN6K9GVQLtZRykzonbS",
+      "cx": 14.986009894498842,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "selected": false,
+      "cy": -37.45525333890478,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "parent": {
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "thermalDiffusivity": 0.05,
+        "albedo": 0.3
+      },
+      "type": "Tree",
+      "lx": 20,
+      "cz": 5,
+      "id": "7eDNB6acZgaay7ax4skeDW",
+      "evergreen": false,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lz": 10,
+      "cx": 27.66042308437673,
+      "name": "Linden"
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 3,
+      "evergreen": true,
+      "id": "vNTvcNkAEuKbiZwrmFTThR",
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "parent": {
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "albedo": 0.3,
+        "thermalDiffusivity": 0.05
+      },
+      "type": "Tree",
+      "cz": 4,
+      "name": "Pine",
+      "selected": false,
+      "cx": -7.544075470411535,
+      "lz": 8,
+      "cy": -7.7921281267799
+    },
+    {
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "type": "Tree",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 3,
+      "cx": -7.489892609774451,
+      "id": "ibv7qyFAZNTUiSKfRnG81J",
+      "cz": -3.635193663950044e-15,
+      "selected": false,
+      "cy": -16.371456830385007,
+      "lz": 8,
+      "parent": {
+        "thermalDiffusivity": 0.05,
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "albedo": 0.3
+      },
+      "name": "Pine"
+    },
+    {
+      "selected": false,
+      "poleSpacing": 4,
+      "pvModel": {
+        "nominalWidth": 1.05,
+        "isc": 6.23,
+        "nominalLength": 1.56,
+        "shadeTolerance": "High",
+        "color": "Black",
+        "vmpp": 57.3,
+        "pmax": 335,
+        "pmaxTC": -0.0029,
+        "impp": 5.85,
+        "voc": 67.9,
+        "width": 1.046,
+        "name": "SPR-X21-335-BLK",
+        "n": 8,
+        "noct": 41.5,
+        "length": 1.558,
+        "m": 12,
+        "brand": "SunPower",
+        "efficiency": 0.21,
+        "cellType": "Monocrystalline",
+        "thickness": 0.046,
+        "weight": 18.6,
+        "price": 800
+      },
+      "lz": 0.046,
+      "cy": -0.023651645489680885,
+      "drawSunBeam": true,
+      "poleRadius": 0.05,
+      "label": "Solar Panel",
+      "ly": 3.12,
+      "lx": 20.99,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "type": "Solar Panel",
+      "tiltAngle": 0.05235987755982989,
+      "poleHeight": 2.5,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "orientation": "Portrait",
+      "cz": 0.5000000074505628,
+      "relativeAzimuth": 0,
+      "cx": -0.14046178216409752,
+      "showLabel": false,
+      "id": "kLwberNeAuQDEs45xghUMw",
+      "parent": {
+        "ly": 17.026616933032848,
+        "selected": false,
+        "parent": {
+          "albedo": 0.3,
+          "snowReflectionFactors": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "thermalDiffusivity": 0.05
+        },
+        "lz": 0.1,
+        "id": "dqxcN6K9GVQLtZRykzonbS",
+        "cy": -28.827610434247095,
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "lx": 36.16252356452459,
+        "cz": 0.05,
+        "type": "Foundation",
+        "cx": 14.986009894498842,
+        "normal": [
+          0,
+          0,
+          1
+        ]
+      },
+      "trackerType": "None"
+    },
+    {
+      "id": "5wtQcSRJfXRx7dRi95EJjx",
+      "cy": -39.306631291677,
+      "type": "Human",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "cz": -9.595411222094811e-15,
+      "selected": false,
+      "parent": {
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "albedo": 0.3,
+        "thermalDiffusivity": 0.05
+      },
+      "cx": 21.944426599548834,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "name": "Jade"
+    },
+    {
+      "cx": -5.807305966540342,
+      "evergreen": false,
+      "cz": -1.2770747175057603e-14,
+      "id": "tJeB5NfeXNiu4x7bJzUo9c",
+      "selected": false,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lz": 8,
+      "name": "Maple",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "type": "Tree",
+      "lx": 10,
+      "parent": {
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "albedo": 0.3,
+        "thermalDiffusivity": 0.05
+      },
+      "cy": -27.497868860590664
+    },
+    {
+      "type": "Human",
+      "name": "Jedi",
+      "id": "wizaQCLaDPXxAgvgzpYzE5",
+      "cy": -40.80759075522136,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "cx": 10.407694553599299,
+      "parent": {
+        "thermalDiffusivity": 0.05,
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "albedo": 0.3
+      },
+      "selected": false,
+      "cz": -9.061105367185487e-15,
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "parent": {
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "albedo": 0.3,
+        "thermalDiffusivity": 0.05
+      },
+      "name": "Jeni",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "cz": -9.833932535276902e-15,
+      "cx": -5.594678028642042,
+      "type": "Human",
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "id": "8gaXxvd41d1wtkBveac2iT",
+      "cy": -24.46034584888105,
+      "selected": false
+    },
+    {
+      "selected": false,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "tSCfpjZEaf2LdYnKVymp8f",
+      "cx": 3.67995672320556,
+      "cy": -41.407427811971,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "parent": {
+        "albedo": 0.3,
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "thermalDiffusivity": 0.05
+      },
+      "cz": -9.194295949470854e-15,
+      "name": "Judd",
+      "type": "Human"
+    },
+    {
+      "type": "Human",
+      "cy": -39.707665221329364,
+      "name": "Jeff",
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "selected": false,
+      "parent": {
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "thermalDiffusivity": 0.05,
+        "albedo": 0.3
+      },
+      "cx": -2.0894497376075947,
+      "cz": -8.816872836565485e-15,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "649JwdxAWZ8uAmjtuwCu7m"
+    },
+    {
+      "id": "v8yuSV55idFvdSiztzVfkc",
+      "cz": -7.538368848568199e-15,
+      "type": "Human",
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "selected": false,
+      "cy": -30.965815439327145,
+      "cx": 5.810842081723248,
+      "parent": {
+        "albedo": 0.3,
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "thermalDiffusivity": 0.05
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "name": "Jena"
+    }
+  ],
+  "view": {
+    "shadowEnabled": true,
+    "showYearlyLightSensorPanel": false,
+    "showStickyNotePanel": false,
+    "mapTilt": 0,
+    "showInfoPanel": true,
+    "showHeliodonPanel": false,
+    "stickyNotePanelX": 6,
+    "groundColor": "forestgreen",
+    "showWeatherPanel": false,
+    "showDailyLightSensorPanel": false,
+    "heliodonPanelX": -1235,
+    "weatherPanelX": 0,
+    "groundImage": false,
+    "autoRotate": false,
+    "axes": true,
+    "weatherPanelY": 0,
+    "groundPanelX": 0,
+    "theme": "Desert",
+    "mapWeatherStations": false,
+    "mapType": "roadmap",
+    "yearlyLightSensorPanelY": 70,
+    "mapZoom": 16,
+    "stickyNotePanelY": 0,
+    "showGroundPanel": false,
+    "heliodonPanelY": 7,
+    "yearlyLightSensorPanelX": -905,
+    "dailyLightSensorPanelY": 15,
+    "heliodon": false,
+    "dailyLightSensorPanelX": -19,
+    "groundPanelY": 0,
+    "showMapPanel": false
+  },
+  "notes": [
+    ""
+  ]
+}

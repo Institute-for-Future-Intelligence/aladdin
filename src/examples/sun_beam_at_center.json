@@ -1,0 +1,309 @@
+{
+  "docid": "jvAAc2DFuZh59jY5rxiTnh",
+  "timestamp": 1635031065788,
+  "owner": "Charles Xie",
+  "email": "charles@intofuture.org",
+  "world": {
+    "cameraPosition": {
+      "x": -3.3909515361664884,
+      "y": 14.869074648580368,
+      "z": 4.324437448245515
+    },
+    "latitude": 42.2844063,
+    "timesPerHour": 20,
+    "date": "Fri Jan 22 2021 09:45:00 GMT-0500 (Eastern Standard Time)",
+    "panCenter": {
+      "z": 1.012159740387775,
+      "x": -1.749495483197602,
+      "y": 1.9482285134722876
+    },
+    "longitude": -71.3488548,
+    "name": "default",
+    "address": "Natick, MA",
+    "ground": {
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "albedo": 0.3,
+      "thermalDiffusivity": 0.05
+    }
+  },
+  "elements": [
+    {
+      "cy": 1.9385448115528998,
+      "name": "Jack",
+      "type": "Human",
+      "parent": {
+        "thermalDiffusivity": 0.05,
+        "albedo": 0.3,
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "cz": 1.1465644746167777e-15,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "cx": -2.72710574788732,
+      "selected": false,
+      "id": "8si9AKQwGf4sYiD91xfFr6",
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lx": 8.151162622676603,
+      "ly": 6.576493454880806,
+      "id": "73EHGXQZFsvacbt1n2ck3h",
+      "selected": false,
+      "cz": 0.05,
+      "cy": 1.1027590009475272,
+      "cx": -0.9582675975183035,
+      "parent": {
+        "albedo": 0.3,
+        "thermalDiffusivity": 0.05,
+        "snowReflectionFactors": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "lz": 0.1,
+      "type": "Foundation"
+    },
+    {
+      "poleSpacingY": 2,
+      "label": "Solar Panel",
+      "poleSpacingX": 4,
+      "showLabel": false,
+      "lx": 0.99,
+      "pvModel": {
+        "name": "SPR-X21-335-BLK",
+        "impp": 5.85,
+        "thickness": 0.046,
+        "m": 12,
+        "weight": 18.6,
+        "isc": 6.23,
+        "vmpp": 57.3,
+        "cellType": "Monocrystalline",
+        "pmax": 335,
+        "pmaxTC": -0.0029,
+        "length": 1.558,
+        "shadeTolerance": "High",
+        "n": 8,
+        "efficiency": 0.21,
+        "price": 800,
+        "voc": 67.9,
+        "nominalWidth": 1.05,
+        "nominalLength": 1.56,
+        "noct": 41.5,
+        "color": "Black",
+        "brand": "SunPower",
+        "width": 1.046
+      },
+      "drawSunBeam": true,
+      "type": "Solar Panel",
+      "trackerType": "None",
+      "relativeAzimuth": 0,
+      "lz": 0.05,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "cy": -0.16505049820470327,
+      "cx": 0.11464240173253676,
+      "cz": 0.5000000074505806,
+      "poleRadius": 0.05,
+      "ly": 1.65,
+      "poleHeight": 0,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parent": {
+        "id": "73EHGXQZFsvacbt1n2ck3h",
+        "selected": true,
+        "lx": 4,
+        "cy": 2.3910057283879302,
+        "parent": {
+          "albedo": 0.3,
+          "thermalDiffusivity": 0.05,
+          "snowReflectionFactors": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "cz": 0.05,
+        "lz": 0.1,
+        "type": "Foundation",
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "ly": 4,
+        "cx": -3.033848908856605,
+        "rotation": [
+          0,
+          0,
+          0
+        ]
+      },
+      "selected": false,
+      "orientation": "Portrait",
+      "tiltAngle": 0,
+      "id": "5QH64n4W7t2nwnWmzmGyMg"
+    },
+    {
+      "lz": 0.01,
+      "ly": 0.1,
+      "cx": 0.1375052960984675,
+      "parent": {
+        "lz": 0.1,
+        "selected": true,
+        "id": "73EHGXQZFsvacbt1n2ck3h",
+        "lx": 4,
+        "cz": 0.05,
+        "cx": -3.033848908856605,
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "cy": 2.3910057283879302,
+        "type": "Foundation",
+        "ly": 4,
+        "parent": {
+          "albedo": 0.3,
+          "snowReflectionFactors": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "thermalDiffusivity": 0.05
+        },
+        "rotation": [
+          0,
+          0,
+          0
+        ]
+      },
+      "showLabel": false,
+      "id": "vPAwDhHdD9bH57J7RhabCf",
+      "cy": 0.12369628620569162,
+      "selected": false,
+      "cz": 0.5000000074505806,
+      "type": "Sensor",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lx": 0.1,
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "view": {
+    "mapWeatherStations": false,
+    "showGroundPanel": false,
+    "showInfoPanel": true,
+    "mapTilt": 0,
+    "groundPanelY": 0,
+    "yearlyLightSensorPanelY": 0,
+    "axes": true,
+    "showHeliodonPanel": true,
+    "showWeatherPanel": false,
+    "dailyLightSensorPanelY": 0,
+    "mapType": "roadmap",
+    "groundImage": false,
+    "autoRotate": false,
+    "dailyLightSensorPanelX": 0,
+    "showYearlyLightSensorPanel": false,
+    "weatherPanelY": 0,
+    "heliodonPanelX": -6,
+    "showStickyNotePanel": false,
+    "groundColor": "forestgreen",
+    "weatherPanelX": 0,
+    "heliodonPanelY": 9,
+    "groundPanelX": 0,
+    "shadowEnabled": true,
+    "theme": "Default",
+    "heliodon": true,
+    "stickyNotePanelY": 0,
+    "yearlyLightSensorPanelX": 0,
+    "showDailyLightSensorPanel": false,
+    "mapZoom": 16,
+    "stickyNotePanelX": 0
+  },
+  "notes": []
+}

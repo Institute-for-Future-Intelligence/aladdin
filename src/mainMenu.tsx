@@ -13,6 +13,12 @@ import About from './about';
 import { saveImage } from './helpers';
 import { Discretization } from './types';
 
+import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
+import sun_beam_at_center from './examples/sun_beam_at_center.json';
+import office_building_01 from './examples/office_building_01.json';
+import solar_farm_01 from './examples/solar_farm_01.json';
+import solar_trackers from './examples/solar_trackers.json';
+
 const { SubMenu } = Menu;
 const { Option } = Select;
 
@@ -115,6 +121,38 @@ const MainMenu = ({
       }
     };
     fileDialog.click();
+  };
+
+  const loadFile = (e: any) => {
+    let input: any;
+    switch (e.key) {
+      case 'solar_radiation_to_box':
+        input = solar_radiation_to_box;
+        break;
+      case 'sun_beam_at_center':
+        input = sun_beam_at_center;
+        break;
+      case 'office_building_01':
+        input = office_building_01;
+        break;
+      case 'solar_farm_01':
+        input = solar_farm_01;
+        break;
+      case 'solar_trackers':
+        input = solar_trackers;
+        break;
+    }
+    if (input) {
+      setCommonStore((state) => {
+        // @ts-ignore
+        state.world = input.world;
+        // @ts-ignore
+        state.viewState = input.view;
+        // @ts-ignore
+        state.elements = input.elements;
+        state.notes = input.notes ?? [];
+      });
+    }
   };
 
   const menu = (
@@ -292,6 +330,23 @@ const MainMenu = ({
             )}
           </Menu>
         </SubMenu>
+      </SubMenu>
+      <SubMenu key={'examples'} title={'Examples'}>
+        <Menu.Item key="solar_radiation_to_box" onClick={loadFile}>
+          Solar Radiation to a Box
+        </Menu.Item>
+        <Menu.Item key="sun_beam_at_center" onClick={loadFile}>
+          Sun Beam and Heliodon
+        </Menu.Item>
+        <Menu.Item key="solar_farm_01" onClick={loadFile}>
+          Solar Farm
+        </Menu.Item>
+        <Menu.Item key="solar_trackers" onClick={loadFile}>
+          Solar Trackers
+        </Menu.Item>
+        <Menu.Item key="office_building_01" onClick={loadFile}>
+          Office Building
+        </Menu.Item>
       </SubMenu>
       <Menu.Item key="about" onClick={gotoAboutPage}>
         About Us
