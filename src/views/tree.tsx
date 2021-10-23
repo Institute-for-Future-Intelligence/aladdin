@@ -18,7 +18,7 @@ import OakShedImage from '../resources/oak_shed.png';
 import PineImage from '../resources/pine.png';
 import { DoubleSide, Euler, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
-import { ThreeEvent, useThree } from '@react-three/fiber';
+import { useThree } from '@react-three/fiber';
 import { Billboard, Cone, Plane, Sphere } from '@react-three/drei';
 import { MOVE_HANDLE_RADIUS } from '../constants';
 import { TreeModel } from '../models/TreeModel';

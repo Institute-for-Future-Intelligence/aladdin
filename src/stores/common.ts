@@ -23,8 +23,6 @@ import { ElementModelFactory } from '../models/ElementModelFactory';
 import { GroundModel } from '../models/GroundModel';
 import { PvModel } from '../models/PvModel';
 import { ThreeEvent } from '@react-three/fiber';
-import { FoundationModel } from 'src/models/FoundationModel';
-import { WallModel } from 'src/models/WallModel';
 
 enableMapSet();
 

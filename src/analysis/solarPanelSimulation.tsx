@@ -15,14 +15,6 @@ import { SolarPanelModel } from '../models/SolarPanelModel';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
 import * as Selector from 'src/stores/selector';
 
-const getPanelEfficiency = (temperature: number, panel: SolarPanelModel) => {
-  let e = panel.pvModel.efficiency;
-  if (panel.pvModel.cellType === 'Monocrystalline') {
-    e *= 0.95; // assuming that the packing density factor of semi-round cells is 0.95
-  }
-  return e * (1 + panel.pvModel.pmaxTC * (temperature - 25));
-};
-
 export interface SolarPanelSimulationProps {
   city: string | null;
   dailyIndividualOutputs: boolean;
@@ -30,6 +22,14 @@ export interface SolarPanelSimulationProps {
   yearlyIndividualOutputs: boolean;
   yearlyPvYieldFlag: boolean;
 }
+
+const getPanelEfficiency = (temperature: number, panel: SolarPanelModel) => {
+  let e = panel.pvModel.efficiency;
+  if (panel.pvModel.cellType === 'Monocrystalline') {
+    e *= 0.95; // assuming that the packing density factor of semi-round cells is 0.95
+  }
+  return e * (1 + panel.pvModel.pmaxTC * (temperature - 25));
+};
 
 const SolarPanelSimulation = ({
   city,
@@ -40,9 +40,8 @@ const SolarPanelSimulation = ({
 }: SolarPanelSimulationProps) => {
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
-  const weatherData = useStore.getState().weatherData;
-  const getElementById = useStore(Selector.getElementById);
   const getWeather = useStore(Selector.getWeather);
+  const getElementById = useStore(Selector.getElementById);
   const setPvDailyYield = useStore(Selector.setPvDailyYield);
   const setPvYearlyYield = useStore(Selector.setPvYearlyYield);
   const setSolarPanelLabels = useStore(Selector.setSolarPanelLabels);
@@ -50,7 +49,7 @@ const SolarPanelSimulation = ({
   const [currentTemperature, setCurrentTemperature] = useState<number>(20);
   const { scene } = useThree();
   const weather = getWeather(city ?? 'Boston MA, USA');
-  const elevation = city ? getWeather(city).elevation : 0;
+  const elevation = city ? weather.elevation : 0;
   const interval = 60 / world.timesPerHour;
   const ray = useMemo(() => new Raycaster(), []);
   const now = new Date(world.date);
@@ -86,38 +85,51 @@ const SolarPanelSimulation = ({
 
   useEffect(() => {
     if (city) {
-      const weather = weatherData[city];
+      const weather = getWeather(city);
       if (weather) {
-        const t = computeOutsideTemperature(now, weather.lowestTemperatures, weather.highestTemperatures);
-        const c = getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(now));
+        const n = new Date(world.date);
+        const t = computeOutsideTemperature(n, weather.lowestTemperatures, weather.highestTemperatures);
+        const c = getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(n));
         setCurrentTemperature(c);
       }
     }
   }, [city, world.date]);
 
-  const inShadow = (content: Object3D[], panelId: string, position: Vector3, sunDirection: Vector3) => {
-    // convert the position and direction from physics model to the coordinate system of three.js
-    ray.set(position, sunDirection);
-    if (content.length > 0) {
+  const inShadow = (panelId: string, position: Vector3, sunDirection: Vector3) => {
+    if (objectsRef.current.length > 1) {
       intersectionsRef.current.length = 0;
-      ray.intersectObjects(objectsRef.current, false, intersectionsRef.current);
+      ray.set(position, sunDirection);
+      const objects = objectsRef.current.filter((obj) => obj.uuid !== panelId);
+      ray.intersectObjects(objects, false, intersectionsRef.current);
       return intersectionsRef.current.length > 0;
     }
     return false;
   };
 
-  const getSimulationElement = (panelId: string, obj: Object3D, arr: Object3D[]) => {
-    if (obj.userData['simulation'] && obj.uuid !== panelId) {
+  const getObjects = () => {
+    const content = scene.children.filter((c) => c.name === 'Content');
+    if (content.length > 0) {
+      const components = content[0].children;
+      objectsRef.current.length = 0;
+      for (const c of components) {
+        getSimulationElement(c, objectsRef.current);
+      }
+    }
+  };
+
+  const getSimulationElement = (obj: Object3D, arr: Object3D[]) => {
+    if (obj.userData['simulation']) {
       arr.push(obj);
     }
     if (obj.children.length > 0) {
       for (const c of obj.children) {
-        getSimulationElement(panelId, c, arr);
+        getSimulationElement(c, arr);
       }
     }
   };
 
   const getDailyYieldForAllSolarPanels = () => {
+    getObjects();
     if (dailyIndividualOutputs) {
       const total = new Array(24).fill(0);
       const map = new Map<string, number[]>();
@@ -220,14 +232,6 @@ const SolarPanelSimulation = ({
     const z0 = panel.poleHeight + center.z - lz / 2;
     const v = new Vector3();
     const cellOutputs = Array.from(Array(nx), () => new Array(ny));
-    const content = scene.children.filter((c) => c.name === 'Content');
-    if (content.length > 0) {
-      const components = content[0].children;
-      objectsRef.current.length = 0;
-      for (const c of components) {
-        getSimulationElement(panel.id, c, objectsRef.current);
-      }
-    }
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         const currentTime = new Date(year, month, date, i, j * interval);
@@ -276,7 +280,7 @@ const SolarPanelSimulation = ({
               cellOutputs[kx][ky] = indirectRadiation;
               if (dot > 0) {
                 v.set(x0 + kx * dx, y0 + ky * dy, z0 + ky * dz);
-                if (!inShadow(content, panel.id, v, sunDirection)) {
+                if (!inShadow(panel.id, v, sunDirection)) {
                   // direct radiation
                   cellOutputs[kx][ky] += dot * peakRadiation;
                 }
@@ -362,6 +366,7 @@ const SolarPanelSimulation = ({
   };
 
   const getYearlyYieldForAllSolarPanels = () => {
+    getObjects();
     if (yearlyIndividualOutputs) {
       const resultArr = [];
       const labels = [];
@@ -459,14 +464,6 @@ const SolarPanelSimulation = ({
     const z0 = panel.poleHeight + center.z - lz / 2;
     const v = new Vector3();
     const cellOutputs = Array.from(Array(nx), () => new Array(ny));
-    const content = scene.children.filter((c) => c.name === 'Content');
-    if (content.length > 0) {
-      const components = content[0].children;
-      objectsRef.current.length = 0;
-      for (const c of components) {
-        getSimulationElement(panel.id, c, objectsRef.current);
-      }
-    }
     for (let month = 0; month < 12; month++) {
       const midMonth = new Date(year, month, date);
       const dayOfYear = Util.dayOfYear(midMonth);
@@ -520,7 +517,7 @@ const SolarPanelSimulation = ({
                 const dot = normal.dot(sunDirection);
                 if (dot > 0) {
                   v.set(x0 + kx * dx, y0 + ky * dy, z0 + ky * dz);
-                  if (!inShadow(content, panel.id, v, sunDirection)) {
+                  if (!inShadow(panel.id, v, sunDirection)) {
                     // direct radiation
                     cellOutputs[kx][ky] += dot * peakRadiation;
                   }
