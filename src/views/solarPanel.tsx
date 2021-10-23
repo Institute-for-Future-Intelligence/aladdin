@@ -4,7 +4,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Cone, Cylinder, Line, Plane, Ring, Sphere } from '@react-three/drei';
-import { DoubleSide, Euler, Mesh, Quaternion, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
+import { DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS, RESIZE_HANDLE_COLOR, RESIZE_HANDLE_SIZE } from '../constants';
@@ -362,8 +362,8 @@ const SolarPanel = ({
           uuid={id}
           args={[lx, ly]}
           userData={{ simulation: true }}
-          receiveShadow={shadowEnabled}
-          castShadow={shadowEnabled}
+          receiveShadow={false}
+          castShadow={false}
           visible={false}
         >
           <meshBasicMaterial side={DoubleSide} />
