@@ -8,7 +8,6 @@ import { Avatar, Button, Dropdown, Input, Menu, Modal, Space } from 'antd';
 import dayjs from 'dayjs';
 import 'antd/dist/antd.css';
 import styled from 'styled-components';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowAltCircleUp,
@@ -49,10 +48,10 @@ const ButtonsContainer = styled.div`
 `;
 
 export interface MainToolBarProps {
-  orbitControls?: OrbitControls;
+  resetView: () => void;
 }
 
-const MainToolBar = ({ orbitControls }: MainToolBarProps) => {
+const MainToolBar = ({ resetView }: MainToolBarProps) => {
   const setCommonStore = useStore((state) => state.set);
   const selectNone = useStore((state) => state.selectNone);
   const autoRotate = useStore((state) => state.viewState.autoRotate);
@@ -64,7 +63,6 @@ const MainToolBar = ({ orbitControls }: MainToolBarProps) => {
   const showCloudFilePanel = useStore((state) => state.showCloudFilePanel);
   const showAccountSettingsPanel = useStore((state) => state.showAccountSettingsPanel);
   const objectTypeToAdd = useStore((state) => state.objectTypeToAdd);
-  const heliodonRadius = useStore((state) => state.heliodonRadius);
 
   const [loading, setLoading] = useState(false);
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
@@ -150,14 +148,8 @@ const MainToolBar = ({ orbitControls }: MainToolBarProps) => {
     resetToSelectMode();
   };
 
-  const resetView = () => {
-    if (orbitControls) {
-      // I don't know why the reset method results in a black screen.
-      // So we are resetting it here to a predictable position.
-      orbitControls.object.position.set(0, 0, Math.min(50, heliodonRadius * 4));
-      orbitControls.target.set(0, 0, 0);
-      orbitControls.update();
-    }
+  const onResetViewButtonClicked = () => {
+    resetView();
     resetToSelectMode();
   };
 
@@ -622,7 +614,7 @@ const MainToolBar = ({ orbitControls }: MainToolBarProps) => {
               size={'3x'}
               color={'#666666'}
               style={{ paddingRight: '12px', cursor: 'pointer' }}
-              onClick={resetView}
+              onClick={onResetViewButtonClicked}
             />
             <FontAwesomeIcon
               title={'Auto rotate'}

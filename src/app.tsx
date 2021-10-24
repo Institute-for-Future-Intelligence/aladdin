@@ -60,6 +60,7 @@ const App = () => {
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const viewState = useStore((state) => state.viewState);
   const loadPvModules = useStore((state) => state.loadPvModules);
+  const heliodonRadius = useStore((state) => state.heliodonRadius);
 
   const [loading, setLoading] = useState(true);
   const [city, setCity] = useState<string | null>('Boston MA, USA');
@@ -117,6 +118,16 @@ const App = () => {
       }
     }
   }
+
+  const resetView = () => {
+    if (orbitControlsRef.current) {
+      // I don't know why the reset method results in a black screen.
+      // So we are resetting it here to a predictable position.
+      orbitControlsRef.current.object.position.set(0, 0, Math.min(50, heliodonRadius * 4));
+      orbitControlsRef.current.target.set(0, 0, 0);
+      orbitControlsRef.current.update();
+    }
+  };
 
   const collectDailyLightSensorData = () => {
     const sensorCount = countElementsByType(ObjectType.Sensor);
@@ -222,7 +233,7 @@ const App = () => {
         setPvYearlyIndividualOutputs={setPvYearlyIndividualOutputs}
         analyzePvYearlyYield={analyzeYearlyPvYield}
       />
-      <MainToolBar orbitControls={orbitControlsRef.current} />
+      <MainToolBar resetView={resetView} />
       <Modal
         width={600}
         visible={pvModelDialogVisible}

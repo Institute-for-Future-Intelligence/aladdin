@@ -33,10 +33,7 @@ const OrbitController = ({ orbitControlsRef, canvasRef, ...rest }: OrbitControll
   // Ref to the controls, so that we can update them on every frame using useFrame
   const controls = useRef<OrbitControls>(null);
   const minPan = useMemo(() => new Vector3(-WORKSPACE_SIZE / 2, -WORKSPACE_SIZE / 2, 0), []);
-  const maxPan = useMemo(
-    () => new Vector3(WORKSPACE_SIZE / 2, WORKSPACE_SIZE / 2, WORKSPACE_SIZE / 8),
-    [],
-  );
+  const maxPan = useMemo(() => new Vector3(WORKSPACE_SIZE / 2, WORKSPACE_SIZE / 2, WORKSPACE_SIZE / 8), []);
 
   useEffect(() => {
     // we have to manually set the camera position when loading a state from a file (as world is reconstructed)
@@ -84,7 +81,7 @@ const OrbitController = ({ orbitControlsRef, canvasRef, ...rest }: OrbitControll
 
   const getCameraDirection = (cam: Camera) => {
     const dir = new Vector3().subVectors(cam.localToWorld(new Vector3(0, 0, 1)), cam.position);
-    if (dir.x == 0 && dir.y == 0) {
+    if (dir.x === 0 && dir.y === 0) {
       cam.getWorldDirection(dir);
     }
     return dir;
