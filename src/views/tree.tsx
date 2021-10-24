@@ -129,14 +129,8 @@ const Tree = ({
       </Billboard>
 
       {/* cast shadow */}
-      <Billboard
-        name={name + ' Shadow Billboard'}
-        castShadow={shadowEnabled}
-        follow={false}
-        customDepthMaterial={customDepthMaterial}
-        rotation={shadowTreeRotation}
-      >
-        <Plane args={[lx, lz]}>
+      <Billboard name={name + ' Shadow Billboard'} follow={false} rotation={shadowTreeRotation}>
+        <Plane castShadow={shadowEnabled} args={[lx, lz]} customDepthMaterial={customDepthMaterial}>
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0} depthTest={false} />
         </Plane>
       </Billboard>
