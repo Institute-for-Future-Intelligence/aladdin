@@ -12,7 +12,9 @@ export interface WorldModel {
   latitude: number;
   longitude: number;
   address: string;
+  orthographic: boolean;
   cameraPosition: Vector3;
+  cameraZoom: number; // for orthographic camera
   panCenter: Vector3;
   ground: GroundModel;
 

@@ -8,7 +8,7 @@ import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import useKey from './useKey';
 import './app.css';
-import { Canvas } from '@react-three/fiber';
+import { Camera, Canvas } from '@react-three/fiber';
 import OrbitController from './orbitController';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Sky from './views/sky';
@@ -41,10 +41,10 @@ import YearlyPvYieldPanel from './panels/yearlyPvYieldPanel';
 import DailyPvYieldPanel from './panels/dailyPvYieldPanel';
 import Lights from './lights';
 import { Grid } from './grid';
-import CameraController from './cameraController';
 import CompassContainer from './compassContainer';
 import { WallModel } from './models/WallModel';
 import * as Selector from 'src/stores/selector';
+import { OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);
@@ -57,12 +57,15 @@ const App = () => {
   const updateElementById = useStore(Selector.updateElementById);
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
+  const orthographic = useStore(Selector.world.orthographic);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const viewState = useStore((state) => state.viewState);
   const loadPvModules = useStore((state) => state.loadPvModules);
   const heliodonRadius = useStore((state) => state.heliodonRadius);
+  const cameraZoom = useStore(Selector.world.cameraZoom);
 
   const [loading, setLoading] = useState(true);
+  const [update, setUpdate] = useState(false);
   const [city, setCity] = useState<string | null>('Boston MA, USA');
   const [dailyLightSensorDataFlag, setDailyLightSensorDataFlag] = useState<boolean>(false);
   const [yearlyLightSensorDataFlag, setYearlyLightSensorDataFlag] = useState<boolean>(false);
@@ -74,6 +77,7 @@ const App = () => {
 
   const orbitControlsRef = useRef<OrbitControls>();
   const canvasRef = useRef<HTMLCanvasElement>();
+  const camRef = useRef<Camera>();
 
   useEffect(() => {
     loadWeatherData();
@@ -90,6 +94,10 @@ const App = () => {
       canvasRef.current.style.cursor = objectTypeToAdd === ObjectType.None ? 'default' : 'crosshair';
     }
   }, [objectTypeToAdd]);
+
+  useEffect(() => {
+    setUpdate(!update);
+  }, [orthographic]);
 
   if (useKey('Delete')) {
     const selectedElement = getSelectedElement();
@@ -175,7 +183,7 @@ const App = () => {
     });
   };
 
-  console.log('x');
+  console.log('x', orthographic, camRef.current);
 
   return (
     <div className="App">
@@ -284,8 +292,12 @@ const App = () => {
             frameloop={'demand'}
             style={{ height: 'calc(100vh - 70px)', backgroundColor: 'black' }}
           >
-            <CameraController />
-            <OrbitController orbitControlsRef={orbitControlsRef} canvasRef={canvasRef} />
+            {orthographic ? (
+              <OrthographicCamera zoom={cameraZoom} makeDefault={true} ref={camRef} />
+            ) : (
+              <PerspectiveCamera zoom={1} fov={45} makeDefault={true} ref={camRef} />
+            )}
+            <OrbitController orbitControlsRef={orbitControlsRef} canvasRef={canvasRef} currentCamera={camRef.current} />
             <Lights />
 
             <ElementsRenderer />

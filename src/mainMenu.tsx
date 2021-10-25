@@ -12,6 +12,7 @@ import { saveAs } from 'file-saver';
 import About from './about';
 import { saveImage } from './helpers';
 import { Discretization } from './types';
+import * as Selector from './stores/selector';
 
 import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
 import sun_beam_at_center from './examples/sun_beam_at_center.json';
@@ -62,6 +63,7 @@ const MainMenu = ({
   const timesPerHour = useStore((state) => state.world.timesPerHour);
   const discretization = useStore((state) => state.world.discretization);
   const solarPanelGridCellSize = useStore((state) => state.world.solarPanelGridCellSize);
+  const orthographic = useStore(Selector.world.orthographic);
   const showInfoPanel = useStore((state) => state.viewState.showInfoPanel);
   const showMapPanel = useStore((state) => state.viewState.showMapPanel);
   const showWeatherPanel = useStore((state) => state.viewState.showWeatherPanel);
@@ -169,6 +171,18 @@ const MainMenu = ({
         </Menu.Item>
       </SubMenu>
       <SubMenu key={'view'} title={'View'}>
+        <Menu.Item key={'orthographic-check-box'}>
+          <Checkbox
+            checked={orthographic}
+            onChange={(e) => {
+              setCommonStore((state) => {
+                state.world.orthographic = e.target.checked;
+              });
+            }}
+          >
+            Orthographic Camera
+          </Checkbox>
+        </Menu.Item>
         <Menu.Item key={'info-panel-check-box'}>
           <Checkbox
             checked={showInfoPanel}
