@@ -1,6 +1,6 @@
 {
-  "docid": "1pX6wkpmsHBiDfQ6StpGwH",
-  "timestamp": 1635031980991,
+  "docid": "xpkvKmQodb7bA7ixDnPaKS",
+  "timestamp": 1635343514298,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -9,9 +9,9 @@
     "name": "default",
     "longitude": -71.3488548,
     "cameraPosition": {
-      "x": 20.761152168612025,
-      "z": 5.920411348505233,
-      "y": -12.812289388981553
+      "x": 18.493393519220277,
+      "z": 5.920411348505066,
+      "y": -15.794463038560236
     },
     "latitude": 42.2844063,
     "ground": {
@@ -37,7 +37,9 @@
       "y": 1.743145139432153,
       "z": 0
     },
-    "date": "Wed Sep 22 2021 14:00:00 GMT-0400 (Eastern Daylight Time)"
+    "date": "Wed Sep 22 2021 14:00:00 GMT-0400 (Eastern Daylight Time)",
+    "orthographic": false,
+    "cameraZoom": 43.16939043526371
   },
   "elements": [
     {

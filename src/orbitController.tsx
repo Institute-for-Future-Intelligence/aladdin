@@ -112,7 +112,11 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera, ...rest }
       if (controls.current) {
         const w = state.world;
         if (orthographic) {
-          w.cameraZoom = cam.zoom;
+          if (cam.zoom && !isNaN(cam.zoom)) {
+            w.cameraZoom = cam.zoom;
+          } else {
+            w.cameraZoom = 20;
+          }
         }
         w.cameraPosition.x = cam.position.x;
         w.cameraPosition.y = cam.position.y;

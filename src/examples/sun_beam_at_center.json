@@ -1,13 +1,13 @@
 {
-  "docid": "jvAAc2DFuZh59jY5rxiTnh",
-  "timestamp": 1635031065788,
+  "docid": "q34D6Wgan691ik54ba6mNT",
+  "timestamp": 1635384923625,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
     "cameraPosition": {
-      "x": -3.3909515361664884,
-      "y": 14.869074648580368,
-      "z": 4.324437448245515
+      "x": -8.088275916198324,
+      "y": 24.25566322143581,
+      "z": 5.53454910256584
     },
     "latitude": 42.2844063,
     "timesPerHour": 20,
@@ -37,7 +37,9 @@
       ],
       "albedo": 0.3,
       "thermalDiffusivity": 0.05
-    }
+    },
+    "orthographic": false,
+    "cameraZoom": 28.63945562104857
   },
   "elements": [
     {

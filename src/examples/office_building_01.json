@@ -1,6 +1,6 @@
 {
-  "docid": "cRb89YQQWJ4mShTH2WYCmf",
-  "timestamp": 1635033139564,
+  "docid": "edgyvs3NAvgyauRyCm4aDg",
+  "timestamp": 1635385084670,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -8,14 +8,14 @@
     "date": "Tue Jun 22 2021 16:00:00 GMT-0400 (Eastern Daylight Time)",
     "longitude": -110.9747108,
     "panCenter": {
-      "y": -2.016961214651789,
-      "x": 32.49746995206247,
-      "z": 8.025937972069059
+      "y": -0.0806959819798074,
+      "x": 29.982619137130474,
+      "z": 7.93777427369862
     },
     "cameraPosition": {
-      "z": 12.937279313063897,
-      "y": -57.68896178820135,
-      "x": 0.9869281512301704
+      "z": 11.056678705071382,
+      "y": -69.77243561626969,
+      "x": -14.833509236437049
     },
     "latitude": 32.2226066,
     "ground": {
@@ -37,7 +37,9 @@
       ]
     },
     "address": "Tucson, AZ, USA",
-    "timesPerHour": 20
+    "timesPerHour": 20,
+    "orthographic": false,
+    "cameraZoom": 15.475618749999999
   },
   "elements": [
     {

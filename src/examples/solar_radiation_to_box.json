@@ -1,6 +1,6 @@
 {
-  "docid": "hxYn7hZswdfqJrKybK8wsp",
-  "timestamp": 1635030516503,
+  "docid": "dNCf11Cyu9NRUe2uVQDNRT",
+  "timestamp": 1635344425274,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -13,13 +13,15 @@
     },
     "address": "Natick, MA",
     "cameraPosition": {
-      "z": 4.043195145636411,
-      "y": 15.047724630303234,
-      "x": 13.226744328364124
+      "z": 4.226818457359473,
+      "y": 18.91766831822906,
+      "x": 13.010761147885216
     },
     "latitude": 42.2844063,
     "longitude": -71.3488548,
     "name": "default",
+    "orthographic": false,
+    "cameraZoom": 35,
     "ground": {
       "snowReflectionFactors": [
         0,

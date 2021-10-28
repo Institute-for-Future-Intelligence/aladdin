@@ -1,6 +1,6 @@
 {
-  "docid": "71tjFcx2yxiNtn1dbJR5fb",
-  "timestamp": 1635030175688,
+  "docid": "oEXyYDASmvHBjfwWDHwTJg",
+  "timestamp": 1635341932049,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -13,9 +13,9 @@
     "solarPanelGridCellSize": 0.5,
     "timesPerHour": 4,
     "cameraPosition": {
-      "y": -10.811634482458732,
-      "z": 5.074126834442774,
-      "x": 17.05429185802418
+      "y": -12.58725490609337,
+      "z": 9.385498830248793,
+      "x": 19.706952134681586
     },
     "longitude": -71.3488548,
     "ground": {
@@ -38,7 +38,9 @@
     },
     "address": "Natick, MA",
     "date": "Fri Oct 15 2021 12:00:00 GMT-0400 (Eastern Daylight Time)",
-    "name": "default"
+    "name": "default",
+    "orthographic": false,
+    "cameraZoom": 35.16173831821251
   },
   "elements": [
     {

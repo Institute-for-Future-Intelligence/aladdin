@@ -57,12 +57,12 @@ const App = () => {
   const updateElementById = useStore(Selector.updateElementById);
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
-  const orthographic = useStore(Selector.world.orthographic);
+  const orthographic = useStore(Selector.world.orthographic) ?? false;
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const viewState = useStore((state) => state.viewState);
   const loadPvModules = useStore((state) => state.loadPvModules);
   const heliodonRadius = useStore((state) => state.heliodonRadius);
-  const cameraZoom = useStore(Selector.world.cameraZoom);
+  const cameraZoom = useStore(Selector.world.cameraZoom) ?? 20;
 
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);
@@ -183,7 +183,7 @@ const App = () => {
     });
   };
 
-  console.log('x', orthographic, camRef.current);
+  console.log('x', orthographic, cameraZoom);
 
   return (
     <div className="App">
