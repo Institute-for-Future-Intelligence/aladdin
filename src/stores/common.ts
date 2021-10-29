@@ -283,11 +283,7 @@ export const useStore = create<CommonStoreState>(
                       e.selected = false;
                       if (e.type === ObjectType.Wall) {
                         for (const w of e.windows) {
-                          if (w.id === id) {
-                            w.selected = true;
-                          } else {
-                            w.selected = false;
-                          }
+                          w.selected = w.id === id;
                         }
                       }
                     }

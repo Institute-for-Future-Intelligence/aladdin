@@ -57,13 +57,13 @@ const App = () => {
   const updateElementById = useStore(Selector.updateElementById);
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
-  const orthographic = useStore(Selector.world.orthographic) ?? false;
+  const orthographic = useStore(Selector.viewstate.orthographic) ?? false;
   const orthographicChanged = useStore((state) => state.orthographicChanged);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const viewState = useStore((state) => state.viewState);
   const loadPvModules = useStore((state) => state.loadPvModules);
   const heliodonRadius = useStore((state) => state.heliodonRadius);
-  const cameraZoom = useStore(Selector.world.cameraZoom) ?? 20;
+  const cameraZoom = useStore(Selector.viewstate.cameraZoom) ?? 20;
 
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);
@@ -128,13 +128,25 @@ const App = () => {
     }
   }
 
-  const resetView = () => {
+  const setTopView = () => {
     if (orbitControlsRef.current) {
       // I don't know why the reset method results in a black screen.
       // So we are resetting it here to a predictable position.
-      orbitControlsRef.current.object.position.set(0, 0, Math.min(50, heliodonRadius * 4));
+      const z = Math.min(50, heliodonRadius * 4);
+      orbitControlsRef.current.object.position.set(0, 0, z);
       orbitControlsRef.current.target.set(0, 0, 0);
       orbitControlsRef.current.update();
+      setCommonStore((state) => {
+        // FIXME: why can't set function be used with a proxy?
+        // Using set or copy will result in crash in run time.
+        const v = state.viewState;
+        v.cameraPosition.x = 0;
+        v.cameraPosition.y = 0;
+        v.cameraPosition.z = z;
+        v.panCenter.x = 0;
+        v.panCenter.y = 0;
+        v.panCenter.z = 0;
+      });
     }
   };
 
@@ -184,7 +196,7 @@ const App = () => {
     });
   };
 
-  console.log('x', orthographic, cameraZoom);
+  console.log('x');
 
   return (
     <div className="App">
@@ -242,7 +254,7 @@ const App = () => {
         setPvYearlyIndividualOutputs={setPvYearlyIndividualOutputs}
         analyzePvYearlyYield={analyzeYearlyPvYield}
       />
-      <MainToolBar resetView={resetView} />
+      <MainToolBar resetView={setTopView} />
       <Modal
         width={600}
         visible={pvModelDialogVisible}
@@ -302,7 +314,12 @@ const App = () => {
              */}
             {orthographicChanged &&
               (orthographic ? (
-                <OrthographicCamera zoom={cameraZoom} makeDefault={true} ref={camRef} />
+                <OrthographicCamera
+                  zoom={cameraZoom}
+                  position={[0, 0, Math.min(50, heliodonRadius * 4)]}
+                  makeDefault={true}
+                  ref={camRef}
+                />
               ) : (
                 <PerspectiveCamera zoom={1} fov={45} makeDefault={true} ref={camRef} />
               ))}

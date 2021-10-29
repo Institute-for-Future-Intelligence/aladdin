@@ -23,10 +23,11 @@ export interface OrbitControllerProps {
 // We need these to setup the OrbitControls class.
 // https://threejs.org/docs/#examples/en/controls/OrbitControls
 const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera, ...rest }: OrbitControllerProps) => {
-  const orthographic = useStore(Selector.world.orthographic);
-  const cameraPosition = useStore(Selector.world.cameraPosition);
-  const cameraZoom = useStore(Selector.world.cameraZoom);
-  const panCenter = useStore((state) => state.world.panCenter);
+  const orthographic = useStore(Selector.viewstate.orthographic);
+  const enableRotate = useStore(Selector.viewstate.enableRotate);
+  const cameraPosition = useStore(Selector.viewstate.cameraPosition);
+  const cameraZoom = useStore(Selector.viewstate.cameraZoom);
+  const panCenter = useStore((state) => state.viewState.panCenter);
   const enableOrbitController = useStore((state) => state.enableOrbitController);
   const autoRotate = useStore((state) => state.viewState.autoRotate);
   const setCommonStore = useStore((state) => state.set);
@@ -43,7 +44,7 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera, ...rest }
   useEffect(() => {
     // we have to manually set the camera position when loading a state from a file (as world is reconstructed)
     if (controls.current) {
-      controls.current.object.position.copy(cameraPosition);
+      if (cameraPosition) controls.current.object.position.copy(cameraPosition);
       controls.current.update();
     }
     if (cam) {
@@ -54,7 +55,7 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera, ...rest }
   useEffect(() => {
     // we have to manually set the target position when loading a state from a file (as world is reconstructed)
     if (controls.current) {
-      controls.current.target.copy(panCenter);
+      if (panCenter) controls.current.target.copy(panCenter);
       controls.current.update();
     }
   }, [panCenter]);
@@ -110,20 +111,28 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera, ...rest }
       // FIXME: why can't set function be used with a proxy?
       // Using set or copy will result in crash in run time.
       if (controls.current) {
-        const w = state.world;
+        const v = state.viewState;
         if (orthographic) {
           if (cam.zoom && !isNaN(cam.zoom)) {
-            w.cameraZoom = cam.zoom;
+            v.cameraZoom = cam.zoom;
           } else {
-            w.cameraZoom = 20;
+            v.cameraZoom = 20;
           }
         }
-        w.cameraPosition.x = cam.position.x;
-        w.cameraPosition.y = cam.position.y;
-        w.cameraPosition.z = cam.position.z;
-        w.panCenter.x = controls.current.target.x;
-        w.panCenter.y = controls.current.target.y;
-        w.panCenter.z = controls.current.target.z;
+        if (!v.cameraPosition) {
+          // cameraPosition was moved from model to viewState
+          v.cameraPosition = new Vector3(0, -5, 0);
+        }
+        v.cameraPosition.x = cam.position.x;
+        v.cameraPosition.y = cam.position.y;
+        v.cameraPosition.z = cam.position.z;
+        if (!v.panCenter) {
+          // panCenter was moved from model to viewState
+          v.panCenter = new Vector3();
+        }
+        v.panCenter.x = controls.current.target.x;
+        v.panCenter.y = controls.current.target.y;
+        v.panCenter.z = controls.current.target.z;
       }
     });
   };
@@ -144,11 +153,11 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera, ...rest }
       args={[cam, gl.domElement]}
       autoRotate={autoRotate}
       enabled={enableOrbitController}
-      enableRotate={true}
+      enableRotate={enableRotate}
       enablePan={true}
       enableZoom={true}
       enableDamping={false}
-      target={new Vector3().copy(panCenter)}
+      target={panCenter ? new Vector3().copy(panCenter) : new Vector3()} // panCenter was moved from model to viewState
       maxAzimuthAngle={Infinity}
       minAzimuthAngle={-Infinity}
       maxPolarAngle={Util.HALF_PI}

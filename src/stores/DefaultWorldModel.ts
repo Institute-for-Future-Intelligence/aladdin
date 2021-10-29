@@ -7,7 +7,6 @@ import { Discretization, HumanName, ObjectType } from '../types';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
 import { SensorModel } from '../models/SensorModel';
-import { Vector3 } from 'three';
 import { WorldModel } from '../models/WorldModel';
 import { GroundModel } from '../models/GroundModel';
 import { HumanModel } from '../models/HumanModel';
@@ -19,10 +18,6 @@ import short from 'short-uuid';
 export class DefaultWorldModel implements WorldModel {
   name: string;
   date: string;
-  orthographic: boolean;
-  cameraPosition: Vector3;
-  cameraZoom: number;
-  panCenter: Vector3;
   ground: GroundModel;
   latitude: number;
   longitude: number;
@@ -43,10 +38,6 @@ export class DefaultWorldModel implements WorldModel {
       thermalDiffusivity: 0.05,
       snowReflectionFactors: new Array(12).fill(0),
     } as GroundModel;
-    this.panCenter = new Vector3(0, 0, 0);
-    this.orthographic = false;
-    this.cameraPosition = new Vector3(0, -5, 0);
-    this.cameraZoom = 20;
 
     this.timesPerHour = 20; // how many times per hour to collect data
     this.solarPanelGridCellSize = 0.5;

@@ -1,6 +1,6 @@
 {
-  "docid": "xpkvKmQodb7bA7ixDnPaKS",
-  "timestamp": 1635343514298,
+  "docid": "4iiCM7y5ESqvhkxoBzsJF1",
+  "timestamp": 1635523231329,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -490,7 +490,20 @@
     "mapType": "roadmap",
     "showYearlyLightSensorPanel": false,
     "showDailyLightSensorPanel": false,
-    "shadowEnabled": true
+    "shadowEnabled": true,
+    "cameraPosition": {
+      "x": 10.77976186282327,
+      "y": -26.552924681577153,
+      "z": 6.5814181826916425
+    },
+    "panCenter": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 24.55475326309651
   },
   "notes": [
     "Solar trackers\n\nAs the sun moves across the sky, solar panels do not always face the sun. Solar trackers allow them to follow the sun like sunflowers to maximize their outputs. This model compares the outputs of solar panels driven by the horizontal single-axis tracker (HSAT), the vertical single-axis tracker (VSAT), and the altazimuth dual-axis trackers (AADAT), as well as that of a fixed solar panel. You can also animate the movement of the sun to see how the solar panels follow it."

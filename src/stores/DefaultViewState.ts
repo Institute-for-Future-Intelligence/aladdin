@@ -3,8 +3,15 @@
  */
 
 import { ViewState } from '../views/ViewState';
+import { Vector3 } from 'three';
 
 export class DefaultViewState implements ViewState {
+  orthographic: boolean;
+  enableRotate: boolean;
+  cameraPosition: Vector3;
+  cameraZoom: number;
+  panCenter: Vector3;
+
   axes: boolean;
   shadowEnabled: boolean;
   theme: string;
@@ -46,6 +53,12 @@ export class DefaultViewState implements ViewState {
   mapWeatherStations: boolean;
 
   constructor() {
+    this.panCenter = new Vector3(0, 0, 0);
+    this.orthographic = false;
+    this.enableRotate = true;
+    this.cameraPosition = new Vector3(0, -5, 0);
+    this.cameraZoom = 20;
+
     this.axes = true;
     this.shadowEnabled = true;
     this.theme = 'Default';

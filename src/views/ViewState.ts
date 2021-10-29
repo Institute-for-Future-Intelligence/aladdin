@@ -2,7 +2,15 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import { Vector3 } from 'three';
+
 export interface ViewState {
+  orthographic: boolean;
+  enableRotate: boolean;
+  cameraPosition: Vector3;
+  cameraZoom: number; // for orthographic camera
+  panCenter: Vector3;
+
   axes: boolean;
   shadowEnabled: boolean;
   theme: string;

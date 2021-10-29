@@ -1,6 +1,6 @@
 {
-  "docid": "edgyvs3NAvgyauRyCm4aDg",
-  "timestamp": 1635385084670,
+  "docid": "iLAqPZNf6o7G7EEJivm7Nh",
+  "timestamp": 1635523317435,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -705,7 +705,20 @@
     "heliodon": false,
     "dailyLightSensorPanelX": -19,
     "groundPanelY": 0,
-    "showMapPanel": false
+    "showMapPanel": false,
+    "cameraPosition": {
+      "x": -17.668848257510255,
+      "y": -65.45421281350046,
+      "z": 12.832574660125607
+    },
+    "panCenter": {
+      "x": 20.495070580620855,
+      "y": -14.153872732756408,
+      "z": 5.49618729325895
+    },
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 15.475618749999999
   },
   "notes": [
     ""

@@ -63,7 +63,8 @@ const MainMenu = ({
   const timesPerHour = useStore((state) => state.world.timesPerHour);
   const discretization = useStore((state) => state.world.discretization);
   const solarPanelGridCellSize = useStore((state) => state.world.solarPanelGridCellSize);
-  const orthographic = useStore(Selector.world.orthographic);
+  const heliodonRadius = useStore((state) => state.heliodonRadius);
+  const orthographic = useStore(Selector.viewstate.orthographic);
   const showInfoPanel = useStore((state) => state.viewState.showInfoPanel);
   const showMapPanel = useStore((state) => state.viewState.showMapPanel);
   const showWeatherPanel = useStore((state) => state.viewState.showWeatherPanel);
@@ -175,13 +176,23 @@ const MainMenu = ({
           <Checkbox
             checked={orthographic}
             onChange={(e) => {
+              const checked = e.target.checked;
               setCommonStore((state) => {
-                state.world.orthographic = e.target.checked;
+                state.viewState.orthographic = checked;
+                state.viewState.enableRotate = !checked;
                 state.orthographicChanged = true;
+                if (checked) {
+                  state.viewState.cameraPosition.x = 0;
+                  state.viewState.cameraPosition.y = 0;
+                  state.viewState.cameraPosition.z = Math.min(50, heliodonRadius * 4);
+                  state.viewState.panCenter.x = 0;
+                  state.viewState.panCenter.y = 0;
+                  state.viewState.panCenter.z = 0;
+                }
               });
             }}
           >
-            Orthographic Camera
+            2D View
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'info-panel-check-box'}>

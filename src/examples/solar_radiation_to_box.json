@@ -1,6 +1,6 @@
 {
-  "docid": "dNCf11Cyu9NRUe2uVQDNRT",
-  "timestamp": 1635344425274,
+  "docid": "qvQcBVeFWegrRrpzaT5V6M",
+  "timestamp": 1635523144978,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -501,7 +501,20 @@
     "groundPanelX": 0,
     "weatherPanelX": 0,
     "yearlyLightSensorPanelX": -905,
-    "showHeliodonPanel": false
+    "showHeliodonPanel": false,
+    "cameraPosition": {
+      "x": 7.577733417043442,
+      "y": 19.610772938087955,
+      "z": 4.655886327109958
+    },
+    "panCenter": {
+      "x": -2.432389491951708,
+      "y": 0.8034413072625061,
+      "z": 1.0138875329134873
+    },
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 24.55475326309651
   },
   "notes": [
     "Solar radiation to a box\n\nThis model shows the solar radiation the five sides (top, west, east, south, and north sides) of a box receives. There is a sensor on each side. Analyze the daily and annual sensor data to compare the solar radiation the five sides receive.\n\nYou can also change the day and the location to investigate the dependency of the results on these factors. "
