@@ -177,6 +177,7 @@ const MainMenu = ({
             onChange={(e) => {
               setCommonStore((state) => {
                 state.world.orthographic = e.target.checked;
+                state.orthographicChanged = true;
               });
             }}
           >

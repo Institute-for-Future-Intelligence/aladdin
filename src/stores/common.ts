@@ -116,6 +116,8 @@ export interface CommonStoreState {
   buildingWallID: string | null;
   deletedWallID: string | null;
   getInitialWallsID: (parentID: string) => string[];
+
+  orthographicChanged: boolean;
 }
 
 export const useStore = create<CommonStoreState>(
@@ -690,6 +692,8 @@ export const useStore = create<CommonStoreState>(
             }
             return wallsID;
           },
+
+          orthographicChanged: false,
         };
       },
       {

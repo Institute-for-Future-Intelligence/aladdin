@@ -58,6 +58,7 @@ const App = () => {
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
   const orthographic = useStore(Selector.world.orthographic) ?? false;
+  const orthographicChanged = useStore((state) => state.orthographicChanged);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const viewState = useStore((state) => state.viewState);
   const loadPvModules = useStore((state) => state.loadPvModules);
@@ -287,16 +288,24 @@ const App = () => {
       <DropdownContextMenu setPvDialogVisible={setPvModelDialogVisible}>
         <div>
           <Canvas
+            orthographic={orthographic}
+            camera={{ zoom: orthographic ? cameraZoom : 1, fov: 45 }}
             shadows={true}
             gl={{ preserveDrawingBuffer: true }}
             frameloop={'demand'}
             style={{ height: 'calc(100vh - 70px)', backgroundColor: 'black' }}
           >
-            {orthographic ? (
-              <OrthographicCamera zoom={cameraZoom} makeDefault={true} ref={camRef} />
-            ) : (
-              <PerspectiveCamera zoom={1} fov={45} makeDefault={true} ref={camRef} />
-            )}
+            {/*
+            The following is for switching camera between the orthographic and perspective modes from the menu.
+            For some reason, the above code does not trigger the camera to change unless we reload the entire page,
+             which is not desirable. So we have to do it this way.
+             */}
+            {orthographicChanged &&
+              (orthographic ? (
+                <OrthographicCamera zoom={cameraZoom} makeDefault={true} ref={camRef} />
+              ) : (
+                <PerspectiveCamera zoom={1} fov={45} makeDefault={true} ref={camRef} />
+              ))}
             <OrbitController orbitControlsRef={orbitControlsRef} canvasRef={canvasRef} currentCamera={camRef.current} />
             <Lights />
 
