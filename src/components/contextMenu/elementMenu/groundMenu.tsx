@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2021. Institute for Future Intelligence, Inc.
+ */
+
 import React from 'react';
 import { InputNumber, Menu, Modal, Space } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';

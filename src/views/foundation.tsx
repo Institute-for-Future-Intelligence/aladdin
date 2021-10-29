@@ -413,7 +413,7 @@ const Foundation = ({
                 state.contextMenuObjectType = ObjectType.Foundation;
               }
             }
-            state.pasteNormal = Util.UNIT_VECTOR_POS_Y;
+            state.pasteNormal = Util.UNIT_VECTOR_POS_Z;
           });
         }}
         onPointerOver={(e) => {

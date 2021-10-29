@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useStore } from '../stores/common';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { Row, Select, Col, Input } from 'antd';
@@ -18,6 +18,7 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const setElementSize = useStore((state) => state.setElementSize);
   const pvModules = useStore((state) => state.pvModules);
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
   const solarPanel = getSelectedElement() as SolarPanelModel;
 
@@ -48,22 +49,15 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
                   // calculate the current x-y layout
                   const nx = Math.max(1, Math.round(solarPanel.lx / solarPanel.pvModel.width));
                   const ny = Math.max(1, Math.round(solarPanel.ly / solarPanel.pvModel.length));
-                  setElementSize(
-                    solarPanel.id,
-                    nx * pvModules[value].width,
-                    ny * pvModules[value].length,
-                  );
+                  setElementSize(solarPanel.id, nx * pvModules[value].width, ny * pvModules[value].length);
                 } else {
                   // calculate the current x-y layout
                   const nx = Math.max(1, Math.round(solarPanel.lx / solarPanel.pvModel.length));
                   const ny = Math.max(1, Math.round(solarPanel.ly / solarPanel.pvModel.width));
-                  setElementSize(
-                    solarPanel.id,
-                    nx * pvModules[value].length,
-                    ny * pvModules[value].width,
-                  );
+                  setElementSize(solarPanel.id, nx * pvModules[value].length, ny * pvModules[value].width);
                 }
                 updateElementById(solarPanel.id, { pvModel: pvModules[value] });
+                setUpdateFlag(!updateFlag);
               }
             }}
           >

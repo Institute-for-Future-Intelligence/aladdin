@@ -102,7 +102,7 @@ const Ground = () => {
           state.pastePoint.copy(e.intersections[0].point);
           state.clickObjectType = ObjectType.Ground;
           state.contextMenuObjectType = ObjectType.Ground;
-          state.pasteNormal = Util.UNIT_VECTOR_POS_Y;
+          state.pasteNormal = Util.UNIT_VECTOR_POS_Z;
         });
       }
     }

@@ -76,7 +76,7 @@ export interface CommonStoreState {
   addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => string;
 
   pastePoint: Vector3;
-  pasteNormal: Vector3;
+  pasteNormal: Vector3 | undefined;
   elementToPaste: ElementModel[];
   copyElementById: (id: string) => void;
   cutElementById: (id: string) => void;
@@ -452,7 +452,7 @@ export const useStore = create<CommonStoreState>(
 
           elementToPaste: [],
           pastePoint: new Vector3(),
-          pasteNormal: new Vector3(0, 0, 1),
+          pasteNormal: undefined,
           copyElementById(id) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -532,7 +532,9 @@ export const useStore = create<CommonStoreState>(
                 }
                 const e = ElementModelCloner.clone(state.elementToPaste[0], m.x, m.y, m.z);
                 if (e) {
-                  e.normal = state.pasteNormal.toArray();
+                  if (state.pasteNormal) {
+                    e.normal = state.pasteNormal.toArray();
+                  }
                   state.elements.push(e);
                 }
                 if (state.elementToPaste.length > 1) {

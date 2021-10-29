@@ -18,6 +18,7 @@ import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
 import sun_beam_at_center from './examples/sun_beam_at_center.json';
 import office_building_01 from './examples/office_building_01.json';
 import solar_farm_01 from './examples/solar_farm_01.json';
+import solar_farm_02 from './examples/solar_farm_02.json';
 import solar_trackers from './examples/solar_trackers.json';
 
 const { SubMenu } = Menu;
@@ -140,6 +141,9 @@ const MainMenu = ({
         break;
       case 'solar_farm_01':
         input = solar_farm_01;
+        break;
+      case 'solar_farm_02':
+        input = solar_farm_02;
         break;
       case 'solar_trackers':
         input = solar_trackers;
@@ -366,6 +370,9 @@ const MainMenu = ({
         </Menu.Item>
         <Menu.Item key="solar_farm_01" onClick={loadFile}>
           Solar Farm
+        </Menu.Item>
+        <Menu.Item key="solar_farm_02" onClick={loadFile}>
+          Solar Farm in the Real World
         </Menu.Item>
         <Menu.Item key="solar_trackers" onClick={loadFile}>
           Solar Trackers

@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2021. Institute for Future Intelligence, Inc.
+ */
+
 import React, { useState } from 'react';
 import { Checkbox, Input, Menu } from 'antd';
 import { useStore } from 'src/stores/common';

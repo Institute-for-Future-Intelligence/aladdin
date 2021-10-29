@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2021. Institute for Future Intelligence, Inc.
+ */
+
 import { Checkbox, Input, InputNumber, Menu, Select, Space } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import React, { useEffect, useState } from 'react';
