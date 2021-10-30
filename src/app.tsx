@@ -20,7 +20,7 @@ import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from './mainMenu';
 import MapPanel from './panels/mapPanel';
 import HeliodonPanel from './panels/heliodonPanel';
-import { VERSION } from './constants';
+import { DEFAULT_FAR, DEFAULT_FOV, VERSION } from './constants';
 import { showInfo, visitHomepage, visitIFI } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
@@ -303,7 +303,7 @@ const App = () => {
           <div>
             <Canvas
               orthographic={orthographic}
-              camera={{ zoom: orthographic ? cameraZoom : 1, fov: 45 }}
+              camera={{ zoom: orthographic ? cameraZoom : 1, fov: DEFAULT_FOV, far: DEFAULT_FAR }}
               shadows={true}
               gl={{ preserveDrawingBuffer: true }}
               frameloop={'demand'}
@@ -323,7 +323,7 @@ const App = () => {
                     ref={camRef}
                   />
                 ) : (
-                  <PerspectiveCamera zoom={1} fov={45} makeDefault={true} ref={camRef} />
+                  <PerspectiveCamera zoom={1} fov={DEFAULT_FOV} far={DEFAULT_FAR} makeDefault={true} ref={camRef} />
                 ))}
               <OrbitController
                 orbitControlsRef={orbitControlsRef}

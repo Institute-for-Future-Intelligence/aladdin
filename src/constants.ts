@@ -10,31 +10,14 @@ export const HOME_URL: string = isProd
   ? 'https://institute-for-future-intelligence.github.io/aladdin/'
   : 'http://localhost:3000/aladdin';
 
-export const PRESET_COLORS = [
-  '#8884d8',
-  '#f97356',
-  '#1bc32c',
-  '#c6502d',
-  '#82ca9d',
-  '#3eaec0',
-  '#627682',
-  '#445111',
-];
+export const PRESET_COLORS = ['#8884d8', '#f97356', '#1bc32c', '#c6502d', '#82ca9d', '#3eaec0', '#627682', '#445111'];
 
-export const MONTHS = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
+export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+export const DEFAULT_SKY_RADIUS = 5000;
+export const DEFAULT_FOV = 45;
+export const DEFAULT_FAR = 1000000;
+export const DEFAULT_SHADOW_CAMERA_OFFSET = 1000;
 
 export const WORKSPACE_SIZE = 100;
 

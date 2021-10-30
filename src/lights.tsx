@@ -4,12 +4,13 @@
 
 import React from 'react';
 import { useStore } from './stores/common';
+import { DEFAULT_FAR, DEFAULT_SHADOW_CAMERA_OFFSET } from './constants';
 
 const Lights = () => {
   const sunlightDirection = useStore((state) => state.sunlightDirection);
 
   return (
-    <React.Fragment>
+    <>
       <ambientLight intensity={0.25} name={'Ambient Light'} />
       <directionalLight
         name={'Directional Light'}
@@ -20,13 +21,13 @@ const Lights = () => {
         shadow-mapSize-height={4096}
         shadow-mapSize-width={4096}
         shadowCameraNear={1}
-        shadowCameraFar={10000}
-        shadowCameraLeft={-100}
-        shadowCameraRight={100}
-        shadowCameraTop={100}
-        shadowCameraBottom={-100}
+        shadowCameraFar={DEFAULT_FAR}
+        shadowCameraLeft={-DEFAULT_SHADOW_CAMERA_OFFSET}
+        shadowCameraRight={DEFAULT_SHADOW_CAMERA_OFFSET}
+        shadowCameraTop={DEFAULT_SHADOW_CAMERA_OFFSET}
+        shadowCameraBottom={-DEFAULT_SHADOW_CAMERA_OFFSET}
       />
-    </React.Fragment>
+    </>
   );
 };
 

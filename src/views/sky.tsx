@@ -19,6 +19,7 @@ import GrasslandNightSkyImage from '../resources/grassland-night.jpg';
 import { useStore } from '../stores/common';
 import { IntersectionPlaneType, ObjectType, ResizeHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
+import { DEFAULT_SKY_RADIUS } from '../constants';
 
 export interface SkyProps {
   theme?: string;
@@ -176,7 +177,7 @@ const Sky = ({ theme = 'Default', ...props }: SkyProps) => {
         }}
         rotation={[Math.PI / 2, 0, 0]}
       >
-        <sphereGeometry args={[900, 16, 8, 0, 2 * Math.PI, 0, Math.PI / 2]} />
+        <sphereBufferGeometry args={[DEFAULT_SKY_RADIUS, 16, 8, 0, 2 * Math.PI, 0, Math.PI / 2]} />
         <meshBasicMaterial map={texture} side={BackSide} opacity={1} color={'skyblue'} />
       </mesh>
       {grabRef.current && intersectionPlaneType !== IntersectionPlaneType.Sky && (
