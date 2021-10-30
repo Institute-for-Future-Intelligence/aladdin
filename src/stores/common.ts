@@ -130,7 +130,13 @@ export const useStore = create<CommonStoreState>(
         const defaultViewState = new DefaultViewState();
 
         return {
-          set: immerSet,
+          set: (fn) => {
+            try {
+              immerSet(fn);
+            } catch (e) {
+              console.log(e);
+            }
+          },
           world: defaultWorldModel,
           elements: defaultElements,
           viewState: defaultViewState,

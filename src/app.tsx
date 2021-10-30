@@ -45,6 +45,7 @@ import CompassContainer from './compassContainer';
 import { WallModel } from './models/WallModel';
 import * as Selector from 'src/stores/selector';
 import { OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
+import ErrorPage from './ErrorPage';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);
@@ -199,164 +200,170 @@ const App = () => {
   console.log('x');
 
   return (
-    <div className="App">
-      {loading && <Spinner />}
-      <div
-        style={{
-          backgroundColor: 'lightblue',
-          height: '72px',
-          paddingTop: '10px',
-          textAlign: 'start',
-          userSelect: 'none',
-          fontSize: '30px',
-        }}
-      >
-        <span
+    <ErrorPage>
+      <div className="App">
+        {loading && <Spinner />}
+        <div
           style={{
-            marginLeft: '120px',
-            verticalAlign: 'middle',
-            cursor: 'pointer',
+            backgroundColor: 'lightblue',
+            height: '72px',
+            paddingTop: '10px',
+            textAlign: 'start',
             userSelect: 'none',
+            fontSize: '30px',
           }}
-          title={'Visit Aladdin homepage'}
-          onClick={visitHomepage}
         >
-          Aladdin
-        </span>
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '10px',
-          left: '10px',
-          zIndex: 999,
-          fontSize: '12px',
-          userSelect: 'none',
-          color: 'antiquewhite',
-        }}
-      >
-        <img
-          alt="IFI Logo"
-          src={ifiLogo}
-          height="40px"
-          style={{ verticalAlign: 'bottom', cursor: 'pointer' }}
-          title={'Go to Institute for Future Intelligence'}
-          onClick={visitIFI}
-        />
-        &nbsp;&nbsp; Institute for Future Intelligence, &copy;{new Date().getFullYear()}. Version {VERSION}
-      </div>
-      <MainMenu
-        canvas={canvasRef.current}
-        collectDailyLightSensorData={collectDailyLightSensorData}
-        collectYearlyLightSensorData={collectYearlyLightSensorData}
-        setPvDailyIndividualOutputs={setPvDailyIndividualOutputs}
-        analyzePvDailyYield={analyzeDailyPvYield}
-        setPvYearlyIndividualOutputs={setPvYearlyIndividualOutputs}
-        analyzePvYearlyYield={analyzeYearlyPvYield}
-      />
-      <MainToolBar resetView={setTopView} />
-      <Modal
-        width={600}
-        visible={pvModelDialogVisible}
-        title="Solar Panel Specs"
-        onOk={() => {
-          setPvModelDialogVisible(false);
-        }}
-        onCancel={() => {
-          setPvModelDialogVisible(false);
-        }}
-      >
-        <PvModelPanel />
-      </Modal>
-      {viewState.showMapPanel && <MapPanel />}
-      {viewState.showHeliodonPanel && <HeliodonPanel />}
-      {viewState.showStickyNotePanel && <StickyNotePanel />}
-      {viewState.showInfoPanel && <InfoPanel city={city} />}
-      {viewState.showWeatherPanel && (
-        <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]} />
-      )}
-      {viewState.showYearlyLightSensorPanel && (
-        <YearlyLightSensorPanel city={city} collectYearlyLightSensorData={collectYearlyLightSensorData} />
-      )}
-      {viewState.showDailyLightSensorPanel && (
-        <DailyLightSensorPanel city={city} collectDailyLightSensorData={collectDailyLightSensorData} />
-      )}
-      {viewState.showYearlyPvYieldPanel && (
-        <YearlyPvYieldPanel
-          city={city}
-          individualOutputs={pvYearlyIndividualOutputs}
-          setIndividualOutputs={setPvYearlyIndividualOutputs}
-          analyzeYearlyPvYield={analyzeYearlyPvYield}
-        />
-      )}
-      {viewState.showDailyPvYieldPanel && (
-        <DailyPvYieldPanel
-          city={city}
-          individualOutputs={pvDailyIndividualOutputs}
-          setIndividualOutputs={setPvDailyIndividualOutputs}
-          analyzeDailyPvYield={analyzeDailyPvYield}
-        />
-      )}
-      <DropdownContextMenu setPvDialogVisible={setPvModelDialogVisible}>
-        <div>
-          <Canvas
-            orthographic={orthographic}
-            camera={{ zoom: orthographic ? cameraZoom : 1, fov: 45 }}
-            shadows={true}
-            gl={{ preserveDrawingBuffer: true }}
-            frameloop={'demand'}
-            style={{ height: 'calc(100vh - 70px)', backgroundColor: 'black' }}
+          <span
+            style={{
+              marginLeft: '120px',
+              verticalAlign: 'middle',
+              cursor: 'pointer',
+              userSelect: 'none',
+            }}
+            title={'Visit Aladdin homepage'}
+            onClick={visitHomepage}
           >
-            {/*
+            Aladdin
+          </span>
+        </div>
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '10px',
+            left: '10px',
+            zIndex: 999,
+            fontSize: '12px',
+            userSelect: 'none',
+            color: 'antiquewhite',
+          }}
+        >
+          <img
+            alt="IFI Logo"
+            src={ifiLogo}
+            height="40px"
+            style={{ verticalAlign: 'bottom', cursor: 'pointer' }}
+            title={'Go to Institute for Future Intelligence'}
+            onClick={visitIFI}
+          />
+          &nbsp;&nbsp; Institute for Future Intelligence, &copy;{new Date().getFullYear()}. Version {VERSION}
+        </div>
+        <MainMenu
+          canvas={canvasRef.current}
+          collectDailyLightSensorData={collectDailyLightSensorData}
+          collectYearlyLightSensorData={collectYearlyLightSensorData}
+          setPvDailyIndividualOutputs={setPvDailyIndividualOutputs}
+          analyzePvDailyYield={analyzeDailyPvYield}
+          setPvYearlyIndividualOutputs={setPvYearlyIndividualOutputs}
+          analyzePvYearlyYield={analyzeYearlyPvYield}
+        />
+        <MainToolBar resetView={setTopView} />
+        <Modal
+          width={600}
+          visible={pvModelDialogVisible}
+          title="Solar Panel Specs"
+          onOk={() => {
+            setPvModelDialogVisible(false);
+          }}
+          onCancel={() => {
+            setPvModelDialogVisible(false);
+          }}
+        >
+          <PvModelPanel />
+        </Modal>
+        {viewState.showMapPanel && <MapPanel />}
+        {viewState.showHeliodonPanel && <HeliodonPanel />}
+        {viewState.showStickyNotePanel && <StickyNotePanel />}
+        {viewState.showInfoPanel && <InfoPanel city={city} />}
+        {viewState.showWeatherPanel && (
+          <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]} />
+        )}
+        {viewState.showYearlyLightSensorPanel && (
+          <YearlyLightSensorPanel city={city} collectYearlyLightSensorData={collectYearlyLightSensorData} />
+        )}
+        {viewState.showDailyLightSensorPanel && (
+          <DailyLightSensorPanel city={city} collectDailyLightSensorData={collectDailyLightSensorData} />
+        )}
+        {viewState.showYearlyPvYieldPanel && (
+          <YearlyPvYieldPanel
+            city={city}
+            individualOutputs={pvYearlyIndividualOutputs}
+            setIndividualOutputs={setPvYearlyIndividualOutputs}
+            analyzeYearlyPvYield={analyzeYearlyPvYield}
+          />
+        )}
+        {viewState.showDailyPvYieldPanel && (
+          <DailyPvYieldPanel
+            city={city}
+            individualOutputs={pvDailyIndividualOutputs}
+            setIndividualOutputs={setPvDailyIndividualOutputs}
+            analyzeDailyPvYield={analyzeDailyPvYield}
+          />
+        )}
+        <DropdownContextMenu setPvDialogVisible={setPvModelDialogVisible}>
+          <div>
+            <Canvas
+              orthographic={orthographic}
+              camera={{ zoom: orthographic ? cameraZoom : 1, fov: 45 }}
+              shadows={true}
+              gl={{ preserveDrawingBuffer: true }}
+              frameloop={'demand'}
+              style={{ height: 'calc(100vh - 70px)', backgroundColor: 'black' }}
+            >
+              {/*
             The following is for switching camera between the orthographic and perspective modes from the menu.
             For some reason, the above code does not trigger the camera to change unless we reload the entire page,
              which is not desirable. So we have to do it this way.
              */}
-            {orthographicChanged &&
-              (orthographic ? (
-                <OrthographicCamera
-                  zoom={cameraZoom}
-                  position={[0, 0, Math.min(50, heliodonRadius * 4)]}
-                  makeDefault={true}
-                  ref={camRef}
-                />
-              ) : (
-                <PerspectiveCamera zoom={1} fov={45} makeDefault={true} ref={camRef} />
-              ))}
-            <OrbitController orbitControlsRef={orbitControlsRef} canvasRef={canvasRef} currentCamera={camRef.current} />
-            <Lights />
+              {orthographicChanged &&
+                (orthographic ? (
+                  <OrthographicCamera
+                    zoom={cameraZoom}
+                    position={[0, 0, Math.min(50, heliodonRadius * 4)]}
+                    makeDefault={true}
+                    ref={camRef}
+                  />
+                ) : (
+                  <PerspectiveCamera zoom={1} fov={45} makeDefault={true} ref={camRef} />
+                ))}
+              <OrbitController
+                orbitControlsRef={orbitControlsRef}
+                canvasRef={canvasRef}
+                currentCamera={camRef.current}
+              />
+              <Lights />
 
-            <ElementsRenderer />
-            <Heliodon />
-            {viewState.axes && <Axes />}
+              <ElementsRenderer />
+              <Heliodon />
+              {viewState.axes && <Axes />}
 
-            <SensorSimulation
-              city={city}
-              dailyLightSensorDataFlag={dailyLightSensorDataFlag}
-              yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}
-            />
-            <SolarPanelSimulation
-              city={city}
-              dailyIndividualOutputs={pvDailyIndividualOutputs}
-              yearlyIndividualOutputs={pvYearlyIndividualOutputs}
-              dailyPvYieldFlag={pvDailyYieldFlag}
-              yearlyPvYieldFlag={pvYearlyYieldFlag}
-            />
-            <Suspense fallback={null}>
-              <Ground />
-              <Grid />
-              {viewState.groundImage && <GroundImage />}
-              {/* <Obj/> */}
-            </Suspense>
-            <Suspense fallback={null}>
-              <Sky theme={viewState.theme} />
-            </Suspense>
-          </Canvas>
-        </div>
-      </DropdownContextMenu>
-      <CompassContainer />
-      <AcceptCookie />
-    </div>
+              <SensorSimulation
+                city={city}
+                dailyLightSensorDataFlag={dailyLightSensorDataFlag}
+                yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}
+              />
+              <SolarPanelSimulation
+                city={city}
+                dailyIndividualOutputs={pvDailyIndividualOutputs}
+                yearlyIndividualOutputs={pvYearlyIndividualOutputs}
+                dailyPvYieldFlag={pvDailyYieldFlag}
+                yearlyPvYieldFlag={pvYearlyYieldFlag}
+              />
+              <Suspense fallback={null}>
+                <Ground />
+                <Grid />
+                {viewState.groundImage && <GroundImage />}
+                {/* <Obj/> */}
+              </Suspense>
+              <Suspense fallback={null}>
+                <Sky theme={viewState.theme} />
+              </Suspense>
+            </Canvas>
+          </div>
+        </DropdownContextMenu>
+        <CompassContainer />
+        <AcceptCookie />
+      </div>
+    </ErrorPage>
   );
 };
 

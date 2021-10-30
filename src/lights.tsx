@@ -20,7 +20,7 @@ const Lights = () => {
         shadow-mapSize-height={4096}
         shadow-mapSize-width={4096}
         shadowCameraNear={1}
-        shadowCameraFar={100}
+        shadowCameraFar={10000}
         shadowCameraLeft={-100}
         shadowCameraRight={100}
         shadowCameraTop={100}

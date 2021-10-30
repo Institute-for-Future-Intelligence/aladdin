@@ -1140,7 +1140,7 @@ const Foundation = ({
           attach="material"
           color={color}
           transparent={groundImage}
-          opacity={groundImage ? 0.25 : 1}
+          opacity={groundImage ? 0.5 : 1}
         />
       </Box>
 
