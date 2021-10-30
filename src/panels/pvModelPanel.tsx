@@ -233,4 +233,4 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
   );
 };
 
-export default React.memo(PvModelPanel);
+export default PvModelPanel;

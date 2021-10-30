@@ -37,7 +37,7 @@ export const FoundationMenu = () => {
         <SubMenu key={'clear'} title={'Clear'} style={{ paddingLeft: '24px' }}>
           {sensorCountFoundation > 0 && (
             <Menu.Item
-              key={'remove-all-sensors'}
+              key={'remove-all-sensors-on-foundation'}
               onClick={() => {
                 Modal.confirm({
                   title:
@@ -58,7 +58,7 @@ export const FoundationMenu = () => {
           )}
           {solarPanelCountFoundation > 0 && (
             <Menu.Item
-              key={'remove-all-solar-panels'}
+              key={'remove-all-solar-panels-on-foundation'}
               onClick={() => {
                 Modal.confirm({
                   title:
