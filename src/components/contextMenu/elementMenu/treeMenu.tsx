@@ -37,7 +37,7 @@ export const TreeMenu = () => {
         </Checkbox>
       </Menu.Item>
       <Menu>
-        <Menu.Item key={'tree-change-type'} style={{ paddingLeft: '40px' }}>
+        <Menu.Item key={'tree-change-type'} style={{ paddingLeft: '36px' }}>
           <Space style={{ width: '60px' }}>Type: </Space>
           <TreeSelection key={'trees'} />
         </Menu.Item>
@@ -51,7 +51,7 @@ export const TreeMenu = () => {
           widthName={'Spread'}
           adjustLength={false}
           adjustAngle={false}
-          style={{ paddingLeft: '24px' }}
+          style={{ paddingLeft: '20px' }}
         />
       )}
     </>

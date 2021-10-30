@@ -53,8 +53,8 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
 
   return (
     <>
-      <Copy />
-      <Cut />
+      <Copy paddingLeft={'40px'} />
+      <Cut paddingLeft={'40px'} />
       {solarPanel && (
         <>
           <Menu.Item

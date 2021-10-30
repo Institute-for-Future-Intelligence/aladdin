@@ -34,7 +34,7 @@ export const SkyMenu = () => {
           Axes
         </Checkbox>
       </Menu.Item>
-      <SubMenu key={'theme'} title={'Theme'}>
+      <SubMenu key={'theme'} title={'Theme'} style={{ paddingLeft: '24px' }}>
         <Radio.Group
           value={theme}
           style={{ height: '135px' }}

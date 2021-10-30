@@ -29,7 +29,7 @@ const TreeSelection = ({ ...rest }: TreeSelectionProps) => {
 
   return (
     <Select
-      style={{ width: '120px' }}
+      style={{ width: '150px' }}
       value={tree?.name}
       onChange={(value) => {
         if (tree) {

@@ -9,7 +9,7 @@ import { useStore } from '../../stores/common';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ColorResult, CompactPicker } from 'react-color';
 
-export const Paste = ({ paddingLeft = '40px' }: { paddingLeft?: string }) => {
+export const Paste = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   const pasteElement = useStore((state) => state.pasteElement);
 
   return (
@@ -19,7 +19,7 @@ export const Paste = ({ paddingLeft = '40px' }: { paddingLeft?: string }) => {
   );
 };
 
-export const Copy = () => {
+export const Copy = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   const copyElementById = useStore((state) => state.copyElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
 
@@ -31,13 +31,13 @@ export const Copy = () => {
   };
 
   return (
-    <Menu.Item key={'foundation-copy'} onClick={copyElement} style={{ paddingLeft: '40px' }}>
+    <Menu.Item key={'foundation-copy'} onClick={copyElement} style={{ paddingLeft: paddingLeft }}>
       Copy
     </Menu.Item>
   );
 };
 
-export const Cut = () => {
+export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   const cutElementById = useStore((state) => state.cutElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
 
@@ -49,7 +49,7 @@ export const Cut = () => {
   };
 
   return (
-    <Menu.Item key={'foundation-cut'} onClick={cutElement} style={{ paddingLeft: '40px' }}>
+    <Menu.Item key={'foundation-cut'} onClick={cutElement} style={{ paddingLeft: paddingLeft }}>
       Cut
     </Menu.Item>
   );

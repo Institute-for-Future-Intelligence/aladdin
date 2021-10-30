@@ -52,7 +52,7 @@ export const CuboidMenu = () => {
         </SubMenu>
       )}
       {selectedElement && contextMenuObjectType && (
-        <ReshapeElementMenu elementId={selectedElement.id} name={'cuboid'} style={{ paddingLeft: '24px' }} />
+        <ReshapeElementMenu elementId={selectedElement.id} name={'cuboid'} style={{ paddingLeft: '20px' }} />
       )}
     </Menu.ItemGroup>
   );

@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { InputNumber, Menu, Modal, Space } from 'antd';
+import { Checkbox, InputNumber, Menu, Modal, Space } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { CompactPicker } from 'react-color';
@@ -19,14 +19,16 @@ export const GroundMenu = () => {
   const countElementsByType = useStore((state) => state.countElementsByType);
   const removeElementsByType = useStore((state) => state.removeElementsByType);
 
+  const groundImage = useStore((state) => state.viewState.groundImage);
   const treeCount = countElementsByType(ObjectType.Tree);
   const humanCount = countElementsByType(ObjectType.Human);
 
   return (
     <>
-      <Paste paddingLeft={''} />
+      <Paste />
       {humanCount > 0 && (
         <Menu.Item
+          style={{ paddingLeft: '36px' }}
           key={'ground-remove-all-humans'}
           onClick={() => {
             Modal.confirm({
@@ -45,6 +47,7 @@ export const GroundMenu = () => {
       )}
       {treeCount > 0 && (
         <Menu.Item
+          style={{ paddingLeft: '36px' }}
           key={'ground-remove-all-trees'}
           onClick={() => {
             Modal.confirm({
@@ -62,7 +65,7 @@ export const GroundMenu = () => {
         </Menu.Item>
       )}
       <Menu>
-        <Menu.Item key={'ground-albedo'}>
+        <Menu.Item style={{ paddingLeft: '36px' }} key={'ground-albedo'}>
           <Space style={{ width: '60px' }}>Albedo:</Space>
           <InputNumber
             min={0.05}
@@ -80,7 +83,19 @@ export const GroundMenu = () => {
           />
         </Menu.Item>
       </Menu>
-      <SubMenu key={'ground-color'} title={'Color'}>
+      <Menu.Item key={'image-on-ground'}>
+        <Checkbox
+          checked={groundImage}
+          onChange={(e) => {
+            setCommonStore((state) => {
+              state.viewState.groundImage = e.target.checked;
+            });
+          }}
+        >
+          Image on Ground
+        </Checkbox>
+      </Menu.Item>
+      <SubMenu key={'ground-color'} title={'Color'} style={{ paddingLeft: '24px' }}>
         <CompactPicker
           color={groundColor}
           onChangeComplete={(colorResult) => {

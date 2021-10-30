@@ -14,6 +14,7 @@ import { ObjectType } from 'src/types';
 export const FoundationMenu = () => {
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const countAllChildElementsByType = useStore((state) => state.countAllChildElementsByType);
+  const countAllChildSolarPanels = useStore((state) => state.countAllChildSolarPanels);
   const removeAllChildElementsByType = useStore((state) => state.removeAllChildElementsByType);
 
   const contextMenuObjectType = useStore((state) => state.contextMenuObjectType);
@@ -21,9 +22,10 @@ export const FoundationMenu = () => {
   const sensorCountFoundation = selectedElement
     ? countAllChildElementsByType(selectedElement.id, ObjectType.Sensor)
     : 0;
-  const solarPanelCountFoundation = selectedElement
+  const solarRackCountFoundation = selectedElement
     ? countAllChildElementsByType(selectedElement.id, ObjectType.SolarPanel)
     : 0;
+  const solarPanelCountFoundation = selectedElement ? countAllChildSolarPanels(selectedElement.id) : 0;
 
   return (
     <Menu.ItemGroup>
@@ -62,7 +64,9 @@ export const FoundationMenu = () => {
                   title:
                     'Do you really want to remove all the ' +
                     solarPanelCountFoundation +
-                    ' solar panels on this foundation?',
+                    ' solar panels mounted on ' +
+                    solarRackCountFoundation +
+                    ' racks on this foundation?',
                   icon: <ExclamationCircleOutlined />,
                   okText: 'OK',
                   cancelText: 'Cancel',
@@ -74,14 +78,14 @@ export const FoundationMenu = () => {
                 });
               }}
             >
-              Remove All {solarPanelCountFoundation} Solar Panels
+              Remove All {solarPanelCountFoundation} Solar Panels ({solarRackCountFoundation} Racks)
             </Menu.Item>
           )}
         </SubMenu>
       )}
       <ColorPicker />
       {selectedElement && contextMenuObjectType && (
-        <ReshapeElementMenu elementId={selectedElement.id} name={'foundation'} style={{ paddingLeft: '24px' }} />
+        <ReshapeElementMenu elementId={selectedElement.id} name={'foundation'} style={{ paddingLeft: '20px' }} />
       )}
     </Menu.ItemGroup>
   );

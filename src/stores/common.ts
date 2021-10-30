@@ -12,7 +12,16 @@ import weather from '../resources/weather.csv';
 import pvmodules from '../resources/pvmodules.csv';
 import Papa from 'papaparse';
 import { Util } from '../Util';
-import { ActionType, DatumEntry, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType, User } from '../types';
+import {
+  ActionType,
+  DatumEntry,
+  MoveHandleType,
+  ObjectType,
+  Orientation,
+  ResizeHandleType,
+  RotateHandleType,
+  User,
+} from '../types';
 import { DefaultWorldModel } from './DefaultWorldModel';
 import { Box3, Vector2, Vector3 } from 'three';
 import { ElementModelCloner } from '../models/ElementModelCloner';
@@ -23,6 +32,7 @@ import { ElementModelFactory } from '../models/ElementModelFactory';
 import { GroundModel } from '../models/GroundModel';
 import { PvModel } from '../models/PvModel';
 import { ThreeEvent } from '@react-three/fiber';
+import { SolarPanelModel } from '../models/SolarPanelModel';
 
 enableMapSet();
 
@@ -85,6 +95,7 @@ export interface CommonStoreState {
   countElementsByType: (type: ObjectType) => number;
   removeElementsByType: (type: ObjectType) => void;
   countAllChildElementsByType: (parentId: string, type: ObjectType) => number;
+  countAllChildSolarPanels: (parentId: string) => number; // special case as a rack may have many solar panels
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
 
   dailyLightSensorData: DatumEntry[];
@@ -519,6 +530,26 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === type && e.parent.id === parentId) {
                   count++;
+                }
+              }
+            });
+            return count;
+          },
+          countAllChildSolarPanels(parentId: string) {
+            let count = 0;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.parent.id === parentId) {
+                  const sp = e as SolarPanelModel;
+                  let nx, ny;
+                  if (sp.orientation === Orientation.portrait) {
+                    nx = Math.max(1, Math.round(sp.lx / sp.pvModel.width));
+                    ny = Math.max(1, Math.round(sp.ly / sp.pvModel.length));
+                  } else {
+                    nx = Math.max(1, Math.round(sp.lx / sp.pvModel.length));
+                    ny = Math.max(1, Math.round(sp.ly / sp.pvModel.width));
+                  }
+                  count += nx * ny;
                 }
               }
             });

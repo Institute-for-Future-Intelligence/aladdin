@@ -34,7 +34,7 @@ export const SensorMenu = () => {
       <Copy />
       <Cut />
       <Menu>
-        <Menu.Item key={'sensor-label-text'} style={{ paddingLeft: '40px' }}>
+        <Menu.Item key={'sensor-label-text'} style={{ paddingLeft: '36px' }}>
           <Input
             addonBefore="Label:"
             value={labelText}

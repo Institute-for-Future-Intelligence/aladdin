@@ -14,7 +14,7 @@ export const HumanMenu = () => {
       <Cut />
       <Lock />
       <Menu>
-        <Menu.Item key={'human-change-person'} style={{ paddingLeft: '40px' }}>
+        <Menu.Item key={'human-change-person'} style={{ paddingLeft: '36px' }}>
           <Space style={{ width: '120px' }}>Change Person: </Space>
           <HumanSelection key={'humans'} />
         </Menu.Item>
