@@ -5,13 +5,13 @@
 import React, { useState } from 'react';
 import { useStore } from './stores/common';
 import styled from 'styled-components';
-import { Checkbox, Dropdown, Input, InputNumber, Menu, Modal, Select, Space } from 'antd';
+import { Checkbox, Dropdown, Input, InputNumber, Menu, Modal, Radio, Select, Space } from 'antd';
 import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
 import { saveAs } from 'file-saver';
 import About from './about';
 import { saveImage } from './helpers';
-import { Discretization } from './types';
+import { Discretization, Language } from './types';
 import * as Selector from './stores/selector';
 
 import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
@@ -21,9 +21,17 @@ import solar_farm_01 from './examples/solar_farm_01.json';
 import solar_farm_02 from './examples/solar_farm_02.json';
 import solar_trackers from './examples/solar_trackers.json';
 import simple_house_01 from './examples/simple_house_01.json';
+import i18n from './i18n';
 
 const { SubMenu } = Menu;
 const { Option } = Select;
+
+const radioStyle = {
+  display: 'block',
+  height: '30px',
+  paddingLeft: '10px',
+  lineHeight: '30px',
+};
 
 const StyledImage = styled.img`
   position: absolute;
@@ -62,6 +70,7 @@ const MainMenu = ({
   ...rest
 }: MainMenuProps) => {
   const setCommonStore = useStore((state) => state.set);
+  const language = useStore((state) => state.language);
   const timesPerHour = useStore((state) => state.world.timesPerHour);
   const discretization = useStore((state) => state.world.discretization);
   const solarPanelGridCellSize = useStore((state) => state.world.solarPanelGridCellSize);
@@ -166,20 +175,22 @@ const MainMenu = ({
     }
   };
 
+  const lng = { lng: language };
+
   const menu = (
     <Menu>
-      <SubMenu key={'file'} title={'File'}>
+      <SubMenu key={'file'} title={i18n.t('menu.fileSubMenu', lng)}>
         <Menu.Item key="open-local-file" onClick={readLocalFile}>
-          Open Local File
+          {i18n.t('menu.file.OpenLocalFile', lng)}
         </Menu.Item>
         <Menu.Item key="save-local-file" onClick={showDownloadDialog}>
-          Save to Download Folder
+          {i18n.t('menu.file.SaveToDownloadFolder', lng)}
         </Menu.Item>
         <Menu.Item key="screenshot" onClick={takeScreenshot}>
-          Take Screenshot
+          {i18n.t('menu.file.TakeScreenshot', lng)}
         </Menu.Item>
       </SubMenu>
-      <SubMenu key={'view'} title={'View'}>
+      <SubMenu key={'view'} title={i18n.t('menu.viewSubMenu', lng)}>
         <Menu.Item key={'orthographic-check-box'}>
           <Checkbox
             checked={orthographic}
@@ -200,7 +211,7 @@ const MainMenu = ({
               });
             }}
           >
-            2D View
+            {i18n.t('menu.view.TwoDimensionalView', lng)}
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'info-panel-check-box'}>
@@ -212,7 +223,7 @@ const MainMenu = ({
               });
             }}
           >
-            Site Information
+            {i18n.t('menu.view.SiteInformation', lng)}
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'map-panel-check-box'}>
@@ -224,7 +235,7 @@ const MainMenu = ({
               });
             }}
           >
-            Map
+            {i18n.t('menu.view.Map', lng)}
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'weather-panel-check-box'}>
@@ -236,7 +247,7 @@ const MainMenu = ({
               });
             }}
           >
-            Weather Data
+            {i18n.t('menu.view.WeatherData', lng)}
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'sticky-note-panel-check-box'}>
@@ -248,18 +259,18 @@ const MainMenu = ({
               });
             }}
           >
-            Sticky Note
+            {i18n.t('menu.view.StickyNote', lng)}
           </Checkbox>
         </Menu.Item>
       </SubMenu>
-      <SubMenu key={'sensors'} title={'Sensors'}>
+      <SubMenu key={'sensors'} title={i18n.t('menu.sensorsSubMenu', lng)}>
         <Menu.Item key={'sensor-collect-daily-data'} onClick={collectDailyLightSensorData}>
-          Collect Daily Data
+          {i18n.t('menu.sensors.CollectDailyData', lng)}
         </Menu.Item>
         <Menu.Item key={'sensor-collect-yearly-data'} onClick={collectYearlyLightSensorData}>
-          Collect Yearly Data
+          {i18n.t('menu.sensors.CollectYearlyData', lng)}
         </Menu.Item>
-        <SubMenu key={'sensor-simulation-options'} title={'Options'}>
+        <SubMenu key={'sensor-simulation-options'} title={i18n.t('word.Options', lng)}>
           <Menu>
             <Menu.Item key={'sensor-simulation-sampling-frequency'}>
               <Space style={{ width: '150px' }}>Sampling Frequency: </Space>
@@ -282,15 +293,19 @@ const MainMenu = ({
           </Menu>
         </SubMenu>
       </SubMenu>
-      <SubMenu key={'solar-panels'} title={'Solar Panels'}>
+      <SubMenu key={'solar-panels'} title={i18n.t('menu.solarPanelsSubMenu', lng)}>
         <Menu.Item
           key={'solar-panel-daily-yield'}
           onClick={() => {
+            setCommonStore((state) => {
+              state.simulationInProgress = true;
+              console.log('simulation started', state.simulationInProgress);
+            });
             setPvDailyIndividualOutputs(false);
             analyzePvDailyYield();
           }}
         >
-          Analyze Daily Yield
+          {i18n.t('menu.solarPanels.AnalyzeDailyYield', lng)}
         </Menu.Item>
         <Menu.Item
           key={'solar-panel-yearly-yield'}
@@ -299,9 +314,9 @@ const MainMenu = ({
             analyzePvYearlyYield();
           }}
         >
-          Analyze Yearly Yield
+          {i18n.t('menu.solarPanels.AnalyzeYearlyYield', lng)}
         </Menu.Item>
-        <SubMenu key={'solar-panel-simulation-options'} title={'Options'}>
+        <SubMenu key={'solar-panel-simulation-options'} title={i18n.t('word.Options', lng)}>
           <Menu>
             <Menu.Item key={'solar-panel-simulation-sampling-frequency'}>
               <Space style={{ width: '150px' }}>Sampling Frequency: </Space>
@@ -365,31 +380,58 @@ const MainMenu = ({
           </Menu>
         </SubMenu>
       </SubMenu>
-      <SubMenu key={'examples'} title={'Examples'}>
+      <SubMenu key={'examples'} title={i18n.t('menu.examplesSubMenu', lng)}>
         <Menu.Item key="solar_radiation_to_box" onClick={loadFile}>
-          Solar Radiation to a Box
+          {i18n.t('menu.examples.SolarRadiationToBox', lng)}
         </Menu.Item>
         <Menu.Item key="sun_beam_at_center" onClick={loadFile}>
-          Sun Beam and Heliodon
+          {i18n.t('menu.examples.SunBeamAndHeliodon', lng)}
         </Menu.Item>
         <Menu.Item key="solar_farm_01" onClick={loadFile}>
-          Solar Farm
+          {i18n.t('menu.examples.SolarFarm', lng)}
         </Menu.Item>
         <Menu.Item key="solar_farm_02" onClick={loadFile}>
-          Solar Farm in the Real World
+          {i18n.t('menu.examples.SolarFarmInRealWorld', lng)}
         </Menu.Item>
         <Menu.Item key="solar_trackers" onClick={loadFile}>
-          Solar Trackers
+          {i18n.t('menu.examples.SolarTrackers', lng)}
         </Menu.Item>
         <Menu.Item key="simple_house_01" onClick={loadFile}>
-          Simple House
+          {i18n.t('menu.examples.SimpleHouse', lng)}
         </Menu.Item>
         <Menu.Item key="office_building_01" onClick={loadFile}>
-          Office Building
+          {i18n.t('menu.examples.OfficeBuilding', lng)}
         </Menu.Item>
       </SubMenu>
+      <SubMenu key={'language'} title={i18n.t('menu.languageSubMenu', lng)}>
+        <Radio.Group
+          value={language}
+          style={{ height: '170px' }}
+          onChange={(e) => {
+            setCommonStore((state) => {
+              state.language = e.target.value;
+            });
+          }}
+        >
+          <Radio style={radioStyle} value={'en'}>
+            {Language.English}
+          </Radio>
+          <Radio style={radioStyle} value={'zh_cn'}>
+            {Language.Chinese_Simplified}
+          </Radio>
+          <Radio style={radioStyle} value={'zh_tw'}>
+            {Language.Chinese_Traditional}
+          </Radio>
+          <Radio style={radioStyle} value={'tr'}>
+            {Language.Turkish}
+          </Radio>
+          <Radio style={radioStyle} value={'es'}>
+            {Language.Spanish}
+          </Radio>
+        </Radio.Group>
+      </SubMenu>
       <Menu.Item key="about" onClick={gotoAboutPage}>
-        About Us
+        {i18n.t('menu.AboutUs', lng)}
       </Menu.Item>
     </Menu>
   );
@@ -415,7 +457,7 @@ const MainMenu = ({
         />
       </Modal>
       <Dropdown overlay={menu} trigger={['click']}>
-        <StyledImage src={logo} title={'Click to open menu'} />
+        <StyledImage src={logo} title={i18n.t('tooltip.clickToOpenMenu', lng)} />
       </Dropdown>
       {aboutUs && <About openAboutUs={openAboutUs} />}
     </>

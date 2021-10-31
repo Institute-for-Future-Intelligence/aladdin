@@ -57,6 +57,14 @@ export enum Theme {
   Grassland = 'Grassland',
 }
 
+export enum Language {
+  English = 'English',
+  Chinese_Simplified = '简体中文',
+  Chinese_Traditional = '繁体中文',
+  Turkish = 'Türk',
+  Spanish = 'Español',
+}
+
 export enum ObjectType {
   Sky = 'Sky',
   Ground = 'Ground',

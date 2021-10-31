@@ -38,6 +38,7 @@ const SolarPanelSimulation = ({
   yearlyIndividualOutputs = false,
   yearlyPvYieldFlag,
 }: SolarPanelSimulationProps) => {
+  const setCommonStore = useStore((state) => state.set);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
@@ -70,6 +71,10 @@ const SolarPanelSimulation = ({
     } else {
       loadedDaily.current = true;
     }
+    setCommonStore((state) => {
+      state.simulationInProgress = false;
+      console.log('simulation ended', state.simulationInProgress);
+    });
   }, [dailyPvYieldFlag]);
 
   useEffect(() => {

@@ -45,6 +45,7 @@ export interface CommonStoreState {
   viewState: ViewState;
   notes: string[];
   user: User;
+  language: string;
 
   exportContent: () => {};
   clearContent: () => void;
@@ -129,6 +130,7 @@ export interface CommonStoreState {
   getInitialWallsID: (parentID: string) => string[];
 
   orthographicChanged: boolean;
+  simulationInProgress: boolean;
 }
 
 export const useStore = create<CommonStoreState>(
@@ -153,6 +155,7 @@ export const useStore = create<CommonStoreState>(
           viewState: defaultViewState,
           notes: [],
           user: {} as User,
+          language: 'en',
           exportContent() {
             const state = get();
             return {
@@ -729,11 +732,13 @@ export const useStore = create<CommonStoreState>(
           },
 
           orthographicChanged: false,
+          simulationInProgress: false,
         };
       },
       {
         name: 'aladdin-storage',
         whitelist: [
+          'language',
           'world',
           'elements',
           'viewState',

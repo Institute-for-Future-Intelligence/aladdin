@@ -46,9 +46,11 @@ import { WallModel } from './models/WallModel';
 import * as Selector from 'src/stores/selector';
 import { OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
 import ErrorPage from './ErrorPage';
+import i18n from './i18n';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);
+  const language = useStore((state) => state.language);
   const loadWeatherData = useStore(Selector.loadWeatherData);
   const getClosestCity = useStore(Selector.getClosestCity);
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -60,6 +62,7 @@ const App = () => {
   const worldLongitude = useStore(Selector.world.longitude);
   const orthographic = useStore(Selector.viewstate.orthographic) ?? false;
   const orthographicChanged = useStore((state) => state.orthographicChanged);
+  const simulationInProgress = useStore((state) => state.simulationInProgress);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const viewState = useStore((state) => state.viewState);
   const loadPvModules = useStore((state) => state.loadPvModules);
@@ -197,12 +200,14 @@ const App = () => {
     });
   };
 
+  const lng = { lng: language };
+
   console.log('x');
 
   return (
     <ErrorPage>
       <div className="App">
-        {loading && <Spinner />}
+        {(loading || simulationInProgress) && <Spinner />}
         <div
           style={{
             backgroundColor: 'lightblue',
@@ -220,10 +225,10 @@ const App = () => {
               cursor: 'pointer',
               userSelect: 'none',
             }}
-            title={'Visit Aladdin homepage'}
+            title={i18n.t('tooltip.visitAladdinHomePage', lng)}
             onClick={visitHomepage}
           >
-            Aladdin
+            {i18n.t('name.Aladdin', lng)}
           </span>
         </div>
         <div
@@ -242,10 +247,11 @@ const App = () => {
             src={ifiLogo}
             height="40px"
             style={{ verticalAlign: 'bottom', cursor: 'pointer' }}
-            title={'Go to Institute for Future Intelligence'}
+            title={i18n.t('tooltip.gotoIFI', lng)}
             onClick={visitIFI}
           />
-          &nbsp;&nbsp; Institute for Future Intelligence, &copy;{new Date().getFullYear()}. Version {VERSION}
+          &nbsp;&nbsp; {i18n.t('name.IFI', lng)}, &copy;{new Date().getFullYear()}. &nbsp;
+          {i18n.t('word.Version', lng) + ' ' + VERSION}
         </div>
         <MainMenu
           canvas={canvasRef.current}
