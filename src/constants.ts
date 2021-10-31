@@ -17,7 +17,7 @@ export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', '
 export const DEFAULT_SKY_RADIUS = 5000;
 export const DEFAULT_FOV = 45;
 export const DEFAULT_FAR = 1000000;
-export const DEFAULT_SHADOW_CAMERA_OFFSET = 1000;
+export const DEFAULT_SHADOW_CAMERA_OFFSET = 100;
 
 export const WORKSPACE_SIZE = 100;
 

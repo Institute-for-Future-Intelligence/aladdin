@@ -20,6 +20,7 @@ import office_building_01 from './examples/office_building_01.json';
 import solar_farm_01 from './examples/solar_farm_01.json';
 import solar_farm_02 from './examples/solar_farm_02.json';
 import solar_trackers from './examples/solar_trackers.json';
+import simple_house_01 from './examples/simple_house_01.json';
 
 const { SubMenu } = Menu;
 const { Option } = Select;
@@ -147,6 +148,9 @@ const MainMenu = ({
         break;
       case 'solar_trackers':
         input = solar_trackers;
+        break;
+      case 'simple_house_01':
+        input = simple_house_01;
         break;
     }
     if (input) {
@@ -376,6 +380,9 @@ const MainMenu = ({
         </Menu.Item>
         <Menu.Item key="solar_trackers" onClick={loadFile}>
           Solar Trackers
+        </Menu.Item>
+        <Menu.Item key="simple_house_01" onClick={loadFile}>
+          Simple House
         </Menu.Item>
         <Menu.Item key="office_building_01" onClick={loadFile}>
           Office Building
