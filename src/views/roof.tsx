@@ -42,8 +42,8 @@ const Roof = ({ cz, lz, parent, points }: RoofModel) => {
   }, []);
 
   return (
-    <group position={absPos} rotation={[0, 0, absAngle]} castShadow receiveShadow>
-      <Extrude args={[shape, settings]} scale={1.1}>
+    <group position={absPos} rotation={[0, 0, absAngle]}>
+      <Extrude args={[shape, settings]} scale={1.1} castShadow receiveShadow>
         <meshStandardMaterial attachArray="material" color={'#002745'} />
         <meshStandardMaterial attachArray="material" color={'#002745'} />
       </Extrude>
