@@ -36,6 +36,7 @@ export const countElementsByType = (state: CommonStoreState) => state.countEleme
 
 export const getWeather = (state: CommonStoreState) => state.getWeather;
 
+// simulation
 export const setPvDailyYield = (state: CommonStoreState) => state.setDailyPvYield;
 
 export const setPvYearlyYield = (state: CommonStoreState) => state.setYearlyPvYield;
@@ -47,6 +48,15 @@ export const setSensorLabels = (state: CommonStoreState) => state.setSensorLabel
 export const setDailyLightSensorData = (state: CommonStoreState) => state.setDailyLightSensorData;
 
 export const setYearlyLightSensorData = (state: CommonStoreState) => state.setYearlyLightSensorData;
+
+// handles
+export const moveHandleType = (state: CommonStoreState) => state.moveHandleType;
+
+export const resizeHandleType = (state: CommonStoreState) => state.resizeHandleType;
+
+export const rotateHandleType = (state: CommonStoreState) => state.rotateHandleType;
+
+export const resizeAnchor = (state: CommonStoreState) => state.resizeAnchor;
 
 export * as viewstate from './viewState';
 

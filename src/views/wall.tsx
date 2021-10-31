@@ -4,14 +4,19 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  BackSide,
   BoxGeometry,
   DoubleSide,
   EdgesGeometry,
   Euler,
+  ExtrudeBufferGeometry,
+  FrontSide,
   Mesh,
   MeshStandardMaterial,
   PlaneGeometry,
   RepeatWrapping,
+  Shape,
+  ShapeBufferGeometry,
   SphereGeometry,
   TextureLoader,
   Vector3,
@@ -27,6 +32,7 @@ import WireFrame from 'src/components/wireFrame';
 import WallExteriorImage from '../resources/WallExteriorImage.png';
 import { CSG } from 'three-csg-ts';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
+import Window from './window';
 
 const Wall = ({
   id,
@@ -36,16 +42,12 @@ const Wall = ({
   ly = 0.5,
   lz = 4,
   relativeAngle,
-  rotation = [0, 0, 0],
   leftOffset = 0,
   rightOffset = 0,
   windows,
   parent,
-  color = 'gray',
-  lineColor = 'black',
-  lineWidth = 0.1,
-  locked = false,
   selected = false,
+  locked = false,
 }: WallModel) => {
   const buildingWallID = useStore((state) => state.buildingWallID);
   const shadowEnabled = useStore((state) => state.viewState.shadowEnabled);
@@ -76,7 +78,7 @@ const Wall = ({
       setWallAbsAngle(p.rotation[2] + relativeAngle);
       setInit(true);
     }
-  }, [cx, cy, p?.cx, p?.cy, p?.cz, p?.rotation]);
+  }, [cx, cy, p?.cx, p?.cy, p?.cz, p?.rotation, relativeAngle]);
 
   const texture = useMemo(() => {
     return new TextureLoader().load(WallExteriorImage, (texture) => {
@@ -98,26 +100,56 @@ const Wall = ({
     }
   }, [leftOffset, rightOffset, lx]);
 
-  const wallRef = useRef<Mesh>(null);
+  const outSideWallRef = useRef<Mesh>(null);
+  const insideWallRef = useRef<Mesh>(null);
   const coverRef = useRef<Mesh>(null);
 
+  const [windowShape, setWindowShape] = useState<Shape[]>([]);
+
+  const drawRectangle = (shape: Shape, lx: number, ly: number, cx = 0, cy = 0, leftOffset = 0, rightOffset = 0) => {
+    const x = lx / 2;
+    const y = ly / 2;
+    shape.moveTo(cx - x + leftOffset, cy - y);
+    shape.lineTo(cx + x - rightOffset, cy - y);
+    shape.lineTo(cx + x - rightOffset, cy + y);
+    shape.lineTo(cx - x + leftOffset, cy + y);
+    shape.lineTo(cx - x + leftOffset, cy - y);
+  };
+
   useEffect(() => {
-    if (wallRef.current) {
-      const box = new Mesh(new BoxGeometry(lx - leftOffset - rightOffset - 0.001, ly, lz));
-      let res: any = box;
-      windows.forEach((window) => {
-        const w = new Mesh(new BoxGeometry(window.lx, window.ly, window.lz));
-        w.position.set(window.cx - leftOffset / 2 + rightOffset / 2, 0, window.cz);
-        w.updateMatrix();
-        res = CSG.subtract(res, w);
+    if (outSideWallRef.current) {
+      const wallShape = new Shape();
+      drawRectangle(wallShape, lx, lz);
+
+      windows.forEach((w) => {
+        const window = new Shape();
+        drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
+        wallShape.holes.push(window);
       });
-      const material1 = new MeshStandardMaterial({ color: 'white' });
-      const material2 = new MeshStandardMaterial({ map: texture });
-      wallRef.current.geometry = res.geometry;
-      wallRef.current.material = material2;
-      wallRef.current.position.set(leftOffset / 2 - rightOffset / 2, ly / 2, 0);
+
+      outSideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
+      outSideWallRef.current.material = new MeshStandardMaterial({ map: texture, side: DoubleSide });
+      outSideWallRef.current.rotation.set(Math.PI / 2, 0, 0);
     }
-  }, [init, lx, ly, lz, leftOffset, rightOffset, wallRef.current, windows]);
+  }, [init, lx, lz, windows]);
+
+  useEffect(() => {
+    if (insideWallRef.current) {
+      const wallShape = new Shape();
+      drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
+
+      windows.forEach((w) => {
+        const window = new Shape();
+        drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
+        wallShape.holes.push(window);
+      });
+
+      insideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
+      insideWallRef.current.material = new MeshStandardMaterial({ color: 'white', side: DoubleSide });
+      insideWallRef.current.rotation.set(Math.PI / 2, 0, 0);
+      insideWallRef.current.position.set(0, ly, 0);
+    }
+  }, [init, leftOffset, rightOffset, lx, ly, lz, windows]);
 
   const legalOnWall = (type: ObjectType) => {
     switch (type) {
@@ -172,13 +204,13 @@ const Wall = ({
     <>
       {wallAbsPosition && wallAbsAngle !== undefined && (
         <group name={`Wall Group ${id}`} position={wallAbsPosition} rotation={[0, 0, wallAbsAngle]}>
-          {/* wall body */}
+          {/* outside wall */}
           <mesh
-            ref={wallRef}
+            ref={outSideWallRef}
             castShadow
             receiveShadow
             onPointerDown={(e) => {
-              if (e.button === 2) return; // ignore right-click
+              if (e.button === 2 || buildingWallID) return; // ignore right-click
               setCommonStore((state) => {
                 state.contextMenuObjectType = null;
               });
@@ -192,9 +224,9 @@ const Wall = ({
                   const relativePos = getWindowRelativePos(p, elementModel);
                   const window = ElementModelFactory.makeWindow(
                     elementModel,
-                    relativePos.x,
-                    relativePos.y,
-                    relativePos.z,
+                    relativePos.x / lx,
+                    0,
+                    relativePos.z / lz,
                   );
                   updateElementById(id, {
                     windows: [...elementModel.windows, window],
@@ -237,6 +269,9 @@ const Wall = ({
             }}
           />
 
+          {/* inside wall */}
+          <mesh ref={insideWallRef} />
+
           {/* window intersection plane */}
           <Plane
             name={'window intersection plane ' + id}
@@ -256,8 +291,8 @@ const Wall = ({
                       if (e.id === elementModel.id) {
                         for (const w of (e as WallModel).windows) {
                           if (w.id == id) {
-                            w.cx = relativePos.x;
-                            w.cz = relativePos.z;
+                            w.cx = relativePos.x / lx;
+                            w.cz = relativePos.z / lz;
                           }
                         }
                       }
@@ -267,8 +302,8 @@ const Wall = ({
                   const pointer = e.intersections[0].point;
                   const v = new Vector3().subVectors(resizeAnchor, pointer).applyEuler(new Euler(0, 0, -wallAbsAngle));
                   const windowAbsCenterPos = new Vector3().addVectors(resizeAnchor, pointer).divideScalar(2);
-                  if (wallRef.current) {
-                    const wallAbsCenterPos = wallRef.current.localToWorld(new Vector3());
+                  if (outSideWallRef.current) {
+                    const wallAbsCenterPos = outSideWallRef.current.localToWorld(new Vector3());
                     const relativePos = new Vector3()
                       .subVectors(windowAbsCenterPos, wallAbsCenterPos)
                       .applyEuler(new Euler(0, 0, -wallAbsAngle));
@@ -277,11 +312,10 @@ const Wall = ({
                         if (e.id === elementModel.id) {
                           for (const w of (e as WallModel).windows) {
                             if (w.id == resizingWindowID) {
-                              w.lx = Math.abs(v.x);
-                              w.lz = Math.abs(v.z);
-                              w.cx = relativePos.x;
-                              w.cy = relativePos.y;
-                              w.cz = relativePos.z;
+                              w.lx = Math.abs(v.x) / lx;
+                              w.lz = Math.abs(v.z) / lz;
+                              w.cx = relativePos.x / lx;
+                              w.cz = relativePos.z / lz;
                             }
                           }
                         }
@@ -294,12 +328,16 @@ const Wall = ({
           />
 
           {windows.map((window) => {
-            const { id, cx, cz, lx, lz } = window;
+            let { id, lx: wlx, lz: wlz, cx: wcx, cz: wcz } = window;
+            wlx = wlx * lx;
+            wlz = wlz * lz;
+            wcx = wcx * lx;
+            wcz = wcz * lz;
             return (
-              <group key={id} name={`Window group ${id}`} position={[cx, 0, cz]} castShadow receiveShadow>
+              <group key={id} name={`Window group ${id}`} position={[wcx, 0, wcz]} castShadow receiveShadow>
                 <Plane
                   name={'window ' + id}
-                  args={[lx, lz]}
+                  args={[wlx, wlz]}
                   rotation={[Math.PI / 2, 0, 0]}
                   onPointerDown={(e) => {
                     if (e.intersections[0].object.name === 'window ' + id) {
@@ -337,44 +375,44 @@ const Wall = ({
                 <group>
                   <Line
                     points={[
-                      [-lx / 2, 0, -lz / 2],
-                      [lx / 2, 0, -lz / 2],
+                      [-wlx / 2, 0, -wlz / 2],
+                      [wlx / 2, 0, -wlz / 2],
                     ]}
                     linewidth={1}
                   />
                   <Line
                     points={[
-                      [-lx / 2, 0, -lz / 2],
-                      [-lx / 2, 0, lz / 2],
+                      [-wlx / 2, 0, -wlz / 2],
+                      [-wlx / 2, 0, wlz / 2],
                     ]}
                     linewidth={1}
                   />
                   <Line
                     points={[
-                      [lx / 2, 0, lz / 2],
-                      [-lx / 2, 0, lz / 2],
+                      [wlx / 2, 0, wlz / 2],
+                      [-wlx / 2, 0, wlz / 2],
                     ]}
                     linewidth={1}
                   />
                   <Line
                     points={[
-                      [lx / 2, 0, lz / 2],
-                      [lx / 2, 0, -lz / 2],
+                      [wlx / 2, 0, wlz / 2],
+                      [wlx / 2, 0, -wlz / 2],
                     ]}
                     linewidth={1}
                   />
                   <Line
                     points={[
-                      [-lx / 2, 0, 0],
-                      [lx / 2, 0, 0],
+                      [-wlx / 2, 0, 0],
+                      [wlx / 2, 0, 0],
                     ]}
                     linewidth={1}
                     color={'white'}
                   />
                   <Line
                     points={[
-                      [0, 0, -lz / 2],
-                      [0, 0, lz / 2],
+                      [0, 0, -wlz / 2],
+                      [0, 0, wlz / 2],
                     ]}
                     linewidth={1}
                     color={'white'}
@@ -388,13 +426,13 @@ const Wall = ({
                       ref={resizeHandleLLRef}
                       name={ResizeHandleType.LowerLeft}
                       args={[0.1, 6, 6]}
-                      position={[-lx / 2, 0, -lz / 2]}
+                      position={[-wlx / 2, 0, -wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
                         setResizingWindowID(id);
                         if (resizeHandleLLRef.current) {
                           setCommonStore((state) => {
-                            const anchor = resizeHandleLLRef.current!.localToWorld(new Vector3(lx, 0, lz));
+                            const anchor = resizeHandleLLRef.current!.localToWorld(new Vector3(wlx, 0, wlz));
                             state.resizeAnchor.copy(anchor);
                           });
                         }
@@ -407,13 +445,13 @@ const Wall = ({
                       ref={resizeHandleULRef}
                       name={ResizeHandleType.UpperLeft}
                       args={[0.1, 6, 6]}
-                      position={[-lx / 2, 0, lz / 2]}
+                      position={[-wlx / 2, 0, wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
                         setResizingWindowID(id);
                         if (resizeHandleULRef.current) {
                           setCommonStore((state) => {
-                            const anchor = resizeHandleULRef.current!.localToWorld(new Vector3(lx, 0, -lz));
+                            const anchor = resizeHandleULRef.current!.localToWorld(new Vector3(wlx, 0, -wlz));
                             state.resizeAnchor.copy(anchor);
                           });
                         }
@@ -426,13 +464,13 @@ const Wall = ({
                       ref={resizeHandleLRRef}
                       name={ResizeHandleType.LowerRight}
                       args={[0.1, 6, 6]}
-                      position={[lx / 2, 0, -lz / 2]}
+                      position={[wlx / 2, 0, -wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
                         setResizingWindowID(id);
                         if (resizeHandleLRRef.current) {
                           setCommonStore((state) => {
-                            const anchor = resizeHandleLRRef.current!.localToWorld(new Vector3(-lx, 0, lz));
+                            const anchor = resizeHandleLRRef.current!.localToWorld(new Vector3(-wlx, 0, wlz));
                             state.resizeAnchor.copy(anchor);
                           });
                         }
@@ -445,13 +483,13 @@ const Wall = ({
                       ref={resizeHandleURRef}
                       name={ResizeHandleType.UpperRight}
                       args={[0.1, 6, 6]}
-                      position={[lx / 2, 0, lz / 2]}
+                      position={[wlx / 2, 0, wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
                         setResizingWindowID(id);
                         if (resizeHandleURRef.current) {
                           setCommonStore((state) => {
-                            const anchor = resizeHandleURRef.current!.localToWorld(new Vector3(-lx, 0, -lz));
+                            const anchor = resizeHandleURRef.current!.localToWorld(new Vector3(-wlx, 0, -wlz));
                             state.resizeAnchor.copy(anchor);
                           });
                         }
@@ -526,7 +564,9 @@ const ResizeHandle = ({ args, id, handleType, highLight, handleSize = 0.4 }: Res
         setHovered(false);
       }}
       onPointerDown={(e) => {
-        selectMe(id, e, ActionType.Resize);
+        if (!buildingWallID) {
+          selectMe(id, e, ActionType.Resize);
+        }
         if (handleRef) {
           setCommonStore((state) => {
             const anchor = handleRef.current!.localToWorld(new Vector3(-x * 2, 0, 0));
