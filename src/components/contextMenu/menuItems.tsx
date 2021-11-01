@@ -7,7 +7,7 @@ import { Checkbox, Menu } from 'antd';
 import { useStore } from '../../stores/common';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ColorResult, CompactPicker } from 'react-color';
-import i18n from '../../i18n';
+import i18n from '../../i18n/i18n';
 
 export const Paste = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   const language = useStore((state) => state.language);

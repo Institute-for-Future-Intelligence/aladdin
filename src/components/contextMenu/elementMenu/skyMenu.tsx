@@ -7,7 +7,7 @@ import { Checkbox, Menu, Radio } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { useStore } from 'src/stores/common';
 import { Theme } from 'src/types';
-import i18n from '../../../i18n';
+import i18n from '../../../i18n/i18n';
 
 export const SkyMenu = () => {
   const setCommonStore = useStore((state) => state.set);

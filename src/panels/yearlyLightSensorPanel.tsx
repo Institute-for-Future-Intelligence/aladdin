@@ -14,7 +14,7 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
 import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { screenshot } from '../helpers';
-import i18n from '../i18n';
+import i18n from '../i18n/i18n';
 
 const Container = styled.div`
   position: fixed;

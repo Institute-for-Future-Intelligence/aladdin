@@ -11,7 +11,7 @@ import { Space } from 'antd';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from '../analysis/heatTools';
 import dayjs from 'dayjs';
 import { Util } from '../Util';
-import i18n from '../i18n';
+import i18n from '../i18n/i18n';
 
 const Container = styled.div`
   position: absolute;

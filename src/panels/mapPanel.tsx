@@ -12,7 +12,7 @@ import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-ur
 import Spinner from '../components/spinner';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import 'antd/dist/antd.css';
-import i18n from '../i18n';
+import i18n from '../i18n/i18n';
 
 const libraries = ['places'] as Libraries;
 

@@ -7,7 +7,7 @@ import { Checkbox, Input, Menu } from 'antd';
 import { useStore } from 'src/stores/common';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { Copy, Cut } from '../menuItems';
-import i18n from '../../../i18n';
+import i18n from '../../../i18n/i18n';
 
 export const SensorMenu = () => {
   const language = useStore((state) => state.language);

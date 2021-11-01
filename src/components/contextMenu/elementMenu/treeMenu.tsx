@@ -9,7 +9,7 @@ import { ObjectType } from 'src/types';
 import TreeSelection from 'src/components/treeSelection';
 import ReshapeElementMenu from 'src/components/reshapeElementMenu';
 import { Copy, Cut, Lock } from '../menuItems';
-import i18n from '../../../i18n';
+import i18n from '../../../i18n/i18n';
 
 export const TreeMenu = () => {
   const language = useStore((state) => state.language);

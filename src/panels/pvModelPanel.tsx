@@ -8,7 +8,7 @@ import { SolarPanelModel } from '../models/SolarPanelModel';
 import { Row, Select, Col, Input } from 'antd';
 import { SolarPanelNominalSize } from '../models/SolarPanelNominalSize';
 import { Orientation, ShadeTolerance } from '../types';
-import i18n from '../i18n';
+import i18n from '../i18n/i18n';
 
 const { Option } = Select;
 

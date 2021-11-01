@@ -11,7 +11,7 @@ import { ObjectType, Orientation, TrackerType } from 'src/types';
 import { Util } from 'src/Util';
 import { Vector3 } from 'three';
 import { Copy, Cut } from '../menuItems';
-import i18n from '../../../i18n';
+import i18n from '../../../i18n/i18n';
 
 const { Option } = Select;
 

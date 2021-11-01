@@ -21,7 +21,7 @@ import solar_farm_01 from './examples/solar_farm_01.json';
 import solar_farm_02 from './examples/solar_farm_02.json';
 import solar_trackers from './examples/solar_trackers.json';
 import simple_house_01 from './examples/simple_house_01.json';
-import i18n from './i18n';
+import i18n from './i18n/i18n';
 
 const { SubMenu } = Menu;
 const { Option } = Select;

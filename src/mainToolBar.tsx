@@ -34,7 +34,7 @@ import CloudFilePanel from './panels/cloudFilePanel';
 import Spinner from './components/spinner';
 import AccountSettingsPanel from './panels/accountSettingsPanel';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import i18n from './i18n';
+import i18n from './i18n/i18n';
 
 const ButtonsContainer = styled.div`
   position: absolute;

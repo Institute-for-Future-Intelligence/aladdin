@@ -11,7 +11,7 @@ import { CompactPicker } from 'react-color';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { Paste } from '../menuItems';
-import i18n from '../../../i18n';
+import i18n from '../../../i18n/i18n';
 
 export const GroundMenu = () => {
   const language = useStore((state) => state.language);

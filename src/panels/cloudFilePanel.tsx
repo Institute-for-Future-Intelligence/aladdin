@@ -13,7 +13,7 @@ import { faEdit, faFile, faTrashAlt } from '@fortawesome/free-regular-svg-icons'
 import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { HOME_URL } from '../constants';
 import { copyTextToClipboard, showSuccess } from '../helpers';
-import i18n from '../i18n';
+import i18n from '../i18n/i18n';
 
 const { Column } = Table;
 

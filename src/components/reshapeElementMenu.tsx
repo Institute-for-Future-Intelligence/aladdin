@@ -7,7 +7,7 @@ import { InputNumber, Menu, Space } from 'antd';
 import { Util } from '../Util';
 import { useStore } from '../stores/common';
 import { ObjectType } from '../types';
-import i18n from '../i18n';
+import i18n from '../i18n/i18n';
 
 export interface ReshapeElementMenuProps {
   elementId: string;

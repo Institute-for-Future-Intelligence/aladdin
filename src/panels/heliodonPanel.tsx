@@ -9,7 +9,7 @@ import { DatePicker, Slider, Space, Switch, TimePicker } from 'antd';
 import moment from 'moment';
 import 'antd/dist/antd.css';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
-import i18n from '../i18n';
+import i18n from '../i18n/i18n';
 
 const Container = styled.div`
   position: absolute;

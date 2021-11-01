@@ -46,7 +46,7 @@ import { WallModel } from './models/WallModel';
 import * as Selector from 'src/stores/selector';
 import { OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
 import ErrorPage from './ErrorPage';
-import i18n from './i18n';
+import i18n from './i18n/i18n';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);

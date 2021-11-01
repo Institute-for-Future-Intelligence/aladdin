@@ -10,7 +10,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import ReshapeElementMenu from 'src/components/reshapeElementMenu';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import i18n from '../../../i18n';
+import i18n from '../../../i18n/i18n';
 
 export const FoundationMenu = () => {
   const language = useStore((state) => state.language);
