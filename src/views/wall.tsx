@@ -76,7 +76,7 @@ const Wall = ({
     return new TextureLoader().load(WallExteriorImage, (texture) => {
       texture.wrapS = texture.wrapT = RepeatWrapping;
       texture.offset.set(0, 0);
-      texture.repeat.set(0.2, 0.2);
+      texture.repeat.set(0.6, 0.6);
     });
   }, []);
 
@@ -577,7 +577,7 @@ interface ResizeHandlesProps {
   highLight: boolean;
   handleSize?: number;
 }
-const ResizeHandle = ({ args, id, handleType, highLight, handleSize = 0.4 }: ResizeHandlesProps) => {
+const ResizeHandle = ({ args, id, handleType, highLight, handleSize = 0.3 }: ResizeHandlesProps) => {
   const setCommonStore = useStore(Selector.set);
   const selectMe = useStore(Selector.selectMe);
   const resizeHandleType = useStore(Selector.resizeHandleType);
