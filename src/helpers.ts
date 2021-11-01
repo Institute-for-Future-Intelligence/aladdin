@@ -32,6 +32,7 @@ export const getMapImage = (size: number, lat: number, lng: number, zoom: number
 
 export const showSuccess = (msg: string) => {
   message.success({
+    duration: 2,
     content: msg,
     className: 'custom-class',
     style: {
@@ -45,6 +46,7 @@ export const showSuccess = (msg: string) => {
 
 export const showInfo = (msg: string) => {
   message.info({
+    duration: 2,
     content: msg,
     className: 'custom-class',
     style: {
@@ -58,6 +60,7 @@ export const showInfo = (msg: string) => {
 
 export const showWarning = (msg: string) => {
   message.warning({
+    duration: 2,
     content: msg,
     className: 'custom-class',
     style: {
@@ -71,6 +74,7 @@ export const showWarning = (msg: string) => {
 
 export const showError = (msg: string) => {
   message.error({
+    duration: 2,
     content: msg,
     className: 'custom-class',
     style: {
@@ -95,10 +99,7 @@ export const extractText = (html: string) => {
 
 export const containedInDOMRect = (rect: DOMRect, x: number, y: number, margin: number) => {
   return (
-    x > rect.x - margin &&
-    x < rect.x + rect.width + margin &&
-    y > rect.y - margin &&
-    y < rect.y + rect.height + margin
+    x > rect.x - margin && x < rect.x + rect.width + margin && y > rect.y - margin && y < rect.y + rect.height + margin
   );
 };
 

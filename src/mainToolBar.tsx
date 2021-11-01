@@ -27,7 +27,7 @@ import WallImage from './resources/wall.png';
 import WindowImage from './resources/window.png';
 import RoofImage from './resources/roof.png';
 import firebase from 'firebase';
-import { showInfo } from './helpers';
+import { showError, showInfo } from './helpers';
 import { CloudFileInfo, ObjectType, User } from './types';
 import queryString from 'querystring';
 import CloudFilePanel from './panels/cloudFilePanel';
@@ -248,21 +248,26 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
   };
 
   const saveToCloud = () => {
-    setLoading(true);
-    if (user.email) {
-      let doc = firebase.firestore().collection('users').doc(user.email);
-      if (doc) {
-        doc
-          .collection('files')
-          .doc(title)
-          .set(exportContent())
-          .then(() => {
-            setLoading(false);
-          })
-          .catch((error) => {
-            console.log('Error saving file:', error);
-          });
+    const t = title.trim();
+    if (t.length > 0) {
+      setLoading(true);
+      if (user.email) {
+        let doc = firebase.firestore().collection('users').doc(user.email);
+        if (doc) {
+          doc
+            .collection('files')
+            .doc(t)
+            .set(exportContent())
+            .then(() => {
+              setLoading(false);
+            })
+            .catch((error) => {
+              console.log('Error saving file:', error);
+            });
+        }
       }
+    } else {
+      showError(i18n.t('avatarMenu.SavingAbortedMustHaveValidTitle', lang) + '.');
     }
     setTitleDialogVisible(false);
   };

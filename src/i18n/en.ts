@@ -109,6 +109,7 @@ export const i18n_en = {
 
     avatarMenu: {
       SaveFileToCloud: 'Save File to Cloud',
+      SavingAbortedMustHaveValidTitle: 'Saving aborted! You must have a valid title for a cloud file',
       MyCloudFiles: 'My Cloud Files',
       AccountSettings: 'Account Settings',
       SignIn: 'Sign In',

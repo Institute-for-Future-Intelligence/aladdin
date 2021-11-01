@@ -109,6 +109,7 @@ export const i18n_zh_cn = {
 
     avatarMenu: {
       SaveFileToCloud: '保存文件到云端',
+      SavingAbortedMustHaveValidTitle: '文件名无效，保存失败',
       MyCloudFiles: '我的云端文件',
       AccountSettings: '账号设定',
       SignIn: '登录',
