@@ -141,7 +141,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
 
   const removeAllContent = () => {
     Modal.confirm({
-      title: 'Do you really want to clear the content?',
+      title: i18n.t('toolbar.DoYouReallyWantToClearContent', lang) + '?',
       icon: <ExclamationCircleOutlined />,
       onOk: () => {
         clearContent();
@@ -410,7 +410,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
   return (
     <>
       <Modal
-        title="Save to the Cloud"
+        title={i18n.t('avatarMenu.SaveFileToCloud', lang)}
         visible={titleDialogVisible}
         onOk={saveToCloud}
         confirmLoading={loading}

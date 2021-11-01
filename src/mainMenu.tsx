@@ -273,7 +273,7 @@ const MainMenu = ({
         <SubMenu key={'sensor-simulation-options'} title={i18n.t('word.Options', lang)}>
           <Menu>
             <Menu.Item key={'sensor-simulation-sampling-frequency'}>
-              <Space style={{ width: '150px' }}>Sampling Frequency: </Space>
+              <Space style={{ width: '150px' }}>{i18n.t('menu.sensors.SamplingFrequency', lang) + ':'}</Space>
               <InputNumber
                 min={1}
                 max={60}
@@ -288,7 +288,7 @@ const MainMenu = ({
                   });
                 }}
               />
-              <Space style={{ paddingLeft: '10px' }}>Times per Hour</Space>
+              <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensors.TimesPerHour', lang)}</Space>
             </Menu.Item>
           </Menu>
         </SubMenu>
@@ -319,7 +319,7 @@ const MainMenu = ({
         <SubMenu key={'solar-panel-simulation-options'} title={i18n.t('word.Options', lang)}>
           <Menu>
             <Menu.Item key={'solar-panel-simulation-sampling-frequency'}>
-              <Space style={{ width: '150px' }}>Sampling Frequency: </Space>
+              <Space style={{ width: '150px' }}>{i18n.t('menu.sensors.SamplingFrequency', lang) + ':'}</Space>
               <InputNumber
                 min={1}
                 max={60}
@@ -334,10 +334,10 @@ const MainMenu = ({
                   });
                 }}
               />
-              <Space style={{ paddingLeft: '10px' }}>Times per Hour</Space>
+              <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensors.TimesPerHour', lang)}</Space>
             </Menu.Item>
             <Menu.Item key={'solar-panel-discretization'}>
-              <Space style={{ width: '150px' }}>Panel Discretization: </Space>
+              <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanels.PanelDiscretization', lang) + ':'}</Space>
               <Select
                 style={{ width: '165px' }}
                 value={discretization ?? Discretization.EXACT}
@@ -348,11 +348,11 @@ const MainMenu = ({
                 }}
               >
                 <Option key={Discretization.EXACT} value={Discretization.EXACT}>
-                  {Discretization.EXACT}
+                  {i18n.t('menu.solarPanels.Exact', lang)}
                 </Option>
                 )
                 <Option key={Discretization.APPROXIMATE} value={Discretization.APPROXIMATE}>
-                  {Discretization.APPROXIMATE}
+                  {i18n.t('menu.solarPanels.Approximate', lang)}
                 </Option>
                 )
               </Select>

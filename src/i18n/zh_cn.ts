@@ -51,6 +51,12 @@ export const i18n_zh_cn = {
       Action: '操作',
       Rename: '改名',
       Latitude: '纬度',
+      Month: '月',
+      Day: '天',
+      Hour: '小时',
+      Daylight: '白天长度',
+      Radiation: '辐射',
+      Temperature: '温度',
       NorthInitial: '北',
       SouthInitial: '南',
       EastInitial: '东',
@@ -76,11 +82,16 @@ export const i18n_zh_cn = {
       sensors: {
         CollectDailyData: '收集当天数据',
         CollectYearlyData: '收集全年数据',
+        SamplingFrequency: '采样频率',
+        TimesPerHour: '每小时次数',
       },
       solarPanelsSubMenu: '太阳能光伏板',
       solarPanels: {
         AnalyzeDailyYield: '分析当天产出',
         AnalyzeYearlyYield: '分析全年产出',
+        PanelDiscretization: '光伏板离散化方法',
+        Exact: '准确',
+        Approximate: '近似',
       },
       examplesSubMenu: '例子',
       examples: {
@@ -204,6 +215,22 @@ export const i18n_zh_cn = {
       MyCloudFiles: '我的云文件',
       GenerateLink: '生成链接',
       LinkGeneratedInClipBoard: '链接已经复制到剪贴板',
+      DoYouReallyWantToDelete: '您确定删除此文件',
+    },
+
+    accountSettingsPanel: {
+      MyAccountSettings: '我的账户设定',
+    },
+
+    weatherPanel: {
+      SunshineHours: '日照时间',
+    },
+
+    yearlyLightSensorPanel: {
+      SkyClearness: '天空清晰度',
+      ShowDaylightResults: '显示日照时间结果',
+      ShowSkyClearnessResults: '显示天空清晰度结果',
+      ShowAverageDailySolarRadiation: '显示日平均辐射结果',
     },
 
     toolbar: {
@@ -222,6 +249,7 @@ export const i18n_zh_cn = {
       AutoRotate: '自动旋转',
       ShowHeliodonPanel: '显示日影仪面板',
       ShowShadow: '显示阴影',
+      DoYouReallyWantToClearContent: '您确定清空场景吗',
     },
 
     tooltip: {

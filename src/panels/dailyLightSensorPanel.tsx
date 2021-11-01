@@ -124,7 +124,7 @@ const DailyLightSensorPanel = ({ city, collectDailyLightSensorData, ...rest }: D
   };
 
   const labelX = 'Hour';
-  const labelY = 'Radiation';
+  const labelY = i18n.t('word.Radiation', lang);
 
   return (
     <ReactDraggable
@@ -139,8 +139,8 @@ const DailyLightSensorPanel = ({ city, collectDailyLightSensorData, ...rest }: D
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>
-              {i18n.t('sensorPanel.LightSensor', lang)}: {i18n.t('sensorPanel.WeatherDataFrom', lang)} {city} |{' '}
-              {moment(now).format('MM/DD')}
+              {i18n.t('sensorPanel.LightSensor', lang)}:{i18n.t('sensorPanel.WeatherDataFrom', lang)}
+              {city} | {moment(now).format('MM/DD')}
             </span>
             <span
               style={{ cursor: 'pointer' }}
@@ -161,7 +161,7 @@ const DailyLightSensorPanel = ({ city, collectDailyLightSensorData, ...rest }: D
             height={responsiveHeight}
             labelX={labelX}
             labelY={labelY}
-            unitY={'kWh/m²/day'}
+            unitY={'kWh/m²/' + i18n.t('word.Day', lang)}
             yMin={0}
             curveType={'linear'}
             fractionDigits={2}

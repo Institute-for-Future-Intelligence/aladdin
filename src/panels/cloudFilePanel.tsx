@@ -115,7 +115,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
 
   const deleteFile = (email: string, title: string) => {
     Modal.confirm({
-      title: 'Do you really want to delete this document titled with "' + title + '"?',
+      title: i18n.t('cloudFilePanel.DoYouReallyWantToDelete', lang) + ' "' + title + '"?',
       icon: <ExclamationCircleOutlined />,
       onOk: () => {
         deleteCloudFile(email, title);

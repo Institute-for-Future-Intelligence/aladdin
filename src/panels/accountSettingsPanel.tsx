@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
+import i18n from '../i18n/i18n';
 
 const Container = styled.div`
   position: fixed;
@@ -55,11 +56,13 @@ const Header = styled.div`
 export interface AccountSettingsPanelProps {}
 
 const AccountSettingsPanel = ({}: AccountSettingsPanelProps) => {
+  const language = useStore((state) => state.language);
   const setCommonStore = useStore((state) => state.set);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
   const [curPosition, setCurPosition] = useState({ x: 0, y: 0 });
+  const lang = { lng: language };
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
@@ -105,7 +108,7 @@ const AccountSettingsPanel = ({}: AccountSettingsPanelProps) => {
         <Container>
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle">
-              <span>My Account Settings</span>
+              <span>{i18n.t('accountSettingsPanel.MyAccountSettings', lang)}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {
@@ -115,7 +118,7 @@ const AccountSettingsPanel = ({}: AccountSettingsPanelProps) => {
                   closePanel();
                 }}
               >
-                Close
+                {i18n.t('word.Close', lang)}
               </span>
             </Header>
           </ColumnWrapper>

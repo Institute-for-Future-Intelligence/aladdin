@@ -133,8 +133,12 @@ const WeatherPanel = ({ city, graphs, ...rest }: WeatherPanelProps) => {
     return result;
   }, [graphs, city]);
 
-  const yNames = ['Temperature', 'Temperature', 'Sunshine'];
-  const yUnits = ['°C', '°C', 'Hours'];
+  const yNames = [
+    i18n.t('word.Temperature', lang),
+    i18n.t('word.Temperature', lang),
+    i18n.t('weatherPanel.SunshineHours', lang),
+  ];
+  const yUnits = ['°C', '°C', i18n.t('word.Hour', lang)];
   const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
 
   const onDrag: DraggableEventHandler = (e, ui) => {

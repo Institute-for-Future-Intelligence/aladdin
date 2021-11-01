@@ -130,7 +130,7 @@ const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData, ...rest }:
   };
 
   const labelX = 'Month';
-  const labelY = 'Radiation';
+  const labelY = i18n.t('word.Radiation', lang);
 
   return (
     <ReactDraggable
@@ -162,33 +162,33 @@ const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData, ...rest }:
           <Space style={{ alignSelf: 'center', padding: '10px' }}>
             <Space>
               <Switch
-                title={'Show daylight results'}
+                title={i18n.t('yearlyLightSensorPanel.ShowDaylightResults', lang)}
                 checked={daylightGraph}
                 onChange={(checked) => {
                   setDaylightGraph(checked);
                 }}
               />
-              Daylight
+              {i18n.t('word.Daylight', lang)}
             </Space>
             <Space>
               <Switch
-                title={'Show sky clearness results'}
+                title={i18n.t('yearlyLightSensorPanel.ShowSkyClearnessResults', lang)}
                 checked={clearnessGraph}
                 onChange={(checked) => {
                   setClearnessGraph(checked);
                 }}
               />
-              Clearness
+              {i18n.t('yearlyLightSensorPanel.SkyClearness', lang)}
             </Space>
             <Space>
               <Switch
-                title={'Show average daily solar radiation'}
+                title={i18n.t('yearlyLightSensorPanel.ShowAverageDailySolarRadiation', lang)}
                 checked={radiationGraph}
                 onChange={(checked) => {
                   setRadiationGraph(checked);
                 }}
               />
-              Radiation
+              {i18n.t('word.Radiation', lang)}
             </Space>
             <Space>
               <Button
@@ -212,9 +212,9 @@ const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData, ...rest }:
               type={GraphDataType.DaylightData}
               dataSource={sensorData.map((e) => ({ Month: e.Month, Daylight: e.Daylight }))}
               height={responsiveHeight}
-              labelX={'Month'}
-              labelY={'Daylight'}
-              unitY={'Hours'}
+              labelX={labelX}
+              labelY={i18n.t('word.Daylight', lang)}
+              unitY={i18n.t('word.Hour', lang)}
               yMin={0}
               curveType={'natural'}
               fractionDigits={1}
@@ -227,8 +227,8 @@ const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData, ...rest }:
               type={GraphDataType.ClearnessData}
               dataSource={sensorData.map((e) => ({ Month: e.Month, Clearness: e.Clearness }))}
               height={responsiveHeight}
-              labelX={'Month'}
-              labelY={'Clearness'}
+              labelX={labelX}
+              labelY={i18n.t('yearlyLightSensorPanel.SkyClearness', lang)}
               unitY={'%'}
               yMin={0}
               yMax={100}
@@ -246,7 +246,7 @@ const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData, ...rest }:
               height={responsiveHeight}
               labelX={labelX}
               labelY={labelY}
-              unitY={'kWh/m²/day'}
+              unitY={'kWh/m²/' + i18n.t('word.Day', lang)}
               yMin={0}
               curveType={'natural'}
               fractionDigits={2}

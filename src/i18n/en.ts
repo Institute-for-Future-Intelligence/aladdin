@@ -51,6 +51,12 @@ export const i18n_en = {
       Action: 'Action',
       Rename: 'Rename',
       Latitude: 'Latitude',
+      Month: 'Month',
+      Day: 'Day',
+      Hour: 'Hour',
+      Daylight: 'Daylight',
+      Radiation: 'Radiation',
+      Temperature: 'Temperature',
       NorthInitial: 'N',
       SouthInitial: 'S',
       EastInitial: 'E',
@@ -76,11 +82,16 @@ export const i18n_en = {
       sensors: {
         CollectDailyData: 'Collect Daily Data',
         CollectYearlyData: 'Collect Yearly Data',
+        SamplingFrequency: 'Sampling Frequency',
+        TimesPerHour: 'Times per Hour',
       },
       solarPanelsSubMenu: 'Solar Panels',
       solarPanels: {
         AnalyzeDailyYield: 'Analyze Daily Yield',
         AnalyzeYearlyYield: 'Analyze Yearly Yield',
+        PanelDiscretization: 'Panel Discretization',
+        Exact: 'Exact',
+        Approximate: 'Approximate',
       },
       examplesSubMenu: 'Examples',
       examples: {
@@ -204,6 +215,22 @@ export const i18n_en = {
       MyCloudFiles: 'My Cloud Files',
       GenerateLink: 'Generate Link',
       LinkGeneratedInClipBoard: 'A link has been generated in the clip board',
+      DoYouReallyWantToDelete: 'Do you really want to delete',
+    },
+
+    accountSettingsPanel: {
+      MyAccountSettings: 'My Account Settings',
+    },
+
+    weatherPanel: {
+      SunshineHours: 'Sunshine',
+    },
+
+    yearlyLightSensorPanel: {
+      SkyClearness: 'Clearness',
+      ShowDaylightResults: 'Show daylight results',
+      ShowSkyClearnessResults: 'Show sky clearness results',
+      ShowAverageDailySolarRadiation: 'Show average daily solar radiation',
     },
 
     toolbar: {
@@ -222,6 +249,7 @@ export const i18n_en = {
       AutoRotate: 'Auto rotate',
       ShowHeliodonPanel: 'Show heliodon panel',
       ShowShadow: 'Show shadow',
+      DoYouReallyWantToClearContent: 'Do you really want to clear the content',
     },
 
     tooltip: {

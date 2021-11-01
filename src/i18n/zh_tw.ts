@@ -51,6 +51,12 @@ export const i18n_zh_tw = {
       Action: '操作',
       Rename: '改名',
       Latitude: '緯度',
+      Month: '月',
+      Day: '天',
+      Hour: '小時',
+      Daylight: '白天長度',
+      Radiation: '輻射',
+      Temperature: '温度',
       NorthInitial: '北',
       SouthInitial: '南',
       EastInitial: '東',
@@ -76,11 +82,16 @@ export const i18n_zh_tw = {
       sensors: {
         CollectDailyData: '收集當天數據',
         CollectYearlyData: '收集全年數據',
+        SamplingFrequency: '採樣頻率',
+        TimesPerHour: '每小時次數',
       },
       solarPanelsSubMenu: '太陽能光伏板',
       solarPanels: {
         AnalyzeDailyYield: '分析當天產出',
         AnalyzeYearlyYield: '分析全年產出',
+        PanelDiscretization: '光伏板離散化方法',
+        Exact: '準確',
+        Approximate: '近似',
       },
       examplesSubMenu: '例子',
       examples: {
@@ -204,6 +215,22 @@ export const i18n_zh_tw = {
       MyCloudFiles: '我的雲文件',
       GenerateLink: '生成鏈接',
       LinkGeneratedInClipBoard: '鏈接已經復製到剪貼板',
+      DoYouReallyWantToDelete: '您確定刪除此文檔',
+    },
+
+    accountSettingsPanel: {
+      MyAccountSettings: '我的賬戶設定',
+    },
+
+    weatherPanel: {
+      SunshineHours: '日照時間',
+    },
+
+    yearlyLightSensorPanel: {
+      SkyClearness: '天空清晰度',
+      ShowDaylightResults: '顯示日照時間結果',
+      ShowSkyClearnessResults: '顯示天空清晰度結果',
+      ShowAverageDailySolarRadiation: '顯示日平均輻射結果',
     },
 
     toolbar: {
@@ -222,6 +249,7 @@ export const i18n_zh_tw = {
       AutoRotate: '自動旋轉',
       ShowHeliodonPanel: '顯示日影儀面板',
       ShowShadow: '顯示陰影',
+      DoYouReallyWantToClearContent: '您確定清空場景嗎',
     },
 
     tooltip: {
