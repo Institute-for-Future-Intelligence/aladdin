@@ -5,5 +5,10 @@
 import { ElementModel } from './ElementModel';
 
 export interface RoofModel extends ElementModel {
-  points: number[][];
+  points: RoofPoints[];
+}
+
+export interface RoofPoints {
+  x: number;
+  y: number;
 }

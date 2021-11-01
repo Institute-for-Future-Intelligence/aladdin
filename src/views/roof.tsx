@@ -29,10 +29,10 @@ const Roof = ({ id, cz, lz, selected, parent, points }: RoofModel) => {
 
   const shape = useMemo(() => {
     const s = new Shape();
-    s.moveTo(points[0][0], points[0][1]);
+    s.moveTo(points[0].x, points[0].y);
 
     for (const point of points) {
-      s.lineTo(point[0], point[1]);
+      s.lineTo(point.x, point.y);
     }
     return s;
   }, []);
