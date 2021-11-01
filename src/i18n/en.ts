@@ -68,6 +68,8 @@ export const i18n_en = {
       file: {
         OpenLocalFile: 'Open Local File',
         SaveToDownloadFolder: 'Save to Download Folder',
+        DownloadAs: 'Download as',
+        SavingAbortedMustHaveValidFileName: 'Saving aborted! You must have a valid file name',
         TakeScreenshot: 'Take Screenshot',
       },
       viewSubMenu: 'View',

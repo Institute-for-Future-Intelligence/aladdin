@@ -10,7 +10,7 @@ import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
 import { saveAs } from 'file-saver';
 import About from './about';
-import { saveImage } from './helpers';
+import { saveImage, showError } from './helpers';
 import { Discretization, Language } from './types';
 import * as Selector from './stores/selector';
 
@@ -106,11 +106,16 @@ const MainMenu = ({
   };
 
   const writeLocalFile = () => {
-    setConfirmLoading(true);
-    const blob = new Blob([JSON.stringify(exportContent())], { type: 'application/json' });
-    saveAs(blob, fileName);
-    setConfirmLoading(false);
-    setDownloadDialogVisible(false);
+    const fn = fileName.trim();
+    if (fn.length > 0) {
+      setConfirmLoading(true);
+      const blob = new Blob([JSON.stringify(exportContent())], { type: 'application/json' });
+      saveAs(blob, fn);
+      setConfirmLoading(false);
+      setDownloadDialogVisible(false);
+    } else {
+      showError(i18n.t('menu.file.SavingAbortedMustHaveValidFileName', lang) + '.');
+    }
   };
 
   const readLocalFile = () => {
@@ -439,7 +444,7 @@ const MainMenu = ({
   return (
     <>
       <Modal
-        title="Download as"
+        title={i18n.t('menu.file.DownloadAs', lang)}
         visible={downloadDialogVisible}
         onOk={writeLocalFile}
         confirmLoading={confirmLoading}

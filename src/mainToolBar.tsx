@@ -266,10 +266,10 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
             });
         }
       }
+      setTitleDialogVisible(false);
     } else {
       showError(i18n.t('avatarMenu.SavingAbortedMustHaveValidTitle', lang) + '.');
     }
-    setTitleDialogVisible(false);
   };
 
   const openCloudFile = (userid: string, title: string) => {

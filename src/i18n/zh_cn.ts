@@ -68,6 +68,8 @@ export const i18n_zh_cn = {
       file: {
         OpenLocalFile: '打开本地文件',
         SaveToDownloadFolder: '保存到下载文件夹',
+        DownloadAs: '下载文件名',
+        SavingAbortedMustHaveValidFileName: '文件名无效，保存失败',
         TakeScreenshot: '截屏',
       },
       viewSubMenu: '视界',
