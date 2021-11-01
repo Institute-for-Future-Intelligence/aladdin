@@ -43,9 +43,7 @@ const Wall = ({
   const setCommonStore = useStore(Selector.set);
   const updateElementById = useStore(Selector.updateElementById);
   const getElementById = useStore(Selector.getElementById);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
   const selectMe = useStore(Selector.selectMe);
-  const selectNone = useStore(Selector.selectNone);
   const resizeAnchor = useStore(Selector.resizeAnchor);
   const shadowEnabled = useStore(Selector.viewstate.shadowEnabled);
   const orthographic = useStore(Selector.viewstate.orthographic);
@@ -216,46 +214,35 @@ const Wall = ({
               setCommonStore((state) => {
                 state.contextMenuObjectType = null;
               });
-              selectMe(id, e, ActionType.Select);
-              const selectedElement = getSelectedElement();
-              // no child of this foundation is clicked
-              if (selectedElement?.id === id) {
-                const objectTypeToAdd = useStore.getState().objectTypeToAdd;
-                if (legalOnWall(objectTypeToAdd) && elementModel) {
-                  // setShowGrid(true);
-                  const p = e.intersections[0].point;
-                  const relativePos = getWindowRelativePos(p, elementModel);
-                  const window = ElementModelFactory.makeWindow(
-                    elementModel,
-                    relativePos.x / lx,
-                    0,
-                    relativePos.z / lz,
-                  );
-                  updateElementById(id, {
-                    windows: [...elementModel.windows, window],
-                  });
-                  setCommonStore((state) => {
-                    state.objectTypeToAdd = ObjectType.None;
-                  });
-                }
-                if (objectTypeToAdd === ObjectType.Roof) {
-                  const points = checkWallLoop(elementModel.id);
-                  if (points) {
-                    const parent = getElementById(elementModel.parent.id);
-                    if (parent) {
-                      const roof = ElementModelFactory.makeRoof(lz, parent, points);
-                      setCommonStore((state) => {
-                        state.elements.push(roof);
-                      });
-                    }
+
+              const objectTypeToAdd = useStore.getState().objectTypeToAdd;
+              if (legalOnWall(objectTypeToAdd) && elementModel) {
+                // setShowGrid(true);
+                const p = e.intersections[0].point;
+                const relativePos = getWindowRelativePos(p, elementModel);
+                const window = ElementModelFactory.makeWindow(elementModel, relativePos.x / lx, 0, relativePos.z / lz);
+                updateElementById(id, {
+                  windows: [...elementModel.windows, window],
+                });
+                setCommonStore((state) => {
+                  state.objectTypeToAdd = ObjectType.None;
+                });
+              } else if (objectTypeToAdd === ObjectType.Roof) {
+                const points = checkWallLoop(elementModel.id);
+                if (points) {
+                  const parent = getElementById(elementModel.parent.id);
+                  if (parent) {
+                    const roof = ElementModelFactory.makeRoof(lz, parent, points);
+                    setCommonStore((state) => {
+                      state.elements.push(roof);
+                    });
                   }
-                  setCommonStore((state) => {
-                    state.objectTypeToAdd = ObjectType.None;
-                  });
                 }
-              }
-              // a child of this foundation is clicked
-              else {
+                setCommonStore((state) => {
+                  state.objectTypeToAdd = ObjectType.None;
+                });
+              } else {
+                selectMe(id, e, ActionType.Select);
               }
             }}
           />
@@ -379,14 +366,12 @@ const Wall = ({
                           state.enableOrbitController = false;
                         });
                       } else {
-                        selectNone();
                         setCommonStore((state) => {
                           for (const elem of state.elements) {
+                            elem.selected = false;
                             if (elem.id === elementModel.id) {
                               for (const window of elem.windows) {
-                                if (window.id === id) {
-                                  window.selected = true;
-                                }
+                                window.selected = window.id === id;
                               }
                             }
                           }

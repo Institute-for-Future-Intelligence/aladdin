@@ -165,7 +165,7 @@ export class ElementModelFactory {
       lx: 0.1,
       ly: 0,
       lz: 0.1,
-      selected: false,
+      selected: true,
       showLabel: false,
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],

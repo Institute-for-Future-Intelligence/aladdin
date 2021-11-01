@@ -33,6 +33,7 @@ import { GroundModel } from '../models/GroundModel';
 import { PvModel } from '../models/PvModel';
 import { ThreeEvent } from '@react-three/fiber';
 import { SolarPanelModel } from '../models/SolarPanelModel';
+import { WallModel } from 'src/models/WallModel';
 
 enableMapSet();
 
@@ -501,7 +502,13 @@ export const useStore = create<CommonStoreState>(
           },
           deleteElementById(id) {
             immerSet((state: CommonStoreState) => {
-              state.elements = state.elements.filter((e) => !(e.id === id || (e.parent && e.parent.id === id)));
+              state.elements = state.elements.filter((e) => {
+                if (e.type === ObjectType.Wall) {
+                  const wall = e as WallModel;
+                  wall.windows = wall.windows.filter((w) => w.id !== id);
+                }
+                return !(e.id === id || (e.parent && e.parent.id === id));
+              });
             });
           },
 
