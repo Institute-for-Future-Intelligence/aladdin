@@ -4,35 +4,26 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  BackSide,
-  BoxGeometry,
   DoubleSide,
-  EdgesGeometry,
   Euler,
-  ExtrudeBufferGeometry,
-  FrontSide,
   Mesh,
   MeshStandardMaterial,
-  PlaneGeometry,
   RepeatWrapping,
   Shape,
   ShapeBufferGeometry,
-  SphereGeometry,
   TextureLoader,
   Vector3,
 } from 'three';
-import { Box, Line, Plane, Sphere, useTexture } from '@react-three/drei';
+import { Line, Plane, Sphere } from '@react-three/drei';
 
 import { ActionType, ObjectType, ResizeHandleType, ResizeHandleType as RType } from 'src/types';
 import { Util } from 'src/Util';
 import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from '../constants';
 import { useStore } from 'src/stores/common';
 import { WallModel } from 'src/models/WallModel';
-import WireFrame from 'src/components/wireFrame';
 import WallExteriorImage from '../resources/WallExteriorImage.png';
-import { CSG } from 'three-csg-ts';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
-import Window from './window';
+import * as Selector from 'src/stores/selector';
 
 const Wall = ({
   id,
@@ -49,29 +40,55 @@ const Wall = ({
   selected = false,
   locked = false,
 }: WallModel) => {
-  const buildingWallID = useStore((state) => state.buildingWallID);
-  const shadowEnabled = useStore((state) => state.viewState.shadowEnabled);
-  const setCommonStore = useStore((state) => state.set);
-  const objectTypeToAdd = useStore((state) => state.objectTypeToAdd);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
-  const addElement = useStore((state) => state.addElement);
-  const updateElementById = useStore((state) => state.updateElementById);
-  const selectNone = useStore((state) => state.selectNone);
+  const setCommonStore = useStore(Selector.set);
+  const updateElementById = useStore(Selector.updateElementById);
+  const getElementById = useStore(Selector.getElementById);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const selectMe = useStore(Selector.selectMe);
+  const selectNone = useStore(Selector.selectNone);
+  const resizeAnchor = useStore(Selector.resizeAnchor);
+  const shadowEnabled = useStore(Selector.viewstate.shadowEnabled);
+  const orthographic = useStore(Selector.viewstate.orthographic);
+  const buildingWallID = useStore(Selector.buildingWallID);
 
   const [wallAbsPosition, setWallAbsPosition] = useState<Vector3>();
   const [wallAbsAngle, setWallAbsAngle] = useState<number>();
-  const [length, setLength] = useState<number>(lx);
+  const [movingWindow, setMovingWindow] = useState<{ id: string; diff: Vector3 } | null>(null);
+  const [resizingWindowID, setResizingWindowID] = useState<string | null>(null!);
+  const [init, setInit] = useState(false);
+  const [x, setX] = useState(lx / 2);
+  const [y, setY] = useState(ly / 2);
+  const [z, setZ] = useState(lz / 2);
 
-  const baseRef = useRef<Mesh>();
-
-  const getElementById = useStore((state) => state.getElementById);
-  const selectMe = useStore((state) => state.selectMe);
+  const outSideWallRef = useRef<Mesh>(null);
+  const insideWallRef = useRef<Mesh>(null);
+  const topSurfaceRef = useRef<Mesh>(null);
+  const resizeHandleLLRef = useRef<Mesh>();
+  const resizeHandleLRRef = useRef<Mesh>();
+  const resizeHandleULRef = useRef<Mesh>();
+  const resizeHandleURRef = useRef<Mesh>();
 
   const p = getElementById(parent.id);
   const elementModel = getElementById(id) as WallModel;
   const highLight = lx === 0;
 
-  const [init, setInit] = useState(false);
+  const whiteWallMaterial = useMemo(() => new MeshStandardMaterial({ color: 'white', side: DoubleSide }), []);
+
+  const texture = useMemo(() => {
+    return new TextureLoader().load(WallExteriorImage, (texture) => {
+      texture.wrapS = texture.wrapT = RepeatWrapping;
+      texture.offset.set(0, 0);
+      texture.repeat.set(0.2, 0.2);
+    });
+  }, []);
+
+  useEffect(() => {
+    setX(lx / 2);
+    setY(ly / 2);
+    setZ(lz / 2);
+  }, [lx, ly, lz]);
+
+  // wall position and rotation
   useEffect(() => {
     if (p) {
       setWallAbsPosition(Util.wallAbsolutePosition(new Vector3(cx, cy), p).setZ(lz / 2 + p.lz));
@@ -80,42 +97,7 @@ const Wall = ({
     }
   }, [cx, cy, p?.cx, p?.cy, p?.cz, p?.rotation, relativeAngle]);
 
-  const texture = useMemo(() => {
-    return new TextureLoader().load(WallExteriorImage, (texture) => {
-      texture.wrapS = texture.wrapT = RepeatWrapping;
-      texture.offset.set(0, 0);
-      texture.repeat.set(lx / 4, 1);
-    });
-  }, []);
-
-  useEffect(() => {
-    texture.repeat.set(lx / 4, 1);
-  }, [lx]);
-
-  useEffect(() => {
-    if (lx > Math.abs(leftOffset) ?? 0 + Math.abs(rightOffset) ?? 0) {
-      setLength(lx - leftOffset - rightOffset - 0.001);
-    } else {
-      setLength(lx);
-    }
-  }, [leftOffset, rightOffset, lx]);
-
-  const outSideWallRef = useRef<Mesh>(null);
-  const insideWallRef = useRef<Mesh>(null);
-  const coverRef = useRef<Mesh>(null);
-
-  const [windowShape, setWindowShape] = useState<Shape[]>([]);
-
-  const drawRectangle = (shape: Shape, lx: number, ly: number, cx = 0, cy = 0, leftOffset = 0, rightOffset = 0) => {
-    const x = lx / 2;
-    const y = ly / 2;
-    shape.moveTo(cx - x + leftOffset, cy - y);
-    shape.lineTo(cx + x - rightOffset, cy - y);
-    shape.lineTo(cx + x - rightOffset, cy + y);
-    shape.lineTo(cx - x + leftOffset, cy + y);
-    shape.lineTo(cx - x + leftOffset, cy - y);
-  };
-
+  // outside wall
   useEffect(() => {
     if (outSideWallRef.current) {
       const wallShape = new Shape();
@@ -133,6 +115,7 @@ const Wall = ({
     }
   }, [init, lx, lz, windows]);
 
+  // inside wall
   useEffect(() => {
     if (insideWallRef.current) {
       const wallShape = new Shape();
@@ -145,11 +128,39 @@ const Wall = ({
       });
 
       insideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
-      insideWallRef.current.material = new MeshStandardMaterial({ color: 'white', side: DoubleSide });
-      insideWallRef.current.rotation.set(Math.PI / 2, 0, 0);
-      insideWallRef.current.position.set(0, ly, 0);
+      insideWallRef.current.material = whiteWallMaterial;
     }
   }, [init, leftOffset, rightOffset, lx, ly, lz, windows]);
+
+  // top surface
+  useEffect(() => {
+    if (topSurfaceRef.current) {
+      const topSurfaceShape = new Shape();
+      drawTopSurface(topSurfaceShape, lx, ly, leftOffset, rightOffset);
+      topSurfaceRef.current.geometry = new ShapeBufferGeometry(topSurfaceShape);
+      topSurfaceRef.current.material = whiteWallMaterial;
+    }
+  }, [init, leftOffset, rightOffset, lx, ly, lz]);
+
+  const drawTopSurface = (shape: Shape, lx: number, ly: number, leftOffset: number, rightOffset: number) => {
+    const x = lx / 2;
+    const y = ly / 2;
+    shape.moveTo(-x, -y);
+    shape.lineTo(x, -y);
+    shape.lineTo(x - rightOffset, y);
+    shape.lineTo(-x + leftOffset, y);
+    shape.lineTo(-x, -y);
+  };
+
+  const drawRectangle = (shape: Shape, lx: number, ly: number, cx = 0, cy = 0, leftOffset = 0, rightOffset = 0) => {
+    const x = lx / 2;
+    const y = ly / 2;
+    shape.moveTo(cx - x + leftOffset, cy - y);
+    shape.lineTo(cx + x - rightOffset, cy - y);
+    shape.lineTo(cx + x - rightOffset, cy + y);
+    shape.lineTo(cx - x + leftOffset, cy + y);
+    shape.lineTo(cx - x + leftOffset, cy - y);
+  };
 
   const legalOnWall = (type: ObjectType) => {
     switch (type) {
@@ -172,15 +183,6 @@ const Wall = ({
     }
     return new Vector3();
   };
-
-  const resizeHandleLLRef = useRef<Mesh>();
-  const resizeHandleLRRef = useRef<Mesh>();
-  const resizeHandleULRef = useRef<Mesh>();
-  const resizeHandleURRef = useRef<Mesh>();
-  const resizeHandleType = useStore((state) => state.resizeHandleType);
-  const resizeAnchor = useStore((state) => state.resizeAnchor);
-  const [movingWindow, setMovingWindow] = useState<{ id: string; diff: Vector3 } | null>(null);
-  const [resizingWindowID, setResizingWindowID] = useState<string | null>(null!);
 
   const checkWallLoop = (id: string) => {
     const startID = id;
@@ -207,8 +209,8 @@ const Wall = ({
           {/* outside wall */}
           <mesh
             ref={outSideWallRef}
-            castShadow
-            receiveShadow
+            castShadow={shadowEnabled}
+            receiveShadow={shadowEnabled}
             onPointerDown={(e) => {
               if (e.button === 2 || buildingWallID) return; // ignore right-click
               setCommonStore((state) => {
@@ -218,6 +220,7 @@ const Wall = ({
               const selectedElement = getSelectedElement();
               // no child of this foundation is clicked
               if (selectedElement?.id === id) {
+                const objectTypeToAdd = useStore.getState().objectTypeToAdd;
                 if (legalOnWall(objectTypeToAdd) && elementModel) {
                   // setShowGrid(true);
                   const p = e.intersections[0].point;
@@ -253,24 +256,50 @@ const Wall = ({
               }
               // a child of this foundation is clicked
               else {
-                // if (selectedElement) {
-                //   if (legalOnWall(selectedElement.type as ObjectType)) {
-                //     grabRef.current = selectedElement;
-                //     setShowGrid(true);
-                //     // TODO: resizeHandleType === null ?
-                //     // if (resizeHandleType) {
-                //     //   setCommonStore((state) => {
-                //     //     state.enableOrbitController = false;
-                //     //   });
-                //     // }
-                //   }
-                // }
               }
             }}
           />
 
           {/* inside wall */}
-          <mesh ref={insideWallRef} />
+          <mesh
+            ref={insideWallRef}
+            position={[0, ly, 0]}
+            rotation={[Math.PI / 2, 0, 0]}
+            castShadow={shadowEnabled}
+            receiveShadow={shadowEnabled}
+          />
+
+          {/* top surface */}
+          <mesh
+            ref={topSurfaceRef}
+            position={[0, y, z]}
+            castShadow={shadowEnabled}
+            receiveShadow={shadowEnabled}
+            onPointerDown={() => {
+              setCommonStore((state) => {
+                for (const e of state.elements) {
+                  e.selected = e.id === id;
+                  if (e.type === ObjectType.Wall) {
+                    for (const w of (e as WallModel).windows) {
+                      w.selected = false;
+                    }
+                  }
+                }
+              });
+            }}
+          />
+
+          {/* side surfaces */}
+          {leftOffset == 0 && (
+            <Plane args={[lz, ly]} position={[-x + 0.01, y, 0]} rotation={[0, Math.PI / 2, 0]}>
+              <meshStandardMaterial color={'white'} side={DoubleSide} />
+            </Plane>
+          )}
+          {rightOffset == 0 && (
+            <Plane args={[lz, ly]} position={[x - 0.01, y, 0]} rotation={[0, Math.PI / 2, 0]}>
+              <meshStandardMaterial color={'white'} side={DoubleSide} />
+            </Plane>
+          )}
 
           {/* window intersection plane */}
           <Plane
@@ -298,7 +327,7 @@ const Wall = ({
                       }
                     }
                   });
-                } else if (resizeHandleType) {
+                } else if (resizingWindowID) {
                   const pointer = e.intersections[0].point;
                   const v = new Vector3().subVectors(resizeAnchor, pointer).applyEuler(new Euler(0, 0, -wallAbsAngle));
                   const windowAbsCenterPos = new Vector3().addVectors(resizeAnchor, pointer).divideScalar(2);
@@ -327,6 +356,7 @@ const Wall = ({
             }}
           />
 
+          {/* windows */}
           {windows.map((window) => {
             let { id, lx: wlx, lz: wlz, cx: wcx, cz: wcz } = window;
             wlx = wlx * lx;
@@ -505,15 +535,48 @@ const Wall = ({
           })}
 
           {/* wireFrame */}
-          {/* {!selected && <WireFrame args={[lx, ly, lz]} />} */}
+          <group rotation={[Math.PI / 2, 0, 0]}>
+            <Line
+              points={[
+                [-x, -z, 0],
+                [-x, z, 0],
+              ]}
+              lineWidth={0.2}
+            />
+            <Line
+              points={[
+                [-x, -z, 0],
+                [x, -z, 0],
+              ]}
+              lineWidth={0.2}
+            />
+            <Line
+              points={[
+                [x, z, 0],
+                [-x, z, 0],
+              ]}
+              lineWidth={0.2}
+            />
+            <Line
+              points={[
+                [x, z, 0],
+                [x, -z, 0],
+              ]}
+              lineWidth={0.2}
+            />
+          </group>
 
           {/* handles */}
-          {(selected || buildingWallID === id) && (
+          {(selected || buildingWallID === id) && !locked && (
             <>
-              <ResizeHandle args={[-lx / 2, 0, -lz / 2]} id={id} handleType={RType.LowerLeft} highLight={highLight} />
-              <ResizeHandle args={[lx / 2, 0, -lz / 2]} id={id} handleType={RType.LowerRight} highLight={highLight} />
-              <ResizeHandle args={[-lx / 2, 0, lz / 2]} id={id} handleType={RType.UpperLeft} highLight={highLight} />
-              <ResizeHandle args={[lx / 2, 0, lz / 2]} id={id} handleType={RType.UpperRight} highLight={highLight} />
+              <ResizeHandle args={[-x, 0, -z]} id={id} handleType={RType.LowerLeft} highLight={highLight} />
+              <ResizeHandle args={[x, 0, -z]} id={id} handleType={RType.LowerRight} highLight={highLight} />
+              {!orthographic && (
+                <ResizeHandle args={[-x, 0, z]} id={id} handleType={RType.UpperLeft} highLight={highLight} />
+              )}
+              {!orthographic && (
+                <ResizeHandle args={[x, 0, z]} id={id} handleType={RType.UpperRight} highLight={highLight} />
+              )}
             </>
           )}
         </group>
@@ -530,14 +593,17 @@ interface ResizeHandlesProps {
   handleSize?: number;
 }
 const ResizeHandle = ({ args, id, handleType, highLight, handleSize = 0.4 }: ResizeHandlesProps) => {
-  const resizeHandleType = useStore((state) => state.resizeHandleType);
-  const buildingWallID = useStore((state) => state.buildingWallID);
+  const setCommonStore = useStore(Selector.set);
+  const selectMe = useStore(Selector.selectMe);
+  const resizeHandleType = useStore(Selector.resizeHandleType);
+  const buildingWallID = useStore(Selector.buildingWallID);
 
   const [hovered, setHovered] = useState(false);
 
   const handleRef = useRef<Mesh>(null);
 
   const [x, y, z] = args;
+
   const color = // handleType === RType.UpperRight ? 'blue' : 'white';
     highLight ||
     hovered ||
@@ -545,9 +611,6 @@ const ResizeHandle = ({ args, id, handleType, highLight, handleSize = 0.4 }: Res
     (buildingWallID && (handleType === RType.LowerRight || handleType === RType.UpperRight))
       ? HIGHLIGHT_HANDLE_COLOR
       : RESIZE_HANDLE_COLOR;
-
-  const setCommonStore = useStore((state) => state.set);
-  const selectMe = useStore((state) => state.selectMe);
 
   // https://github.com/mrdoob/three.js/issues/20220
 

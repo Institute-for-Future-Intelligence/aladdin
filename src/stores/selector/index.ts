@@ -22,6 +22,8 @@ export const deleteElementById = (state: CommonStoreState) => state.deleteElemen
 
 export const selectMe = (state: CommonStoreState) => state.selectMe;
 
+export const selectNone = (state: CommonStoreState) => state.selectNone;
+
 export const addElement = (state: CommonStoreState) => state.addElement;
 
 export const objectTypeToAdd = (state: CommonStoreState) => state.objectTypeToAdd;
@@ -57,6 +59,8 @@ export const resizeHandleType = (state: CommonStoreState) => state.resizeHandleT
 export const rotateHandleType = (state: CommonStoreState) => state.rotateHandleType;
 
 export const resizeAnchor = (state: CommonStoreState) => state.resizeAnchor;
+
+export const buildingWallID = (state: CommonStoreState) => state.buildingWallID;
 
 export * as viewstate from './viewState';
 
