@@ -47,7 +47,6 @@ const Wall = ({
   const selectMe = useStore(Selector.selectMe);
   const resizeAnchor = useStore(Selector.resizeAnchor);
   const shadowEnabled = useStore(Selector.viewstate.shadowEnabled);
-  const orthographic = useStore(Selector.viewstate.orthographic);
   const buildingWallID = useStore(Selector.buildingWallID);
 
   const [wallAbsPosition, setWallAbsPosition] = useState<Vector3>();
@@ -255,6 +254,9 @@ const Wall = ({
             rotation={[Math.PI / 2, 0, 0]}
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
+            onPointerDown={(e) => {
+              selectMe(id, e, ActionType.Select);
+            }}
           />
 
           {/* top surface */}
@@ -263,28 +265,33 @@ const Wall = ({
             position={[0, y, z]}
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
-            onPointerDown={() => {
-              setCommonStore((state) => {
-                for (const e of state.elements) {
-                  e.selected = e.id === id;
-                  if (e.type === ObjectType.Wall) {
-                    for (const w of (e as WallModel).windows) {
-                      w.selected = false;
-                    }
-                  }
-                }
-              });
+            onPointerDown={(e) => {
+              selectMe(id, e, ActionType.Select);
             }}
           />
 
           {/* side surfaces */}
           {leftOffset == 0 && (
-            <Plane args={[lz, ly]} position={[-x + 0.01, y, 0]} rotation={[0, Math.PI / 2, 0]}>
+            <Plane
+              args={[lz, ly]}
+              position={[-x + 0.01, y, 0]}
+              rotation={[0, Math.PI / 2, 0]}
+              onPointerDown={(e) => {
+                selectMe(id, e, ActionType.Select);
+              }}
+            >
               <meshStandardMaterial color={'white'} side={DoubleSide} />
             </Plane>
           )}
           {rightOffset == 0 && (
-            <Plane args={[lz, ly]} position={[x - 0.01, y, 0]} rotation={[0, Math.PI / 2, 0]}>
+            <Plane
+              args={[lz, ly]}
+              position={[x - 0.01, y, 0]}
+              rotation={[0, Math.PI / 2, 0]}
+              onPointerDown={(e) => {
+                selectMe(id, e, ActionType.Select);
+              }}
+            >
               <meshStandardMaterial color={'white'} side={DoubleSide} />
             </Plane>
           )}
@@ -367,16 +374,7 @@ const Wall = ({
                           state.enableOrbitController = false;
                         });
                       } else {
-                        setCommonStore((state) => {
-                          for (const elem of state.elements) {
-                            elem.selected = false;
-                            if (elem.id === elementModel.id) {
-                              for (const window of elem.windows) {
-                                window.selected = window.id === id;
-                              }
-                            }
-                          }
-                        });
+                        selectMe(id, e, ActionType.Select);
                       }
                     }
                   }}
@@ -388,52 +386,7 @@ const Wall = ({
                 </Plane>
 
                 {/* wireframes */}
-                <group>
-                  <Line
-                    points={[
-                      [-wlx / 2, 0, -wlz / 2],
-                      [wlx / 2, 0, -wlz / 2],
-                    ]}
-                    linewidth={1}
-                  />
-                  <Line
-                    points={[
-                      [-wlx / 2, 0, -wlz / 2],
-                      [-wlx / 2, 0, wlz / 2],
-                    ]}
-                    linewidth={1}
-                  />
-                  <Line
-                    points={[
-                      [wlx / 2, 0, wlz / 2],
-                      [-wlx / 2, 0, wlz / 2],
-                    ]}
-                    linewidth={1}
-                  />
-                  <Line
-                    points={[
-                      [wlx / 2, 0, wlz / 2],
-                      [wlx / 2, 0, -wlz / 2],
-                    ]}
-                    linewidth={1}
-                  />
-                  <Line
-                    points={[
-                      [-wlx / 2, 0, 0],
-                      [wlx / 2, 0, 0],
-                    ]}
-                    linewidth={1}
-                    color={'white'}
-                  />
-                  <Line
-                    points={[
-                      [0, 0, -wlz / 2],
-                      [0, 0, wlz / 2],
-                    ]}
-                    linewidth={1}
-                    color={'white'}
-                  />
-                </group>
+                <WindowWireFrame x={wlx / 2} z={wlz / 2} />
 
                 {/* handles */}
                 {window.selected && (
@@ -521,49 +474,11 @@ const Wall = ({
           })}
 
           {/* wireFrame */}
-          <group rotation={[Math.PI / 2, 0, 0]}>
-            <Line
-              points={[
-                [-x, -z, 0],
-                [-x, z, 0],
-              ]}
-              lineWidth={0.2}
-            />
-            <Line
-              points={[
-                [-x, -z, 0],
-                [x, -z, 0],
-              ]}
-              lineWidth={0.2}
-            />
-            <Line
-              points={[
-                [x, z, 0],
-                [-x, z, 0],
-              ]}
-              lineWidth={0.2}
-            />
-            <Line
-              points={[
-                [x, z, 0],
-                [x, -z, 0],
-              ]}
-              lineWidth={0.2}
-            />
-          </group>
+          <WallWireFrame x={x} z={z} />
 
           {/* handles */}
           {(selected || buildingWallID === id) && !locked && (
-            <>
-              <ResizeHandle args={[-x, 0, -z]} id={id} handleType={RType.LowerLeft} highLight={highLight} />
-              <ResizeHandle args={[x, 0, -z]} id={id} handleType={RType.LowerRight} highLight={highLight} />
-              {!orthographic && (
-                <ResizeHandle args={[-x, 0, z]} id={id} handleType={RType.UpperLeft} highLight={highLight} />
-              )}
-              {!orthographic && (
-                <ResizeHandle args={[x, 0, z]} id={id} handleType={RType.UpperRight} highLight={highLight} />
-              )}
-            </>
+            <ResizeHandleWarpper x={x} z={z} id={id} highLight={highLight} />
           )}
         </group>
       )}
@@ -572,13 +487,34 @@ const Wall = ({
 };
 
 interface ResizeHandlesProps {
-  args: [x: number, y: number, z: number];
+  x: number;
+  z: number;
   id: string;
   handleType: RType;
   highLight: boolean;
   handleSize?: number;
 }
-const ResizeHandle = ({ args, id, handleType, highLight, handleSize = 0.3 }: ResizeHandlesProps) => {
+
+interface ResizeHandleWarpperProps {
+  x: number;
+  z: number;
+  id: string;
+  highLight: boolean;
+}
+
+interface WallWireFrameProps {
+  x: number;
+  z: number;
+  lineWidth?: number;
+}
+
+interface WindowWireFrameProps {
+  x: number;
+  z: number;
+  lineWidth?: number;
+}
+
+const ResizeHandle = React.memo(({ x, z, id, handleType, highLight, handleSize = 0.3 }: ResizeHandlesProps) => {
   const setCommonStore = useStore(Selector.set);
   const selectMe = useStore(Selector.selectMe);
   const resizeHandleType = useStore(Selector.resizeHandleType);
@@ -587,8 +523,6 @@ const ResizeHandle = ({ args, id, handleType, highLight, handleSize = 0.3 }: Res
   const [hovered, setHovered] = useState(false);
 
   const handleRef = useRef<Mesh>(null);
-
-  const [x, y, z] = args;
 
   const color = // handleType === RType.UpperRight ? 'blue' : 'white';
     highLight ||
@@ -605,7 +539,7 @@ const ResizeHandle = ({ args, id, handleType, highLight, handleSize = 0.3 }: Res
       name={handleType}
       ref={handleRef}
       args={[handleSize]}
-      position={args}
+      position={[x, 0, z]}
       onPointerOver={() => {
         setHovered(true);
       }}
@@ -632,6 +566,106 @@ const ResizeHandle = ({ args, id, handleType, highLight, handleSize = 0.3 }: Res
       <meshStandardMaterial color={color} />
     </Sphere>
   );
-};
+});
+
+const ResizeHandleWarpper = React.memo(({ x, z, id, highLight }: ResizeHandleWarpperProps) => {
+  const orthographic = useStore(Selector.viewstate.orthographic);
+  return (
+    <React.Fragment>
+      <ResizeHandle x={-x} z={-z} id={id} handleType={RType.LowerLeft} highLight={highLight} />
+      <ResizeHandle x={x} z={-z} id={id} handleType={RType.LowerRight} highLight={highLight} />
+      {!orthographic && <ResizeHandle x={-x} z={z} id={id} handleType={RType.UpperLeft} highLight={highLight} />}
+      {!orthographic && <ResizeHandle x={x} z={z} id={id} handleType={RType.UpperRight} highLight={highLight} />}
+    </React.Fragment>
+  );
+});
+
+const WallWireFrame = React.memo(({ x, z, lineWidth = 0.2 }: WallWireFrameProps) => {
+  return (
+    <React.Fragment>
+      <group rotation={[Math.PI / 2, 0, 0]}>
+        <Line
+          points={[
+            [-x, -z, 0],
+            [-x, z, 0],
+          ]}
+          lineWidth={lineWidth}
+        />
+        <Line
+          points={[
+            [-x, -z, 0],
+            [x, -z, 0],
+          ]}
+          lineWidth={lineWidth}
+        />
+        <Line
+          points={[
+            [x, z, 0],
+            [-x, z, 0],
+          ]}
+          lineWidth={lineWidth}
+        />
+        <Line
+          points={[
+            [x, z, 0],
+            [x, -z, 0],
+          ]}
+          lineWidth={lineWidth}
+        />
+      </group>
+    </React.Fragment>
+  );
+});
+
+const WindowWireFrame = React.memo(({ x, z, lineWidth = 1 }: WindowWireFrameProps) => {
+  return (
+    <React.Fragment>
+      <Line
+        points={[
+          [-x, 0, -z],
+          [x, 0, -z],
+        ]}
+        linewidth={lineWidth}
+      />
+      <Line
+        points={[
+          [-x, 0, -z],
+          [-x, 0, z],
+        ]}
+        linewidth={lineWidth}
+      />
+      <Line
+        points={[
+          [x, 0, z],
+          [-x, 0, z],
+        ]}
+        linewidth={lineWidth}
+      />
+      <Line
+        points={[
+          [x, 0, z],
+          [x, 0, -z],
+        ]}
+        linewidth={lineWidth}
+      />
+      <Line
+        points={[
+          [-x, 0, 0],
+          [x, 0, 0],
+        ]}
+        linewidth={lineWidth}
+        color={'white'}
+      />
+      <Line
+        points={[
+          [0, 0, -z],
+          [0, 0, z],
+        ]}
+        linewidth={lineWidth}
+        color={'white'}
+      />
+    </React.Fragment>
+  );
+});
 
 export default Wall;
