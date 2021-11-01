@@ -12,6 +12,7 @@ import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-ur
 import Spinner from '../components/spinner';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import 'antd/dist/antd.css';
+import i18n from '../i18n';
 
 const libraries = ['places'] as Libraries;
 
@@ -60,6 +61,7 @@ const Header = styled.div`
 `;
 
 const MapPanel = () => {
+  const language = useStore((state) => state.language);
   const setCommonStore = useStore((state) => state.set);
   const address = useStore((state) => state.world.address);
   const latitude = useStore((state) => state.world.latitude);
@@ -69,7 +71,6 @@ const MapPanel = () => {
   const groundImage = useStore((state) => state.viewState.groundImage);
   const mapWeatherStations = useStore((state) => state.viewState.mapWeatherStations);
   const mapZoom = useStore((state) => state.viewState.mapZoom);
-
   const searchBox = useRef<google.maps.places.SearchBox>();
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 460;
@@ -78,6 +79,7 @@ const MapPanel = () => {
     x: isNaN(mapPanelX) ? 0 : Math.min(mapPanelX, window.innerWidth - wOffset),
     y: isNaN(mapPanelY) ? 0 : Math.min(mapPanelY, window.innerHeight - hOffset),
   });
+  const lang = { lng: language };
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
@@ -155,7 +157,7 @@ const MapPanel = () => {
       <Container>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
-            <span>Map</span>
+            <span>{i18n.t('menu.view.Map', lang)}</span>
             <span
               style={{ cursor: 'pointer' }}
               onTouchStart={() => {
@@ -165,13 +167,13 @@ const MapPanel = () => {
                 closePanel();
               }}
             >
-              Close
+              {i18n.t('word.Close', lang)}
             </span>
           </Header>
           <Space direction={'vertical'}>
             <Space style={{ paddingTop: '10px' }} align={'center'} size={20}>
               <Space direction={'horizontal'}>
-                <Space>Image on Ground:</Space>
+                <Space>{i18n.t('mapPanel.ImageOnGround', lang) + ':'}</Space>
                 <Switch
                   title={'Show ground image'}
                   checked={groundImage}
@@ -181,7 +183,7 @@ const MapPanel = () => {
                     });
                   }}
                 />
-                <Space>Stations on Map:</Space>
+                <Space>{i18n.t('mapPanel.StationsOnMap', lang) + ':'}</Space>
                 <Switch
                   title={'Show weather stations'}
                   checked={mapWeatherStations}
@@ -221,7 +223,9 @@ const MapPanel = () => {
                 <div>
                   <Maps />
                   <p style={{ paddingTop: '10px' }}>
-                    Coordinates: ({latitude.toFixed(4)}°, {longitude.toFixed(4)}°), Zoom: {mapZoom}
+                    {i18n.t('mapPanel.Coordinates', lang) + ':'} ({latitude.toFixed(4)}°, {longitude.toFixed(4)}°),
+                    &nbsp;
+                    {i18n.t('mapPanel.Zoom', lang) + ':'} {mapZoom}
                   </p>
                 </div>
               </Space>

@@ -11,6 +11,7 @@ import { useStore } from '../stores/common';
 import { MONTHS } from '../constants';
 import { Util } from '../Util';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
+import i18n from '../i18n';
 
 const Container = styled.div`
   position: fixed;
@@ -65,6 +66,7 @@ export interface WeatherPanelProps {
 }
 
 const WeatherPanel = ({ city, graphs, ...rest }: WeatherPanelProps) => {
+  const language = useStore((state) => state.language);
   const setCommonStore = useStore((state) => state.set);
   const viewState = useStore((state) => state.viewState);
   const getWeather = useStore((state) => state.getWeather);
@@ -73,13 +75,10 @@ const WeatherPanel = ({ city, graphs, ...rest }: WeatherPanelProps) => {
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 540;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(viewState.weatherPanelX)
-      ? 0
-      : Math.min(viewState.weatherPanelX, window.innerWidth - wOffset),
-    y: isNaN(viewState.weatherPanelY)
-      ? 0
-      : Math.min(viewState.weatherPanelY, window.innerHeight - hOffset),
+    x: isNaN(viewState.weatherPanelX) ? 0 : Math.min(viewState.weatherPanelX, window.innerWidth - wOffset),
+    y: isNaN(viewState.weatherPanelY) ? 0 : Math.min(viewState.weatherPanelY, window.innerHeight - hOffset),
   });
+  const lang = { lng: language };
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
@@ -170,7 +169,9 @@ const WeatherPanel = ({ city, graphs, ...rest }: WeatherPanelProps) => {
       <Container>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
-            <span>Weather: {city}</span>
+            <span>
+              {i18n.t('word.Weather', lang) + ':'} {city}
+            </span>
             <span
               style={{ cursor: 'pointer' }}
               onTouchStart={() => {
@@ -180,7 +181,7 @@ const WeatherPanel = ({ city, graphs, ...rest }: WeatherPanelProps) => {
                 closePanel();
               }}
             >
-              Close
+              {i18n.t('word.Close', lang)}
             </span>
           </Header>
           <>

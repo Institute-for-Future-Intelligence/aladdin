@@ -200,7 +200,7 @@ const App = () => {
     });
   };
 
-  const lng = { lng: language };
+  const lang = { lng: language };
 
   console.log('x');
 
@@ -225,10 +225,10 @@ const App = () => {
               cursor: 'pointer',
               userSelect: 'none',
             }}
-            title={i18n.t('tooltip.visitAladdinHomePage', lng)}
+            title={i18n.t('tooltip.visitAladdinHomePage', lang)}
             onClick={visitHomepage}
           >
-            {i18n.t('name.Aladdin', lng)}
+            {i18n.t('name.Aladdin', lang)}
           </span>
         </div>
         <div
@@ -247,11 +247,11 @@ const App = () => {
             src={ifiLogo}
             height="40px"
             style={{ verticalAlign: 'bottom', cursor: 'pointer' }}
-            title={i18n.t('tooltip.gotoIFI', lng)}
+            title={i18n.t('tooltip.gotoIFI', lang)}
             onClick={visitIFI}
           />
-          &nbsp;&nbsp; {i18n.t('name.IFI', lng)}, &copy;{new Date().getFullYear()}. &nbsp;
-          {i18n.t('word.Version', lng) + ' ' + VERSION}
+          &nbsp;&nbsp; {i18n.t('name.IFI', lang)}, &copy;{new Date().getFullYear()}. &nbsp;
+          {i18n.t('word.Version', lang) + ' ' + VERSION}
         </div>
         <MainMenu
           canvas={canvasRef.current}
@@ -266,13 +266,15 @@ const App = () => {
         <Modal
           width={600}
           visible={pvModelDialogVisible}
-          title="Solar Panel Specs"
+          title={i18n.t('pvModelPanel.SolarPanelSpecs', lang)}
           onOk={() => {
             setPvModelDialogVisible(false);
           }}
           onCancel={() => {
             setPvModelDialogVisible(false);
           }}
+          okText={i18n.t('word.OK', lang)}
+          cancelText={i18n.t('word.Cancel', lang)}
         >
           <PvModelPanel />
         </Modal>

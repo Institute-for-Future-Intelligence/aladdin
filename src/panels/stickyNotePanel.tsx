@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Input, Space } from 'antd';
+import i18n from '../i18n';
 
 const Container = styled.div`
   position: fixed;
@@ -58,6 +59,7 @@ const { TextArea } = Input;
 export interface StickyNotePanelProps {}
 
 const StickyNotePanel = ({}: StickyNotePanelProps) => {
+  const language = useStore((state) => state.language);
   const setCommonStore = useStore((state) => state.set);
   const viewState = useStore((state) => state.viewState);
   const notes = useStore((state) => state.notes);
@@ -69,6 +71,7 @@ const StickyNotePanel = ({}: StickyNotePanelProps) => {
     y: isNaN(viewState.stickyNotePanelY) ? 0 : Math.min(viewState.stickyNotePanelY, window.innerHeight - hOffset),
   });
   const [text, setText] = useState<string>(notes.length > 0 ? notes[0] : '');
+  const lang = { lng: language };
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
@@ -121,7 +124,7 @@ const StickyNotePanel = ({}: StickyNotePanelProps) => {
         <Container>
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle">
-              <span>Sticky Note</span>
+              <span>{i18n.t('menu.view.StickyNote', lang)}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {
@@ -131,7 +134,7 @@ const StickyNotePanel = ({}: StickyNotePanelProps) => {
                   closePanel();
                 }}
               >
-                Close
+                {i18n.t('word.Close', lang)}
               </span>
             </Header>
             <TextArea
@@ -155,7 +158,7 @@ const StickyNotePanel = ({}: StickyNotePanelProps) => {
                   });
                 }}
               >
-                Save
+                {i18n.t('word.Save', lang)}
               </Button>
             </Space>
           </ColumnWrapper>

@@ -9,11 +9,14 @@ import { ObjectType } from 'src/types';
 import TreeSelection from 'src/components/treeSelection';
 import ReshapeElementMenu from 'src/components/reshapeElementMenu';
 import { Copy, Cut, Lock } from '../menuItems';
+import i18n from '../../../i18n';
 
 export const TreeMenu = () => {
+  const language = useStore((state) => state.language);
   const updateElementById = useStore((state) => state.updateElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const selectedElement = getSelectedElement();
+  const lang = { lng: language };
 
   const showTreeModel = (on: boolean) => {
     if (selectedElement && selectedElement.type === ObjectType.Tree) {
@@ -33,12 +36,12 @@ export const TreeMenu = () => {
             showTreeModel(e.target.checked);
           }}
         >
-          Show Model
+          {i18n.t('treeMenu.ShowModel', lang)}
         </Checkbox>
       </Menu.Item>
       <Menu>
         <Menu.Item key={'tree-change-type'} style={{ paddingLeft: '36px' }}>
-          <Space style={{ width: '60px' }}>Type: </Space>
+          <Space style={{ width: '60px' }}>{i18n.t('treeMenu.Type', lang)}: </Space>
           <TreeSelection key={'trees'} />
         </Menu.Item>
       </Menu>
@@ -48,7 +51,7 @@ export const TreeMenu = () => {
           name={'tree'}
           maxWidth={40}
           maxHeight={20}
-          widthName={'Spread'}
+          widthName={i18n.t('treeMenu.Spread', lang)}
           adjustLength={false}
           adjustAngle={false}
           style={{ paddingLeft: '20px' }}

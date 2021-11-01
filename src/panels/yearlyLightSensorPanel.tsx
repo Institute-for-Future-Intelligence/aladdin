@@ -14,6 +14,7 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
 import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { screenshot } from '../helpers';
+import i18n from '../i18n';
 
 const Container = styled.div`
   position: fixed;
@@ -68,11 +69,8 @@ export interface YearlyLightSensorPanelProps {
   [key: string]: any;
 }
 
-const YearlyLightSensorPanel = ({
-  city,
-  collectYearlyLightSensorData,
-  ...rest
-}: YearlyLightSensorPanelProps) => {
+const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData, ...rest }: YearlyLightSensorPanelProps) => {
+  const language = useStore((state) => state.language);
   const setCommonStore = useStore((state) => state.set);
   const viewState = useStore((state) => state.viewState);
   const sensorData = useStore((state) => state.yearlyLightSensorData);
@@ -93,6 +91,7 @@ const YearlyLightSensorPanel = ({
       : Math.min(viewState.yearlyLightSensorPanelY, window.innerHeight - hOffset),
   });
 
+  const lang = { lng: language };
   const responsiveHeight = 100;
   const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
 
@@ -145,7 +144,9 @@ const YearlyLightSensorPanel = ({
       <Container>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
-            <span>Light Sensor: Weather Data from {city}</span>
+            <span>
+              {i18n.t('sensorPanel.LightSensor', lang)}: {i18n.t('sensorPanel.WeatherDataFrom', lang)} {city}
+            </span>
             <span
               style={{ cursor: 'pointer' }}
               onTouchStart={() => {
@@ -155,7 +156,7 @@ const YearlyLightSensorPanel = ({
                 closePanel();
               }}
             >
-              Close
+              {i18n.t('word.Close', lang)}
             </span>
           </Header>
           <Space style={{ alignSelf: 'center', padding: '10px' }}>
@@ -193,13 +194,13 @@ const YearlyLightSensorPanel = ({
               <Button
                 type="default"
                 icon={<ReloadOutlined />}
-                title={'Update'}
+                title={i18n.t('word.Update', lang)}
                 onClick={collectYearlyLightSensorData}
               />
               <Button
                 type="default"
                 icon={<SaveOutlined />}
-                title={'Save as image'}
+                title={i18n.t('word.SaveAsImage', lang)}
                 onClick={() => {
                   screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-light-sensor', {});
                 }}

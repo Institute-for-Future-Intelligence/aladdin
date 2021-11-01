@@ -10,8 +10,10 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import ReshapeElementMenu from 'src/components/reshapeElementMenu';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
+import i18n from '../../../i18n';
 
 export const FoundationMenu = () => {
+  const language = useStore((state) => state.language);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const countAllChildElementsByType = useStore((state) => state.countAllChildElementsByType);
   const countAllChildSolarPanels = useStore((state) => state.countAllChildSolarPanels);
@@ -26,6 +28,7 @@ export const FoundationMenu = () => {
     ? countAllChildElementsByType(selectedElement.id, ObjectType.SolarPanel)
     : 0;
   const solarPanelCountFoundation = selectedElement ? countAllChildSolarPanels(selectedElement.id) : 0;
+  const lang = { lng: language };
 
   return (
     <Menu.ItemGroup>
@@ -34,7 +37,7 @@ export const FoundationMenu = () => {
       <Cut />
       <Lock />
       {(sensorCountFoundation > 0 || solarPanelCountFoundation > 0) && contextMenuObjectType && (
-        <SubMenu key={'clear'} title={'Clear'} style={{ paddingLeft: '24px' }}>
+        <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
           {sensorCountFoundation > 0 && (
             <Menu.Item
               key={'remove-all-sensors-on-foundation'}
@@ -43,8 +46,8 @@ export const FoundationMenu = () => {
                   title:
                     'Do you really want to remove all the ' + sensorCountFoundation + ' sensors on this foundation?',
                   icon: <ExclamationCircleOutlined />,
-                  okText: 'OK',
-                  cancelText: 'Cancel',
+                  okText: i18n.t('word.OK', lang),
+                  cancelText: i18n.t('word.Cancel', lang),
                   onOk: () => {
                     if (selectedElement) {
                       removeAllChildElementsByType(selectedElement.id, ObjectType.Sensor);
@@ -53,7 +56,7 @@ export const FoundationMenu = () => {
                 });
               }}
             >
-              Remove All {sensorCountFoundation} Sensors
+              {i18n.t('foundationMenu.RemoveAllSensors', lang)} ({sensorCountFoundation})
             </Menu.Item>
           )}
           {solarPanelCountFoundation > 0 && (
@@ -68,8 +71,8 @@ export const FoundationMenu = () => {
                     solarRackCountFoundation +
                     ' racks on this foundation?',
                   icon: <ExclamationCircleOutlined />,
-                  okText: 'OK',
-                  cancelText: 'Cancel',
+                  okText: i18n.t('word.OK', lang),
+                  cancelText: i18n.t('word.Cancel', lang),
                   onOk: () => {
                     if (selectedElement) {
                       removeAllChildElementsByType(selectedElement.id, ObjectType.SolarPanel);
@@ -78,7 +81,8 @@ export const FoundationMenu = () => {
                 });
               }}
             >
-              Remove All {solarPanelCountFoundation} Solar Panels ({solarRackCountFoundation} Racks)
+              {i18n.t('foundationMenu.RemoveAllSolarPanels', lang)}&nbsp; ({solarPanelCountFoundation},{' '}
+              {solarRackCountFoundation} {i18n.t('foundationMenu.Racks', lang)})
             </Menu.Item>
           )}
         </SubMenu>

@@ -7,13 +7,15 @@ import { Checkbox, Input, Menu } from 'antd';
 import { useStore } from 'src/stores/common';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { Copy, Cut } from '../menuItems';
+import i18n from '../../../i18n';
 
 export const SensorMenu = () => {
+  const language = useStore((state) => state.language);
   const updateElementById = useStore((state) => state.updateElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const selectedElement = getSelectedElement();
-
   const [labelText, setLabelText] = useState<string>(selectedElement?.label ?? '');
+  const lang = { lng: language };
 
   const updateElementLabelText = () => {
     if (selectedElement) {
@@ -36,7 +38,7 @@ export const SensorMenu = () => {
       <Menu>
         <Menu.Item key={'sensor-label-text'} style={{ paddingLeft: '36px' }}>
           <Input
-            addonBefore="Label:"
+            addonBefore={i18n.t('sensorMenu.Label', lang) + ':'}
             value={labelText}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
             onPressEnter={updateElementLabelText}
@@ -46,7 +48,7 @@ export const SensorMenu = () => {
       </Menu>
       <Menu.Item key={'sensor-show-label'}>
         <Checkbox checked={!!selectedElement?.showLabel} onChange={showElementLabel}>
-          Keep Showing Label
+          {i18n.t('sensorMenu.KeepShowingLabel', lang)}
         </Checkbox>
       </Menu.Item>
     </>

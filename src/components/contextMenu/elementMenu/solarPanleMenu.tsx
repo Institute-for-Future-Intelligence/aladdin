@@ -11,22 +11,24 @@ import { ObjectType, Orientation, TrackerType } from 'src/types';
 import { Util } from 'src/Util';
 import { Vector3 } from 'three';
 import { Copy, Cut } from '../menuItems';
+import i18n from '../../../i18n';
 
 const { Option } = Select;
 
 export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (visible: boolean) => void }) => {
+  const language = useStore((state) => state.language);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const setElementSize = useStore((state) => state.setElementSize);
   const updateElementById = useStore((state) => state.updateElementById);
-
   const [solarPanel, setSolarPanel] = useState<SolarPanelModel>();
   const [dx, setDx] = useState<number>(0);
   const [dy, setDy] = useState<number>(0);
   const [panelNormal, setPanelNormal] = useState<Vector3>();
   const [labelText, setLabelText] = useState<string>('');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-
   const element = getSelectedElement();
+  const lang = { lng: language };
+
   useEffect(() => {
     if (element && element.type === ObjectType.SolarPanel) {
       setSolarPanel(element as SolarPanelModel);
@@ -64,11 +66,11 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
             }}
             style={{ paddingLeft: '40px' }}
           >
-            Change PV Model {'(' + solarPanel.pvModel.name + ')'}...
+            {i18n.t('solarPanelMenu.ChangePvModel', lang)} ({solarPanel.pvModel.name})...
           </Menu.Item>
           <Menu>
             <Menu.Item key={'solar-panel-orientation'} style={{ paddingLeft: '40px' }}>
-              <Space style={{ width: '150px' }}>Orientation: </Space>
+              <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.Orientation', lang) + ':'}</Space>
               <Select
                 style={{ width: '120px' }}
                 value={solarPanel.orientation}
@@ -91,17 +93,24 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                 }}
               >
                 <Option key={Orientation.portrait} value={Orientation.portrait}>
-                  {Orientation.portrait}
+                  {i18n.t('solarPanelMenu.Portrait', lang)}
                 </Option>
                 )
                 <Option key={Orientation.landscape} value={Orientation.landscape}>
-                  {Orientation.landscape}
+                  {i18n.t('solarPanelMenu.Landscape', lang)}
                 </Option>
                 )
               </Select>
             </Menu.Item>
             <Menu.Item key={'solar-panel-width'} style={{ paddingLeft: '40px' }}>
-              <Space style={{ width: '150px' }}>{'Width (' + Math.round(solarPanel.lx / dx) + ' panels):'}</Space>
+              <Space style={{ width: '150px' }}>
+                {i18n.t('word.Width', lang) +
+                  ' (' +
+                  Math.round(solarPanel.lx / dx) +
+                  ' ' +
+                  i18n.t('solarPanelMenu.Panels', lang) +
+                  '):'}
+              </Space>
               <InputNumber
                 min={dx}
                 max={100 * dx}
@@ -119,7 +128,14 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
               />
             </Menu.Item>
             <Menu.Item key={'solar-panel-length'} style={{ paddingLeft: '40px' }}>
-              <Space style={{ width: '150px' }}>{'Length (' + Math.round(solarPanel.ly / dy) + ' panels):'}</Space>
+              <Space style={{ width: '150px' }}>
+                {i18n.t('word.Length', lang) +
+                  ' (' +
+                  Math.round(solarPanel.ly / dy) +
+                  ' ' +
+                  i18n.t('solarPanelMenu.Panels', lang) +
+                  '):'}
+              </Space>
               <InputNumber
                 min={dy}
                 max={100 * dy}
@@ -139,7 +155,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
             {panelNormal && Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z) && (
               <>
                 <Menu.Item key={'solar-panel-tilt-angle'} style={{ paddingLeft: '40px' }}>
-                  <Space style={{ width: '150px' }}>Tilt Angle: </Space>
+                  <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.TiltAngle', lang) + ':'}</Space>
                   <InputNumber
                     min={-90}
                     max={90}
@@ -157,7 +173,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                   />
                 </Menu.Item>
                 <Menu.Item key={'solar-panel-relative-azimuth'} style={{ paddingLeft: '40px' }}>
-                  <Space style={{ width: '150px' }}>Relative Azimuth: </Space>
+                  <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.RelativeAzimuth', lang) + ':'}</Space>
                   <InputNumber
                     min={-180}
                     max={180}
@@ -177,7 +193,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                   />
                 </Menu.Item>
                 <Menu.Item key={'solar-panel-tracker'} style={{ paddingLeft: '40px' }}>
-                  <Space style={{ width: '150px' }}>Tracker: </Space>
+                  <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.Tracker', lang) + ':'}</Space>
                   <Select
                     style={{ width: '120px' }}
                     value={solarPanel.trackerType}
@@ -219,7 +235,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                   </Select>
                 </Menu.Item>
                 <Menu.Item key={'solar-panel-pole-height'} style={{ paddingLeft: '40px' }}>
-                  <Space style={{ width: '150px' }}>Pole Height: </Space>
+                  <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.PoleHeight', lang) + ':'}</Space>
                   <InputNumber
                     min={0}
                     max={5}
@@ -237,7 +253,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                   />
                 </Menu.Item>
                 <Menu.Item key={'solar-panel-pole-spacing'} style={{ paddingLeft: '40px' }}>
-                  <Space style={{ width: '150px' }}>Pole Spacing: </Space>
+                  <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.PoleSpacing', lang) + ':'}</Space>
                   <InputNumber
                     min={2}
                     max={10}
@@ -267,17 +283,17 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                   }
                 }}
               >
-                Draw Sun Beam
+                {i18n.t('solarPanelMenu.DrawSunBeam', lang)}
               </Checkbox>
             </Menu.Item>
             <Menu.Item key={'solar-panel-show-label'}>
               <Checkbox checked={!!solarPanel?.showLabel} onChange={showElementLabel}>
-                Keep Showing Label
+                {i18n.t('solarPanelMenu.KeepShowingLabel', lang)}
               </Checkbox>
             </Menu.Item>
             <Menu.Item key={'solar-panel-label-text'} style={{ paddingLeft: '40px' }}>
               <Input
-                addonBefore="Label:"
+                addonBefore={i18n.t('solarPanelMenu.Label', lang) + ':'}
                 value={labelText}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
                 onPressEnter={updateElementLabelText}

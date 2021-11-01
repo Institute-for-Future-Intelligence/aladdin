@@ -11,6 +11,7 @@ import { Space } from 'antd';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from '../analysis/heatTools';
 import dayjs from 'dayjs';
 import { Util } from '../Util';
+import i18n from '../i18n';
 
 const Container = styled.div`
   position: absolute;
@@ -51,6 +52,7 @@ export interface InfoPanelProps {
 }
 
 const InfoPanel = ({ city }: InfoPanelProps) => {
+  const language = useStore((state) => state.language);
   const dateString = useStore((state) => state.world.date);
   const address = useStore((state) => state.world.address);
   const latitude = useStore((state) => state.world.latitude);
@@ -59,19 +61,15 @@ const InfoPanel = ({ city }: InfoPanelProps) => {
   const now = new Date(dateString);
   const [dailyTemperatures, setDailyTemperatures] = useState({ low: 0, high: 20 });
   const [currentTemperature, setCurrentTemperature] = useState<number>(10);
-
   const sunlightDirection = useStore((state) => state.sunlightDirection);
   const daytime = sunlightDirection.y > 0;
+  const lang = { lng: language };
 
   useEffect(() => {
     if (city) {
       const weather = weatherData[city];
       if (weather) {
-        const t = computeOutsideTemperature(
-          now,
-          weather.lowestTemperatures,
-          weather.highestTemperatures,
-        );
+        const t = computeOutsideTemperature(now, weather.lowestTemperatures, weather.highestTemperatures);
         setDailyTemperatures(t);
         const c = getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(now));
         setCurrentTemperature(c);
@@ -120,10 +118,12 @@ const InfoPanel = ({ city }: InfoPanelProps) => {
           {dailyTemperatures
             ? currentTemperature.toFixed(1) +
               '°C (' +
-              'Low: ' +
+              i18n.t('infoPanel.Low', lang) +
+              ':' +
               dailyTemperatures.low.toFixed(1) +
               '°C, ' +
-              'High: ' +
+              i18n.t('infoPanel.High', lang) +
+              ': ' +
               dailyTemperatures.high.toFixed(1) +
               '°C)'
             : ''}

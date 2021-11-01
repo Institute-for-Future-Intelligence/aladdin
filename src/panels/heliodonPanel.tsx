@@ -9,6 +9,7 @@ import { DatePicker, Slider, Space, Switch, TimePicker } from 'antd';
 import moment from 'moment';
 import 'antd/dist/antd.css';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
+import i18n from '../i18n';
 
 const Container = styled.div`
   position: absolute;
@@ -55,6 +56,7 @@ const Header = styled.div`
 `;
 
 const HeliodonPanel = () => {
+  const language = useStore((state) => state.language);
   const setCommonStore = useStore((state) => state.set);
   const dateString = useStore((state) => state.world.date);
   const latitude = useStore((state) => state.world.latitude);
@@ -66,14 +68,11 @@ const HeliodonPanel = () => {
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 680;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 250;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(viewState.heliodonPanelX)
-      ? 0
-      : Math.max(viewState.heliodonPanelX, wOffset - window.innerWidth),
-    y: isNaN(viewState.heliodonPanelY)
-      ? 0
-      : Math.min(viewState.heliodonPanelY, window.innerHeight - hOffset),
+    x: isNaN(viewState.heliodonPanelX) ? 0 : Math.max(viewState.heliodonPanelX, wOffset - window.innerWidth),
+    y: isNaN(viewState.heliodonPanelY) ? 0 : Math.min(viewState.heliodonPanelY, window.innerHeight - hOffset),
   });
   const date = useMemo(() => new Date(dateString), [dateString]);
+  const lang = { lng: language };
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
@@ -162,7 +161,7 @@ const HeliodonPanel = () => {
                 closePanel();
               }}
             >
-              Close
+              {i18n.t('word.Close', lang)}
             </span>
           </Header>
           <Space style={{ padding: '20px' }} align={'baseline'} size={20}>

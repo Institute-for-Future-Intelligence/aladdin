@@ -12,6 +12,7 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
 import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { screenshot } from '../helpers';
+import i18n from '../i18n';
 
 const Container = styled.div`
   position: fixed;
@@ -66,11 +67,8 @@ export interface DailyLightSensorPanelProps {
   [key: string]: any;
 }
 
-const DailyLightSensorPanel = ({
-  city,
-  collectDailyLightSensorData,
-  ...rest
-}: DailyLightSensorPanelProps) => {
+const DailyLightSensorPanel = ({ city, collectDailyLightSensorData, ...rest }: DailyLightSensorPanelProps) => {
+  const language = useStore((state) => state.language);
   const setCommonStore = useStore((state) => state.set);
   const viewState = useStore((state) => state.viewState);
   const sensorLabels = useStore((state) => state.sensorLabels);
@@ -88,6 +86,7 @@ const DailyLightSensorPanel = ({
       : Math.min(viewState.dailyLightSensorPanelY, window.innerHeight - hOffset),
   });
 
+  const lang = { lng: language };
   const responsiveHeight = 100;
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
@@ -140,7 +139,8 @@ const DailyLightSensorPanel = ({
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>
-              Light Sensor: Weather Data from {city} | {moment(now).format('MM/DD')}
+              {i18n.t('sensorPanel.LightSensor', lang)}: {i18n.t('sensorPanel.WeatherDataFrom', lang)} {city} |{' '}
+              {moment(now).format('MM/DD')}
             </span>
             <span
               style={{ cursor: 'pointer' }}
@@ -151,7 +151,7 @@ const DailyLightSensorPanel = ({
                 closePanel();
               }}
             >
-              Close
+              {i18n.t('word.Close', lang)}
             </span>
           </Header>
           <LineGraph
@@ -173,13 +173,13 @@ const DailyLightSensorPanel = ({
             <Button
               type="default"
               icon={<ReloadOutlined />}
-              title={'Update'}
+              title={i18n.t('word.Update', lang)}
               onClick={collectDailyLightSensorData}
             />
             <Button
               type="default"
               icon={<SaveOutlined />}
-              title={'Save as image'}
+              title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
                 screenshot('line-graph-' + labelX + '-' + labelY, 'daily-light-sensor', {});
               }}

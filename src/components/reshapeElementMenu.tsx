@@ -7,6 +7,7 @@ import { InputNumber, Menu, Space } from 'antd';
 import { Util } from '../Util';
 import { useStore } from '../stores/common';
 import { ObjectType } from '../types';
+import i18n from '../i18n';
 
 export interface ReshapeElementMenuProps {
   elementId: string;
@@ -26,8 +27,8 @@ export interface ReshapeElementMenuProps {
 const ReshapeElementMenu = ({
   elementId,
   name = 'default',
-  maxWidth = 100,
-  maxLength = 100,
+  maxWidth = 1000,
+  maxLength = 1000,
   maxHeight = 100,
   adjustWidth = true,
   adjustLength = true,
@@ -36,18 +37,20 @@ const ReshapeElementMenu = ({
   widthName = 'Width',
   ...rest
 }: ReshapeElementMenuProps) => {
+  const language = useStore((state) => state.language);
   const setElementSize = useStore((state) => state.setElementSize);
   const setElementRotation = useStore((state) => state.setElementRotation);
   const getElementById = useStore((state) => state.getElementById);
   const updateElementById = useStore((state) => state.updateElementById);
   const element = getElementById(elementId);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const lang = { lng: language };
 
   return (
     <Menu key={name} {...rest}>
       {adjustWidth && (
         <Menu.Item key={name + '-lx'}>
-          <Space style={{ width: '60px' }}>{widthName}:</Space>
+          <Space style={{ width: '60px' }}>{widthName === 'Width' ? i18n.t('word.Width', lang) : widthName}:</Space>
           <InputNumber
             min={0.1}
             max={maxWidth}
@@ -66,9 +69,7 @@ const ReshapeElementMenu = ({
                 const text = (event.target as HTMLInputElement).value;
                 let value;
                 try {
-                  value = parseFloat(
-                    text.endsWith('m') ? text.substring(0, text.length - 1).trim() : text,
-                  );
+                  value = parseFloat(text.endsWith('m') ? text.substring(0, text.length - 1).trim() : text);
                 } catch (err) {
                   console.log(err);
                   return;
@@ -82,7 +83,7 @@ const ReshapeElementMenu = ({
       )}
       {adjustLength && (
         <Menu.Item key={name + '-ly'}>
-          <Space style={{ width: '60px' }}>Length:</Space>
+          <Space style={{ width: '60px' }}>{i18n.t('word.Length', lang)}:</Space>
           <InputNumber
             min={0.1}
             max={maxLength}
@@ -101,9 +102,7 @@ const ReshapeElementMenu = ({
                 const text = (event.target as HTMLInputElement).value;
                 let value;
                 try {
-                  value = parseFloat(
-                    text.endsWith('m') ? text.substring(0, text.length - 1).trim() : text,
-                  );
+                  value = parseFloat(text.endsWith('m') ? text.substring(0, text.length - 1).trim() : text);
                 } catch (err) {
                   console.log(err);
                   return;
@@ -117,7 +116,7 @@ const ReshapeElementMenu = ({
       )}
       {adjustHeight && (
         <Menu.Item key={name + '-lz'}>
-          <Space style={{ width: '60px' }}>Height:</Space>
+          <Space style={{ width: '60px' }}>{i18n.t('word.Height', lang)}:</Space>
           <InputNumber
             min={0.1}
             max={maxHeight}
@@ -145,9 +144,7 @@ const ReshapeElementMenu = ({
                 const text = (event.target as HTMLInputElement).value;
                 let value;
                 try {
-                  value = parseFloat(
-                    text.endsWith('m') ? text.substring(0, text.length - 1).trim() : text,
-                  );
+                  value = parseFloat(text.endsWith('m') ? text.substring(0, text.length - 1).trim() : text);
                 } catch (err) {
                   console.log(err);
                   return;
@@ -170,7 +167,7 @@ const ReshapeElementMenu = ({
       )}
       {adjustAngle && (
         <Menu.Item key={name + '-angle'}>
-          <Space style={{ width: '60px' }}>Angle:</Space>
+          <Space style={{ width: '60px' }}>{i18n.t('word.Angle', lang)}:</Space>
           <InputNumber
             min={-360}
             max={360}
@@ -180,12 +177,7 @@ const ReshapeElementMenu = ({
             formatter={(a) => Number(a).toFixed(1) + '°'}
             onChange={(value) => {
               if (element && value !== null) {
-                setElementRotation(
-                  element.id,
-                  element.rotation[0],
-                  element.rotation[1],
-                  Util.toRadians(-value),
-                );
+                setElementRotation(element.id, element.rotation[0], element.rotation[1], Util.toRadians(-value));
                 setUpdateFlag(!updateFlag);
               }
             }}
@@ -194,19 +186,12 @@ const ReshapeElementMenu = ({
                 const text = (event.target as HTMLInputElement).value;
                 let value;
                 try {
-                  value = parseFloat(
-                    text.endsWith('°') ? text.substring(0, text.length - 1).trim() : text,
-                  );
+                  value = parseFloat(text.endsWith('°') ? text.substring(0, text.length - 1).trim() : text);
                 } catch (err) {
                   console.log(err);
                   return;
                 }
-                setElementRotation(
-                  element.id,
-                  element.rotation[0],
-                  element.rotation[1],
-                  Util.toRadians(-value),
-                );
+                setElementRotation(element.id, element.rotation[0], element.rotation[1], Util.toRadians(-value));
                 setUpdateFlag(!updateFlag);
               }
             }}

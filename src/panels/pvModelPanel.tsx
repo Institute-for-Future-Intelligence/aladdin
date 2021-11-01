@@ -8,18 +8,20 @@ import { SolarPanelModel } from '../models/SolarPanelModel';
 import { Row, Select, Col, Input } from 'antd';
 import { SolarPanelNominalSize } from '../models/SolarPanelNominalSize';
 import { Orientation, ShadeTolerance } from '../types';
+import i18n from '../i18n';
 
 const { Option } = Select;
 
 export interface PvModelPanelProps {}
 
 const PvModelPanel = ({}: PvModelPanelProps) => {
+  const language = useStore((state) => state.language);
   const updateElementById = useStore((state) => state.updateElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const setElementSize = useStore((state) => state.setElementSize);
   const pvModules = useStore((state) => state.pvModules);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-
+  const lang = { lng: language };
   const solarPanel = getSelectedElement() as SolarPanelModel;
 
   const panelSizeString =
@@ -36,7 +38,7 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
     <>
       <Row gutter={16} style={{ paddingBottom: '10px' }}>
         <Col className="gutter-row" span={14}>
-          Model:
+          {i18n.t('pvModelPanel.Model', lang) + ':'}
         </Col>
         <Col className="gutter-row" span={10}>
           <Select
@@ -71,7 +73,7 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
       </Row>
       <Row gutter={16} style={{ paddingBottom: '10px' }}>
         <Col className="gutter-row" span={14}>
-          Panel Size:
+          {i18n.t('pvModelPanel.PanelSize', lang) + ':'}
         </Col>
         <Col className="gutter-row" span={10}>
           <Select
@@ -94,7 +96,7 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
       </Row>
       <Row gutter={16} style={{ paddingBottom: '10px' }}>
         <Col className="gutter-row" span={14}>
-          Cell Type:
+          {i18n.t('pvModelPanel.CellType', lang) + ':'}
         </Col>
         <Col className="gutter-row" span={10}>
           <Select
@@ -108,15 +110,15 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
             }}
           >
             <Option key={'Monocrystalline'} value={'Monocrystalline'}>
-              Monocrystalline
+              {i18n.t('pvModelPanel.Monocrystalline', lang)}
             </Option>
             )
             <Option key={'Polycrystalline'} value={'Polycrystalline'}>
-              Polycrystalline
+              {i18n.t('pvModelPanel.Polycrystalline', lang)}
             </Option>
             )
             <Option key={'Thin Film'} value={'Thin Film'}>
-              Thin Film
+              {i18n.t('pvModelPanel.ThinFilm', lang)}
             </Option>
             )
           </Select>
@@ -124,7 +126,7 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
       </Row>
       <Row gutter={16} style={{ paddingBottom: '10px' }}>
         <Col className="gutter-row" span={14}>
-          Color:
+          {i18n.t('word.Color', lang) + ':'}
         </Col>
         <Col className="gutter-row" span={10}>
           <Select
@@ -138,11 +140,11 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
             }}
           >
             <Option key={'Black'} value={'Black'}>
-              Black
+              {i18n.t('pvModelPanel.Black', lang)}
             </Option>
             )
             <Option key={'Blue'} value={'Blue'}>
-              Blue
+              {i18n.t('pvModelPanel.Blue', lang)}
             </Option>
             )
           </Select>
@@ -150,7 +152,7 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
       </Row>
       <Row gutter={16} style={{ paddingBottom: '10px' }}>
         <Col className="gutter-row" span={14}>
-          Solar Cell Efficiency (%):
+          {i18n.t('pvModelPanel.SolarCellEfficiency', lang) + ' (%):'}
         </Col>
         <Col className="gutter-row" span={10}>
           <Input
@@ -167,7 +169,7 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
       </Row>
       <Row gutter={16} style={{ paddingBottom: '10px' }}>
         <Col className="gutter-row" span={14}>
-          Nominal Operating Cell Temperature (°C)::
+          {i18n.t('pvModelPanel.NominalOperatingCellTemperature', lang) + ' (°C):'}
         </Col>
         <Col className="gutter-row" span={10}>
           <Input
@@ -184,7 +186,7 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
       </Row>
       <Row gutter={16} style={{ paddingBottom: '10px' }}>
         <Col className="gutter-row" span={14}>
-          Temperature Coefficient of Pmax (%/(°C)::
+          {i18n.t('pvModelPanel.TemperatureCoefficientOfPmax', lang) + ' (%/°C):'}
         </Col>
         <Col className="gutter-row" span={10}>
           <Input
@@ -201,7 +203,7 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
       </Row>
       <Row gutter={16} style={{ paddingBottom: '10px' }}>
         <Col className="gutter-row" span={14}>
-          Shade Tolerance:
+          {i18n.t('pvModelPanel.ShadeTolerance', lang) + ':'}
         </Col>
         <Col className="gutter-row" span={10}>
           <Select

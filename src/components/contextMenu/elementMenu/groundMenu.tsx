@@ -11,8 +11,10 @@ import { CompactPicker } from 'react-color';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { Paste } from '../menuItems';
+import i18n from '../../../i18n';
 
 export const GroundMenu = () => {
+  const language = useStore((state) => state.language);
   const albedo = useStore((state) => state.world.ground.albedo);
   const groundColor = useStore((state) => state.viewState.groundColor);
   const setCommonStore = useStore((state) => state.set);
@@ -22,6 +24,8 @@ export const GroundMenu = () => {
   const groundImage = useStore((state) => state.viewState.groundImage);
   const treeCount = countElementsByType(ObjectType.Tree);
   const humanCount = countElementsByType(ObjectType.Human);
+
+  const lang = { lng: language };
 
   return (
     <>
@@ -34,15 +38,15 @@ export const GroundMenu = () => {
             Modal.confirm({
               title: 'Do you really want to remove all ' + humanCount + ' people?',
               icon: <ExclamationCircleOutlined />,
-              okText: 'OK',
-              cancelText: 'Cancel',
+              okText: i18n.t('word.OK', lang),
+              cancelText: i18n.t('word.Cancel', lang),
               onOk: () => {
                 removeElementsByType(ObjectType.Human);
               },
             });
           }}
         >
-          Remove All {humanCount} People
+          {i18n.t('groundMenu.RemoveAllPeople', lang)} ({humanCount})
         </Menu.Item>
       )}
       {treeCount > 0 && (
@@ -53,20 +57,20 @@ export const GroundMenu = () => {
             Modal.confirm({
               title: 'Do you really want to remove all ' + treeCount + ' trees?',
               icon: <ExclamationCircleOutlined />,
-              okText: 'OK',
-              cancelText: 'Cancel',
+              okText: i18n.t('word.OK', lang),
+              cancelText: i18n.t('word.Cancel', lang),
               onOk: () => {
                 removeElementsByType(ObjectType.Tree);
               },
             });
           }}
         >
-          Remove All {treeCount} Trees
+          {i18n.t('groundMenu.RemoveAllTrees', lang)} ({treeCount})
         </Menu.Item>
       )}
       <Menu>
         <Menu.Item style={{ paddingLeft: '36px' }} key={'ground-albedo'}>
-          <Space style={{ width: '60px' }}>Albedo:</Space>
+          <Space style={{ width: '60px' }}>{i18n.t('groundMenu.Albedo', lang)}:</Space>
           <InputNumber
             min={0.05}
             max={1}
@@ -92,10 +96,10 @@ export const GroundMenu = () => {
             });
           }}
         >
-          Image on Ground
+          {i18n.t('groundMenu.ImageOnGround', lang)}
         </Checkbox>
       </Menu.Item>
-      <SubMenu key={'ground-color'} title={'Color'} style={{ paddingLeft: '24px' }}>
+      <SubMenu key={'ground-color'} title={i18n.t('word.Color', { lng: language })} style={{ paddingLeft: '24px' }}>
         <CompactPicker
           color={groundColor}
           onChangeComplete={(colorResult) => {

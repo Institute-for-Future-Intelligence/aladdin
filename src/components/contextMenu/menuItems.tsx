@@ -4,22 +4,24 @@
 
 import React from 'react';
 import { Checkbox, Menu } from 'antd';
-
 import { useStore } from '../../stores/common';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ColorResult, CompactPicker } from 'react-color';
+import i18n from '../../i18n';
 
 export const Paste = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
+  const language = useStore((state) => state.language);
   const pasteElement = useStore((state) => state.pasteElement);
 
   return (
     <Menu.Item key={'ground-paste'} onClick={pasteElement} style={{ paddingLeft: paddingLeft }}>
-      Paste
+      {i18n.t('word.Paste', { lng: language })}
     </Menu.Item>
   );
 };
 
 export const Copy = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
+  const language = useStore((state) => state.language);
   const copyElementById = useStore((state) => state.copyElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
 
@@ -32,12 +34,13 @@ export const Copy = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
 
   return (
     <Menu.Item key={'foundation-copy'} onClick={copyElement} style={{ paddingLeft: paddingLeft }}>
-      Copy
+      {i18n.t('word.Copy', { lng: language })}
     </Menu.Item>
   );
 };
 
 export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
+  const language = useStore((state) => state.language);
   const cutElementById = useStore((state) => state.cutElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
 
@@ -50,12 +53,13 @@ export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
 
   return (
     <Menu.Item key={'foundation-cut'} onClick={cutElement} style={{ paddingLeft: paddingLeft }}>
-      Cut
+      {i18n.t('word.Cut', { lng: language })}
     </Menu.Item>
   );
 };
 
 export const Lock = () => {
+  const language = useStore((state) => state.language);
   const updateElementById = useStore((state) => state.updateElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const selectedElement = getSelectedElement();
@@ -75,13 +79,14 @@ export const Lock = () => {
           lockElement(e.target.checked);
         }}
       >
-        Lock
+        {i18n.t('word.Lock', { lng: language })}
       </Checkbox>
     </Menu.Item>
   );
 };
 
 export const ColorPicker = () => {
+  const language = useStore((state) => state.language);
   const updateElementById = useStore((state) => state.updateElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const selectedElement = getSelectedElement();
@@ -93,7 +98,7 @@ export const ColorPicker = () => {
   };
 
   return (
-    <SubMenu key={'color'} title={'Color'} style={{ paddingLeft: '24px' }}>
+    <SubMenu key={'color'} title={i18n.t('word.Color', { lng: language })} style={{ paddingLeft: '24px' }}>
       <CompactPicker color={selectedElement?.color} onChangeComplete={changeElementColor} />
     </SubMenu>
   );

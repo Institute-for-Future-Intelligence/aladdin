@@ -125,7 +125,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
     }
   }, [cloudFiles.current]);
 
-  const lng = { lng: language };
+  const lang = { lng: language };
 
   const init = () => {
     if (query.userid && query.title) {
@@ -395,16 +395,16 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
   const avatarMenu = (
     <Menu>
       <Menu.Item key="save-file-to-cloud" onClick={showTitleDialog}>
-        {i18n.t('avatarMenu.SaveFileToCloud', lng)}
+        {i18n.t('avatarMenu.SaveFileToCloud', lang)}
       </Menu.Item>
       <Menu.Item key="my-cloud-files" onClick={gotoMyCloudFiles}>
-        {i18n.t('avatarMenu.MyCloudFiles', lng)}
+        {i18n.t('avatarMenu.MyCloudFiles', lang)}
       </Menu.Item>
       <Menu.Item key="account" onClick={gotoAccountSettings}>
-        {i18n.t('avatarMenu.AccountSettings', lng)}
+        {i18n.t('avatarMenu.AccountSettings', lang)}
       </Menu.Item>
       <Menu.Item key="signOut" onClick={signOut}>
-        {i18n.t('avatarMenu.SignOut', lng)}
+        {i18n.t('avatarMenu.SignOut', lang)}
       </Menu.Item>
     </Menu>
   );
@@ -434,7 +434,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
         <Space direction="horizontal">
           <div>
             <FontAwesomeIcon
-              title={i18n.t('toolbar.Select', lng)}
+              title={i18n.t('toolbar.Select', lang)}
               icon={faMousePointer}
               size={'3x'}
               color={objectTypeToAdd === ObjectType.None ? 'antiquewhite' : '#666666'}
@@ -442,7 +442,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               onClick={resetToSelectMode}
             />
             <img
-              title={i18n.t('toolbar.AddFoundation', lng)}
+              title={i18n.t('toolbar.AddFoundation', lang)}
               alt={'Foundation'}
               src={FoundationImage}
               height={56}
@@ -465,7 +465,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               }}
             />
             <img
-              title={i18n.t('toolbar.AddWall', lng)}
+              title={i18n.t('toolbar.AddWall', lang)}
               alt={'Wall'}
               src={WallImage}
               height={56}
@@ -489,7 +489,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               }}
             />
             <img
-              title={i18n.t('toolbar.AddWindow', lng)}
+              title={i18n.t('toolbar.AddWindow', lang)}
               alt={'Window'}
               src={WindowImage}
               height={56}
@@ -512,7 +512,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               }}
             />
             <img
-              title={i18n.t('toolbar.AddRoof', lng)}
+              title={i18n.t('toolbar.AddRoof', lang)}
               alt={'Roof'}
               src={RoofImage}
               height={56}
@@ -535,7 +535,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               }}
             />
             <FontAwesomeIcon
-              title={i18n.t('toolbar.AddCuboid', lng)}
+              title={i18n.t('toolbar.AddCuboid', lang)}
               icon={faCube}
               size={'3x'}
               color={objectTypeToAdd === ObjectType.Cuboid ? 'antiquewhite' : '#666666'}
@@ -547,7 +547,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               }}
             />
             <FontAwesomeIcon
-              title={i18n.t('toolbar.AddSensor', lng)}
+              title={i18n.t('toolbar.AddSensor', lang)}
               icon={faTachometerAlt}
               size={'3x'}
               color={objectTypeToAdd === ObjectType.Sensor ? 'antiquewhite' : '#666666'}
@@ -559,7 +559,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               }}
             />
             <img
-              title={i18n.t('toolbar.AddSolarPanel', lng)}
+              title={i18n.t('toolbar.AddSolarPanel', lang)}
               alt={'Solar panel'}
               src={SolarPanelImage}
               height={56}
@@ -581,7 +581,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               }}
             />
             <FontAwesomeIcon
-              title={i18n.t('toolbar.AddTree', lng)}
+              title={i18n.t('toolbar.AddTree', lang)}
               icon={faTree}
               size={'3x'}
               color={objectTypeToAdd === ObjectType.Tree ? 'antiquewhite' : '#666666'}
@@ -593,7 +593,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               }}
             />
             <FontAwesomeIcon
-              title={i18n.t('toolbar.AddPeople', lng)}
+              title={i18n.t('toolbar.AddPeople', lang)}
               icon={faWalking}
               size={'3x'}
               color={objectTypeToAdd === ObjectType.Human ? 'antiquewhite' : '#666666'}
@@ -605,7 +605,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               }}
             />
             <FontAwesomeIcon
-              title={i18n.t('toolbar.ClearScene', lng)}
+              title={i18n.t('toolbar.ClearScene', lang)}
               icon={faEraser}
               size={'3x'}
               color={'#666666'}
@@ -613,7 +613,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               onClick={removeAllContent}
             />
             <FontAwesomeIcon
-              title={i18n.t('toolbar.ResetView', lng)}
+              title={i18n.t('toolbar.ResetView', lang)}
               icon={faArrowAltCircleUp}
               size={'3x'}
               color={'#666666'}
@@ -621,7 +621,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               onClick={onResetViewButtonClicked}
             />
             <FontAwesomeIcon
-              title={i18n.t('toolbar.AutoRotate', lng)}
+              title={i18n.t('toolbar.AutoRotate', lang)}
               icon={faAsymmetrik}
               size={'3x'}
               color={autoRotate ? 'antiquewhite' : '#666666'}
@@ -629,7 +629,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               onClick={toggleAutoRotate}
             />
             <FontAwesomeIcon
-              title={i18n.t('toolbar.ShowHeliodonPanel', lng)}
+              title={i18n.t('toolbar.ShowHeliodonPanel', lang)}
               icon={faSun}
               size={'3x'}
               color={showHeliodonPanel ? 'antiquewhite' : '#666666'}
@@ -637,7 +637,7 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               onClick={toggleHelidonPanel}
             />
             <img
-              title={i18n.t('toolbar.ShowShadow', lng)}
+              title={i18n.t('toolbar.ShowShadow', lang)}
               alt={'Shadow effect'}
               src={ShadowImage}
               height={48}
@@ -660,14 +660,14 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
                 <a
                   className="ant-dropdown-link"
                   onClick={(e) => e.preventDefault()}
-                  title={i18n.t('tooltip.clickToAccessCloudTools', lng)}
+                  title={i18n.t('tooltip.clickToAccessCloudTools', lang)}
                 >
                   <Avatar size={32} src={user.photoURL} alt={user.displayName} />
                 </a>
               </Dropdown>
             ) : (
-              <Button type="primary" title={i18n.t('avatarMenu.SignIn', lng)} onClick={signIn}>
-                {i18n.t('avatarMenu.SignIn', lng)}
+              <Button type="primary" title={i18n.t('avatarMenu.SignIn', lang)} onClick={signIn}>
+                {i18n.t('avatarMenu.SignIn', lang)}
               </Button>
             )}
           </div>
