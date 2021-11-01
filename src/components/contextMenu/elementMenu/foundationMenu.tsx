@@ -46,8 +46,6 @@ export const FoundationMenu = () => {
                   title:
                     'Do you really want to remove all the ' + sensorCountFoundation + ' sensors on this foundation?',
                   icon: <ExclamationCircleOutlined />,
-                  okText: i18n.t('word.OK', lang),
-                  cancelText: i18n.t('word.Cancel', lang),
                   onOk: () => {
                     if (selectedElement) {
                       removeAllChildElementsByType(selectedElement.id, ObjectType.Sensor);
@@ -71,8 +69,6 @@ export const FoundationMenu = () => {
                     solarRackCountFoundation +
                     ' racks on this foundation?',
                   icon: <ExclamationCircleOutlined />,
-                  okText: i18n.t('word.OK', lang),
-                  cancelText: i18n.t('word.Cancel', lang),
                   onOk: () => {
                     if (selectedElement) {
                       removeAllChildElementsByType(selectedElement.id, ObjectType.SolarPanel);

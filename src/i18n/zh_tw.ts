@@ -9,6 +9,17 @@ export const i18n_zh_tw = {
       Aladdin: '阿拉丁',
     },
 
+    aboutUs: {
+      ProductBroughtToYouBy: '未來智能研究所榮譽出品',
+      TermsOfService: '服務條款',
+      PrivacyPolicy: '隱私政策',
+      Software: '軟體',
+      Content: '課件',
+      Research: '研究',
+      Support: '服務',
+      Acknowledgment: '鳴謝',
+    },
+
     word: {
       Version: '版本',
       Options: '選項',

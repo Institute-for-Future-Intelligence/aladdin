@@ -3,6 +3,8 @@
  */
 
 import React from 'react';
+import { useStore } from './stores/common';
+import i18n from './i18n/i18n';
 
 export interface TeamProps {
   top: number;
@@ -11,9 +13,12 @@ export interface TeamProps {
 }
 
 const Team = ({ top, height, color }: TeamProps) => {
+  const language = useStore((state) => state.language);
+  const lang = { lng: language };
   const linePos = top + 56 + 'px';
   const top110 = top + 110 + 'px';
   const top250 = top + 220 + 'px';
+
   return (
     <div>
       <div
@@ -28,7 +33,7 @@ const Team = ({ top, height, color }: TeamProps) => {
           height: (height ?? 300) + 'px',
         }}
       >
-        <h2 style={{ marginTop: '20px', color: color }}>This product is brought to you by</h2>
+        <h2 style={{ marginTop: '20px', color: color }}>{i18n.t('aboutUs.ProductBroughtToYouBy', lang)}</h2>
         <p style={{ fontSize: '12px', color: color }}>
           <a
             target="_blank"
@@ -36,7 +41,7 @@ const Team = ({ top, height, color }: TeamProps) => {
             href="https://intofuture.org/aladdin-terms.html"
             style={{ color: color }}
           >
-            Terms of Service
+            {i18n.t('aboutUs.TermsOfService', lang)}
           </a>
           &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
           <a
@@ -45,7 +50,7 @@ const Team = ({ top, height, color }: TeamProps) => {
             href="https://intofuture.org/aladdin-privacy.html"
             style={{ color: color }}
           >
-            Privacy Policy
+            {i18n.t('aboutUs.PrivacyPolicy', lang)}
           </a>
         </p>
       </div>
@@ -77,28 +82,28 @@ const Team = ({ top, height, color }: TeamProps) => {
               }}
             >
               <td>
-                <h3 style={{ color: color }}>Software</h3>
+                <h3 style={{ color: color }}>{i18n.t('aboutUs.Software', lang)}</h3>
                 Charles Xie
                 <br />
                 Xiaotong Ding
                 <br />
               </td>
               <td>
-                <h3 style={{ color: color }}>Content</h3>
+                <h3 style={{ color: color }}>{i18n.t('aboutUs.Content', lang)}</h3>
                 Rundong Jiang
                 <br />
                 Charles Xie
                 <br />
               </td>
               <td>
-                <h3 style={{ color: color }}>Research</h3>
+                <h3 style={{ color: color }}>{i18n.t('aboutUs.Research', lang)}</h3>
                 Shannon Sung
                 <br />
                 Charles Xie
                 <br />
               </td>
               <td>
-                <h3 style={{ color: color }}>Support</h3>
+                <h3 style={{ color: color }}>{i18n.t('aboutUs.Support', lang)}</h3>
                 Rundong Jiang
                 <br />
               </td>
@@ -117,10 +122,10 @@ const Team = ({ top, height, color }: TeamProps) => {
           color: color,
         }}
       >
-        Acknowledgment: The National Science Foundation (NSF) generously provided funding for the research and
-        development of this product through grants #2105695 and #2131097. Any opinions, findings, and conclusions or
-        recommendations expressed in this product, however, are those of the authors and do not necessarily reflect the
-        views of NSF.
+        {i18n.t('aboutUs.Acknowledgment', lang)}: The National Science Foundation (NSF) generously provided funding for
+        the research and development of this product through grants #2105695 and #2131097. Any opinions, findings, and
+        conclusions or recommendations expressed in this product, however, are those of the authors and do not
+        necessarily reflect the views of NSF.
       </div>
     </div>
   );

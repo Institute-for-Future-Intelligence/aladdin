@@ -5,6 +5,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import Team from './team';
+import { useStore } from './stores/common';
+import i18n from './i18n/i18n';
 
 const Container = styled.div`
   position: absolute;
@@ -26,6 +28,7 @@ export interface AboutProps {
 }
 
 const About = ({ openAboutUs }: AboutProps) => {
+  const language = useStore((state) => state.language);
   return (
     <Container>
       <Team top={10} color={'antiquewhite'} />
@@ -41,7 +44,7 @@ const About = ({ openAboutUs }: AboutProps) => {
           openAboutUs(false);
         }}
       >
-        Close
+        {i18n.t('word.Close', { lng: language })}
       </div>
     </Container>
   );

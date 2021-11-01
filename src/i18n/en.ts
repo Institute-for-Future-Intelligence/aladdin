@@ -9,6 +9,17 @@ export const i18n_en = {
       Aladdin: 'Aladdin',
     },
 
+    aboutUs: {
+      ProductBroughtToYouBy: 'This product is brought to you by',
+      TermsOfService: 'Terms of Service',
+      PrivacyPolicy: 'Privacy Policy',
+      Software: 'Software',
+      Content: 'Content',
+      Research: 'Research',
+      Support: 'Support',
+      Acknowledgment: 'Acknowledgment',
+    },
+
     word: {
       Version: 'Version',
       Options: 'Options',

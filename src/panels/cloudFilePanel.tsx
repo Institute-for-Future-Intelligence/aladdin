@@ -117,8 +117,6 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
     Modal.confirm({
       title: 'Do you really want to delete this document titled with "' + title + '"?',
       icon: <ExclamationCircleOutlined />,
-      okText: i18n.t('word.OK', lang),
-      cancelText: i18n.t('word.Cancel', lang),
       onOk: () => {
         deleteCloudFile(email, title);
       },
@@ -142,8 +140,6 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
           setRenameDialogVisible(false);
           setNewTitle(undefined);
         }}
-        okText={i18n.t('word.OK', lang)}
-        cancelText={i18n.t('word.Cancel', lang)}
       >
         <Input
           placeholder="Title"

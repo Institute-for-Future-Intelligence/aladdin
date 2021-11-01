@@ -38,8 +38,6 @@ export const GroundMenu = () => {
             Modal.confirm({
               title: 'Do you really want to remove all ' + humanCount + ' people?',
               icon: <ExclamationCircleOutlined />,
-              okText: i18n.t('word.OK', lang),
-              cancelText: i18n.t('word.Cancel', lang),
               onOk: () => {
                 removeElementsByType(ObjectType.Human);
               },
@@ -57,8 +55,6 @@ export const GroundMenu = () => {
             Modal.confirm({
               title: 'Do you really want to remove all ' + treeCount + ' trees?',
               icon: <ExclamationCircleOutlined />,
-              okText: i18n.t('word.OK', lang),
-              cancelText: i18n.t('word.Cancel', lang),
               onOk: () => {
                 removeElementsByType(ObjectType.Tree);
               },

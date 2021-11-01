@@ -143,8 +143,6 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
     Modal.confirm({
       title: 'Do you really want to clear the content?',
       icon: <ExclamationCircleOutlined />,
-      okText: 'OK',
-      cancelText: 'Cancel',
       onOk: () => {
         clearContent();
       },

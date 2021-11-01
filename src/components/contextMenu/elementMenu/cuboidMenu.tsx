@@ -43,8 +43,6 @@ export const CuboidMenu = () => {
                 Modal.confirm({
                   title: 'Do you really want to remove all the ' + sensorCountCuboid + ' sensors on this cuboid?',
                   icon: <ExclamationCircleOutlined />,
-                  okText: i18n.t('word.OK', lang),
-                  cancelText: i18n.t('word.Cancel', lang),
                   onOk: () => {
                     if (selectedElement) {
                       removeAllChildElementsByType(selectedElement.id, ObjectType.Sensor);
@@ -68,8 +66,6 @@ export const CuboidMenu = () => {
                     solarRackCountCuboid +
                     ' racks on this cuboid?',
                   icon: <ExclamationCircleOutlined />,
-                  okText: i18n.t('word.OK', lang),
-                  cancelText: i18n.t('word.Cancel', lang),
                   onOk: () => {
                     if (selectedElement) {
                       removeAllChildElementsByType(selectedElement.id, ObjectType.SolarPanel);
