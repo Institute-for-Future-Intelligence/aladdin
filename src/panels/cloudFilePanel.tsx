@@ -13,6 +13,7 @@ import { faEdit, faFile, faTrashAlt } from '@fortawesome/free-regular-svg-icons'
 import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { HOME_URL } from '../constants';
 import { copyTextToClipboard, showSuccess } from '../helpers';
+import i18n from '../i18n';
 
 const { Column } = Table;
 
@@ -68,12 +69,8 @@ export interface CloudFilePanelProps {
   renameCloudFile: (userid: string, oldTitle: string, newTitle: string) => void;
 }
 
-const CloudFilePanel = ({
-  cloudFileArray,
-  openCloudFile,
-  deleteCloudFile,
-  renameCloudFile,
-}: CloudFilePanelProps) => {
+const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, renameCloudFile }: CloudFilePanelProps) => {
+  const language = useStore((state) => state.language);
   const setCommonStore = useStore((state) => state.set);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 680;
@@ -83,6 +80,7 @@ const CloudFilePanel = ({
   const [oldTitle, setOldTitle] = useState<string>();
   const [newTitle, setNewTitle] = useState<string>();
   const [email, setEmail] = useState<string>();
+  const lang = { lng: language };
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
@@ -119,8 +117,8 @@ const CloudFilePanel = ({
     Modal.confirm({
       title: 'Do you really want to delete this document titled with "' + title + '"?',
       icon: <ExclamationCircleOutlined />,
-      okText: 'OK',
-      cancelText: 'Cancel',
+      okText: i18n.t('word.OK', lang),
+      cancelText: i18n.t('word.Cancel', lang),
       onOk: () => {
         deleteCloudFile(email, title);
       },
@@ -137,13 +135,15 @@ const CloudFilePanel = ({
   return (
     <>
       <Modal
-        title="Rename"
+        title={i18n.t('word.Rename', lang)}
         visible={renameDialogVisible}
         onOk={renameFile}
         onCancel={() => {
           setRenameDialogVisible(false);
           setNewTitle(undefined);
         }}
+        okText={i18n.t('word.OK', lang)}
+        cancelText={i18n.t('word.Cancel', lang)}
       >
         <Input
           placeholder="Title"
@@ -165,7 +165,7 @@ const CloudFilePanel = ({
         <Container>
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle">
-              <span>My Cloud Files</span>
+              <span>{i18n.t('cloudFilePanel.MyCloudFiles', lang)}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {
@@ -175,7 +175,7 @@ const CloudFilePanel = ({
                   closePanel();
                 }}
               >
-                Close
+                {i18n.t('word.Close', lang)}
               </span>
             </Header>
             <Table
@@ -187,16 +187,16 @@ const CloudFilePanel = ({
                 pageSizeOptions: ['5', '10', '50'],
               }}
             >
-              <Column title="Title" dataIndex="title" key="title" />
-              <Column title="Owner" dataIndex="owner" key="owner" />
-              <Column title="Time" dataIndex="time" key="time" />
+              <Column title={i18n.t('word.Title', lang)} dataIndex="title" key="title" />
+              <Column title={i18n.t('word.Owner', lang)} dataIndex="owner" key="owner" />
+              <Column title={i18n.t('word.Time', lang)} dataIndex="time" key="time" />
               <Column
-                title="Action"
+                title={i18n.t('word.Action', lang)}
                 key="action"
                 render={(text, record: any) => (
                   <Space size="middle">
                     <FontAwesomeIcon
-                      title={'Open'}
+                      title={i18n.t('word.Open', lang)}
                       icon={faFile}
                       size={'lg'}
                       color={'#666666'}
@@ -206,7 +206,7 @@ const CloudFilePanel = ({
                       }}
                     />
                     <FontAwesomeIcon
-                      title={'Delete'}
+                      title={i18n.t('word.Delete', lang)}
                       icon={faTrashAlt}
                       size={'lg'}
                       color={'#666666'}
@@ -216,7 +216,7 @@ const CloudFilePanel = ({
                       }}
                     />
                     <FontAwesomeIcon
-                      title={'Rename'}
+                      title={i18n.t('word.Rename', lang)}
                       icon={faEdit}
                       size={'lg'}
                       color={'#666666'}
@@ -228,7 +228,7 @@ const CloudFilePanel = ({
                       }}
                     />
                     <FontAwesomeIcon
-                      title={'Generate link'}
+                      title={i18n.t('cloudFilePanel.GenerateLink', lang)}
                       icon={faLink}
                       size={'lg'}
                       color={'#666666'}
@@ -241,7 +241,7 @@ const CloudFilePanel = ({
                           '&title=' +
                           encodeURIComponent(record.title);
                         copyTextToClipboard(url);
-                        showSuccess('A link has been generated in the clip board.');
+                        showSuccess(i18n.t('cloudFilePanel.LinkGeneratedInClipBoard', lang) + '.');
                       }}
                     />
                   </Space>

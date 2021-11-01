@@ -151,7 +151,7 @@ const HeliodonPanel = () => {
       <Container>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
-            <span>Heliodon Settings</span>
+            <span>{i18n.t('heliodonPanel.HeliodonSettings', lang)}</span>
             <span
               style={{ cursor: 'pointer' }}
               onTouchStart={() => {
@@ -166,7 +166,7 @@ const HeliodonPanel = () => {
           </Header>
           <Space style={{ padding: '20px' }} align={'baseline'} size={20}>
             <div>
-              Show
+              {i18n.t('word.Show', lang)}
               <br />
               <Switch
                 checked={viewState.heliodon}
@@ -178,7 +178,7 @@ const HeliodonPanel = () => {
               />
             </div>
             <div>
-              Animate
+              {i18n.t('word.Animate', lang)}
               <br />
               <Switch
                 checked={animateSun}
@@ -190,7 +190,7 @@ const HeliodonPanel = () => {
               />
             </div>
             <div>
-              Date
+              {i18n.t('word.Date', lang)}
               <br />
               <DatePicker
                 value={moment(date)}
@@ -209,7 +209,7 @@ const HeliodonPanel = () => {
               />
             </div>
             <div>
-              Time
+              {i18n.t('word.Time', lang)}
               <br />
               <TimePicker
                 value={moment(date, 'HH:mm')}
@@ -220,7 +220,7 @@ const HeliodonPanel = () => {
               />
             </div>
             <div>
-              Latitude: {latitude.toFixed(4)}°
+              {i18n.t('word.Latitude', lang)}: {latitude.toFixed(4)}°
               <Slider
                 style={{ width: '150px' }}
                 marks={{ '-90': '-90°', 0: '0°', 90: '90°' }}
