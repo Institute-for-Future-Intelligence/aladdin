@@ -129,6 +129,9 @@ const MainMenu = ({
           if (reader.result) {
             const input = JSON.parse(reader.result.toString());
             setCommonStore((state) => {
+              // remove old properties
+              if (input.world.hasOwnProperty('cameraPosition')) delete input.world.cameraPosition;
+              if (input.world.hasOwnProperty('panCenter')) delete input.world.panCenter;
               state.world = input.world;
               state.viewState = input.view;
               state.elements = input.elements;

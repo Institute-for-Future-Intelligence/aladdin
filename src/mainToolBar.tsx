@@ -252,18 +252,22 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
     if (t.length > 0) {
       setLoading(true);
       if (user.email) {
-        let doc = firebase.firestore().collection('users').doc(user.email);
-        if (doc) {
-          doc
-            .collection('files')
-            .doc(t)
-            .set(exportContent())
-            .then(() => {
-              setLoading(false);
-            })
-            .catch((error) => {
-              console.log('Error saving file:', error);
-            });
+        try {
+          let doc = firebase.firestore().collection('users').doc(user.email);
+          if (doc) {
+            doc
+              .collection('files')
+              .doc(t)
+              .set(exportContent())
+              .then(() => {
+                setLoading(false);
+              })
+              .catch((error) => {
+                console.log('Error saving file:', error);
+              });
+          }
+        } catch (e) {
+          console.log(e);
         }
       }
       setTitleDialogVisible(false);
@@ -286,6 +290,9 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
           const data = doc.data();
           if (data) {
             setCommonStore((state) => {
+              // remove old properties
+              if (data.world.hasOwnProperty('cameraPosition')) delete data.world.cameraPosition;
+              if (data.world.hasOwnProperty('panCenter')) delete data.world.panCenter;
               state.world = data.world;
               state.viewState = data.view;
               state.elements = data.elements;
