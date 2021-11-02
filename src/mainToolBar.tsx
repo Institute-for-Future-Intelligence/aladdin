@@ -35,6 +35,7 @@ import Spinner from './components/spinner';
 import AccountSettingsPanel from './panels/accountSettingsPanel';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import i18n from './i18n/i18n';
+import { Vector3 } from 'three';
 
 const ButtonsContainer = styled.div`
   position: absolute;
@@ -293,6 +294,8 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               // remove old properties
               if (data.world.hasOwnProperty('cameraPosition')) delete data.world.cameraPosition;
               if (data.world.hasOwnProperty('panCenter')) delete data.world.panCenter;
+              if (!data.view.hasOwnProperty('cameraPosition')) data.view.cameraPosition = { ...new Vector3(0, -5, 0) };
+              if (!data.view.hasOwnProperty('panCenter')) data.view.panCenter = { ...new Vector3(0, 0, 0) };
               state.world = data.world;
               state.viewState = data.view;
               state.elements = data.elements;

@@ -22,6 +22,7 @@ import solar_farm_02 from './examples/solar_farm_02.json';
 import solar_trackers from './examples/solar_trackers.json';
 import simple_house_01 from './examples/simple_house_01.json';
 import i18n from './i18n/i18n';
+import { Vector3 } from 'three';
 
 const { SubMenu } = Menu;
 const { Option } = Select;
@@ -132,6 +133,8 @@ const MainMenu = ({
               // remove old properties
               if (input.world.hasOwnProperty('cameraPosition')) delete input.world.cameraPosition;
               if (input.world.hasOwnProperty('panCenter')) delete input.world.panCenter;
+              if (!input.view.hasOwnProperty('cameraPosition')) input.view.cameraPosition = new Vector3(0, -5, 0);
+              if (!input.view.hasOwnProperty('panCenter')) input.view.panCenter = new Vector3(0, 0, 0);
               state.world = input.world;
               state.viewState = input.view;
               state.elements = input.elements;
