@@ -1,7 +1,7 @@
 /*
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  *
- * @author Charles Xie
+ * @author Charles Xie, Xiaotong Ding
  */
 
 import React, { Suspense, useEffect, useRef, useState } from 'react';
@@ -41,22 +41,17 @@ import DailyPvYieldPanel from './panels/dailyPvYieldPanel';
 import Lights from './lights';
 import { Grid } from './grid';
 import CompassContainer from './compassContainer';
-import { WallModel } from './models/WallModel';
 import * as Selector from 'src/stores/selector';
 import { OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
 import ErrorPage from './ErrorPage';
 import i18n from './i18n/i18n';
-import enUS from 'antd/lib/locale/en_US';
-import zhCN from 'antd/lib/locale/zh_CN';
-import zhTW from 'antd/lib/locale/zh_TW';
-import esES from 'antd/lib/locale/es_ES';
-import trTR from 'antd/lib/locale/tr_TR';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
 import KeyboardListener from './keyboardListener';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore((state) => state.language);
+  const locale = useStore((state) => state.locale);
   const loadWeatherData = useStore(Selector.loadWeatherData);
   const getClosestCity = useStore(Selector.getClosestCity);
   const countElementsByType = useStore(Selector.countElementsByType);
@@ -186,16 +181,6 @@ const App = () => {
   };
 
   const lang = { lng: language };
-  let locale = enUS;
-  if (language === 'zh_cn') {
-    locale = zhCN;
-  } else if (language === 'zh_tw') {
-    locale = zhTW;
-  } else if (language === 'es') {
-    locale = esES;
-  } else if (language === 'tr') {
-    locale = trTR;
-  }
 
   console.log('x');
 

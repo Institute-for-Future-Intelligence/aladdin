@@ -23,6 +23,11 @@ import solar_trackers from './examples/solar_trackers.json';
 import simple_house_01 from './examples/simple_house_01.json';
 import i18n from './i18n/i18n';
 import { Vector3 } from 'three';
+import zhCN from 'antd/lib/locale/zh_CN';
+import zhTW from 'antd/lib/locale/zh_TW';
+import esES from 'antd/lib/locale/es_ES';
+import trTR from 'antd/lib/locale/tr_TR';
+import enUS from 'antd/lib/locale/en_US';
 
 const { SubMenu } = Menu;
 const { Option } = Select;
@@ -175,11 +180,8 @@ const MainMenu = ({
     }
     if (input) {
       setCommonStore((state) => {
-        // @ts-ignore
         state.world = input.world;
-        // @ts-ignore
         state.viewState = input.view;
-        // @ts-ignore
         state.elements = input.elements;
         state.notes = input.notes ?? [];
       });
@@ -421,6 +423,22 @@ const MainMenu = ({
           onChange={(e) => {
             setCommonStore((state) => {
               state.language = e.target.value;
+              switch (state.language) {
+                case 'zh_cn':
+                  state.locale = zhCN;
+                  break;
+                case 'zh_tw':
+                  state.locale = zhTW;
+                  break;
+                case 'es':
+                  state.locale = esES;
+                  break;
+                case 'tr':
+                  state.locale = trTR;
+                  break;
+                default:
+                  state.locale = enUS;
+              }
             });
           }}
         >

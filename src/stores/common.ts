@@ -34,6 +34,8 @@ import { PvModel } from '../models/PvModel';
 import { ThreeEvent } from '@react-three/fiber';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { WallModel } from 'src/models/WallModel';
+import { Locale } from 'antd/lib/locale-provider';
+import enUS from 'antd/lib/locale/en_US';
 
 enableMapSet();
 
@@ -47,6 +49,7 @@ export interface CommonStoreState {
   notes: string[];
   user: User;
   language: string;
+  locale: Locale;
 
   exportContent: () => {};
   clearContent: () => void;
@@ -157,6 +160,7 @@ export const useStore = create<CommonStoreState>(
           notes: [],
           user: {} as User,
           language: 'en',
+          locale: enUS,
           exportContent() {
             const state = get();
             return {
