@@ -6,7 +6,6 @@
 
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useStore } from './stores/common';
-import useKey from './useKey';
 import './app.css';
 import { Camera, Canvas } from '@react-three/fiber';
 import OrbitController from './orbitController';
@@ -52,6 +51,7 @@ import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
 import esES from 'antd/lib/locale/es_ES';
 import trTR from 'antd/lib/locale/tr_TR';
+import KeyboardEventHandler from 'react-keyboard-event-handler';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);
@@ -109,33 +109,39 @@ const App = () => {
     setUpdate(!update);
   }, [orthographic]);
 
-  if (useKey('Delete')) {
-    const selectedElement = getSelectedElement();
-    if (selectedElement) {
-      if (selectedElement.type === ObjectType.Wall) {
-        const currentWall = selectedElement as WallModel;
-        if (currentWall.leftJoints.length > 0) {
-          const targetWall = getElementById(currentWall.leftJoints[0].id) as WallModel;
-          if (targetWall) {
-            updateElementById(targetWall.id, { rightOffset: 0, rightJoints: [] });
+  const onKeyDown = (key: string, e: KeyboardEvent) => {
+    switch (key) {
+      case 'Delete':
+        const selectedElement = getSelectedElement();
+        if (selectedElement) {
+          if (selectedElement.type === ObjectType.Wall) {
+            const currentWall = selectedElement as WallModel;
+            if (currentWall.leftJoints.length > 0) {
+              const targetWall = getElementById(currentWall.leftJoints[0].id) as WallModel;
+              if (targetWall) {
+                updateElementById(targetWall.id, { rightOffset: 0, rightJoints: [] });
+              }
+            }
+            if (currentWall.rightJoints.length > 0) {
+              const targetWall = getElementById(currentWall.rightJoints[0].id) as WallModel;
+              if (targetWall) {
+                updateElementById(targetWall.id, { leftOffset: 0, leftJoints: [] });
+              }
+            }
+            setCommonStore((state) => {
+              state.deletedWallID = selectedElement.id;
+            });
+          }
+          deleteElementById(selectedElement.id);
+          if (canvasRef.current) {
+            canvasRef.current.style.cursor = 'default'; // if an element is deleted but the cursor is not default
           }
         }
-        if (currentWall.rightJoints.length > 0) {
-          const targetWall = getElementById(currentWall.rightJoints[0].id) as WallModel;
-          if (targetWall) {
-            updateElementById(targetWall.id, { leftOffset: 0, leftJoints: [] });
-          }
-        }
-        setCommonStore((state) => {
-          state.deletedWallID = selectedElement.id;
-        });
-      }
-      deleteElementById(selectedElement.id);
-      if (canvasRef.current) {
-        canvasRef.current.style.cursor = 'default'; // if an element is deleted but the cursor is not default
-      }
+        break;
     }
-  }
+  };
+
+  const onKeyUp = (key: string, e: KeyboardEvent) => {};
 
   const setTopView = () => {
     if (orbitControlsRef.current) {
@@ -380,6 +386,16 @@ const App = () => {
                   <Sky theme={viewState.theme} />
                 </Suspense>
               </Canvas>
+              <KeyboardEventHandler
+                handleKeys={['left', 'up', 'right', 'down']}
+                handleEventType={'keydown'}
+                onKeyEvent={(key, e) => onKeyDown(key, e)}
+              ></KeyboardEventHandler>
+              <KeyboardEventHandler
+                handleKeys={['delete']}
+                handleEventType={'keyup'}
+                onKeyEvent={(key, e) => onKeyUp(key, e)}
+              ></KeyboardEventHandler>
             </div>
           </DropdownContextMenu>
           <CompassContainer />
