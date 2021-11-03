@@ -390,12 +390,12 @@ const App = () => {
                 handleKeys={['left', 'up', 'right', 'down']}
                 handleEventType={'keydown'}
                 onKeyEvent={(key, e) => onKeyDown(key, e)}
-              ></KeyboardEventHandler>
+              />
               <KeyboardEventHandler
                 handleKeys={['delete']}
                 handleEventType={'keyup'}
                 onKeyEvent={(key, e) => onKeyUp(key, e)}
-              ></KeyboardEventHandler>
+              />
             </div>
           </DropdownContextMenu>
           <CompassContainer />
