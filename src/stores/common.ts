@@ -136,6 +136,8 @@ export interface CommonStoreState {
   simulationInProgress: boolean;
   locale: Locale;
   localFileName: string;
+  // the following is to fix the bug that when ctrl+o is pressed, the file dialog gets fired up multiple times
+  localFileDialogRequested: boolean;
 }
 
 export const useStore = create<CommonStoreState>(
@@ -746,6 +748,7 @@ export const useStore = create<CommonStoreState>(
           simulationInProgress: false,
           locale: enUS,
           localFileName: 'aladdin.json',
+          localFileDialogRequested: false,
         };
       },
       {

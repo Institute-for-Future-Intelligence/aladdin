@@ -36,6 +36,7 @@ const KeyboardListener = ({
   const getElementById = useStore(Selector.getElementById);
   const updateElementById = useStore(Selector.updateElementById);
   const localFileName = useStore((state) => state.localFileName);
+  const localFileDialogRequested = useStore((state) => state.localFileDialogRequested);
 
   const [downloadDialogVisible, setDownloadDialogVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -48,7 +49,12 @@ const KeyboardListener = ({
   const handleKey = () => {
     switch (keyName) {
       case 'control+o':
-        readLocalFile();
+        if (!localFileDialogRequested) {
+          setCommonStore((state) => {
+            state.localFileDialogRequested = true;
+          });
+          readLocalFile();
+        }
         break;
       case 'control+s':
         setDownloadDialogVisible(true);

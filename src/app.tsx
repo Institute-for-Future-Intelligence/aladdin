@@ -117,6 +117,11 @@ const App = () => {
   };
 
   const readLocalFile = () => {
+    document.body.onfocus = () => {
+      setCommonStore((state) => {
+        state.localFileDialogRequested = false;
+      });
+    };
     const fileDialog = document.getElementById('file-dialog') as HTMLInputElement;
     fileDialog.onchange = (e) => {
       if (fileDialog.files && fileDialog.files.length > 0) {
