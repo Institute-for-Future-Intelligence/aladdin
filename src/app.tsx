@@ -52,17 +52,14 @@ import zhTW from 'antd/lib/locale/zh_TW';
 import esES from 'antd/lib/locale/es_ES';
 import trTR from 'antd/lib/locale/tr_TR';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
+import KeyboardListener from './keyboardListener';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore((state) => state.language);
   const loadWeatherData = useStore(Selector.loadWeatherData);
   const getClosestCity = useStore(Selector.getClosestCity);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
-  const deleteElementById = useStore(Selector.deleteElementById);
   const countElementsByType = useStore(Selector.countElementsByType);
-  const getElementById = useStore(Selector.getElementById);
-  const updateElementById = useStore(Selector.updateElementById);
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
   const orthographic = useStore(Selector.viewstate.orthographic) ?? false;
@@ -84,6 +81,10 @@ const App = () => {
   const [pvDailyIndividualOutputs, setPvDailyIndividualOutputs] = useState<boolean>(false);
   const [pvYearlyIndividualOutputs, setPvYearlyIndividualOutputs] = useState<boolean>(false);
   const [pvModelDialogVisible, setPvModelDialogVisible] = useState<boolean>(false);
+  const [keyName, setKeyName] = useState<string | undefined>();
+  const [keyDown, setKeyDown] = useState<boolean>(false);
+  const [keyUp, setKeyUp] = useState<boolean>(false);
+  const [keyFlag, setKeyFlag] = useState<boolean>(false);
 
   const orbitControlsRef = useRef<OrbitControls>();
   const canvasRef = useRef<HTMLCanvasElement>();
@@ -109,39 +110,12 @@ const App = () => {
     setUpdate(!update);
   }, [orthographic]);
 
-  const onKeyDown = (key: string, e: KeyboardEvent) => {
-    switch (key) {
-      case 'Delete':
-        const selectedElement = getSelectedElement();
-        if (selectedElement) {
-          if (selectedElement.type === ObjectType.Wall) {
-            const currentWall = selectedElement as WallModel;
-            if (currentWall.leftJoints.length > 0) {
-              const targetWall = getElementById(currentWall.leftJoints[0].id) as WallModel;
-              if (targetWall) {
-                updateElementById(targetWall.id, { rightOffset: 0, rightJoints: [] });
-              }
-            }
-            if (currentWall.rightJoints.length > 0) {
-              const targetWall = getElementById(currentWall.rightJoints[0].id) as WallModel;
-              if (targetWall) {
-                updateElementById(targetWall.id, { leftOffset: 0, leftJoints: [] });
-              }
-            }
-            setCommonStore((state) => {
-              state.deletedWallID = selectedElement.id;
-            });
-          }
-          deleteElementById(selectedElement.id);
-          if (canvasRef.current) {
-            canvasRef.current.style.cursor = 'default'; // if an element is deleted but the cursor is not default
-          }
-        }
-        break;
-    }
+  const handleKeyEvent = (key: string, down: boolean, e: KeyboardEvent) => {
+    setKeyName(key);
+    setKeyDown(down);
+    setKeyUp(!down);
+    setKeyFlag(!keyFlag);
   };
-
-  const onKeyUp = (key: string, e: KeyboardEvent) => {};
 
   const setTopView = () => {
     if (orbitControlsRef.current) {
@@ -386,15 +360,22 @@ const App = () => {
                   <Sky theme={viewState.theme} />
                 </Suspense>
               </Canvas>
+              <KeyboardListener
+                keyFlag={keyFlag}
+                keyName={keyName}
+                keyDown={keyDown}
+                keyUp={keyUp}
+                canvas={canvasRef.current}
+              />
               <KeyboardEventHandler
                 handleKeys={['left', 'up', 'right', 'down']}
                 handleEventType={'keydown'}
-                onKeyEvent={(key, e) => onKeyDown(key, e)}
+                onKeyEvent={(key, e) => handleKeyEvent(key, true, e)}
               />
               <KeyboardEventHandler
                 handleKeys={['delete']}
                 handleEventType={'keyup'}
-                onKeyEvent={(key, e) => onKeyUp(key, e)}
+                onKeyEvent={(key, e) => handleKeyEvent(key, false, e)}
               />
             </div>
           </DropdownContextMenu>
