@@ -42,14 +42,13 @@ enableMapSet();
 export interface CommonStoreState {
   set: (fn: (state: CommonStoreState) => void) => void;
 
-  // only the following four properties are persisted (see the whitelist at the end)
+  // only the following properties are persisted (see the whitelist at the end)
   world: WorldModel;
   elements: ElementModel[];
   viewState: ViewState;
   notes: string[];
   user: User;
   language: string;
-  locale: Locale;
 
   exportContent: () => {};
   clearContent: () => void;
@@ -135,6 +134,8 @@ export interface CommonStoreState {
 
   orthographicChanged: boolean;
   simulationInProgress: boolean;
+  locale: Locale;
+  localFileName: string;
 }
 
 export const useStore = create<CommonStoreState>(
@@ -160,7 +161,6 @@ export const useStore = create<CommonStoreState>(
           notes: [],
           user: {} as User,
           language: 'en',
-          locale: enUS,
           exportContent() {
             const state = get();
             return {
@@ -744,6 +744,8 @@ export const useStore = create<CommonStoreState>(
 
           orthographicChanged: false,
           simulationInProgress: false,
+          locale: enUS,
+          localFileName: 'aladdin.json',
         };
       },
       {

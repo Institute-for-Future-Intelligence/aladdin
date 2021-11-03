@@ -8,9 +8,8 @@ import styled from 'styled-components';
 import { Checkbox, Dropdown, Input, InputNumber, Menu, Modal, Radio, Select, Space } from 'antd';
 import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
-import { saveAs } from 'file-saver';
 import About from './about';
-import { saveImage, showError } from './helpers';
+import { saveImage } from './helpers';
 import { Discretization, Language } from './types';
 import * as Selector from './stores/selector';
 
@@ -21,8 +20,8 @@ import solar_farm_01 from './examples/solar_farm_01.json';
 import solar_farm_02 from './examples/solar_farm_02.json';
 import solar_trackers from './examples/solar_trackers.json';
 import simple_house_01 from './examples/simple_house_01.json';
+
 import i18n from './i18n/i18n';
-import { Vector3 } from 'three';
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
 import esES from 'antd/lib/locale/es_ES';
@@ -54,6 +53,8 @@ const StyledImage = styled.img`
 `;
 
 export interface MainMenuProps {
+  readLocalFile: () => void;
+  writeLocalFile: () => boolean;
   collectDailyLightSensorData: () => void;
   collectYearlyLightSensorData: () => void;
   setPvDailyIndividualOutputs: (b: boolean) => void;
@@ -66,6 +67,8 @@ export interface MainMenuProps {
 }
 
 const MainMenu = ({
+  readLocalFile,
+  writeLocalFile,
   collectDailyLightSensorData,
   collectYearlyLightSensorData,
   setPvDailyIndividualOutputs,
@@ -77,6 +80,7 @@ const MainMenu = ({
 }: MainMenuProps) => {
   const setCommonStore = useStore((state) => state.set);
   const language = useStore((state) => state.language);
+  const localFileName = useStore((state) => state.localFileName);
   const timesPerHour = useStore((state) => state.world.timesPerHour);
   const discretization = useStore((state) => state.world.discretization);
   const solarPanelGridCellSize = useStore((state) => state.world.solarPanelGridCellSize);
@@ -86,11 +90,11 @@ const MainMenu = ({
   const showMapPanel = useStore((state) => state.viewState.showMapPanel);
   const showWeatherPanel = useStore((state) => state.viewState.showWeatherPanel);
   const showStickyNotePanel = useStore((state) => state.viewState.showStickyNotePanel);
-  const exportContent = useStore((state) => state.exportContent);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [fileName, setFileName] = useState<string>('aladdin.json');
-  const [downloadDialogVisible, setDownloadDialogVisible] = useState(false);
   const [aboutUs, setAboutUs] = useState(false);
+  const [downloadDialogVisible, setDownloadDialogVisible] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
+  const lang = { lng: language };
 
   const openAboutUs = (on: boolean) => {
     setAboutUs(on);
@@ -105,52 +109,6 @@ const MainMenu = ({
       // TODO
       saveImage('screenshot.png', canvas.toDataURL('image/png'));
     }
-  };
-
-  const showDownloadDialog = () => {
-    setDownloadDialogVisible(true);
-  };
-
-  const writeLocalFile = () => {
-    const fn = fileName.trim();
-    if (fn.length > 0) {
-      setConfirmLoading(true);
-      const blob = new Blob([JSON.stringify(exportContent())], { type: 'application/json' });
-      saveAs(blob, fn);
-      setConfirmLoading(false);
-      setDownloadDialogVisible(false);
-    } else {
-      showError(i18n.t('menu.file.SavingAbortedMustHaveValidFileName', lang) + '.');
-    }
-  };
-
-  const readLocalFile = () => {
-    const fileDialog = document.getElementById('file-dialog') as HTMLInputElement;
-    fileDialog.onchange = (e) => {
-      if (fileDialog.files && fileDialog.files.length > 0) {
-        let reader = new FileReader();
-        reader.readAsText(fileDialog.files[0]);
-        setFileName(fileDialog.files[0].name);
-        reader.onload = (e) => {
-          if (reader.result) {
-            const input = JSON.parse(reader.result.toString());
-            setCommonStore((state) => {
-              // remove old properties
-              if (input.world.hasOwnProperty('cameraPosition')) delete input.world.cameraPosition;
-              if (input.world.hasOwnProperty('panCenter')) delete input.world.panCenter;
-              if (!input.view.hasOwnProperty('cameraPosition')) input.view.cameraPosition = new Vector3(0, -5, 0);
-              if (!input.view.hasOwnProperty('panCenter')) input.view.panCenter = new Vector3(0, 0, 0);
-              state.world = input.world;
-              state.viewState = input.view;
-              state.elements = input.elements;
-              state.notes = input.notes ?? [];
-            });
-          }
-          fileDialog.value = '';
-        };
-      }
-    };
-    fileDialog.click();
   };
 
   const loadFile = (e: any) => {
@@ -188,15 +146,18 @@ const MainMenu = ({
     }
   };
 
-  const lang = { lng: language };
-
   const menu = (
     <Menu>
       <SubMenu key={'file'} title={i18n.t('menu.fileSubMenu', lang)}>
         <Menu.Item key="open-local-file" onClick={readLocalFile}>
           {i18n.t('menu.file.OpenLocalFile', lang)}
         </Menu.Item>
-        <Menu.Item key="save-local-file" onClick={showDownloadDialog}>
+        <Menu.Item
+          key="save-local-file"
+          onClick={() => {
+            setDownloadDialogVisible(true);
+          }}
+        >
           {i18n.t('menu.file.SaveToDownloadFolder', lang)}
         </Menu.Item>
         <Menu.Item key="screenshot" onClick={takeScreenshot}>
@@ -470,7 +431,13 @@ const MainMenu = ({
       <Modal
         title={i18n.t('menu.file.DownloadAs', lang)}
         visible={downloadDialogVisible}
-        onOk={writeLocalFile}
+        onOk={() => {
+          setConfirmLoading(true);
+          if (writeLocalFile()) {
+            setDownloadDialogVisible(false);
+          }
+          setConfirmLoading(false);
+        }}
         confirmLoading={confirmLoading}
         onCancel={() => {
           setDownloadDialogVisible(false);
@@ -478,10 +445,12 @@ const MainMenu = ({
       >
         <Input
           placeholder="File name"
-          value={fileName}
+          value={localFileName}
           onPressEnter={writeLocalFile}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setFileName(e.target.value);
+            setCommonStore((state) => {
+              state.localFileName = e.target.value;
+            });
           }}
         />
       </Modal>

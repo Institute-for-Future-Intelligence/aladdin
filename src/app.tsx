@@ -20,7 +20,7 @@ import MainMenu from './mainMenu';
 import MapPanel from './panels/mapPanel';
 import HeliodonPanel from './panels/heliodonPanel';
 import { DEFAULT_FAR, DEFAULT_FOV, VERSION } from './constants';
-import { showInfo, visitHomepage, visitIFI } from './helpers';
+import { showError, showInfo, visitHomepage, visitIFI } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
 import { Modal, ConfigProvider } from 'antd';
@@ -47,11 +47,14 @@ import ErrorPage from './ErrorPage';
 import i18n from './i18n/i18n';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
 import KeyboardListener from './keyboardListener';
+import { Vector3 } from 'three';
+import { saveAs } from 'file-saver';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore((state) => state.language);
   const locale = useStore((state) => state.locale);
+  const localFileName = useStore((state) => state.localFileName);
   const loadWeatherData = useStore(Selector.loadWeatherData);
   const getClosestCity = useStore(Selector.getClosestCity);
   const countElementsByType = useStore(Selector.countElementsByType);
@@ -65,6 +68,7 @@ const App = () => {
   const loadPvModules = useStore((state) => state.loadPvModules);
   const heliodonRadius = useStore((state) => state.heliodonRadius);
   const cameraZoom = useStore(Selector.viewstate.cameraZoom) ?? 20;
+  const exportContent = useStore((state) => state.exportContent);
 
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);
@@ -110,6 +114,50 @@ const App = () => {
     setKeyDown(down);
     setKeyUp(!down);
     setKeyFlag(!keyFlag);
+  };
+
+  const readLocalFile = () => {
+    const fileDialog = document.getElementById('file-dialog') as HTMLInputElement;
+    fileDialog.onchange = (e) => {
+      if (fileDialog.files && fileDialog.files.length > 0) {
+        const reader = new FileReader();
+        reader.readAsText(fileDialog.files[0]);
+        const fn = fileDialog.files[0].name;
+        setCommonStore((state) => {
+          state.localFileName = fn;
+        });
+        reader.onload = (e) => {
+          if (reader.result) {
+            const input = JSON.parse(reader.result.toString());
+            setCommonStore((state) => {
+              // remove old properties
+              if (input.world.hasOwnProperty('cameraPosition')) delete input.world.cameraPosition;
+              if (input.world.hasOwnProperty('panCenter')) delete input.world.panCenter;
+              if (!input.view.hasOwnProperty('cameraPosition')) input.view.cameraPosition = new Vector3(0, -5, 0);
+              if (!input.view.hasOwnProperty('panCenter')) input.view.panCenter = new Vector3(0, 0, 0);
+              state.world = input.world;
+              state.viewState = input.view;
+              state.elements = input.elements;
+              state.notes = input.notes ?? [];
+            });
+          }
+          fileDialog.value = '';
+        };
+      }
+    };
+    fileDialog.click();
+  };
+
+  const writeLocalFile = () => {
+    const fn = localFileName.trim();
+    if (fn.length > 0) {
+      const blob = new Blob([JSON.stringify(exportContent())], { type: 'application/json' });
+      saveAs(blob, fn);
+      return true;
+    } else {
+      showError(i18n.t('menu.file.SavingAbortedMustHaveValidFileName', lang) + '.');
+      return false;
+    }
   };
 
   const setTopView = () => {
@@ -236,6 +284,8 @@ const App = () => {
           </div>
           <MainMenu
             canvas={canvasRef.current}
+            readLocalFile={readLocalFile}
+            writeLocalFile={writeLocalFile}
             collectDailyLightSensorData={collectDailyLightSensorData}
             collectYearlyLightSensorData={collectYearlyLightSensorData}
             setPvDailyIndividualOutputs={setPvDailyIndividualOutputs}
@@ -351,16 +401,24 @@ const App = () => {
                 keyDown={keyDown}
                 keyUp={keyUp}
                 canvas={canvasRef.current}
+                readLocalFile={readLocalFile}
+                writeLocalFile={writeLocalFile}
               />
               <KeyboardEventHandler
-                handleKeys={['left', 'up', 'right', 'down']}
+                handleKeys={['left', 'up', 'right', 'down', 'control+o', 'control+s']}
                 handleEventType={'keydown'}
-                onKeyEvent={(key, e) => handleKeyEvent(key, true, e)}
+                onKeyEvent={(key, e) => {
+                  e.preventDefault();
+                  handleKeyEvent(key, true, e);
+                }}
               />
               <KeyboardEventHandler
                 handleKeys={['delete']}
                 handleEventType={'keyup'}
-                onKeyEvent={(key, e) => handleKeyEvent(key, false, e)}
+                onKeyEvent={(key, e) => {
+                  e.preventDefault();
+                  handleKeyEvent(key, false, e);
+                }}
               />
             </div>
           </DropdownContextMenu>
