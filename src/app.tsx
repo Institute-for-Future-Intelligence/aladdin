@@ -116,6 +116,22 @@ const App = () => {
     setKeyFlag(!keyFlag);
   };
 
+  const set2DView = (selected: boolean) => {
+    setCommonStore((state) => {
+      state.viewState.orthographic = selected;
+      state.viewState.enableRotate = !selected;
+      state.orthographicChanged = true;
+      if (selected) {
+        state.viewState.cameraPosition.x = 0;
+        state.viewState.cameraPosition.y = 0;
+        state.viewState.cameraPosition.z = Math.min(50, heliodonRadius * 4);
+        state.viewState.panCenter.x = 0;
+        state.viewState.panCenter.y = 0;
+        state.viewState.panCenter.z = 0;
+      }
+    });
+  };
+
   const readLocalFile = () => {
     document.body.onfocus = () => {
       setCommonStore((state) => {
@@ -291,6 +307,7 @@ const App = () => {
             canvas={canvasRef.current}
             readLocalFile={readLocalFile}
             writeLocalFile={writeLocalFile}
+            set2DView={set2DView}
             collectDailyLightSensorData={collectDailyLightSensorData}
             collectYearlyLightSensorData={collectYearlyLightSensorData}
             setPvDailyIndividualOutputs={setPvDailyIndividualOutputs}
@@ -408,9 +425,20 @@ const App = () => {
                 canvas={canvasRef.current}
                 readLocalFile={readLocalFile}
                 writeLocalFile={writeLocalFile}
+                set2DView={set2DView}
               />
               <KeyboardEventHandler
-                handleKeys={['left', 'up', 'right', 'down', 'control+o', 'control+s']}
+                handleKeys={[
+                  'left',
+                  'up',
+                  'right',
+                  'down',
+                  'control+o',
+                  'control+s',
+                  'control+c',
+                  'control+x',
+                  'control+v',
+                ]}
                 handleEventType={'keydown'}
                 onKeyEvent={(key, e) => {
                   e.preventDefault();
@@ -418,7 +446,7 @@ const App = () => {
                 }}
               />
               <KeyboardEventHandler
-                handleKeys={['delete']}
+                handleKeys={['delete', 'f2']}
                 handleEventType={'keyup'}
                 onKeyEvent={(key, e) => {
                   e.preventDefault();

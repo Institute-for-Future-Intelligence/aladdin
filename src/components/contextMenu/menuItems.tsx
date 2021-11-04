@@ -16,6 +16,7 @@ export const Paste = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   return (
     <Menu.Item key={'ground-paste'} onClick={pasteElement} style={{ paddingLeft: paddingLeft }}>
       {i18n.t('word.Paste', { lng: language })}
+      <label style={{ paddingLeft: '4px', fontSize: 9 }}>(Ctrl+V)</label>
     </Menu.Item>
   );
 };
@@ -35,6 +36,7 @@ export const Copy = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   return (
     <Menu.Item key={'foundation-copy'} onClick={copyElement} style={{ paddingLeft: paddingLeft }}>
       {i18n.t('word.Copy', { lng: language })}
+      <label style={{ paddingLeft: '4px', fontSize: 9 }}>(Ctrl+C)</label>
     </Menu.Item>
   );
 };
@@ -54,6 +56,7 @@ export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   return (
     <Menu.Item key={'foundation-cut'} onClick={cutElement} style={{ paddingLeft: paddingLeft }}>
       {i18n.t('word.Cut', { lng: language })}
+      <label style={{ paddingLeft: '4px', fontSize: 9 }}>(Ctrl+X)</label>
     </Menu.Item>
   );
 };

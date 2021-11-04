@@ -18,6 +18,7 @@ export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement;
   readLocalFile: () => void;
   writeLocalFile: () => boolean;
+  set2DView: (selected: boolean) => void;
 }
 
 const KeyboardListener = ({
@@ -28,10 +29,15 @@ const KeyboardListener = ({
   canvas,
   readLocalFile,
   writeLocalFile,
+  set2DView,
 }: KeyboardListenerProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore((state) => state.language);
+  const orthographic = useStore(Selector.viewstate.orthographic) ?? false;
   const getSelectedElement = useStore(Selector.getSelectedElement);
+  const copyElementById = useStore((state) => state.copyElementById);
+  const cutElementById = useStore((state) => state.cutElementById);
+  const pasteElement = useStore((state) => state.pasteElement);
   const deleteElementById = useStore(Selector.deleteElementById);
   const getElementById = useStore(Selector.getElementById);
   const updateElementById = useStore(Selector.updateElementById);
@@ -48,6 +54,24 @@ const KeyboardListener = ({
 
   const handleKey = () => {
     switch (keyName) {
+      case 'control+c':
+        const copiedElement = getSelectedElement();
+        if (copiedElement) {
+          copyElementById(copiedElement.id);
+        }
+        break;
+      case 'control+x':
+        const cutElement = getSelectedElement();
+        if (cutElement) {
+          cutElementById(cutElement.id);
+        }
+        break;
+      case 'control+v':
+        pasteElement();
+        break;
+      case 'f2':
+        set2DView(!orthographic);
+        break;
       case 'control+o':
         if (!localFileDialogRequested) {
           setCommonStore((state) => {
@@ -60,10 +84,10 @@ const KeyboardListener = ({
         setDownloadDialogVisible(true);
         break;
       case 'delete':
-        const selectedElement = getSelectedElement();
-        if (selectedElement) {
-          if (selectedElement.type === ObjectType.Wall) {
-            const currentWall = selectedElement as WallModel;
+        const deletedElement = getSelectedElement();
+        if (deletedElement) {
+          if (deletedElement.type === ObjectType.Wall) {
+            const currentWall = deletedElement as WallModel;
             if (currentWall.leftJoints.length > 0) {
               const targetWall = getElementById(currentWall.leftJoints[0].id) as WallModel;
               if (targetWall) {
@@ -77,10 +101,10 @@ const KeyboardListener = ({
               }
             }
             setCommonStore((state) => {
-              state.deletedWallID = selectedElement.id;
+              state.deletedWallID = deletedElement.id;
             });
           }
-          deleteElementById(selectedElement.id);
+          deleteElementById(deletedElement.id);
           if (canvas) {
             canvas.style.cursor = 'default'; // if an element is deleted but the cursor is not default
           }

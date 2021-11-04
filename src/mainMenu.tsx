@@ -55,6 +55,7 @@ const StyledImage = styled.img`
 export interface MainMenuProps {
   readLocalFile: () => void;
   writeLocalFile: () => boolean;
+  set2DView: (selected: boolean) => void;
   collectDailyLightSensorData: () => void;
   collectYearlyLightSensorData: () => void;
   setPvDailyIndividualOutputs: (b: boolean) => void;
@@ -69,6 +70,7 @@ export interface MainMenuProps {
 const MainMenu = ({
   readLocalFile,
   writeLocalFile,
+  set2DView,
   collectDailyLightSensorData,
   collectYearlyLightSensorData,
   setPvDailyIndividualOutputs,
@@ -84,7 +86,6 @@ const MainMenu = ({
   const timesPerHour = useStore((state) => state.world.timesPerHour);
   const discretization = useStore((state) => state.world.discretization);
   const solarPanelGridCellSize = useStore((state) => state.world.solarPanelGridCellSize);
-  const heliodonRadius = useStore((state) => state.heliodonRadius);
   const orthographic = useStore(Selector.viewstate.orthographic);
   const showInfoPanel = useStore((state) => state.viewState.showInfoPanel);
   const showMapPanel = useStore((state) => state.viewState.showMapPanel);
@@ -151,6 +152,7 @@ const MainMenu = ({
       <SubMenu key={'file'} title={i18n.t('menu.fileSubMenu', lang)}>
         <Menu.Item key="open-local-file" onClick={readLocalFile}>
           {i18n.t('menu.file.OpenLocalFile', lang)}
+          <label style={{ paddingLeft: '2px', fontSize: 9 }}>(Ctrl+O)</label>
         </Menu.Item>
         <Menu.Item
           key="save-local-file"
@@ -159,6 +161,7 @@ const MainMenu = ({
           }}
         >
           {i18n.t('menu.file.SaveToDownloadFolder', lang)}
+          <label style={{ paddingLeft: '2px', fontSize: 9 }}>(Ctrl+S)</label>
         </Menu.Item>
         <Menu.Item key="screenshot" onClick={takeScreenshot}>
           {i18n.t('menu.file.TakeScreenshot', lang)}
@@ -169,23 +172,11 @@ const MainMenu = ({
           <Checkbox
             checked={orthographic}
             onChange={(e) => {
-              const checked = e.target.checked;
-              setCommonStore((state) => {
-                state.viewState.orthographic = checked;
-                state.viewState.enableRotate = !checked;
-                state.orthographicChanged = true;
-                if (checked) {
-                  state.viewState.cameraPosition.x = 0;
-                  state.viewState.cameraPosition.y = 0;
-                  state.viewState.cameraPosition.z = Math.min(50, heliodonRadius * 4);
-                  state.viewState.panCenter.x = 0;
-                  state.viewState.panCenter.y = 0;
-                  state.viewState.panCenter.z = 0;
-                }
-              });
+              set2DView(e.target.checked);
             }}
           >
             {i18n.t('menu.view.TwoDimensionalView', lang)}
+            <label style={{ paddingLeft: '2px', fontSize: 9 }}>(F2)</label>
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'info-panel-check-box'}>
