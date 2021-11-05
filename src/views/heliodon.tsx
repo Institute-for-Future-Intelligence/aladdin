@@ -4,23 +4,8 @@
 
 import { Util } from '../Util';
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  BufferAttribute,
-  BufferGeometry,
-  Color,
-  DoubleSide,
-  Euler,
-  MeshBasicMaterial,
-  Plane,
-  SphereGeometry,
-  Vector3,
-} from 'three';
-import {
-  computeDeclinationAngle,
-  computeHourAngle,
-  computeSunLocation,
-  TILT_ANGLE,
-} from '../analysis/sunTools';
+import { BufferAttribute, BufferGeometry, DoubleSide, Euler, Plane, Vector3 } from 'three';
+import { computeDeclinationAngle, computeHourAngle, computeSunLocation, TILT_ANGLE } from '../analysis/sunTools';
 import { Line, Plane as Drei_Plane } from '@react-three/drei';
 import { useStore } from '../stores/common';
 
@@ -71,9 +56,7 @@ const Heliodon = ({}: HeliodonProps) => {
   }, [aabb]);
 
   useEffect(() => {
-    setSunlightDirection(
-      computeSunLocation(radius, hourAngle, declinationAngle, Util.toRadians(worldLatitude)),
-    );
+    setSunlightDirection(computeSunLocation(radius, hourAngle, declinationAngle, Util.toRadians(worldLatitude)));
   }, [worldLatitude, hourAngle, declinationAngle, radius]);
 
   const nRibLines = 5;
@@ -235,9 +218,7 @@ const Heliodon = ({}: HeliodonProps) => {
             </lineSegments>
             {/* draw sun path*/}
             <mesh>
-              {sunPathPoints.length > 3 && (
-                <Line lineWidth={2} points={sunPathPoints} color={'yellow'} />
-              )}
+              {sunPathPoints.length > 3 && <Line lineWidth={2} points={sunPathPoints} color={'yellow'} />}
               {pointArraySunPaths
                 .filter((a) => a.length > 3)
                 .map((a, index) => {

@@ -3,8 +3,8 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Line, Plane, Sphere } from '@react-three/drei';
-import { Euler, Face, Mesh, Raycaster, Vector2, Vector3 } from 'three';
+import { Box, Sphere } from '@react-three/drei';
+import { Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { CuboidModel } from '../models/CuboidModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -94,10 +94,6 @@ const Cuboid = ({
   const positionULTop = useMemo(() => new Vector3(-hx, hy, hz), [hx, hy, hz]);
   const positionLRTop = useMemo(() => new Vector3(hx, -hy, hz), [hx, hy, hz]);
   const positionURTop = useMemo(() => new Vector3(hx, hy, hz), [hx, hy, hz]);
-  const positionLLBot = useMemo(() => new Vector3(-hx, -hy, -hz), [hx, hy, hz]);
-  const positionULBot = useMemo(() => new Vector3(-hx, hy, -hz), [hx, hy, hz]);
-  const positionLRBot = useMemo(() => new Vector3(hx, -hy, -hz), [hx, hy, hz]);
-  const positionURBot = useMemo(() => new Vector3(hx, hy, -hz), [hx, hy, hz]);
 
   const handleLift = MOVE_HANDLE_RADIUS;
   const positionLowerFace = useMemo(() => new Vector3(0, -hy - MOVE_HANDLE_OFFSET, handleLift - hz), [hy, hz]);

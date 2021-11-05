@@ -3,11 +3,11 @@
  */
 
 import React, { useMemo, useRef, useState } from 'react';
-import { Box, Line, Sphere } from '@react-three/drei';
+import { Box, Sphere } from '@react-three/drei';
 import { Euler, Mesh, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { SensorModel } from '../models/SensorModel';
-import { ThreeEvent, useThree } from '@react-three/fiber';
+import { useThree } from '@react-three/fiber';
 import { HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS } from '../constants';
 import { ActionType, ObjectType } from '../types';
 import { Util } from '../Util';
@@ -77,13 +77,7 @@ const Sensor = ({
       }
     }
   }
-  const hx = lx / 2;
-  const hy = ly / 2;
   const hz = lz / 2;
-  const positionLL = new Vector3(-hx, -hy, hz);
-  const positionUL = new Vector3(-hx, hy, hz);
-  const positionLR = new Vector3(hx, -hy, hz);
-  const positionUR = new Vector3(hx, hy, hz);
   const element = getElementById(id);
 
   const euler = useMemo(() => {

@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Plane } from '@react-three/drei';
 import { useStore } from '../stores/common';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';

@@ -69,6 +69,10 @@ const KeyboardListener = ({
                 setElementPosition(selectedElement.id, selectedElement.cx - moveStepAbsolute, selectedElement.cy);
                 break;
               case ObjectType.Sensor:
+                const halfLx = selectedElement.parent ? selectedElement.lx / (2 * selectedElement.parent.lx) : 0;
+                const x = Math.max(-0.5 + halfLx, selectedElement.cx - moveStepRelative);
+                setElementPosition(selectedElement.id, x, selectedElement.cy);
+                break;
               case ObjectType.SolarPanel:
                 setElementPosition(selectedElement.id, selectedElement.cx - moveStepRelative, selectedElement.cy);
                 break;
@@ -87,6 +91,10 @@ const KeyboardListener = ({
                 setElementPosition(selectedElement.id, selectedElement.cx + moveStepAbsolute, selectedElement.cy);
                 break;
               case ObjectType.Sensor:
+                const halfLx = selectedElement.parent ? selectedElement.lx / (2 * selectedElement.parent.lx) : 0;
+                const x = Math.min(0.5 - halfLx, selectedElement.cx + moveStepRelative);
+                setElementPosition(selectedElement.id, x, selectedElement.cy);
+                break;
               case ObjectType.SolarPanel:
                 setElementPosition(selectedElement.id, selectedElement.cx + moveStepRelative, selectedElement.cy);
                 break;
@@ -105,6 +113,10 @@ const KeyboardListener = ({
                 setElementPosition(selectedElement.id, selectedElement.cx, selectedElement.cy - moveStepAbsolute);
                 break;
               case ObjectType.Sensor:
+                const halfLy = selectedElement.parent ? selectedElement.ly / (2 * selectedElement.parent.ly) : 0;
+                const y = Math.max(-0.5 + halfLy, selectedElement.cy - moveStepRelative);
+                setElementPosition(selectedElement.id, selectedElement.cx, y);
+                break;
               case ObjectType.SolarPanel:
                 setElementPosition(selectedElement.id, selectedElement.cx, selectedElement.cy - moveStepRelative);
                 break;
@@ -123,6 +135,10 @@ const KeyboardListener = ({
                 setElementPosition(selectedElement.id, selectedElement.cx, selectedElement.cy + moveStepAbsolute);
                 break;
               case ObjectType.Sensor:
+                const halfLy = selectedElement.parent ? selectedElement.ly / (2 * selectedElement.parent.ly) : 0;
+                const y = Math.min(0.5 - halfLy, selectedElement.cy + moveStepRelative);
+                setElementPosition(selectedElement.id, selectedElement.cx, y);
+                break;
               case ObjectType.SolarPanel:
                 setElementPosition(selectedElement.id, selectedElement.cx, selectedElement.cy + moveStepRelative);
                 break;

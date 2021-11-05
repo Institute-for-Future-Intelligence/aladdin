@@ -81,19 +81,17 @@ export class Util {
 
   static wallAbsolutePosition(v: Vector3, parent: ElementModel) {
     const parentPos = new Vector3(parent.cx, parent.cy);
-    const vector = new Vector3().addVectors(
+    return new Vector3().addVectors(
       parentPos,
       new Vector3(v.x, v.y).applyAxisAngle(Util.UNIT_VECTOR_POS_Z, parent.rotation[2]),
     );
-    return vector;
   }
 
   static wallRelativePosition(v: Vector3, parent: ElementModel) {
     const parentPos = new Vector3(parent.cx, parent.cy);
-    const vector = new Vector3()
+    return new Vector3()
       .subVectors(new Vector3(v.x, v.y), parentPos)
       .applyAxisAngle(Util.UNIT_VECTOR_POS_Z, -parent.rotation[2]);
-    return vector;
   }
 
   static toRadians(degrees: number) {
