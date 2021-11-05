@@ -24,6 +24,7 @@ import { MOVE_HANDLE_RADIUS } from '../constants';
 import { TreeModel } from '../models/TreeModel';
 import { ObjectType, TreeType } from '../types';
 import { Util } from '../Util';
+import * as Selector from '../stores/selector';
 
 const Tree = ({
   id,
@@ -39,6 +40,7 @@ const Tree = ({
   ...props
 }: TreeModel) => {
   const setCommonStore = useStore((state) => state.set);
+  const orthographic = useStore(Selector.viewstate.orthographic) ?? false;
   const date = useStore((state) => state.world.date);
   const now = new Date(date);
   const shadowEnabled = useStore((state) => state.viewState.shadowEnabled);
@@ -138,7 +140,7 @@ const Tree = ({
       {/* simulation model */}
       {name !== TreeType.Pine ? (
         <Sphere
-          visible={showModel && !noLeaves}
+          visible={(showModel && !noLeaves) || orthographic}
           userData={{ simulation: !noLeaves }}
           name={name + ' Model'}
           args={[lx / 2, 8, 8, 0, Util.TWO_PI, 0, theta]}
@@ -149,7 +151,7 @@ const Tree = ({
         </Sphere>
       ) : (
         <Cone
-          visible={showModel}
+          visible={showModel || orthographic}
           name={name + ' Model'}
           userData={{ simulation: true }}
           position={[0, 0, lz * 0.1]}
