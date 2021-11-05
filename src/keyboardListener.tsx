@@ -41,29 +41,103 @@ const KeyboardListener = ({
   const deleteElementById = useStore(Selector.deleteElementById);
   const getElementById = useStore(Selector.getElementById);
   const updateElementById = useStore(Selector.updateElementById);
+  const setElementPosition = useStore(Selector.setElementPosition);
   const localFileName = useStore((state) => state.localFileName);
   const localFileDialogRequested = useStore((state) => state.localFileDialogRequested);
 
   const [downloadDialogVisible, setDownloadDialogVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const lang = { lng: language };
+  const moveStepRelative = 0.01;
+  const moveStepAbsolute = 0.1;
 
   useEffect(() => {
     handleKey();
   }, [keyFlag, keyName, keyDown, keyUp]);
 
   const handleKey = () => {
+    const selectedElement = getSelectedElement();
     switch (keyName) {
+      case 'left':
+        if (orthographic) {
+          if (selectedElement) {
+            switch (selectedElement.type) {
+              case ObjectType.Foundation:
+              case ObjectType.Cuboid:
+              case ObjectType.Tree:
+              case ObjectType.Human:
+                setElementPosition(selectedElement.id, selectedElement.cx - moveStepAbsolute, selectedElement.cy);
+                break;
+              case ObjectType.Sensor:
+              case ObjectType.SolarPanel:
+                setElementPosition(selectedElement.id, selectedElement.cx - moveStepRelative, selectedElement.cy);
+                break;
+            }
+          }
+        }
+        break;
+      case 'right':
+        if (orthographic) {
+          if (selectedElement) {
+            switch (selectedElement.type) {
+              case ObjectType.Foundation:
+              case ObjectType.Cuboid:
+              case ObjectType.Tree:
+              case ObjectType.Human:
+                setElementPosition(selectedElement.id, selectedElement.cx + moveStepAbsolute, selectedElement.cy);
+                break;
+              case ObjectType.Sensor:
+              case ObjectType.SolarPanel:
+                setElementPosition(selectedElement.id, selectedElement.cx + moveStepRelative, selectedElement.cy);
+                break;
+            }
+          }
+        }
+        break;
+      case 'down':
+        if (orthographic) {
+          if (selectedElement) {
+            switch (selectedElement.type) {
+              case ObjectType.Foundation:
+              case ObjectType.Cuboid:
+              case ObjectType.Tree:
+              case ObjectType.Human:
+                setElementPosition(selectedElement.id, selectedElement.cx, selectedElement.cy - moveStepAbsolute);
+                break;
+              case ObjectType.Sensor:
+              case ObjectType.SolarPanel:
+                setElementPosition(selectedElement.id, selectedElement.cx, selectedElement.cy - moveStepRelative);
+                break;
+            }
+          }
+        }
+        break;
+      case 'up':
+        if (orthographic) {
+          if (selectedElement) {
+            switch (selectedElement.type) {
+              case ObjectType.Foundation:
+              case ObjectType.Cuboid:
+              case ObjectType.Tree:
+              case ObjectType.Human:
+                setElementPosition(selectedElement.id, selectedElement.cx, selectedElement.cy + moveStepAbsolute);
+                break;
+              case ObjectType.Sensor:
+              case ObjectType.SolarPanel:
+                setElementPosition(selectedElement.id, selectedElement.cx, selectedElement.cy + moveStepRelative);
+                break;
+            }
+          }
+        }
+        break;
       case 'control+c':
-        const copiedElement = getSelectedElement();
-        if (copiedElement) {
-          copyElementById(copiedElement.id);
+        if (selectedElement) {
+          copyElementById(selectedElement.id);
         }
         break;
       case 'control+x':
-        const cutElement = getSelectedElement();
-        if (cutElement) {
-          cutElementById(cutElement.id);
+        if (selectedElement) {
+          cutElementById(selectedElement.id);
         }
         break;
       case 'control+v':
@@ -84,10 +158,9 @@ const KeyboardListener = ({
         setDownloadDialogVisible(true);
         break;
       case 'delete':
-        const deletedElement = getSelectedElement();
-        if (deletedElement) {
-          if (deletedElement.type === ObjectType.Wall) {
-            const currentWall = deletedElement as WallModel;
+        if (selectedElement) {
+          if (selectedElement.type === ObjectType.Wall) {
+            const currentWall = selectedElement as WallModel;
             if (currentWall.leftJoints.length > 0) {
               const targetWall = getElementById(currentWall.leftJoints[0].id) as WallModel;
               if (targetWall) {
@@ -101,10 +174,10 @@ const KeyboardListener = ({
               }
             }
             setCommonStore((state) => {
-              state.deletedWallID = deletedElement.id;
+              state.deletedWallID = selectedElement.id;
             });
           }
-          deleteElementById(deletedElement.id);
+          deleteElementById(selectedElement.id);
           if (canvas) {
             canvas.style.cursor = 'default'; // if an element is deleted but the cursor is not default
           }

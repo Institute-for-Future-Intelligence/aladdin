@@ -24,7 +24,7 @@ const Compass = ({ ...props }: CompassProps) => {
     height: 0.0,
     size: 0.6,
   } as TextGeometryParameters;
-  const textMaterial = new MeshBasicMaterial({ color: 'white' });
+  const textMaterial = new MeshBasicMaterial({ color: 'antiquewhite' });
   const compassMaterial = new MeshBasicMaterial({ color: 'red' });
   const PI = Math.PI;
 

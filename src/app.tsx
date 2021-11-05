@@ -455,7 +455,7 @@ const App = () => {
               />
             </div>
           </DropdownContextMenu>
-          <CompassContainer />
+          {!orthographic && <CompassContainer />}
           <AcceptCookie />
         </div>
       </ErrorPage>
