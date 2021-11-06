@@ -162,11 +162,8 @@ const KeyboardListener = ({
       case 'meta+v': // for Mac
         pasteElement();
         break;
-      case 'ctrl+u':
-      case 'meta+u': // for Mac
-        if (keyUp) {
-          set2DView(!orthographic);
-        }
+      case 'f2':
+        set2DView(!orthographic);
         break;
       case 'ctrl+o':
       case 'meta+o': // for Mac

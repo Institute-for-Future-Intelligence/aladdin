@@ -460,8 +460,6 @@ const App = () => {
                   'meta+x',
                   'ctrl+v',
                   'meta+v',
-                  'ctrl+u',
-                  'meta+u',
                 ]}
                 handleEventType={'keydown'}
                 onKeyEvent={(key, e) => {
@@ -470,7 +468,7 @@ const App = () => {
                 }}
               />
               <KeyboardEventHandler
-                handleKeys={['delete', 'ctrl+u', 'meta+u']}
+                handleKeys={['delete', 'f2']}
                 handleEventType={'keyup'}
                 onKeyEvent={(key, e) => {
                   e.preventDefault();
