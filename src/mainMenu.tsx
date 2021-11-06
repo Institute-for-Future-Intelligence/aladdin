@@ -176,7 +176,7 @@ const MainMenu = ({
             }}
           >
             {i18n.t('menu.view.TwoDimensionalView', lang)}
-            <label style={{ paddingLeft: '2px', fontSize: 9 }}>(F2)</label>
+            <label style={{ paddingLeft: '2px', fontSize: 9 }}>(Ctrl+U)</label>
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'info-panel-check-box'}>

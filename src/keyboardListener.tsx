@@ -146,23 +146,30 @@ const KeyboardListener = ({
           }
         }
         break;
-      case 'control+c':
+      case 'ctrl+c':
+      case 'meta+c': // for Mac
         if (selectedElement) {
           copyElementById(selectedElement.id);
         }
         break;
-      case 'control+x':
+      case 'ctrl+x':
+      case 'meta+x': // for Mac
         if (selectedElement) {
           cutElementById(selectedElement.id);
         }
         break;
-      case 'control+v':
+      case 'ctrl+v':
+      case 'meta+v': // for Mac
         pasteElement();
         break;
-      case 'f2':
-        set2DView(!orthographic);
+      case 'ctrl+u':
+      case 'meta+u': // for Mac
+        if (keyUp) {
+          set2DView(!orthographic);
+        }
         break;
-      case 'control+o':
+      case 'ctrl+o':
+      case 'meta+o': // for Mac
         if (!localFileDialogRequested) {
           setCommonStore((state) => {
             state.localFileDialogRequested = true;
@@ -170,7 +177,8 @@ const KeyboardListener = ({
           readLocalFile();
         }
         break;
-      case 'control+s':
+      case 'ctrl+s':
+      case 'meta+s': // for Mac
         setDownloadDialogVisible(true);
         break;
       case 'delete':
