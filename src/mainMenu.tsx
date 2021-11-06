@@ -27,6 +27,7 @@ import zhTW from 'antd/lib/locale/zh_TW';
 import esES from 'antd/lib/locale/es_ES';
 import trTR from 'antd/lib/locale/tr_TR';
 import enUS from 'antd/lib/locale/en_US';
+import { Util } from './Util';
 
 const { SubMenu } = Menu;
 const { Option } = Select;
@@ -96,6 +97,7 @@ const MainMenu = ({
   const [confirmLoading, setConfirmLoading] = useState(false);
 
   const lang = { lng: language };
+  const isMac = Util.getOS()?.startsWith('Mac');
 
   const openAboutUs = (on: boolean) => {
     setAboutUs(on);
@@ -152,7 +154,7 @@ const MainMenu = ({
       <SubMenu key={'file'} title={i18n.t('menu.fileSubMenu', lang)}>
         <Menu.Item key="open-local-file" onClick={readLocalFile}>
           {i18n.t('menu.file.OpenLocalFile', lang)}
-          <label style={{ paddingLeft: '2px', fontSize: 9 }}>(Ctrl+O)</label>
+          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+O)</label>
         </Menu.Item>
         <Menu.Item
           key="save-local-file"
@@ -161,7 +163,7 @@ const MainMenu = ({
           }}
         >
           {i18n.t('menu.file.SaveToDownloadFolder', lang)}
-          <label style={{ paddingLeft: '2px', fontSize: 9 }}>(Ctrl+S)</label>
+          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+S)</label>
         </Menu.Item>
         <Menu.Item key="screenshot" onClick={takeScreenshot}>
           {i18n.t('menu.file.TakeScreenshot', lang)}
@@ -176,7 +178,7 @@ const MainMenu = ({
             }}
           >
             {i18n.t('menu.view.TwoDimensionalView', lang)}
-            <label style={{ paddingLeft: '2px', fontSize: 9 }}>(Ctrl+U)</label>
+            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+U)</label>
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'info-panel-check-box'}>

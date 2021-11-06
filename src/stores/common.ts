@@ -138,6 +138,8 @@ export interface CommonStoreState {
   localFileName: string;
   // the following is to fix the bug that when ctrl+o is pressed, the file dialog gets fired up multiple times
   localFileDialogRequested: boolean;
+  savedCameraPosition: Vector3;
+  savedPanCenter: Vector3;
 }
 
 export const useStore = create<CommonStoreState>(
@@ -749,6 +751,8 @@ export const useStore = create<CommonStoreState>(
           locale: enUS,
           localFileName: 'aladdin.json',
           localFileDialogRequested: false,
+          savedCameraPosition: new Vector3(0, -5, 0),
+          savedPanCenter: new Vector3(),
         };
       },
       {

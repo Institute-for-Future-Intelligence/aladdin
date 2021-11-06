@@ -8,15 +8,17 @@ import { useStore } from '../../stores/common';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ColorResult, CompactPicker } from 'react-color';
 import i18n from '../../i18n/i18n';
+import { Util } from '../../Util';
 
 export const Paste = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   const language = useStore((state) => state.language);
   const pasteElement = useStore((state) => state.pasteElement);
+  const isMac = Util.getOS()?.startsWith('Mac');
 
   return (
     <Menu.Item key={'ground-paste'} onClick={pasteElement} style={{ paddingLeft: paddingLeft }}>
       {i18n.t('word.Paste', { lng: language })}
-      <label style={{ paddingLeft: '4px', fontSize: 9 }}>(Ctrl+V)</label>
+      <label style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+V)</label>
     </Menu.Item>
   );
 };
@@ -25,6 +27,7 @@ export const Copy = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   const language = useStore((state) => state.language);
   const copyElementById = useStore((state) => state.copyElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
+  const isMac = Util.getOS()?.startsWith('Mac');
 
   const copyElement = () => {
     const selectedElement = getSelectedElement();
@@ -36,7 +39,7 @@ export const Copy = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   return (
     <Menu.Item key={'foundation-copy'} onClick={copyElement} style={{ paddingLeft: paddingLeft }}>
       {i18n.t('word.Copy', { lng: language })}
-      <label style={{ paddingLeft: '4px', fontSize: 9 }}>(Ctrl+C)</label>
+      <label style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+C)</label>
     </Menu.Item>
   );
 };
@@ -45,6 +48,7 @@ export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   const language = useStore((state) => state.language);
   const cutElementById = useStore((state) => state.cutElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
+  const isMac = Util.getOS()?.startsWith('Mac');
 
   const cutElement = () => {
     const selectedElement = getSelectedElement();
@@ -56,7 +60,7 @@ export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   return (
     <Menu.Item key={'foundation-cut'} onClick={cutElement} style={{ paddingLeft: paddingLeft }}>
       {i18n.t('word.Cut', { lng: language })}
-      <label style={{ paddingLeft: '4px', fontSize: 9 }}>(Ctrl+X)</label>
+      <label style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+X)</label>
     </Menu.Item>
   );
 };
