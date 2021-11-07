@@ -20,18 +20,20 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const setElementSize = useStore((state) => state.setElementSize);
   const pvModules = useStore((state) => state.pvModules);
+  const getPvModule = useStore((state) => state.getPvModule);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const lang = { lng: language };
   const solarPanel = getSelectedElement() as SolarPanelModel;
+  const pvModel = getPvModule(solarPanel.pvModelName) ?? getPvModule('SPR-X21-335-BLK');
 
   const panelSizeString =
-    solarPanel.pvModel.nominalWidth.toFixed(2) +
+    pvModel.nominalWidth.toFixed(2) +
     'm × ' +
-    solarPanel.pvModel.nominalLength.toFixed(2) +
+    pvModel.nominalLength.toFixed(2) +
     'm (' +
-    solarPanel.pvModel.n +
+    pvModel.n +
     ' × ' +
-    solarPanel.pvModel.m +
+    pvModel.m +
     ' cells)';
 
   return (
@@ -44,21 +46,21 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
           <Select
             defaultValue="Custom"
             style={{ width: '100%' }}
-            value={solarPanel.pvModel.name}
+            value={pvModel.name}
             onChange={(value) => {
               if (solarPanel) {
                 if (solarPanel.orientation === Orientation.portrait) {
                   // calculate the current x-y layout
-                  const nx = Math.max(1, Math.round(solarPanel.lx / solarPanel.pvModel.width));
-                  const ny = Math.max(1, Math.round(solarPanel.ly / solarPanel.pvModel.length));
+                  const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.width));
+                  const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.length));
                   setElementSize(solarPanel.id, nx * pvModules[value].width, ny * pvModules[value].length);
                 } else {
                   // calculate the current x-y layout
-                  const nx = Math.max(1, Math.round(solarPanel.lx / solarPanel.pvModel.length));
-                  const ny = Math.max(1, Math.round(solarPanel.ly / solarPanel.pvModel.width));
+                  const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.length));
+                  const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.width));
                   setElementSize(solarPanel.id, nx * pvModules[value].length, ny * pvModules[value].width);
                 }
-                updateElementById(solarPanel.id, { pvModel: pvModules[value] });
+                updateElementById(solarPanel.id, { pvModelName: pvModules[value].name });
                 setUpdateFlag(!updateFlag);
               }
             }}
@@ -102,7 +104,7 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
           <Select
             disabled={true}
             style={{ width: '100%' }}
-            value={solarPanel.pvModel.cellType}
+            value={pvModel.cellType}
             onChange={(value) => {
               if (solarPanel) {
                 // TODO
@@ -132,7 +134,7 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
           <Select
             disabled={true}
             style={{ width: '100%' }}
-            value={solarPanel.pvModel.color}
+            value={pvModel.color}
             onChange={(value) => {
               if (solarPanel) {
                 // TODO
@@ -158,7 +160,7 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
           <Input
             disabled={true}
             style={{ width: '100%' }}
-            value={100 * solarPanel.pvModel.efficiency}
+            value={100 * pvModel.efficiency}
             onChange={(value) => {
               if (solarPanel) {
                 // TODO
@@ -175,7 +177,7 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
           <Input
             disabled={true}
             style={{ width: '100%' }}
-            value={solarPanel.pvModel.noct}
+            value={pvModel.noct}
             onChange={(value) => {
               if (solarPanel) {
                 // TODO
@@ -192,7 +194,7 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
           <Input
             disabled={true}
             style={{ width: '100%' }}
-            value={solarPanel.pvModel.pmaxTC}
+            value={pvModel.pmaxTC}
             onChange={(value) => {
               if (solarPanel) {
                 // TODO
@@ -209,7 +211,7 @@ const PvModelPanel = ({}: PvModelPanelProps) => {
           <Select
             disabled={true}
             style={{ width: '100%' }}
-            value={solarPanel.pvModel.shadeTolerance}
+            value={pvModel.shadeTolerance}
             onChange={(value) => {
               if (solarPanel) {
                 // TODO

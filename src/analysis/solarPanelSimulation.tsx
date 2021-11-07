@@ -14,6 +14,7 @@ import { MONTHS } from '../constants';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
 import * as Selector from 'src/stores/selector';
+import { PvModel } from '../models/PvModel';
 
 export interface SolarPanelSimulationProps {
   city: string | null;
@@ -23,12 +24,12 @@ export interface SolarPanelSimulationProps {
   yearlyPvYieldFlag: boolean;
 }
 
-const getPanelEfficiency = (temperature: number, panel: SolarPanelModel) => {
-  let e = panel.pvModel.efficiency;
-  if (panel.pvModel.cellType === 'Monocrystalline') {
+const getPanelEfficiency = (temperature: number, panel: SolarPanelModel, pvModel: PvModel) => {
+  let e = pvModel.efficiency;
+  if (pvModel.cellType === 'Monocrystalline') {
     e *= 0.95; // assuming that the packing density factor of semi-round cells is 0.95
   }
-  return e * (1 + panel.pvModel.pmaxTC * (temperature - 25));
+  return e * (1 + pvModel.pmaxTC * (temperature - 25));
 };
 
 const SolarPanelSimulation = ({
@@ -41,6 +42,7 @@ const SolarPanelSimulation = ({
   const setCommonStore = useStore((state) => state.set);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
+  const getPvModule = useStore((state) => state.getPvModule);
   const getWeather = useStore(Selector.getWeather);
   const getElementById = useStore(Selector.getElementById);
   const setPvDailyYield = useStore(Selector.setPvDailyYield);
@@ -182,8 +184,7 @@ const SolarPanelSimulation = ({
   };
 
   const getDailyYield = (panel: SolarPanelModel) => {
-    // why are the properties of parents cached here?
-    const parent = getElementById(panel.parent.id);
+    const parent = getElementById(panel.parentId);
     if (!parent) throw new Error('parent of solar panel does not exist');
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);
@@ -199,20 +200,21 @@ const SolarPanelSimulation = ({
     const dayOfYear = Util.dayOfYear(now);
     let count = 0;
     let lx, ly, lz, nx: number, ny: number;
+    const pvModel = getPvModule(panel.pvModelName);
     if (world.discretization === Discretization.EXACT) {
       lx = panel.lx;
       ly = panel.ly * Math.cos(panel.tiltAngle);
       lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
       if (panel.orientation === Orientation.portrait) {
-        nx = Math.max(1, Math.round(panel.lx / panel.pvModel.width));
-        ny = Math.max(1, Math.round(panel.ly / panel.pvModel.length));
-        nx *= panel.pvModel.n;
-        ny *= panel.pvModel.m;
+        nx = Math.max(1, Math.round(panel.lx / pvModel.width));
+        ny = Math.max(1, Math.round(panel.ly / pvModel.length));
+        nx *= pvModel.n;
+        ny *= pvModel.m;
       } else {
-        nx = Math.max(1, Math.round(panel.lx / panel.pvModel.length));
-        ny = Math.max(1, Math.round(panel.ly / panel.pvModel.width));
-        nx *= panel.pvModel.m;
-        ny *= panel.pvModel.n;
+        nx = Math.max(1, Math.round(panel.lx / pvModel.length));
+        ny = Math.max(1, Math.round(panel.ly / pvModel.width));
+        nx *= pvModel.m;
+        ny *= pvModel.n;
       }
     } else {
       lx = panel.lx;
@@ -295,7 +297,7 @@ const SolarPanelSimulation = ({
           // we must consider cell wiring and distributed efficiency
           // Nice demo at: https://www.youtube.com/watch?v=UNPJapaZlCU
           let sum = 0;
-          switch (panel.pvModel.shadeTolerance) {
+          switch (pvModel.shadeTolerance) {
             case ShadeTolerance.NONE:
               // all the cells are connected in a single series,
               // so the total output is determined by the minimum
@@ -366,7 +368,11 @@ const SolarPanelSimulation = ({
     const daylight = (count * interval) / 60;
     const clearness = weather.sunshineHours[month] / (30 * daylight);
     const factor =
-      panel.lx * panel.ly * getPanelEfficiency(currentTemperature, panel) * inverterEfficiency * (1 - dustLoss);
+      panel.lx *
+      panel.ly *
+      getPanelEfficiency(currentTemperature, panel, pvModel) *
+      inverterEfficiency *
+      (1 - dustLoss);
     return result.map((x) => (x * factor * clearness) / world.timesPerHour);
   };
 
@@ -418,8 +424,7 @@ const SolarPanelSimulation = ({
 
   const getYearlyPvYield = (panel: SolarPanelModel) => {
     const data = [];
-    // why are the properties of parents cached here?
-    const parent = getElementById(panel.parent.id);
+    const parent = getElementById(panel.parentId);
     if (!parent) throw new Error('parent of solar panel does not exist');
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);
@@ -431,20 +436,21 @@ const SolarPanelSimulation = ({
     const year = now.getFullYear();
     const date = 15;
     let lx, ly, lz, nx: number, ny: number;
+    const pvModel = getPvModule(panel.pvModelName);
     if (world.discretization === Discretization.EXACT) {
       lx = panel.lx;
       ly = panel.ly * Math.cos(panel.tiltAngle);
       lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
       if (panel.orientation === Orientation.portrait) {
-        nx = Math.max(1, Math.round(panel.lx / panel.pvModel.width));
-        ny = Math.max(1, Math.round(panel.ly / panel.pvModel.length));
-        nx *= panel.pvModel.n;
-        ny *= panel.pvModel.m;
+        nx = Math.max(1, Math.round(panel.lx / pvModel.width));
+        ny = Math.max(1, Math.round(panel.ly / pvModel.length));
+        nx *= pvModel.n;
+        ny *= pvModel.m;
       } else {
-        nx = Math.max(1, Math.round(panel.lx / panel.pvModel.length));
-        ny = Math.max(1, Math.round(panel.ly / panel.pvModel.width));
-        nx *= panel.pvModel.m;
-        ny *= panel.pvModel.n;
+        nx = Math.max(1, Math.round(panel.lx / pvModel.length));
+        ny = Math.max(1, Math.round(panel.ly / pvModel.width));
+        nx *= pvModel.m;
+        ny *= pvModel.n;
       }
     } else {
       lx = panel.lx;
@@ -532,7 +538,7 @@ const SolarPanelSimulation = ({
             // we must consider cell wiring and distributed efficiency
             // Nice demo at: https://www.youtube.com/watch?v=UNPJapaZlCU
             let sum = 0;
-            switch (panel.pvModel.shadeTolerance) {
+            switch (pvModel.shadeTolerance) {
               case ShadeTolerance.NONE:
                 // all the cells are connected in a single series,
                 // so the total output is determined by the minimum
@@ -602,7 +608,11 @@ const SolarPanelSimulation = ({
       const daylight = (count * interval) / 60;
       const clearness = weather.sunshineHours[midMonth.getMonth()] / (30 * daylight);
       const factor =
-        panel.lx * panel.ly * getPanelEfficiency(currentTemperature, panel) * inverterEfficiency * (1 - dustLoss);
+        panel.lx *
+        panel.ly *
+        getPanelEfficiency(currentTemperature, panel, pvModel) *
+        inverterEfficiency *
+        (1 - dustLoss);
       dailyYield *= clearness * factor;
       dailyYield /= world.timesPerHour; // convert the unit of timeStep from minute to hour so that we get kWh
       data.push({ Month: MONTHS[month], Yield: dailyYield } as DatumEntry);

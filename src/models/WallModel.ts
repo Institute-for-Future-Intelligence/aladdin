@@ -2,7 +2,6 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import { Vector3 } from 'three';
 import { ElementModel } from './ElementModel';
 import { WallSide } from 'src/types';
 import { WindowModel } from './WindowModel';

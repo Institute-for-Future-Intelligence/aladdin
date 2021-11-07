@@ -4,10 +4,9 @@
 
 import { ElementModel } from './ElementModel';
 import { Orientation, TrackerType } from '../types';
-import { PvModel } from './PvModel';
 
 export interface SolarPanelModel extends ElementModel {
-  pvModel: PvModel;
+  pvModelName: string;
   relativeAzimuth: number; // in radian
   tiltAngle: number; // in radian
   monthlyTiltAngles: number[]; // seasonally adjusted tilt angles

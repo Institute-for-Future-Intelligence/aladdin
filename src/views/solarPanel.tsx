@@ -29,7 +29,7 @@ import WireFrame from 'src/components/wireFrame';
 
 const SolarPanel = ({
   id,
-  pvModel,
+  pvModelName,
   cx,
   cy,
   cz,
@@ -51,7 +51,7 @@ const SolarPanel = ({
   selected = false,
   showLabel = false,
   locked = false,
-  parent,
+  parentId,
   orientation = Orientation.portrait,
 }: SolarPanelModel) => {
   const setCommonStore = useStore((state) => state.set);
@@ -61,6 +61,7 @@ const SolarPanel = ({
   const getElementById = useStore((state) => state.getElementById);
   const selectMe = useStore((state) => state.selectMe);
   const updateElementById = useStore((state) => state.updateElementById);
+  const getPvModule = useStore((state) => state.getPvModule);
   const resizeHandleType = useStore((state) => state.resizeHandleType);
   const rotateHandleType = useStore((state) => state.rotateHandleType);
   const {
@@ -86,9 +87,10 @@ const SolarPanel = ({
   const heliodonRadius = useStore((state) => state.heliodonRadius);
   const sunBeamLength = Math.max(100, heliodonRadius);
   const panelNormal = new Vector3().fromArray(normal);
+  const pvModel = getPvModule(pvModelName) ?? getPvModule('SPR-X21-335-BLK');
 
-  if (parent) {
-    const p = getElementById(parent.id);
+  if (parentId) {
+    const p = getElementById(parentId);
     if (p) {
       switch (p.type) {
         case ObjectType.Foundation:
@@ -150,7 +152,7 @@ const SolarPanel = ({
       setNx(Math.max(1, Math.round(lx / pvModel.length)));
       setNy(Math.max(1, Math.round(ly / pvModel.width)));
     }
-  }, [orientation, pvModel, lx, ly]);
+  }, [orientation, pvModelName, lx, ly]);
 
   useEffect(() => {
     const handlePointerUp = () => {
@@ -252,7 +254,7 @@ const SolarPanel = ({
   const sunDirection = useMemo(() => {
     return getSunDirection(new Date(date), latitude);
   }, [date, latitude]);
-  const rot = getElementById(parent.id)?.rotation[2];
+  const rot = getElementById(parentId)?.rotation[2];
   const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(Util.UNIT_VECTOR_POS_Z, -rot) : sunDirection;
 
   const relativeEuler = useMemo(() => {

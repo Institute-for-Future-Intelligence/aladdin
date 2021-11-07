@@ -70,6 +70,7 @@ const Foundation = ({
   const deleteElementById = useStore(Selector.deleteElementById);
   const selectMe = useStore(Selector.selectMe);
   const addElement = useStore(Selector.addElement);
+  const getPvModule = useStore((state) => state.getPvModule);
 
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const deletedWallID = useStore(Selector.deletedWallID);
@@ -714,6 +715,7 @@ const Foundation = ({
               let intersects;
               if (intersecPlaneRef.current) {
                 const solarPanel = grabRef.current as SolarPanelModel;
+                const pvModel = getPvModule(solarPanel.pvModelName);
                 intersects = ray.intersectObjects([intersecPlaneRef.current]);
                 if (intersects.length > 0) {
                   let p = intersects[0].point; //World coordinate
@@ -721,7 +723,7 @@ const Foundation = ({
                     p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
                     setElementPosition(solarPanel.id, p.x, p.y); //Relative coordinate
                   } else if (rotateHandleType) {
-                    const parent = getElementById(solarPanel.parent.id);
+                    const parent = getElementById(solarPanel.parentId);
                     if (parent) {
                       const pr = parent.rotation[2]; //parent rotation
                       const pc = new Vector2(parent.cx, parent.cy); //world parent center
@@ -750,17 +752,11 @@ const Foundation = ({
                           const theta = -angle + rp.angle() + Math.PI / 2;
                           let dyl = d * Math.cos(theta);
                           if (solarPanel.orientation === Orientation.portrait) {
-                            const nx = Math.max(
-                              1,
-                              Math.ceil((dyl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length),
-                            );
-                            dyl = nx * solarPanel.pvModel.length;
+                            const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));
+                            dyl = nx * pvModel.length;
                           } else {
-                            const nx = Math.max(
-                              1,
-                              Math.ceil((dyl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width),
-                            );
-                            dyl = nx * solarPanel.pvModel.width;
+                            const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
+                            dyl = nx * pvModel.width;
                           }
                           setElementSize(solarPanel.id, solarPanel.lx, dyl);
 
@@ -782,17 +778,11 @@ const Foundation = ({
                           const theta = -angle + rp.angle() - Math.PI / 2;
                           let dyl = d * Math.cos(theta);
                           if (solarPanel.orientation === Orientation.portrait) {
-                            const nx = Math.max(
-                              1,
-                              Math.ceil((dyl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length),
-                            );
-                            dyl = nx * solarPanel.pvModel.length;
+                            const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));
+                            dyl = nx * pvModel.length;
                           } else {
-                            const nx = Math.max(
-                              1,
-                              Math.ceil((dyl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width),
-                            );
-                            dyl = nx * solarPanel.pvModel.width;
+                            const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
+                            dyl = nx * pvModel.width;
                           }
                           setElementSize(solarPanel.id, solarPanel.lx, dyl);
 
@@ -814,17 +804,11 @@ const Foundation = ({
                           const theta = rp.angle() - angle + Math.PI;
                           let dxl = d * Math.cos(theta);
                           if (solarPanel.orientation === Orientation.portrait) {
-                            const nx = Math.max(
-                              1,
-                              Math.ceil((dxl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width),
-                            );
-                            dxl = nx * solarPanel.pvModel.width;
+                            const nx = Math.max(1, Math.ceil((dxl - pvModel.width / 2) / pvModel.width));
+                            dxl = nx * pvModel.width;
                           } else {
-                            const nx = Math.max(
-                              1,
-                              Math.ceil((dxl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length),
-                            );
-                            dxl = nx * solarPanel.pvModel.length;
+                            const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
+                            dxl = nx * pvModel.length;
                           }
                           setElementSize(solarPanel.id, dxl, solarPanel.ly);
 
@@ -846,17 +830,11 @@ const Foundation = ({
                           const theta = -angle + rp.angle();
                           let dxl = d * Math.cos(theta);
                           if (solarPanel.orientation === Orientation.portrait) {
-                            const nx = Math.max(
-                              1,
-                              Math.ceil((dxl - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width),
-                            );
-                            dxl = nx * solarPanel.pvModel.width;
+                            const nx = Math.max(1, Math.ceil((dxl - pvModel.width / 2) / pvModel.width));
+                            dxl = nx * pvModel.width;
                           } else {
-                            const nx = Math.max(
-                              1,
-                              Math.ceil((dxl - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length),
-                            );
-                            dxl = nx * solarPanel.pvModel.length;
+                            const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
+                            dxl = nx * pvModel.length;
                           }
                           setElementSize(solarPanel.id, dxl, solarPanel.ly);
 

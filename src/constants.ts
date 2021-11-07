@@ -30,3 +30,5 @@ export const MOVE_HANDLE_COLOR_2 = 'orchid';
 export const MOVE_HANDLE_COLOR_3 = 'pink';
 export const RESIZE_HANDLE_COLOR = 'white';
 export const HIGHLIGHT_HANDLE_COLOR = 'red';
+
+export const GROUND_ID = 'Ground';

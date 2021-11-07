@@ -2,8 +2,6 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import { GroundModel } from './GroundModel';
-
 export interface ElementModel {
   id: string;
   type: string;
@@ -16,7 +14,7 @@ export interface ElementModel {
   normal: number[]; // normal vector of this element's primary surface if applicable
   rotation: number[]; // Euler angle for the orientation
 
-  parent: ElementModel | GroundModel;
+  parentId: string;
   selected?: boolean;
   locked?: boolean;
   color?: string;

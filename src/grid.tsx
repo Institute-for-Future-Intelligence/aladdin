@@ -87,17 +87,17 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
 
   useEffect(() => {
     if (rotateHandle) {
-      const { cx, cy, lx, ly, type, parent } = element;
+      const { cx, cy, lx, ly, type, parentId } = element;
       switch (type) {
-        case 'Solar Panel':
-          const currParent = getElementById(parent.id);
+        case ObjectType.SolarPanel:
+          const currParent = getElementById(parentId);
           if (currParent) {
             const rcx = cx * currParent.lx;
             const rcy = cy * currParent.ly;
             setPosition(new Vector3(rcx, rcy, height ?? currParent.lz));
           }
           break;
-        case 'Foundation':
+        case ObjectType.Foundation:
           setPosition(new Vector3(cx, cy, 0));
           break;
         default:
@@ -132,19 +132,14 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
       {position && (
         <group position={position} rotation={[Math.PI / 2, 0, 0]} name={'Polar Grid'}>
           <polarGridHelper args={[radius, 24, 6]} />
-          <Ring
-            args={[radius * 0.98, radius, 24, 1, Math.PI / 2, angle]}
-            rotation={[-Util.HALF_PI, 0, 0]}
-          >
+          <Ring args={[radius * 0.98, radius, 24, 1, Math.PI / 2, angle]} rotation={[-Util.HALF_PI, 0, 0]}>
             <meshBasicMaterial side={DoubleSide} color={'yellow'} />
           </Ring>
 
           {/* shown angle */}
           <group rotation={[0, angle, 0]}>
             <mesh position={[-0.5, 0, -radius * 0.9]} rotation={[-Util.HALF_PI, 0, 0]}>
-              <textGeometry
-                args={[`${Math.abs(Math.floor((angle / Math.PI) * 180))}°`, textGeometryParams]}
-              />
+              <textGeometry args={[`${Math.abs(Math.floor((angle / Math.PI) * 180))}°`, textGeometryParams]} />
             </mesh>
           </group>
 

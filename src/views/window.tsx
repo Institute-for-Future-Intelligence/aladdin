@@ -9,7 +9,7 @@ import { DoubleSide, Vector3 } from 'three';
 import { useStore } from 'src/stores/common';
 import { WallModel } from 'src/models/WallModel';
 
-const Window = ({ cx, cy, parent }: WindowModel) => {
+const Window = ({ cx, cy, parentId }: WindowModel) => {
   const getElementById = useStore((state) => state.getElementById);
 
   const [absPostion, setAbsPostion] = useState<Vector3>(null!);

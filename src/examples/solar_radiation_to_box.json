@@ -1,6 +1,6 @@
 {
-  "docid": "qvQcBVeFWegrRrpzaT5V6M",
-  "timestamp": 1635523144978,
+  "docid": "oH3KGziDstAedc4QqowF9N",
+  "timestamp": 1636307906967,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -43,24 +43,6 @@
   },
   "elements": [
     {
-      "parent": {
-        "thermalDiffusivity": 0.05,
-        "albedo": 0.3,
-        "snowReflectionFactors": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ]
-      },
       "selected": false,
       "cz": -0.00999999999999913,
       "cx": -0.2955982837076121,
@@ -77,28 +59,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "parentId": "Ground"
     },
     {
       "selected": false,
-      "parent": {
-        "thermalDiffusivity": 0.05,
-        "snowReflectionFactors": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        "albedo": 0.3
-      },
       "cy": 4.081504375344256,
       "name": "June",
       "rotation": [
@@ -114,28 +79,11 @@
       "id": "xaNFgEDtpNwZNyUWnndg4x",
       "cz": -0.009999999999999095,
       "type": "Human",
-      "cx": 2.399220108700476
+      "cx": 2.399220108700476,
+      "parentId": "Ground"
     },
     {
       "cx": 0.20566332108722207,
-      "parent": {
-        "thermalDiffusivity": 0.05,
-        "albedo": 0.3,
-        "snowReflectionFactors": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ]
-      },
       "color": "gray",
       "cz": 2,
       "type": "Cuboid",
@@ -154,7 +102,8 @@
       ],
       "lx": 2.2290047878920136,
       "id": "2QtCNEmEF6Mcs3vbbR96ZT",
-      "selected": false
+      "selected": false,
+      "parentId": "Ground"
     },
     {
       "ly": 0.1,
@@ -167,46 +116,6 @@
         1
       ],
       "lz": 0.01,
-      "parent": {
-        "cz": 2,
-        "cx": 0.20566332108722207,
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "color": "gray",
-        "id": "2QtCNEmEF6Mcs3vbbR96ZT",
-        "cy": 0.10935014088128625,
-        "ly": 3.646712311386908,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "selected": true,
-        "type": "Cuboid",
-        "lz": 4,
-        "lx": 2.2290047878920136,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "albedo": 0.3,
-          "thermalDiffusivity": 0.05
-        }
-      },
       "rotation": [
         0,
         0,
@@ -217,49 +126,10 @@
       "cx": 0.03109721392634064,
       "cy": 0.16878784903489202,
       "id": "iqgmPt2Nm3r4bW8A7g6DJy",
-      "label": "Top"
+      "label": "Top",
+      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT"
     },
     {
-      "parent": {
-        "color": "gray",
-        "id": "2QtCNEmEF6Mcs3vbbR96ZT",
-        "selected": true,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "albedo": 0.3,
-          "thermalDiffusivity": 0.05
-        },
-        "cy": 0.10935014088128625,
-        "cz": 2,
-        "lz": 4,
-        "lx": 2.2290047878920136,
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "cx": 0.20566332108722207,
-        "type": "Cuboid",
-        "ly": 3.646712311386908
-      },
       "label": "North",
       "rotation": [
         0,
@@ -280,7 +150,8 @@
       "cz": -0.036155842645941405,
       "lx": 0.1,
       "lz": 0.01,
-      "cx": -0.0014535790327764226
+      "cx": -0.0014535790327764226,
+      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT"
     },
     {
       "normal": [
@@ -301,49 +172,10 @@
         0,
         0
       ],
-      "parent": {
-        "type": "Cuboid",
-        "ly": 3.646712311386908,
-        "selected": true,
-        "cx": 0.20566332108722207,
-        "color": "gray",
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "cz": 2,
-        "id": "2QtCNEmEF6Mcs3vbbR96ZT",
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "cy": 0.10935014088128625,
-        "lx": 2.2290047878920136,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "lz": 4
-      },
       "type": "Sensor",
       "cx": 0.5000000161579515,
-      "selected": false
+      "selected": false,
+      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT"
     },
     {
       "lz": 0.01,
@@ -357,46 +189,6 @@
       "selected": false,
       "id": "1GCXGRbm6nuTH23uA8Yngz",
       "cx": 0.028086152131634783,
-      "parent": {
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "cy": 0.10935014088128625,
-        "lx": 2.2290047878920136,
-        "lz": 4,
-        "selected": false,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "color": "gray",
-        "cx": 0.20566332108722207,
-        "cz": 2,
-        "id": "2QtCNEmEF6Mcs3vbbR96ZT",
-        "type": "Cuboid",
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "ly": 3.646712311386908
-      },
       "normal": [
         0,
         -1,
@@ -406,50 +198,11 @@
       "ly": 0.1,
       "type": "Sensor",
       "label": "South",
-      "lx": 0.1
+      "lx": 0.1,
+      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT"
     },
     {
       "selected": false,
-      "parent": {
-        "parent": {
-          "albedo": 0.3,
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05
-        },
-        "lz": 4,
-        "ly": 3.646712311386908,
-        "cy": 0.10935014088128625,
-        "cz": 2,
-        "id": "2QtCNEmEF6Mcs3vbbR96ZT",
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "cx": 0.20566332108722207,
-        "color": "gray",
-        "type": "Cuboid",
-        "selected": false,
-        "lx": 2.2290047878920136,
-        "rotation": [
-          0,
-          0,
-          0
-        ]
-      },
       "ly": 0.1,
       "normal": [
         -1,
@@ -469,7 +222,8 @@
       "type": "Sensor",
       "showLabel": true,
       "lz": 0.01,
-      "lx": 0.1
+      "lx": 0.1,
+      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT"
     }
   ],
   "view": {
@@ -503,9 +257,9 @@
     "yearlyLightSensorPanelX": -905,
     "showHeliodonPanel": false,
     "cameraPosition": {
-      "x": 7.577733417043442,
-      "y": 19.610772938087955,
-      "z": 4.655886327109958
+      "x": 7.577733417043435,
+      "y": 19.610772938087944,
+      "z": 4.655886327109957
     },
     "panCenter": {
       "x": -2.432389491951708,

@@ -5,7 +5,6 @@
 import { HumanName, ObjectType, Orientation, TrackerType, TreeType } from '../types';
 import short from 'short-uuid';
 import { Vector3 } from 'three';
-import { GroundModel } from './GroundModel';
 import { ElementModel } from './ElementModel';
 import { HumanModel } from './HumanModel';
 import { TreeModel } from './TreeModel';
@@ -16,9 +15,10 @@ import { SolarPanelModel } from './SolarPanelModel';
 import { PvModel } from './PvModel';
 import { WallModel } from './WallModel';
 import { RoofModel, RoofPoint } from './RoofModel';
+import { GROUND_ID } from '../constants';
 
 export class ElementModelFactory {
-  static makeHuman(parent: GroundModel, x: number, y: number, z?: number) {
+  static makeHuman(x: number, y: number, z?: number) {
     return {
       type: ObjectType.Human,
       name: HumanName.Jack,
@@ -27,12 +27,12 @@ export class ElementModelFactory {
       cz: z,
       normal: [0, 1, 0],
       rotation: [0, 0, 0],
-      parent: parent,
+      parentId: GROUND_ID,
       id: short.generate() as string,
     } as HumanModel;
   }
 
-  static makeTree(parent: GroundModel, x: number, y: number, z?: number) {
+  static makeTree(x: number, y: number, z?: number) {
     return {
       type: ObjectType.Tree,
       name: TreeType.Dogwood,
@@ -43,9 +43,42 @@ export class ElementModelFactory {
       lz: 4,
       normal: [0, 1, 0],
       rotation: [0, 0, 0],
-      parent: parent,
+      parentId: GROUND_ID,
       id: short.generate() as string,
     } as TreeModel;
+  }
+
+  static makeCuboid(x: number, y: number) {
+    return {
+      type: ObjectType.Cuboid,
+      cx: x,
+      cy: y,
+      cz: 2,
+      lx: 2,
+      ly: 2,
+      lz: 4,
+      color: 'gray',
+      normal: [0, 0, 1],
+      rotation: [0, 0, 0],
+      parentId: GROUND_ID,
+      id: short.generate() as string,
+    } as CuboidModel;
+  }
+
+  static makeFoundation(x: number, y: number) {
+    return {
+      type: ObjectType.Foundation,
+      cx: x,
+      cy: y,
+      cz: 0.05,
+      lx: 4,
+      ly: 4,
+      lz: 0.1,
+      normal: [0, 0, 1],
+      rotation: [0, 0, 0],
+      parentId: GROUND_ID,
+      id: short.generate() as string,
+    } as FoundationModel;
   }
 
   static makeSensor(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: []) {
@@ -60,7 +93,7 @@ export class ElementModelFactory {
       showLabel: false,
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],
-      parent: parent,
+      parentId: parent.id,
       id: short.generate() as string,
     } as SensorModel;
   }
@@ -76,7 +109,7 @@ export class ElementModelFactory {
   ) {
     return {
       type: ObjectType.SolarPanel,
-      pvModel: pvModel,
+      pvModelName: pvModel.name,
       trackerType: TrackerType.NO_TRACKER,
       relativeAzimuth: 0,
       tiltAngle: 0,
@@ -94,42 +127,9 @@ export class ElementModelFactory {
       showLabel: false,
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],
-      parent: parent,
+      parentId: parent.id,
       id: short.generate() as string,
     } as SolarPanelModel;
-  }
-
-  static makeCuboid(parent: GroundModel, x: number, y: number) {
-    return {
-      type: ObjectType.Cuboid,
-      cx: x,
-      cy: y,
-      cz: 2,
-      lx: 2,
-      ly: 2,
-      lz: 4,
-      color: 'gray',
-      normal: [0, 0, 1],
-      rotation: [0, 0, 0],
-      parent: parent,
-      id: short.generate() as string,
-    } as CuboidModel;
-  }
-
-  static makeFoundation(parent: GroundModel, x: number, y: number) {
-    return {
-      type: ObjectType.Foundation,
-      cx: x,
-      cy: y,
-      cz: 0.05,
-      lx: 4,
-      ly: 4,
-      lz: 0.1,
-      normal: [0, 0, 1],
-      rotation: [0, 0, 0],
-      parent: parent,
-      id: short.generate() as string,
-    } as FoundationModel;
   }
 
   static makeWall(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: []) {
@@ -151,7 +151,7 @@ export class ElementModelFactory {
       showLabel: false,
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: [0, 0, 0],
-      parent: parent,
+      parentId: parent.id,
       id: short.generate() as string,
     } as WallModel;
   }
@@ -169,7 +169,7 @@ export class ElementModelFactory {
       showLabel: false,
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],
-      parent: parent,
+      parentId: parent.id,
       id: short.generate() as string,
     } as SensorModel;
   }
@@ -188,7 +188,7 @@ export class ElementModelFactory {
       showLabel: false,
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],
-      parent: parent,
+      parentId: parent.id,
       id: short.generate() as string,
     } as RoofModel;
   }

@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useStore } from 'src/stores/common';
 import { RoofModel } from 'src/models/RoofModel';
 import { Extrude, Sphere } from '@react-three/drei';
@@ -10,13 +10,13 @@ import { Shape, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { ActionType } from 'src/types';
 
-const Roof = ({ id, cz, lz, selected, parent, points }: RoofModel) => {
+const Roof = ({ id, cz, lz, selected, parentId, points }: RoofModel) => {
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
 
   const [absPos, setAbsPos] = useState<Vector3>(null!);
   const [absAngle, setAbsAngle] = useState<number>(null!);
-  const currParent = getElementById(parent.id);
+  const currParent = getElementById(parentId);
 
   useEffect(() => {
     if (currParent) {

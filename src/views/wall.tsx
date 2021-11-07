@@ -37,7 +37,7 @@ const Wall = ({
   leftOffset = 0,
   rightOffset = 0,
   windows,
-  parent,
+  parentId,
   selected = false,
   locked = false,
 }: WallModel) => {
@@ -67,7 +67,7 @@ const Wall = ({
   const resizeHandleULRef = useRef<Mesh>();
   const resizeHandleURRef = useRef<Mesh>();
 
-  const p = getElementById(parent.id);
+  const p = getElementById(parentId);
   const elementModel = getElementById(id) as WallModel;
   const highLight = lx === 0;
 
@@ -174,7 +174,7 @@ const Wall = ({
 
   const getWindowRelativePos = (p: Vector3, wall: WallModel) => {
     const { cx, cy, cz } = wall;
-    const foundation = getElementById(wall.parent.id);
+    const foundation = getElementById(wall.parentId);
     if (foundation && wallAbsAngle !== undefined) {
       const wallAbsPos = Util.wallAbsolutePosition(new Vector3(cx, cy, cz), foundation).setZ(lz / 2);
       const relativePos = new Vector3().subVectors(p, wallAbsPos).applyEuler(new Euler(0, 0, -wallAbsAngle));
@@ -231,7 +231,7 @@ const Wall = ({
               } else if (objectTypeToAdd === ObjectType.Roof) {
                 const points = checkWallLoop(elementModel.id);
                 if (points) {
-                  const parent = getElementById(elementModel.parent.id);
+                  const parent = getElementById(elementModel.parentId);
                   if (parent) {
                     const roof = ElementModelFactory.makeRoof(lz, parent, points);
                     setCommonStore((state) => {

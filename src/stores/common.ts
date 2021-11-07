@@ -74,7 +74,7 @@ export interface CommonStoreState {
   resizeAnchor: Vector3;
   showCloudFilePanel: boolean;
   showAccountSettingsPanel: boolean;
-  selectedEmelent: ElementModel | null;
+  selectedElement: ElementModel | null;
   getSelectedElement: () => ElementModel | null;
   getResizeHandlePosition: (e: ElementModel, type: ResizeHandleType) => Vector3;
   getElementById: (id: string) => ElementModel | null;
@@ -236,7 +236,7 @@ export const useStore = create<CommonStoreState>(
           showCloudFilePanel: false,
           showAccountSettingsPanel: false,
 
-          selectedEmelent: null,
+          selectedElement: null,
           getSelectedElement() {
             const elements = get().elements;
             for (const e of elements) {
@@ -244,7 +244,8 @@ export const useStore = create<CommonStoreState>(
                 return e;
               }
               if (e.type === ObjectType.Wall) {
-                for (const w of e.windows) {
+                const wall = e as WallModel;
+                for (const w of wall.windows) {
                   if (w.selected) {
                     return w;
                   }
@@ -289,7 +290,8 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 e.selected = false;
                 if (e.type === ObjectType.Wall) {
-                  for (const w of e.windows) {
+                  const wall = e as WallModel;
+                  for (const w of wall.windows) {
                     w.selected = false;
                   }
                 }
@@ -304,7 +306,8 @@ export const useStore = create<CommonStoreState>(
                     if (e.id === id) {
                       e.selected = true;
                       if (e.type === ObjectType.Wall) {
-                        for (const w of e.windows) {
+                        const wall = e as WallModel;
+                        for (const w of wall.windows) {
                           w.selected = false;
                         }
                       }
@@ -312,7 +315,8 @@ export const useStore = create<CommonStoreState>(
                     } else {
                       e.selected = false;
                       if (e.type === ObjectType.Wall) {
-                        for (const w of e.windows) {
+                        const wall = e as WallModel;
+                        for (const w of wall.windows) {
                           w.selected = w.id === id;
                         }
                       }
@@ -376,7 +380,7 @@ export const useStore = create<CommonStoreState>(
           setElementRotation(id, x, y, z) {
             immerSet((state: CommonStoreState) => {
               for (let [i, e] of state.elements.entries()) {
-                if (e.id === id || (e.parent && e.parent.id === id)) {
+                if (e.id === id || e.parentId === id) {
                   const elem = state.elements[i];
                   elem.rotation[0] = x;
                   elem.rotation[1] = y;
@@ -389,7 +393,7 @@ export const useStore = create<CommonStoreState>(
           setElementNormal(id, x, y, z) {
             immerSet((state: CommonStoreState) => {
               for (let [i, e] of state.elements.entries()) {
-                if (e.id === id || (e.parent && e.parent.id === id)) {
+                if (e.id === id || e.parentId === id) {
                   const elem = state.elements[i];
                   elem.normal[0] = x;
                   elem.normal[1] = y;
@@ -421,10 +425,10 @@ export const useStore = create<CommonStoreState>(
               const m = position;
               switch (state.objectTypeToAdd) {
                 case ObjectType.Human:
-                  state.elements.push(ElementModelFactory.makeHuman(state.world.ground, m.x, m.y, m.z));
+                  state.elements.push(ElementModelFactory.makeHuman(m.x, m.y, m.z));
                   break;
                 case ObjectType.Tree:
-                  state.elements.push(ElementModelFactory.makeTree(state.world.ground, m.x, m.y, m.z));
+                  state.elements.push(ElementModelFactory.makeTree(m.x, m.y, m.z));
                   break;
                 case ObjectType.Sensor:
                   const sensorParentModel = parent as ElementModel;
@@ -456,10 +460,10 @@ export const useStore = create<CommonStoreState>(
                   );
                   break;
                 case ObjectType.Foundation:
-                  state.elements.push(ElementModelFactory.makeFoundation(state.world.ground, m.x, m.y));
+                  state.elements.push(ElementModelFactory.makeFoundation(m.x, m.y));
                   break;
                 case ObjectType.Cuboid:
-                  state.elements.push(ElementModelFactory.makeCuboid(state.world.ground, m.x, m.y));
+                  state.elements.push(ElementModelFactory.makeCuboid(m.x, m.y));
                   break;
                 case ObjectType.Wall:
                   const wallParentModel = parent as ElementModel;
@@ -502,11 +506,11 @@ export const useStore = create<CommonStoreState>(
                 }
               }
               for (const e of state.elements) {
-                if (e.parent && e.parent.id === id) {
+                if (e.parentId === id) {
                   state.elementToPaste.push(e);
                 }
               }
-              state.elements = state.elements.filter((e) => !(e.id === id || (e.parent && e.parent.id === id)));
+              state.elements = state.elements.filter((e) => !(e.id === id || e.parentId === id));
             });
           },
           deleteElementById(id) {
@@ -516,7 +520,7 @@ export const useStore = create<CommonStoreState>(
                   const wall = e as WallModel;
                   wall.windows = wall.windows.filter((w) => w.id !== id);
                 }
-                return !(e.id === id || (e.parent && e.parent.id === id));
+                return !(e.id === id || e.parentId === id);
               });
             });
           },
@@ -540,14 +544,14 @@ export const useStore = create<CommonStoreState>(
 
           removeAllChildElementsByType(parentId: string, type: ObjectType) {
             immerSet((state: CommonStoreState) => {
-              state.elements = state.elements.filter((x) => x.type !== type || x.parent.id !== parentId);
+              state.elements = state.elements.filter((x) => x.type !== type || x.parentId !== parentId);
             });
           },
           countAllChildElementsByType(parentId: string, type: ObjectType) {
             let count = 0;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === type && e.parent.id === parentId) {
+                if (e.type === type && e.parentId === parentId) {
                   count++;
                 }
               }
@@ -558,15 +562,16 @@ export const useStore = create<CommonStoreState>(
             let count = 0;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.parent.id === parentId) {
+                if (e.type === ObjectType.SolarPanel && e.parentId === parentId) {
                   const sp = e as SolarPanelModel;
+                  const pvModel = state.getPvModule(sp.pvModelName);
                   let nx, ny;
                   if (sp.orientation === Orientation.portrait) {
-                    nx = Math.max(1, Math.round(sp.lx / sp.pvModel.width));
-                    ny = Math.max(1, Math.round(sp.ly / sp.pvModel.length));
+                    nx = Math.max(1, Math.round(sp.lx / pvModel.width));
+                    ny = Math.max(1, Math.round(sp.ly / pvModel.length));
                   } else {
-                    nx = Math.max(1, Math.round(sp.lx / sp.pvModel.length));
-                    ny = Math.max(1, Math.round(sp.ly / sp.pvModel.width));
+                    nx = Math.max(1, Math.round(sp.lx / pvModel.length));
+                    ny = Math.max(1, Math.round(sp.ly / pvModel.width));
                   }
                   count += nx * ny;
                 }
@@ -580,13 +585,15 @@ export const useStore = create<CommonStoreState>(
               if (state.elementToPaste.length > 0) {
                 let m = state.pastePoint;
                 const newParent = state.getSelectedElement();
-                const oldParent = state.elementToPaste[0].parent;
-                // if parent is ground, it has no type definition
-                if (newParent && oldParent && oldParent.type !== ObjectType.Ground) {
-                  state.elementToPaste[0].parent = newParent;
-                  m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
+                const oldParent = state.getElementById(state.elementToPaste[0].parentId);
+                if (newParent) {
+                  // if parent is ground, it has no type definition but we use it to check its type
+                  if (oldParent && oldParent.type) {
+                    state.elementToPaste[0].parentId = newParent.id;
+                    m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
+                  }
                 }
-                const e = ElementModelCloner.clone(state.elementToPaste[0], m.x, m.y, m.z);
+                const e = ElementModelCloner.clone(newParent, state.elementToPaste[0], m.x, m.y, m.z);
                 if (e) {
                   if (state.pasteNormal) {
                     e.normal = state.pasteNormal.toArray();
@@ -607,7 +614,8 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               if (state.elementToPaste.length > 0) {
                 const elem = state.elementToPaste[0];
-                const e = ElementModelCloner.clone(elem, elem.cx, elem.cy, elem.cz);
+                const parent = state.getElementById(elem.parentId);
+                const e = ElementModelCloner.clone(parent, elem, elem.cx, elem.cy, elem.cz);
                 if (e) {
                   switch (e.type) {
                     case ObjectType.Human:
@@ -621,12 +629,24 @@ export const useStore = create<CommonStoreState>(
                       state.elementToPaste = [e];
                       break;
                     case ObjectType.SolarPanel:
-                      const parent = state.getElementById(e.parent.id);
-                      if (parent) {
-                        e.cx += e.lx / parent.lx;
+                      if (e.parentId) {
+                        const parent = state.getElementById(e.parentId);
+                        if (parent) {
+                          e.cx += e.lx / parent.lx;
+                        }
+                        state.elements.push(e);
+                        state.elementToPaste = [e];
                       }
-                      state.elements.push(e);
-                      state.elementToPaste = [e];
+                      break;
+                    case ObjectType.Sensor:
+                      if (e.parentId) {
+                        const parent = state.getElementById(e.parentId);
+                        if (parent) {
+                          e.cx += e.lx / parent.lx;
+                        }
+                        state.elements.push(e);
+                        state.elementToPaste = [e];
+                      }
                       break;
                   }
                 }
@@ -777,7 +797,7 @@ export const useStore = create<CommonStoreState>(
             const state = get();
             const wallsID: string[] = [];
             for (const e of state.elements) {
-              if (e.type === ObjectType.Wall && e.parent.id === parentID) {
+              if (e.type === ObjectType.Wall && e.parentId === parentID) {
                 wallsID.push(e.id);
               }
             }
@@ -787,7 +807,7 @@ export const useStore = create<CommonStoreState>(
           orthographicChanged: false,
           simulationInProgress: false,
           locale: enUS,
-          localFileName: 'aladdin.json',
+          localFileName: 'aladdin.ala',
           localFileDialogRequested: false,
           savedCameraPosition: new Vector3(0, -5, 0),
           savedPanCenter: new Vector3(),

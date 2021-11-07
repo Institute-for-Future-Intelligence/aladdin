@@ -24,6 +24,7 @@ import { ElementModel } from '../models/ElementModel';
 import RotateHandle from '../components/rotateHandle';
 import { PolarGrid } from 'src/grid';
 import WireFrame from 'src/components/wireFrame';
+import { SolarPanelModel } from '../models/SolarPanelModel';
 
 const Cuboid = ({
   id,
@@ -54,6 +55,7 @@ const Cuboid = ({
   const updateElementById = useStore((state) => state.updateElementById);
   const setElementSize = useStore((state) => state.setElementSize);
   const resizeAnchor = useStore((state) => state.resizeAnchor);
+  const getPvModule = useStore((state) => state.getPvModule);
 
   const {
     camera,
@@ -273,7 +275,7 @@ const Cuboid = ({
                   }
                   setElementPosition(grabRef.current.id, p.x, p.y, p.z);
                 } else if (rotateHandleType) {
-                  const parent = getElementById(grabRef.current.parent.id);
+                  const parent = getElementById(grabRef.current.parentId);
                   if (parent) {
                     const pr = parent.rotation[2]; //parent rotation
                     const pc = new Vector2(parent.cx, parent.cy); //world parent center
@@ -291,7 +293,7 @@ const Cuboid = ({
                     });
                   }
                 } else if (resizeHandleType && elementModel) {
-                  const solarPanel = grabRef.current;
+                  const solarPanel = grabRef.current as SolarPanelModel;
                   const wp = new Vector3(p.x, p.y, p.z);
                   const vd = new Vector3().subVectors(wp, resizeAnchor);
                   const vh = new Vector3().subVectors(
@@ -303,30 +305,25 @@ const Cuboid = ({
                   }
                   const vhd = vd.projectOnVector(vh);
                   let d = vhd.length();
+                  const pvModel = getPvModule(solarPanel.pvModelName);
                   if (solarPanel.orientation === Orientation.portrait) {
                     if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
-                      const nx = Math.max(1, Math.ceil((d - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width));
-                      d = nx * solarPanel.pvModel.width;
+                      const nx = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
+                      d = nx * pvModel.width;
                       setElementSize(solarPanel.id, d, solarPanel.ly);
                     } else {
-                      const ny = Math.max(
-                        1,
-                        Math.ceil((d - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length),
-                      );
-                      d = ny * solarPanel.pvModel.length;
+                      const ny = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
+                      d = ny * pvModel.length;
                       setElementSize(solarPanel.id, solarPanel.lx, d);
                     }
                   } else {
                     if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
-                      const nx = Math.max(
-                        1,
-                        Math.ceil((d - solarPanel.pvModel.length / 2) / solarPanel.pvModel.length),
-                      );
-                      d = nx * solarPanel.pvModel.length;
+                      const nx = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
+                      d = nx * pvModel.length;
                       setElementSize(solarPanel.id, d, solarPanel.ly);
                     } else {
-                      const ny = Math.max(1, Math.ceil((d - solarPanel.pvModel.width / 2) / solarPanel.pvModel.width));
-                      d = ny * solarPanel.pvModel.width;
+                      const ny = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
+                      d = ny * pvModel.width;
                       setElementSize(solarPanel.id, solarPanel.lx, d);
                     }
                   }

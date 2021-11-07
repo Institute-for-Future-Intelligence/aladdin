@@ -26,6 +26,7 @@ import JudyImage from '../resources/judy.png';
 import JuneImage from '../resources/june.png';
 import JuroImage from '../resources/juro.png';
 import { useStore } from '../stores/common';
+import { HumanModel } from '../models/HumanModel';
 
 const { Option } = Select;
 
@@ -38,7 +39,7 @@ const HumanSelection = ({ ...rest }: HumanSelectionProps) => {
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
-  const human = getSelectedElement();
+  const human = getSelectedElement() as HumanModel;
 
   return (
     <Select

@@ -36,6 +36,7 @@ import AccountSettingsPanel from './panels/accountSettingsPanel';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import i18n from './i18n/i18n';
 import { Vector3 } from 'three';
+import { GROUND_ID } from './constants';
 
 const ButtonsContainer = styled.div`
   position: absolute;
@@ -298,6 +299,17 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               if (!data.view.hasOwnProperty('panCenter')) data.view.panCenter = { ...new Vector3(0, 0, 0) };
               state.world = data.world;
               state.viewState = data.view;
+              // remove old properties
+              for (const elem of data.elements) {
+                if (elem.hasOwnProperty('parent')) {
+                  if (!elem.hasOwnProperty('parentId')) elem.parentId = elem.parent.id ?? GROUND_ID;
+                  delete elem.parent;
+                }
+                if (elem.hasOwnProperty('pvModel')) {
+                  if (!elem.hasOwnProperty('pvModelName')) elem.pvModelName = elem.pvModel.name ?? 'SPR-X21-335-BLK';
+                  delete elem.pvModel;
+                }
+              }
               state.elements = data.elements;
               state.notes = data.notes ?? [];
             });

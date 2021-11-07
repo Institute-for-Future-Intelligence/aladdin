@@ -12,6 +12,7 @@ import { GroundModel } from '../models/GroundModel';
 import { HumanModel } from '../models/HumanModel';
 import { TreeModel } from '../models/TreeModel';
 import short from 'short-uuid';
+import { GROUND_ID } from '../constants';
 
 // default scene
 
@@ -56,7 +57,7 @@ export class DefaultWorldModel implements WorldModel {
       lz: 0.1,
       normal: [0, 0, 1],
       rotation: [0, 0, 0],
-      parent: this.ground,
+      parentId: GROUND_ID,
       id: short.generate() as string,
     } as FoundationModel;
     const sensor = {
@@ -67,7 +68,7 @@ export class DefaultWorldModel implements WorldModel {
       lx: 0.1,
       ly: 0.1,
       lz: 0.01,
-      parent: foundation,
+      parentId: foundation.id,
       normal: [0, 0, 1],
       rotation: [0, 0, 0],
       id: short.generate() as string,
@@ -89,7 +90,7 @@ export class DefaultWorldModel implements WorldModel {
       color: 'gray',
       normal: [0, 0, 1],
       rotation: [0, 0, Math.PI / 6],
-      parent: this.ground,
+      parentId: GROUND_ID,
       id: short.generate() as string,
     } as CuboidModel;
     elements.push(cuboid);
@@ -101,7 +102,7 @@ export class DefaultWorldModel implements WorldModel {
       cy: 2,
       normal: [1, 0, 0],
       rotation: [0, 0, 0],
-      parent: this.ground,
+      parentId: GROUND_ID,
       id: short.generate() as string,
     } as HumanModel;
     const woman = {
@@ -111,7 +112,7 @@ export class DefaultWorldModel implements WorldModel {
       cy: 2,
       normal: [1, 0, 0],
       rotation: [0, 0, 0],
-      parent: this.ground,
+      parentId: GROUND_ID,
       id: short.generate() as string,
     } as HumanModel;
     elements.push(man);
@@ -127,7 +128,7 @@ export class DefaultWorldModel implements WorldModel {
       lz: 4,
       normal: [1, 0, 0],
       rotation: [0, 0, 0],
-      parent: this.ground,
+      parentId: GROUND_ID,
       id: short.generate() as string,
     } as TreeModel;
     const tree2 = {
@@ -140,7 +141,7 @@ export class DefaultWorldModel implements WorldModel {
       lz: 6,
       normal: [1, 0, 0],
       rotation: [0, 0, 0],
-      parent: this.ground,
+      parentId: GROUND_ID,
       id: short.generate() as string,
     } as TreeModel;
     elements.push(tree1);

@@ -1,6 +1,6 @@
 {
-  "docid": "7NfTYux5B3U7kqqewoi8Rt",
-  "timestamp": 1635806185977,
+  "docid": "stBdgWvUAiU7hSShXhwtEo",
+  "timestamp": 1636307331539,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -60,26 +60,9 @@
         0,
         0.212062254347157
       ],
-      "parent": {
-        "snowReflectionFactors": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        "thermalDiffusivity": 0.05,
-        "albedo": 0.3
-      },
       "id": "gKtCDo6vdsdKsNWyrYnEMY",
-      "selected": false
+      "selected": false,
+      "parentId": "Ground"
     },
     {
       "type": "Wall",
@@ -442,48 +425,10 @@
         0,
         0.212062254347157
       ],
-      "parent": {
-        "type": "Foundation",
-        "cx": -5.132079215763441,
-        "cy": -0.7367750700230316,
-        "cz": 0.05,
-        "lx": 19.070319674601013,
-        "ly": 17.99503156684139,
-        "lz": 0.1,
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "id": "gKtCDo6vdsdKsNWyrYnEMY",
-        "selected": false
-      },
       "id": "egzW42i4cfqWFAkG1qgDuE",
       "leftOffset": 0.04999999999999995,
-      "rightOffset": 0
+      "rightOffset": 0,
+      "parentId": "gKtCDo6vdsdKsNWyrYnEMY"
     },
     {
       "type": "Wall",
@@ -858,48 +803,10 @@
         0,
         0.212062254347157
       ],
-      "parent": {
-        "type": "Foundation",
-        "cx": -5.132079215763441,
-        "cy": -0.7367750700230316,
-        "cz": 0.05,
-        "lx": 19.070319674601013,
-        "ly": 17.99503156684139,
-        "lz": 0.1,
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "id": "gKtCDo6vdsdKsNWyrYnEMY",
-        "selected": false
-      },
       "id": "oKhEE6pqiRVMDi3gyzbuwY",
       "rightOffset": 0.04999999999999995,
-      "leftOffset": 0
+      "leftOffset": 0,
+      "parentId": "gKtCDo6vdsdKsNWyrYnEMY"
     },
     {
       "type": "Wall",
@@ -1274,48 +1181,10 @@
         0,
         0.212062254347157
       ],
-      "parent": {
-        "type": "Foundation",
-        "cx": -5.132079215763441,
-        "cy": -0.7367750700230316,
-        "cz": 0.05,
-        "lx": 19.070319674601013,
-        "ly": 17.99503156684139,
-        "lz": 0.1,
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "id": "gKtCDo6vdsdKsNWyrYnEMY",
-        "selected": false
-      },
       "id": "vDTY9T9My3NuhgtQGtJGKE",
       "leftOffset": 0,
-      "rightOffset": 0
+      "rightOffset": 0,
+      "parentId": "gKtCDo6vdsdKsNWyrYnEMY"
     },
     {
       "type": "Wall",
@@ -1471,48 +1340,10 @@
         0,
         0.212062254347157
       ],
-      "parent": {
-        "type": "Foundation",
-        "cx": -5.132079215763441,
-        "cy": -0.7367750700230316,
-        "cz": 0.05,
-        "lx": 19.070319674601013,
-        "ly": 17.99503156684139,
-        "lz": 0.1,
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "id": "gKtCDo6vdsdKsNWyrYnEMY",
-        "selected": false
-      },
       "id": "sqyiw2bkXbikHyRGWUrNw5",
       "leftOffset": 0,
-      "rightOffset": 0
+      "rightOffset": 0,
+      "parentId": "gKtCDo6vdsdKsNWyrYnEMY"
     },
     {
       "type": "Roof",
@@ -1556,46 +1387,8 @@
         0,
         0.212062254347157
       ],
-      "parent": {
-        "type": "Foundation",
-        "cx": -5.132079215763441,
-        "cy": -0.7367750700230316,
-        "cz": 0.05,
-        "lx": 19.070319674601013,
-        "ly": 17.99503156684139,
-        "lz": 0.1,
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "id": "gKtCDo6vdsdKsNWyrYnEMY",
-        "selected": false
-      },
-      "id": "k4Mk5ijUjpAoa7pESaYKB8"
+      "id": "k4Mk5ijUjpAoa7pESaYKB8",
+      "parentId": "gKtCDo6vdsdKsNWyrYnEMY"
     },
     {
       "type": "Human",
@@ -1613,26 +1406,9 @@
         0,
         0
       ],
-      "parent": {
-        "snowReflectionFactors": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        "thermalDiffusivity": 0.05,
-        "albedo": 0.3
-      },
       "id": "wyKLctq5CKnuwSih6BiC7h",
-      "selected": false
+      "selected": false,
+      "parentId": "Ground"
     },
     {
       "type": "Human",
@@ -1650,26 +1426,9 @@
         0,
         0
       ],
-      "parent": {
-        "snowReflectionFactors": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        "thermalDiffusivity": 0.05,
-        "albedo": 0.3
-      },
       "id": "s7bKMp3whEUj2xKarWfyuP",
-      "selected": false
+      "selected": false,
+      "parentId": "Ground"
     },
     {
       "type": "Tree",
@@ -1689,28 +1448,11 @@
         0,
         0
       ],
-      "parent": {
-        "snowReflectionFactors": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        "thermalDiffusivity": 0.05,
-        "albedo": 0.3
-      },
       "id": "m6pgzs71YLiJpPcn2hhaSB",
       "selected": false,
       "evergreen": false,
-      "showModel": false
+      "showModel": false,
+      "parentId": "Ground"
     },
     {
       "type": "Human",
@@ -1728,26 +1470,9 @@
         0,
         0
       ],
-      "parent": {
-        "snowReflectionFactors": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        "thermalDiffusivity": 0.05,
-        "albedo": 0.3
-      },
       "id": "3Nh4PiPXXiuPwGfq894GNy",
-      "selected": false
+      "selected": false,
+      "parentId": "Ground"
     },
     {
       "type": "Human",
@@ -1765,26 +1490,9 @@
         0,
         0
       ],
-      "parent": {
-        "snowReflectionFactors": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        "thermalDiffusivity": 0.05,
-        "albedo": 0.3
-      },
       "id": "1dAqZbGZNqxposaPg9FNmi",
-      "selected": false
+      "selected": false,
+      "parentId": "Ground"
     },
     {
       "type": "Human",
@@ -1802,26 +1510,9 @@
         0,
         0
       ],
-      "parent": {
-        "snowReflectionFactors": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        "thermalDiffusivity": 0.05,
-        "albedo": 0.3
-      },
       "id": "c4h2Q1aJv8MZNbgwSai2Vj",
-      "selected": false
+      "selected": false,
+      "parentId": "Ground"
     },
     {
       "type": "Human",
@@ -1839,26 +1530,9 @@
         0,
         0
       ],
-      "parent": {
-        "snowReflectionFactors": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        "thermalDiffusivity": 0.05,
-        "albedo": 0.3
-      },
       "id": "v1HrgbkjFJtyNiE16787RN",
-      "selected": false
+      "selected": false,
+      "parentId": "Ground"
     },
     {
       "type": "Roof",
@@ -1898,46 +1572,8 @@
         0,
         0
       ],
-      "parent": {
-        "type": "Foundation",
-        "cx": 1.0684296534694853,
-        "cy": -0.5936786192283758,
-        "cz": 0.1,
-        "lx": 20.710359232557256,
-        "ly": 17.731586239971843,
-        "lz": 0.2,
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "rotation": [
-          0,
-          0,
-          0.212062254347157
-        ],
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "id": "gKtCDo6vdsdKsNWyrYnEMY",
-        "selected": false
-      },
-      "id": "gnCtJpiu4kh4GN1FeL1jB8"
+      "id": "gnCtJpiu4kh4GN1FeL1jB8",
+      "parentId": "gKtCDo6vdsdKsNWyrYnEMY"
     },
     {
       "type": "Tree",
@@ -1957,27 +1593,10 @@
         0,
         0
       ],
-      "parent": {
-        "snowReflectionFactors": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        "thermalDiffusivity": 0.05,
-        "albedo": 0.3
-      },
       "id": "mopayetZxhsFgkpDNCdBzW",
       "selected": false,
-      "evergreen": true
+      "evergreen": true,
+      "parentId": "Ground"
     }
   ],
   "view": {
@@ -2011,8 +1630,8 @@
     "yearlyLightSensorPanelX": -905,
     "showHeliodonPanel": false,
     "cameraPosition": {
-      "x": 23.76360990290099,
-      "y": 13.244858165377691,
+      "x": 23.76360990290089,
+      "y": 13.244858165377588,
       "z": 2.9588328611597055
     },
     "panCenter": {

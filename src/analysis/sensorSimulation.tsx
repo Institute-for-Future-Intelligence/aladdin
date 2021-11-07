@@ -106,8 +106,7 @@ const SensorSimulation = ({ city, dailyLightSensorDataFlag, yearlyLightSensorDat
   };
 
   const collectDailyLightSensorData = (sensor: SensorModel) => {
-    // why are the properties of parents cached here?
-    const parent = getElementById(sensor.parent.id);
+    const parent = getElementById(sensor.parentId);
     if (!parent) throw new Error('parent of sensor does not exist');
     const position = Util.absoluteCoordinates(sensor.cx, sensor.cy, sensor.cz, parent);
     const normal = new Vector3().fromArray(sensor.normal);
@@ -181,8 +180,7 @@ const SensorSimulation = ({ city, dailyLightSensorDataFlag, yearlyLightSensorDat
 
   const collectYearlyLightSensorData = (sensor: SensorModel) => {
     const data = [];
-    // why are the properties of parents cached here?
-    const parent = getElementById(sensor.parent.id);
+    const parent = getElementById(sensor.parentId);
     if (!parent) throw new Error('parent of sensor does not exist');
     const position = Util.absoluteCoordinates(sensor.cx, sensor.cy, sensor.cz, parent);
     const normal = new Vector3().fromArray(sensor.normal);

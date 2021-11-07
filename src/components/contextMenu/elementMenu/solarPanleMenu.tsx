@@ -20,6 +20,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const setElementSize = useStore((state) => state.setElementSize);
   const updateElementById = useStore((state) => state.updateElementById);
+  const getPvModule = useStore((state) => state.getPvModule);
   const [solarPanel, setSolarPanel] = useState<SolarPanelModel>();
   const [dx, setDx] = useState<number>(0);
   const [dy, setDy] = useState<number>(0);
@@ -31,9 +32,11 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
 
   useEffect(() => {
     if (element && element.type === ObjectType.SolarPanel) {
-      setSolarPanel(element as SolarPanelModel);
-      setDx(element.orientation === Orientation.portrait ? element.pvModel.width : element.pvModel.length);
-      setDy(element.orientation === Orientation.portrait ? element.pvModel.length : element.pvModel.width);
+      const panel = element as SolarPanelModel;
+      const pvModel = getPvModule(panel.pvModelName) ?? getPvModule('SPR-X21-335-BLK');
+      setSolarPanel(panel);
+      setDx(panel.orientation === Orientation.portrait ? pvModel.width : pvModel.length);
+      setDy(panel.orientation === Orientation.portrait ? pvModel.length : pvModel.width);
       setPanelNormal(new Vector3().fromArray(element.normal));
       setLabelText(element.label ?? '');
     }
@@ -66,7 +69,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
             }}
             style={{ paddingLeft: '40px' }}
           >
-            {i18n.t('solarPanelMenu.ChangePvModel', lang)} ({solarPanel.pvModel.name})...
+            {i18n.t('solarPanelMenu.ChangePvModel', lang)} ({solarPanel.pvModelName})...
           </Menu.Item>
           <Menu>
             <Menu.Item key={'solar-panel-orientation'} style={{ paddingLeft: '40px' }}>
@@ -76,16 +79,17 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                 value={solarPanel.orientation}
                 onChange={(value) => {
                   if (solarPanel) {
+                    const pvModel = getPvModule(solarPanel.pvModelName);
                     if (value === Orientation.portrait) {
                       // calculate the current x-y layout
-                      const nx = Math.max(1, Math.round(solarPanel.lx / solarPanel.pvModel.width));
-                      const ny = Math.max(1, Math.round(solarPanel.ly / solarPanel.pvModel.length));
-                      setElementSize(solarPanel.id, nx * solarPanel.pvModel.width, ny * solarPanel.pvModel.length);
+                      const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.width));
+                      const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.length));
+                      setElementSize(solarPanel.id, nx * pvModel.width, ny * pvModel.length);
                     } else {
                       // calculate the current x-y layout
-                      const nx = Math.max(1, Math.round(solarPanel.lx / solarPanel.pvModel.length));
-                      const ny = Math.max(1, Math.round(solarPanel.ly / solarPanel.pvModel.width));
-                      setElementSize(solarPanel.id, nx * solarPanel.pvModel.length, ny * solarPanel.pvModel.width);
+                      const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.length));
+                      const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.width));
+                      setElementSize(solarPanel.id, nx * pvModel.length, ny * pvModel.width);
                     }
                     updateElementById(solarPanel.id, { orientation: value });
                     setUpdateFlag(!updateFlag);

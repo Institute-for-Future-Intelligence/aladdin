@@ -28,7 +28,7 @@ const Sensor = ({
   lineWidth = 0.1,
   selected = false,
   showLabel = false,
-  parent,
+  parentId,
   light = true,
   heatFlux = false,
 }: SensorModel) => {
@@ -43,8 +43,8 @@ const Sensor = ({
   const baseRef = useRef<Mesh>();
   const handleRef = useRef<Mesh>();
 
-  if (parent) {
-    const p = getElementById(parent.id);
+  if (parentId) {
+    const p = getElementById(parentId);
     if (p) {
       switch (p.type) {
         case ObjectType.Foundation:

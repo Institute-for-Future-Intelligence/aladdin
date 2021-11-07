@@ -1,6 +1,6 @@
 {
-  "docid": "69QrNKhKggV6m3HRarDWL9",
-  "timestamp": 1635530582361,
+  "docid": "e9CRVxPdnDWp8MN9r4MA1W",
+  "timestamp": 1636313041508,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -47,24 +47,6 @@
       "id": "iQNq5wTvhz2y4LnmToU5UD",
       "lx": 142.2392773808651,
       "cz": 0.05,
-      "parent": {
-        "snowReflectionFactors": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        "thermalDiffusivity": 0.05,
-        "albedo": 0.3
-      },
       "type": "Foundation",
       "selected": false,
       "cx": -4.195363174263456,
@@ -78,7 +60,8 @@
         0,
         1
       ],
-      "lz": 0.1
+      "lz": 0.1,
+      "parentId": "Ground"
     },
     {
       "poleSpacing": 4,
@@ -90,75 +73,12 @@
       "id": "7sf7cy4bvAVCBGQacXzmco",
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": -0.18385364628122985,
       "normal": [
         0,
         0,
         1
       ],
-      "parent": {
-        "ly": 7.765545737700638,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lx": 8.696616493705655,
-        "parent": {
-          "albedo": 0.3,
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05
-        },
-        "type": "Foundation",
-        "cy": 0.0268486720548049,
-        "lz": 0.1,
-        "selected": true,
-        "cx": -0.5238196140364044,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "cz": 0.05
-      },
       "label": "Solar Panel",
       "poleHeight": 2,
       "trackerType": "None",
@@ -172,126 +92,12 @@
       "showLabel": false,
       "cy": 0.41154795014414136,
       "lx": 41.328,
-      "cz": 0.5000000074505806
+      "cz": 0.5000000074505806,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Solar Panel",
-      "pvModel": {
-        "cellType": "Monocrystalline",
-        "name": "SPR-X21-335-BLK",
-        "impp": 5.85,
-        "n": 8,
-        "nominalWidth": 1.05,
-        "pmax": 335,
-        "color": "Black",
-        "width": 1.046,
-        "isc": 6.23,
-        "m": 12,
-        "weight": 18.6,
-        "voc": 67.9,
-        "brand": "SunPower",
-        "nominalLength": 1.56,
-        "shadeTolerance": "High",
-        "vmpp": 57.3,
-        "price": 800,
-        "thickness": 0.046,
-        "efficiency": 0.21,
-        "noct": 41.5,
-        "length": 1.558,
-        "pmaxTC": -0.0029
-      },
-      "cx": -119.67514283544527,
-      "cy": 43.831696548930296,
-      "cz": 7.105427357601002e-15,
-      "lx": 42.066,
-      "ly": 5.23,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0.5235987755982988,
-      "relativeAzimuth": 0,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 2,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0.00661825942312345
-      ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
-      "id": "s7SP194zWyJp9eQPD3Qwm6",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": -0.2085999883408015,
       "cy": 0.2967737516247513,
       "cz": 0.5000000074505806,
@@ -316,74 +122,13 @@
         0,
         0.00661825942312345
       ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
       "id": "u6H9MqgWa4Kd52HKxXHyfd",
-      "selected": false
+      "selected": false,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Solar Panel",
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": -0.2129725916428917,
       "cy": 0.1761385706326769,
       "cz": 0.5000000074505806,
@@ -408,74 +153,13 @@
         0,
         0.00661825942312345
       ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
       "id": "isD3hQKxBaKvJHVhXQRSFX",
-      "selected": false
+      "selected": false,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Solar Panel",
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": 0.21286490782149506,
       "cy": 0.40533727676341674,
       "cz": 0.5000000074505095,
@@ -500,74 +184,13 @@
         0,
         0.00661825942312345
       ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
       "id": "1H8Ah2NiusXod1r5JfSEdM",
-      "selected": false
+      "selected": false,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Solar Panel",
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": 0.2157404930716505,
       "cy": 0.29104137076474096,
       "cz": 0.5000000074505095,
@@ -592,74 +215,13 @@
         0,
         0.00661825942312345
       ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
       "id": "umpehqPsRtCDK6UA4mqJoG",
-      "selected": false
+      "selected": false,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Solar Panel",
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": 0.21328618631855467,
       "cy": 0.16957071412835875,
       "cz": 0.5000000074505806,
@@ -684,74 +246,13 @@
         0,
         0.00661825942312345
       ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
       "id": "8h6miktsic7qwiuXwVm3JD",
-      "selected": false
+      "selected": false,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Solar Panel",
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": 0.21280595475914066,
       "cy": 0.051276050662342434,
       "cz": 0.5000000074505806,
@@ -776,74 +277,13 @@
         0,
         0.00661825942312345
       ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
       "id": "sZ6SPNs3Br48SVURLMnSBP",
-      "selected": false
+      "selected": false,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Solar Panel",
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": 0.21273135059185827,
       "cy": -0.06678446254817177,
       "cz": 0.5000000074505806,
@@ -868,74 +308,13 @@
         0,
         0.00661825942312345
       ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
       "id": "qf6tt85DDUFdqqdq41kgue",
-      "selected": false
+      "selected": false,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Solar Panel",
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": 0.21145696320583168,
       "cy": -0.1839603970895393,
       "cz": 0.5000000074505806,
@@ -960,74 +339,13 @@
         0,
         0.00661825942312345
       ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
       "id": "w8vP9aAybeC5dwx3A4mqYx",
-      "selected": false
+      "selected": false,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Solar Panel",
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": -0.24935013235822032,
       "cy": -0.17377993517526577,
       "cz": 0.5000000074505095,
@@ -1052,74 +370,13 @@
         0,
         0.00661825942312345
       ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
       "id": "3x3G8XioH9Zzi5C1YzQSrN",
-      "selected": false
+      "selected": false,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Solar Panel",
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": -0.2490430523236341,
       "cy": -0.2948792563178018,
       "cz": 0.5000000074505806,
@@ -1144,74 +401,13 @@
         0,
         0.00661825942312345
       ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
       "id": "uavg3RvDMs9sLARTaFJrKn",
-      "selected": false
+      "selected": false,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Solar Panel",
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": -0.2487148289589619,
       "cy": -0.4107703751503071,
       "cz": 0.5000000074505806,
@@ -1236,74 +432,13 @@
         0,
         0.00661825942312345
       ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
       "id": "a8WkjS34Zm7gGZArEABXf2",
-      "selected": false
+      "selected": false,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Solar Panel",
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": 0.14095223506070606,
       "cy": -0.3015421690388455,
       "cz": 0.5000000074505806,
@@ -1328,74 +463,13 @@
         0,
         0.00661825942312345
       ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
       "id": "qHjdyMPfLFYccMdZ5935io",
-      "selected": false
+      "selected": false,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Solar Panel",
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": 0.14180997020529057,
       "cy": -0.42019250284417625,
       "cz": 0.5000000074505806,
@@ -1420,74 +494,13 @@
         0,
         0.00661825942312345
       ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
       "id": "ftH1AYF9mgzBPfNfgKxezE",
-      "selected": false
+      "selected": false,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Solar Panel",
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": -0.31517396320068136,
       "cy": -0.058484237305800275,
       "cz": 0.5000000074505095,
@@ -1512,74 +525,13 @@
         0,
         0.00661825942312345
       ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
       "id": "kZjSD5Mr7pTSrSA5ejYZf4",
-      "selected": false
+      "selected": false,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Solar Panel",
-      "pvModel": {
-        "name": "CS6X-355P-FG",
-        "brand": "Canadian Solar",
-        "cellType": "Polycrystalline",
-        "efficiency": 0.1818,
-        "length": 1.968,
-        "nominalLength": 1.96,
-        "width": 0.992,
-        "nominalWidth": 0.99,
-        "thickness": 0.006,
-        "m": 12,
-        "n": 6,
-        "pmax": 355,
-        "vmpp": 38.2,
-        "impp": 9.3,
-        "voc": 46.4,
-        "isc": 9.84,
-        "pmaxTC": -0.0039,
-        "noct": 43,
-        "weight": 27.5,
-        "color": "Blue",
-        "shadeTolerance": "Partial",
-        "price": 599
-      },
       "cx": -0.21302098966369915,
       "cy": 0.057976450186776635,
       "cz": 0.5000000074505806,
@@ -1604,47 +556,10 @@
         0,
         0.00661825942312345
       ],
-      "parent": {
-        "ly": 87.2478942173648,
-        "cy": -12.414850309565772,
-        "id": "iQNq5wTvhz2y4LnmToU5UD",
-        "lx": 142.2392773808651,
-        "cz": 0.05,
-        "parent": {
-          "snowReflectionFactors": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "thermalDiffusivity": 0.05,
-          "albedo": 0.3
-        },
-        "type": "Foundation",
-        "selected": true,
-        "cx": -4.195363174263456,
-        "rotation": [
-          0,
-          0,
-          0.00661825942312345
-        ],
-        "normal": [
-          0,
-          0,
-          1
-        ],
-        "lz": 0.1
-      },
       "id": "2A3HnZNQYnV4x6trmVoEk4",
-      "selected": false
+      "selected": false,
+      "parentId": "iQNq5wTvhz2y4LnmToU5UD",
+      "pvModelName": "CS6X-355P-FG"
     },
     {
       "type": "Cuboid",
@@ -1665,26 +580,9 @@
         0,
         0
       ],
-      "parent": {
-        "thermalDiffusivity": 0.05,
-        "albedo": 0.3,
-        "snowReflectionFactors": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ]
-      },
       "id": "nSRqRBZwyjaTyApnpzrTp2",
-      "selected": false
+      "selected": false,
+      "parentId": "Ground"
     }
   ],
   "view": {
@@ -1719,7 +617,7 @@
     "showDailyLightSensorPanel": false,
     "heliodonPanelY": 7,
     "cameraPosition": {
-      "x": 51.879489605769194,
+      "x": 51.87948960576917,
       "y": -90.25292092826471,
       "z": 114.2217846685714
     },

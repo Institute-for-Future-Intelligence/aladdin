@@ -19,7 +19,7 @@ import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from './mainMenu';
 import MapPanel from './panels/mapPanel';
 import HeliodonPanel from './panels/heliodonPanel';
-import { DEFAULT_FAR, DEFAULT_FOV, VERSION } from './constants';
+import { DEFAULT_FAR, DEFAULT_FOV, GROUND_ID, VERSION } from './constants';
 import { showError, showInfo, visitHomepage, visitIFI } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
@@ -175,6 +175,17 @@ const App = () => {
               if (!input.view.hasOwnProperty('panCenter')) input.view.panCenter = new Vector3(0, 0, 0);
               state.world = input.world;
               state.viewState = input.view;
+              // remove old properties
+              for (const elem of input.elements) {
+                if (elem.hasOwnProperty('parent')) {
+                  if (!elem.hasOwnProperty('parentId')) elem.parentId = elem.parent.id ?? GROUND_ID;
+                  delete elem.parent;
+                }
+                if (elem.hasOwnProperty('pvModel')) {
+                  if (!elem.hasOwnProperty('pvModelName')) elem.pvModelName = elem.pvModel.name ?? 'SPR-X21-335-BLK';
+                  delete elem.pvModel;
+                }
+              }
               state.elements = input.elements;
               state.notes = input.notes ?? [];
             });
