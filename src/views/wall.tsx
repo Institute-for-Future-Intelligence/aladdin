@@ -25,6 +25,17 @@ import WallExteriorImage from '../resources/WallExteriorImage.png';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import * as Selector from 'src/stores/selector';
 import { RoofPoint } from 'src/models/RoofModel';
+import { WindowModel } from 'src/models/WindowModel';
+import { FoundationGrid } from './foundation';
+
+interface WindowProps {
+  id: string;
+  wlx: number;
+  wlz: number;
+  wcx: number;
+  wcz: number;
+  diff: Vector3;
+}
 
 const Wall = ({
   id,
@@ -42,22 +53,15 @@ const Wall = ({
   locked = false,
 }: WallModel) => {
   const setCommonStore = useStore(Selector.set);
-  const updateElementById = useStore(Selector.updateElementById);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
-  const resizeAnchor = useStore(Selector.resizeAnchor);
   const shadowEnabled = useStore(Selector.viewstate.shadowEnabled);
-  const buildingWallID = useStore(Selector.buildingWallID);
 
-  const [wallAbsPosition, setWallAbsPosition] = useState<Vector3>();
-  const [wallAbsAngle, setWallAbsAngle] = useState<number>();
-  const [movingWindow, setMovingWindow] = useState<{ id: string; diff: Vector3 } | null>(null);
-  const [resizingWindowID, setResizingWindowID] = useState<string | null>(null!);
-  const [init, setInit] = useState(false);
-  const [x, setX] = useState(lx / 2);
-  const [y, setY] = useState(ly / 2);
-  const [z, setZ] = useState(lz / 2);
+  const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
+  const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
+  const buildingWallIDRef = useRef(useStore.getState().buildingWallID);
 
+  const triggerPointerUpRef = useRef(false);
   const outSideWallRef = useRef<Mesh>(null);
   const insideWallRef = useRef<Mesh>(null);
   const topSurfaceRef = useRef<Mesh>(null);
@@ -65,6 +69,19 @@ const Wall = ({
   const resizeHandleLRRef = useRef<Mesh>();
   const resizeHandleULRef = useRef<Mesh>();
   const resizeHandleURRef = useRef<Mesh>();
+
+  const [renderWindows, setRenderWindows] = useState<WindowModel[]>(windows);
+  const [wallAbsPosition, setWallAbsPosition] = useState<Vector3>();
+  const [wallAbsAngle, setWallAbsAngle] = useState<number>();
+  const [movingWindow, setMovingWindow] = useState<WindowProps | null>(null);
+  const [resizingWindow, setResizingWindow] = useState<WindowProps | null>(null);
+  const [invalidWindowID, setInvalidWindowID] = useState<string | null>(null);
+  const [isBuildingNewWindow, setIsBuildingNewWindow] = useState(false);
+  const [showGrid, setShowGrid] = useState(false);
+  const [init, setInit] = useState(false);
+  const [x, setX] = useState(lx / 2);
+  const [y, setY] = useState(ly / 2);
+  const [z, setZ] = useState(lz / 2);
 
   const p = getElementById(parentId);
   const elementModel = getElementById(id) as WallModel;
@@ -78,6 +95,12 @@ const Wall = ({
       texture.offset.set(0, 0);
       texture.repeat.set(0.6, 0.6);
     });
+  }, []);
+
+  useEffect(() => {
+    useStore.subscribe((state) => (objectTypeToAddRef.current = state.objectTypeToAdd));
+    useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
+    useStore.subscribe((state) => (buildingWallIDRef.current = state.buildingWallID));
   }, []);
 
   useEffect(() => {
@@ -102,14 +125,15 @@ const Wall = ({
       drawRectangle(wallShape, lx, lz);
 
       windows.forEach((w) => {
-        const window = new Shape();
-        drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
-        wallShape.holes.push(window);
+        if (w.id !== invalidWindowID) {
+          const window = new Shape();
+          drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
+          wallShape.holes.push(window);
+        }
       });
 
       outSideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
       outSideWallRef.current.material = new MeshStandardMaterial({ map: texture, side: DoubleSide });
-      outSideWallRef.current.rotation.set(Math.PI / 2, 0, 0);
     }
   }, [init, lx, lz, windows]);
 
@@ -120,9 +144,11 @@ const Wall = ({
       drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
 
       windows.forEach((w) => {
-        const window = new Shape();
-        drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
-        wallShape.holes.push(window);
+        if (w.id !== invalidWindowID) {
+          const window = new Shape();
+          drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
+          wallShape.holes.push(window);
+        }
       });
 
       insideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
@@ -139,6 +165,11 @@ const Wall = ({
       topSurfaceRef.current.material = whiteWallMaterial;
     }
   }, [init, leftOffset, rightOffset, lx, ly, lz]);
+
+  // windows
+  useEffect(() => {
+    setRenderWindows([...windows]);
+  }, [windows]);
 
   const drawTopSurface = (shape: Shape, lx: number, ly: number, leftOffset: number, rightOffset: number) => {
     const x = lx / 2;
@@ -160,26 +191,72 @@ const Wall = ({
     shape.lineTo(cx - x + leftOffset, cy - y);
   };
 
-  const legalOnWall = (type: ObjectType) => {
-    switch (type) {
-      case ObjectType.Sensor:
-      case ObjectType.SolarPanel:
-      case ObjectType.Window:
-        return true;
-      default:
-        return false;
-    }
-  };
-
   const getWindowRelativePos = (p: Vector3, wall: WallModel) => {
     const { cx, cy, cz } = wall;
     const foundation = getElementById(wall.parentId);
     if (foundation && wallAbsAngle !== undefined) {
-      const wallAbsPos = Util.wallAbsolutePosition(new Vector3(cx, cy, cz), foundation).setZ(lz / 2);
+      const wallAbsPos = Util.wallAbsolutePosition(new Vector3(cx, cy, cz), foundation).setZ(lz / 2 + foundation.lz);
       const relativePos = new Vector3().subVectors(p, wallAbsPos).applyEuler(new Euler(0, 0, -wallAbsAngle));
       return relativePos;
     }
     return new Vector3();
+  };
+
+  const stickToNormalGrid = (v: Vector3) => {
+    return new Vector3(Math.round(v.x), v.y, Math.round(v.z));
+  };
+
+  const stickToFineGrid = (v: Vector3) => {
+    const x = parseFloat((Math.round(v.x / 0.2) * 0.2).toFixed(1));
+    const z = parseFloat((Math.round(v.z / 0.2) * 0.2).toFixed(1));
+    return new Vector3(x, v.y, z);
+  };
+
+  const windowInsideWall = (p: Vector3) => {
+    if (movingWindow) {
+      const { wlx, wlz } = movingWindow;
+      const maxX = (lx - wlx) / 2;
+      const maxZ = (lz - wlz) / 2;
+      if (p.x > maxX) {
+        p.setX(maxX - 0.1);
+      } else if (p.x < -maxX) {
+        p.setX(-maxX + 0.1);
+      }
+      if (p.z > maxZ) {
+        p.setZ(maxZ - 0.1);
+      } else if (p.z < -maxZ) {
+        p.setZ(-maxZ + 0.1);
+      }
+    }
+    return p;
+  };
+
+  const checkWindowCollision = (id: string, p: Vector3, wlx: number, wlz: number) => {
+    for (const w of windows) {
+      if (w.id !== id) {
+        const minX = w.cx * lx - (w.lx * lx) / 2; // target window left
+        const maxX = w.cx * lx + (w.lx * lx) / 2; // target window right
+        const minZ = w.cz * lz - (w.lz * lz) / 2; // target window bot
+        const maxZ = w.cz * lz + (w.lz * lz) / 2; // target window up
+        const wMinX = p.x - wlx / 2; // current window left
+        const wMaxX = p.x + wlx / 2; // current window right
+        const wMinZ = p.z - wlz / 2; // current window bot
+        const wMaxZ = p.z + wlz / 2; // current window up
+        if (
+          ((wMinX >= minX && wMinX <= maxX) ||
+            (wMaxX >= minX && wMaxX <= maxX) ||
+            (minX >= wMinX && minX <= wMaxX) ||
+            (maxX >= wMinX && maxX <= wMaxX)) &&
+          ((wMinZ >= minZ && wMinZ <= maxZ) ||
+            (wMaxZ >= minZ && wMaxZ <= maxZ) ||
+            (minZ >= wMinZ && minZ <= wMaxZ) ||
+            (maxZ >= wMinZ && maxZ <= wMaxZ))
+        ) {
+          return false; // has collision
+        }
+      }
+    }
+    return true; // no collision
   };
 
   const checkWallLoop = (id: string) => {
@@ -207,27 +284,17 @@ const Wall = ({
           {/* outside wall */}
           <mesh
             ref={outSideWallRef}
+            rotation={[Math.PI / 2, 0, 0]}
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
             onPointerDown={(e) => {
-              if (e.button === 2 || buildingWallID) return; // ignore right-click
+              if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
               setCommonStore((state) => {
                 state.contextMenuObjectType = null;
               });
 
               const objectTypeToAdd = useStore.getState().objectTypeToAdd;
-              if (legalOnWall(objectTypeToAdd) && elementModel) {
-                // setShowGrid(true);
-                const p = e.intersections[0].point;
-                const relativePos = getWindowRelativePos(p, elementModel);
-                const window = ElementModelFactory.makeWindow(elementModel, relativePos.x / lx, 0, relativePos.z / lz);
-                updateElementById(id, {
-                  windows: [...elementModel.windows, window],
-                });
-                setCommonStore((state) => {
-                  state.objectTypeToAdd = ObjectType.None;
-                });
-              } else if (objectTypeToAdd === ObjectType.Roof) {
+              if (objectTypeToAdd === ObjectType.Roof) {
                 const points = checkWallLoop(elementModel.id);
                 if (points) {
                   const parent = getElementById(elementModel.parentId);
@@ -300,16 +367,91 @@ const Wall = ({
           <Plane
             name={'window intersection plane ' + id}
             args={[lx, lz]}
-            position={[0, 0.01, 0]}
+            position={[0, ly / 2 + 0.01, 0]}
             rotation={[Math.PI / 2, 0, 0]}
             visible={false}
             onPointerMove={(e) => {
+              // console.log('pointer move');
+              // ***** use this as poiterUp event *****
+              if (triggerPointerUpRef.current) {
+                if (invalidWindowID) {
+                  if (isBuildingNewWindow) {
+                    setCommonStore((state) => {
+                      for (const e of state.elements) {
+                        if (e.id === elementModel.id) {
+                          (e as WallModel).windows.pop();
+                        }
+                      }
+                    });
+                  } else if (movingWindow || resizingWindow) {
+                    const wcx = movingWindow ? movingWindow.wcx : resizingWindow!.wcx;
+                    const wcz = movingWindow ? movingWindow.wcz : resizingWindow!.wcz;
+                    const wlx = movingWindow ? movingWindow.wlx : resizingWindow!.wlx;
+                    const wlz = movingWindow ? movingWindow.wlz : resizingWindow!.wlz;
+                    setCommonStore((state) => {
+                      for (const e of state.elements) {
+                        if (e.id === elementModel.id) {
+                          for (const w of (e as WallModel).windows) {
+                            if (w.id == movingWindow?.id || w.id == resizingWindow?.id) {
+                              w.cx = wcx / lx;
+                              w.cz = wcz / lz;
+                              w.lx = wlx / lx;
+                              w.lz = wlz / lz;
+                            }
+                          }
+                        }
+                      }
+                      state.enableOrbitController = true;
+                    });
+                  }
+                }
+                setMovingWindow(null);
+                setResizingWindow(null);
+                setInvalidWindowID(null);
+                setShowGrid(false);
+                setIsBuildingNewWindow(false);
+
+                triggerPointerUpRef.current = false;
+                return;
+              }
+              // ***************************************
+
               if (e.intersections[0].object.name === 'window intersection plane ' + id) {
+                const pointer = e.intersections[0].point;
+
+                // add new window
+                if (objectTypeToAddRef.current === ObjectType.Window) {
+                  const relativePos = stickToNormalGrid(getWindowRelativePos(pointer, elementModel));
+                  const newWindow = ElementModelFactory.makeWindow(
+                    elementModel,
+                    relativePos.x / lx,
+                    0,
+                    relativePos.z / lz,
+                  );
+                  setCommonStore((state) => {
+                    for (const e of state.elements) {
+                      if (e.id === elementModel.id) {
+                        (e as WallModel).windows.push(newWindow);
+                      }
+                    }
+                    state.objectTypeToAdd = ObjectType.None;
+                    state.enableOrbitController = false;
+                  });
+                  setMovingWindow({ id: newWindow.id, wlx: 0, wlz: 0, wcx: 0, wcz: 0, diff: new Vector3() });
+                  setShowGrid(true);
+                  setIsBuildingNewWindow(true);
+                }
+
+                // moving and resizing
                 if (movingWindow) {
-                  const pointer = e.intersections[0].point;
-                  const { id, diff } = movingWindow;
+                  const { id, diff, wlx, wlz } = movingWindow;
                   const absPos = new Vector3().addVectors(pointer, diff);
-                  const relativePos = getWindowRelativePos(absPos, elementModel);
+                  const relativePos = windowInsideWall(stickToNormalGrid(getWindowRelativePos(absPos, elementModel)));
+                  if (checkWindowCollision(id, relativePos, wlx, wlz)) {
+                    setInvalidWindowID(null);
+                  } else {
+                    setInvalidWindowID(id);
+                  }
                   setCommonStore((state) => {
                     for (const e of state.elements) {
                       if (e.id === elementModel.id) {
@@ -322,20 +464,22 @@ const Wall = ({
                       }
                     }
                   });
-                } else if (resizingWindowID) {
-                  const pointer = e.intersections[0].point;
-                  const v = new Vector3().subVectors(resizeAnchor, pointer).applyEuler(new Euler(0, 0, -wallAbsAngle));
-                  const windowAbsCenterPos = new Vector3().addVectors(resizeAnchor, pointer).divideScalar(2);
+                } else if (resizingWindow) {
+                  const p = stickToNormalGrid(getWindowRelativePos(pointer, elementModel));
+                  const r = getWindowRelativePos(resizeAnchorRef.current, elementModel);
+                  const v = new Vector3().subVectors(r, p);
+                  const relativePos = new Vector3().addVectors(r, p).divideScalar(2);
                   if (outSideWallRef.current) {
-                    const wallAbsCenterPos = outSideWallRef.current.localToWorld(new Vector3());
-                    const relativePos = new Vector3()
-                      .subVectors(windowAbsCenterPos, wallAbsCenterPos)
-                      .applyEuler(new Euler(0, 0, -wallAbsAngle));
+                    if (checkWindowCollision(resizingWindow.id, relativePos, Math.abs(v.x), Math.abs(v.z))) {
+                      setInvalidWindowID(null);
+                    } else {
+                      setInvalidWindowID(resizingWindow.id);
+                    }
                     setCommonStore((state) => {
                       for (const e of state.elements) {
                         if (e.id === elementModel.id) {
                           for (const w of (e as WallModel).windows) {
-                            if (w.id == resizingWindowID) {
+                            if (w.id == resizingWindow.id) {
                               w.lx = Math.abs(v.x) / lx;
                               w.lz = Math.abs(v.z) / lz;
                               w.cx = relativePos.x / lx;
@@ -349,15 +493,32 @@ const Wall = ({
                 }
               }
             }}
+            onPointerDown={() => {
+              // building new window
+              if (movingWindow && resizeHandleLLRef.current) {
+                setCommonStore((state) => {
+                  const anchor = resizeHandleLLRef.current!.localToWorld(new Vector3(0, 0, 0));
+                  state.resizeAnchor.copy(anchor);
+                });
+                setResizingWindow(movingWindow);
+                setMovingWindow(null);
+              }
+            }}
+            onPointerUp={() => {
+              // Don't know why pointerMove will trigger one more time after pointerUp ???
+              // console.log('pointer up');
+              triggerPointerUpRef.current = true;
+            }}
           />
 
           {/* windows */}
-          {windows.map((window) => {
+          {renderWindows.map((window) => {
             let { id, lx: wlx, lz: wlz, cx: wcx, cz: wcz } = window;
             wlx = wlx * lx;
             wlz = wlz * lz;
             wcx = wcx * lx;
             wcz = wcz * lz;
+            const color = invalidWindowID == id ? 'red' : '#477395';
             return (
               <group key={id} name={`Window group ${id}`} position={[wcx, 0, wcz]} castShadow receiveShadow>
                 <Plane
@@ -369,7 +530,8 @@ const Wall = ({
                       if (window.selected) {
                         const v = e.intersections[0].object.localToWorld(new Vector3());
                         const diff = new Vector3().subVectors(v, e.intersections[0].point);
-                        setMovingWindow({ id, diff });
+                        setMovingWindow({ id, wlx, wlz, wcx, wcz, diff });
+                        setShowGrid(true);
                         setCommonStore((state) => {
                           state.enableOrbitController = false;
                         });
@@ -379,10 +541,10 @@ const Wall = ({
                     }
                   }}
                   onPointerUp={() => {
-                    setMovingWindow(null);
+                    setShowGrid(false);
                   }}
                 >
-                  <meshBasicMaterial side={DoubleSide} color={'#477395'} opacity={0.5} transparent={true} />
+                  <meshBasicMaterial side={DoubleSide} color={color} opacity={0.5} transparent={true} />
                 </Plane>
 
                 {/* wireframes */}
@@ -398,7 +560,8 @@ const Wall = ({
                       position={[-wlx / 2, 0, -wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
-                        setResizingWindowID(id);
+                        setShowGrid(true);
+                        setResizingWindow({ id, wlx, wlz, wcx, wcz, diff: new Vector3() });
                         if (resizeHandleLLRef.current) {
                           setCommonStore((state) => {
                             const anchor = resizeHandleLLRef.current!.localToWorld(new Vector3(wlx, 0, wlz));
@@ -407,7 +570,7 @@ const Wall = ({
                         }
                       }}
                       onPointerUp={() => {
-                        setResizingWindowID(null);
+                        setShowGrid(false);
                       }}
                     />
                     <Sphere
@@ -417,7 +580,8 @@ const Wall = ({
                       position={[-wlx / 2, 0, wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
-                        setResizingWindowID(id);
+                        setShowGrid(true);
+                        setResizingWindow({ id, wlx, wlz, wcx, wcz, diff: new Vector3() });
                         if (resizeHandleULRef.current) {
                           setCommonStore((state) => {
                             const anchor = resizeHandleULRef.current!.localToWorld(new Vector3(wlx, 0, -wlz));
@@ -426,7 +590,7 @@ const Wall = ({
                         }
                       }}
                       onPointerUp={() => {
-                        setResizingWindowID(null);
+                        setShowGrid(false);
                       }}
                     />
                     <Sphere
@@ -436,7 +600,8 @@ const Wall = ({
                       position={[wlx / 2, 0, -wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
-                        setResizingWindowID(id);
+                        setShowGrid(true);
+                        setResizingWindow({ id, wlx, wlz, wcx, wcz, diff: new Vector3() });
                         if (resizeHandleLRRef.current) {
                           setCommonStore((state) => {
                             const anchor = resizeHandleLRRef.current!.localToWorld(new Vector3(-wlx, 0, wlz));
@@ -445,7 +610,7 @@ const Wall = ({
                         }
                       }}
                       onPointerUp={() => {
-                        setResizingWindowID(null);
+                        setShowGrid(false);
                       }}
                     />
                     <Sphere
@@ -455,7 +620,8 @@ const Wall = ({
                       position={[wlx / 2, 0, wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
-                        setResizingWindowID(id);
+                        setShowGrid(true);
+                        setResizingWindow({ id, wlx, wlz, wcx, wcz, diff: new Vector3() });
                         if (resizeHandleURRef.current) {
                           setCommonStore((state) => {
                             const anchor = resizeHandleURRef.current!.localToWorld(new Vector3(-wlx, 0, -wlz));
@@ -464,7 +630,7 @@ const Wall = ({
                         }
                       }}
                       onPointerUp={() => {
-                        setResizingWindowID(null);
+                        setShowGrid(false);
                       }}
                     />
                   </group>
@@ -477,8 +643,13 @@ const Wall = ({
           <WallWireFrame x={x} z={z} />
 
           {/* handles */}
-          {(selected || buildingWallID === id) && !locked && (
-            <ResizeHandleWarpper x={x} z={z} id={id} highLight={highLight} />
+          {selected && !locked && <WallResizeHandleWarpper x={x} z={z} id={id} highLight={highLight} />}
+
+          {/* grid */}
+          {showGrid && (
+            <group position={[0, -0.001, 0]} rotation={[Math.PI / 2, 0, 0]}>
+              <FoundationGrid args={[lx, lz, 0]} unit={1} />
+            </group>
           )}
         </group>
       )}
@@ -495,7 +666,7 @@ interface ResizeHandlesProps {
   handleSize?: number;
 }
 
-interface ResizeHandleWarpperProps {
+interface WallResizeHandleWarpperProps {
   x: number;
   z: number;
   id: string;
@@ -514,7 +685,7 @@ interface WindowWireFrameProps {
   lineWidth?: number;
 }
 
-const ResizeHandle = React.memo(({ x, z, id, handleType, highLight, handleSize = 0.3 }: ResizeHandlesProps) => {
+const WallResizeHandle = React.memo(({ x, z, id, handleType, highLight, handleSize = 0.3 }: ResizeHandlesProps) => {
   const setCommonStore = useStore(Selector.set);
   const selectMe = useStore(Selector.selectMe);
   const resizeHandleType = useStore(Selector.resizeHandleType);
@@ -568,14 +739,14 @@ const ResizeHandle = React.memo(({ x, z, id, handleType, highLight, handleSize =
   );
 });
 
-const ResizeHandleWarpper = React.memo(({ x, z, id, highLight }: ResizeHandleWarpperProps) => {
+const WallResizeHandleWarpper = React.memo(({ x, z, id, highLight }: WallResizeHandleWarpperProps) => {
   const orthographic = useStore(Selector.viewstate.orthographic);
   return (
     <React.Fragment>
-      <ResizeHandle x={-x} z={-z} id={id} handleType={RType.LowerLeft} highLight={highLight} />
-      <ResizeHandle x={x} z={-z} id={id} handleType={RType.LowerRight} highLight={highLight} />
-      {!orthographic && <ResizeHandle x={-x} z={z} id={id} handleType={RType.UpperLeft} highLight={highLight} />}
-      {!orthographic && <ResizeHandle x={x} z={z} id={id} handleType={RType.UpperRight} highLight={highLight} />}
+      <WallResizeHandle x={-x} z={-z} id={id} handleType={RType.LowerLeft} highLight={highLight} />
+      <WallResizeHandle x={x} z={-z} id={id} handleType={RType.LowerRight} highLight={highLight} />
+      {!orthographic && <WallResizeHandle x={-x} z={z} id={id} handleType={RType.UpperLeft} highLight={highLight} />}
+      {!orthographic && <WallResizeHandle x={x} z={z} id={id} handleType={RType.UpperRight} highLight={highLight} />}
     </React.Fragment>
   );
 });

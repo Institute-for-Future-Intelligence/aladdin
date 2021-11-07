@@ -287,8 +287,8 @@ const Foundation = ({
   };
 
   const stickToFineGrid = (v: Vector3) => {
-    const x = parseFloat((Math.floor(v.x / 0.2) * 0.2).toFixed(1));
-    const y = parseFloat((Math.floor(v.y / 0.2) * 0.2).toFixed(1));
+    const x = parseFloat((Math.round(v.x / 0.2) * 0.2).toFixed(1));
+    const y = parseFloat((Math.round(v.y / 0.2) * 0.2).toFixed(1));
     return new Vector3(x, y, v.z);
   };
 
@@ -1184,58 +1184,60 @@ const Foundation = ({
   );
 };
 
-const FoundationGrid = React.memo(({ args }: { args: [lx: number, ly: number, lz: number] }) => {
-  const lx = args[0] / 2;
-  const ly = args[1] / 2;
-  const lz = args[2] / 2;
+export const FoundationGrid = React.memo(
+  ({ args, unit = 1 }: { args: [lx: number, ly: number, lz: number]; unit?: number }) => {
+    const lx = args[0] / 2;
+    const ly = args[1] / 2;
+    const lz = args[2] / 2;
 
-  const pointsX: number[] = [0];
-  const pointsY: number[] = [0];
+    const pointsX: number[] = [0];
+    const pointsY: number[] = [0];
 
-  const lineColor = 'white';
-  const lineWidth = 0.5;
+    const lineColor = 'white';
+    const lineWidth = 0.5;
 
-  for (let i = 1; i <= lx; i++) {
-    pointsX.push(i);
-    pointsX.push(-i);
-  }
+    for (let i = unit; i <= lx; i += unit) {
+      pointsX.push(i);
+      pointsX.push(-i);
+    }
 
-  for (let i = 1; i <= ly; i++) {
-    pointsY.push(i);
-    pointsY.push(-i);
-  }
+    for (let i = unit; i <= ly; i += unit) {
+      pointsY.push(i);
+      pointsY.push(-i);
+    }
 
-  return (
-    <group position={[0, 0, lz + 0.01]}>
-      {pointsX.map((value) => {
-        return (
-          <Line
-            key={value}
-            points={[
-              [value, -ly, 0],
-              [value, ly, 0],
-            ]}
-            color={lineColor}
-            lineWidth={lineWidth}
-            depthWrite={false}
-          />
-        );
-      })}
-      {pointsY.map((value) => {
-        return (
-          <Line
-            key={value}
-            points={[
-              [-lx, value, 0],
-              [lx, value, 0],
-            ]}
-            color={lineColor}
-            lineWidth={lineWidth}
-          />
-        );
-      })}
-    </group>
-  );
-});
+    return (
+      <group position={[0, 0, lz + 0.01]}>
+        {pointsX.map((value) => {
+          return (
+            <Line
+              key={value}
+              points={[
+                [value, -ly, 0],
+                [value, ly, 0],
+              ]}
+              color={lineColor}
+              lineWidth={lineWidth}
+              // depthWrite={false}
+            />
+          );
+        })}
+        {pointsY.map((value) => {
+          return (
+            <Line
+              key={value}
+              points={[
+                [-lx, value, 0],
+                [lx, value, 0],
+              ]}
+              color={lineColor}
+              lineWidth={lineWidth}
+            />
+          );
+        })}
+      </group>
+    );
+  },
+);
 
 export default React.memo(Foundation);

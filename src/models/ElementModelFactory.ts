@@ -16,6 +16,7 @@ import { PvModel } from './PvModel';
 import { WallModel } from './WallModel';
 import { RoofModel, RoofPoint } from './RoofModel';
 import { GROUND_ID } from '../constants';
+import { WindowModel } from './WindowModel';
 
 export class ElementModelFactory {
   static makeHuman(x: number, y: number, z?: number) {
@@ -162,16 +163,16 @@ export class ElementModelFactory {
       cx: x,
       cy: 0,
       cz: z,
-      lx: 0.1,
+      lx: 0,
       ly: 0,
-      lz: 0.1,
+      lz: 0,
       selected: true,
       showLabel: false,
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],
       parentId: parent.id,
       id: short.generate() as string,
-    } as SensorModel;
+    } as WindowModel;
   }
 
   static makeRoof(cz: number, parent: ElementModel, points: RoofPoint[], normal?: Vector3, rotation?: []) {
