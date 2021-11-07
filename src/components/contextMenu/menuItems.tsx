@@ -12,7 +12,7 @@ import { Util } from '../../Util';
 
 export const Paste = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   const language = useStore((state) => state.language);
-  const pasteElement = useStore((state) => state.pasteElement);
+  const pasteElement = useStore((state) => state.pasteElementToPoint);
   const isMac = Util.getOS()?.startsWith('Mac');
 
   return (

@@ -94,7 +94,8 @@ export interface CommonStoreState {
   elementToPaste: ElementModel[];
   copyElementById: (id: string) => void;
   cutElementById: (id: string) => void;
-  pasteElement: () => void;
+  pasteElementToPoint: () => void;
+  pasteElementByKey: () => void;
   deleteElementById: (id: string) => void;
   countElementsByType: (type: ObjectType) => number;
   removeElementsByType: (type: ObjectType) => void;
@@ -574,14 +575,14 @@ export const useStore = create<CommonStoreState>(
             return count;
           },
 
-          pasteElement() {
+          pasteElementToPoint() {
             immerSet((state: CommonStoreState) => {
               if (state.elementToPaste.length > 0) {
                 let m = state.pastePoint;
                 const newParent = state.getSelectedElement();
                 const oldParent = state.elementToPaste[0].parent;
-                if (newParent && oldParent && !('albedo' in oldParent)) {
-                  // Warning: we use albedo to check type
+                // if parent is ground, it has no type definition
+                if (newParent && oldParent && oldParent.type !== ObjectType.Ground) {
                   state.elementToPaste[0].parent = newParent;
                   m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
                 }
@@ -591,6 +592,35 @@ export const useStore = create<CommonStoreState>(
                     e.normal = state.pasteNormal.toArray();
                   }
                   state.elements.push(e);
+                }
+                if (state.elementToPaste.length > 1) {
+                  // paste children, too
+                  for (let i = 1; i < state.elementToPaste.length; i++) {
+                    // TODO
+                  }
+                }
+              }
+            });
+          },
+
+          pasteElementByKey() {
+            immerSet((state: CommonStoreState) => {
+              if (state.elementToPaste.length > 0) {
+                const elem = state.elementToPaste[0];
+                const e = ElementModelCloner.clone(elem, elem.cx, elem.cy, elem.cz);
+                if (e) {
+                  switch (e.type) {
+                    case ObjectType.Human:
+                      e.cx += 1;
+                      state.elements.push(e);
+                      state.elementToPaste = [e];
+                      break;
+                    case ObjectType.Tree:
+                      e.cx += e.lx;
+                      state.elements.push(e);
+                      state.elementToPaste = [e];
+                      break;
+                  }
                 }
                 if (state.elementToPaste.length > 1) {
                   // paste children, too

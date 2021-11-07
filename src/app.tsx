@@ -82,9 +82,9 @@ const App = () => {
   const [pvDailyIndividualOutputs, setPvDailyIndividualOutputs] = useState<boolean>(false);
   const [pvYearlyIndividualOutputs, setPvYearlyIndividualOutputs] = useState<boolean>(false);
   const [pvModelDialogVisible, setPvModelDialogVisible] = useState<boolean>(false);
-  const [keyName, setKeyName] = useState<string | undefined>();
-  const [keyDown, setKeyDown] = useState<boolean>(false);
-  const [keyUp, setKeyUp] = useState<boolean>(false);
+  const keyName = useRef<string | undefined>(undefined);
+  const keyDown = useRef<boolean>(false);
+  const keyUp = useRef<boolean>(false);
   const [keyFlag, setKeyFlag] = useState<boolean>(false);
 
   const orbitControlsRef = useRef<OrbitControls>();
@@ -112,9 +112,9 @@ const App = () => {
   }, [orthographic]);
 
   const handleKeyEvent = (key: string, down: boolean, e: KeyboardEvent) => {
-    setKeyName(key);
-    setKeyDown(down);
-    setKeyUp(!down);
+    keyName.current = key;
+    keyDown.current = down;
+    keyUp.current = !down;
     setKeyFlag(!keyFlag);
   };
 
@@ -436,9 +436,9 @@ const App = () => {
               </Canvas>
               <KeyboardListener
                 keyFlag={keyFlag}
-                keyName={keyName}
-                keyDown={keyDown}
-                keyUp={keyUp}
+                keyName={keyName.current}
+                keyDown={keyDown.current}
+                keyUp={keyUp.current}
                 canvas={canvasRef.current}
                 readLocalFile={readLocalFile}
                 writeLocalFile={writeLocalFile}
@@ -468,7 +468,12 @@ const App = () => {
                 }}
               />
               <KeyboardEventHandler
-                handleKeys={['delete', 'f2']}
+                handleKeys={[
+                  'ctrl+v', // we want the paste action to be fired only when the key is up, but we also need to add
+                  'meta+v', // these keyboard shortcuts to the keydown handler so that the browser's default can be prevented
+                  'delete',
+                  'f2',
+                ]}
                 handleEventType={'keyup'}
                 onKeyEvent={(key, e) => {
                   e.preventDefault();

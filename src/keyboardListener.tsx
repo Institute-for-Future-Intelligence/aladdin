@@ -37,7 +37,7 @@ const KeyboardListener = ({
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const copyElementById = useStore((state) => state.copyElementById);
   const cutElementById = useStore((state) => state.cutElementById);
-  const pasteElement = useStore((state) => state.pasteElement);
+  const pasteElement = useStore((state) => state.pasteElementByKey);
   const deleteElementById = useStore(Selector.deleteElementById);
   const getElementById = useStore(Selector.getElementById);
   const updateElementById = useStore(Selector.updateElementById);
@@ -160,7 +160,9 @@ const KeyboardListener = ({
         break;
       case 'ctrl+v':
       case 'meta+v': // for Mac
-        pasteElement();
+        if (keyUp) {
+          pasteElement();
+        }
         break;
       case 'f2':
         set2DView(!orthographic);
