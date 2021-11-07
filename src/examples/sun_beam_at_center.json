@@ -85,9 +85,8 @@
       "parentId": "Ground"
     },
     {
-      "poleSpacingY": 2,
+      "poleSpacing": 2,
       "label": "Solar Panel",
-      "poleSpacingX": 4,
       "showLabel": false,
       "lx": 0.99,
       "drawSunBeam": true,

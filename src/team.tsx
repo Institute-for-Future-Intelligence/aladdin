@@ -106,6 +106,8 @@ const Team = ({ top, height, color }: TeamProps) => {
                 <h3 style={{ color: color }}>{i18n.t('aboutUs.Support', lang)}</h3>
                 Rundong Jiang
                 <br />
+                Joy Massicotte
+                <br />
               </td>
             </tr>
           </tbody>
@@ -122,10 +124,7 @@ const Team = ({ top, height, color }: TeamProps) => {
           color: color,
         }}
       >
-        {i18n.t('aboutUs.Acknowledgment', lang)}: The National Science Foundation (NSF) generously provided funding for
-        the research and development of this product through grants #2105695 and #2131097. Any opinions, findings, and
-        conclusions or recommendations expressed in this product, however, are those of the authors and do not
-        necessarily reflect the views of NSF.
+        {i18n.t('aboutUs.Acknowledgment', lang)}: {i18n.t('aboutUs.FundingInformation', lang)}
       </div>
     </div>
   );

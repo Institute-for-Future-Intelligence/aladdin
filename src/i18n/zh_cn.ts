@@ -18,6 +18,8 @@ export const i18n_zh_cn = {
       Research: '研究',
       Support: '服务',
       Acknowledgment: '鸣谢',
+      FundingInformation:
+        '本产品的研发承蒙美国国家科学基金会慷慨资助（项目号#2105695和#2131097）。本产品的任何观点或结论仅代表作者个人意见。',
     },
 
     word: {

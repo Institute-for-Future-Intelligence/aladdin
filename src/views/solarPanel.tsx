@@ -126,13 +126,15 @@ const SolarPanel = ({
       }
     }
   }
-  lz = pvModel.thickness;
 
-  // deal with a single solar panel
-  if (pvModel.width && ly === pvModel.length && orientation === Orientation.landscape) {
-    const tmp = lx;
-    lx = ly;
-    ly = tmp;
+  if (pvModel) {
+    lz = pvModel.thickness;
+    // deal with a single solar panel
+    if (pvModel.width && ly === pvModel.length && orientation === Orientation.landscape) {
+      const tmp = lx;
+      lx = ly;
+      ly = tmp;
+    }
   }
 
   const hx = lx / 2;

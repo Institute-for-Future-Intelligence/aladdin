@@ -636,8 +636,10 @@ export const useStore = create<CommonStoreState>(
                         if (parent) {
                           e.cx += e.lx / parent.lx;
                         }
-                        state.elements.push(e);
-                        state.elementToPaste = [e];
+                        if (e.cx < 0.5) {
+                          state.elements.push(e);
+                          state.elementToPaste = [e];
+                        }
                       }
                       break;
                     case ObjectType.Sensor:
@@ -646,8 +648,10 @@ export const useStore = create<CommonStoreState>(
                         if (parent) {
                           e.cx += e.lx / parent.lx;
                         }
-                        state.elements.push(e);
-                        state.elementToPaste = [e];
+                        if (e.cx < 0.5) {
+                          state.elements.push(e);
+                          state.elementToPaste = [e];
+                        }
                       }
                       break;
                   }

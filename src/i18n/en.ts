@@ -18,6 +18,8 @@ export const i18n_en = {
       Research: 'Research',
       Support: 'Support',
       Acknowledgment: 'Acknowledgment',
+      FundingInformation:
+        'The National Science Foundation (NSF) generously provided funding for the research and development of this product through grants #2105695 and #2131097. Any opinions, findings, and conclusions or recommendations expressed in this product, however, are those of the authors and do not necessarily reflect the views of NSF.',
     },
 
     word: {

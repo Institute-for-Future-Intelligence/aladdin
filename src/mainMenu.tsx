@@ -144,16 +144,6 @@ const MainMenu = ({
       setCommonStore((state) => {
         state.world = input.world;
         state.viewState = input.view;
-        for (const elem of input.elements) {
-          if (elem.hasOwnProperty('parent')) {
-            if (!elem.hasOwnProperty('parentId')) elem.parentId = elem.parent.id ?? GROUND_ID;
-            delete elem.parent;
-          }
-          if (elem.hasOwnProperty('pvModel')) {
-            if (!elem.hasOwnProperty('pvModelName')) elem.pvModelName = elem.pvModel.name ?? 'SPR-X21-335-BLK';
-            delete elem.pvModel;
-          }
-        }
         state.elements = input.elements;
         state.notes = input.notes ?? [];
       });
