@@ -24,7 +24,7 @@ import { WallModel } from 'src/models/WallModel';
 import WallExteriorImage from '../resources/WallExteriorImage.png';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import * as Selector from 'src/stores/selector';
-import { RoofPoints } from 'src/models/RoofModel';
+import { RoofPoint } from 'src/models/RoofModel';
 
 const Wall = ({
   id,
@@ -185,7 +185,7 @@ const Wall = ({
 
   const checkWallLoop = (id: string) => {
     const startID = id;
-    const points: RoofPoints[] = [];
+    const points: RoofPoint[] = [];
 
     let wall = getElementById(id) as WallModel;
     while (wall && wall.leftJoints.length > 0) {

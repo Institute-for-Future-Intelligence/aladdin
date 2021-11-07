@@ -15,7 +15,7 @@ import { FoundationModel } from './FoundationModel';
 import { SolarPanelModel } from './SolarPanelModel';
 import { PvModel } from './PvModel';
 import { WallModel } from './WallModel';
-import { RoofModel, RoofPoints } from './RoofModel';
+import { RoofModel, RoofPoint } from './RoofModel';
 
 export class ElementModelFactory {
   static makeHuman(parent: GroundModel, x: number, y: number, z?: number) {
@@ -174,7 +174,7 @@ export class ElementModelFactory {
     } as SensorModel;
   }
 
-  static makeRoof(cz: number, parent: ElementModel, points: RoofPoints[], normal?: Vector3, rotation?: []) {
+  static makeRoof(cz: number, parent: ElementModel, points: RoofPoint[], normal?: Vector3, rotation?: []) {
     return {
       type: ObjectType.Roof,
       cx: 0,

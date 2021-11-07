@@ -620,6 +620,14 @@ export const useStore = create<CommonStoreState>(
                       state.elements.push(e);
                       state.elementToPaste = [e];
                       break;
+                    case ObjectType.SolarPanel:
+                      const parent = state.getElementById(e.parent.id);
+                      if (parent) {
+                        e.cx += e.lx / parent.lx;
+                      }
+                      state.elements.push(e);
+                      state.elementToPaste = [e];
+                      break;
                   }
                 }
                 if (state.elementToPaste.length > 1) {
