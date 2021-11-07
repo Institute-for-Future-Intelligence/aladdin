@@ -44,6 +44,7 @@ const KeyboardListener = ({
   const setElementPosition = useStore(Selector.setElementPosition);
   const localFileName = useStore((state) => state.localFileName);
   const localFileDialogRequested = useStore((state) => state.localFileDialogRequested);
+  const setEnableFineGird = useStore((state) => state.setEnableFineGird);
 
   const [downloadDialogVisible, setDownloadDialogVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -208,8 +209,15 @@ const KeyboardListener = ({
           if (canvas) {
             canvas.style.cursor = 'default'; // if an element is deleted but the cursor is not default
           }
-          break;
         }
+        break;
+      case 'shift':
+        if (keyDown) {
+          setEnableFineGird(true);
+        } else if (keyUp) {
+          setEnableFineGird(false);
+        }
+        break;
     }
   };
 

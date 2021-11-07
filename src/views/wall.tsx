@@ -60,6 +60,7 @@ const Wall = ({
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
   const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
   const buildingWallIDRef = useRef(useStore.getState().buildingWallID);
+  const enableFineGirdRef = useRef(useStore.getState().enableFineGird);
 
   const triggerPointerUpRef = useRef(false);
   const outSideWallRef = useRef<Mesh>(null);
@@ -101,6 +102,7 @@ const Wall = ({
     useStore.subscribe((state) => (objectTypeToAddRef.current = state.objectTypeToAdd));
     useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
     useStore.subscribe((state) => (buildingWallIDRef.current = state.buildingWallID));
+    useStore.subscribe((state) => (enableFineGirdRef.current = state.enableFineGird));
   }, []);
 
   useEffect(() => {
@@ -232,6 +234,9 @@ const Wall = ({
   };
 
   const checkWindowCollision = (id: string, p: Vector3, wlx: number, wlz: number) => {
+    if (wlx < 0.1 || wlz < 0.1) {
+      return false;
+    }
     for (const w of windows) {
       if (w.id !== id) {
         const minX = w.cx * lx - (w.lx * lx) / 2; // target window left
@@ -405,6 +410,7 @@ const Wall = ({
                     });
                   }
                 }
+
                 setMovingWindow(null);
                 setResizingWindow(null);
                 setInvalidWindowID(null);
@@ -421,7 +427,12 @@ const Wall = ({
 
                 // add new window
                 if (objectTypeToAddRef.current === ObjectType.Window) {
-                  const relativePos = stickToNormalGrid(getWindowRelativePos(pointer, elementModel));
+                  let relativePos = getWindowRelativePos(pointer, elementModel);
+                  if (enableFineGirdRef.current) {
+                    relativePos = stickToFineGrid(relativePos);
+                  } else {
+                    relativePos = stickToNormalGrid(relativePos);
+                  }
                   const newWindow = ElementModelFactory.makeWindow(
                     elementModel,
                     relativePos.x / lx,
@@ -446,7 +457,13 @@ const Wall = ({
                 if (movingWindow) {
                   const { id, diff, wlx, wlz } = movingWindow;
                   const absPos = new Vector3().addVectors(pointer, diff);
-                  const relativePos = windowInsideWall(stickToNormalGrid(getWindowRelativePos(absPos, elementModel)));
+                  let relativePos = getWindowRelativePos(absPos, elementModel);
+                  if (enableFineGirdRef.current) {
+                    relativePos = stickToFineGrid(relativePos);
+                  } else {
+                    relativePos = stickToNormalGrid(relativePos);
+                  }
+                  relativePos = windowInsideWall(relativePos);
                   if (checkWindowCollision(id, relativePos, wlx, wlz)) {
                     setInvalidWindowID(null);
                   } else {
@@ -465,7 +482,12 @@ const Wall = ({
                     }
                   });
                 } else if (resizingWindow) {
-                  const p = stickToNormalGrid(getWindowRelativePos(pointer, elementModel));
+                  let p = getWindowRelativePos(pointer, elementModel);
+                  if (enableFineGirdRef.current) {
+                    p = stickToFineGrid(p);
+                  } else {
+                    p = stickToNormalGrid(p);
+                  }
                   const r = getWindowRelativePos(resizeAnchorRef.current, elementModel);
                   const v = new Vector3().subVectors(r, p);
                   const relativePos = new Vector3().addVectors(r, p).divideScalar(2);
@@ -648,7 +670,7 @@ const Wall = ({
           {/* grid */}
           {showGrid && (
             <group position={[0, -0.001, 0]} rotation={[Math.PI / 2, 0, 0]}>
-              <FoundationGrid args={[lx, lz, 0]} unit={1} />
+              <FoundationGrid args={[lx, lz, 0]} objectType={ObjectType.Wall} />
             </group>
           )}
         </group>

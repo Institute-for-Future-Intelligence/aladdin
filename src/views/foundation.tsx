@@ -98,11 +98,11 @@ const Foundation = ({
   const [buildingWallID, setBuildingWallID] = useState<string | null>(null);
   const [isSettingWallStartPoint, setIsSettingWallStartPoint] = useState(false);
   const [isSettingWallEndPoint, setIsSettingWallEndPoint] = useState(false);
-  const [enableWallMagnet, setEnableWallMagnet] = useState(true);
   const [wallPoints, setWallPoints] = useState<Map<string, { leftPoint: Vector3 | null; rightPoint: Vector3 | null }>>(
     new Map(),
   );
 
+  const enableFineGirdRef = useRef(useStore.getState().enableFineGird);
   const baseRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
   const intersecPlaneRef = useRef<Mesh>();
@@ -147,6 +147,10 @@ const Foundation = ({
   }
 
   useEffect(() => {
+    useStore.subscribe((state) => (enableFineGirdRef.current = state.enableFineGird));
+  }, []);
+
+  useEffect(() => {
     const initialWallsID = getInitialWallsID(id);
     for (const id of initialWallsID) {
       const wall = getElementById(id) as WallModel;
@@ -168,9 +172,6 @@ const Foundation = ({
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
-        case 'Shift':
-          setEnableWallMagnet(false);
-          break;
         case 'Escape':
           if (buildingWallIDRef.current) {
             deleteElementById(buildingWallIDRef.current);
@@ -184,14 +185,9 @@ const Foundation = ({
           break;
       }
     };
-    const onKeyUp = () => {
-      setEnableWallMagnet(true);
-    };
     window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('keyup', onKeyUp);
     return () => {
       window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('keyup', onKeyUp);
     };
   }, []);
 
@@ -293,7 +289,7 @@ const Foundation = ({
   };
 
   const updatePointer = (p: Vector3, targetPoint?: Vector3 | null) => {
-    if (enableWallMagnet) {
+    if (!enableFineGirdRef.current) {
       if (targetPoint) {
         p = targetPoint;
       } else {
@@ -377,7 +373,7 @@ const Foundation = ({
             let targetID: string | null = null;
             let targetPoint: Vector3 | null = null;
             let targetSide: WallSide | null = null;
-            if (enableWallMagnet) {
+            if (!enableFineGirdRef.current) {
               let target = findMagnetPoint(wallPoints, p, 1.5);
               targetID = target.targetID;
               targetPoint = target.targetPoint;
@@ -477,7 +473,7 @@ const Foundation = ({
                     let targetID: string | null = null;
                     let targetPoint: Vector3 | null = null;
                     let targetSide: WallSide | null = null;
-                    if (enableWallMagnet) {
+                    if (!enableFineGirdRef.current) {
                       let target = findMagnetPoint(wallPoints, p, 1.5);
                       targetID = target.targetID;
                       targetPoint = target.targetPoint;
@@ -867,7 +863,9 @@ const Foundation = ({
           {rotateHandleType && grabRef.current?.type === ObjectType.SolarPanel && (
             <PolarGrid element={grabRef.current} height={grabRef.current.poleHeight} />
           )}
-          {(moveHandleType || resizeHandleType || buildingWallID) && <FoundationGrid args={[lx, ly, lz]} />}
+          {(moveHandleType || resizeHandleType || buildingWallID) && (
+            <FoundationGrid args={[lx, ly, lz]} objectType={ObjectType.Foundation} />
+          )}
         </>
       )}
 
@@ -1185,16 +1183,30 @@ const Foundation = ({
 };
 
 export const FoundationGrid = React.memo(
-  ({ args, unit = 1 }: { args: [lx: number, ly: number, lz: number]; unit?: number }) => {
+  ({ args, objectType }: { args: [lx: number, ly: number, lz: number]; objectType: ObjectType }) => {
+    const enableFineGird = useStore((state) => state.enableFineGird);
+
+    const [unit, setUnit] = useState(1);
+    const [lineWidth, setLineWidth] = useState(0.5);
+
+    const lineColor = objectType === ObjectType.Foundation ? 'white' : 'white';
+
+    useEffect(() => {
+      if (enableFineGird) {
+        setUnit(0.4);
+        setLineWidth(0.2);
+      } else {
+        setUnit(1);
+        setLineWidth(0.5);
+      }
+    }, [enableFineGird]);
+
     const lx = args[0] / 2;
     const ly = args[1] / 2;
     const lz = args[2] / 2;
 
     const pointsX: number[] = [0];
     const pointsY: number[] = [0];
-
-    const lineColor = 'white';
-    const lineWidth = 0.5;
 
     for (let i = unit; i <= lx; i += unit) {
       pointsX.push(i);

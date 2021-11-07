@@ -141,6 +141,8 @@ export interface CommonStoreState {
   localFileDialogRequested: boolean;
   savedCameraPosition: Vector3;
   savedPanCenter: Vector3;
+  enableFineGird: boolean;
+  setEnableFineGird: (b: boolean) => void;
 }
 
 export const useStore = create<CommonStoreState>(
@@ -811,6 +813,13 @@ export const useStore = create<CommonStoreState>(
           localFileDialogRequested: false,
           savedCameraPosition: new Vector3(0, -5, 0),
           savedPanCenter: new Vector3(),
+
+          enableFineGird: false,
+          setEnableFineGird(b: boolean) {
+            immerSet((state: CommonStoreState) => {
+              state.enableFineGird = b;
+            });
+          },
         };
       },
       {

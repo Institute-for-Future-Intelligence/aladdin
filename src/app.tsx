@@ -471,6 +471,7 @@ const App = () => {
                   'meta+x',
                   'ctrl+v',
                   'meta+v',
+                  'shift',
                 ]}
                 handleEventType={'keydown'}
                 onKeyEvent={(key, e) => {
@@ -484,6 +485,7 @@ const App = () => {
                   'meta+v', // these keyboard shortcuts to the keydown handler so that the browser's default can be prevented
                   'delete',
                   'f2',
+                  'shift',
                 ]}
                 handleEventType={'keyup'}
                 onKeyEvent={(key, e) => {
