@@ -25,6 +25,8 @@ export const i18n_zh_tw = {
     word: {
       Version: '版本',
       Options: '選項',
+      Or: '或',
+      Press: '按',
       Open: '打開',
       Save: '保存',
       SaveAsImage: '保存為圖像',
@@ -204,11 +206,14 @@ export const i18n_zh_tw = {
     instructionPanel: {
       Rotate: '旋轉',
       DragMouse: '拖動滑鼠',
+      Zoom: '缩放',
+      MouseWheelOrKeys: '滑鼠滾輪或者Ctrl+[和Ctrl+]',
       Pan: '平移',
-      HoldCtrlDragMouse: '按下Ctrl鍵並拖動滑鼠',
+      HoldCtrlDragMouse: '按下Ctrl鍵或滑鼠右鍵並拖動滑鼠',
       Toggle2D3D: '二維/三維切换',
       ResetView: '重置視角',
       AutoRotate: '自動旋轉',
+      StartOrStop: '按F4鍵啟動或停止',
     },
 
     mapPanel: {

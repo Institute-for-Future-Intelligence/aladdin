@@ -20,6 +20,7 @@ export interface KeyboardListenerProps {
   writeLocalFile: () => boolean;
   set2DView: (selected: boolean) => void;
   resetView: () => void;
+  zoomView: (scale: number) => void;
 }
 
 const KeyboardListener = ({
@@ -32,6 +33,7 @@ const KeyboardListener = ({
   writeLocalFile,
   set2DView,
   resetView,
+  zoomView,
 }: KeyboardListenerProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore((state) => state.language);
@@ -155,6 +157,11 @@ const KeyboardListener = ({
         break;
       case 'ctrl+[':
       case 'meta+[': // for Mac
+        zoomView(0.9);
+        break;
+      case 'ctrl+]':
+      case 'meta+]': // for Mac
+        zoomView(1.1);
         break;
       case 'ctrl+c':
       case 'meta+c': // for Mac

@@ -33,7 +33,7 @@ const ColumnWrapper = styled.div`
   align-content: flex-start;
   align-items: flex-start;
   margin: auto;
-  width: 200px;
+  width: 300px;
   padding-bottom: 10px;
   display: flex;
   font-size: 12px;
@@ -52,20 +52,23 @@ const InstructionPanel = ({}: InstructionPanelProps) => {
   return (
     <Container>
       <ColumnWrapper>
-        <label style={{ color: color }}>
+        <label style={{ color: color, fontSize: '10px' }}>
           <b>{i18n.t('instructionPanel.Rotate', lang)}</b>: {i18n.t('instructionPanel.DragMouse', lang)}
         </label>
-        <label style={{ color: color }}>
+        <label style={{ color: color, fontSize: '10px' }}>
+          <b>{i18n.t('instructionPanel.Zoom', lang)}</b>: {i18n.t('instructionPanel.MouseWheelOrKeys', lang)}
+        </label>
+        <label style={{ color: color, fontSize: '10px' }}>
           <b>{i18n.t('instructionPanel.Pan', lang)}</b>: {i18n.t('instructionPanel.HoldCtrlDragMouse', lang)}
         </label>
-        <label style={{ color: color }}>
-          <b>{i18n.t('instructionPanel.ResetView', lang)}</b>: Ctrl+Home
+        <label style={{ color: color, fontSize: '10px' }}>
+          <b>{i18n.t('instructionPanel.ResetView', lang)}</b>: {i18n.t('word.Press', lang)} Ctrl+Home
         </label>
-        <label style={{ color: color }}>
-          <b>{i18n.t('instructionPanel.Toggle2D3D', lang)}</b>: F2
+        <label style={{ color: color, fontSize: '10px' }}>
+          <b>{i18n.t('instructionPanel.Toggle2D3D', lang)}</b>: {i18n.t('word.Press', lang)} F2
         </label>
-        <label style={{ color: color }}>
-          <b>{i18n.t('instructionPanel.AutoRotate', lang)}</b>: F4
+        <label style={{ color: color, fontSize: '10px' }}>
+          <b>{i18n.t('instructionPanel.AutoRotate', lang)}</b>: {i18n.t('instructionPanel.StartOrStop', lang)}
         </label>
       </ColumnWrapper>
     </Container>

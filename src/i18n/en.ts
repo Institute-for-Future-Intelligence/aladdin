@@ -25,6 +25,8 @@ export const i18n_en = {
     word: {
       Version: 'Version',
       Options: 'Options',
+      Or: 'Or',
+      Press: 'Press',
       Open: 'Open',
       Save: 'Save',
       SaveAsImage: 'Save as Image',
@@ -204,11 +206,14 @@ export const i18n_en = {
     instructionPanel: {
       Rotate: 'Rotate',
       DragMouse: 'Drag mouse',
+      Zoom: 'Zoom',
+      MouseWheelOrKeys: 'Rotate mouse wheel or press Ctrl+[ or Ctrl+]',
       Pan: 'Pan',
-      HoldCtrlDragMouse: 'Hold Ctrl key and drag mouse',
+      HoldCtrlDragMouse: 'Hold Ctrl or mouse right button and drag mouse',
       Toggle2D3D: 'Toggle 2D/3D',
       ResetView: 'Reset',
       AutoRotate: 'Auto rotate',
+      StartOrStop: 'Press F4 to start or stop',
     },
 
     mapPanel: {
