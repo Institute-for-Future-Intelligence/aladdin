@@ -48,7 +48,7 @@ const KeyboardListener = ({
   const setElementPosition = useStore(Selector.setElementPosition);
   const localFileName = useStore((state) => state.localFileName);
   const localFileDialogRequested = useStore((state) => state.localFileDialogRequested);
-  const setEnableFineGird = useStore((state) => state.setEnableFineGird);
+  const setEnableFineGrid = useStore((state) => state.setEnableFineGrid);
 
   const [downloadDialogVisible, setDownloadDialogVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -247,9 +247,9 @@ const KeyboardListener = ({
         break;
       case 'shift':
         if (keyDown) {
-          setEnableFineGird(true);
+          setEnableFineGrid(true);
         } else if (keyUp) {
-          setEnableFineGird(false);
+          setEnableFineGrid(false);
         }
         break;
     }

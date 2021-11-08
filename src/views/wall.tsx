@@ -66,7 +66,7 @@ const Wall = ({
   const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
   const resizeHandleTypeRef = useRef(useStore.getState().resizeHandleType);
   const buildingWallIDRef = useRef(useStore.getState().buildingWallID);
-  const enableFineGirdRef = useRef(useStore.getState().enableFineGird);
+  const enableFineGridRef = useRef(useStore.getState().enableFineGrid);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const outSideWallRef = useRef<Mesh>(null);
@@ -85,7 +85,7 @@ const Wall = ({
   const [resizingWindow, setResizingWindow] = useState<WindowProps | null>(null);
   const [invalidWindowID, setInvalidWindowID] = useState<string | null>(null);
   const [isBuildingNewWindow, setIsBuildingNewWindow] = useState(false);
-  const [showGird, setShowGird] = useState(false);
+  const [showGrid, setShowGrid] = useState(false);
   const [init, setInit] = useState(false);
   const [x, setX] = useState(lx / 2);
   const [y, setY] = useState(ly / 2);
@@ -124,7 +124,7 @@ const Wall = ({
     useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
     useStore.subscribe((state) => (resizeHandleTypeRef.current = state.resizeHandleType));
     useStore.subscribe((state) => (buildingWallIDRef.current = state.buildingWallID));
-    useStore.subscribe((state) => (enableFineGirdRef.current = state.enableFineGird));
+    useStore.subscribe((state) => (enableFineGridRef.current = state.enableFineGrid));
   }, []);
 
   useEffect(() => {
@@ -420,7 +420,7 @@ const Wall = ({
             <Plane
               name={'intersection plane ' + id}
               ref={intersectionPlaneRef}
-              args={[lx + (showGird ? 50 : 1), lz + (showGird ? 10 : 1)]}
+              args={[lx + (showGrid ? 50 : 1), lz + (showGrid ? 10 : 1)]}
               position={[0, ly / 2 + 0.01, 0]}
               rotation={[Math.PI / 2, 0, 0]}
               visible={false}
@@ -437,7 +437,7 @@ const Wall = ({
                   // add new window
                   if (objectTypeToAddRef.current === ObjectType.Window) {
                     let relativePos = getWindowRelativePos(pointer, elementModel);
-                    if (enableFineGirdRef.current) {
+                    if (enableFineGridRef.current) {
                       relativePos = stickToFineGrid(relativePos);
                     } else {
                       relativePos = stickToNormalGrid(relativePos);
@@ -458,7 +458,7 @@ const Wall = ({
                       state.enableOrbitController = false;
                     });
                     setMovingWindow({ id: newWindow.id, wlx: 0, wlz: 0, wcx: 0, wcz: 0, diff: new Vector3() });
-                    setShowGird(true);
+                    setShowGrid(true);
                     setIsBuildingNewWindow(true);
                   }
 
@@ -467,7 +467,7 @@ const Wall = ({
                     const { id, diff, wlx, wlz } = movingWindow;
                     const absPos = new Vector3().addVectors(pointer, diff);
                     let relativePos = getWindowRelativePos(absPos, elementModel);
-                    if (enableFineGirdRef.current) {
+                    if (enableFineGridRef.current) {
                       relativePos = stickToFineGrid(relativePos);
                     } else {
                       relativePos = stickToNormalGrid(relativePos);
@@ -493,7 +493,7 @@ const Wall = ({
                   } else if (resizingWindow) {
                     let p = getWindowRelativePos(pointer, elementModel);
 
-                    if (enableFineGirdRef.current) {
+                    if (enableFineGridRef.current) {
                       p = stickToFineGrid(p);
                     } else {
                       p = stickToNormalGrid(p);
@@ -529,7 +529,7 @@ const Wall = ({
                       resizeHandleTypeRef.current == ResizeHandleType.UpperLeft)
                   ) {
                     let height = new Vector3().subVectors(pointer, resizeAnchorRef.current);
-                    if (enableFineGirdRef.current) {
+                    if (enableFineGridRef.current) {
                       height = stickToFineGrid(height);
                     } else {
                       height = stickToNormalGrid(height);
@@ -595,7 +595,7 @@ const Wall = ({
                 setMovingWindow(null);
                 setResizingWindow(null);
                 setInvalidWindowID(null);
-                setShowGird(false);
+                setShowGrid(false);
                 setIsBuildingNewWindow(false);
                 if (grabRef.current) {
                   grabRef.current = null;
@@ -626,7 +626,7 @@ const Wall = ({
                         const v = e.intersections[0].object.localToWorld(new Vector3());
                         const diff = new Vector3().subVectors(v, e.intersections[0].point);
                         setMovingWindow({ id, wlx, wlz, wcx, wcz, diff });
-                        setShowGird(true);
+                        setShowGrid(true);
                         setCommonStore((state) => {
                           state.enableOrbitController = false;
                         });
@@ -638,7 +638,7 @@ const Wall = ({
                     }
                   }}
                   onPointerUp={() => {
-                    setShowGird(false);
+                    setShowGrid(false);
                     if (grabRef.current) {
                       grabRef.current = null;
                     }
@@ -660,7 +660,7 @@ const Wall = ({
                       position={[-wlx / 2, 0, -wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
-                        setShowGird(true);
+                        setShowGrid(true);
                         setResizingWindow({ id, wlx, wlz, wcx, wcz, diff: new Vector3() });
                         if (resizeHandleLLRef.current) {
                           setCommonStore((state) => {
@@ -670,7 +670,7 @@ const Wall = ({
                         }
                       }}
                       onPointerUp={() => {
-                        setShowGird(false);
+                        setShowGrid(false);
                       }}
                     />
                     <Sphere
@@ -680,7 +680,7 @@ const Wall = ({
                       position={[-wlx / 2, 0, wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
-                        setShowGird(true);
+                        setShowGrid(true);
                         setResizingWindow({ id, wlx, wlz, wcx, wcz, diff: new Vector3() });
                         if (resizeHandleULRef.current) {
                           setCommonStore((state) => {
@@ -690,7 +690,7 @@ const Wall = ({
                         }
                       }}
                       onPointerUp={() => {
-                        setShowGird(false);
+                        setShowGrid(false);
                       }}
                     />
                     <Sphere
@@ -700,7 +700,7 @@ const Wall = ({
                       position={[wlx / 2, 0, -wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
-                        setShowGird(true);
+                        setShowGrid(true);
                         setResizingWindow({ id, wlx, wlz, wcx, wcz, diff: new Vector3() });
                         if (resizeHandleLRRef.current) {
                           setCommonStore((state) => {
@@ -710,7 +710,7 @@ const Wall = ({
                         }
                       }}
                       onPointerUp={() => {
-                        setShowGird(false);
+                        setShowGrid(false);
                       }}
                     />
                     <Sphere
@@ -720,7 +720,7 @@ const Wall = ({
                       position={[wlx / 2, 0, wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
-                        setShowGird(true);
+                        setShowGrid(true);
                         setResizingWindow({ id, wlx, wlz, wcx, wcz, diff: new Vector3() });
                         if (resizeHandleURRef.current) {
                           setCommonStore((state) => {
@@ -730,7 +730,7 @@ const Wall = ({
                         }
                       }}
                       onPointerUp={() => {
-                        setShowGird(false);
+                        setShowGrid(false);
                       }}
                     />
                   </group>
@@ -744,11 +744,11 @@ const Wall = ({
 
           {/* handles */}
           {selected && !locked && (
-            <WallResizeHandleWarpper x={x} z={z} id={id} highLight={highLight} setShowGird={setShowGird} />
+            <WallResizeHandleWarpper x={x} z={z} id={id} highLight={highLight} setShowGrid={setShowGrid} />
           )}
 
           {/* grid */}
-          {showGird && (
+          {showGrid && (
             <group position={[0, -0.001, 0]} rotation={[Math.PI / 2, 0, 0]}>
               <FoundationGrid args={[lx, lz, 0]} objectType={ObjectType.Wall} />
             </group>
@@ -766,7 +766,7 @@ interface ResizeHandlesProps {
   handleType: RType;
   highLight: boolean;
   handleSize?: number;
-  setShowGird: (b: boolean) => void;
+  setShowGrid: (b: boolean) => void;
 }
 
 interface WallResizeHandleWarpperProps {
@@ -774,7 +774,7 @@ interface WallResizeHandleWarpperProps {
   z: number;
   id: string;
   highLight: boolean;
-  setShowGird: (b: boolean) => void;
+  setShowGrid: (b: boolean) => void;
 }
 
 interface WallWireFrameProps {
@@ -790,7 +790,7 @@ interface WindowWireFrameProps {
 }
 
 const WallResizeHandle = React.memo(
-  ({ x, z, id, handleType, highLight, handleSize = 0.3, setShowGird }: ResizeHandlesProps) => {
+  ({ x, z, id, handleType, highLight, handleSize = 0.3, setShowGrid }: ResizeHandlesProps) => {
     const setCommonStore = useStore(Selector.set);
     const selectMe = useStore(Selector.selectMe);
     const resizeHandleType = useStore(Selector.resizeHandleType);
@@ -835,7 +835,7 @@ const WallResizeHandle = React.memo(
                 const anchor = handleRef.current!.localToWorld(new Vector3(0, 0, -z * 2));
                 state.resizeAnchor.copy(anchor);
               });
-              setShowGird(true);
+              setShowGrid(true);
             }
           }
         }}
@@ -851,7 +851,7 @@ const WallResizeHandle = React.memo(
   },
 );
 
-const WallResizeHandleWarpper = React.memo(({ x, z, id, highLight, setShowGird }: WallResizeHandleWarpperProps) => {
+const WallResizeHandleWarpper = React.memo(({ x, z, id, highLight, setShowGrid }: WallResizeHandleWarpperProps) => {
   const orthographic = useStore(Selector.viewstate.orthographic);
   return (
     <React.Fragment>
@@ -861,7 +861,7 @@ const WallResizeHandleWarpper = React.memo(({ x, z, id, highLight, setShowGird }
         id={id}
         handleType={RType.LowerLeft}
         highLight={highLight}
-        setShowGird={setShowGird}
+        setShowGrid={setShowGrid}
       />
       <WallResizeHandle
         x={x}
@@ -869,7 +869,7 @@ const WallResizeHandleWarpper = React.memo(({ x, z, id, highLight, setShowGird }
         id={id}
         handleType={RType.LowerRight}
         highLight={highLight}
-        setShowGird={setShowGird}
+        setShowGrid={setShowGrid}
       />
       {!orthographic && (
         <WallResizeHandle
@@ -878,7 +878,7 @@ const WallResizeHandleWarpper = React.memo(({ x, z, id, highLight, setShowGird }
           id={id}
           handleType={RType.UpperLeft}
           highLight={highLight}
-          setShowGird={setShowGird}
+          setShowGrid={setShowGrid}
         />
       )}
       {!orthographic && (
@@ -888,7 +888,7 @@ const WallResizeHandleWarpper = React.memo(({ x, z, id, highLight, setShowGird }
           id={id}
           handleType={RType.UpperRight}
           highLight={highLight}
-          setShowGird={setShowGird}
+          setShowGrid={setShowGrid}
         />
       )}
     </React.Fragment>

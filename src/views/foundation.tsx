@@ -102,7 +102,7 @@ const Foundation = ({
     new Map(),
   );
 
-  const enableFineGirdRef = useRef(useStore.getState().enableFineGird);
+  const enableFineGridRef = useRef(useStore.getState().enableFineGrid);
   const baseRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
   const intersecPlaneRef = useRef<Mesh>();
@@ -147,7 +147,7 @@ const Foundation = ({
   }
 
   useEffect(() => {
-    useStore.subscribe((state) => (enableFineGirdRef.current = state.enableFineGird));
+    useStore.subscribe((state) => (enableFineGridRef.current = state.enableFineGrid));
   }, []);
 
   useEffect(() => {
@@ -289,7 +289,7 @@ const Foundation = ({
   };
 
   const updatePointer = (p: Vector3, targetPoint?: Vector3 | null) => {
-    if (!enableFineGirdRef.current) {
+    if (!enableFineGridRef.current) {
       if (targetPoint) {
         p = targetPoint;
       } else {
@@ -373,7 +373,7 @@ const Foundation = ({
             let targetID: string | null = null;
             let targetPoint: Vector3 | null = null;
             let targetSide: WallSide | null = null;
-            if (!enableFineGirdRef.current) {
+            if (!enableFineGridRef.current) {
               let target = findMagnetPoint(wallPoints, p, 1.5);
               targetID = target.targetID;
               targetPoint = target.targetPoint;
@@ -473,7 +473,7 @@ const Foundation = ({
                     let targetID: string | null = null;
                     let targetPoint: Vector3 | null = null;
                     let targetSide: WallSide | null = null;
-                    if (!enableFineGirdRef.current) {
+                    if (!enableFineGridRef.current) {
                       let target = findMagnetPoint(wallPoints, p, 1.5);
                       targetID = target.targetID;
                       targetPoint = target.targetPoint;
@@ -1184,7 +1184,7 @@ const Foundation = ({
 
 export const FoundationGrid = React.memo(
   ({ args, objectType }: { args: [lx: number, ly: number, lz: number]; objectType: ObjectType }) => {
-    const enableFineGird = useStore((state) => state.enableFineGird);
+    const enableFineGrid = useStore((state) => state.enableFineGrid);
 
     const [unit, setUnit] = useState(1);
     const [lineWidth, setLineWidth] = useState(0.5);
@@ -1192,14 +1192,14 @@ export const FoundationGrid = React.memo(
     const lineColor = objectType === ObjectType.Foundation ? 'white' : 'white';
 
     useEffect(() => {
-      if (enableFineGird) {
+      if (enableFineGrid) {
         setUnit(0.4);
         setLineWidth(0.2);
       } else {
         setUnit(1);
         setLineWidth(0.5);
       }
-    }, [enableFineGird]);
+    }, [enableFineGrid]);
 
     const lx = args[0] / 2;
     const ly = args[1] / 2;
