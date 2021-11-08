@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   DoubleSide,
   Euler,
@@ -19,7 +19,7 @@ import { Line, Plane, Sphere } from '@react-three/drei';
 import { ActionType, ObjectType, ResizeHandleType, ResizeHandleType as RType } from 'src/types';
 import { Util } from 'src/Util';
 import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from '../constants';
-import { useStore } from 'src/stores/common';
+import { CommonStoreState, useStore } from 'src/stores/common';
 import { WallModel } from 'src/models/WallModel';
 import WallExteriorImage from '../resources/WallExteriorImage.png';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
@@ -84,7 +84,6 @@ const Wall = ({
   const [y, setY] = useState(ly / 2);
   const [z, setZ] = useState(lz / 2);
 
-  const p = getElementById(parentId);
   const elementModel = getElementById(id) as WallModel;
   const highLight = lx === 0;
 
@@ -98,6 +97,18 @@ const Wall = ({
     });
   }, []);
 
+  const parentSelector = useCallback((state: CommonStoreState) => {
+    for (const e of state.elements) {
+      if (e.id === parentId) {
+        return e;
+      }
+    }
+    return null;
+  }, []);
+
+  const parent = useStore(parentSelector);
+
+  // subscribe common store
   useEffect(() => {
     useStore.subscribe((state) => (objectTypeToAddRef.current = state.objectTypeToAdd));
     useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
@@ -113,12 +124,12 @@ const Wall = ({
 
   // wall position and rotation
   useEffect(() => {
-    if (p) {
-      setWallAbsPosition(Util.wallAbsolutePosition(new Vector3(cx, cy), p).setZ(lz / 2 + p.lz));
-      setWallAbsAngle(p.rotation[2] + relativeAngle);
+    if (parent) {
+      setWallAbsPosition(Util.wallAbsolutePosition(new Vector3(cx, cy), parent).setZ(lz / 2 + parent.lz));
+      setWallAbsAngle(parent.rotation[2] + relativeAngle);
       setInit(true);
     }
-  }, [cx, cy, p?.cx, p?.cy, p?.cz, p?.rotation, relativeAngle]);
+  }, [cx, cy, parent?.cx, parent?.cy, parent?.cz, parent?.rotation, relativeAngle]);
 
   // outside wall
   useEffect(() => {
@@ -861,4 +872,4 @@ const WindowWireFrame = React.memo(({ x, z, lineWidth = 1 }: WindowWireFrameProp
   );
 });
 
-export default Wall;
+export default React.memo(Wall);
