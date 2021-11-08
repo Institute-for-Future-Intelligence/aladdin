@@ -12,6 +12,7 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
 import { screenshot } from '../helpers';
 import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import i18n from '../i18n/i18n';
 
 const Container = styled.div`
   position: fixed;
@@ -64,8 +65,6 @@ export interface DailyPvYieldPanelProps {
   individualOutputs: boolean;
   setIndividualOutputs: (b: boolean) => void;
   analyzeDailyPvYield: () => void;
-
-  [key: string]: any;
 }
 
 const DailyPvYieldPanel = ({
@@ -73,8 +72,8 @@ const DailyPvYieldPanel = ({
   individualOutputs = false,
   setIndividualOutputs,
   analyzeDailyPvYield,
-  ...rest
 }: DailyPvYieldPanelProps) => {
+  const language = useStore((state) => state.language);
   const setCommonStore = useStore((state) => state.set);
   const viewState = useStore((state) => state.viewState);
   const countElementsByType = useStore((state) => state.countElementsByType);
@@ -85,16 +84,13 @@ const DailyPvYieldPanel = ({
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(viewState.dailyPvYieldPanelX)
-      ? 0
-      : Math.max(viewState.dailyPvYieldPanelX, wOffset - window.innerWidth),
-    y: isNaN(viewState.dailyPvYieldPanelY)
-      ? 0
-      : Math.min(viewState.dailyPvYieldPanelY, window.innerHeight - hOffset),
+    x: isNaN(viewState.dailyPvYieldPanelX) ? 0 : Math.max(viewState.dailyPvYieldPanelX, wOffset - window.innerWidth),
+    y: isNaN(viewState.dailyPvYieldPanelY) ? 0 : Math.min(viewState.dailyPvYieldPanelY, window.innerHeight - hOffset),
   });
   const [sum, setSum] = useState(0);
   const panelSumRef = useRef(new Map<string, number>());
 
+  const lang = { lng: language };
   const responsiveHeight = 100;
 
   useEffect(() => {
@@ -105,10 +101,7 @@ const DailyPvYieldPanel = ({
         if (datum.hasOwnProperty(prop)) {
           if (prop !== 'Hour') {
             s += datum[prop] as number;
-            panelSumRef.current.set(
-              prop,
-              (panelSumRef.current.get(prop) ?? 0) + (datum[prop] as number),
-            );
+            panelSumRef.current.set(prop, (panelSumRef.current.get(prop) ?? 0) + (datum[prop] as number));
           }
         }
       }
@@ -158,14 +151,12 @@ const DailyPvYieldPanel = ({
   }, [solarPanelCount]);
 
   const labelX = 'Hour';
-  const labelY = 'Yield per Hour';
+  const labelY = i18n.t('solarPanelYieldPanel.YieldPerHour', lang);
   let totalTooltip = '';
   if (individualOutputs) {
-    panelSumRef.current.forEach(
-      (value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'),
-    );
+    panelSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
     totalTooltip += '——————————\n';
-    totalTooltip += 'Total: ' + sum.toFixed(2) + ' kWh';
+    totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
 
   return (
@@ -181,7 +172,8 @@ const DailyPvYieldPanel = ({
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>
-              Solar Panel Daily Yield: Weather Data from {city} | {moment(now).format('MM/DD')}
+              {i18n.t('solarPanelYieldPanel.SolarPanelDailyYield', lang)}:{i18n.t('sensorPanel.WeatherDataFrom', lang)}
+              {city} | {moment(now).format('MM/DD')}
             </span>
             <span
               style={{ cursor: 'pointer' }}
@@ -192,7 +184,7 @@ const DailyPvYieldPanel = ({
                 closePanel();
               }}
             >
-              Close
+              {i18n.t('word.Close', lang)}
             </span>
           </Header>
           <LineGraph
@@ -202,28 +194,26 @@ const DailyPvYieldPanel = ({
             height={responsiveHeight}
             labelX={labelX}
             labelY={labelY}
-            unitY={'kWh'}
+            unitY={i18n.t('word.kWh', lang)}
             yMin={0}
             curveType={'linear'}
             fractionDigits={2}
             symbolCount={24}
             referenceX={now.getHours()}
-            {...rest}
           />
           <Space style={{ alignSelf: 'center' }}>
             {individualOutputs && solarPanelCount > 1 ? (
-              <Space
-                title={totalTooltip}
-                style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}
-              >
-                Hover for breakdown
+              <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
+                {i18n.t('solarPanelYieldPanel.HoverForBreakdown', lang)}
               </Space>
             ) : (
-              <Space style={{ cursor: 'default' }}>Daily Total: {sum.toFixed(2)} kWh</Space>
+              <Space style={{ cursor: 'default' }}>
+                {i18n.t('solarPanelYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
+              </Space>
             )}
             {solarPanelCount > 1 && (
               <Switch
-                title={'Show outputs of individual solar panels'}
+                title={i18n.t('solarPanelYieldPanel.ShowOutputsOfIndividualSolarPanels', lang)}
                 checkedChildren={<UnorderedListOutlined />}
                 unCheckedChildren={<UnorderedListOutlined />}
                 checked={individualOutputs}
@@ -236,13 +226,13 @@ const DailyPvYieldPanel = ({
             <Button
               type="default"
               icon={<ReloadOutlined />}
-              title={'Update'}
+              title={i18n.t('word.Update', lang)}
               onClick={analyzeDailyPvYield}
             />
             <Button
               type="default"
               icon={<SaveOutlined />}
-              title={'Save as image'}
+              title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
                 screenshot('line-graph-' + labelX + '-' + labelY, 'daily-pv-yield', {});
               }}

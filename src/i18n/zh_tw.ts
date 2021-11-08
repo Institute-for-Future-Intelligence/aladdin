@@ -27,6 +27,7 @@ export const i18n_zh_tw = {
       Version: '版本',
       Options: '選項',
       Or: '或',
+      Total: '總數',
       Press: '按',
       Open: '打開',
       Save: '保存',
@@ -62,6 +63,7 @@ export const i18n_zh_tw = {
       Daylight: '白天長度',
       Radiation: '輻射',
       Temperature: '温度',
+      kWh: '千瓦時',
       NorthInitial: '北',
       SouthInitial: '南',
       EastInitial: '東',
@@ -237,6 +239,17 @@ export const i18n_zh_tw = {
     sensorPanel: {
       LightSensor: '光傳感器',
       WeatherDataFrom: '氣象數據來自',
+    },
+
+    solarPanelYieldPanel: {
+      SolarPanelDailyYield: '光伏日發電量',
+      SolarPanelYearlyYield: '光伏年發電量',
+      Yield: '發電量',
+      YieldPerHour: '每小時發電量',
+      DailyTotal: '日發電總量',
+      YearlyTotal: '年發電總量',
+      HoverForBreakdown: '在此停留滑鼠分列發電量',
+      ShowOutputsOfIndividualSolarPanels: '顯示每個光伏單位單獨發電量',
     },
 
     heliodonPanel: {

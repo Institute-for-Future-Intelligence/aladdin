@@ -9,15 +9,11 @@ import { computeDeclinationAngle, computeHourAngle, computeSunLocation, TILT_ANG
 import { Line, Plane as Drei_Plane } from '@react-three/drei';
 import { useStore } from '../stores/common';
 
-export interface HeliodonProps {
-  [key: string]: any;
-}
-
 const HOUR_DIVISIONS = 96;
 const BASE_DIVISIONS = 72;
 const DECLINATION_DIVISIONS = 12;
 
-const Heliodon = ({}: HeliodonProps) => {
+const Heliodon = () => {
   const worldLatitude = useStore((state) => state.world.latitude);
   const dateString = useStore((state) => state.world.date);
   const aabb = useStore((state) => state.aabb);

@@ -15,14 +15,12 @@ export interface OrbitControllerProps {
   orbitControlsRef?: React.MutableRefObject<OrbitControls | undefined>;
   canvasRef?: React.MutableRefObject<HTMLCanvasElement | undefined>;
   currentCamera?: Camera;
-
-  [key: string]: any;
 }
 
 // Get a reference to the Three.js Camera, and the canvas html element.
 // We need these to setup the OrbitControls class.
 // https://threejs.org/docs/#examples/en/controls/OrbitControls
-const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera, ...rest }: OrbitControllerProps) => {
+const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitControllerProps) => {
   const orthographic = useStore(Selector.viewstate.orthographic);
   const enableRotate = useStore(Selector.viewstate.enableRotate);
   const cameraPosition = useStore(Selector.viewstate.cameraPosition);

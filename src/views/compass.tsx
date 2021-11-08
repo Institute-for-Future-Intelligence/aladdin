@@ -11,11 +11,7 @@ import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
 import { Util } from '../Util';
 import { useStore } from '../stores/common';
 
-export interface CompassProps {
-  [key: string]: any;
-}
-
-const Compass = ({ ...props }: CompassProps) => {
+const Compass = () => {
   const model = useLoader(OBJLoader, compassObj);
   const font = useLoader(FontLoader, helvetikerFont);
   const mesh = useRef<Mesh>(null!);
@@ -33,7 +29,7 @@ const Compass = ({ ...props }: CompassProps) => {
   const rotationZ = (-PI * 17) / 18 + Math.atan2(dirc_X_Y.x, dirc_X_Y.y);
 
   return (
-    <mesh {...props} ref={mesh} name={'Compass'} rotation={[-PI / 3, 0, rotationZ]}>
+    <mesh ref={mesh} name={'Compass'} rotation={[-PI / 3, 0, rotationZ]}>
       <mesh position={[-0.2, 2, 0]} material={textMaterial}>
         <textGeometry args={['N', textGeometryParams]} />
       </mesh>

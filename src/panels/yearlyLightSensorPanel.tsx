@@ -65,11 +65,9 @@ const Header = styled.div`
 export interface YearlyLightSensorPanelProps {
   city: string | null;
   collectYearlyLightSensorData: () => void;
-
-  [key: string]: any;
 }
 
-const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData, ...rest }: YearlyLightSensorPanelProps) => {
+const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData }: YearlyLightSensorPanelProps) => {
   const language = useStore((state) => state.language);
   const setCommonStore = useStore((state) => state.set);
   const viewState = useStore((state) => state.viewState);
@@ -219,7 +217,6 @@ const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData, ...rest }:
               curveType={'natural'}
               fractionDigits={1}
               referenceX={referenceX}
-              {...rest}
             />
           )}
           {clearnessGraph && (
@@ -235,7 +232,6 @@ const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData, ...rest }:
               fractionDigits={1}
               referenceX={referenceX}
               color={'#66CDAA'}
-              {...rest}
             />
           )}
           {radiationGraph && (
@@ -251,7 +247,6 @@ const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData, ...rest }:
               curveType={'natural'}
               fractionDigits={2}
               referenceX={referenceX}
-              {...rest}
             />
           )}
         </ColumnWrapper>

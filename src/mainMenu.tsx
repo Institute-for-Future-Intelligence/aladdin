@@ -66,8 +66,6 @@ export interface MainMenuProps {
   setPvYearlyIndividualOutputs: (b: boolean) => void;
   analyzePvYearlyYield: () => void;
   canvas?: HTMLCanvasElement;
-
-  [key: string]: any;
 }
 
 const MainMenu = ({
@@ -83,7 +81,6 @@ const MainMenu = ({
   setPvYearlyIndividualOutputs,
   analyzePvYearlyYield,
   canvas,
-  ...rest
 }: MainMenuProps) => {
   const setCommonStore = useStore((state) => state.set);
   const language = useStore((state) => state.language);

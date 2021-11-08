@@ -13,6 +13,7 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
 import { screenshot } from '../helpers';
 import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import i18n from '../i18n/i18n';
 
 const Container = styled.div`
   position: fixed;
@@ -65,8 +66,6 @@ export interface YearlyPvYieldPanelProps {
   individualOutputs: boolean;
   setIndividualOutputs: (b: boolean) => void;
   analyzeYearlyPvYield: () => void;
-
-  [key: string]: any;
 }
 
 const YearlyPvYieldPanel = ({
@@ -74,8 +73,8 @@ const YearlyPvYieldPanel = ({
   individualOutputs = false,
   setIndividualOutputs,
   analyzeYearlyPvYield,
-  ...rest
 }: YearlyPvYieldPanelProps) => {
+  const language = useStore((state) => state.language);
   const setCommonStore = useStore((state) => state.set);
   const viewState = useStore((state) => state.viewState);
   const yearlyYield = useStore((state) => state.yearlyPvYield);
@@ -86,18 +85,15 @@ const YearlyPvYieldPanel = ({
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(viewState.yearlyPvYieldPanelX)
-      ? 0
-      : Math.max(viewState.yearlyPvYieldPanelX, wOffset - window.innerWidth),
-    y: isNaN(viewState.yearlyPvYieldPanelY)
-      ? 0
-      : Math.min(viewState.yearlyPvYieldPanelY, window.innerHeight - hOffset),
+    x: isNaN(viewState.yearlyPvYieldPanelX) ? 0 : Math.max(viewState.yearlyPvYieldPanelX, wOffset - window.innerWidth),
+    y: isNaN(viewState.yearlyPvYieldPanelY) ? 0 : Math.min(viewState.yearlyPvYieldPanelY, window.innerHeight - hOffset),
   });
   const [sum, setSum] = useState(0);
   const panelSumRef = useRef(new Map<string, number>());
 
   const responsiveHeight = 100;
   const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
+  const lang = { lng: language };
 
   useEffect(() => {
     let s = 0;
@@ -107,10 +103,7 @@ const YearlyPvYieldPanel = ({
         if (datum.hasOwnProperty(prop)) {
           if (prop !== 'Month') {
             s += datum[prop] as number;
-            panelSumRef.current.set(
-              prop,
-              (panelSumRef.current.get(prop) ?? 0) + (datum[prop] as number),
-            );
+            panelSumRef.current.set(prop, (panelSumRef.current.get(prop) ?? 0) + (datum[prop] as number));
           }
         }
       }
@@ -160,14 +153,12 @@ const YearlyPvYieldPanel = ({
   }, [solarPanelCount]);
 
   const labelX = 'Month';
-  const labelY = 'Yield';
+  const labelY = i18n.t('solarPanelYieldPanel.Yield', lang);
   let totalTooltip = '';
   if (individualOutputs) {
-    panelSumRef.current.forEach(
-      (value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'),
-    );
+    panelSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
     totalTooltip += '——————————\n';
-    totalTooltip += 'Total: ' + sum.toFixed(2) + ' kWh';
+    totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
 
   return (
@@ -182,7 +173,10 @@ const YearlyPvYieldPanel = ({
       <Container>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
-            <span>Solar Panel Yearly Yield: Weather Data from {city}</span>
+            <span>
+              {i18n.t('solarPanelYieldPanel.SolarPanelYearlyYield', lang)}:{i18n.t('sensorPanel.WeatherDataFrom', lang)}{' '}
+              {city}
+            </span>
             <span
               style={{ cursor: 'pointer' }}
               onTouchStart={() => {
@@ -192,7 +186,7 @@ const YearlyPvYieldPanel = ({
                 closePanel();
               }}
             >
-              Close
+              {i18n.t('word.Close', lang)}
             </span>
           </Header>
           <LineGraph
@@ -202,27 +196,25 @@ const YearlyPvYieldPanel = ({
             height={responsiveHeight}
             labelX={labelX}
             labelY={labelY}
-            unitY={'kWh'}
+            unitY={i18n.t('word.kWh', lang)}
             yMin={0}
             curveType={'natural'}
             fractionDigits={2}
             referenceX={referenceX}
-            {...rest}
           />
           <Space style={{ alignSelf: 'center' }}>
             {individualOutputs && solarPanelCount > 1 ? (
-              <Space
-                title={totalTooltip}
-                style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}
-              >
-                Hover for breakdown
+              <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
+                {i18n.t('solarPanelYieldPanel.HoverForBreakdown', lang)}
               </Space>
             ) : (
-              <Space>Yearly Total: {sum.toFixed(2)} kWh</Space>
+              <Space>
+                {i18n.t('solarPanelYieldPanel.YearlyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
+              </Space>
             )}
             {solarPanelCount > 1 && (
               <Switch
-                title={'Show outputs of individual solar panels'}
+                title={i18n.t('solarPanelYieldPanel.ShowOutputsOfIndividualSolarPanels', lang)}
                 checkedChildren={<UnorderedListOutlined />}
                 unCheckedChildren={<UnorderedListOutlined />}
                 checked={individualOutputs}
@@ -235,13 +227,13 @@ const YearlyPvYieldPanel = ({
             <Button
               type="default"
               icon={<ReloadOutlined />}
-              title={'Update'}
+              title={i18n.t('word.Update', lang)}
               onClick={analyzeYearlyPvYield}
             />
             <Button
               type="default"
               icon={<SaveOutlined />}
-              title={'Save as image'}
+              title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
                 screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-pv-yield', {});
               }}

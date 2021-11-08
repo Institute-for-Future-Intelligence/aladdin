@@ -35,8 +35,6 @@ export interface LineGraphProps {
   referenceX?: number | string;
   fractionDigits?: number;
   symbolCount?: number;
-
-  [key: string]: any;
 }
 
 const LineGraph = ({
@@ -54,7 +52,6 @@ const LineGraph = ({
   referenceX,
   fractionDigits = 2,
   symbolCount = 12,
-  ...rest
 }: LineGraphProps) => {
   const [lineCount, setLineCount] = useState<number>(0);
   const [horizontalGridLines, setHorizontalGridLines] = useState<boolean>(true);
@@ -68,9 +65,7 @@ const LineGraph = ({
     if (!dataSource || dataSource.length === 0) {
       return;
     }
-    const len = Array.isArray(dataSource)
-      ? Object.keys(dataSource[0]).length - 1
-      : Object.keys(dataSource).length - 1;
+    const len = Array.isArray(dataSource) ? Object.keys(dataSource[0]).length - 1 : Object.keys(dataSource).length - 1;
     if (lineCount !== len) {
       setLineCount(len);
     }
@@ -172,9 +167,7 @@ const LineGraph = ({
                   bottom: 30,
                 }}
               >
-                <Tooltip
-                  formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY}
-                />
+                <Tooltip formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY} />
                 <CartesianGrid
                   vertical={verticalGridLines}
                   horizontal={horizontalGridLines}
@@ -182,11 +175,7 @@ const LineGraph = ({
                 />
                 <ReferenceLine x={referenceX} stroke="orange" strokeWidth={2} />
                 <XAxis dataKey={labelX}>
-                  <Label
-                    value={labelX + (unitX ? ' (' + unitX + ')' : '')}
-                    offset={0}
-                    position="bottom"
-                  />
+                  <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
                 </XAxis>
                 <YAxis domain={[yMin, yMax]}>
                   <Label

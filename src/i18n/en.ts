@@ -27,6 +27,7 @@ export const i18n_en = {
       Version: 'Version',
       Options: 'Options',
       Or: 'Or',
+      Total: 'Total',
       Press: 'Press',
       Open: 'Open',
       Save: 'Save',
@@ -62,6 +63,7 @@ export const i18n_en = {
       Daylight: 'Daylight',
       Radiation: 'Radiation',
       Temperature: 'Temperature',
+      kWh: 'kWh',
       NorthInitial: 'N',
       SouthInitial: 'S',
       EastInitial: 'E',
@@ -237,6 +239,17 @@ export const i18n_en = {
     sensorPanel: {
       LightSensor: 'Light Sensor',
       WeatherDataFrom: 'Weather Data from',
+    },
+
+    solarPanelYieldPanel: {
+      SolarPanelDailyYield: 'Solar Panel Daily Yield',
+      SolarPanelYearlyYield: 'Solar Panel Yearly Yield',
+      Yield: 'Yield',
+      YieldPerHour: 'Yield per Hour',
+      DailyTotal: 'Daily Total',
+      YearlyTotal: 'Yearly Total',
+      HoverForBreakdown: 'Hover for breakdown',
+      ShowOutputsOfIndividualSolarPanels: 'Show outputs of individual solar panels',
     },
 
     heliodonPanel: {

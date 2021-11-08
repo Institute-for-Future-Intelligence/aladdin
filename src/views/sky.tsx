@@ -23,11 +23,9 @@ import { DEFAULT_SKY_RADIUS } from '../constants';
 
 export interface SkyProps {
   theme?: string;
-
-  [key: string]: any;
 }
 
-const Sky = ({ theme = 'Default', ...props }: SkyProps) => {
+const Sky = ({ theme = 'Default' }: SkyProps) => {
   const setCommonStore = useStore((state) => state.set);
   const selectNone = useStore((state) => state.selectNone);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
@@ -152,7 +150,6 @@ const Sky = ({ theme = 'Default', ...props }: SkyProps) => {
   return (
     <>
       <mesh
-        {...props}
         ref={meshRef}
         name={'Sky'}
         scale={[1, scale, 1]}

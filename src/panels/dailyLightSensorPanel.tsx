@@ -63,11 +63,9 @@ const Header = styled.div`
 export interface DailyLightSensorPanelProps {
   city: string | null;
   collectDailyLightSensorData: () => void;
-
-  [key: string]: any;
 }
 
-const DailyLightSensorPanel = ({ city, collectDailyLightSensorData, ...rest }: DailyLightSensorPanelProps) => {
+const DailyLightSensorPanel = ({ city, collectDailyLightSensorData }: DailyLightSensorPanelProps) => {
   const language = useStore((state) => state.language);
   const setCommonStore = useStore((state) => state.set);
   const viewState = useStore((state) => state.viewState);
@@ -167,7 +165,6 @@ const DailyLightSensorPanel = ({ city, collectDailyLightSensorData, ...rest }: D
             fractionDigits={2}
             symbolCount={24}
             referenceX={now.getHours()}
-            {...rest}
           />
           <Space style={{ alignSelf: 'center' }}>
             <Button

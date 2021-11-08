@@ -12,11 +12,9 @@ import sampleObj from '../assets/house.obj';
 
 export interface ObjProps {
   scale?: number;
-
-  [key: string]: any;
 }
 
-const Obj = ({ scale = 0.5, ...props }: ObjProps) => {
+const Obj = ({ scale = 0.5 }: ObjProps) => {
   const mesh = useRef<Mesh>(null!);
 
   const material = useLoader(MTLLoader, sampleMtl) as MTLLoader.MaterialCreator;
@@ -38,7 +36,7 @@ const Obj = ({ scale = 0.5, ...props }: ObjProps) => {
   }
 
   return (
-    <mesh {...props} ref={mesh} position={[-3, 0, 3]}>
+    <mesh ref={mesh} position={[-3, 0, 3]}>
       <primitive object={model} scale={scale} />
     </mesh>
   );

@@ -30,11 +30,7 @@ import { HumanModel } from '../models/HumanModel';
 
 const { Option } = Select;
 
-export interface HumanSelectionProps {
-  [key: string]: any;
-}
-
-const HumanSelection = ({ ...rest }: HumanSelectionProps) => {
+const HumanSelection = () => {
   const updateElementById = useStore((state) => state.updateElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);

@@ -16,11 +16,7 @@ import PineImage from '../resources/pine.png';
 
 const { Option } = Select;
 
-export interface TreeSelectionProps {
-  [key: string]: any;
-}
-
-const TreeSelection = ({ ...rest }: TreeSelectionProps) => {
+const TreeSelection = () => {
   const updateElementById = useStore((state) => state.updateElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);

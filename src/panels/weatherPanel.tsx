@@ -61,11 +61,9 @@ const Header = styled.div`
 export interface WeatherPanelProps {
   city: string | null;
   graphs: GraphDataType[];
-
-  [key: string]: any;
 }
 
-const WeatherPanel = ({ city, graphs, ...rest }: WeatherPanelProps) => {
+const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
   const language = useStore((state) => state.language);
   const setCommonStore = useStore((state) => state.set);
   const viewState = useStore((state) => state.viewState);
@@ -204,7 +202,6 @@ const WeatherPanel = ({ city, graphs, ...rest }: WeatherPanelProps) => {
                     fractionDigits={0}
                     referenceX={referenceX}
                     color={'#FFD700'}
-                    {...rest}
                   />
                 );
               }
@@ -219,7 +216,6 @@ const WeatherPanel = ({ city, graphs, ...rest }: WeatherPanelProps) => {
                   unitY={yUnits[g]}
                   fractionDigits={0}
                   referenceX={referenceX}
-                  {...rest}
                 />
               );
             })}
