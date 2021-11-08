@@ -23,6 +23,7 @@ export interface ViewState {
   showWeatherPanel: boolean;
   showStickyNotePanel: boolean;
   showInfoPanel: boolean;
+  showInstructionPanel: boolean;
   showDailyLightSensorPanel: boolean;
   showYearlyLightSensorPanel: boolean;
   showDailyPvYieldPanel: boolean;

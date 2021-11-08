@@ -78,6 +78,7 @@ export const i18n_en = {
       view: {
         TwoDimensionalView: '2D View',
         SiteInformation: 'Site Information',
+        Instruction: 'Instruction',
         Map: 'Map',
         WeatherData: 'Weather Data',
         StickyNote: 'Sticky Note',
@@ -200,6 +201,16 @@ export const i18n_en = {
       Low: 'Low',
     },
 
+    instructionPanel: {
+      Rotate: 'Rotate',
+      DragMouse: 'Drag mouse',
+      Pan: 'Pan',
+      HoldCtrlDragMouse: 'Hold Ctrl key and drag mouse',
+      Toggle2D3D: 'Toggle 2D/3D',
+      ResetView: 'Reset',
+      AutoRotate: 'Auto rotate',
+    },
+
     mapPanel: {
       ImageOnGround: 'Image on Ground',
       StationsOnMap: 'Stations on Map',
@@ -250,8 +261,6 @@ export const i18n_en = {
       AddTree: 'Add tree',
       AddPeople: 'Add people',
       ClearScene: 'Clear scene',
-      ResetView: 'Reset view',
-      AutoRotate: 'Auto rotate',
       ShowHeliodonPanel: 'Show heliodon panel',
       ShowShadow: 'Show shadow',
       DoYouReallyWantToClearContent: 'Do you really want to clear the content',

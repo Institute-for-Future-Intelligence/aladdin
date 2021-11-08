@@ -35,6 +35,7 @@ import MainToolBar from './mainToolBar';
 import Spinner from './components/spinner';
 import StickyNotePanel from './panels/stickyNotePanel';
 import InfoPanel from './panels/infoPanel';
+import InstructionPanel from './panels/instructionPanel';
 import PvModelPanel from './panels/pvModelPanel';
 import YearlyPvYieldPanel from './panels/yearlyPvYieldPanel';
 import DailyPvYieldPanel from './panels/dailyPvYieldPanel';
@@ -214,15 +215,15 @@ const App = () => {
       // I don't know why the reset method results in a black screen.
       // So we are resetting it here to a predictable position.
       const z = Math.min(50, heliodonRadius * 4);
-      orbitControlsRef.current.object.position.set(0, 0, z);
+      orbitControlsRef.current.object.position.set(z, z, z);
       orbitControlsRef.current.target.set(0, 0, 0);
       orbitControlsRef.current.update();
       setCommonStore((state) => {
         // FIXME: why can't set function be used with a proxy?
         // Using set or copy will result in crash in run time.
         const v = state.viewState;
-        v.cameraPosition.x = 0;
-        v.cameraPosition.y = 0;
+        v.cameraPosition.x = z;
+        v.cameraPosition.y = z;
         v.cameraPosition.z = z;
         v.panCenter.x = 0;
         v.panCenter.y = 0;
@@ -343,7 +344,7 @@ const App = () => {
             setPvYearlyIndividualOutputs={setPvYearlyIndividualOutputs}
             analyzePvYearlyYield={analyzeYearlyPvYield}
           />
-          <MainToolBar resetView={setTopView} />
+          <MainToolBar />
           <Modal
             width={600}
             visible={pvModelDialogVisible}
@@ -361,6 +362,7 @@ const App = () => {
           {viewState.showHeliodonPanel && <HeliodonPanel />}
           {viewState.showStickyNotePanel && <StickyNotePanel />}
           {viewState.showInfoPanel && <InfoPanel city={city} />}
+          {viewState.showInstructionPanel && <InstructionPanel />}
           {viewState.showWeatherPanel && (
             <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]} />
           )}
@@ -454,6 +456,7 @@ const App = () => {
                 readLocalFile={readLocalFile}
                 writeLocalFile={writeLocalFile}
                 set2DView={set2DView}
+                resetView={setTopView}
               />
               <KeyboardEventHandler
                 handleKeys={[
@@ -483,8 +486,10 @@ const App = () => {
                 handleKeys={[
                   'ctrl+v', // we want the paste action to be fired only when the key is up, but we also need to add
                   'meta+v', // these keyboard shortcuts to the keydown handler so that the browser's default can be prevented
+                  'ctrl+home',
                   'delete',
                   'f2',
+                  'f4',
                   'shift',
                 ]}
                 handleEventType={'keyup'}

@@ -78,6 +78,7 @@ export const i18n_zh_tw = {
       view: {
         TwoDimensionalView: '二維模式',
         SiteInformation: '地理位置資訊',
+        Instruction: '操作說明',
         Map: '地圖',
         WeatherData: '氣象數據',
         StickyNote: '便簽',
@@ -200,6 +201,16 @@ export const i18n_zh_tw = {
       Low: '最低温度',
     },
 
+    instructionPanel: {
+      Rotate: '旋轉',
+      DragMouse: '拖動滑鼠',
+      Pan: '平移',
+      HoldCtrlDragMouse: '按下Ctrl鍵並拖動滑鼠',
+      Toggle2D3D: '二維/三維切换',
+      ResetView: '重置視角',
+      AutoRotate: '自動旋轉',
+    },
+
     mapPanel: {
       ImageOnGround: '地面顯示圖像',
       StationsOnMap: '顯示氣象站位置',
@@ -250,8 +261,6 @@ export const i18n_zh_tw = {
       AddTree: '添加樹木',
       AddPeople: '添加人物',
       ClearScene: '清空場景',
-      ResetView: '重置視角',
-      AutoRotate: '自動旋轉',
       ShowHeliodonPanel: '顯示日影儀面板',
       ShowShadow: '顯示陰影',
       DoYouReallyWantToClearContent: '您確定清空場景嗎',

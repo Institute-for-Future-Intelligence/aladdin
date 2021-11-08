@@ -24,6 +24,7 @@ export class DefaultViewState implements ViewState {
   showWeatherPanel: boolean;
   showStickyNotePanel: boolean;
   showInfoPanel: boolean;
+  showInstructionPanel: boolean;
   showDailyLightSensorPanel: boolean;
   showYearlyLightSensorPanel: boolean;
   showDailyPvYieldPanel: boolean;
@@ -71,6 +72,7 @@ export class DefaultViewState implements ViewState {
     this.showWeatherPanel = false;
     this.showStickyNotePanel = false;
     this.showInfoPanel = true;
+    this.showInstructionPanel = true;
     this.showDailyLightSensorPanel = false;
     this.showYearlyLightSensorPanel = false;
     this.showDailyPvYieldPanel = false;

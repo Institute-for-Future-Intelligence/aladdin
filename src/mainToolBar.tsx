@@ -10,7 +10,6 @@ import 'antd/dist/antd.css';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faArrowAltCircleUp,
   faCube,
   faEraser,
   faMousePointer,
@@ -19,7 +18,6 @@ import {
   faTree,
   faWalking,
 } from '@fortawesome/free-solid-svg-icons';
-import { faAsymmetrik } from '@fortawesome/free-brands-svg-icons';
 import FoundationImage from './resources/foundation.png';
 import SolarPanelImage from './resources/solar-panel.png';
 import ShadowImage from './resources/shadow.png';
@@ -50,15 +48,12 @@ const ButtonsContainer = styled.div`
   z-index: 9;
 `;
 
-export interface MainToolBarProps {
-  resetView: () => void;
-}
+export interface MainToolBarProps {}
 
-const MainToolBar = ({ resetView }: MainToolBarProps) => {
+const MainToolBar = ({}: MainToolBarProps) => {
   const setCommonStore = useStore((state) => state.set);
   const language = useStore((state) => state.language);
   const selectNone = useStore((state) => state.selectNone);
-  const autoRotate = useStore((state) => state.viewState.autoRotate);
   const showHeliodonPanel = useStore((state) => state.viewState.showHeliodonPanel);
   const shadowEnabled = useStore((state) => state.viewState.shadowEnabled);
   const user = useStore((state) => state.user);
@@ -148,18 +143,6 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
       onOk: () => {
         clearContent();
       },
-    });
-    resetToSelectMode();
-  };
-
-  const onResetViewButtonClicked = () => {
-    resetView();
-    resetToSelectMode();
-  };
-
-  const toggleAutoRotate = () => {
-    setCommonStore((state) => {
-      state.viewState.autoRotate = !state.viewState.autoRotate;
     });
     resetToSelectMode();
   };
@@ -636,22 +619,6 @@ const MainToolBar = ({ resetView }: MainToolBarProps) => {
               color={'#666666'}
               style={{ paddingRight: '12px', cursor: 'pointer' }}
               onClick={removeAllContent}
-            />
-            <FontAwesomeIcon
-              title={i18n.t('toolbar.ResetView', lang)}
-              icon={faArrowAltCircleUp}
-              size={'3x'}
-              color={'#666666'}
-              style={{ paddingRight: '12px', cursor: 'pointer' }}
-              onClick={onResetViewButtonClicked}
-            />
-            <FontAwesomeIcon
-              title={i18n.t('toolbar.AutoRotate', lang)}
-              icon={faAsymmetrik}
-              size={'3x'}
-              color={autoRotate ? 'antiquewhite' : '#666666'}
-              style={{ paddingRight: '12px', cursor: 'pointer' }}
-              onClick={toggleAutoRotate}
             />
             <FontAwesomeIcon
               title={i18n.t('toolbar.ShowHeliodonPanel', lang)}

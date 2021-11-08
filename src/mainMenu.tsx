@@ -28,7 +28,6 @@ import esES from 'antd/lib/locale/es_ES';
 import trTR from 'antd/lib/locale/tr_TR';
 import enUS from 'antd/lib/locale/en_US';
 import { Util } from './Util';
-import { GROUND_ID } from './constants';
 
 const { SubMenu } = Menu;
 const { Option } = Select;
@@ -90,6 +89,7 @@ const MainMenu = ({
   const solarPanelGridCellSize = useStore((state) => state.world.solarPanelGridCellSize);
   const orthographic = useStore(Selector.viewstate.orthographic);
   const showInfoPanel = useStore((state) => state.viewState.showInfoPanel);
+  const showInstructionPanel = useStore((state) => state.viewState.showInstructionPanel);
   const showMapPanel = useStore((state) => state.viewState.showMapPanel);
   const showWeatherPanel = useStore((state) => state.viewState.showWeatherPanel);
   const showStickyNotePanel = useStore((state) => state.viewState.showStickyNotePanel);
@@ -192,6 +192,18 @@ const MainMenu = ({
             }}
           >
             {i18n.t('menu.view.SiteInformation', lang)}
+          </Checkbox>
+        </Menu.Item>
+        <Menu.Item key={'instruction-panel-check-box'}>
+          <Checkbox
+            checked={showInstructionPanel}
+            onChange={(e) => {
+              setCommonStore((state) => {
+                state.viewState.showInstructionPanel = e.target.checked;
+              });
+            }}
+          >
+            {i18n.t('menu.view.Instruction', lang)}
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'map-panel-check-box'}>

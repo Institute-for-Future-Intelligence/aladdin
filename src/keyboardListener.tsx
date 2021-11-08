@@ -19,6 +19,7 @@ export interface KeyboardListenerProps {
   readLocalFile: () => void;
   writeLocalFile: () => boolean;
   set2DView: (selected: boolean) => void;
+  resetView: () => void;
 }
 
 const KeyboardListener = ({
@@ -30,6 +31,7 @@ const KeyboardListener = ({
   readLocalFile,
   writeLocalFile,
   set2DView,
+  resetView,
 }: KeyboardListenerProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore((state) => state.language);
@@ -169,8 +171,22 @@ const KeyboardListener = ({
           pasteElement();
         }
         break;
+      case 'ctrl+home':
+        set2DView(false);
+        resetView();
+        setCommonStore((state) => {
+          state.objectTypeToAdd = ObjectType.None;
+          state.viewState.orthographic = false;
+        });
+        break;
       case 'f2':
         set2DView(!orthographic);
+        break;
+      case 'f4':
+        setCommonStore((state) => {
+          state.objectTypeToAdd = ObjectType.None;
+          state.viewState.autoRotate = !state.viewState.autoRotate;
+        });
         break;
       case 'ctrl+o':
       case 'meta+o': // for Mac
