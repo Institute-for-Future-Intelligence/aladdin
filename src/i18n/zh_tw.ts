@@ -85,6 +85,7 @@ export const i18n_zh_tw = {
         WeatherData: '氣象數據',
         StickyNote: '便簽',
       },
+      analysisSubMenu: '分析',
       sensorsSubMenu: '傳感器',
       sensors: {
         CollectDailyData: '收集當天數據',

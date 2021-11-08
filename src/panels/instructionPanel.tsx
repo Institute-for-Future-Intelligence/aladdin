@@ -6,6 +6,7 @@ import React from 'react';
 import { useStore } from '../stores/common';
 import styled from 'styled-components';
 import i18n from '../i18n/i18n';
+import * as Selector from '../stores/selector';
 
 const Container = styled.div`
   position: absolute;
@@ -46,30 +47,37 @@ export interface InstructionPanelProps {}
 const InstructionPanel = ({}: InstructionPanelProps) => {
   const language = useStore((state) => state.language);
   const sunlightDirection = useStore((state) => state.sunlightDirection);
+  const orthographic = useStore(Selector.viewstate.orthographic) ?? false;
   const lang = { lng: language };
   const color = sunlightDirection.y > 0 ? 'navajowhite' : 'antiquewhite';
 
   return (
     <Container>
-      <ColumnWrapper>
-        <label style={{ color: color, fontSize: '10px' }}>
-          <b>{i18n.t('instructionPanel.Rotate', lang)}</b>: {i18n.t('instructionPanel.DragMouse', lang)}
-        </label>
-        <label style={{ color: color, fontSize: '10px' }}>
+      <ColumnWrapper style={{ color: color, fontSize: '9px' }}>
+        {!orthographic && (
+          <label>
+            <b>{i18n.t('instructionPanel.Rotate', lang)}</b>: {i18n.t('instructionPanel.DragMouse', lang)}
+          </label>
+        )}
+        <label>
           <b>{i18n.t('instructionPanel.Zoom', lang)}</b>: {i18n.t('instructionPanel.MouseWheelOrKeys', lang)}
         </label>
-        <label style={{ color: color, fontSize: '10px' }}>
+        <label>
           <b>{i18n.t('instructionPanel.Pan', lang)}</b>: {i18n.t('instructionPanel.HoldCtrlDragMouse', lang)}
         </label>
-        <label style={{ color: color, fontSize: '10px' }}>
-          <b>{i18n.t('instructionPanel.ResetView', lang)}</b>: {i18n.t('word.Press', lang)} Ctrl+Home
-        </label>
-        <label style={{ color: color, fontSize: '10px' }}>
+        {!orthographic && (
+          <label>
+            <b>{i18n.t('instructionPanel.ResetView', lang)}</b>: {i18n.t('word.Press', lang)} Ctrl+Home
+          </label>
+        )}
+        <label>
           <b>{i18n.t('instructionPanel.Toggle2D3D', lang)}</b>: {i18n.t('word.Press', lang)} F2
         </label>
-        <label style={{ color: color, fontSize: '10px' }}>
-          <b>{i18n.t('instructionPanel.AutoRotate', lang)}</b>: {i18n.t('instructionPanel.StartOrStop', lang)}
-        </label>
+        {!orthographic && (
+          <label>
+            <b>{i18n.t('instructionPanel.AutoRotate', lang)}</b>: {i18n.t('instructionPanel.StartOrStop', lang)}
+          </label>
+        )}
       </ColumnWrapper>
     </Container>
   );

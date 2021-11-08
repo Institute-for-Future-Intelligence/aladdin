@@ -182,21 +182,28 @@ const KeyboardListener = ({
         }
         break;
       case 'ctrl+home':
-        set2DView(false);
-        resetView();
-        setCommonStore((state) => {
-          state.objectTypeToAdd = ObjectType.None;
-          state.viewState.orthographic = false;
-        });
+        if (!orthographic) {
+          set2DView(false);
+          resetView();
+          setCommonStore((state) => {
+            state.objectTypeToAdd = ObjectType.None;
+            state.viewState.orthographic = false;
+          });
+        }
         break;
       case 'f2':
         set2DView(!orthographic);
+        setCommonStore((state) => {
+          state.viewState.autoRotate = false;
+        });
         break;
       case 'f4':
-        setCommonStore((state) => {
-          state.objectTypeToAdd = ObjectType.None;
-          state.viewState.autoRotate = !state.viewState.autoRotate;
-        });
+        if (!orthographic) {
+          setCommonStore((state) => {
+            state.objectTypeToAdd = ObjectType.None;
+            state.viewState.autoRotate = !state.viewState.autoRotate;
+          });
+        }
         break;
       case 'ctrl+o':
       case 'meta+o': // for Mac

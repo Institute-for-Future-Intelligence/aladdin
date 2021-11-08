@@ -82,7 +82,7 @@ const InfoPanel = ({ city }: InfoPanelProps) => {
   return (
     <Container>
       <ColumnWrapper>
-        <Space direction={'horizontal'} style={{ color: color }}>
+        <Space direction={'horizontal'} style={{ color: color, fontSize: '10px' }}>
           <FontAwesomeIcon
             title={'Geo'}
             icon={faMapMarkerAlt}

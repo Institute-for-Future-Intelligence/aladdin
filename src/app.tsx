@@ -118,21 +118,27 @@ const App = () => {
   };
 
   const zoomView = (scale: number) => {
-    if (orbitControlsRef.current) {
-      const p = orbitControlsRef.current.object.position;
-      const x = p.x * scale;
-      const y = p.y * scale;
-      const z = p.z * scale;
-      orbitControlsRef.current.object.position.set(x, y, z);
-      orbitControlsRef.current.update();
+    if (orthographic) {
       setCommonStore((state) => {
-        const v = state.viewState;
-        // FIXME: why can't set function be used with a proxy?
-        // Using set or copy will result in crash in run time.
-        v.cameraPosition.x = x;
-        v.cameraPosition.y = y;
-        v.cameraPosition.z = z;
+        state.viewState.cameraZoom = cameraZoom * scale;
       });
+    } else {
+      if (orbitControlsRef.current) {
+        const p = orbitControlsRef.current.object.position;
+        const x = p.x * scale;
+        const y = p.y * scale;
+        const z = p.z * scale;
+        orbitControlsRef.current.object.position.set(x, y, z);
+        orbitControlsRef.current.update();
+        setCommonStore((state) => {
+          const v = state.viewState;
+          // FIXME: why can't set function be used with a proxy?
+          // Using set or copy will result in crash in run time.
+          v.cameraPosition.x = x;
+          v.cameraPosition.y = y;
+          v.cameraPosition.z = z;
+        });
+      }
     }
   };
 

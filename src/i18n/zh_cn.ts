@@ -85,6 +85,7 @@ export const i18n_zh_cn = {
         WeatherData: '气象数据',
         StickyNote: '便签',
       },
+      analysisSubMenu: '分析',
       sensorsSubMenu: '传感器',
       sensors: {
         CollectDailyData: '收集当天数据',

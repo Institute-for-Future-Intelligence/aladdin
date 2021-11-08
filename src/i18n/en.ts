@@ -85,6 +85,7 @@ export const i18n_en = {
         WeatherData: 'Weather Data',
         StickyNote: 'Sticky Note',
       },
+      analysisSubMenu: 'Analysis',
       sensorsSubMenu: 'Sensors',
       sensors: {
         CollectDailyData: 'Collect Daily Data',

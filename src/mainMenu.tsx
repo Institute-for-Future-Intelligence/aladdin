@@ -152,6 +152,7 @@ const MainMenu = ({
 
   const menu = (
     <Menu>
+      {/*file menu*/}
       <SubMenu key={'file'} title={i18n.t('menu.fileSubMenu', lang)}>
         <Menu.Item key="open-local-file" onClick={readLocalFile}>
           {i18n.t('menu.file.OpenLocalFile', lang)}
@@ -170,6 +171,8 @@ const MainMenu = ({
           {i18n.t('menu.file.TakeScreenshot', lang)}
         </Menu.Item>
       </SubMenu>
+
+      {/*view menu */}
       <SubMenu key={'view'} title={i18n.t('menu.viewSubMenu', lang)}>
         <Menu.Item key={'orthographic-check-box'}>
           <Checkbox
@@ -243,123 +246,132 @@ const MainMenu = ({
           </Checkbox>
         </Menu.Item>
       </SubMenu>
-      <SubMenu key={'sensors'} title={i18n.t('menu.sensorsSubMenu', lang)}>
-        <Menu.Item key={'sensor-collect-daily-data'} onClick={collectDailyLightSensorData}>
-          {i18n.t('menu.sensors.CollectDailyData', lang)}
-        </Menu.Item>
-        <Menu.Item key={'sensor-collect-yearly-data'} onClick={collectYearlyLightSensorData}>
-          {i18n.t('menu.sensors.CollectYearlyData', lang)}
-        </Menu.Item>
-        <SubMenu key={'sensor-simulation-options'} title={i18n.t('word.Options', lang)}>
-          <Menu>
-            <Menu.Item key={'sensor-simulation-sampling-frequency'}>
-              <Space style={{ width: '150px' }}>{i18n.t('menu.sensors.SamplingFrequency', lang) + ':'}</Space>
-              <InputNumber
-                min={1}
-                max={60}
-                step={1}
-                style={{ width: 60 }}
-                precision={0}
-                value={timesPerHour}
-                formatter={(a) => Number(a).toFixed(0)}
-                onChange={(value) => {
-                  setCommonStore((state) => {
-                    state.world.timesPerHour = value;
-                  });
-                }}
-              />
-              <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensors.TimesPerHour', lang)}</Space>
-            </Menu.Item>
-          </Menu>
-        </SubMenu>
-      </SubMenu>
-      <SubMenu key={'solar-panels'} title={i18n.t('menu.solarPanelsSubMenu', lang)}>
-        <Menu.Item
-          key={'solar-panel-daily-yield'}
-          onClick={() => {
-            setCommonStore((state) => {
-              state.simulationInProgress = true;
-              console.log('simulation started', state.simulationInProgress);
-            });
-            setPvDailyIndividualOutputs(false);
-            analyzePvDailyYield();
-          }}
-        >
-          {i18n.t('menu.solarPanels.AnalyzeDailyYield', lang)}
-        </Menu.Item>
-        <Menu.Item
-          key={'solar-panel-yearly-yield'}
-          onClick={() => {
-            setPvYearlyIndividualOutputs(false);
-            analyzePvYearlyYield();
-          }}
-        >
-          {i18n.t('menu.solarPanels.AnalyzeYearlyYield', lang)}
-        </Menu.Item>
-        <SubMenu key={'solar-panel-simulation-options'} title={i18n.t('word.Options', lang)}>
-          <Menu>
-            <Menu.Item key={'solar-panel-simulation-sampling-frequency'}>
-              <Space style={{ width: '150px' }}>{i18n.t('menu.sensors.SamplingFrequency', lang) + ':'}</Space>
-              <InputNumber
-                min={1}
-                max={60}
-                step={1}
-                style={{ width: 60 }}
-                precision={0}
-                value={timesPerHour}
-                formatter={(a) => Number(a).toFixed(0)}
-                onChange={(value) => {
-                  setCommonStore((state) => {
-                    state.world.timesPerHour = value;
-                  });
-                }}
-              />
-              <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensors.TimesPerHour', lang)}</Space>
-            </Menu.Item>
-            <Menu.Item key={'solar-panel-discretization'}>
-              <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanels.PanelDiscretization', lang) + ':'}</Space>
-              <Select
-                style={{ width: '165px' }}
-                value={discretization ?? Discretization.EXACT}
-                onChange={(value) => {
-                  setCommonStore((state) => {
-                    state.world.discretization = value;
-                  });
-                }}
-              >
-                <Option key={Discretization.EXACT} value={Discretization.EXACT}>
-                  {i18n.t('menu.solarPanels.Exact', lang)}
-                </Option>
-                )
-                <Option key={Discretization.APPROXIMATE} value={Discretization.APPROXIMATE}>
-                  {i18n.t('menu.solarPanels.Approximate', lang)}
-                </Option>
-                )
-              </Select>
-            </Menu.Item>
-            {discretization === Discretization.APPROXIMATE && (
-              <Menu.Item key={'solar-panel-simulation-grid-cell-size'}>
-                <Space style={{ width: '150px' }}>Grid Cell Size: </Space>
+
+      {/*analysis menu */}
+      <SubMenu key={'analysis'} title={i18n.t('menu.analysisSubMenu', lang)}>
+        {/*sensors*/}
+        <SubMenu key={'sensors'} title={i18n.t('menu.sensorsSubMenu', lang)}>
+          <Menu.Item key={'sensor-collect-daily-data'} onClick={collectDailyLightSensorData}>
+            {i18n.t('menu.sensors.CollectDailyData', lang)}
+          </Menu.Item>
+          <Menu.Item key={'sensor-collect-yearly-data'} onClick={collectYearlyLightSensorData}>
+            {i18n.t('menu.sensors.CollectYearlyData', lang)}
+          </Menu.Item>
+          <SubMenu key={'sensor-simulation-options'} title={i18n.t('word.Options', lang)}>
+            <Menu>
+              <Menu.Item key={'sensor-simulation-sampling-frequency'}>
+                <Space style={{ width: '150px' }}>{i18n.t('menu.sensors.SamplingFrequency', lang) + ':'}</Space>
                 <InputNumber
-                  min={0.1}
-                  max={5}
-                  step={0.1}
+                  min={1}
+                  max={60}
+                  step={1}
                   style={{ width: 60 }}
-                  precision={1}
-                  value={solarPanelGridCellSize ?? 0.5}
-                  formatter={(a) => Number(a).toFixed(1)}
+                  precision={0}
+                  value={timesPerHour}
+                  formatter={(a) => Number(a).toFixed(0)}
                   onChange={(value) => {
                     setCommonStore((state) => {
-                      state.world.solarPanelGridCellSize = value;
+                      state.world.timesPerHour = value;
                     });
                   }}
                 />
-                <Space style={{ paddingLeft: '10px' }}>m</Space>
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensors.TimesPerHour', lang)}</Space>
               </Menu.Item>
-            )}
-          </Menu>
+            </Menu>
+          </SubMenu>
+        </SubMenu>
+
+        {/*solar panels */}
+        <SubMenu key={'solar-panels'} title={i18n.t('menu.solarPanelsSubMenu', lang)}>
+          <Menu.Item
+            key={'solar-panel-daily-yield'}
+            onClick={() => {
+              setCommonStore((state) => {
+                state.simulationInProgress = true;
+                console.log('simulation started', state.simulationInProgress);
+              });
+              setPvDailyIndividualOutputs(false);
+              analyzePvDailyYield();
+            }}
+          >
+            {i18n.t('menu.solarPanels.AnalyzeDailyYield', lang)}
+          </Menu.Item>
+          <Menu.Item
+            key={'solar-panel-yearly-yield'}
+            onClick={() => {
+              setPvYearlyIndividualOutputs(false);
+              analyzePvYearlyYield();
+            }}
+          >
+            {i18n.t('menu.solarPanels.AnalyzeYearlyYield', lang)}
+          </Menu.Item>
+          <SubMenu key={'solar-panel-simulation-options'} title={i18n.t('word.Options', lang)}>
+            <Menu>
+              <Menu.Item key={'solar-panel-simulation-sampling-frequency'}>
+                <Space style={{ width: '150px' }}>{i18n.t('menu.sensors.SamplingFrequency', lang) + ':'}</Space>
+                <InputNumber
+                  min={1}
+                  max={60}
+                  step={1}
+                  style={{ width: 60 }}
+                  precision={0}
+                  value={timesPerHour}
+                  formatter={(a) => Number(a).toFixed(0)}
+                  onChange={(value) => {
+                    setCommonStore((state) => {
+                      state.world.timesPerHour = value;
+                    });
+                  }}
+                />
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensors.TimesPerHour', lang)}</Space>
+              </Menu.Item>
+              <Menu.Item key={'solar-panel-discretization'}>
+                <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanels.PanelDiscretization', lang) + ':'}</Space>
+                <Select
+                  style={{ width: '165px' }}
+                  value={discretization ?? Discretization.EXACT}
+                  onChange={(value) => {
+                    setCommonStore((state) => {
+                      state.world.discretization = value;
+                    });
+                  }}
+                >
+                  <Option key={Discretization.EXACT} value={Discretization.EXACT}>
+                    {i18n.t('menu.solarPanels.Exact', lang)}
+                  </Option>
+                  )
+                  <Option key={Discretization.APPROXIMATE} value={Discretization.APPROXIMATE}>
+                    {i18n.t('menu.solarPanels.Approximate', lang)}
+                  </Option>
+                  )
+                </Select>
+              </Menu.Item>
+              {discretization === Discretization.APPROXIMATE && (
+                <Menu.Item key={'solar-panel-simulation-grid-cell-size'}>
+                  <Space style={{ width: '150px' }}>Grid Cell Size: </Space>
+                  <InputNumber
+                    min={0.1}
+                    max={5}
+                    step={0.1}
+                    style={{ width: 60 }}
+                    precision={1}
+                    value={solarPanelGridCellSize ?? 0.5}
+                    formatter={(a) => Number(a).toFixed(1)}
+                    onChange={(value) => {
+                      setCommonStore((state) => {
+                        state.world.solarPanelGridCellSize = value;
+                      });
+                    }}
+                  />
+                  <Space style={{ paddingLeft: '10px' }}>m</Space>
+                </Menu.Item>
+              )}
+            </Menu>
+          </SubMenu>
         </SubMenu>
       </SubMenu>
+
+      {/*example menu */}
       <SubMenu key={'examples'} title={i18n.t('menu.examplesSubMenu', lang)}>
         <Menu.Item key="solar_radiation_to_box" onClick={loadFile}>
           {i18n.t('menu.examples.SolarRadiationToBox', lang)}
@@ -383,6 +395,8 @@ const MainMenu = ({
           {i18n.t('menu.examples.OfficeBuilding', lang)}
         </Menu.Item>
       </SubMenu>
+
+      {/*language menu*/}
       <SubMenu key={'language'} title={i18n.t('menu.languageSubMenu', lang)}>
         <Radio.Group
           value={language}
@@ -426,6 +440,7 @@ const MainMenu = ({
           </Radio>
         </Radio.Group>
       </SubMenu>
+      {/*about menu */}
       <Menu.Item key="about" onClick={gotoAboutPage}>
         {i18n.t('menu.AboutUs', lang)}
       </Menu.Item>
