@@ -184,7 +184,8 @@
     },
     "orthographic": false,
     "enableRotate": true,
-    "cameraZoom": 20
+    "cameraZoom": 20,
+    "showInstructionPanel": true
   },
   "notes": []
 }

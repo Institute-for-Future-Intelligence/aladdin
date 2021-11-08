@@ -630,6 +630,7 @@
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 13.268408625781248,
+    "showInstructionPanel": true,
     "showDailyPvYieldPanel": false
   },
   "notes": [

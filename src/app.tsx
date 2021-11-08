@@ -70,8 +70,6 @@ const App = () => {
   const heliodonRadius = useStore((state) => state.heliodonRadius);
   const cameraZoom = useStore(Selector.viewstate.cameraZoom) ?? 20;
   const exportContent = useStore((state) => state.exportContent);
-  const savedCameraPosition = useStore((state) => state.savedCameraPosition);
-  const savedPanCenter = useStore((state) => state.savedPanCenter);
 
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);
@@ -117,6 +115,28 @@ const App = () => {
     keyDown.current = down;
     keyUp.current = !down;
     setKeyFlag(!keyFlag);
+  };
+
+  const resetView = () => {
+    if (orbitControlsRef.current) {
+      // I don't know why the reset method results in a black screen.
+      // So we are resetting it here to a predictable position.
+      const z = Math.min(50, heliodonRadius * 4);
+      orbitControlsRef.current.object.position.set(z, z, z);
+      orbitControlsRef.current.target.set(0, 0, 0);
+      orbitControlsRef.current.update();
+      setCommonStore((state) => {
+        // FIXME: why can't set function be used with a proxy?
+        // Using set or copy will result in crash in run time.
+        const v = state.viewState;
+        v.cameraPosition.x = z;
+        v.cameraPosition.y = z;
+        v.cameraPosition.z = z;
+        v.panCenter.x = 0;
+        v.panCenter.y = 0;
+        v.panCenter.z = 0;
+      });
+    }
   };
 
   const set2DView = (selected: boolean) => {
@@ -207,28 +227,6 @@ const App = () => {
     } else {
       showError(i18n.t('menu.file.SavingAbortedMustHaveValidFileName', lang) + '.');
       return false;
-    }
-  };
-
-  const setTopView = () => {
-    if (orbitControlsRef.current) {
-      // I don't know why the reset method results in a black screen.
-      // So we are resetting it here to a predictable position.
-      const z = Math.min(50, heliodonRadius * 4);
-      orbitControlsRef.current.object.position.set(z, z, z);
-      orbitControlsRef.current.target.set(0, 0, 0);
-      orbitControlsRef.current.update();
-      setCommonStore((state) => {
-        // FIXME: why can't set function be used with a proxy?
-        // Using set or copy will result in crash in run time.
-        const v = state.viewState;
-        v.cameraPosition.x = z;
-        v.cameraPosition.y = z;
-        v.cameraPosition.z = z;
-        v.panCenter.x = 0;
-        v.panCenter.y = 0;
-        v.panCenter.z = 0;
-      });
     }
   };
 
@@ -456,7 +454,7 @@ const App = () => {
                 readLocalFile={readLocalFile}
                 writeLocalFile={writeLocalFile}
                 set2DView={set2DView}
-                resetView={setTopView}
+                resetView={resetView}
               />
               <KeyboardEventHandler
                 handleKeys={[
@@ -474,6 +472,10 @@ const App = () => {
                   'meta+x',
                   'ctrl+v',
                   'meta+v',
+                  'ctrl+[',
+                  'meta+[',
+                  'ctrl+]',
+                  'meta+]',
                   'shift',
                 ]}
                 handleEventType={'keydown'}

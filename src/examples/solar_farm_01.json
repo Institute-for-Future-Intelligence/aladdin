@@ -278,7 +278,8 @@
     },
     "orthographic": false,
     "enableRotate": true,
-    "cameraZoom": 45.44146361606706
+    "cameraZoom": 45.44146361606706,
+    "showInstructionPanel": true
   },
   "notes": []
 }

@@ -1641,7 +1641,8 @@
     },
     "orthographic": false,
     "enableRotate": true,
-    "cameraZoom": 47.83311959586007
+    "cameraZoom": 47.83311959586007,
+    "showInstructionPanel": true
   },
   "notes": [
     "Solar radiation to a box\n\nThis model shows the solar radiation the five sides (top, west, east, south, and north sides) of a box receives. There is a sensor on each side. Analyze the daily and annual sensor data to compare the solar radiation the five sides receive.\n\nYou can also change the day and the location to investigate the dependency of the results on these factors. "

@@ -153,6 +153,9 @@ const KeyboardListener = ({
           }
         }
         break;
+      case 'ctrl+[':
+      case 'meta+[': // for Mac
+        break;
       case 'ctrl+c':
       case 'meta+c': // for Mac
         if (selectedElement) {
