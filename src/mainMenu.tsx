@@ -10,7 +10,7 @@ import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
 import About from './about';
 import { saveImage } from './helpers';
-import { Discretization, Language } from './types';
+import { Discretization, Language, ObjectType } from './types';
 import * as Selector from './stores/selector';
 
 import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
@@ -57,6 +57,8 @@ export interface MainMenuProps {
   readLocalFile: () => void;
   writeLocalFile: () => boolean;
   set2DView: (selected: boolean) => void;
+  resetView: () => void;
+  zoomView: (scale: number) => void;
   collectDailyLightSensorData: () => void;
   collectYearlyLightSensorData: () => void;
   setPvDailyIndividualOutputs: (b: boolean) => void;
@@ -72,6 +74,8 @@ const MainMenu = ({
   readLocalFile,
   writeLocalFile,
   set2DView,
+  resetView,
+  zoomView,
   collectDailyLightSensorData,
   collectYearlyLightSensorData,
   setPvDailyIndividualOutputs,
@@ -88,6 +92,7 @@ const MainMenu = ({
   const discretization = useStore((state) => state.world.discretization);
   const solarPanelGridCellSize = useStore((state) => state.world.solarPanelGridCellSize);
   const orthographic = useStore(Selector.viewstate.orthographic);
+  const autoRotate = useStore((state) => state.viewState.autoRotate);
   const showInfoPanel = useStore((state) => state.viewState.showInfoPanel);
   const showInstructionPanel = useStore((state) => state.viewState.showInstructionPanel);
   const showMapPanel = useStore((state) => state.viewState.showMapPanel);
@@ -174,17 +179,77 @@ const MainMenu = ({
 
       {/*view menu */}
       <SubMenu key={'view'} title={i18n.t('menu.viewSubMenu', lang)}>
+        {!orthographic && (
+          <Menu.Item
+            key={'reset-view'}
+            onClick={() => {
+              if (!orthographic) {
+                set2DView(false);
+                resetView();
+                setCommonStore((state) => {
+                  state.objectTypeToAdd = ObjectType.None;
+                  state.viewState.orthographic = false;
+                });
+              }
+            }}
+            style={{ paddingLeft: '36px' }}
+          >
+            {i18n.t('menu.view.ResetView', lang)}
+            <label style={{ paddingLeft: '2px', fontSize: 9 }}>(Ctrl+Home)</label>
+          </Menu.Item>
+        )}
+        <Menu.Item
+          key={'zoom-out-view'}
+          onClick={() => {
+            zoomView(1.1);
+          }}
+          style={{ paddingLeft: '36px' }}
+        >
+          {i18n.t('menu.view.ZoomOut', lang)}
+          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+])</label>
+        </Menu.Item>
+        <Menu.Item
+          key={'zoom-in-view'}
+          onClick={() => {
+            zoomView(0.9);
+          }}
+          style={{ paddingLeft: '36px' }}
+        >
+          {i18n.t('menu.view.ZoomIn', lang)}
+          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+[)</label>
+        </Menu.Item>
         <Menu.Item key={'orthographic-check-box'}>
           <Checkbox
             checked={orthographic}
             onChange={(e) => {
               set2DView(e.target.checked);
+              setCommonStore((state) => {
+                state.viewState.autoRotate = false;
+              });
             }}
           >
             {i18n.t('menu.view.TwoDimensionalView', lang)}
             <label style={{ paddingLeft: '2px', fontSize: 9 }}>(F2)</label>
           </Checkbox>
         </Menu.Item>
+        {!orthographic && (
+          <Menu.Item key={'auto-rotate-check-box'}>
+            <Checkbox
+              checked={autoRotate}
+              onChange={(e) => {
+                if (!orthographic) {
+                  setCommonStore((state) => {
+                    state.objectTypeToAdd = ObjectType.None;
+                    state.viewState.autoRotate = !state.viewState.autoRotate;
+                  });
+                }
+              }}
+            >
+              {i18n.t('menu.view.AutoRotate', lang)}
+              <label style={{ paddingLeft: '2px', fontSize: 9 }}>(F4)</label>
+            </Checkbox>
+          </Menu.Item>
+        )}
         <Menu.Item key={'info-panel-check-box'}>
           <Checkbox
             checked={showInfoPanel}
@@ -209,6 +274,22 @@ const MainMenu = ({
             {i18n.t('menu.view.Instruction', lang)}
           </Checkbox>
         </Menu.Item>
+        <Menu.Item key={'sticky-note-panel-check-box'}>
+          <Checkbox
+            checked={showStickyNotePanel}
+            onChange={(e) => {
+              setCommonStore((state) => {
+                state.viewState.showStickyNotePanel = e.target.checked;
+              });
+            }}
+          >
+            {i18n.t('menu.view.StickyNote', lang)}
+          </Checkbox>
+        </Menu.Item>
+      </SubMenu>
+
+      {/*tool menu */}
+      <SubMenu key={'tool'} title={i18n.t('menu.toolSubMenu', lang)}>
         <Menu.Item key={'map-panel-check-box'}>
           <Checkbox
             checked={showMapPanel}
@@ -218,7 +299,7 @@ const MainMenu = ({
               });
             }}
           >
-            {i18n.t('menu.view.Map', lang)}
+            {i18n.t('menu.tool.Map', lang)}
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'weather-panel-check-box'}>
@@ -230,19 +311,7 @@ const MainMenu = ({
               });
             }}
           >
-            {i18n.t('menu.view.WeatherData', lang)}
-          </Checkbox>
-        </Menu.Item>
-        <Menu.Item key={'sticky-note-panel-check-box'}>
-          <Checkbox
-            checked={showStickyNotePanel}
-            onChange={(e) => {
-              setCommonStore((state) => {
-                state.viewState.showStickyNotePanel = e.target.checked;
-              });
-            }}
-          >
-            {i18n.t('menu.view.StickyNote', lang)}
+            {i18n.t('menu.tool.WeatherData', lang)}
           </Checkbox>
         </Menu.Item>
       </SubMenu>
@@ -373,27 +442,34 @@ const MainMenu = ({
 
       {/*example menu */}
       <SubMenu key={'examples'} title={i18n.t('menu.examplesSubMenu', lang)}>
-        <Menu.Item key="solar_radiation_to_box" onClick={loadFile}>
-          {i18n.t('menu.examples.SolarRadiationToBox', lang)}
-        </Menu.Item>
-        <Menu.Item key="sun_beam_at_center" onClick={loadFile}>
-          {i18n.t('menu.examples.SunBeamAndHeliodon', lang)}
-        </Menu.Item>
-        <Menu.Item key="solar_farm_01" onClick={loadFile}>
-          {i18n.t('menu.examples.SolarFarm', lang)}
-        </Menu.Item>
-        <Menu.Item key="solar_farm_02" onClick={loadFile}>
-          {i18n.t('menu.examples.SolarFarmInRealWorld', lang)}
-        </Menu.Item>
-        <Menu.Item key="solar_trackers" onClick={loadFile}>
-          {i18n.t('menu.examples.SolarTrackers', lang)}
-        </Menu.Item>
-        <Menu.Item key="simple_house_01" onClick={loadFile}>
-          {i18n.t('menu.examples.SimpleHouse', lang)}
-        </Menu.Item>
-        <Menu.Item key="office_building_01" onClick={loadFile}>
-          {i18n.t('menu.examples.OfficeBuilding', lang)}
-        </Menu.Item>
+        {/*solar energy */}
+        <SubMenu key={'solar-energy'} title={i18n.t('menu.solarEnergySubMenu', lang)}>
+          <Menu.Item key="solar_radiation_to_box" onClick={loadFile}>
+            {i18n.t('menu.examples.SolarRadiationToBox', lang)}
+          </Menu.Item>
+          <Menu.Item key="sun_beam_at_center" onClick={loadFile}>
+            {i18n.t('menu.examples.SunBeamAndHeliodon', lang)}
+          </Menu.Item>
+          <Menu.Item key="solar_farm_01" onClick={loadFile}>
+            {i18n.t('menu.examples.SolarFarm', lang)}
+          </Menu.Item>
+          <Menu.Item key="solar_farm_02" onClick={loadFile}>
+            {i18n.t('menu.examples.SolarFarmInRealWorld', lang)}
+          </Menu.Item>
+          <Menu.Item key="solar_trackers" onClick={loadFile}>
+            {i18n.t('menu.examples.SolarTrackers', lang)}
+          </Menu.Item>
+        </SubMenu>
+
+        {/*buildings*/}
+        <SubMenu key={'buildings'} title={i18n.t('menu.buildingsSubMenu', lang)}>
+          <Menu.Item key="simple_house_01" onClick={loadFile}>
+            {i18n.t('menu.examples.SimpleHouse', lang)}
+          </Menu.Item>
+          <Menu.Item key="office_building_01" onClick={loadFile}>
+            {i18n.t('menu.examples.OfficeBuilding', lang)}
+          </Menu.Item>
+        </SubMenu>
       </SubMenu>
 
       {/*language menu*/}

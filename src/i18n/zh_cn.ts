@@ -23,6 +23,7 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      AllRightsReserved: '版权所有',
       Version: '版本',
       Options: '选项',
       Or: '或',
@@ -79,11 +80,18 @@ export const i18n_zh_cn = {
       viewSubMenu: '视界',
       view: {
         TwoDimensionalView: '二维模式',
+        ResetView: '重置视角',
+        ZoomIn: '放大',
+        ZoomOut: '缩小',
+        AutoRotate: '自动旋转',
         SiteInformation: '地理位置信息',
         Instruction: '操作说明',
+        StickyNote: '便签',
+      },
+      toolSubMenu: '工具',
+      tool: {
         Map: '地图',
         WeatherData: '气象数据',
-        StickyNote: '便签',
       },
       analysisSubMenu: '分析',
       sensorsSubMenu: '传感器',
@@ -102,6 +110,8 @@ export const i18n_zh_cn = {
         Approximate: '近似',
       },
       examplesSubMenu: '例子',
+      solarEnergySubMenu: '太阳能',
+      buildingsSubMenu: '建筑物',
       examples: {
         SolarRadiationToBox: '一个箱体受到的太阳能辐射分析',
         SunBeamAndHeliodon: '太阳光束和日影仪',

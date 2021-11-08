@@ -23,6 +23,7 @@ export const i18n_en = {
     },
 
     word: {
+      AllRightsReserved: 'All Rights Reserved',
       Version: 'Version',
       Options: 'Options',
       Or: 'Or',
@@ -79,11 +80,18 @@ export const i18n_en = {
       viewSubMenu: 'View',
       view: {
         TwoDimensionalView: '2D View',
+        ResetView: 'Reset',
+        ZoomIn: 'Zoom In',
+        ZoomOut: 'Zoom Out',
+        AutoRotate: 'Auto rotate',
         SiteInformation: 'Site Information',
         Instruction: 'Instruction',
+        StickyNote: 'Sticky Note',
+      },
+      toolSubMenu: 'Tool',
+      tool: {
         Map: 'Map',
         WeatherData: 'Weather Data',
-        StickyNote: 'Sticky Note',
       },
       analysisSubMenu: 'Analysis',
       sensorsSubMenu: 'Sensors',
@@ -102,6 +110,8 @@ export const i18n_en = {
         Approximate: 'Approximate',
       },
       examplesSubMenu: 'Examples',
+      solarEnergySubMenu: 'Solar Energy',
+      buildingsSubMenu: 'Buildings',
       examples: {
         SolarRadiationToBox: 'Solar Radiation to a Box',
         SunBeamAndHeliodon: 'Sun Beam and Heliodon',

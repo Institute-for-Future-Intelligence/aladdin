@@ -182,6 +182,7 @@ const KeyboardListener = ({
         }
         break;
       case 'ctrl+home':
+      case 'meta+home': // for Mac
         if (!orthographic) {
           set2DView(false);
           resetView();

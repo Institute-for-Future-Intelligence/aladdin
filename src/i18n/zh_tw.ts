@@ -23,6 +23,7 @@ export const i18n_zh_tw = {
     },
 
     word: {
+      AllRightsReserved: '版權所有',
       Version: '版本',
       Options: '選項',
       Or: '或',
@@ -79,11 +80,18 @@ export const i18n_zh_tw = {
       viewSubMenu: '視界',
       view: {
         TwoDimensionalView: '二維模式',
+        ResetView: '重置視角',
+        ZoomIn: '放大',
+        ZoomOut: '縮小',
+        AutoRotate: '自動旋轉',
         SiteInformation: '地理位置資訊',
         Instruction: '操作說明',
+        StickyNote: '便簽',
+      },
+      toolSubMenu: '工具',
+      tool: {
         Map: '地圖',
         WeatherData: '氣象數據',
-        StickyNote: '便簽',
       },
       analysisSubMenu: '分析',
       sensorsSubMenu: '傳感器',
@@ -102,6 +110,8 @@ export const i18n_zh_tw = {
         Approximate: '近似',
       },
       examplesSubMenu: '例子',
+      solarEnergySubMenu: '太陽能',
+      buildingsSubMenu: '建築物',
       examples: {
         SolarRadiationToBox: '一個箱體受到的太陽能輻射分析',
         SunBeamAndHeliodon: '太陽光束和日影儀',

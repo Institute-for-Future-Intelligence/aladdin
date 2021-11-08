@@ -352,14 +352,16 @@ const App = () => {
               title={i18n.t('tooltip.gotoIFI', lang)}
               onClick={visitIFI}
             />
-            &nbsp;&nbsp; {i18n.t('name.IFI', lang)}, &copy;{new Date().getFullYear()}. &nbsp;
-            {i18n.t('word.Version', lang) + ' ' + VERSION}
+            &nbsp;&nbsp; &copy;{new Date().getFullYear()} {i18n.t('name.IFI', lang)}
+            &nbsp;{i18n.t('word.Version', lang) + ' ' + VERSION + '. ' + i18n.t('word.AllRightsReserved', lang) + '. '}
           </div>
           <MainMenu
             canvas={canvasRef.current}
             readLocalFile={readLocalFile}
             writeLocalFile={writeLocalFile}
             set2DView={set2DView}
+            resetView={resetView}
+            zoomView={zoomView}
             collectDailyLightSensorData={collectDailyLightSensorData}
             collectYearlyLightSensorData={collectYearlyLightSensorData}
             setPvDailyIndividualOutputs={setPvDailyIndividualOutputs}
@@ -515,6 +517,7 @@ const App = () => {
                   'ctrl+v', // we want the paste action to be fired only when the key is up, but we also need to add
                   'meta+v', // these keyboard shortcuts to the keydown handler so that the browser's default can be prevented
                   'ctrl+home',
+                  'meta+home',
                   'delete',
                   'f2',
                   'f4',
