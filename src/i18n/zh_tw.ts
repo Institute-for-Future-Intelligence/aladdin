@@ -79,6 +79,11 @@ export const i18n_zh_tw = {
         SavingAbortedMustHaveValidFileName: '文檔名無效，保存失敗',
         TakeScreenshot: '截屏',
       },
+      editSubMenu: '編輯',
+      edit: {
+        Undo: '撤銷',
+        Redo: '重做',
+      },
       viewSubMenu: '視界',
       view: {
         TwoDimensionalView: '二維模式',

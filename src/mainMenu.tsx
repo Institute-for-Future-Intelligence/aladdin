@@ -83,6 +83,7 @@ const MainMenu = ({
   canvas,
 }: MainMenuProps) => {
   const setCommonStore = useStore((state) => state.set);
+  const undoManager = useStore((state) => state.undoManager);
   const language = useStore((state) => state.language);
   const localFileName = useStore((state) => state.localFileName);
   const timesPerHour = useStore((state) => state.world.timesPerHour);
@@ -171,6 +172,32 @@ const MainMenu = ({
         </Menu.Item>
         <Menu.Item key="screenshot" onClick={takeScreenshot}>
           {i18n.t('menu.file.TakeScreenshot', lang)}
+        </Menu.Item>
+      </SubMenu>
+
+      {/*edit menu*/}
+      <SubMenu key={'edit'} title={i18n.t('menu.editSubMenu', lang)}>
+        <Menu.Item
+          key="undo"
+          onClick={() => {
+            if (undoManager.hasUndo()) {
+              undoManager.undo();
+            }
+          }}
+        >
+          {i18n.t('menu.edit.Undo', lang)}
+          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Z)</label>
+        </Menu.Item>
+        <Menu.Item
+          key="redo"
+          onClick={() => {
+            if (undoManager.hasRedo()) {
+              undoManager.redo();
+            }
+          }}
+        >
+          {i18n.t('menu.edit.Redo', lang)}
+          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Y)</label>
         </Menu.Item>
       </SubMenu>
 

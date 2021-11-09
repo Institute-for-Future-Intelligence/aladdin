@@ -9,6 +9,7 @@ import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { Input, Modal } from 'antd';
 import i18n from './i18n/i18n';
+import { ElementModel } from './models/ElementModel';
 
 export interface KeyboardListenerProps {
   keyFlag: boolean; // flip this every time to ensure that handleKey is called in useEffect
@@ -36,6 +37,8 @@ const KeyboardListener = ({
   zoomView,
 }: KeyboardListenerProps) => {
   const setCommonStore = useStore(Selector.set);
+  const undoManager = useStore((state) => state.undoManager);
+  const addUndoable = useStore((state) => state.addUndoable);
   const language = useStore((state) => state.language);
   const orthographic = useStore(Selector.viewstate.orthographic) ?? false;
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -59,6 +62,31 @@ const KeyboardListener = ({
   useEffect(() => {
     handleKey();
   }, [keyFlag, keyName, keyDown, keyUp]);
+
+  const deleteElement = (elem: ElementModel) => {
+    if (elem.type === ObjectType.Wall) {
+      const currentWall = elem as WallModel;
+      if (currentWall.leftJoints.length > 0) {
+        const targetWall = getElementById(currentWall.leftJoints[0].id) as WallModel;
+        if (targetWall) {
+          updateElementById(targetWall.id, { rightOffset: 0, rightJoints: [] });
+        }
+      }
+      if (currentWall.rightJoints.length > 0) {
+        const targetWall = getElementById(currentWall.rightJoints[0].id) as WallModel;
+        if (targetWall) {
+          updateElementById(targetWall.id, { leftOffset: 0, leftJoints: [] });
+        }
+      }
+      setCommonStore((state) => {
+        state.deletedWallID = elem.id;
+      });
+    }
+    deleteElementById(elem.id);
+    if (canvas) {
+      canvas.style.cursor = 'default'; // if an element is deleted but the cursor is not default
+    }
+  };
 
   const handleKey = () => {
     const selectedElement = getSelectedElement();
@@ -221,27 +249,30 @@ const KeyboardListener = ({
         break;
       case 'delete':
         if (selectedElement) {
-          if (selectedElement.type === ObjectType.Wall) {
-            const currentWall = selectedElement as WallModel;
-            if (currentWall.leftJoints.length > 0) {
-              const targetWall = getElementById(currentWall.leftJoints[0].id) as WallModel;
-              if (targetWall) {
-                updateElementById(targetWall.id, { rightOffset: 0, rightJoints: [] });
-              }
-            }
-            if (currentWall.rightJoints.length > 0) {
-              const targetWall = getElementById(currentWall.rightJoints[0].id) as WallModel;
-              if (targetWall) {
-                updateElementById(targetWall.id, { leftOffset: 0, leftJoints: [] });
-              }
-            }
-            setCommonStore((state) => {
-              state.deletedWallID = selectedElement.id;
-            });
+          deleteElement(selectedElement);
+          addUndoable({
+            undo: () => {
+              console.log('undo');
+            },
+            redo: () => {
+              console.log('redo');
+            },
+          });
+        }
+        break;
+      case 'ctrl+z':
+      case 'meta+z': // for Mac
+        if (keyUp) {
+          if (undoManager.hasUndo()) {
+            undoManager.undo();
           }
-          deleteElementById(selectedElement.id);
-          if (canvas) {
-            canvas.style.cursor = 'default'; // if an element is deleted but the cursor is not default
+        }
+        break;
+      case 'ctrl+y':
+      case 'meta+y': // for Mac
+        if (keyUp) {
+          if (undoManager.hasRedo()) {
+            undoManager.redo();
           }
         }
         break;

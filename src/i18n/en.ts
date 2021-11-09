@@ -79,6 +79,11 @@ export const i18n_en = {
         SavingAbortedMustHaveValidFileName: 'Saving aborted! You must have a valid file name',
         TakeScreenshot: 'Take Screenshot',
       },
+      editSubMenu: 'Edit',
+      edit: {
+        Undo: 'Undo',
+        Redo: 'Redo',
+      },
       viewSubMenu: 'View',
       view: {
         TwoDimensionalView: '2D View',

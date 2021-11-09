@@ -528,6 +528,10 @@ const App = () => {
                   'meta+[',
                   'ctrl+]',
                   'meta+]',
+                  'ctrl+z',
+                  'meta+z',
+                  'ctrl+y',
+                  'meta+y',
                   'shift',
                 ]}
                 handleEventType={'keydown'}
@@ -540,6 +544,10 @@ const App = () => {
                 handleKeys={[
                   'ctrl+v', // we want the paste action to be fired only when the key is up, but we also need to add
                   'meta+v', // these keyboard shortcuts to the keydown handler so that the browser's default can be prevented
+                  'ctrl+z',
+                  'meta+z',
+                  'ctrl+y',
+                  'meta+y',
                   'ctrl+home',
                   'meta+home',
                   'delete',

@@ -36,6 +36,9 @@ import { SolarPanelModel } from '../models/SolarPanelModel';
 import { WallModel } from 'src/models/WallModel';
 import { Locale } from 'antd/lib/locale-provider';
 import enUS from 'antd/lib/locale/en_US';
+// @ts-ignore
+import UndoManager from 'undo-manager';
+import { Undoable } from '../Undoable';
 
 enableMapSet();
 
@@ -53,6 +56,8 @@ export interface CommonStoreState {
 
   exportContent: () => {};
   clearContent: () => void;
+  undoManager: UndoManager;
+  addUndoable: (undoable: Undoable) => void;
 
   weatherData: { [key: string]: WeatherModel };
   getWeather: (location: string) => WeatherModel;
@@ -186,6 +191,12 @@ export const useStore = create<CommonStoreState>(
           clearContent() {
             immerSet((state: CommonStoreState) => {
               state.elements = [];
+            });
+          },
+          undoManager: new UndoManager(),
+          addUndoable(undable: Undoable) {
+            immerSet((state: CommonStoreState) => {
+              state.undoManager.add(undable);
             });
           },
 
