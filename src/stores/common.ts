@@ -286,6 +286,13 @@ export const useStore = create<CommonStoreState>(
               if (e.id === id) {
                 return e;
               }
+              if (e.type === ObjectType.Wall) {
+                for (const w of (e as WallModel).windows) {
+                  if (w.id === id) {
+                    return w;
+                  }
+                }
+              }
             }
             return null;
           },
@@ -363,6 +370,14 @@ export const useStore = create<CommonStoreState>(
                   element = state.elements[i];
                   break;
                 }
+                if (e.type === ObjectType.Wall) {
+                  const wall = e as WallModel;
+                  for (const [wi, we] of wall.windows.entries()) {
+                    if (we.id === id) {
+                      wall.windows[wi] = { ...we, ...newProps };
+                    }
+                  }
+                }
               }
             });
             return element;
@@ -417,6 +432,16 @@ export const useStore = create<CommonStoreState>(
                     state.selectedElementHeight = lz;
                   }
                   break;
+                } else if (e.type === ObjectType.Wall) {
+                  for (const w of (e as WallModel).windows) {
+                    if (w.id === id) {
+                      w.lx = lx;
+                      w.ly = ly;
+                      if (lz) {
+                        w.lz = lz;
+                      }
+                    }
+                  }
                 }
               }
             });

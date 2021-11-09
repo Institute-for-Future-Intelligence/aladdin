@@ -6,7 +6,7 @@ import React from 'react';
 import { Checkbox, Menu, Space } from 'antd';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import TreeSelection from 'src/components/treeSelection';
+import TreeSelection from 'src/components/contextMenu/elementMenu/treeSelection';
 import ReshapeElementMenu from 'src/components/reshapeElementMenu';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';

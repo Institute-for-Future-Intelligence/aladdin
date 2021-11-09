@@ -212,6 +212,13 @@ export const i18n_zh_tw = {
       TemperatureCoefficientOfPmax: 'Pmax溫度係數',
     },
 
+    wallMenu: {
+      Thickness: '厚度',
+      Texture: '材質',
+    },
+
+    windowMenu: {},
+
     infoPanel: {
       High: '最高溫度',
       Low: '最低温度',

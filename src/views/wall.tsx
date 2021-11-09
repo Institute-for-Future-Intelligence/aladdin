@@ -325,6 +325,17 @@ const Wall = ({
             rotation={[Math.PI / 2, 0, 0]}
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
+            onContextMenu={(e) => {
+              selectMe(id, e, ActionType.Select);
+              setCommonStore((state) => {
+                if (e.intersections.length > 0) {
+                  const intersected = e.intersections[0].object === outSideWallRef.current;
+                  if (intersected) {
+                    state.contextMenuObjectType = ObjectType.Wall;
+                  }
+                }
+              });
+            }}
             onPointerDown={(e) => {
               if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
               setCommonStore((state) => {
@@ -482,7 +493,7 @@ const Wall = ({
                       for (const e of state.elements) {
                         if (e.id === elementModel.id) {
                           for (const w of (e as WallModel).windows) {
-                            if (w.id == id) {
+                            if (w.id === id) {
                               w.cx = relativePos.x / lx;
                               w.cz = relativePos.z / lz;
                             }
@@ -524,6 +535,7 @@ const Wall = ({
                       });
                     }
                   } else if (
+                    // adjust wall height
                     grabRef.current?.id === id &&
                     (resizeHandleTypeRef.current == ResizeHandleType.UpperRight ||
                       resizeHandleTypeRef.current == ResizeHandleType.UpperLeft)
@@ -620,9 +632,18 @@ const Wall = ({
                   name={'window ' + id}
                   args={[wlx, wlz]}
                   rotation={[Math.PI / 2, 0, 0]}
-                  onPointerDown={(e) => {
+                  onContextMenu={(e) => {
+                    selectMe(id, e, ActionType.Select);
                     if (e.intersections[0].object.name === 'window ' + id) {
-                      if (window.selected) {
+                      setCommonStore((state) => {
+                        state.contextMenuObjectType = ObjectType.Window;
+                      });
+                    }
+                  }}
+                  onPointerDown={(e) => {
+                    if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
+                    if (e.intersections[0].object.name === 'window ' + id) {
+                      if (window.selected && !window.locked) {
                         const v = e.intersections[0].object.localToWorld(new Vector3());
                         const diff = new Vector3().subVectors(v, e.intersections[0].point);
                         setMovingWindow({ id, wlx, wlz, wcx, wcz, diff });
@@ -651,7 +672,7 @@ const Wall = ({
                 <WindowWireFrame x={wlx / 2} z={wlz / 2} />
 
                 {/* handles */}
-                {window.selected && (
+                {window.selected && !window.locked && (
                   <group>
                     <Sphere
                       ref={resizeHandleLLRef}

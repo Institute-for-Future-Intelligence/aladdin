@@ -4,15 +4,15 @@
 
 import React, { useState } from 'react';
 import { Select } from 'antd';
-import { useStore } from '../stores/common';
-import { TreeType } from '../types';
-import CottonwoodImage from '../resources/cottonwood.png';
-import DogwoodImage from '../resources/dogwood.png';
-import ElmImage from '../resources/elm.png';
-import LindenImage from '../resources/linden.png';
-import MapleImage from '../resources/maple.png';
-import OakImage from '../resources/oak.png';
-import PineImage from '../resources/pine.png';
+import { useStore } from '../../../stores/common';
+import { TreeType } from '../../../types';
+import CottonwoodImage from '../../../resources/cottonwood.png';
+import DogwoodImage from '../../../resources/dogwood.png';
+import ElmImage from '../../../resources/elm.png';
+import LindenImage from '../../../resources/linden.png';
+import MapleImage from '../../../resources/maple.png';
+import OakImage from '../../../resources/oak.png';
+import PineImage from '../../../resources/pine.png';
 
 const { Option } = Select;
 

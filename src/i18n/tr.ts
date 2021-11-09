@@ -82,6 +82,13 @@ export const i18n_tr = {
       ThemeGrassland: 'Grassland',
     },
 
+    wallMenu: {
+      Thickness: 'Kalınlık',
+      Texture: 'Doku',
+    },
+
+    windowMenu: {},
+
     toolbar: {
       Select: 'Select',
       AddFoundation: 'Add foundation',

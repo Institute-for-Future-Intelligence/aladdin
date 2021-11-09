@@ -20,6 +20,9 @@ export interface ReshapeElementMenuProps {
   adjustHeight?: boolean;
   adjustAngle?: boolean;
   widthName?: string;
+  lengthStep?: number;
+  widthStep?: number;
+  heightStep?: number;
 
   [key: string]: any;
 }
@@ -35,6 +38,9 @@ const ReshapeElementMenu = ({
   adjustHeight = true,
   adjustAngle = true,
   widthName = 'Width',
+  lengthStep = 0.5,
+  widthStep = 0.5,
+  heightStep = 0.1,
   ...rest
 }: ReshapeElementMenuProps) => {
   const language = useStore((state) => state.language);
@@ -50,17 +56,17 @@ const ReshapeElementMenu = ({
     <Menu key={name} {...rest}>
       {adjustWidth && (
         <Menu.Item key={name + '-lx'}>
-          <Space style={{ width: '60px' }}>{widthName === 'Width' ? i18n.t('word.Width', lang) : widthName}:</Space>
+          <Space style={{ width: '80px' }}>{widthName === 'Width' ? i18n.t('word.Width', lang) : widthName}:</Space>
           <InputNumber
             min={0.1}
             max={maxWidth}
-            step={0.5}
+            step={widthStep}
             precision={1}
-            value={element?.lx ?? 1}
-            formatter={(x) => Number(x).toFixed(1) + ' m'}
+            value={element?.ly ?? 1}
+            formatter={(y) => Number(y).toFixed(1) + ' m'}
             onChange={(value) => {
               if (element) {
-                setElementSize(element.id, value, element.ly);
+                setElementSize(element.id, element.lx, value);
                 setUpdateFlag(!updateFlag);
               }
             }}
@@ -74,7 +80,7 @@ const ReshapeElementMenu = ({
                   console.log(err);
                   return;
                 }
-                setElementSize(element.id, value, element.ly);
+                setElementSize(element.id, element.lx, value);
                 setUpdateFlag(!updateFlag);
               }
             }}
@@ -83,17 +89,17 @@ const ReshapeElementMenu = ({
       )}
       {adjustLength && (
         <Menu.Item key={name + '-ly'}>
-          <Space style={{ width: '60px' }}>{i18n.t('word.Length', lang)}:</Space>
+          <Space style={{ width: '80px' }}>{i18n.t('word.Length', lang)}:</Space>
           <InputNumber
             min={0.1}
             max={maxLength}
-            step={0.5}
+            step={lengthStep}
             precision={1}
-            value={element?.ly ?? 1}
+            value={element?.lx ?? 1}
             formatter={(y) => Number(y).toFixed(1) + ' m'}
             onChange={(value) => {
               if (element && value) {
-                setElementSize(element.id, element.lx, value);
+                setElementSize(element.id, value, element.ly);
                 setUpdateFlag(!updateFlag);
               }
             }}
@@ -107,7 +113,7 @@ const ReshapeElementMenu = ({
                   console.log(err);
                   return;
                 }
-                setElementSize(element.id, element.lx, value);
+                setElementSize(element.id, value, element.ly);
                 setUpdateFlag(!updateFlag);
               }
             }}
@@ -116,11 +122,11 @@ const ReshapeElementMenu = ({
       )}
       {adjustHeight && (
         <Menu.Item key={name + '-lz'}>
-          <Space style={{ width: '60px' }}>{i18n.t('word.Height', lang)}:</Space>
+          <Space style={{ width: '80px' }}>{i18n.t('word.Height', lang)}:</Space>
           <InputNumber
             min={0.1}
             max={maxHeight}
-            step={0.1}
+            step={heightStep}
             precision={1}
             value={element?.lz ?? 0.1}
             formatter={(h) => Number(h).toFixed(1) + ' m'}
@@ -167,7 +173,7 @@ const ReshapeElementMenu = ({
       )}
       {adjustAngle && (
         <Menu.Item key={name + '-angle'}>
-          <Space style={{ width: '60px' }}>{i18n.t('word.Angle', lang)}:</Space>
+          <Space style={{ width: '80px' }}>{i18n.t('word.Angle', lang)}:</Space>
           <InputNumber
             min={-360}
             max={360}

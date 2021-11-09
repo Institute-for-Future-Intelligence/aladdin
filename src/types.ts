@@ -180,6 +180,10 @@ export enum HumanName {
   Juro = 'Juro',
 }
 
+export enum WallTexture {
+  default = 'Default',
+}
+
 export enum WallSide {
   Left = 'Left',
   Right = 'Right',

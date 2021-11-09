@@ -16,6 +16,8 @@ import {
   SkyMenu,
   SolarPanelMenu,
   TreeMenu,
+  WallMenu,
+  WindowMenu,
 } from './elementMenu';
 
 export interface ContextMenuProps {
@@ -75,6 +77,18 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children, setPvDialog
         return (
           <Menu>
             <TreeMenu />
+          </Menu>
+        );
+      case ObjectType.Wall:
+        return (
+          <Menu>
+            <WallMenu />
+          </Menu>
+        );
+      case ObjectType.Window:
+        return (
+          <Menu>
+            <WindowMenu />
           </Menu>
         );
       default:

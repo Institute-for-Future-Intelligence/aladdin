@@ -196,6 +196,13 @@ export const i18n_en = {
       KeepShowingLabel: 'Keep Showing Label',
     },
 
+    wallMenu: {
+      Thickness: 'Thickness',
+      Texture: 'Texture',
+    },
+
+    windowMenu: {},
+
     pvModelPanel: {
       SolarPanelSpecs: 'Solar Panel Specs',
       Model: 'Model',
