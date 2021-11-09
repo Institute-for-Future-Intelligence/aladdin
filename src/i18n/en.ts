@@ -128,6 +128,7 @@ export const i18n_en = {
     },
 
     avatarMenu: {
+      UpdateCloudFile: 'Update This Cloud File',
       SaveFileToCloud: 'Save File to Cloud',
       SavingAbortedMustHaveValidTitle: 'Saving aborted! You must have a valid title for a cloud file',
       MyCloudFiles: 'My Cloud Files',
@@ -279,6 +280,7 @@ export const i18n_en = {
     },
 
     toolbar: {
+      CloudFile: 'Cloud file',
       Select: 'Select',
       AddFoundation: 'Add foundation',
       AddWall: 'Add wall',

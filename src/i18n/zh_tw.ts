@@ -128,6 +128,7 @@ export const i18n_zh_tw = {
     },
 
     avatarMenu: {
+      UpdateCloudFile: '更新當前云文檔',
       SaveFileToCloud: '保存文檔到雲端',
       SavingAbortedMustHaveValidTitle: '文檔名無效，保存失敗',
       MyCloudFiles: '我的雲端文檔',
@@ -279,6 +280,7 @@ export const i18n_zh_tw = {
     },
 
     toolbar: {
+      CloudFile: '雲文檔',
       Select: '選擇',
       AddFoundation: '添加地基',
       AddWall: '添加牆體',

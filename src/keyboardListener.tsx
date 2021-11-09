@@ -184,19 +184,19 @@ const KeyboardListener = ({
       case 'ctrl+home':
       case 'meta+home': // for Mac
         if (!orthographic) {
-          set2DView(false);
-          resetView();
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
             state.viewState.orthographic = false;
           });
+          set2DView(false);
+          resetView();
         }
         break;
       case 'f2':
-        set2DView(!orthographic);
         setCommonStore((state) => {
           state.viewState.autoRotate = false;
         });
+        set2DView(!orthographic);
         break;
       case 'f4':
         if (!orthographic) {

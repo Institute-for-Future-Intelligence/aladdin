@@ -50,6 +50,8 @@ import KeyboardEventHandler from 'react-keyboard-event-handler';
 import KeyboardListener from './keyboardListener';
 import { Vector3 } from 'three';
 import { saveAs } from 'file-saver';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCloud } from '@fortawesome/free-solid-svg-icons';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);
@@ -70,6 +72,7 @@ const App = () => {
   const heliodonRadius = useStore((state) => state.heliodonRadius);
   const cameraZoom = useStore(Selector.viewstate.cameraZoom) ?? 20;
   const exportContent = useStore((state) => state.exportContent);
+  const cloudFile = useStore((state) => state.cloudFile);
 
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);
@@ -234,6 +237,7 @@ const App = () => {
               }
               state.elements = input.elements;
               state.notes = input.notes ?? [];
+              state.cloudFile = undefined;
             });
           }
           fileDialog.value = '';
@@ -332,6 +336,26 @@ const App = () => {
             >
               {i18n.t('name.Aladdin', lang)}
             </span>
+            {cloudFile && (
+              <span
+                style={{
+                  marginLeft: '20px',
+                  fontSize: '14px',
+                  verticalAlign: 'center',
+                  userSelect: 'none',
+                }}
+                title={i18n.t('toolbar.CloudFile', lang)}
+              >
+                <FontAwesomeIcon
+                  title={i18n.t('toolbar.CloudFile', lang)}
+                  icon={faCloud}
+                  size={'lg'}
+                  color={'#888888'}
+                  style={{ paddingRight: '8px' }}
+                />
+                {cloudFile}
+              </span>
+            )}
           </div>
           <div
             style={{

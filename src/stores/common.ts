@@ -49,6 +49,7 @@ export interface CommonStoreState {
   notes: string[];
   user: User;
   language: string;
+  cloudFile: string | undefined;
 
   exportContent: () => {};
   clearContent: () => void;
@@ -168,6 +169,7 @@ export const useStore = create<CommonStoreState>(
           notes: [],
           user: {} as User,
           language: 'en',
+          cloudFile: undefined,
           exportContent() {
             const state = get();
             return {
@@ -830,6 +832,7 @@ export const useStore = create<CommonStoreState>(
         name: 'aladdin-storage',
         whitelist: [
           'language',
+          'cloudFile',
           'world',
           'elements',
           'viewState',

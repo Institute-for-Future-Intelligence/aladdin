@@ -48,9 +48,7 @@ const ButtonsContainer = styled.div`
   z-index: 9;
 `;
 
-export interface MainToolBarProps {}
-
-const MainToolBar = ({}: MainToolBarProps) => {
+const MainToolBar = () => {
   const setCommonStore = useStore((state) => state.set);
   const language = useStore((state) => state.language);
   const selectNone = useStore((state) => state.selectNone);
@@ -62,10 +60,11 @@ const MainToolBar = ({}: MainToolBarProps) => {
   const showCloudFilePanel = useStore((state) => state.showCloudFilePanel);
   const showAccountSettingsPanel = useStore((state) => state.showAccountSettingsPanel);
   const objectTypeToAdd = useStore((state) => state.objectTypeToAdd);
+  const cloudFile = useStore((state) => state.cloudFile);
 
   const [loading, setLoading] = useState(false);
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
-  const [title, setTitle] = useState<string>('My Aladdin File');
+  const [title, setTitle] = useState<string>(cloudFile ?? 'My Aladdin File');
   const [titleDialogVisible, setTitleDialogVisible] = useState(false);
   const cloudFiles = useRef<CloudFileInfo[] | void>();
 
@@ -232,13 +231,13 @@ const MainToolBar = ({}: MainToolBarProps) => {
       });
   };
 
-  const saveToCloud = () => {
-    const t = title.trim();
+  const saveToCloud = (tlt: string) => {
+    const t = tlt.trim();
     if (t.length > 0) {
       setLoading(true);
       if (user.email) {
         try {
-          let doc = firebase.firestore().collection('users').doc(user.email);
+          const doc = firebase.firestore().collection('users').doc(user.email);
           if (doc) {
             doc
               .collection('files')
@@ -246,6 +245,9 @@ const MainToolBar = ({}: MainToolBarProps) => {
               .set(exportContent())
               .then(() => {
                 setLoading(false);
+                setCommonStore((state) => {
+                  state.cloudFile = t;
+                });
               })
               .catch((error) => {
                 console.log('Error saving file:', error);
@@ -295,6 +297,7 @@ const MainToolBar = ({}: MainToolBarProps) => {
               }
               state.elements = data.elements;
               state.notes = data.notes ?? [];
+              state.cloudFile = title;
             });
             setLoading(false);
           } else {
@@ -400,8 +403,20 @@ const MainToolBar = ({}: MainToolBarProps) => {
     resetToSelectMode();
   };
 
+  const updateCloudFile = () => {
+    if (cloudFile) {
+      saveToCloud(cloudFile);
+      setTitle(cloudFile);
+    }
+  };
+
   const avatarMenu = (
     <Menu>
+      {cloudFile && (
+        <Menu.Item key="update-cloud-file" onClick={updateCloudFile}>
+          {i18n.t('avatarMenu.UpdateCloudFile', lang)}
+        </Menu.Item>
+      )}
       <Menu.Item key="save-file-to-cloud" onClick={showTitleDialog}>
         {i18n.t('avatarMenu.SaveFileToCloud', lang)}
       </Menu.Item>
@@ -422,7 +437,7 @@ const MainToolBar = ({}: MainToolBarProps) => {
       <Modal
         title={i18n.t('avatarMenu.SaveFileToCloud', lang)}
         visible={titleDialogVisible}
-        onOk={saveToCloud}
+        onOk={() => saveToCloud(title)}
         confirmLoading={loading}
         onCancel={() => {
           setTitleDialogVisible(false);
@@ -430,10 +445,15 @@ const MainToolBar = ({}: MainToolBarProps) => {
       >
         <Input
           placeholder="Title"
-          value={title}
-          onPressEnter={saveToCloud}
+          value={cloudFile ?? title}
+          onPressEnter={() => saveToCloud(title)}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setTitle(e.target.value);
+            let t = e.target.value;
+            if (t) t = t.trim();
+            setTitle(t);
+            setCommonStore((state) => {
+              state.cloudFile = t;
+            });
           }}
         />
       </Modal>
