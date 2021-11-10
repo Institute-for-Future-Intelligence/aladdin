@@ -18,12 +18,20 @@ import {
 } from 'three';
 import { Box, Line, Plane, Sphere } from '@react-three/drei';
 
-import { ActionType, ObjectType, ResizeHandleType, ResizeHandleType as RType } from 'src/types';
+import { ActionType, ObjectType, ResizeHandleType, ResizeHandleType as RType, WallTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from '../constants';
 import { CommonStoreState, useStore } from 'src/stores/common';
 import { WallModel } from 'src/models/WallModel';
-import WallExteriorImage from '../resources/WallExteriorImage.png';
+import Wall_00_Img from '../resources/wall_00.png';
+import Wall_01_Img from '../resources/wall_01.png';
+import Wall_02_Img from '../resources/wall_02.png';
+import Wall_03_Img from '../resources/wall_03.png';
+import Wall_04_Img from '../resources/wall_04.png';
+import Wall_05_Img from '../resources/wall_05.png';
+import Wall_06_Img from '../resources/wall_06.png';
+import Wall_07_Img from '../resources/wall_07.png';
+import Wall_08_Img from '../resources/wall_08.png';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import * as Selector from 'src/stores/selector';
 import { RoofPoint } from 'src/models/RoofModel';
@@ -52,10 +60,53 @@ const Wall = ({
   leftOffset = 0,
   rightOffset = 0,
   windows,
+  textureType,
   parentId,
   selected = false,
   locked = false,
 }: WallModel) => {
+  const textureLoader = useMemo(() => {
+    let textureImg;
+    switch (textureType) {
+      case WallTexture.NoTexture:
+        textureImg = Wall_00_Img;
+        break;
+      case WallTexture.Texture_1:
+        textureImg = Wall_01_Img;
+        break;
+      case WallTexture.Texture_2:
+        textureImg = Wall_02_Img;
+        break;
+      case WallTexture.Texture_3:
+        textureImg = Wall_03_Img;
+        break;
+      case WallTexture.Texture_4:
+        textureImg = Wall_04_Img;
+        break;
+      case WallTexture.Texture_5:
+        textureImg = Wall_05_Img;
+        break;
+      case WallTexture.Texture_6:
+        textureImg = Wall_06_Img;
+        break;
+      case WallTexture.Texture_7:
+        textureImg = Wall_07_Img;
+        break;
+      case WallTexture.Texture_8:
+        textureImg = Wall_08_Img;
+        break;
+      default:
+        textureImg = Wall_00_Img;
+    }
+
+    return new TextureLoader().load(textureImg, (texture) => {
+      texture.wrapS = texture.wrapT = RepeatWrapping;
+      texture.offset.set(0, 0);
+      texture.repeat.set(0.6, 0.6);
+      setTexture(texture);
+    });
+  }, [textureType]);
+
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -78,6 +129,7 @@ const Wall = ({
   const resizeHandleURRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
 
+  const [texture, setTexture] = useState(textureLoader);
   const [renderWindows, setRenderWindows] = useState<WindowModel[]>(windows);
   const [wallAbsPosition, setWallAbsPosition] = useState<Vector3>();
   const [wallAbsAngle, setWallAbsAngle] = useState<number>();
@@ -109,14 +161,6 @@ const Wall = ({
   const ray = useMemo(() => new Raycaster(), []);
 
   const whiteWallMaterial = useMemo(() => new MeshStandardMaterial({ color: 'white', side: DoubleSide }), []);
-
-  const texture = useMemo(() => {
-    return new TextureLoader().load(WallExteriorImage, (texture) => {
-      texture.wrapS = texture.wrapT = RepeatWrapping;
-      texture.offset.set(0, 0);
-      texture.repeat.set(0.6, 0.6);
-    });
-  }, []);
 
   // subscribe common store
   useEffect(() => {
@@ -155,7 +199,6 @@ const Wall = ({
           wallShape.holes.push(window);
         }
       });
-
       outSideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
       outSideWallRef.current.material = new MeshStandardMaterial({ map: texture, side: DoubleSide });
       gl.render(scene, camera);
@@ -378,7 +421,9 @@ const Wall = ({
                 grabRef.current = null;
               }
             }}
-          />
+          >
+            <meshBasicMaterial map={texture} side={DoubleSide} />
+          </mesh>
 
           {/* inside wall */}
           <mesh

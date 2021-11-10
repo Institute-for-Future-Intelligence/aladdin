@@ -181,7 +181,15 @@ export enum HumanName {
 }
 
 export enum WallTexture {
-  default = 'Default',
+  Texture_1 = 'Texture #1',
+  Texture_2 = 'Texture #2',
+  Texture_3 = 'Texture #3',
+  Texture_4 = 'Texture #4',
+  Texture_5 = 'Texture #5',
+  Texture_6 = 'Texture #6',
+  Texture_7 = 'Texture #7',
+  Texture_8 = 'Texture #8',
+  NoTexture = 'No Texture',
 }
 
 export enum WallSide {
