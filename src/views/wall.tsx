@@ -491,89 +491,58 @@ const Wall = ({
 
                 if (intersectionPlaneRef.current) {
                   const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-                  const pointer = intersects[0].point;
+                  if (intersects.length > 0) {
+                    const pointer = intersects[0].point;
 
-                  // add new window
-                  if (objectTypeToAddRef.current === ObjectType.Window) {
-                    let relativePos = getWindowRelativePos(pointer, elementModel);
-                    if (enableFineGridRef.current) {
-                      relativePos = stickToFineGrid(relativePos);
-                    } else {
-                      relativePos = stickToNormalGrid(relativePos);
-                    }
-                    const newWindow = ElementModelFactory.makeWindow(
-                      elementModel,
-                      relativePos.x / lx,
-                      0,
-                      relativePos.z / lz,
-                    );
-                    setCommonStore((state) => {
-                      for (const e of state.elements) {
-                        if (e.id === elementModel.id) {
-                          (e as WallModel).windows.push(newWindow);
-                        }
+                    // add new window
+                    if (objectTypeToAddRef.current === ObjectType.Window) {
+                      let relativePos = getWindowRelativePos(pointer, elementModel);
+                      if (enableFineGridRef.current) {
+                        relativePos = stickToFineGrid(relativePos);
+                      } else {
+                        relativePos = stickToNormalGrid(relativePos);
                       }
-                      state.objectTypeToAdd = ObjectType.None;
-                      state.enableOrbitController = false;
-                    });
-                    setMovingWindow({ id: newWindow.id, wlx: 0, wlz: 0, wcx: 0, wcz: 0, diff: new Vector3() });
-                    setShowGrid(true);
-                    setIsBuildingNewWindow(true);
-                  }
-
-                  // moving and resizing
-                  if (movingWindow) {
-                    const { id, diff, wlx, wlz } = movingWindow;
-                    const absPos = new Vector3().addVectors(pointer, diff);
-                    let relativePos = getWindowRelativePos(absPos, elementModel);
-                    if (enableFineGridRef.current) {
-                      relativePos = stickToFineGrid(relativePos);
-                    } else {
-                      relativePos = stickToNormalGrid(relativePos);
-                    }
-                    relativePos = movingWindowInsideWall(relativePos);
-                    if (checkWindowCollision(id, relativePos, wlx, wlz)) {
-                      setInvalidWindowID(null);
-                    } else {
-                      setInvalidWindowID(id);
-                    }
-                    setCommonStore((state) => {
-                      for (const e of state.elements) {
-                        if (e.id === elementModel.id) {
-                          for (const w of (e as WallModel).windows) {
-                            if (w.id === id) {
-                              w.cx = relativePos.x / lx;
-                              w.cz = relativePos.z / lz;
-                            }
+                      const newWindow = ElementModelFactory.makeWindow(
+                        elementModel,
+                        relativePos.x / lx,
+                        0,
+                        relativePos.z / lz,
+                      );
+                      setCommonStore((state) => {
+                        for (const e of state.elements) {
+                          if (e.id === elementModel.id) {
+                            (e as WallModel).windows.push(newWindow);
                           }
                         }
-                      }
-                    });
-                  } else if (resizingWindow) {
-                    let p = getWindowRelativePos(pointer, elementModel);
-
-                    if (enableFineGridRef.current) {
-                      p = stickToFineGrid(p);
-                    } else {
-                      p = stickToNormalGrid(p);
+                        state.objectTypeToAdd = ObjectType.None;
+                        state.enableOrbitController = false;
+                      });
+                      setMovingWindow({ id: newWindow.id, wlx: 0, wlz: 0, wcx: 0, wcz: 0, diff: new Vector3() });
+                      setShowGrid(true);
+                      setIsBuildingNewWindow(true);
                     }
-                    p = resizingWindowInsideWall(p);
-                    const r = getWindowRelativePos(resizeAnchorRef.current, elementModel);
-                    const v = new Vector3().subVectors(r, p);
-                    const relativePos = new Vector3().addVectors(r, p).divideScalar(2);
-                    if (outSideWallRef.current) {
-                      if (checkWindowCollision(resizingWindow.id, relativePos, Math.abs(v.x), Math.abs(v.z))) {
+
+                    // moving and resizing
+                    if (movingWindow) {
+                      const { id, diff, wlx, wlz } = movingWindow;
+                      const absPos = new Vector3().addVectors(pointer, diff);
+                      let relativePos = getWindowRelativePos(absPos, elementModel);
+                      if (enableFineGridRef.current) {
+                        relativePos = stickToFineGrid(relativePos);
+                      } else {
+                        relativePos = stickToNormalGrid(relativePos);
+                      }
+                      relativePos = movingWindowInsideWall(relativePos);
+                      if (checkWindowCollision(id, relativePos, wlx, wlz)) {
                         setInvalidWindowID(null);
                       } else {
-                        setInvalidWindowID(resizingWindow.id);
+                        setInvalidWindowID(id);
                       }
                       setCommonStore((state) => {
                         for (const e of state.elements) {
                           if (e.id === elementModel.id) {
                             for (const w of (e as WallModel).windows) {
-                              if (w.id == resizingWindow.id) {
-                                w.lx = Math.abs(v.x) / lx;
-                                w.lz = Math.abs(v.z) / lz;
+                              if (w.id === id) {
                                 w.cx = relativePos.x / lx;
                                 w.cz = relativePos.z / lz;
                               }
@@ -581,26 +550,59 @@ const Wall = ({
                           }
                         }
                       });
-                    }
-                  } else if (
-                    // adjust wall height
-                    grabRef.current?.id === id &&
-                    (resizeHandleTypeRef.current == ResizeHandleType.UpperRight ||
-                      resizeHandleTypeRef.current == ResizeHandleType.UpperLeft)
-                  ) {
-                    let height = new Vector3().subVectors(pointer, resizeAnchorRef.current);
-                    if (enableFineGridRef.current) {
-                      height = stickToFineGrid(height);
-                    } else {
-                      height = stickToNormalGrid(height);
-                    }
-                    setCommonStore((state) => {
-                      for (const e of state.elements) {
-                        if (e.id === elementModel.id) {
-                          (e as WallModel).lz = Math.max(height.z, 0.5);
-                        }
+                    } else if (resizingWindow) {
+                      let p = getWindowRelativePos(pointer, elementModel);
+
+                      if (enableFineGridRef.current) {
+                        p = stickToFineGrid(p);
+                      } else {
+                        p = stickToNormalGrid(p);
                       }
-                    });
+                      p = resizingWindowInsideWall(p);
+                      const r = getWindowRelativePos(resizeAnchorRef.current, elementModel);
+                      const v = new Vector3().subVectors(r, p);
+                      const relativePos = new Vector3().addVectors(r, p).divideScalar(2);
+                      if (outSideWallRef.current) {
+                        if (checkWindowCollision(resizingWindow.id, relativePos, Math.abs(v.x), Math.abs(v.z))) {
+                          setInvalidWindowID(null);
+                        } else {
+                          setInvalidWindowID(resizingWindow.id);
+                        }
+                        setCommonStore((state) => {
+                          for (const e of state.elements) {
+                            if (e.id === elementModel.id) {
+                              for (const w of (e as WallModel).windows) {
+                                if (w.id == resizingWindow.id) {
+                                  w.lx = Math.abs(v.x) / lx;
+                                  w.lz = Math.abs(v.z) / lz;
+                                  w.cx = relativePos.x / lx;
+                                  w.cz = relativePos.z / lz;
+                                }
+                              }
+                            }
+                          }
+                        });
+                      }
+                    } else if (
+                      // adjust wall height
+                      grabRef.current?.id === id &&
+                      (resizeHandleTypeRef.current == ResizeHandleType.UpperRight ||
+                        resizeHandleTypeRef.current == ResizeHandleType.UpperLeft)
+                    ) {
+                      let height = new Vector3().subVectors(pointer, resizeAnchorRef.current);
+                      if (enableFineGridRef.current) {
+                        height = stickToFineGrid(height);
+                      } else {
+                        height = stickToNormalGrid(height);
+                      }
+                      setCommonStore((state) => {
+                        for (const e of state.elements) {
+                          if (e.id === elementModel.id) {
+                            (e as WallModel).lz = Math.max(height.z, 0.5);
+                          }
+                        }
+                      });
+                    }
                   }
                 }
               }}
