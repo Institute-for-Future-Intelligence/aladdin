@@ -10,6 +10,8 @@ import * as Selector from './stores/selector';
 import { Input, Modal } from 'antd';
 import i18n from './i18n/i18n';
 import { ElementModel } from './models/ElementModel';
+import { ElementModelCloner } from './models/ElementModelCloner';
+import { UndoableDeletion } from './UndoableDeletion';
 
 export interface KeyboardListenerProps {
   keyFlag: boolean; // flip this every time to ensure that handleKey is called in useEffect
@@ -250,14 +252,33 @@ const KeyboardListener = ({
       case 'delete':
         if (selectedElement) {
           deleteElement(selectedElement);
-          addUndoable({
+          const parent = selectedElement.parentId ? getElementById(selectedElement.parentId) : null;
+          const clonedElement = ElementModelCloner.clone(
+            parent,
+            selectedElement,
+            selectedElement.cx,
+            selectedElement.cy,
+            selectedElement.cz,
+          );
+          const undoableDeletion = {
+            name: 'Deletion',
+            timestamp: Date.now(),
+            deletedElement: clonedElement,
             undo: () => {
-              console.log('undo');
+              setCommonStore((state) => {
+                if (undoableDeletion.deletedElement) {
+                  state.elements.push(undoableDeletion.deletedElement);
+                  state.selectedElement = undoableDeletion.deletedElement;
+                }
+              });
             },
             redo: () => {
-              console.log('redo');
+              if (undoableDeletion.deletedElement) {
+                deleteElementById(undoableDeletion.deletedElement.id);
+              }
             },
-          });
+          } as UndoableDeletion;
+          addUndoable(undoableDeletion);
         }
         break;
       case 'ctrl+z':

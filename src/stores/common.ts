@@ -318,26 +318,27 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
+              state.selectedElement = null;
             });
           },
           selectMe(id, e, action) {
             if (e.intersections.length > 0) {
               if (e.intersections[0].object === e.eventObject) {
                 immerSet((state) => {
-                  for (const e of state.elements) {
-                    if (e.id === id) {
-                      e.selected = true;
-                      if (e.type === ObjectType.Wall) {
-                        const wall = e as WallModel;
+                  for (const elem of state.elements) {
+                    if (elem.id === id) {
+                      elem.selected = true;
+                      if (elem.type === ObjectType.Wall) {
+                        const wall = elem as WallModel;
                         for (const w of wall.windows) {
                           w.selected = false;
                         }
                       }
-                      state.selectedElementHeight = e.lz;
+                      state.selectedElementHeight = elem.lz;
                     } else {
-                      e.selected = false;
-                      if (e.type === ObjectType.Wall) {
-                        const wall = e as WallModel;
+                      elem.selected = false;
+                      if (elem.type === ObjectType.Wall) {
+                        const wall = elem as WallModel;
                         for (const w of wall.windows) {
                           w.selected = w.id === id;
                         }
@@ -555,6 +556,12 @@ export const useStore = create<CommonStoreState>(
           },
           deleteElementById(id) {
             immerSet((state: CommonStoreState) => {
+              for (const elem of state.elements) {
+                if (elem.id === id) {
+                  elem.selected = false;
+                  break;
+                }
+              }
               state.elements = state.elements.filter((e) => {
                 if (e.type === ObjectType.Wall) {
                   const wall = e as WallModel;
@@ -562,6 +569,7 @@ export const useStore = create<CommonStoreState>(
                 }
                 return !(e.id === id || e.parentId === id);
               });
+              state.selectedElement = null;
             });
           },
 
