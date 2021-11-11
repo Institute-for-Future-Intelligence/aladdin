@@ -10,7 +10,6 @@ import * as Selector from './stores/selector';
 import { Input, Modal } from 'antd';
 import i18n from './i18n/i18n';
 import { ElementModel } from './models/ElementModel';
-import { ElementModelCloner } from './models/ElementModelCloner';
 import { UndoableDeletion } from './UndoableDeletion';
 
 export interface KeyboardListenerProps {
@@ -252,29 +251,24 @@ const KeyboardListener = ({
       case 'delete':
         if (selectedElement) {
           deleteElement(selectedElement);
-          const parent = selectedElement.parentId ? getElementById(selectedElement.parentId) : null;
-          const clonedElement = ElementModelCloner.clone(
-            parent,
-            selectedElement,
-            selectedElement.cx,
-            selectedElement.cy,
-            selectedElement.cz,
-          );
+          // do not use {...selectedElement} as it does not do deep copy
+          const clonedElement = JSON.parse(JSON.stringify(selectedElement));
+          clonedElement.selected = false;
           const undoableDeletion = {
             name: 'Deletion',
             timestamp: Date.now(),
             deletedElement: clonedElement,
             undo: () => {
               setCommonStore((state) => {
-                if (undoableDeletion.deletedElement) {
-                  state.elements.push(undoableDeletion.deletedElement);
-                  state.selectedElement = undoableDeletion.deletedElement;
-                }
+                state.elements.push(undoableDeletion.deletedElement);
+                state.selectedElement = undoableDeletion.deletedElement;
               });
+              // clonedElement.selected = true; FIXME: Why does this become readonly?
             },
             redo: () => {
-              if (undoableDeletion.deletedElement) {
-                deleteElementById(undoableDeletion.deletedElement.id);
+              const elem = getElementById(undoableDeletion.deletedElement.id);
+              if (elem) {
+                deleteElement(elem);
               }
             },
           } as UndoableDeletion;
