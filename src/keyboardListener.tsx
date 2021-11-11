@@ -10,7 +10,8 @@ import * as Selector from './stores/selector';
 import { Input, Modal } from 'antd';
 import i18n from './i18n/i18n';
 import { ElementModel } from './models/ElementModel';
-import { UndoableDeletion } from './UndoableDeletion';
+import { UndoableDeletion } from './undo/UndoableDeletion';
+import { UndoableZoomView } from './undo/UndoableZoomView';
 
 export interface KeyboardListenerProps {
   keyFlag: boolean; // flip this every time to ensure that handleKey is called in useEffect
@@ -187,6 +188,15 @@ const KeyboardListener = ({
       case 'ctrl+[':
       case 'meta+[': // for Mac
         zoomView(0.9);
+        const undoableZoomView = {
+          name: 'Zoom View',
+          timestamp: Date.now(),
+          oldValue: 0,
+          newValue: 0,
+          undo: () => {},
+          redo: () => {},
+        } as UndoableZoomView;
+        addUndoable(undoableZoomView);
         break;
       case 'ctrl+]':
       case 'meta+]': // for Mac

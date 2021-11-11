@@ -3,7 +3,7 @@
  */
 
 import { Undoable } from './Undoable';
-import { ElementModel } from './models/ElementModel';
+import { ElementModel } from '../models/ElementModel';
 
 export interface UndoableDeletion extends Undoable {
   deletedElement: ElementModel;

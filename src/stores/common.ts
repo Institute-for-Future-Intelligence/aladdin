@@ -38,7 +38,7 @@ import { Locale } from 'antd/lib/locale-provider';
 import enUS from 'antd/lib/locale/en_US';
 // @ts-ignore
 import UndoManager from 'undo-manager';
-import { Undoable } from '../Undoable';
+import { Undoable } from '../undo/Undoable';
 
 enableMapSet();
 
