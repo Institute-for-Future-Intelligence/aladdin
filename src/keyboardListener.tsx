@@ -64,7 +64,7 @@ const KeyboardListener = ({
     handleKey();
   }, [keyFlag, keyName, keyDown, keyUp]);
 
-  const deleteElement = (elem: ElementModel) => {
+  const deleteElement = (elem: ElementModel, cut: boolean) => {
     if (elem.type === ObjectType.Wall) {
       const currentWall = elem as WallModel;
       if (currentWall.leftJoints.length > 0) {
@@ -83,7 +83,11 @@ const KeyboardListener = ({
         state.deletedWallID = elem.id;
       });
     }
-    deleteElementById(elem.id);
+    if (cut) {
+      cutElementById(elem.id); // cut will fill the buffer for pasting
+    } else {
+      deleteElementById(elem.id); // delete will not fill the buffer for pasting
+    }
     if (canvas) {
       canvas.style.cursor = 'default'; // if an element is deleted but the cursor is not default
     }
@@ -201,7 +205,29 @@ const KeyboardListener = ({
       case 'ctrl+x':
       case 'meta+x': // for Mac
         if (selectedElement) {
-          cutElementById(selectedElement.id);
+          deleteElement(selectedElement, true);
+          // do not use {...selectedElement} as it does not do deep copy
+          const clonedElement = JSON.parse(JSON.stringify(selectedElement));
+          clonedElement.selected = false;
+          const undoableCut = {
+            name: 'Cut',
+            timestamp: Date.now(),
+            deletedElement: clonedElement,
+            undo: () => {
+              setCommonStore((state) => {
+                state.elements.push(undoableCut.deletedElement);
+                state.selectedElement = undoableCut.deletedElement;
+              });
+              // clonedElement.selected = true; FIXME: Why does this become readonly?
+            },
+            redo: () => {
+              const elem = getElementById(undoableCut.deletedElement.id);
+              if (elem) {
+                deleteElement(elem, true);
+              }
+            },
+          } as UndoableDelete;
+          addUndoable(undoableCut);
         }
         break;
       case 'ctrl+v':
@@ -250,7 +276,7 @@ const KeyboardListener = ({
         break;
       case 'delete':
         if (selectedElement) {
-          deleteElement(selectedElement);
+          deleteElement(selectedElement, false);
           // do not use {...selectedElement} as it does not do deep copy
           const clonedElement = JSON.parse(JSON.stringify(selectedElement));
           clonedElement.selected = false;
@@ -268,7 +294,7 @@ const KeyboardListener = ({
             redo: () => {
               const elem = getElementById(undoableDelete.deletedElement.id);
               if (elem) {
-                deleteElement(elem);
+                deleteElement(elem, false);
               }
             },
           } as UndoableDelete;

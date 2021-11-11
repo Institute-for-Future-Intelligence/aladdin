@@ -7,11 +7,12 @@ import { Checkbox, InputNumber, Menu, Modal, Space } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { CompactPicker } from 'react-color';
-
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { Paste } from '../menuItems';
 import i18n from '../../../i18n/i18n';
+import { UndoableRemoveAll } from '../../../undo/UndoableRemoveAll';
+import { ElementModel } from '../../../models/ElementModel';
 
 export const GroundMenu = () => {
   const language = useStore((state) => state.language);
@@ -20,6 +21,8 @@ export const GroundMenu = () => {
   const setCommonStore = useStore((state) => state.set);
   const countElementsByType = useStore((state) => state.countElementsByType);
   const removeElementsByType = useStore((state) => state.removeElementsByType);
+  const addUndoable = useStore((state) => state.addUndoable);
+  const elements = useStore((state) => state.elements);
 
   const groundImage = useStore((state) => state.viewState.groundImage);
   const treeCount = countElementsByType(ObjectType.Tree);
@@ -39,7 +42,30 @@ export const GroundMenu = () => {
               title: 'Do you really want to remove all ' + humanCount + ' people?',
               icon: <ExclamationCircleOutlined />,
               onOk: () => {
+                const removed: ElementModel[] = [];
+                for (const elem of elements) {
+                  if (elem.type === ObjectType.Human) {
+                    removed.push(elem);
+                  }
+                }
                 removeElementsByType(ObjectType.Human);
+                const removedElements = JSON.parse(JSON.stringify(removed));
+                const undoableRemoveAll = {
+                  name: 'Remove All',
+                  timestamp: Date.now(),
+                  removedElements: removedElements,
+                  undo: () => {
+                    setCommonStore((state) => {
+                      for (const elem of undoableRemoveAll.removedElements) {
+                        state.elements.push(elem);
+                      }
+                    });
+                  },
+                  redo: () => {
+                    removeElementsByType(ObjectType.Human);
+                  },
+                } as UndoableRemoveAll;
+                addUndoable(undoableRemoveAll);
               },
             });
           }}
@@ -56,7 +82,30 @@ export const GroundMenu = () => {
               title: 'Do you really want to remove all ' + treeCount + ' trees?',
               icon: <ExclamationCircleOutlined />,
               onOk: () => {
+                const removed: ElementModel[] = [];
+                for (const elem of elements) {
+                  if (elem.type === ObjectType.Tree) {
+                    removed.push(elem);
+                  }
+                }
                 removeElementsByType(ObjectType.Tree);
+                const removedElements = JSON.parse(JSON.stringify(removed));
+                const undoableRemoveAll = {
+                  name: 'Remove All',
+                  timestamp: Date.now(),
+                  removedElements: removedElements,
+                  undo: () => {
+                    setCommonStore((state) => {
+                      for (const elem of undoableRemoveAll.removedElements) {
+                        state.elements.push(elem);
+                      }
+                    });
+                  },
+                  redo: () => {
+                    removeElementsByType(ObjectType.Tree);
+                  },
+                } as UndoableRemoveAll;
+                addUndoable(undoableRemoveAll);
               },
             });
           }}
