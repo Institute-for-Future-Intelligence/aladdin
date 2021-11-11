@@ -11,6 +11,7 @@ import { ElementModel } from '../models/ElementModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS } from '../constants';
 import { Util } from '../Util';
+import { UndoableMove } from '../undo/UndoableMove';
 
 const Ground = () => {
   const setCommonStore = useStore((state) => state.set);
@@ -28,8 +29,10 @@ const Ground = () => {
   const setElementRotation = useStore((state) => state.setElementRotation);
   const updateElement = useStore((state) => state.updateElementById);
   const addElement = useStore((state) => state.addElement);
+  const getElementById = useStore((state) => state.getElementById);
   const getCameraDirection = useStore((state) => state.getCameraDirection);
   const getResizeHandlePosition = useStore((state) => state.getResizeHandlePosition);
+  const addUndoable = useStore((state) => state.addUndoable);
   const {
     camera,
     gl: { domElement },
@@ -37,6 +40,8 @@ const Ground = () => {
   const groundPlaneRef = useRef<Mesh>();
   const intersectionPlaneRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
+  const oldPosition = useRef<Vector3>(new Vector3());
+  const newPosition = useRef<Vector3>(new Vector3());
 
   useEffect(() => {
     window.addEventListener('pointerup', handlePointerUp);
@@ -109,7 +114,33 @@ const Ground = () => {
   };
 
   const handlePointerUp = () => {
-    grabRef.current = null;
+    if (grabRef.current) {
+      const elem = getElementById(grabRef.current.id);
+      if (elem) {
+        newPosition.current.x = elem.cx;
+        newPosition.current.y = elem.cy;
+        newPosition.current.z = elem.cz;
+      }
+      const undoableMove = {
+        name: 'Move Object',
+        timestamp: Date.now(),
+        movedElement: grabRef.current,
+        oldX: oldPosition.current.x,
+        oldY: oldPosition.current.y,
+        oldZ: oldPosition.current.z,
+        newX: newPosition.current.x,
+        newY: newPosition.current.y,
+        newZ: newPosition.current.z,
+        undo: () => {
+          setElementPosition(undoableMove.movedElement.id, undoableMove.oldX, undoableMove.oldY, undoableMove.oldZ);
+        },
+        redo: () => {
+          setElementPosition(undoableMove.movedElement.id, undoableMove.newX, undoableMove.newY, undoableMove.newZ);
+        },
+      } as UndoableMove;
+      addUndoable(undoableMove);
+      grabRef.current = null;
+    }
     setCommonStore((state) => {
       state.moveHandleType = null;
       state.resizeHandleType = null;
@@ -141,6 +172,9 @@ const Ground = () => {
         if (selectedElement) {
           if (legalOnGround(selectedElement.type as ObjectType)) {
             grabRef.current = selectedElement;
+            oldPosition.current.x = selectedElement.cx;
+            oldPosition.current.y = selectedElement.cy;
+            oldPosition.current.z = selectedElement.cz;
             if (selectedElement.type !== ObjectType.Foundation && selectedElement.type !== ObjectType.Cuboid) {
               setCommonStore((state) => {
                 state.enableOrbitController = false;
@@ -320,6 +354,7 @@ const Ground = () => {
         renderOrder={-2}
         onContextMenu={handleContextMenu}
         onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
         onPointerMove={handleGroudPointerMove}
       >
         <meshStandardMaterial depthTest={false} color={viewState.groundColor} />

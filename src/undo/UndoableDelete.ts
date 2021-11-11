@@ -5,6 +5,6 @@
 import { Undoable } from './Undoable';
 import { ElementModel } from '../models/ElementModel';
 
-export interface UndoableDeletion extends Undoable {
+export interface UndoableDelete extends Undoable {
   deletedElement: ElementModel;
 }

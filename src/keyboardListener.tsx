@@ -10,8 +10,7 @@ import * as Selector from './stores/selector';
 import { Input, Modal } from 'antd';
 import i18n from './i18n/i18n';
 import { ElementModel } from './models/ElementModel';
-import { UndoableDeletion } from './undo/UndoableDeletion';
-import { UndoableZoomView } from './undo/UndoableZoomView';
+import { UndoableDelete } from './undo/UndoableDelete';
 
 export interface KeyboardListenerProps {
   keyFlag: boolean; // flip this every time to ensure that handleKey is called in useEffect
@@ -188,15 +187,6 @@ const KeyboardListener = ({
       case 'ctrl+[':
       case 'meta+[': // for Mac
         zoomView(0.9);
-        const undoableZoomView = {
-          name: 'Zoom View',
-          timestamp: Date.now(),
-          oldValue: 0,
-          newValue: 0,
-          undo: () => {},
-          redo: () => {},
-        } as UndoableZoomView;
-        addUndoable(undoableZoomView);
         break;
       case 'ctrl+]':
       case 'meta+]': // for Mac
@@ -264,25 +254,25 @@ const KeyboardListener = ({
           // do not use {...selectedElement} as it does not do deep copy
           const clonedElement = JSON.parse(JSON.stringify(selectedElement));
           clonedElement.selected = false;
-          const undoableDeletion = {
-            name: 'Deletion',
+          const undoableDelete = {
+            name: 'Delete',
             timestamp: Date.now(),
             deletedElement: clonedElement,
             undo: () => {
               setCommonStore((state) => {
-                state.elements.push(undoableDeletion.deletedElement);
-                state.selectedElement = undoableDeletion.deletedElement;
+                state.elements.push(undoableDelete.deletedElement);
+                state.selectedElement = undoableDelete.deletedElement;
               });
               // clonedElement.selected = true; FIXME: Why does this become readonly?
             },
             redo: () => {
-              const elem = getElementById(undoableDeletion.deletedElement.id);
+              const elem = getElementById(undoableDelete.deletedElement.id);
               if (elem) {
                 deleteElement(elem);
               }
             },
-          } as UndoableDeletion;
-          addUndoable(undoableDeletion);
+          } as UndoableDelete;
+          addUndoable(undoableDelete);
         }
         break;
       case 'ctrl+z':
