@@ -5,12 +5,20 @@
 import { Undoable } from './Undoable';
 import { ElementModel } from '../models/ElementModel';
 
-export interface UndoableMove extends Undoable {
+export interface UndoableResize extends Undoable {
   oldCx: number;
   oldCy: number;
   oldCz: number;
   newCx: number;
   newCy: number;
   newCz: number;
-  movedElement: ElementModel;
+
+  oldLx: number;
+  oldLy: number;
+  oldLz: number;
+  newLx: number;
+  newLy: number;
+  newLz: number;
+
+  resizedElement: ElementModel;
 }
