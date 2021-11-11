@@ -5,12 +5,7 @@
 import React, { useState } from 'react';
 import { Modal, Radio, RadioChangeEvent, Select, Space } from 'antd';
 import { useStore } from '../../../stores/common';
-<<<<<<< HEAD
-import * as Selector from '../../../stores/selector';
-import { WallTexture } from '../../../types';
-=======
 import { ObjectType, WallTexture } from '../../../types';
->>>>>>> 8ae0329 (wall texture selection apply to all walls)
 import Wall_01_Img from '../../../resources/wall_01.png';
 import Wall_02_Img from '../../../resources/wall_02.png';
 import Wall_03_Img from '../../../resources/wall_03.png';

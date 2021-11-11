@@ -211,8 +211,13 @@ export const i18n_en = {
     },
 
     wallMenu: {
+      Size: 'Size',
       Thickness: 'Thickness',
       Texture: 'Texture',
+      Size_of_Wall: 'Size of Wall',
+      Only_This_Wall: 'Apply to only this wall',
+      Walls_on_Foundation: 'Apply to all walls on this foundation',
+      All_Walls: 'Apply to all walls',
     },
 
     windowMenu: {},

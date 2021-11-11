@@ -85,6 +85,10 @@ export const i18n_es = {
     wallMenu: {
       Thickness: 'Espesor',
       Texture: 'Textura',
+      Size_of_Wall: 'Tamaño de la pared',
+      Only_This_Wall: 'Aplicar solo a esta pared',
+      Walls_on_Foundation: 'Aplicar a todas las paredes de esta base',
+      All_Walls: 'Aplicar a todas las paredes',
     },
 
     windowMenu: {},

@@ -200,7 +200,6 @@ const Wall = ({
         }
       });
       outSideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
-      outSideWallRef.current.material = new MeshStandardMaterial({ map: texture, side: DoubleSide });
       gl.render(scene, camera);
     }
   }, [init, lx, lz, windows]);
