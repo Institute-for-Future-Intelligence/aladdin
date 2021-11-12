@@ -18,7 +18,7 @@ export const setElementSize = (state: CommonStoreState) => state.setElementSize;
 
 export const updateElementById = (state: CommonStoreState) => state.updateElementById;
 
-export const deleteElementById = (state: CommonStoreState) => state.deleteElementById;
+export const removeElementById = (state: CommonStoreState) => state.removeElementById;
 
 export const selectMe = (state: CommonStoreState) => state.selectMe;
 

@@ -99,10 +99,9 @@ export interface CommonStoreState {
   pasteNormal: Vector3 | undefined;
   elementToPaste: ElementModel[];
   copyElementById: (id: string) => void;
-  cutElementById: (id: string) => void;
+  removeElementById: (id: string, cut: boolean) => void; // set cut to false for deletion
   pasteElementToPoint: () => void;
   pasteElementByKey: () => void;
-  deleteElementById: (id: string) => void;
   countElementsByType: (type: ObjectType) => number;
   removeElementsByType: (type: ObjectType) => void;
   countAllChildElementsByType: (parentId: string, type: ObjectType) => number;
@@ -538,28 +537,38 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          cutElementById(id) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.id === id) {
-                  state.elementToPaste = [e];
-                  break;
-                }
-              }
-              for (const e of state.elements) {
-                if (e.parentId === id) {
-                  state.elementToPaste.push(e);
-                }
-              }
-              state.elements = state.elements.filter((e) => !(e.id === id || e.parentId === id));
-            });
-          },
-          deleteElementById(id) {
+          removeElementById(id: string, cut: boolean) {
             immerSet((state: CommonStoreState) => {
               for (const elem of state.elements) {
                 if (elem.id === id) {
+                  if (cut) {
+                    state.elementToPaste = [elem];
+                  }
                   elem.selected = false;
+                  if (elem.type === ObjectType.Wall) {
+                    const currentWall = elem as WallModel;
+                    if (currentWall.leftJoints.length > 0) {
+                      const targetWall = state.getElementById(currentWall.leftJoints[0].id) as WallModel;
+                      if (targetWall) {
+                        state.updateElementById(targetWall.id, { rightOffset: 0, rightJoints: [] });
+                      }
+                    }
+                    if (currentWall.rightJoints.length > 0) {
+                      const targetWall = state.getElementById(currentWall.rightJoints[0].id) as WallModel;
+                      if (targetWall) {
+                        state.updateElementById(targetWall.id, { leftOffset: 0, leftJoints: [] });
+                      }
+                    }
+                    state.deletedWallID = elem.id;
+                  }
                   break;
+                }
+              }
+              if (cut) {
+                for (const e of state.elements) {
+                  if (e.parentId === id) {
+                    state.elementToPaste.push(e);
+                  }
                 }
               }
               state.elements = state.elements.filter((e) => {
@@ -572,7 +581,6 @@ export const useStore = create<CommonStoreState>(
               state.selectedElement = null;
             });
           },
-
           removeElementsByType(type: ObjectType) {
             immerSet((state: CommonStoreState) => {
               state.elements = state.elements.filter((x) => x.type !== type);

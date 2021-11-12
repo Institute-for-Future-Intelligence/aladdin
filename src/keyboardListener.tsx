@@ -44,11 +44,9 @@ const KeyboardListener = ({
   const orthographic = useStore(Selector.viewstate.orthographic) ?? false;
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const copyElementById = useStore((state) => state.copyElementById);
-  const cutElementById = useStore((state) => state.cutElementById);
+  const removeElementById = useStore((state) => state.removeElementById);
   const pasteElement = useStore((state) => state.pasteElementByKey);
-  const deleteElementById = useStore(Selector.deleteElementById);
   const getElementById = useStore(Selector.getElementById);
-  const updateElementById = useStore(Selector.updateElementById);
   const setElementPosition = useStore(Selector.setElementPosition);
   const localFileName = useStore((state) => state.localFileName);
   const localFileDialogRequested = useStore((state) => state.localFileDialogRequested);
@@ -64,30 +62,8 @@ const KeyboardListener = ({
     handleKey();
   }, [keyFlag, keyName, keyDown, keyUp]);
 
-  const deleteElement = (elem: ElementModel, cut: boolean) => {
-    if (elem.type === ObjectType.Wall) {
-      const currentWall = elem as WallModel;
-      if (currentWall.leftJoints.length > 0) {
-        const targetWall = getElementById(currentWall.leftJoints[0].id) as WallModel;
-        if (targetWall) {
-          updateElementById(targetWall.id, { rightOffset: 0, rightJoints: [] });
-        }
-      }
-      if (currentWall.rightJoints.length > 0) {
-        const targetWall = getElementById(currentWall.rightJoints[0].id) as WallModel;
-        if (targetWall) {
-          updateElementById(targetWall.id, { leftOffset: 0, leftJoints: [] });
-        }
-      }
-      setCommonStore((state) => {
-        state.deletedWallID = elem.id;
-      });
-    }
-    if (cut) {
-      cutElementById(elem.id); // cut will fill the buffer for pasting
-    } else {
-      deleteElementById(elem.id); // delete will not fill the buffer for pasting
-    }
+  const removeElement = (elem: ElementModel, cut: boolean) => {
+    removeElementById(elem.id, cut);
     if (canvas) {
       canvas.style.cursor = 'default'; // if an element is deleted but the cursor is not default
     }
@@ -205,7 +181,7 @@ const KeyboardListener = ({
       case 'ctrl+x':
       case 'meta+x': // for Mac
         if (selectedElement) {
-          deleteElement(selectedElement, true);
+          removeElement(selectedElement, true);
           // do not use {...selectedElement} as it does not do deep copy
           const clonedElement = JSON.parse(JSON.stringify(selectedElement));
           clonedElement.selected = false;
@@ -223,7 +199,7 @@ const KeyboardListener = ({
             redo: () => {
               const elem = getElementById(undoableCut.deletedElement.id);
               if (elem) {
-                deleteElement(elem, true);
+                removeElement(elem, true);
               }
             },
           } as UndoableDelete;
@@ -276,7 +252,7 @@ const KeyboardListener = ({
         break;
       case 'delete':
         if (selectedElement) {
-          deleteElement(selectedElement, false);
+          removeElement(selectedElement, false);
           // do not use {...selectedElement} as it does not do deep copy
           const clonedElement = JSON.parse(JSON.stringify(selectedElement));
           clonedElement.selected = false;
@@ -294,7 +270,7 @@ const KeyboardListener = ({
             redo: () => {
               const elem = getElementById(undoableDelete.deletedElement.id);
               if (elem) {
-                deleteElement(elem, false);
+                removeElement(elem, false);
               }
             },
           } as UndoableDelete;

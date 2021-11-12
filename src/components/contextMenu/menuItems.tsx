@@ -52,39 +52,17 @@ export const Copy = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
 export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   const setCommonStore = useStore((state) => state.set);
   const language = useStore((state) => state.language);
-  const cutElementById = useStore((state) => state.cutElementById);
+  const removeElementById = useStore((state) => state.removeElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const getElementById = useStore(Selector.getElementById);
   const updateElementById = useStore(Selector.updateElementById);
   const addUndoable = useStore((state) => state.addUndoable);
   const isMac = Util.getOS()?.startsWith('Mac');
 
-  const cutElement = (elem: ElementModel) => {
-    if (elem.type === ObjectType.Wall) {
-      const currentWall = elem as WallModel;
-      if (currentWall.leftJoints.length > 0) {
-        const targetWall = getElementById(currentWall.leftJoints[0].id) as WallModel;
-        if (targetWall) {
-          updateElementById(targetWall.id, { rightOffset: 0, rightJoints: [] });
-        }
-      }
-      if (currentWall.rightJoints.length > 0) {
-        const targetWall = getElementById(currentWall.rightJoints[0].id) as WallModel;
-        if (targetWall) {
-          updateElementById(targetWall.id, { leftOffset: 0, leftJoints: [] });
-        }
-      }
-      setCommonStore((state) => {
-        state.deletedWallID = elem.id;
-      });
-    }
-    cutElementById(elem.id);
-  };
-
   const cut = () => {
     const selectedElement = getSelectedElement();
     if (selectedElement) {
-      cutElement(selectedElement);
+      removeElementById(selectedElement.id, true);
       // do not use {...selectedElement} as it does not do deep copy
       const clonedElement = JSON.parse(JSON.stringify(selectedElement));
       clonedElement.selected = false;
@@ -102,7 +80,7 @@ export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
         redo: () => {
           const elem = getElementById(undoableCut.deletedElement.id);
           if (elem) {
-            cutElement(elem);
+            removeElementById(elem.id, true);
           }
         },
       } as UndoableDelete;

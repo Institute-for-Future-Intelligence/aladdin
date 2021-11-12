@@ -131,114 +131,125 @@ const Ground = () => {
           newDimensionRef.current.y = elem.ly;
           newDimensionRef.current.z = elem.lz;
         }
-        const undoableResize = {
-          name: 'Resize',
-          timestamp: Date.now(),
-          resizedElement: grabRef.current,
-          oldCx: oldPositionRef.current.x,
-          oldCy: oldPositionRef.current.y,
-          oldCz: oldPositionRef.current.z,
-          newCx: newPositionRef.current.x,
-          newCy: newPositionRef.current.y,
-          newCz: newPositionRef.current.z,
-          oldLx: oldDimensionRef.current.x,
-          oldLy: oldDimensionRef.current.y,
-          oldLz: oldDimensionRef.current.z,
-          newLx: newDimensionRef.current.x,
-          newLy: newDimensionRef.current.y,
-          newLz: newDimensionRef.current.z,
-          undo: () => {
-            setElementPosition(
-              undoableResize.resizedElement.id,
-              undoableResize.oldCx,
-              undoableResize.oldCy,
-              undoableResize.oldCz,
-            );
-            setElementSize(
-              undoableResize.resizedElement.id,
-              undoableResize.oldLx,
-              undoableResize.oldLy,
-              undoableResize.oldLz,
-            );
-          },
-          redo: () => {
-            setElementPosition(
-              undoableResize.resizedElement.id,
-              undoableResize.newCx,
-              undoableResize.newCy,
-              undoableResize.newCz,
-            );
-            setElementSize(
-              undoableResize.resizedElement.id,
-              undoableResize.newLx,
-              undoableResize.newLy,
-              undoableResize.newLz,
-            );
-          },
-        } as UndoableResize;
-        addUndoable(undoableResize);
+        if (
+          newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001 &&
+          newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > 0.0001
+        ) {
+          const undoableResize = {
+            name: 'Resize',
+            timestamp: Date.now(),
+            resizedElement: grabRef.current,
+            oldCx: oldPositionRef.current.x,
+            oldCy: oldPositionRef.current.y,
+            oldCz: oldPositionRef.current.z,
+            newCx: newPositionRef.current.x,
+            newCy: newPositionRef.current.y,
+            newCz: newPositionRef.current.z,
+            oldLx: oldDimensionRef.current.x,
+            oldLy: oldDimensionRef.current.y,
+            oldLz: oldDimensionRef.current.z,
+            newLx: newDimensionRef.current.x,
+            newLy: newDimensionRef.current.y,
+            newLz: newDimensionRef.current.z,
+            undo: () => {
+              setElementPosition(
+                undoableResize.resizedElement.id,
+                undoableResize.oldCx,
+                undoableResize.oldCy,
+                undoableResize.oldCz,
+              );
+              setElementSize(
+                undoableResize.resizedElement.id,
+                undoableResize.oldLx,
+                undoableResize.oldLy,
+                undoableResize.oldLz,
+              );
+            },
+            redo: () => {
+              setElementPosition(
+                undoableResize.resizedElement.id,
+                undoableResize.newCx,
+                undoableResize.newCy,
+                undoableResize.newCz,
+              );
+              setElementSize(
+                undoableResize.resizedElement.id,
+                undoableResize.newLx,
+                undoableResize.newLy,
+                undoableResize.newLz,
+              );
+            },
+          } as UndoableResize;
+          addUndoable(undoableResize);
+        }
       } else if (rotateHandleType) {
         if (elem) {
           newRotationRef.current = [...elem.rotation];
         }
-        const undoableRotate = {
-          name: 'Rotate',
-          timestamp: Date.now(),
-          rotatedElement: grabRef.current,
-          oldRotation: oldRotationRef.current,
-          newRotation: newRotationRef.current,
-          undo: () => {
-            setElementRotation(
-              undoableRotate.rotatedElement.id,
-              undoableRotate.oldRotation[0],
-              undoableRotate.oldRotation[1],
-              undoableRotate.oldRotation[2],
-            );
-          },
-          redo: () => {
-            setElementRotation(
-              undoableRotate.rotatedElement.id,
-              undoableRotate.newRotation[0],
-              undoableRotate.newRotation[1],
-              undoableRotate.newRotation[2],
-            );
-          },
-        } as UndoableRotate;
-        addUndoable(undoableRotate);
+        const oldRotation = new Vector3().fromArray(oldRotationRef.current);
+        const newRotation = new Vector3().fromArray(newRotationRef.current);
+        if (newRotation.distanceToSquared(oldRotation) > 0.0001) {
+          const undoableRotate = {
+            name: 'Rotate',
+            timestamp: Date.now(),
+            rotatedElement: grabRef.current,
+            oldRotation: oldRotationRef.current,
+            newRotation: newRotationRef.current,
+            undo: () => {
+              setElementRotation(
+                undoableRotate.rotatedElement.id,
+                undoableRotate.oldRotation[0],
+                undoableRotate.oldRotation[1],
+                undoableRotate.oldRotation[2],
+              );
+            },
+            redo: () => {
+              setElementRotation(
+                undoableRotate.rotatedElement.id,
+                undoableRotate.newRotation[0],
+                undoableRotate.newRotation[1],
+                undoableRotate.newRotation[2],
+              );
+            },
+          } as UndoableRotate;
+          addUndoable(undoableRotate);
+        }
       } else {
         if (elem) {
           newPositionRef.current.x = elem.cx;
           newPositionRef.current.y = elem.cy;
           newPositionRef.current.z = elem.cz;
         }
-        const undoableMove = {
-          name: 'Move',
-          timestamp: Date.now(),
-          movedElement: grabRef.current,
-          oldCx: oldPositionRef.current.x,
-          oldCy: oldPositionRef.current.y,
-          oldCz: oldPositionRef.current.z,
-          newCx: newPositionRef.current.x,
-          newCy: newPositionRef.current.y,
-          newCz: newPositionRef.current.z,
-          undo: () => {
-            setElementPosition(
-              undoableMove.movedElement.id,
-              undoableMove.oldCx,
-              undoableMove.oldCy,
-              undoableMove.oldCz,
-            );
-          },
-          redo: () => {
-            setElementPosition(
-              undoableMove.movedElement.id,
-              undoableMove.newCx,
-              undoableMove.newCy,
-              undoableMove.newCz,
-            );
-          },
-        } as UndoableMove;
-        addUndoable(undoableMove);
+        if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001) {
+          const undoableMove = {
+            name: 'Move',
+            timestamp: Date.now(),
+            movedElement: grabRef.current,
+            oldCx: oldPositionRef.current.x,
+            oldCy: oldPositionRef.current.y,
+            oldCz: oldPositionRef.current.z,
+            newCx: newPositionRef.current.x,
+            newCy: newPositionRef.current.y,
+            newCz: newPositionRef.current.z,
+            undo: () => {
+              setElementPosition(
+                undoableMove.movedElement.id,
+                undoableMove.oldCx,
+                undoableMove.oldCy,
+                undoableMove.oldCz,
+              );
+            },
+            redo: () => {
+              setElementPosition(
+                undoableMove.movedElement.id,
+                undoableMove.newCx,
+                undoableMove.newCy,
+                undoableMove.newCz,
+              );
+            },
+          } as UndoableMove;
+          addUndoable(undoableMove);
+        }
       }
       grabRef.current = null;
     }

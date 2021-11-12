@@ -67,7 +67,7 @@ const Foundation = ({
   const setElementSize = useStore(Selector.setElementSize);
 
   const updateElementById = useStore(Selector.updateElementById);
-  const deleteElementById = useStore(Selector.deleteElementById);
+  const removeElementById = useStore(Selector.removeElementById);
   const selectMe = useStore(Selector.selectMe);
   const addElement = useStore(Selector.addElement);
   const getPvModule = useStore((state) => state.getPvModule);
@@ -174,7 +174,7 @@ const Foundation = ({
       switch (e.key) {
         case 'Escape':
           if (buildingWallIDRef.current) {
-            deleteElementById(buildingWallIDRef.current);
+            removeElementById(buildingWallIDRef.current, false);
             setIsSettingWallStartPoint(false);
             setIsSettingWallEndPoint(false);
             setBuildingWallID(null);
