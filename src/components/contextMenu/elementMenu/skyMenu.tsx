@@ -8,9 +8,12 @@ import SubMenu from 'antd/lib/menu/SubMenu';
 import { useStore } from 'src/stores/common';
 import { Theme } from 'src/types';
 import i18n from '../../../i18n/i18n';
+import { UndoableCheck } from '../../../undo/UndoableCheck';
+import { UndoableChange } from '../../../undo/UndoableChange';
 
 export const SkyMenu = () => {
   const setCommonStore = useStore((state) => state.set);
+  const addUndoable = useStore((state) => state.addUndoable);
   const axes = useStore((state) => state.viewState.axes);
   const theme = useStore((state) => state.viewState.theme);
   const language = useStore((state) => state.language);
@@ -23,15 +26,38 @@ export const SkyMenu = () => {
     lineHeight: '30px',
   };
 
+  const setAxes = (checked: boolean) => {
+    setCommonStore((state) => {
+      state.viewState.axes = checked;
+    });
+  };
+
+  const setTheme = (theme: string) => {
+    setCommonStore((state) => {
+      state.viewState.theme = theme;
+    });
+  };
+
   return (
     <>
       <Menu.Item key={'axes'}>
         <Checkbox
           checked={axes}
           onChange={(e) => {
-            setCommonStore((state) => {
-              state.viewState.axes = e.target.checked;
-            });
+            const checked = e.target.checked;
+            const undoableCheck = {
+              name: 'Show Axes',
+              timestamp: Date.now(),
+              checked: checked,
+              undo: () => {
+                setAxes(!undoableCheck.checked);
+              },
+              redo: () => {
+                setAxes(undoableCheck.checked);
+              },
+            } as UndoableCheck;
+            addUndoable(undoableCheck);
+            setAxes(checked);
           }}
         >
           {i18n.t('skyMenu.Axes', lang)}
@@ -42,9 +68,22 @@ export const SkyMenu = () => {
           value={theme}
           style={{ height: '135px' }}
           onChange={(e) => {
-            setCommonStore((state) => {
-              state.viewState.theme = e.target.value;
-            });
+            const oldTheme = theme;
+            const newTheme = e.target.value;
+            const undoableChange = {
+              name: 'Select Theme',
+              timestamp: Date.now(),
+              oldValue: oldTheme,
+              newValue: newTheme,
+              undo: () => {
+                setTheme(undoableChange.oldValue as string);
+              },
+              redo: () => {
+                setTheme(undoableChange.newValue as string);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            setTheme(newTheme);
           }}
         >
           <Radio style={radioStyle} value={Theme.Default}>

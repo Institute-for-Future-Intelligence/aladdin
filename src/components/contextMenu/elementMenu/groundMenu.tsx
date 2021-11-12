@@ -13,6 +13,8 @@ import { Paste } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAll } from '../../../undo/UndoableRemoveAll';
 import { ElementModel } from '../../../models/ElementModel';
+import { UndoableCheck } from '../../../undo/UndoableCheck';
+import { UndoableChange } from '../../../undo/UndoableChange';
 
 export const GroundMenu = () => {
   const language = useStore((state) => state.language);
@@ -29,6 +31,24 @@ export const GroundMenu = () => {
   const humanCount = countElementsByType(ObjectType.Human);
 
   const lang = { lng: language };
+
+  const setGroundImage = (checked: boolean) => {
+    setCommonStore((state) => {
+      state.viewState.groundImage = checked;
+    });
+  };
+
+  const setGroundColor = (color: string) => {
+    setCommonStore((state) => {
+      state.viewState.groundColor = color;
+    });
+  };
+
+  const setAlbedo = (value: number) => {
+    setCommonStore((state) => {
+      state.world.ground.albedo = value;
+    });
+  };
 
   return (
     <>
@@ -124,9 +144,22 @@ export const GroundMenu = () => {
             value={albedo}
             onChange={(value) => {
               if (value) {
-                setCommonStore((state) => {
-                  state.world.ground.albedo = value;
-                });
+                const oldAlbedo = albedo;
+                const newAlbedo = value;
+                const undoableChange = {
+                  name: 'Set Albedo',
+                  timestamp: Date.now(),
+                  oldValue: oldAlbedo,
+                  newValue: newAlbedo,
+                  undo: () => {
+                    setAlbedo(undoableChange.oldValue as number);
+                  },
+                  redo: () => {
+                    setAlbedo(undoableChange.newValue as number);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                setAlbedo(newAlbedo);
               }
             }}
           />
@@ -136,9 +169,20 @@ export const GroundMenu = () => {
         <Checkbox
           checked={groundImage}
           onChange={(e) => {
-            setCommonStore((state) => {
-              state.viewState.groundImage = e.target.checked;
-            });
+            const checked = e.target.checked;
+            const undoableCheck = {
+              name: 'Show Ground Image',
+              timestamp: Date.now(),
+              checked: checked,
+              undo: () => {
+                setGroundImage(!undoableCheck.checked);
+              },
+              redo: () => {
+                setGroundImage(undoableCheck.checked);
+              },
+            } as UndoableCheck;
+            addUndoable(undoableCheck);
+            setGroundImage(checked);
           }}
         >
           {i18n.t('groundMenu.ImageOnGround', lang)}
@@ -148,9 +192,22 @@ export const GroundMenu = () => {
         <CompactPicker
           color={groundColor}
           onChangeComplete={(colorResult) => {
-            setCommonStore((state) => {
-              state.viewState.groundColor = colorResult.hex;
-            });
+            const oldColor = groundColor;
+            const newColor = colorResult.hex;
+            const undoableChange = {
+              name: 'Set Ground Color',
+              timestamp: Date.now(),
+              oldValue: oldColor,
+              newValue: newColor,
+              undo: () => {
+                setGroundColor(undoableChange.oldValue as string);
+              },
+              redo: () => {
+                setGroundColor(undoableChange.newValue as string);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            setGroundColor(newColor);
           }}
         />
       </SubMenu>

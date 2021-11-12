@@ -11,9 +11,6 @@ import i18n from '../../i18n/i18n';
 import { Util } from '../../Util';
 import { UndoableDelete } from '../../undo/UndoableDelete';
 import * as Selector from '../../stores/selector';
-import { ElementModel } from '../../models/ElementModel';
-import { ObjectType } from '../../types';
-import { WallModel } from '../../models/WallModel';
 
 export const Paste = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   const language = useStore((state) => state.language);
@@ -55,7 +52,6 @@ export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   const removeElementById = useStore((state) => state.removeElementById);
   const getSelectedElement = useStore((state) => state.getSelectedElement);
   const getElementById = useStore(Selector.getElementById);
-  const updateElementById = useStore(Selector.updateElementById);
   const addUndoable = useStore((state) => state.addUndoable);
   const isMac = Util.getOS()?.startsWith('Mac');
 
