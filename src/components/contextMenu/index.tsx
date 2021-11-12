@@ -4,8 +4,8 @@
 
 import React from 'react';
 import { Dropdown, Menu } from 'antd';
-
 import { useStore } from 'src/stores/common';
+import * as Selector from '../../stores/selector';
 import { ObjectType } from 'src/types';
 import {
   CuboidMenu,
@@ -27,7 +27,7 @@ export interface ContextMenuProps {
 }
 
 const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children, setPvDialogVisible }) => {
-  const contextMenuObjectType = useStore((state) => state.contextMenuObjectType);
+  const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
 
   const contextMenu = (setPvDialogVisible: (visible: boolean) => void) => {
     switch (contextMenuObjectType) {

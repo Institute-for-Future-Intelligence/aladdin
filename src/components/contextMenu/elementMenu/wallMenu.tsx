@@ -5,14 +5,16 @@
 import React from 'react';
 import { Menu, Space } from 'antd';
 import { useStore } from 'src/stores/common';
+import * as Selector from '../../../stores/selector';
 import ReshapeElementMenu from 'src/components/reshapeElementMenu';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import WallSelection from './wallSelection';
 
 export const WallMenu = () => {
-  const language = useStore((state) => state.language);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
+  const language = useStore(Selector.language);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
+
   const selectedElement = getSelectedElement();
   const lang = { lng: language };
 

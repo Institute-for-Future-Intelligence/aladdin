@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import { GraphDataType } from '../types';
 import { MONTHS } from '../constants';
 import { Util } from '../Util';
@@ -68,12 +69,13 @@ export interface YearlyLightSensorPanelProps {
 }
 
 const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData }: YearlyLightSensorPanelProps) => {
-  const language = useStore((state) => state.language);
-  const setCommonStore = useStore((state) => state.set);
+  const language = useStore(Selector.language);
+  const setCommonStore = useStore(Selector.set);
+  const now = useStore(Selector.world.date);
+  const sensorLabels = useStore(Selector.sensorLabels);
+  const sensorData = useStore(Selector.yearlyLightSensorData);
   const viewState = useStore((state) => state.viewState);
-  const sensorData = useStore((state) => state.yearlyLightSensorData);
-  const sensorLabels = useStore((state) => state.sensorLabels);
-  const now = useStore((state) => state.world.date);
+
   const [daylightGraph, setDaylightGraph] = useState(true);
   const [clearnessGraph, setClearnessGraph] = useState(true);
   const [radiationGraph, setRadiationGraph] = useState(true);

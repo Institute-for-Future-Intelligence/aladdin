@@ -3,8 +3,9 @@
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Plane } from '@react-three/drei';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
+import { Plane } from '@react-three/drei';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
@@ -16,25 +17,26 @@ import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableRotate } from '../undo/UndoableRotate';
 
 const Ground = () => {
-  const setCommonStore = useStore((state) => state.set);
+  const setCommonStore = useStore(Selector.set);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const selectNone = useStore(Selector.selectNone);
+  const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
+  const moveHandleType = useStore(Selector.moveHandleType);
+  const resizeHandleType = useStore(Selector.resizeHandleType);
+  const rotateHandleType = useStore(Selector.rotateHandleType);
+  const resizeAnchor = useStore(Selector.resizeAnchor);
+  const setElementPosition = useStore(Selector.setElementPosition);
+  const setElementSize = useStore(Selector.setElementSize);
+  const setElementRotation = useStore(Selector.setElementRotation);
+  const updateElement = useStore(Selector.updateElementById);
+  const addElement = useStore(Selector.addElement);
+  const getElementById = useStore(Selector.getElementById);
+  const getCameraDirection = useStore(Selector.getCameraDirection);
+  const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
+  const addUndoable = useStore(Selector.addUndoable);
   const groundModel = useStore((state) => state.world.ground);
   const viewState = useStore((state) => state.viewState);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
-  const selectNone = useStore((state) => state.selectNone);
-  const objectTypeToAdd = useStore((state) => state.objectTypeToAdd);
-  const moveHandleType = useStore((state) => state.moveHandleType);
-  const resizeHandleType = useStore((state) => state.resizeHandleType);
-  const rotateHandleType = useStore((state) => state.rotateHandleType);
-  const resizeAnchor = useStore((state) => state.resizeAnchor);
-  const setElementPosition = useStore((state) => state.setElementPosition);
-  const setElementSize = useStore((state) => state.setElementSize);
-  const setElementRotation = useStore((state) => state.setElementRotation);
-  const updateElement = useStore((state) => state.updateElementById);
-  const addElement = useStore((state) => state.addElement);
-  const getElementById = useStore((state) => state.getElementById);
-  const getCameraDirection = useStore((state) => state.getCameraDirection);
-  const getResizeHandlePosition = useStore((state) => state.getResizeHandlePosition);
-  const addUndoable = useStore((state) => state.addUndoable);
+
   const {
     camera,
     gl: { domElement },

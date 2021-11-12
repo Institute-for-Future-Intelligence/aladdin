@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import { GraphDataType, ObjectType } from '../types';
 import { MONTHS } from '../constants';
 import { Util } from '../Util';
@@ -74,13 +75,14 @@ const YearlyPvYieldPanel = ({
   setIndividualOutputs,
   analyzeYearlyPvYield,
 }: YearlyPvYieldPanelProps) => {
-  const language = useStore((state) => state.language);
-  const setCommonStore = useStore((state) => state.set);
+  const language = useStore(Selector.language);
+  const setCommonStore = useStore(Selector.set);
+  const yearlyYield = useStore(Selector.yearlyPvYield);
+  const solarPanelLabels = useStore(Selector.solarPanelLabels);
+  const countElementsByType = useStore(Selector.countElementsByType);
+  const now = useStore(Selector.world.date);
   const viewState = useStore((state) => state.viewState);
-  const yearlyYield = useStore((state) => state.yearlyPvYield);
-  const solarPanelLabels = useStore((state) => state.solarPanelLabels);
-  const countElementsByType = useStore((state) => state.countElementsByType);
-  const now = useStore((state) => state.world.date);
+
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;

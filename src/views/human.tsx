@@ -25,17 +25,18 @@ import JuneImage from '../resources/june.png';
 import JuroImage from '../resources/juro.png';
 import { DoubleSide, Euler, Mesh, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import { useThree } from '@react-three/fiber';
 import { HumanModel } from '../models/HumanModel';
 import { Billboard, Plane, Sphere } from '@react-three/drei';
 import { MOVE_HANDLE_RADIUS } from '../constants';
 import { HumanName, ObjectType } from '../types';
-import * as Selector from '../stores/selector';
 
 const Human = ({ id, cx, cy, name = HumanName.Jack, selected = false, locked = false, ...props }: HumanModel) => {
-  const setCommonStore = useStore((state) => state.set);
-  const orthographic = useStore(Selector.viewstate.orthographic) ?? false;
-  const selectMe = useStore((state) => state.selectMe);
+  const setCommonStore = useStore(Selector.set);
+  const orthographic = useStore(Selector.viewState.orthographic) ?? false;
+  const selectMe = useStore(Selector.selectMe);
+
   const [hovered, setHovered] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);
   const meshRef = useRef<Mesh>(null!);
@@ -45,7 +46,7 @@ const Human = ({ id, cx, cy, name = HumanName.Jack, selected = false, locked = f
   } = useThree();
 
   // have to add this to listen to world(camera) change, this is better than memo's shallow campare
-  useStore((state) => state.cameraDirection);
+  useStore(Selector.cameraDirection);
   const cameraX = camera.position.x;
   const cameraY = camera.position.y;
 

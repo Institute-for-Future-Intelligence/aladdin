@@ -5,6 +5,7 @@
 import React, { useState } from 'react';
 import { Select } from 'antd';
 import { useStore } from '../../../stores/common';
+import * as Selector from '../../../stores/selector';
 import { WallTexture } from '../../../types';
 import WallExteriorImage from '../../../resources/WallExteriorImage.png';
 import { WallModel } from 'src/models/WallModel';
@@ -12,8 +13,8 @@ import { WallModel } from 'src/models/WallModel';
 const { Option } = Select;
 
 const WallSelection = () => {
-  const updateElementById = useStore((state) => state.updateElementById);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
+  const updateElementById = useStore(Selector.updateElementById);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
   const wall = getSelectedElement() as WallModel;

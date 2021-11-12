@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { useStore } from './stores/common';
+import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
 
 export interface TeamProps {
@@ -13,7 +14,7 @@ export interface TeamProps {
 }
 
 const Team = ({ top, height, color }: TeamProps) => {
-  const language = useStore((state) => state.language);
+  const language = useStore(Selector.language);
   const lang = { lng: language };
   const linePos = top + 56 + 'px';
   const top110 = top + 110 + 'px';

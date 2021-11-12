@@ -60,7 +60,7 @@ const Wall = ({
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const selectMe = useStore(Selector.selectMe);
-  const shadowEnabled = useStore(Selector.viewstate.shadowEnabled);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
   const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
@@ -873,7 +873,7 @@ const WallResizeHandle = React.memo(
 );
 
 const WallResizeHandleWarpper = React.memo(({ x, z, id, highLight, setShowGrid }: WallResizeHandleWarpperProps) => {
-  const orthographic = useStore(Selector.viewstate.orthographic);
+  const orthographic = useStore(Selector.viewState.orthographic);
   return (
     <React.Fragment>
       <WallResizeHandle

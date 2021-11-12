@@ -4,6 +4,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useStore } from './stores/common';
+import * as Selector from './stores/selector';
 import { Box3, Group, Vector3 } from 'three';
 import { ObjectType } from './types';
 import { FoundationModel } from './models/FoundationModel';
@@ -26,9 +27,9 @@ import { RoofModel } from './models/RoofModel';
 export interface ElementsRendererProps {}
 
 const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererProps) => {
-  const setCommonStore = useStore((state) => state.set);
-  const heliodon = useStore((state) => state.viewState.heliodon);
-  const elements = useStore((state) => state.elements);
+  const setCommonStore = useStore(Selector.set);
+  const heliodon = useStore(Selector.viewState.heliodon);
+  const elements = useStore(Selector.elements);
   const groupRef = useRef<Group>();
 
   useEffect(() => {

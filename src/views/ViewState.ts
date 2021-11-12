@@ -12,6 +12,7 @@ export interface ViewState {
   panCenter: Vector3;
 
   axes: boolean;
+  autoRotate: boolean;
   shadowEnabled: boolean;
   theme: string;
   heliodon: boolean;
@@ -28,7 +29,6 @@ export interface ViewState {
   showYearlyLightSensorPanel: boolean;
   showDailyPvYieldPanel: boolean;
   showYearlyPvYieldPanel: boolean;
-  autoRotate: boolean;
 
   heliodonPanelX: number;
   heliodonPanelY: number;

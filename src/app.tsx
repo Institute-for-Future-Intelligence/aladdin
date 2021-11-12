@@ -6,6 +6,7 @@
 
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useStore } from './stores/common';
+import * as Selector from 'src/stores/selector';
 import './app.css';
 import { Camera, Canvas } from '@react-three/fiber';
 import OrbitController from './orbitController';
@@ -42,7 +43,6 @@ import DailyPvYieldPanel from './panels/dailyPvYieldPanel';
 import Lights from './lights';
 import { Grid } from './grid';
 import CompassContainer from './compassContainer';
-import * as Selector from 'src/stores/selector';
 import { OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
 import ErrorPage from './ErrorPage';
 import i18n from './i18n/i18n';
@@ -55,24 +55,24 @@ import { faCloud } from '@fortawesome/free-solid-svg-icons';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore((state) => state.language);
-  const locale = useStore((state) => state.locale);
-  const localFileName = useStore((state) => state.localFileName);
+  const language = useStore(Selector.language);
+  const locale = useStore(Selector.locale);
+  const localFileName = useStore(Selector.localFileName);
   const loadWeatherData = useStore(Selector.loadWeatherData);
   const getClosestCity = useStore(Selector.getClosestCity);
   const countElementsByType = useStore(Selector.countElementsByType);
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
-  const orthographic = useStore(Selector.viewstate.orthographic) ?? false;
-  const orthographicChanged = useStore((state) => state.orthographicChanged);
-  const simulationInProgress = useStore((state) => state.simulationInProgress);
+  const orthographic = useStore(Selector.viewState.orthographic) ?? false;
+  const orthographicChanged = useStore(Selector.orthographicChanged);
+  const simulationInProgress = useStore(Selector.simulationInProgress);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
+  const loadPvModules = useStore(Selector.loadPvModules);
+  const heliodonRadius = useStore(Selector.heliodonRadius);
+  const cameraZoom = useStore(Selector.viewState.cameraZoom) ?? 20;
+  const exportContent = useStore(Selector.exportContent);
+  const cloudFile = useStore(Selector.cloudFile);
   const viewState = useStore((state) => state.viewState);
-  const loadPvModules = useStore((state) => state.loadPvModules);
-  const heliodonRadius = useStore((state) => state.heliodonRadius);
-  const cameraZoom = useStore(Selector.viewstate.cameraZoom) ?? 20;
-  const exportContent = useStore((state) => state.exportContent);
-  const cloudFile = useStore((state) => state.cloudFile);
 
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);

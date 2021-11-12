@@ -4,7 +4,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { ObjectType } from './types';
-import { WallModel } from './models/WallModel';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { Input, Modal } from 'antd';
@@ -38,19 +37,19 @@ const KeyboardListener = ({
   zoomView,
 }: KeyboardListenerProps) => {
   const setCommonStore = useStore(Selector.set);
-  const undoManager = useStore((state) => state.undoManager);
-  const addUndoable = useStore((state) => state.addUndoable);
-  const language = useStore((state) => state.language);
-  const orthographic = useStore(Selector.viewstate.orthographic) ?? false;
+  const undoManager = useStore(Selector.undoManager);
+  const addUndoable = useStore(Selector.addUndoable);
+  const language = useStore(Selector.language);
+  const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const getSelectedElement = useStore(Selector.getSelectedElement);
-  const copyElementById = useStore((state) => state.copyElementById);
-  const removeElementById = useStore((state) => state.removeElementById);
-  const pasteElement = useStore((state) => state.pasteElementByKey);
+  const copyElementById = useStore(Selector.copyElementById);
+  const removeElementById = useStore(Selector.removeElementById);
+  const pasteElement = useStore(Selector.pasteElementByKey);
   const getElementById = useStore(Selector.getElementById);
   const setElementPosition = useStore(Selector.setElementPosition);
-  const localFileName = useStore((state) => state.localFileName);
-  const localFileDialogRequested = useStore((state) => state.localFileDialogRequested);
-  const setEnableFineGrid = useStore((state) => state.setEnableFineGrid);
+  const localFileName = useStore(Selector.localFileName);
+  const setEnableFineGrid = useStore(Selector.setEnableFineGrid);
+  const localFileDialogRequested = useStore(Selector.localFileDialogRequested);
 
   const [downloadDialogVisible, setDownloadDialogVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);

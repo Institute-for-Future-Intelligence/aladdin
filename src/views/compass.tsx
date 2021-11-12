@@ -10,8 +10,10 @@ import compassObj from '../assets/compass.obj';
 import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
 import { Util } from '../Util';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 
 const Compass = () => {
+  const cameraDirection = useStore(Selector.cameraDirection);
   const model = useLoader(OBJLoader, compassObj);
   const font = useLoader(FontLoader, helvetikerFont);
   const mesh = useRef<Mesh>(null!);
@@ -22,9 +24,8 @@ const Compass = () => {
   } as TextGeometryParameters;
   const textMaterial = new MeshBasicMaterial({ color: 'antiquewhite' });
   const compassMaterial = new MeshBasicMaterial({ color: 'red' });
-  const PI = Math.PI;
 
-  const cameraDirection = useStore((state) => state.cameraDirection);
+  const PI = Math.PI;
   const dirc_X_Y = cameraDirection.setZ(0);
   const rotationZ = (-PI * 17) / 18 + Math.atan2(dirc_X_Y.x, dirc_X_Y.y);
 

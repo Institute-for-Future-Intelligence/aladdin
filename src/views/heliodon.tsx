@@ -8,19 +8,20 @@ import { BufferAttribute, BufferGeometry, DoubleSide, Euler, Plane, Vector3 } fr
 import { computeDeclinationAngle, computeHourAngle, computeSunLocation, TILT_ANGLE } from '../analysis/sunTools';
 import { Line, Plane as Drei_Plane } from '@react-three/drei';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 
 const HOUR_DIVISIONS = 96;
 const BASE_DIVISIONS = 72;
 const DECLINATION_DIVISIONS = 12;
 
 const Heliodon = () => {
-  const worldLatitude = useStore((state) => state.world.latitude);
-  const dateString = useStore((state) => state.world.date);
-  const aabb = useStore((state) => state.aabb);
-  const radius = useStore((state) => state.heliodonRadius);
-  const heliodon = useStore((state) => state.viewState.heliodon);
-  const setRadius = useStore((state) => state.setHeliodonRadius);
-  const setSunlightDirection = useStore((state) => state.setSunlightDirection);
+  const worldLatitude = useStore(Selector.world.latitude);
+  const dateString = useStore(Selector.world.date);
+  const aabb = useStore(Selector.aabb);
+  const radius = useStore(Selector.heliodonRadius);
+  const heliodon = useStore(Selector.viewState.heliodon);
+  const setRadius = useStore(Selector.setHeliodonRadius);
+  const setSunlightDirection = useStore(Selector.setSunlightDirection);
 
   const [hourAngle, setHourAngle] = useState<number>(0);
   const [declinationAngle, setDeclinationAngle] = useState<number>(0);

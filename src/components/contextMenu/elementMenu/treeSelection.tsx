@@ -5,6 +5,7 @@
 import React, { useState } from 'react';
 import { Select } from 'antd';
 import { useStore } from '../../../stores/common';
+import * as Selector from '../../../stores/selector';
 import { TreeType } from '../../../types';
 import CottonwoodImage from '../../../resources/cottonwood.png';
 import DogwoodImage from '../../../resources/dogwood.png';
@@ -17,8 +18,8 @@ import PineImage from '../../../resources/pine.png';
 const { Option } = Select;
 
 const TreeSelection = () => {
-  const updateElementById = useStore((state) => state.updateElementById);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
+  const updateElementById = useStore(Selector.updateElementById);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
   const tree = getSelectedElement();

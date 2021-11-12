@@ -4,6 +4,7 @@
 
 import React, { useState } from 'react';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { Row, Select, Col, Input } from 'antd';
 import { SolarPanelNominalSize } from '../models/SolarPanelNominalSize';
@@ -15,12 +16,13 @@ const { Option } = Select;
 export interface PvModelPanelProps {}
 
 const PvModelPanel = ({}: PvModelPanelProps) => {
-  const language = useStore((state) => state.language);
-  const updateElementById = useStore((state) => state.updateElementById);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
-  const setElementSize = useStore((state) => state.setElementSize);
-  const pvModules = useStore((state) => state.pvModules);
-  const getPvModule = useStore((state) => state.getPvModule);
+  const language = useStore(Selector.language);
+  const updateElementById = useStore(Selector.updateElementById);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const setElementSize = useStore(Selector.setElementSize);
+  const pvModules = useStore(Selector.pvModules);
+  const getPvModule = useStore(Selector.getPvModule);
+
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const lang = { lng: language };
   const solarPanel = getSelectedElement() as SolarPanelModel;

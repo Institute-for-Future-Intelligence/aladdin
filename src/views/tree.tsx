@@ -18,13 +18,13 @@ import OakShedImage from '../resources/oak_shed.png';
 import PineImage from '../resources/pine.png';
 import { DoubleSide, Euler, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import { useThree } from '@react-three/fiber';
 import { Billboard, Cone, Plane, Sphere } from '@react-three/drei';
 import { MOVE_HANDLE_RADIUS } from '../constants';
 import { TreeModel } from '../models/TreeModel';
 import { ObjectType, TreeType } from '../types';
 import { Util } from '../Util';
-import * as Selector from '../stores/selector';
 
 const Tree = ({
   id,
@@ -39,12 +39,14 @@ const Tree = ({
   evergreen = false,
   ...props
 }: TreeModel) => {
-  const setCommonStore = useStore((state) => state.set);
-  const orthographic = useStore(Selector.viewstate.orthographic) ?? false;
-  const date = useStore((state) => state.world.date);
+  const setCommonStore = useStore(Selector.set);
+  const orthographic = useStore(Selector.viewState.orthographic) ?? false;
+  const date = useStore(Selector.world.date);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const selectMe = useStore(Selector.selectMe);
+  const sunlightDirection = useStore(Selector.sunlightDirection);
+
   const now = new Date(date);
-  const shadowEnabled = useStore((state) => state.viewState.shadowEnabled);
-  const selectMe = useStore((state) => state.selectMe);
   const [hovered, setHovered] = useState(false);
   const meshRef = useRef<Mesh>(null!);
   const {
@@ -56,8 +58,7 @@ const Tree = ({
   const month = now.getMonth() + 1;
   const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
 
-  useStore((state) => state.cameraDirection);
-  const sunlightDirection = useStore((state) => state.sunlightDirection);
+  useStore(Selector.cameraDirection);
   const sunlightX = sunlightDirection.x;
   const sunlightZ = sunlightDirection.y;
   const cameraX = camera.position.x;

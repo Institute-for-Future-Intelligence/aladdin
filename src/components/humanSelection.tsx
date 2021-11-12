@@ -26,13 +26,14 @@ import JudyImage from '../resources/judy.png';
 import JuneImage from '../resources/june.png';
 import JuroImage from '../resources/juro.png';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import { HumanModel } from '../models/HumanModel';
 
 const { Option } = Select;
 
 const HumanSelection = () => {
-  const updateElementById = useStore((state) => state.updateElementById);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
+  const updateElementById = useStore(Selector.updateElementById);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
   const human = getSelectedElement() as HumanModel;

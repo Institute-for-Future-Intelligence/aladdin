@@ -6,6 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Cone, Cylinder, Line, Plane, Ring, Sphere } from '@react-three/drei';
 import { DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS, RESIZE_HANDLE_COLOR, RESIZE_HANDLE_SIZE } from '../constants';
 import {
@@ -54,20 +55,23 @@ const SolarPanel = ({
   parentId,
   orientation = Orientation.portrait,
 }: SolarPanelModel) => {
-  const setCommonStore = useStore((state) => state.set);
-  const date = useStore((state) => state.world.date);
-  const latitude = useStore((state) => state.world.latitude);
-  const shadowEnabled = useStore((state) => state.viewState.shadowEnabled);
-  const getElementById = useStore((state) => state.getElementById);
-  const selectMe = useStore((state) => state.selectMe);
-  const updateElementById = useStore((state) => state.updateElementById);
-  const getPvModule = useStore((state) => state.getPvModule);
-  const resizeHandleType = useStore((state) => state.resizeHandleType);
-  const rotateHandleType = useStore((state) => state.rotateHandleType);
+  const setCommonStore = useStore(Selector.set);
+  const date = useStore(Selector.world.date);
+  const latitude = useStore(Selector.world.latitude);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const getElementById = useStore(Selector.getElementById);
+  const selectMe = useStore(Selector.selectMe);
+  const updateElementById = useStore(Selector.updateElementById);
+  const getPvModule = useStore(Selector.getPvModule);
+  const heliodonRadius = useStore(Selector.heliodonRadius);
+  const resizeHandleType = useStore(Selector.resizeHandleType);
+  const rotateHandleType = useStore(Selector.rotateHandleType);
+
   const {
     gl: { domElement },
     camera,
   } = useThree();
+
   const [hovered, setHovered] = useState(false);
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [nx, setNx] = useState(1);
@@ -84,7 +88,6 @@ const SolarPanel = ({
   const pointerDown = useRef<boolean>(false);
   const ray = useMemo(() => new Raycaster(), []);
 
-  const heliodonRadius = useStore((state) => state.heliodonRadius);
   const sunBeamLength = Math.max(100, heliodonRadius);
   const panelNormal = new Vector3().fromArray(normal);
   const pvModel = getPvModule(pvModelName) ?? getPvModule('SPR-X21-335-BLK');

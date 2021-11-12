@@ -4,6 +4,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import styled from 'styled-components';
 import { Space, Switch } from 'antd';
 import Maps from '../components/maps';
@@ -61,16 +62,17 @@ const Header = styled.div`
 `;
 
 const MapPanel = () => {
-  const language = useStore((state) => state.language);
-  const setCommonStore = useStore((state) => state.set);
-  const address = useStore((state) => state.world.address);
-  const latitude = useStore((state) => state.world.latitude);
-  const longitude = useStore((state) => state.world.longitude);
-  const mapPanelX = useStore((state) => state.viewState.mapPanelX);
-  const mapPanelY = useStore((state) => state.viewState.mapPanelY);
-  const groundImage = useStore((state) => state.viewState.groundImage);
-  const mapWeatherStations = useStore((state) => state.viewState.mapWeatherStations);
-  const mapZoom = useStore((state) => state.viewState.mapZoom);
+  const language = useStore(Selector.language);
+  const setCommonStore = useStore(Selector.set);
+  const address = useStore(Selector.world.address);
+  const latitude = useStore(Selector.world.latitude);
+  const longitude = useStore(Selector.world.longitude);
+  const mapPanelX = useStore(Selector.viewState.mapPanelX);
+  const mapPanelY = useStore(Selector.viewState.mapPanelY);
+  const groundImage = useStore(Selector.viewState.groundImage);
+  const mapWeatherStations = useStore(Selector.viewState.mapWeatherStations);
+  const mapZoom = useStore(Selector.viewState.mapZoom);
+
   const searchBox = useRef<google.maps.places.SearchBox>();
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 460;

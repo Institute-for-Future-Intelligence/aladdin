@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Sphere } from '@react-three/drei';
 import { Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import { CuboidModel } from '../models/CuboidModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType } from '../types';
@@ -40,22 +41,22 @@ const Cuboid = ({
   selected = false,
   locked = false,
 }: CuboidModel) => {
-  const setCommonStore = useStore((state) => state.set);
+  const setCommonStore = useStore(Selector.set);
+  const moveHandleType = useStore(Selector.moveHandleType);
+  const rotateHandleType = useStore(Selector.rotateHandleType);
+  const resizeHandleType = useStore(Selector.resizeHandleType);
+  const getElementById = useStore(Selector.getElementById);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const addElement = useStore(Selector.addElement);
+  const setElementPosition = useStore(Selector.setElementPosition);
+  const setElementNormal = useStore(Selector.setElementNormal);
+  const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
+  const selectMe = useStore(Selector.selectMe);
+  const updateElementById = useStore(Selector.updateElementById);
+  const setElementSize = useStore(Selector.setElementSize);
+  const resizeAnchor = useStore(Selector.resizeAnchor);
+  const getPvModule = useStore(Selector.getPvModule);
   const viewState = useStore((state) => state.viewState);
-  const moveHandleType = useStore((state) => state.moveHandleType);
-  const rotateHandleType = useStore((state) => state.rotateHandleType);
-  const resizeHandleType = useStore((state) => state.resizeHandleType);
-  const getElementById = useStore((state) => state.getElementById);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
-  const addElement = useStore((state) => state.addElement);
-  const setElementPosition = useStore((state) => state.setElementPosition);
-  const setElementNormal = useStore((state) => state.setElementNormal);
-  const objectTypeToAdd = useStore((state) => state.objectTypeToAdd);
-  const selectMe = useStore((state) => state.selectMe);
-  const updateElementById = useStore((state) => state.updateElementById);
-  const setElementSize = useStore((state) => state.setElementSize);
-  const resizeAnchor = useStore((state) => state.resizeAnchor);
-  const getPvModule = useStore((state) => state.getPvModule);
 
   const {
     camera,

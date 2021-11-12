@@ -5,14 +5,15 @@
 import React, { useState } from 'react';
 import { Checkbox, Input, Menu } from 'antd';
 import { useStore } from 'src/stores/common';
+import * as Selector from '../../../stores/selector';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { Copy, Cut } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 
 export const SensorMenu = () => {
-  const language = useStore((state) => state.language);
-  const updateElementById = useStore((state) => state.updateElementById);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
+  const language = useStore(Selector.language);
+  const updateElementById = useStore(Selector.updateElementById);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
   const selectedElement = getSelectedElement();
   const [labelText, setLabelText] = useState<string>(selectedElement?.label ?? '');
   const lang = { lng: language };

@@ -36,9 +36,9 @@ import { SolarPanelModel } from '../models/SolarPanelModel';
 import { WallModel } from 'src/models/WallModel';
 import { Locale } from 'antd/lib/locale-provider';
 import enUS from 'antd/lib/locale/en_US';
+import { Undoable } from '../undo/Undoable';
 // @ts-ignore
 import UndoManager from 'undo-manager';
-import { Undoable } from '../undo/Undoable';
 
 enableMapSet();
 
@@ -142,12 +142,13 @@ export interface CommonStoreState {
   simulationInProgress: boolean;
   locale: Locale;
   localFileName: string;
-  // the following is to fix the bug that when ctrl+o is pressed, the file dialog gets fired up multiple times
-  localFileDialogRequested: boolean;
   savedCameraPosition: Vector3;
   savedPanCenter: Vector3;
   enableFineGrid: boolean;
   setEnableFineGrid: (b: boolean) => void;
+
+  // the following is to fix the bug that when ctrl+o is pressed, the file dialog gets fired up multiple times
+  localFileDialogRequested: boolean;
 }
 
 export const useStore = create<CommonStoreState>(

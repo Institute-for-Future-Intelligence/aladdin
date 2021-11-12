@@ -5,16 +5,16 @@
 import React from 'react';
 import { Checkbox, Menu } from 'antd';
 import { useStore } from '../../stores/common';
+import * as Selector from '../../stores/selector';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ColorResult, CompactPicker } from 'react-color';
 import i18n from '../../i18n/i18n';
 import { Util } from '../../Util';
 import { UndoableDelete } from '../../undo/UndoableDelete';
-import * as Selector from '../../stores/selector';
 
 export const Paste = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
-  const language = useStore((state) => state.language);
-  const pasteElement = useStore((state) => state.pasteElementToPoint);
+  const language = useStore(Selector.language);
+  const pasteElement = useStore(Selector.pasteElementToPoint);
   const isMac = Util.getOS()?.startsWith('Mac');
 
   return (
@@ -26,9 +26,9 @@ export const Paste = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
 };
 
 export const Copy = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
-  const language = useStore((state) => state.language);
-  const copyElementById = useStore((state) => state.copyElementById);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
+  const language = useStore(Selector.language);
+  const copyElementById = useStore(Selector.copyElementById);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
   const isMac = Util.getOS()?.startsWith('Mac');
 
   const copyElement = () => {
@@ -47,12 +47,12 @@ export const Copy = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
 };
 
 export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
-  const setCommonStore = useStore((state) => state.set);
-  const language = useStore((state) => state.language);
-  const removeElementById = useStore((state) => state.removeElementById);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
+  const setCommonStore = useStore(Selector.set);
+  const language = useStore(Selector.language);
+  const removeElementById = useStore(Selector.removeElementById);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
   const getElementById = useStore(Selector.getElementById);
-  const addUndoable = useStore((state) => state.addUndoable);
+  const addUndoable = useStore(Selector.addUndoable);
   const isMac = Util.getOS()?.startsWith('Mac');
 
   const cut = () => {
@@ -93,9 +93,9 @@ export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
 };
 
 export const Lock = () => {
-  const language = useStore((state) => state.language);
-  const updateElementById = useStore((state) => state.updateElementById);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
+  const language = useStore(Selector.language);
+  const updateElementById = useStore(Selector.updateElementById);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
   const selectedElement = getSelectedElement();
 
   const lockElement = (on: boolean) => {
@@ -120,9 +120,9 @@ export const Lock = () => {
 };
 
 export const ColorPicker = () => {
-  const language = useStore((state) => state.language);
-  const updateElementById = useStore((state) => state.updateElementById);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
+  const language = useStore(Selector.language);
+  const updateElementById = useStore(Selector.updateElementById);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
   const selectedElement = getSelectedElement();
 
   const changeElementColor = (colorResult: ColorResult) => {

@@ -6,6 +6,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Team from './team';
 import { useStore } from './stores/common';
+import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
 
 const Container = styled.div`
@@ -28,7 +29,7 @@ export interface AboutProps {
 }
 
 const About = ({ openAboutUs }: AboutProps) => {
-  const language = useStore((state) => state.language);
+  const language = useStore(Selector.language);
   return (
     <Container>
       <Team top={10} color={'antiquewhite'} />

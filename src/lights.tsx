@@ -4,10 +4,11 @@
 
 import React from 'react';
 import { useStore } from './stores/common';
+import * as Selector from './stores/selector';
 import { DEFAULT_FAR, DEFAULT_SHADOW_CAMERA_OFFSET } from './constants';
 
 const Lights = () => {
-  const sunlightDirection = useStore((state) => state.sunlightDirection);
+  const sunlightDirection = useStore(Selector.sunlightDirection);
 
   return (
     <>

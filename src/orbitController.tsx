@@ -21,14 +21,14 @@ export interface OrbitControllerProps {
 // We need these to setup the OrbitControls class.
 // https://threejs.org/docs/#examples/en/controls/OrbitControls
 const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitControllerProps) => {
-  const orthographic = useStore(Selector.viewstate.orthographic);
-  const enableRotate = useStore(Selector.viewstate.enableRotate);
-  const cameraPosition = useStore(Selector.viewstate.cameraPosition);
-  const cameraZoom = useStore(Selector.viewstate.cameraZoom);
-  const panCenter = useStore((state) => state.viewState.panCenter);
-  const enableOrbitController = useStore((state) => state.enableOrbitController);
-  const autoRotate = useStore((state) => state.viewState.autoRotate);
-  const setCommonStore = useStore((state) => state.set);
+  const orthographic = useStore(Selector.viewState.orthographic);
+  const enableRotate = useStore(Selector.viewState.enableRotate);
+  const cameraPosition = useStore(Selector.viewState.cameraPosition);
+  const cameraZoom = useStore(Selector.viewState.cameraZoom);
+  const panCenter = useStore(Selector.viewState.panCenter);
+  const enableOrbitController = useStore(Selector.enableOrbitController);
+  const autoRotate = useStore(Selector.viewState.autoRotate);
+  const setCommonStore = useStore(Selector.set);
 
   const { camera, gl, scene } = useThree();
   camera.up.set(0, 0, 1);

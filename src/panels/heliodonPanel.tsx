@@ -4,6 +4,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import styled from 'styled-components';
 import { DatePicker, Slider, Space, Switch, TimePicker } from 'antd';
 import moment from 'moment';
@@ -56,12 +57,13 @@ const Header = styled.div`
 `;
 
 const HeliodonPanel = () => {
-  const language = useStore((state) => state.language);
-  const setCommonStore = useStore((state) => state.set);
-  const dateString = useStore((state) => state.world.date);
-  const latitude = useStore((state) => state.world.latitude);
+  const language = useStore(Selector.language);
+  const setCommonStore = useStore(Selector.set);
+  const dateString = useStore(Selector.world.date);
+  const latitude = useStore(Selector.world.latitude);
+  const animateSun = useStore(Selector.animateSun);
   const viewState = useStore((state) => state.viewState);
-  const animateSun = useStore((state) => state.animateSun);
+
   const requestRef = useRef<number>(0);
   const previousFrameTime = useRef<number>(-1);
   const wrapperRef = useRef<HTMLDivElement | null>(null);

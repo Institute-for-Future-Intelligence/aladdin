@@ -11,17 +11,18 @@ import helvetikerFont from './fonts/helvetiker_regular.typeface.fnt';
 import { WORKSPACE_SIZE } from './constants';
 import { Util } from './Util';
 import { useStore } from './stores/common';
+import * as Selector from './stores/selector';
 import { ObjectType, ResizeHandleType } from './types';
 import { ElementModel } from './models/ElementModel';
 
 export const Grid = () => {
-  const grid = useStore((state) => state.grid);
-  const enableOrbitController = useStore((state) => state.enableOrbitController);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
-  const viewStateGroundImage = useStore((state) => state.viewState.groundImage);
-  const moveHandleType = useStore((state) => state.moveHandleType);
-  const rotateHandleType = useStore((state) => state.rotateHandleType);
-  const resizeHandleType = useStore((state) => state.resizeHandleType);
+  const grid = useStore(Selector.grid);
+  const enableOrbitController = useStore(Selector.enableOrbitController);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const viewStateGroundImage = useStore(Selector.viewState.groundImage);
+  const moveHandleType = useStore(Selector.moveHandleType);
+  const rotateHandleType = useStore(Selector.rotateHandleType);
+  const resizeHandleType = useStore(Selector.resizeHandleType);
 
   const [showGrid, setShowGrid] = useState(false);
   const [showScale, setShowScale] = useState(false);
@@ -78,9 +79,9 @@ export const Grid = () => {
 };
 
 export const PolarGrid = ({ element, height }: { element: ElementModel; height?: number }) => {
-  const rotateHandle = useStore((state) => state.rotateHandleType);
-  const angle = useStore((state) => state.selectedElementAngle);
-  const getElementById = useStore((state) => state.getElementById);
+  const rotateHandle = useStore(Selector.rotateHandleType);
+  const angle = useStore(Selector.selectedElementAngle);
+  const getElementById = useStore(Selector.getElementById);
 
   const [position, setPosition] = useState<Vector3>();
   const [radius, setRadius] = useState<number>(10);
@@ -163,11 +164,10 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
 };
 
 export const VerticalScale = ({ element }: { element: ElementModel }) => {
-  const getResizeHandlePosition = useStore((state) => state.getResizeHandlePosition);
-  const getCameraDirection = useStore((state) => state.getCameraDirection);
-
-  const resizeHandleType = useStore((state) => state.resizeHandleType);
-  const selectedElementHeight = useStore((state) => state.selectedElementHeight);
+  const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
+  const getCameraDirection = useStore(Selector.getCameraDirection);
+  const resizeHandleType = useStore(Selector.resizeHandleType);
+  const selectedElementHeight = useStore(Selector.selectedElementHeight);
 
   const [position, setPostion] = useState<Vector3>();
   const [rotation, setRotation] = useState<Euler>();

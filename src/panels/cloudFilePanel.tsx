@@ -5,6 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Input, Modal, Space, Table } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -70,8 +71,9 @@ export interface CloudFilePanelProps {
 }
 
 const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, renameCloudFile }: CloudFilePanelProps) => {
-  const language = useStore((state) => state.language);
-  const setCommonStore = useStore((state) => state.set);
+  const language = useStore(Selector.language);
+  const setCommonStore = useStore(Selector.set);
+
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 680;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;

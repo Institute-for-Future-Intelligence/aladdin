@@ -6,17 +6,19 @@ import React from 'react';
 import { Checkbox, Menu, Radio } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { useStore } from 'src/stores/common';
+import * as Selector from '../../../stores/selector';
 import { Theme } from 'src/types';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 
 export const SkyMenu = () => {
-  const setCommonStore = useStore((state) => state.set);
-  const addUndoable = useStore((state) => state.addUndoable);
-  const axes = useStore((state) => state.viewState.axes);
-  const theme = useStore((state) => state.viewState.theme);
-  const language = useStore((state) => state.language);
+  const setCommonStore = useStore(Selector.set);
+  const addUndoable = useStore(Selector.addUndoable);
+  const axes = useStore(Selector.viewState.axes);
+  const theme = useStore(Selector.viewState.theme);
+  const language = useStore(Selector.language);
+
   const lang = { lng: language };
 
   const radioStyle = {

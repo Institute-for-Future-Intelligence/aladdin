@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { InputNumber, Menu, Space } from 'antd';
 import { Util } from '../Util';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import { ObjectType } from '../types';
 import i18n from '../i18n/i18n';
 
@@ -43,11 +44,11 @@ const ReshapeElementMenu = ({
   heightStep = 0.1,
   ...rest
 }: ReshapeElementMenuProps) => {
-  const language = useStore((state) => state.language);
-  const setElementSize = useStore((state) => state.setElementSize);
-  const setElementRotation = useStore((state) => state.setElementRotation);
-  const getElementById = useStore((state) => state.getElementById);
-  const updateElementById = useStore((state) => state.updateElementById);
+  const language = useStore(Selector.language);
+  const setElementSize = useStore(Selector.setElementSize);
+  const setElementRotation = useStore(Selector.setElementRotation);
+  const getElementById = useStore(Selector.getElementById);
+  const updateElementById = useStore(Selector.updateElementById);
   const element = getElementById(elementId);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const lang = { lng: language };

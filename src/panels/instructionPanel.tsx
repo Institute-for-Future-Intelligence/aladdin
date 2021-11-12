@@ -45,9 +45,9 @@ const ColumnWrapper = styled.div`
 export interface InstructionPanelProps {}
 
 const InstructionPanel = ({}: InstructionPanelProps) => {
-  const language = useStore((state) => state.language);
-  const sunlightDirection = useStore((state) => state.sunlightDirection);
-  const orthographic = useStore(Selector.viewstate.orthographic) ?? false;
+  const language = useStore(Selector.language);
+  const sunlightDirection = useStore(Selector.sunlightDirection);
+  const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const lang = { lng: language };
   const color = sunlightDirection.y > 0 ? 'navajowhite' : 'antiquewhite';
 

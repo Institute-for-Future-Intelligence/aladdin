@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import { GraphDataType, ObjectType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
@@ -73,13 +74,14 @@ const DailyPvYieldPanel = ({
   setIndividualOutputs,
   analyzeDailyPvYield,
 }: DailyPvYieldPanelProps) => {
-  const language = useStore((state) => state.language);
-  const setCommonStore = useStore((state) => state.set);
+  const language = useStore(Selector.language);
+  const setCommonStore = useStore(Selector.set);
+  const countElementsByType = useStore(Selector.countElementsByType);
+  const dailyYield = useStore(Selector.dailyPvYield);
+  const solarPanelLabels = useStore(Selector.solarPanelLabels);
+  const now = new Date(useStore(Selector.world.date));
   const viewState = useStore((state) => state.viewState);
-  const countElementsByType = useStore((state) => state.countElementsByType);
-  const dailyYield = useStore((state) => state.dailyPvYield);
-  const solarPanelLabels = useStore((state) => state.solarPanelLabels);
-  const now = new Date(useStore((state) => state.world.date));
+
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;

@@ -61,22 +61,18 @@ const Foundation = ({
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getInitialWallsID = useStore(Selector.getInitialWallsID);
-
   const setCommonStore = useStore(Selector.set);
   const setElementPosition = useStore(Selector.setElementPosition);
   const setElementSize = useStore(Selector.setElementSize);
-
   const updateElementById = useStore(Selector.updateElementById);
   const removeElementById = useStore(Selector.removeElementById);
   const selectMe = useStore(Selector.selectMe);
   const addElement = useStore(Selector.addElement);
-  const getPvModule = useStore((state) => state.getPvModule);
-
+  const getPvModule = useStore(Selector.getPvModule);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const deletedWallID = useStore(Selector.deletedWallID);
-  const shadowEnabled = useStore(Selector.viewstate.shadowEnabled);
-  const groundImage = useStore(Selector.viewstate.groundImage);
-
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const groundImage = useStore(Selector.viewState.groundImage);
   const moveHandleType = useStore(Selector.moveHandleType);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const rotateHandleType = useStore(Selector.rotateHandleType);
@@ -1184,7 +1180,7 @@ const Foundation = ({
 
 export const FoundationGrid = React.memo(
   ({ args, objectType }: { args: [lx: number, ly: number, lz: number]; objectType: ObjectType }) => {
-    const enableFineGrid = useStore((state) => state.enableFineGrid);
+    const enableFineGrid = useStore(Selector.enableFineGrid);
 
     const [unit, setUnit] = useState(1);
     const [lineWidth, setLineWidth] = useState(0.5);

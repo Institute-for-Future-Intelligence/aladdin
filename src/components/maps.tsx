@@ -5,6 +5,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 
 const containerStyle = {
   border: '1px solid',
@@ -13,14 +14,15 @@ const containerStyle = {
 };
 
 const Maps = () => {
-  const setCommonStore = useStore((state) => state.set);
-  const latitude = useStore((state) => state.world.latitude);
-  const longitude = useStore((state) => state.world.longitude);
+  const setCommonStore = useStore(Selector.set);
+  const latitude = useStore(Selector.world.latitude);
+  const longitude = useStore(Selector.world.longitude);
+  const weatherData = useStore(Selector.weatherData);
   const viewState = useStore((state) => state.viewState);
+
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const bounds = useRef<google.maps.LatLngBounds | null | undefined>();
   const cities = useRef<google.maps.LatLng[]>([]);
-  const weatherData = useStore((state) => state.weatherData);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
   useEffect(() => {}, [updateFlag]);

@@ -7,6 +7,7 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import React, { useEffect, useState } from 'react';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
+import * as Selector from '../../../stores/selector';
 import { ObjectType, Orientation, TrackerType } from 'src/types';
 import { Util } from 'src/Util';
 import { Vector3 } from 'three';
@@ -16,11 +17,12 @@ import i18n from '../../../i18n/i18n';
 const { Option } = Select;
 
 export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (visible: boolean) => void }) => {
-  const language = useStore((state) => state.language);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
-  const setElementSize = useStore((state) => state.setElementSize);
-  const updateElementById = useStore((state) => state.updateElementById);
-  const getPvModule = useStore((state) => state.getPvModule);
+  const language = useStore(Selector.language);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const setElementSize = useStore(Selector.setElementSize);
+  const updateElementById = useStore(Selector.updateElementById);
+  const getPvModule = useStore(Selector.getPvModule);
+
   const [solarPanel, setSolarPanel] = useState<SolarPanelModel>();
   const [dx, setDx] = useState<number>(0);
   const [dy, setDy] = useState<number>(0);

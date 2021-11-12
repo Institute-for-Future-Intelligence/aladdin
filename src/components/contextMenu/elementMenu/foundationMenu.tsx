@@ -9,17 +9,18 @@ import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import ReshapeElementMenu from 'src/components/reshapeElementMenu';
 import { useStore } from 'src/stores/common';
+import * as Selector from '../../../stores/selector';
 import { ObjectType } from 'src/types';
 import i18n from '../../../i18n/i18n';
 
 export const FoundationMenu = () => {
-  const language = useStore((state) => state.language);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
-  const countAllChildElementsByType = useStore((state) => state.countAllChildElementsByType);
-  const countAllChildSolarPanels = useStore((state) => state.countAllChildSolarPanels);
-  const removeAllChildElementsByType = useStore((state) => state.removeAllChildElementsByType);
+  const language = useStore(Selector.language);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const countAllChildElementsByType = useStore(Selector.countAllChildElementsByType);
+  const countAllChildSolarPanels = useStore(Selector.countAllChildSolarPanels);
+  const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
+  const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
 
-  const contextMenuObjectType = useStore((state) => state.contextMenuObjectType);
   const selectedElement = getSelectedElement();
   const sensorCountFoundation = selectedElement
     ? countAllChildElementsByType(selectedElement.id, ObjectType.Sensor)

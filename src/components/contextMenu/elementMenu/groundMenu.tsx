@@ -8,6 +8,7 @@ import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { CompactPicker } from 'react-color';
 import { useStore } from 'src/stores/common';
+import * as Selector from '../../../stores/selector';
 import { ObjectType } from 'src/types';
 import { Paste } from '../menuItems';
 import i18n from '../../../i18n/i18n';
@@ -17,16 +18,16 @@ import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 
 export const GroundMenu = () => {
-  const language = useStore((state) => state.language);
+  const language = useStore(Selector.language);
   const albedo = useStore((state) => state.world.ground.albedo);
-  const groundColor = useStore((state) => state.viewState.groundColor);
-  const setCommonStore = useStore((state) => state.set);
-  const countElementsByType = useStore((state) => state.countElementsByType);
-  const removeElementsByType = useStore((state) => state.removeElementsByType);
-  const addUndoable = useStore((state) => state.addUndoable);
-  const elements = useStore((state) => state.elements);
+  const groundColor = useStore(Selector.viewState.groundColor);
+  const setCommonStore = useStore(Selector.set);
+  const countElementsByType = useStore(Selector.countElementsByType);
+  const removeElementsByType = useStore(Selector.removeElementsByType);
+  const addUndoable = useStore(Selector.addUndoable);
+  const elements = useStore(Selector.elements);
+  const groundImage = useStore(Selector.viewState.groundImage);
 
-  const groundImage = useStore((state) => state.viewState.groundImage);
   const treeCount = countElementsByType(ObjectType.Tree);
   const humanCount = countElementsByType(ObjectType.Human);
 

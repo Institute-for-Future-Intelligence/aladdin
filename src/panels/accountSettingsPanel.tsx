@@ -5,6 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
 
@@ -56,8 +57,9 @@ const Header = styled.div`
 export interface AccountSettingsPanelProps {}
 
 const AccountSettingsPanel = ({}: AccountSettingsPanelProps) => {
-  const language = useStore((state) => state.language);
-  const setCommonStore = useStore((state) => state.set);
+  const language = useStore(Selector.language);
+  const setCommonStore = useStore(Selector.set);
+
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;

@@ -5,6 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Input, Space } from 'antd';
 import i18n from '../i18n/i18n';
@@ -59,10 +60,11 @@ const { TextArea } = Input;
 export interface StickyNotePanelProps {}
 
 const StickyNotePanel = ({}: StickyNotePanelProps) => {
-  const language = useStore((state) => state.language);
-  const setCommonStore = useStore((state) => state.set);
+  const language = useStore(Selector.language);
+  const setCommonStore = useStore(Selector.set);
+  const notes = useStore(Selector.notes);
   const viewState = useStore((state) => state.viewState);
-  const notes = useStore((state) => state.notes);
+
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 440;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 400;

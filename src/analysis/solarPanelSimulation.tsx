@@ -7,13 +7,13 @@ import { calculateDiffuseAndReflectedRadiation, calculatePeakRadiation, getSunDi
 import { Euler, Intersection, Object3D, Quaternion, Raycaster, Vector3 } from 'three';
 import { useThree } from '@react-three/fiber';
 import { useStore } from '../stores/common';
+import * as Selector from 'src/stores/selector';
 import { DatumEntry, Discretization, ObjectType, Orientation, ShadeTolerance, TrackerType } from '../types';
 import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
 import { MONTHS } from '../constants';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
-import * as Selector from 'src/stores/selector';
 import { PvModel } from '../models/PvModel';
 
 export interface SolarPanelSimulationProps {
@@ -39,14 +39,14 @@ const SolarPanelSimulation = ({
   yearlyIndividualOutputs = false,
   yearlyPvYieldFlag,
 }: SolarPanelSimulationProps) => {
-  const setCommonStore = useStore((state) => state.set);
+  const setCommonStore = useStore(Selector.set);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
-  const getPvModule = useStore((state) => state.getPvModule);
+  const getPvModule = useStore(Selector.getPvModule);
   const getWeather = useStore(Selector.getWeather);
   const getElementById = useStore(Selector.getElementById);
-  const setPvDailyYield = useStore(Selector.setPvDailyYield);
-  const setPvYearlyYield = useStore(Selector.setPvYearlyYield);
+  const setPvDailyYield = useStore(Selector.setDailyPvYield);
+  const setPvYearlyYield = useStore(Selector.setYearlyPvYield);
   const setSolarPanelLabels = useStore(Selector.setSolarPanelLabels);
 
   const [currentTemperature, setCurrentTemperature] = useState<number>(20);

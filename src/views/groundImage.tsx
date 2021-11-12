@@ -5,6 +5,7 @@
 import React from 'react';
 import { useTexture } from '@react-three/drei';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import { DoubleSide } from 'three';
 import { getMapImage } from '../helpers';
 import { Util } from '../Util';
@@ -16,13 +17,12 @@ import { Util } from '../Util';
 
 const NATICK_MAP_SCALE_FACTOR = 0.7;
 const NATICK_LATITUDE = 42.2845513;
-const MERCATOR_PROJECTION_SCALE_CONSTANT =
-  NATICK_MAP_SCALE_FACTOR / Math.cos(Util.toRadians(NATICK_LATITUDE));
+const MERCATOR_PROJECTION_SCALE_CONSTANT = NATICK_MAP_SCALE_FACTOR / Math.cos(Util.toRadians(NATICK_LATITUDE));
 
 const GroundImage = () => {
-  const latitude = useStore((state) => state.world.latitude);
-  const longitude = useStore((state) => state.world.longitude);
-  const mapZoom = useStore((state) => state.viewState.mapZoom);
+  const latitude = useStore(Selector.world.latitude);
+  const longitude = useStore(Selector.world.longitude);
+  const mapZoom = useStore(Selector.viewState.mapZoom);
 
   const texture = useTexture(getMapImage(640, latitude, longitude, mapZoom));
   let zoomScale = 1;
@@ -38,13 +38,7 @@ const GroundImage = () => {
   return (
     <mesh rotation={[0, 0, 0]} position={[0, 0, 0]} renderOrder={-1} scale={[scale, scale, 1]}>
       <planeBufferGeometry args={[100, 100]} />
-      <meshStandardMaterial
-        attach="material"
-        depthTest={false}
-        side={DoubleSide}
-        map={texture}
-        opacity={1}
-      />
+      <meshStandardMaterial attach="material" depthTest={false} side={DoubleSide} map={texture} opacity={1} />
     </mesh>
   );
 };

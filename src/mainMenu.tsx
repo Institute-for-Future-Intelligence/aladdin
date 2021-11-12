@@ -82,20 +82,21 @@ const MainMenu = ({
   analyzePvYearlyYield,
   canvas,
 }: MainMenuProps) => {
-  const setCommonStore = useStore((state) => state.set);
-  const undoManager = useStore((state) => state.undoManager);
-  const language = useStore((state) => state.language);
-  const localFileName = useStore((state) => state.localFileName);
-  const timesPerHour = useStore((state) => state.world.timesPerHour);
-  const discretization = useStore((state) => state.world.discretization);
-  const solarPanelGridCellSize = useStore((state) => state.world.solarPanelGridCellSize);
-  const orthographic = useStore(Selector.viewstate.orthographic);
-  const autoRotate = useStore((state) => state.viewState.autoRotate);
-  const showInfoPanel = useStore((state) => state.viewState.showInfoPanel);
-  const showInstructionPanel = useStore((state) => state.viewState.showInstructionPanel);
-  const showMapPanel = useStore((state) => state.viewState.showMapPanel);
-  const showWeatherPanel = useStore((state) => state.viewState.showWeatherPanel);
-  const showStickyNotePanel = useStore((state) => state.viewState.showStickyNotePanel);
+  const setCommonStore = useStore(Selector.set);
+  const undoManager = useStore(Selector.undoManager);
+  const language = useStore(Selector.language);
+  const localFileName = useStore(Selector.localFileName);
+  const timesPerHour = useStore(Selector.world.timesPerHour);
+  const discretization = useStore(Selector.world.discretization);
+  const solarPanelGridCellSize = useStore(Selector.world.solarPanelGridCellSize);
+  const orthographic = useStore(Selector.viewState.orthographic);
+  const autoRotate = useStore(Selector.viewState.autoRotate);
+  const showInfoPanel = useStore(Selector.viewState.showInfoPanel);
+  const showInstructionPanel = useStore(Selector.viewState.showInstructionPanel);
+  const showMapPanel = useStore(Selector.viewState.showMapPanel);
+  const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
+  const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
+
   const [aboutUs, setAboutUs] = useState(false);
   const [downloadDialogVisible, setDownloadDialogVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -149,6 +150,7 @@ const MainMenu = ({
         state.viewState = input.view;
         state.elements = input.elements;
         state.notes = input.notes ?? [];
+        state.cloudFile = undefined;
       });
     }
   };

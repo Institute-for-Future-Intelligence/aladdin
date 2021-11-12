@@ -8,9 +8,10 @@ import HumanSelection from 'src/components/humanSelection';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { useStore } from '../../../stores/common';
+import * as Selector from '../../../stores/selector';
 
 export const HumanMenu = () => {
-  const language = useStore((state) => state.language);
+  const language = useStore(Selector.language);
   return (
     <>
       <Copy />

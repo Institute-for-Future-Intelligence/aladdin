@@ -17,6 +17,7 @@ import GrasslandDaySkyImage from '../resources/grassland.jpg';
 import GrasslandNightSkyImage from '../resources/grassland-night.jpg';
 
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import { IntersectionPlaneType, ObjectType, ResizeHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
 import { DEFAULT_SKY_RADIUS } from '../constants';
@@ -26,15 +27,14 @@ export interface SkyProps {
 }
 
 const Sky = ({ theme = 'Default' }: SkyProps) => {
-  const setCommonStore = useStore((state) => state.set);
-  const selectNone = useStore((state) => state.selectNone);
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
-  const updateElement = useStore((state) => state.updateElementById);
-  const getCameraDirection = useStore((state) => state.getCameraDirection);
-  const getResizeHandlePosition = useStore((state) => state.getResizeHandlePosition);
-
-  const resizeHandleType = useStore((state) => state.resizeHandleType);
-  const sunlightDirection = useStore((state) => state.sunlightDirection);
+  const setCommonStore = useStore(Selector.set);
+  const selectNone = useStore(Selector.selectNone);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const updateElement = useStore(Selector.updateElementById);
+  const getCameraDirection = useStore(Selector.getCameraDirection);
+  const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
+  const resizeHandleType = useStore(Selector.resizeHandleType);
+  const sunlightDirection = useStore(Selector.sunlightDirection);
 
   const {
     camera,

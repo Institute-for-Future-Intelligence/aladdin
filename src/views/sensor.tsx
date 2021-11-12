@@ -6,6 +6,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { Box, Sphere } from '@react-three/drei';
 import { Euler, Mesh, Vector3 } from 'three';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import { SensorModel } from '../models/SensorModel';
 import { useThree } from '@react-three/fiber';
 import { HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS } from '../constants';
@@ -32,10 +33,11 @@ const Sensor = ({
   light = true,
   heatFlux = false,
 }: SensorModel) => {
-  const setCommonStore = useStore((state) => state.set);
-  const shadowEnabled = useStore((state) => state.viewState.shadowEnabled);
-  const getElementById = useStore((state) => state.getElementById);
-  const selectMe = useStore((state) => state.selectMe);
+  const setCommonStore = useStore(Selector.set);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const getElementById = useStore(Selector.getElementById);
+  const selectMe = useStore(Selector.selectMe);
+
   const {
     gl: { domElement },
   } = useThree();

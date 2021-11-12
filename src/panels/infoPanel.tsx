@@ -4,6 +4,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarDay, faCloudSunRain, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
@@ -52,16 +53,17 @@ export interface InfoPanelProps {
 }
 
 const InfoPanel = ({ city }: InfoPanelProps) => {
-  const language = useStore((state) => state.language);
-  const dateString = useStore((state) => state.world.date);
-  const address = useStore((state) => state.world.address);
-  const latitude = useStore((state) => state.world.latitude);
-  const longitude = useStore((state) => state.world.longitude);
-  const weatherData = useStore((state) => state.weatherData);
-  const now = new Date(dateString);
+  const language = useStore(Selector.language);
+  const dateString = useStore(Selector.world.date);
+  const address = useStore(Selector.world.address);
+  const latitude = useStore(Selector.world.latitude);
+  const longitude = useStore(Selector.world.longitude);
+  const weatherData = useStore(Selector.weatherData);
+  const sunlightDirection = useStore(Selector.sunlightDirection);
+
   const [dailyTemperatures, setDailyTemperatures] = useState({ low: 0, high: 20 });
   const [currentTemperature, setCurrentTemperature] = useState<number>(10);
-  const sunlightDirection = useStore((state) => state.sunlightDirection);
+  const now = new Date(dateString);
   const daytime = sunlightDirection.y > 0;
   const lang = { lng: language };
 

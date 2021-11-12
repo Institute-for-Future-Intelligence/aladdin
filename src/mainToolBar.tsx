@@ -4,6 +4,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from './stores/common';
+import * as Selector from './stores/selector';
 import { Avatar, Button, Dropdown, Input, Menu, Modal, Space } from 'antd';
 import dayjs from 'dayjs';
 import 'antd/dist/antd.css';
@@ -49,18 +50,18 @@ const ButtonsContainer = styled.div`
 `;
 
 const MainToolBar = () => {
-  const setCommonStore = useStore((state) => state.set);
-  const language = useStore((state) => state.language);
-  const selectNone = useStore((state) => state.selectNone);
+  const setCommonStore = useStore(Selector.set);
+  const language = useStore(Selector.language);
+  const selectNone = useStore(Selector.selectNone);
   const showHeliodonPanel = useStore((state) => state.viewState.showHeliodonPanel);
-  const shadowEnabled = useStore((state) => state.viewState.shadowEnabled);
-  const user = useStore((state) => state.user);
-  const exportContent = useStore((state) => state.exportContent);
-  const clearContent = useStore((state) => state.clearContent);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const user = useStore(Selector.user);
+  const exportContent = useStore(Selector.exportContent);
+  const clearContent = useStore(Selector.clearContent);
   const showCloudFilePanel = useStore((state) => state.showCloudFilePanel);
   const showAccountSettingsPanel = useStore((state) => state.showAccountSettingsPanel);
-  const objectTypeToAdd = useStore((state) => state.objectTypeToAdd);
-  const cloudFile = useStore((state) => state.cloudFile);
+  const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
+  const cloudFile = useStore(Selector.cloudFile);
 
   const [loading, setLoading] = useState(false);
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);

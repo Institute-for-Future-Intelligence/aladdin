@@ -8,6 +8,7 @@ import LineGraph from '../components/lineGraph';
 import { GraphDataType } from '../types';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import { MONTHS } from '../constants';
 import { Util } from '../Util';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
@@ -64,11 +65,12 @@ export interface WeatherPanelProps {
 }
 
 const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
-  const language = useStore((state) => state.language);
-  const setCommonStore = useStore((state) => state.set);
+  const language = useStore(Selector.language);
+  const setCommonStore = useStore(Selector.set);
+  const now = useStore(Selector.world.date);
+  const getWeather = useStore(Selector.getWeather);
   const viewState = useStore((state) => state.viewState);
-  const getWeather = useStore((state) => state.getWeather);
-  const now = useStore((state) => state.world.date);
+
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 540;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;

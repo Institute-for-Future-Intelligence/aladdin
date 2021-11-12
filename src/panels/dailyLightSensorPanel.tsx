@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 import { GraphDataType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
@@ -66,12 +67,13 @@ export interface DailyLightSensorPanelProps {
 }
 
 const DailyLightSensorPanel = ({ city, collectDailyLightSensorData }: DailyLightSensorPanelProps) => {
-  const language = useStore((state) => state.language);
-  const setCommonStore = useStore((state) => state.set);
+  const language = useStore(Selector.language);
+  const setCommonStore = useStore(Selector.set);
+  const sensorLabels = useStore(Selector.sensorLabels);
+  const sensorData = useStore(Selector.dailyLightSensorData);
+  const now = new Date(useStore(Selector.world.date));
   const viewState = useStore((state) => state.viewState);
-  const sensorLabels = useStore((state) => state.sensorLabels);
-  const sensorData = useStore((state) => state.dailyLightSensorData);
-  const now = new Date(useStore((state) => state.world.date));
+
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 460;
