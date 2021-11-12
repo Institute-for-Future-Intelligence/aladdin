@@ -12,10 +12,15 @@ import { useStore } from 'src/stores/common';
 import * as Selector from '../../../stores/selector';
 import { ObjectType } from 'src/types';
 import i18n from '../../../i18n/i18n';
+import { ElementModel } from '../../../models/ElementModel';
+import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 
 export const FoundationMenu = () => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
+  const elements = useStore(Selector.elements);
   const getSelectedElement = useStore(Selector.getSelectedElement);
+  const addUndoable = useStore(Selector.addUndoable);
   const countAllChildElementsByType = useStore(Selector.countAllChildElementsByType);
   const countAllChildSolarPanels = useStore(Selector.countAllChildSolarPanels);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
@@ -45,11 +50,40 @@ export const FoundationMenu = () => {
               onClick={() => {
                 Modal.confirm({
                   title:
-                    'Do you really want to remove all the ' + sensorCountFoundation + ' sensors on this foundation?',
+                    i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSensorsOnFoundation', lang) +
+                    ' (' +
+                    sensorCountFoundation +
+                    ' ' +
+                    i18n.t('foundationMenu.Sensors', lang) +
+                    ')?',
                   icon: <ExclamationCircleOutlined />,
                   onOk: () => {
                     if (selectedElement) {
+                      const removed: ElementModel[] = [];
+                      for (const elem of elements) {
+                        if (elem.type === ObjectType.Sensor && elem.parentId === selectedElement.id) {
+                          removed.push(elem);
+                        }
+                      }
                       removeAllChildElementsByType(selectedElement.id, ObjectType.Sensor);
+                      const removedElements = JSON.parse(JSON.stringify(removed));
+                      const undoableRemoveAllSensorChildren = {
+                        name: 'Remove All Sensors on Foundation',
+                        timestamp: Date.now(),
+                        parentId: selectedElement.id,
+                        removedElements: removedElements,
+                        undo: () => {
+                          setCommonStore((state) => {
+                            for (const elem of undoableRemoveAllSensorChildren.removedElements) {
+                              state.elements.push(elem);
+                            }
+                          });
+                        },
+                        redo: () => {
+                          removeAllChildElementsByType(undoableRemoveAllSensorChildren.parentId, ObjectType.Sensor);
+                        },
+                      } as UndoableRemoveAllChildren;
+                      addUndoable(undoableRemoveAllSensorChildren);
                     }
                   },
                 });
@@ -64,22 +98,55 @@ export const FoundationMenu = () => {
               onClick={() => {
                 Modal.confirm({
                   title:
-                    'Do you really want to remove all the ' +
+                    i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSolarPanelsOnFoundation', lang) +
+                    ' (' +
                     solarPanelCountFoundation +
-                    ' solar panels mounted on ' +
+                    ' ' +
+                    i18n.t('foundationMenu.SolarPanels', lang) +
+                    ', ' +
                     solarRackCountFoundation +
-                    ' racks on this foundation?',
+                    ' ' +
+                    i18n.t('foundationMenu.Racks', lang) +
+                    ')?',
                   icon: <ExclamationCircleOutlined />,
                   onOk: () => {
                     if (selectedElement) {
+                      const removed: ElementModel[] = [];
+                      for (const elem of elements) {
+                        if (elem.type === ObjectType.SolarPanel && elem.parentId === selectedElement.id) {
+                          removed.push(elem);
+                        }
+                      }
                       removeAllChildElementsByType(selectedElement.id, ObjectType.SolarPanel);
+                      const removedElements = JSON.parse(JSON.stringify(removed));
+                      const undoableRemoveAllSolarPanelChildren = {
+                        name: 'Remove All Solar Panels on Foundation',
+                        timestamp: Date.now(),
+                        parentId: selectedElement.id,
+                        removedElements: removedElements,
+                        undo: () => {
+                          setCommonStore((state) => {
+                            for (const elem of undoableRemoveAllSolarPanelChildren.removedElements) {
+                              state.elements.push(elem);
+                            }
+                          });
+                        },
+                        redo: () => {
+                          removeAllChildElementsByType(
+                            undoableRemoveAllSolarPanelChildren.parentId,
+                            ObjectType.SolarPanel,
+                          );
+                        },
+                      } as UndoableRemoveAllChildren;
+                      addUndoable(undoableRemoveAllSolarPanelChildren);
                     }
                   },
                 });
               }}
             >
-              {i18n.t('foundationMenu.RemoveAllSolarPanels', lang)}&nbsp; ({solarPanelCountFoundation},{' '}
-              {solarRackCountFoundation} {i18n.t('foundationMenu.Racks', lang)})
+              {i18n.t('foundationMenu.RemoveAllSolarPanels', lang)}&nbsp; ({solarPanelCountFoundation}{' '}
+              {i18n.t('foundationMenu.SolarPanels', lang)}, {solarRackCountFoundation}{' '}
+              {i18n.t('foundationMenu.Racks', lang)})
             </Menu.Item>
           )}
         </SubMenu>

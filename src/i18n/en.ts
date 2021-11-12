@@ -162,12 +162,21 @@ export const i18n_en = {
       RemoveAllSolarPanels: 'Remove All Solar Panels',
       RemoveAllSensors: 'Remove All Sensors',
       Racks: 'Racks',
+      SolarPanels: 'Solar Panels',
+      DoYouReallyWantToRemoveAllSolarPanelsOnFoundation:
+        'Do you really want to remove all the solar panels on this foundation',
+      Sensors: 'Sensors',
+      DoYouReallyWantToRemoveAllSensorsOnFoundation: 'Do you really want to remove all the sensors on this foundation',
     },
 
     cuboidMenu: {
       RemoveAllSolarPanels: 'Remove All Solar Panels',
       RemoveAllSensors: 'Remove All Sensors',
       Racks: 'Racks',
+      SolarPanels: 'Solar Panels',
+      DoYouReallyWantToRemoveAllSolarPanelsOnCuboid: 'Do you really want to remove all the solar panels on this cuboid',
+      Sensors: 'Sensors',
+      DoYouReallyWantToRemoveAllSensorsOnCuboid: 'Do you really want to remove all the sensors on this cuboid',
     },
 
     treeMenu: {
