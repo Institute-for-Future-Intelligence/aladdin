@@ -72,7 +72,19 @@ const App = () => {
   const cameraZoom = useStore(Selector.viewState.cameraZoom) ?? 20;
   const exportContent = useStore(Selector.exportContent);
   const cloudFile = useStore(Selector.cloudFile);
-  const viewState = useStore((state) => state.viewState);
+  const axes = useStore(Selector.viewState.axes);
+  const theme = useStore(Selector.viewState.theme);
+  const groundImage = useStore(Selector.viewState.groundImage);
+  const showInfoPanel = useStore(Selector.viewState.showInfoPanel);
+  const showInstructionPanel = useStore(Selector.viewState.showInstructionPanel);
+  const showMapPanel = useStore(Selector.viewState.showMapPanel);
+  const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
+  const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
+  const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
+  const showDailyLightSensorPanel = useStore(Selector.viewState.showDailyLightSensorPanel);
+  const showYearlyLightSensorPanel = useStore(Selector.viewState.showYearlyLightSensorPanel);
+  const showDailyPvYieldPanel = useStore(Selector.viewState.showDailyPvYieldPanel);
+  const showYearlyPvYieldPanel = useStore(Selector.viewState.showYearlyPvYieldPanel);
 
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);
@@ -407,21 +419,21 @@ const App = () => {
           >
             <PvModelPanel />
           </Modal>
-          {viewState.showMapPanel && <MapPanel />}
-          {viewState.showHeliodonPanel && <HeliodonPanel />}
-          {viewState.showStickyNotePanel && <StickyNotePanel />}
-          {viewState.showInfoPanel && <InfoPanel city={city} />}
-          {viewState.showInstructionPanel && <InstructionPanel />}
-          {viewState.showWeatherPanel && (
+          {showMapPanel && <MapPanel />}
+          {showHeliodonPanel && <HeliodonPanel />}
+          {showStickyNotePanel && <StickyNotePanel />}
+          {showInfoPanel && <InfoPanel city={city} />}
+          {showInstructionPanel && <InstructionPanel />}
+          {showWeatherPanel && (
             <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]} />
           )}
-          {viewState.showYearlyLightSensorPanel && (
+          {showYearlyLightSensorPanel && (
             <YearlyLightSensorPanel city={city} collectYearlyLightSensorData={collectYearlyLightSensorData} />
           )}
-          {viewState.showDailyLightSensorPanel && (
+          {showDailyLightSensorPanel && (
             <DailyLightSensorPanel city={city} collectDailyLightSensorData={collectDailyLightSensorData} />
           )}
-          {viewState.showYearlyPvYieldPanel && (
+          {showYearlyPvYieldPanel && (
             <YearlyPvYieldPanel
               city={city}
               individualOutputs={pvYearlyIndividualOutputs}
@@ -429,7 +441,7 @@ const App = () => {
               analyzeYearlyPvYield={analyzeYearlyPvYield}
             />
           )}
-          {viewState.showDailyPvYieldPanel && (
+          {showDailyPvYieldPanel && (
             <DailyPvYieldPanel
               city={city}
               individualOutputs={pvDailyIndividualOutputs}
@@ -472,7 +484,7 @@ const App = () => {
 
                 <ElementsRenderer />
                 <Heliodon />
-                {viewState.axes && <Axes />}
+                {axes && <Axes />}
 
                 <SensorSimulation
                   city={city}
@@ -489,11 +501,11 @@ const App = () => {
                 <Suspense fallback={null}>
                   <Ground />
                   <Grid />
-                  {viewState.groundImage && <GroundImage />}
+                  {groundImage && <GroundImage />}
                   {/* <Obj/> */}
                 </Suspense>
                 <Suspense fallback={null}>
-                  <Sky theme={viewState.theme} />
+                  <Sky theme={theme} />
                 </Suspense>
               </Canvas>
               <KeyboardListener
