@@ -125,7 +125,8 @@ const Team = ({ top, height, color }: TeamProps) => {
           color: color,
         }}
       >
-        {i18n.t('aboutUs.Acknowledgment', lang)}: {i18n.t('aboutUs.FundingInformation', lang)}
+        {i18n.t('aboutUs.Acknowledgment', lang)}: {i18n.t('aboutUs.FundingInformation', lang)}{' '}
+        {i18n.t('aboutUs.Contact', lang)}
       </div>
     </div>
   );

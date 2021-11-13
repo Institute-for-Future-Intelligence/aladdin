@@ -11,16 +11,30 @@ import TreeSelection from './treeSelection';
 import ReshapeElementMenu from '../../reshapeElementMenu';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
+import { UndoableCheck } from '../../../undo/UndoableCheck';
 
 export const TreeMenu = () => {
   const language = useStore(Selector.language);
   const updateElementById = useStore(Selector.updateElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const selectedElement = getSelectedElement();
+  const addUndoable = useStore(Selector.addUndoable);
   const lang = { lng: language };
 
   const showTreeModel = (on: boolean) => {
     if (selectedElement && selectedElement.type === ObjectType.Tree) {
+      const undoableCheck = {
+        name: 'Show Tree Model',
+        timestamp: Date.now(),
+        checked: on,
+        undo: () => {
+          updateElementById(selectedElement.id, { showModel: !undoableCheck.checked });
+        },
+        redo: () => {
+          updateElementById(selectedElement.id, { showModel: undoableCheck.checked });
+        },
+      } as UndoableCheck;
+      addUndoable(undoableCheck);
       updateElementById(selectedElement.id, { showModel: on });
     }
   };

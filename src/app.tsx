@@ -563,6 +563,8 @@ const App = () => {
                   'meta+y',
                   'ctrl+home',
                   'meta+home',
+                  'ctrl+shift+s',
+                  'meta+shift+s',
                   'delete',
                   'f2',
                   'f4',

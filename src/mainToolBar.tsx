@@ -38,6 +38,7 @@ import i18n from './i18n/i18n';
 import { Vector3 } from 'three';
 import { GROUND_ID } from './constants';
 import { UndoableRemoveAll } from './undo/UndoableRemoveAll';
+import { Util } from './Util';
 
 const ButtonsContainer = styled.div`
   position: absolute;
@@ -73,7 +74,9 @@ const MainToolBar = () => {
   const [titleDialogVisible, setTitleDialogVisible] = useState(false);
   const cloudFiles = useRef<CloudFileInfo[] | void>();
 
+  const isMac = Util.getOS()?.startsWith('Mac');
   const query = queryString.parse(window.location.search);
+  const lang = { lng: language };
 
   useEffect(() => {
     const config = {
@@ -125,8 +128,6 @@ const MainToolBar = () => {
       setCloudFileArray(arr);
     }
   }, [cloudFiles.current]);
-
-  const lang = { lng: language };
 
   const init = () => {
     if (query.userid && query.title) {
@@ -435,6 +436,7 @@ const MainToolBar = () => {
       {cloudFile && (
         <Menu.Item key="update-cloud-file" onClick={updateCloudFile}>
           {i18n.t('avatarMenu.UpdateCloudFile', lang)}
+          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+S)</label>
         </Menu.Item>
       )}
       <Menu.Item key="save-file-to-cloud" onClick={showTitleDialog}>

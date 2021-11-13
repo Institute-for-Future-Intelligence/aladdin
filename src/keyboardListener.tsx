@@ -270,6 +270,12 @@ const KeyboardListener = ({
       case 'meta+s': // for Mac
         setDownloadDialogVisible(true);
         break;
+      case 'ctrl+shift+s':
+      case 'meta+shift+s': // for Mac
+        if (keyUp) {
+          console.log(keyName);
+        }
+        break;
       case 'delete':
         if (selectedElement) {
           removeElement(selectedElement, false);
