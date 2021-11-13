@@ -162,12 +162,20 @@ export const i18n_zh_tw = {
       RemoveAllSolarPanels: '刪除此地基上的所有光伏板',
       RemoveAllSensors: '刪除此地基上的所有傳感器',
       Racks: '支架',
+      SolarPanels: '光伏板',
+      DoYouReallyWantToRemoveAllSolarPanelsOnFoundation: '你確定刪除此地基上的所有光伏板嗎',
+      Sensors: '傳感器',
+      DoYouReallyWantToRemoveAllSensorsOnFoundation: '你確定刪除此地基上的所有傳感器嗎',
     },
 
     cuboidMenu: {
       RemoveAllSolarPanels: '刪除此長方體表面上的所有光伏板',
       RemoveAllSensors: '刪除此長方體表面上的所有傳感器',
       Racks: '支架',
+      SolarPanels: '光伏板',
+      DoYouReallyWantToRemoveAllSolarPanelsOnCuboid: '你確定刪除此長方體表面上的所有光伏板嗎',
+      Sensors: '傳感器',
+      DoYouReallyWantToRemoveAllSensorsOnCuboid: '你確定刪除此長方體表面上的所有傳感器嗎',
     },
 
     treeMenu: {

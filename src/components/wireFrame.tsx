@@ -5,8 +5,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Vector3 } from 'three';
 import { Line } from '@react-three/drei';
-
 import { useStore } from 'src/stores/common';
+import * as Selector from '../stores/selector';
 
 export interface WireFrameProps {
   args: [x: number, y: number, z: number];
@@ -15,7 +15,7 @@ export interface WireFrameProps {
 }
 
 const WireFrame = ({ args, lineColor = 'black', lineWidth = 0.2 }: WireFrameProps) => {
-  const groundImage = useStore((state) => state.viewState.groundImage);
+  const groundImage = useStore(Selector.viewState.groundImage);
 
   const [wireframeColor, setWireframeColor] = useState(lineColor);
   const [wireframeWidth, setWireframeWidth] = useState(lineWidth);
