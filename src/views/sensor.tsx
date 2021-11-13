@@ -12,7 +12,7 @@ import { useThree } from '@react-three/fiber';
 import { HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS } from '../constants';
 import { ActionType, ObjectType } from '../types';
 import { Util } from '../Util';
-import WireFrame from 'src/components/wireFrame';
+import Wireframe from '../components/wireframe';
 
 const Sensor = ({
   id,
@@ -141,7 +141,7 @@ const Sensor = ({
       </Box>
 
       {/* wireFrame */}
-      {!selected && <WireFrame args={[lx, ly, lz]} />}
+      {!selected && <Wireframe args={[lx, ly, lz]} />}
 
       {/* draw handle */}
       {selected && (

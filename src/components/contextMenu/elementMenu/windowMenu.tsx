@@ -3,12 +3,13 @@
  */
 
 import React from 'react';
-import { useStore } from 'src/stores/common';
-import ReshapeElementMenu from 'src/components/reshapeElementMenu';
+import { useStore } from '../../../stores/common';
+import * as Selector from '../../../stores/selector';
+import ReshapeElementMenu from '../../reshapeElementMenu';
 import { Copy, Cut, Lock } from '../menuItems';
 
 export const WindowMenu = () => {
-  const getSelectedElement = useStore((state) => state.getSelectedElement);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
   const selectedElement = getSelectedElement();
 
   return (

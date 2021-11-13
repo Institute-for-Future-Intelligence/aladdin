@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Select } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -14,13 +14,14 @@ import LindenImage from '../../../resources/linden.png';
 import MapleImage from '../../../resources/maple.png';
 import OakImage from '../../../resources/oak.png';
 import PineImage from '../../../resources/pine.png';
+import { UndoableChange } from '../../../undo/UndoableChange';
 
 const { Option } = Select;
 
 const TreeSelection = () => {
   const updateElementById = useStore(Selector.updateElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const addUndoable = useStore(Selector.addUndoable);
 
   const tree = getSelectedElement();
 
@@ -30,11 +31,31 @@ const TreeSelection = () => {
       value={tree?.name}
       onChange={(value) => {
         if (tree) {
+          const oldTree = tree.name;
+          const newTree = value;
+          const undoableChange = {
+            name: 'Change Tree',
+            timestamp: Date.now(),
+            oldValue: oldTree,
+            newValue: newTree,
+            undo: () => {
+              updateElementById(tree.id, {
+                evergreen: undoableChange.oldValue === TreeType.Pine,
+                name: undoableChange.oldValue as string,
+              });
+            },
+            redo: () => {
+              updateElementById(tree.id, {
+                evergreen: undoableChange.newValue === TreeType.Pine,
+                name: undoableChange.newValue as string,
+              });
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
           updateElementById(tree.id, {
-            name: value,
-            evergreen: value === TreeType.Pine,
+            name: newTree,
+            evergreen: newTree === TreeType.Pine,
           });
-          setUpdateFlag(!updateFlag);
         }
       }}
     >

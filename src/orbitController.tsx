@@ -6,10 +6,10 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Camera, useFrame, useThree } from '@react-three/fiber';
 import { useStore } from './stores/common';
+import * as Selector from './stores/selector';
 import { Util } from './Util';
 import { Vector3 } from 'three';
 import { WORKSPACE_SIZE } from './constants';
-import * as Selector from 'src/stores/selector';
 
 export interface OrbitControllerProps {
   orbitControlsRef?: React.MutableRefObject<OrbitControls | undefined>;

@@ -4,18 +4,17 @@
 
 import React, { useEffect, useState } from 'react';
 import { InputNumber, Menu, Modal, Radio, RadioChangeEvent, Space } from 'antd';
-import { useStore } from 'src/stores/common';
+import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import WallSelection from './wallSelection';
-import { ElementModel } from 'src/models/ElementModel';
-import { WallModel } from 'src/models/WallModel';
-import { ObjectType } from 'src/types';
+import { ElementModel } from '../../../models/ElementModel';
+import { WallModel } from '../../../models/WallModel';
+import { ObjectType } from '../../../types';
 
 export const WallMenu = () => {
   const language = useStore(Selector.language);
-
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const setCommonStore = useStore(Selector.set);
   const setElementSize = useStore(Selector.setElementSize);

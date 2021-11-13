@@ -2,7 +2,6 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useRef, useState } from 'react';
 import CottonwoodImage from '../resources/cottonwood.png';
 import CottonwoodShedImage from '../resources/cottonwood_shed.png';
 import DogwoodImage from '../resources/dogwood.png';
@@ -16,6 +15,8 @@ import MapleShedImage from '../resources/maple_shed.png';
 import OakImage from '../resources/oak.png';
 import OakShedImage from '../resources/oak_shed.png';
 import PineImage from '../resources/pine.png';
+
+import React, { useMemo, useRef, useState } from 'react';
 import { DoubleSide, Euler, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';

@@ -23,8 +23,8 @@ import {
 import { Util } from '../Util';
 import { ElementModel } from '../models/ElementModel';
 import RotateHandle from '../components/rotateHandle';
-import { PolarGrid } from 'src/grid';
-import WireFrame from 'src/components/wireFrame';
+import { PolarGrid } from '../grid';
+import Wireframe from '../components/wireframe';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 
 const Cuboid = ({
@@ -385,7 +385,7 @@ const Cuboid = ({
         </>
       )}
 
-      {!selected && <WireFrame args={[lx, ly, lz]} />}
+      {!selected && <Wireframe args={[lx, ly, lz]} />}
 
       {/* draw handles */}
       {selected && !locked && (

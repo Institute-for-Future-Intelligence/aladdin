@@ -30,10 +30,10 @@ import { Util } from '../Util';
 import { ElementModel } from '../models/ElementModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { PolarGrid } from '../grid';
-import { WallModel } from 'src/models/WallModel';
+import { WallModel } from '../models/WallModel';
 import RotateHandle from '../components/rotateHandle';
-import WireFrame from 'src/components/wireFrame';
-import * as Selector from 'src/stores/selector';
+import Wireframe from '../components/wireframe';
+import * as Selector from '../stores/selector';
 import { UndoableAdd } from '../undo/UndoableAdd';
 
 interface wallJoint {
@@ -870,7 +870,7 @@ const Foundation = ({
       )}
 
       {/* wireFrame */}
-      {!selected && <WireFrame args={[lx, ly, lz]} />}
+      {!selected && <Wireframe args={[lx, ly, lz]} />}
 
       {/* draw handles */}
       {selected && !locked && (

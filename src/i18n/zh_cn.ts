@@ -9,6 +9,11 @@ export const i18n_zh_cn = {
       Aladdin: '阿拉丁',
     },
 
+    cookie: {
+      Statement: '声明：为了改善您的用户体验，阿拉丁采用cookie储存少量数据。',
+      Accept: '同意',
+    },
+
     aboutUs: {
       ProductBroughtToYouBy: '未来智能研究所荣誉出品',
       TermsOfService: '服务条款',

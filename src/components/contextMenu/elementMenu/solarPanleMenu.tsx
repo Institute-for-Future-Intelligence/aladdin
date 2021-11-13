@@ -2,15 +2,15 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import React, { useEffect, useState } from 'react';
 import { Checkbox, Input, InputNumber, Menu, Select, Space } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import React, { useEffect, useState } from 'react';
-import { SolarPanelModel } from 'src/models/SolarPanelModel';
-import { useStore } from 'src/stores/common';
-import * as Selector from '../../../stores/selector';
-import { ObjectType, Orientation, TrackerType } from 'src/types';
-import { Util } from 'src/Util';
 import { Vector3 } from 'three';
+import { SolarPanelModel } from '../../../models/SolarPanelModel';
+import { useStore } from '../../../stores/common';
+import * as Selector from '../../../stores/selector';
+import { ObjectType, Orientation, TrackerType } from '../../../types';
+import { Util } from '../../../Util';
 import { Copy, Cut } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 

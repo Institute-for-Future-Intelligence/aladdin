@@ -2,6 +2,16 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import Wall_00_Img from '../resources/wall_00.png';
+import Wall_01_Img from '../resources/wall_01.png';
+import Wall_02_Img from '../resources/wall_02.png';
+import Wall_03_Img from '../resources/wall_03.png';
+import Wall_04_Img from '../resources/wall_04.png';
+import Wall_05_Img from '../resources/wall_05.png';
+import Wall_06_Img from '../resources/wall_06.png';
+import Wall_07_Img from '../resources/wall_07.png';
+import Wall_08_Img from '../resources/wall_08.png';
+
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   DoubleSide,
@@ -17,28 +27,18 @@ import {
   Vector3,
 } from 'three';
 import { Box, Line, Plane, Sphere } from '@react-three/drei';
-
 import { ActionType, ObjectType, ResizeHandleType, ResizeHandleType as RType, WallTexture } from 'src/types';
-import { Util } from 'src/Util';
+import { Util } from '../Util';
 import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from '../constants';
-import { CommonStoreState, useStore } from 'src/stores/common';
-import { WallModel } from 'src/models/WallModel';
-import Wall_00_Img from '../resources/wall_00.png';
-import Wall_01_Img from '../resources/wall_01.png';
-import Wall_02_Img from '../resources/wall_02.png';
-import Wall_03_Img from '../resources/wall_03.png';
-import Wall_04_Img from '../resources/wall_04.png';
-import Wall_05_Img from '../resources/wall_05.png';
-import Wall_06_Img from '../resources/wall_06.png';
-import Wall_07_Img from '../resources/wall_07.png';
-import Wall_08_Img from '../resources/wall_08.png';
-import { ElementModelFactory } from 'src/models/ElementModelFactory';
-import * as Selector from 'src/stores/selector';
-import { RoofPoint } from 'src/models/RoofModel';
-import { WindowModel } from 'src/models/WindowModel';
+import { CommonStoreState, useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
+import { WallModel } from '../models/WallModel';
+import { ElementModelFactory } from '../models/ElementModelFactory';
+import { RoofPoint } from '../models/RoofModel';
+import { WindowModel } from '../models/WindowModel';
 import { FoundationGrid } from './foundation';
 import { useThree } from '@react-three/fiber';
-import { ElementModel } from 'src/models/ElementModel';
+import { ElementModel } from '../models/ElementModel';
 
 interface WindowProps {
   id: string;

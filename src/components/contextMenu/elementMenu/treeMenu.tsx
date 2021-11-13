@@ -4,11 +4,11 @@
 
 import React from 'react';
 import { Checkbox, Menu, Space } from 'antd';
-import { useStore } from 'src/stores/common';
+import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { ObjectType } from 'src/types';
-import TreeSelection from 'src/components/contextMenu/elementMenu/treeSelection';
-import ReshapeElementMenu from 'src/components/reshapeElementMenu';
+import { ObjectType } from '../../../types';
+import TreeSelection from './treeSelection';
+import ReshapeElementMenu from '../../reshapeElementMenu';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 

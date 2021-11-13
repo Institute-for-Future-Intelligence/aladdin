@@ -9,6 +9,11 @@ export const i18n_zh_tw = {
       Aladdin: '阿拉丁',
     },
 
+    cookie: {
+      Statement: '聲明：為了改善您的用戶體驗，阿拉丁採用cookie儲存少量數據。',
+      Accept: '同意',
+    },
+
     aboutUs: {
       ProductBroughtToYouBy: '未來智能研究所榮譽出品',
       TermsOfService: '服務條款',

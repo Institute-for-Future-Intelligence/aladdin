@@ -12,6 +12,8 @@ import i18n from '../../i18n/i18n';
 import { Util } from '../../Util';
 import { UndoableDelete } from '../../undo/UndoableDelete';
 import { UndoablePaste } from '../../undo/UndoablePaste';
+import { UndoableCheck } from '../../undo/UndoableCheck';
+import { UndoableChange } from '../../undo/UndoableChange';
 
 export const Paste = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   const setCommonStore = useStore(Selector.set);
@@ -128,6 +130,7 @@ export const Lock = () => {
   const updateElementById = useStore(Selector.updateElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const selectedElement = getSelectedElement();
+  const addUndoable = useStore(Selector.addUndoable);
 
   const lockElement = (on: boolean) => {
     if (selectedElement) {
@@ -141,7 +144,20 @@ export const Lock = () => {
       <Checkbox
         checked={selectedElement?.locked}
         onChange={(e) => {
-          lockElement(e.target.checked);
+          const checked = e.target.checked;
+          const undoableCheck = {
+            name: 'Lock',
+            timestamp: Date.now(),
+            checked: checked,
+            undo: () => {
+              lockElement(!undoableCheck.checked);
+            },
+            redo: () => {
+              lockElement(undoableCheck.checked);
+            },
+          } as UndoableCheck;
+          addUndoable(undoableCheck);
+          lockElement(checked);
         }}
       >
         {i18n.t('word.Lock', { lng: language })}
@@ -155,10 +171,26 @@ export const ColorPicker = () => {
   const updateElementById = useStore(Selector.updateElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const selectedElement = getSelectedElement();
+  const addUndoable = useStore(Selector.addUndoable);
 
   const changeElementColor = (colorResult: ColorResult) => {
     if (selectedElement) {
-      updateElementById(selectedElement.id, { color: colorResult.hex });
+      const oldColor = selectedElement.color;
+      const newColor = colorResult.hex;
+      const undoableChange = {
+        name: 'Set Element Color',
+        timestamp: Date.now(),
+        oldValue: oldColor,
+        newValue: newColor,
+        undo: () => {
+          updateElementById(selectedElement.id, { color: undoableChange.oldValue as string });
+        },
+        redo: () => {
+          updateElementById(selectedElement.id, { color: undoableChange.newValue as string });
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateElementById(selectedElement.id, { color: newColor });
     }
   };
 

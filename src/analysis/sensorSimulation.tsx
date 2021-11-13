@@ -12,7 +12,7 @@ import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
 import { MONTHS } from '../constants';
 import { SensorModel } from '../models/SensorModel';
-import * as Selector from 'src/stores/selector';
+import * as Selector from '../stores/selector';
 
 export interface SensorSimulationProps {
   city: string | null;

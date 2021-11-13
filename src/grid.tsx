@@ -7,7 +7,6 @@ import { DoubleSide, Euler, FontLoader, TextGeometryParameters, Vector3 } from '
 import { useLoader } from '@react-three/fiber';
 import { Line, Ring } from '@react-three/drei';
 import helvetikerFont from './fonts/helvetiker_regular.typeface.fnt';
-
 import { WORKSPACE_SIZE } from './constants';
 import { Util } from './Util';
 import { useStore } from './stores/common';

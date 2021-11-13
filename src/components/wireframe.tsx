@@ -8,13 +8,13 @@ import { Line } from '@react-three/drei';
 import { useStore } from 'src/stores/common';
 import * as Selector from '../stores/selector';
 
-export interface WireFrameProps {
+export interface WireframeProps {
   args: [x: number, y: number, z: number];
   lineColor?: string;
   lineWidth?: number;
 }
 
-const WireFrame = ({ args, lineColor = 'black', lineWidth = 0.2 }: WireFrameProps) => {
+const Wireframe = ({ args, lineColor = 'black', lineWidth = 0.2 }: WireframeProps) => {
   const groundImage = useStore(Selector.viewState.groundImage);
 
   const [wireframeColor, setWireframeColor] = useState(lineColor);
@@ -128,4 +128,4 @@ const WireFrame = ({ args, lineColor = 'black', lineWidth = 0.2 }: WireFrameProp
   );
 };
 
-export default React.memo(WireFrame);
+export default React.memo(Wireframe);

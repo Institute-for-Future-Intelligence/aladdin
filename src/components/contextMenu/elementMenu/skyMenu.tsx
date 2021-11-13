@@ -5,9 +5,9 @@
 import React from 'react';
 import { Checkbox, Menu, Radio } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
-import { useStore } from 'src/stores/common';
+import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { Theme } from 'src/types';
+import { Theme } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';

@@ -9,6 +9,11 @@ export const i18n_en = {
       Aladdin: 'Aladdin',
     },
 
+    cookie: {
+      Statement: 'By clicking Accept, you agree to our use of cookies to improve your experience with Aladdin.',
+      Accept: 'Accept',
+    },
+
     aboutUs: {
       ProductBroughtToYouBy: 'This product is brought to you by',
       TermsOfService: 'Terms of Service',

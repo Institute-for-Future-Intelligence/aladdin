@@ -4,9 +4,9 @@
 
 import React from 'react';
 import { Dropdown, Menu } from 'antd';
-import { useStore } from 'src/stores/common';
+import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
-import { ObjectType } from 'src/types';
+import { ObjectType } from '../../types';
 import {
   CuboidMenu,
   FoundationMenu,

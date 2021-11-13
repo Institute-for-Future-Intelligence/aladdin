@@ -5,7 +5,9 @@
 import React, { useState } from 'react';
 import { Modal, Radio, RadioChangeEvent, Select, Space } from 'antd';
 import { useStore } from '../../../stores/common';
+import * as Selector from '../../../stores/selector';
 import { ObjectType, WallTexture } from '../../../types';
+import { WallModel } from '../../../models/WallModel';
 import Wall_01_Img from '../../../resources/wall_01.png';
 import Wall_02_Img from '../../../resources/wall_02.png';
 import Wall_03_Img from '../../../resources/wall_03.png';
@@ -14,8 +16,6 @@ import Wall_05_Img from '../../../resources/wall_05.png';
 import Wall_06_Img from '../../../resources/wall_06.png';
 import Wall_07_Img from '../../../resources/wall_07.png';
 import Wall_08_Img from '../../../resources/wall_08.png';
-import { WallModel } from 'src/models/WallModel';
-import * as Selector from 'src/stores/selector';
 
 const { Option } = Select;
 

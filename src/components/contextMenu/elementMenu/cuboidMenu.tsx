@@ -7,10 +7,10 @@ import { Menu, Modal } from 'antd';
 import { ColorPicker, Copy, Cut, Lock, Paste } from '../menuItems';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { useStore } from 'src/stores/common';
+import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { ObjectType } from 'src/types';
-import ReshapeElementMenu from 'src/components/reshapeElementMenu';
+import { ObjectType } from '../../../types';
+import ReshapeElementMenu from '../../reshapeElementMenu';
 import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 

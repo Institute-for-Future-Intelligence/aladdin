@@ -2,39 +2,40 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Select } from 'antd';
-import { HumanName } from '../types';
-import JackImage from '../resources/jack.png';
-import JadeImage from '../resources/jade.png';
-import JaneImage from '../resources/jane.png';
-import JayeImage from '../resources/jaye.png';
-import JeanImage from '../resources/jean.png';
-import JediImage from '../resources/jedi.png';
-import JeffImage from '../resources/jeff.png';
-import JenaImage from '../resources/jena.png';
-import JeniImage from '../resources/jeni.png';
-import JessImage from '../resources/jess.png';
-import JettImage from '../resources/jett.png';
-import JillImage from '../resources/jill.png';
-import JoanImage from '../resources/joan.png';
-import JoelImage from '../resources/joel.png';
-import JohnImage from '../resources/john.png';
-import JoseImage from '../resources/jose.png';
-import JuddImage from '../resources/judd.png';
-import JudyImage from '../resources/judy.png';
-import JuneImage from '../resources/june.png';
-import JuroImage from '../resources/juro.png';
-import { useStore } from '../stores/common';
-import * as Selector from '../stores/selector';
-import { HumanModel } from '../models/HumanModel';
+import { HumanName } from '../../../types';
+import JackImage from '../../../resources/jack.png';
+import JadeImage from '../../../resources/jade.png';
+import JaneImage from '../../../resources/jane.png';
+import JayeImage from '../../../resources/jaye.png';
+import JeanImage from '../../../resources/jean.png';
+import JediImage from '../../../resources/jedi.png';
+import JeffImage from '../../../resources/jeff.png';
+import JenaImage from '../../../resources/jena.png';
+import JeniImage from '../../../resources/jeni.png';
+import JessImage from '../../../resources/jess.png';
+import JettImage from '../../../resources/jett.png';
+import JillImage from '../../../resources/jill.png';
+import JoanImage from '../../../resources/joan.png';
+import JoelImage from '../../../resources/joel.png';
+import JohnImage from '../../../resources/john.png';
+import JoseImage from '../../../resources/jose.png';
+import JuddImage from '../../../resources/judd.png';
+import JudyImage from '../../../resources/judy.png';
+import JuneImage from '../../../resources/june.png';
+import JuroImage from '../../../resources/juro.png';
+import { useStore } from '../../../stores/common';
+import * as Selector from '../../../stores/selector';
+import { HumanModel } from '../../../models/HumanModel';
+import { UndoableChange } from '../../../undo/UndoableChange';
 
 const { Option } = Select;
 
 const HumanSelection = () => {
   const updateElementById = useStore(Selector.updateElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const addUndoable = useStore(Selector.addUndoable);
 
   const human = getSelectedElement() as HumanModel;
 
@@ -44,8 +45,22 @@ const HumanSelection = () => {
       value={human?.name}
       onChange={(value) => {
         if (human) {
-          updateElementById(human.id, { name: value });
-          setUpdateFlag(!updateFlag);
+          const oldPerson = human.name;
+          const newPerson = value;
+          const undoableChange = {
+            name: 'Change People',
+            timestamp: Date.now(),
+            oldValue: oldPerson,
+            newValue: newPerson,
+            undo: () => {
+              updateElementById(human.id, { name: undoableChange.oldValue as string });
+            },
+            redo: () => {
+              updateElementById(human.id, { name: undoableChange.newValue as string });
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateElementById(human.id, { name: newPerson });
         }
       }}
     >

@@ -2,6 +2,13 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import FoundationImage from './resources/foundation.png';
+import SolarPanelImage from './resources/solar-panel.png';
+import ShadowImage from './resources/shadow.png';
+import WallImage from './resources/wall.png';
+import WindowImage from './resources/window.png';
+import RoofImage from './resources/roof.png';
+
 import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
@@ -19,12 +26,6 @@ import {
   faTree,
   faWalking,
 } from '@fortawesome/free-solid-svg-icons';
-import FoundationImage from './resources/foundation.png';
-import SolarPanelImage from './resources/solar-panel.png';
-import ShadowImage from './resources/shadow.png';
-import WallImage from './resources/wall.png';
-import WindowImage from './resources/window.png';
-import RoofImage from './resources/roof.png';
 import firebase from 'firebase';
 import { showError, showInfo } from './helpers';
 import { CloudFileInfo, ObjectType, User } from './types';

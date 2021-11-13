@@ -4,9 +4,9 @@
 
 import React, { useState } from 'react';
 import { Checkbox, Input, Menu } from 'antd';
-import { useStore } from 'src/stores/common';
-import * as Selector from '../../../stores/selector';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { useStore } from '../../../stores/common';
+import * as Selector from '../../../stores/selector';
 import { Copy, Cut } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 

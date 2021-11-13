@@ -2,7 +2,6 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useRef, useState } from 'react';
 import JackImage from '../resources/jack.png';
 import JadeImage from '../resources/jade.png';
 import JaneImage from '../resources/jane.png';
@@ -23,6 +22,8 @@ import JuddImage from '../resources/judd.png';
 import JudyImage from '../resources/judy.png';
 import JuneImage from '../resources/june.png';
 import JuroImage from '../resources/juro.png';
+
+import React, { useMemo, useRef, useState } from 'react';
 import { DoubleSide, Euler, Mesh, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';

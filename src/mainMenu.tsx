@@ -2,6 +2,20 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
+import sun_beam_at_center from './examples/sun_beam_at_center.json';
+import office_building_01 from './examples/office_building_01.json';
+import solar_farm_01 from './examples/solar_farm_01.json';
+import solar_farm_02 from './examples/solar_farm_02.json';
+import solar_trackers from './examples/solar_trackers.json';
+import simple_house_01 from './examples/simple_house_01.json';
+
+import zhCN from 'antd/lib/locale/zh_CN';
+import zhTW from 'antd/lib/locale/zh_TW';
+import esES from 'antd/lib/locale/es_ES';
+import trTR from 'antd/lib/locale/tr_TR';
+import enUS from 'antd/lib/locale/en_US';
+
 import React, { useState } from 'react';
 import { useStore } from './stores/common';
 import styled from 'styled-components';
@@ -12,21 +26,7 @@ import About from './about';
 import { saveImage } from './helpers';
 import { Discretization, Language, ObjectType } from './types';
 import * as Selector from './stores/selector';
-
-import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
-import sun_beam_at_center from './examples/sun_beam_at_center.json';
-import office_building_01 from './examples/office_building_01.json';
-import solar_farm_01 from './examples/solar_farm_01.json';
-import solar_farm_02 from './examples/solar_farm_02.json';
-import solar_trackers from './examples/solar_trackers.json';
-import simple_house_01 from './examples/simple_house_01.json';
-
 import i18n from './i18n/i18n';
-import zhCN from 'antd/lib/locale/zh_CN';
-import zhTW from 'antd/lib/locale/zh_TW';
-import esES from 'antd/lib/locale/es_ES';
-import trTR from 'antd/lib/locale/tr_TR';
-import enUS from 'antd/lib/locale/en_US';
 import { Util } from './Util';
 
 const { SubMenu } = Menu;

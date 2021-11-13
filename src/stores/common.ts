@@ -33,7 +33,7 @@ import { GroundModel } from '../models/GroundModel';
 import { PvModel } from '../models/PvModel';
 import { ThreeEvent } from '@react-three/fiber';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import { WallModel } from 'src/models/WallModel';
+import { WallModel } from '../models/WallModel';
 import { Locale } from 'antd/lib/locale-provider';
 import enUS from 'antd/lib/locale/en_US';
 import { Undoable } from '../undo/Undoable';

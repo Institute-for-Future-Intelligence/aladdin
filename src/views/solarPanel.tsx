@@ -26,7 +26,7 @@ import SolarPanelBlackLandscapeImage from '../resources/solar-panel-black-landsc
 import SolarPanelBlackPortraitImage from '../resources/solar-panel-black-portrait.png';
 import { getSunDirection } from '../analysis/sunTools';
 import RotateHandle from '../components/rotateHandle';
-import WireFrame from 'src/components/wireFrame';
+import Wireframe from '../components/wireframe';
 
 const SolarPanel = ({
   id,
@@ -525,7 +525,7 @@ const SolarPanel = ({
         )}
 
         {/* wireframe */}
-        {!selected && <WireFrame args={[lx, ly, lz]} />}
+        {!selected && <Wireframe args={[lx, ly, lz]} />}
       </group>
 
       {/* draw rotate handles */}

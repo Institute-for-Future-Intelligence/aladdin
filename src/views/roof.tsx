@@ -3,12 +3,12 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { useStore } from 'src/stores/common';
-import { RoofModel } from 'src/models/RoofModel';
+import { useStore } from '../stores/common';
+import { RoofModel } from '../models/RoofModel';
 import { Extrude, Sphere } from '@react-three/drei';
 import { Shape, Vector3 } from 'three';
-import * as Selector from 'src/stores/selector';
-import { ActionType } from 'src/types';
+import * as Selector from '../stores/selector';
+import { ActionType } from '../types';
 
 const Roof = ({ id, cz, lz, selected, parentId, points }: RoofModel) => {
   const getElementById = useStore(Selector.getElementById);

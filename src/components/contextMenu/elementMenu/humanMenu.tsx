@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Menu, Space } from 'antd';
-import HumanSelection from 'src/components/humanSelection';
+import HumanSelection from './humanSelection';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { useStore } from '../../../stores/common';

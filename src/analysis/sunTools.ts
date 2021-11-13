@@ -2,17 +2,15 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import { Util } from '../Util';
 import { Vector3 } from 'three';
+import { Util } from '../Util';
 import { AirMass, ASHRAE_C, SOLAR_CONSTANT } from './analysisConstants';
 import { GroundModel } from '../models/GroundModel';
 
 export const TILT_ANGLE = (23.45 / 180.0) * Math.PI;
 
 export const computeDeclinationAngle = (date: Date) => {
-  const days = Math.floor(
-    (date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24),
-  );
+  const days = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
   return TILT_ANGLE * Math.sin((Util.TWO_PI * (284 + days)) / 365.25);
 };
 
@@ -30,12 +28,7 @@ export const getSunDirection = (date: Date, latitude: number) => {
   ).normalize();
 };
 
-export const computeSunLocation = (
-  radius: number,
-  hourAngle: number,
-  declinationAngle: number,
-  latitude: number,
-) => {
+export const computeSunLocation = (radius: number, hourAngle: number, declinationAngle: number, latitude: number) => {
   const cosDec = Math.cos(declinationAngle);
   const sinDec = Math.sin(declinationAngle);
   const cosLat = Math.cos(latitude);
@@ -58,11 +51,7 @@ export const computeSunLocation = (
 const getExtraterrestrialRadiation = (dayOfYear: number) => {
   const b = (Util.TWO_PI * dayOfYear) / 365;
   const er =
-    1.00011 +
-    0.034221 * Math.cos(b) +
-    0.00128 * Math.sin(b) +
-    0.000719 * Math.cos(2 * b) +
-    0.000077 * Math.sin(2 * b);
+    1.00011 + 0.034221 * Math.cos(b) + 0.00128 * Math.sin(b) + 0.000719 * Math.cos(2 * b) + 0.000077 * Math.sin(2 * b);
   return SOLAR_CONSTANT * er;
 };
 
@@ -74,11 +63,7 @@ const computeAirMass = (airMassType: AirMass, sunDirection: Vector3, altitude: n
       return 1;
     case AirMass.KASTEN_YOUNG:
       zenithAngle = sunDirection.angleTo(Util.UNIT_VECTOR_POS_Z);
-      return (
-        1 /
-        (Math.cos(zenithAngle) +
-          0.50572 * Math.pow(96.07995 - (zenithAngle / Math.PI) * 180, -1.6364))
-      );
+      return 1 / (Math.cos(zenithAngle) + 0.50572 * Math.pow(96.07995 - (zenithAngle / Math.PI) * 180, -1.6364));
     default:
       zenithAngle = sunDirection.angleTo(Util.UNIT_VECTOR_POS_Z);
       const cos = Math.cos(zenithAngle);
