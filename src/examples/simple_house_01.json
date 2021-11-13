@@ -1,6 +1,6 @@
 {
-  "docid": "stBdgWvUAiU7hSShXhwtEo",
-  "timestamp": 1636307331539,
+  "docid": "buiAxEVEG2UnniK3sQpppy",
+  "timestamp": 1636768740772,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -428,7 +428,8 @@
       "id": "egzW42i4cfqWFAkG1qgDuE",
       "leftOffset": 0.04999999999999995,
       "rightOffset": 0,
-      "parentId": "gKtCDo6vdsdKsNWyrYnEMY"
+      "parentId": "gKtCDo6vdsdKsNWyrYnEMY",
+      "textureType": "Texture #7"
     },
     {
       "type": "Wall",
@@ -806,7 +807,8 @@
       "id": "oKhEE6pqiRVMDi3gyzbuwY",
       "rightOffset": 0.04999999999999995,
       "leftOffset": 0,
-      "parentId": "gKtCDo6vdsdKsNWyrYnEMY"
+      "parentId": "gKtCDo6vdsdKsNWyrYnEMY",
+      "textureType": "Texture #7"
     },
     {
       "type": "Wall",
@@ -1184,7 +1186,8 @@
       "id": "vDTY9T9My3NuhgtQGtJGKE",
       "leftOffset": 0,
       "rightOffset": 0,
-      "parentId": "gKtCDo6vdsdKsNWyrYnEMY"
+      "parentId": "gKtCDo6vdsdKsNWyrYnEMY",
+      "textureType": "Texture #7"
     },
     {
       "type": "Wall",
@@ -1343,7 +1346,8 @@
       "id": "sqyiw2bkXbikHyRGWUrNw5",
       "leftOffset": 0,
       "rightOffset": 0,
-      "parentId": "gKtCDo6vdsdKsNWyrYnEMY"
+      "parentId": "gKtCDo6vdsdKsNWyrYnEMY",
+      "textureType": "Texture #7"
     },
     {
       "type": "Roof",
@@ -1630,9 +1634,9 @@
     "yearlyLightSensorPanelX": -905,
     "showHeliodonPanel": false,
     "cameraPosition": {
-      "x": 23.76360990290089,
-      "y": 13.244858165377588,
-      "z": 2.9588328611597055
+      "x": 19.849598634980747,
+      "y": 16.43168664164982,
+      "z": 4.363194502474513
     },
     "panCenter": {
       "x": 4.68638225767228,

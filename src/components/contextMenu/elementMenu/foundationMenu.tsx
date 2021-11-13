@@ -12,7 +12,6 @@ import { useStore } from 'src/stores/common';
 import * as Selector from '../../../stores/selector';
 import { ObjectType } from 'src/types';
 import i18n from '../../../i18n/i18n';
-import { ElementModel } from '../../../models/ElementModel';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 
 export const FoundationMenu = () => {
@@ -59,12 +58,9 @@ export const FoundationMenu = () => {
                   icon: <ExclamationCircleOutlined />,
                   onOk: () => {
                     if (selectedElement) {
-                      const removed: ElementModel[] = [];
-                      for (const elem of elements) {
-                        if (elem.type === ObjectType.Sensor && elem.parentId === selectedElement.id) {
-                          removed.push(elem);
-                        }
-                      }
+                      const removed = elements.filter(
+                        (e) => e.type === ObjectType.Sensor && e.parentId === selectedElement.id,
+                      );
                       removeAllChildElementsByType(selectedElement.id, ObjectType.Sensor);
                       const removedElements = JSON.parse(JSON.stringify(removed));
                       const undoableRemoveAllSensorChildren = {
@@ -74,9 +70,7 @@ export const FoundationMenu = () => {
                         removedElements: removedElements,
                         undo: () => {
                           setCommonStore((state) => {
-                            for (const elem of undoableRemoveAllSensorChildren.removedElements) {
-                              state.elements.push(elem);
-                            }
+                            state.elements.push(...undoableRemoveAllSensorChildren.removedElements);
                           });
                         },
                         redo: () => {
@@ -111,12 +105,9 @@ export const FoundationMenu = () => {
                   icon: <ExclamationCircleOutlined />,
                   onOk: () => {
                     if (selectedElement) {
-                      const removed: ElementModel[] = [];
-                      for (const elem of elements) {
-                        if (elem.type === ObjectType.SolarPanel && elem.parentId === selectedElement.id) {
-                          removed.push(elem);
-                        }
-                      }
+                      const removed = elements.filter(
+                        (e) => e.type === ObjectType.SolarPanel && e.parentId === selectedElement.id,
+                      );
                       removeAllChildElementsByType(selectedElement.id, ObjectType.SolarPanel);
                       const removedElements = JSON.parse(JSON.stringify(removed));
                       const undoableRemoveAllSolarPanelChildren = {
@@ -126,9 +117,7 @@ export const FoundationMenu = () => {
                         removedElements: removedElements,
                         undo: () => {
                           setCommonStore((state) => {
-                            for (const elem of undoableRemoveAllSolarPanelChildren.removedElements) {
-                              state.elements.push(elem);
-                            }
+                            state.elements.push(...undoableRemoveAllSolarPanelChildren.removedElements);
                           });
                         },
                         redo: () => {

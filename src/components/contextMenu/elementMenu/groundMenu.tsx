@@ -13,7 +13,6 @@ import { ObjectType } from 'src/types';
 import { Paste } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAll } from '../../../undo/UndoableRemoveAll';
-import { ElementModel } from '../../../models/ElementModel';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 
@@ -63,12 +62,7 @@ export const GroundMenu = () => {
               title: 'Do you really want to remove all ' + humanCount + ' people?',
               icon: <ExclamationCircleOutlined />,
               onOk: () => {
-                const removed: ElementModel[] = [];
-                for (const elem of elements) {
-                  if (elem.type === ObjectType.Human) {
-                    removed.push(elem);
-                  }
-                }
+                const removed = elements.filter((e) => e.type === ObjectType.Human);
                 removeElementsByType(ObjectType.Human);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
@@ -77,9 +71,7 @@ export const GroundMenu = () => {
                   removedElements: removedElements,
                   undo: () => {
                     setCommonStore((state) => {
-                      for (const elem of undoableRemoveAll.removedElements) {
-                        state.elements.push(elem);
-                      }
+                      state.elements.push(...undoableRemoveAll.removedElements);
                     });
                   },
                   redo: () => {
@@ -103,12 +95,7 @@ export const GroundMenu = () => {
               title: 'Do you really want to remove all ' + treeCount + ' trees?',
               icon: <ExclamationCircleOutlined />,
               onOk: () => {
-                const removed: ElementModel[] = [];
-                for (const elem of elements) {
-                  if (elem.type === ObjectType.Tree) {
-                    removed.push(elem);
-                  }
-                }
+                const removed = elements.filter((e) => e.type === ObjectType.Tree);
                 removeElementsByType(ObjectType.Tree);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
@@ -117,9 +104,7 @@ export const GroundMenu = () => {
                   removedElements: removedElements,
                   undo: () => {
                     setCommonStore((state) => {
-                      for (const elem of undoableRemoveAll.removedElements) {
-                        state.elements.push(elem);
-                      }
+                      state.elements.push(...undoableRemoveAll.removedElements);
                     });
                   },
                   redo: () => {

@@ -36,6 +36,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import i18n from './i18n/i18n';
 import { Vector3 } from 'three';
 import { GROUND_ID } from './constants';
+import { UndoableRemoveAll } from './undo/UndoableRemoveAll';
 
 const ButtonsContainer = styled.div`
   position: absolute;
@@ -62,6 +63,8 @@ const MainToolBar = () => {
   const showAccountSettingsPanel = useStore(Selector.showAccountSettingsPanel);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const cloudFile = useStore(Selector.cloudFile);
+  const addUndoable = useStore(Selector.addUndoable);
+  const elements = useStore(Selector.elements);
 
   const [loading, setLoading] = useState(false);
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
@@ -141,7 +144,22 @@ const MainToolBar = () => {
       title: i18n.t('toolbar.DoYouReallyWantToClearContent', lang) + '?',
       icon: <ExclamationCircleOutlined />,
       onOk: () => {
+        const removedElements = JSON.parse(JSON.stringify(elements));
         clearContent();
+        const undoableClearContent = {
+          name: 'Clear Scene',
+          timestamp: Date.now(),
+          removedElements: removedElements,
+          undo: () => {
+            setCommonStore((state) => {
+              state.elements.push(...undoableClearContent.removedElements);
+            });
+          },
+          redo: () => {
+            clearContent();
+          },
+        } as UndoableRemoveAll;
+        addUndoable(undoableClearContent);
       },
     });
     resetToSelectMode();
