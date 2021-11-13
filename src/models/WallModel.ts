@@ -13,9 +13,9 @@ export interface WallModel extends ElementModel {
   leftJoints: JointProps[];
   rightJoints: JointProps[];
   windows: WindowModel[];
+  textureType: string;
   leftOffset?: number;
   rightOffset?: number;
-  texture: string;
 }
 
 export interface JointProps {

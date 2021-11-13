@@ -85,6 +85,10 @@ export const i18n_tr = {
     wallMenu: {
       Thickness: 'Kalınlık',
       Texture: 'Doku',
+      Size_of_Wall: 'Duvar Boyutu',
+      Only_This_Wall: 'Sadece bu duvara uygula',
+      Walls_on_Foundation: 'Bu temeldeki tüm duvarlara uygulayın',
+      All_Walls: 'Tüm duvarlara uygula',
     },
 
     windowMenu: {},

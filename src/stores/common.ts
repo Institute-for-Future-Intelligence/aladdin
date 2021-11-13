@@ -556,16 +556,21 @@ export const useStore = create<CommonStoreState>(
                   elem.selected = false;
                   if (elem.type === ObjectType.Wall) {
                     const currentWall = elem as WallModel;
+                    let leftWallId = '';
+                    let rightWallId = '';
                     if (currentWall.leftJoints.length > 0) {
-                      const targetWall = state.getElementById(currentWall.leftJoints[0].id) as WallModel;
-                      if (targetWall) {
-                        state.updateElementById(targetWall.id, { rightOffset: 0, rightJoints: [] });
-                      }
+                      leftWallId = state.getElementById(currentWall.leftJoints[0].id)?.id ?? '';
                     }
                     if (currentWall.rightJoints.length > 0) {
-                      const targetWall = state.getElementById(currentWall.rightJoints[0].id) as WallModel;
-                      if (targetWall) {
-                        state.updateElementById(targetWall.id, { leftOffset: 0, leftJoints: [] });
+                      rightWallId = state.getElementById(currentWall.rightJoints[0].id)?.id ?? '';
+                    }
+                    for (const w of state.elements) {
+                      if (w.id === leftWallId) {
+                        (w as WallModel).rightOffset = 0;
+                        (w as WallModel).rightJoints = [];
+                      } else if (w.id === rightWallId) {
+                        (w as WallModel).leftOffset = 0;
+                        (w as WallModel).leftJoints = [];
                       }
                     }
                     state.deletedWallID = elem.id;
