@@ -647,13 +647,14 @@ const Wall = ({
                     if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
                     if (e.intersections[0].object.name === 'window ' + id) {
                       if (window.selected && !window.locked) {
-                        const v = e.intersections[0].object.localToWorld(new Vector3());
-                        const diff = new Vector3().subVectors(v, e.intersections[0].point);
-                        setMovingWindow({ id, wlx, wlz, wcx, wcz, diff });
-                        setShowGrid(true);
                         setCommonStore((state) => {
                           state.enableOrbitController = false;
                         });
+                        const v = e.intersections[0].object.localToWorld(new Vector3());
+                        // const diff = new Vector3().subVectors(v, e.intersections[0].point);
+                        const diff = new Vector3();
+                        setMovingWindow({ id, wlx, wlz, wcx, wcz, diff });
+                        setShowGrid(true);
                       } else {
                         selectMe(id, e, ActionType.Select);
                         const selectedElement = getSelectedElement();
@@ -677,10 +678,10 @@ const Wall = ({
                 {/* handles */}
                 {window.selected && !window.locked && (
                   <group>
-                    <Sphere
+                    <Box
                       ref={resizeHandleLLRef}
                       name={ResizeHandleType.LowerLeft}
-                      args={[0.1, 6, 6]}
+                      args={[0.1, 0.1, 0.1]}
                       position={[-wlx / 2, 0, -wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
@@ -697,10 +698,10 @@ const Wall = ({
                         setShowGrid(false);
                       }}
                     />
-                    <Sphere
+                    <Box
                       ref={resizeHandleULRef}
                       name={ResizeHandleType.UpperLeft}
-                      args={[0.1, 6, 6]}
+                      args={[0.1, 0.1, 0.1]}
                       position={[-wlx / 2, 0, wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
@@ -717,10 +718,10 @@ const Wall = ({
                         setShowGrid(false);
                       }}
                     />
-                    <Sphere
+                    <Box
                       ref={resizeHandleLRRef}
                       name={ResizeHandleType.LowerRight}
-                      args={[0.1, 6, 6]}
+                      args={[0.1, 0.1, 0.1]}
                       position={[wlx / 2, 0, -wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
@@ -737,10 +738,10 @@ const Wall = ({
                         setShowGrid(false);
                       }}
                     />
-                    <Sphere
+                    <Box
                       ref={resizeHandleURRef}
                       name={ResizeHandleType.UpperRight}
-                      args={[0.1, 6, 6]}
+                      args={[0.1, 0.1, 0.1]}
                       position={[wlx / 2, 0, wlz / 2]}
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
@@ -757,6 +758,7 @@ const Wall = ({
                         setShowGrid(false);
                       }}
                     />
+                    <Sphere args={[0.1, 6, 6]} />
                   </group>
                 )}
               </group>
