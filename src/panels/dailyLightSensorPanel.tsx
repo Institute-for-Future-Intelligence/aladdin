@@ -72,18 +72,15 @@ const DailyLightSensorPanel = ({ city, collectDailyLightSensorData }: DailyLight
   const sensorLabels = useStore(Selector.sensorLabels);
   const sensorData = useStore(Selector.dailyLightSensorData);
   const now = new Date(useStore(Selector.world.date));
-  const viewState = useStore((state) => state.viewState);
+  const dailyLightSensorPanelX = useStore(Selector.viewState.dailyLightSensorPanelX);
+  const dailyLightSensorPanelY = useStore(Selector.viewState.dailyLightSensorPanelY);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 460;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(viewState.dailyLightSensorPanelX)
-      ? 0
-      : Math.max(viewState.dailyLightSensorPanelX, wOffset - window.innerWidth),
-    y: isNaN(viewState.dailyLightSensorPanelY)
-      ? 0
-      : Math.min(viewState.dailyLightSensorPanelY, window.innerHeight - hOffset),
+    x: isNaN(dailyLightSensorPanelX) ? 0 : Math.max(dailyLightSensorPanelX, wOffset - window.innerWidth),
+    y: isNaN(dailyLightSensorPanelY) ? 0 : Math.min(dailyLightSensorPanelY, window.innerHeight - hOffset),
   });
 
   const lang = { lng: language };
@@ -93,8 +90,8 @@ const DailyLightSensorPanel = ({ city, collectDailyLightSensorData }: DailyLight
   useEffect(() => {
     const handleResize = () => {
       setCurPosition({
-        x: Math.max(viewState.dailyLightSensorPanelX, wOffset - window.innerWidth),
-        y: Math.min(viewState.dailyLightSensorPanelY, window.innerHeight - hOffset),
+        x: Math.max(dailyLightSensorPanelX, wOffset - window.innerWidth),
+        y: Math.min(dailyLightSensorPanelY, window.innerHeight - hOffset),
       });
     };
     window.addEventListener('resize', handleResize);

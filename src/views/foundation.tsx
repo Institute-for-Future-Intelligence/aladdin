@@ -34,6 +34,7 @@ import { WallModel } from 'src/models/WallModel';
 import RotateHandle from '../components/rotateHandle';
 import WireFrame from 'src/components/wireFrame';
 import * as Selector from 'src/stores/selector';
+import { UndoableAdd } from '../undo/UndoableAdd';
 
 interface wallJoint {
   id: string;
@@ -77,6 +78,7 @@ const Foundation = ({
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const rotateHandleType = useStore(Selector.rotateHandleType);
   const resizeAnchor = useStore(Selector.resizeAnchor);
+  const addUndoable = useStore(Selector.addUndoable);
 
   const {
     camera,
@@ -347,7 +349,24 @@ const Foundation = ({
           if (selectedElement?.id === id) {
             if (legalOnFoundation(objectTypeToAdd) && elementModel) {
               setShowGrid(true);
-              addElement(elementModel, e.intersections[0].point);
+              const position = e.intersections[0].point;
+              const id = addElement(elementModel, position);
+              const addedElement = getElementById(id);
+              const undoableAdd = {
+                name: 'Add',
+                timestamp: Date.now(),
+                addedElement: addedElement,
+                undo: () => {
+                  removeElementById(undoableAdd.addedElement.id, false);
+                },
+                redo: () => {
+                  setCommonStore((state) => {
+                    state.elements.push(undoableAdd.addedElement);
+                    state.selectedElement = undoableAdd.addedElement;
+                  });
+                },
+              } as UndoableAdd;
+              addUndoable(undoableAdd);
               setCommonStore((state) => {
                 state.objectTypeToAdd = ObjectType.None;
               });

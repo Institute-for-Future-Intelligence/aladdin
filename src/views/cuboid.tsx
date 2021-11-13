@@ -56,7 +56,7 @@ const Cuboid = ({
   const setElementSize = useStore(Selector.setElementSize);
   const resizeAnchor = useStore(Selector.resizeAnchor);
   const getPvModule = useStore(Selector.getPvModule);
-  const viewState = useStore((state) => state.viewState);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
   const {
     camera,
@@ -203,8 +203,8 @@ const Cuboid = ({
     <group name={'Cuboid Group ' + id} position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
       {/* draw rectangular cuboid */}
       <Box
-        castShadow={viewState.shadowEnabled}
-        receiveShadow={viewState.shadowEnabled}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
         userData={{ simulation: true, aabb: true }}
         uuid={id}
         ref={baseRef}

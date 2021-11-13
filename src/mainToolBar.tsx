@@ -53,13 +53,13 @@ const MainToolBar = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const selectNone = useStore(Selector.selectNone);
-  const showHeliodonPanel = useStore((state) => state.viewState.showHeliodonPanel);
+  const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const user = useStore(Selector.user);
   const exportContent = useStore(Selector.exportContent);
   const clearContent = useStore(Selector.clearContent);
-  const showCloudFilePanel = useStore((state) => state.showCloudFilePanel);
-  const showAccountSettingsPanel = useStore((state) => state.showAccountSettingsPanel);
+  const showCloudFilePanel = useStore(Selector.showCloudFilePanel);
+  const showAccountSettingsPanel = useStore(Selector.showAccountSettingsPanel);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const cloudFile = useStore(Selector.cloudFile);
 

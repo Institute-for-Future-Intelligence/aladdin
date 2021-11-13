@@ -13,9 +13,7 @@ import i18n from '../i18n/i18n';
 
 const { Option } = Select;
 
-export interface PvModelPanelProps {}
-
-const PvModelPanel = ({}: PvModelPanelProps) => {
+const PvModelPanel = () => {
   const language = useStore(Selector.language);
   const updateElementById = useStore(Selector.updateElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);

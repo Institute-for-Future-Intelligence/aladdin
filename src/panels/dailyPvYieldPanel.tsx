@@ -80,14 +80,15 @@ const DailyPvYieldPanel = ({
   const dailyYield = useStore(Selector.dailyPvYield);
   const solarPanelLabels = useStore(Selector.solarPanelLabels);
   const now = new Date(useStore(Selector.world.date));
-  const viewState = useStore((state) => state.viewState);
+  const dailyPvYieldPanelX = useStore(Selector.viewState.dailyPvYieldPanelX);
+  const dailyPvYieldPanelY = useStore(Selector.viewState.dailyPvYieldPanelY);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(viewState.dailyPvYieldPanelX) ? 0 : Math.max(viewState.dailyPvYieldPanelX, wOffset - window.innerWidth),
-    y: isNaN(viewState.dailyPvYieldPanelY) ? 0 : Math.min(viewState.dailyPvYieldPanelY, window.innerHeight - hOffset),
+    x: isNaN(dailyPvYieldPanelX) ? 0 : Math.max(dailyPvYieldPanelX, wOffset - window.innerWidth),
+    y: isNaN(dailyPvYieldPanelY) ? 0 : Math.min(dailyPvYieldPanelY, window.innerHeight - hOffset),
   });
   const [sum, setSum] = useState(0);
   const panelSumRef = useRef(new Map<string, number>());
@@ -115,8 +116,8 @@ const DailyPvYieldPanel = ({
   useEffect(() => {
     const handleResize = () => {
       setCurPosition({
-        x: Math.max(viewState.dailyPvYieldPanelX, wOffset - window.innerWidth),
-        y: Math.min(viewState.dailyPvYieldPanelY, window.innerHeight - hOffset),
+        x: Math.max(dailyPvYieldPanelX, wOffset - window.innerWidth),
+        y: Math.min(dailyPvYieldPanelY, window.innerHeight - hOffset),
       });
     };
     window.addEventListener('resize', handleResize);

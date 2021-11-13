@@ -74,7 +74,8 @@ const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData }: YearlyLi
   const now = useStore(Selector.world.date);
   const sensorLabels = useStore(Selector.sensorLabels);
   const sensorData = useStore(Selector.yearlyLightSensorData);
-  const viewState = useStore((state) => state.viewState);
+  const yearlyLightSensorPanelX = useStore(Selector.viewState.yearlyLightSensorPanelX);
+  const yearlyLightSensorPanelY = useStore(Selector.viewState.yearlyLightSensorPanelY);
 
   const [daylightGraph, setDaylightGraph] = useState(true);
   const [clearnessGraph, setClearnessGraph] = useState(true);
@@ -83,12 +84,8 @@ const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData }: YearlyLi
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 540;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(viewState.yearlyLightSensorPanelX)
-      ? 0
-      : Math.max(viewState.yearlyLightSensorPanelX, wOffset - window.innerWidth),
-    y: isNaN(viewState.yearlyLightSensorPanelY)
-      ? 0
-      : Math.min(viewState.yearlyLightSensorPanelY, window.innerHeight - hOffset),
+    x: isNaN(yearlyLightSensorPanelX) ? 0 : Math.max(yearlyLightSensorPanelX, wOffset - window.innerWidth),
+    y: isNaN(yearlyLightSensorPanelY) ? 0 : Math.min(yearlyLightSensorPanelY, window.innerHeight - hOffset),
   });
 
   const lang = { lng: language };
@@ -99,8 +96,8 @@ const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData }: YearlyLi
   useEffect(() => {
     const handleResize = () => {
       setCurPosition({
-        x: Math.max(viewState.yearlyLightSensorPanelX, wOffset - window.innerWidth),
-        y: Math.min(viewState.yearlyLightSensorPanelY, window.innerHeight - hOffset),
+        x: Math.max(yearlyLightSensorPanelX, wOffset - window.innerWidth),
+        y: Math.min(yearlyLightSensorPanelY, window.innerHeight - hOffset),
       });
     };
     window.addEventListener('resize', handleResize);

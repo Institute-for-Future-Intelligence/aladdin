@@ -36,8 +36,9 @@ const Ground = () => {
   const getCameraDirection = useStore(Selector.getCameraDirection);
   const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
   const addUndoable = useStore(Selector.addUndoable);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const groundColor = useStore(Selector.viewState.groundColor);
   const groundModel = useStore((state) => state.world.ground);
-  const viewState = useStore((state) => state.viewState);
 
   const {
     camera,
@@ -482,7 +483,7 @@ const Ground = () => {
         </Plane>
       )}
       <Plane
-        receiveShadow={viewState.shadowEnabled}
+        receiveShadow={shadowEnabled}
         ref={groundPlaneRef}
         name={'Ground'}
         rotation={[0, 0, 0]}
@@ -494,7 +495,7 @@ const Ground = () => {
         onPointerUp={handlePointerUp}
         onPointerMove={handleGroudPointerMove}
       >
-        <meshStandardMaterial depthTest={false} color={viewState.groundColor} />
+        <meshStandardMaterial depthTest={false} color={groundColor} />
       </Plane>
     </>
   );

@@ -69,14 +69,15 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
   const setCommonStore = useStore(Selector.set);
   const now = useStore(Selector.world.date);
   const getWeather = useStore(Selector.getWeather);
-  const viewState = useStore((state) => state.viewState);
+  const weatherPanelX = useStore(Selector.viewState.weatherPanelX);
+  const weatherPanelY = useStore(Selector.viewState.weatherPanelY);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 540;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(viewState.weatherPanelX) ? 0 : Math.min(viewState.weatherPanelX, window.innerWidth - wOffset),
-    y: isNaN(viewState.weatherPanelY) ? 0 : Math.min(viewState.weatherPanelY, window.innerHeight - hOffset),
+    x: isNaN(weatherPanelX) ? 0 : Math.min(weatherPanelX, window.innerWidth - wOffset),
+    y: isNaN(weatherPanelY) ? 0 : Math.min(weatherPanelY, window.innerHeight - hOffset),
   });
   const lang = { lng: language };
 
@@ -84,8 +85,8 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
   useEffect(() => {
     const handleResize = () => {
       setCurPosition({
-        x: Math.min(viewState.weatherPanelX, window.innerWidth - wOffset),
-        y: Math.min(viewState.weatherPanelY, window.innerHeight - hOffset),
+        x: Math.min(weatherPanelX, window.innerWidth - wOffset),
+        y: Math.min(weatherPanelY, window.innerHeight - hOffset),
       });
     };
     window.addEventListener('resize', handleResize);

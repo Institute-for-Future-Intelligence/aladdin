@@ -81,14 +81,15 @@ const YearlyPvYieldPanel = ({
   const solarPanelLabels = useStore(Selector.solarPanelLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
   const now = useStore(Selector.world.date);
-  const viewState = useStore((state) => state.viewState);
+  const yearlyPvYieldPanelX = useStore(Selector.viewState.yearlyPvYieldPanelX);
+  const yearlyPvYieldPanelY = useStore(Selector.viewState.yearlyPvYieldPanelY);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(viewState.yearlyPvYieldPanelX) ? 0 : Math.max(viewState.yearlyPvYieldPanelX, wOffset - window.innerWidth),
-    y: isNaN(viewState.yearlyPvYieldPanelY) ? 0 : Math.min(viewState.yearlyPvYieldPanelY, window.innerHeight - hOffset),
+    x: isNaN(yearlyPvYieldPanelX) ? 0 : Math.max(yearlyPvYieldPanelX, wOffset - window.innerWidth),
+    y: isNaN(yearlyPvYieldPanelY) ? 0 : Math.min(yearlyPvYieldPanelY, window.innerHeight - hOffset),
   });
   const [sum, setSum] = useState(0);
   const panelSumRef = useRef(new Map<string, number>());
@@ -117,8 +118,8 @@ const YearlyPvYieldPanel = ({
   useEffect(() => {
     const handleResize = () => {
       setCurPosition({
-        x: Math.max(viewState.yearlyPvYieldPanelX, wOffset - window.innerWidth),
-        y: Math.min(viewState.yearlyPvYieldPanelY, window.innerHeight - hOffset),
+        x: Math.max(yearlyPvYieldPanelX, wOffset - window.innerWidth),
+        y: Math.min(yearlyPvYieldPanelY, window.innerHeight - hOffset),
       });
     };
     window.addEventListener('resize', handleResize);

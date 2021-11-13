@@ -18,7 +18,10 @@ const Maps = () => {
   const latitude = useStore(Selector.world.latitude);
   const longitude = useStore(Selector.world.longitude);
   const weatherData = useStore(Selector.weatherData);
-  const viewState = useStore((state) => state.viewState);
+  const mapWeatherStations = useStore(Selector.viewState.mapWeatherStations);
+  const mapZoom = useStore(Selector.viewState.mapZoom);
+  const mapTilt = useStore(Selector.viewState.mapTilt);
+  const mapType = useStore(Selector.viewState.mapType);
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const bounds = useRef<google.maps.LatLngBounds | null | undefined>();
@@ -54,7 +57,7 @@ const Maps = () => {
   const onBoundsChanged = () => {
     if (map) {
       bounds.current = map.getBounds();
-      if (viewState.mapWeatherStations) {
+      if (mapWeatherStations) {
         loadCities();
       }
     }
@@ -81,7 +84,7 @@ const Maps = () => {
   const onZoomChanged = () => {
     if (map) {
       const z = map.getZoom();
-      if (z !== viewState.mapZoom) {
+      if (z !== mapZoom) {
         setCommonStore((state) => {
           state.viewState.mapZoom = z;
         });
@@ -92,7 +95,7 @@ const Maps = () => {
   const onTiltChanged = () => {
     if (map) {
       const t = map.getTilt();
-      if (t !== viewState.mapTilt) {
+      if (t !== mapTilt) {
         setCommonStore((state) => {
           state.viewState.mapTilt = t;
         });
@@ -103,7 +106,7 @@ const Maps = () => {
   const onMapTypeIdChanged = () => {
     if (map) {
       const typeId = map.getMapTypeId();
-      if (typeId !== viewState.mapType) {
+      if (typeId !== mapType) {
         setCommonStore((state) => {
           state.viewState.mapType = typeId;
         });
@@ -116,10 +119,10 @@ const Maps = () => {
   return (
     <GoogleMap
       mapContainerStyle={containerStyle}
-      mapTypeId={viewState.mapType}
+      mapTypeId={mapType}
       center={latLng}
-      zoom={viewState.mapZoom}
-      tilt={viewState.mapTilt}
+      zoom={mapZoom}
+      tilt={mapTilt}
       onLoad={onLoad}
       onBoundsChanged={onBoundsChanged}
       onUnmount={onUnmount}
@@ -130,9 +133,9 @@ const Maps = () => {
     >
       {/* Child components, such as markers, info windows, etc. */}
       <>
-        {viewState.mapWeatherStations &&
+        {mapWeatherStations &&
           cities.current.map((c, index) => {
-            const scale = 0.2 * viewState.mapZoom;
+            const scale = 0.2 * mapZoom;
             return (
               <Marker
                 key={index}

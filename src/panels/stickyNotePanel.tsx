@@ -57,20 +57,19 @@ const Header = styled.div`
 
 const { TextArea } = Input;
 
-export interface StickyNotePanelProps {}
-
-const StickyNotePanel = ({}: StickyNotePanelProps) => {
+const StickyNotePanel = () => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const notes = useStore(Selector.notes);
-  const viewState = useStore((state) => state.viewState);
+  const stickyNotePanelX = useStore(Selector.viewState.stickyNotePanelX);
+  const stickyNotePanelY = useStore(Selector.viewState.stickyNotePanelY);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 440;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 400;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(viewState.stickyNotePanelX) ? 0 : Math.min(viewState.stickyNotePanelX, window.innerWidth - wOffset),
-    y: isNaN(viewState.stickyNotePanelY) ? 0 : Math.min(viewState.stickyNotePanelY, window.innerHeight - hOffset),
+    x: isNaN(stickyNotePanelX) ? 0 : Math.min(stickyNotePanelX, window.innerWidth - wOffset),
+    y: isNaN(stickyNotePanelY) ? 0 : Math.min(stickyNotePanelY, window.innerHeight - hOffset),
   });
   const [text, setText] = useState<string>(notes.length > 0 ? notes[0] : '');
   const lang = { lng: language };
@@ -79,8 +78,8 @@ const StickyNotePanel = ({}: StickyNotePanelProps) => {
   useEffect(() => {
     const handleResize = () => {
       setCurPosition({
-        x: Math.min(viewState.stickyNotePanelX, window.innerWidth - wOffset),
-        y: Math.min(viewState.stickyNotePanelY, window.innerHeight - hOffset),
+        x: Math.min(stickyNotePanelX, window.innerWidth - wOffset),
+        y: Math.min(stickyNotePanelY, window.innerHeight - hOffset),
       });
     };
     window.addEventListener('resize', handleResize);

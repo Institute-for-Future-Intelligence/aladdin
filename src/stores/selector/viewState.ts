@@ -30,9 +30,9 @@ export const heliodon = (state: CommonStoreState) => state.viewState.heliodon;
 
 export const mapZoom = (state: CommonStoreState) => state.viewState.mapZoom;
 
-export const mapPanelX = (state: CommonStoreState) => state.viewState.mapPanelX;
+export const mapTilt = (state: CommonStoreState) => state.viewState.mapTilt;
 
-export const mapPanelY = (state: CommonStoreState) => state.viewState.mapPanelY;
+export const mapType = (state: CommonStoreState) => state.viewState.mapType;
 
 export const mapWeatherStations = (state: CommonStoreState) => state.viewState.mapWeatherStations;
 
@@ -42,16 +42,48 @@ export const showInstructionPanel = (state: CommonStoreState) => state.viewState
 
 export const showHeliodonPanel = (state: CommonStoreState) => state.viewState.showHeliodonPanel;
 
+export const heliodonPanelX = (state: CommonStoreState) => state.viewState.heliodonPanelX;
+
+export const heliodonPanelY = (state: CommonStoreState) => state.viewState.heliodonPanelY;
+
 export const showMapPanel = (state: CommonStoreState) => state.viewState.showMapPanel;
+
+export const mapPanelX = (state: CommonStoreState) => state.viewState.mapPanelX;
+
+export const mapPanelY = (state: CommonStoreState) => state.viewState.mapPanelY;
 
 export const showWeatherPanel = (state: CommonStoreState) => state.viewState.showWeatherPanel;
 
+export const weatherPanelX = (state: CommonStoreState) => state.viewState.weatherPanelX;
+
+export const weatherPanelY = (state: CommonStoreState) => state.viewState.weatherPanelY;
+
 export const showStickyNotePanel = (state: CommonStoreState) => state.viewState.showStickyNotePanel;
+
+export const stickyNotePanelX = (state: CommonStoreState) => state.viewState.stickyNotePanelX;
+
+export const stickyNotePanelY = (state: CommonStoreState) => state.viewState.stickyNotePanelY;
 
 export const showDailyLightSensorPanel = (state: CommonStoreState) => state.viewState.showDailyLightSensorPanel;
 
+export const dailyLightSensorPanelX = (state: CommonStoreState) => state.viewState.dailyLightSensorPanelX;
+
+export const dailyLightSensorPanelY = (state: CommonStoreState) => state.viewState.dailyLightSensorPanelY;
+
 export const showYearlyLightSensorPanel = (state: CommonStoreState) => state.viewState.showYearlyLightSensorPanel;
+
+export const yearlyLightSensorPanelX = (state: CommonStoreState) => state.viewState.yearlyLightSensorPanelX;
+
+export const yearlyLightSensorPanelY = (state: CommonStoreState) => state.viewState.yearlyLightSensorPanelY;
 
 export const showDailyPvYieldPanel = (state: CommonStoreState) => state.viewState.showDailyPvYieldPanel;
 
+export const dailyPvYieldPanelX = (state: CommonStoreState) => state.viewState.dailyPvYieldPanelX;
+
+export const dailyPvYieldPanelY = (state: CommonStoreState) => state.viewState.dailyPvYieldPanelY;
+
 export const showYearlyPvYieldPanel = (state: CommonStoreState) => state.viewState.showYearlyPvYieldPanel;
+
+export const yearlyPvYieldPanelX = (state: CommonStoreState) => state.viewState.yearlyPvYieldPanelX;
+
+export const yearlyPvYieldPanelY = (state: CommonStoreState) => state.viewState.yearlyPvYieldPanelY;

@@ -110,6 +110,10 @@ export const enableFineGrid = (state: CommonStoreState) => state.enableFineGrid;
 
 export const setEnableFineGrid = (state: CommonStoreState) => state.setEnableFineGrid;
 
+export const showCloudFilePanel = (state: CommonStoreState) => state.showCloudFilePanel;
+
+export const showAccountSettingsPanel = (state: CommonStoreState) => state.showAccountSettingsPanel;
+
 // science
 export const weatherData = (state: CommonStoreState) => state.weatherData;
 

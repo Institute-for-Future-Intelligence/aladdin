@@ -62,7 +62,9 @@ const HeliodonPanel = () => {
   const dateString = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
   const animateSun = useStore(Selector.animateSun);
-  const viewState = useStore((state) => state.viewState);
+  const heliodon = useStore(Selector.viewState.heliodon);
+  const heliodonPanelX = useStore(Selector.viewState.heliodonPanelX);
+  const heliodonPanelY = useStore(Selector.viewState.heliodonPanelY);
 
   const requestRef = useRef<number>(0);
   const previousFrameTime = useRef<number>(-1);
@@ -70,8 +72,8 @@ const HeliodonPanel = () => {
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 680;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 250;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(viewState.heliodonPanelX) ? 0 : Math.max(viewState.heliodonPanelX, wOffset - window.innerWidth),
-    y: isNaN(viewState.heliodonPanelY) ? 0 : Math.min(viewState.heliodonPanelY, window.innerHeight - hOffset),
+    x: isNaN(heliodonPanelX) ? 0 : Math.max(heliodonPanelX, wOffset - window.innerWidth),
+    y: isNaN(heliodonPanelY) ? 0 : Math.min(heliodonPanelY, window.innerHeight - hOffset),
   });
   const date = useMemo(() => new Date(dateString), [dateString]);
   const lang = { lng: language };
@@ -80,8 +82,8 @@ const HeliodonPanel = () => {
   useEffect(() => {
     const handleResize = () => {
       setCurPosition({
-        x: Math.max(viewState.heliodonPanelX, wOffset - window.innerWidth),
-        y: Math.min(viewState.heliodonPanelY, window.innerHeight - hOffset),
+        x: Math.max(heliodonPanelX, wOffset - window.innerWidth),
+        y: Math.min(heliodonPanelY, window.innerHeight - hOffset),
       });
     };
     window.addEventListener('resize', handleResize);
@@ -171,7 +173,7 @@ const HeliodonPanel = () => {
               {i18n.t('word.Show', lang)}
               <br />
               <Switch
-                checked={viewState.heliodon}
+                checked={heliodon}
                 onChange={(checked) => {
                   setCommonStore((state) => {
                     state.viewState.heliodon = checked;

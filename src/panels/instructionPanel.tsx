@@ -42,9 +42,7 @@ const ColumnWrapper = styled.div`
   opacity: 100%;
 `;
 
-export interface InstructionPanelProps {}
-
-const InstructionPanel = ({}: InstructionPanelProps) => {
+const InstructionPanel = () => {
   const language = useStore(Selector.language);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
