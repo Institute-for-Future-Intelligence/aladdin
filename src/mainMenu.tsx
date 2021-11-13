@@ -19,7 +19,7 @@ import enUS from 'antd/lib/locale/en_US';
 import React, { useState } from 'react';
 import { useStore } from './stores/common';
 import styled from 'styled-components';
-import { Checkbox, Dropdown, Input, InputNumber, Menu, Modal, Radio, Select, Space } from 'antd';
+import { Checkbox, Dropdown, InputNumber, Menu, Radio, Select, Space } from 'antd';
 import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
 import About from './about';
@@ -54,8 +54,6 @@ const StyledImage = styled.img`
 `;
 
 export interface MainMenuProps {
-  readLocalFile: () => void;
-  writeLocalFile: () => boolean;
   set2DView: (selected: boolean) => void;
   resetView: () => void;
   zoomView: (scale: number) => void;
@@ -69,8 +67,6 @@ export interface MainMenuProps {
 }
 
 const MainMenu = ({
-  readLocalFile,
-  writeLocalFile,
   set2DView,
   resetView,
   zoomView,
@@ -85,7 +81,6 @@ const MainMenu = ({
   const setCommonStore = useStore(Selector.set);
   const undoManager = useStore(Selector.undoManager);
   const language = useStore(Selector.language);
-  const localFileName = useStore(Selector.localFileName);
   const timesPerHour = useStore(Selector.world.timesPerHour);
   const discretization = useStore(Selector.world.discretization);
   const solarPanelGridCellSize = useStore(Selector.world.solarPanelGridCellSize);
@@ -98,8 +93,6 @@ const MainMenu = ({
   const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
 
   const [aboutUs, setAboutUs] = useState(false);
-  const [downloadDialogVisible, setDownloadDialogVisible] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
 
   const lang = { lng: language };
   const isMac = Util.getOS()?.startsWith('Mac');
@@ -159,14 +152,23 @@ const MainMenu = ({
     <Menu>
       {/*file menu*/}
       <SubMenu key={'file'} title={i18n.t('menu.fileSubMenu', lang)}>
-        <Menu.Item key="open-local-file" onClick={readLocalFile}>
+        <Menu.Item
+          key="open-local-file"
+          onClick={() => {
+            setCommonStore((state) => {
+              state.openLocalFileFlag = !state.openLocalFileFlag;
+            });
+          }}
+        >
           {i18n.t('menu.file.OpenLocalFile', lang)}
           <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+O)</label>
         </Menu.Item>
         <Menu.Item
           key="save-local-file"
           onClick={() => {
-            setDownloadDialogVisible(true);
+            setCommonStore((state) => {
+              state.saveLocalFileDialogVisible = true;
+            });
           }}
         >
           {i18n.t('menu.file.SaveToDownloadFolder', lang)}
@@ -551,32 +553,6 @@ const MainMenu = ({
 
   return (
     <>
-      <Modal
-        title={i18n.t('menu.file.DownloadAs', lang)}
-        visible={downloadDialogVisible}
-        onOk={() => {
-          setConfirmLoading(true);
-          if (writeLocalFile()) {
-            setDownloadDialogVisible(false);
-          }
-          setConfirmLoading(false);
-        }}
-        confirmLoading={confirmLoading}
-        onCancel={() => {
-          setDownloadDialogVisible(false);
-        }}
-      >
-        <Input
-          placeholder="File name"
-          value={localFileName}
-          onPressEnter={writeLocalFile}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setCommonStore((state) => {
-              state.localFileName = e.target.value;
-            });
-          }}
-        />
-      </Modal>
       <Dropdown overlay={menu} trigger={['click']}>
         <StyledImage src={logo} title={i18n.t('tooltip.clickToOpenMenu', lang)} />
       </Dropdown>

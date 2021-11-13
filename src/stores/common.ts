@@ -142,6 +142,10 @@ export interface CommonStoreState {
   simulationInProgress: boolean;
   locale: Locale;
   localFileName: string;
+  openLocalFileFlag: boolean;
+  saveLocalFileFlag: boolean;
+  saveLocalFileDialogVisible: boolean;
+  updateCloudFileFlag: boolean;
   savedCameraPosition: Vector3;
   savedPanCenter: Vector3;
   enableFineGrid: boolean;
@@ -888,6 +892,10 @@ export const useStore = create<CommonStoreState>(
           simulationInProgress: false,
           locale: enUS,
           localFileName: 'aladdin.ala',
+          openLocalFileFlag: false,
+          saveLocalFileFlag: false,
+          saveLocalFileDialogVisible: false,
+          updateCloudFileFlag: false,
           localFileDialogRequested: false,
           savedCameraPosition: new Vector3(0, -5, 0),
           savedPanCenter: new Vector3(),

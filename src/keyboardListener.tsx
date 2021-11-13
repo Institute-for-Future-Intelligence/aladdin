@@ -2,12 +2,10 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { ObjectType } from './types';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
-import { Input, Modal } from 'antd';
-import i18n from './i18n/i18n';
 import { ElementModel } from './models/ElementModel';
 import { UndoableDelete } from './undo/UndoableDelete';
 import { UndoablePaste } from './undo/UndoablePaste';
@@ -18,8 +16,6 @@ export interface KeyboardListenerProps {
   keyDown: boolean;
   keyUp: boolean;
   canvas?: HTMLCanvasElement;
-  readLocalFile: () => void;
-  writeLocalFile: () => boolean;
   set2DView: (selected: boolean) => void;
   resetView: () => void;
   zoomView: (scale: number) => void;
@@ -31,8 +27,6 @@ const KeyboardListener = ({
   keyDown,
   keyUp,
   canvas,
-  readLocalFile,
-  writeLocalFile,
   set2DView,
   resetView,
   zoomView,
@@ -40,7 +34,6 @@ const KeyboardListener = ({
   const setCommonStore = useStore(Selector.set);
   const undoManager = useStore(Selector.undoManager);
   const addUndoable = useStore(Selector.addUndoable);
-  const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const copyElementById = useStore(Selector.copyElementById);
@@ -48,14 +41,10 @@ const KeyboardListener = ({
   const pasteElements = useStore(Selector.pasteElementsByKey);
   const getElementById = useStore(Selector.getElementById);
   const setElementPosition = useStore(Selector.setElementPosition);
-  const localFileName = useStore(Selector.localFileName);
   const setEnableFineGrid = useStore(Selector.setEnableFineGrid);
   const localFileDialogRequested = useStore(Selector.localFileDialogRequested);
   const buildingWallID = useStore(Selector.buildingWallID);
 
-  const [downloadDialogVisible, setDownloadDialogVisible] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const lang = { lng: language };
   const moveStepRelative = 0.01;
   const moveStepAbsolute = 0.1;
 
@@ -262,18 +251,22 @@ const KeyboardListener = ({
         if (!localFileDialogRequested) {
           setCommonStore((state) => {
             state.localFileDialogRequested = true;
+            state.openLocalFileFlag = !state.openLocalFileFlag;
           });
-          readLocalFile();
         }
         break;
       case 'ctrl+s':
       case 'meta+s': // for Mac
-        setDownloadDialogVisible(true);
+        setCommonStore((state) => {
+          state.saveLocalFileDialogVisible = true;
+        });
         break;
       case 'ctrl+shift+s':
       case 'meta+shift+s': // for Mac
         if (keyUp) {
-          console.log(keyName);
+          setCommonStore((state) => {
+            state.updateCloudFileFlag = !state.updateCloudFileFlag;
+          });
         }
         break;
       case 'delete':
@@ -334,36 +327,7 @@ const KeyboardListener = ({
     }
   };
 
-  return (
-    <>
-      <Modal
-        title={i18n.t('menu.file.DownloadAs', lang)}
-        visible={downloadDialogVisible}
-        onOk={() => {
-          setConfirmLoading(true);
-          if (writeLocalFile()) {
-            setDownloadDialogVisible(false);
-          }
-          setConfirmLoading(false);
-        }}
-        confirmLoading={confirmLoading}
-        onCancel={() => {
-          setDownloadDialogVisible(false);
-        }}
-      >
-        <Input
-          placeholder="File name"
-          value={localFileName}
-          onPressEnter={writeLocalFile}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setCommonStore((state) => {
-              state.localFileName = e.target.value;
-            });
-          }}
-        />
-      </Modal>
-    </>
-  );
+  return <></>;
 };
 
 export default React.memo(KeyboardListener);

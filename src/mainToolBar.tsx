@@ -42,12 +42,14 @@ const MainToolBar = () => {
   const showCloudFilePanel = useStore(Selector.showCloudFilePanel);
   const showAccountSettingsPanel = useStore(Selector.showAccountSettingsPanel);
   const cloudFile = useStore(Selector.cloudFile);
+  const updateCloudFileFlag = useStore(Selector.updateCloudFileFlag);
 
   const [loading, setLoading] = useState(false);
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
   const [title, setTitle] = useState<string>(cloudFile ?? 'My Aladdin File');
   const [titleDialogVisible, setTitleDialogVisible] = useState(false);
   const cloudFiles = useRef<CloudFileInfo[] | void>();
+  const firstCall = useRef<boolean>(true);
 
   const isMac = Util.getOS()?.startsWith('Mac');
   const query = queryString.parse(window.location.search);
@@ -103,6 +105,14 @@ const MainToolBar = () => {
       setCloudFileArray(arr);
     }
   }, [cloudFiles.current]);
+
+  useEffect(() => {
+    if (firstCall.current) {
+      firstCall.current = false;
+    } else {
+      updateCloudFile();
+    }
+  }, [updateCloudFileFlag]);
 
   const init = () => {
     if (query.userid && query.title) {

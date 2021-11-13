@@ -20,8 +20,8 @@ import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from './mainMenu';
 import MapPanel from './panels/mapPanel';
 import HeliodonPanel from './panels/heliodonPanel';
-import { DEFAULT_FAR, DEFAULT_FOV, GROUND_ID, VERSION } from './constants';
-import { showError, showInfo, visitHomepage, visitIFI } from './helpers';
+import { DEFAULT_FAR, DEFAULT_FOV, VERSION } from './constants';
+import { showInfo, visitHomepage, visitIFI } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
 import { Modal, ConfigProvider } from 'antd';
@@ -48,16 +48,14 @@ import ErrorPage from './ErrorPage';
 import i18n from './i18n/i18n';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
 import KeyboardListener from './keyboardListener';
-import { Vector3 } from 'three';
-import { saveAs } from 'file-saver';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCloud } from '@fortawesome/free-solid-svg-icons';
+import LocalFileManager from './localFileManager';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const locale = useStore(Selector.locale);
-  const localFileName = useStore(Selector.localFileName);
   const loadWeatherData = useStore(Selector.loadWeatherData);
   const getClosestCity = useStore(Selector.getClosestCity);
   const countElementsByType = useStore(Selector.countElementsByType);
@@ -70,7 +68,6 @@ const App = () => {
   const loadPvModules = useStore(Selector.loadPvModules);
   const heliodonRadius = useStore(Selector.heliodonRadius);
   const cameraZoom = useStore(Selector.viewState.cameraZoom) ?? 20;
-  const exportContent = useStore(Selector.exportContent);
   const cloudFile = useStore(Selector.cloudFile);
   const axes = useStore(Selector.viewState.axes);
   const theme = useStore(Selector.viewState.theme);
@@ -104,6 +101,7 @@ const App = () => {
   const orbitControlsRef = useRef<OrbitControls>();
   const canvasRef = useRef<HTMLCanvasElement>();
   const camRef = useRef<Camera>();
+  const lang = { lng: language };
 
   useEffect(() => {
     loadWeatherData();
@@ -210,67 +208,6 @@ const App = () => {
     });
   };
 
-  const readLocalFile = () => {
-    document.body.onfocus = () => {
-      setCommonStore((state) => {
-        state.localFileDialogRequested = false;
-      });
-    };
-    const fileDialog = document.getElementById('file-dialog') as HTMLInputElement;
-    fileDialog.onchange = (e) => {
-      if (fileDialog.files && fileDialog.files.length > 0) {
-        const reader = new FileReader();
-        reader.readAsText(fileDialog.files[0]);
-        const fn = fileDialog.files[0].name;
-        setCommonStore((state) => {
-          state.localFileName = fn;
-        });
-        reader.onload = (e) => {
-          if (reader.result) {
-            const input = JSON.parse(reader.result.toString());
-            setCommonStore((state) => {
-              // remove old properties
-              if (input.world.hasOwnProperty('cameraPosition')) delete input.world.cameraPosition;
-              if (input.world.hasOwnProperty('panCenter')) delete input.world.panCenter;
-              if (!input.view.hasOwnProperty('cameraPosition')) input.view.cameraPosition = new Vector3(0, -5, 0);
-              if (!input.view.hasOwnProperty('panCenter')) input.view.panCenter = new Vector3(0, 0, 0);
-              state.world = input.world;
-              state.viewState = input.view;
-              // remove old properties
-              for (const elem of input.elements) {
-                if (elem.hasOwnProperty('parent')) {
-                  if (!elem.hasOwnProperty('parentId')) elem.parentId = elem.parent.id ?? GROUND_ID;
-                  delete elem.parent;
-                }
-                if (elem.hasOwnProperty('pvModel')) {
-                  if (!elem.hasOwnProperty('pvModelName')) elem.pvModelName = elem.pvModel.name ?? 'SPR-X21-335-BLK';
-                  delete elem.pvModel;
-                }
-              }
-              state.elements = input.elements;
-              state.notes = input.notes ?? [];
-              state.cloudFile = undefined;
-            });
-          }
-          fileDialog.value = '';
-        };
-      }
-    };
-    fileDialog.click();
-  };
-
-  const writeLocalFile = () => {
-    const fn = localFileName.trim();
-    if (fn.length > 0) {
-      const blob = new Blob([JSON.stringify(exportContent())], { type: 'application/json' });
-      saveAs(blob, fn);
-      return true;
-    } else {
-      showError(i18n.t('menu.file.SavingAbortedMustHaveValidFileName', lang) + '.');
-      return false;
-    }
-  };
-
   const collectDailyLightSensorData = () => {
     const sensorCount = countElementsByType(ObjectType.Sensor);
     if (sensorCount === 0) {
@@ -316,8 +253,6 @@ const App = () => {
       state.viewState.showYearlyPvYieldPanel = true;
     });
   };
-
-  const lang = { lng: language };
 
   console.log('x');
 
@@ -391,10 +326,9 @@ const App = () => {
             &nbsp;&nbsp; &copy;{new Date().getFullYear()} {i18n.t('name.IFI', lang)}
             &nbsp;{i18n.t('word.Version', lang) + ' ' + VERSION + '. ' + i18n.t('word.AllRightsReserved', lang) + '. '}
           </div>
+          <LocalFileManager />
           <MainMenu
             canvas={canvasRef.current}
-            readLocalFile={readLocalFile}
-            writeLocalFile={writeLocalFile}
             set2DView={set2DView}
             resetView={resetView}
             zoomView={zoomView}
@@ -514,8 +448,6 @@ const App = () => {
                 keyDown={keyDown.current}
                 keyUp={keyUp.current}
                 canvas={canvasRef.current}
-                readLocalFile={readLocalFile}
-                writeLocalFile={writeLocalFile}
                 set2DView={set2DView}
                 resetView={resetView}
                 zoomView={zoomView}

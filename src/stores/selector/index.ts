@@ -26,7 +26,15 @@ export const locale = (state: CommonStoreState) => state.locale;
 
 export const cloudFile = (state: CommonStoreState) => state.cloudFile;
 
+export const updateCloudFileFlag = (state: CommonStoreState) => state.updateCloudFileFlag;
+
 export const localFileName = (state: CommonStoreState) => state.localFileName;
+
+export const openLocalFileFlag = (state: CommonStoreState) => state.openLocalFileFlag;
+
+export const saveLocalFileFlag = (state: CommonStoreState) => state.saveLocalFileFlag;
+
+export const saveLocalFileDialogVisible = (state: CommonStoreState) => state.saveLocalFileDialogVisible;
 
 export const undoManager = (state: CommonStoreState) => state.undoManager;
 
