@@ -10,6 +10,7 @@ import { Input, Modal } from 'antd';
 import i18n from './i18n/i18n';
 import { ElementModel } from './models/ElementModel';
 import { UndoableDelete } from './undo/UndoableDelete';
+import { UndoablePaste } from './undo/UndoablePaste';
 
 export interface KeyboardListenerProps {
   keyFlag: boolean; // flip this every time to ensure that handleKey is called in useEffect
@@ -44,7 +45,7 @@ const KeyboardListener = ({
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const copyElementById = useStore(Selector.copyElementById);
   const removeElementById = useStore(Selector.removeElementById);
-  const pasteElement = useStore(Selector.pasteElementByKey);
+  const pasteElements = useStore(Selector.pasteElementsByKey);
   const getElementById = useStore(Selector.getElementById);
   const setElementPosition = useStore(Selector.setElementPosition);
   const localFileName = useStore(Selector.localFileName);
@@ -209,7 +210,26 @@ const KeyboardListener = ({
       case 'ctrl+v':
       case 'meta+v': // for Mac
         if (keyUp) {
-          pasteElement();
+          const pastedElements = pasteElements();
+          if (pastedElements.length > 0) {
+            const undoablePaste = {
+              name: 'Paste by Key',
+              timestamp: Date.now(),
+              pastedElements: JSON.parse(JSON.stringify(pastedElements)),
+              undo: () => {
+                for (const elem of undoablePaste.pastedElements) {
+                  removeElementById(elem.id, false);
+                }
+              },
+              redo: () => {
+                setCommonStore((state) => {
+                  state.elements.push(...undoablePaste.pastedElements);
+                  state.selectedElement = undoablePaste.pastedElements[0];
+                });
+              },
+            } as UndoablePaste;
+            addUndoable(undoablePaste);
+          }
         }
         break;
       case 'ctrl+home':

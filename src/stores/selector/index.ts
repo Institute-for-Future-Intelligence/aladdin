@@ -74,9 +74,11 @@ export const removeElementsByType = (state: CommonStoreState) => state.removeEle
 
 export const removeAllChildElementsByType = (state: CommonStoreState) => state.removeAllChildElementsByType;
 
-export const pasteElementToPoint = (state: CommonStoreState) => state.pasteElementToPoint;
+export const pasteElementsToPoint = (state: CommonStoreState) => state.pasteElementsToPoint;
 
-export const pasteElementByKey = (state: CommonStoreState) => state.pasteElementByKey;
+export const pasteElementsByKey = (state: CommonStoreState) => state.pasteElementsByKey;
+
+export const elementsToPaste = (state: CommonStoreState) => state.elementsToPaste;
 
 export const selectMe = (state: CommonStoreState) => state.selectMe;
 

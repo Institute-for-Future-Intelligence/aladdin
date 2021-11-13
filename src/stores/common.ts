@@ -97,11 +97,11 @@ export interface CommonStoreState {
 
   pastePoint: Vector3;
   pasteNormal: Vector3 | undefined;
-  elementToPaste: ElementModel[];
+  elementsToPaste: ElementModel[];
   copyElementById: (id: string) => void;
   removeElementById: (id: string, cut: boolean) => void; // set cut to false for deletion
-  pasteElementToPoint: () => void;
-  pasteElementByKey: () => void;
+  pasteElementsToPoint: () => ElementModel[];
+  pasteElementsByKey: () => ElementModel[];
   countElementsByType: (type: ObjectType) => number;
   removeElementsByType: (type: ObjectType) => void;
   countAllChildElementsByType: (parentId: string, type: ObjectType) => number;
@@ -533,14 +533,14 @@ export const useStore = create<CommonStoreState>(
             return id;
           },
 
-          elementToPaste: [],
+          elementsToPaste: [],
           pastePoint: new Vector3(),
           pasteNormal: undefined,
           copyElementById(id) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.id === id) {
-                  state.elementToPaste = [e];
+                  state.elementsToPaste = [e];
                   break;
                 }
               }
@@ -551,7 +551,7 @@ export const useStore = create<CommonStoreState>(
               for (const elem of state.elements) {
                 if (elem.id === id) {
                   if (cut) {
-                    state.elementToPaste = [elem];
+                    state.elementsToPaste = [elem];
                   }
                   elem.selected = false;
                   if (elem.type === ObjectType.Wall) {
@@ -581,7 +581,7 @@ export const useStore = create<CommonStoreState>(
               if (cut) {
                 for (const e of state.elements) {
                   if (e.parentId === id) {
-                    state.elementToPaste.push(e);
+                    state.elementsToPaste.push(e);
                   }
                 }
               }
@@ -650,40 +650,44 @@ export const useStore = create<CommonStoreState>(
             return count;
           },
 
-          pasteElementToPoint() {
+          pasteElementsToPoint() {
+            const pastedElements: ElementModel[] = [];
             immerSet((state: CommonStoreState) => {
-              if (state.elementToPaste.length > 0) {
+              if (state.elementsToPaste.length > 0) {
                 let m = state.pastePoint;
                 const newParent = state.getSelectedElement();
-                const oldParent = state.getElementById(state.elementToPaste[0].parentId);
+                const oldParent = state.getElementById(state.elementsToPaste[0].parentId);
                 if (newParent) {
                   // if parent is ground, it has no type definition but we use it to check its type
                   if (oldParent && oldParent.type) {
-                    state.elementToPaste[0].parentId = newParent.id;
+                    state.elementsToPaste[0].parentId = newParent.id;
                     m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
                   }
                 }
-                const e = ElementModelCloner.clone(newParent, state.elementToPaste[0], m.x, m.y, m.z);
+                const e = ElementModelCloner.clone(newParent, state.elementsToPaste[0], m.x, m.y, m.z);
                 if (e) {
                   if (state.pasteNormal) {
                     e.normal = state.pasteNormal.toArray();
                   }
                   state.elements.push(e);
+                  pastedElements.push(e);
                 }
-                if (state.elementToPaste.length > 1) {
+                if (state.elementsToPaste.length > 1) {
                   // paste children, too
-                  for (let i = 1; i < state.elementToPaste.length; i++) {
+                  for (let i = 1; i < state.elementsToPaste.length; i++) {
                     // TODO
                   }
                 }
               }
             });
+            return pastedElements;
           },
 
-          pasteElementByKey() {
+          pasteElementsByKey() {
+            const pastedElements: ElementModel[] = [];
             immerSet((state: CommonStoreState) => {
-              if (state.elementToPaste.length > 0) {
-                const elem = state.elementToPaste[0];
+              if (state.elementsToPaste.length > 0) {
+                const elem = state.elementsToPaste[0];
                 const parent = state.getElementById(elem.parentId);
                 const e = ElementModelCloner.clone(parent, elem, elem.cx, elem.cy, elem.cz);
                 if (e) {
@@ -691,12 +695,12 @@ export const useStore = create<CommonStoreState>(
                     case ObjectType.Human:
                       e.cx += 1;
                       state.elements.push(e);
-                      state.elementToPaste = [e];
+                      state.elementsToPaste = [e];
                       break;
                     case ObjectType.Tree:
                       e.cx += e.lx;
                       state.elements.push(e);
-                      state.elementToPaste = [e];
+                      state.elementsToPaste = [e];
                       break;
                     case ObjectType.SolarPanel:
                       if (e.parentId) {
@@ -706,7 +710,7 @@ export const useStore = create<CommonStoreState>(
                         }
                         if (e.cx < 0.5) {
                           state.elements.push(e);
-                          state.elementToPaste = [e];
+                          state.elementsToPaste = [e];
                         }
                       }
                       break;
@@ -718,20 +722,22 @@ export const useStore = create<CommonStoreState>(
                         }
                         if (e.cx < 0.5) {
                           state.elements.push(e);
-                          state.elementToPaste = [e];
+                          state.elementsToPaste = [e];
                         }
                       }
                       break;
                   }
+                  pastedElements.push(e);
                 }
-                if (state.elementToPaste.length > 1) {
+                if (state.elementsToPaste.length > 1) {
                   // paste children, too
-                  for (let i = 1; i < state.elementToPaste.length; i++) {
+                  for (let i = 1; i < state.elementsToPaste.length; i++) {
                     // TODO
                   }
                 }
               }
             });
+            return pastedElements;
           },
 
           pvModules: {},

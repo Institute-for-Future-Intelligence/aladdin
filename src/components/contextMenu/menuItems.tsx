@@ -11,14 +11,45 @@ import { ColorResult, CompactPicker } from 'react-color';
 import i18n from '../../i18n/i18n';
 import { Util } from '../../Util';
 import { UndoableDelete } from '../../undo/UndoableDelete';
+import { UndoablePaste } from '../../undo/UndoablePaste';
 
 export const Paste = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  const pasteElement = useStore(Selector.pasteElementToPoint);
+  const pasteElements = useStore(Selector.pasteElementsToPoint);
+  const elementsToPaste = useStore(Selector.elementsToPaste);
+  const removeElementById = useStore(Selector.removeElementById);
+  const addUndoable = useStore(Selector.addUndoable);
+
   const isMac = Util.getOS()?.startsWith('Mac');
 
+  const paste = () => {
+    if (elementsToPaste && elementsToPaste.length > 0) {
+      const pastedElements = pasteElements();
+      if (pastedElements.length > 0) {
+        const undoablePaste = {
+          name: 'Paste to Point',
+          timestamp: Date.now(),
+          pastedElements: JSON.parse(JSON.stringify(pastedElements)),
+          undo: () => {
+            for (const elem of undoablePaste.pastedElements) {
+              removeElementById(elem.id, false);
+            }
+          },
+          redo: () => {
+            setCommonStore((state) => {
+              state.elements.push(...undoablePaste.pastedElements);
+              state.selectedElement = undoablePaste.pastedElements[0];
+            });
+          },
+        } as UndoablePaste;
+        addUndoable(undoablePaste);
+      }
+    }
+  };
+
   return (
-    <Menu.Item key={'ground-paste'} onClick={pasteElement} style={{ paddingLeft: paddingLeft }}>
+    <Menu.Item key={'ground-paste'} onClick={paste} style={{ paddingLeft: paddingLeft }}>
       {i18n.t('word.Paste', { lng: language })}
       <label style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+V)</label>
     </Menu.Item>
