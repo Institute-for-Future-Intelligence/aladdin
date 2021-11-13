@@ -41,7 +41,7 @@ export const CuboidMenu = () => {
       <Cut />
       <Lock />
       <ColorPicker />
-      {sensorCountCuboid > 0 && contextMenuObjectType && (
+      {(sensorCountCuboid > 0 || solarPanelCountCuboid > 0) && contextMenuObjectType && (
         <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
           {sensorCountCuboid > 0 && (
             <Menu.Item
