@@ -545,6 +545,7 @@ const App = () => {
                   'ctrl+y',
                   'meta+y',
                   'shift',
+                  'esc',
                 ]}
                 handleEventType={'keydown'}
                 onKeyEvent={(key, e) => {

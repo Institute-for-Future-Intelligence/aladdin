@@ -162,30 +162,15 @@ const Foundation = ({
   useEffect(() => {
     if (deletedWallID) {
       wallPoints.delete(deletedWallID);
+      setIsSettingWallStartPoint(false);
+      setIsSettingWallEndPoint(false);
+      setBuildingWallID(null);
+      setCommonStore((state) => {
+        state.buildingWallID = null;
+        state.deletedWallID = null;
+      });
     }
   }, [deletedWallID]);
-
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      switch (e.key) {
-        case 'Escape':
-          if (buildingWallIDRef.current) {
-            removeElementById(buildingWallIDRef.current, false);
-            setIsSettingWallStartPoint(false);
-            setIsSettingWallEndPoint(false);
-            setBuildingWallID(null);
-            setCommonStore((state) => {
-              state.buildingWallID = null;
-            });
-          }
-          break;
-      }
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => {
-      window.removeEventListener('keydown', onKeyDown);
-    };
-  }, []);
 
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {

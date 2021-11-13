@@ -50,6 +50,7 @@ const KeyboardListener = ({
   const localFileName = useStore(Selector.localFileName);
   const setEnableFineGrid = useStore(Selector.setEnableFineGrid);
   const localFileDialogRequested = useStore(Selector.localFileDialogRequested);
+  const buildingWallID = useStore(Selector.buildingWallID);
 
   const [downloadDialogVisible, setDownloadDialogVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -297,6 +298,11 @@ const KeyboardListener = ({
           setEnableFineGrid(true);
         } else if (keyUp) {
           setEnableFineGrid(false);
+        }
+        break;
+      case 'esc':
+        if (keyDown && buildingWallID) {
+          removeElementById(buildingWallID, false);
         }
         break;
     }
