@@ -15,6 +15,7 @@ import { Util } from '../Util';
 import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableRotate } from '../undo/UndoableRotate';
+import { UndoableAdd } from '../undo/UndoableAdd';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
@@ -31,6 +32,7 @@ const Ground = () => {
   const updateElement = useStore(Selector.updateElementById);
   const addElement = useStore(Selector.addElement);
   const getElementById = useStore(Selector.getElementById);
+  const removeElementById = useStore(Selector.removeElementById);
   const getCameraDirection = useStore(Selector.getCameraDirection);
   const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
   const addUndoable = useStore(Selector.addUndoable);
@@ -276,7 +278,24 @@ const Ground = () => {
         });
         selectNone();
         if (legalOnGround(objectTypeToAdd)) {
-          addElement(groundModel, e.intersections[0].point);
+          const position = e.intersections[0].point;
+          const id = addElement(groundModel, position);
+          const addedElement = getElementById(id);
+          const undoableAdd = {
+            name: 'Add',
+            timestamp: Date.now(),
+            addedElement: addedElement,
+            undo: () => {
+              removeElementById(undoableAdd.addedElement.id, false);
+            },
+            redo: () => {
+              setCommonStore((state) => {
+                state.elements.push(undoableAdd.addedElement);
+                state.selectedElement = undoableAdd.addedElement;
+              });
+            },
+          } as UndoableAdd;
+          addUndoable(undoableAdd);
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
           });

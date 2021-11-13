@@ -159,7 +159,7 @@ const MapPanel = () => {
       <Container>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
-            <span>{i18n.t('menu.view.Map', lang)}</span>
+            <span>{i18n.t('menu.tool.Map', lang)}</span>
             <span
               style={{ cursor: 'pointer' }}
               onTouchStart={() => {

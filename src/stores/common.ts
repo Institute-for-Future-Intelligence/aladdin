@@ -466,45 +466,53 @@ export const useStore = create<CommonStoreState>(
               const m = position;
               switch (state.objectTypeToAdd) {
                 case ObjectType.Human:
-                  state.elements.push(ElementModelFactory.makeHuman(m.x, m.y, m.z));
+                  const human = ElementModelFactory.makeHuman(m.x, m.y, m.z);
+                  id = human.id;
+                  state.elements.push(human);
                   break;
                 case ObjectType.Tree:
-                  state.elements.push(ElementModelFactory.makeTree(m.x, m.y, m.z));
+                  const tree = ElementModelFactory.makeTree(m.x, m.y, m.z);
+                  id = tree.id;
+                  state.elements.push(tree);
                   break;
                 case ObjectType.Sensor:
                   const sensorParentModel = parent as ElementModel;
                   const sensorRelativeCoordinates = Util.relativeCoordinates(m.x, m.y, m.z, sensorParentModel);
-                  state.elements.push(
-                    ElementModelFactory.makeSensor(
-                      sensorParentModel,
-                      sensorRelativeCoordinates.x,
-                      sensorRelativeCoordinates.y,
-                      sensorRelativeCoordinates.z,
-                      normal,
-                      parent.rotation,
-                    ),
+                  const sensor = ElementModelFactory.makeSensor(
+                    sensorParentModel,
+                    sensorRelativeCoordinates.x,
+                    sensorRelativeCoordinates.y,
+                    sensorRelativeCoordinates.z,
+                    normal,
+                    parent.rotation,
                   );
+                  id = sensor.id;
+                  state.elements.push(sensor);
                   break;
                 case ObjectType.SolarPanel:
                   const solarPanelParentModel = parent as ElementModel;
                   const solarPanelRelativeCoordinates = Util.relativeCoordinates(m.x, m.y, m.z, solarPanelParentModel);
-                  state.elements.push(
-                    ElementModelFactory.makeSolarPanel(
-                      solarPanelParentModel,
-                      state.getPvModule('SPR-X21-335-BLK'),
-                      solarPanelRelativeCoordinates.x,
-                      solarPanelRelativeCoordinates.y,
-                      solarPanelRelativeCoordinates.z,
-                      normal,
-                      parent.rotation,
-                    ),
+                  const solarPanel = ElementModelFactory.makeSolarPanel(
+                    solarPanelParentModel,
+                    state.getPvModule('SPR-X21-335-BLK'),
+                    solarPanelRelativeCoordinates.x,
+                    solarPanelRelativeCoordinates.y,
+                    solarPanelRelativeCoordinates.z,
+                    normal,
+                    parent.rotation,
                   );
+                  id = solarPanel.id;
+                  state.elements.push(solarPanel);
                   break;
                 case ObjectType.Foundation:
-                  state.elements.push(ElementModelFactory.makeFoundation(m.x, m.y));
+                  const foundation = ElementModelFactory.makeFoundation(m.x, m.y);
+                  id = foundation.id;
+                  state.elements.push(foundation);
                   break;
                 case ObjectType.Cuboid:
-                  state.elements.push(ElementModelFactory.makeCuboid(m.x, m.y));
+                  const cuboid = ElementModelFactory.makeCuboid(m.x, m.y);
+                  id = cuboid.id;
+                  state.elements.push(cuboid);
                   break;
                 case ObjectType.Wall:
                   const wallParentModel = parent as ElementModel;
