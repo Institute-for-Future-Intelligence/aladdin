@@ -16,7 +16,7 @@ import {
   Vector2,
   Vector3,
 } from 'three';
-import { Line, Plane, Sphere } from '@react-three/drei';
+import { Box, Line, Plane, Sphere } from '@react-three/drei';
 
 import { ActionType, ObjectType, ResizeHandleType, ResizeHandleType as RType } from 'src/types';
 import { Util } from 'src/Util';
@@ -832,11 +832,20 @@ const WallResizeHandle = React.memo(
         ? HIGHLIGHT_HANDLE_COLOR
         : RESIZE_HANDLE_COLOR;
 
+    let lx = handleSize,
+      ly = handleSize,
+      lz = handleSize;
+    if (handleType === RType.LowerRight || handleType === RType.LowerLeft) {
+      lx = handleSize * 1.7;
+    } else {
+      ly = handleSize / 2;
+      lz = handleSize * 1.7;
+    }
     return (
-      <Sphere
+      <Box
         name={handleType}
         ref={handleRef}
-        args={[handleSize]}
+        args={[lx, ly, lz]}
         position={[x, 0, z]}
         onPointerOver={() => {
           setHovered(true);
@@ -870,7 +879,7 @@ const WallResizeHandle = React.memo(
         }}
       >
         <meshStandardMaterial color={color} />
-      </Sphere>
+      </Box>
     );
   },
 );
