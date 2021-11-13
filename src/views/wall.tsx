@@ -104,7 +104,7 @@ const Wall = ({
   const elementModel = getElementById(id) as WallModel;
   const highLight = lx === 0;
 
-  const { camera, gl } = useThree();
+  const { camera, gl, scene } = useThree();
 
   const ray = useMemo(() => new Raycaster(), []);
 
@@ -158,6 +158,7 @@ const Wall = ({
 
       outSideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
       outSideWallRef.current.material = new MeshStandardMaterial({ map: texture, side: DoubleSide });
+      gl.render(scene, camera);
     }
   }, [init, lx, lz, windows]);
 
@@ -177,6 +178,7 @@ const Wall = ({
 
       insideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
       insideWallRef.current.material = whiteWallMaterial;
+      gl.render(scene, camera);
     }
   }, [init, leftOffset, rightOffset, lx, ly, lz, windows]);
 
@@ -187,6 +189,7 @@ const Wall = ({
       drawTopSurface(topSurfaceShape, lx, ly, leftOffset, rightOffset);
       topSurfaceRef.current.geometry = new ShapeBufferGeometry(topSurfaceShape);
       topSurfaceRef.current.material = whiteWallMaterial;
+      gl.render(scene, camera);
     }
   }, [init, leftOffset, rightOffset, lx, ly, lz]);
 
