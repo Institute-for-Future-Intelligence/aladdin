@@ -24,9 +24,9 @@ const WallSelection = () => {
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const setCommonStore = useStore(Selector.set);
 
-  const wall = getSelectedElement() as WallModel;
+  const wall = getSelectedElement();
 
-  const [textureType, setTextureType] = useState(wall.textureType ?? WallTexture.NoTexture);
+  const [textureType, setTextureType] = useState(wall?.textureType ?? WallTexture.NoTexture);
   const [prevTexture, setPrevTexture] = useState('');
   const [radioGroup, setRadioGroup] = useState(1);
   const [isModalVisible, setIsModalVisible] = useState(false);

@@ -179,16 +179,16 @@ export const WallMenu = () => {
       <>
         <Modal
           centered
-          title={i18n.t('wallMenu.Size_of_Wall', lang)}
+          title={i18n.t('wallMenu.SizeOfWall', lang)}
           visible={isModalVisible}
           onOk={onClickModalOk}
           onCancel={onClickModalCancel}
         >
           <Radio.Group onChange={onRadioChange} value={radioGroup}>
             <Space direction="vertical">
-              <Radio value={1}>{i18n.t('wallMenu.Only_This_Wall', lang)}</Radio>
-              <Radio value={2}>{i18n.t('wallMenu.Walls_on_Foundation', lang)}</Radio>
-              <Radio value={3}>{i18n.t('wallMenu.All_Walls', lang)}</Radio>
+              <Radio value={1}>{i18n.t('wallMenu.OnlyThisWall', lang)}</Radio>
+              <Radio value={2}>{i18n.t('wallMenu.WallsOnFoundation', lang)}</Radio>
+              <Radio value={3}>{i18n.t('wallMenu.AllWalls', lang)}</Radio>
             </Space>
           </Radio.Group>
           <br /> <br />
