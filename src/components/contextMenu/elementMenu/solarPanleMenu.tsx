@@ -13,6 +13,7 @@ import { ObjectType, Orientation, TrackerType } from '../../../types';
 import { Util } from '../../../Util';
 import { Copy, Cut } from '../menuItems';
 import i18n from '../../../i18n/i18n';
+import { UndoableCheck } from '../../../undo/UndoableCheck';
 
 const { Option } = Select;
 
@@ -22,6 +23,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
   const setElementSize = useStore(Selector.setElementSize);
   const updateElementById = useStore(Selector.updateElementById);
   const getPvModule = useStore(Selector.getPvModule);
+  const addUndoable = useStore(Selector.addUndoable);
 
   const [solarPanel, setSolarPanel] = useState<SolarPanelModel>();
   const [dx, setDx] = useState<number>(0);
@@ -46,6 +48,18 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
 
   const showElementLabel = (e: CheckboxChangeEvent) => {
     if (solarPanel) {
+      const undoableCheck = {
+        name: 'Show Label',
+        timestamp: Date.now(),
+        checked: !solarPanel.showLabel,
+        undo: () => {
+          updateElementById(solarPanel.id, { showLabel: !undoableCheck.checked });
+        },
+        redo: () => {
+          updateElementById(solarPanel.id, { showLabel: undoableCheck.checked });
+        },
+      } as UndoableCheck;
+      addUndoable(undoableCheck);
       updateElementById(solarPanel.id, { showLabel: e.target.checked });
       setUpdateFlag(!updateFlag);
     }
@@ -284,6 +298,18 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                 checked={!!solarPanel?.drawSunBeam}
                 onChange={(e) => {
                   if (solarPanel) {
+                    const undoableCheck = {
+                      name: 'Show Sun Beam',
+                      timestamp: Date.now(),
+                      checked: !solarPanel.drawSunBeam,
+                      undo: () => {
+                        updateElementById(solarPanel.id, { drawSunBeam: !undoableCheck.checked });
+                      },
+                      redo: () => {
+                        updateElementById(solarPanel.id, { drawSunBeam: undoableCheck.checked });
+                      },
+                    } as UndoableCheck;
+                    addUndoable(undoableCheck);
                     updateElementById(solarPanel.id, { drawSunBeam: e.target.checked });
                     setUpdateFlag(!updateFlag);
                   }

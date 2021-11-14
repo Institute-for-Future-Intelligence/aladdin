@@ -28,6 +28,7 @@ import { ObjectType } from './types';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import i18n from './i18n/i18n';
 import { UndoableRemoveAll } from './undo/UndoableRemoveAll';
+import { UndoableCheck } from './undo/UndoableCheck';
 
 const MainToolBarButtons = () => {
   const setCommonStore = useStore(Selector.set);
@@ -75,6 +76,22 @@ const MainToolBarButtons = () => {
   };
 
   const toggleShadow = () => {
+    const undoableCheck = {
+      name: 'Show Shadow',
+      timestamp: Date.now(),
+      checked: !shadowEnabled,
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.shadowEnabled = !undoableCheck.checked;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.shadowEnabled = undoableCheck.checked;
+        });
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
     setCommonStore((state) => {
       state.viewState.shadowEnabled = !state.viewState.shadowEnabled;
     });

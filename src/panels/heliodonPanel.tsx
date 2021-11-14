@@ -11,6 +11,7 @@ import moment from 'moment';
 import 'antd/dist/antd.css';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
+import { UndoableCheck } from '../undo/UndoableCheck';
 
 const Container = styled.div`
   position: absolute;
@@ -59,6 +60,7 @@ const Header = styled.div`
 const HeliodonPanel = () => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
+  const addUndoable = useStore(Selector.addUndoable);
   const dateString = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
   const animateSun = useStore(Selector.animateSun);
@@ -175,6 +177,22 @@ const HeliodonPanel = () => {
               <Switch
                 checked={heliodon}
                 onChange={(checked) => {
+                  const undoableCheck = {
+                    name: 'Show Heliodon',
+                    timestamp: Date.now(),
+                    checked: !heliodon,
+                    undo: () => {
+                      setCommonStore((state) => {
+                        state.viewState.heliodon = !undoableCheck.checked;
+                      });
+                    },
+                    redo: () => {
+                      setCommonStore((state) => {
+                        state.viewState.heliodon = undoableCheck.checked;
+                      });
+                    },
+                  } as UndoableCheck;
+                  addUndoable(undoableCheck);
                   setCommonStore((state) => {
                     state.viewState.heliodon = checked;
                   });
@@ -187,6 +205,22 @@ const HeliodonPanel = () => {
               <Switch
                 checked={animateSun}
                 onChange={(checked) => {
+                  const undoableCheck = {
+                    name: 'Animate Heliodon',
+                    timestamp: Date.now(),
+                    checked: !animateSun,
+                    undo: () => {
+                      setCommonStore((state) => {
+                        state.animateSun = !undoableCheck.checked;
+                      });
+                    },
+                    redo: () => {
+                      setCommonStore((state) => {
+                        state.animateSun = undoableCheck.checked;
+                      });
+                    },
+                  } as UndoableCheck;
+                  addUndoable(undoableCheck);
                   setCommonStore((state) => {
                     state.animateSun = checked;
                   });
@@ -198,10 +232,10 @@ const HeliodonPanel = () => {
               <br />
               <DatePicker
                 value={moment(date)}
-                onChange={(moment) => {
-                  if (moment) {
+                onChange={(d) => {
+                  if (d) {
                     const day = new Date(date);
-                    const m = moment.toDate();
+                    const m = d.toDate();
                     day.setFullYear(m.getFullYear());
                     day.setMonth(m.getMonth());
                     day.setDate(m.getDate());
@@ -218,8 +252,8 @@ const HeliodonPanel = () => {
               <TimePicker
                 value={moment(date, 'HH:mm')}
                 format={'HH:mm'}
-                onChange={(moment) => {
-                  if (moment) changeTime?.(moment.toDate());
+                onChange={(t) => {
+                  if (t) changeTime?.(t.toDate());
                 }}
               />
             </div>
