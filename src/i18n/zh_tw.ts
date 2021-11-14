@@ -30,6 +30,7 @@ export const i18n_zh_tw = {
 
     word: {
       AllRightsReserved: '版權所有',
+      MeterAbbreviation: '米',
       Version: '版本',
       Options: '選項',
       Or: '或',

@@ -30,6 +30,7 @@ export const i18n_en = {
 
     word: {
       AllRightsReserved: 'All Rights Reserved',
+      MeterAbbreviation: 'm',
       Version: 'Version',
       Options: 'Options',
       Or: 'Or',

@@ -64,7 +64,7 @@ const ReshapeElementMenu = ({
             step={widthStep}
             precision={1}
             value={element?.ly ?? 1}
-            formatter={(y) => Number(y).toFixed(1) + ' m'}
+            formatter={(y) => Number(y).toFixed(1) + ' ' + i18n.t('word.MeterAbbreviation', lang)}
             onChange={(value) => {
               if (element) {
                 setElementSize(element.id, element.lx, value);
@@ -97,7 +97,7 @@ const ReshapeElementMenu = ({
             step={lengthStep}
             precision={1}
             value={element?.lx ?? 1}
-            formatter={(y) => Number(y).toFixed(1) + ' m'}
+            formatter={(y) => Number(y).toFixed(1) + ' ' + i18n.t('word.MeterAbbreviation', lang)}
             onChange={(value) => {
               if (element && value) {
                 setElementSize(element.id, value, element.ly);
@@ -130,7 +130,7 @@ const ReshapeElementMenu = ({
             step={heightStep}
             precision={1}
             value={element?.lz ?? 0.1}
-            formatter={(h) => Number(h).toFixed(1) + ' m'}
+            formatter={(h) => Number(h).toFixed(1) + ' ' + i18n.t('word.MeterAbbreviation', lang)}
             onChange={(value) => {
               if (element && value) {
                 setElementSize(element.id, element.lx, element.ly, value);

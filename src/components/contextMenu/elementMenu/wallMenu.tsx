@@ -198,7 +198,7 @@ export const WallMenu = () => {
             step={0.5}
             precision={1}
             value={inputHeightValue}
-            formatter={(n) => Number(n).toFixed(1) + ' m'}
+            formatter={(n) => Number(n).toFixed(1) + ' ' + i18n.t('word.MeterAbbreviation', lang)}
             style={{ width: '80px', marginRight: '20px' }}
             onChange={onChangeHeight}
             onPressEnter={(event) => {
@@ -222,7 +222,7 @@ export const WallMenu = () => {
             step={0.1}
             precision={1}
             value={inputThicknessValue}
-            formatter={(n) => Number(n).toFixed(1) + ' m'}
+            formatter={(n) => Number(n).toFixed(1) + ' ' + i18n.t('word.MeterAbbreviation', lang)}
             style={{ width: '80px' }}
             onChange={onChangeThickness}
             onPressEnter={(event) => {
