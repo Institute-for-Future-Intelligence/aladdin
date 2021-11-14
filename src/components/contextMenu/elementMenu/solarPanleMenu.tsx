@@ -47,7 +47,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
     }
   }, [element]);
 
-  const showElementLabel = (e: CheckboxChangeEvent) => {
+  const showLabel = (checked: boolean) => {
     if (solarPanel) {
       const undoableCheck = {
         name: 'Show Solar Panel Label',
@@ -61,12 +61,32 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
         },
       } as UndoableCheck;
       addUndoable(undoableCheck);
-      updateElementById(solarPanel.id, { showLabel: e.target.checked });
+      updateElementById(solarPanel.id, { showLabel: checked });
       setUpdateFlag(!updateFlag);
     }
   };
 
   const setOrientation = (value: Orientation) => {
+    if (solarPanel) {
+      const oldOrientation = solarPanel.orientation;
+      const undoableChange = {
+        name: 'Set Solar Panel Orientation',
+        timestamp: Date.now(),
+        oldValue: oldOrientation,
+        newValue: value,
+        undo: () => {
+          changeOrientation(undoableChange.oldValue as Orientation);
+        },
+        redo: () => {
+          changeOrientation(undoableChange.newValue as Orientation);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      changeOrientation(value);
+    }
+  };
+
+  const changeOrientation = (value: Orientation) => {
     if (solarPanel) {
       const pvModel = getPvModule(solarPanel.pvModelName);
       if (value === Orientation.portrait) {
@@ -85,7 +105,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
     }
   };
 
-  const updateElementLabelText = () => {
+  const updateLabelText = () => {
     if (solarPanel) {
       const oldLabel = solarPanel.label;
       const undoableChange = {
@@ -106,12 +126,137 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
     }
   };
 
+  const updatePoleHeight = (value: number) => {
+    if (solarPanel) {
+      const oldHeight = solarPanel.poleHeight;
+      const undoableChange = {
+        name: 'Set Solar Panel Pole Height',
+        timestamp: Date.now(),
+        oldValue: oldHeight,
+        newValue: value,
+        undo: () => {
+          updateElementById(solarPanel.id, { poleHeight: undoableChange.oldValue as number });
+        },
+        redo: () => {
+          updateElementById(solarPanel.id, { poleHeight: undoableChange.newValue as number });
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateElementById(solarPanel.id, { poleHeight: value });
+      setUpdateFlag(!updateFlag);
+    }
+  };
+
+  const updatePoleSpacing = (value: number) => {
+    if (solarPanel) {
+      const oldSpacing = solarPanel.poleSpacing;
+      const undoableChange = {
+        name: 'Set Solar Panel Pole Spacing',
+        timestamp: Date.now(),
+        oldValue: oldSpacing,
+        newValue: value,
+        undo: () => {
+          updateElementById(solarPanel.id, { poleSpacing: undoableChange.oldValue as number });
+        },
+        redo: () => {
+          updateElementById(solarPanel.id, { poleSpacing: undoableChange.newValue as number });
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateElementById(solarPanel.id, { poleSpacing: value ?? 1 });
+      setUpdateFlag(!updateFlag);
+    }
+  };
+
+  const setAzimuth = (value: number) => {
+    if (solarPanel) {
+      const oldAzimuth = solarPanel.relativeAzimuth;
+      const undoableChange = {
+        name: 'Set Solar Panel Azimuth',
+        timestamp: Date.now(),
+        oldValue: oldAzimuth,
+        newValue: value,
+        undo: () => {
+          updateElementById(solarPanel.id, { relativeAzimuth: Util.toRadians(undoableChange.oldValue as number) });
+        },
+        redo: () => {
+          updateElementById(solarPanel.id, { relativeAzimuth: Util.toRadians(undoableChange.newValue as number) });
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateElementById(solarPanel.id, { relativeAzimuth: Util.toRadians(value ?? 0) });
+      setUpdateFlag(!updateFlag);
+    }
+  };
+
+  const setTiltAngle = (value: number) => {
+    if (solarPanel) {
+      const oldTilt = solarPanel.tiltAngle;
+      const undoableChange = {
+        name: 'Set Solar Panel Tilt Angle',
+        timestamp: Date.now(),
+        oldValue: oldTilt,
+        newValue: value,
+        undo: () => {
+          updateElementById(solarPanel.id, { tiltAngle: Util.toRadians(undoableChange.oldValue as number) });
+        },
+        redo: () => {
+          updateElementById(solarPanel.id, { tiltAngle: Util.toRadians(undoableChange.newValue as number) });
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateElementById(solarPanel.id, { tiltAngle: Util.toRadians(value ?? 0) });
+      setUpdateFlag(!updateFlag);
+    }
+  };
+
+  const setTracker = (value: string) => {
+    if (solarPanel) {
+      const oldTracker = solarPanel.trackerType;
+      const undoableChange = {
+        name: 'Set Solar Panel Tracker',
+        timestamp: Date.now(),
+        oldValue: oldTracker,
+        newValue: value,
+        undo: () => {
+          updateElementById(solarPanel.id, { trackerType: undoableChange.oldValue as string });
+        },
+        redo: () => {
+          updateElementById(solarPanel.id, { trackerType: undoableChange.newValue as string });
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateElementById(solarPanel.id, { trackerType: value });
+      setUpdateFlag(!updateFlag);
+    }
+  };
+
+  const drawSunBeam = (checked: boolean) => {
+    if (solarPanel) {
+      const undoableCheck = {
+        name: 'Show Sun Beam',
+        timestamp: Date.now(),
+        checked: !solarPanel.drawSunBeam,
+        undo: () => {
+          updateElementById(solarPanel.id, { drawSunBeam: !undoableCheck.checked });
+        },
+        redo: () => {
+          updateElementById(solarPanel.id, { drawSunBeam: undoableCheck.checked });
+        },
+      } as UndoableCheck;
+      addUndoable(undoableCheck);
+      updateElementById(solarPanel.id, { drawSunBeam: checked });
+      setUpdateFlag(!updateFlag);
+    }
+  };
+
   return (
     <>
       <Copy paddingLeft={'40px'} />
       <Cut paddingLeft={'40px'} />
       {solarPanel && (
         <>
+          {/* pv model */}
           <Menu.Item
             key={'solar-panel-change'}
             onClick={() => {
@@ -121,31 +266,15 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
           >
             {i18n.t('solarPanelMenu.ChangePvModel', lang)} ({solarPanel.pvModelName})...
           </Menu.Item>
+
+          {/* orientation: landscape or portrait */}
           <Menu>
             <Menu.Item key={'solar-panel-orientation'} style={{ paddingLeft: '40px' }}>
               <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.Orientation', lang) + ':'}</Space>
               <Select
                 style={{ width: '120px' }}
                 value={solarPanel.orientation}
-                onChange={(value) => {
-                  if (solarPanel) {
-                    const oldOrientation = solarPanel.orientation;
-                    const undoableChange = {
-                      name: 'Set Solar Panel Orientation',
-                      timestamp: Date.now(),
-                      oldValue: oldOrientation,
-                      newValue: value,
-                      undo: () => {
-                        setOrientation(undoableChange.oldValue as Orientation);
-                      },
-                      redo: () => {
-                        setOrientation(undoableChange.newValue as Orientation);
-                      },
-                    } as UndoableChange;
-                    addUndoable(undoableChange);
-                    setOrientation(value);
-                  }
-                }}
+                onChange={(value) => setOrientation(value)}
               >
                 <Option key={Orientation.portrait} value={Orientation.portrait}>
                   {i18n.t('solarPanelMenu.Portrait', lang)}
@@ -157,6 +286,8 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                 )
               </Select>
             </Menu.Item>
+
+            {/* array width */}
             <Menu.Item key={'solar-panel-width'} style={{ paddingLeft: '40px' }}>
               <Space style={{ width: '150px' }}>
                 {i18n.t('word.Width', lang) +
@@ -164,6 +295,8 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                   Math.round(solarPanel.lx / dx) +
                   ' ' +
                   i18n.t('solarPanelMenu.Panels', lang) +
+                  ') (' +
+                  i18n.t('word.MeterAbbreviation', lang) +
                   '):'}
               </Space>
               <InputNumber
@@ -173,7 +306,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                 style={{ width: 120 }}
                 precision={2}
                 value={solarPanel.lx}
-                formatter={(a) => Number(a).toFixed(2) + ' ' + i18n.t('word.MeterAbbreviation', lang)}
+                formatter={(a) => Number(a).toFixed(2)}
                 onChange={(value) => {
                   if (solarPanel) {
                     updateElementById(solarPanel.id, { lx: value ?? 1 });
@@ -182,6 +315,8 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                 }}
               />
             </Menu.Item>
+
+            {/* array length */}
             <Menu.Item key={'solar-panel-length'} style={{ paddingLeft: '40px' }}>
               <Space style={{ width: '150px' }}>
                 {i18n.t('word.Length', lang) +
@@ -189,6 +324,8 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                   Math.round(solarPanel.ly / dy) +
                   ' ' +
                   i18n.t('solarPanelMenu.Panels', lang) +
+                  ') (' +
+                  i18n.t('word.MeterAbbreviation', lang) +
                   '):'}
               </Space>
               <InputNumber
@@ -198,7 +335,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                 style={{ width: 120 }}
                 precision={2}
                 value={solarPanel.ly}
-                formatter={(a) => Number(a).toFixed(2) + ' ' + i18n.t('word.MeterAbbreviation', lang)}
+                formatter={(a) => Number(a).toFixed(2)}
                 onChange={(value) => {
                   if (solarPanel) {
                     updateElementById(solarPanel.id, { ly: value ?? 2 });
@@ -207,8 +344,10 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                 }}
               />
             </Menu.Item>
+
             {panelNormal && Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z) && (
               <>
+                {/* tilt angle */}
                 <Menu.Item key={'solar-panel-tilt-angle'} style={{ paddingLeft: '40px' }}>
                   <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.TiltAngle', lang) + ':'}</Space>
                   <InputNumber
@@ -219,14 +358,11 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                     value={Util.toDegrees(solarPanel.tiltAngle)}
                     step={1}
                     formatter={(a) => Number(a).toFixed(1) + '°'}
-                    onChange={(value) => {
-                      if (solarPanel) {
-                        updateElementById(solarPanel.id, { tiltAngle: Util.toRadians(value ?? 0) });
-                        setUpdateFlag(!updateFlag);
-                      }
-                    }}
+                    onChange={(value) => setTiltAngle(value)}
                   />
                 </Menu.Item>
+
+                {/* relative azimuth to the parent element */}
                 <Menu.Item key={'solar-panel-relative-azimuth'} style={{ paddingLeft: '40px' }}>
                   <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.RelativeAzimuth', lang) + ':'}</Space>
                   <InputNumber
@@ -237,41 +373,17 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                     value={Util.toDegrees(solarPanel.relativeAzimuth)}
                     step={1}
                     formatter={(a) => Number(a).toFixed(1) + '°'}
-                    onChange={(value) => {
-                      if (solarPanel) {
-                        updateElementById(solarPanel.id, {
-                          relativeAzimuth: Util.toRadians(value ?? 0),
-                        });
-                        setUpdateFlag(!updateFlag);
-                      }
-                    }}
+                    onChange={(value) => setAzimuth(value)}
                   />
                 </Menu.Item>
+
+                {/* solar tracker type */}
                 <Menu.Item key={'solar-panel-tracker'} style={{ paddingLeft: '40px' }}>
                   <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.Tracker', lang) + ':'}</Space>
                   <Select
                     style={{ width: '120px' }}
                     value={solarPanel.trackerType}
-                    onChange={(value) => {
-                      if (solarPanel) {
-                        const oldTracker = solarPanel.trackerType;
-                        const undoableChange = {
-                          name: 'Set Solar Panel Tracker',
-                          timestamp: Date.now(),
-                          oldValue: oldTracker,
-                          newValue: value,
-                          undo: () => {
-                            updateElementById(solarPanel.id, { trackerType: undoableChange.oldValue as string });
-                          },
-                          redo: () => {
-                            updateElementById(solarPanel.id, { trackerType: undoableChange.newValue as string });
-                          },
-                        } as UndoableChange;
-                        addUndoable(undoableChange);
-                        updateElementById(solarPanel.id, { trackerType: value });
-                        setUpdateFlag(!updateFlag);
-                      }
-                    }}
+                    onChange={(value) => setTracker(value)}
                   >
                     <Option key={'NONE'} value={TrackerType.NO_TRACKER} title={'No tracker'}>
                       None
@@ -303,8 +415,16 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                     )
                   </Select>
                 </Menu.Item>
+
+                {/* pole height */}
                 <Menu.Item key={'solar-panel-pole-height'} style={{ paddingLeft: '40px' }}>
-                  <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.PoleHeight', lang) + ':'}</Space>
+                  <Space style={{ width: '150px' }}>
+                    {i18n.t('solarPanelMenu.PoleHeight', lang) +
+                      ' (' +
+                      i18n.t('word.MeterAbbreviation', lang) +
+                      ')' +
+                      ':'}
+                  </Space>
                   <InputNumber
                     min={0}
                     max={5}
@@ -312,112 +432,56 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                     step={0.1}
                     precision={2}
                     value={solarPanel.poleHeight}
-                    formatter={(a) => Number(a).toFixed(2) + ' ' + i18n.t('word.MeterAbbreviation', lang)}
-                    onChange={(e) => {
-                      // onChange seems to work only for the up and down buttons
-                      if (solarPanel) {
-                        updateElementById(solarPanel.id, { poleHeight: e });
-                        setUpdateFlag(!updateFlag);
-                      }
-                    }}
-                    onInput={(input) => {
-                      // not sure why we need this, but we do
-                      if (solarPanel) {
-                        let value = 0;
-                        try {
-                          value = Number.parseFloat(input.substring(0, input.length - 2));
-                        } catch (err) {
-                          console.log(err);
-                          return;
-                        }
-                        if (value < 0) {
-                          value = 0;
-                        } else if (value > 5) {
-                          value = 5;
-                        }
-                        updateElementById(solarPanel.id, { poleHeight: value });
-                        setUpdateFlag(!updateFlag);
-                      }
-                    }}
+                    formatter={(a) => Number(a).toFixed(2)}
+                    onChange={(value) => updatePoleHeight(value)}
                   />
                 </Menu.Item>
+
+                {/* pole spacing */}
                 <Menu.Item key={'solar-panel-pole-spacing'} style={{ paddingLeft: '40px' }}>
-                  <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.PoleSpacing', lang) + ':'}</Space>
+                  <Space style={{ width: '150px' }}>
+                    {i18n.t('solarPanelMenu.PoleSpacing', lang) +
+                      ' (' +
+                      i18n.t('word.MeterAbbreviation', lang) +
+                      ')' +
+                      ':'}
+                  </Space>
                   <InputNumber
-                    min={2}
+                    min={1}
                     max={10}
                     step={1}
                     style={{ width: 120 }}
-                    precision={0}
+                    precision={2}
                     value={solarPanel.poleSpacing}
-                    formatter={(a) => Number(a).toFixed(1) + ' ' + i18n.t('word.MeterAbbreviation', lang)}
-                    onChange={(value) => {
-                      if (solarPanel) {
-                        updateElementById(solarPanel.id, { poleSpacing: value ?? 1 });
-                        setUpdateFlag(!updateFlag);
-                      }
-                    }}
-                    onInput={(input) => {
-                      // not sure why we need this, but we do
-                      if (solarPanel) {
-                        let value = 0;
-                        try {
-                          value = Number.parseFloat(input.substring(0, input.length - 2));
-                        } catch (err) {
-                          console.log(err);
-                          return;
-                        }
-                        if (value < 2) {
-                          value = 2;
-                        } else if (value > 10) {
-                          value = 10;
-                        }
-                        updateElementById(solarPanel.id, { poleSpacing: value });
-                        setUpdateFlag(!updateFlag);
-                      }
-                    }}
+                    formatter={(a) => Number(a).toFixed(2)}
+                    onChange={(value) => updatePoleSpacing(value)}
                   />
                 </Menu.Item>
               </>
             )}
 
+            {/* draw sun beam or not */}
             <Menu.Item key={'solar-panel-draw-sun-beam'}>
-              <Checkbox
-                checked={!!solarPanel?.drawSunBeam}
-                onChange={(e) => {
-                  if (solarPanel) {
-                    const undoableCheck = {
-                      name: 'Show Sun Beam',
-                      timestamp: Date.now(),
-                      checked: !solarPanel.drawSunBeam,
-                      undo: () => {
-                        updateElementById(solarPanel.id, { drawSunBeam: !undoableCheck.checked });
-                      },
-                      redo: () => {
-                        updateElementById(solarPanel.id, { drawSunBeam: undoableCheck.checked });
-                      },
-                    } as UndoableCheck;
-                    addUndoable(undoableCheck);
-                    updateElementById(solarPanel.id, { drawSunBeam: e.target.checked });
-                    setUpdateFlag(!updateFlag);
-                  }
-                }}
-              >
+              <Checkbox checked={!!solarPanel?.drawSunBeam} onChange={(e) => drawSunBeam(e.target.checked)}>
                 {i18n.t('solarPanelMenu.DrawSunBeam', lang)}
               </Checkbox>
             </Menu.Item>
+
+            {/* show label or not */}
             <Menu.Item key={'solar-panel-show-label'}>
-              <Checkbox checked={!!solarPanel?.showLabel} onChange={showElementLabel}>
+              <Checkbox checked={!!solarPanel?.showLabel} onChange={(e) => showLabel(e.target.checked)}>
                 {i18n.t('solarPanelMenu.KeepShowingLabel', lang)}
               </Checkbox>
             </Menu.Item>
+
+            {/* label text */}
             <Menu.Item key={'solar-panel-label-text'} style={{ paddingLeft: '40px' }}>
               <Input
                 addonBefore={i18n.t('solarPanelMenu.Label', lang) + ':'}
                 value={labelText}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
-                onPressEnter={updateElementLabelText}
-                onBlur={updateElementLabelText}
+                onPressEnter={updateLabelText}
+                onBlur={updateLabelText}
               />
             </Menu.Item>
           </Menu>
