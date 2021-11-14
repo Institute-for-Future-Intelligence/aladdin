@@ -16,11 +16,9 @@ import * as Selector from '../stores/selector';
 
 export interface SensorSimulationProps {
   city: string | null;
-  dailyLightSensorDataFlag: boolean;
-  yearlyLightSensorDataFlag: boolean;
 }
 
-const SensorSimulation = ({ city, dailyLightSensorDataFlag, yearlyLightSensorDataFlag }: SensorSimulationProps) => {
+const SensorSimulation = ({ city }: SensorSimulationProps) => {
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const getElementById = useStore(Selector.getElementById);
@@ -28,6 +26,8 @@ const SensorSimulation = ({ city, dailyLightSensorDataFlag, yearlyLightSensorDat
   const setSensorLabels = useStore(Selector.setSensorLabels);
   const setDailyLightSensorData = useStore(Selector.setDailyLightSensorData);
   const setYearlyLightSensorData = useStore(Selector.setYearlyLightSensorData);
+  const dailyLightSensorFlag = useStore(Selector.dailyLightSensorFlag);
+  const yearlyLightSensorFlag = useStore(Selector.yearlyLightSensorFlag);
 
   const { scene } = useThree();
   const weather = getWeather(city ?? 'Boston MA, USA');
@@ -47,7 +47,7 @@ const SensorSimulation = ({ city, dailyLightSensorDataFlag, yearlyLightSensorDat
     } else {
       loadedDaily.current = true;
     }
-  }, [dailyLightSensorDataFlag]);
+  }, [dailyLightSensorFlag]);
 
   useEffect(() => {
     if (loadedYearly.current) {
@@ -58,7 +58,7 @@ const SensorSimulation = ({ city, dailyLightSensorDataFlag, yearlyLightSensorDat
     } else {
       loadedYearly.current = true;
     }
-  }, [yearlyLightSensorDataFlag]);
+  }, [yearlyLightSensorFlag]);
 
   const inShadow = (content: Object3D[], objects: Object3D[], position: Vector3, sunDirection: Vector3) => {
     // convert the position and direction from physics model to the coordinate system of three.js

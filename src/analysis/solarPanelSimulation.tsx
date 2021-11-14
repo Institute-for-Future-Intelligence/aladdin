@@ -18,10 +18,6 @@ import { PvModel } from '../models/PvModel';
 
 export interface SolarPanelSimulationProps {
   city: string | null;
-  dailyIndividualOutputs: boolean;
-  dailyPvYieldFlag: boolean;
-  yearlyIndividualOutputs: boolean;
-  yearlyPvYieldFlag: boolean;
 }
 
 const getPanelEfficiency = (temperature: number, panel: SolarPanelModel, pvModel: PvModel) => {
@@ -32,13 +28,7 @@ const getPanelEfficiency = (temperature: number, panel: SolarPanelModel, pvModel
   return e * (1 + pvModel.pmaxTC * (temperature - 25));
 };
 
-const SolarPanelSimulation = ({
-  city,
-  dailyIndividualOutputs = false,
-  dailyPvYieldFlag,
-  yearlyIndividualOutputs = false,
-  yearlyPvYieldFlag,
-}: SolarPanelSimulationProps) => {
+const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
@@ -47,6 +37,10 @@ const SolarPanelSimulation = ({
   const getElementById = useStore(Selector.getElementById);
   const setPvDailyYield = useStore(Selector.setDailyPvYield);
   const setPvYearlyYield = useStore(Selector.setYearlyPvYield);
+  const dailyPvFlag = useStore(Selector.dailyPvFlag);
+  const yearlyPvFlag = useStore(Selector.yearlyPvFlag);
+  const dailyIndividualOutputs = useStore(Selector.dailyPvIndividualOutputs);
+  const yearlyIndividualOutputs = useStore(Selector.yearlyPvIndividualOutputs);
   const setSolarPanelLabels = useStore(Selector.setSolarPanelLabels);
 
   const [currentTemperature, setCurrentTemperature] = useState<number>(20);
@@ -77,7 +71,7 @@ const SolarPanelSimulation = ({
       state.simulationInProgress = false;
       console.log('simulation ended', state.simulationInProgress);
     });
-  }, [dailyPvYieldFlag]);
+  }, [dailyPvFlag]);
 
   useEffect(() => {
     if (loadedYearly.current) {
@@ -88,7 +82,10 @@ const SolarPanelSimulation = ({
     } else {
       loadedYearly.current = true;
     }
-  }, [yearlyPvYieldFlag]);
+    setCommonStore((state) => {
+      state.simulationInProgress = false;
+    });
+  }, [yearlyPvFlag]);
 
   useEffect(() => {
     if (city) {

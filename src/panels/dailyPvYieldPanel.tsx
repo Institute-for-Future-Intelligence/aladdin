@@ -63,25 +63,18 @@ const Header = styled.div`
 
 export interface DailyPvYieldPanelProps {
   city: string | null;
-  individualOutputs: boolean;
-  setIndividualOutputs: (b: boolean) => void;
-  analyzeDailyPvYield: () => void;
 }
 
-const DailyPvYieldPanel = ({
-  city,
-  individualOutputs = false,
-  setIndividualOutputs,
-  analyzeDailyPvYield,
-}: DailyPvYieldPanelProps) => {
+const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
+  const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
   const dailyYield = useStore(Selector.dailyPvYield);
-  const solarPanelLabels = useStore(Selector.solarPanelLabels);
-  const now = new Date(useStore(Selector.world.date));
+  const dailyPvIndividualOutputs = useStore(Selector.dailyPvIndividualOutputs);
   const dailyPvYieldPanelX = useStore(Selector.viewState.dailyPvYieldPanelX);
   const dailyPvYieldPanelY = useStore(Selector.viewState.dailyPvYieldPanelY);
+  const solarPanelLabels = useStore(Selector.solarPanelLabels);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
@@ -148,15 +141,17 @@ const DailyPvYieldPanel = ({
 
   const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
   useEffect(() => {
-    if (solarPanelCount < 2 && individualOutputs) {
-      setIndividualOutputs(false);
+    if (solarPanelCount < 2 && dailyPvIndividualOutputs) {
+      setCommonStore((state) => {
+        state.dailyPvIndividualOutputs = false;
+      });
     }
   }, [solarPanelCount]);
 
   const labelX = 'Hour';
   const labelY = i18n.t('solarPanelYieldPanel.YieldPerHour', lang);
   let totalTooltip = '';
-  if (individualOutputs) {
+  if (dailyPvIndividualOutputs) {
     panelSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
     totalTooltip += '——————————\n';
     totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
@@ -205,7 +200,7 @@ const DailyPvYieldPanel = ({
             referenceX={now.getHours()}
           />
           <Space style={{ alignSelf: 'center' }}>
-            {individualOutputs && solarPanelCount > 1 ? (
+            {dailyPvIndividualOutputs && solarPanelCount > 1 ? (
               <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
                 {i18n.t('solarPanelYieldPanel.HoverForBreakdown', lang)}
               </Space>
@@ -219,10 +214,12 @@ const DailyPvYieldPanel = ({
                 title={i18n.t('solarPanelYieldPanel.ShowOutputsOfIndividualSolarPanels', lang)}
                 checkedChildren={<UnorderedListOutlined />}
                 unCheckedChildren={<UnorderedListOutlined />}
-                checked={individualOutputs}
+                checked={dailyPvIndividualOutputs}
                 onChange={(checked) => {
-                  setIndividualOutputs(checked);
-                  analyzeDailyPvYield();
+                  setCommonStore((state) => {
+                    state.dailyPvIndividualOutputs = checked;
+                    state.dailyPvFlag = !state.dailyPvFlag;
+                  });
                 }}
               />
             )}
@@ -230,7 +227,11 @@ const DailyPvYieldPanel = ({
               type="default"
               icon={<ReloadOutlined />}
               title={i18n.t('word.Update', lang)}
-              onClick={analyzeDailyPvYield}
+              onClick={() => {
+                setCommonStore((state) => {
+                  state.dailyPvFlag = !state.dailyPvFlag;
+                });
+              }}
             />
             <Button
               type="default"

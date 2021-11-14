@@ -109,15 +109,21 @@ export interface CommonStoreState {
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
 
   dailyLightSensorData: DatumEntry[];
+  dailyLightSensorFlag: boolean;
   setDailyLightSensorData: (data: DatumEntry[]) => void;
   yearlyLightSensorData: DatumEntry[];
+  yearlyLightSensorFlag: boolean;
   setYearlyLightSensorData: (data: DatumEntry[]) => void;
   sensorLabels: string[];
   setSensorLabels: (labels: string[]) => void;
 
   dailyPvYield: DatumEntry[];
+  dailyPvFlag: boolean;
+  dailyPvIndividualOutputs: boolean;
   setDailyPvYield: (data: DatumEntry[]) => void;
   yearlyPvYield: DatumEntry[];
+  yearlyPvFlag: boolean;
+  yearlyPvIndividualOutputs: boolean;
   setYearlyPvYield: (data: DatumEntry[]) => void;
   solarPanelLabels: string[];
   setSolarPanelLabels: (labels: string[]) => void;
@@ -205,12 +211,14 @@ export const useStore = create<CommonStoreState>(
           },
 
           yearlyLightSensorData: [],
+          yearlyLightSensorFlag: false,
           setYearlyLightSensorData(data) {
             immerSet((state: CommonStoreState) => {
               state.yearlyLightSensorData = [...data];
             });
           },
           dailyLightSensorData: [],
+          dailyLightSensorFlag: false,
           setDailyLightSensorData(data) {
             immerSet((state: CommonStoreState) => {
               state.dailyLightSensorData = [...data];
@@ -224,12 +232,16 @@ export const useStore = create<CommonStoreState>(
           },
 
           yearlyPvYield: [],
+          yearlyPvFlag: false,
+          yearlyPvIndividualOutputs: false,
           setYearlyPvYield(data) {
             immerSet((state: CommonStoreState) => {
               state.yearlyPvYield = [...data];
             });
           },
           dailyPvYield: [],
+          dailyPvFlag: false,
+          dailyPvIndividualOutputs: false,
           setDailyPvYield(data) {
             immerSet((state: CommonStoreState) => {
               state.dailyPvYield = [...data];

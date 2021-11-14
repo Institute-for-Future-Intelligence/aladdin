@@ -57,27 +57,10 @@ export interface MainMenuProps {
   set2DView: (selected: boolean) => void;
   resetView: () => void;
   zoomView: (scale: number) => void;
-  collectDailyLightSensorData: () => void;
-  collectYearlyLightSensorData: () => void;
-  setPvDailyIndividualOutputs: (b: boolean) => void;
-  analyzePvDailyYield: () => void;
-  setPvYearlyIndividualOutputs: (b: boolean) => void;
-  analyzePvYearlyYield: () => void;
   canvas?: HTMLCanvasElement;
 }
 
-const MainMenu = ({
-  set2DView,
-  resetView,
-  zoomView,
-  collectDailyLightSensorData,
-  collectYearlyLightSensorData,
-  setPvDailyIndividualOutputs,
-  analyzePvDailyYield,
-  setPvYearlyIndividualOutputs,
-  analyzePvYearlyYield,
-  canvas,
-}: MainMenuProps) => {
+const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => {
   const setCommonStore = useStore(Selector.set);
   const undoManager = useStore(Selector.undoManager);
   const language = useStore(Selector.language);
@@ -348,10 +331,24 @@ const MainMenu = ({
       <SubMenu key={'analysis'} title={i18n.t('menu.analysisSubMenu', lang)}>
         {/*sensors*/}
         <SubMenu key={'sensors'} title={i18n.t('menu.sensorsSubMenu', lang)}>
-          <Menu.Item key={'sensor-collect-daily-data'} onClick={collectDailyLightSensorData}>
+          <Menu.Item
+            key={'sensor-collect-daily-data'}
+            onClick={() => {
+              setCommonStore((state) => {
+                state.dailyLightSensorFlag = !state.dailyLightSensorFlag;
+              });
+            }}
+          >
             {i18n.t('menu.sensors.CollectDailyData', lang)}
           </Menu.Item>
-          <Menu.Item key={'sensor-collect-yearly-data'} onClick={collectYearlyLightSensorData}>
+          <Menu.Item
+            key={'sensor-collect-yearly-data'}
+            onClick={() => {
+              setCommonStore((state) => {
+                state.yearlyLightSensorFlag = !state.yearlyLightSensorFlag;
+              });
+            }}
+          >
             {i18n.t('menu.sensors.CollectYearlyData', lang)}
           </Menu.Item>
           <SubMenu key={'sensor-simulation-options'} title={i18n.t('word.Options', lang)}>
@@ -385,10 +382,10 @@ const MainMenu = ({
             onClick={() => {
               setCommonStore((state) => {
                 state.simulationInProgress = true;
+                state.dailyPvIndividualOutputs = false;
+                state.dailyPvFlag = !state.dailyPvFlag;
                 console.log('simulation started', state.simulationInProgress);
               });
-              setPvDailyIndividualOutputs(false);
-              analyzePvDailyYield();
             }}
           >
             {i18n.t('menu.solarPanels.AnalyzeDailyYield', lang)}
@@ -396,8 +393,11 @@ const MainMenu = ({
           <Menu.Item
             key={'solar-panel-yearly-yield'}
             onClick={() => {
-              setPvYearlyIndividualOutputs(false);
-              analyzePvYearlyYield();
+              setCommonStore((state) => {
+                state.simulationInProgress = true;
+                state.yearlyPvIndividualOutputs = false;
+                state.yearlyPvFlag = !state.yearlyPvFlag;
+              });
             }}
           >
             {i18n.t('menu.solarPanels.AnalyzeYearlyYield', lang)}

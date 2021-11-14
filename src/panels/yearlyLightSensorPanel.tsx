@@ -65,15 +65,14 @@ const Header = styled.div`
 
 export interface YearlyLightSensorPanelProps {
   city: string | null;
-  collectYearlyLightSensorData: () => void;
 }
 
-const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData }: YearlyLightSensorPanelProps) => {
+const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const now = useStore(Selector.world.date);
-  const sensorLabels = useStore(Selector.sensorLabels);
   const sensorData = useStore(Selector.yearlyLightSensorData);
+  const sensorLabels = useStore(Selector.sensorLabels);
   const yearlyLightSensorPanelX = useStore(Selector.viewState.yearlyLightSensorPanelX);
   const yearlyLightSensorPanelY = useStore(Selector.viewState.yearlyLightSensorPanelY);
 
@@ -192,7 +191,11 @@ const YearlyLightSensorPanel = ({ city, collectYearlyLightSensorData }: YearlyLi
                 type="default"
                 icon={<ReloadOutlined />}
                 title={i18n.t('word.Update', lang)}
-                onClick={collectYearlyLightSensorData}
+                onClick={() => {
+                  setCommonStore((state) => {
+                    state.yearlyLightSensorFlag = !state.yearlyLightSensorFlag;
+                  });
+                }}
               />
               <Button
                 type="default"

@@ -310,6 +310,11 @@ export const i18n_zh_tw = {
       ShowAverageDailySolarRadiation: '顯示日平均輻射結果',
     },
 
+    analysisManager: {
+      NoSensorForCollectingData: '沒有傳感器收集數據。',
+      NoSolarPanelForAnalysis: '沒有光伏板可以分析。',
+    },
+
     toolbar: {
       CloudFile: '雲文檔',
       Select: '選擇',

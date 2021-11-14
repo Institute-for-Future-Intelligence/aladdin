@@ -63,15 +63,14 @@ const Header = styled.div`
 
 export interface DailyLightSensorPanelProps {
   city: string | null;
-  collectDailyLightSensorData: () => void;
 }
 
-const DailyLightSensorPanel = ({ city, collectDailyLightSensorData }: DailyLightSensorPanelProps) => {
+const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
+  const now = new Date(useStore(Selector.world.date));
   const sensorLabels = useStore(Selector.sensorLabels);
   const sensorData = useStore(Selector.dailyLightSensorData);
-  const now = new Date(useStore(Selector.world.date));
   const dailyLightSensorPanelX = useStore(Selector.viewState.dailyLightSensorPanelX);
   const dailyLightSensorPanelY = useStore(Selector.viewState.dailyLightSensorPanelY);
 
@@ -170,7 +169,11 @@ const DailyLightSensorPanel = ({ city, collectDailyLightSensorData }: DailyLight
               type="default"
               icon={<ReloadOutlined />}
               title={i18n.t('word.Update', lang)}
-              onClick={collectDailyLightSensorData}
+              onClick={() => {
+                setCommonStore((state) => {
+                  state.dailyLightSensorFlag = !state.dailyLightSensorFlag;
+                });
+              }}
             />
             <Button
               type="default"

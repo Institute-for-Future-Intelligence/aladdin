@@ -139,9 +139,17 @@ export const setSunlightDirection = (state: CommonStoreState) => state.setSunlig
 
 export const dailyPvYield = (state: CommonStoreState) => state.dailyPvYield;
 
+export const dailyPvFlag = (state: CommonStoreState) => state.dailyPvFlag;
+
+export const dailyPvIndividualOutputs = (state: CommonStoreState) => state.dailyPvIndividualOutputs;
+
 export const setDailyPvYield = (state: CommonStoreState) => state.setDailyPvYield;
 
 export const yearlyPvYield = (state: CommonStoreState) => state.yearlyPvYield;
+
+export const yearlyPvFlag = (state: CommonStoreState) => state.yearlyPvFlag;
+
+export const yearlyPvIndividualOutputs = (state: CommonStoreState) => state.yearlyPvIndividualOutputs;
 
 export const setYearlyPvYield = (state: CommonStoreState) => state.setYearlyPvYield;
 
@@ -155,9 +163,13 @@ export const setSensorLabels = (state: CommonStoreState) => state.setSensorLabel
 
 export const dailyLightSensorData = (state: CommonStoreState) => state.dailyLightSensorData;
 
+export const dailyLightSensorFlag = (state: CommonStoreState) => state.dailyLightSensorFlag;
+
 export const setDailyLightSensorData = (state: CommonStoreState) => state.setDailyLightSensorData;
 
 export const yearlyLightSensorData = (state: CommonStoreState) => state.yearlyLightSensorData;
+
+export const yearlyLightSensorFlag = (state: CommonStoreState) => state.yearlyLightSensorFlag;
 
 export const setYearlyLightSensorData = (state: CommonStoreState) => state.setYearlyLightSensorData;
 

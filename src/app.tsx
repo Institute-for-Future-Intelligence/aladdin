@@ -21,7 +21,7 @@ import MainMenu from './mainMenu';
 import MapPanel from './panels/mapPanel';
 import HeliodonPanel from './panels/heliodonPanel';
 import { DEFAULT_FAR, DEFAULT_FOV, VERSION } from './constants';
-import { showInfo, visitHomepage, visitIFI } from './helpers';
+import { visitHomepage, visitIFI } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
 import { Modal, ConfigProvider } from 'antd';
@@ -51,6 +51,7 @@ import KeyboardListener from './keyboardListener';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCloud } from '@fortawesome/free-solid-svg-icons';
 import LocalFileManager from './localFileManager';
+import AnalysisManager from './analysisManager';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);
@@ -58,7 +59,6 @@ const App = () => {
   const locale = useStore(Selector.locale);
   const loadWeatherData = useStore(Selector.loadWeatherData);
   const getClosestCity = useStore(Selector.getClosestCity);
-  const countElementsByType = useStore(Selector.countElementsByType);
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
@@ -86,12 +86,6 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);
   const [city, setCity] = useState<string | null>('Boston MA, USA');
-  const [dailyLightSensorDataFlag, setDailyLightSensorDataFlag] = useState<boolean>(false);
-  const [yearlyLightSensorDataFlag, setYearlyLightSensorDataFlag] = useState<boolean>(false);
-  const [pvDailyYieldFlag, setPvDailyYieldFlag] = useState<boolean>(false);
-  const [pvYearlyYieldFlag, setPvYearlyYieldFlag] = useState<boolean>(false);
-  const [pvDailyIndividualOutputs, setPvDailyIndividualOutputs] = useState<boolean>(false);
-  const [pvYearlyIndividualOutputs, setPvYearlyIndividualOutputs] = useState<boolean>(false);
   const [pvModelDialogVisible, setPvModelDialogVisible] = useState<boolean>(false);
   const keyName = useRef<string | undefined>(undefined);
   const keyDown = useRef<boolean>(false);
@@ -208,52 +202,6 @@ const App = () => {
     });
   };
 
-  const collectDailyLightSensorData = () => {
-    const sensorCount = countElementsByType(ObjectType.Sensor);
-    if (sensorCount === 0) {
-      showInfo('There is no sensor for collecting data.');
-      return;
-    }
-    setDailyLightSensorDataFlag(!dailyLightSensorDataFlag);
-    setCommonStore((state) => {
-      state.viewState.showDailyLightSensorPanel = true;
-    });
-  };
-
-  const collectYearlyLightSensorData = async () => {
-    const sensorCount = countElementsByType(ObjectType.Sensor);
-    if (sensorCount === 0) {
-      showInfo('There is no sensor for collecting data.');
-      return;
-    }
-    setYearlyLightSensorDataFlag(!yearlyLightSensorDataFlag);
-    setCommonStore((state) => {
-      state.viewState.showYearlyLightSensorPanel = true;
-    });
-  };
-
-  const analyzeDailyPvYield = () => {
-    const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
-    if (solarPanelCount === 0) {
-      showInfo('There is no solar panel for analysis.');
-    }
-    setPvDailyYieldFlag(!pvDailyYieldFlag);
-    setCommonStore((state) => {
-      state.viewState.showDailyPvYieldPanel = true;
-    });
-  };
-
-  const analyzeYearlyPvYield = () => {
-    const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
-    if (solarPanelCount === 0) {
-      showInfo('There is no solar panel for analysis.');
-    }
-    setPvYearlyYieldFlag(!pvYearlyYieldFlag);
-    setCommonStore((state) => {
-      state.viewState.showYearlyPvYieldPanel = true;
-    });
-  };
-
   console.log('x');
 
   return (
@@ -327,18 +275,8 @@ const App = () => {
             &nbsp;{i18n.t('word.Version', lang) + ' ' + VERSION + '. ' + i18n.t('word.AllRightsReserved', lang) + '. '}
           </div>
           <LocalFileManager />
-          <MainMenu
-            canvas={canvasRef.current}
-            set2DView={set2DView}
-            resetView={resetView}
-            zoomView={zoomView}
-            collectDailyLightSensorData={collectDailyLightSensorData}
-            collectYearlyLightSensorData={collectYearlyLightSensorData}
-            setPvDailyIndividualOutputs={setPvDailyIndividualOutputs}
-            analyzePvDailyYield={analyzeDailyPvYield}
-            setPvYearlyIndividualOutputs={setPvYearlyIndividualOutputs}
-            analyzePvYearlyYield={analyzeYearlyPvYield}
-          />
+          <AnalysisManager />
+          <MainMenu canvas={canvasRef.current} set2DView={set2DView} resetView={resetView} zoomView={zoomView} />
           <MainToolBar />
           <Modal
             width={600}
@@ -361,28 +299,10 @@ const App = () => {
           {showWeatherPanel && (
             <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]} />
           )}
-          {showYearlyLightSensorPanel && (
-            <YearlyLightSensorPanel city={city} collectYearlyLightSensorData={collectYearlyLightSensorData} />
-          )}
-          {showDailyLightSensorPanel && (
-            <DailyLightSensorPanel city={city} collectDailyLightSensorData={collectDailyLightSensorData} />
-          )}
-          {showYearlyPvYieldPanel && (
-            <YearlyPvYieldPanel
-              city={city}
-              individualOutputs={pvYearlyIndividualOutputs}
-              setIndividualOutputs={setPvYearlyIndividualOutputs}
-              analyzeYearlyPvYield={analyzeYearlyPvYield}
-            />
-          )}
-          {showDailyPvYieldPanel && (
-            <DailyPvYieldPanel
-              city={city}
-              individualOutputs={pvDailyIndividualOutputs}
-              setIndividualOutputs={setPvDailyIndividualOutputs}
-              analyzeDailyPvYield={analyzeDailyPvYield}
-            />
-          )}
+          {showYearlyLightSensorPanel && <YearlyLightSensorPanel city={city} />}
+          {showDailyLightSensorPanel && <DailyLightSensorPanel city={city} />}
+          {showYearlyPvYieldPanel && <YearlyPvYieldPanel city={city} />}
+          {showDailyPvYieldPanel && <DailyPvYieldPanel city={city} />}
           <DropdownContextMenu setPvDialogVisible={setPvModelDialogVisible}>
             <div>
               <Canvas
@@ -420,18 +340,8 @@ const App = () => {
                 <Heliodon />
                 {axes && <Axes />}
 
-                <SensorSimulation
-                  city={city}
-                  dailyLightSensorDataFlag={dailyLightSensorDataFlag}
-                  yearlyLightSensorDataFlag={yearlyLightSensorDataFlag}
-                />
-                <SolarPanelSimulation
-                  city={city}
-                  dailyIndividualOutputs={pvDailyIndividualOutputs}
-                  yearlyIndividualOutputs={pvYearlyIndividualOutputs}
-                  dailyPvYieldFlag={pvDailyYieldFlag}
-                  yearlyPvYieldFlag={pvYearlyYieldFlag}
-                />
+                <SensorSimulation city={city} />
+                <SolarPanelSimulation city={city} />
                 <Suspense fallback={null}>
                   <Ground />
                   <Grid />

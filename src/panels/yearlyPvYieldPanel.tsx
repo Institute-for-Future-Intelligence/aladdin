@@ -64,23 +64,16 @@ const Header = styled.div`
 
 export interface YearlyPvYieldPanelProps {
   city: string | null;
-  individualOutputs: boolean;
-  setIndividualOutputs: (b: boolean) => void;
-  analyzeYearlyPvYield: () => void;
 }
 
-const YearlyPvYieldPanel = ({
-  city,
-  individualOutputs = false,
-  setIndividualOutputs,
-  analyzeYearlyPvYield,
-}: YearlyPvYieldPanelProps) => {
+const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
+  const now = useStore(Selector.world.date);
   const yearlyYield = useStore(Selector.yearlyPvYield);
+  const yearlyPvIndividualOutputs = useStore(Selector.yearlyPvIndividualOutputs);
   const solarPanelLabels = useStore(Selector.solarPanelLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
-  const now = useStore(Selector.world.date);
   const yearlyPvYieldPanelX = useStore(Selector.viewState.yearlyPvYieldPanelX);
   const yearlyPvYieldPanelY = useStore(Selector.viewState.yearlyPvYieldPanelY);
 
@@ -150,15 +143,17 @@ const YearlyPvYieldPanel = ({
 
   const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
   useEffect(() => {
-    if (solarPanelCount < 2 && individualOutputs) {
-      setIndividualOutputs(false);
+    if (solarPanelCount < 2 && yearlyPvIndividualOutputs) {
+      setCommonStore((state) => {
+        state.yearlyPvIndividualOutputs = false;
+      });
     }
   }, [solarPanelCount]);
 
   const labelX = 'Month';
   const labelY = i18n.t('solarPanelYieldPanel.Yield', lang);
   let totalTooltip = '';
-  if (individualOutputs) {
+  if (yearlyPvIndividualOutputs) {
     panelSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
     totalTooltip += '——————————\n';
     totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
@@ -206,7 +201,7 @@ const YearlyPvYieldPanel = ({
             referenceX={referenceX}
           />
           <Space style={{ alignSelf: 'center' }}>
-            {individualOutputs && solarPanelCount > 1 ? (
+            {yearlyPvIndividualOutputs && solarPanelCount > 1 ? (
               <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
                 {i18n.t('solarPanelYieldPanel.HoverForBreakdown', lang)}
               </Space>
@@ -220,10 +215,12 @@ const YearlyPvYieldPanel = ({
                 title={i18n.t('solarPanelYieldPanel.ShowOutputsOfIndividualSolarPanels', lang)}
                 checkedChildren={<UnorderedListOutlined />}
                 unCheckedChildren={<UnorderedListOutlined />}
-                checked={individualOutputs}
+                checked={yearlyPvIndividualOutputs}
                 onChange={(checked) => {
-                  setIndividualOutputs(checked);
-                  analyzeYearlyPvYield();
+                  setCommonStore((state) => {
+                    state.yearlyPvIndividualOutputs = checked;
+                    state.yearlyPvFlag = !state.yearlyPvFlag;
+                  });
                 }}
               />
             )}
@@ -231,7 +228,11 @@ const YearlyPvYieldPanel = ({
               type="default"
               icon={<ReloadOutlined />}
               title={i18n.t('word.Update', lang)}
-              onClick={analyzeYearlyPvYield}
+              onClick={() => {
+                setCommonStore((state) => {
+                  state.yearlyPvFlag = !state.yearlyPvFlag;
+                });
+              }}
             />
             <Button
               type="default"

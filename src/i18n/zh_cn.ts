@@ -310,6 +310,11 @@ export const i18n_zh_cn = {
       ShowAverageDailySolarRadiation: '显示日平均辐射结果',
     },
 
+    analysisManager: {
+      NoSensorForCollectingData: '没有传感器收集数据。',
+      NoSolarPanelForAnalysis: '没有光伏板可以分析。',
+    },
+
     toolbar: {
       CloudFile: '云文件',
       Select: '选择',

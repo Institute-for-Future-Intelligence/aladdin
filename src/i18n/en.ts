@@ -311,6 +311,11 @@ export const i18n_en = {
       ShowAverageDailySolarRadiation: 'Show average daily solar radiation',
     },
 
+    analysisManager: {
+      NoSensorForCollectingData: 'There is no sensor for collecting data.',
+      NoSolarPanelForAnalysis: 'There is no solar panel for analysis.',
+    },
+
     toolbar: {
       CloudFile: 'Cloud file',
       Select: 'Select',
