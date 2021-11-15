@@ -178,6 +178,8 @@ export enum HumanName {
   Judy = 'Judy',
   June = 'June',
   Juro = 'Juro',
+  Xiaoli = 'Xiaoli',
+  Xiaoming = 'Xiaoming',
 }
 
 export enum WallTexture {

@@ -28,13 +28,15 @@ const PvModelPanel = () => {
 
   const panelSizeString =
     pvModel.nominalWidth.toFixed(2) +
-    'm × ' +
+    'm×' +
     pvModel.nominalLength.toFixed(2) +
     'm (' +
     pvModel.n +
-    ' × ' +
+    '×' +
     pvModel.m +
-    ' cells)';
+    ' ' +
+    i18n.t('pvModelPanel.Cells', lang) +
+    ')';
 
   return (
     <>

@@ -134,6 +134,8 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
     }
   };
 
+  // cannot use the stored dx, dy in the following calculation
+  // as changing orientation does not cause it to update
   const changeOrientation = (value: Orientation) => {
     if (solarPanel) {
       const pvModel = getPvModule(solarPanel.pvModelName);

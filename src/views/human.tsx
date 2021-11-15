@@ -22,6 +22,8 @@ import JuddImage from '../resources/judd.png';
 import JudyImage from '../resources/judy.png';
 import JuneImage from '../resources/june.png';
 import JuroImage from '../resources/juro.png';
+import XiaomingImage from '../resources/xiaoming.png';
+import XiaohuaImage from '../resources/xiaoli.png';
 
 import React, { useMemo, useRef, useState } from 'react';
 import { DoubleSide, Euler, Mesh, TextureLoader, Vector3 } from 'three';
@@ -111,6 +113,12 @@ const Human = ({ id, cx, cy, name = HumanName.Jack, selected = false, locked = f
       case HumanName.Juro:
         textureImg = JuroImage;
         break;
+      case HumanName.Xiaoming:
+        textureImg = XiaomingImage;
+        break;
+      case HumanName.Xiaoli:
+        textureImg = XiaohuaImage;
+        break;
       default:
         textureImg = JackImage;
     }
@@ -132,6 +140,8 @@ const Human = ({ id, cx, cy, name = HumanName.Jack, selected = false, locked = f
       case HumanName.Jose:
         return 2;
       case HumanName.June:
+        return 0.4;
+      case HumanName.Xiaoli:
         return 0.4;
       default:
         return 0.6;
@@ -178,6 +188,10 @@ const Human = ({ id, cx, cy, name = HumanName.Jack, selected = false, locked = f
         return 1.85;
       case HumanName.Juro:
         return 1.9;
+      case HumanName.Xiaoming:
+        return 1.75;
+      case HumanName.Xiaoli:
+        return 1.65;
       default:
         return 1.8;
     }
