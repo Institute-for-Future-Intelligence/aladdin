@@ -43,12 +43,12 @@ const HumanSelection = () => {
 
   const human = getSelectedElement() as HumanModel;
   const lang = { lng: language };
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [selectionValue, setSelectionValue] = useState(human?.name ?? '');
 
   return (
     <Select
       style={{ width: '120px' }}
-      value={human?.name}
+      value={selectionValue}
       onChange={(value) => {
         if (human) {
           const oldPerson = human.name;
@@ -67,7 +67,7 @@ const HumanSelection = () => {
           } as UndoableChange;
           addUndoable(undoableChange);
           updateElementById(human.id, { name: newPerson });
-          setUpdateFlag(!updateFlag);
+          setSelectionValue(newPerson);
         }
       }}
     >

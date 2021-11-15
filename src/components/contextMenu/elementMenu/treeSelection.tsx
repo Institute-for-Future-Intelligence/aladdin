@@ -25,14 +25,14 @@ const TreeSelection = () => {
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
 
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const lang = { lng: language };
   const tree = getSelectedElement();
+  const [selectValue, setSelectValue] = useState(tree?.name ?? '');
 
   return (
     <Select
       style={{ width: '150px' }}
-      value={tree?.name}
+      value={selectValue}
       onChange={(value) => {
         if (tree) {
           const oldTree = tree.name;
@@ -60,7 +60,7 @@ const TreeSelection = () => {
             name: newTree,
             evergreen: newTree === TreeType.Pine,
           });
-          setUpdateFlag(!updateFlag);
+          setSelectValue(newTree);
         }
       }}
     >
