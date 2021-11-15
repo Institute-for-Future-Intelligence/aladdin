@@ -47,6 +47,54 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
     }
   }, [element]);
 
+  const setWidth = (value: number) => {
+    if (solarPanel) {
+      const oldWidth = solarPanel.lx;
+      let w = value ?? 1;
+      const n = Math.max(1, Math.ceil((w - dx / 2) / dx));
+      w = n * dx;
+      const undoableChange = {
+        name: 'Set Solar Panel Array Width',
+        timestamp: Date.now(),
+        oldValue: oldWidth,
+        newValue: w,
+        undo: () => {
+          updateElementById(solarPanel.id, { lx: undoableChange.oldValue as number });
+        },
+        redo: () => {
+          updateElementById(solarPanel.id, { lx: undoableChange.newValue as number });
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateElementById(solarPanel.id, { lx: w });
+      setUpdateFlag(!updateFlag);
+    }
+  };
+
+  const setLength = (value: number) => {
+    if (solarPanel) {
+      const oldLength = solarPanel.ly;
+      let l = value ?? 2;
+      const n = Math.max(1, Math.ceil((l - dy / 2) / dy));
+      l = n * dy;
+      const undoableChange = {
+        name: 'Set Solar Panel Array Length',
+        timestamp: Date.now(),
+        oldValue: oldLength,
+        newValue: l,
+        undo: () => {
+          updateElementById(solarPanel.id, { ly: undoableChange.oldValue as number });
+        },
+        redo: () => {
+          updateElementById(solarPanel.id, { ly: undoableChange.newValue as number });
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateElementById(solarPanel.id, { ly: l });
+      setUpdateFlag(!updateFlag);
+    }
+  };
+
   const showLabel = (checked: boolean) => {
     if (solarPanel) {
       const undoableCheck = {
@@ -307,12 +355,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                 precision={2}
                 value={solarPanel.lx}
                 formatter={(a) => Number(a).toFixed(2)}
-                onChange={(value) => {
-                  if (solarPanel) {
-                    updateElementById(solarPanel.id, { lx: value ?? 1 });
-                    setUpdateFlag(!updateFlag);
-                  }
-                }}
+                onChange={(value) => setWidth(value)}
               />
             </Menu.Item>
 
@@ -336,12 +379,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
                 precision={2}
                 value={solarPanel.ly}
                 formatter={(a) => Number(a).toFixed(2)}
-                onChange={(value) => {
-                  if (solarPanel) {
-                    updateElementById(solarPanel.id, { ly: value ?? 2 });
-                    setUpdateFlag(!updateFlag);
-                  }
-                }}
+                onChange={(value) => setLength(value)}
               />
             </Menu.Item>
 
