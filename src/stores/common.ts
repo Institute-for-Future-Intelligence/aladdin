@@ -285,6 +285,7 @@ export const useStore = create<CommonStoreState>(
             }
             return null;
           },
+
           getResizeHandlePosition(e: ElementModel, type: ResizeHandleType) {
             const { cx, cy, cz, lx, ly, rotation } = e;
             const p = new Vector3();

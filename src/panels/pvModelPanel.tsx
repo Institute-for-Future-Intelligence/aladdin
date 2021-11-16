@@ -2,13 +2,13 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import { Row, Select, Col, Input } from 'antd';
+import { Row, Select, Col, Input, Radio, Space, RadioChangeEvent } from 'antd';
 import { SolarPanelNominalSize } from '../models/SolarPanelNominalSize';
-import { Orientation, ShadeTolerance } from '../types';
+import { ObjectType, Orientation, Scope, ShadeTolerance } from '../types';
 import i18n from '../i18n/i18n';
 
 const { Option } = Select;
@@ -16,31 +16,43 @@ const { Option } = Select;
 const PvModelPanel = () => {
   const language = useStore(Selector.language);
   const updateElementById = useStore(Selector.updateElementById);
+  const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const setElementSize = useStore(Selector.setElementSize);
   const pvModules = useStore(Selector.pvModules);
   const getPvModule = useStore(Selector.getPvModule);
 
+  const [scope, setScope] = useState<Scope>(Scope.OnlyThisObject);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [panelSizeString, setPanelSizeString] = useState<string>();
+
   const lang = { lng: language };
   const solarPanel = getSelectedElement() as SolarPanelModel;
   const pvModel = getPvModule(solarPanel.pvModelName) ?? getPvModule('SPR-X21-335-BLK');
+  const parentType = getElementById(solarPanel.parentId)?.type;
 
-  const panelSizeString =
-    pvModel.nominalWidth.toFixed(2) +
-    'm×' +
-    pvModel.nominalLength.toFixed(2) +
-    'm (' +
-    pvModel.n +
-    '×' +
-    pvModel.m +
-    ' ' +
-    i18n.t('pvModelPanel.Cells', lang) +
-    ')';
+  useEffect(() => {
+    setPanelSizeString(
+      pvModel.nominalWidth.toFixed(2) +
+        'm×' +
+        pvModel.nominalLength.toFixed(2) +
+        'm (' +
+        pvModel.n +
+        '×' +
+        pvModel.m +
+        ' ' +
+        i18n.t('pvModelPanel.Cells', lang) +
+        ')',
+    );
+  }, [pvModel]);
+
+  const onScopeChange = (e: RadioChangeEvent) => {
+    setScope(e.target.value);
+  };
 
   return (
     <>
-      <Row gutter={16} style={{ paddingBottom: '10px' }}>
+      <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={14}>
           {i18n.t('pvModelPanel.Model', lang) + ':'}
         </Col>
@@ -75,7 +87,7 @@ const PvModelPanel = () => {
           </Select>
         </Col>
       </Row>
-      <Row gutter={16} style={{ paddingBottom: '10px' }}>
+      <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={14}>
           {i18n.t('pvModelPanel.PanelSize', lang) + ':'}
         </Col>
@@ -98,7 +110,7 @@ const PvModelPanel = () => {
           </Select>
         </Col>
       </Row>
-      <Row gutter={16} style={{ paddingBottom: '10px' }}>
+      <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={14}>
           {i18n.t('pvModelPanel.CellType', lang) + ':'}
         </Col>
@@ -128,7 +140,7 @@ const PvModelPanel = () => {
           </Select>
         </Col>
       </Row>
-      <Row gutter={16} style={{ paddingBottom: '10px' }}>
+      <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={14}>
           {i18n.t('word.Color', lang) + ':'}
         </Col>
@@ -154,7 +166,7 @@ const PvModelPanel = () => {
           </Select>
         </Col>
       </Row>
-      <Row gutter={16} style={{ paddingBottom: '10px' }}>
+      <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={14}>
           {i18n.t('pvModelPanel.SolarCellEfficiency', lang) + ' (%):'}
         </Col>
@@ -171,7 +183,7 @@ const PvModelPanel = () => {
           />
         </Col>
       </Row>
-      <Row gutter={16} style={{ paddingBottom: '10px' }}>
+      <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={14}>
           {i18n.t('pvModelPanel.NominalOperatingCellTemperature', lang) + ' (°C):'}
         </Col>
@@ -188,7 +200,7 @@ const PvModelPanel = () => {
           />
         </Col>
       </Row>
-      <Row gutter={16} style={{ paddingBottom: '10px' }}>
+      <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={14}>
           {i18n.t('pvModelPanel.TemperatureCoefficientOfPmax', lang) + ' (%/°C):'}
         </Col>
@@ -205,7 +217,7 @@ const PvModelPanel = () => {
           />
         </Col>
       </Row>
-      <Row gutter={16} style={{ paddingBottom: '10px' }}>
+      <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={14}>
           {i18n.t('pvModelPanel.ShadeTolerance', lang) + ':'}
         </Col>
@@ -234,6 +246,25 @@ const PvModelPanel = () => {
             )
           </Select>
         </Col>
+      </Row>
+      <Row
+        gutter={6}
+        style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+      >
+        <Radio.Group onChange={onScopeChange} value={scope}>
+          <Space direction="vertical">
+            <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
+            {parentType !== ObjectType.Foundation && (
+              <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+                {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
+              </Radio>
+            )}
+            <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+              {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
+            </Radio>
+            <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
+          </Space>
+        </Radio.Group>
       </Row>
     </>
   );

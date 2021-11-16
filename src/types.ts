@@ -123,6 +123,13 @@ export enum IntersectionPlaneType {
   Sky = 'Sky',
 }
 
+export enum Scope {
+  OnlyThisObject = 0,
+  AllObjectsOfThisTypeOnSurface = 1,
+  AllObjectsOfThisTypeAboveFoundation = 2,
+  AllObjectsOfThisType = 3,
+}
+
 export enum Orientation {
   portrait = 'Portrait',
   landscape = 'Landscape',

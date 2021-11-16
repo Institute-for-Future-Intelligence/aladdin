@@ -79,6 +79,7 @@ export const i18n_en = {
 
     menu: {
       mainMenu: 'Main Menu',
+      cloudMenu: 'Cloud Menu',
       fileSubMenu: 'File',
       file: {
         OpenLocalFile: 'Open Local File',
@@ -217,7 +218,8 @@ export const i18n_en = {
       Label: 'Label',
       KeepShowingLabel: 'Keep Showing Label',
       OnlyThisSolarPanel: 'Only This Solar Panel',
-      AllSolarPanelsOnThisFoundation: 'All Solar Panels on This Foundation',
+      AllSolarPanelsOnSurface: 'All Solar Panels on the Same Surface',
+      AllSolarPanelsAboveFoundation: 'All Solar Panels Above the Same Foundation',
       AllSolarPanels: 'All Solar Panels',
     },
 

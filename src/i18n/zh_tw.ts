@@ -79,6 +79,7 @@ export const i18n_zh_tw = {
 
     menu: {
       mainMenu: '主菜單',
+      cloudMenu: '雲菜單',
       fileSubMenu: '文檔',
       file: {
         OpenLocalFile: '打開本地文檔',
@@ -215,6 +216,10 @@ export const i18n_zh_tw = {
       DrawSunBeam: '顯示光柱',
       Label: '標籤',
       KeepShowingLabel: '顯示標籤',
+      OnlyThisSolarPanel: '只這個光伏板',
+      AllSolarPanelsOnSurface: '同一表面上的所有光伏板',
+      AllSolarPanelsAboveFoundation: '同一地基上的所有光伏板',
+      AllSolarPanels: '所有光伏板',
     },
 
     pvModelPanel: {
