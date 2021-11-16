@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Checkbox, Input, InputNumber, Menu, Modal, Select, Space } from 'antd';
+import { Checkbox, Input, InputNumber, Menu, Select, Space } from 'antd';
 import { Vector3 } from 'three';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { useStore } from '../../../stores/common';
@@ -22,7 +22,17 @@ export const SolarPanelMenu = () => {
   const language = useStore(Selector.language);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const setElementSize = useStore(Selector.setElementSize);
-  const updateElementById = useStore(Selector.updateElementById);
+  const updateElementLabelById = useStore(Selector.updateElementLabelById);
+  const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
+  const updateElementLxById = useStore(Selector.updateElementLxById);
+  const updateElementLyById = useStore(Selector.updateElementLyById);
+  const updateSolarPanelOrientationById = useStore(Selector.updateSolarPanelOrientationById);
+  const updateSolarPanelPoleHeightById = useStore(Selector.updateSolarPanelPoleHeightById);
+  const updateSolarPanelPoleSpacingById = useStore(Selector.updateSolarPanelPoleSpacingById);
+  const updateSolarPanelRelativeAzimuthById = useStore(Selector.updateSolarPanelRelativeAzimuthById);
+  const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
+  const updateSolarPanelTrackerTypeById = useStore(Selector.updateSolarPanelTrackerTypeById);
+  const updateSolarPanelDrawSunBeamById = useStore(Selector.updateSolarPanelDrawSunBeamById);
   const getPvModule = useStore(Selector.getPvModule);
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -60,14 +70,14 @@ export const SolarPanelMenu = () => {
         oldValue: oldWidth,
         newValue: w,
         undo: () => {
-          updateElementById(solarPanel.id, { lx: undoableChange.oldValue as number });
+          updateElementLxById(solarPanel.id, undoableChange.oldValue as number);
         },
         redo: () => {
-          updateElementById(solarPanel.id, { lx: undoableChange.newValue as number });
+          updateElementLxById(solarPanel.id, undoableChange.newValue as number);
         },
       } as UndoableChange;
       addUndoable(undoableChange);
-      updateElementById(solarPanel.id, { lx: w });
+      updateElementLxById(solarPanel.id, w);
       setUpdateFlag(!updateFlag);
     }
   };
@@ -84,14 +94,14 @@ export const SolarPanelMenu = () => {
         oldValue: oldLength,
         newValue: l,
         undo: () => {
-          updateElementById(solarPanel.id, { ly: undoableChange.oldValue as number });
+          updateElementLyById(solarPanel.id, undoableChange.oldValue as number);
         },
         redo: () => {
-          updateElementById(solarPanel.id, { ly: undoableChange.newValue as number });
+          updateElementLyById(solarPanel.id, undoableChange.newValue as number);
         },
       } as UndoableChange;
       addUndoable(undoableChange);
-      updateElementById(solarPanel.id, { ly: l });
+      updateElementLyById(solarPanel.id, l);
       setUpdateFlag(!updateFlag);
     }
   };
@@ -103,14 +113,14 @@ export const SolarPanelMenu = () => {
         timestamp: Date.now(),
         checked: !solarPanel.showLabel,
         undo: () => {
-          updateElementById(solarPanel.id, { showLabel: !undoableCheck.checked });
+          updateElementShowLabelById(solarPanel.id, !undoableCheck.checked);
         },
         redo: () => {
-          updateElementById(solarPanel.id, { showLabel: undoableCheck.checked });
+          updateElementShowLabelById(solarPanel.id, undoableCheck.checked);
         },
       } as UndoableCheck;
       addUndoable(undoableCheck);
-      updateElementById(solarPanel.id, { showLabel: checked });
+      updateElementShowLabelById(solarPanel.id, checked);
       setUpdateFlag(!updateFlag);
     }
   };
@@ -151,7 +161,7 @@ export const SolarPanelMenu = () => {
         const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.width));
         setElementSize(solarPanel.id, nx * pvModel.length, ny * pvModel.width);
       }
-      updateElementById(solarPanel.id, { orientation: value });
+      updateSolarPanelOrientationById(solarPanel.id, value);
       setUpdateFlag(!updateFlag);
     }
   };
@@ -165,14 +175,14 @@ export const SolarPanelMenu = () => {
         oldValue: oldLabel,
         newValue: labelText,
         undo: () => {
-          updateElementById(solarPanel.id, { label: undoableChange.oldValue as string });
+          updateElementLabelById(solarPanel.id, undoableChange.oldValue as string);
         },
         redo: () => {
-          updateElementById(solarPanel.id, { label: undoableChange.newValue as string });
+          updateElementLabelById(solarPanel.id, undoableChange.newValue as string);
         },
       } as UndoableChange;
       addUndoable(undoableChange);
-      updateElementById(solarPanel.id, { label: labelText });
+      updateElementLabelById(solarPanel.id, labelText);
       setUpdateFlag(!updateFlag);
     }
   };
@@ -186,14 +196,14 @@ export const SolarPanelMenu = () => {
         oldValue: oldHeight,
         newValue: value,
         undo: () => {
-          updateElementById(solarPanel.id, { poleHeight: undoableChange.oldValue as number });
+          updateSolarPanelPoleHeightById(solarPanel.id, undoableChange.oldValue as number);
         },
         redo: () => {
-          updateElementById(solarPanel.id, { poleHeight: undoableChange.newValue as number });
+          updateSolarPanelPoleHeightById(solarPanel.id, undoableChange.newValue as number);
         },
       } as UndoableChange;
       addUndoable(undoableChange);
-      updateElementById(solarPanel.id, { poleHeight: value });
+      updateSolarPanelPoleHeightById(solarPanel.id, value);
       setUpdateFlag(!updateFlag);
     }
   };
@@ -207,14 +217,14 @@ export const SolarPanelMenu = () => {
         oldValue: oldSpacing,
         newValue: value,
         undo: () => {
-          updateElementById(solarPanel.id, { poleSpacing: undoableChange.oldValue as number });
+          updateSolarPanelPoleSpacingById(solarPanel.id, undoableChange.oldValue as number);
         },
         redo: () => {
-          updateElementById(solarPanel.id, { poleSpacing: undoableChange.newValue as number });
+          updateSolarPanelPoleSpacingById(solarPanel.id, undoableChange.newValue as number);
         },
       } as UndoableChange;
       addUndoable(undoableChange);
-      updateElementById(solarPanel.id, { poleSpacing: value ?? 1 });
+      updateSolarPanelPoleSpacingById(solarPanel.id, value ?? 1);
       setUpdateFlag(!updateFlag);
     }
   };
@@ -228,14 +238,14 @@ export const SolarPanelMenu = () => {
         oldValue: oldAzimuth,
         newValue: value,
         undo: () => {
-          updateElementById(solarPanel.id, { relativeAzimuth: Util.toRadians(undoableChange.oldValue as number) });
+          updateSolarPanelRelativeAzimuthById(solarPanel.id, Util.toRadians(undoableChange.oldValue as number));
         },
         redo: () => {
-          updateElementById(solarPanel.id, { relativeAzimuth: Util.toRadians(undoableChange.newValue as number) });
+          updateSolarPanelRelativeAzimuthById(solarPanel.id, Util.toRadians(undoableChange.newValue as number));
         },
       } as UndoableChange;
       addUndoable(undoableChange);
-      updateElementById(solarPanel.id, { relativeAzimuth: Util.toRadians(value ?? 0) });
+      updateSolarPanelRelativeAzimuthById(solarPanel.id, Util.toRadians(value ?? 0));
       setUpdateFlag(!updateFlag);
     }
   };
@@ -249,19 +259,19 @@ export const SolarPanelMenu = () => {
         oldValue: oldTilt,
         newValue: value,
         undo: () => {
-          updateElementById(solarPanel.id, { tiltAngle: Util.toRadians(undoableChange.oldValue as number) });
+          updateSolarPanelTiltAngleById(solarPanel.id, Util.toRadians(undoableChange.oldValue as number));
         },
         redo: () => {
-          updateElementById(solarPanel.id, { tiltAngle: Util.toRadians(undoableChange.newValue as number) });
+          updateSolarPanelTiltAngleById(solarPanel.id, Util.toRadians(undoableChange.newValue as number));
         },
       } as UndoableChange;
       addUndoable(undoableChange);
-      updateElementById(solarPanel.id, { tiltAngle: Util.toRadians(value ?? 0) });
+      updateSolarPanelTiltAngleById(solarPanel.id, Util.toRadians(value ?? 0));
       setUpdateFlag(!updateFlag);
     }
   };
 
-  const setTracker = (value: string) => {
+  const setTracker = (value: TrackerType) => {
     if (solarPanel) {
       const oldTracker = solarPanel.trackerType;
       const undoableChange = {
@@ -270,14 +280,14 @@ export const SolarPanelMenu = () => {
         oldValue: oldTracker,
         newValue: value,
         undo: () => {
-          updateElementById(solarPanel.id, { trackerType: undoableChange.oldValue as string });
+          updateSolarPanelTrackerTypeById(solarPanel.id, undoableChange.oldValue as TrackerType);
         },
         redo: () => {
-          updateElementById(solarPanel.id, { trackerType: undoableChange.newValue as string });
+          updateSolarPanelTrackerTypeById(solarPanel.id, undoableChange.newValue as TrackerType);
         },
       } as UndoableChange;
       addUndoable(undoableChange);
-      updateElementById(solarPanel.id, { trackerType: value });
+      updateSolarPanelTrackerTypeById(solarPanel.id, value);
       setUpdateFlag(!updateFlag);
     }
   };
@@ -289,14 +299,14 @@ export const SolarPanelMenu = () => {
         timestamp: Date.now(),
         checked: !solarPanel.drawSunBeam,
         undo: () => {
-          updateElementById(solarPanel.id, { drawSunBeam: !undoableCheck.checked });
+          updateSolarPanelDrawSunBeamById(solarPanel.id, !undoableCheck.checked);
         },
         redo: () => {
-          updateElementById(solarPanel.id, { drawSunBeam: undoableCheck.checked });
+          updateSolarPanelDrawSunBeamById(solarPanel.id, undoableCheck.checked);
         },
       } as UndoableCheck;
       addUndoable(undoableCheck);
-      updateElementById(solarPanel.id, { drawSunBeam: checked });
+      updateSolarPanelDrawSunBeamById(solarPanel.id, checked);
       setUpdateFlag(!updateFlag);
     }
   };

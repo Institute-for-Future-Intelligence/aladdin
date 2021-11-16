@@ -72,7 +72,34 @@ export const setElementSize = (state: CommonStoreState) => state.setElementSize;
 
 export const setElementNormal = (state: CommonStoreState) => state.setElementNormal;
 
+// TODO: this needs to be replaced with direct update soon because we need to
+//  remove [key: string]: any; in ElementModel
 export const updateElementById = (state: CommonStoreState) => state.updateElementById;
+
+export const updateElementLabelById = (state: CommonStoreState) => state.updateElementLabelById;
+
+export const updateElementShowLabelById = (state: CommonStoreState) => state.updateElementShowLabelById;
+
+export const updateElementLxById = (state: CommonStoreState) => state.updateElementLxById;
+
+export const updateElementLyById = (state: CommonStoreState) => state.updateElementLyById;
+
+export const updateSolarPanelModelById = (state: CommonStoreState) => state.updateSolarPanelModelById;
+
+export const updateSolarPanelOrientationById = (state: CommonStoreState) => state.updateSolarPanelOrientationById;
+
+export const updateSolarPanelPoleHeightById = (state: CommonStoreState) => state.updateSolarPanelPoleHeightById;
+
+export const updateSolarPanelPoleSpacingById = (state: CommonStoreState) => state.updateSolarPanelPoleSpacingById;
+
+export const updateSolarPanelRelativeAzimuthById = (state: CommonStoreState) =>
+  state.updateSolarPanelRelativeAzimuthById;
+
+export const updateSolarPanelTiltAngleById = (state: CommonStoreState) => state.updateSolarPanelTiltAngleById;
+
+export const updateSolarPanelTrackerTypeById = (state: CommonStoreState) => state.updateSolarPanelTrackerTypeById;
+
+export const updateSolarPanelDrawSunBeamById = (state: CommonStoreState) => state.updateSolarPanelDrawSunBeamById;
 
 export const copyElementById = (state: CommonStoreState) => state.copyElementById;
 

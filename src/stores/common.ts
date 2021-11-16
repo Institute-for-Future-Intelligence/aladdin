@@ -20,6 +20,7 @@ import {
   Orientation,
   ResizeHandleType,
   RotateHandleType,
+  TrackerType,
   User,
 } from '../types';
 import { DefaultWorldModel } from './DefaultWorldModel';
@@ -86,11 +87,30 @@ export interface CommonStoreState {
   getElementById: (id: string) => ElementModel | null;
   selectMe: (id: string, e: ThreeEvent<MouseEvent>, action?: ActionType) => void;
   selectNone: () => void;
-  updateElementById: (id: string, element: Partial<ElementModel>) => ElementModel | null;
   setElementPosition: (id: string, x: number, y: number, z?: number) => void;
   setElementRotation: (id: string, x: number, y: number, z: number) => void;
   setElementNormal: (id: string, x: number, y: number, z: number) => void;
   setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
+
+  // TODO: this needs to be replaced with direct update soon because we need to
+  //  remove [key: string]: any; in ElementModel
+  updateElementById: (id: string, element: Partial<ElementModel>) => ElementModel | null;
+
+  // for all types of elements
+  updateElementLabelById: (id: string, label: string) => void;
+  updateElementShowLabelById: (id: string, showLabel: boolean) => void;
+  updateElementLxById: (id: string, lx: number) => void;
+  updateElementLyById: (id: string, ly: number) => void;
+
+  // for solar panels
+  updateSolarPanelModelById: (id: string, pvModelName: string) => void;
+  updateSolarPanelOrientationById: (id: string, orientation: Orientation) => void;
+  updateSolarPanelPoleHeightById: (id: string, poleHeight: number) => void;
+  updateSolarPanelPoleSpacingById: (id: string, poleHeight: number) => void;
+  updateSolarPanelRelativeAzimuthById: (id: string, relativeAzimuth: number) => void;
+  updateSolarPanelTiltAngleById: (id: string, tiltAngle: number) => void;
+  updateSolarPanelTrackerTypeById: (id: string, trackerType: TrackerType) => void;
+  updateSolarPanelDrawSunBeamById: (id: string, drawSunBeam: boolean) => void;
 
   objectTypeToAdd: ObjectType;
   addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => string;
@@ -389,6 +409,7 @@ export const useStore = create<CommonStoreState>(
               }
             }
           },
+
           updateElementById(id, newProps) {
             let element: ElementModel | null = null;
             immerSet((state: CommonStoreState) => {
@@ -411,6 +432,119 @@ export const useStore = create<CommonStoreState>(
             });
             return element;
           },
+
+          // for all types of elements
+          updateElementLabelById(id, label) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  e.label = label;
+                }
+              }
+            });
+          },
+          updateElementShowLabelById(id, showLabel) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  e.showLabel = showLabel;
+                }
+              }
+            });
+          },
+          updateElementLxById(id, lx) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  e.lx = lx;
+                }
+              }
+            });
+          },
+          updateElementLyById(id, ly) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  e.lx = ly;
+                }
+              }
+            });
+          },
+
+          // for solar panels
+          updateSolarPanelModelById(id, pvModelName) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                  (e as SolarPanelModel).pvModelName = pvModelName;
+                }
+              }
+            });
+          },
+          updateSolarPanelOrientationById(id, orientation) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                  (e as SolarPanelModel).orientation = orientation;
+                }
+              }
+            });
+          },
+          updateSolarPanelPoleHeightById(id, poleHeight) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                  (e as SolarPanelModel).poleHeight = poleHeight;
+                }
+              }
+            });
+          },
+          updateSolarPanelPoleSpacingById(id, poleSpacing) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                  (e as SolarPanelModel).poleSpacing = poleSpacing;
+                }
+              }
+            });
+          },
+          updateSolarPanelRelativeAzimuthById(id, relativeAzimuth) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                  (e as SolarPanelModel).relativeAzimuth = relativeAzimuth;
+                }
+              }
+            });
+          },
+          updateSolarPanelTiltAngleById(id, tiltAngle) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                  (e as SolarPanelModel).tiltAngle = tiltAngle;
+                }
+              }
+            });
+          },
+          updateSolarPanelTrackerTypeById(id, trackerType) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                  (e as SolarPanelModel).trackerType = trackerType;
+                }
+              }
+            });
+          },
+          updateSolarPanelDrawSunBeamById(id, drawSunBeam) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                  (e as SolarPanelModel).drawSunBeam = drawSunBeam;
+                }
+              }
+            });
+          },
+
           setElementPosition(id, x, y, z?) {
             immerSet((state: CommonStoreState) => {
               for (let [i, e] of state.elements.entries()) {

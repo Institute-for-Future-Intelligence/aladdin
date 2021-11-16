@@ -23,7 +23,7 @@ const PvModelPanel = ({
   setPvModelDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
-  const updateElementById = useStore(Selector.updateElementById);
+  const updateSolarPanelModelById = useStore(Selector.updateSolarPanelModelById);
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const setElementSize = useStore(Selector.setElementSize);
@@ -70,8 +70,18 @@ const PvModelPanel = ({
       timestamp: Date.now(),
       oldValue: oldModel,
       newValue: value,
+      scope: scope,
       undo: () => {
-        changePvModel(undoableChange.oldValue as string);
+        switch (scope) {
+          case Scope.AllObjectsOfThisType:
+            break;
+          case Scope.AllObjectsOfThisTypeAboveFoundation:
+            break;
+          case Scope.AllObjectsOfThisTypeOnSurface:
+            break;
+          default:
+            changePvModel(undoableChange.oldValue as string);
+        }
       },
       redo: () => {
         changePvModel(undoableChange.newValue as string);
@@ -95,7 +105,7 @@ const PvModelPanel = ({
         const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.width));
         setElementSize(solarPanel.id, nx * pvModules[value].length, ny * pvModules[value].width);
       }
-      updateElementById(solarPanel.id, { pvModelName: pvModules[value].name });
+      updateSolarPanelModelById(solarPanel.id, pvModules[value].name);
       setUpdateFlag(!updateFlag);
     }
   };
