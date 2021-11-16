@@ -10,6 +10,7 @@ import { Row, Select, Col, Input, Radio, Space, RadioChangeEvent, Modal } from '
 import { SolarPanelNominalSize } from '../models/SolarPanelNominalSize';
 import { ObjectType, Orientation, Scope, ShadeTolerance } from '../types';
 import i18n from '../i18n/i18n';
+import { UndoableChange } from '../undo/UndoableChange';
 
 const { Option } = Select;
 
@@ -27,6 +28,7 @@ const PvModelPanel = ({
   const setElementSize = useStore(Selector.setElementSize);
   const pvModules = useStore(Selector.pvModules);
   const getPvModule = useStore(Selector.getPvModule);
+  const addUndoable = useStore(Selector.addUndoable);
 
   const [prevPvModel, setPrevPvModel] = useState<string | undefined>(undefined);
   const [scope, setScope] = useState<Scope>(Scope.OnlyThisObject);
@@ -55,6 +57,24 @@ const PvModelPanel = ({
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setScope(e.target.value);
+  };
+
+  const setPvModel = (value: string) => {
+    const oldModel = solarPanel.pvModelName;
+    const undoableChange = {
+      name: 'Set Solar Panel Model',
+      timestamp: Date.now(),
+      oldValue: oldModel,
+      newValue: value,
+      undo: () => {
+        changePvModel(undoableChange.oldValue as string);
+      },
+      redo: () => {
+        changePvModel(undoableChange.newValue as string);
+      },
+    } as UndoableChange;
+    addUndoable(undoableChange);
+    changePvModel(value);
   };
 
   const changePvModel = (value: string) => {
@@ -87,7 +107,7 @@ const PvModelPanel = ({
         }}
         onCancel={() => {
           if (prevPvModel) {
-            changePvModel(prevPvModel);
+            setPvModel(prevPvModel);
           }
           setPvModelDialogVisible(false);
         }}
@@ -101,7 +121,7 @@ const PvModelPanel = ({
               defaultValue="Custom"
               style={{ width: '100%' }}
               value={pvModel.name}
-              onChange={(value) => changePvModel(value)}
+              onChange={(value) => setPvModel(value)}
             >
               {Object.keys(pvModules).map((key) => (
                 <Option key={key} value={key}>

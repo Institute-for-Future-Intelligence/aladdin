@@ -25,6 +25,7 @@ export const SolarPanelMenu = () => {
   const updateElementById = useStore(Selector.updateElementById);
   const getPvModule = useStore(Selector.getPvModule);
   const addUndoable = useStore(Selector.addUndoable);
+
   const [solarPanel, setSolarPanel] = useState<SolarPanelModel>();
   const [dx, setDx] = useState<number>(0);
   const [dy, setDy] = useState<number>(0);

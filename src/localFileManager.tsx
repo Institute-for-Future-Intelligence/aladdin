@@ -11,6 +11,7 @@ import { saveAs } from 'file-saver';
 import { showError } from './helpers';
 import i18n from './i18n/i18n';
 import { Input, Modal } from 'antd';
+import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 
 const LocalFileManager = () => {
   const setCommonStore = useStore(Selector.set);
@@ -24,7 +25,10 @@ const LocalFileManager = () => {
   const lang = { lng: language };
   const firstOpenCall = useRef<boolean>(true);
   const firstSaveCall = useRef<boolean>(true);
-  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
+  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
+  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
+  const dragRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (firstOpenCall.current) {
@@ -103,10 +107,31 @@ const LocalFileManager = () => {
     }
   };
 
+  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
+    const { clientWidth, clientHeight } = window?.document?.documentElement;
+    const targetRect = dragRef?.current?.getBoundingClientRect();
+    if (targetRect) {
+      setBounds({
+        left: -targetRect?.left + uiData?.x,
+        right: clientWidth - (targetRect?.right - uiData?.x),
+        top: -targetRect?.top + uiData?.y,
+        bottom: clientHeight - (targetRect?.bottom - uiData?.y),
+      });
+    }
+  };
+
   return (
     <>
       <Modal
-        title={i18n.t('menu.file.DownloadAs', lang)}
+        title={
+          <div
+            style={{ width: '100%', cursor: 'move' }}
+            onMouseOver={() => setDragEnabled(true)}
+            onMouseOut={() => setDragEnabled(false)}
+          >
+            {i18n.t('menu.file.DownloadAs', lang)}
+          </div>
+        }
         visible={saveLocalFileDialogVisible}
         onOk={() => {
           setConfirmLoading(true);
@@ -123,6 +148,11 @@ const LocalFileManager = () => {
             state.saveLocalFileDialogVisible = false;
           });
         }}
+        modalRender={(modal) => (
+          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
+            <div ref={dragRef}>{modal}</div>
+          </Draggable>
+        )}
       >
         <Input
           placeholder="File name"
