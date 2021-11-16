@@ -108,14 +108,14 @@ const LocalFileManager = () => {
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    const { clientWidth, clientHeight } = window?.document?.documentElement;
-    const targetRect = dragRef?.current?.getBoundingClientRect();
-    if (targetRect) {
+    if (dragRef.current) {
+      const { clientWidth, clientHeight } = window.document.documentElement;
+      const targetRect = dragRef.current.getBoundingClientRect();
       setBounds({
-        left: -targetRect?.left + uiData?.x,
-        right: clientWidth - (targetRect?.right - uiData?.x),
-        top: -targetRect?.top + uiData?.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData?.y),
+        left: -targetRect.left + uiData.x,
+        right: clientWidth - (targetRect.right - uiData.x),
+        top: -targetRect.top + uiData.y,
+        bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
   };

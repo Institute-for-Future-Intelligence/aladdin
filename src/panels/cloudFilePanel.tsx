@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
+import ReactDraggable, { DraggableBounds, DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable';
 import { Input, Modal, Space, Table } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,6 +15,7 @@ import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { HOME_URL } from '../constants';
 import { copyTextToClipboard, showSuccess } from '../helpers';
 import i18n from '../i18n/i18n';
+import Draggable from 'react-draggable';
 
 const { Column } = Table;
 
@@ -79,9 +80,12 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
   const [curPosition, setCurPosition] = useState({ x: 0, y: 0 });
   const [renameDialogVisible, setRenameDialogVisible] = useState(false);
+  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
+  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const [oldTitle, setOldTitle] = useState<string>();
   const [newTitle, setNewTitle] = useState<string>();
   const [email, setEmail] = useState<string>();
+  const dragRef = useRef<HTMLDivElement | null>(null);
   const lang = { lng: language };
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
@@ -132,16 +136,42 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
     setRenameDialogVisible(false);
   };
 
+  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
+    if (dragRef.current) {
+      const { clientWidth, clientHeight } = window.document.documentElement;
+      const targetRect = dragRef.current.getBoundingClientRect();
+      setBounds({
+        left: -targetRect.left + uiData.x,
+        right: clientWidth - (targetRect.right - uiData.x),
+        top: -targetRect.top + uiData.y,
+        bottom: clientHeight - (targetRect?.bottom - uiData.y),
+      });
+    }
+  };
+
   return (
     <>
       <Modal
-        title={i18n.t('word.Rename', lang)}
+        title={
+          <div
+            style={{ width: '100%', cursor: 'move' }}
+            onMouseOver={() => setDragEnabled(true)}
+            onMouseOut={() => setDragEnabled(false)}
+          >
+            {i18n.t('word.Rename', lang)}
+          </div>
+        }
         visible={renameDialogVisible}
         onOk={renameFile}
         onCancel={() => {
           setRenameDialogVisible(false);
           setNewTitle(undefined);
         }}
+        modalRender={(modal) => (
+          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
+            <div ref={dragRef}>{modal}</div>
+          </Draggable>
+        )}
       >
         <Input
           placeholder="Title"

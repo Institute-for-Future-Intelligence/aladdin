@@ -21,6 +21,7 @@ import { Vector3 } from 'three';
 import { GROUND_ID } from './constants';
 import { Util } from './Util';
 import MainToolBarButtons from './mainToolBarButtons';
+import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 
 const ButtonsContainer = styled.div`
   position: absolute;
@@ -48,6 +49,9 @@ const MainToolBar = () => {
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
   const [title, setTitle] = useState<string>(cloudFile ?? 'My Aladdin File');
   const [titleDialogVisible, setTitleDialogVisible] = useState(false);
+  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
+  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
+  const dragRef = useRef<HTMLDivElement | null>(null);
   const cloudFiles = useRef<CloudFileInfo[] | void>();
   const firstCall = useRef<boolean>(true);
 
@@ -399,16 +403,42 @@ const MainToolBar = () => {
     </Menu>
   );
 
+  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
+    if (dragRef.current) {
+      const { clientWidth, clientHeight } = window.document.documentElement;
+      const targetRect = dragRef.current.getBoundingClientRect();
+      setBounds({
+        left: -targetRect.left + uiData.x,
+        right: clientWidth - (targetRect.right - uiData.x),
+        top: -targetRect.top + uiData.y,
+        bottom: clientHeight - (targetRect?.bottom - uiData.y),
+      });
+    }
+  };
+
   return (
     <>
       <Modal
-        title={i18n.t('avatarMenu.SaveFileToCloud', lang)}
+        title={
+          <div
+            style={{ width: '100%', cursor: 'move' }}
+            onMouseOver={() => setDragEnabled(true)}
+            onMouseOut={() => setDragEnabled(false)}
+          >
+            {i18n.t('avatarMenu.SaveFileToCloud', lang)}
+          </div>
+        }
         visible={titleDialogVisible}
         onOk={() => saveToCloud(title)}
         confirmLoading={loading}
         onCancel={() => {
           setTitleDialogVisible(false);
         }}
+        modalRender={(modal) => (
+          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
+            <div ref={dragRef}>{modal}</div>
+          </Draggable>
+        )}
       >
         <Input
           placeholder="Title"
