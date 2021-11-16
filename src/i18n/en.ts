@@ -49,6 +49,7 @@ export const i18n_en = {
       OK: 'OK',
       Cancel: 'Cancel',
       Close: 'Close',
+      ApplyTo: 'Apply to',
       Clear: 'Clear',
       Length: 'Length',
       Width: 'Width',

@@ -21,15 +21,13 @@ import {
 } from './elementMenu';
 
 export interface ContextMenuProps {
-  setPvDialogVisible: (visible: boolean) => void;
-
   [key: string]: any;
 }
 
-const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children, setPvDialogVisible }) => {
+const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
 
-  const contextMenu = (setPvDialogVisible: (visible: boolean) => void) => {
+  const contextMenu = () => {
     switch (contextMenuObjectType) {
       case ObjectType.Ground:
         return (
@@ -58,7 +56,7 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children, setPvDialog
       case ObjectType.SolarPanel:
         return (
           <Menu>
-            <SolarPanelMenu setPvDialogVisible={setPvDialogVisible} />
+            <SolarPanelMenu />
           </Menu>
         );
       case ObjectType.Sensor:
@@ -97,7 +95,7 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children, setPvDialog
   };
 
   return (
-    <Dropdown key={'canvas-context-menu'} trigger={['contextMenu']} overlay={contextMenu(setPvDialogVisible)}>
+    <Dropdown key={'canvas-context-menu'} trigger={['contextMenu']} overlay={contextMenu()}>
       {children}
     </Dropdown>
   );

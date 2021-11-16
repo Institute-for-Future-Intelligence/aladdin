@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Checkbox, Input, InputNumber, Menu, Select, Space } from 'antd';
+import { Checkbox, Input, InputNumber, Menu, Modal, Select, Space } from 'antd';
 import { Vector3 } from 'three';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { useStore } from '../../../stores/common';
@@ -14,10 +14,11 @@ import { Copy, Cut } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
+import PvModelPanel from '../../../panels/pvModelPanel';
 
 const { Option } = Select;
 
-export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (visible: boolean) => void }) => {
+export const SolarPanelMenu = () => {
   const language = useStore(Selector.language);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const setElementSize = useStore(Selector.setElementSize);
@@ -25,6 +26,7 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
   const getPvModule = useStore(Selector.getPvModule);
   const addUndoable = useStore(Selector.addUndoable);
 
+  const [pvModelDialogVisible, setPvModelDialogVisible] = useState<boolean>(false);
   const [solarPanel, setSolarPanel] = useState<SolarPanelModel>();
   const [dx, setDx] = useState<number>(0);
   const [dy, setDy] = useState<number>(0);
@@ -306,10 +308,23 @@ export const SolarPanelMenu = ({ setPvDialogVisible }: { setPvDialogVisible: (vi
       {solarPanel && (
         <>
           {/* pv model */}
+          <Modal
+            width={600}
+            visible={pvModelDialogVisible}
+            title={i18n.t('pvModelPanel.SolarPanelSpecs', lang)}
+            onOk={() => {
+              setPvModelDialogVisible(false);
+            }}
+            onCancel={() => {
+              setPvModelDialogVisible(false);
+            }}
+          >
+            <PvModelPanel />
+          </Modal>
           <Menu.Item
             key={'solar-panel-change'}
             onClick={() => {
-              setPvDialogVisible(true);
+              setPvModelDialogVisible(true);
             }}
             style={{ paddingLeft: '40px' }}
           >

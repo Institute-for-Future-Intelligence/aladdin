@@ -49,6 +49,7 @@ export const i18n_zh_cn = {
       OK: '确定',
       Cancel: '取消',
       Close: '关闭',
+      ApplyTo: '适用于',
       Clear: '清空',
       Length: '长度',
       Width: '宽度',

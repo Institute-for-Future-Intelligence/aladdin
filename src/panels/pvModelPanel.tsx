@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import { Row, Select, Col, Input, Radio, Space, RadioChangeEvent } from 'antd';
+import { Row, Select, Col, Input, Radio, Space, RadioChangeEvent, Modal } from 'antd';
 import { SolarPanelNominalSize } from '../models/SolarPanelNominalSize';
 import { ObjectType, Orientation, Scope, ShadeTolerance } from '../types';
 import i18n from '../i18n/i18n';
@@ -22,6 +22,7 @@ const PvModelPanel = () => {
   const pvModules = useStore(Selector.pvModules);
   const getPvModule = useStore(Selector.getPvModule);
 
+  const [prevPvModel, setPrevPvModel] = useState('SPR-X21-335-BLK');
   const [scope, setScope] = useState<Scope>(Scope.OnlyThisObject);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [panelSizeString, setPanelSizeString] = useState<string>();
@@ -50,6 +51,25 @@ const PvModelPanel = () => {
     setScope(e.target.value);
   };
 
+  const onChangePvModel = (value: string) => {
+    if (solarPanel) {
+      setPrevPvModel(pvModel.name);
+      if (solarPanel.orientation === Orientation.portrait) {
+        // calculate the current x-y layout
+        const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.width));
+        const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.length));
+        setElementSize(solarPanel.id, nx * pvModules[value].width, ny * pvModules[value].length);
+      } else {
+        // calculate the current x-y layout
+        const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.length));
+        const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.width));
+        setElementSize(solarPanel.id, nx * pvModules[value].length, ny * pvModules[value].width);
+      }
+      updateElementById(solarPanel.id, { pvModelName: pvModules[value].name });
+      setUpdateFlag(!updateFlag);
+    }
+  };
+
   return (
     <>
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
@@ -61,23 +81,7 @@ const PvModelPanel = () => {
             defaultValue="Custom"
             style={{ width: '100%' }}
             value={pvModel.name}
-            onChange={(value) => {
-              if (solarPanel) {
-                if (solarPanel.orientation === Orientation.portrait) {
-                  // calculate the current x-y layout
-                  const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.width));
-                  const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.length));
-                  setElementSize(solarPanel.id, nx * pvModules[value].width, ny * pvModules[value].length);
-                } else {
-                  // calculate the current x-y layout
-                  const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.length));
-                  const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.width));
-                  setElementSize(solarPanel.id, nx * pvModules[value].length, ny * pvModules[value].width);
-                }
-                updateElementById(solarPanel.id, { pvModelName: pvModules[value].name });
-                setUpdateFlag(!updateFlag);
-              }
-            }}
+            onChange={(value) => onChangePvModel(value)}
           >
             {Object.keys(pvModules).map((key) => (
               <Option key={key} value={key}>
@@ -98,7 +102,7 @@ const PvModelPanel = () => {
             value={panelSizeString}
             onChange={(value) => {
               if (solarPanel) {
-                // TODO
+                // TODO for custom solar panel
               }
             }}
           >
@@ -121,7 +125,7 @@ const PvModelPanel = () => {
             value={pvModel.cellType}
             onChange={(value) => {
               if (solarPanel) {
-                // TODO
+                // TODO for custom solar panel
               }
             }}
           >
@@ -151,7 +155,7 @@ const PvModelPanel = () => {
             value={pvModel.color}
             onChange={(value) => {
               if (solarPanel) {
-                // TODO
+                // TODO for custom solar panel
               }
             }}
           >
@@ -177,7 +181,7 @@ const PvModelPanel = () => {
             value={100 * pvModel.efficiency}
             onChange={(value) => {
               if (solarPanel) {
-                // TODO
+                // TODO for custom solar panel
               }
             }}
           />
@@ -194,7 +198,7 @@ const PvModelPanel = () => {
             value={pvModel.noct}
             onChange={(value) => {
               if (solarPanel) {
-                // TODO
+                // TODO for custom solar panel
               }
             }}
           />
@@ -211,7 +215,7 @@ const PvModelPanel = () => {
             value={pvModel.pmaxTC}
             onChange={(value) => {
               if (solarPanel) {
-                // TODO
+                // TODO for custom solar panel
               }
             }}
           />
@@ -228,7 +232,7 @@ const PvModelPanel = () => {
             value={pvModel.shadeTolerance}
             onChange={(value) => {
               if (solarPanel) {
-                // TODO
+                // TODO for custom solar panel
               }
             }}
           >
@@ -251,20 +255,25 @@ const PvModelPanel = () => {
         gutter={6}
         style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
       >
-        <Radio.Group onChange={onScopeChange} value={scope}>
-          <Space direction="vertical">
-            <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
-            {parentType !== ObjectType.Foundation && (
-              <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
-                {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
+        <Col className="gutter-row" span={3}>
+          {i18n.t('word.ApplyTo', lang) + ':'}
+        </Col>
+        <Col className="gutter-row" span={21}>
+          <Radio.Group onChange={onScopeChange} value={scope}>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
+              {parentType !== ObjectType.Foundation && (
+                <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+                  {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
+                </Radio>
+              )}
+              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
               </Radio>
-            )}
-            <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-              {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
-            </Radio>
-            <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
-          </Space>
-        </Radio.Group>
+              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
       </Row>
     </>
   );

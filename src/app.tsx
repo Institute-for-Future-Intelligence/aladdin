@@ -24,7 +24,7 @@ import { DEFAULT_FAR, DEFAULT_FOV, VERSION } from './constants';
 import { visitHomepage, visitIFI } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
-import { Modal, ConfigProvider } from 'antd';
+import { ConfigProvider } from 'antd';
 import DropdownContextMenu from './components/contextMenu';
 import WeatherPanel from './panels/weatherPanel';
 import { GraphDataType, ObjectType } from './types';
@@ -37,7 +37,6 @@ import Spinner from './components/spinner';
 import StickyNotePanel from './panels/stickyNotePanel';
 import InfoPanel from './panels/infoPanel';
 import InstructionPanel from './panels/instructionPanel';
-import PvModelPanel from './panels/pvModelPanel';
 import YearlyPvYieldPanel from './panels/yearlyPvYieldPanel';
 import DailyPvYieldPanel from './panels/dailyPvYieldPanel';
 import Lights from './lights';
@@ -86,7 +85,6 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);
   const [city, setCity] = useState<string | null>('Boston MA, USA');
-  const [pvModelDialogVisible, setPvModelDialogVisible] = useState<boolean>(false);
   const keyName = useRef<string | undefined>(undefined);
   const keyDown = useRef<boolean>(false);
   const keyUp = useRef<boolean>(false);
@@ -278,19 +276,6 @@ const App = () => {
           <AnalysisManager />
           <MainMenu canvas={canvasRef.current} set2DView={set2DView} resetView={resetView} zoomView={zoomView} />
           <MainToolBar />
-          <Modal
-            width={600}
-            visible={pvModelDialogVisible}
-            title={i18n.t('pvModelPanel.SolarPanelSpecs', lang)}
-            onOk={() => {
-              setPvModelDialogVisible(false);
-            }}
-            onCancel={() => {
-              setPvModelDialogVisible(false);
-            }}
-          >
-            <PvModelPanel />
-          </Modal>
           {showMapPanel && <MapPanel />}
           {showHeliodonPanel && <HeliodonPanel />}
           {showStickyNotePanel && <StickyNotePanel />}
@@ -303,7 +288,7 @@ const App = () => {
           {showDailyLightSensorPanel && <DailyLightSensorPanel city={city} />}
           {showYearlyPvYieldPanel && <YearlyPvYieldPanel city={city} />}
           {showDailyPvYieldPanel && <DailyPvYieldPanel city={city} />}
-          <DropdownContextMenu setPvDialogVisible={setPvModelDialogVisible}>
+          <DropdownContextMenu>
             <div>
               <Canvas
                 orthographic={orthographic}
