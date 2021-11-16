@@ -19,20 +19,19 @@ import PvModelPanel from '../../../panels/pvModelPanel';
 const { Option } = Select;
 
 export const SolarPanelMenu = () => {
-  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const setElementSize = useStore(Selector.setElementSize);
   const updateElementById = useStore(Selector.updateElementById);
   const getPvModule = useStore(Selector.getPvModule);
   const addUndoable = useStore(Selector.addUndoable);
-
   const [solarPanel, setSolarPanel] = useState<SolarPanelModel>();
   const [dx, setDx] = useState<number>(0);
   const [dy, setDy] = useState<number>(0);
   const [panelNormal, setPanelNormal] = useState<Vector3>();
   const [labelText, setLabelText] = useState<string>('');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [pvModelDialogVisible, setPvModelDialogVisible] = useState(false);
   const element = getSelectedElement();
   const lang = { lng: language };
 
@@ -308,13 +307,11 @@ export const SolarPanelMenu = () => {
       {solarPanel && (
         <>
           {/* pv model */}
-          <PvModelPanel />
+          <PvModelPanel pvModelDialogVisible={pvModelDialogVisible} setPvModelDialogVisible={setPvModelDialogVisible} />
           <Menu.Item
             key={'solar-panel-change'}
             onClick={() => {
-              setCommonStore((state) => {
-                state.pvModelDialogVisible = true;
-              });
+              setPvModelDialogVisible(true);
             }}
             style={{ paddingLeft: '40px' }}
           >

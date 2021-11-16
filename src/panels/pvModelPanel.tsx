@@ -13,8 +13,13 @@ import i18n from '../i18n/i18n';
 
 const { Option } = Select;
 
-const PvModelPanel = () => {
-  const setCommonStore = useStore(Selector.set);
+const PvModelPanel = ({
+  pvModelDialogVisible,
+  setPvModelDialogVisible,
+}: {
+  pvModelDialogVisible: boolean;
+  setPvModelDialogVisible: (b: boolean) => void;
+}) => {
   const language = useStore(Selector.language);
   const updateElementById = useStore(Selector.updateElementById);
   const getElementById = useStore(Selector.getElementById);
@@ -22,7 +27,6 @@ const PvModelPanel = () => {
   const setElementSize = useStore(Selector.setElementSize);
   const pvModules = useStore(Selector.pvModules);
   const getPvModule = useStore(Selector.getPvModule);
-  const pvModelDialogVisible = useStore(Selector.pvModelDialogVisible);
 
   const [prevPvModel, setPrevPvModel] = useState<string | undefined>(undefined);
   const [scope, setScope] = useState<Scope>(Scope.OnlyThisObject);
@@ -79,17 +83,13 @@ const PvModelPanel = () => {
         visible={pvModelDialogVisible}
         title={i18n.t('pvModelPanel.SolarPanelSpecs', lang)}
         onOk={() => {
-          setCommonStore((state) => {
-            state.pvModelDialogVisible = false;
-          });
+          setPvModelDialogVisible(false);
         }}
         onCancel={() => {
           if (prevPvModel) {
             changePvModel(prevPvModel);
           }
-          setCommonStore((state) => {
-            state.pvModelDialogVisible = false;
-          });
+          setPvModelDialogVisible(false);
         }}
       >
         <Row gutter={6} style={{ paddingBottom: '4px' }}>

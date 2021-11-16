@@ -152,7 +152,6 @@ export interface CommonStoreState {
   saveLocalFileFlag: boolean;
   saveLocalFileDialogVisible: boolean;
   updateCloudFileFlag: boolean;
-  pvModelDialogVisible: boolean;
   savedCameraPosition: Vector3;
   savedPanCenter: Vector3;
   enableFineGrid: boolean;
