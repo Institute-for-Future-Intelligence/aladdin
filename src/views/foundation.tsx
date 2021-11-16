@@ -61,7 +61,7 @@ const Foundation = ({
 }: FoundationModel) => {
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
-  const getInitialWallsID = useStore(Selector.getInitialWallsID);
+  const getAllWallsIdOnFoundation = useStore(Selector.getAllWallsIdOnFoundation);
   const setCommonStore = useStore(Selector.set);
   const setElementPosition = useStore(Selector.setElementPosition);
   const setElementSize = useStore(Selector.setElementSize);
@@ -72,6 +72,7 @@ const Foundation = ({
   const getPvModule = useStore(Selector.getPvModule);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const deletedWallID = useStore(Selector.deletedWallID);
+  const updateWallPointOnFoundation = useStore(Selector.updateWallPointOnFoundation);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const groundImage = useStore(Selector.viewState.groundImage);
   const moveHandleType = useStore(Selector.moveHandleType);
@@ -149,8 +150,8 @@ const Foundation = ({
   }, []);
 
   useEffect(() => {
-    const initialWallsID = getInitialWallsID(id);
-    for (const id of initialWallsID) {
+    const wallsID = getAllWallsIdOnFoundation(id);
+    for (const id of wallsID) {
       const wall = getElementById(id) as WallModel;
       if (wall) {
         const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1]);
@@ -159,7 +160,7 @@ const Foundation = ({
       }
     }
     setWallPoints(wallPoints);
-  }, []);
+  }, [updateWallPointOnFoundation]);
 
   useEffect(() => {
     if (deletedWallID) {

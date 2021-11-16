@@ -488,6 +488,7 @@ const Ground = () => {
           }
         }
       }
+      state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
     });
   };
 

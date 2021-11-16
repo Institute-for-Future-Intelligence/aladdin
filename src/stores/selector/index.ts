@@ -62,7 +62,7 @@ export const getElementById = (state: CommonStoreState) => state.getElementById;
 
 export const getSelectedElement = (state: CommonStoreState) => state.getSelectedElement;
 
-export const getInitialWallsID = (state: CommonStoreState) => state.getInitialWallsID;
+export const getAllWallsIdOnFoundation = (state: CommonStoreState) => state.getAllWallsIdOnFoundation;
 
 export const setElementPosition = (state: CommonStoreState) => state.setElementPosition;
 
@@ -155,6 +155,8 @@ export const addElement = (state: CommonStoreState) => state.addElement;
 export const objectTypeToAdd = (state: CommonStoreState) => state.objectTypeToAdd;
 
 export const deletedWallID = (state: CommonStoreState) => state.deletedWallID;
+
+export const updateWallPointOnFoundation = (state: CommonStoreState) => state.updateWallPointOnFoundation;
 
 export const countElementsByType = (state: CommonStoreState) => state.countElementsByType;
 

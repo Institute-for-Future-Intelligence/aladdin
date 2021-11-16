@@ -187,7 +187,8 @@ export interface CommonStoreState {
 
   buildingWallID: string | null;
   deletedWallID: string | null;
-  getInitialWallsID: (parentID: string) => string[];
+  updateWallPointOnFoundation: boolean;
+  getAllWallsIdOnFoundation: (parentID: string) => string[];
 
   orthographicChanged: boolean;
   simulationInProgress: boolean;
@@ -1275,7 +1276,8 @@ export const useStore = create<CommonStoreState>(
 
           buildingWallID: null,
           deletedWallID: null,
-          getInitialWallsID(parentID: string) {
+          updateWallPointOnFoundation: false,
+          getAllWallsIdOnFoundation(parentID: string) {
             const state = get();
             const wallsID: string[] = [];
             for (const e of state.elements) {
