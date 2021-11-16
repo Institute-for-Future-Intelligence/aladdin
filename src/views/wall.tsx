@@ -59,6 +59,8 @@ const Wall = ({
   relativeAngle,
   leftOffset = 0,
   rightOffset = 0,
+  leftJoints,
+  rightJoints,
   windows,
   textureType,
   parentId,
@@ -142,6 +144,8 @@ const Wall = ({
   const [x, setX] = useState(lx / 2);
   const [y, setY] = useState(ly / 2);
   const [z, setZ] = useState(lz / 2);
+  const [leftOffsetState, setLeftOffsetState] = useState(leftOffset);
+  const [rightOffsetState, setRightOffsetState] = useState(rightOffset);
 
   const parentSelector = useCallback((state: CommonStoreState) => {
     for (const e of state.elements) {
@@ -161,6 +165,34 @@ const Wall = ({
   const ray = useMemo(() => new Raycaster(), []);
 
   const whiteWallMaterial = useMemo(() => new MeshStandardMaterial({ color: 'white', side: DoubleSide }), []);
+
+  useEffect(() => {
+    setLeftOffsetState(leftOffset);
+  }, [leftOffset]);
+
+  useEffect(() => {
+    setRightOffsetState(rightOffset);
+  }, [rightOffset]);
+
+  // wall offset state
+  useEffect(() => {
+    if (leftJoints.length > 0) {
+      const targetWall = getElementById(leftJoints[0].id);
+      if (targetWall) {
+        const deltaAngle = (Math.PI * 3 - (relativeAngle - targetWall.relativeAngle)) % (Math.PI * 2);
+        const offset = ly / Math.tan(deltaAngle);
+        setLeftOffsetState(offset);
+      }
+    }
+    if (rightJoints.length > 0) {
+      const targetWall = getElementById(rightJoints[0].id);
+      if (targetWall) {
+        const deltaAngle = (Math.PI * 3 + relativeAngle - targetWall.relativeAngle) % (Math.PI * 2);
+        const offset = ly / Math.tan(deltaAngle);
+        setRightOffsetState(offset);
+      }
+    }
+  }, [ly]);
 
   // subscribe common store
   useEffect(() => {
@@ -208,7 +240,7 @@ const Wall = ({
   useEffect(() => {
     if (insideWallRef.current) {
       const wallShape = new Shape();
-      drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
+      drawRectangle(wallShape, lx, lz, 0, 0, leftOffsetState, rightOffsetState);
 
       windows.forEach((w) => {
         if (w.id !== invalidWindowID) {
@@ -222,42 +254,50 @@ const Wall = ({
       insideWallRef.current.material = whiteWallMaterial;
       gl.render(scene, camera);
     }
-  }, [init, leftOffset, rightOffset, lx, ly, lz, windows]);
+  }, [init, leftOffsetState, rightOffsetState, lx, ly, lz, windows]);
 
   // top surface
   useEffect(() => {
     if (topSurfaceRef.current) {
       const topSurfaceShape = new Shape();
-      drawTopSurface(topSurfaceShape, lx, ly, leftOffset, rightOffset);
+      drawTopSurface(topSurfaceShape, lx, ly, leftOffsetState, rightOffsetState);
       topSurfaceRef.current.geometry = new ShapeBufferGeometry(topSurfaceShape);
       topSurfaceRef.current.material = whiteWallMaterial;
       gl.render(scene, camera);
     }
-  }, [init, leftOffset, rightOffset, lx, ly, lz]);
+  }, [init, leftOffsetState, rightOffsetState, lx, ly, lz]);
 
   // windows
   useEffect(() => {
     setRenderWindows([...windows]);
   }, [windows]);
 
-  const drawTopSurface = (shape: Shape, lx: number, ly: number, leftOffset: number, rightOffset: number) => {
+  const drawTopSurface = (shape: Shape, lx: number, ly: number, leftOffsetState: number, rightOffsetState: number) => {
     const x = lx / 2;
     const y = ly / 2;
     shape.moveTo(-x, -y);
     shape.lineTo(x, -y);
-    shape.lineTo(x - rightOffset, y);
-    shape.lineTo(-x + leftOffset, y);
+    shape.lineTo(x - rightOffsetState, y);
+    shape.lineTo(-x + leftOffsetState, y);
     shape.lineTo(-x, -y);
   };
 
-  const drawRectangle = (shape: Shape, lx: number, ly: number, cx = 0, cy = 0, leftOffset = 0, rightOffset = 0) => {
+  const drawRectangle = (
+    shape: Shape,
+    lx: number,
+    ly: number,
+    cx = 0,
+    cy = 0,
+    leftOffsetState = 0,
+    rightOffsetState = 0,
+  ) => {
     const x = lx / 2;
     const y = ly / 2;
-    shape.moveTo(cx - x + leftOffset, cy - y);
-    shape.lineTo(cx + x - rightOffset, cy - y);
-    shape.lineTo(cx + x - rightOffset, cy + y);
-    shape.lineTo(cx - x + leftOffset, cy + y);
-    shape.lineTo(cx - x + leftOffset, cy - y);
+    shape.moveTo(cx - x + leftOffsetState, cy - y);
+    shape.lineTo(cx + x - rightOffsetState, cy - y);
+    shape.lineTo(cx + x - rightOffsetState, cy + y);
+    shape.lineTo(cx - x + leftOffsetState, cy + y);
+    shape.lineTo(cx - x + leftOffsetState, cy - y);
   };
 
   const getWindowRelativePos = (p: Vector3, wall: WallModel) => {
@@ -448,7 +488,7 @@ const Wall = ({
           />
 
           {/* side surfaces */}
-          {leftOffset == 0 && (
+          {leftOffsetState == 0 && (
             <Plane
               args={[lz, ly]}
               position={[-x + 0.01, y, 0]}
@@ -460,7 +500,7 @@ const Wall = ({
               <meshStandardMaterial color={'white'} side={DoubleSide} />
             </Plane>
           )}
-          {rightOffset == 0 && (
+          {rightOffsetState == 0 && (
             <Plane
               args={[lz, ly]}
               position={[x - 0.01, y, 0]}
