@@ -78,6 +78,7 @@ export const i18n_zh_cn = {
     },
 
     menu: {
+      mainMenu: '主菜单',
       fileSubMenu: '文件',
       file: {
         OpenLocalFile: '打开本地文件',

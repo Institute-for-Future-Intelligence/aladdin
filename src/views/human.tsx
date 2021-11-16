@@ -22,8 +22,8 @@ import JuddImage from '../resources/judd.png';
 import JudyImage from '../resources/judy.png';
 import JuneImage from '../resources/june.png';
 import JuroImage from '../resources/juro.png';
+import XiaoliImage from '../resources/xiaoli.png';
 import XiaomingImage from '../resources/xiaoming.png';
-import XiaohuaImage from '../resources/xiaoli.png';
 
 import React, { useMemo, useRef, useState } from 'react';
 import { DoubleSide, Euler, Mesh, TextureLoader, Vector3 } from 'three';
@@ -117,7 +117,7 @@ const Human = ({ id, cx, cy, name = HumanName.Jack, selected = false, locked = f
         textureImg = XiaomingImage;
         break;
       case HumanName.Xiaoli:
-        textureImg = XiaohuaImage;
+        textureImg = XiaoliImage;
         break;
       default:
         textureImg = JackImage;

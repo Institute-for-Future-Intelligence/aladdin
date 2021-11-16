@@ -25,8 +25,8 @@ import JuddImage from '../../../resources/judd.png';
 import JudyImage from '../../../resources/judy.png';
 import JuneImage from '../../../resources/june.png';
 import JuroImage from '../../../resources/juro.png';
+import XiaoliImage from '../../../resources/xiaoli.png';
 import XiaomingImage from '../../../resources/xiaoming.png';
-import XiaohuaImage from '../../../resources/xiaoli.png';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { HumanModel } from '../../../models/HumanModel';
@@ -152,7 +152,7 @@ const HumanSelection = () => {
         {i18n.t('people.Juro', lang)}
       </Option>
       <Option key={HumanName.Xiaoli} value={HumanName.Xiaoli}>
-        <img alt={HumanName.Xiaoli} src={XiaohuaImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+        <img alt={HumanName.Xiaoli} src={XiaoliImage} height={20} style={{ paddingRight: '8px' }} />{' '}
         {i18n.t('people.Xiaoli', lang)}
       </Option>
       <Option key={HumanName.Xiaoming} value={HumanName.Xiaoming}>

@@ -4,7 +4,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { Checkbox, Input, InputNumber, Menu, Select, Space } from 'antd';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { Vector3 } from 'three';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { useStore } from '../../../stores/common';

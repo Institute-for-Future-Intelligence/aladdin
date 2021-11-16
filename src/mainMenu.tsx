@@ -53,6 +53,18 @@ const StyledImage = styled.img`
   }
 `;
 
+const LabelContainer = styled.div`
+  position: absolute;
+  top: 54px;
+  left: 0;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  z-index: 9;
+`;
+
 export interface MainMenuProps {
   set2DView: (selected: boolean) => void;
   resetView: () => void;
@@ -556,6 +568,9 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
       <Dropdown overlay={menu} trigger={['click']}>
         <StyledImage src={logo} title={i18n.t('tooltip.clickToOpenMenu', lang)} />
       </Dropdown>
+      <LabelContainer>
+        <label style={{ fontSize: '10px', alignContent: 'center' }}>{i18n.t('menu.mainMenu', lang)}</label>
+      </LabelContainer>
       {aboutUs && <About openAboutUs={openAboutUs} />}
     </>
   );
