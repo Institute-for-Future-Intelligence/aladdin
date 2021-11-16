@@ -19,6 +19,7 @@ import PvModelPanel from '../../../panels/pvModelPanel';
 const { Option } = Select;
 
 export const SolarPanelMenu = () => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const setElementSize = useStore(Selector.setElementSize);
@@ -26,7 +27,6 @@ export const SolarPanelMenu = () => {
   const getPvModule = useStore(Selector.getPvModule);
   const addUndoable = useStore(Selector.addUndoable);
 
-  const [pvModelDialogVisible, setPvModelDialogVisible] = useState<boolean>(false);
   const [solarPanel, setSolarPanel] = useState<SolarPanelModel>();
   const [dx, setDx] = useState<number>(0);
   const [dy, setDy] = useState<number>(0);
@@ -308,23 +308,13 @@ export const SolarPanelMenu = () => {
       {solarPanel && (
         <>
           {/* pv model */}
-          <Modal
-            width={600}
-            visible={pvModelDialogVisible}
-            title={i18n.t('pvModelPanel.SolarPanelSpecs', lang)}
-            onOk={() => {
-              setPvModelDialogVisible(false);
-            }}
-            onCancel={() => {
-              setPvModelDialogVisible(false);
-            }}
-          >
-            <PvModelPanel />
-          </Modal>
+          <PvModelPanel />
           <Menu.Item
             key={'solar-panel-change'}
             onClick={() => {
-              setPvModelDialogVisible(true);
+              setCommonStore((state) => {
+                state.pvModelDialogVisible = true;
+              });
             }}
             style={{ paddingLeft: '40px' }}
           >

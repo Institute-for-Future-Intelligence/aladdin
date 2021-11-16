@@ -124,6 +124,8 @@ export const showCloudFilePanel = (state: CommonStoreState) => state.showCloudFi
 
 export const showAccountSettingsPanel = (state: CommonStoreState) => state.showAccountSettingsPanel;
 
+export const pvModelDialogVisible = (state: CommonStoreState) => state.pvModelDialogVisible;
+
 // science
 export const weatherData = (state: CommonStoreState) => state.weatherData;
 

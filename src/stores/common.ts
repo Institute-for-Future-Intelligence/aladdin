@@ -152,6 +152,7 @@ export interface CommonStoreState {
   saveLocalFileFlag: boolean;
   saveLocalFileDialogVisible: boolean;
   updateCloudFileFlag: boolean;
+  pvModelDialogVisible: boolean;
   savedCameraPosition: Vector3;
   savedPanCenter: Vector3;
   enableFineGrid: boolean;
@@ -910,6 +911,7 @@ export const useStore = create<CommonStoreState>(
           saveLocalFileDialogVisible: false,
           updateCloudFileFlag: false,
           localFileDialogRequested: false,
+          pvModelDialogVisible: false,
           savedCameraPosition: new Vector3(0, -5, 0),
           savedPanCenter: new Vector3(),
 

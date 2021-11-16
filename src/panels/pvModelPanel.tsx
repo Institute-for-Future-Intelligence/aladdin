@@ -14,6 +14,7 @@ import i18n from '../i18n/i18n';
 const { Option } = Select;
 
 const PvModelPanel = () => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const updateElementById = useStore(Selector.updateElementById);
   const getElementById = useStore(Selector.getElementById);
@@ -21,8 +22,9 @@ const PvModelPanel = () => {
   const setElementSize = useStore(Selector.setElementSize);
   const pvModules = useStore(Selector.pvModules);
   const getPvModule = useStore(Selector.getPvModule);
+  const pvModelDialogVisible = useStore(Selector.pvModelDialogVisible);
 
-  const [prevPvModel, setPrevPvModel] = useState('SPR-X21-335-BLK');
+  const [prevPvModel, setPrevPvModel] = useState<string | undefined>(undefined);
   const [scope, setScope] = useState<Scope>(Scope.OnlyThisObject);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [panelSizeString, setPanelSizeString] = useState<string>();
@@ -51,7 +53,7 @@ const PvModelPanel = () => {
     setScope(e.target.value);
   };
 
-  const onChangePvModel = (value: string) => {
+  const changePvModel = (value: string) => {
     if (solarPanel) {
       setPrevPvModel(pvModel.name);
       if (solarPanel.orientation === Orientation.portrait) {
@@ -72,209 +74,228 @@ const PvModelPanel = () => {
 
   return (
     <>
-      <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={14}>
-          {i18n.t('pvModelPanel.Model', lang) + ':'}
-        </Col>
-        <Col className="gutter-row" span={10}>
-          <Select
-            defaultValue="Custom"
-            style={{ width: '100%' }}
-            value={pvModel.name}
-            onChange={(value) => onChangePvModel(value)}
-          >
-            {Object.keys(pvModules).map((key) => (
-              <Option key={key} value={key}>
-                {key}
-              </Option>
-            ))}
-          </Select>
-        </Col>
-      </Row>
-      <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={14}>
-          {i18n.t('pvModelPanel.PanelSize', lang) + ':'}
-        </Col>
-        <Col className="gutter-row" span={10}>
-          <Select
-            disabled={true}
-            style={{ width: '100%' }}
-            value={panelSizeString}
-            onChange={(value) => {
-              if (solarPanel) {
-                // TODO for custom solar panel
-              }
-            }}
-          >
-            {SolarPanelNominalSize.instance.nominalStrings.map((key) => (
-              <Option key={key} value={key}>
-                {key}
-              </Option>
-            ))}
-          </Select>
-        </Col>
-      </Row>
-      <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={14}>
-          {i18n.t('pvModelPanel.CellType', lang) + ':'}
-        </Col>
-        <Col className="gutter-row" span={10}>
-          <Select
-            disabled={true}
-            style={{ width: '100%' }}
-            value={pvModel.cellType}
-            onChange={(value) => {
-              if (solarPanel) {
-                // TODO for custom solar panel
-              }
-            }}
-          >
-            <Option key={'Monocrystalline'} value={'Monocrystalline'}>
-              {i18n.t('pvModelPanel.Monocrystalline', lang)}
-            </Option>
-            )
-            <Option key={'Polycrystalline'} value={'Polycrystalline'}>
-              {i18n.t('pvModelPanel.Polycrystalline', lang)}
-            </Option>
-            )
-            <Option key={'Thin Film'} value={'Thin Film'}>
-              {i18n.t('pvModelPanel.ThinFilm', lang)}
-            </Option>
-            )
-          </Select>
-        </Col>
-      </Row>
-      <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={14}>
-          {i18n.t('word.Color', lang) + ':'}
-        </Col>
-        <Col className="gutter-row" span={10}>
-          <Select
-            disabled={true}
-            style={{ width: '100%' }}
-            value={pvModel.color}
-            onChange={(value) => {
-              if (solarPanel) {
-                // TODO for custom solar panel
-              }
-            }}
-          >
-            <Option key={'Black'} value={'Black'}>
-              {i18n.t('pvModelPanel.Black', lang)}
-            </Option>
-            )
-            <Option key={'Blue'} value={'Blue'}>
-              {i18n.t('pvModelPanel.Blue', lang)}
-            </Option>
-            )
-          </Select>
-        </Col>
-      </Row>
-      <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={14}>
-          {i18n.t('pvModelPanel.SolarCellEfficiency', lang) + ' (%):'}
-        </Col>
-        <Col className="gutter-row" span={10}>
-          <Input
-            disabled={true}
-            style={{ width: '100%' }}
-            value={100 * pvModel.efficiency}
-            onChange={(value) => {
-              if (solarPanel) {
-                // TODO for custom solar panel
-              }
-            }}
-          />
-        </Col>
-      </Row>
-      <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={14}>
-          {i18n.t('pvModelPanel.NominalOperatingCellTemperature', lang) + ' (°C):'}
-        </Col>
-        <Col className="gutter-row" span={10}>
-          <Input
-            disabled={true}
-            style={{ width: '100%' }}
-            value={pvModel.noct}
-            onChange={(value) => {
-              if (solarPanel) {
-                // TODO for custom solar panel
-              }
-            }}
-          />
-        </Col>
-      </Row>
-      <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={14}>
-          {i18n.t('pvModelPanel.TemperatureCoefficientOfPmax', lang) + ' (%/°C):'}
-        </Col>
-        <Col className="gutter-row" span={10}>
-          <Input
-            disabled={true}
-            style={{ width: '100%' }}
-            value={pvModel.pmaxTC}
-            onChange={(value) => {
-              if (solarPanel) {
-                // TODO for custom solar panel
-              }
-            }}
-          />
-        </Col>
-      </Row>
-      <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={14}>
-          {i18n.t('pvModelPanel.ShadeTolerance', lang) + ':'}
-        </Col>
-        <Col className="gutter-row" span={10}>
-          <Select
-            disabled={true}
-            style={{ width: '100%' }}
-            value={pvModel.shadeTolerance}
-            onChange={(value) => {
-              if (solarPanel) {
-                // TODO for custom solar panel
-              }
-            }}
-          >
-            <Option key={ShadeTolerance.HIGH} value={ShadeTolerance.HIGH}>
-              {ShadeTolerance.HIGH}
-            </Option>
-            )
-            <Option key={ShadeTolerance.NONE} value={ShadeTolerance.NONE}>
-              {ShadeTolerance.NONE}
-            </Option>
-            )
-            <Option key={ShadeTolerance.PARTIAL} value={ShadeTolerance.PARTIAL}>
-              {ShadeTolerance.PARTIAL}
-            </Option>
-            )
-          </Select>
-        </Col>
-      </Row>
-      <Row
-        gutter={6}
-        style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+      <Modal
+        width={600}
+        visible={pvModelDialogVisible}
+        title={i18n.t('pvModelPanel.SolarPanelSpecs', lang)}
+        onOk={() => {
+          setCommonStore((state) => {
+            state.pvModelDialogVisible = false;
+          });
+        }}
+        onCancel={() => {
+          if (prevPvModel) {
+            changePvModel(prevPvModel);
+          }
+          setCommonStore((state) => {
+            state.pvModelDialogVisible = false;
+          });
+        }}
       >
-        <Col className="gutter-row" span={3}>
-          {i18n.t('word.ApplyTo', lang) + ':'}
-        </Col>
-        <Col className="gutter-row" span={21}>
-          <Radio.Group onChange={onScopeChange} value={scope}>
-            <Space direction="vertical">
-              <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
-              {parentType !== ObjectType.Foundation && (
-                <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
-                  {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={14}>
+            {i18n.t('pvModelPanel.Model', lang) + ':'}
+          </Col>
+          <Col className="gutter-row" span={10}>
+            <Select
+              defaultValue="Custom"
+              style={{ width: '100%' }}
+              value={pvModel.name}
+              onChange={(value) => changePvModel(value)}
+            >
+              {Object.keys(pvModules).map((key) => (
+                <Option key={key} value={key}>
+                  {key}
+                </Option>
+              ))}
+            </Select>
+          </Col>
+        </Row>
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={14}>
+            {i18n.t('pvModelPanel.PanelSize', lang) + ':'}
+          </Col>
+          <Col className="gutter-row" span={10}>
+            <Select
+              disabled={true}
+              style={{ width: '100%' }}
+              value={panelSizeString}
+              onChange={(value) => {
+                if (solarPanel) {
+                  // TODO for custom solar panel
+                }
+              }}
+            >
+              {SolarPanelNominalSize.instance.nominalStrings.map((key) => (
+                <Option key={key} value={key}>
+                  {key}
+                </Option>
+              ))}
+            </Select>
+          </Col>
+        </Row>
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={14}>
+            {i18n.t('pvModelPanel.CellType', lang) + ':'}
+          </Col>
+          <Col className="gutter-row" span={10}>
+            <Select
+              disabled={true}
+              style={{ width: '100%' }}
+              value={pvModel.cellType}
+              onChange={(value) => {
+                if (solarPanel) {
+                  // TODO for custom solar panel
+                }
+              }}
+            >
+              <Option key={'Monocrystalline'} value={'Monocrystalline'}>
+                {i18n.t('pvModelPanel.Monocrystalline', lang)}
+              </Option>
+              )
+              <Option key={'Polycrystalline'} value={'Polycrystalline'}>
+                {i18n.t('pvModelPanel.Polycrystalline', lang)}
+              </Option>
+              )
+              <Option key={'Thin Film'} value={'Thin Film'}>
+                {i18n.t('pvModelPanel.ThinFilm', lang)}
+              </Option>
+              )
+            </Select>
+          </Col>
+        </Row>
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={14}>
+            {i18n.t('word.Color', lang) + ':'}
+          </Col>
+          <Col className="gutter-row" span={10}>
+            <Select
+              disabled={true}
+              style={{ width: '100%' }}
+              value={pvModel.color}
+              onChange={(value) => {
+                if (solarPanel) {
+                  // TODO for custom solar panel
+                }
+              }}
+            >
+              <Option key={'Black'} value={'Black'}>
+                {i18n.t('pvModelPanel.Black', lang)}
+              </Option>
+              )
+              <Option key={'Blue'} value={'Blue'}>
+                {i18n.t('pvModelPanel.Blue', lang)}
+              </Option>
+              )
+            </Select>
+          </Col>
+        </Row>
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={14}>
+            {i18n.t('pvModelPanel.SolarCellEfficiency', lang) + ' (%):'}
+          </Col>
+          <Col className="gutter-row" span={10}>
+            <Input
+              disabled={true}
+              style={{ width: '100%' }}
+              value={100 * pvModel.efficiency}
+              onChange={(value) => {
+                if (solarPanel) {
+                  // TODO for custom solar panel
+                }
+              }}
+            />
+          </Col>
+        </Row>
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={14}>
+            {i18n.t('pvModelPanel.NominalOperatingCellTemperature', lang) + ' (°C):'}
+          </Col>
+          <Col className="gutter-row" span={10}>
+            <Input
+              disabled={true}
+              style={{ width: '100%' }}
+              value={pvModel.noct}
+              onChange={(value) => {
+                if (solarPanel) {
+                  // TODO for custom solar panel
+                }
+              }}
+            />
+          </Col>
+        </Row>
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={14}>
+            {i18n.t('pvModelPanel.TemperatureCoefficientOfPmax', lang) + ' (%/°C):'}
+          </Col>
+          <Col className="gutter-row" span={10}>
+            <Input
+              disabled={true}
+              style={{ width: '100%' }}
+              value={pvModel.pmaxTC}
+              onChange={(value) => {
+                if (solarPanel) {
+                  // TODO for custom solar panel
+                }
+              }}
+            />
+          </Col>
+        </Row>
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={14}>
+            {i18n.t('pvModelPanel.ShadeTolerance', lang) + ':'}
+          </Col>
+          <Col className="gutter-row" span={10}>
+            <Select
+              disabled={true}
+              style={{ width: '100%' }}
+              value={pvModel.shadeTolerance}
+              onChange={(value) => {
+                if (solarPanel) {
+                  // TODO for custom solar panel
+                }
+              }}
+            >
+              <Option key={ShadeTolerance.HIGH} value={ShadeTolerance.HIGH}>
+                {ShadeTolerance.HIGH}
+              </Option>
+              )
+              <Option key={ShadeTolerance.NONE} value={ShadeTolerance.NONE}>
+                {ShadeTolerance.NONE}
+              </Option>
+              )
+              <Option key={ShadeTolerance.PARTIAL} value={ShadeTolerance.PARTIAL}>
+                {ShadeTolerance.PARTIAL}
+              </Option>
+              )
+            </Select>
+          </Col>
+        </Row>
+        <Row
+          gutter={6}
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+        >
+          <Col className="gutter-row" span={3}>
+            {i18n.t('word.ApplyTo', lang) + ':'}
+          </Col>
+          <Col className="gutter-row" span={21}>
+            <Radio.Group onChange={onScopeChange} value={scope}>
+              <Space direction="vertical">
+                <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
+                {parentType !== ObjectType.Foundation && (
+                  <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+                    {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
+                  </Radio>
+                )}
+                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                  {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
                 </Radio>
-              )}
-              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
-              </Radio>
-              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
-            </Space>
-          </Radio.Group>
-        </Col>
-      </Row>
+                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
+              </Space>
+            </Radio.Group>
+          </Col>
+        </Row>
+      </Modal>
     </>
   );
 };
