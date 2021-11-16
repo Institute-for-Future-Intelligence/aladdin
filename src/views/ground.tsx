@@ -16,6 +16,13 @@ import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableRotate } from '../undo/UndoableRotate';
 import { UndoableAdd } from '../undo/UndoableAdd';
+import { WallModel } from 'src/models/WallModel';
+
+interface WallAbsPos {
+  leftPointAbsPos: Vector3;
+  rightPointAbsPos: Vector3;
+  centerPointAbsPos: Vector3;
+}
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
@@ -53,6 +60,7 @@ const Ground = () => {
   const newDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const oldRotationRef = useRef<number[]>([0, 0, 1]);
   const newRotationRef = useRef<number[]>([0, 0, 1]);
+  const wallsAbsPosMapRef = useRef<Map<string, WallAbsPos>>(new Map());
 
   useEffect(() => {
     window.addEventListener('pointerup', handlePointerUp);
@@ -318,6 +326,34 @@ const Ground = () => {
                 state.enableOrbitController = false;
               });
             }
+
+            if (selectedElement.type === ObjectType.Foundation) {
+              const map = new Map<string, WallAbsPos>();
+              const parentCenter = new Vector3(selectedElement.cx, selectedElement.cy);
+              for (const e of useStore.getState().elements) {
+                if (e.type === ObjectType.Wall && e.parentId === selectedElement.id) {
+                  const wall = e as WallModel;
+                  const centerPointAbsPos = new Vector3().addVectors(
+                    parentCenter,
+                    new Vector3(wall.cx, wall.cy).applyEuler(new Euler(0, 0, selectedElement.rotation[2])),
+                  );
+                  const leftPointAbsPos = new Vector3().addVectors(
+                    parentCenter,
+                    new Vector3(wall.leftPoint[0], wall.leftPoint[1]).applyEuler(
+                      new Euler(0, 0, selectedElement.rotation[2]),
+                    ),
+                  );
+                  const rightPointAbsPos = new Vector3().addVectors(
+                    parentCenter,
+                    new Vector3(wall.rightPoint[0], wall.rightPoint[1]).applyEuler(
+                      new Euler(0, 0, selectedElement.rotation[2]),
+                    ),
+                  );
+                  map.set(wall.id, { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos });
+                }
+              }
+              wallsAbsPosMapRef.current = map;
+            }
           }
         }
       }
@@ -421,15 +457,38 @@ const Ground = () => {
   };
 
   const handleResize = (p: Vector3) => {
-    const P = new Vector2(p.x, p.y);
-    const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
+    const P = new Vector3(p.x, p.y);
+    const resizeAnchor2D = new Vector3(resizeAnchor.x, resizeAnchor.y);
     const R = resizeAnchor2D.distanceTo(P);
     const angle = Math.atan2(P.x - resizeAnchor.x, P.y - resizeAnchor.y) + grabRef.current!.rotation[2];
     const lx = Math.abs(R * Math.sin(angle));
     const ly = Math.abs(R * Math.cos(angle));
-    const c = new Vector2().addVectors(P, resizeAnchor2D).divideScalar(2);
+    const c = new Vector3().addVectors(P, resizeAnchor2D).divideScalar(2);
     setElementSize(grabRef.current!.id, lx, ly);
     setElementPosition(grabRef.current!.id, c.x, c.y);
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.parentId === grabRef.current!.id) {
+          const wall = wallsAbsPosMapRef.current.get(e.id);
+          if (wall) {
+            const { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos } = wall;
+            const centerPointRelativePos = new Vector3()
+              .subVectors(centerPointAbsPos, c)
+              .applyEuler(new Euler(0, 0, -grabRef.current!.rotation[2]));
+            const leftPointRelativePos = new Vector3()
+              .subVectors(leftPointAbsPos, c)
+              .applyEuler(new Euler(0, 0, -grabRef.current!.rotation[2]));
+            const rightPointRelativePos = new Vector3()
+              .subVectors(rightPointAbsPos, c)
+              .applyEuler(new Euler(0, 0, -grabRef.current!.rotation[2]));
+            e.cx = centerPointRelativePos.x;
+            e.cy = centerPointRelativePos.y;
+            (e as WallModel).leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, grabRef.current!.lz];
+            (e as WallModel).rightPoint = [rightPointRelativePos.x, rightPointRelativePos.y, grabRef.current!.lz];
+          }
+        }
+      }
+    });
   };
 
   const handleRotate = (p: Vector3) => {
