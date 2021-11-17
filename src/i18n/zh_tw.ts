@@ -48,6 +48,7 @@ export const i18n_zh_tw = {
       Color: '顏色',
       OK: '確定',
       Cancel: '取消',
+      Apply: '應用',
       Close: '關閉',
       ApplyTo: '適用於',
       Clear: '清空',

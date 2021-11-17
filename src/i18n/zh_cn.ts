@@ -48,6 +48,7 @@ export const i18n_zh_cn = {
       Color: '颜色',
       OK: '确定',
       Cancel: '取消',
+      Apply: '应用',
       Close: '关闭',
       ApplyTo: '适用于',
       Clear: '清空',

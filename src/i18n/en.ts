@@ -48,6 +48,7 @@ export const i18n_en = {
       Color: 'Color',
       OK: 'OK',
       Cancel: 'Cancel',
+      Apply: 'Apply',
       Close: 'Close',
       ApplyTo: 'Apply to',
       Clear: 'Clear',

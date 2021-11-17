@@ -6,12 +6,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import { Row, Select, Col, Input, Radio, Space, RadioChangeEvent, Modal } from 'antd';
+import { Button, Col, Input, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import { SolarPanelNominalSize } from '../models/SolarPanelNominalSize';
 import { ObjectType, Scope, ShadeTolerance } from '../types';
 import i18n from '../i18n/i18n';
 import { UndoableChange } from '../undo/UndoableChange';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import { UndoableChangeGroup } from '../undo/UndoableChangeGroup';
 
 const { Option } = Select;
 
@@ -23,6 +24,7 @@ const PvModelPanel = ({
   setPvModelDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
+  const elements = useStore(Selector.elements);
   const updateSolarPanelModelById = useStore(Selector.updateSolarPanelModelById);
   const updateSolarPanelModelForAll = useStore(Selector.updateSolarPanelModelForAll);
   const getElementById = useStore(Selector.getElementById);
@@ -31,17 +33,17 @@ const PvModelPanel = ({
   const getPvModule = useStore(Selector.getPvModule);
   const addUndoable = useStore(Selector.addUndoable);
 
-  const [prevPvModel, setPrevPvModel] = useState<string | undefined>(undefined);
-  const [scope, setScope] = useState<Scope>(Scope.OnlyThisObject);
+  const solarPanel = getSelectedElement() as SolarPanelModel;
+  const [selectedPvModel, setSelectedPvModel] = useState<string>(solarPanel.pvModelName ?? 'SPR-X21-335-BLK');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [panelSizeString, setPanelSizeString] = useState<string>();
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const scopeRef = useRef<Scope>(Scope.OnlyThisObject);
 
   const lang = { lng: language };
-  const solarPanel = getSelectedElement() as SolarPanelModel;
-  const pvModel = getPvModule(solarPanel.pvModelName) ?? getPvModule('SPR-X21-335-BLK');
+  const pvModel = getPvModule(solarPanel.pvModelName ?? selectedPvModel);
   const parentType = getElementById(solarPanel.parentId)?.type;
 
   useEffect(() => {
@@ -59,49 +61,63 @@ const PvModelPanel = ({
     );
   }, [pvModel]);
 
+  useEffect(() => {
+    setSelectedPvModel(solarPanel.pvModelName);
+  }, [solarPanel]);
+
   const onScopeChange = (e: RadioChangeEvent) => {
-    setScope(e.target.value);
+    scopeRef.current = e.target.value;
+    setUpdateFlag(!updateFlag);
   };
 
   const setPvModel = (value: string) => {
-    const oldModel = solarPanel.pvModelName;
-    const undoableChange = {
-      name: 'Set Solar Panel Model',
-      timestamp: Date.now(),
-      oldValue: oldModel,
-      newValue: value,
-      scope: scope,
-      undo: () => {
-        if (undoableChange.scope) {
-          changePvModel(undoableChange.oldValue as string, undoableChange.scope);
+    switch (scopeRef.current) {
+      case Scope.AllObjectsOfThisType:
+        const oldModels = new Map<string, string>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.SolarPanel) {
+            oldModels.set(elem.id, (elem as SolarPanelModel).pvModelName);
+          }
         }
-      },
-      redo: () => {
-        if (undoableChange.scope) {
-          changePvModel(undoableChange.newValue as string, undoableChange.scope);
-        }
-      },
-    } as UndoableChange;
-    addUndoable(undoableChange);
-    changePvModel(value, scope);
-  };
-
-  const changePvModel = (m: string, s: Scope) => {
-    if (solarPanel) {
-      setPrevPvModel(pvModel.name);
-      switch (s) {
-        case Scope.AllObjectsOfThisType:
-          updateSolarPanelModelForAll(pvModules[m].name);
-          break;
-        case Scope.AllObjectsOfThisTypeAboveFoundation:
-          break;
-        case Scope.AllObjectsOfThisTypeOnSurface:
-          break;
-        default:
-          updateSolarPanelModelById(solarPanel.id, pvModules[m].name);
-      }
-      setUpdateFlag(!updateFlag);
+        const undoableChangeGroup = {
+          name: 'Set Model for All Solar Panels',
+          timestamp: Date.now(),
+          oldValues: oldModels,
+          newValue: value,
+          undo: () => {
+            for (const [id, model] of undoableChangeGroup.oldValues.entries()) {
+              updateSolarPanelModelById(id, model as string);
+            }
+          },
+          redo: () => {
+            updateSolarPanelModelForAll(undoableChangeGroup.newValue as string);
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeGroup);
+        updateSolarPanelModelForAll(value);
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        break;
+      default:
+        const oldModel = solarPanel.pvModelName;
+        const undoableChange = {
+          name: 'Set Model for Selected Solar Panels',
+          timestamp: Date.now(),
+          oldValue: oldModel,
+          newValue: value,
+          undo: () => {
+            updateSolarPanelModelById(solarPanel.id, undoableChange.oldValue as string);
+          },
+          redo: () => {
+            updateSolarPanelModelById(solarPanel.id, undoableChange.newValue as string);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateSolarPanelModelById(solarPanel.id, value);
     }
+    setUpdateFlag(!updateFlag);
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
@@ -131,15 +147,35 @@ const PvModelPanel = ({
             {i18n.t('pvModelPanel.SolarPanelSpecs', lang)}
           </div>
         }
-        onOk={() => {
-          setPvModelDialogVisible(false);
-        }}
-        onCancel={() => {
-          if (prevPvModel) {
-            setPvModel(prevPvModel);
-          }
-          setPvModelDialogVisible(false);
-        }}
+        footer={[
+          <Button
+            key="OK"
+            type="primary"
+            onClick={() => {
+              setPvModel(selectedPvModel);
+              setPvModelDialogVisible(false);
+            }}
+          >
+            {i18n.t('word.OK', lang)}
+          </Button>,
+          <Button
+            key="Cancel"
+            onClick={() => {
+              setSelectedPvModel(solarPanel.pvModelName);
+              setPvModelDialogVisible(false);
+            }}
+          >
+            {i18n.t('word.Cancel', lang)}
+          </Button>,
+          <Button
+            key="Apply"
+            onClick={() => {
+              setPvModel(selectedPvModel);
+            }}
+          >
+            {i18n.t('word.Apply', lang)}
+          </Button>,
+        ]}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
             <div ref={dragRef}>{modal}</div>
@@ -154,8 +190,11 @@ const PvModelPanel = ({
             <Select
               defaultValue="Custom"
               style={{ width: '100%' }}
-              value={pvModel.name}
-              onChange={(value) => setPvModel(value)}
+              value={selectedPvModel}
+              onChange={(value) => {
+                setSelectedPvModel(value);
+                setUpdateFlag(!updateFlag);
+              }}
             >
               {Object.keys(pvModules).map((key) => (
                 <Option key={key} value={key}>
@@ -333,7 +372,7 @@ const PvModelPanel = ({
             {i18n.t('word.ApplyTo', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={21}>
-            <Radio.Group onChange={onScopeChange} value={scope}>
+            <Radio.Group onChange={onScopeChange} value={scopeRef.current}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
                 {parentType !== ObjectType.Foundation && (
