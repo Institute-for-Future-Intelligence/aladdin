@@ -124,10 +124,10 @@ export enum IntersectionPlaneType {
 }
 
 export enum Scope {
-  OnlyThisObject = 0,
-  AllObjectsOfThisTypeOnSurface = 1,
-  AllObjectsOfThisTypeAboveFoundation = 2,
-  AllObjectsOfThisType = 3,
+  OnlyThisObject = 1,
+  AllObjectsOfThisTypeOnSurface = 2,
+  AllObjectsOfThisTypeAboveFoundation = 3,
+  AllObjectsOfThisType = 4,
 }
 
 export enum Orientation {

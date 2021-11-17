@@ -8,7 +8,7 @@ import * as Selector from '../stores/selector';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { Row, Select, Col, Input, Radio, Space, RadioChangeEvent, Modal } from 'antd';
 import { SolarPanelNominalSize } from '../models/SolarPanelNominalSize';
-import { ObjectType, Orientation, Scope, ShadeTolerance } from '../types';
+import { ObjectType, Scope, ShadeTolerance } from '../types';
 import i18n from '../i18n/i18n';
 import { UndoableChange } from '../undo/UndoableChange';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
@@ -24,9 +24,9 @@ const PvModelPanel = ({
 }) => {
   const language = useStore(Selector.language);
   const updateSolarPanelModelById = useStore(Selector.updateSolarPanelModelById);
+  const updateSolarPanelModelForAll = useStore(Selector.updateSolarPanelModelForAll);
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
-  const setElementSize = useStore(Selector.setElementSize);
   const pvModules = useStore(Selector.pvModules);
   const getPvModule = useStore(Selector.getPvModule);
   const addUndoable = useStore(Selector.addUndoable);
@@ -72,40 +72,34 @@ const PvModelPanel = ({
       newValue: value,
       scope: scope,
       undo: () => {
-        switch (scope) {
-          case Scope.AllObjectsOfThisType:
-            break;
-          case Scope.AllObjectsOfThisTypeAboveFoundation:
-            break;
-          case Scope.AllObjectsOfThisTypeOnSurface:
-            break;
-          default:
-            changePvModel(undoableChange.oldValue as string);
+        if (undoableChange.scope) {
+          changePvModel(undoableChange.oldValue as string, undoableChange.scope);
         }
       },
       redo: () => {
-        changePvModel(undoableChange.newValue as string);
+        if (undoableChange.scope) {
+          changePvModel(undoableChange.newValue as string, undoableChange.scope);
+        }
       },
     } as UndoableChange;
     addUndoable(undoableChange);
-    changePvModel(value);
+    changePvModel(value, scope);
   };
 
-  const changePvModel = (value: string) => {
+  const changePvModel = (m: string, s: Scope) => {
     if (solarPanel) {
       setPrevPvModel(pvModel.name);
-      if (solarPanel.orientation === Orientation.portrait) {
-        // calculate the current x-y layout
-        const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.width));
-        const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.length));
-        setElementSize(solarPanel.id, nx * pvModules[value].width, ny * pvModules[value].length);
-      } else {
-        // calculate the current x-y layout
-        const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.length));
-        const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.width));
-        setElementSize(solarPanel.id, nx * pvModules[value].length, ny * pvModules[value].width);
+      switch (s) {
+        case Scope.AllObjectsOfThisType:
+          updateSolarPanelModelForAll(pvModules[m].name);
+          break;
+        case Scope.AllObjectsOfThisTypeAboveFoundation:
+          break;
+        case Scope.AllObjectsOfThisTypeOnSurface:
+          break;
+        default:
+          updateSolarPanelModelById(solarPanel.id, pvModules[m].name);
       }
-      updateSolarPanelModelById(solarPanel.id, pvModules[value].name);
       setUpdateFlag(!updateFlag);
     }
   };

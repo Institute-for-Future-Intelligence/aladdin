@@ -104,6 +104,7 @@ export interface CommonStoreState {
 
   // for solar panels
   updateSolarPanelModelById: (id: string, pvModelName: string) => void;
+  updateSolarPanelModelForAll: (pvModelName: string) => void;
   updateSolarPanelOrientationById: (id: string, orientation: Orientation) => void;
   updateSolarPanelPoleHeightById: (id: string, poleHeight: number) => void;
   updateSolarPanelPoleSpacingById: (id: string, poleHeight: number) => void;
@@ -425,6 +426,7 @@ export const useStore = create<CommonStoreState>(
                   for (const [wi, we] of wall.windows.entries()) {
                     if (we.id === id) {
                       wall.windows[wi] = { ...we, ...newProps };
+                      break;
                     }
                   }
                 }
@@ -439,6 +441,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.id === id) {
                   e.label = label;
+                  break;
                 }
               }
             });
@@ -448,6 +451,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.id === id) {
                   e.showLabel = showLabel;
+                  break;
                 }
               }
             });
@@ -457,6 +461,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.id === id) {
                   e.lx = lx;
+                  break;
                 }
               }
             });
@@ -466,6 +471,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.id === id) {
                   e.lx = ly;
+                  break;
                 }
               }
             });
@@ -476,16 +482,58 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
-                  (e as SolarPanelModel).pvModelName = pvModelName;
+                  const sp = e as SolarPanelModel;
+                  sp.pvModelName = pvModelName;
+                  const pvModel = state.pvModules[pvModelName];
+                  if (sp.orientation === Orientation.portrait) {
+                    // calculate the current x-y layout
+                    const nx = Math.max(1, Math.round(sp.lx / pvModel.width));
+                    const ny = Math.max(1, Math.round(sp.ly / pvModel.length));
+                    sp.lx = nx * pvModel.width;
+                    sp.ly = ny * pvModel.length;
+                  } else {
+                    // calculate the current x-y layout
+                    const nx = Math.max(1, Math.round(sp.lx / pvModel.length));
+                    const ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+                    sp.lx = nx * pvModel.length;
+                    sp.ly = ny * pvModel.width;
+                  }
+                  break;
                 }
               }
             });
           },
+          updateSolarPanelModelForAll(pvModelName) {
+            immerSet((state: CommonStoreState) => {
+              const pvModel = state.pvModules[pvModelName];
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  const sp = e as SolarPanelModel;
+                  sp.pvModelName = pvModelName;
+                  if (sp.orientation === Orientation.portrait) {
+                    // calculate the current x-y layout
+                    const nx = Math.max(1, Math.round(sp.lx / pvModel.width));
+                    const ny = Math.max(1, Math.round(sp.ly / pvModel.length));
+                    sp.lx = nx * pvModel.width;
+                    sp.ly = ny * pvModel.length;
+                  } else {
+                    // calculate the current x-y layout
+                    const nx = Math.max(1, Math.round(sp.lx / pvModel.length));
+                    const ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+                    sp.lx = nx * pvModel.length;
+                    sp.ly = ny * pvModel.width;
+                  }
+                }
+              }
+            });
+          },
+
           updateSolarPanelOrientationById(id, orientation) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
                   (e as SolarPanelModel).orientation = orientation;
+                  break;
                 }
               }
             });
@@ -495,6 +543,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
                   (e as SolarPanelModel).poleHeight = poleHeight;
+                  break;
                 }
               }
             });
@@ -504,6 +553,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
                   (e as SolarPanelModel).poleSpacing = poleSpacing;
+                  break;
                 }
               }
             });
@@ -513,6 +563,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
                   (e as SolarPanelModel).relativeAzimuth = relativeAzimuth;
+                  break;
                 }
               }
             });
@@ -522,6 +573,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
                   (e as SolarPanelModel).tiltAngle = tiltAngle;
+                  break;
                 }
               }
             });
@@ -531,6 +583,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
                   (e as SolarPanelModel).trackerType = trackerType;
+                  break;
                 }
               }
             });
@@ -540,6 +593,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
                   (e as SolarPanelModel).drawSunBeam = drawSunBeam;
+                  break;
                 }
               }
             });
