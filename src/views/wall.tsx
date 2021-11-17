@@ -403,7 +403,12 @@ const Wall = ({
   return (
     <>
       {wallAbsPosition && wallAbsAngle !== undefined && (
-        <group name={`Wall Group ${id}`} position={wallAbsPosition} rotation={[0, 0, wallAbsAngle]}>
+        <group
+          name={`Wall Group ${id}`}
+          position={wallAbsPosition}
+          rotation={[0, 0, wallAbsAngle]}
+          userData={{ parentId: parentId }}
+        >
           {/* outside wall */}
           <mesh
             ref={outSideWallRef}

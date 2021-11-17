@@ -2,11 +2,11 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { Plane } from '@react-three/drei';
-import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
+import { Box3, DoubleSide, Euler, Mesh, Raycaster, Scene, Vector2, Vector3 } from 'three';
 import { IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -50,6 +50,7 @@ const Ground = () => {
   const {
     camera,
     gl: { domElement },
+    scene,
   } = useThree();
   const groundPlaneRef = useRef<Mesh>();
   const intersectionPlaneRef = useRef<Mesh>();
@@ -272,7 +273,14 @@ const Ground = () => {
       state.rotateHandleType = null;
       state.enableOrbitController = true;
     });
+    setMinX(null);
+    setMaxX(null);
   };
+
+  const [minX, setMinX] = useState<number | null>(null);
+  const [maxX, setMaxX] = useState<number | null>(null);
+  const [minY, setMinY] = useState<number | null>(null);
+  const [maxY, setMaxY] = useState<number | null>(null);
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2) return; // ignore right-click
@@ -331,28 +339,62 @@ const Ground = () => {
               const map = new Map<string, WallAbsPos>();
               const parentCenter = new Vector3(selectedElement.cx, selectedElement.cy);
               for (const e of useStore.getState().elements) {
-                if (e.type === ObjectType.Wall && e.parentId === selectedElement.id) {
-                  const wall = e as WallModel;
-                  const centerPointAbsPos = new Vector3().addVectors(
-                    parentCenter,
-                    new Vector3(wall.cx, wall.cy).applyEuler(new Euler(0, 0, selectedElement.rotation[2])),
-                  );
-                  const leftPointAbsPos = new Vector3().addVectors(
-                    parentCenter,
-                    new Vector3(wall.leftPoint[0], wall.leftPoint[1]).applyEuler(
-                      new Euler(0, 0, selectedElement.rotation[2]),
-                    ),
-                  );
-                  const rightPointAbsPos = new Vector3().addVectors(
-                    parentCenter,
-                    new Vector3(wall.rightPoint[0], wall.rightPoint[1]).applyEuler(
-                      new Euler(0, 0, selectedElement.rotation[2]),
-                    ),
-                  );
-                  map.set(wall.id, { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos });
+                if (e.parentId === selectedElement.id) {
+                  if (e.type === ObjectType.Wall) {
+                    const wall = e as WallModel;
+                    const centerPointAbsPos = new Vector3().addVectors(
+                      parentCenter,
+                      new Vector3(wall.cx, wall.cy).applyEuler(new Euler(0, 0, selectedElement.rotation[2])),
+                    );
+                    const leftPointAbsPos = new Vector3().addVectors(
+                      parentCenter,
+                      new Vector3(wall.leftPoint[0], wall.leftPoint[1]).applyEuler(
+                        new Euler(0, 0, selectedElement.rotation[2]),
+                      ),
+                    );
+                    const rightPointAbsPos = new Vector3().addVectors(
+                      parentCenter,
+                      new Vector3(wall.rightPoint[0], wall.rightPoint[1]).applyEuler(
+                        new Euler(0, 0, selectedElement.rotation[2]),
+                      ),
+                    );
+                    map.set(wall.id, { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos });
+                  } else if (e.type === ObjectType.SolarPanel) {
+                    // to do
+                  } else if (e.type === ObjectType.Sensor) {
+                    // to do
+                  }
                 }
               }
               wallsAbsPosMapRef.current = map;
+
+              const min = new Vector3(+Infinity, +Infinity, +Infinity);
+              const max = new Vector3(-Infinity, -Infinity, -Infinity);
+              for (const content of scene.children) {
+                if (content.name === 'Content') {
+                  const children = content.children.filter((c) => c.userData['parentId'] === selectedElement.id);
+                  for (const c of children) {
+                    const box = new Box3().setFromObject(c);
+                    min.min(box.min);
+                    max.max(box.max);
+                  }
+                }
+              }
+              const p = e.intersections[0].point;
+              if (p.x > max.x) {
+                setMinX(max.x + 1);
+                setMaxX(null);
+              } else if (p.x < min.x) {
+                setMaxX(min.x - 1);
+                setMinX(null);
+              }
+              if (p.y > max.y) {
+                setMinY(max.y + 1);
+                setMaxY(null);
+              } else if (p.y < min.y) {
+                setMaxY(min.y - 1);
+                setMinY(null);
+              }
             }
           }
         }
@@ -457,7 +499,21 @@ const Ground = () => {
   };
 
   const handleResize = (p: Vector3) => {
-    const P = new Vector3(p.x, p.y);
+    let px = p.x,
+      py = p.y;
+    if (minX !== null) {
+      px = Math.max(p.x, minX);
+    }
+    if (maxX != null) {
+      px = Math.min(p.x, maxX);
+    }
+    if (minY !== null) {
+      py = Math.max(p.y, minY);
+    }
+    if (maxY != null) {
+      py = Math.min(p.y, maxY);
+    }
+    const P = new Vector3(px, py);
     const resizeAnchor2D = new Vector3(resizeAnchor.x, resizeAnchor.y);
     const R = resizeAnchor2D.distanceTo(P);
     const angle = Math.atan2(P.x - resizeAnchor.x, P.y - resizeAnchor.y) + grabRef.current!.rotation[2];
