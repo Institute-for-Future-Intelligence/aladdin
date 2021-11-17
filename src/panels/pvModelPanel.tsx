@@ -149,14 +149,12 @@ const PvModelPanel = ({
         }
         footer={[
           <Button
-            key="OK"
-            type="primary"
+            key="Apply"
             onClick={() => {
               setPvModel(selectedPvModel);
-              setPvModelDialogVisible(false);
             }}
           >
-            {i18n.t('word.OK', lang)}
+            {i18n.t('word.Apply', lang)}
           </Button>,
           <Button
             key="Cancel"
@@ -168,14 +166,22 @@ const PvModelPanel = ({
             {i18n.t('word.Cancel', lang)}
           </Button>,
           <Button
-            key="Apply"
+            key="OK"
+            type="primary"
             onClick={() => {
               setPvModel(selectedPvModel);
+              setPvModelDialogVisible(false);
             }}
           >
-            {i18n.t('word.Apply', lang)}
+            {i18n.t('word.OK', lang)}
           </Button>,
         ]}
+        // this must be specified for the x button at the upper-right corner to work
+        onCancel={() => {
+          setSelectedPvModel(solarPanel.pvModelName);
+          setPvModelDialogVisible(false);
+        }}
+        destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
             <div ref={dragRef}>{modal}</div>
