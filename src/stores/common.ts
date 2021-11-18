@@ -106,11 +106,21 @@ export interface CommonStoreState {
   // for solar panels
   solarPanelActionScope: Scope;
   setSolarPanelActionScope: (scope: Scope) => void;
+
   updateSolarPanelModelById: (id: string, pvModelName: string) => void;
   updateSolarPanelModelOnSurface: (parentId: string, normal: number[] | undefined, pvModelName: string) => void;
   updateSolarPanelModelAboveFoundation: (foundationId: string, pvModelName: string) => void;
   updateSolarPanelModelForAll: (pvModelName: string) => void;
+
   updateSolarPanelOrientationById: (id: string, orientation: Orientation) => void;
+  updateSolarPanelOrientationOnSurface: (
+    parentId: string,
+    normal: number[] | undefined,
+    orientation: Orientation,
+  ) => void;
+  updateSolarPanelOrientationAboveFoundation: (foundationId: string, orientation: Orientation) => void;
+  updateSolarPanelOrientationForAll: (orientation: Orientation) => void;
+
   updateSolarPanelPoleHeightById: (id: string, poleHeight: number) => void;
   updateSolarPanelPoleSpacingById: (id: string, poleHeight: number) => void;
   updateSolarPanelRelativeAzimuthById: (id: string, relativeAzimuth: number) => void;
@@ -606,6 +616,42 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+          updateSolarPanelOrientationAboveFoundation(foundationId, orientation) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                  (e as SolarPanelModel).orientation = orientation;
+                }
+              }
+            });
+          },
+          updateSolarPanelOrientationOnSurface(parentId, normal, orientation) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  let found;
+                  if (normal) {
+                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+                  } else {
+                    found = e.parentId === parentId;
+                  }
+                  if (found) {
+                    (e as SolarPanelModel).orientation = orientation;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarPanelOrientationForAll(orientation) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  (e as SolarPanelModel).orientation = orientation;
+                }
+              }
+            });
+          },
+
           updateSolarPanelPoleHeightById(id, poleHeight) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {

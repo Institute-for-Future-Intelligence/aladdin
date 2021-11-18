@@ -99,6 +99,14 @@ export const updateSolarPanelModelForAll = (state: CommonStoreState) => state.up
 
 export const updateSolarPanelOrientationById = (state: CommonStoreState) => state.updateSolarPanelOrientationById;
 
+export const updateSolarPanelOrientationOnSurface = (state: CommonStoreState) =>
+  state.updateSolarPanelOrientationOnSurface;
+
+export const updateSolarPanelOrientationAboveFoundation = (state: CommonStoreState) =>
+  state.updateSolarPanelOrientationAboveFoundation;
+
+export const updateSolarPanelOrientationForAll = (state: CommonStoreState) => state.updateSolarPanelOrientationForAll;
+
 export const updateSolarPanelPoleHeightById = (state: CommonStoreState) => state.updateSolarPanelPoleHeightById;
 
 export const updateSolarPanelPoleSpacingById = (state: CommonStoreState) => state.updateSolarPanelPoleSpacingById;

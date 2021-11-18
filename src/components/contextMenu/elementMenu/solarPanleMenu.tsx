@@ -14,19 +14,18 @@ import { Copy, Cut } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
-import PvModelPanel from '../../../panels/pvModelPanel';
+import PvModelSelection from './pvModelSelection';
+import SolarPanelOrientationSelection from './solarPanelOrientationSelection';
 
 const { Option } = Select;
 
 export const SolarPanelMenu = () => {
   const language = useStore(Selector.language);
   const getSelectedElement = useStore(Selector.getSelectedElement);
-  const setElementSize = useStore(Selector.setElementSize);
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLyById = useStore(Selector.updateElementLyById);
-  const updateSolarPanelOrientationById = useStore(Selector.updateSolarPanelOrientationById);
   const updateSolarPanelPoleHeightById = useStore(Selector.updateSolarPanelPoleHeightById);
   const updateSolarPanelPoleSpacingById = useStore(Selector.updateSolarPanelPoleSpacingById);
   const updateSolarPanelRelativeAzimuthById = useStore(Selector.updateSolarPanelRelativeAzimuthById);
@@ -43,6 +42,7 @@ export const SolarPanelMenu = () => {
   const [labelText, setLabelText] = useState<string>('');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [pvModelDialogVisible, setPvModelDialogVisible] = useState(false);
+  const [orientationDialogVisible, setOrientationDialogVisible] = useState(false);
   const element = getSelectedElement();
   const lang = { lng: language };
 
@@ -121,47 +121,6 @@ export const SolarPanelMenu = () => {
       } as UndoableCheck;
       addUndoable(undoableCheck);
       updateElementShowLabelById(solarPanel.id, checked);
-      setUpdateFlag(!updateFlag);
-    }
-  };
-
-  const setOrientation = (value: Orientation) => {
-    if (solarPanel) {
-      const oldOrientation = solarPanel.orientation;
-      const undoableChange = {
-        name: 'Set Solar Panel Orientation',
-        timestamp: Date.now(),
-        oldValue: oldOrientation,
-        newValue: value,
-        undo: () => {
-          changeOrientation(undoableChange.oldValue as Orientation);
-        },
-        redo: () => {
-          changeOrientation(undoableChange.newValue as Orientation);
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      changeOrientation(value);
-    }
-  };
-
-  // cannot use the stored dx, dy in the following calculation
-  // as changing orientation does not cause it to update
-  const changeOrientation = (value: Orientation) => {
-    if (solarPanel) {
-      const pvModel = getPvModule(solarPanel.pvModelName);
-      if (value === Orientation.portrait) {
-        // calculate the current x-y layout
-        const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.width));
-        const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.length));
-        setElementSize(solarPanel.id, nx * pvModel.width, ny * pvModel.length);
-      } else {
-        // calculate the current x-y layout
-        const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.length));
-        const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.width));
-        setElementSize(solarPanel.id, nx * pvModel.length, ny * pvModel.width);
-      }
-      updateSolarPanelOrientationById(solarPanel.id, value);
       setUpdateFlag(!updateFlag);
     }
   };
@@ -318,7 +277,10 @@ export const SolarPanelMenu = () => {
       {solarPanel && (
         <>
           {/* pv model */}
-          <PvModelPanel pvModelDialogVisible={pvModelDialogVisible} setPvModelDialogVisible={setPvModelDialogVisible} />
+          <PvModelSelection
+            pvModelDialogVisible={pvModelDialogVisible}
+            setPvModelDialogVisible={setPvModelDialogVisible}
+          />
           <Menu.Item
             key={'solar-panel-change'}
             onClick={() => {
@@ -330,25 +292,21 @@ export const SolarPanelMenu = () => {
           </Menu.Item>
 
           {/* orientation: landscape or portrait */}
-          <Menu>
-            <Menu.Item key={'solar-panel-orientation'} style={{ paddingLeft: '40px' }}>
-              <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.Orientation', lang) + ':'}</Space>
-              <Select
-                style={{ width: '120px' }}
-                value={solarPanel.orientation}
-                onChange={(value) => setOrientation(value)}
-              >
-                <Option key={Orientation.portrait} value={Orientation.portrait}>
-                  {i18n.t('solarPanelMenu.Portrait', lang)}
-                </Option>
-                )
-                <Option key={Orientation.landscape} value={Orientation.landscape}>
-                  {i18n.t('solarPanelMenu.Landscape', lang)}
-                </Option>
-                )
-              </Select>
-            </Menu.Item>
+          <SolarPanelOrientationSelection
+            orientationDialogVisible={orientationDialogVisible}
+            setOrientationDialogVisible={setOrientationDialogVisible}
+          />
+          <Menu.Item
+            key={'solar-panel-orientation'}
+            style={{ paddingLeft: '40px', width: '150px' }}
+            onClick={() => {
+              setOrientationDialogVisible(true);
+            }}
+          >
+            {i18n.t('solarPanelMenu.Orientation', lang)}...
+          </Menu.Item>
 
+          <Menu>
             {/* array width */}
             <Menu.Item key={'solar-panel-width'} style={{ paddingLeft: '40px' }}>
               <Space style={{ width: '150px' }}>

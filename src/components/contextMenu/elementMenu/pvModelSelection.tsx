@@ -3,21 +3,21 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useStore } from '../stores/common';
-import * as Selector from '../stores/selector';
-import { SolarPanelModel } from '../models/SolarPanelModel';
+import { useStore } from '../../../stores/common';
+import * as Selector from '../../../stores/selector';
+import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { Button, Col, Input, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
-import { SolarPanelNominalSize } from '../models/SolarPanelNominalSize';
-import { ObjectType, Scope, ShadeTolerance } from '../types';
-import i18n from '../i18n/i18n';
-import { UndoableChange } from '../undo/UndoableChange';
+import { SolarPanelNominalSize } from '../../../models/SolarPanelNominalSize';
+import { ObjectType, Scope, ShadeTolerance } from '../../../types';
+import i18n from '../../../i18n/i18n';
+import { UndoableChange } from '../../../undo/UndoableChange';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { UndoableChangeGroup } from '../undo/UndoableChangeGroup';
-import { Util } from '../Util';
+import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
+import { Util } from '../../../Util';
 
 const { Option } = Select;
 
-const PvModelPanel = ({
+const PvModelSelection = ({
   pvModelDialogVisible,
   setPvModelDialogVisible,
 }: {
@@ -185,7 +185,7 @@ const PvModelPanel = ({
       default:
         const oldModel = solarPanel.pvModelName;
         const undoableChange = {
-          name: 'Set Model for Selected Solar Panels',
+          name: 'Set Model for Selected Solar Panel',
           timestamp: Date.now(),
           oldValue: oldModel,
           newValue: value,
@@ -479,4 +479,4 @@ const PvModelPanel = ({
   );
 };
 
-export default PvModelPanel;
+export default PvModelSelection;
