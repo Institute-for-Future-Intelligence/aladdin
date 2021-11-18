@@ -104,6 +104,7 @@ export interface CommonStoreState {
 
   // for solar panels
   updateSolarPanelModelById: (id: string, pvModelName: string) => void;
+  updateSolarPanelModelAboveFoundation: (pvModelName: string, foundationId: string) => void;
   updateSolarPanelModelForAll: (pvModelName: string) => void;
   updateSolarPanelOrientationById: (id: string, orientation: Orientation) => void;
   updateSolarPanelPoleHeightById: (id: string, poleHeight: number) => void;
@@ -499,6 +500,30 @@ export const useStore = create<CommonStoreState>(
                     sp.ly = ny * pvModel.width;
                   }
                   break;
+                }
+              }
+            });
+          },
+          updateSolarPanelModelAboveFoundation(pvModelName, foundationId: string) {
+            immerSet((state: CommonStoreState) => {
+              const pvModel = state.pvModules[pvModelName];
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                  const sp = e as SolarPanelModel;
+                  sp.pvModelName = pvModelName;
+                  if (sp.orientation === Orientation.portrait) {
+                    // calculate the current x-y layout
+                    const nx = Math.max(1, Math.round(sp.lx / pvModel.width));
+                    const ny = Math.max(1, Math.round(sp.ly / pvModel.length));
+                    sp.lx = nx * pvModel.width;
+                    sp.ly = ny * pvModel.length;
+                  } else {
+                    // calculate the current x-y layout
+                    const nx = Math.max(1, Math.round(sp.lx / pvModel.length));
+                    const ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+                    sp.lx = nx * pvModel.length;
+                    sp.ly = ny * pvModel.width;
+                  }
                 }
               }
             });

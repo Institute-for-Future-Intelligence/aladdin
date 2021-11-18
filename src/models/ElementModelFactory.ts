@@ -83,6 +83,17 @@ export class ElementModelFactory {
   }
 
   static makeSensor(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: []) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+      case ObjectType.Wall:
+      case ObjectType.Roof:
+        foundationId = parent.parentId;
+        break;
+    }
     return {
       type: ObjectType.Sensor,
       cx: x,
@@ -95,6 +106,7 @@ export class ElementModelFactory {
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],
       parentId: parent.id,
+      foundationId: foundationId,
       id: short.generate() as string,
     } as SensorModel;
   }
@@ -108,6 +120,17 @@ export class ElementModelFactory {
     normal?: Vector3,
     rotation?: [],
   ) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+      case ObjectType.Wall:
+      case ObjectType.Roof:
+        foundationId = parent.parentId;
+        break;
+    }
     return {
       type: ObjectType.SolarPanel,
       pvModelName: pvModel.name,
@@ -129,6 +152,7 @@ export class ElementModelFactory {
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],
       parentId: parent.id,
+      foundationId: foundationId,
       id: short.generate() as string,
     } as SolarPanelModel;
   }
@@ -154,11 +178,22 @@ export class ElementModelFactory {
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: [0, 0, 0],
       parentId: parent.id,
+      foundationId: parent.id,
       id: short.generate() as string,
     } as WallModel;
   }
 
   static makeWindow(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: []) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+      case ObjectType.Wall:
+      case ObjectType.Roof:
+        foundationId = parent.parentId;
+        break;
+    }
     return {
       type: ObjectType.Window,
       cx: x,
@@ -172,6 +207,7 @@ export class ElementModelFactory {
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],
       parentId: parent.id,
+      foundationId: foundationId,
       id: short.generate() as string,
     } as WindowModel;
   }
@@ -191,6 +227,7 @@ export class ElementModelFactory {
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],
       parentId: parent.id,
+      foundationId: parent.id,
       id: short.generate() as string,
     } as RoofModel;
   }

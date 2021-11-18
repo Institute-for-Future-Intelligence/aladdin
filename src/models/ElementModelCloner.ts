@@ -67,6 +67,17 @@ export class ElementModelCloner {
   }
 
   private static cloneSensor(parent: ElementModel, sensor: SensorModel, x: number, y: number, z?: number) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+      case ObjectType.Wall:
+      case ObjectType.Roof:
+        foundationId = parent.parentId;
+        break;
+    }
     return {
       type: ObjectType.Sensor,
       cx: x,
@@ -78,12 +89,24 @@ export class ElementModelCloner {
       showLabel: sensor.showLabel,
       normal: [...sensor.normal],
       rotation: sensor.parentId ? [...parent.rotation] : [0, 0, 0],
-      parentId: sensor.parentId,
+      parentId: parent.id,
+      foundationId: foundationId,
       id: short.generate() as string,
     } as SensorModel;
   }
 
   private static cloneSolarPanel(parent: ElementModel, solarPanel: SolarPanelModel, x: number, y: number, z?: number) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+      case ObjectType.Wall:
+      case ObjectType.Roof:
+        foundationId = parent.parentId;
+        break;
+    }
     return {
       type: ObjectType.SolarPanel,
       pvModelName: solarPanel.pvModelName,
@@ -103,7 +126,8 @@ export class ElementModelCloner {
       showLabel: solarPanel.showLabel,
       normal: [...solarPanel.normal],
       rotation: solarPanel.parentId ? [...parent.rotation] : [0, 0, 0],
-      parentId: solarPanel.parentId,
+      parentId: parent.id,
+      foundationId: foundationId,
       id: short.generate() as string,
     } as SolarPanelModel;
   }

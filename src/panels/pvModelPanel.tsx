@@ -26,6 +26,7 @@ const PvModelPanel = ({
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateSolarPanelModelById = useStore(Selector.updateSolarPanelModelById);
+  const updateSolarPanelModelAboveFoundation = useStore(Selector.updateSolarPanelModelAboveFoundation);
   const updateSolarPanelModelForAll = useStore(Selector.updateSolarPanelModelForAll);
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -73,30 +74,59 @@ const PvModelPanel = ({
   const setPvModel = (value: string) => {
     switch (scopeRef.current) {
       case Scope.AllObjectsOfThisType:
-        const oldModels = new Map<string, string>();
+        const oldModelsAll = new Map<string, string>();
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel) {
-            oldModels.set(elem.id, (elem as SolarPanelModel).pvModelName);
+            oldModelsAll.set(elem.id, (elem as SolarPanelModel).pvModelName);
           }
         }
-        const undoableChangeGroup = {
+        const undoableChangeAll = {
           name: 'Set Model for All Solar Panels',
           timestamp: Date.now(),
-          oldValues: oldModels,
+          oldValues: oldModelsAll,
           newValue: value,
           undo: () => {
-            for (const [id, model] of undoableChangeGroup.oldValues.entries()) {
+            for (const [id, model] of undoableChangeAll.oldValues.entries()) {
               updateSolarPanelModelById(id, model as string);
             }
           },
           redo: () => {
-            updateSolarPanelModelForAll(undoableChangeGroup.newValue as string);
+            updateSolarPanelModelForAll(undoableChangeAll.newValue as string);
           },
         } as UndoableChangeGroup;
-        addUndoable(undoableChangeGroup);
+        addUndoable(undoableChangeAll);
         updateSolarPanelModelForAll(value);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
+        const oldModelsAboveFoundation = new Map<string, string>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
+            oldModelsAboveFoundation.set(elem.id, (elem as SolarPanelModel).pvModelName);
+          }
+        }
+        const undoableChangeAboveFoundation = {
+          name: 'Set Model for All Solar Panels Above Foundation',
+          timestamp: Date.now(),
+          oldValues: oldModelsAboveFoundation,
+          newValue: value,
+          undo: () => {
+            for (const [id, model] of undoableChangeAboveFoundation.oldValues.entries()) {
+              updateSolarPanelModelById(id, model as string);
+            }
+          },
+          redo: () => {
+            if (solarPanel.foundationId) {
+              updateSolarPanelModelAboveFoundation(
+                undoableChangeAboveFoundation.newValue as string,
+                solarPanel.foundationId,
+              );
+            }
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeAboveFoundation);
+        if (solarPanel.foundationId) {
+          updateSolarPanelModelAboveFoundation(value, solarPanel.foundationId);
+        }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
         break;
