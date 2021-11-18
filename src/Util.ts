@@ -38,6 +38,15 @@ export class Util {
     );
   }
 
+  static isIdentical(u?: number[], v?: number[]) {
+    if (!u || !v || u.length !== v.length) return false;
+    if (u === v) return true;
+    for (let i = 0; i < u.length; i++) {
+      if (Math.abs(u[i] - v[i]) > Util.ZERO_TOLERANCE) return false;
+    }
+    return true;
+  }
+
   static isZero(x: number) {
     return Math.abs(x) < Util.ZERO_TOLERANCE;
   }

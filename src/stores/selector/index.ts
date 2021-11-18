@@ -86,6 +86,8 @@ export const updateElementLyById = (state: CommonStoreState) => state.updateElem
 
 export const updateSolarPanelModelById = (state: CommonStoreState) => state.updateSolarPanelModelById;
 
+export const updateSolarPanelModelOnSurface = (state: CommonStoreState) => state.updateSolarPanelModelOnSurface;
+
 export const updateSolarPanelModelAboveFoundation = (state: CommonStoreState) =>
   state.updateSolarPanelModelAboveFoundation;
 
