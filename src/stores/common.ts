@@ -20,6 +20,7 @@ import {
   Orientation,
   ResizeHandleType,
   RotateHandleType,
+  Scope,
   TrackerType,
   User,
 } from '../types';
@@ -103,6 +104,8 @@ export interface CommonStoreState {
   updateElementLyById: (id: string, ly: number) => void;
 
   // for solar panels
+  solarPanelActionScope: Scope;
+  setSolarPanelActionScope: (scope: Scope) => void;
   updateSolarPanelModelById: (id: string, pvModelName: string) => void;
   updateSolarPanelModelOnSurface: (parentId: string, normal: number[] | undefined, pvModelName: string) => void;
   updateSolarPanelModelAboveFoundation: (foundationId: string, pvModelName: string) => void;
@@ -480,6 +483,13 @@ export const useStore = create<CommonStoreState>(
           },
 
           // for solar panels
+          solarPanelActionScope: Scope.OnlyThisObject,
+          setSolarPanelActionScope(scope: Scope) {
+            immerSet((state: CommonStoreState) => {
+              state.solarPanelActionScope = scope;
+            });
+          },
+
           updateSolarPanelModelById(id, pvModelName) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {

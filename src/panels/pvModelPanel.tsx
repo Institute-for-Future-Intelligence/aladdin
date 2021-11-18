@@ -35,19 +35,20 @@ const PvModelPanel = ({
   const pvModules = useStore(Selector.pvModules);
   const getPvModule = useStore(Selector.getPvModule);
   const addUndoable = useStore(Selector.addUndoable);
+  const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
+  const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
 
   const solarPanel = getSelectedElement() as SolarPanelModel;
-  const [selectedPvModel, setSelectedPvModel] = useState<string>(solarPanel.pvModelName ?? 'SPR-X21-335-BLK');
+  const [selectedPvModel, setSelectedPvModel] = useState<string>(solarPanel?.pvModelName ?? 'SPR-X21-335-BLK');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [panelSizeString, setPanelSizeString] = useState<string>();
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const scopeRef = useRef<Scope>(Scope.OnlyThisObject);
+  const scopeRef = useRef<Scope>(solarPanelActionScope);
 
   const lang = { lng: language };
-  const pvModel = getPvModule(solarPanel.pvModelName ?? selectedPvModel);
-  const parentType = getElementById(solarPanel.parentId)?.type;
+  const pvModel = getPvModule(solarPanel.pvModelName ?? selectedPvModel) ?? getPvModule('SPR-X21-335-BLK');
 
   useEffect(() => {
     setPanelSizeString(
@@ -71,6 +72,7 @@ const PvModelPanel = ({
   const onScopeChange = (e: RadioChangeEvent) => {
     scopeRef.current = e.target.value;
     setUpdateFlag(!updateFlag);
+    setSolarPanelActionScope(scopeRef.current);
   };
 
   const setPvModel = (value: string) => {
@@ -460,14 +462,12 @@ const PvModelPanel = ({
             {i18n.t('word.ApplyTo', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={21}>
-            <Radio.Group onChange={onScopeChange} value={scopeRef.current}>
+            <Radio.Group onChange={onScopeChange} value={solarPanelActionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
-                {parentType !== ObjectType.Foundation && (
-                  <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
-                    {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
-                  </Radio>
-                )}
+                <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+                  {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
+                </Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                   {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
                 </Radio>
