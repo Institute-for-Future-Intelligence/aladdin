@@ -68,7 +68,7 @@ const Cuboid = ({
   const [normal, setNormal] = useState<Vector3>();
   const ray = useMemo(() => new Raycaster(), []);
 
-  const elementModel = getElementById(id);
+  const cuboidModel = getElementById(id) as CuboidModel;
   const baseRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
   const faceNormalRef = useRef<Vector3>(Util.UNIT_VECTOR_POS_Z);
@@ -216,10 +216,10 @@ const Cuboid = ({
           const selectedElement = getSelectedElement();
           if (selectedElement?.id === id) {
             // no child of this cuboid is clicked
-            if (legalOnCuboid(objectTypeToAdd) && elementModel) {
+            if (legalOnCuboid(objectTypeToAdd) && cuboidModel) {
               setShowGrid(true);
               const intersection = e.intersections[0];
-              addElement(elementModel, intersection.point, intersection.face?.normal);
+              addElement(cuboidModel, intersection.point, intersection.face?.normal);
               setCommonStore((state) => {
                 state.objectTypeToAdd = ObjectType.None;
               });
@@ -262,7 +262,7 @@ const Cuboid = ({
               if (intersects.length > 0) {
                 let p = intersects[0].point;
                 const face = intersects[0].face;
-                if (moveHandleType && elementModel) {
+                if (moveHandleType && cuboidModel) {
                   if (face) {
                     const n = face.normal;
                     if (normal && !normal.equals(n)) {
@@ -271,8 +271,8 @@ const Cuboid = ({
                     setupGridHelper(n);
                     setElementNormal(grabRef.current.id, n.x, n.y, n.z);
                   }
-                  if (elementModel) {
-                    p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
+                  if (cuboidModel) {
+                    p = Util.relativeCoordinates(p.x, p.y, p.z, cuboidModel);
                   }
                   setElementPosition(grabRef.current.id, p.x, p.y, p.z);
                 } else if (rotateHandleType) {
@@ -293,12 +293,12 @@ const Cuboid = ({
                       state.selectedElementAngle = rotation + offset;
                     });
                   }
-                } else if (resizeHandleType && elementModel) {
+                } else if (resizeHandleType && cuboidModel) {
                   const solarPanel = grabRef.current as SolarPanelModel;
                   const wp = new Vector3(p.x, p.y, p.z);
                   const vd = new Vector3().subVectors(wp, resizeAnchor);
                   const vh = new Vector3().subVectors(
-                    Util.absoluteCoordinates(solarPanel.cx, solarPanel.cy, solarPanel.cz, elementModel),
+                    Util.absoluteCoordinates(solarPanel.cx, solarPanel.cy, solarPanel.cz, cuboidModel),
                     resizeAnchor,
                   );
                   if (normal && normal.z === 1) {
@@ -329,7 +329,7 @@ const Cuboid = ({
                     }
                   }
                   const wc = new Vector3().addVectors(resizeAnchor, vhd.normalize().multiplyScalar(d / 2));
-                  const rc = Util.relativeCoordinates(wc.x, wc.y, wc.z, elementModel);
+                  const rc = Util.relativeCoordinates(wc.x, wc.y, wc.z, cuboidModel);
                   setElementPosition(solarPanel.id, rc.x, rc.y, rc.z);
                 }
               }

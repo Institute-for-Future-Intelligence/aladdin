@@ -114,7 +114,7 @@ const Foundation = ({
   const moveHandleRightRef = useRef<Mesh>();
   const ray = useMemo(() => new Raycaster(), []);
 
-  const elementModel = getElementById(id) as FoundationModel;
+  const foundationModel = getElementById(id) as FoundationModel;
   const handleLift = MOVE_HANDLE_RADIUS / 2;
   const hx = lx / 2;
   const hy = ly / 2;
@@ -332,10 +332,10 @@ const Foundation = ({
           const selectedElement = getSelectedElement();
           // no child of this foundation is clicked
           if (selectedElement?.id === id) {
-            if (legalOnFoundation(objectTypeToAdd) && elementModel) {
+            if (legalOnFoundation(objectTypeToAdd) && foundationModel) {
               setShowGrid(true);
               const position = e.intersections[0].point;
-              const id = addElement(elementModel, position);
+              const id = addElement(foundationModel, position);
               const addedElement = getElementById(id);
               const undoableAdd = {
                 name: 'Add',
@@ -369,7 +369,7 @@ const Foundation = ({
 
           if (isSettingWallStartPoint && buildingWallID && baseRef.current) {
             const intersects = ray.intersectObjects([baseRef.current]);
-            let p = Util.wallRelativePosition(intersects[0].point, elementModel);
+            let p = Util.wallRelativePosition(intersects[0].point, foundationModel);
             let targetID: string | null = null;
             let targetPoint: Vector3 | null = null;
             let targetSide: WallSide | null = null;
@@ -416,7 +416,7 @@ const Foundation = ({
             updateElementById(buildingWallID, { leftPoint: [p.x, p.y, p.z] });
             setCommonStore((state) => {
               state.resizeHandleType = resizeHandleType;
-              state.resizeAnchor = Util.wallAbsolutePosition(p, elementModel);
+              state.resizeAnchor = Util.wallAbsolutePosition(p, foundationModel);
             });
             grabRef.current = selectedElement;
           }
@@ -454,13 +454,13 @@ const Foundation = ({
           mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
           mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
           ray.setFromCamera(mouse, camera);
-          if (baseRef.current && elementModel) {
+          if (baseRef.current && foundationModel) {
             const intersects = ray.intersectObjects([baseRef.current]);
             let p = intersects[0].point;
             if (grabRef.current && grabRef.current.type && !grabRef.current.locked && intersects.length > 0) {
               switch (grabRef.current.type) {
                 case ObjectType.Sensor:
-                  p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
+                  p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
                   setElementPosition(grabRef.current.id, p.x, p.y);
                   break;
                 case ObjectType.Wall:
@@ -469,7 +469,7 @@ const Foundation = ({
                     (resizeHandleType === ResizeHandleType.LowerLeft ||
                       resizeHandleType === ResizeHandleType.LowerRight)
                   ) {
-                    p = Util.wallRelativePosition(p, elementModel);
+                    p = Util.wallRelativePosition(p, foundationModel);
                     let targetID: string | null = null;
                     let targetPoint: Vector3 | null = null;
                     let targetSide: WallSide | null = null;
@@ -482,7 +482,7 @@ const Foundation = ({
                     p = updatePointer(p, targetPoint);
 
                     // update length
-                    const relativResizeAnchor = Util.wallRelativePosition(resizeAnchor, elementModel);
+                    const relativResizeAnchor = Util.wallRelativePosition(resizeAnchor, foundationModel);
                     const lx = p.distanceTo(relativResizeAnchor);
                     const relativeCenter = new Vector3().addVectors(p, relativResizeAnchor).divideScalar(2);
                     let angle =
@@ -661,7 +661,7 @@ const Foundation = ({
               }
             }
             if (objectTypeToAdd === ObjectType.Wall) {
-              const wallID = addElement(elementModel, p);
+              const wallID = addElement(foundationModel, p);
               buildingWallIDRef.current = wallID;
               setBuildingWallID(wallID);
               setIsSettingWallStartPoint(true);
@@ -673,7 +673,7 @@ const Foundation = ({
               });
             }
             if (buildingWallID && isSettingWallStartPoint) {
-              p = Util.wallRelativePosition(intersects[0].point, elementModel);
+              p = Util.wallRelativePosition(intersects[0].point, foundationModel);
               const { targetPoint } = findMagnetPoint(wallPoints, p, 1.5);
               p = updatePointer(p, targetPoint);
               if (isSettingWallStartPoint) {
@@ -715,8 +715,8 @@ const Foundation = ({
                 intersects = ray.intersectObjects([intersecPlaneRef.current]);
                 if (intersects.length > 0) {
                   let p = intersects[0].point; //World coordinate
-                  if (moveHandleType && elementModel) {
-                    p = Util.relativeCoordinates(p.x, p.y, p.z, elementModel);
+                  if (moveHandleType && foundationModel) {
+                    p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
                     setElementPosition(solarPanel.id, p.x, p.y); //Relative coordinate
                   } else if (rotateHandleType) {
                     const parent = getElementById(solarPanel.parentId);
