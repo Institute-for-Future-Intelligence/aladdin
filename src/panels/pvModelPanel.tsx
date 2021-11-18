@@ -45,10 +45,9 @@ const PvModelPanel = ({
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const scopeRef = useRef<Scope>(solarPanelActionScope);
 
   const lang = { lng: language };
-  const pvModel = getPvModule(solarPanel.pvModelName ?? selectedPvModel) ?? getPvModule('SPR-X21-335-BLK');
+  const pvModel = getPvModule(selectedPvModel ?? 'SPR-X21-335-BLK');
 
   useEffect(() => {
     setPanelSizeString(
@@ -70,13 +69,12 @@ const PvModelPanel = ({
   }, [solarPanel]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    scopeRef.current = e.target.value;
+    setSolarPanelActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
-    setSolarPanelActionScope(scopeRef.current);
   };
 
   const setPvModel = (value: string) => {
-    switch (scopeRef.current) {
+    switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldModelsAll = new Map<string, string>();
         for (const elem of elements) {
