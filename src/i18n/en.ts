@@ -215,6 +215,8 @@ export const i18n_en = {
       PanelsLong: 'panels long',
       TiltAngle: 'Tilt Angle',
       SouthFacingIsPositive: 'South facing is positive',
+      AzimuthOfNorthIsZero: 'Azimuth of north is 0°',
+      CounterclockwiseAzimuthIsPositive: 'Counter-clockwise is positive',
       RelativeAzimuth: 'Relative Azimuth',
       Tracker: 'Tracker',
       PoleHeight: 'Pole Height',

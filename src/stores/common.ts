@@ -135,6 +135,15 @@ export interface CommonStoreState {
   updateSolarPanelTiltAngleAboveFoundation: (foundationId: string, tiltAngle: number) => void;
   updateSolarPanelTiltAngleForAll: (tiltAngle: number) => void;
 
+  updateSolarPanelRelativeAzimuthById: (id: string, relativeAzimuth: number) => void;
+  updateSolarPanelRelativeAzimuthOnSurface: (
+    parentId: string,
+    normal: number[] | undefined,
+    relativeAzimuth: number,
+  ) => void;
+  updateSolarPanelRelativeAzimuthAboveFoundation: (foundationId: string, relativeAzimuth: number) => void;
+  updateSolarPanelRelativeAzimuthForAll: (relativeAzimuth: number) => void;
+
   updateSolarPanelOrientationById: (id: string, orientation: Orientation) => void;
   updateSolarPanelOrientationOnSurface: (
     parentId: string,
@@ -147,7 +156,6 @@ export interface CommonStoreState {
   updateSolarPanelPoleHeightById: (id: string, poleHeight: number) => void;
 
   updateSolarPanelPoleSpacingById: (id: string, poleHeight: number) => void;
-  updateSolarPanelRelativeAzimuthById: (id: string, relativeAzimuth: number) => void;
   updateSolarPanelTrackerTypeById: (id: string, trackerType: TrackerType) => void;
   updateSolarPanelDrawSunBeamById: (id: string, drawSunBeam: boolean) => void;
 
@@ -820,6 +828,56 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          updateSolarPanelRelativeAzimuthById(id, relativeAzimuth) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                  const sp = e as SolarPanelModel;
+                  sp.relativeAzimuth = relativeAzimuth;
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarPanelRelativeAzimuthAboveFoundation(foundationId, relativeAzimuth) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                  const sp = e as SolarPanelModel;
+                  sp.relativeAzimuth = relativeAzimuth;
+                }
+              }
+            });
+          },
+          updateSolarPanelRelativeAzimuthOnSurface(parentId, normal, relativeAzimuth) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  let found;
+                  if (normal) {
+                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+                  } else {
+                    found = e.parentId === parentId;
+                  }
+                  if (found) {
+                    const sp = e as SolarPanelModel;
+                    sp.relativeAzimuth = relativeAzimuth;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarPanelRelativeAzimuthForAll(relativeAzimuth) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  const sp = e as SolarPanelModel;
+                  sp.relativeAzimuth = relativeAzimuth;
+                }
+              }
+            });
+          },
+
           updateSolarPanelOrientationById(id, orientation) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -881,16 +939,6 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
                   (e as SolarPanelModel).poleSpacing = poleSpacing;
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPanelRelativeAzimuthById(id, relativeAzimuth) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id) {
-                  (e as SolarPanelModel).relativeAzimuth = relativeAzimuth;
                   break;
                 }
               }

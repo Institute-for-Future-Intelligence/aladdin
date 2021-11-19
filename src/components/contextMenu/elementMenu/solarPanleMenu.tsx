@@ -19,6 +19,7 @@ import SolarPanelOrientationSelection from './solarPanelOrientationSelection';
 import SolarPanelWidthInput from './solarPanelWidthInput';
 import SolarPanelLengthInput from './solarPanelLengthInput';
 import SolarPanelTiltAngleInput from './solarPanelTiltAngleInput';
+import SolarPanelRelativeAzimuthInput from './solarPanelRelativeAzimuthInput';
 
 const { Option } = Select;
 
@@ -29,7 +30,6 @@ export const SolarPanelMenu = () => {
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const updateSolarPanelPoleHeightById = useStore(Selector.updateSolarPanelPoleHeightById);
   const updateSolarPanelPoleSpacingById = useStore(Selector.updateSolarPanelPoleSpacingById);
-  const updateSolarPanelRelativeAzimuthById = useStore(Selector.updateSolarPanelRelativeAzimuthById);
   const updateSolarPanelTrackerTypeById = useStore(Selector.updateSolarPanelTrackerTypeById);
   const updateSolarPanelDrawSunBeamById = useStore(Selector.updateSolarPanelDrawSunBeamById);
   const addUndoable = useStore(Selector.addUndoable);
@@ -43,6 +43,7 @@ export const SolarPanelMenu = () => {
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [tiltDialogVisible, setTiltDialogVisible] = useState(false);
+  const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
   const element = getSelectedElement();
   const lang = { lng: language };
 
@@ -133,27 +134,6 @@ export const SolarPanelMenu = () => {
       } as UndoableChange;
       addUndoable(undoableChange);
       updateSolarPanelPoleSpacingById(solarPanel.id, value ?? 1);
-      setUpdateFlag(!updateFlag);
-    }
-  };
-
-  const setAzimuth = (value: number) => {
-    if (solarPanel) {
-      const oldAzimuth = solarPanel.relativeAzimuth;
-      const undoableChange = {
-        name: 'Set Solar Panel Azimuth',
-        timestamp: Date.now(),
-        oldValue: oldAzimuth,
-        newValue: value,
-        undo: () => {
-          updateSolarPanelRelativeAzimuthById(solarPanel.id, Util.toRadians(undoableChange.oldValue as number));
-        },
-        redo: () => {
-          updateSolarPanelRelativeAzimuthById(solarPanel.id, Util.toRadians(undoableChange.newValue as number));
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      updateSolarPanelRelativeAzimuthById(solarPanel.id, Util.toRadians(value ?? 0));
       setUpdateFlag(!updateFlag);
     }
   };
@@ -273,24 +253,24 @@ export const SolarPanelMenu = () => {
             {i18n.t('solarPanelMenu.TiltAngle', lang)} ...
           </Menu.Item>
 
+          {/* relative azimuth to the parent element */}
+          <SolarPanelRelativeAzimuthInput
+            azimuthDialogVisible={azimuthDialogVisible}
+            setAzimuthDialogVisible={setAzimuthDialogVisible}
+          />
+          <Menu.Item
+            key={'solar-panel-relative-azimuth'}
+            style={{ paddingLeft: '40px' }}
+            onClick={() => {
+              setAzimuthDialogVisible(true);
+            }}
+          >
+            {i18n.t('solarPanelMenu.RelativeAzimuth', lang)} ...
+          </Menu.Item>
+
           <Menu>
             {panelNormal && Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z) && (
               <>
-                {/* relative azimuth to the parent element */}
-                <Menu.Item key={'solar-panel-relative-azimuth'} style={{ paddingLeft: '40px' }}>
-                  <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.RelativeAzimuth', lang) + ':'}</Space>
-                  <InputNumber
-                    min={-180}
-                    max={180}
-                    style={{ width: 120 }}
-                    precision={1}
-                    value={Util.toDegrees(solarPanel.relativeAzimuth)}
-                    step={1}
-                    formatter={(a) => Number(a).toFixed(1) + '°'}
-                    onChange={(value) => setAzimuth(value)}
-                  />
-                </Menu.Item>
-
                 {/* solar tracker type */}
                 <Menu.Item key={'solar-panel-tracker'} style={{ paddingLeft: '40px' }}>
                   <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.Tracker', lang) + ':'}</Space>

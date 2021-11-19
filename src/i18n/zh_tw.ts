@@ -214,6 +214,8 @@ export const i18n_zh_tw = {
       PanelsLong: '塊光伏板長',
       TiltAngle: '傾斜角度',
       SouthFacingIsPositive: '朝南為正',
+      AzimuthOfNorthIsZero: '正北的方位角為零度',
+      CounterclockwiseAzimuthIsPositive: '逆時針為正',
       RelativeAzimuth: '相對方位角',
       Tracker: '追日系統',
       PoleHeight: '支架高度',
