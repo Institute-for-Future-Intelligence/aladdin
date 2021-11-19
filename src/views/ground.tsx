@@ -292,6 +292,7 @@ const Ground = () => {
       if (groundClicked) {
         setCommonStore((state) => {
           state.clickObjectType = ObjectType.Ground;
+          state.selectedElement = null;
         });
         selectNone();
         if (legalOnGround(objectTypeToAdd)) {

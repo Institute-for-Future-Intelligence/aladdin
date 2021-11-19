@@ -204,6 +204,7 @@ export class ElementModelFactory {
       lz: 0,
       selected: true,
       showLabel: false,
+      color: '#477395',
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],
       parentId: parent.id,

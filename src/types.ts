@@ -93,6 +93,7 @@ export enum MoveHandleType {
   Left = 'Move Handle Left',
   Right = 'Move Handle Right',
   Top = 'Move Handle Top',
+  Mid = 'Move Handle Mid',
 }
 
 export enum ResizeHandleType {

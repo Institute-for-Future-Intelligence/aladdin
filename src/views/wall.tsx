@@ -26,27 +26,50 @@ import {
   Vector2,
   Vector3,
 } from 'three';
-import { Box, Line, Plane, Sphere } from '@react-three/drei';
-import { ActionType, ObjectType, ResizeHandleType, ResizeHandleType as RType, WallTexture } from 'src/types';
+import { useThree } from '@react-three/fiber';
+import { Box, Line, Plane } from '@react-three/drei';
+import {
+  ActionType,
+  MoveHandleType,
+  ObjectType,
+  ResizeHandleType,
+  ResizeHandleType as RType,
+  WallTexture,
+} from 'src/types';
 import { Util } from '../Util';
 import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from '../constants';
 import { CommonStoreState, useStore } from '../stores/common';
-import * as Selector from '../stores/selector';
+import { ElementModel } from '../models/ElementModel';
+import { WindowModel } from '../models/WindowModel';
 import { WallModel } from '../models/WallModel';
 import { ElementModelFactory } from '../models/ElementModelFactory';
 import { RoofPoint } from '../models/RoofModel';
-import { WindowModel } from '../models/WindowModel';
 import { FoundationGrid } from './foundation';
-import { useThree } from '@react-three/fiber';
-import { ElementModel } from '../models/ElementModel';
+import Window from './window';
+import * as Selector from '../stores/selector';
 
-interface WindowProps {
+interface ResizeHandlesProps {
+  x: number;
+  z: number;
   id: string;
-  wlx: number;
-  wlz: number;
-  wcx: number;
-  wcz: number;
-  diff: Vector3;
+  handleType: RType;
+  highLight: boolean;
+  handleSize?: number;
+  setShowGrid: (b: boolean) => void;
+}
+
+interface WallResizeHandleWarpperProps {
+  x: number;
+  z: number;
+  id: string;
+  highLight: boolean;
+  setShowGrid: (b: boolean) => void;
+}
+
+interface WallWireFrameProps {
+  x: number;
+  z: number;
+  lineWidth?: number;
 }
 
 const Wall = ({
@@ -61,7 +84,6 @@ const Wall = ({
   rightOffset = 0,
   leftJoints,
   rightJoints,
-  windows,
   textureType,
   parentId,
   selected = false,
@@ -108,16 +130,19 @@ const Wall = ({
       setTexture(texture);
     });
   }, [textureType]);
+  const [texture, setTexture] = useState(textureLoader);
 
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const selectMe = useStore(Selector.selectMe);
+  const elements = useStore(Selector.elements);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
-  const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
+  const moveHandleTypeRef = useRef(useStore.getState().moveHandleType);
   const resizeHandleTypeRef = useRef(useStore.getState().resizeHandleType);
+  const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
   const buildingWallIDRef = useRef(useStore.getState().buildingWallID);
   const enableFineGridRef = useRef(useStore.getState().enableFineGrid);
 
@@ -125,27 +150,22 @@ const Wall = ({
   const outSideWallRef = useRef<Mesh>(null);
   const insideWallRef = useRef<Mesh>(null);
   const topSurfaceRef = useRef<Mesh>(null);
-  const resizeHandleLLRef = useRef<Mesh>();
-  const resizeHandleLRRef = useRef<Mesh>();
-  const resizeHandleULRef = useRef<Mesh>();
-  const resizeHandleURRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
 
-  const [texture, setTexture] = useState(textureLoader);
-  const [renderWindows, setRenderWindows] = useState<WindowModel[]>(windows);
-  const [wallAbsPosition, setWallAbsPosition] = useState<Vector3>();
-  const [wallAbsAngle, setWallAbsAngle] = useState<number>();
-  const [movingWindow, setMovingWindow] = useState<WindowProps | null>(null);
-  const [resizingWindow, setResizingWindow] = useState<WindowProps | null>(null);
-  const [invalidWindowID, setInvalidWindowID] = useState<string | null>(null);
-  const [isBuildingNewWindow, setIsBuildingNewWindow] = useState(false);
-  const [showGrid, setShowGrid] = useState(false);
-  const [init, setInit] = useState(false);
   const [x, setX] = useState(lx / 2);
   const [y, setY] = useState(ly / 2);
   const [z, setZ] = useState(lz / 2);
+  const [wallAbsPosition, setWallAbsPosition] = useState<Vector3>();
+  const [wallAbsAngle, setWallAbsAngle] = useState<number>();
   const [leftOffsetState, setLeftOffsetState] = useState(leftOffset);
   const [rightOffsetState, setRightOffsetState] = useState(rightOffset);
+  const [init, setInit] = useState(false);
+  const [showGrid, setShowGrid] = useState(false);
+
+  const [windows, setWindows] = useState<WindowModel[]>([]);
+  const [isBuildingNewWindow, setIsBuildingNewWindow] = useState(false);
+  const [invalidWindowID, setInvalidWindowID] = useState<string | null>(null);
+  const [originElements, setOriginElements] = useState<ElementModel[]>([]);
 
   const parentSelector = useCallback((state: CommonStoreState) => {
     for (const e of state.elements) {
@@ -157,7 +177,7 @@ const Wall = ({
   }, []);
 
   const parent = useStore(parentSelector);
-  const elementModel = getElementById(id) as WallModel;
+  const wallModel = getElementById(id) as WallModel;
   const highLight = lx === 0;
 
   const { camera, gl, scene } = useThree();
@@ -166,6 +186,32 @@ const Wall = ({
 
   const whiteWallMaterial = useMemo(() => new MeshStandardMaterial({ color: 'white', side: DoubleSide }), []);
 
+  // subscribe common store
+  useEffect(() => {
+    useStore.subscribe((state) => (objectTypeToAddRef.current = state.objectTypeToAdd));
+    useStore.subscribe((state) => (moveHandleTypeRef.current = state.moveHandleType));
+    useStore.subscribe((state) => (resizeHandleTypeRef.current = state.resizeHandleType));
+    useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
+    useStore.subscribe((state) => (buildingWallIDRef.current = state.buildingWallID));
+    useStore.subscribe((state) => (enableFineGridRef.current = state.enableFineGrid));
+  }, []);
+
+  useEffect(() => {
+    setX(lx / 2);
+    setY(ly / 2);
+    setZ(lz / 2);
+  }, [lx, ly, lz]);
+
+  // wall position and rotation
+  useEffect(() => {
+    if (parent) {
+      setWallAbsPosition(Util.wallAbsolutePosition(new Vector3(cx, cy), parent).setZ(lz / 2 + parent.lz));
+      setWallAbsAngle(parent.rotation[2] + relativeAngle);
+      setInit(true);
+    }
+  }, [cx, cy, lz, parent?.cx, parent?.cy, parent?.cz, parent?.rotation, relativeAngle]);
+
+  // wall offset state
   useEffect(() => {
     setLeftOffsetState(leftOffset);
   }, [leftOffset]);
@@ -174,7 +220,6 @@ const Wall = ({
     setRightOffsetState(rightOffset);
   }, [rightOffset]);
 
-  // wall offset state
   useEffect(() => {
     if (leftJoints.length > 0) {
       const targetWall = getElementById(leftJoints[0].id);
@@ -194,29 +239,10 @@ const Wall = ({
     }
   }, [ly]);
 
-  // subscribe common store
+  // windows
   useEffect(() => {
-    useStore.subscribe((state) => (objectTypeToAddRef.current = state.objectTypeToAdd));
-    useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
-    useStore.subscribe((state) => (resizeHandleTypeRef.current = state.resizeHandleType));
-    useStore.subscribe((state) => (buildingWallIDRef.current = state.buildingWallID));
-    useStore.subscribe((state) => (enableFineGridRef.current = state.enableFineGrid));
-  }, []);
-
-  useEffect(() => {
-    setX(lx / 2);
-    setY(ly / 2);
-    setZ(lz / 2);
-  }, [lx, ly, lz]);
-
-  // wall position and rotation
-  useEffect(() => {
-    if (parent) {
-      setWallAbsPosition(Util.wallAbsolutePosition(new Vector3(cx, cy), parent).setZ(lz / 2 + parent.lz));
-      setWallAbsAngle(parent.rotation[2] + relativeAngle);
-      setInit(true);
-    }
-  }, [cx, cy, lz, parent?.cx, parent?.cy, parent?.cz, parent?.rotation, relativeAngle]);
+    setWindows(elements.filter((e) => e.type === ObjectType.Window && e.parentId === id));
+  }, [elements]);
 
   // outside wall
   useEffect(() => {
@@ -267,11 +293,6 @@ const Wall = ({
     }
   }, [init, leftOffsetState, rightOffsetState, lx, ly, lz]);
 
-  // windows
-  useEffect(() => {
-    setRenderWindows([...windows]);
-  }, [windows]);
-
   const drawTopSurface = (shape: Shape, lx: number, ly: number, leftOffsetState: number, rightOffsetState: number) => {
     const x = lx / 2;
     const y = ly / 2;
@@ -321,21 +342,18 @@ const Wall = ({
     return new Vector3(x, v.y, z);
   };
 
-  const movingWindowInsideWall = (p: Vector3) => {
-    if (movingWindow) {
-      const { wlx, wlz } = movingWindow;
-      const maxX = (lx - wlx) / 2;
-      const maxZ = (lz - wlz) / 2;
-      if (p.x > maxX) {
-        p.setX(maxX - 0.1);
-      } else if (p.x < -maxX) {
-        p.setX(-maxX + 0.1);
-      }
-      if (p.z > maxZ) {
-        p.setZ(maxZ - 0.1);
-      } else if (p.z < -maxZ) {
-        p.setZ(-maxZ + 0.1);
-      }
+  const movingWindowInsideWall = (p: Vector3, wlx: number, wlz: number) => {
+    const maxX = (lx - wlx) / 2;
+    const maxZ = (lz - wlz) / 2;
+    if (p.x > maxX) {
+      p.setX(maxX - 0.1);
+    } else if (p.x < -maxX) {
+      p.setX(-maxX + 0.1);
+    }
+    if (p.z > maxZ) {
+      p.setZ(maxZ - 0.1);
+    } else if (p.z < -maxZ) {
+      p.setZ(-maxZ + 0.1);
     }
     return p;
   };
@@ -353,6 +371,7 @@ const Wall = ({
 
   const checkWindowCollision = (id: string, p: Vector3, wlx: number, wlz: number) => {
     if (wlx < 0.1 || wlz < 0.1) {
+      setInvalidWindowID(id);
       return false;
     }
     for (const w of windows) {
@@ -375,10 +394,12 @@ const Wall = ({
             (minZ >= wMinZ && minZ <= wMaxZ) ||
             (maxZ >= wMinZ && maxZ <= wMaxZ))
         ) {
+          setInvalidWindowID(id);
           return false; // has collision
         }
       }
     }
+    setInvalidWindowID(null);
     return true; // no collision
   };
 
@@ -400,6 +421,22 @@ const Wall = ({
     return null;
   };
 
+  const setRayCast = (e: PointerEvent) => {
+    const mouse = new Vector2();
+    mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
+    mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
+    ray.setFromCamera(mouse, camera);
+  };
+
+  const getPositionOnGrid = (p: Vector3) => {
+    if (enableFineGridRef.current) {
+      p = stickToFineGrid(p);
+    } else {
+      p = stickToNormalGrid(p);
+    }
+    return p;
+  };
+
   return (
     <>
       {wallAbsPosition && wallAbsAngle !== undefined && (
@@ -411,6 +448,7 @@ const Wall = ({
         >
           {/* outside wall */}
           <mesh
+            name={'Outside Wall'}
             ref={outSideWallRef}
             rotation={[Math.PI / 2, 0, 0]}
             castShadow={shadowEnabled}
@@ -418,11 +456,8 @@ const Wall = ({
             onContextMenu={(e) => {
               selectMe(id, e, ActionType.Select);
               setCommonStore((state) => {
-                if (e.intersections.length > 0) {
-                  const intersected = e.intersections[0].object === outSideWallRef.current;
-                  if (intersected) {
-                    state.contextMenuObjectType = ObjectType.Wall;
-                  }
+                if (e.intersections.length > 0 && e.intersections[0].object === outSideWallRef.current) {
+                  state.contextMenuObjectType = ObjectType.Wall;
                 }
               });
             }}
@@ -432,37 +467,12 @@ const Wall = ({
                 state.contextMenuObjectType = null;
               });
 
-              selectMe(id, e, ActionType.Select);
-              const selectedElement = getSelectedElement();
-              grabRef.current = selectedElement;
-
-              if (selectedElement) {
-                if (selectedElement.id === id) {
-                  // no child of this wall is clicked
-                  const objectTypeToAdd = useStore.getState().objectTypeToAdd;
-                  if (objectTypeToAdd === ObjectType.Roof) {
-                    const points = checkWallLoop(elementModel.id);
-                    if (points) {
-                      const parent = getElementById(elementModel.parentId);
-                      if (parent) {
-                        const roof = ElementModelFactory.makeRoof(lz, parent, points);
-                        setCommonStore((state) => {
-                          state.elements.push(roof);
-                        });
-                      }
-                    }
-                    setCommonStore((state) => {
-                      state.objectTypeToAdd = ObjectType.None;
-                    });
-                  }
-                } else {
-                  // a child of this wall is clicked
-                }
-              }
-            }}
-            onPointerUp={() => {
-              if (grabRef.current) {
-                grabRef.current = null;
+              if (
+                !moveHandleTypeRef.current &&
+                !resizeHandleTypeRef.current &&
+                useStore.getState().objectTypeToAdd === ObjectType.None
+              ) {
+                selectMe(id, e, ActionType.Select);
               }
             }}
           >
@@ -471,6 +481,7 @@ const Wall = ({
 
           {/* inside wall */}
           <mesh
+            name={'Inside Wall'}
             ref={insideWallRef}
             position={[0, ly, 0]}
             rotation={[Math.PI / 2, 0, 0]}
@@ -483,6 +494,7 @@ const Wall = ({
 
           {/* top surface */}
           <mesh
+            name={'Top Wall'}
             ref={topSurfaceRef}
             position={[0, y, z]}
             castShadow={shadowEnabled}
@@ -519,341 +531,180 @@ const Wall = ({
           )}
 
           {/* intersection plane */}
-          {true && (
-            <Plane
-              name={'intersection plane ' + id}
-              ref={intersectionPlaneRef}
-              args={[lx + (showGrid ? 50 : 1), lz + (showGrid ? 10 : 1)]}
-              position={[0, ly / 2 + 0.01, 0]}
-              rotation={[Math.PI / 2, 0, 0]}
-              visible={false}
-              onPointerMove={(e) => {
-                const mouse = new Vector2();
-                mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
-                mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
-                ray.setFromCamera(mouse, camera);
+          <Plane
+            name={'Wall Intersection Plane ' + id}
+            ref={intersectionPlaneRef}
+            args={[lx, lz]}
+            position={[0, ly / 2 + 0.01, 0]}
+            rotation={[Math.PI / 2, 0, 0]}
+            visible={false}
+            onPointerMove={(e) => {
+              setRayCast(e);
 
-                if (intersectionPlaneRef.current) {
-                  const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-                  if (intersects.length > 0) {
-                    const pointer = intersects[0].point;
+              if (intersectionPlaneRef.current) {
+                const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
+                if (intersects.length > 0) {
+                  const pointer = intersects[0].point;
 
-                    // add new window
-                    if (objectTypeToAddRef.current === ObjectType.Window) {
-                      let relativePos = getWindowRelativePos(pointer, elementModel);
-                      if (enableFineGridRef.current) {
-                        relativePos = stickToFineGrid(relativePos);
-                      } else {
-                        relativePos = stickToNormalGrid(relativePos);
-                      }
-                      const newWindow = ElementModelFactory.makeWindow(
-                        elementModel,
-                        relativePos.x / lx,
-                        0,
-                        relativePos.z / lz,
-                      );
-                      setCommonStore((state) => {
-                        for (const e of state.elements) {
-                          if (e.id === elementModel.id) {
-                            (e as WallModel).windows.push(newWindow);
-                          }
-                        }
-                        state.objectTypeToAdd = ObjectType.None;
-                        state.enableOrbitController = false;
-                      });
-                      setMovingWindow({ id: newWindow.id, wlx: 0, wlz: 0, wcx: 0, wcz: 0, diff: new Vector3() });
-                      setShowGrid(true);
-                      setIsBuildingNewWindow(true);
-                    }
+                  // move or resize
+                  if (grabRef.current?.parentId === id) {
+                    const moveHandleType = moveHandleTypeRef.current;
+                    const resizeHandleType = resizeHandleTypeRef.current;
 
-                    // moving and resizing
-                    if (movingWindow) {
-                      const { id, diff, wlx, wlz } = movingWindow;
-                      const absPos = new Vector3().addVectors(pointer, diff);
-                      let relativePos = getWindowRelativePos(absPos, elementModel);
-                      if (enableFineGridRef.current) {
-                        relativePos = stickToFineGrid(relativePos);
-                      } else {
-                        relativePos = stickToNormalGrid(relativePos);
-                      }
-                      relativePos = movingWindowInsideWall(relativePos);
-                      if (checkWindowCollision(id, relativePos, wlx, wlz)) {
-                        setInvalidWindowID(null);
-                      } else {
-                        setInvalidWindowID(id);
-                      }
-                      setCommonStore((state) => {
-                        for (const e of state.elements) {
-                          if (e.id === elementModel.id) {
-                            for (const w of (e as WallModel).windows) {
-                              if (w.id === id) {
-                                w.cx = relativePos.x / lx;
-                                w.cz = relativePos.z / lz;
-                              }
-                            }
-                          }
-                        }
-                      });
-                    } else if (resizingWindow) {
-                      let p = getWindowRelativePos(pointer, elementModel);
+                    if (grabRef.current?.type === ObjectType.Window) {
+                      let p = getWindowRelativePos(pointer, wallModel);
+                      p = getPositionOnGrid(p);
 
-                      if (enableFineGridRef.current) {
-                        p = stickToFineGrid(p);
-                      } else {
-                        p = stickToNormalGrid(p);
-                      }
-                      p = resizingWindowInsideWall(p);
-                      const r = getWindowRelativePos(resizeAnchorRef.current, elementModel);
-                      const v = new Vector3().subVectors(r, p);
-                      const relativePos = new Vector3().addVectors(r, p).divideScalar(2);
-                      if (outSideWallRef.current) {
-                        if (checkWindowCollision(resizingWindow.id, relativePos, Math.abs(v.x), Math.abs(v.z))) {
-                          setInvalidWindowID(null);
-                        } else {
-                          setInvalidWindowID(resizingWindow.id);
-                        }
+                      if (moveHandleType) {
+                        p = movingWindowInsideWall(p, grabRef.current.lx * lx, grabRef.current.lz * lz);
+                        checkWindowCollision(grabRef.current.id, p, grabRef.current.lx * lx, grabRef.current.lz * lz);
                         setCommonStore((state) => {
                           for (const e of state.elements) {
-                            if (e.id === elementModel.id) {
-                              for (const w of (e as WallModel).windows) {
-                                if (w.id == resizingWindow.id) {
-                                  w.lx = Math.abs(v.x) / lx;
-                                  w.lz = Math.abs(v.z) / lz;
-                                  w.cx = relativePos.x / lx;
-                                  w.cz = relativePos.z / lz;
-                                }
-                              }
+                            if (e.id === grabRef.current?.id) {
+                              e.cx = p.x / lx;
+                              e.cz = p.z / lz;
+                              e.color = e.id === invalidWindowID ? 'red' : '#477395';
+                            }
+                          }
+                        });
+                      } else if (resizeHandleType) {
+                        p = resizingWindowInsideWall(p);
+                        let resizeAnchor = getWindowRelativePos(resizeAnchorRef.current, wallModel);
+                        if (isBuildingNewWindow) {
+                          resizeAnchor = getPositionOnGrid(resizeAnchor);
+                        }
+                        const v = new Vector3().subVectors(resizeAnchor, p); // window diagonal vector
+                        let relativePos = new Vector3().addVectors(resizeAnchor, p).divideScalar(2);
+                        checkWindowCollision(grabRef.current.id, relativePos, Math.abs(v.x), Math.abs(v.z));
+                        setCommonStore((state) => {
+                          for (const e of state.elements) {
+                            if (e.id === grabRef.current?.id) {
+                              e.lx = Math.abs(v.x) / lx;
+                              e.lz = Math.abs(v.z) / lz;
+                              e.cx = relativePos.x / lx;
+                              e.cz = relativePos.z / lz;
+                              e.color = e.id === invalidWindowID ? 'red' : '#477395';
                             }
                           }
                         });
                       }
-                    } else if (
-                      // adjust wall height
-                      grabRef.current?.id === id &&
-                      (resizeHandleTypeRef.current == ResizeHandleType.UpperRight ||
-                        resizeHandleTypeRef.current == ResizeHandleType.UpperLeft)
-                    ) {
-                      let height = new Vector3().subVectors(pointer, resizeAnchorRef.current);
-                      if (enableFineGridRef.current) {
-                        height = stickToFineGrid(height);
-                      } else {
-                        height = stickToNormalGrid(height);
-                      }
-                      setCommonStore((state) => {
-                        for (const e of state.elements) {
-                          if (e.id === elementModel.id) {
-                            (e as WallModel).lz = Math.max(height.z, 0.5);
-                          }
-                        }
-                      });
+                    } else if (grabRef.current?.type === ObjectType.SolarPanel) {
+                    } else if (grabRef.current?.type === ObjectType.Sensor) {
                     }
                   }
+
+                  // add new window
+                  if (objectTypeToAddRef.current === ObjectType.Window) {
+                    let relativePos = getWindowRelativePos(pointer, wallModel);
+                    relativePos = getPositionOnGrid(relativePos);
+
+                    const newWindow = ElementModelFactory.makeWindow(
+                      wallModel,
+                      relativePos.x / lx,
+                      0,
+                      relativePos.z / lz,
+                    );
+                    setCommonStore((state) => {
+                      state.enableOrbitController = false;
+                      state.objectTypeToAdd = ObjectType.None;
+                      state.elements.push(newWindow);
+                      state.selectedElement = newWindow;
+                      state.moveHandleType = MoveHandleType.Mid;
+                    });
+                    setShowGrid(true);
+                    setIsBuildingNewWindow(true);
+                    grabRef.current = newWindow;
+                  }
+                  // add new solar panel
+                  else if (objectTypeToAddRef.current === ObjectType.SolarPanel) {
+                  }
+                  // add new sensor
+                  else if (objectTypeToAddRef.current === ObjectType.Sensor) {
+                  }
                 }
-              }}
-              onPointerDown={() => {
-                // building new window
-                if (movingWindow && resizeHandleLLRef.current) {
-                  setCommonStore((state) => {
-                    const anchor = resizeHandleLLRef.current!.localToWorld(new Vector3(0, 0, 0));
-                    state.resizeAnchor.copy(anchor);
-                  });
-                  setResizingWindow(movingWindow);
-                  setMovingWindow(null);
-                }
-                const selectedElement = getSelectedElement();
-                if (selectedElement) {
-                  grabRef.current = selectedElement;
-                }
-              }}
-              onPointerUp={() => {
-                if (invalidWindowID) {
+              }
+            }}
+            onPointerDown={(e) => {
+              setRayCast(e);
+
+              if (intersectionPlaneRef.current) {
+                const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
+
+                if (intersects.length > 0) {
+                  const pointer = intersects[0].point;
+
+                  // set window start point
                   if (isBuildingNewWindow) {
                     setCommonStore((state) => {
-                      for (const e of state.elements) {
-                        if (e.id === elementModel.id) {
-                          (e as WallModel).windows.pop();
-                        }
-                      }
-                    });
-                  } else if (movingWindow || resizingWindow) {
-                    const wcx = movingWindow ? movingWindow.wcx : resizingWindow!.wcx;
-                    const wcz = movingWindow ? movingWindow.wcz : resizingWindow!.wcz;
-                    const wlx = movingWindow ? movingWindow.wlx : resizingWindow!.wlx;
-                    const wlz = movingWindow ? movingWindow.wlz : resizingWindow!.wlz;
-                    setCommonStore((state) => {
-                      for (const e of state.elements) {
-                        if (e.id === elementModel.id) {
-                          for (const w of (e as WallModel).windows) {
-                            if (w.id == movingWindow?.id || w.id == resizingWindow?.id) {
-                              w.cx = wcx / lx;
-                              w.cz = wcz / lz;
-                              w.lx = wlx / lx;
-                              w.lz = wlz / lz;
-                            }
-                          }
-                        }
-                      }
-                      state.enableOrbitController = true;
+                      state.moveHandleType = null;
+                      state.resizeHandleType = ResizeHandleType.LowerRight;
+                      state.resizeAnchor.copy(pointer);
                     });
                   }
-                }
 
-                setMovingWindow(null);
-                setResizingWindow(null);
-                setInvalidWindowID(null);
-                setShowGrid(false);
-                setIsBuildingNewWindow(false);
-                if (grabRef.current) {
-                  grabRef.current = null;
-                }
-              }}
-            >
-              <meshBasicMaterial side={DoubleSide} />
-            </Plane>
-          )}
+                  const selectedElement = getSelectedElement();
+                  grabRef.current = selectedElement;
 
-          {/* windows */}
-          {renderWindows.map((window) => {
-            let { id, lx: wlx, lz: wlz, cx: wcx, cz: wcz } = window;
-            wlx = wlx * lx;
-            wlz = wlz * lz;
-            wcx = wcx * lx;
-            wcz = wcz * lz;
-            const color = invalidWindowID == id ? 'red' : '#477395';
-            return (
-              <group key={id} name={`Window group ${id}`} position={[wcx, 0, wcz]} castShadow receiveShadow>
-                <Plane
-                  name={'window ' + id}
-                  args={[wlx, wlz]}
-                  rotation={[Math.PI / 2, 0, 0]}
-                  onContextMenu={(e) => {
-                    selectMe(id, e, ActionType.Select);
-                    if (e.intersections[0].object.name === 'window ' + id) {
+                  if (objectTypeToAddRef.current === ObjectType.Roof) {
+                    const points = checkWallLoop(wallModel.id);
+                    if (points && parent) {
+                      const roof = ElementModelFactory.makeRoof(lz, parent, points);
                       setCommonStore((state) => {
-                        state.contextMenuObjectType = ObjectType.Window;
+                        state.elements.push(roof);
                       });
                     }
-                  }}
-                  onPointerDown={(e) => {
-                    if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
-                    if (e.intersections[0].object.name === 'window ' + id) {
-                      if (window.selected && !window.locked) {
-                        setCommonStore((state) => {
-                          state.enableOrbitController = false;
-                        });
-                        const v = e.intersections[0].object.localToWorld(new Vector3());
-                        // const diff = new Vector3().subVectors(v, e.intersections[0].point);
-                        const diff = new Vector3();
-                        setMovingWindow({ id, wlx, wlz, wcx, wcz, diff });
+                    setCommonStore((state) => {
+                      state.objectTypeToAdd = ObjectType.None;
+                    });
+                  }
+
+                  if (selectedElement && selectedElement.parentId === id) {
+                    if (selectedElement.id === id) {
+                      // no child of this wall is clicked
+                    } else {
+                      // a child of this wall is clicked
+                      if (moveHandleTypeRef.current || resizeHandleTypeRef.current) {
                         setShowGrid(true);
-                      } else {
-                        selectMe(id, e, ActionType.Select);
-                        const selectedElement = getSelectedElement();
-                        grabRef.current = selectedElement;
                       }
                     }
-                  }}
-                  onPointerUp={() => {
-                    setShowGrid(false);
-                    if (grabRef.current) {
-                      grabRef.current = null;
+                  }
+                  setOriginElements([...elements]);
+                }
+              }
+            }}
+            onPointerUp={() => {
+              if (invalidWindowID) {
+                if (isBuildingNewWindow) {
+                  setCommonStore((state) => {
+                    state.elements.pop();
+                  });
+                  setIsBuildingNewWindow(false);
+                } else {
+                  setCommonStore((state) => {
+                    if (originElements) {
+                      state.elements = [...originElements];
                     }
-                  }}
-                >
-                  <meshBasicMaterial side={DoubleSide} color={color} opacity={0.5} transparent={true} />
-                </Plane>
+                    state.enableOrbitController = true;
+                  });
+                }
+                setInvalidWindowID(null);
+                setOriginElements([]);
+              }
+              setShowGrid(false);
+              setIsBuildingNewWindow(false);
+              setCommonStore((state) => {
+                state.moveHandleType = null;
+                state.resizeHandleType = null;
+              });
 
-                {/* wireframes */}
-                <WindowWireFrame x={wlx / 2} z={wlz / 2} />
+              grabRef.current = null;
+            }}
+          >
+            <meshBasicMaterial side={DoubleSide} />
+          </Plane>
 
-                {/* handles */}
-                {window.selected && !window.locked && (
-                  <group>
-                    <Box
-                      ref={resizeHandleLLRef}
-                      name={ResizeHandleType.LowerLeft}
-                      args={[0.1, 0.1, 0.1]}
-                      position={[-wlx / 2, 0, -wlz / 2]}
-                      onPointerDown={(e) => {
-                        selectMe(id, e, ActionType.Resize);
-                        setShowGrid(true);
-                        setResizingWindow({ id, wlx, wlz, wcx, wcz, diff: new Vector3() });
-                        if (resizeHandleLLRef.current) {
-                          setCommonStore((state) => {
-                            const anchor = resizeHandleLLRef.current!.localToWorld(new Vector3(wlx, 0, wlz));
-                            state.resizeAnchor.copy(anchor);
-                          });
-                        }
-                      }}
-                      onPointerUp={() => {
-                        setShowGrid(false);
-                      }}
-                    />
-                    <Box
-                      ref={resizeHandleULRef}
-                      name={ResizeHandleType.UpperLeft}
-                      args={[0.1, 0.1, 0.1]}
-                      position={[-wlx / 2, 0, wlz / 2]}
-                      onPointerDown={(e) => {
-                        selectMe(id, e, ActionType.Resize);
-                        setShowGrid(true);
-                        setResizingWindow({ id, wlx, wlz, wcx, wcz, diff: new Vector3() });
-                        if (resizeHandleULRef.current) {
-                          setCommonStore((state) => {
-                            const anchor = resizeHandleULRef.current!.localToWorld(new Vector3(wlx, 0, -wlz));
-                            state.resizeAnchor.copy(anchor);
-                          });
-                        }
-                      }}
-                      onPointerUp={() => {
-                        setShowGrid(false);
-                      }}
-                    />
-                    <Box
-                      ref={resizeHandleLRRef}
-                      name={ResizeHandleType.LowerRight}
-                      args={[0.1, 0.1, 0.1]}
-                      position={[wlx / 2, 0, -wlz / 2]}
-                      onPointerDown={(e) => {
-                        selectMe(id, e, ActionType.Resize);
-                        setShowGrid(true);
-                        setResizingWindow({ id, wlx, wlz, wcx, wcz, diff: new Vector3() });
-                        if (resizeHandleLRRef.current) {
-                          setCommonStore((state) => {
-                            const anchor = resizeHandleLRRef.current!.localToWorld(new Vector3(-wlx, 0, wlz));
-                            state.resizeAnchor.copy(anchor);
-                          });
-                        }
-                      }}
-                      onPointerUp={() => {
-                        setShowGrid(false);
-                      }}
-                    />
-                    <Box
-                      ref={resizeHandleURRef}
-                      name={ResizeHandleType.UpperRight}
-                      args={[0.1, 0.1, 0.1]}
-                      position={[wlx / 2, 0, wlz / 2]}
-                      onPointerDown={(e) => {
-                        selectMe(id, e, ActionType.Resize);
-                        setShowGrid(true);
-                        setResizingWindow({ id, wlx, wlz, wcx, wcz, diff: new Vector3() });
-                        if (resizeHandleURRef.current) {
-                          setCommonStore((state) => {
-                            const anchor = resizeHandleURRef.current!.localToWorld(new Vector3(-wlx, 0, -wlz));
-                            state.resizeAnchor.copy(anchor);
-                          });
-                        }
-                      }}
-                      onPointerUp={() => {
-                        setShowGrid(false);
-                      }}
-                    />
-                    <Sphere args={[0.1, 6, 6]} />
-                  </group>
-                )}
-              </group>
-            );
+          {windows.map((e) => {
+            return <Window key={e.id} {...(e as WindowModel)} />;
           })}
 
           {/* wireFrame */}
@@ -875,36 +726,6 @@ const Wall = ({
     </>
   );
 };
-
-interface ResizeHandlesProps {
-  x: number;
-  z: number;
-  id: string;
-  handleType: RType;
-  highLight: boolean;
-  handleSize?: number;
-  setShowGrid: (b: boolean) => void;
-}
-
-interface WallResizeHandleWarpperProps {
-  x: number;
-  z: number;
-  id: string;
-  highLight: boolean;
-  setShowGrid: (b: boolean) => void;
-}
-
-interface WallWireFrameProps {
-  x: number;
-  z: number;
-  lineWidth?: number;
-}
-
-interface WindowWireFrameProps {
-  x: number;
-  z: number;
-  lineWidth?: number;
-}
 
 const WallResizeHandle = React.memo(
   ({ x, z, id, handleType, highLight, handleSize = 0.3, setShowGrid }: ResizeHandlesProps) => {
@@ -961,7 +782,7 @@ const WallResizeHandle = React.memo(
                 const anchor = handleRef.current!.localToWorld(new Vector3(0, 0, -z * 2));
                 state.resizeAnchor.copy(anchor);
               });
-              setShowGrid(true);
+              // setShowGrid(true);
             }
           }
         }}
@@ -1054,57 +875,6 @@ const WallWireFrame = React.memo(({ x, z, lineWidth = 0.2 }: WallWireFrameProps)
           lineWidth={lineWidth}
         />
       </group>
-    </React.Fragment>
-  );
-});
-
-const WindowWireFrame = React.memo(({ x, z, lineWidth = 1 }: WindowWireFrameProps) => {
-  return (
-    <React.Fragment>
-      <Line
-        points={[
-          [-x, 0, -z],
-          [x, 0, -z],
-        ]}
-        linewidth={lineWidth}
-      />
-      <Line
-        points={[
-          [-x, 0, -z],
-          [-x, 0, z],
-        ]}
-        linewidth={lineWidth}
-      />
-      <Line
-        points={[
-          [x, 0, z],
-          [-x, 0, z],
-        ]}
-        linewidth={lineWidth}
-      />
-      <Line
-        points={[
-          [x, 0, z],
-          [x, 0, -z],
-        ]}
-        linewidth={lineWidth}
-      />
-      <Line
-        points={[
-          [-x, 0, 0],
-          [x, 0, 0],
-        ]}
-        linewidth={lineWidth}
-        color={'white'}
-      />
-      <Line
-        points={[
-          [0, 0, -z],
-          [0, 0, z],
-        ]}
-        linewidth={lineWidth}
-        color={'white'}
-      />
     </React.Fragment>
   );
 });

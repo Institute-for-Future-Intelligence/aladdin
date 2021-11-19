@@ -320,14 +320,6 @@ export const useStore = create<CommonStoreState>(
               if (e.selected) {
                 return e;
               }
-              if (e.type === ObjectType.Wall) {
-                const wall = e as WallModel;
-                for (const w of wall.windows) {
-                  if (w.selected) {
-                    return w;
-                  }
-                }
-              }
             }
             return null;
           },
@@ -360,13 +352,6 @@ export const useStore = create<CommonStoreState>(
               if (e.id === id) {
                 return e;
               }
-              if (e.type === ObjectType.Wall) {
-                for (const w of (e as WallModel).windows) {
-                  if (w.id === id) {
-                    return w;
-                  }
-                }
-              }
             }
             return null;
           },
@@ -374,12 +359,6 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 e.selected = false;
-                if (e.type === ObjectType.Wall) {
-                  const wall = e as WallModel;
-                  for (const w of wall.windows) {
-                    w.selected = false;
-                  }
-                }
               }
               state.selectedElement = null;
             });
@@ -391,21 +370,9 @@ export const useStore = create<CommonStoreState>(
                   for (const elem of state.elements) {
                     if (elem.id === id) {
                       elem.selected = true;
-                      if (elem.type === ObjectType.Wall) {
-                        const wall = elem as WallModel;
-                        for (const w of wall.windows) {
-                          w.selected = false;
-                        }
-                      }
                       state.selectedElementHeight = elem.lz;
                     } else {
                       elem.selected = false;
-                      if (elem.type === ObjectType.Wall) {
-                        const wall = elem as WallModel;
-                        for (const w of wall.windows) {
-                          w.selected = w.id === id;
-                        }
-                      }
                     }
                   }
                   if (action) {
@@ -445,15 +412,6 @@ export const useStore = create<CommonStoreState>(
                   state.selectedElementHeight = newProps.lz ?? 0;
                   element = state.elements[i];
                   break;
-                }
-                if (e.type === ObjectType.Wall) {
-                  const wall = e as WallModel;
-                  for (const [wi, we] of wall.windows.entries()) {
-                    if (we.id === id) {
-                      wall.windows[wi] = { ...we, ...newProps };
-                      break;
-                    }
-                  }
                 }
               }
             });
@@ -847,16 +805,6 @@ export const useStore = create<CommonStoreState>(
                     state.selectedElementHeight = lz;
                   }
                   break;
-                } else if (e.type === ObjectType.Wall) {
-                  for (const w of (e as WallModel).windows) {
-                    if (w.id === id) {
-                      w.lx = lx;
-                      w.ly = ly;
-                      if (lz) {
-                        w.lz = lz;
-                      }
-                    }
-                  }
                 }
               }
             });
@@ -989,10 +937,6 @@ export const useStore = create<CommonStoreState>(
                 }
               }
               state.elements = state.elements.filter((e) => {
-                if (e.type === ObjectType.Wall) {
-                  const wall = e as WallModel;
-                  wall.windows = wall.windows.filter((w) => w.id !== id);
-                }
                 return !(e.id === id || e.parentId === id);
               });
               state.selectedElement = null;
