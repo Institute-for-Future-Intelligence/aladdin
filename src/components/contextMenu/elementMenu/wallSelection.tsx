@@ -122,11 +122,6 @@ const WallSelection = () => {
           {WallTexture.Texture_5}
         </Option>
 
-        <Option key={WallTexture.Texture_3} value={WallTexture.Texture_3}>
-          <img alt={WallTexture.Texture_3} src={Wall_03_Img} height={20} width={35} style={{ paddingRight: '8px' }} />{' '}
-          {WallTexture.Texture_3}
-        </Option>
-
         <Option key={WallTexture.Texture_6} value={WallTexture.Texture_6}>
           <img alt={WallTexture.Texture_6} src={Wall_06_Img} height={20} width={35} style={{ paddingRight: '8px' }} />{' '}
           {WallTexture.Texture_6}
