@@ -120,6 +120,16 @@ export interface CommonStoreState {
   updateSolarPanelModelAboveFoundation: (foundationId: string, pvModelName: string) => void;
   updateSolarPanelModelForAll: (pvModelName: string) => void;
 
+  updateSolarPanelLxById: (id: string, lx: number) => void;
+  updateSolarPanelLxOnSurface: (parentId: string, normal: number[] | undefined, lx: number) => void;
+  updateSolarPanelLxAboveFoundation: (foundationId: string, lx: number) => void;
+  updateSolarPanelLxForAll: (lx: number) => void;
+
+  updateSolarPanelLyById: (id: string, ly: number) => void;
+  updateSolarPanelLyOnSurface: (parentId: string, normal: number[] | undefined, ly: number) => void;
+  updateSolarPanelLyAboveFoundation: (foundationId: string, ly: number) => void;
+  updateSolarPanelLyForAll: (ly: number) => void;
+
   updateSolarPanelOrientationById: (id: string, orientation: Orientation) => void;
   updateSolarPanelOrientationOnSurface: (
     parentId: string,
@@ -643,6 +653,114 @@ export const useStore = create<CommonStoreState>(
                     sp.lx = nx * pvModel.length;
                     sp.ly = ny * pvModel.width;
                   }
+                }
+              }
+            });
+          },
+
+          updateSolarPanelLxById(id, lx) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                  const sp = e as SolarPanelModel;
+                  const pv = state.getPvModule(sp.pvModelName);
+                  e.lx = Util.panelizeLx(sp, pv, lx);
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarPanelLxAboveFoundation(foundationId, lx) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                  const sp = e as SolarPanelModel;
+                  const pv = state.getPvModule(sp.pvModelName);
+                  e.lx = Util.panelizeLx(sp, pv, lx);
+                }
+              }
+            });
+          },
+          updateSolarPanelLxOnSurface(parentId, normal, lx) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  let found;
+                  if (normal) {
+                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+                  } else {
+                    found = e.parentId === parentId;
+                  }
+                  if (found) {
+                    const sp = e as SolarPanelModel;
+                    const pv = state.getPvModule(sp.pvModelName);
+                    e.lx = Util.panelizeLx(sp, pv, lx);
+                  }
+                }
+              }
+            });
+          },
+          updateSolarPanelLxForAll(lx) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  const sp = e as SolarPanelModel;
+                  const pv = state.getPvModule(sp.pvModelName);
+                  e.lx = Util.panelizeLx(sp, pv, lx);
+                }
+              }
+            });
+          },
+
+          updateSolarPanelLyById(id, ly) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                  const sp = e as SolarPanelModel;
+                  const pv = state.getPvModule(sp.pvModelName);
+                  e.ly = Util.panelizeLy(sp, pv, ly);
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarPanelLyAboveFoundation(foundationId, ly) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                  const sp = e as SolarPanelModel;
+                  const pv = state.getPvModule(sp.pvModelName);
+                  e.ly = Util.panelizeLy(sp, pv, ly);
+                }
+              }
+            });
+          },
+          updateSolarPanelLyOnSurface(parentId, normal, ly) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  let found;
+                  if (normal) {
+                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+                  } else {
+                    found = e.parentId === parentId;
+                  }
+                  if (found) {
+                    const sp = e as SolarPanelModel;
+                    const pv = state.getPvModule(sp.pvModelName);
+                    e.ly = Util.panelizeLy(sp, pv, ly);
+                  }
+                }
+              }
+            });
+          },
+          updateSolarPanelLyForAll(ly) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  const sp = e as SolarPanelModel;
+                  const pv = state.getPvModule(sp.pvModelName);
+                  e.ly = Util.panelizeLy(sp, pv, ly);
                 }
               }
             });

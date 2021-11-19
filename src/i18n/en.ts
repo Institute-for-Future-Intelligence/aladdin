@@ -211,6 +211,8 @@ export const i18n_en = {
       Portrait: 'Portrait',
       Landscape: 'Landscape',
       Panels: 'Panels',
+      PanelsWide: 'Panels Wide',
+      PanelsLong: 'Panels Long',
       TiltAngle: 'Tilt Angle',
       RelativeAzimuth: 'Relative Azimuth',
       Tracker: 'Tracker',

@@ -26,6 +26,7 @@ import RotateHandle from '../components/rotateHandle';
 import { PolarGrid } from '../grid';
 import Wireframe from '../components/wireframe';
 import { SolarPanelModel } from '../models/SolarPanelModel';
+import { UndoableAdd } from '../undo/UndoableAdd';
 
 const Cuboid = ({
   id,
@@ -48,6 +49,7 @@ const Cuboid = ({
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addElement = useStore(Selector.addElement);
+  const removeElementById = useStore(Selector.removeElementById);
   const setElementPosition = useStore(Selector.setElementPosition);
   const setElementNormal = useStore(Selector.setElementNormal);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
@@ -57,6 +59,7 @@ const Cuboid = ({
   const resizeAnchor = useStore(Selector.resizeAnchor);
   const getPvModule = useStore(Selector.getPvModule);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const addUndoable = useStore(Selector.addUndoable);
 
   const {
     camera,
@@ -219,7 +222,24 @@ const Cuboid = ({
             if (legalOnCuboid(objectTypeToAdd) && cuboidModel) {
               setShowGrid(true);
               const intersection = e.intersections[0];
-              addElement(cuboidModel, intersection.point, intersection.face?.normal);
+              const position = intersection.point;
+              const id = addElement(cuboidModel, position, intersection.face?.normal);
+              const addedElement = getElementById(id);
+              const undoableAdd = {
+                name: 'Add',
+                timestamp: Date.now(),
+                addedElement: addedElement,
+                undo: () => {
+                  removeElementById(undoableAdd.addedElement.id, false);
+                },
+                redo: () => {
+                  setCommonStore((state) => {
+                    state.elements.push(undoableAdd.addedElement);
+                    state.selectedElement = undoableAdd.addedElement;
+                  });
+                },
+              } as UndoableAdd;
+              addUndoable(undoableAdd);
               setCommonStore((state) => {
                 state.objectTypeToAdd = ObjectType.None;
               });

@@ -109,6 +109,22 @@ export const updateSolarPanelModelAboveFoundation = (state: CommonStoreState) =>
 
 export const updateSolarPanelModelForAll = (state: CommonStoreState) => state.updateSolarPanelModelForAll;
 
+export const updateSolarPanelLxById = (state: CommonStoreState) => state.updateSolarPanelLxById;
+
+export const updateSolarPanelLxOnSurface = (state: CommonStoreState) => state.updateSolarPanelLxOnSurface;
+
+export const updateSolarPanelLxAboveFoundation = (state: CommonStoreState) => state.updateSolarPanelLxAboveFoundation;
+
+export const updateSolarPanelLxForAll = (state: CommonStoreState) => state.updateSolarPanelLxForAll;
+
+export const updateSolarPanelLyById = (state: CommonStoreState) => state.updateSolarPanelLyById;
+
+export const updateSolarPanelLyOnSurface = (state: CommonStoreState) => state.updateSolarPanelLyOnSurface;
+
+export const updateSolarPanelLyAboveFoundation = (state: CommonStoreState) => state.updateSolarPanelLyAboveFoundation;
+
+export const updateSolarPanelLyForAll = (state: CommonStoreState) => state.updateSolarPanelLyForAll;
+
 export const updateSolarPanelOrientationById = (state: CommonStoreState) => state.updateSolarPanelOrientationById;
 
 export const updateSolarPanelOrientationOnSurface = (state: CommonStoreState) =>

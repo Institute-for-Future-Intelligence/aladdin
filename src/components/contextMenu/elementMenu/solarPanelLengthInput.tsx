@@ -24,10 +24,10 @@ const SolarPanelLengthInput = ({
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getPvModule = useStore(Selector.getPvModule);
-  const updateSolarPanelLengthById = useStore(Selector.updateElementLyById);
-  const updateSolarPanelLengthOnSurface = useStore(Selector.updateElementLyOnSurface);
-  const updateSolarPanelLengthAboveFoundation = useStore(Selector.updateElementLyAboveFoundation);
-  const updateSolarPanelLengthForAll = useStore(Selector.updateElementLyForAll);
+  const updateSolarPanelLyById = useStore(Selector.updateSolarPanelLyById);
+  const updateSolarPanelLyOnSurface = useStore(Selector.updateSolarPanelLyOnSurface);
+  const updateSolarPanelLyAboveFoundation = useStore(Selector.updateSolarPanelLyAboveFoundation);
+  const updateSolarPanelLyForAll = useStore(Selector.updateSolarPanelLyForAll);
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
@@ -60,9 +60,6 @@ const SolarPanelLengthInput = ({
   };
 
   const setLength = (value: number) => {
-    let l = value ?? 1;
-    const n = Math.max(1, Math.ceil((l - dy / 2) / dy));
-    l = n * dy;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldLengthsAll = new Map<string, number>();
@@ -75,18 +72,18 @@ const SolarPanelLengthInput = ({
           name: 'Set Length for All Solar Panel Arrays',
           timestamp: Date.now(),
           oldValues: oldLengthsAll,
-          newValue: l,
+          newValue: value,
           undo: () => {
             for (const [id, ly] of undoableChangeAll.oldValues.entries()) {
-              updateSolarPanelLengthById(id, ly as number);
+              updateSolarPanelLyById(id, ly as number);
             }
           },
           redo: () => {
-            updateSolarPanelLengthForAll(ObjectType.SolarPanel, undoableChangeAll.newValue as number);
+            updateSolarPanelLyForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateSolarPanelLengthForAll(ObjectType.SolarPanel, l);
+        updateSolarPanelLyForAll(value);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (solarPanel.foundationId) {
@@ -100,17 +97,16 @@ const SolarPanelLengthInput = ({
             name: 'Set Length for All Solar Panel Arrays Above Foundation',
             timestamp: Date.now(),
             oldValues: oldLengthsAboveFoundation,
-            newValue: l,
+            newValue: value,
             groupId: solarPanel.foundationId,
             undo: () => {
               for (const [id, ly] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updateSolarPanelLengthById(id, ly as number);
+                updateSolarPanelLyById(id, ly as number);
               }
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
-                updateSolarPanelLengthAboveFoundation(
-                  ObjectType.SolarPanel,
+                updateSolarPanelLyAboveFoundation(
                   undoableChangeAboveFoundation.groupId,
                   undoableChangeAboveFoundation.newValue as number,
                 );
@@ -118,7 +114,7 @@ const SolarPanelLengthInput = ({
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateSolarPanelLengthAboveFoundation(ObjectType.SolarPanel, solarPanel.foundationId, l);
+          updateSolarPanelLyAboveFoundation(solarPanel.foundationId, value);
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
@@ -149,18 +145,17 @@ const SolarPanelLengthInput = ({
               name: 'Set Length for All Solar Panel Arrays on Surface',
               timestamp: Date.now(),
               oldValues: oldLengthsOnSurface,
-              newValue: l,
+              newValue: value,
               groupId: solarPanel.parentId,
               normal: normal,
               undo: () => {
                 for (const [id, ly] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateSolarPanelLengthById(id, ly as number);
+                  updateSolarPanelLyById(id, ly as number);
                 }
               },
               redo: () => {
                 if (undoableChangeOnSurface.groupId) {
-                  updateSolarPanelLengthOnSurface(
-                    ObjectType.SolarPanel,
+                  updateSolarPanelLyOnSurface(
                     undoableChangeOnSurface.groupId,
                     undoableChangeOnSurface.normal,
                     undoableChangeOnSurface.newValue as number,
@@ -169,7 +164,7 @@ const SolarPanelLengthInput = ({
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeOnSurface);
-            updateSolarPanelLengthOnSurface(ObjectType.SolarPanel, solarPanel.parentId, normal, l);
+            updateSolarPanelLyOnSurface(solarPanel.parentId, normal, value);
           }
         }
         break;
@@ -180,16 +175,16 @@ const SolarPanelLengthInput = ({
             name: 'Set Solar Panel Array Length',
             timestamp: Date.now(),
             oldValue: oldLength,
-            newValue: l,
+            newValue: value,
             undo: () => {
-              updateSolarPanelLengthById(solarPanel.id, undoableChange.oldValue as number);
+              updateSolarPanelLyById(solarPanel.id, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateSolarPanelLengthById(solarPanel.id, undoableChange.newValue as number);
+              updateSolarPanelLyById(solarPanel.id, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateSolarPanelLengthById(solarPanel.id, l);
+          updateSolarPanelLyById(solarPanel.id, value);
           setUpdateFlag(!updateFlag);
         }
     }
@@ -207,6 +202,13 @@ const SolarPanelLengthInput = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const panelize = (value: number) => {
+    let l = value ?? 1;
+    const n = Math.max(1, Math.ceil((l - dy / 2) / dy));
+    l = n * dy;
+    return l;
   };
 
   return (
@@ -274,10 +276,14 @@ const SolarPanelLengthInput = ({
               precision={2}
               value={inputLength}
               formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputLength(value)}
+              onChange={(value) => setInputLength(panelize(value))}
+              onPressEnter={(event) => {
+                setLength(inputLength);
+                setLengthDialogVisible(false);
+              }}
             />
             <div style={{ paddingTop: '20px', textAlign: 'center' }}>
-              {Math.round(inputLength / dy) + ' ' + i18n.t('solarPanelMenu.Panels', lang)}
+              {Math.round(inputLength / dy) + ' ' + i18n.t('solarPanelMenu.PanelsLong', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>

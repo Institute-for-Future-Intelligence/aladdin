@@ -4,6 +4,9 @@
 
 import { Euler, Vector3 } from 'three';
 import { ElementModel } from './models/ElementModel';
+import { SolarPanelModel } from './models/SolarPanelModel';
+import { Orientation } from './types';
+import { PvModel } from './models/PvModel';
 
 export class Util {
   static get UNIT_VECTOR_POS_X() {
@@ -28,6 +31,22 @@ export class Util {
 
   static get UNIT_VECTOR_NEG_Z() {
     return new Vector3(0, 0, -1);
+  }
+
+  static panelizeLx(solarPanel: SolarPanelModel, pvModel: PvModel, value: number) {
+    const dx = solarPanel.orientation === Orientation.portrait ? pvModel.width : pvModel.length;
+    let lx = value ?? 1;
+    const n = Math.max(1, Math.ceil((lx - dx / 2) / dx));
+    lx = n * dx;
+    return lx;
+  }
+
+  static panelizeLy(solarPanel: SolarPanelModel, pvModel: PvModel, value: number) {
+    const dy = solarPanel.orientation === Orientation.portrait ? pvModel.length : pvModel.width;
+    let ly = value ?? 1;
+    const n = Math.max(1, Math.ceil((ly - dy / 2) / dy));
+    ly = n * dy;
+    return ly;
   }
 
   static isSame(u: Vector3, v: Vector3) {

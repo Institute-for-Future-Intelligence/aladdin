@@ -210,6 +210,8 @@ export const i18n_zh_cn = {
       Portrait: '纵向',
       Landscape: '橫向',
       Panels: '块',
+      PanelsWide: '块光伏板宽',
+      PanelsLong: '块光伏板长',
       TiltAngle: '倾斜角度',
       RelativeAzimuth: '相对方位角',
       Tracker: '追日系统',
