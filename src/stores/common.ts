@@ -153,10 +153,18 @@ export interface CommonStoreState {
   updateSolarPanelOrientationAboveFoundation: (foundationId: string, orientation: Orientation) => void;
   updateSolarPanelOrientationForAll: (orientation: Orientation) => void;
 
+  updateSolarPanelTrackerTypeById: (id: string, trackerType: TrackerType) => void;
+  updateSolarPanelTrackerTypeOnSurface: (
+    parentId: string,
+    normal: number[] | undefined,
+    trackerType: TrackerType,
+  ) => void;
+  updateSolarPanelTrackerTypeAboveFoundation: (foundationId: string, trackerType: TrackerType) => void;
+  updateSolarPanelTrackerTypeForAll: (trackerType: TrackerType) => void;
+
   updateSolarPanelPoleHeightById: (id: string, poleHeight: number) => void;
 
   updateSolarPanelPoleSpacingById: (id: string, poleHeight: number) => void;
-  updateSolarPanelTrackerTypeById: (id: string, trackerType: TrackerType) => void;
   updateSolarPanelDrawSunBeamById: (id: string, drawSunBeam: boolean) => void;
 
   objectTypeToAdd: ObjectType;
@@ -924,6 +932,52 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          updateSolarPanelTrackerTypeById(id, trackerType) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                  (e as SolarPanelModel).trackerType = trackerType;
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarPanelTrackerTypeAboveFoundation(foundationId, trackerType) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                  (e as SolarPanelModel).trackerType = trackerType;
+                }
+              }
+            });
+          },
+          updateSolarPanelTrackerTypeOnSurface(parentId, normal, trackerType) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  let found;
+                  if (normal) {
+                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+                  } else {
+                    found = e.parentId === parentId;
+                  }
+                  if (found) {
+                    (e as SolarPanelModel).trackerType = trackerType;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarPanelTrackerTypeForAll(trackerType) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  (e as SolarPanelModel).trackerType = trackerType;
+                }
+              }
+            });
+          },
+
           updateSolarPanelPoleHeightById(id, poleHeight) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -939,16 +993,6 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
                   (e as SolarPanelModel).poleSpacing = poleSpacing;
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPanelTrackerTypeById(id, trackerType) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id) {
-                  (e as SolarPanelModel).trackerType = trackerType;
                   break;
                 }
               }

@@ -156,11 +156,19 @@ export const updateSolarPanelOrientationAboveFoundation = (state: CommonStoreSta
 
 export const updateSolarPanelOrientationForAll = (state: CommonStoreState) => state.updateSolarPanelOrientationForAll;
 
+export const updateSolarPanelTrackerTypeById = (state: CommonStoreState) => state.updateSolarPanelTrackerTypeById;
+
+export const updateSolarPanelTrackerTypeOnSurface = (state: CommonStoreState) =>
+  state.updateSolarPanelTrackerTypeOnSurface;
+
+export const updateSolarPanelTrackerTypeAboveFoundation = (state: CommonStoreState) =>
+  state.updateSolarPanelTrackerTypeAboveFoundation;
+
+export const updateSolarPanelTrackerTypeForAll = (state: CommonStoreState) => state.updateSolarPanelTrackerTypeForAll;
+
 export const updateSolarPanelPoleHeightById = (state: CommonStoreState) => state.updateSolarPanelPoleHeightById;
 
 export const updateSolarPanelPoleSpacingById = (state: CommonStoreState) => state.updateSolarPanelPoleSpacingById;
-
-export const updateSolarPanelTrackerTypeById = (state: CommonStoreState) => state.updateSolarPanelTrackerTypeById;
 
 export const updateSolarPanelDrawSunBeamById = (state: CommonStoreState) => state.updateSolarPanelDrawSunBeamById;
 

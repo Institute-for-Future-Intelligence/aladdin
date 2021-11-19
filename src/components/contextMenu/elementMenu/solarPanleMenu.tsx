@@ -3,12 +3,12 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Checkbox, Input, InputNumber, Menu, Select, Space } from 'antd';
+import { Checkbox, Input, InputNumber, Menu, Space } from 'antd';
 import { Vector3 } from 'three';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { ObjectType, TrackerType } from '../../../types';
+import { ObjectType } from '../../../types';
 import { Util } from '../../../Util';
 import { Copy, Cut } from '../menuItems';
 import i18n from '../../../i18n/i18n';
@@ -20,8 +20,7 @@ import SolarPanelWidthInput from './solarPanelWidthInput';
 import SolarPanelLengthInput from './solarPanelLengthInput';
 import SolarPanelTiltAngleInput from './solarPanelTiltAngleInput';
 import SolarPanelRelativeAzimuthInput from './solarPanelRelativeAzimuthInput';
-
-const { Option } = Select;
+import SolarPanelTrackerSelection from './solarPanelTrackerSelection';
 
 export const SolarPanelMenu = () => {
   const language = useStore(Selector.language);
@@ -30,7 +29,6 @@ export const SolarPanelMenu = () => {
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const updateSolarPanelPoleHeightById = useStore(Selector.updateSolarPanelPoleHeightById);
   const updateSolarPanelPoleSpacingById = useStore(Selector.updateSolarPanelPoleSpacingById);
-  const updateSolarPanelTrackerTypeById = useStore(Selector.updateSolarPanelTrackerTypeById);
   const updateSolarPanelDrawSunBeamById = useStore(Selector.updateSolarPanelDrawSunBeamById);
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -44,6 +42,7 @@ export const SolarPanelMenu = () => {
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [tiltDialogVisible, setTiltDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
+  const [trackerDialogVisible, setTrackerDialogVisible] = useState(false);
   const element = getSelectedElement();
   const lang = { lng: language };
 
@@ -134,27 +133,6 @@ export const SolarPanelMenu = () => {
       } as UndoableChange;
       addUndoable(undoableChange);
       updateSolarPanelPoleSpacingById(solarPanel.id, value ?? 1);
-      setUpdateFlag(!updateFlag);
-    }
-  };
-
-  const setTracker = (value: TrackerType) => {
-    if (solarPanel) {
-      const oldTracker = solarPanel.trackerType;
-      const undoableChange = {
-        name: 'Set Solar Panel Tracker',
-        timestamp: Date.now(),
-        oldValue: oldTracker,
-        newValue: value,
-        undo: () => {
-          updateSolarPanelTrackerTypeById(solarPanel.id, undoableChange.oldValue as TrackerType);
-        },
-        redo: () => {
-          updateSolarPanelTrackerTypeById(solarPanel.id, undoableChange.newValue as TrackerType);
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      updateSolarPanelTrackerTypeById(solarPanel.id, value);
       setUpdateFlag(!updateFlag);
     }
   };
@@ -268,48 +246,24 @@ export const SolarPanelMenu = () => {
             {i18n.t('solarPanelMenu.RelativeAzimuth', lang)} ...
           </Menu.Item>
 
+          {/* solar tracker type */}
+          <SolarPanelTrackerSelection
+            trackerDialogVisible={trackerDialogVisible}
+            setTrackerDialogVisible={setTrackerDialogVisible}
+          />
+          <Menu.Item
+            key={'solar-panel-tracker'}
+            style={{ paddingLeft: '40px' }}
+            onClick={() => {
+              setTrackerDialogVisible(true);
+            }}
+          >
+            {i18n.t('solarPanelMenu.Tracker', lang)} ...
+          </Menu.Item>
+
           <Menu>
             {panelNormal && Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z) && (
               <>
-                {/* solar tracker type */}
-                <Menu.Item key={'solar-panel-tracker'} style={{ paddingLeft: '40px' }}>
-                  <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.Tracker', lang) + ':'}</Space>
-                  <Select
-                    style={{ width: '120px' }}
-                    value={solarPanel.trackerType}
-                    onChange={(value) => setTracker(value)}
-                  >
-                    <Option key={'NONE'} value={TrackerType.NO_TRACKER} title={'No tracker'}>
-                      None
-                    </Option>
-                    )
-                    <Option
-                      key={'HSAT'}
-                      value={TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER}
-                      title={'Horizontal single axis tracker'}
-                    >
-                      HSAT
-                    </Option>
-                    )
-                    <Option
-                      key={'VSAT'}
-                      value={TrackerType.VERTICAL_SINGLE_AXIS_TRACKER}
-                      title={'Vertical single axis tracker'}
-                    >
-                      VSAT
-                    </Option>
-                    )
-                    <Option
-                      key={'AADAT'}
-                      value={TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER}
-                      title={'Altazimuth single axis tracker'}
-                    >
-                      AADAT
-                    </Option>
-                    )
-                  </Select>
-                </Menu.Item>
-
                 {/* pole height */}
                 <Menu.Item key={'solar-panel-pole-height'} style={{ paddingLeft: '40px' }}>
                   <Space style={{ width: '150px' }}>
