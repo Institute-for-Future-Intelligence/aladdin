@@ -16,6 +16,8 @@ import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import PvModelSelection from './pvModelSelection';
 import SolarPanelOrientationSelection from './solarPanelOrientationSelection';
+import SolarPanelWidthInput from './solarPanelWidthInput';
+import SolarPanelLengthInput from './solarPanelLengthInput';
 
 const { Option } = Select;
 
@@ -24,7 +26,6 @@ export const SolarPanelMenu = () => {
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
-  const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLyById = useStore(Selector.updateElementLyById);
   const updateSolarPanelPoleHeightById = useStore(Selector.updateSolarPanelPoleHeightById);
   const updateSolarPanelPoleSpacingById = useStore(Selector.updateSolarPanelPoleSpacingById);
@@ -43,6 +44,8 @@ export const SolarPanelMenu = () => {
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [pvModelDialogVisible, setPvModelDialogVisible] = useState(false);
   const [orientationDialogVisible, setOrientationDialogVisible] = useState(false);
+  const [widthDialogVisible, setWidthDialogVisible] = useState(false);
+  const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const element = getSelectedElement();
   const lang = { lng: language };
 
@@ -57,30 +60,6 @@ export const SolarPanelMenu = () => {
       setLabelText(element.label ?? '');
     }
   }, [element]);
-
-  const setWidth = (value: number) => {
-    if (solarPanel) {
-      const oldWidth = solarPanel.lx;
-      let w = value ?? 1;
-      const n = Math.max(1, Math.ceil((w - dx / 2) / dx));
-      w = n * dx;
-      const undoableChange = {
-        name: 'Set Solar Panel Array Width',
-        timestamp: Date.now(),
-        oldValue: oldWidth,
-        newValue: w,
-        undo: () => {
-          updateElementLxById(solarPanel.id, undoableChange.oldValue as number);
-        },
-        redo: () => {
-          updateElementLxById(solarPanel.id, undoableChange.newValue as number);
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      updateElementLxById(solarPanel.id, w);
-      setUpdateFlag(!updateFlag);
-    }
-  };
 
   const setLength = (value: number) => {
     if (solarPanel) {
@@ -288,7 +267,7 @@ export const SolarPanelMenu = () => {
             }}
             style={{ paddingLeft: '40px' }}
           >
-            {i18n.t('solarPanelMenu.ChangePvModel', lang)} ({solarPanel.pvModelName})...
+            {i18n.t('solarPanelMenu.ChangePvModel', lang)} ({solarPanel.pvModelName}) ...
           </Menu.Item>
 
           {/* orientation: landscape or portrait */}
@@ -303,58 +282,37 @@ export const SolarPanelMenu = () => {
               setOrientationDialogVisible(true);
             }}
           >
-            {i18n.t('solarPanelMenu.Orientation', lang)}...
+            {i18n.t('solarPanelMenu.Orientation', lang)} ...
+          </Menu.Item>
+
+          {/* array width */}
+          <SolarPanelWidthInput widthDialogVisible={widthDialogVisible} setWidthDialogVisible={setWidthDialogVisible} />
+          <Menu.Item
+            key={'solar-panel-width'}
+            style={{ paddingLeft: '40px' }}
+            onClick={() => {
+              setWidthDialogVisible(true);
+            }}
+          >
+            {i18n.t('word.Width', lang)} ...
+          </Menu.Item>
+
+          {/* array length */}
+          <SolarPanelLengthInput
+            lengthDialogVisible={lengthDialogVisible}
+            setLengthDialogVisible={setLengthDialogVisible}
+          />
+          <Menu.Item
+            key={'solar-panel-length'}
+            style={{ paddingLeft: '40px' }}
+            onClick={() => {
+              setLengthDialogVisible(true);
+            }}
+          >
+            {i18n.t('word.Length', lang)} ...
           </Menu.Item>
 
           <Menu>
-            {/* array width */}
-            <Menu.Item key={'solar-panel-width'} style={{ paddingLeft: '40px' }}>
-              <Space style={{ width: '150px' }}>
-                {i18n.t('word.Width', lang) +
-                  ' (' +
-                  Math.round(solarPanel.lx / dx) +
-                  ' ' +
-                  i18n.t('solarPanelMenu.Panels', lang) +
-                  ') (' +
-                  i18n.t('word.MeterAbbreviation', lang) +
-                  '):'}
-              </Space>
-              <InputNumber
-                min={dx}
-                max={100 * dx}
-                step={dx}
-                style={{ width: 120 }}
-                precision={2}
-                value={solarPanel.lx}
-                formatter={(a) => Number(a).toFixed(2)}
-                onChange={(value) => setWidth(value)}
-              />
-            </Menu.Item>
-
-            {/* array length */}
-            <Menu.Item key={'solar-panel-length'} style={{ paddingLeft: '40px' }}>
-              <Space style={{ width: '150px' }}>
-                {i18n.t('word.Length', lang) +
-                  ' (' +
-                  Math.round(solarPanel.ly / dy) +
-                  ' ' +
-                  i18n.t('solarPanelMenu.Panels', lang) +
-                  ') (' +
-                  i18n.t('word.MeterAbbreviation', lang) +
-                  '):'}
-              </Space>
-              <InputNumber
-                min={dy}
-                max={100 * dy}
-                step={dy}
-                style={{ width: 120 }}
-                precision={2}
-                value={solarPanel.ly}
-                formatter={(a) => Number(a).toFixed(2)}
-                onChange={(value) => setLength(value)}
-              />
-            </Menu.Item>
-
             {panelNormal && Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z) && (
               <>
                 {/* tilt angle */}

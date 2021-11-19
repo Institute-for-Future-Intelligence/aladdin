@@ -82,7 +82,19 @@ export const updateElementShowLabelById = (state: CommonStoreState) => state.upd
 
 export const updateElementLxById = (state: CommonStoreState) => state.updateElementLxById;
 
+export const updateElementLxOnSurface = (state: CommonStoreState) => state.updateElementLxOnSurface;
+
+export const updateElementLxAboveFoundation = (state: CommonStoreState) => state.updateElementLxAboveFoundation;
+
+export const updateElementLxForAll = (state: CommonStoreState) => state.updateElementLxForAll;
+
 export const updateElementLyById = (state: CommonStoreState) => state.updateElementLyById;
+
+export const updateElementLyOnSurface = (state: CommonStoreState) => state.updateElementLyOnSurface;
+
+export const updateElementLyAboveFoundation = (state: CommonStoreState) => state.updateElementLyAboveFoundation;
+
+export const updateElementLyForAll = (state: CommonStoreState) => state.updateElementLyForAll;
 
 export const solarPanelActionScope = (state: CommonStoreState) => state.solarPanelActionScope;
 

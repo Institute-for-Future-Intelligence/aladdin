@@ -100,8 +100,16 @@ export interface CommonStoreState {
   // for all types of elements
   updateElementLabelById: (id: string, label: string) => void;
   updateElementShowLabelById: (id: string, showLabel: boolean) => void;
+
   updateElementLxById: (id: string, lx: number) => void;
+  updateElementLxOnSurface: (type: ObjectType, parentId: string, normal: number[] | undefined, lx: number) => void;
+  updateElementLxAboveFoundation: (type: ObjectType, foundationId: string, lx: number) => void;
+  updateElementLxForAll: (type: ObjectType, lx: number) => void;
+
   updateElementLyById: (id: string, ly: number) => void;
+  updateElementLyOnSurface: (type: ObjectType, parentId: string, normal: number[] | undefined, ly: number) => void;
+  updateElementLyAboveFoundation: (type: ObjectType, foundationId: string, ly: number) => void;
+  updateElementLyForAll: (type: ObjectType, ly: number) => void;
 
   // for solar panels
   solarPanelActionScope: Scope;
@@ -122,6 +130,7 @@ export interface CommonStoreState {
   updateSolarPanelOrientationForAll: (orientation: Orientation) => void;
 
   updateSolarPanelPoleHeightById: (id: string, poleHeight: number) => void;
+
   updateSolarPanelPoleSpacingById: (id: string, poleHeight: number) => void;
   updateSolarPanelRelativeAzimuthById: (id: string, relativeAzimuth: number) => void;
   updateSolarPanelTiltAngleById: (id: string, tiltAngle: number) => void;
@@ -471,6 +480,8 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+
+          // lx
           updateElementLxById(id, lx) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -481,12 +492,84 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+          updateElementLxAboveFoundation(type, foundationId, lx) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && e.foundationId === foundationId) {
+                  e.lx = lx;
+                }
+              }
+            });
+          },
+          updateElementLxOnSurface(type, parentId, normal, lx) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type) {
+                  let found;
+                  if (normal) {
+                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+                  } else {
+                    found = e.parentId === parentId;
+                  }
+                  if (found) {
+                    e.lx = lx;
+                  }
+                }
+              }
+            });
+          },
+          updateElementLxForAll(type, lx) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type) {
+                  e.lx = lx;
+                }
+              }
+            });
+          },
+
+          // ly
           updateElementLyById(id, ly) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.id === id) {
-                  e.lx = ly;
+                  e.ly = ly;
                   break;
+                }
+              }
+            });
+          },
+          updateElementLyAboveFoundation(type, foundationId, ly) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && e.foundationId === foundationId) {
+                  e.ly = ly;
+                }
+              }
+            });
+          },
+          updateElementLyOnSurface(type, parentId, normal, ly) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type) {
+                  let found;
+                  if (normal) {
+                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+                  } else {
+                    found = e.parentId === parentId;
+                  }
+                  if (found) {
+                    e.ly = ly;
+                  }
+                }
+              }
+            });
+          },
+          updateElementLyForAll(type, ly) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type) {
+                  e.ly = ly;
                 }
               }
             });

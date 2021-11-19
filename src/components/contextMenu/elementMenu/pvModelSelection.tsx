@@ -3,15 +3,15 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
+import { Button, Col, Input, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
+import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
-import { Button, Col, Input, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import { SolarPanelNominalSize } from '../../../models/SolarPanelNominalSize';
 import { ObjectType, Scope, ShadeTolerance } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 
