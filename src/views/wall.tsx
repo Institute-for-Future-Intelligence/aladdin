@@ -704,9 +704,7 @@ const Wall = ({
 
               grabRef.current = null;
             }}
-          >
-            <meshBasicMaterial side={DoubleSide} />
-          </Plane>
+          />
 
           {windows.map((e) => {
             return <Window key={e.id} {...(e as WindowModel)} />;
