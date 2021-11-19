@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Checkbox, Input, InputNumber, Menu, Space } from 'antd';
+import { Checkbox, Input, Menu } from 'antd';
 import { Vector3 } from 'three';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { useStore } from '../../../stores/common';
@@ -21,14 +21,14 @@ import SolarPanelLengthInput from './solarPanelLengthInput';
 import SolarPanelTiltAngleInput from './solarPanelTiltAngleInput';
 import SolarPanelRelativeAzimuthInput from './solarPanelRelativeAzimuthInput';
 import SolarPanelTrackerSelection from './solarPanelTrackerSelection';
+import SolarPanelPoleHeightInput from './solarPanelPoleHeightInput';
+import SolarPanelPoleSpacingInput from './solarPanelPoleSpacingInput';
 
 export const SolarPanelMenu = () => {
   const language = useStore(Selector.language);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
-  const updateSolarPanelPoleHeightById = useStore(Selector.updateSolarPanelPoleHeightById);
-  const updateSolarPanelPoleSpacingById = useStore(Selector.updateSolarPanelPoleSpacingById);
   const updateSolarPanelDrawSunBeamById = useStore(Selector.updateSolarPanelDrawSunBeamById);
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -43,6 +43,9 @@ export const SolarPanelMenu = () => {
   const [tiltDialogVisible, setTiltDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
   const [trackerDialogVisible, setTrackerDialogVisible] = useState(false);
+  const [poleHeightDialogVisible, setPoleHeightDialogVisible] = useState(false);
+  const [poleSpacingDialogVisible, setPoleSpacingDialogVisible] = useState(false);
+
   const element = getSelectedElement();
   const lang = { lng: language };
 
@@ -91,48 +94,6 @@ export const SolarPanelMenu = () => {
       } as UndoableChange;
       addUndoable(undoableChange);
       updateElementLabelById(solarPanel.id, labelText);
-      setUpdateFlag(!updateFlag);
-    }
-  };
-
-  const updatePoleHeight = (value: number) => {
-    if (solarPanel) {
-      const oldHeight = solarPanel.poleHeight;
-      const undoableChange = {
-        name: 'Set Solar Panel Pole Height',
-        timestamp: Date.now(),
-        oldValue: oldHeight,
-        newValue: value,
-        undo: () => {
-          updateSolarPanelPoleHeightById(solarPanel.id, undoableChange.oldValue as number);
-        },
-        redo: () => {
-          updateSolarPanelPoleHeightById(solarPanel.id, undoableChange.newValue as number);
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      updateSolarPanelPoleHeightById(solarPanel.id, value);
-      setUpdateFlag(!updateFlag);
-    }
-  };
-
-  const updatePoleSpacing = (value: number) => {
-    if (solarPanel) {
-      const oldSpacing = solarPanel.poleSpacing;
-      const undoableChange = {
-        name: 'Set Solar Panel Pole Spacing',
-        timestamp: Date.now(),
-        oldValue: oldSpacing,
-        newValue: value,
-        undo: () => {
-          updateSolarPanelPoleSpacingById(solarPanel.id, undoableChange.oldValue as number);
-        },
-        redo: () => {
-          updateSolarPanelPoleSpacingById(solarPanel.id, undoableChange.newValue as number);
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      updateSolarPanelPoleSpacingById(solarPanel.id, value ?? 1);
       setUpdateFlag(!updateFlag);
     }
   };
@@ -219,109 +180,101 @@ export const SolarPanelMenu = () => {
             {i18n.t('word.Length', lang)} ...
           </Menu.Item>
 
-          {/* tilt angle */}
-          <SolarPanelTiltAngleInput tiltDialogVisible={tiltDialogVisible} setTiltDialogVisible={setTiltDialogVisible} />
-          <Menu.Item
-            key={'solar-panel-tilt-angle'}
-            style={{ paddingLeft: '40px' }}
-            onClick={() => {
-              setTiltDialogVisible(true);
-            }}
-          >
-            {i18n.t('solarPanelMenu.TiltAngle', lang)} ...
+          {panelNormal && Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z) && (
+            <>
+              {/* tilt angle */}
+              <SolarPanelTiltAngleInput
+                tiltDialogVisible={tiltDialogVisible}
+                setTiltDialogVisible={setTiltDialogVisible}
+              />
+              <Menu.Item
+                key={'solar-panel-tilt-angle'}
+                style={{ paddingLeft: '40px' }}
+                onClick={() => {
+                  setTiltDialogVisible(true);
+                }}
+              >
+                {i18n.t('solarPanelMenu.TiltAngle', lang)} ...
+              </Menu.Item>
+
+              {/* relative azimuth to the parent element */}
+              <SolarPanelRelativeAzimuthInput
+                azimuthDialogVisible={azimuthDialogVisible}
+                setAzimuthDialogVisible={setAzimuthDialogVisible}
+              />
+              <Menu.Item
+                key={'solar-panel-relative-azimuth'}
+                style={{ paddingLeft: '40px' }}
+                onClick={() => {
+                  setAzimuthDialogVisible(true);
+                }}
+              >
+                {i18n.t('solarPanelMenu.RelativeAzimuth', lang)} ...
+              </Menu.Item>
+
+              {/* solar tracker type */}
+              <SolarPanelTrackerSelection
+                trackerDialogVisible={trackerDialogVisible}
+                setTrackerDialogVisible={setTrackerDialogVisible}
+              />
+              <Menu.Item
+                key={'solar-panel-tracker'}
+                style={{ paddingLeft: '40px' }}
+                onClick={() => {
+                  setTrackerDialogVisible(true);
+                }}
+              >
+                {i18n.t('solarPanelMenu.Tracker', lang)} ...
+              </Menu.Item>
+
+              {/* pole height */}
+              <SolarPanelPoleHeightInput
+                poleHeightDialogVisible={poleHeightDialogVisible}
+                setPoleHeightDialogVisible={setPoleHeightDialogVisible}
+              />
+              <Menu.Item
+                key={'solar-panel-pole-height'}
+                style={{ paddingLeft: '40px' }}
+                onClick={() => {
+                  setPoleHeightDialogVisible(true);
+                }}
+              >
+                {i18n.t('solarPanelMenu.PoleHeight', lang)} ...
+              </Menu.Item>
+
+              {/* pole spacing */}
+              <SolarPanelPoleSpacingInput
+                poleSpacingDialogVisible={poleSpacingDialogVisible}
+                setPoleSpacingDialogVisible={setPoleSpacingDialogVisible}
+              />
+              <Menu.Item
+                key={'solar-panel-pole-spacing'}
+                style={{ paddingLeft: '40px' }}
+                onClick={() => {
+                  setPoleSpacingDialogVisible(true);
+                }}
+              >
+                {i18n.t('solarPanelMenu.PoleSpacing', lang)} ...
+              </Menu.Item>
+            </>
+          )}
+
+          {/* draw sun beam or not */}
+          <Menu.Item key={'solar-panel-draw-sun-beam'}>
+            <Checkbox checked={!!solarPanel?.drawSunBeam} onChange={(e) => drawSunBeam(e.target.checked)}>
+              {i18n.t('solarPanelMenu.DrawSunBeam', lang)}
+            </Checkbox>
           </Menu.Item>
 
-          {/* relative azimuth to the parent element */}
-          <SolarPanelRelativeAzimuthInput
-            azimuthDialogVisible={azimuthDialogVisible}
-            setAzimuthDialogVisible={setAzimuthDialogVisible}
-          />
-          <Menu.Item
-            key={'solar-panel-relative-azimuth'}
-            style={{ paddingLeft: '40px' }}
-            onClick={() => {
-              setAzimuthDialogVisible(true);
-            }}
-          >
-            {i18n.t('solarPanelMenu.RelativeAzimuth', lang)} ...
+          {/* show label or not */}
+          <Menu.Item key={'solar-panel-show-label'}>
+            <Checkbox checked={!!solarPanel?.showLabel} onChange={(e) => showLabel(e.target.checked)}>
+              {i18n.t('solarPanelMenu.KeepShowingLabel', lang)}
+            </Checkbox>
           </Menu.Item>
 
-          {/* solar tracker type */}
-          <SolarPanelTrackerSelection
-            trackerDialogVisible={trackerDialogVisible}
-            setTrackerDialogVisible={setTrackerDialogVisible}
-          />
-          <Menu.Item
-            key={'solar-panel-tracker'}
-            style={{ paddingLeft: '40px' }}
-            onClick={() => {
-              setTrackerDialogVisible(true);
-            }}
-          >
-            {i18n.t('solarPanelMenu.Tracker', lang)} ...
-          </Menu.Item>
-
+          {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
           <Menu>
-            {panelNormal && Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z) && (
-              <>
-                {/* pole height */}
-                <Menu.Item key={'solar-panel-pole-height'} style={{ paddingLeft: '40px' }}>
-                  <Space style={{ width: '150px' }}>
-                    {i18n.t('solarPanelMenu.PoleHeight', lang) +
-                      ' (' +
-                      i18n.t('word.MeterAbbreviation', lang) +
-                      ')' +
-                      ':'}
-                  </Space>
-                  <InputNumber
-                    min={0}
-                    max={5}
-                    style={{ width: 120 }}
-                    step={0.1}
-                    precision={2}
-                    value={solarPanel.poleHeight}
-                    formatter={(a) => Number(a).toFixed(2)}
-                    onChange={(value) => updatePoleHeight(value)}
-                  />
-                </Menu.Item>
-
-                {/* pole spacing */}
-                <Menu.Item key={'solar-panel-pole-spacing'} style={{ paddingLeft: '40px' }}>
-                  <Space style={{ width: '150px' }}>
-                    {i18n.t('solarPanelMenu.PoleSpacing', lang) +
-                      ' (' +
-                      i18n.t('word.MeterAbbreviation', lang) +
-                      ')' +
-                      ':'}
-                  </Space>
-                  <InputNumber
-                    min={1}
-                    max={10}
-                    step={1}
-                    style={{ width: 120 }}
-                    precision={2}
-                    value={solarPanel.poleSpacing}
-                    formatter={(a) => Number(a).toFixed(2)}
-                    onChange={(value) => updatePoleSpacing(value)}
-                  />
-                </Menu.Item>
-              </>
-            )}
-
-            {/* draw sun beam or not */}
-            <Menu.Item key={'solar-panel-draw-sun-beam'}>
-              <Checkbox checked={!!solarPanel?.drawSunBeam} onChange={(e) => drawSunBeam(e.target.checked)}>
-                {i18n.t('solarPanelMenu.DrawSunBeam', lang)}
-              </Checkbox>
-            </Menu.Item>
-
-            {/* show label or not */}
-            <Menu.Item key={'solar-panel-show-label'}>
-              <Checkbox checked={!!solarPanel?.showLabel} onChange={(e) => showLabel(e.target.checked)}>
-                {i18n.t('solarPanelMenu.KeepShowingLabel', lang)}
-              </Checkbox>
-            </Menu.Item>
-
             {/* label text */}
             <Menu.Item key={'solar-panel-label-text'} style={{ paddingLeft: '40px' }}>
               <Input

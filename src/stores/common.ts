@@ -163,8 +163,15 @@ export interface CommonStoreState {
   updateSolarPanelTrackerTypeForAll: (trackerType: TrackerType) => void;
 
   updateSolarPanelPoleHeightById: (id: string, poleHeight: number) => void;
+  updateSolarPanelPoleHeightOnSurface: (parentId: string, normal: number[] | undefined, poleHeight: number) => void;
+  updateSolarPanelPoleHeightAboveFoundation: (foundationId: string, poleHeight: number) => void;
+  updateSolarPanelPoleHeightForAll: (poleHeight: number) => void;
 
-  updateSolarPanelPoleSpacingById: (id: string, poleHeight: number) => void;
+  updateSolarPanelPoleSpacingById: (id: string, poleSpacing: number) => void;
+  updateSolarPanelPoleSpacingOnSurface: (parentId: string, normal: number[] | undefined, poleSpacing: number) => void;
+  updateSolarPanelPoleSpacingAboveFoundation: (foundationId: string, poleSpacing: number) => void;
+  updateSolarPanelPoleSpacingForAll: (poleSpacing: number) => void;
+
   updateSolarPanelDrawSunBeamById: (id: string, drawSunBeam: boolean) => void;
 
   objectTypeToAdd: ObjectType;
@@ -982,22 +989,102 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
-                  (e as SolarPanelModel).poleHeight = poleHeight;
+                  const sp = e as SolarPanelModel;
+                  sp.poleHeight = poleHeight;
                   break;
                 }
               }
             });
           },
+          updateSolarPanelPoleHeightAboveFoundation(foundationId, poleHeight) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                  const sp = e as SolarPanelModel;
+                  sp.poleHeight = poleHeight;
+                }
+              }
+            });
+          },
+          updateSolarPanelPoleHeightOnSurface(parentId, normal, poleHeight) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  let found;
+                  if (normal) {
+                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+                  } else {
+                    found = e.parentId === parentId;
+                  }
+                  if (found) {
+                    const sp = e as SolarPanelModel;
+                    sp.poleHeight = poleHeight;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarPanelPoleHeightForAll(poleHeight) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  const sp = e as SolarPanelModel;
+                  sp.poleHeight = poleHeight;
+                }
+              }
+            });
+          },
+
           updateSolarPanelPoleSpacingById(id, poleSpacing) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
-                  (e as SolarPanelModel).poleSpacing = poleSpacing;
+                  const sp = e as SolarPanelModel;
+                  sp.poleSpacing = poleSpacing;
                   break;
                 }
               }
             });
           },
+          updateSolarPanelPoleSpacingAboveFoundation(foundationId, poleSpacing) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                  const sp = e as SolarPanelModel;
+                  sp.poleSpacing = poleSpacing;
+                }
+              }
+            });
+          },
+          updateSolarPanelPoleSpacingOnSurface(parentId, normal, poleSpacing) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  let found;
+                  if (normal) {
+                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+                  } else {
+                    found = e.parentId === parentId;
+                  }
+                  if (found) {
+                    const sp = e as SolarPanelModel;
+                    sp.poleSpacing = poleSpacing;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarPanelPoleSpacingForAll(poleSpacing) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  const sp = e as SolarPanelModel;
+                  sp.poleSpacing = poleSpacing;
+                }
+              }
+            });
+          },
+
           updateSolarPanelDrawSunBeamById(id, drawSunBeam) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
