@@ -50,6 +50,7 @@ const SolarPanelWidthInput = ({
     if (solarPanel) {
       const pvModel = getPvModule(solarPanel.pvModelName) ?? getPvModule('SPR-X21-335-BLK');
       setDx(solarPanel.orientation === Orientation.portrait ? pvModel.width : pvModel.length);
+      setInputWidth(solarPanel.lx);
     }
   }, [solarPanel]);
 

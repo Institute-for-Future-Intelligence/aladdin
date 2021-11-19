@@ -65,7 +65,7 @@ const PvModelSelection = ({
   }, [pvModel]);
 
   useEffect(() => {
-    setSelectedPvModel(solarPanel.pvModelName);
+    setSelectedPvModel(solarPanel?.pvModelName ?? 'SPR-X21-335-BLK');
   }, [solarPanel]);
 
   const onScopeChange = (e: RadioChangeEvent) => {

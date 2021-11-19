@@ -50,6 +50,7 @@ const SolarPanelLengthInput = ({
     if (solarPanel) {
       const pvModel = getPvModule(solarPanel.pvModelName) ?? getPvModule('SPR-X21-335-BLK');
       setDy(solarPanel.orientation === Orientation.portrait ? pvModel.length : pvModel.width);
+      setInputLength(solarPanel.ly);
     }
   }, [solarPanel]);
 
