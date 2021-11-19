@@ -510,7 +510,7 @@ const Foundation = ({
                         const targetWall = getElementById(targetJoint.id) as WallModel;
                         if (targetWall) {
                           const deltaAngle = (Math.PI * 3 - (angle - targetWall.relativeAngle)) % (Math.PI * 2);
-                          if (deltaAngle < Math.PI / 2) {
+                          if (deltaAngle < Math.PI / 2 && deltaAngle > 0) {
                             const tan = Math.tan(deltaAngle);
                             const currLeftOffset = currWall.ly / tan;
                             const targetRightOffset = targetWall.ly / tan;
@@ -520,8 +520,6 @@ const Foundation = ({
                             updateElementById(targetWall.id, {
                               rightOffset: targetRightOffset,
                             });
-                          } else if (deltaAngle < Math.PI) {
-                            // do nothing
                           } else {
                             // gap
                             updateElementById(currWall.id, {
@@ -553,7 +551,7 @@ const Foundation = ({
                         const targetWall = getElementById(currWall.rightJoints[0].id) as WallModel;
                         if (targetWall) {
                           const deltaAngle = (Math.PI * 3 + angle - targetWall.relativeAngle) % (Math.PI * 2);
-                          if (deltaAngle < Math.PI / 2) {
+                          if (deltaAngle < Math.PI / 2 && deltaAngle > 0) {
                             const tan = Math.tan(deltaAngle);
                             const currRightOffset = currWall.ly / tan;
                             const targetLeftOffset = targetWall.ly / tan;
@@ -563,8 +561,6 @@ const Foundation = ({
                             updateElementById(targetWall.id, {
                               leftOffset: targetLeftOffset,
                             });
-                          } else if (deltaAngle < Math.PI) {
-                            // do nothing
                           } else {
                             // gap
                             updateElementById(currWall.id, {

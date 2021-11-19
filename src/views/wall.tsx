@@ -488,6 +488,7 @@ const Wall = ({
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
             onPointerDown={(e) => {
+              if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
               selectMe(id, e, ActionType.Select);
             }}
           />
@@ -500,6 +501,7 @@ const Wall = ({
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
             onPointerDown={(e) => {
+              if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
               selectMe(id, e, ActionType.Select);
             }}
           />
@@ -511,6 +513,7 @@ const Wall = ({
               position={[-x + 0.01, y, 0]}
               rotation={[0, Math.PI / 2, 0]}
               onPointerDown={(e) => {
+                if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
                 selectMe(id, e, ActionType.Select);
               }}
             >
@@ -523,6 +526,7 @@ const Wall = ({
               position={[x - 0.01, y, 0]}
               rotation={[0, Math.PI / 2, 0]}
               onPointerDown={(e) => {
+                if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
                 selectMe(id, e, ActionType.Select);
               }}
             >
@@ -625,6 +629,7 @@ const Wall = ({
               }
             }}
             onPointerDown={(e) => {
+              if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
               setRayCast(e);
 
               if (intersectionPlaneRef.current) {
