@@ -125,6 +125,15 @@ export const updateSolarPanelLyAboveFoundation = (state: CommonStoreState) => st
 
 export const updateSolarPanelLyForAll = (state: CommonStoreState) => state.updateSolarPanelLyForAll;
 
+export const updateSolarPanelTiltAngleById = (state: CommonStoreState) => state.updateSolarPanelTiltAngleById;
+
+export const updateSolarPanelTiltAngleOnSurface = (state: CommonStoreState) => state.updateSolarPanelTiltAngleOnSurface;
+
+export const updateSolarPanelTiltAngleAboveFoundation = (state: CommonStoreState) =>
+  state.updateSolarPanelTiltAngleAboveFoundation;
+
+export const updateSolarPanelTiltAngleForAll = (state: CommonStoreState) => state.updateSolarPanelTiltAngleForAll;
+
 export const updateSolarPanelOrientationById = (state: CommonStoreState) => state.updateSolarPanelOrientationById;
 
 export const updateSolarPanelOrientationOnSurface = (state: CommonStoreState) =>
@@ -141,8 +150,6 @@ export const updateSolarPanelPoleSpacingById = (state: CommonStoreState) => stat
 
 export const updateSolarPanelRelativeAzimuthById = (state: CommonStoreState) =>
   state.updateSolarPanelRelativeAzimuthById;
-
-export const updateSolarPanelTiltAngleById = (state: CommonStoreState) => state.updateSolarPanelTiltAngleById;
 
 export const updateSolarPanelTrackerTypeById = (state: CommonStoreState) => state.updateSolarPanelTrackerTypeById;
 

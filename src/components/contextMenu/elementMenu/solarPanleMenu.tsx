@@ -8,7 +8,7 @@ import { Vector3 } from 'three';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { ObjectType, Orientation, TrackerType } from '../../../types';
+import { ObjectType, TrackerType } from '../../../types';
 import { Util } from '../../../Util';
 import { Copy, Cut } from '../menuItems';
 import i18n from '../../../i18n/i18n';
@@ -18,6 +18,7 @@ import PvModelSelection from './pvModelSelection';
 import SolarPanelOrientationSelection from './solarPanelOrientationSelection';
 import SolarPanelWidthInput from './solarPanelWidthInput';
 import SolarPanelLengthInput from './solarPanelLengthInput';
+import SolarPanelTiltAngleInput from './solarPanelTiltAngleInput';
 
 const { Option } = Select;
 
@@ -26,19 +27,14 @@ export const SolarPanelMenu = () => {
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
-  const updateElementLyById = useStore(Selector.updateElementLyById);
   const updateSolarPanelPoleHeightById = useStore(Selector.updateSolarPanelPoleHeightById);
   const updateSolarPanelPoleSpacingById = useStore(Selector.updateSolarPanelPoleSpacingById);
   const updateSolarPanelRelativeAzimuthById = useStore(Selector.updateSolarPanelRelativeAzimuthById);
-  const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
   const updateSolarPanelTrackerTypeById = useStore(Selector.updateSolarPanelTrackerTypeById);
   const updateSolarPanelDrawSunBeamById = useStore(Selector.updateSolarPanelDrawSunBeamById);
-  const getPvModule = useStore(Selector.getPvModule);
   const addUndoable = useStore(Selector.addUndoable);
 
   const [solarPanel, setSolarPanel] = useState<SolarPanelModel>();
-  const [dx, setDx] = useState<number>(0);
-  const [dy, setDy] = useState<number>(0);
   const [panelNormal, setPanelNormal] = useState<Vector3>();
   const [labelText, setLabelText] = useState<string>('');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -46,44 +42,18 @@ export const SolarPanelMenu = () => {
   const [orientationDialogVisible, setOrientationDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
+  const [tiltDialogVisible, setTiltDialogVisible] = useState(false);
   const element = getSelectedElement();
   const lang = { lng: language };
 
   useEffect(() => {
     if (element && element.type === ObjectType.SolarPanel) {
       const panel = element as SolarPanelModel;
-      const pvModel = getPvModule(panel.pvModelName) ?? getPvModule('SPR-X21-335-BLK');
       setSolarPanel(panel);
-      setDx(panel.orientation === Orientation.portrait ? pvModel.width : pvModel.length);
-      setDy(panel.orientation === Orientation.portrait ? pvModel.length : pvModel.width);
       setPanelNormal(new Vector3().fromArray(element.normal));
       setLabelText(element.label ?? '');
     }
   }, [element]);
-
-  const setLength = (value: number) => {
-    if (solarPanel) {
-      const oldLength = solarPanel.ly;
-      let l = value ?? 2;
-      const n = Math.max(1, Math.ceil((l - dy / 2) / dy));
-      l = n * dy;
-      const undoableChange = {
-        name: 'Set Solar Panel Array Length',
-        timestamp: Date.now(),
-        oldValue: oldLength,
-        newValue: l,
-        undo: () => {
-          updateElementLyById(solarPanel.id, undoableChange.oldValue as number);
-        },
-        redo: () => {
-          updateElementLyById(solarPanel.id, undoableChange.newValue as number);
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      updateElementLyById(solarPanel.id, l);
-      setUpdateFlag(!updateFlag);
-    }
-  };
 
   const showLabel = (checked: boolean) => {
     if (solarPanel) {
@@ -184,27 +154,6 @@ export const SolarPanelMenu = () => {
       } as UndoableChange;
       addUndoable(undoableChange);
       updateSolarPanelRelativeAzimuthById(solarPanel.id, Util.toRadians(value ?? 0));
-      setUpdateFlag(!updateFlag);
-    }
-  };
-
-  const setTiltAngle = (value: number) => {
-    if (solarPanel) {
-      const oldTilt = solarPanel.tiltAngle;
-      const undoableChange = {
-        name: 'Set Solar Panel Tilt Angle',
-        timestamp: Date.now(),
-        oldValue: oldTilt,
-        newValue: value,
-        undo: () => {
-          updateSolarPanelTiltAngleById(solarPanel.id, Util.toRadians(undoableChange.oldValue as number));
-        },
-        redo: () => {
-          updateSolarPanelTiltAngleById(solarPanel.id, Util.toRadians(undoableChange.newValue as number));
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      updateSolarPanelTiltAngleById(solarPanel.id, Util.toRadians(value ?? 0));
       setUpdateFlag(!updateFlag);
     }
   };
@@ -312,24 +261,21 @@ export const SolarPanelMenu = () => {
             {i18n.t('word.Length', lang)} ...
           </Menu.Item>
 
+          {/* tilt angle */}
+          <SolarPanelTiltAngleInput tiltDialogVisible={tiltDialogVisible} setTiltDialogVisible={setTiltDialogVisible} />
+          <Menu.Item
+            key={'solar-panel-tilt-angle'}
+            style={{ paddingLeft: '40px' }}
+            onClick={() => {
+              setTiltDialogVisible(true);
+            }}
+          >
+            {i18n.t('solarPanelMenu.TiltAngle', lang)} ...
+          </Menu.Item>
+
           <Menu>
             {panelNormal && Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z) && (
               <>
-                {/* tilt angle */}
-                <Menu.Item key={'solar-panel-tilt-angle'} style={{ paddingLeft: '40px' }}>
-                  <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.TiltAngle', lang) + ':'}</Space>
-                  <InputNumber
-                    min={-90}
-                    max={90}
-                    style={{ width: 120 }}
-                    precision={1}
-                    value={Util.toDegrees(solarPanel.tiltAngle)}
-                    step={1}
-                    formatter={(a) => Number(a).toFixed(1) + '°'}
-                    onChange={(value) => setTiltAngle(value)}
-                  />
-                </Menu.Item>
-
                 {/* relative azimuth to the parent element */}
                 <Menu.Item key={'solar-panel-relative-azimuth'} style={{ paddingLeft: '40px' }}>
                   <Space style={{ width: '150px' }}>{i18n.t('solarPanelMenu.RelativeAzimuth', lang) + ':'}</Space>

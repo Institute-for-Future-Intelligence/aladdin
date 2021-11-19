@@ -130,6 +130,11 @@ export interface CommonStoreState {
   updateSolarPanelLyAboveFoundation: (foundationId: string, ly: number) => void;
   updateSolarPanelLyForAll: (ly: number) => void;
 
+  updateSolarPanelTiltAngleById: (id: string, tiltAngle: number) => void;
+  updateSolarPanelTiltAngleOnSurface: (parentId: string, normal: number[] | undefined, tiltAngle: number) => void;
+  updateSolarPanelTiltAngleAboveFoundation: (foundationId: string, tiltAngle: number) => void;
+  updateSolarPanelTiltAngleForAll: (tiltAngle: number) => void;
+
   updateSolarPanelOrientationById: (id: string, orientation: Orientation) => void;
   updateSolarPanelOrientationOnSurface: (
     parentId: string,
@@ -143,7 +148,6 @@ export interface CommonStoreState {
 
   updateSolarPanelPoleSpacingById: (id: string, poleHeight: number) => void;
   updateSolarPanelRelativeAzimuthById: (id: string, relativeAzimuth: number) => void;
-  updateSolarPanelTiltAngleById: (id: string, tiltAngle: number) => void;
   updateSolarPanelTrackerTypeById: (id: string, trackerType: TrackerType) => void;
   updateSolarPanelDrawSunBeamById: (id: string, drawSunBeam: boolean) => void;
 
@@ -766,6 +770,56 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          updateSolarPanelTiltAngleById(id, tiltAngle) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                  const sp = e as SolarPanelModel;
+                  sp.tiltAngle = tiltAngle;
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarPanelTiltAngleAboveFoundation(foundationId, tiltAngle) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                  const sp = e as SolarPanelModel;
+                  sp.tiltAngle = tiltAngle;
+                }
+              }
+            });
+          },
+          updateSolarPanelTiltAngleOnSurface(parentId, normal, tiltAngle) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  let found;
+                  if (normal) {
+                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+                  } else {
+                    found = e.parentId === parentId;
+                  }
+                  if (found) {
+                    const sp = e as SolarPanelModel;
+                    sp.tiltAngle = tiltAngle;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarPanelTiltAngleForAll(tiltAngle) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  const sp = e as SolarPanelModel;
+                  sp.tiltAngle = tiltAngle;
+                }
+              }
+            });
+          },
+
           updateSolarPanelOrientationById(id, orientation) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -837,16 +891,6 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
                   (e as SolarPanelModel).relativeAzimuth = relativeAzimuth;
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPanelTiltAngleById(id, tiltAngle) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id) {
-                  (e as SolarPanelModel).tiltAngle = tiltAngle;
                   break;
                 }
               }

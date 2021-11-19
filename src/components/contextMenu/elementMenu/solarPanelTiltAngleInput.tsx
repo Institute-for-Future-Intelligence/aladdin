@@ -8,26 +8,25 @@ import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
-import { ObjectType, Orientation, Scope } from '../../../types';
+import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 
-const SolarPanelLengthInput = ({
-  lengthDialogVisible,
-  setLengthDialogVisible,
+const SolarPanelTiltAngleInput = ({
+  tiltDialogVisible,
+  setTiltDialogVisible,
 }: {
-  lengthDialogVisible: boolean;
-  setLengthDialogVisible: (b: boolean) => void;
+  tiltDialogVisible: boolean;
+  setTiltDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const getPvModule = useStore(Selector.getPvModule);
-  const updateSolarPanelLyById = useStore(Selector.updateSolarPanelLyById);
-  const updateSolarPanelLyOnSurface = useStore(Selector.updateSolarPanelLyOnSurface);
-  const updateSolarPanelLyAboveFoundation = useStore(Selector.updateSolarPanelLyAboveFoundation);
-  const updateSolarPanelLyForAll = useStore(Selector.updateSolarPanelLyForAll);
+  const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
+  const updateSolarPanelTiltAngleOnSurface = useStore(Selector.updateSolarPanelTiltAngleOnSurface);
+  const updateSolarPanelTiltAngleAboveFoundation = useStore(Selector.updateSolarPanelTiltAngleAboveFoundation);
+  const updateSolarPanelTiltAngleForAll = useStore(Selector.updateSolarPanelTiltAngleForAll);
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
@@ -35,10 +34,7 @@ const SolarPanelLengthInput = ({
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
 
   const solarPanel = getSelectedElement() as SolarPanelModel;
-  const [dy, setDy] = useState<number>(0);
-  const [inputLength, setInputLength] = useState<number>(
-    solarPanel.orientation === Orientation.portrait ? solarPanel?.ly ?? 2 : solarPanel?.lx ?? 1,
-  );
+  const [inputTiltAngle, setInputTiltAngle] = useState<number>(solarPanel?.tiltAngle ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -48,9 +44,7 @@ const SolarPanelLengthInput = ({
 
   useEffect(() => {
     if (solarPanel) {
-      const pvModel = getPvModule(solarPanel.pvModelName) ?? getPvModule('SPR-X21-335-BLK');
-      setDy(solarPanel.orientation === Orientation.portrait ? pvModel.length : pvModel.width);
-      setInputLength(solarPanel.ly);
+      setInputTiltAngle(solarPanel.tiltAngle);
     }
   }, [solarPanel]);
 
@@ -59,54 +53,54 @@ const SolarPanelLengthInput = ({
     setUpdateFlag(!updateFlag);
   };
 
-  const setLength = (value: number) => {
+  const setTiltAngle = (value: number) => {
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldLengthsAll = new Map<string, number>();
+        const oldTiltAnglesAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel) {
-            oldLengthsAll.set(elem.id, elem.ly);
+            oldTiltAnglesAll.set(elem.id, (elem as SolarPanelModel).tiltAngle);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Length for All Solar Panel Arrays',
+          name: 'Set Tilt Angle for All Solar Panel Arrays',
           timestamp: Date.now(),
-          oldValues: oldLengthsAll,
+          oldValues: oldTiltAnglesAll,
           newValue: value,
           undo: () => {
-            for (const [id, ly] of undoableChangeAll.oldValues.entries()) {
-              updateSolarPanelLyById(id, ly as number);
+            for (const [id, ta] of undoableChangeAll.oldValues.entries()) {
+              updateSolarPanelTiltAngleById(id, ta as number);
             }
           },
           redo: () => {
-            updateSolarPanelLyForAll(undoableChangeAll.newValue as number);
+            updateSolarPanelTiltAngleForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateSolarPanelLyForAll(value);
+        updateSolarPanelTiltAngleForAll(value);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (solarPanel.foundationId) {
-          const oldLengthsAboveFoundation = new Map<string, number>();
+          const oldTiltAnglesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
-              oldLengthsAboveFoundation.set(elem.id, elem.ly);
+              oldTiltAnglesAboveFoundation.set(elem.id, (elem as SolarPanelModel).tiltAngle);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Length for All Solar Panel Arrays Above Foundation',
+            name: 'Set Tilt Angle for All Solar Panel Arrays Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldLengthsAboveFoundation,
+            oldValues: oldTiltAnglesAboveFoundation,
             newValue: value,
             groupId: solarPanel.foundationId,
             undo: () => {
-              for (const [id, ly] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updateSolarPanelLyById(id, ly as number);
+              for (const [id, ta] of undoableChangeAboveFoundation.oldValues.entries()) {
+                updateSolarPanelTiltAngleById(id, ta as number);
               }
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
-                updateSolarPanelLyAboveFoundation(
+                updateSolarPanelTiltAngleAboveFoundation(
                   undoableChangeAboveFoundation.groupId,
                   undoableChangeAboveFoundation.newValue as number,
                 );
@@ -114,14 +108,14 @@ const SolarPanelLengthInput = ({
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateSolarPanelLyAboveFoundation(solarPanel.foundationId, value);
+          updateSolarPanelTiltAngleAboveFoundation(solarPanel.foundationId, value);
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
         if (solarPanel.parentId) {
           const parent = getElementById(solarPanel.parentId);
           if (parent) {
-            const oldLengthsOnSurface = new Map<string, number>();
+            const oldTiltAnglesOnSurface = new Map<string, number>();
             const isParentCuboid = parent.type === ObjectType.Cuboid;
             if (isParentCuboid) {
               for (const elem of elements) {
@@ -130,32 +124,32 @@ const SolarPanelLengthInput = ({
                   elem.parentId === solarPanel.parentId &&
                   Util.isIdentical(elem.normal, solarPanel.normal)
                 ) {
-                  oldLengthsOnSurface.set(elem.id, elem.ly);
+                  oldTiltAnglesOnSurface.set(elem.id, (elem as SolarPanelModel).tiltAngle);
                 }
               }
             } else {
               for (const elem of elements) {
                 if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                  oldLengthsOnSurface.set(elem.id, elem.ly);
+                  oldTiltAnglesOnSurface.set(elem.id, (elem as SolarPanelModel).tiltAngle);
                 }
               }
             }
             const normal = isParentCuboid ? solarPanel.normal : undefined;
             const undoableChangeOnSurface = {
-              name: 'Set Length for All Solar Panel Arrays on Surface',
+              name: 'Set Tilt Angle for All Solar Panel Arrays on Surface',
               timestamp: Date.now(),
-              oldValues: oldLengthsOnSurface,
+              oldValues: oldTiltAnglesOnSurface,
               newValue: value,
               groupId: solarPanel.parentId,
               normal: normal,
               undo: () => {
-                for (const [id, ly] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateSolarPanelLyById(id, ly as number);
+                for (const [id, ta] of undoableChangeOnSurface.oldValues.entries()) {
+                  updateSolarPanelTiltAngleById(id, ta as number);
                 }
               },
               redo: () => {
                 if (undoableChangeOnSurface.groupId) {
-                  updateSolarPanelLyOnSurface(
+                  updateSolarPanelTiltAngleOnSurface(
                     undoableChangeOnSurface.groupId,
                     undoableChangeOnSurface.normal,
                     undoableChangeOnSurface.newValue as number,
@@ -164,27 +158,27 @@ const SolarPanelLengthInput = ({
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeOnSurface);
-            updateSolarPanelLyOnSurface(solarPanel.parentId, normal, value);
+            updateSolarPanelTiltAngleOnSurface(solarPanel.parentId, normal, value);
           }
         }
         break;
       default:
         if (solarPanel) {
-          const oldLength = solarPanel.ly;
+          const oldTiltAngle = solarPanel.tiltAngle;
           const undoableChange = {
-            name: 'Set Solar Panel Array Length',
+            name: 'Set Solar Panel Array Tilt Angle',
             timestamp: Date.now(),
-            oldValue: oldLength,
+            oldValue: oldTiltAngle,
             newValue: value,
             undo: () => {
-              updateSolarPanelLyById(solarPanel.id, undoableChange.oldValue as number);
+              updateSolarPanelTiltAngleById(solarPanel.id, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateSolarPanelLyById(solarPanel.id, undoableChange.newValue as number);
+              updateSolarPanelTiltAngleById(solarPanel.id, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateSolarPanelLyById(solarPanel.id, value);
+          updateSolarPanelTiltAngleById(solarPanel.id, value);
           setUpdateFlag(!updateFlag);
         }
     }
@@ -204,32 +198,25 @@ const SolarPanelLengthInput = ({
     }
   };
 
-  const panelize = (value: number) => {
-    let l = value ?? 1;
-    const n = Math.max(1, Math.ceil((l - dy / 2) / dy));
-    l = n * dy;
-    return l;
-  };
-
   return (
     <>
       <Modal
         width={550}
-        visible={lengthDialogVisible}
+        visible={tiltDialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('word.Length', lang)}
+            {i18n.t('solarPanelMenu.TiltAngle', lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
-              setLength(inputLength);
+              setTiltAngle(inputTiltAngle);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -237,8 +224,8 @@ const SolarPanelLengthInput = ({
           <Button
             key="Cancel"
             onClick={() => {
-              setInputLength(solarPanel.ly);
-              setLengthDialogVisible(false);
+              setInputTiltAngle(solarPanel.tiltAngle);
+              setTiltDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -247,8 +234,8 @@ const SolarPanelLengthInput = ({
             key="OK"
             type="primary"
             onClick={() => {
-              setLength(inputLength);
-              setLengthDialogVisible(false);
+              setTiltAngle(inputTiltAngle);
+              setTiltDialogVisible(false);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -256,8 +243,8 @@ const SolarPanelLengthInput = ({
         ]}
         // this must be specified for the x button at the upper-right corner to work
         onCancel={() => {
-          setInputLength(solarPanel.ly);
-          setLengthDialogVisible(false);
+          setInputTiltAngle(solarPanel.tiltAngle);
+          setTiltDialogVisible(false);
         }}
         destroyOnClose={false}
         modalRender={(modal) => (
@@ -269,25 +256,22 @@ const SolarPanelLengthInput = ({
         <Row gutter={6}>
           <Col className="gutter-row" span={6}>
             <InputNumber
-              min={dy}
-              max={100 * dy}
-              step={dy}
+              min={-90}
+              max={90}
               style={{ width: 120 }}
-              precision={2}
-              value={inputLength}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputLength(panelize(value))}
+              precision={1}
+              value={Util.toDegrees(inputTiltAngle)}
+              step={1}
+              formatter={(a) => Number(a).toFixed(1) + '°'}
+              onChange={(value) => setInputTiltAngle(Util.toRadians(value))}
               onPressEnter={(event) => {
-                setLength(inputLength);
-                setLengthDialogVisible(false);
+                setTiltAngle(inputTiltAngle);
+                setTiltDialogVisible(false);
               }}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {Math.round(inputLength / dy) + ' ' + i18n.t('solarPanelMenu.PanelsLong', lang)}
+              {i18n.t('solarPanelMenu.SouthFacingIsPositive', lang)}
             </div>
-          </Col>
-          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-            {i18n.t('word.MeterAbbreviation', lang)}
           </Col>
           <Col
             className="gutter-row"
@@ -313,4 +297,4 @@ const SolarPanelLengthInput = ({
   );
 };
 
-export default SolarPanelLengthInput;
+export default SolarPanelTiltAngleInput;

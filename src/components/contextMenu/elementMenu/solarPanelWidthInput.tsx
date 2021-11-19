@@ -282,7 +282,7 @@ const SolarPanelWidthInput = ({
                 setWidthDialogVisible(false);
               }}
             />
-            <div style={{ paddingTop: '20px', textAlign: 'center' }}>
+            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {Math.round(inputWidth / dx) + ' ' + i18n.t('solarPanelMenu.PanelsWide', lang)}
             </div>
           </Col>
