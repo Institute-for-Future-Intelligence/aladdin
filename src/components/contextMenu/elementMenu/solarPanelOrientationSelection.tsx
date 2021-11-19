@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
@@ -47,6 +47,12 @@ const SolarPanelOrientationSelection = ({
   const dragRef = useRef<HTMLDivElement | null>(null);
 
   const lang = { lng: language };
+
+  useEffect(() => {
+    if (solarPanel) {
+      setSelectedOrientation(solarPanel.orientation);
+    }
+  }, [solarPanel]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setSolarPanelActionScope(e.target.value);
