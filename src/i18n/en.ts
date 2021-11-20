@@ -168,6 +168,10 @@ export const i18n_en = {
       ImageOnGround: 'Image on Ground',
       RemoveAllTrees: 'Remove All Trees',
       RemoveAllPeople: 'Remove All People',
+      RemoveAllFoundations: 'Remove All Foundations',
+      DoYouReallyWantToRemoveAllPeople: 'Do you really want to remove all the people',
+      DoYouReallyWantToRemoveAllTrees: 'Do you really want to remove all the trees',
+      DoYouReallyWantToRemoveAllFoundations: 'Do you really want to remove all the foundations',
     },
 
     foundationMenu: {

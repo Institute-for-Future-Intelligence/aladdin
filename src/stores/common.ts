@@ -1285,7 +1285,13 @@ export const useStore = create<CommonStoreState>(
           },
           removeElementsByType(type: ObjectType) {
             immerSet((state: CommonStoreState) => {
-              state.elements = state.elements.filter((x) => x.type !== type);
+              if (type === ObjectType.Foundation) {
+                state.elements = state.elements.filter((x) => {
+                  return x.type !== ObjectType.Foundation && !x.foundationId;
+                });
+              } else {
+                state.elements = state.elements.filter((x) => x.type !== type);
+              }
             });
           },
           countElementsByType(type: ObjectType) {

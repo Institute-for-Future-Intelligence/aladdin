@@ -29,6 +29,7 @@ export const GroundMenu = () => {
 
   const treeCount = countElementsByType(ObjectType.Tree);
   const humanCount = countElementsByType(ObjectType.Human);
+  const foundationCount = countElementsByType(ObjectType.Foundation);
 
   const lang = { lng: language };
 
@@ -59,7 +60,7 @@ export const GroundMenu = () => {
           key={'ground-remove-all-humans'}
           onClick={() => {
             Modal.confirm({
-              title: 'Do you really want to remove all ' + humanCount + ' people?',
+              title: i18n.t('groundMenu.DoYouReallyWantToRemoveAllPeople', lang) + ' (' + humanCount + ')?',
               icon: <ExclamationCircleOutlined />,
               onOk: () => {
                 const removed = elements.filter((e) => e.type === ObjectType.Human);
@@ -92,7 +93,7 @@ export const GroundMenu = () => {
           key={'ground-remove-all-trees'}
           onClick={() => {
             Modal.confirm({
-              title: 'Do you really want to remove all ' + treeCount + ' trees?',
+              title: i18n.t('groundMenu.DoYouReallyWantToRemoveAllTrees', lang) + ' (' + treeCount + ')?',
               icon: <ExclamationCircleOutlined />,
               onOk: () => {
                 const removed = elements.filter((e) => e.type === ObjectType.Tree);
@@ -117,6 +118,39 @@ export const GroundMenu = () => {
           }}
         >
           {i18n.t('groundMenu.RemoveAllTrees', lang)} ({treeCount})
+        </Menu.Item>
+      )}
+      {foundationCount > 0 && (
+        <Menu.Item
+          style={{ paddingLeft: '36px' }}
+          key={'ground-remove-all-foundations'}
+          onClick={() => {
+            Modal.confirm({
+              title: i18n.t('groundMenu.DoYouReallyWantToRemoveAllFoundations', lang) + ' (' + foundationCount + ')?',
+              icon: <ExclamationCircleOutlined />,
+              onOk: () => {
+                const removed = elements.filter((e) => e.type === ObjectType.Foundation);
+                removeElementsByType(ObjectType.Foundation);
+                const removedElements = JSON.parse(JSON.stringify(removed));
+                const undoableRemoveAll = {
+                  name: 'Remove All',
+                  timestamp: Date.now(),
+                  removedElements: removedElements,
+                  undo: () => {
+                    setCommonStore((state) => {
+                      state.elements.push(...undoableRemoveAll.removedElements);
+                    });
+                  },
+                  redo: () => {
+                    removeElementsByType(ObjectType.Foundation);
+                  },
+                } as UndoableRemoveAll;
+                addUndoable(undoableRemoveAll);
+              },
+            });
+          }}
+        >
+          {i18n.t('groundMenu.RemoveAllFoundations', lang)} ({foundationCount})
         </Menu.Item>
       )}
       <Menu>

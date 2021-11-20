@@ -168,6 +168,10 @@ export const i18n_zh_tw = {
       ImageOnGround: '地面顯示圖像',
       RemoveAllTrees: '刪除所有樹木',
       RemoveAllPeople: '删除所有人物',
+      RemoveAllFoundations: '删除所有地基',
+      DoYouReallyWantToRemoveAllPeople: '你確定刪除所有人物嗎',
+      DoYouReallyWantToRemoveAllTrees: '你確定刪除所有樹木嗎',
+      DoYouReallyWantToRemoveAllFoundations: '你確定刪除所有地基嗎',
     },
 
     foundationMenu: {
