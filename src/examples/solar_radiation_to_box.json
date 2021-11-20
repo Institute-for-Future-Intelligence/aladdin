@@ -127,7 +127,8 @@
       "cy": 0.16878784903489202,
       "id": "iqgmPt2Nm3r4bW8A7g6DJy",
       "label": "Top",
-      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT"
+      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT",
+      "foundationId": "2QtCNEmEF6Mcs3vbbR96ZT"
     },
     {
       "label": "North",
@@ -151,7 +152,8 @@
       "lx": 0.1,
       "lz": 0.01,
       "cx": -0.0014535790327764226,
-      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT"
+      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT",
+      "foundationId": "2QtCNEmEF6Mcs3vbbR96ZT"
     },
     {
       "normal": [
@@ -175,7 +177,8 @@
       "type": "Sensor",
       "cx": 0.5000000161579515,
       "selected": false,
-      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT"
+      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT",
+      "foundationId": "2QtCNEmEF6Mcs3vbbR96ZT"
     },
     {
       "lz": 0.01,
@@ -199,7 +202,8 @@
       "type": "Sensor",
       "label": "South",
       "lx": 0.1,
-      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT"
+      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT",
+      "foundationId": "2QtCNEmEF6Mcs3vbbR96ZT"
     },
     {
       "selected": false,
@@ -223,7 +227,8 @@
       "showLabel": true,
       "lz": 0.01,
       "lx": 0.1,
-      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT"
+      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT",
+      "foundationId": "2QtCNEmEF6Mcs3vbbR96ZT"
     }
   ],
   "view": {

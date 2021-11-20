@@ -1,6 +1,6 @@
 {
-  "docid": "buiAxEVEG2UnniK3sQpppy",
-  "timestamp": 1636768740772,
+  "docid": "bJH1mgJA6tf2e9cmk4tjKV",
+  "timestamp": 1637366974246,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -1601,6 +1601,106 @@
       "selected": false,
       "evergreen": true,
       "parentId": "Ground"
+    },
+    {
+      "type": "Window",
+      "cx": 0,
+      "cy": 0,
+      "cz": -0.0625,
+      "lx": 0.8,
+      "ly": 0,
+      "lz": 0.875,
+      "selected": false,
+      "showLabel": false,
+      "color": "#477395",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "egzW42i4cfqWFAkG1qgDuE",
+      "foundationId": "gKtCDo6vdsdKsNWyrYnEMY",
+      "id": "gKnaSBVyEzGizYo4SKg5Cp"
+    },
+    {
+      "type": "Window",
+      "cx": -6.832141690000964e-17,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0.9230769230769229,
+      "ly": 0,
+      "lz": 0.75,
+      "selected": false,
+      "showLabel": false,
+      "color": "#477395",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "vDTY9T9My3NuhgtQGtJGKE",
+      "foundationId": "gKtCDo6vdsdKsNWyrYnEMY",
+      "id": "e5SGTYPrtaLbNTAiCDYFuE"
+    },
+    {
+      "type": "Window",
+      "cx": 0,
+      "cy": 0,
+      "cz": -0.0625,
+      "lx": 0.8,
+      "ly": 0,
+      "lz": 0.875,
+      "selected": false,
+      "showLabel": false,
+      "color": "#477395",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "sqyiw2bkXbikHyRGWUrNw5",
+      "foundationId": "gKtCDo6vdsdKsNWyrYnEMY",
+      "id": "6DYShcBUxPMuT5UL6egqgk"
+    },
+    {
+      "type": "Window",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0.9230769230769231,
+      "ly": 0,
+      "lz": 0.75,
+      "selected": false,
+      "showLabel": false,
+      "color": "#477395",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "oKhEE6pqiRVMDi3gyzbuwY",
+      "foundationId": "gKtCDo6vdsdKsNWyrYnEMY",
+      "id": "4oMgdGwUtSdi8cLpTdv4cP"
     }
   ],
   "view": {
@@ -1634,9 +1734,9 @@
     "yearlyLightSensorPanelX": -905,
     "showHeliodonPanel": false,
     "cameraPosition": {
-      "x": 19.849598634980747,
-      "y": 16.43168664164982,
-      "z": 4.363194502474513
+      "x": 20.923058974204416,
+      "y": 15.707231603829056,
+      "z": 3.217948586752983
     },
     "panCenter": {
       "x": 4.68638225767228,

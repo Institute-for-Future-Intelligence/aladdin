@@ -95,6 +95,7 @@
         1
       ],
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
+      "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
       "pvModelName": "SPR-X21-335-BLK"
     },
     {
@@ -128,6 +129,7 @@
       "cy": -0.10573019166804135,
       "orientation": "Portrait",
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
+      "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
       "pvModelName": "SPR-X21-335-BLK"
     },
     {
@@ -161,6 +163,7 @@
       "ly": 1.558,
       "cz": 0.5000000074505806,
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
+      "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
       "pvModelName": "SPR-X21-335-BLK"
     },
     {
@@ -194,6 +197,7 @@
       "cz": 0.5000000074506161,
       "type": "Solar Panel",
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
+      "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
       "pvModelName": "SPR-X21-335-BLK"
     }
   ],

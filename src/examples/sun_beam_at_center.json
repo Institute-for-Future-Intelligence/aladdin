@@ -115,6 +115,7 @@
       "tiltAngle": 0,
       "id": "5QH64n4W7t2nwnWmzmGyMg",
       "parentId": "73EHGXQZFsvacbt1n2ck3h",
+      "foundationId": "73EHGXQZFsvacbt1n2ck3h",
       "pvModelName": "SPR-X21-335-BLK"
     },
     {
@@ -138,7 +139,8 @@
         0,
         0
       ],
-      "parentId": "73EHGXQZFsvacbt1n2ck3h"
+      "parentId": "73EHGXQZFsvacbt1n2ck3h",
+      "foundationId": "73EHGXQZFsvacbt1n2ck3h"
     }
   ],
   "view": {

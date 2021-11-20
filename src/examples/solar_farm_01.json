@@ -96,6 +96,7 @@
       "drawSunBeam": true,
       "ly": 2.092,
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "pvModelName": "SPR-X21-335-BLK"
     },
     {
@@ -129,6 +130,7 @@
       ],
       "trackerType": "None",
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "pvModelName": "SPR-X21-335-BLK"
     },
     {
@@ -162,6 +164,7 @@
       "tiltAngle": 0.5235987755982988,
       "id": "mAv2C19w4RJA4u6knYxU3u",
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "pvModelName": "SPR-X21-335-BLK"
     },
     {
@@ -195,6 +198,7 @@
       ],
       "relativeAzimuth": 0,
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "pvModelName": "SPR-X20-250-BLK"
     },
     {
@@ -228,6 +232,7 @@
       "cy": 0.35915527919266454,
       "drawSunBeam": true,
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "pvModelName": "SPR-X20-250-BLK"
     }
   ],
