@@ -5,7 +5,6 @@
 import React from 'react';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import ReshapeElementMenu from '../../reshapeElementMenu';
 import { Copy, Cut, Lock } from '../menuItems';
 
 export const WindowMenu = () => {
@@ -17,19 +16,6 @@ export const WindowMenu = () => {
       <Copy />
       <Cut />
       <Lock />
-      {selectedElement && (
-        <ReshapeElementMenu
-          elementId={selectedElement.id}
-          name={'window'}
-          maxLength={10}
-          maxHeight={10}
-          adjustAngle={false}
-          adjustWidth={false}
-          lengthStep={0.1}
-          heigthStep={0.1}
-          style={{ paddingLeft: '20px' }}
-        />
-      )}
     </>
   );
 };
