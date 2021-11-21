@@ -11,27 +11,26 @@ import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { FoundationModel } from '../../../models/FoundationModel';
-import { Util } from '../../../Util';
+import { CuboidModel } from '../../../models/CuboidModel';
 
-const FoundationAzimuthInput = ({
-  azimuthDialogVisible,
-  setAzimuthDialogVisible,
+const CuboidHeightInput = ({
+  heightDialogVisible,
+  setHeightDialogVisible,
 }: {
-  azimuthDialogVisible: boolean;
-  setAzimuthDialogVisible: (b: boolean) => void;
+  heightDialogVisible: boolean;
+  setHeightDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateElementRotationById = useStore(Selector.updateElementRotationById);
-  const updateElementRotationForAll = useStore(Selector.updateElementRotationForAll);
+  const updateElementLzById = useStore(Selector.updateElementLzById);
+  const updateElementLzForAll = useStore(Selector.updateElementLzForAll);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
-  const foundationActionScope = useStore(Selector.foundationActionScope);
-  const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
+  const cuboidActionScope = useStore(Selector.cuboidActionScope);
+  const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
 
-  const foundation = getSelectedElement() as FoundationModel;
-  const [inputAzimuth, setInputAzimuth] = useState<number>(foundation?.rotation[2] ?? 0);
+  const cuboid = getSelectedElement() as CuboidModel;
+  const [inputLz, setInputLz] = useState<number>(cuboid?.lz ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -40,59 +39,59 @@ const FoundationAzimuthInput = ({
   const lang = { lng: language };
 
   useEffect(() => {
-    if (foundation) {
-      setInputAzimuth(foundation.rotation[2]);
+    if (cuboid) {
+      setInputLz(cuboid.lz);
     }
-  }, [foundation]);
+  }, [cuboid]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setFoundationActionScope(e.target.value);
+    setCuboidActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
-  const setAzimuth = (value: number) => {
-    switch (foundationActionScope) {
+  const setLz = (value: number) => {
+    switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldAzimuthsAll = new Map<string, number>();
+        const oldLzsAll = new Map<string, number>();
         for (const elem of elements) {
-          if (elem.type === ObjectType.Foundation) {
-            oldAzimuthsAll.set(elem.id, elem.rotation[2]);
+          if (elem.type === ObjectType.Cuboid) {
+            oldLzsAll.set(elem.id, elem.lz);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Azimuth for All Foundations',
+          name: 'Set Height for All Cuboids',
           timestamp: Date.now(),
-          oldValues: oldAzimuthsAll,
+          oldValues: oldLzsAll,
           newValue: value,
           undo: () => {
-            for (const [id, az] of undoableChangeAll.oldValues.entries()) {
-              updateElementRotationById(id, 0, 0, az as number);
+            for (const [id, lz] of undoableChangeAll.oldValues.entries()) {
+              updateElementLzById(id, lz as number);
             }
           },
           redo: () => {
-            updateElementRotationForAll(ObjectType.Foundation, 0, 0, undoableChangeAll.newValue as number);
+            updateElementLzForAll(ObjectType.Cuboid, undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateElementRotationForAll(ObjectType.Foundation, 0, 0, value);
+        updateElementLzForAll(ObjectType.Cuboid, value);
         break;
       default:
-        if (foundation) {
-          const oldAzimuth = foundation.rotation[2];
+        if (cuboid) {
+          const oldLz = cuboid.lz;
           const undoableChange = {
-            name: 'Set Foundation Azimuth',
+            name: 'Set Cuboid Width',
             timestamp: Date.now(),
-            oldValue: oldAzimuth,
+            oldValue: oldLz,
             newValue: value,
             undo: () => {
-              updateElementRotationById(foundation.id, 0, 0, undoableChange.oldValue as number);
+              updateElementLzById(cuboid.id, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateElementRotationById(foundation.id, 0, 0, undoableChange.newValue as number);
+              updateElementLzById(cuboid.id, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateElementRotationById(foundation.id, 0, 0, value);
+          updateElementLzById(cuboid.id, value);
           setUpdateFlag(!updateFlag);
         }
     }
@@ -116,21 +115,21 @@ const FoundationAzimuthInput = ({
     <>
       <Modal
         width={550}
-        visible={azimuthDialogVisible}
+        visible={heightDialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('word.Azimuth', lang)}
+            {i18n.t('word.Height', lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
-              setAzimuth(inputAzimuth);
+              setLz(inputLz);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -138,8 +137,8 @@ const FoundationAzimuthInput = ({
           <Button
             key="Cancel"
             onClick={() => {
-              setInputAzimuth(foundation?.rotation[2]);
-              setAzimuthDialogVisible(false);
+              setInputLz(cuboid?.lz);
+              setHeightDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -148,8 +147,8 @@ const FoundationAzimuthInput = ({
             key="OK"
             type="primary"
             onClick={() => {
-              setAzimuth(inputAzimuth);
-              setAzimuthDialogVisible(false);
+              setLz(inputLz);
+              setHeightDialogVisible(false);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -157,8 +156,8 @@ const FoundationAzimuthInput = ({
         ]}
         // this must be specified for the x button at the upper-right corner to work
         onCancel={() => {
-          setInputAzimuth(foundation?.rotation[2]);
-          setAzimuthDialogVisible(false);
+          setInputLz(cuboid?.lz);
+          setHeightDialogVisible(false);
         }}
         destroyOnClose={false}
         modalRender={(modal) => (
@@ -170,32 +169,32 @@ const FoundationAzimuthInput = ({
         <Row gutter={6}>
           <Col className="gutter-row" span={6}>
             <InputNumber
-              min={-180}
-              max={180}
+              min={1}
+              max={1000}
               style={{ width: 120 }}
               step={0.5}
               precision={1}
-              value={Util.toDegrees(inputAzimuth)}
-              formatter={(a) => Number(a).toFixed(1) + '°'}
-              onChange={(value) => setInputAzimuth(Util.toRadians(value))}
+              value={inputLz}
+              formatter={(a) => Number(a).toFixed(1)}
+              onChange={(value) => setInputLz(value)}
               onPressEnter={(event) => {
-                setAzimuth(inputAzimuth);
-                setAzimuthDialogVisible(false);
+                setLz(inputLz);
+                setHeightDialogVisible(false);
               }}
             />
+          </Col>
+          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+            {i18n.t('word.MeterAbbreviation', lang)}
           </Col>
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={16}
           >
-            <Radio.Group onChange={onScopeChange} value={foundationActionScope}>
+            <Radio.Group onChange={onScopeChange} value={cuboidActionScope}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
-                <Radio value={Scope.AllConnectedObjects}>
-                  {i18n.t('foundationMenu.AllConnectedFoundations', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
+                <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.OnlyThisCuboid', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('cuboidMenu.AllCuboids', lang)}</Radio>
               </Space>
             </Radio.Group>
           </Col>
@@ -205,4 +204,4 @@ const FoundationAzimuthInput = ({
   );
 };
 
-export default FoundationAzimuthInput;
+export default CuboidHeightInput;

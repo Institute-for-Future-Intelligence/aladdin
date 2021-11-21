@@ -169,10 +169,10 @@ const FoundationHeightInput = ({
         <Row gutter={6}>
           <Col className="gutter-row" span={6}>
             <InputNumber
-              min={1}
-              max={1000}
+              min={0.1}
+              max={10}
               style={{ width: 120 }}
-              step={0.5}
+              step={0.1}
               precision={1}
               value={inputLz}
               formatter={(a) => Number(a).toFixed(1)}

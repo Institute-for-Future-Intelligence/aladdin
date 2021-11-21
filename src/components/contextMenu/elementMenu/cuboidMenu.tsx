@@ -10,10 +10,13 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { ObjectType } from '../../../types';
-import ReshapeElementMenu from '../../reshapeElementMenu';
 import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 import CuboidColorSelection from './cuboidColorSelection';
+import CuboidWidthInput from './cuboidWidthInput';
+import CuboidLengthInput from './cuboidLengthInput';
+import CuboidHeightInput from './cuboidHeightInput';
+import CuboidAzimuthInput from './cuboidAzimuthInput';
 
 export const CuboidMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -28,6 +31,10 @@ export const CuboidMenu = () => {
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
 
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
+  const [widthDialogVisible, setWidthDialogVisible] = useState(false);
+  const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
+  const [heightDialogVisible, setHeightDialogVisible] = useState(false);
+  const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
   const sensorCountCuboid = selectedElement ? countAllChildElementsByType(selectedElement.id, ObjectType.Sensor) : 0;
   const solarRackCountCuboid = selectedElement
@@ -42,16 +49,7 @@ export const CuboidMenu = () => {
       <Copy />
       <Cut />
       <Lock />
-      <CuboidColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
-      <Menu.Item
-        key={'cuboid-color'}
-        style={{ paddingLeft: '36px' }}
-        onClick={() => {
-          setColorDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Color', lang)} ...
-      </Menu.Item>
+
       {(sensorCountCuboid > 0 || solarPanelCountCuboid > 0) && contextMenuObjectType && (
         <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
           {sensorCountCuboid > 0 && (
@@ -150,9 +148,64 @@ export const CuboidMenu = () => {
           )}
         </SubMenu>
       )}
-      {selectedElement && contextMenuObjectType && (
-        <ReshapeElementMenu elementId={selectedElement.id} name={'cuboid'} style={{ paddingLeft: '20px' }} />
-      )}
+
+      <CuboidColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
+      <Menu.Item
+        key={'cuboid-color'}
+        style={{ paddingLeft: '36px' }}
+        onClick={() => {
+          setColorDialogVisible(true);
+        }}
+      >
+        {i18n.t('word.Color', lang)} ...
+      </Menu.Item>
+
+      <CuboidWidthInput widthDialogVisible={widthDialogVisible} setWidthDialogVisible={setWidthDialogVisible} />
+      <Menu.Item
+        key={'cuboid-width'}
+        style={{ paddingLeft: '36px' }}
+        onClick={() => {
+          setWidthDialogVisible(true);
+        }}
+      >
+        {i18n.t('word.Width', lang)} ...
+      </Menu.Item>
+
+      <CuboidLengthInput lengthDialogVisible={lengthDialogVisible} setLengthDialogVisible={setLengthDialogVisible} />
+      <Menu.Item
+        key={'cuboid-length'}
+        style={{ paddingLeft: '36px' }}
+        onClick={() => {
+          setLengthDialogVisible(true);
+        }}
+      >
+        {i18n.t('word.Length', lang)} ...
+      </Menu.Item>
+
+      <CuboidHeightInput heightDialogVisible={heightDialogVisible} setHeightDialogVisible={setHeightDialogVisible} />
+      <Menu.Item
+        key={'cuboid-height'}
+        style={{ paddingLeft: '36px' }}
+        onClick={() => {
+          setHeightDialogVisible(true);
+        }}
+      >
+        {i18n.t('word.Height', lang)} ...
+      </Menu.Item>
+
+      <CuboidAzimuthInput
+        azimuthDialogVisible={azimuthDialogVisible}
+        setAzimuthDialogVisible={setAzimuthDialogVisible}
+      />
+      <Menu.Item
+        key={'cuboid-azimuth'}
+        style={{ paddingLeft: '36px' }}
+        onClick={() => {
+          setAzimuthDialogVisible(true);
+        }}
+      >
+        {i18n.t('word.Azimuth', lang)} ...
+      </Menu.Item>
     </Menu.ItemGroup>
   );
 };
