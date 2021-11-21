@@ -182,6 +182,9 @@ export const i18n_zh_cn = {
       DoYouReallyWantToRemoveAllSolarPanelsOnFoundation: '你确定删除此地基上的所有光伏板吗',
       Sensors: '传感器',
       DoYouReallyWantToRemoveAllSensorsOnFoundation: '你确定删除此地基上的所有传感器吗',
+      OnlyThisFoundation: '只这块地基',
+      AllConnectedFoundations: '所有相连的地基',
+      AllFoundations: '所有地基',
     },
 
     cuboidMenu: {

@@ -101,6 +101,9 @@ export interface CommonStoreState {
   updateElementLabelById: (id: string, label: string) => void;
   updateElementShowLabelById: (id: string, showLabel: boolean) => void;
 
+  updateElementColorById: (id: string, color: string) => void;
+  updateElementColorForAll: (type: ObjectType, color: string) => void;
+
   updateElementLxById: (id: string, lx: number) => void;
   updateElementLxOnSurface: (type: ObjectType, parentId: string, normal: number[] | undefined, lx: number) => void;
   updateElementLxAboveFoundation: (type: ObjectType, foundationId: string, lx: number) => void;
@@ -110,6 +113,15 @@ export interface CommonStoreState {
   updateElementLyOnSurface: (type: ObjectType, parentId: string, normal: number[] | undefined, ly: number) => void;
   updateElementLyAboveFoundation: (type: ObjectType, foundationId: string, ly: number) => void;
   updateElementLyForAll: (type: ObjectType, ly: number) => void;
+
+  updateElementLzById: (id: string, lz: number) => void;
+  updateElementLzOnSurface: (type: ObjectType, parentId: string, normal: number[] | undefined, lz: number) => void;
+  updateElementLzAboveFoundation: (type: ObjectType, foundationId: string, lz: number) => void;
+  updateElementLzForAll: (type: ObjectType, lz: number) => void;
+
+  // for foundations
+  foundationActionScope: Scope;
+  setFoundationActionScope: (scope: Scope) => void;
 
   // for solar panels
   solarPanelActionScope: Scope;
@@ -477,6 +489,27 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          // color
+          updateElementColorById(id, color) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  e.color = color;
+                  break;
+                }
+              }
+            });
+          },
+          updateElementColorForAll(type, color) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type) {
+                  e.color = color;
+                }
+              }
+            });
+          },
+
           // lx
           updateElementLxById(id, lx) {
             immerSet((state: CommonStoreState) => {
@@ -568,6 +601,61 @@ export const useStore = create<CommonStoreState>(
                   e.ly = ly;
                 }
               }
+            });
+          },
+
+          // lz
+          updateElementLzById(id, lz) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  e.lz = lz;
+                  break;
+                }
+              }
+            });
+          },
+          updateElementLzAboveFoundation(type, foundationId, lz) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && e.foundationId === foundationId) {
+                  e.lz = lz;
+                }
+              }
+            });
+          },
+          updateElementLzOnSurface(type, parentId, normal, lz) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type) {
+                  let found;
+                  if (normal) {
+                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+                  } else {
+                    found = e.parentId === parentId;
+                  }
+                  if (found) {
+                    e.lz = lz;
+                  }
+                }
+              }
+            });
+          },
+          updateElementLzForAll(type, lz) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type) {
+                  e.lz = lz;
+                }
+              }
+            });
+          },
+
+          // for solar panels
+          foundationActionScope: Scope.OnlyThisObject,
+          setFoundationActionScope(scope: Scope) {
+            immerSet((state: CommonStoreState) => {
+              state.foundationActionScope = scope;
             });
           },
 

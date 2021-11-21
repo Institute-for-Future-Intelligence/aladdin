@@ -2,9 +2,9 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Menu, Modal } from 'antd';
-import { ColorPicker, Copy, Cut, Lock, Paste } from '../menuItems';
+import { Copy, Cut, Lock, Paste } from '../menuItems';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import ReshapeElementMenu from '../../reshapeElementMenu';
@@ -13,6 +13,7 @@ import * as Selector from '../../../stores/selector';
 import { ObjectType } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
+import FoundationColorSelection from './foundationColorSelection';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -24,6 +25,8 @@ export const FoundationMenu = () => {
   const countAllChildSolarPanels = useStore(Selector.countAllChildSolarPanels);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
+
+  const [colorDialogVisible, setColorDialogVisible] = useState(false);
 
   const selectedElement = getSelectedElement();
   const sensorCountFoundation = selectedElement
@@ -140,7 +143,16 @@ export const FoundationMenu = () => {
           )}
         </SubMenu>
       )}
-      <ColorPicker />
+      <FoundationColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
+      <Menu.Item
+        key={'foundation-color'}
+        style={{ paddingLeft: '36px' }}
+        onClick={() => {
+          setColorDialogVisible(true);
+        }}
+      >
+        {i18n.t('word.Color', lang)} ...
+      </Menu.Item>
       {selectedElement && contextMenuObjectType && (
         <ReshapeElementMenu elementId={selectedElement.id} name={'foundation'} style={{ paddingLeft: '20px' }} />
       )}

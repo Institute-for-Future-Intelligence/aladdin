@@ -183,6 +183,9 @@ export const i18n_en = {
         'Do you really want to remove all the solar panels on this foundation',
       Sensors: 'Sensors',
       DoYouReallyWantToRemoveAllSensorsOnFoundation: 'Do you really want to remove all the sensors on this foundation',
+      OnlyThisFoundation: 'Only This Foundation',
+      AllConnectedFoundations: 'All Connected Foundations',
+      AllFoundations: 'All Foundations',
     },
 
     cuboidMenu: {

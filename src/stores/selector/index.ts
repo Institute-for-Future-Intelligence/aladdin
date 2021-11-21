@@ -96,6 +96,22 @@ export const updateElementLyAboveFoundation = (state: CommonStoreState) => state
 
 export const updateElementLyForAll = (state: CommonStoreState) => state.updateElementLyForAll;
 
+export const updateElementLzById = (state: CommonStoreState) => state.updateElementLzById;
+
+export const updateElementLzOnSurface = (state: CommonStoreState) => state.updateElementLzOnSurface;
+
+export const updateElementLzAboveFoundation = (state: CommonStoreState) => state.updateElementLzAboveFoundation;
+
+export const updateElementLzForAll = (state: CommonStoreState) => state.updateElementLzForAll;
+
+export const updateElementColorById = (state: CommonStoreState) => state.updateElementColorById;
+
+export const updateElementColorForAll = (state: CommonStoreState) => state.updateElementColorForAll;
+
+export const foundationActionScope = (state: CommonStoreState) => state.foundationActionScope;
+
+export const setFoundationActionScope = (state: CommonStoreState) => state.setFoundationActionScope;
+
 export const solarPanelActionScope = (state: CommonStoreState) => state.solarPanelActionScope;
 
 export const setSolarPanelActionScope = (state: CommonStoreState) => state.setSolarPanelActionScope;
