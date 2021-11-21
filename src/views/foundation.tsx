@@ -112,8 +112,10 @@ const Foundation = ({
   const moveHandleUpperRef = useRef<Mesh>();
   const moveHandleLeftRef = useRef<Mesh>();
   const moveHandleRightRef = useRef<Mesh>();
-  const ray = useMemo(() => new Raycaster(), []);
+  const oldPositionRef = useRef<Vector3>(new Vector3());
+  const newPositionRef = useRef<Vector3>(new Vector3());
 
+  const ray = useMemo(() => new Raycaster(), []);
   const foundationModel = getElementById(id) as FoundationModel;
   const handleLift = MOVE_HANDLE_RADIUS / 2;
   const hx = lx / 2;
@@ -285,6 +287,501 @@ const Foundation = ({
     return p;
   };
 
+  const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (e.button === 2) return; // ignore right-click
+    setCommonStore((state) => {
+      state.contextMenuObjectType = null;
+    });
+    if (!buildingWallID) {
+      selectMe(id, e, ActionType.Select);
+    }
+    const selectedElement = getSelectedElement();
+    // no child of this foundation is clicked
+    if (selectedElement?.id === id) {
+      if (legalOnFoundation(objectTypeToAdd) && foundationModel) {
+        setShowGrid(true);
+        const position = e.intersections[0].point;
+        const id = addElement(foundationModel, position);
+        const addedElement = getElementById(id);
+        const undoableAdd = {
+          name: 'Add',
+          timestamp: Date.now(),
+          addedElement: addedElement,
+          undo: () => {
+            removeElementById(undoableAdd.addedElement.id, false);
+          },
+          redo: () => {
+            setCommonStore((state) => {
+              state.elements.push(undoableAdd.addedElement);
+              state.selectedElement = undoableAdd.addedElement;
+            });
+          },
+        } as UndoableAdd;
+        addUndoable(undoableAdd);
+        setCommonStore((state) => {
+          state.objectTypeToAdd = ObjectType.None;
+        });
+      }
+    }
+    // a child of this foundation is clicked
+    else {
+      if (selectedElement) {
+        if (legalOnFoundation(selectedElement.type as ObjectType)) {
+          grabRef.current = selectedElement;
+          setShowGrid(true);
+        }
+      }
+    }
+
+    if (isSettingWallStartPoint && buildingWallID && baseRef.current) {
+      const intersects = ray.intersectObjects([baseRef.current]);
+      let p = Util.wallRelativePosition(intersects[0].point, foundationModel);
+      let targetID: string | null = null;
+      let targetPoint: Vector3 | null = null;
+      let targetSide: WallSide | null = null;
+      if (!enableFineGridRef.current) {
+        let target = findMagnetPoint(wallPoints, p, 1.5);
+        targetID = target.targetID;
+        targetPoint = target.targetPoint;
+        targetSide = target.targetSide;
+      }
+      p = updatePointer(p, targetPoint);
+      let resizeHandleType = ResizeHandleType.LowerRight;
+      if (targetID) {
+        // left to right
+        if (targetSide === WallSide.Right) {
+          setElementPosition(buildingWallID, p.x, p.y);
+          updateWallLeftJointsById(buildingWallID, [{ id: targetID, side: WallSide.Right }]);
+          updateWallRightJointsById(targetID, [{ id: buildingWallID, side: WallSide.Left }]);
+        }
+        // left to left
+        else if (targetSide === WallSide.Left) {
+          setElementPosition(buildingWallID, p.x, p.y);
+          updateWallRightJointsById(buildingWallID, [{ id: targetID, side: WallSide.Left }]);
+          updateWallLeftJointsById(targetID, [{ id: buildingWallID, side: WallSide.Right }]);
+          resizeHandleType = ResizeHandleType.LowerLeft;
+        }
+      }
+      // no attach to wall
+      else {
+        setElementPosition(buildingWallID, p.x, p.y);
+      }
+
+      setIsSettingWallStartPoint(false);
+      setIsSettingWallEndPoint(true);
+      setWallPoints(wallPoints.set(buildingWallID, { leftPoint: p, rightPoint: null }));
+      updateWallLeftPointById(buildingWallID, [p.x, p.y, p.z]);
+      setCommonStore((state) => {
+        state.resizeHandleType = resizeHandleType;
+        state.resizeAnchor = Util.wallAbsolutePosition(p, foundationModel);
+      });
+      grabRef.current = selectedElement;
+    }
+  };
+
+  const handlePointerUp = () => {
+    if (grabRef.current) {
+      const elem = getElementById(grabRef.current.id);
+      if (elem && elem.type === ObjectType.Wall) {
+        const wall = elem as WallModel;
+        const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1], wall.leftPoint[2]);
+        const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1], wall.rightPoint[2]);
+        setWallPoints(wallPoints.set(grabRef.current.id, { leftPoint: leftPoint, rightPoint: rightPoint }));
+      }
+      grabRef.current = null;
+    }
+    if (!buildingWallID) {
+      setShowGrid(false);
+    }
+    if (isSettingWallEndPoint && buildingWallID && baseRef.current) {
+      setCommonStore((state) => {
+        state.objectTypeToAdd = ObjectType.None;
+        state.buildingWallID = null;
+        state.enableOrbitController = true;
+      });
+      setIsSettingWallEndPoint(false);
+      setBuildingWallID(null);
+      buildingWallIDRef.current = null;
+    }
+  };
+
+  const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
+    if (!grabRef.current && !buildingWallID && objectTypeToAdd !== ObjectType.Wall) {
+      return;
+    }
+    const mouse = new Vector2();
+    mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
+    mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
+    ray.setFromCamera(mouse, camera);
+    if (baseRef.current && foundationModel) {
+      const intersects = ray.intersectObjects([baseRef.current]);
+      let p = intersects[0].point;
+      if (grabRef.current && grabRef.current.type && !grabRef.current.locked && intersects.length > 0) {
+        switch (grabRef.current.type) {
+          case ObjectType.Sensor:
+            p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
+            setElementPosition(grabRef.current.id, p.x, p.y);
+            break;
+          case ObjectType.Wall:
+            if (
+              resizeHandleType &&
+              (resizeHandleType === ResizeHandleType.LowerLeft || resizeHandleType === ResizeHandleType.LowerRight)
+            ) {
+              p = Util.wallRelativePosition(p, foundationModel);
+              let targetID: string | null = null;
+              let targetPoint: Vector3 | null = null;
+              let targetSide: WallSide | null = null;
+              if (!enableFineGridRef.current) {
+                let target = findMagnetPoint(wallPoints, p, 1.5);
+                targetID = target.targetID;
+                targetPoint = target.targetPoint;
+                targetSide = target.targetSide;
+              }
+              p = updatePointer(p, targetPoint);
+
+              // update length
+              const relativResizeAnchor = Util.wallRelativePosition(resizeAnchor, foundationModel);
+              const lx = p.distanceTo(relativResizeAnchor);
+              const relativeCenter = new Vector3().addVectors(p, relativResizeAnchor).divideScalar(2);
+              let angle =
+                Math.atan2(p.y - relativResizeAnchor.y, p.x - relativResizeAnchor.x) -
+                (resizeHandleType === ResizeHandleType.LowerLeft ? Math.PI : 0);
+              angle = angle >= 0 ? angle : (Math.PI * 2 + angle) % (Math.PI * 2);
+              const leftPoint = resizeHandleType === ResizeHandleType.LowerLeft ? p : relativResizeAnchor;
+              const rightPoint = resizeHandleType === ResizeHandleType.LowerLeft ? relativResizeAnchor : p;
+              setElementPosition(grabRef.current.id, relativeCenter.x, relativeCenter.y);
+              updateElementLxById(grabRef.current.id, lx);
+              updateWallRelativeAngleById(grabRef.current.id, angle);
+              updateWallLeftPointById(grabRef.current.id, [leftPoint.x, leftPoint.y, leftPoint.z]);
+              updateWallRightPointById(grabRef.current.id, [rightPoint.x, rightPoint.y, rightPoint.z]);
+
+              // change angle or detach
+              if (resizeHandleType === ResizeHandleType.LowerRight) {
+                const currWall = getElementById(grabRef.current.id) as WallModel;
+                // change angle
+                if (currWall.leftJoints.length > 0) {
+                  const targetJoint = currWall.leftJoints[0];
+                  const targetWall = getElementById(targetJoint.id) as WallModel;
+                  if (targetWall) {
+                    const deltaAngle = (Math.PI * 3 - (angle - targetWall.relativeAngle)) % (Math.PI * 2);
+                    if (deltaAngle < Math.PI / 2 && deltaAngle > 0) {
+                      const tan = Math.tan(deltaAngle);
+                      const currLeftOffset = currWall.ly / tan;
+                      const targetRightOffset = targetWall.ly / tan;
+                      updateWallLeftOffsetById(currWall.id, currLeftOffset);
+                      updateWallRightOffsetById(targetWall.id, targetRightOffset);
+                    } else {
+                      // gap
+                      updateWallLeftOffsetById(currWall.id, 0);
+                      updateWallRightOffsetById(targetWall.id, 0);
+                    }
+                  }
+                }
+                // detach from other
+                if (currWall.rightJoints.length > 0) {
+                  const targetWall = currWall.rightJoints[0];
+                  updateWallRightOffsetById(currWall.id, 0);
+                  updateWallRightJointsById(currWall.id, []);
+                  updateWallLeftOffsetById(targetWall.id, 0);
+                  updateWallLeftJointsById(targetWall.id, []);
+                }
+              }
+              if (resizeHandleType === ResizeHandleType.LowerLeft) {
+                const currWall = getElementById(grabRef.current.id) as WallModel;
+                // change angle
+                if (currWall.rightJoints.length > 0) {
+                  const targetWall = getElementById(currWall.rightJoints[0].id) as WallModel;
+                  if (targetWall) {
+                    const deltaAngle = (Math.PI * 3 + angle - targetWall.relativeAngle) % (Math.PI * 2);
+                    if (deltaAngle < Math.PI / 2 && deltaAngle > 0) {
+                      const tan = Math.tan(deltaAngle);
+                      const currRightOffset = currWall.ly / tan;
+                      const targetLeftOffset = targetWall.ly / tan;
+                      updateWallRightOffsetById(currWall.id, currRightOffset);
+                      updateWallLeftOffsetById(targetWall.id, targetLeftOffset);
+                    } else {
+                      // gap
+                      updateWallRightOffsetById(currWall.id, 0);
+                      updateWallLeftOffsetById(targetWall.id, 0);
+                    }
+                  }
+                }
+                // detach from other
+                if (currWall.leftJoints.length > 0) {
+                  const targetWall = getElementById(currWall.leftJoints[0].id);
+                  if (targetWall) {
+                    updateWallLeftOffsetById(currWall.id, 0);
+                    updateWallLeftJointsById(currWall.id, []); // should check whole arr
+                    updateWallRightOffsetById(targetWall.id, 0);
+                    updateWallRightJointsById(targetWall.id, []); // should check whole arr
+                  }
+                }
+              }
+
+              // attach to other wall (curr to target)
+              if (targetID && targetPoint && targetSide) {
+                const targetWall = getElementById(targetID) as WallModel;
+                const currWall = getElementById(grabRef.current.id) as WallModel;
+                if (targetWall && currWall) {
+                  // rotate 180 if sides are same
+                  if (
+                    (resizeHandleType === ResizeHandleType.LowerLeft &&
+                      targetSide === WallSide.Left &&
+                      currWall.rightJoints.length === 0) ||
+                    (resizeHandleType === ResizeHandleType.LowerRight &&
+                      targetSide === WallSide.Right &&
+                      currWall.leftJoints.length === 0)
+                  ) {
+                    angle = (angle + Math.PI) % (Math.PI * 2);
+                    updateWallRelativeAngleById(currWall.id, angle);
+                    setCommonStore((state) => {
+                      state.resizeHandleType =
+                        resizeHandleType === ResizeHandleType.LowerLeft
+                          ? ResizeHandleType.LowerRight
+                          : ResizeHandleType.LowerLeft;
+                    });
+                  }
+                  // attach to left side
+                  if (targetSide === WallSide.Left && currWall.rightJoints.length === 0) {
+                    const deltaAngle = (Math.PI * 3 + angle - targetWall.relativeAngle) % (Math.PI * 2);
+                    let currRightOffset = 0;
+                    let targetLeftOffset = targetWall.leftOffset;
+                    if (deltaAngle < Math.PI / 2) {
+                      const tan = Math.tan(deltaAngle);
+                      currRightOffset = currWall.ly / tan;
+                      targetLeftOffset = targetWall.ly / tan;
+                    }
+                    updateWallRightOffsetById(currWall.id, currRightOffset);
+                    updateWallRightJointsById(currWall.id, [{ id: targetWall.id, side: WallSide.Left }]);
+                    if (targetLeftOffset) {
+                      updateWallLeftOffsetById(targetWall.id, targetLeftOffset);
+                      updateWallLeftJointsById(targetWall.id, [{ id: currWall.id, side: WallSide.Right }]);
+                    }
+                  }
+                  // attach to right side
+                  else if (targetSide === WallSide.Right && currWall.leftJoints.length === 0) {
+                    const deltaAngle = (Math.PI * 3 - (angle - targetWall.relativeAngle)) % (Math.PI * 2);
+                    let currLeftOffset = 0;
+                    let targetRightOffset = targetWall.rightOffset;
+                    if (deltaAngle < Math.PI / 2) {
+                      const tan = Math.tan(deltaAngle);
+                      currLeftOffset = currWall.ly / tan;
+                      targetRightOffset = targetWall.ly / tan;
+                    }
+                    updateWallLeftOffsetById(currWall.id, currLeftOffset);
+                    updateWallLeftJointsById(currWall.id, [{ id: targetWall.id, side: WallSide.Right }]);
+                    if (targetRightOffset) {
+                      // FIXME: target right offset may be undefined
+                      updateWallRightOffsetById(targetWall.id, targetRightOffset);
+                      updateWallRightJointsById(targetWall.id, [{ id: currWall.id, side: WallSide.Left }]);
+                    }
+                  }
+                }
+              }
+            }
+            break;
+        }
+      }
+      if (objectTypeToAdd === ObjectType.Wall) {
+        const wallID = addElement(foundationModel, p);
+        buildingWallIDRef.current = wallID;
+        setBuildingWallID(wallID);
+        setIsSettingWallStartPoint(true);
+        setShowGrid(true);
+        setCommonStore((state) => {
+          state.buildingWallID = wallID;
+          state.objectTypeToAdd = ObjectType.None;
+          state.enableOrbitController = false;
+        });
+      }
+      if (buildingWallID && isSettingWallStartPoint) {
+        p = Util.wallRelativePosition(intersects[0].point, foundationModel);
+        const { targetPoint } = findMagnetPoint(wallPoints, p, 1.5);
+        p = updatePointer(p, targetPoint);
+        if (isSettingWallStartPoint) {
+          setElementPosition(buildingWallID, p.x, p.y);
+        }
+      }
+    }
+  };
+
+  const handlePointerOver = (e: ThreeEvent<PointerEvent>) => {
+    if (e.intersections.length > 0) {
+      const intersected = e.intersections[0].object === baseRef.current;
+      if (intersected) {
+        setHovered(true);
+      }
+    }
+  };
+
+  const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
+    selectMe(id, e, ActionType.Select);
+    setCommonStore((state) => {
+      state.pastePoint.copy(e.intersections[0].point);
+      state.clickObjectType = ObjectType.Foundation;
+      if (e.intersections.length > 0) {
+        const intersected = e.intersections[0].object === baseRef.current;
+        if (intersected) {
+          state.contextMenuObjectType = ObjectType.Foundation;
+        }
+      }
+      state.pasteNormal = Util.UNIT_VECTOR_POS_Z;
+    });
+  };
+
+  const handleSolarPanelMove = (e: ThreeEvent<PointerEvent>) => {
+    if (grabRef.current) {
+      const mouse = new Vector2();
+      mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
+      mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
+      ray.setFromCamera(mouse, camera);
+      let intersects;
+      if (intersecPlaneRef.current) {
+        const solarPanel = grabRef.current as SolarPanelModel;
+        const pvModel = getPvModule(solarPanel.pvModelName);
+        intersects = ray.intersectObjects([intersecPlaneRef.current]);
+        if (intersects.length > 0) {
+          let p = intersects[0].point; //World coordinate
+          if (moveHandleType && foundationModel) {
+            p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
+            setElementPosition(solarPanel.id, p.x, p.y); //Relative coordinate
+          } else if (rotateHandleType) {
+            const parent = getElementById(solarPanel.parentId);
+            if (parent) {
+              const pr = parent.rotation[2]; //parent rotation
+              const pc = new Vector2(parent.cx, parent.cy); //world parent center
+              const cc = new Vector2(parent.lx * solarPanel.cx, parent.ly * solarPanel.cy) //local current center
+                .rotateAround(new Vector2(0, 0), pr); //add parent rotation
+              const wc = new Vector2().addVectors(cc, pc); //world current center
+              const rotation =
+                -pr + Math.atan2(-p.x + wc.x, p.y - wc.y) + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
+              const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0; // make sure angle is between -PI to PI
+              updateSolarPanelRelativeAzimuthById(grabRef.current.id, rotation + offset);
+              setCommonStore((state) => {
+                state.selectedElementAngle = rotation + offset;
+              });
+            }
+          } else if (resizeHandleType) {
+            switch (resizeHandleType) {
+              case ResizeHandleType.Lower:
+                {
+                  const wp = new Vector2(p.x, p.y);
+                  const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
+                  const d = wp.distanceTo(resizeAnchor2D);
+                  const angle = solarPanel.relativeAzimuth + rotation[2]; // world panel azimuth
+                  const rp = new Vector2().subVectors(wp, resizeAnchor2D); // relative vector from anchor to pointer
+                  const theta = -angle + rp.angle() + Math.PI / 2;
+                  let dyl = d * Math.cos(theta);
+                  if (solarPanel.orientation === Orientation.portrait) {
+                    const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));
+                    dyl = nx * pvModel.length;
+                  } else {
+                    const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
+                    dyl = nx * pvModel.width;
+                  }
+                  updateElementLyById(solarPanel.id, dyl);
+
+                  const wcx = resizeAnchor.x + (dyl * Math.sin(angle)) / 2;
+                  const wcy = resizeAnchor.y - (dyl * Math.cos(angle)) / 2;
+                  const wc = new Vector2(wcx, wcy); // world panel center
+                  const wbc = new Vector2(cx, cy); // world foundation center
+                  const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
+                  setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
+                }
+                break;
+              case ResizeHandleType.Upper:
+                {
+                  const wp = new Vector2(p.x, p.y);
+                  const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
+                  const d = wp.distanceTo(resizeAnchor2D);
+                  const angle = solarPanel.relativeAzimuth + rotation[2];
+                  const rp = new Vector2().subVectors(wp, resizeAnchor2D);
+                  const theta = -angle + rp.angle() - Math.PI / 2;
+                  let dyl = d * Math.cos(theta);
+                  if (solarPanel.orientation === Orientation.portrait) {
+                    const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));
+                    dyl = nx * pvModel.length;
+                  } else {
+                    const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
+                    dyl = nx * pvModel.width;
+                  }
+                  updateElementLyById(solarPanel.id, dyl);
+
+                  const wcx = resizeAnchor.x - (dyl * Math.sin(angle)) / 2;
+                  const wcy = resizeAnchor.y + (dyl * Math.cos(angle)) / 2;
+                  const wc = new Vector2(wcx, wcy);
+                  const wbc = new Vector2(cx, cy);
+                  const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
+                  setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
+                }
+                break;
+              case ResizeHandleType.Left:
+                {
+                  const wp = new Vector2(p.x, p.y);
+                  const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
+                  const d = wp.distanceTo(resizeAnchor2D);
+                  const angle = solarPanel.relativeAzimuth + rotation[2];
+                  const rp = new Vector2().subVectors(wp, resizeAnchor2D);
+                  const theta = rp.angle() - angle + Math.PI;
+                  let dxl = d * Math.cos(theta);
+                  if (solarPanel.orientation === Orientation.portrait) {
+                    const nx = Math.max(1, Math.ceil((dxl - pvModel.width / 2) / pvModel.width));
+                    dxl = nx * pvModel.width;
+                  } else {
+                    const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
+                    dxl = nx * pvModel.length;
+                  }
+                  updateElementLxById(solarPanel.id, dxl);
+
+                  const wcx = resizeAnchor.x - (dxl * Math.cos(angle)) / 2;
+                  const wcy = resizeAnchor.y - (dxl * Math.sin(angle)) / 2;
+                  const wc = new Vector2(wcx, wcy);
+                  const wbc = new Vector2(cx, cy);
+                  const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
+                  setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
+                }
+                break;
+              case ResizeHandleType.Right:
+                {
+                  const wp = new Vector2(p.x, p.y);
+                  const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
+                  const d = wp.distanceTo(resizeAnchor2D);
+                  const angle = solarPanel.relativeAzimuth + rotation[2];
+                  const rp = new Vector2().subVectors(wp, resizeAnchor2D);
+                  const theta = -angle + rp.angle();
+                  let dxl = d * Math.cos(theta);
+                  if (solarPanel.orientation === Orientation.portrait) {
+                    const nx = Math.max(1, Math.ceil((dxl - pvModel.width / 2) / pvModel.width));
+                    dxl = nx * pvModel.width;
+                  } else {
+                    const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
+                    dxl = nx * pvModel.length;
+                  }
+                  updateElementLxById(solarPanel.id, dxl);
+
+                  const wcx = resizeAnchor.x + (dxl * Math.cos(angle)) / 2;
+                  const wcy = resizeAnchor.y + (dxl * Math.sin(angle)) / 2;
+                  const wc = new Vector2(wcx, wcy);
+                  const wbc = new Vector2(cx, cy);
+                  const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
+                  setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
+                }
+                break;
+            }
+          }
+        }
+      }
+    }
+  };
+
+  const handleSolarPanelPointerUp = () => {
+    grabRef.current = null;
+    setShowGrid(false);
+    setCommonStore((state) => {
+      state.enableOrbitController = true;
+    });
+  };
+
   return (
     <group name={'Foundation Group ' + id} position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
       {/* draw rectangle */}
@@ -296,347 +793,12 @@ const Foundation = ({
         ref={baseRef}
         name={'Foundation'}
         args={[lx, ly, lz]}
-        onContextMenu={(e) => {
-          selectMe(id, e, ActionType.Select);
-          setCommonStore((state) => {
-            state.pastePoint.copy(e.intersections[0].point);
-            state.clickObjectType = ObjectType.Foundation;
-            if (e.intersections.length > 0) {
-              const intersected = e.intersections[0].object === baseRef.current;
-              if (intersected) {
-                state.contextMenuObjectType = ObjectType.Foundation;
-              }
-            }
-            state.pasteNormal = Util.UNIT_VECTOR_POS_Z;
-          });
-        }}
-        onPointerOver={(e) => {
-          if (e.intersections.length > 0) {
-            const intersected = e.intersections[0].object === baseRef.current;
-            if (intersected) {
-              setHovered(true);
-            }
-          }
-        }}
-        onPointerOut={(e) => {
-          setHovered(false);
-        }}
-        onPointerDown={(e) => {
-          if (e.button === 2) return; // ignore right-click
-          setCommonStore((state) => {
-            state.contextMenuObjectType = null;
-          });
-          if (!buildingWallID) {
-            selectMe(id, e, ActionType.Select);
-          }
-          const selectedElement = getSelectedElement();
-          // no child of this foundation is clicked
-          if (selectedElement?.id === id) {
-            if (legalOnFoundation(objectTypeToAdd) && foundationModel) {
-              setShowGrid(true);
-              const position = e.intersections[0].point;
-              const id = addElement(foundationModel, position);
-              const addedElement = getElementById(id);
-              const undoableAdd = {
-                name: 'Add',
-                timestamp: Date.now(),
-                addedElement: addedElement,
-                undo: () => {
-                  removeElementById(undoableAdd.addedElement.id, false);
-                },
-                redo: () => {
-                  setCommonStore((state) => {
-                    state.elements.push(undoableAdd.addedElement);
-                    state.selectedElement = undoableAdd.addedElement;
-                  });
-                },
-              } as UndoableAdd;
-              addUndoable(undoableAdd);
-              setCommonStore((state) => {
-                state.objectTypeToAdd = ObjectType.None;
-              });
-            }
-          }
-          // a child of this foundation is clicked
-          else {
-            if (selectedElement) {
-              if (legalOnFoundation(selectedElement.type as ObjectType)) {
-                grabRef.current = selectedElement;
-                setShowGrid(true);
-              }
-            }
-          }
-
-          if (isSettingWallStartPoint && buildingWallID && baseRef.current) {
-            const intersects = ray.intersectObjects([baseRef.current]);
-            let p = Util.wallRelativePosition(intersects[0].point, foundationModel);
-            let targetID: string | null = null;
-            let targetPoint: Vector3 | null = null;
-            let targetSide: WallSide | null = null;
-            if (!enableFineGridRef.current) {
-              let target = findMagnetPoint(wallPoints, p, 1.5);
-              targetID = target.targetID;
-              targetPoint = target.targetPoint;
-              targetSide = target.targetSide;
-            }
-            p = updatePointer(p, targetPoint);
-            let resizeHandleType = ResizeHandleType.LowerRight;
-            if (targetID) {
-              // left to right
-              if (targetSide === WallSide.Right) {
-                setElementPosition(buildingWallID, p.x, p.y);
-                updateWallLeftJointsById(buildingWallID, [{ id: targetID, side: WallSide.Right }]);
-                updateWallRightJointsById(targetID, [{ id: buildingWallID, side: WallSide.Left }]);
-              }
-              // left to left
-              else if (targetSide === WallSide.Left) {
-                setElementPosition(buildingWallID, p.x, p.y);
-                updateWallRightJointsById(buildingWallID, [{ id: targetID, side: WallSide.Left }]);
-                updateWallLeftJointsById(targetID, [{ id: buildingWallID, side: WallSide.Right }]);
-                resizeHandleType = ResizeHandleType.LowerLeft;
-              }
-            }
-            // no attach to wall
-            else {
-              setElementPosition(buildingWallID, p.x, p.y);
-            }
-
-            setIsSettingWallStartPoint(false);
-            setIsSettingWallEndPoint(true);
-            setWallPoints(wallPoints.set(buildingWallID, { leftPoint: p, rightPoint: null }));
-            updateWallLeftPointById(buildingWallID, [p.x, p.y, p.z]);
-            setCommonStore((state) => {
-              state.resizeHandleType = resizeHandleType;
-              state.resizeAnchor = Util.wallAbsolutePosition(p, foundationModel);
-            });
-            grabRef.current = selectedElement;
-          }
-        }}
-        onPointerUp={(e) => {
-          if (grabRef.current) {
-            const elem = getElementById(grabRef.current.id);
-            if (elem && elem.type === ObjectType.Wall) {
-              const wall = elem as WallModel;
-              const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1], wall.leftPoint[2]);
-              const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1], wall.rightPoint[2]);
-              setWallPoints(wallPoints.set(grabRef.current.id, { leftPoint: leftPoint, rightPoint: rightPoint }));
-            }
-            grabRef.current = null;
-          }
-          if (!buildingWallID) {
-            setShowGrid(false);
-          }
-          if (isSettingWallEndPoint && buildingWallID && baseRef.current) {
-            setCommonStore((state) => {
-              state.objectTypeToAdd = ObjectType.None;
-              state.buildingWallID = null;
-              state.enableOrbitController = true;
-            });
-            setIsSettingWallEndPoint(false);
-            setBuildingWallID(null);
-            buildingWallIDRef.current = null;
-          }
-        }}
-        onPointerMove={(e) => {
-          if (!grabRef.current && !buildingWallID && objectTypeToAdd !== ObjectType.Wall) {
-            return;
-          }
-          const mouse = new Vector2();
-          mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
-          mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
-          ray.setFromCamera(mouse, camera);
-          if (baseRef.current && foundationModel) {
-            const intersects = ray.intersectObjects([baseRef.current]);
-            let p = intersects[0].point;
-            if (grabRef.current && grabRef.current.type && !grabRef.current.locked && intersects.length > 0) {
-              switch (grabRef.current.type) {
-                case ObjectType.Sensor:
-                  p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
-                  setElementPosition(grabRef.current.id, p.x, p.y);
-                  break;
-                case ObjectType.Wall:
-                  if (
-                    resizeHandleType &&
-                    (resizeHandleType === ResizeHandleType.LowerLeft ||
-                      resizeHandleType === ResizeHandleType.LowerRight)
-                  ) {
-                    p = Util.wallRelativePosition(p, foundationModel);
-                    let targetID: string | null = null;
-                    let targetPoint: Vector3 | null = null;
-                    let targetSide: WallSide | null = null;
-                    if (!enableFineGridRef.current) {
-                      let target = findMagnetPoint(wallPoints, p, 1.5);
-                      targetID = target.targetID;
-                      targetPoint = target.targetPoint;
-                      targetSide = target.targetSide;
-                    }
-                    p = updatePointer(p, targetPoint);
-
-                    // update length
-                    const relativResizeAnchor = Util.wallRelativePosition(resizeAnchor, foundationModel);
-                    const lx = p.distanceTo(relativResizeAnchor);
-                    const relativeCenter = new Vector3().addVectors(p, relativResizeAnchor).divideScalar(2);
-                    let angle =
-                      Math.atan2(p.y - relativResizeAnchor.y, p.x - relativResizeAnchor.x) -
-                      (resizeHandleType === ResizeHandleType.LowerLeft ? Math.PI : 0);
-                    angle = angle >= 0 ? angle : (Math.PI * 2 + angle) % (Math.PI * 2);
-                    const leftPoint = resizeHandleType === ResizeHandleType.LowerLeft ? p : relativResizeAnchor;
-                    const rightPoint = resizeHandleType === ResizeHandleType.LowerLeft ? relativResizeAnchor : p;
-                    setElementPosition(grabRef.current.id, relativeCenter.x, relativeCenter.y);
-                    updateElementLxById(grabRef.current.id, lx);
-                    updateWallRelativeAngleById(grabRef.current.id, angle);
-                    updateWallLeftPointById(grabRef.current.id, [leftPoint.x, leftPoint.y, leftPoint.z]);
-                    updateWallRightPointById(grabRef.current.id, [rightPoint.x, rightPoint.y, rightPoint.z]);
-
-                    // change angle or detach
-                    if (resizeHandleType === ResizeHandleType.LowerRight) {
-                      const currWall = getElementById(grabRef.current.id) as WallModel;
-                      // change angle
-                      if (currWall.leftJoints.length > 0) {
-                        const targetJoint = currWall.leftJoints[0];
-                        const targetWall = getElementById(targetJoint.id) as WallModel;
-                        if (targetWall) {
-                          const deltaAngle = (Math.PI * 3 - (angle - targetWall.relativeAngle)) % (Math.PI * 2);
-                          if (deltaAngle < Math.PI / 2 && deltaAngle > 0) {
-                            const tan = Math.tan(deltaAngle);
-                            const currLeftOffset = currWall.ly / tan;
-                            const targetRightOffset = targetWall.ly / tan;
-                            updateWallLeftOffsetById(currWall.id, currLeftOffset);
-                            updateWallRightOffsetById(targetWall.id, targetRightOffset);
-                          } else {
-                            // gap
-                            updateWallLeftOffsetById(currWall.id, 0);
-                            updateWallRightOffsetById(targetWall.id, 0);
-                          }
-                        }
-                      }
-                      // detach from other
-                      if (currWall.rightJoints.length > 0) {
-                        const targetWall = currWall.rightJoints[0];
-                        updateWallRightOffsetById(currWall.id, 0);
-                        updateWallRightJointsById(currWall.id, []);
-                        updateWallLeftOffsetById(targetWall.id, 0);
-                        updateWallLeftJointsById(targetWall.id, []);
-                      }
-                    }
-                    if (resizeHandleType === ResizeHandleType.LowerLeft) {
-                      const currWall = getElementById(grabRef.current.id) as WallModel;
-                      // change angle
-                      if (currWall.rightJoints.length > 0) {
-                        const targetWall = getElementById(currWall.rightJoints[0].id) as WallModel;
-                        if (targetWall) {
-                          const deltaAngle = (Math.PI * 3 + angle - targetWall.relativeAngle) % (Math.PI * 2);
-                          if (deltaAngle < Math.PI / 2 && deltaAngle > 0) {
-                            const tan = Math.tan(deltaAngle);
-                            const currRightOffset = currWall.ly / tan;
-                            const targetLeftOffset = targetWall.ly / tan;
-                            updateWallRightOffsetById(currWall.id, currRightOffset);
-                            updateWallLeftOffsetById(targetWall.id, targetLeftOffset);
-                          } else {
-                            // gap
-                            updateWallRightOffsetById(currWall.id, 0);
-                            updateWallLeftOffsetById(targetWall.id, 0);
-                          }
-                        }
-                      }
-                      // detach from other
-                      if (currWall.leftJoints.length > 0) {
-                        const targetWall = getElementById(currWall.leftJoints[0].id);
-                        if (targetWall) {
-                          updateWallLeftOffsetById(currWall.id, 0);
-                          updateWallLeftJointsById(currWall.id, []); // should check whole arr
-                          updateWallRightOffsetById(targetWall.id, 0);
-                          updateWallRightJointsById(targetWall.id, []); // should check whole arr
-                        }
-                      }
-                    }
-
-                    // attach to other wall (curr to target)
-                    if (targetID && targetPoint && targetSide) {
-                      const targetWall = getElementById(targetID) as WallModel;
-                      const currWall = getElementById(grabRef.current.id) as WallModel;
-                      if (targetWall && currWall) {
-                        // rotate 180 if sides are same
-                        if (
-                          (resizeHandleType === ResizeHandleType.LowerLeft &&
-                            targetSide === WallSide.Left &&
-                            currWall.rightJoints.length == 0) ||
-                          (resizeHandleType === ResizeHandleType.LowerRight &&
-                            targetSide === WallSide.Right &&
-                            currWall.leftJoints.length == 0)
-                        ) {
-                          angle = (angle + Math.PI) % (Math.PI * 2);
-                          updateWallRelativeAngleById(currWall.id, angle);
-                          setCommonStore((state) => {
-                            state.resizeHandleType =
-                              resizeHandleType === ResizeHandleType.LowerLeft
-                                ? ResizeHandleType.LowerRight
-                                : ResizeHandleType.LowerLeft;
-                          });
-                        }
-                        // attach to left side
-                        if (targetSide === WallSide.Left && currWall.rightJoints.length === 0) {
-                          const deltaAngle = (Math.PI * 3 + angle - targetWall.relativeAngle) % (Math.PI * 2);
-                          let currRightOffset = 0;
-                          let targetLeftOffset = targetWall.leftOffset;
-                          if (deltaAngle < Math.PI / 2) {
-                            const tan = Math.tan(deltaAngle);
-                            currRightOffset = currWall.ly / tan;
-                            targetLeftOffset = targetWall.ly / tan;
-                          }
-                          updateWallRightOffsetById(currWall.id, currRightOffset);
-                          updateWallRightJointsById(currWall.id, [{ id: targetWall.id, side: WallSide.Left }]);
-                          if (targetLeftOffset) {
-                            updateWallLeftOffsetById(targetWall.id, targetLeftOffset);
-                            updateWallLeftJointsById(targetWall.id, [{ id: currWall.id, side: WallSide.Right }]);
-                          }
-                        }
-                        // attach to right side
-                        else if (targetSide === WallSide.Right && currWall.leftJoints.length === 0) {
-                          const deltaAngle = (Math.PI * 3 - (angle - targetWall.relativeAngle)) % (Math.PI * 2);
-                          let currLeftOffset = 0;
-                          let targetRightOffset = targetWall.rightOffset;
-                          if (deltaAngle < Math.PI / 2) {
-                            const tan = Math.tan(deltaAngle);
-                            currLeftOffset = currWall.ly / tan;
-                            targetRightOffset = targetWall.ly / tan;
-                          }
-                          updateWallLeftOffsetById(currWall.id, currLeftOffset);
-                          updateWallLeftJointsById(currWall.id, [{ id: targetWall.id, side: WallSide.Right }]);
-                          if (targetRightOffset) {
-                            // FIXME: target right offset may be undefined
-                            updateWallRightOffsetById(targetWall.id, targetRightOffset);
-                            updateWallRightJointsById(targetWall.id, [{ id: currWall.id, side: WallSide.Left }]);
-                          }
-                        }
-                      }
-                    }
-                  }
-                  break;
-              }
-            }
-            if (objectTypeToAdd === ObjectType.Wall) {
-              const wallID = addElement(foundationModel, p);
-              buildingWallIDRef.current = wallID;
-              setBuildingWallID(wallID);
-              setIsSettingWallStartPoint(true);
-              setShowGrid(true);
-              setCommonStore((state) => {
-                state.buildingWallID = wallID;
-                state.objectTypeToAdd = ObjectType.None;
-                state.enableOrbitController = false;
-              });
-            }
-            if (buildingWallID && isSettingWallStartPoint) {
-              p = Util.wallRelativePosition(intersects[0].point, foundationModel);
-              const { targetPoint } = findMagnetPoint(wallPoints, p, 1.5);
-              p = updatePointer(p, targetPoint);
-              if (isSettingWallStartPoint) {
-                setElementPosition(buildingWallID, p.x, p.y);
-              }
-            }
-          }
-        }}
+        onContextMenu={handleContextMenu}
+        onPointerOver={handlePointerOver}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerMove={handlePointerMove}
+        onPointerOut={(e) => setHovered(false)}
       >
         <meshStandardMaterial
           attach="material"
@@ -654,161 +816,8 @@ const Foundation = ({
           rotation={intersectionPlaneRotation}
           args={[lx, ly]}
           visible={false}
-          onPointerMove={(e) => {
-            if (grabRef.current) {
-              const mouse = new Vector2();
-              mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
-              mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
-              ray.setFromCamera(mouse, camera);
-              let intersects;
-              if (intersecPlaneRef.current) {
-                const solarPanel = grabRef.current as SolarPanelModel;
-                const pvModel = getPvModule(solarPanel.pvModelName);
-                intersects = ray.intersectObjects([intersecPlaneRef.current]);
-                if (intersects.length > 0) {
-                  let p = intersects[0].point; //World coordinate
-                  if (moveHandleType && foundationModel) {
-                    p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
-                    setElementPosition(solarPanel.id, p.x, p.y); //Relative coordinate
-                  } else if (rotateHandleType) {
-                    const parent = getElementById(solarPanel.parentId);
-                    if (parent) {
-                      const pr = parent.rotation[2]; //parent rotation
-                      const pc = new Vector2(parent.cx, parent.cy); //world parent center
-                      const cc = new Vector2(parent.lx * solarPanel.cx, parent.ly * solarPanel.cy) //local current center
-                        .rotateAround(new Vector2(0, 0), pr); //add parent rotation
-                      const wc = new Vector2().addVectors(cc, pc); //world current center
-                      const rotation =
-                        -pr +
-                        Math.atan2(-p.x + wc.x, p.y - wc.y) +
-                        (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
-                      const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0; // make sure angle is between -PI to PI
-                      if (grabRef.current?.type === ObjectType.SolarPanel) {
-                        updateSolarPanelRelativeAzimuthById(grabRef.current.id, rotation + offset);
-                      }
-                      setCommonStore((state) => {
-                        state.selectedElementAngle = rotation + offset;
-                      });
-                    }
-                  } else if (resizeHandleType) {
-                    switch (resizeHandleType) {
-                      case ResizeHandleType.Lower:
-                        {
-                          const wp = new Vector2(p.x, p.y);
-                          const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
-                          const d = wp.distanceTo(resizeAnchor2D);
-                          const angle = solarPanel.relativeAzimuth + rotation[2]; // world panel azimuth
-                          const rp = new Vector2().subVectors(wp, resizeAnchor2D); // relative vector from anchor to pointer
-                          const theta = -angle + rp.angle() + Math.PI / 2;
-                          let dyl = d * Math.cos(theta);
-                          if (solarPanel.orientation === Orientation.portrait) {
-                            const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));
-                            dyl = nx * pvModel.length;
-                          } else {
-                            const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
-                            dyl = nx * pvModel.width;
-                          }
-                          updateElementLyById(solarPanel.id, dyl);
-
-                          const wcx = resizeAnchor.x + (dyl * Math.sin(angle)) / 2;
-                          const wcy = resizeAnchor.y - (dyl * Math.cos(angle)) / 2;
-                          const wc = new Vector2(wcx, wcy); // world panel center
-                          const wbc = new Vector2(cx, cy); // world foundation center
-                          const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
-                          setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
-                        }
-                        break;
-                      case ResizeHandleType.Upper:
-                        {
-                          const wp = new Vector2(p.x, p.y);
-                          const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
-                          const d = wp.distanceTo(resizeAnchor2D);
-                          const angle = solarPanel.relativeAzimuth + rotation[2];
-                          const rp = new Vector2().subVectors(wp, resizeAnchor2D);
-                          const theta = -angle + rp.angle() - Math.PI / 2;
-                          let dyl = d * Math.cos(theta);
-                          if (solarPanel.orientation === Orientation.portrait) {
-                            const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));
-                            dyl = nx * pvModel.length;
-                          } else {
-                            const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
-                            dyl = nx * pvModel.width;
-                          }
-                          updateElementLyById(solarPanel.id, dyl);
-
-                          const wcx = resizeAnchor.x - (dyl * Math.sin(angle)) / 2;
-                          const wcy = resizeAnchor.y + (dyl * Math.cos(angle)) / 2;
-                          const wc = new Vector2(wcx, wcy);
-                          const wbc = new Vector2(cx, cy);
-                          const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
-                          setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
-                        }
-                        break;
-                      case ResizeHandleType.Left:
-                        {
-                          const wp = new Vector2(p.x, p.y);
-                          const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
-                          const d = wp.distanceTo(resizeAnchor2D);
-                          const angle = solarPanel.relativeAzimuth + rotation[2];
-                          const rp = new Vector2().subVectors(wp, resizeAnchor2D);
-                          const theta = rp.angle() - angle + Math.PI;
-                          let dxl = d * Math.cos(theta);
-                          if (solarPanel.orientation === Orientation.portrait) {
-                            const nx = Math.max(1, Math.ceil((dxl - pvModel.width / 2) / pvModel.width));
-                            dxl = nx * pvModel.width;
-                          } else {
-                            const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
-                            dxl = nx * pvModel.length;
-                          }
-                          updateElementLxById(solarPanel.id, dxl);
-
-                          const wcx = resizeAnchor.x - (dxl * Math.cos(angle)) / 2;
-                          const wcy = resizeAnchor.y - (dxl * Math.sin(angle)) / 2;
-                          const wc = new Vector2(wcx, wcy);
-                          const wbc = new Vector2(cx, cy);
-                          const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
-                          setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
-                        }
-                        break;
-                      case ResizeHandleType.Right:
-                        {
-                          const wp = new Vector2(p.x, p.y);
-                          const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
-                          const d = wp.distanceTo(resizeAnchor2D);
-                          const angle = solarPanel.relativeAzimuth + rotation[2];
-                          const rp = new Vector2().subVectors(wp, resizeAnchor2D);
-                          const theta = -angle + rp.angle();
-                          let dxl = d * Math.cos(theta);
-                          if (solarPanel.orientation === Orientation.portrait) {
-                            const nx = Math.max(1, Math.ceil((dxl - pvModel.width / 2) / pvModel.width));
-                            dxl = nx * pvModel.width;
-                          } else {
-                            const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
-                            dxl = nx * pvModel.length;
-                          }
-                          updateElementLxById(solarPanel.id, dxl);
-
-                          const wcx = resizeAnchor.x + (dxl * Math.cos(angle)) / 2;
-                          const wcy = resizeAnchor.y + (dxl * Math.sin(angle)) / 2;
-                          const wc = new Vector2(wcx, wcy);
-                          const wbc = new Vector2(cx, cy);
-                          const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
-                          setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
-                        }
-                        break;
-                    }
-                  }
-                }
-              }
-            }
-          }}
-          onPointerUp={(e) => {
-            grabRef.current = null;
-            setShowGrid(false);
-            setCommonStore((state) => {
-              state.enableOrbitController = true;
-            });
-          }}
+          onPointerMove={handleSolarPanelMove}
+          onPointerUp={handleSolarPanelPointerUp}
         />
       )}
 

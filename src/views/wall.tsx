@@ -507,7 +507,7 @@ const Wall = ({
           />
 
           {/* side surfaces */}
-          {leftOffsetState == 0 && (
+          {leftOffsetState === 0 && (
             <Plane
               args={[lz, ly]}
               position={[-x + 0.01, y, 0]}
@@ -520,7 +520,7 @@ const Wall = ({
               <meshStandardMaterial color={'white'} side={DoubleSide} />
             </Plane>
           )}
-          {rightOffsetState == 0 && (
+          {rightOffsetState === 0 && (
             <Plane
               args={[lz, ly]}
               position={[x - 0.01, y, 0]}

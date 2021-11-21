@@ -37,7 +37,7 @@ const SolarPanelWidthInput = ({
   const solarPanel = getSelectedElement() as SolarPanelModel;
   const [dx, setDx] = useState<number>(0);
   const [inputWidth, setInputWidth] = useState<number>(
-    solarPanel.orientation === Orientation.portrait ? solarPanel?.lx ?? 1 : solarPanel?.ly ?? 2,
+    solarPanel?.orientation === Orientation.portrait ? solarPanel?.lx ?? 1 : solarPanel?.ly ?? 2,
   );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

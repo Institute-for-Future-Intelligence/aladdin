@@ -37,7 +37,7 @@ const SolarPanelLengthInput = ({
   const solarPanel = getSelectedElement() as SolarPanelModel;
   const [dy, setDy] = useState<number>(0);
   const [inputLength, setInputLength] = useState<number>(
-    solarPanel.orientation === Orientation.portrait ? solarPanel?.ly ?? 2 : solarPanel?.lx ?? 1,
+    solarPanel?.orientation === Orientation.portrait ? solarPanel?.ly ?? 2 : solarPanel?.lx ?? 1,
   );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

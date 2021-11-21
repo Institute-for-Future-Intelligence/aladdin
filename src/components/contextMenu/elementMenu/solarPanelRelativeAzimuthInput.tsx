@@ -13,7 +13,6 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
-import { updateSolarPanelRelativeAzimuthById } from '../../../stores/selector';
 
 const SolarPanelRelativeAzimuthInput = ({
   azimuthDialogVisible,
