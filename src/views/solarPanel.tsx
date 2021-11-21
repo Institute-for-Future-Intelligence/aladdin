@@ -61,7 +61,7 @@ const SolarPanel = ({
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
-  const updateElementById = useStore(Selector.updateElementById);
+  const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
   const getPvModule = useStore(Selector.getPvModule);
   const heliodonRadius = useStore(Selector.heliodonRadius);
   const resizeHandleType = useStore(Selector.resizeHandleType);
@@ -620,7 +620,7 @@ const SolarPanel = ({
                               ? Math.sign(-cv.y) * Math.sign(Math.cos(wr))
                               : Math.sign(cv.x) * Math.sign(Math.sin(wr));
                           const angle = cv.angleTo(new Vector3(0, 0, 1)) * sign;
-                          updateElementById(id, { tiltAngle: angle });
+                          updateSolarPanelTiltAngleById(id, angle);
                         }
                       }
                     }

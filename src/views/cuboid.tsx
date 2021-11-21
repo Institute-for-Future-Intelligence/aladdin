@@ -55,7 +55,8 @@ const Cuboid = ({
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const selectMe = useStore(Selector.selectMe);
   const updateElementById = useStore(Selector.updateElementById);
-  const setElementSize = useStore(Selector.setElementSize);
+  const updateElementLxById = useStore(Selector.updateElementLxById);
+  const updateElementLyById = useStore(Selector.updateElementLyById);
   const resizeAnchor = useStore(Selector.resizeAnchor);
   const getPvModule = useStore(Selector.getPvModule);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -330,21 +331,21 @@ const Cuboid = ({
                     if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
                       const nx = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
                       d = nx * pvModel.width;
-                      setElementSize(solarPanel.id, d, solarPanel.ly);
+                      updateElementLxById(solarPanel.id, d);
                     } else {
                       const ny = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
                       d = ny * pvModel.length;
-                      setElementSize(solarPanel.id, solarPanel.lx, d);
+                      updateElementLyById(solarPanel.id, d);
                     }
                   } else {
                     if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
                       const nx = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
                       d = nx * pvModel.length;
-                      setElementSize(solarPanel.id, d, solarPanel.ly);
+                      updateElementLxById(solarPanel.id, d);
                     } else {
                       const ny = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
                       d = ny * pvModel.width;
-                      setElementSize(solarPanel.id, solarPanel.lx, d);
+                      updateElementLyById(solarPanel.id, d);
                     }
                   }
                   const wc = new Vector3().addVectors(resizeAnchor, vhd.normalize().multiplyScalar(d / 2));

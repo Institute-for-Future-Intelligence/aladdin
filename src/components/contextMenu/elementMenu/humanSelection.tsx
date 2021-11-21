@@ -37,7 +37,7 @@ const { Option } = Select;
 
 const HumanSelection = () => {
   const language = useStore(Selector.language);
-  const updateElementById = useStore(Selector.updateElementById);
+  const updateHumanNameById = useStore(Selector.updateHumanNameById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -52,22 +52,21 @@ const HumanSelection = () => {
       onChange={(value) => {
         if (human) {
           const oldPerson = human.name;
-          const newPerson = value;
           const undoableChange = {
             name: 'Change People',
             timestamp: Date.now(),
             oldValue: oldPerson,
-            newValue: newPerson,
+            newValue: value,
             undo: () => {
-              updateElementById(human.id, { name: undoableChange.oldValue as string });
+              updateHumanNameById(human.id, undoableChange.oldValue as HumanName);
             },
             redo: () => {
-              updateElementById(human.id, { name: undoableChange.newValue as string });
+              updateHumanNameById(human.id, undoableChange.newValue as HumanName);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateElementById(human.id, { name: newPerson });
-          setSelectionValue(newPerson);
+          updateHumanNameById(human.id, value);
+          setSelectionValue(value);
         }
       }}
     >

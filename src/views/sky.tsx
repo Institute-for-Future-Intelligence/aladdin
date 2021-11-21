@@ -30,7 +30,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const setCommonStore = useStore(Selector.set);
   const selectNone = useStore(Selector.selectNone);
   const getSelectedElement = useStore(Selector.getSelectedElement);
-  const updateElement = useStore(Selector.updateElementById);
+  const updateElementLzById = useStore(Selector.updateElementLzById);
   const getCameraDirection = useStore(Selector.getCameraDirection);
   const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
   const resizeHandleType = useStore(Selector.resizeHandleType);
@@ -141,7 +141,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         intersects = ray.intersectObjects([intersectionPlaneRef.current]);
         if (intersects.length > 0) {
           const p = intersects[0].point;
-          updateElement(grabRef.current.id, { lz: Math.max(1, p.z) });
+          updateElementLzById(grabRef.current.id, Math.max(1, p.z));
         }
       }
     }

@@ -20,7 +20,7 @@ import Wall_08_Img from '../../../resources/wall_08.png';
 const { Option } = Select;
 
 const WallSelection = () => {
-  const updateElementById = useStore(Selector.updateElementById);
+  const updateWallTextureById = useStore(Selector.updateWallTextureById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const setCommonStore = useStore(Selector.set);
 
@@ -35,9 +35,7 @@ const WallSelection = () => {
     if (wall) {
       switch (radioGroup) {
         case 1:
-          updateElementById(wall.id, {
-            textureType: textureType,
-          });
+          updateWallTextureById(wall.id, textureType);
           break;
 
         case 2:

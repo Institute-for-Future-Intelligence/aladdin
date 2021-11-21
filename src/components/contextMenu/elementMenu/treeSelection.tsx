@@ -21,7 +21,7 @@ const { Option } = Select;
 
 const TreeSelection = () => {
   const language = useStore(Selector.language);
-  const updateElementById = useStore(Selector.updateElementById);
+  const updateTreeTypeById = useStore(Selector.updateTreeTypeById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -36,31 +36,21 @@ const TreeSelection = () => {
       onChange={(value) => {
         if (tree) {
           const oldTree = tree.name;
-          const newTree = value;
           const undoableChange = {
             name: 'Change Tree',
             timestamp: Date.now(),
             oldValue: oldTree,
-            newValue: newTree,
+            newValue: value,
             undo: () => {
-              updateElementById(tree.id, {
-                evergreen: undoableChange.oldValue === TreeType.Pine,
-                name: undoableChange.oldValue as string,
-              });
+              updateTreeTypeById(tree.id, undoableChange.oldValue as TreeType);
             },
             redo: () => {
-              updateElementById(tree.id, {
-                evergreen: undoableChange.newValue === TreeType.Pine,
-                name: undoableChange.newValue as string,
-              });
+              updateTreeTypeById(tree.id, undoableChange.newValue as TreeType);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateElementById(tree.id, {
-            name: newTree,
-            evergreen: newTree === TreeType.Pine,
-          });
-          setSelectValue(newTree);
+          updateTreeTypeById(tree.id, value);
+          setSelectValue(value);
         }
       }}
     >

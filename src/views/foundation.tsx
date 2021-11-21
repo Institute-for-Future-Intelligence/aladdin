@@ -64,8 +64,9 @@ const Foundation = ({
   const getAllWallsIdOnFoundation = useStore(Selector.getAllWallsIdOnFoundation);
   const setCommonStore = useStore(Selector.set);
   const setElementPosition = useStore(Selector.setElementPosition);
-  const setElementSize = useStore(Selector.setElementSize);
   const updateElementById = useStore(Selector.updateElementById);
+  const updateElementLxById = useStore(Selector.updateElementLxById);
+  const updateElementLyById = useStore(Selector.updateElementLyById);
   const removeElementById = useStore(Selector.removeElementById);
   const selectMe = useStore(Selector.selectMe);
   const addElement = useStore(Selector.addElement);
@@ -674,10 +675,7 @@ const Foundation = ({
               const { targetPoint } = findMagnetPoint(wallPoints, p, 1.5);
               p = updatePointer(p, targetPoint);
               if (isSettingWallStartPoint) {
-                updateElementById(buildingWallID, {
-                  cx: p.x,
-                  cy: p.y,
-                });
+                setElementPosition(buildingWallID, p.x, p.y);
               }
             }
           }
@@ -751,7 +749,7 @@ const Foundation = ({
                             const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
                             dyl = nx * pvModel.width;
                           }
-                          setElementSize(solarPanel.id, solarPanel.lx, dyl);
+                          updateElementLyById(solarPanel.id, dyl);
 
                           const wcx = resizeAnchor.x + (dyl * Math.sin(angle)) / 2;
                           const wcy = resizeAnchor.y - (dyl * Math.cos(angle)) / 2;
@@ -777,7 +775,7 @@ const Foundation = ({
                             const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
                             dyl = nx * pvModel.width;
                           }
-                          setElementSize(solarPanel.id, solarPanel.lx, dyl);
+                          updateElementLyById(solarPanel.id, dyl);
 
                           const wcx = resizeAnchor.x - (dyl * Math.sin(angle)) / 2;
                           const wcy = resizeAnchor.y + (dyl * Math.cos(angle)) / 2;
@@ -803,7 +801,7 @@ const Foundation = ({
                             const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
                             dxl = nx * pvModel.length;
                           }
-                          setElementSize(solarPanel.id, dxl, solarPanel.ly);
+                          updateElementLxById(solarPanel.id, dxl);
 
                           const wcx = resizeAnchor.x - (dxl * Math.cos(angle)) / 2;
                           const wcy = resizeAnchor.y - (dxl * Math.sin(angle)) / 2;
@@ -829,7 +827,7 @@ const Foundation = ({
                             const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
                             dxl = nx * pvModel.length;
                           }
-                          setElementSize(solarPanel.id, dxl, solarPanel.ly);
+                          updateElementLxById(solarPanel.id, dxl);
 
                           const wcx = resizeAnchor.x + (dxl * Math.cos(angle)) / 2;
                           const wcy = resizeAnchor.y + (dxl * Math.sin(angle)) / 2;

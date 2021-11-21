@@ -3,8 +3,7 @@
  */
 
 import { ElementModel } from './ElementModel';
-import { WallSide } from 'src/types';
-import { WindowModel } from './WindowModel';
+import { WallSide, WallTexture } from 'src/types';
 
 export interface WallModel extends ElementModel {
   relativeAngle: number;
@@ -12,7 +11,7 @@ export interface WallModel extends ElementModel {
   rightPoint: number[];
   leftJoints: JointProps[];
   rightJoints: JointProps[];
-  textureType: string;
+  textureType: WallTexture;
   leftOffset?: number;
   rightOffset?: number;
 }

@@ -15,6 +15,7 @@ import { Util } from '../Util';
 import {
   ActionType,
   DatumEntry,
+  HumanName,
   MoveHandleType,
   ObjectType,
   Orientation,
@@ -22,7 +23,9 @@ import {
   RotateHandleType,
   Scope,
   TrackerType,
+  TreeType,
   User,
+  WallTexture,
 } from '../types';
 import { DefaultWorldModel } from './DefaultWorldModel';
 import { Box3, Vector2, Vector3 } from 'three';
@@ -42,6 +45,7 @@ import { Undoable } from '../undo/Undoable';
 // @ts-ignore
 import UndoManager from 'undo-manager';
 import { TreeModel } from '../models/TreeModel';
+import { HumanModel } from '../models/HumanModel';
 
 enableMapSet();
 
@@ -98,6 +102,8 @@ export interface CommonStoreState {
   updateElementById: (id: string, element: Partial<ElementModel>) => ElementModel | null;
 
   // for all types of elements
+  updateElementLockById: (id: string, locked: boolean) => void;
+
   updateElementLabelById: (id: string, label: string) => void;
   updateElementShowLabelById: (id: string, showLabel: boolean) => void;
 
@@ -106,6 +112,10 @@ export interface CommonStoreState {
 
   updateElementRotationById: (id: string, x: number, y: number, z: number) => void;
   updateElementRotationForAll: (type: ObjectType, x: number, y: number, z: number) => void;
+
+  updateElementCxById: (id: string, cx: number) => void;
+  updateElementCyById: (id: string, cy: number) => void;
+  updateElementCzById: (id: string, cz: number) => void;
 
   updateElementLxById: (id: string, lx: number) => void;
   updateElementLxOnSurface: (type: ObjectType, parentId: string, normal: number[] | undefined, lx: number) => void;
@@ -193,7 +203,12 @@ export interface CommonStoreState {
 
   updateSolarPanelDrawSunBeamById: (id: string, drawSunBeam: boolean) => void;
 
+  updateWallTextureById: (id: string, texture: WallTexture) => void;
+
+  updateTreeTypeById: (id: string, type: TreeType) => void;
   updateTreeShowModelById: (id: string, showModel: boolean) => void;
+
+  updateHumanNameById: (id: string, name: HumanName) => void;
 
   objectTypeToAdd: ObjectType;
   addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => string;
@@ -477,6 +492,17 @@ export const useStore = create<CommonStoreState>(
           },
 
           // for all types of elements
+          updateElementLockById(id, locked) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  e.locked = locked;
+                  break;
+                }
+              }
+            });
+          },
+
           updateElementLabelById(id, label) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -514,6 +540,37 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === type) {
                   e.color = color;
+                }
+              }
+            });
+          },
+
+          updateElementCxById(id, cx) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  e.cx = cx;
+                  break;
+                }
+              }
+            });
+          },
+          updateElementCyById(id, cy) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  e.cy = cy;
+                  break;
+                }
+              }
+            });
+          },
+          updateElementCzById(id, cz) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  e.cz = cz;
+                  break;
                 }
               }
             });
@@ -1226,11 +1283,45 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          updateWallTextureById(id, texture) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.id === id) {
+                  (e as WallModel).textureType = texture;
+                  break;
+                }
+              }
+            });
+          },
+
+          updateTreeTypeById(id, name) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Tree && e.id === id) {
+                  const tree = e as TreeModel;
+                  tree.name = name;
+                  tree.evergreen = name === TreeType.Pine;
+                  break;
+                }
+              }
+            });
+          },
           updateTreeShowModelById(id, showModel) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Tree && e.id === id) {
                   (e as TreeModel).showModel = showModel;
+                  break;
+                }
+              }
+            });
+          },
+
+          updateHumanNameById(id, name) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Human && e.id === id) {
+                  (e as HumanModel).name = name;
                   break;
                 }
               }

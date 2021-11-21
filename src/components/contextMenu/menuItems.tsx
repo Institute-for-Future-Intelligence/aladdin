@@ -127,14 +127,14 @@ export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
 
 export const Lock = () => {
   const language = useStore(Selector.language);
-  const updateElementById = useStore(Selector.updateElementById);
+  const updateElementLockById = useStore(Selector.updateElementLockById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const selectedElement = getSelectedElement();
   const addUndoable = useStore(Selector.addUndoable);
 
   const lockElement = (on: boolean) => {
     if (selectedElement) {
-      updateElementById(selectedElement.id, { locked: on });
+      updateElementLockById(selectedElement.id, on);
       // setUpdateFlag(!updateFlag);
     }
   };
@@ -168,7 +168,7 @@ export const Lock = () => {
 
 export const ColorPicker = () => {
   const language = useStore(Selector.language);
-  const updateElementById = useStore(Selector.updateElementById);
+  const updateElementColorById = useStore(Selector.updateElementColorById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const selectedElement = getSelectedElement();
   const addUndoable = useStore(Selector.addUndoable);
@@ -183,14 +183,14 @@ export const ColorPicker = () => {
         oldValue: oldColor,
         newValue: newColor,
         undo: () => {
-          updateElementById(selectedElement.id, { color: undoableChange.oldValue as string });
+          updateElementColorById(selectedElement.id, undoableChange.oldValue as string);
         },
         redo: () => {
-          updateElementById(selectedElement.id, { color: undoableChange.newValue as string });
+          updateElementColorById(selectedElement.id, undoableChange.newValue as string);
         },
       } as UndoableChange;
       addUndoable(undoableChange);
-      updateElementById(selectedElement.id, { color: newColor });
+      updateElementColorById(selectedElement.id, newColor);
     }
   };
 

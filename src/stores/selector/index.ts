@@ -74,9 +74,17 @@ export const setElementNormal = (state: CommonStoreState) => state.setElementNor
 //  remove [key: string]: any; in ElementModel
 export const updateElementById = (state: CommonStoreState) => state.updateElementById;
 
+export const updateElementLockById = (state: CommonStoreState) => state.updateElementLockById;
+
 export const updateElementLabelById = (state: CommonStoreState) => state.updateElementLabelById;
 
 export const updateElementShowLabelById = (state: CommonStoreState) => state.updateElementShowLabelById;
+
+export const updateElementCxById = (state: CommonStoreState) => state.updateElementCxById;
+
+export const updateElementCyById = (state: CommonStoreState) => state.updateElementCyById;
+
+export const updateElementCzById = (state: CommonStoreState) => state.updateElementCzById;
 
 export const updateElementLxById = (state: CommonStoreState) => state.updateElementLxById;
 
@@ -210,7 +218,13 @@ export const updateSolarPanelPoleSpacingForAll = (state: CommonStoreState) => st
 
 export const updateSolarPanelDrawSunBeamById = (state: CommonStoreState) => state.updateSolarPanelDrawSunBeamById;
 
+export const updateWallTextureById = (state: CommonStoreState) => state.updateWallTextureById;
+
+export const updateTreeTypeById = (state: CommonStoreState) => state.updateTreeTypeById;
+
 export const updateTreeShowModelById = (state: CommonStoreState) => state.updateTreeShowModelById;
+
+export const updateHumanNameById = (state: CommonStoreState) => state.updateHumanNameById;
 
 export const copyElementById = (state: CommonStoreState) => state.copyElementById;
 

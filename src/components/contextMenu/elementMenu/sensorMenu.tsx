@@ -14,7 +14,8 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 
 export const SensorMenu = () => {
   const language = useStore(Selector.language);
-  const updateElementById = useStore(Selector.updateElementById);
+  const updateElementLabelById = useStore(Selector.updateElementLabelById);
+  const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -31,14 +32,14 @@ export const SensorMenu = () => {
         oldValue: oldLabel,
         newValue: labelText,
         undo: () => {
-          updateElementById(selectedElement.id, { label: undoableChange.oldValue as string });
+          updateElementLabelById(selectedElement.id, undoableChange.oldValue as string);
         },
         redo: () => {
-          updateElementById(selectedElement.id, { label: undoableChange.newValue as string });
+          updateElementLabelById(selectedElement.id, undoableChange.newValue as string);
         },
       } as UndoableChange;
       addUndoable(undoableChange);
-      updateElementById(selectedElement.id, { label: labelText });
+      updateElementLabelById(selectedElement.id, labelText);
     }
   };
 
@@ -49,14 +50,14 @@ export const SensorMenu = () => {
         timestamp: Date.now(),
         checked: !selectedElement.showLabel,
         undo: () => {
-          updateElementById(selectedElement.id, { showLabel: !undoableCheck.checked });
+          updateElementShowLabelById(selectedElement.id, !undoableCheck.checked);
         },
         redo: () => {
-          updateElementById(selectedElement.id, { showLabel: undoableCheck.checked });
+          updateElementShowLabelById(selectedElement.id, undoableCheck.checked);
         },
       } as UndoableCheck;
       addUndoable(undoableCheck);
-      updateElementById(selectedElement.id, { showLabel: e.target.checked });
+      updateElementShowLabelById(selectedElement.id, e.target.checked);
     }
   };
 

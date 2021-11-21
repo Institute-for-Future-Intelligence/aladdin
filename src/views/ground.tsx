@@ -36,7 +36,8 @@ const Ground = () => {
   const setElementPosition = useStore(Selector.setElementPosition);
   const setElementSize = useStore(Selector.setElementSize);
   const setElementRotation = useStore(Selector.updateElementRotationById);
-  const updateElement = useStore(Selector.updateElementById);
+  const updateElementCzById = useStore(Selector.updateElementCzById);
+  const updateElementLzById = useStore(Selector.updateElementLzById);
   const addElement = useStore(Selector.addElement);
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
@@ -482,7 +483,8 @@ const Ground = () => {
           intersects = ray.intersectObjects([intersectionPlaneRef.current]);
           if (intersects.length > 0) {
             const p = intersects[0].point;
-            updateElement(grabRef.current.id, { cz: Math.max(0.5, p.z / 2), lz: Math.max(1, p.z) });
+            updateElementCzById(grabRef.current.id, Math.max(0.5, p.z / 2));
+            updateElementLzById(grabRef.current.id, Math.max(1, p.z));
           }
         }
       }
