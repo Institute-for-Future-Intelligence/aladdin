@@ -2,9 +2,9 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Menu, Modal } from 'antd';
-import { ColorPicker, Copy, Cut, Lock, Paste } from '../menuItems';
+import { Copy, Cut, Lock, Paste } from '../menuItems';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useStore } from '../../../stores/common';
@@ -13,6 +13,7 @@ import { ObjectType } from '../../../types';
 import ReshapeElementMenu from '../../reshapeElementMenu';
 import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
+import CuboidColorSelection from './cuboidColorSelection';
 
 export const CuboidMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -25,6 +26,8 @@ export const CuboidMenu = () => {
   const countAllChildSolarPanels = useStore(Selector.countAllChildSolarPanels);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
+
+  const [colorDialogVisible, setColorDialogVisible] = useState(false);
 
   const sensorCountCuboid = selectedElement ? countAllChildElementsByType(selectedElement.id, ObjectType.Sensor) : 0;
   const solarRackCountCuboid = selectedElement
@@ -39,7 +42,16 @@ export const CuboidMenu = () => {
       <Copy />
       <Cut />
       <Lock />
-      <ColorPicker />
+      <CuboidColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
+      <Menu.Item
+        key={'cuboid-color'}
+        style={{ paddingLeft: '36px' }}
+        onClick={() => {
+          setColorDialogVisible(true);
+        }}
+      >
+        {i18n.t('word.Color', lang)} ...
+      </Menu.Item>
       {(sensorCountCuboid > 0 || solarPanelCountCuboid > 0) && contextMenuObjectType && (
         <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
           {sensorCountCuboid > 0 && (

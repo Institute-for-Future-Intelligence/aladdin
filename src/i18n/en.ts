@@ -196,6 +196,8 @@ export const i18n_en = {
       DoYouReallyWantToRemoveAllSolarPanelsOnCuboid: 'Do you really want to remove all the solar panels on this cuboid',
       Sensors: 'Sensors',
       DoYouReallyWantToRemoveAllSensorsOnCuboid: 'Do you really want to remove all the sensors on this cuboid',
+      OnlyThisCuboid: 'Only This Cuboid',
+      AllCuboids: 'All Cuboids',
     },
 
     treeMenu: {

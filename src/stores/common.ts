@@ -123,6 +123,10 @@ export interface CommonStoreState {
   foundationActionScope: Scope;
   setFoundationActionScope: (scope: Scope) => void;
 
+  // for cuboids
+  cuboidActionScope: Scope;
+  setCuboidActionScope: (scope: Scope) => void;
+
   // for solar panels
   solarPanelActionScope: Scope;
   setSolarPanelActionScope: (scope: Scope) => void;
@@ -651,11 +655,19 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          // for solar panels
+          // for foundations
           foundationActionScope: Scope.OnlyThisObject,
           setFoundationActionScope(scope: Scope) {
             immerSet((state: CommonStoreState) => {
               state.foundationActionScope = scope;
+            });
+          },
+
+          // for cuboids
+          cuboidActionScope: Scope.OnlyThisObject,
+          setCuboidActionScope(scope: Scope) {
+            immerSet((state: CommonStoreState) => {
+              state.cuboidActionScope = scope;
             });
           },
 

@@ -112,6 +112,10 @@ export const foundationActionScope = (state: CommonStoreState) => state.foundati
 
 export const setFoundationActionScope = (state: CommonStoreState) => state.setFoundationActionScope;
 
+export const cuboidActionScope = (state: CommonStoreState) => state.cuboidActionScope;
+
+export const setCuboidActionScope = (state: CommonStoreState) => state.setCuboidActionScope;
+
 export const solarPanelActionScope = (state: CommonStoreState) => state.solarPanelActionScope;
 
 export const setSolarPanelActionScope = (state: CommonStoreState) => state.setSolarPanelActionScope;
