@@ -57,6 +57,7 @@ export const i18n_zh_cn = {
       Width: '宽度',
       Height: '高度',
       Angle: '角度',
+      Azimuth: '方位角',
       Weather: '天气',
       Show: '显示',
       Animate: '动画',

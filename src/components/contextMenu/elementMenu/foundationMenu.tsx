@@ -7,13 +7,16 @@ import { Menu, Modal } from 'antd';
 import { Copy, Cut, Lock, Paste } from '../menuItems';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import ReshapeElementMenu from '../../reshapeElementMenu';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { ObjectType } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 import FoundationColorSelection from './foundationColorSelection';
+import FoundationWidthInput from './foundationWidthInput';
+import FoundationLengthInput from './foundationLengthInput';
+import FoundationHeightInput from './foundationHeightInput';
+import FoundationAzimuthInput from './foundationAzimuthInput';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -27,6 +30,10 @@ export const FoundationMenu = () => {
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
 
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
+  const [widthDialogVisible, setWidthDialogVisible] = useState(false);
+  const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
+  const [heightDialogVisible, setHeightDialogVisible] = useState(false);
+  const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
   const selectedElement = getSelectedElement();
   const sensorCountFoundation = selectedElement
@@ -89,6 +96,7 @@ export const FoundationMenu = () => {
               {i18n.t('foundationMenu.RemoveAllSensors', lang)} ({sensorCountFoundation})
             </Menu.Item>
           )}
+
           {solarPanelCountFoundation > 0 && (
             <Menu.Item
               key={'remove-all-solar-panels-on-foundation'}
@@ -143,6 +151,7 @@ export const FoundationMenu = () => {
           )}
         </SubMenu>
       )}
+
       <FoundationColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
       <Menu.Item
         key={'foundation-color'}
@@ -153,9 +162,59 @@ export const FoundationMenu = () => {
       >
         {i18n.t('word.Color', lang)} ...
       </Menu.Item>
-      {selectedElement && contextMenuObjectType && (
-        <ReshapeElementMenu elementId={selectedElement.id} name={'foundation'} style={{ paddingLeft: '20px' }} />
-      )}
+
+      <FoundationWidthInput widthDialogVisible={widthDialogVisible} setWidthDialogVisible={setWidthDialogVisible} />
+      <Menu.Item
+        key={'foundation-width'}
+        style={{ paddingLeft: '36px' }}
+        onClick={() => {
+          setWidthDialogVisible(true);
+        }}
+      >
+        {i18n.t('word.Width', lang)} ...
+      </Menu.Item>
+
+      <FoundationLengthInput
+        lengthDialogVisible={lengthDialogVisible}
+        setLengthDialogVisible={setLengthDialogVisible}
+      />
+      <Menu.Item
+        key={'foundation-length'}
+        style={{ paddingLeft: '36px' }}
+        onClick={() => {
+          setLengthDialogVisible(true);
+        }}
+      >
+        {i18n.t('word.Length', lang)} ...
+      </Menu.Item>
+
+      <FoundationHeightInput
+        heightDialogVisible={heightDialogVisible}
+        setHeightDialogVisible={setHeightDialogVisible}
+      />
+      <Menu.Item
+        key={'foundation-height'}
+        style={{ paddingLeft: '36px' }}
+        onClick={() => {
+          setHeightDialogVisible(true);
+        }}
+      >
+        {i18n.t('word.Height', lang)} ...
+      </Menu.Item>
+
+      <FoundationAzimuthInput
+        azimuthDialogVisible={azimuthDialogVisible}
+        setAzimuthDialogVisible={setAzimuthDialogVisible}
+      />
+      <Menu.Item
+        key={'foundation-azimuth'}
+        style={{ paddingLeft: '36px' }}
+        onClick={() => {
+          setAzimuthDialogVisible(true);
+        }}
+      >
+        {i18n.t('word.Azimuth', lang)} ...
+      </Menu.Item>
     </Menu.ItemGroup>
   );
 };

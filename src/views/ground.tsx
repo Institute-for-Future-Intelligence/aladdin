@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { Plane } from '@react-three/drei';
-import { Box3, DoubleSide, Euler, Mesh, Raycaster, Scene, Vector2, Vector3 } from 'three';
+import { Box3, DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -35,7 +35,7 @@ const Ground = () => {
   const resizeAnchor = useStore(Selector.resizeAnchor);
   const setElementPosition = useStore(Selector.setElementPosition);
   const setElementSize = useStore(Selector.setElementSize);
-  const setElementRotation = useStore(Selector.setElementRotation);
+  const setElementRotation = useStore(Selector.updateElementRotationById);
   const updateElement = useStore(Selector.updateElementById);
   const addElement = useStore(Selector.addElement);
   const getElementById = useStore(Selector.getElementById);

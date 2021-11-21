@@ -57,6 +57,7 @@ export const i18n_en = {
       Width: 'Width',
       Height: 'Height',
       Angle: 'Angle',
+      Azimuth: 'Azimuth',
       Weather: 'Weather',
       Show: 'Show',
       Animate: 'Animate',

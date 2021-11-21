@@ -66,8 +66,6 @@ export const getAllWallsIdOnFoundation = (state: CommonStoreState) => state.getA
 
 export const setElementPosition = (state: CommonStoreState) => state.setElementPosition;
 
-export const setElementRotation = (state: CommonStoreState) => state.setElementRotation;
-
 export const setElementSize = (state: CommonStoreState) => state.setElementSize;
 
 export const setElementNormal = (state: CommonStoreState) => state.setElementNormal;
@@ -107,6 +105,10 @@ export const updateElementLzForAll = (state: CommonStoreState) => state.updateEl
 export const updateElementColorById = (state: CommonStoreState) => state.updateElementColorById;
 
 export const updateElementColorForAll = (state: CommonStoreState) => state.updateElementColorForAll;
+
+export const updateElementRotationById = (state: CommonStoreState) => state.updateElementRotationById;
+
+export const updateElementRotationForAll = (state: CommonStoreState) => state.updateElementRotationForAll;
 
 export const foundationActionScope = (state: CommonStoreState) => state.foundationActionScope;
 

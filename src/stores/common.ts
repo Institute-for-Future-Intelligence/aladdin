@@ -89,7 +89,6 @@ export interface CommonStoreState {
   selectMe: (id: string, e: ThreeEvent<MouseEvent>, action?: ActionType) => void;
   selectNone: () => void;
   setElementPosition: (id: string, x: number, y: number, z?: number) => void;
-  setElementRotation: (id: string, x: number, y: number, z: number) => void;
   setElementNormal: (id: string, x: number, y: number, z: number) => void;
   setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
 
@@ -103,6 +102,9 @@ export interface CommonStoreState {
 
   updateElementColorById: (id: string, color: string) => void;
   updateElementColorForAll: (type: ObjectType, color: string) => void;
+
+  updateElementRotationById: (id: string, x: number, y: number, z: number) => void;
+  updateElementRotationForAll: (type: ObjectType, x: number, y: number, z: number) => void;
 
   updateElementLxById: (id: string, lx: number) => void;
   updateElementLxOnSurface: (type: ObjectType, parentId: string, normal: number[] | undefined, lx: number) => void;
@@ -650,6 +652,31 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === type) {
                   e.lz = lz;
+                }
+              }
+            });
+          },
+
+          updateElementRotationById(id, x, y, z) {
+            immerSet((state: CommonStoreState) => {
+              for (const [i, e] of state.elements.entries()) {
+                if (e.id === id || e.parentId === id) {
+                  const elem = state.elements[i];
+                  elem.rotation[0] = x;
+                  elem.rotation[1] = y;
+                  elem.rotation[2] = z;
+                }
+              }
+              state.selectedElementAngle = z;
+            });
+          },
+          updateElementRotationForAll(type, x, y, z) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type) {
+                  e.rotation[0] = x;
+                  e.rotation[1] = y;
+                  e.rotation[2] = z;
                 }
               }
             });
@@ -1208,19 +1235,6 @@ export const useStore = create<CommonStoreState>(
                   break;
                 }
               }
-            });
-          },
-          setElementRotation(id, x, y, z) {
-            immerSet((state: CommonStoreState) => {
-              for (let [i, e] of state.elements.entries()) {
-                if (e.id === id || e.parentId === id) {
-                  const elem = state.elements[i];
-                  elem.rotation[0] = x;
-                  elem.rotation[1] = y;
-                  elem.rotation[2] = z;
-                }
-              }
-              state.selectedElementAngle = z;
             });
           },
           setElementNormal(id, x, y, z) {
