@@ -31,7 +31,7 @@ const TreeSelection = () => {
 
   return (
     <Select
-      style={{ width: '150px' }}
+      style={{ width: '160px' }}
       value={selectValue}
       onChange={(value) => {
         if (tree) {
@@ -65,29 +65,31 @@ const TreeSelection = () => {
       }}
     >
       <Option key={TreeType.Cottonwood} value={TreeType.Cottonwood}>
-        <img alt={TreeType.Cottonwood} src={CottonwoodImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+        <img alt={TreeType.Cottonwood} src={CottonwoodImage} height={20} style={{ paddingRight: '16px' }} />{' '}
         {i18n.t('tree.Cottonwood', lang)}
       </Option>
       <Option key={TreeType.Dogwood} value={TreeType.Dogwood}>
-        <img alt={TreeType.Dogwood} src={DogwoodImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+        <img alt={TreeType.Dogwood} src={DogwoodImage} height={20} style={{ paddingRight: '16px' }} />{' '}
         {i18n.t('tree.Dogwood', lang)}
       </Option>
       <Option key={TreeType.Elm} value={TreeType.Elm}>
-        <img alt={TreeType.Elm} src={ElmImage} height={20} style={{ paddingRight: '8px' }} /> {i18n.t('tree.Elm', lang)}
+        <img alt={TreeType.Elm} src={ElmImage} height={20} style={{ paddingRight: '22px' }} />
+        {i18n.t('tree.Elm', lang)}
       </Option>
       <Option key={TreeType.Linden} value={TreeType.Linden}>
-        <img alt={TreeType.Linden} src={LindenImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+        <img alt={TreeType.Linden} src={LindenImage} height={20} style={{ paddingRight: '18px' }} />{' '}
         {i18n.t('tree.Linden', lang)}
       </Option>
       <Option key={TreeType.Maple} value={TreeType.Maple}>
-        <img alt={TreeType.Maple} src={MapleImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+        <img alt={TreeType.Maple} src={MapleImage} height={20} style={{ paddingRight: '18px' }} />{' '}
         {i18n.t('tree.Maple', lang)}
       </Option>
       <Option key={TreeType.Oak} value={TreeType.Oak}>
-        <img alt={TreeType.Oak} src={OakImage} height={20} style={{ paddingRight: '8px' }} /> {i18n.t('tree.Oak', lang)}
+        <img alt={TreeType.Oak} src={OakImage} height={20} style={{ paddingRight: '16px' }} />
+        {i18n.t('tree.Oak', lang)}
       </Option>
       <Option key={TreeType.Pine} value={TreeType.Pine}>
-        <img alt={TreeType.Pine} src={PineImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+        <img alt={TreeType.Pine} src={PineImage} height={20} style={{ paddingRight: '22px' }} />{' '}
         {i18n.t('tree.Pine', lang)}
       </Option>
     </Select>

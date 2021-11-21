@@ -41,6 +41,7 @@ import enUS from 'antd/lib/locale/en_US';
 import { Undoable } from '../undo/Undoable';
 // @ts-ignore
 import UndoManager from 'undo-manager';
+import { TreeModel } from '../models/TreeModel';
 
 enableMapSet();
 
@@ -191,6 +192,8 @@ export interface CommonStoreState {
   updateSolarPanelPoleSpacingForAll: (poleSpacing: number) => void;
 
   updateSolarPanelDrawSunBeamById: (id: string, drawSunBeam: boolean) => void;
+
+  updateTreeShowModelById: (id: string, showModel: boolean) => void;
 
   objectTypeToAdd: ObjectType;
   addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => string;
@@ -1217,6 +1220,17 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
                   (e as SolarPanelModel).drawSunBeam = drawSunBeam;
+                  break;
+                }
+              }
+            });
+          },
+
+          updateTreeShowModelById(id, showModel) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Tree && e.id === id) {
+                  (e as TreeModel).showModel = showModel;
                   break;
                 }
               }

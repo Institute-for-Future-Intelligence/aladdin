@@ -210,6 +210,8 @@ export const updateSolarPanelPoleSpacingForAll = (state: CommonStoreState) => st
 
 export const updateSolarPanelDrawSunBeamById = (state: CommonStoreState) => state.updateSolarPanelDrawSunBeamById;
 
+export const updateTreeShowModelById = (state: CommonStoreState) => state.updateTreeShowModelById;
+
 export const copyElementById = (state: CommonStoreState) => state.copyElementById;
 
 export const removeElementById = (state: CommonStoreState) => state.removeElementById;
