@@ -70,10 +70,6 @@ export const setElementSize = (state: CommonStoreState) => state.setElementSize;
 
 export const setElementNormal = (state: CommonStoreState) => state.setElementNormal;
 
-// TODO: this needs to be replaced with direct update soon because we need to
-//  remove [key: string]: any; in ElementModel
-export const updateElementById = (state: CommonStoreState) => state.updateElementById;
-
 export const updateElementLockById = (state: CommonStoreState) => state.updateElementLockById;
 
 export const updateElementLabelById = (state: CommonStoreState) => state.updateElementLabelById;
@@ -217,6 +213,20 @@ export const updateSolarPanelPoleSpacingAboveFoundation = (state: CommonStoreSta
 export const updateSolarPanelPoleSpacingForAll = (state: CommonStoreState) => state.updateSolarPanelPoleSpacingForAll;
 
 export const updateSolarPanelDrawSunBeamById = (state: CommonStoreState) => state.updateSolarPanelDrawSunBeamById;
+
+export const updateWallRelativeAngleById = (state: CommonStoreState) => state.updateWallRelativeAngleById;
+
+export const updateWallLeftOffsetById = (state: CommonStoreState) => state.updateWallLeftOffsetById;
+
+export const updateWallRightOffsetById = (state: CommonStoreState) => state.updateWallRightOffsetById;
+
+export const updateWallLeftJointsById = (state: CommonStoreState) => state.updateWallLeftJointsById;
+
+export const updateWallRightJointsById = (state: CommonStoreState) => state.updateWallRightJointsById;
+
+export const updateWallLeftPointById = (state: CommonStoreState) => state.updateWallLeftPointById;
+
+export const updateWallRightPointById = (state: CommonStoreState) => state.updateWallRightPointById;
 
 export const updateWallTextureById = (state: CommonStoreState) => state.updateWallTextureById;
 

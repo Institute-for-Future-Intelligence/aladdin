@@ -3,9 +3,10 @@
  */
 
 import { ElementModel } from './ElementModel';
+import { TreeType } from '../types';
 
 export interface TreeModel extends ElementModel {
-  name: string;
+  name: TreeType;
   evergreen: boolean;
   showModel: boolean;
 }

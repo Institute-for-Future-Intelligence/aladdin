@@ -38,7 +38,7 @@ import { GroundModel } from '../models/GroundModel';
 import { PvModel } from '../models/PvModel';
 import { ThreeEvent } from '@react-three/fiber';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import { WallModel } from '../models/WallModel';
+import { JointProps, WallModel } from '../models/WallModel';
 import { Locale } from 'antd/lib/locale-provider';
 import enUS from 'antd/lib/locale/en_US';
 import { Undoable } from '../undo/Undoable';
@@ -96,10 +96,6 @@ export interface CommonStoreState {
   setElementPosition: (id: string, x: number, y: number, z?: number) => void;
   setElementNormal: (id: string, x: number, y: number, z: number) => void;
   setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
-
-  // TODO: this needs to be replaced with direct update soon because we need to
-  //  remove [key: string]: any; in ElementModel
-  updateElementById: (id: string, element: Partial<ElementModel>) => ElementModel | null;
 
   // for all types of elements
   updateElementLockById: (id: string, locked: boolean) => void;
@@ -203,6 +199,13 @@ export interface CommonStoreState {
 
   updateSolarPanelDrawSunBeamById: (id: string, drawSunBeam: boolean) => void;
 
+  updateWallRelativeAngleById: (id: string, angle: number) => void;
+  updateWallLeftOffsetById: (id: string, offset: number) => void;
+  updateWallRightOffsetById: (id: string, offset: number) => void;
+  updateWallLeftJointsById: (id: string, joints: JointProps[]) => void;
+  updateWallRightJointsById: (id: string, joints: JointProps[]) => void;
+  updateWallLeftPointById: (id: string, point: number[]) => void;
+  updateWallRightPointById: (id: string, point: number[]) => void;
   updateWallTextureById: (id: string, texture: WallTexture) => void;
 
   updateTreeTypeById: (id: string, type: TreeType) => void;
@@ -474,21 +477,6 @@ export const useStore = create<CommonStoreState>(
                 });
               }
             }
-          },
-
-          updateElementById(id, newProps) {
-            let element: ElementModel | null = null;
-            immerSet((state: CommonStoreState) => {
-              for (let [i, e] of state.elements.entries()) {
-                if (e.id === id) {
-                  state.elements[i] = { ...e, ...newProps };
-                  state.selectedElementHeight = newProps.lz ?? 0;
-                  element = state.elements[i];
-                  break;
-                }
-              }
-            });
-            return element;
           },
 
           // for all types of elements
@@ -1283,6 +1271,76 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          updateWallRelativeAngleById(id, angle) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.id === id) {
+                  (e as WallModel).relativeAngle = angle;
+                  break;
+                }
+              }
+            });
+          },
+          updateWallLeftOffsetById(id, offset) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.id === id) {
+                  (e as WallModel).leftOffset = offset;
+                  break;
+                }
+              }
+            });
+          },
+          updateWallRightOffsetById(id, offset) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.id === id) {
+                  (e as WallModel).rightOffset = offset;
+                  break;
+                }
+              }
+            });
+          },
+          updateWallLeftJointsById(id, joints) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.id === id) {
+                  (e as WallModel).leftJoints = joints;
+                  break;
+                }
+              }
+            });
+          },
+          updateWallRightJointsById(id, joints) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.id === id) {
+                  (e as WallModel).rightJoints = joints;
+                  break;
+                }
+              }
+            });
+          },
+          updateWallLeftPointById(id, point) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.id === id) {
+                  (e as WallModel).leftPoint = point;
+                  break;
+                }
+              }
+            });
+          },
+          updateWallRightPointById(id, point) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.id === id) {
+                  (e as WallModel).rightPoint = point;
+                  break;
+                }
+              }
+            });
+          },
           updateWallTextureById(id, texture) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -1395,7 +1453,7 @@ export const useStore = create<CommonStoreState>(
                     sensorRelativeCoordinates.y,
                     sensorRelativeCoordinates.z,
                     normal,
-                    parent.rotation,
+                    'rotation' in parent ? parent.rotation : undefined,
                   );
                   id = sensor.id;
                   state.elements.push(sensor);
@@ -1410,7 +1468,7 @@ export const useStore = create<CommonStoreState>(
                     solarPanelRelativeCoordinates.y,
                     solarPanelRelativeCoordinates.z,
                     normal,
-                    parent.rotation,
+                    'rotation' in parent ? parent.rotation : undefined,
                   );
                   id = solarPanel.id;
                   state.elements.push(solarPanel);
@@ -1434,7 +1492,7 @@ export const useStore = create<CommonStoreState>(
                     relativePos.y,
                     relativePos.z,
                     normal,
-                    parent.rotation,
+                    'rotation' in parent ? parent.rotation : undefined,
                   );
                   state.elements.push(wall);
                   id = wall.id;

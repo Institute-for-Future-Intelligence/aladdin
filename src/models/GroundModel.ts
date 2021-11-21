@@ -9,6 +9,4 @@ export interface GroundModel {
   thermalDiffusivity: number;
 
   snowReflectionFactors: number[];
-
-  [key: string]: any;
 }

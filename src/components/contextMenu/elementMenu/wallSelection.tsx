@@ -24,10 +24,10 @@ const WallSelection = () => {
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const setCommonStore = useStore(Selector.set);
 
-  const wall = getSelectedElement();
+  const wall = getSelectedElement() as WallModel;
 
-  const [textureType, setTextureType] = useState(wall?.textureType ?? WallTexture.NoTexture);
-  const [prevTexture, setPrevTexture] = useState('');
+  const [textureType, setTextureType] = useState<WallTexture>(wall?.textureType ?? WallTexture.NoTexture);
+  const [prevTexture, setPrevTexture] = useState<WallTexture>(WallTexture.NoTexture);
   const [radioGroup, setRadioGroup] = useState(1);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -72,7 +72,7 @@ const WallSelection = () => {
     setRadioGroup(e.target.value);
   };
 
-  const onSelectionChange = (value: string) => {
+  const onSelectionChange = (value: WallTexture) => {
     setIsModalVisible(true);
     setPrevTexture(textureType);
     setTextureType(value);

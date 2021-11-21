@@ -82,7 +82,7 @@ export class ElementModelFactory {
     } as FoundationModel;
   }
 
-  static makeSensor(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: []) {
+  static makeSensor(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: number[]) {
     let foundationId;
     switch (parent.type) {
       case ObjectType.Foundation:
@@ -118,7 +118,7 @@ export class ElementModelFactory {
     y: number,
     z?: number,
     normal?: Vector3,
-    rotation?: [],
+    rotation?: number[],
   ) {
     let foundationId;
     switch (parent.type) {
@@ -157,7 +157,7 @@ export class ElementModelFactory {
     } as SolarPanelModel;
   }
 
-  static makeWall(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: []) {
+  static makeWall(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: number[]) {
     return {
       type: ObjectType.Wall,
       cx: x,
@@ -183,7 +183,7 @@ export class ElementModelFactory {
     } as WallModel;
   }
 
-  static makeWindow(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: []) {
+  static makeWindow(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: number[]) {
     let foundationId;
     switch (parent.type) {
       case ObjectType.Cuboid:
@@ -213,7 +213,7 @@ export class ElementModelFactory {
     } as WindowModel;
   }
 
-  static makeRoof(cz: number, parent: ElementModel, points: RoofPoint[], normal?: Vector3, rotation?: []) {
+  static makeRoof(cz: number, parent: ElementModel, points: RoofPoint[], normal?: Vector3, rotation?: number[]) {
     return {
       type: ObjectType.Roof,
       cx: 0,

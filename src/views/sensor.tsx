@@ -80,7 +80,7 @@ const Sensor = ({
     }
   }
   const hz = lz / 2;
-  const element = getElementById(id);
+  const sensorModel = getElementById(id) as SensorModel;
 
   const euler = useMemo(() => {
     const v = new Vector3().fromArray(normal);
@@ -137,7 +137,7 @@ const Sensor = ({
           domElement.style.cursor = 'default';
         }}
       >
-        <meshStandardMaterial attach="material" color={element?.lit ? HIGHLIGHT_HANDLE_COLOR : color} />
+        <meshStandardMaterial attach="material" color={sensorModel?.lit ? HIGHLIGHT_HANDLE_COLOR : color} />
       </Box>
 
       {/* wireFrame */}
@@ -161,7 +161,7 @@ const Sensor = ({
       {(hovered || showLabel) && !selected && (
         <textSprite
           name={'Label'}
-          text={element?.label ? element.label : 'Sensor'}
+          text={sensorModel?.label ? sensorModel.label : 'Sensor'}
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}

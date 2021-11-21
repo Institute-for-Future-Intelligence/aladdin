@@ -54,7 +54,7 @@ const Cuboid = ({
   const setElementNormal = useStore(Selector.setElementNormal);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const selectMe = useStore(Selector.selectMe);
-  const updateElementById = useStore(Selector.updateElementById);
+  const updateSolarPanelRelativeAzimuthById = useStore(Selector.updateSolarPanelRelativeAzimuthById);
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLyById = useStore(Selector.updateElementLyById);
   const resizeAnchor = useStore(Selector.resizeAnchor);
@@ -308,7 +308,9 @@ const Cuboid = ({
                       Math.atan2(-p.x + wc.x, p.y - wc.y) +
                       (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
                     const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0; // make sure angle is between -PI to PI
-                    updateElementById(grabRef.current.id, { relativeAzimuth: rotation + offset });
+                    if (grabRef.current?.type === ObjectType.SolarPanel) {
+                      updateSolarPanelRelativeAzimuthById(grabRef.current.id, rotation + offset);
+                    }
                     setCommonStore((state) => {
                       state.selectedElementAngle = rotation + offset;
                     });
@@ -399,8 +401,8 @@ const Cuboid = ({
               args={[gridLength.current, 20, 'gray', 'gray']}
             />
           )}
-          {rotateHandleType && grabRef.current && (
-            <PolarGrid element={grabRef.current} height={grabRef.current.poleHeight + hz} />
+          {rotateHandleType && grabRef.current && grabRef.current.type === ObjectType.SolarPanel && (
+            <PolarGrid element={grabRef.current} height={(grabRef.current as SolarPanelModel).poleHeight + hz} />
           )}
         </>
       )}

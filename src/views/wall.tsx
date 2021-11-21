@@ -222,7 +222,7 @@ const Wall = ({
 
   useEffect(() => {
     if (leftJoints.length > 0) {
-      const targetWall = getElementById(leftJoints[0].id);
+      const targetWall = getElementById(leftJoints[0].id) as WallModel;
       if (targetWall) {
         const deltaAngle = (Math.PI * 3 - (relativeAngle - targetWall.relativeAngle)) % (Math.PI * 2);
         const offset = ly / Math.tan(deltaAngle);
@@ -230,7 +230,7 @@ const Wall = ({
       }
     }
     if (rightJoints.length > 0) {
-      const targetWall = getElementById(rightJoints[0].id);
+      const targetWall = getElementById(rightJoints[0].id) as WallModel;
       if (targetWall) {
         const deltaAngle = (Math.PI * 3 + relativeAngle - targetWall.relativeAngle) % (Math.PI * 2);
         const offset = ly / Math.tan(deltaAngle);

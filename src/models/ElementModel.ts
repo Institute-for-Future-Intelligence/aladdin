@@ -24,5 +24,6 @@ export interface ElementModel {
   label?: string;
   showLabel?: boolean;
 
-  [key: string]: any;
+  // EVIL: DO NOT DO THIS!!!
+  //[key: string]: any;
 }

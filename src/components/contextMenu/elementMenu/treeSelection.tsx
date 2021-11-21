@@ -16,6 +16,7 @@ import OakImage from '../../../resources/oak.png';
 import PineImage from '../../../resources/pine.png';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import i18n from '../../../i18n/i18n';
+import { TreeModel } from '../../../models/TreeModel';
 
 const { Option } = Select;
 
@@ -26,8 +27,8 @@ const TreeSelection = () => {
   const addUndoable = useStore(Selector.addUndoable);
 
   const lang = { lng: language };
-  const tree = getSelectedElement();
-  const [selectValue, setSelectValue] = useState(tree?.name ?? '');
+  const tree = getSelectedElement() as TreeModel;
+  const [selectValue, setSelectValue] = useState<TreeType>(tree?.name ?? '');
 
   return (
     <Select
