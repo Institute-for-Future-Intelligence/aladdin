@@ -29,7 +29,7 @@ import {
 import { Util } from '../Util';
 import { ElementModel } from '../models/ElementModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import { PolarGrid } from '../grid';
+import { PolarGrid } from '../polarGrid';
 import { WallModel } from '../models/WallModel';
 import RotateHandle from '../components/rotateHandle';
 import Wireframe from '../components/wireframe';

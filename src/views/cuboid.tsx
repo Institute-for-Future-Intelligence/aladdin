@@ -23,7 +23,7 @@ import {
 import { Util } from '../Util';
 import { ElementModel } from '../models/ElementModel';
 import RotateHandle from '../components/rotateHandle';
-import { PolarGrid } from '../grid';
+import { PolarGrid } from '../polarGrid';
 import Wireframe from '../components/wireframe';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { UndoableAdd } from '../undo/UndoableAdd';
@@ -563,7 +563,7 @@ const Cuboid = ({
         <>
           {(moveHandleType || resizeHandleType) && (
             <gridHelper
-              name={'Cuboid Grid'}
+              name={'Cuboid Auxiliary'}
               position={gridPositionRef.current}
               rotation={gridRotationRef.current}
               scale={gridScale.current}

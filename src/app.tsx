@@ -40,7 +40,7 @@ import InstructionPanel from './panels/instructionPanel';
 import YearlyPvYieldPanel from './panels/yearlyPvYieldPanel';
 import DailyPvYieldPanel from './panels/dailyPvYieldPanel';
 import Lights from './lights';
-import { Grid } from './grid';
+import { Auxiliary } from './auxiliary';
 import CompassContainer from './compassContainer';
 import { OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
 import ErrorPage from './ErrorPage';
@@ -329,7 +329,7 @@ const App = () => {
                 <Suspense fallback={null}>
                   <Heliodon />
                   <Ground />
-                  <Grid />
+                  <Auxiliary />
                   {groundImage && <GroundImage />}
                   {/* <Obj/> */}
                 </Suspense>

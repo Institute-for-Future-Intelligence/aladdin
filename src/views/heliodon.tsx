@@ -226,7 +226,7 @@ const Heliodon = () => {
   }, [latitude, radius]);
 
   return (
-    <React.Fragment>
+    <>
       {heliodon && (
         <group>
           {tickLabels.map((v, i) => {
@@ -237,6 +237,7 @@ const Heliodon = () => {
               <group key={i} rotation={[Util.HALF_PI, (times * Math.PI) / nLabels, 0]}>
                 <mesh position={[offset, 0, -radius * 1.1]} rotation={[-Util.HALF_PI, 0, 0]}>
                   <textGeometry args={[`${(180 / nLabels) * times}°`, textGeometryParams]} />
+                  <meshStandardMaterial attach="material" color={'lightGray'} />
                 </mesh>
               </group>
             );
@@ -294,7 +295,7 @@ const Heliodon = () => {
           </Drei_Plane>
         </group>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

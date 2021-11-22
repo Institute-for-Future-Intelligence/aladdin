@@ -120,6 +120,16 @@ const LocalFileManager = () => {
     }
   };
 
+  const performOKAction = () => {
+    setConfirmLoading(true);
+    if (writeLocalFile()) {
+      setCommonStore((state) => {
+        state.saveLocalFileDialogVisible = false;
+      });
+    }
+    setConfirmLoading(false);
+  };
+
   return (
     <>
       <Modal
@@ -133,15 +143,7 @@ const LocalFileManager = () => {
           </div>
         }
         visible={saveLocalFileDialogVisible}
-        onOk={() => {
-          setConfirmLoading(true);
-          if (writeLocalFile()) {
-            setCommonStore((state) => {
-              state.saveLocalFileDialogVisible = false;
-            });
-          }
-          setConfirmLoading(false);
-        }}
+        onOk={performOKAction}
         confirmLoading={confirmLoading}
         onCancel={() => {
           setCommonStore((state) => {
@@ -157,7 +159,7 @@ const LocalFileManager = () => {
         <Input
           placeholder="File name"
           value={localFileName}
-          onPressEnter={writeLocalFile}
+          onPressEnter={performOKAction}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setCommonStore((state) => {
               state.localFileName = e.target.value;
