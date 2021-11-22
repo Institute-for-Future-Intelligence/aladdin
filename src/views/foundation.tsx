@@ -36,6 +36,7 @@ import Wireframe from '../components/wireframe';
 import * as Selector from '../stores/selector';
 import { UndoableAdd } from '../undo/UndoableAdd';
 import { UndoableMove } from '../undo/UndoableMove';
+import { UndoableResize } from '../undo/UndoableResize';
 
 const Foundation = ({
   id,
@@ -56,6 +57,7 @@ const Foundation = ({
   const getAllWallsIdOnFoundation = useStore(Selector.getAllWallsIdOnFoundation);
   const setCommonStore = useStore(Selector.set);
   const setElementPosition = useStore(Selector.setElementPosition);
+  const setElementSize = useStore(Selector.setElementSize);
   const updateWallRelativeAngleById = useStore(Selector.updateWallRelativeAngleById);
   const updateWallLeftOffsetById = useStore(Selector.updateWallLeftOffsetById);
   const updateWallRightOffsetById = useStore(Selector.updateWallRightOffsetById);
@@ -115,6 +117,8 @@ const Foundation = ({
   const moveHandleRightRef = useRef<Mesh>();
   const oldPositionRef = useRef<Vector3>(new Vector3());
   const newPositionRef = useRef<Vector3>(new Vector3());
+  const oldDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
+  const newDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
 
   const ray = useMemo(() => new Raycaster(), []);
   const foundationModel = getElementById(id) as FoundationModel;
@@ -188,11 +192,11 @@ const Foundation = ({
             handle === MoveHandleType.Upper ||
             handle === MoveHandleType.Lower ||
             handle === MoveHandleType.Left ||
-            handle === MoveHandleType.Right ||
-            handle === RotateHandleType.Lower ||
-            handle === RotateHandleType.Upper
+            handle === MoveHandleType.Right
           ) {
             domElement.style.cursor = 'move';
+          } else if (handle === RotateHandleType.Lower || handle === RotateHandleType.Upper) {
+            domElement.style.cursor = 'grab';
           } else {
             domElement.style.cursor = 'pointer';
           }
@@ -333,6 +337,9 @@ const Foundation = ({
           oldPositionRef.current.x = selectedElement.cx;
           oldPositionRef.current.y = selectedElement.cy;
           oldPositionRef.current.z = selectedElement.cz;
+          oldDimensionRef.current.x = selectedElement.lx;
+          oldDimensionRef.current.y = selectedElement.ly;
+          oldDimensionRef.current.z = selectedElement.lz;
         }
       }
     }
@@ -393,39 +400,100 @@ const Foundation = ({
           const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1], wall.rightPoint[2]);
           setWallPoints(wallPoints.set(grabRef.current.id, { leftPoint: leftPoint, rightPoint: rightPoint }));
         } else {
-          // for moving sensors and solar panels
-          newPositionRef.current.x = elem.cx;
-          newPositionRef.current.y = elem.cy;
-          newPositionRef.current.z = elem.cz;
-          if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001) {
-            const undoableMove = {
-              name: 'Move',
-              timestamp: Date.now(),
-              movedElement: grabRef.current,
-              oldCx: oldPositionRef.current.x,
-              oldCy: oldPositionRef.current.y,
-              oldCz: oldPositionRef.current.z,
-              newCx: newPositionRef.current.x,
-              newCy: newPositionRef.current.y,
-              newCz: newPositionRef.current.z,
-              undo: () => {
-                setElementPosition(
-                  undoableMove.movedElement.id,
-                  undoableMove.oldCx,
-                  undoableMove.oldCy,
-                  undoableMove.oldCz,
-                );
-              },
-              redo: () => {
-                setElementPosition(
-                  undoableMove.movedElement.id,
-                  undoableMove.newCx,
-                  undoableMove.newCy,
-                  undoableMove.newCz,
-                );
-              },
-            } as UndoableMove;
-            addUndoable(undoableMove);
+          if (resizeHandleType) {
+            newPositionRef.current.x = elem.cx;
+            newPositionRef.current.y = elem.cy;
+            newPositionRef.current.z = elem.cz;
+            newDimensionRef.current.x = elem.lx;
+            newDimensionRef.current.y = elem.ly;
+            newDimensionRef.current.z = elem.lz;
+            if (
+              newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001 &&
+              newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > 0.0001
+            ) {
+              const undoableResize = {
+                name: 'Resize',
+                timestamp: Date.now(),
+                resizedElement: grabRef.current,
+                oldCx: oldPositionRef.current.x,
+                oldCy: oldPositionRef.current.y,
+                oldCz: oldPositionRef.current.z,
+                newCx: newPositionRef.current.x,
+                newCy: newPositionRef.current.y,
+                newCz: newPositionRef.current.z,
+                oldLx: oldDimensionRef.current.x,
+                oldLy: oldDimensionRef.current.y,
+                oldLz: oldDimensionRef.current.z,
+                newLx: newDimensionRef.current.x,
+                newLy: newDimensionRef.current.y,
+                newLz: newDimensionRef.current.z,
+                undo: () => {
+                  setElementPosition(
+                    undoableResize.resizedElement.id,
+                    undoableResize.oldCx,
+                    undoableResize.oldCy,
+                    undoableResize.oldCz,
+                  );
+                  setElementSize(
+                    undoableResize.resizedElement.id,
+                    undoableResize.oldLx,
+                    undoableResize.oldLy,
+                    undoableResize.oldLz,
+                  );
+                },
+                redo: () => {
+                  setElementPosition(
+                    undoableResize.resizedElement.id,
+                    undoableResize.newCx,
+                    undoableResize.newCy,
+                    undoableResize.newCz,
+                  );
+                  setElementSize(
+                    undoableResize.resizedElement.id,
+                    undoableResize.newLx,
+                    undoableResize.newLy,
+                    undoableResize.newLz,
+                  );
+                },
+              } as UndoableResize;
+              addUndoable(undoableResize);
+            }
+          } else if (rotateHandleType) {
+          } else {
+            // for moving sensors and solar panels
+            newPositionRef.current.x = elem.cx;
+            newPositionRef.current.y = elem.cy;
+            newPositionRef.current.z = elem.cz;
+            if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001) {
+              const undoableMove = {
+                name: 'Move',
+                timestamp: Date.now(),
+                movedElement: grabRef.current,
+                oldCx: oldPositionRef.current.x,
+                oldCy: oldPositionRef.current.y,
+                oldCz: oldPositionRef.current.z,
+                newCx: newPositionRef.current.x,
+                newCy: newPositionRef.current.y,
+                newCz: newPositionRef.current.z,
+                undo: () => {
+                  setElementPosition(
+                    undoableMove.movedElement.id,
+                    undoableMove.oldCx,
+                    undoableMove.oldCy,
+                    undoableMove.oldCz,
+                  );
+                },
+                redo: () => {
+                  setElementPosition(
+                    undoableMove.movedElement.id,
+                    undoableMove.newCx,
+                    undoableMove.newCy,
+                    undoableMove.newCz,
+                  );
+                },
+              } as UndoableMove;
+              addUndoable(undoableMove);
+            }
           }
         }
         grabRef.current = null;
@@ -816,7 +884,7 @@ const Foundation = ({
   };
 
   const handleSolarPanelPointerUp = () => {
-    grabRef.current = null;
+    //grabRef.current = null;
     setShowGrid(false);
     setCommonStore((state) => {
       state.enableOrbitController = true;

@@ -140,11 +140,11 @@ const Cuboid = ({
             handle === MoveHandleType.Upper ||
             handle === MoveHandleType.Lower ||
             handle === MoveHandleType.Left ||
-            handle === MoveHandleType.Right ||
-            handle === RotateHandleType.Upper ||
-            handle === RotateHandleType.Lower
+            handle === MoveHandleType.Right
           ) {
             domElement.style.cursor = 'move';
+          } else if (handle === RotateHandleType.Upper || handle === RotateHandleType.Lower) {
+            domElement.style.cursor = 'grab';
           } else {
             domElement.style.cursor = 'pointer';
           }

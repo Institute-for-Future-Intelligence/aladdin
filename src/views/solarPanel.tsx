@@ -232,18 +232,14 @@ const SolarPanel = ({
       const intersected = e.intersections[0].object === e.eventObject;
       if (intersected) {
         setHoveredHandle(handle);
-        if (
-          // unfortunately, I cannot find a way to tell the type of an enum variable
-          handle === MoveHandleType.Top ||
-          handle === ResizeHandleType.Upper ||
-          handle === ResizeHandleType.Lower ||
-          handle === ResizeHandleType.Left ||
-          handle === ResizeHandleType.Right ||
+        if (handle === MoveHandleType.Top) {
+          domElement.style.cursor = 'move';
+        } else if (
           handle === RotateHandleType.Lower ||
           handle === RotateHandleType.Upper ||
           handle === RotateHandleType.Tilt
         ) {
-          domElement.style.cursor = 'move';
+          domElement.style.cursor = 'grab';
         } else {
           domElement.style.cursor = 'pointer';
         }
