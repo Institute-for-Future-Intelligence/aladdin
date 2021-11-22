@@ -27,6 +27,7 @@ import SolarPanelBlackPortraitImage from '../resources/solar-panel-black-portrai
 import { getSunDirection } from '../analysis/sunTools';
 import RotateHandle from '../components/rotateHandle';
 import Wireframe from '../components/wireframe';
+import { UndoableChange } from '../undo/UndoableChange';
 
 const SolarPanel = ({
   id,
@@ -66,6 +67,7 @@ const SolarPanel = ({
   const heliodonRadius = useStore(Selector.heliodonRadius);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const rotateHandleType = useStore(Selector.rotateHandleType);
+  const addUndoable = useStore(Selector.addUndoable);
 
   const {
     gl: { domElement },
@@ -86,6 +88,8 @@ const SolarPanel = ({
   const resizeHandleRightRef = useRef<Mesh>();
   const tiltHandleRef = useRef<Mesh>();
   const pointerDown = useRef<boolean>(false);
+  const oldTiltAngleRef = useRef<number>(0);
+  const newTiltAngleRef = useRef<number>(0);
   const ray = useMemo(() => new Raycaster(), []);
 
   const sunBeamLength = Math.max(100, heliodonRadius);
@@ -578,6 +582,8 @@ const SolarPanel = ({
                   state.enableOrbitController = false;
                 });
                 pointerDown.current = true;
+                const sp = getElementById(id) as SolarPanelModel;
+                oldTiltAngleRef.current = sp.tiltAngle;
               }
             }}
           >
@@ -596,6 +602,22 @@ const SolarPanel = ({
                 name={'Solar panel tilt handle'}
                 args={[tiltHandleSize, 2 * tiltHandleSize, 18, 2, -Math.PI / 2, Math.PI]}
                 rotation={[0, -Math.PI / 2, relativeEuler.z, 'ZXY']}
+                onPointerDown={(e) => {}}
+                onPointerUp={(e) => {
+                  const undoableChange = {
+                    name: 'Set Solar Panel Array Tilt Angle',
+                    timestamp: Date.now(),
+                    oldValue: oldTiltAngleRef.current,
+                    newValue: newTiltAngleRef.current,
+                    undo: () => {
+                      updateSolarPanelTiltAngleById(id, undoableChange.oldValue as number);
+                    },
+                    redo: () => {
+                      updateSolarPanelTiltAngleById(id, undoableChange.newValue as number);
+                    },
+                  } as UndoableChange;
+                  addUndoable(undoableChange);
+                }}
                 onPointerMove={(e) => {
                   if (pointerDown.current) {
                     const mouse = new Vector2();
@@ -617,6 +639,7 @@ const SolarPanel = ({
                               : Math.sign(cv.x) * Math.sign(Math.sin(wr));
                           const angle = cv.angleTo(new Vector3(0, 0, 1)) * sign;
                           updateSolarPanelTiltAngleById(id, angle);
+                          newTiltAngleRef.current = angle;
                         }
                       }
                     }
