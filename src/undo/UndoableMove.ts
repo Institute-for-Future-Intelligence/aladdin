@@ -4,6 +4,7 @@
 
 import { Undoable } from './Undoable';
 import { ElementModel } from '../models/ElementModel';
+import { Vector3 } from 'three';
 
 export interface UndoableMove extends Undoable {
   oldCx: number;
@@ -12,5 +13,7 @@ export interface UndoableMove extends Undoable {
   newCx: number;
   newCy: number;
   newCz: number;
+  oldNormal?: Vector3;
+  newNormal?: Vector3;
   movedElement: ElementModel;
 }

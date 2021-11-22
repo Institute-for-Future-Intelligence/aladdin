@@ -35,6 +35,7 @@ import RotateHandle from '../components/rotateHandle';
 import Wireframe from '../components/wireframe';
 import * as Selector from '../stores/selector';
 import { UndoableAdd } from '../undo/UndoableAdd';
+import { UndoableMove } from '../undo/UndoableMove';
 
 const Foundation = ({
   id,
@@ -329,6 +330,9 @@ const Foundation = ({
         if (legalOnFoundation(selectedElement.type as ObjectType)) {
           grabRef.current = selectedElement;
           setShowGrid(true);
+          oldPositionRef.current.x = selectedElement.cx;
+          oldPositionRef.current.y = selectedElement.cy;
+          oldPositionRef.current.z = selectedElement.cz;
         }
       }
     }
@@ -382,13 +386,50 @@ const Foundation = ({
   const handlePointerUp = () => {
     if (grabRef.current) {
       const elem = getElementById(grabRef.current.id);
-      if (elem && elem.type === ObjectType.Wall) {
-        const wall = elem as WallModel;
-        const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1], wall.leftPoint[2]);
-        const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1], wall.rightPoint[2]);
-        setWallPoints(wallPoints.set(grabRef.current.id, { leftPoint: leftPoint, rightPoint: rightPoint }));
+      if (elem) {
+        if (elem.type === ObjectType.Wall) {
+          const wall = elem as WallModel;
+          const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1], wall.leftPoint[2]);
+          const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1], wall.rightPoint[2]);
+          setWallPoints(wallPoints.set(grabRef.current.id, { leftPoint: leftPoint, rightPoint: rightPoint }));
+        } else {
+          // for moving sensors and solar panels
+          newPositionRef.current.x = elem.cx;
+          newPositionRef.current.y = elem.cy;
+          newPositionRef.current.z = elem.cz;
+          if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001) {
+            const undoableMove = {
+              name: 'Move',
+              timestamp: Date.now(),
+              movedElement: grabRef.current,
+              oldCx: oldPositionRef.current.x,
+              oldCy: oldPositionRef.current.y,
+              oldCz: oldPositionRef.current.z,
+              newCx: newPositionRef.current.x,
+              newCy: newPositionRef.current.y,
+              newCz: newPositionRef.current.z,
+              undo: () => {
+                setElementPosition(
+                  undoableMove.movedElement.id,
+                  undoableMove.oldCx,
+                  undoableMove.oldCy,
+                  undoableMove.oldCz,
+                );
+              },
+              redo: () => {
+                setElementPosition(
+                  undoableMove.movedElement.id,
+                  undoableMove.newCx,
+                  undoableMove.newCy,
+                  undoableMove.newCz,
+                );
+              },
+            } as UndoableMove;
+            addUndoable(undoableMove);
+          }
+        }
+        grabRef.current = null;
       }
-      grabRef.current = null;
     }
     if (!buildingWallID) {
       setShowGrid(false);
