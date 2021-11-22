@@ -37,6 +37,7 @@ import * as Selector from '../stores/selector';
 import { UndoableAdd } from '../undo/UndoableAdd';
 import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
+import { UndoableChange } from '../undo/UndoableChange';
 
 const Foundation = ({
   id,
@@ -119,6 +120,8 @@ const Foundation = ({
   const newPositionRef = useRef<Vector3>(new Vector3());
   const oldDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const newDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
+  const oldAzimuthRef = useRef<number>(0);
+  const newAzimuthRef = useRef<number>(0);
 
   const ray = useMemo(() => new Raycaster(), []);
   const foundationModel = getElementById(id) as FoundationModel;
@@ -340,6 +343,9 @@ const Foundation = ({
           oldDimensionRef.current.x = selectedElement.lx;
           oldDimensionRef.current.y = selectedElement.ly;
           oldDimensionRef.current.z = selectedElement.lz;
+          if (selectedElement.type === ObjectType.SolarPanel) {
+            oldAzimuthRef.current = (selectedElement as SolarPanelModel).relativeAzimuth;
+          }
         }
       }
     }
@@ -459,6 +465,24 @@ const Foundation = ({
               addUndoable(undoableResize);
             }
           } else if (rotateHandleType) {
+            if (grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
+              const solarPanel = grabRef.current as SolarPanelModel;
+              if (Math.abs(newAzimuthRef.current - oldAzimuthRef.current) > 0.001) {
+                const undoableRotate = {
+                  name: 'Rotate',
+                  timestamp: Date.now(),
+                  oldValue: oldAzimuthRef.current,
+                  newValue: newAzimuthRef.current,
+                  undo: () => {
+                    updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableRotate.oldValue as number);
+                  },
+                  redo: () => {
+                    updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableRotate.newValue as number);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableRotate);
+              }
+            }
           } else {
             // for moving sensors and solar panels
             newPositionRef.current.x = elem.cx;
@@ -766,6 +790,7 @@ const Foundation = ({
                 -pr + Math.atan2(-p.x + wc.x, p.y - wc.y) + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
               const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0; // make sure angle is between -PI to PI
               updateSolarPanelRelativeAzimuthById(grabRef.current.id, rotation + offset);
+              newAzimuthRef.current = rotation + offset;
               setCommonStore((state) => {
                 state.selectedElementAngle = rotation + offset;
               });

@@ -327,10 +327,10 @@ const Ground = () => {
             oldPositionRef.current.x = selectedElement.cx;
             oldPositionRef.current.y = selectedElement.cy;
             oldPositionRef.current.z = selectedElement.cz;
-            oldRotationRef.current = [...selectedElement.rotation];
             oldDimensionRef.current.x = selectedElement.lx;
             oldDimensionRef.current.y = selectedElement.ly;
             oldDimensionRef.current.z = selectedElement.lz;
+            oldRotationRef.current = [...selectedElement.rotation];
             if (selectedElement.type !== ObjectType.Foundation && selectedElement.type !== ObjectType.Cuboid) {
               setCommonStore((state) => {
                 state.enableOrbitController = false;
