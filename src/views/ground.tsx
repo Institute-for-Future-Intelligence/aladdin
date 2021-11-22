@@ -485,6 +485,9 @@ const Ground = () => {
             const p = intersects[0].point;
             updateElementCzById(grabRef.current.id, Math.max(0.5, p.z / 2));
             updateElementLzById(grabRef.current.id, Math.max(1, p.z));
+            setCommonStore((state) => {
+              state.selectedElementHeight = Math.max(1, p.z);
+            });
           }
         }
       }

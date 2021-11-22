@@ -563,7 +563,7 @@ const Cuboid = ({
         <>
           {(moveHandleType || resizeHandleType) && (
             <gridHelper
-              name={'Cuboid Auxiliary'}
+              name={'Cuboid Grid'}
               position={gridPositionRef.current}
               rotation={gridRotationRef.current}
               scale={gridScale.current}

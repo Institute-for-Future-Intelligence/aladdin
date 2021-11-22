@@ -23,14 +23,18 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
   const [position, setPostion] = useState<Vector3>();
   const [rotation, setRotation] = useState<Euler>();
 
+  const color = 'lightGray';
   const font = useLoader(FontLoader, helvetikerFont);
-  const fontSize = 0.4;
+  const textGeometryParamsTickLabel = {
+    font: font,
+    height: 0,
+    size: 0.25,
+  } as TextGeometryParameters;
   const textGeometryParams = {
     font: font,
-    height: 0.0,
-    size: fontSize,
+    height: 0,
+    size: 0.35,
   } as TextGeometryParameters;
-  const color = 'lightGray';
 
   useEffect(() => {
     if (resizeHandleType) {
@@ -43,7 +47,6 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
   }, [resizeHandleType]);
 
   useEffect(() => {
-    console.log(selectedElementHeight);
     setHeight(Math.ceil(selectedElementHeight) + 1);
     setShownHeight(selectedElementHeight.toFixed(1));
   }, [selectedElementHeight]);
@@ -61,12 +64,13 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
             ]}
             color={color}
           />
+          <mesh position={[-1.5, selectedElementHeight - 0.175, 0]}>
+            <textGeometry args={[shownHeight, textGeometryParams]} />
+            <meshStandardMaterial attach="material" color={'white'} />
+          </mesh>
           {tickLabels.map((e, i) => {
-            const len = 0.4 + (i % 5 === 0 ? 0.4 : 0);
-            const lineWidth = i % 5 === 0 ? 1.5 : 0.5;
-            const posL = i > 9 ? -1.7 : -1.5;
-            const posR = i > 9 ? 1 : 1.2;
-            const textGeometry = <textGeometry args={[`${i}`, textGeometryParams]} />;
+            const len = 0.2 + (i % 5 === 0 ? 0.05 : 0);
+            const textGeometry = <textGeometry args={[`${i}`, textGeometryParamsTickLabel]} />;
             return (
               <group key={i}>
                 <Line
@@ -74,19 +78,11 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
                     [-len, i, 0],
                     [len, i, 0],
                   ]}
-                  lineWidth={lineWidth}
+                  lineWidth={0.5}
                   color={color}
                 />
-                <mesh position={[posL, i, 0]}>
+                <mesh position={[0.4, i - 0.125, 0]}>
                   {textGeometry}
-                  <meshStandardMaterial attach="material" color={color} />
-                </mesh>
-                <mesh position={[posR, i, 0]}>
-                  {textGeometry}
-                  <meshStandardMaterial attach="material" color={color} />
-                </mesh>
-                <mesh position={[-0.5, parseFloat(shownHeight) + 0.5, 0]}>
-                  <textGeometry args={[shownHeight, textGeometryParams]} />
                   <meshStandardMaterial attach="material" color={color} />
                 </mesh>
               </group>
