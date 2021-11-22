@@ -23,7 +23,9 @@ const FoundationHeightInput = ({
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateElementLzById = useStore(Selector.updateElementLzById);
+  const updateElementCzById = useStore(Selector.updateElementCzById);
   const updateElementLzForAll = useStore(Selector.updateElementLzForAll);
+  const updateElementCzForAll = useStore(Selector.updateElementCzForAll);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
@@ -49,6 +51,11 @@ const FoundationHeightInput = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const updateLzAndCz = (id: string, value: number) => {
+    updateElementLzById(id, value);
+    updateElementCzById(id, value / 2);
+  };
+
   const setLz = (value: number) => {
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
@@ -65,15 +72,18 @@ const FoundationHeightInput = ({
           newValue: value,
           undo: () => {
             for (const [id, lz] of undoableChangeAll.oldValues.entries()) {
-              updateElementLzById(id, lz as number);
+              updateLzAndCz(id, lz as number);
             }
           },
           redo: () => {
-            updateElementLzForAll(ObjectType.Foundation, undoableChangeAll.newValue as number);
+            const newCz = undoableChangeAll.newValue as number;
+            updateElementLzForAll(ObjectType.Foundation, newCz);
+            updateElementCzForAll(ObjectType.Foundation, newCz / 2);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateElementLzForAll(ObjectType.Foundation, value);
+        updateElementCzForAll(ObjectType.Foundation, value / 2);
         break;
       default:
         if (foundation) {
@@ -84,14 +94,14 @@ const FoundationHeightInput = ({
             oldValue: oldLz,
             newValue: value,
             undo: () => {
-              updateElementLzById(foundation.id, undoableChange.oldValue as number);
+              updateLzAndCz(foundation.id, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateElementLzById(foundation.id, undoableChange.newValue as number);
+              updateLzAndCz(foundation.id, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateElementLzById(foundation.id, value);
+          updateLzAndCz(foundation.id, value);
           setUpdateFlag(!updateFlag);
         }
     }

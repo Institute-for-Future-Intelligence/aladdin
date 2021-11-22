@@ -82,6 +82,8 @@ export const updateElementCyById = (state: CommonStoreState) => state.updateElem
 
 export const updateElementCzById = (state: CommonStoreState) => state.updateElementCzById;
 
+export const updateElementCzForAll = (state: CommonStoreState) => state.updateElementCzForAll;
+
 export const updateElementLxById = (state: CommonStoreState) => state.updateElementLxById;
 
 export const updateElementLxOnSurface = (state: CommonStoreState) => state.updateElementLxOnSurface;

@@ -23,7 +23,9 @@ const CuboidHeightInput = ({
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateElementLzById = useStore(Selector.updateElementLzById);
+  const updateElementCzById = useStore(Selector.updateElementCzById);
   const updateElementLzForAll = useStore(Selector.updateElementLzForAll);
+  const updateElementCzForAll = useStore(Selector.updateElementCzForAll);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
@@ -49,6 +51,11 @@ const CuboidHeightInput = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const updateLzAndCz = (id: string, value: number) => {
+    updateElementLzById(id, value);
+    updateElementCzById(id, value / 2);
+  };
+
   const setLz = (value: number) => {
     switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
@@ -65,15 +72,18 @@ const CuboidHeightInput = ({
           newValue: value,
           undo: () => {
             for (const [id, lz] of undoableChangeAll.oldValues.entries()) {
-              updateElementLzById(id, lz as number);
+              updateLzAndCz(id, lz as number);
             }
           },
           redo: () => {
-            updateElementLzForAll(ObjectType.Cuboid, undoableChangeAll.newValue as number);
+            const newCz = undoableChangeAll.newValue as number;
+            updateElementLzForAll(ObjectType.Cuboid, newCz);
+            updateElementCzForAll(ObjectType.Cuboid, newCz / 2);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateElementLzForAll(ObjectType.Cuboid, value);
+        updateElementCzForAll(ObjectType.Cuboid, value / 2);
         break;
       default:
         if (cuboid) {
@@ -84,14 +94,14 @@ const CuboidHeightInput = ({
             oldValue: oldLz,
             newValue: value,
             undo: () => {
-              updateElementLzById(cuboid.id, undoableChange.oldValue as number);
+              updateLzAndCz(cuboid.id, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateElementLzById(cuboid.id, undoableChange.newValue as number);
+              updateLzAndCz(cuboid.id, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateElementLzById(cuboid.id, value);
+          updateLzAndCz(cuboid.id, value);
           setUpdateFlag(!updateFlag);
         }
     }

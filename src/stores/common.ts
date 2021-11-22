@@ -112,6 +112,7 @@ export interface CommonStoreState {
   updateElementCxById: (id: string, cx: number) => void;
   updateElementCyById: (id: string, cy: number) => void;
   updateElementCzById: (id: string, cz: number) => void;
+  updateElementCzForAll: (type: ObjectType, cz: number) => void;
 
   updateElementLxById: (id: string, lx: number) => void;
   updateElementLxOnSurface: (type: ObjectType, parentId: string, normal: number[] | undefined, lx: number) => void;
@@ -559,6 +560,15 @@ export const useStore = create<CommonStoreState>(
                 if (e.id === id) {
                   e.cz = cz;
                   break;
+                }
+              }
+            });
+          },
+          updateElementCzForAll(type, cz) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type) {
+                  e.cz = cz;
                 }
               }
             });
