@@ -322,12 +322,12 @@ const App = () => {
                 <Lights />
 
                 <ElementsRenderer />
-                <Heliodon />
                 {axes && <Axes />}
 
                 <SensorSimulation city={city} />
                 <SolarPanelSimulation city={city} />
                 <Suspense fallback={null}>
+                  <Heliodon />
                   <Ground />
                   <Grid />
                   {groundImage && <GroundImage />}

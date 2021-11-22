@@ -4,11 +4,22 @@
 
 import { Util } from '../Util';
 import React, { useEffect, useMemo, useState } from 'react';
-import { BufferAttribute, BufferGeometry, DoubleSide, Euler, Plane, Vector3 } from 'three';
+import {
+  BufferAttribute,
+  BufferGeometry,
+  DoubleSide,
+  Euler,
+  FontLoader,
+  Plane,
+  TextGeometryParameters,
+  Vector3,
+} from 'three';
 import { computeDeclinationAngle, computeHourAngle, computeSunLocation, TILT_ANGLE } from '../analysis/sunTools';
 import { Line, Plane as Drei_Plane } from '@react-three/drei';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
+import { useLoader } from '@react-three/fiber';
+import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
 
 const HOUR_DIVISIONS = 96;
 const BASE_DIVISIONS = 72;
@@ -26,6 +37,27 @@ const Heliodon = () => {
   const [hourAngle, setHourAngle] = useState<number>(0);
   const [declinationAngle, setDeclinationAngle] = useState<number>(0);
   const [latitude, setLatitude] = useState<number>(Util.toRadians(42));
+
+  const font = useLoader(FontLoader, helvetikerFont);
+  const fontSize = radius * 0.05;
+  const textGeometryParams = {
+    font: font,
+    height: 0,
+    size: fontSize,
+  } as TextGeometryParameters;
+
+  const nLabels = 6;
+  const tickLabels = new Array(2 * nLabels + 1).fill(0);
+
+  const getOffset = (i: number) => {
+    if (i === 0) {
+      return -fontSize * 0.3;
+    } else if (i > 0 && i < 7) {
+      return -fontSize * 0.8;
+    } else {
+      return -fontSize * 1.2;
+    }
+  };
 
   useEffect(() => {
     setLatitude(Util.toRadians(worldLatitude));
@@ -197,6 +229,18 @@ const Heliodon = () => {
     <React.Fragment>
       {heliodon && (
         <group>
+          {tickLabels.map((v, i) => {
+            let times = Math.ceil(i / 2) * (i % 2 === 0 ? 1 : -1);
+            if (times === -nLabels) times = nLabels;
+            const offset = getOffset(Math.abs(times));
+            return (
+              <group key={i} rotation={[Util.HALF_PI, (times * Math.PI) / nLabels, 0]}>
+                <mesh position={[offset, 0, -radius * 1.1]} rotation={[-Util.HALF_PI, 0, 0]}>
+                  <textGeometry args={[`${(180 / nLabels) * times}°`, textGeometryParams]} />
+                </mesh>
+              </group>
+            );
+          })}
           <mesh rotation={new Euler(0, 0, 0)} name={'Heliodon'}>
             {/* draw base */}
             <mesh>

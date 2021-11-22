@@ -115,7 +115,7 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
     size: fontSize,
   } as TextGeometryParameters;
 
-  const scale = new Array(25).fill(0);
+  const tickLabels = new Array(25).fill(0);
 
   const getOffset = (i: number) => {
     if (i === 0) {
@@ -139,19 +139,19 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
           {/* shown angle */}
           <group rotation={[0, angle, 0]}>
             <mesh position={[-0.5, 0, -radius * 0.9]} rotation={[-Util.HALF_PI, 0, 0]}>
-              <textGeometry args={[`${Math.abs(Math.floor((angle / Math.PI) * 180))}°`, textGeometryParams]} />
+              <textGeometry args={[`${Math.floor((angle / Math.PI) * 180)}°`, textGeometryParams]} />
             </mesh>
           </group>
 
-          {/* scale */}
-          {scale.map((v, i) => {
-            const times = Math.ceil(i / 2) * (i % 2 === 0 ? 1 : -1);
-            const absTimes = Math.abs(times);
-            const offset = getOffset(absTimes);
+          {/* tick labels */}
+          {tickLabels.map((v, i) => {
+            let times = Math.ceil(i / 2) * (i % 2 === 0 ? 1 : -1);
+            if (times === -12) times = 12;
+            const offset = getOffset(Math.abs(times));
             return (
               <group key={i} rotation={[0, (times * Math.PI) / 12, 0]}>
                 <mesh position={[offset, 0, -radius * 1.05]} rotation={[-Util.HALF_PI, 0, 0]}>
-                  <textGeometry args={[`${15 * absTimes}°`, textGeometryParams]} />
+                  <textGeometry args={[`${15 * times}°`, textGeometryParams]} />
                 </mesh>
               </group>
             );
