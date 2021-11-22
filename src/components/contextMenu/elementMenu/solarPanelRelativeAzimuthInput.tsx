@@ -272,9 +272,11 @@ const SolarPanelRelativeAzimuthInput = ({
               }}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('solarPanelMenu.AzimuthOfNorthIsZero', lang)}
+              {i18n.t('word.Range', lang)}: [-180°, 180°]
               <br />
-              {i18n.t('solarPanelMenu.CounterclockwiseAzimuthIsPositive', lang)}
+              {i18n.t('shared.AzimuthOfNorthIsZero', lang)}
+              <br />
+              {i18n.t('shared.CounterclockwiseAzimuthIsPositive', lang)}
             </div>
           </Col>
           <Col

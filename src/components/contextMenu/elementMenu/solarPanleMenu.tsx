@@ -119,8 +119,8 @@ export const SolarPanelMenu = () => {
 
   return (
     <>
-      <Copy paddingLeft={'40px'} />
-      <Cut paddingLeft={'40px'} />
+      <Copy paddingLeft={'36px'} />
+      <Cut paddingLeft={'36px'} />
       {solarPanel && (
         <>
           {/* pv model */}
@@ -133,7 +133,7 @@ export const SolarPanelMenu = () => {
             onClick={() => {
               setPvModelDialogVisible(true);
             }}
-            style={{ paddingLeft: '40px' }}
+            style={{ paddingLeft: '36px' }}
           >
             {i18n.t('solarPanelMenu.ChangePvModel', lang)} ({solarPanel.pvModelName}) ...
           </Menu.Item>
@@ -145,7 +145,7 @@ export const SolarPanelMenu = () => {
           />
           <Menu.Item
             key={'solar-panel-orientation'}
-            style={{ paddingLeft: '40px', width: '150px' }}
+            style={{ paddingLeft: '36px', width: '150px' }}
             onClick={() => {
               setOrientationDialogVisible(true);
             }}
@@ -157,7 +157,7 @@ export const SolarPanelMenu = () => {
           <SolarPanelWidthInput widthDialogVisible={widthDialogVisible} setWidthDialogVisible={setWidthDialogVisible} />
           <Menu.Item
             key={'solar-panel-width'}
-            style={{ paddingLeft: '40px' }}
+            style={{ paddingLeft: '36px' }}
             onClick={() => {
               setWidthDialogVisible(true);
             }}
@@ -172,7 +172,7 @@ export const SolarPanelMenu = () => {
           />
           <Menu.Item
             key={'solar-panel-length'}
-            style={{ paddingLeft: '40px' }}
+            style={{ paddingLeft: '36px' }}
             onClick={() => {
               setLengthDialogVisible(true);
             }}
@@ -189,7 +189,7 @@ export const SolarPanelMenu = () => {
               />
               <Menu.Item
                 key={'solar-panel-tilt-angle'}
-                style={{ paddingLeft: '40px' }}
+                style={{ paddingLeft: '36px' }}
                 onClick={() => {
                   setTiltDialogVisible(true);
                 }}
@@ -204,7 +204,7 @@ export const SolarPanelMenu = () => {
               />
               <Menu.Item
                 key={'solar-panel-relative-azimuth'}
-                style={{ paddingLeft: '40px' }}
+                style={{ paddingLeft: '36px' }}
                 onClick={() => {
                   setAzimuthDialogVisible(true);
                 }}
@@ -219,7 +219,7 @@ export const SolarPanelMenu = () => {
               />
               <Menu.Item
                 key={'solar-panel-tracker'}
-                style={{ paddingLeft: '40px' }}
+                style={{ paddingLeft: '36px' }}
                 onClick={() => {
                   setTrackerDialogVisible(true);
                 }}
@@ -234,7 +234,7 @@ export const SolarPanelMenu = () => {
               />
               <Menu.Item
                 key={'solar-panel-pole-height'}
-                style={{ paddingLeft: '40px' }}
+                style={{ paddingLeft: '36px' }}
                 onClick={() => {
                   setPoleHeightDialogVisible(true);
                 }}
@@ -249,7 +249,7 @@ export const SolarPanelMenu = () => {
               />
               <Menu.Item
                 key={'solar-panel-pole-spacing'}
-                style={{ paddingLeft: '40px' }}
+                style={{ paddingLeft: '36px' }}
                 onClick={() => {
                   setPoleSpacingDialogVisible(true);
                 }}
@@ -276,7 +276,7 @@ export const SolarPanelMenu = () => {
           {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
           <Menu>
             {/* label text */}
-            <Menu.Item key={'solar-panel-label-text'} style={{ paddingLeft: '40px' }}>
+            <Menu.Item key={'solar-panel-label-text'} style={{ paddingLeft: '36px' }}>
               <Input
                 addonBefore={i18n.t('solarPanelMenu.Label', lang) + ':'}
                 value={labelText}

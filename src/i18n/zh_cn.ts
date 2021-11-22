@@ -33,9 +33,11 @@ export const i18n_zh_cn = {
       MeterAbbreviation: '米',
       Version: '版本',
       Options: '选项',
+      MaximumNumber: '最多',
       Or: '或',
       None: '无',
       Total: '总数',
+      Range: '范围',
       Press: '按',
       Open: '打开',
       Save: '保存',
@@ -79,6 +81,11 @@ export const i18n_zh_cn = {
       SouthInitial: '南',
       EastInitial: '东',
       WestInitial: '西',
+    },
+
+    shared: {
+      AzimuthOfNorthIsZero: '正北的方位角为零度',
+      CounterclockwiseAzimuthIsPositive: '逆时针为正',
     },
 
     menu: {
@@ -225,10 +232,9 @@ export const i18n_zh_cn = {
       PanelsLong: '块光伏板长',
       TiltAngle: '倾斜角度',
       SouthFacingIsPositive: '朝南为正',
-      AzimuthOfNorthIsZero: '正北的方位角为零度',
-      CounterclockwiseAzimuthIsPositive: '逆时针为正',
       RelativeAzimuth: '相对方位角',
       Tracker: '追日系统',
+      SolarTrackerFollowsSun: '追日系统提高光伏板产出。',
       PoleHeight: '支架高度',
       PoleSpacing: '支架间隔',
       DrawSunBeam: '显示光柱',

@@ -292,6 +292,9 @@ const SolarPanelTrackerSelection = ({
               </Option>
               )
             </Select>
+            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+              {i18n.t('solarPanelMenu.SolarTrackerFollowsSun', lang)}
+            </div>
           </Col>
           <Col
             className="gutter-row"

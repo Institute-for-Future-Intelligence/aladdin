@@ -284,6 +284,8 @@ const SolarPanelLengthInput = ({
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {Math.round(inputLength / dy) + ' ' + i18n.t('solarPanelMenu.PanelsLong', lang)}
+              <br />
+              {i18n.t('word.MaximumNumber', lang)}: 100 {i18n.t('solarPanelMenu.Panels', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>

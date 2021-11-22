@@ -192,6 +192,9 @@ const CuboidHeightInput = ({
                 setHeightDialogVisible(false);
               }}
             />
+            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+              {i18n.t('word.Range', lang)}: [1, 1000] {i18n.t('word.MeterAbbreviation', lang)}
+            </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
             {i18n.t('word.MeterAbbreviation', lang)}

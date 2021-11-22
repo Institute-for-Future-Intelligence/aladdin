@@ -270,6 +270,8 @@ const SolarPanelTiltAngleInput = ({
               }}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+              {i18n.t('word.Range', lang)}: [-90°, 90°]
+              <br />
               {i18n.t('solarPanelMenu.SouthFacingIsPositive', lang)}
             </div>
           </Col>
