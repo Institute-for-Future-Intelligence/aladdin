@@ -145,6 +145,7 @@ export const i18n_en = {
         SolarFarm: 'Solar Farm',
         SolarFarmInRealWorld: 'Solar Farm in the Real World',
         SolarTrackers: 'Solar Trackers',
+        SolarTrackersInRealWorld: 'Solar Trackers in the Real World',
         SimpleHouse: 'Simple House',
         OfficeBuilding: 'Office Building',
       },

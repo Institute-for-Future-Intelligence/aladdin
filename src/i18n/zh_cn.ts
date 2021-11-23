@@ -140,11 +140,12 @@ export const i18n_zh_cn = {
       solarEnergySubMenu: '太阳能',
       buildingsSubMenu: '建筑物',
       examples: {
-        SolarRadiationToBox: '一个箱体受到的太阳能辐射分析',
+        SolarRadiationToBox: '一个长方体受到的太阳能辐射分析',
         SunBeamAndHeliodon: '太阳光束和日影仪',
         SolarFarm: '太阳能农场',
         SolarFarmInRealWorld: '模拟一个真实世界里的太阳能农场',
         SolarTrackers: '自动追日器',
+        SolarTrackersInRealWorld: '模拟一个真实世界里的追日光伏板阵列',
         SimpleHouse: '一栋简单的房屋',
         OfficeBuilding: '一栋简单的办公楼',
       },

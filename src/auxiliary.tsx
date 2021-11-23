@@ -16,6 +16,7 @@ export const Auxiliary = () => {
   const moveHandleType = useStore(Selector.moveHandleType);
   const rotateHandleType = useStore(Selector.rotateHandleType);
   const resizeHandleType = useStore(Selector.resizeHandleType);
+  const groundImage = useStore(Selector.viewState.groundImage);
 
   const [showGrid, setShowGrid] = useState(false);
   const [showVerticalRuler, setshowVerticalRuler] = useState(false);
@@ -49,7 +50,7 @@ export const Auxiliary = () => {
 
   return (
     <>
-      {!enableOrbitController && legalOnGround() && (
+      {!enableOrbitController && legalOnGround() && !groundImage && (
         <>
           {(showGrid || moveHandleType) && (
             <gridHelper

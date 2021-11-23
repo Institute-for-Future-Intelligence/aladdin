@@ -7,6 +7,7 @@ import sun_beam_at_center from './examples/sun_beam_at_center.json';
 import office_building_01 from './examples/office_building_01.json';
 import solar_farm_01 from './examples/solar_farm_01.json';
 import solar_farm_02 from './examples/solar_farm_02.json';
+import solar_farm_03 from './examples/solar_farm_03.json';
 import solar_trackers from './examples/solar_trackers.json';
 import simple_house_01 from './examples/simple_house_01.json';
 
@@ -124,6 +125,9 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
         break;
       case 'solar_farm_02':
         input = solar_farm_02;
+        break;
+      case 'solar_farm_03':
+        input = solar_farm_03;
         break;
       case 'solar_trackers':
         input = solar_trackers;
@@ -498,6 +502,9 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
           </Menu.Item>
           <Menu.Item key="solar_trackers" onClick={loadFile}>
             {i18n.t('menu.examples.SolarTrackers', lang)}
+          </Menu.Item>
+          <Menu.Item key="solar_farm_03" onClick={loadFile}>
+            {i18n.t('menu.examples.SolarTrackersInRealWorld', lang)}
           </Menu.Item>
         </SubMenu>
 

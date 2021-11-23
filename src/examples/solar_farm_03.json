@@ -1,0 +1,490 @@
+{
+  "docid": "mwd81QquC6sL2Yh6ZgDSyd",
+  "timestamp": 1637685037169,
+  "owner": "Charles Xie",
+  "email": "charles@intofuture.org",
+  "world": {
+    "panCenter": {
+      "x": 3.851635917562679,
+      "z": 0,
+      "y": 2.343074680222979
+    },
+    "latitude": 35.81284404374666,
+    "solarPanelGridCellSize": 0.5,
+    "timesPerHour": 4,
+    "cameraPosition": {
+      "y": -12.58725490609337,
+      "z": 9.385498830248793,
+      "x": 19.706952134681586
+    },
+    "longitude": -78.7501240418377,
+    "ground": {
+      "albedo": 0.3,
+      "thermalDiffusivity": 0.05,
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "address": "2401 Trenton Rd, Raleigh, NC 27607, USA",
+    "date": "Thu Apr 15 2021 09:45:00 GMT-0400 (Eastern Daylight Time)",
+    "name": "default",
+    "orthographic": false,
+    "cameraZoom": 35.16173831821251
+  },
+  "elements": [
+    {
+      "cy": -0.19826566679670066,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 0.1,
+      "ly": 51.9907667035674,
+      "id": "of4fAMi2p9MKmo6JDUYnfX",
+      "type": "Foundation",
+      "cx": 0.09409470654824759,
+      "cz": 0.05,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 75.61279135922823,
+      "selected": false,
+      "parentId": "Ground"
+    },
+    {
+      "poleRadius": 0.05,
+      "type": "Solar Panel",
+      "lx": 1.984,
+      "lz": 0.046,
+      "relativeAzimuth": 0,
+      "drawSunBeam": false,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "ly": 21.648,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "poleSpacing": 3,
+      "cx": 0.08211037572567748,
+      "trackerType": "HSAT",
+      "cy": 0.2234368441602269,
+      "label": "Row3",
+      "cz": 0.5000000074506161,
+      "orientation": "Portrait",
+      "showLabel": false,
+      "selected": false,
+      "poleHeight": 1,
+      "tiltAngle": 0,
+      "id": "mAv2C19w4RJA4u6knYxU3u",
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "pvModelName": "CS6X-355P-FG"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.16248436170569222,
+      "cy": 0.2234368441602269,
+      "cz": 0.5000000074505806,
+      "lx": 1.984,
+      "ly": 21.648,
+      "lz": 0.046,
+      "trackerType": "HSAT",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Portrait",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "bLn1japfJEgTKBPWbNzur1",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.23879905546449415,
+      "cy": 0.2246175890711455,
+      "cz": 0.5000000074505806,
+      "lx": 1.984,
+      "ly": 21.648,
+      "lz": 0.046,
+      "trackerType": "HSAT",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Portrait",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "xrAXVLJvJZKmHgq57E2MQB",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.31836118300026617,
+      "cy": 0.2233645095937837,
+      "cz": 0.5000000074505806,
+      "lx": 1.984,
+      "ly": 21.648,
+      "lz": 0.046,
+      "trackerType": "HSAT",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Portrait",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "tRW2bpMcmbgt4enWCcDP51",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.39629959364755313,
+      "cy": 0.22343686243351435,
+      "cz": 0.5000000074505806,
+      "lx": 1.984,
+      "ly": 21.648,
+      "lz": 0.046,
+      "trackerType": "HSAT",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Portrait",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "tJsi7hiees32d12b6mBMhW",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.47586172118332537,
+      "cy": 0.22461757079785805,
+      "cz": 0.5000000074505806,
+      "lx": 1.984,
+      "ly": 21.648,
+      "lz": 0.046,
+      "trackerType": "HSAT",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Portrait",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "5KhMg2uodxoo1Z4XL87XGA",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.0025482481899054073,
+      "cy": 0.22225611752259564,
+      "cz": 0.5000000074505806,
+      "lx": 1.984,
+      "ly": 21.648,
+      "lz": 0.046,
+      "trackerType": "HSAT",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Portrait",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "26aZGW371fb7o1PfURQ3zg",
+      "selected": false,
+      "drawSunBeam": true
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.07457830401313895,
+      "cy": 0.2246175890711455,
+      "cz": 0.5000000074505806,
+      "lx": 1.984,
+      "ly": 21.648,
+      "lz": 0.046,
+      "trackerType": "HSAT",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Portrait",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "wUt5FR6ocPi4PpiJnSm7dt",
+      "selected": false,
+      "drawSunBeam": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.15495228999315366,
+      "cy": 0.2210754091582519,
+      "cz": 0.5000000074506517,
+      "lx": 1.984,
+      "ly": 21.648,
+      "lz": 0.046,
+      "trackerType": "HSAT",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Portrait",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "9KjddEKBMzvacaiu1qXZ6p",
+      "selected": false,
+      "drawSunBeam": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.23532627597316833,
+      "cy": 0.22107540915833737,
+      "cz": 0.5000000074505806,
+      "lx": 1.984,
+      "ly": 21.648,
+      "lz": 0.046,
+      "trackerType": "HSAT",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Portrait",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "v1S992hiHrrXWRFsDpx8ie",
+      "selected": false,
+      "drawSunBeam": false
+    },
+    {
+      "type": "Cuboid",
+      "cx": -32.63845852923165,
+      "cy": 15.792302218810745,
+      "cz": 1.2553344031996811,
+      "lx": 5.133059413294499,
+      "ly": 13.392050108713438,
+      "lz": 2.5106688063993623,
+      "color": "gray",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "1x2m4C7FHzAwDkHxXXdvsn",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Jack",
+      "cx": -28.54553838833994,
+      "cy": 11.2385720166683,
+      "cz": 0,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "qnU7wNUFWabF7Yh9Ri8Vn5",
+      "selected": false
+    }
+  ],
+  "view": {
+    "yearlyPvYieldPanelX": -25,
+    "autoRotate": false,
+    "mapZoom": 20,
+    "axes": true,
+    "theme": "Default",
+    "showInfoPanel": true,
+    "showWeatherPanel": false,
+    "groundPanelX": 0,
+    "dailyPvYieldPanelX": -4,
+    "dailyLightSensorPanelY": 232,
+    "showDailyLightSensorPanel": false,
+    "mapTilt": 0,
+    "yearlyPvYieldPanelY": 16,
+    "yearlyLightSensorPanelX": 0,
+    "showGroundPanel": false,
+    "showHeliodonPanel": false,
+    "heliodon": false,
+    "weatherPanelY": 0,
+    "heliodonPanelX": -1175,
+    "dailyPvYieldPanelY": 3,
+    "mapWeatherStations": false,
+    "yearlyLightSensorPanelY": 0,
+    "showPvDailyYieldPanel": true,
+    "showYearlyPvYieldPanel": false,
+    "dailyLightSensorPanelX": -240,
+    "weatherPanelX": 0,
+    "heliodonPanelY": -33,
+    "groundColor": "forestgreen",
+    "groundPanelY": 0,
+    "groundImage": true,
+    "showDailyPvYieldPanel": true,
+    "shadowEnabled": false,
+    "showYearlyLightSensorPanel": false,
+    "mapType": "hybrid",
+    "cameraPosition": {
+      "x": 50.281932072837236,
+      "y": 50.335697249065504,
+      "z": 9.4396254637996
+    },
+    "panCenter": {
+      "x": -0.16685922023341063,
+      "y": 16.697148054113296,
+      "z": 3.0260993412577157
+    },
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 33.40365140230188,
+    "showInstructionPanel": true,
+    "showMapPanel": false
+  },
+  "notes": []
+}

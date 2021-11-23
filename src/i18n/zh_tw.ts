@@ -140,11 +140,12 @@ export const i18n_zh_tw = {
       solarEnergySubMenu: '太陽能',
       buildingsSubMenu: '建築物',
       examples: {
-        SolarRadiationToBox: '一個箱體受到的太陽能輻射分析',
+        SolarRadiationToBox: '一個長方體受到的太陽能輻射分析',
         SunBeamAndHeliodon: '太陽光束和日影儀',
         SolarFarm: '太陽能農場',
         SolarFarmInRealWorld: '模擬一個真實世界裡的太陽能農場',
         SolarTrackers: '自動追日器',
+        SolarTrackersInRealWorld: '模擬一個真實世界裡的追日光伏板陣列',
         SimpleHouse: '一棟簡單的房屋',
         OfficeBuilding: '一棟簡單的寫字樓',
       },
