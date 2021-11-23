@@ -38,7 +38,7 @@ import { GroundModel } from '../models/GroundModel';
 import { PvModel } from '../models/PvModel';
 import { ThreeEvent } from '@react-three/fiber';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import { JointProps, WallModel } from '../models/WallModel';
+import { WallModel } from '../models/WallModel';
 import { Locale } from 'antd/lib/locale-provider';
 import enUS from 'antd/lib/locale/en_US';
 import { Undoable } from '../undo/Undoable';
@@ -203,8 +203,8 @@ export interface CommonStoreState {
   updateWallRelativeAngleById: (id: string, angle: number) => void;
   updateWallLeftOffsetById: (id: string, offset: number) => void;
   updateWallRightOffsetById: (id: string, offset: number) => void;
-  updateWallLeftJointsById: (id: string, joints: JointProps[]) => void;
-  updateWallRightJointsById: (id: string, joints: JointProps[]) => void;
+  updateWallLeftJointsById: (id: string, joints: string[]) => void;
+  updateWallRightJointsById: (id: string, joints: string[]) => void;
   updateWallLeftPointById: (id: string, point: number[]) => void;
   updateWallRightPointById: (id: string, point: number[]) => void;
   updateWallTextureById: (id: string, texture: WallTexture) => void;
@@ -1538,10 +1538,10 @@ export const useStore = create<CommonStoreState>(
                     let leftWallId = '';
                     let rightWallId = '';
                     if (currentWall.leftJoints.length > 0) {
-                      leftWallId = state.getElementById(currentWall.leftJoints[0].id)?.id ?? '';
+                      leftWallId = state.getElementById(currentWall.leftJoints[0])?.id ?? '';
                     }
                     if (currentWall.rightJoints.length > 0) {
-                      rightWallId = state.getElementById(currentWall.rightJoints[0].id)?.id ?? '';
+                      rightWallId = state.getElementById(currentWall.rightJoints[0])?.id ?? '';
                     }
                     for (const w of state.elements) {
                       if (w.id === leftWallId) {

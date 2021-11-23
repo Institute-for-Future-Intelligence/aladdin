@@ -80,8 +80,8 @@ const Wall = ({
   ly = 0.5,
   lz = 4,
   relativeAngle,
-  leftOffset = 0,
-  rightOffset = 0,
+  leftOffset,
+  rightOffset,
   leftJoints,
   rightJoints,
   textureType,
@@ -222,19 +222,23 @@ const Wall = ({
 
   useEffect(() => {
     if (leftJoints.length > 0) {
-      const targetWall = getElementById(leftJoints[0].id) as WallModel;
+      const targetWall = getElementById(leftJoints[0]) as WallModel;
       if (targetWall) {
         const deltaAngle = (Math.PI * 3 - (relativeAngle - targetWall.relativeAngle)) % (Math.PI * 2);
-        const offset = ly / Math.tan(deltaAngle);
-        setLeftOffsetState(offset);
+        if (deltaAngle < Math.PI / 2 && deltaAngle > 0) {
+          const offset = ly / Math.tan(deltaAngle);
+          setLeftOffsetState(offset);
+        }
       }
     }
     if (rightJoints.length > 0) {
-      const targetWall = getElementById(rightJoints[0].id) as WallModel;
+      const targetWall = getElementById(rightJoints[0]) as WallModel;
       if (targetWall) {
         const deltaAngle = (Math.PI * 3 + relativeAngle - targetWall.relativeAngle) % (Math.PI * 2);
-        const offset = ly / Math.tan(deltaAngle);
-        setRightOffsetState(offset);
+        if (deltaAngle < Math.PI / 2 && deltaAngle > 0) {
+          const offset = ly / Math.tan(deltaAngle);
+          setRightOffsetState(offset);
+        }
       }
     }
   }, [ly]);
@@ -411,7 +415,7 @@ const Wall = ({
     while (wall && wall.leftJoints.length > 0) {
       const point = [...wall.leftPoint];
       points.push({ x: point[0], y: point[1] });
-      const id = wall.leftJoints[0].id;
+      const id = wall.leftJoints[0];
       if (id === startID) {
         return points;
       } else {

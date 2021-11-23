@@ -9,14 +9,9 @@ export interface WallModel extends ElementModel {
   relativeAngle: number;
   leftPoint: number[];
   rightPoint: number[];
-  leftJoints: JointProps[];
-  rightJoints: JointProps[];
+  leftJoints: string[];
+  rightJoints: string[];
   textureType: WallTexture;
-  leftOffset?: number;
-  rightOffset?: number;
-}
-
-export interface JointProps {
-  id: string;
-  side: WallSide;
+  leftOffset: number;
+  rightOffset: number;
 }

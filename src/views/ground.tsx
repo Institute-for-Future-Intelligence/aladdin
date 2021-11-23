@@ -197,6 +197,9 @@ const Ground = () => {
           } as UndoableResize;
           addUndoable(undoableResize);
         }
+        setCommonStore((state) => {
+          state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
+        });
       } else if (rotateHandleType) {
         if (elem) {
           newRotationRef.current = [...elem.rotation];
@@ -550,7 +553,6 @@ const Ground = () => {
           }
         }
       }
-      state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
     });
   };
 
