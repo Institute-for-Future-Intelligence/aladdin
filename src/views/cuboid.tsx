@@ -247,7 +247,7 @@ const Cuboid = ({
       }
     } else {
       // a child of this cuboid is clicked
-      if (selectedElement) {
+      if (selectedElement && selectedElement.parentId === id) {
         if (legalOnCuboid(selectedElement.type as ObjectType)) {
           setShowGrid(true);
           grabRef.current = selectedElement;
@@ -283,87 +283,89 @@ const Cuboid = ({
   };
 
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
-    if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
-      const mouse = new Vector2();
-      mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
-      mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
-      ray.setFromCamera(mouse, camera);
-      let intersects;
-      if (baseRef.current) {
-        intersects = ray.intersectObjects([baseRef.current]);
-        if (intersects.length > 0) {
-          let p = intersects[0].point;
-          const face = intersects[0].face;
-          if (moveHandleType && cuboidModel) {
-            if (face) {
-              const n = face.normal;
-              if (normal && !normal.equals(n)) {
-                setNormal(n);
+    if (grabRef.current && !grabRef.current.locked) {
+      if (grabRef.current.parentId === id && grabRef.current.type) {
+        const mouse = new Vector2();
+        mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
+        mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
+        ray.setFromCamera(mouse, camera);
+        let intersects;
+        if (baseRef.current) {
+          intersects = ray.intersectObjects([baseRef.current]);
+          if (intersects.length > 0) {
+            let p = intersects[0].point;
+            const face = intersects[0].face;
+            if (moveHandleType && cuboidModel) {
+              if (face) {
+                const n = face.normal;
+                if (normal && !normal.equals(n)) {
+                  setNormal(n);
+                }
+                setupGridHelper(n);
+                setElementNormal(grabRef.current.id, n.x, n.y, n.z);
               }
-              setupGridHelper(n);
-              setElementNormal(grabRef.current.id, n.x, n.y, n.z);
-            }
-            if (cuboidModel) {
               p = Util.relativeCoordinates(p.x, p.y, p.z, cuboidModel);
-            }
-            setElementPosition(grabRef.current.id, p.x, p.y, p.z);
-          } else if (rotateHandleType) {
-            const parent = getElementById(grabRef.current.parentId);
-            if (parent) {
-              const pr = parent.rotation[2]; //parent rotation
-              const pc = new Vector2(parent.cx, parent.cy); //world parent center
-              const cc = new Vector2(parent.lx * grabRef.current.cx, parent.ly * grabRef.current.cy) //local current center
-                .rotateAround(new Vector2(0, 0), pr); //add parent rotation
-              const wc = new Vector2().addVectors(cc, pc); //world current center
-              const rotation =
-                -pr + Math.atan2(-p.x + wc.x, p.y - wc.y) + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
-              const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0; // make sure angle is between -PI to PI
-              if (grabRef.current?.type === ObjectType.SolarPanel) {
-                updateSolarPanelRelativeAzimuthById(grabRef.current.id, rotation + offset);
-                newAzimuthRef.current = rotation + offset;
+              setElementPosition(grabRef.current.id, p.x, p.y, p.z);
+            } else if (rotateHandleType) {
+              const parent = getElementById(grabRef.current.parentId);
+              if (parent) {
+                const pr = parent.rotation[2]; //parent rotation
+                const pc = new Vector2(parent.cx, parent.cy); //world parent center
+                const cc = new Vector2(parent.lx * grabRef.current.cx, parent.ly * grabRef.current.cy) //local current center
+                  .rotateAround(new Vector2(0, 0), pr); //add parent rotation
+                const wc = new Vector2().addVectors(cc, pc); //world current center
+                const rotation =
+                  -pr +
+                  Math.atan2(-p.x + wc.x, p.y - wc.y) +
+                  (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
+                const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0; // make sure angle is between -PI to PI
+                if (grabRef.current?.type === ObjectType.SolarPanel) {
+                  updateSolarPanelRelativeAzimuthById(grabRef.current.id, rotation + offset);
+                  newAzimuthRef.current = rotation + offset;
+                }
+                setCommonStore((state) => {
+                  state.selectedElementAngle = rotation + offset;
+                });
               }
-              setCommonStore((state) => {
-                state.selectedElementAngle = rotation + offset;
-              });
-            }
-          } else if (resizeHandleType && cuboidModel) {
-            const solarPanel = grabRef.current as SolarPanelModel;
-            const wp = new Vector3(p.x, p.y, p.z);
-            const vd = new Vector3().subVectors(wp, resizeAnchor);
-            const vh = new Vector3().subVectors(
-              Util.absoluteCoordinates(solarPanel.cx, solarPanel.cy, solarPanel.cz, cuboidModel),
-              resizeAnchor,
-            );
-            if (normal && normal.z === 1) {
-              vh.setZ(0);
-            }
-            const vhd = vd.projectOnVector(vh);
-            let d = vhd.length();
-            const pvModel = getPvModule(solarPanel.pvModelName);
-            if (solarPanel.orientation === Orientation.portrait) {
-              if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
-                const nx = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
-                d = nx * pvModel.width;
-                updateElementLxById(solarPanel.id, d);
+            } else if (resizeHandleType && cuboidModel) {
+              const solarPanel = grabRef.current as SolarPanelModel;
+              const wp = new Vector3(p.x, p.y, p.z);
+              const vd = new Vector3().subVectors(wp, resizeAnchor);
+              const vh = new Vector3().subVectors(
+                Util.absoluteCoordinates(solarPanel.cx, solarPanel.cy, solarPanel.cz, cuboidModel),
+                resizeAnchor,
+              );
+              if (normal && normal.z === 1) {
+                vh.setZ(0);
+              }
+              const vhd = vd.projectOnVector(vh);
+              let d = vhd.length();
+              const pvModel = getPvModule(solarPanel.pvModelName);
+              if (solarPanel.orientation === Orientation.portrait) {
+                if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
+                  const nx = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
+                  d = nx * pvModel.width;
+                  updateElementLxById(solarPanel.id, d);
+                } else {
+                  const ny = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
+                  d = ny * pvModel.length;
+                  updateElementLyById(solarPanel.id, d);
+                }
               } else {
-                const ny = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
-                d = ny * pvModel.length;
-                updateElementLyById(solarPanel.id, d);
+                if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
+                  const nx = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
+                  d = nx * pvModel.length;
+                  updateElementLxById(solarPanel.id, d);
+                } else {
+                  const ny = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
+                  d = ny * pvModel.width;
+                  updateElementLyById(solarPanel.id, d);
+                }
               }
-            } else {
-              if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
-                const nx = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
-                d = nx * pvModel.length;
-                updateElementLxById(solarPanel.id, d);
-              } else {
-                const ny = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
-                d = ny * pvModel.width;
-                updateElementLyById(solarPanel.id, d);
-              }
+              const wc = new Vector3().addVectors(resizeAnchor, vhd.normalize().multiplyScalar(d / 2));
+              const rc = Util.relativeCoordinates(wc.x, wc.y, wc.z, cuboidModel);
+              setElementPosition(solarPanel.id, rc.x, rc.y, rc.z);
             }
-            const wc = new Vector3().addVectors(resizeAnchor, vhd.normalize().multiplyScalar(d / 2));
-            const rc = Util.relativeCoordinates(wc.x, wc.y, wc.z, cuboidModel);
-            setElementPosition(solarPanel.id, rc.x, rc.y, rc.z);
           }
         }
       }
@@ -373,7 +375,7 @@ const Cuboid = ({
   const handlePointerUp = () => {
     if (grabRef.current) {
       const elem = getElementById(grabRef.current.id);
-      if (elem) {
+      if (elem && elem.parentId === id) {
         if (resizeHandleType) {
           newPositionRef.current.x = elem.cx;
           newPositionRef.current.y = elem.cy;

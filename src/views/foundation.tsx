@@ -333,7 +333,7 @@ const Foundation = ({
     }
     // a child of this foundation is clicked
     else {
-      if (selectedElement) {
+      if (selectedElement && selectedElement.parentId === id) {
         if (legalOnFoundation(selectedElement.type as ObjectType)) {
           grabRef.current = selectedElement;
           setShowGrid(true);
@@ -398,6 +398,7 @@ const Foundation = ({
 
   const handlePointerUp = () => {
     if (grabRef.current) {
+      if (grabRef.current.parentId !== id) return;
       const elem = getElementById(grabRef.current.id);
       if (elem) {
         if (elem.type === ObjectType.Wall) {
@@ -542,6 +543,7 @@ const Foundation = ({
     if (!grabRef.current && !buildingWallID && objectTypeToAdd !== ObjectType.Wall) {
       return;
     }
+    if (grabRef.current?.parentId !== id) return;
     const mouse = new Vector2();
     mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
