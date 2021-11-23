@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.b8305f81.chunk.css",
-    "main.js": "/aladdin/static/js/main.41ebde77.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.41ebde77.chunk.js.map",
-    "runtime-main.js": "/aladdin/static/js/runtime-main.501a43df.js",
-    "runtime-main.js.map": "/aladdin/static/js/runtime-main.501a43df.js.map",
+    "main.js": "/aladdin/static/js/main.19af1023.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.19af1023.chunk.js.map",
+    "runtime-main.js": "/aladdin/static/js/runtime-main.e8091437.js",
+    "runtime-main.js.map": "/aladdin/static/js/runtime-main.e8091437.js.map",
     "static/css/2.a95be28f.chunk.css": "/aladdin/static/css/2.a95be28f.chunk.css",
-    "static/js/2.126a9f17.chunk.js": "/aladdin/static/js/2.126a9f17.chunk.js",
-    "static/js/2.126a9f17.chunk.js.map": "/aladdin/static/js/2.126a9f17.chunk.js.map",
-    "static/js/3.a403034e.chunk.js": "/aladdin/static/js/3.a403034e.chunk.js",
-    "static/js/3.a403034e.chunk.js.map": "/aladdin/static/js/3.a403034e.chunk.js.map",
+    "static/js/2.54e309a5.chunk.js": "/aladdin/static/js/2.54e309a5.chunk.js",
+    "static/js/2.54e309a5.chunk.js.map": "/aladdin/static/js/2.54e309a5.chunk.js.map",
+    "static/js/3.98fe06c2.chunk.js": "/aladdin/static/js/3.98fe06c2.chunk.js",
+    "static/js/3.98fe06c2.chunk.js.map": "/aladdin/static/js/3.98fe06c2.chunk.js.map",
     "index.html": "/aladdin/index.html",
     "static/css/2.a95be28f.chunk.css.map": "/aladdin/static/css/2.a95be28f.chunk.css.map",
     "static/css/main.b8305f81.chunk.css.map": "/aladdin/static/css/main.b8305f81.chunk.css.map",
-    "static/js/2.126a9f17.chunk.js.LICENSE.txt": "/aladdin/static/js/2.126a9f17.chunk.js.LICENSE.txt",
+    "static/js/2.54e309a5.chunk.js.LICENSE.txt": "/aladdin/static/js/2.54e309a5.chunk.js.LICENSE.txt",
     "static/media/compass.ddc4aa38.obj": "/aladdin/static/media/compass.ddc4aa38.obj",
     "static/media/cottonwood.581e0938.png": "/aladdin/static/media/cottonwood.581e0938.png",
     "static/media/cottonwood_shed.9c316396.png": "/aladdin/static/media/cottonwood_shed.9c316396.png",
@@ -59,10 +59,10 @@
     "static/media/xiaoming.787a8ea5.png": "/aladdin/static/media/xiaoming.787a8ea5.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.501a43df.js",
+    "static/js/runtime-main.e8091437.js",
     "static/css/2.a95be28f.chunk.css",
-    "static/js/2.126a9f17.chunk.js",
+    "static/js/2.54e309a5.chunk.js",
     "static/css/main.b8305f81.chunk.css",
-    "static/js/main.41ebde77.chunk.js"
+    "static/js/main.19af1023.chunk.js"
   ]
 }
