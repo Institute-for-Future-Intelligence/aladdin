@@ -405,8 +405,7 @@ const Foundation = ({
       if (legalOnFoundation(objectTypeToAddRef.current) && foundationModel) {
         setShowGrid(true);
         const position = e.intersections[0].point;
-        const id = addElement(foundationModel, position);
-        const addedElement = getElementById(id);
+        const addedElement = addElement(foundationModel, position);
         const undoableAdd = {
           name: 'Add',
           timestamp: Date.now(),
@@ -671,7 +670,7 @@ const Foundation = ({
     if (!grabRef.current && !buildingWallID && objectTypeToAdd !== ObjectType.Wall) {
       return;
     }
-    if (grabRef.current?.parentId !== id) return;
+    if (grabRef.current?.parentId !== id && objectTypeToAdd === ObjectType.None) return;
     const mouse = new Vector2();
     mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
@@ -1050,13 +1049,14 @@ const Foundation = ({
         }
       }
       if (objectTypeToAdd === ObjectType.Wall) {
-        const wallID = addElement(foundationModel, p);
-        buildingWallIDRef.current = wallID;
-        setBuildingWallID(wallID);
+        const addedWall = addElement(foundationModel, p) as WallModel;
+        grabRef.current = addedWall;
+        buildingWallIDRef.current = addedWall.id;
+        setBuildingWallID(addedWall.id);
         setIsSettingWallStartPoint(true);
         setShowGrid(true);
         setCommonStore((state) => {
-          state.buildingWallID = wallID;
+          state.buildingWallID = addedWall.id;
           state.objectTypeToAdd = ObjectType.None;
           state.enableOrbitController = false;
         });

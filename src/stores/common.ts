@@ -215,7 +215,7 @@ export interface CommonStoreState {
   updateHumanNameById: (id: string, name: HumanName) => void;
 
   objectTypeToAdd: ObjectType;
-  addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => string;
+  addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => ElementModel | null;
 
   pastePoint: Vector3;
   pasteNormal: Vector3 | undefined;
@@ -1440,18 +1440,18 @@ export const useStore = create<CommonStoreState>(
 
           objectTypeToAdd: ObjectType.None,
           addElement(parent: ElementModel | GroundModel, position, normal) {
-            let id = '';
+            let model: ElementModel | null = null;
             immerSet((state: CommonStoreState) => {
               const m = position;
               switch (state.objectTypeToAdd) {
                 case ObjectType.Human:
                   const human = ElementModelFactory.makeHuman(m.x, m.y, m.z);
-                  id = human.id;
+                  model = human;
                   state.elements.push(human);
                   break;
                 case ObjectType.Tree:
                   const tree = ElementModelFactory.makeTree(m.x, m.y, m.z);
-                  id = tree.id;
+                  model = tree;
                   state.elements.push(tree);
                   break;
                 case ObjectType.Sensor:
@@ -1465,7 +1465,7 @@ export const useStore = create<CommonStoreState>(
                     normal,
                     'rotation' in parent ? parent.rotation : undefined,
                   );
-                  id = sensor.id;
+                  model = sensor;
                   state.elements.push(sensor);
                   break;
                 case ObjectType.SolarPanel:
@@ -1480,17 +1480,17 @@ export const useStore = create<CommonStoreState>(
                     normal,
                     'rotation' in parent ? parent.rotation : undefined,
                   );
-                  id = solarPanel.id;
+                  model = solarPanel;
                   state.elements.push(solarPanel);
                   break;
                 case ObjectType.Foundation:
                   const foundation = ElementModelFactory.makeFoundation(m.x, m.y);
-                  id = foundation.id;
+                  model = foundation;
                   state.elements.push(foundation);
                   break;
                 case ObjectType.Cuboid:
                   const cuboid = ElementModelFactory.makeCuboid(m.x, m.y);
-                  id = cuboid.id;
+                  model = cuboid;
                   state.elements.push(cuboid);
                   break;
                 case ObjectType.Wall:
@@ -1505,11 +1505,11 @@ export const useStore = create<CommonStoreState>(
                     'rotation' in parent ? parent.rotation : undefined,
                   );
                   state.elements.push(wall);
-                  id = wall.id;
+                  model = wall;
                   break;
               }
             });
-            return id;
+            return model;
           },
 
           elementsToPaste: [],
