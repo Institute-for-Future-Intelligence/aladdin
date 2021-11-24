@@ -12,7 +12,8 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
-import Foundation_Texture_01 from '../../../resources/foundation_01.png';
+import Foundation_Texture_01_Menu from '../../../resources/foundation_01_menu.png';
+import Foundation_Texture_02_Menu from '../../../resources/foundation_02_menu.png';
 
 const FoundationTextureSelection = ({
   textureDialogVisible,
@@ -182,7 +183,7 @@ const FoundationTextureSelection = ({
                     display: 'inline-block',
                     verticalAlign: 'middle',
                     marginRight: '12px',
-                    width: '26px',
+                    width: '32px',
                     height: '20px',
                     border: '1px dashed dimGray',
                   }}
@@ -194,12 +195,22 @@ const FoundationTextureSelection = ({
               <Option key={FoundationTexture.Texture_1} value={FoundationTexture.Texture_1}>
                 <img
                   alt={FoundationTexture.Texture_1}
-                  src={Foundation_Texture_01}
+                  src={Foundation_Texture_01_Menu}
                   height={20}
-                  width={35}
+                  width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
                 {i18n.t('foundationMenu.Texture1', lang)}
+              </Option>
+              <Option key={FoundationTexture.Texture_2} value={FoundationTexture.Texture_2}>
+                <img
+                  alt={FoundationTexture.Texture_2}
+                  src={Foundation_Texture_02_Menu}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('foundationMenu.Texture2', lang)}
               </Option>
             </Select>
           </Col>

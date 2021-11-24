@@ -40,7 +40,9 @@ import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableChange } from '../undo/UndoableChange';
 import { ElementGrid } from './elementGrid';
+import Foundation_Texture_00 from '../resources/foundation_00.png';
 import Foundation_Texture_01 from '../resources/foundation_01.png';
+import Foundation_Texture_02 from '../resources/foundation_02.png';
 
 const Foundation = ({
   id,
@@ -193,13 +195,25 @@ const Foundation = ({
       case FoundationTexture.Texture_1:
         textureImg = Foundation_Texture_01;
         break;
+      case FoundationTexture.Texture_2:
+        textureImg = Foundation_Texture_02;
+        break;
       default:
-        textureImg = Foundation_Texture_01;
+        textureImg = Foundation_Texture_00;
     }
     return new TextureLoader().load(textureImg, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
       t.offset.set(0, 0);
-      t.repeat.set(lx / 20, ly / 20);
+      let repeat = 1;
+      switch (textureType) {
+        case FoundationTexture.Texture_1:
+          repeat = 10;
+          break;
+        case FoundationTexture.Texture_2:
+          repeat = 8;
+          break;
+      }
+      t.repeat.set(repeat, repeat);
       setTexture(t);
     });
   }, [textureType]);
@@ -1297,9 +1311,21 @@ const Foundation = ({
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
         {textureType === FoundationTexture.NoTexture ? (
-          <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
+          <meshStandardMaterial
+            attachArray="material"
+            color={color}
+            map={texture}
+            transparent={groundImage}
+            opacity={opacity}
+          />
         ) : (
-          <meshStandardMaterial attachArray="material" map={texture} transparent={groundImage} opacity={opacity} />
+          <meshStandardMaterial
+            attachArray="material"
+            color={'white'}
+            map={texture}
+            transparent={groundImage}
+            opacity={opacity}
+          />
         )}
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
       </Box>

@@ -193,6 +193,7 @@ export enum HumanName {
 
 export enum FoundationTexture {
   Texture_1 = 'Foundation Texture #1',
+  Texture_2 = 'Foundation Texture #2',
   NoTexture = 'No Foundation Texture',
 }
 

@@ -192,6 +192,7 @@ export const i18n_en = {
       RemoveAllSensors: 'Remove All Sensors',
       Racks: 'Racks',
       Texture1: 'Texture 1',
+      Texture2: 'Texture 2',
       SolarPanels: 'Solar Panels',
       DoYouReallyWantToRemoveAllSolarPanelsOnFoundation:
         'Do you really want to remove all the solar panels on this foundation',
