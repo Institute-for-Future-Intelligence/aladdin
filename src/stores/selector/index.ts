@@ -120,6 +120,10 @@ export const foundationActionScope = (state: CommonStoreState) => state.foundati
 
 export const setFoundationActionScope = (state: CommonStoreState) => state.setFoundationActionScope;
 
+export const updateFoundationTextureById = (state: CommonStoreState) => state.updateFoundationTextureById;
+
+export const updateFoundationTextureForAll = (state: CommonStoreState) => state.updateFoundationTextureForAll;
+
 export const cuboidActionScope = (state: CommonStoreState) => state.cuboidActionScope;
 
 export const setCuboidActionScope = (state: CommonStoreState) => state.setCuboidActionScope;

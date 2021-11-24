@@ -3,7 +3,7 @@
  */
 
 import { ElementModel } from '../models/ElementModel';
-import { Discretization, HumanName, ObjectType } from '../types';
+import { Discretization, FoundationTexture, HumanName, ObjectType } from '../types';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
 import { SensorModel } from '../models/SensorModel';
@@ -58,6 +58,7 @@ export class DefaultWorldModel implements WorldModel {
       normal: [0, 0, 1],
       rotation: [0, 0, 0],
       parentId: GROUND_ID,
+      textureType: FoundationTexture.NoTexture,
       id: short.generate() as string,
     } as FoundationModel;
     const sensor = {
@@ -69,6 +70,7 @@ export class DefaultWorldModel implements WorldModel {
       ly: 0.1,
       lz: 0.01,
       parentId: foundation.id,
+      foundationId: foundation.id,
       normal: [0, 0, 1],
       rotation: [0, 0, 0],
       id: short.generate() as string,
@@ -100,6 +102,7 @@ export class DefaultWorldModel implements WorldModel {
       name: HumanName.Jack,
       cx: 2,
       cy: 2,
+      cz: 0,
       normal: [1, 0, 0],
       rotation: [0, 0, 0],
       parentId: GROUND_ID,
@@ -110,6 +113,7 @@ export class DefaultWorldModel implements WorldModel {
       name: HumanName.Jill,
       cx: -2,
       cy: 2,
+      cz: 0,
       normal: [1, 0, 0],
       rotation: [0, 0, 0],
       parentId: GROUND_ID,
@@ -124,6 +128,7 @@ export class DefaultWorldModel implements WorldModel {
       evergreen: false,
       cx: 5,
       cy: 5,
+      cz: 0,
       lx: 3,
       lz: 4,
       normal: [1, 0, 0],
@@ -137,6 +142,7 @@ export class DefaultWorldModel implements WorldModel {
       evergreen: true,
       cx: -5,
       cy: 5,
+      cz: 0,
       lx: 2,
       lz: 6,
       normal: [1, 0, 0],

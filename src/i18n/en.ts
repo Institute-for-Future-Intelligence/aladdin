@@ -49,6 +49,9 @@ export const i18n_en = {
       Delete: 'Delete',
       Lock: 'Lock',
       Color: 'Color',
+      Texture: 'Texture',
+      Size: 'Size',
+      Thickness: 'Thickness',
       OK: 'OK',
       Cancel: 'Cancel',
       Apply: 'Apply',
@@ -86,6 +89,7 @@ export const i18n_en = {
     shared: {
       AzimuthOfNorthIsZero: 'Azimuth of north is 0°',
       CounterclockwiseAzimuthIsPositive: 'Counter-clockwise is positive',
+      NoTexture: 'No Texture',
     },
 
     menu: {
@@ -187,6 +191,7 @@ export const i18n_en = {
       RemoveAllSolarPanels: 'Remove All Solar Panels',
       RemoveAllSensors: 'Remove All Sensors',
       Racks: 'Racks',
+      Texture1: 'Texture 1',
       SolarPanels: 'Solar Panels',
       DoYouReallyWantToRemoveAllSolarPanelsOnFoundation:
         'Do you really want to remove all the solar panels on this foundation',
@@ -253,9 +258,6 @@ export const i18n_en = {
     },
 
     wallMenu: {
-      Size: 'Size',
-      Thickness: 'Thickness',
-      Texture: 'Texture',
       SizeOfWall: 'Size of Wall',
       OnlyThisWall: 'Apply to only this wall',
       WallsOnFoundation: 'Apply to all walls on this foundation',

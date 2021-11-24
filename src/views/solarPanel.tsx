@@ -183,31 +183,31 @@ const SolarPanel = ({
 
   const texture = useMemo(() => {
     const loader = new TextureLoader();
-    let texture;
+    let tex;
     switch (orientation) {
       case Orientation.portrait:
-        texture = loader.load(
+        tex = loader.load(
           pvModel.color === 'Blue' ? SolarPanelBluePortraitImage : SolarPanelBlackPortraitImage,
-          (texture) => {
-            texture.wrapS = texture.wrapT = RepeatWrapping;
-            texture.offset.set(0, 0);
-            texture.repeat.set(nx, ny);
+          (t) => {
+            t.wrapS = t.wrapT = RepeatWrapping;
+            t.offset.set(0, 0);
+            t.repeat.set(nx, ny);
             setUpdateFlag(!updateFlag);
           },
         );
         break;
       default:
-        texture = loader.load(
+        tex = loader.load(
           pvModel.color === 'Blue' ? SolarPanelBlueLandscapeImage : SolarPanelBlackLandscapeImage,
-          (texture) => {
-            texture.wrapS = texture.wrapT = RepeatWrapping;
-            texture.offset.set(0, 0);
-            texture.repeat.set(nx, ny);
+          (t) => {
+            t.wrapS = t.wrapT = RepeatWrapping;
+            t.offset.set(0, 0);
+            t.repeat.set(nx, ny);
             setUpdateFlag(!updateFlag);
           },
         );
     }
-    return texture;
+    return tex;
   }, [orientation, pvModel.color, nx, ny]);
 
   const euler = useMemo(() => {

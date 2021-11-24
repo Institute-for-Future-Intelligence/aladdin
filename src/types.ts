@@ -191,16 +191,21 @@ export enum HumanName {
   Xiaoming = 'Xiaoming',
 }
 
+export enum FoundationTexture {
+  Texture_1 = 'Foundation Texture #1',
+  NoTexture = 'No Foundation Texture',
+}
+
 export enum WallTexture {
-  Texture_1 = 'Texture #1',
-  Texture_2 = 'Texture #2',
-  Texture_3 = 'Texture #3',
-  Texture_4 = 'Texture #4',
-  Texture_5 = 'Texture #5',
-  Texture_6 = 'Texture #6',
-  Texture_7 = 'Texture #7',
-  Texture_8 = 'Texture #8',
-  NoTexture = 'No Texture',
+  Texture_1 = 'Wall Texture #1',
+  Texture_2 = 'Wall Texture #2',
+  Texture_3 = 'Wall Texture #3',
+  Texture_4 = 'Wall Texture #4',
+  Texture_5 = 'Wall Texture #5',
+  Texture_6 = 'Wall Texture #6',
+  Texture_7 = 'Wall Texture #7',
+  Texture_8 = 'Wall Texture #8',
+  NoTexture = 'No Wall Texture',
 }
 
 export enum WallSide {

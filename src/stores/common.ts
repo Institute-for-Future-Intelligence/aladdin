@@ -15,6 +15,7 @@ import { Util } from '../Util';
 import {
   ActionType,
   DatumEntry,
+  FoundationTexture,
   HumanName,
   MoveHandleType,
   ObjectType,
@@ -46,6 +47,7 @@ import { Undoable } from '../undo/Undoable';
 import UndoManager from 'undo-manager';
 import { TreeModel } from '../models/TreeModel';
 import { HumanModel } from '../models/HumanModel';
+import { FoundationModel } from '../models/FoundationModel';
 
 enableMapSet();
 
@@ -132,6 +134,8 @@ export interface CommonStoreState {
   // for foundations
   foundationActionScope: Scope;
   setFoundationActionScope: (scope: Scope) => void;
+  updateFoundationTextureById: (id: string, texture: FoundationTexture) => void;
+  updateFoundationTextureForAll: (texture: FoundationTexture) => void;
 
   // for cuboids
   cuboidActionScope: Scope;
@@ -745,6 +749,26 @@ export const useStore = create<CommonStoreState>(
           setFoundationActionScope(scope: Scope) {
             immerSet((state: CommonStoreState) => {
               state.foundationActionScope = scope;
+            });
+          },
+
+          updateFoundationTextureById(id, texture) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id) {
+                  (e as FoundationModel).textureType = texture;
+                  break;
+                }
+              }
+            });
+          },
+          updateFoundationTextureForAll(texture) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation) {
+                  (e as FoundationModel).textureType = texture;
+                }
+              }
             });
           },
 

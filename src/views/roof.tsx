@@ -8,7 +8,7 @@ import { RoofModel } from '../models/RoofModel';
 import { Extrude, Sphere } from '@react-three/drei';
 import { Shape, Vector3 } from 'three';
 import * as Selector from '../stores/selector';
-import { ActionType } from '../types';
+import { ActionType, ObjectType } from '../types';
 
 const Roof = ({ id, cz, lz, selected, parentId, points }: RoofModel) => {
   const getElementById = useStore(Selector.getElementById);
@@ -26,6 +26,11 @@ const Roof = ({ id, cz, lz, selected, parentId, points }: RoofModel) => {
   }, [currParent]);
 
   useEffect(() => {}, []);
+
+  // only these elements are allowed to be on the roof
+  const legalOnRoof = (type: ObjectType) => {
+    return type === ObjectType.Human || type === ObjectType.Sensor || type === ObjectType.SolarPanel;
+  };
 
   const shape = useMemo(() => {
     const s = new Shape();

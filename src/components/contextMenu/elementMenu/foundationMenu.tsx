@@ -17,6 +17,7 @@ import FoundationWidthInput from './foundationWidthInput';
 import FoundationLengthInput from './foundationLengthInput';
 import FoundationHeightInput from './foundationHeightInput';
 import FoundationAzimuthInput from './foundationAzimuthInput';
+import FoundationTextureSelection from './foundationTextureSelection';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -30,6 +31,7 @@ export const FoundationMenu = () => {
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
 
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
+  const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
@@ -161,6 +163,20 @@ export const FoundationMenu = () => {
         }}
       >
         {i18n.t('word.Color', lang)} ...
+      </Menu.Item>
+
+      <FoundationTextureSelection
+        textureDialogVisible={textureDialogVisible}
+        setTextureDialogVisible={setTextureDialogVisible}
+      />
+      <Menu.Item
+        key={'foundation-texture'}
+        style={{ paddingLeft: '36px' }}
+        onClick={() => {
+          setTextureDialogVisible(true);
+        }}
+      >
+        {i18n.t('word.Texture', lang)} ...
       </Menu.Item>
 
       <FoundationWidthInput widthDialogVisible={widthDialogVisible} setWidthDialogVisible={setWidthDialogVisible} />

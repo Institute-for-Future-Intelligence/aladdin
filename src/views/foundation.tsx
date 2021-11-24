@@ -3,13 +3,14 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Line, Sphere, Plane } from '@react-three/drei';
-import { Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
+import { Box, Plane, Sphere } from '@react-three/drei';
+import { Euler, Mesh, Raycaster, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { FoundationModel } from '../models/FoundationModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
   ActionType,
+  FoundationTexture,
   MoveHandleType,
   ObjectType,
   Orientation,
@@ -39,6 +40,7 @@ import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableChange } from '../undo/UndoableChange';
 import { ElementGrid } from './elementGrid';
+import Foundation_Texture_01 from '../resources/foundation_01.png';
 
 const Foundation = ({
   id,
@@ -53,6 +55,7 @@ const Foundation = ({
   lineWidth = 0.2,
   locked = false,
   selected = false,
+  textureType = FoundationTexture.NoTexture,
 }: FoundationModel) => {
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -60,13 +63,7 @@ const Foundation = ({
   const setCommonStore = useStore(Selector.set);
   const setElementPosition = useStore(Selector.setElementPosition);
   const setElementSize = useStore(Selector.setElementSize);
-  const updateWallRelativeAngleById = useStore(Selector.updateWallRelativeAngleById);
-  const updateWallLeftOffsetById = useStore(Selector.updateWallLeftOffsetById);
-  const updateWallRightOffsetById = useStore(Selector.updateWallRightOffsetById);
-  const updateWallLeftJointsById = useStore(Selector.updateWallLeftJointsById);
-  const updateWallRightJointsById = useStore(Selector.updateWallRightJointsById);
   const updateWallLeftPointById = useStore(Selector.updateWallLeftPointById);
-  const updateWallRightPointById = useStore(Selector.updateWallRightPointById);
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLyById = useStore(Selector.updateElementLyById);
   const updateSolarPanelRelativeAzimuthById = useStore(Selector.updateSolarPanelRelativeAzimuthById);
@@ -189,6 +186,21 @@ const Foundation = ({
       });
     }
   }, [deletedWallID]);
+
+  const [updateFlag, setUpdateFlag] = useState(false);
+  const texture = useMemo(() => {
+    let textureImg;
+    switch (textureType) {
+      case FoundationTexture.Texture_1:
+        textureImg = Foundation_Texture_01;
+        break;
+      default:
+        textureImg = '';
+    }
+    return new TextureLoader().load(textureImg, (t) => {
+      setUpdateFlag(!updateFlag);
+    });
+  }, [textureType]);
 
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
@@ -1257,6 +1269,8 @@ const Foundation = ({
     });
   };
 
+  const opacity = groundImage ? 0.5 : 1;
+
   return (
     <group name={'Foundation Group ' + id} position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
       {/* draw rectangle */}
@@ -1275,12 +1289,16 @@ const Foundation = ({
         onPointerMove={handlePointerMove}
         onPointerOut={(e) => setHovered(false)}
       >
-        <meshStandardMaterial
-          attach="material"
-          color={color}
-          transparent={groundImage}
-          opacity={groundImage ? 0.5 : 1}
-        />
+        <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
+        <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
+        <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
+        <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
+        {texture.image ? (
+          <meshStandardMaterial attachArray="material" map={texture} transparent={groundImage} opacity={opacity} />
+        ) : (
+          <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
+        )}
+        <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
       </Box>
 
       {/* intersection plane */}

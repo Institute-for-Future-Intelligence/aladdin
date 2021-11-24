@@ -3,5 +3,8 @@
  */
 
 import { ElementModel } from './ElementModel';
+import { FoundationTexture } from '../types';
 
-export interface FoundationModel extends ElementModel {}
+export interface FoundationModel extends ElementModel {
+  textureType: FoundationTexture;
+}

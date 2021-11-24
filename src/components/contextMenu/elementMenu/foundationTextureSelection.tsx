@@ -1,0 +1,215 @@
+/*
+ * @Copyright 2021. Institute for Future Intelligence, Inc.
+ */
+
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
+import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import { useStore } from '../../../stores/common';
+import * as Selector from '../../../stores/selector';
+import { FoundationTexture, ObjectType, Scope } from '../../../types';
+import i18n from '../../../i18n/i18n';
+import { UndoableChange } from '../../../undo/UndoableChange';
+import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
+import { FoundationModel } from '../../../models/FoundationModel';
+import Foundation_Texture_01 from '../../../resources/foundation_01.png';
+
+const FoundationTextureSelection = ({
+  textureDialogVisible,
+  setTextureDialogVisible,
+}: {
+  textureDialogVisible: boolean;
+  setTextureDialogVisible: (b: boolean) => void;
+}) => {
+  const language = useStore(Selector.language);
+  const elements = useStore(Selector.elements);
+  const updateFoundationTextureById = useStore(Selector.updateFoundationTextureById);
+  const updateFoundationTextureForAll = useStore(Selector.updateFoundationTextureForAll);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const addUndoable = useStore(Selector.addUndoable);
+  const foundationActionScope = useStore(Selector.foundationActionScope);
+  const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
+
+  const foundation = getSelectedElement() as FoundationModel;
+  const [selectedTexture, setSelectedTexture] = useState<FoundationTexture>(
+    foundation?.textureType ?? FoundationTexture.NoTexture,
+  );
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
+  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
+  const dragRef = useRef<HTMLDivElement | null>(null);
+
+  const lang = { lng: language };
+  const { Option } = Select;
+
+  useEffect(() => {
+    if (foundation) {
+      setSelectedTexture(foundation?.textureType ?? FoundationTexture.NoTexture);
+    }
+  }, [foundation]);
+
+  const onScopeChange = (e: RadioChangeEvent) => {
+    setFoundationActionScope(e.target.value);
+    setUpdateFlag(!updateFlag);
+  };
+
+  const setTexture = (value: FoundationTexture) => {
+    switch (foundationActionScope) {
+      case Scope.AllObjectsOfThisType:
+        const oldTexturesAll = new Map<string, FoundationTexture>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Foundation) {
+            oldTexturesAll.set(elem.id, (elem as FoundationModel).textureType ?? FoundationTexture.NoTexture);
+          }
+        }
+        const undoableChangeAll = {
+          name: 'Set Texture for All Foundations',
+          timestamp: Date.now(),
+          oldValues: oldTexturesAll,
+          newValue: value,
+          undo: () => {
+            for (const [id, texture] of undoableChangeAll.oldValues.entries()) {
+              updateFoundationTextureById(id, texture as FoundationTexture);
+            }
+          },
+          redo: () => {
+            updateFoundationTextureForAll(undoableChangeAll.newValue as FoundationTexture);
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeAll);
+        updateFoundationTextureForAll(value);
+        break;
+      default:
+        if (foundation) {
+          const oldTexture = foundation.textureType;
+          const undoableChange = {
+            name: 'Set Texture of Selected Foundation',
+            timestamp: Date.now(),
+            oldValue: oldTexture,
+            newValue: value,
+            undo: () => {
+              updateFoundationTextureById(foundation.id, undoableChange.oldValue as FoundationTexture);
+            },
+            redo: () => {
+              updateFoundationTextureById(foundation.id, undoableChange.newValue as FoundationTexture);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateFoundationTextureById(foundation.id, value);
+        }
+    }
+    setUpdateFlag(!updateFlag);
+  };
+
+  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
+    if (dragRef.current) {
+      const { clientWidth, clientHeight } = window.document.documentElement;
+      const targetRect = dragRef.current.getBoundingClientRect();
+      setBounds({
+        left: -targetRect.left + uiData.x,
+        right: clientWidth - (targetRect.right - uiData.x),
+        top: -targetRect.top + uiData.y,
+        bottom: clientHeight - (targetRect?.bottom - uiData.y),
+      });
+    }
+  };
+
+  return (
+    <>
+      <Modal
+        width={600}
+        visible={textureDialogVisible}
+        title={
+          <div
+            style={{ width: '100%', cursor: 'move' }}
+            onMouseOver={() => setDragEnabled(true)}
+            onMouseOut={() => setDragEnabled(false)}
+          >
+            {i18n.t('word.Texture', lang)}
+          </div>
+        }
+        footer={[
+          <Button
+            key="Apply"
+            onClick={() => {
+              setTexture(selectedTexture);
+            }}
+          >
+            {i18n.t('word.Apply', lang)}
+          </Button>,
+          <Button
+            key="Cancel"
+            onClick={() => {
+              if (foundation?.textureType) {
+                setSelectedTexture(foundation.textureType);
+              }
+              setTextureDialogVisible(false);
+            }}
+          >
+            {i18n.t('word.Cancel', lang)}
+          </Button>,
+          <Button
+            key="OK"
+            type="primary"
+            onClick={() => {
+              setTexture(selectedTexture);
+              setTextureDialogVisible(false);
+            }}
+          >
+            {i18n.t('word.OK', lang)}
+          </Button>,
+        ]}
+        // this must be specified for the x button at the upper-right corner to work
+        onCancel={() => {
+          if (foundation?.textureType) {
+            setSelectedTexture(foundation.textureType);
+          }
+          setTextureDialogVisible(false);
+        }}
+        destroyOnClose={false}
+        modalRender={(modal) => (
+          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
+            <div ref={dragRef}>{modal}</div>
+          </Draggable>
+        )}
+      >
+        <Row gutter={6}>
+          <Col className="gutter-row" span={12}>
+            <Select style={{ width: '150px' }} value={selectedTexture} onChange={(value) => setSelectedTexture(value)}>
+              <Option key={FoundationTexture.NoTexture} value={FoundationTexture.NoTexture}>
+                {i18n.t('shared.NoTexture', lang)}
+              </Option>
+              <Option key={FoundationTexture.Texture_1} value={FoundationTexture.Texture_1}>
+                <img
+                  alt={FoundationTexture.Texture_1}
+                  src={Foundation_Texture_01}
+                  height={20}
+                  width={35}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('foundationMenu.Texture1', lang)}
+              </Option>
+            </Select>
+          </Col>
+          <Col
+            className="gutter-row"
+            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+            span={12}
+          >
+            <Radio.Group onChange={onScopeChange} value={foundationActionScope}>
+              <Space direction="vertical">
+                <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
+                <Radio value={Scope.AllConnectedObjects}>
+                  {i18n.t('foundationMenu.AllConnectedFoundations', lang)}
+                </Radio>
+                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
+              </Space>
+            </Radio.Group>
+          </Col>
+        </Row>
+      </Modal>
+    </>
+  );
+};
+
+export default FoundationTextureSelection;

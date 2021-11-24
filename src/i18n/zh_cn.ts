@@ -49,6 +49,9 @@ export const i18n_zh_cn = {
       Delete: '删除',
       Lock: '固定',
       Color: '颜色',
+      Texture: '材质',
+      Thickness: '厚度',
+      Size: '尺寸',
       OK: '确定',
       Cancel: '取消',
       Apply: '应用',
@@ -86,6 +89,7 @@ export const i18n_zh_cn = {
     shared: {
       AzimuthOfNorthIsZero: '正北的方位角为零度',
       CounterclockwiseAzimuthIsPositive: '逆时针为正',
+      NoTexture: '无材质',
     },
 
     menu: {
@@ -187,6 +191,7 @@ export const i18n_zh_cn = {
       RemoveAllSolarPanels: '删除此地基上所有的光伏板',
       RemoveAllSensors: '删除此地基上所有的传感器',
       Racks: '支架',
+      Texture1: '材质一',
       SolarPanels: '光伏板',
       DoYouReallyWantToRemoveAllSolarPanelsOnFoundation: '你确定删除此地基上所有的光伏板吗',
       Sensors: '传感器',
@@ -269,9 +274,6 @@ export const i18n_zh_cn = {
     },
 
     wallMenu: {
-      Thickness: '厚度',
-      Texture: '材质',
-      Size: '尺寸',
       SizeOfWall: '墙的尺寸',
       OnlyThisWall: '仅对选中的墙生效',
       WallsOnFoundation: '对这块地基上所有的墙生效',
