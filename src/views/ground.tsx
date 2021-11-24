@@ -197,6 +197,9 @@ const Ground = () => {
           } as UndoableResize;
           addUndoable(undoableResize);
         }
+        setCommonStore((state) => {
+          state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
+        });
       } else if (rotateHandleType) {
         if (elem) {
           newRotationRef.current = [...elem.rotation];
@@ -298,8 +301,7 @@ const Ground = () => {
         selectNone();
         if (legalOnGround(objectTypeToAdd)) {
           const position = e.intersections[0].point;
-          const id = addElement(groundModel, position);
-          const addedElement = getElementById(id);
+          const addedElement = addElement(groundModel, position);
           const undoableAdd = {
             name: 'Add',
             timestamp: Date.now(),
@@ -572,7 +574,6 @@ const Ground = () => {
           }
         }
       }
-      state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
     });
   };
 

@@ -224,8 +224,7 @@ const Cuboid = ({
       if (legalOnCuboid(objectTypeToAdd) && cuboidModel) {
         setShowGrid(true);
         const intersection = e.intersections[0];
-        const id = addElement(cuboidModel, intersection.point, intersection.face?.normal);
-        const addedElement = getElementById(id);
+        const addedElement = addElement(cuboidModel, intersection.point, intersection.face?.normal);
         const undoableAdd = {
           name: 'Add',
           timestamp: Date.now(),

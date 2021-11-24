@@ -171,6 +171,8 @@ export class ElementModelFactory {
       rightPoint: [],
       leftJoints: [],
       rightJoints: [],
+      leftOffset: 0,
+      rightOffset: 0,
       textureType: WallTexture.NoTexture,
       selected: true,
       windows: [],

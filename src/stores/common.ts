@@ -38,7 +38,7 @@ import { GroundModel } from '../models/GroundModel';
 import { PvModel } from '../models/PvModel';
 import { ThreeEvent } from '@react-three/fiber';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import { JointProps, WallModel } from '../models/WallModel';
+import { WallModel } from '../models/WallModel';
 import { Locale } from 'antd/lib/locale-provider';
 import enUS from 'antd/lib/locale/en_US';
 import { Undoable } from '../undo/Undoable';
@@ -203,8 +203,8 @@ export interface CommonStoreState {
   updateWallRelativeAngleById: (id: string, angle: number) => void;
   updateWallLeftOffsetById: (id: string, offset: number) => void;
   updateWallRightOffsetById: (id: string, offset: number) => void;
-  updateWallLeftJointsById: (id: string, joints: JointProps[]) => void;
-  updateWallRightJointsById: (id: string, joints: JointProps[]) => void;
+  updateWallLeftJointsById: (id: string, joints: string[]) => void;
+  updateWallRightJointsById: (id: string, joints: string[]) => void;
   updateWallLeftPointById: (id: string, point: number[]) => void;
   updateWallRightPointById: (id: string, point: number[]) => void;
   updateWallTextureById: (id: string, texture: WallTexture) => void;
@@ -215,7 +215,7 @@ export interface CommonStoreState {
   updateHumanNameById: (id: string, name: HumanName) => void;
 
   objectTypeToAdd: ObjectType;
-  addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => string;
+  addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => ElementModel | null;
 
   pastePoint: Vector3;
   pasteNormal: Vector3 | undefined;
@@ -1440,18 +1440,18 @@ export const useStore = create<CommonStoreState>(
 
           objectTypeToAdd: ObjectType.None,
           addElement(parent: ElementModel | GroundModel, position, normal) {
-            let id = '';
+            let model: ElementModel | null = null;
             immerSet((state: CommonStoreState) => {
               const m = position;
               switch (state.objectTypeToAdd) {
                 case ObjectType.Human:
                   const human = ElementModelFactory.makeHuman(m.x, m.y, m.z);
-                  id = human.id;
+                  model = human;
                   state.elements.push(human);
                   break;
                 case ObjectType.Tree:
                   const tree = ElementModelFactory.makeTree(m.x, m.y, m.z);
-                  id = tree.id;
+                  model = tree;
                   state.elements.push(tree);
                   break;
                 case ObjectType.Sensor:
@@ -1465,7 +1465,7 @@ export const useStore = create<CommonStoreState>(
                     normal,
                     'rotation' in parent ? parent.rotation : undefined,
                   );
-                  id = sensor.id;
+                  model = sensor;
                   state.elements.push(sensor);
                   break;
                 case ObjectType.SolarPanel:
@@ -1480,17 +1480,17 @@ export const useStore = create<CommonStoreState>(
                     normal,
                     'rotation' in parent ? parent.rotation : undefined,
                   );
-                  id = solarPanel.id;
+                  model = solarPanel;
                   state.elements.push(solarPanel);
                   break;
                 case ObjectType.Foundation:
                   const foundation = ElementModelFactory.makeFoundation(m.x, m.y);
-                  id = foundation.id;
+                  model = foundation;
                   state.elements.push(foundation);
                   break;
                 case ObjectType.Cuboid:
                   const cuboid = ElementModelFactory.makeCuboid(m.x, m.y);
-                  id = cuboid.id;
+                  model = cuboid;
                   state.elements.push(cuboid);
                   break;
                 case ObjectType.Wall:
@@ -1505,11 +1505,11 @@ export const useStore = create<CommonStoreState>(
                     'rotation' in parent ? parent.rotation : undefined,
                   );
                   state.elements.push(wall);
-                  id = wall.id;
+                  model = wall;
                   break;
               }
             });
-            return id;
+            return model;
           },
 
           elementsToPaste: [],
@@ -1538,10 +1538,10 @@ export const useStore = create<CommonStoreState>(
                     let leftWallId = '';
                     let rightWallId = '';
                     if (currentWall.leftJoints.length > 0) {
-                      leftWallId = state.getElementById(currentWall.leftJoints[0].id)?.id ?? '';
+                      leftWallId = state.getElementById(currentWall.leftJoints[0])?.id ?? '';
                     }
                     if (currentWall.rightJoints.length > 0) {
-                      rightWallId = state.getElementById(currentWall.rightJoints[0].id)?.id ?? '';
+                      rightWallId = state.getElementById(currentWall.rightJoints[0])?.id ?? '';
                     }
                     for (const w of state.elements) {
                       if (w.id === leftWallId) {
