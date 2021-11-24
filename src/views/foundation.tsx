@@ -38,6 +38,7 @@ import { UndoableAdd } from '../undo/UndoableAdd';
 import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableChange } from '../undo/UndoableChange';
+import { ElementGrid } from './elementGrid';
 
 const Foundation = ({
   id,
@@ -240,6 +241,8 @@ const Foundation = ({
   // only these elements are allowed to be on the foundation
   const legalOnFoundation = (type: ObjectType) => {
     switch (type) {
+      case ObjectType.Human:
+      case ObjectType.Tree:
       case ObjectType.Sensor:
       case ObjectType.SolarPanel:
       case ObjectType.Wall:
@@ -1261,7 +1264,7 @@ const Foundation = ({
         castShadow={shadowEnabled}
         receiveShadow={shadowEnabled}
         uuid={id}
-        userData={{ aabb: true }}
+        userData={{ simulation: true, aabb: true, stand: true }}
         ref={baseRef}
         name={'Foundation'}
         args={[lx, ly, lz]}
@@ -1299,7 +1302,7 @@ const Foundation = ({
             <PolarGrid element={grabRef.current} height={(grabRef.current as SolarPanelModel).poleHeight + hz} />
           )}
           {(moveHandleTypeRef.current || resizeHandleTypeRef.current || buildingWallID) && (
-            <FoundationGrid args={[lx, ly, lz]} objectType={ObjectType.Foundation} />
+            <ElementGrid args={[lx, ly, lz]} objectType={ObjectType.Foundation} />
           )}
         </>
       )}
@@ -1620,75 +1623,5 @@ const Foundation = ({
     </group>
   );
 };
-
-export const FoundationGrid = React.memo(
-  ({ args, objectType }: { args: [lx: number, ly: number, lz: number]; objectType: ObjectType }) => {
-    const enableFineGrid = useStore(Selector.enableFineGrid);
-
-    const [unit, setUnit] = useState(1);
-    const [lineWidth, setLineWidth] = useState(0.5);
-
-    const lineColor = objectType === ObjectType.Foundation ? '#444444' : '#444444';
-
-    useEffect(() => {
-      if (enableFineGrid) {
-        setUnit(0.4);
-        setLineWidth(0.2);
-      } else {
-        setUnit(1);
-        setLineWidth(0.5);
-      }
-    }, [enableFineGrid]);
-
-    const lx = args[0] / 2;
-    const ly = args[1] / 2;
-    const lz = args[2] / 2;
-
-    const pointsX: number[] = [0];
-    const pointsY: number[] = [0];
-
-    for (let i = unit; i <= lx; i += unit) {
-      pointsX.push(i);
-      pointsX.push(-i);
-    }
-
-    for (let i = unit; i <= ly; i += unit) {
-      pointsY.push(i);
-      pointsY.push(-i);
-    }
-
-    return (
-      <group position={[0, 0, lz + 0.01]}>
-        {pointsX.map((value) => {
-          return (
-            <Line
-              key={value}
-              points={[
-                [value, -ly, 0],
-                [value, ly, 0],
-              ]}
-              color={lineColor}
-              lineWidth={lineWidth}
-              // depthWrite={false}
-            />
-          );
-        })}
-        {pointsY.map((value) => {
-          return (
-            <Line
-              key={value}
-              points={[
-                [-lx, value, 0],
-                [lx, value, 0],
-              ]}
-              color={lineColor}
-              lineWidth={lineWidth}
-            />
-          );
-        })}
-      </group>
-    );
-  },
-);
 
 export default React.memo(Foundation);

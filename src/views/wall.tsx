@@ -44,7 +44,7 @@ import { WindowModel } from '../models/WindowModel';
 import { WallModel } from '../models/WallModel';
 import { ElementModelFactory } from '../models/ElementModelFactory';
 import { RoofPoint } from '../models/RoofModel';
-import { FoundationGrid } from './foundation';
+import { ElementGrid } from './elementGrid';
 import Window from './window';
 import * as Selector from '../stores/selector';
 
@@ -453,6 +453,8 @@ const Wall = ({
           {/* outside wall */}
           <mesh
             name={'Outside Wall'}
+            uuid={id}
+            userData={{ simulation: true }}
             ref={outSideWallRef}
             rotation={[Math.PI / 2, 0, 0]}
             castShadow={shadowEnabled}
@@ -725,7 +727,7 @@ const Wall = ({
           {/* grid */}
           {showGrid && (
             <group position={[0, -0.001, 0]} rotation={[Math.PI / 2, 0, 0]}>
-              <FoundationGrid args={[lx, lz, 0]} objectType={ObjectType.Wall} />
+              <ElementGrid args={[lx, lz, 0]} objectType={ObjectType.Wall} />
             </group>
           )}
         </group>

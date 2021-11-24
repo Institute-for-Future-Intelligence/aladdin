@@ -407,7 +407,7 @@ const Ground = () => {
   };
 
   const fetchElements = (currentId: string, obj: Object3D, arr: Object3D[]) => {
-    if (obj.userData['simulation'] && obj.uuid !== currentId) {
+    if (obj.userData['stand'] && obj.uuid !== currentId) {
       arr.push(obj);
     }
     if (obj.children.length > 0) {
@@ -427,21 +427,24 @@ const Ground = () => {
       switch (grabRef.current.type) {
         case ObjectType.Human:
         case ObjectType.Tree:
-          if (groundPlaneRef.current) {
-            intersects = ray.intersectObjects([groundPlaneRef.current]);
+          const content = scene.children.filter((c) => c.name === 'Content');
+          const objects: Object3D[] = [];
+          if (content.length > 0) {
+            const components = content[0].children;
+            for (const c of components) {
+              fetchElements(grabRef.current.id, c, objects);
+            }
+            intersects = ray.intersectObjects(objects);
             if (intersects.length > 0) {
               const p = intersects[0].point;
-              setElementPosition(grabRef.current.id, p.x, p.y);
-              ray.set(p, Util.UNIT_VECTOR_NEG_Z);
-              const content = scene.children.filter((c) => c.name === 'Content');
-              const objects: Object3D[] = [];
-              if (content.length > 0) {
-                const components = content[0].children;
-                for (const c of components) {
-                  fetchElements(grabRef.current.id, c, objects);
+              setElementPosition(grabRef.current.id, p.x, p.y, p.z);
+            } else {
+              if (groundPlaneRef.current) {
+                intersects = ray.intersectObjects([groundPlaneRef.current]);
+                if (intersects.length > 0) {
+                  const p = intersects[0].point;
+                  setElementPosition(grabRef.current.id, p.x, p.y, p.z);
                 }
-                const intersects = ray.intersectObjects(objects);
-                console.log(intersects[0]);
               }
             }
           }

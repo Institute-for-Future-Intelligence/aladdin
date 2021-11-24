@@ -110,30 +110,30 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     return false;
   };
 
-  const getObjects = () => {
+  const fetchObjects = () => {
     const content = scene.children.filter((c) => c.name === 'Content');
     if (content.length > 0) {
       const components = content[0].children;
       objectsRef.current.length = 0;
       for (const c of components) {
-        getSimulationElement(c, objectsRef.current);
+        fetchSimulationElements(c, objectsRef.current);
       }
     }
   };
 
-  const getSimulationElement = (obj: Object3D, arr: Object3D[]) => {
+  const fetchSimulationElements = (obj: Object3D, arr: Object3D[]) => {
     if (obj.userData['simulation']) {
       arr.push(obj);
     }
     if (obj.children.length > 0) {
       for (const c of obj.children) {
-        getSimulationElement(c, arr);
+        fetchSimulationElements(c, arr);
       }
     }
   };
 
   const getDailyYieldForAllSolarPanels = () => {
-    getObjects();
+    fetchObjects();
     if (dailyIndividualOutputs) {
       const total = new Array(24).fill(0);
       const map = new Map<string, number[]>();
@@ -374,7 +374,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   };
 
   const getYearlyYieldForAllSolarPanels = () => {
-    getObjects();
+    fetchObjects();
     if (yearlyIndividualOutputs) {
       const resultArr = [];
       const labels = [];

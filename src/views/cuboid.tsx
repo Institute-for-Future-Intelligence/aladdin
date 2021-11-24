@@ -545,7 +545,7 @@ const Cuboid = ({
       <Box
         castShadow={shadowEnabled}
         receiveShadow={shadowEnabled}
-        userData={{ simulation: true, aabb: true }}
+        userData={{ simulation: true, aabb: true, stand: true }}
         uuid={id}
         ref={baseRef}
         args={[lx, ly, lz]}

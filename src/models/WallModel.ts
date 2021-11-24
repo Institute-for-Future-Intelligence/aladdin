@@ -3,7 +3,7 @@
  */
 
 import { ElementModel } from './ElementModel';
-import { WallSide, WallTexture } from 'src/types';
+import { WallTexture } from 'src/types';
 
 export interface WallModel extends ElementModel {
   relativeAngle: number;
