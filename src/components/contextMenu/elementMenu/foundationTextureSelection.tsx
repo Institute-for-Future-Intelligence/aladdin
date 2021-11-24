@@ -117,7 +117,7 @@ const FoundationTextureSelection = ({
   return (
     <>
       <Modal
-        width={600}
+        width={500}
         visible={textureDialogVisible}
         title={
           <div
@@ -174,9 +174,21 @@ const FoundationTextureSelection = ({
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={12}>
+          <Col className="gutter-row" span={10}>
             <Select style={{ width: '150px' }} value={selectedTexture} onChange={(value) => setSelectedTexture(value)}>
               <Option key={FoundationTexture.NoTexture} value={FoundationTexture.NoTexture}>
+                <div
+                  style={{
+                    display: 'inline-block',
+                    verticalAlign: 'middle',
+                    marginRight: '12px',
+                    width: '26px',
+                    height: '20px',
+                    border: '1px dashed dimGray',
+                  }}
+                >
+                  {' '}
+                </div>
                 {i18n.t('shared.NoTexture', lang)}
               </Option>
               <Option key={FoundationTexture.Texture_1} value={FoundationTexture.Texture_1}>
@@ -194,7 +206,7 @@ const FoundationTextureSelection = ({
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={12}
+            span={14}
           >
             <Radio.Group onChange={onScopeChange} value={foundationActionScope}>
               <Space direction="vertical">

@@ -4,7 +4,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Plane, Sphere } from '@react-three/drei';
-import { Euler, Mesh, Raycaster, TextureLoader, Vector2, Vector3 } from 'three';
+import { Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { FoundationModel } from '../models/FoundationModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -187,20 +187,23 @@ const Foundation = ({
     }
   }, [deletedWallID]);
 
-  const [updateFlag, setUpdateFlag] = useState(false);
-  const texture = useMemo(() => {
+  const textureLoader = useMemo(() => {
     let textureImg;
     switch (textureType) {
       case FoundationTexture.Texture_1:
         textureImg = Foundation_Texture_01;
         break;
       default:
-        textureImg = '';
+        textureImg = Foundation_Texture_01;
     }
     return new TextureLoader().load(textureImg, (t) => {
-      setUpdateFlag(!updateFlag);
+      t.wrapS = t.wrapT = RepeatWrapping;
+      t.offset.set(0, 0);
+      t.repeat.set(lx / 20, ly / 20);
+      setTexture(t);
     });
   }, [textureType]);
+  const [texture, setTexture] = useState(textureLoader);
 
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
@@ -1293,10 +1296,10 @@ const Foundation = ({
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
-        {texture.image ? (
-          <meshStandardMaterial attachArray="material" map={texture} transparent={groundImage} opacity={opacity} />
-        ) : (
+        {textureType === FoundationTexture.NoTexture ? (
           <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
+        ) : (
+          <meshStandardMaterial attachArray="material" map={texture} transparent={groundImage} opacity={opacity} />
         )}
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
       </Box>
