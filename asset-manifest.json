@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.b8305f81.chunk.css",
-    "main.js": "/aladdin/static/js/main.19af1023.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.19af1023.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.d136c4d1.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.d136c4d1.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.e8091437.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.e8091437.js.map",
     "static/css/2.a95be28f.chunk.css": "/aladdin/static/css/2.a95be28f.chunk.css",
-    "static/js/2.54e309a5.chunk.js": "/aladdin/static/js/2.54e309a5.chunk.js",
-    "static/js/2.54e309a5.chunk.js.map": "/aladdin/static/js/2.54e309a5.chunk.js.map",
+    "static/js/2.1507c5cd.chunk.js": "/aladdin/static/js/2.1507c5cd.chunk.js",
+    "static/js/2.1507c5cd.chunk.js.map": "/aladdin/static/js/2.1507c5cd.chunk.js.map",
     "static/js/3.98fe06c2.chunk.js": "/aladdin/static/js/3.98fe06c2.chunk.js",
     "static/js/3.98fe06c2.chunk.js.map": "/aladdin/static/js/3.98fe06c2.chunk.js.map",
     "index.html": "/aladdin/index.html",
     "static/css/2.a95be28f.chunk.css.map": "/aladdin/static/css/2.a95be28f.chunk.css.map",
     "static/css/main.b8305f81.chunk.css.map": "/aladdin/static/css/main.b8305f81.chunk.css.map",
-    "static/js/2.54e309a5.chunk.js.LICENSE.txt": "/aladdin/static/js/2.54e309a5.chunk.js.LICENSE.txt",
+    "static/js/2.1507c5cd.chunk.js.LICENSE.txt": "/aladdin/static/js/2.1507c5cd.chunk.js.LICENSE.txt",
     "static/media/compass.ddc4aa38.obj": "/aladdin/static/media/compass.ddc4aa38.obj",
     "static/media/cottonwood.581e0938.png": "/aladdin/static/media/cottonwood.581e0938.png",
     "static/media/cottonwood_shed.9c316396.png": "/aladdin/static/media/cottonwood_shed.9c316396.png",
@@ -26,6 +26,8 @@
     "static/media/elm_shed.74f112de.png": "/aladdin/static/media/elm_shed.74f112de.png",
     "static/media/forest-night.cb3d48a2.jpg": "/aladdin/static/media/forest-night.cb3d48a2.jpg",
     "static/media/forest.1016063e.jpg": "/aladdin/static/media/forest.1016063e.jpg",
+    "static/media/foundation_01.bda6fc00.png": "/aladdin/static/media/foundation_01.bda6fc00.png",
+    "static/media/foundation_02.a1240091.png": "/aladdin/static/media/foundation_02.a1240091.png",
     "static/media/grassland-night.fa2ff11e.jpg": "/aladdin/static/media/grassland-night.fa2ff11e.jpg",
     "static/media/grassland.d74bba81.jpg": "/aladdin/static/media/grassland.d74bba81.jpg",
     "static/media/helvetiker_regular.typeface.9a3651b4.fnt": "/aladdin/static/media/helvetiker_regular.typeface.9a3651b4.fnt",
@@ -61,8 +63,8 @@
   "entrypoints": [
     "static/js/runtime-main.e8091437.js",
     "static/css/2.a95be28f.chunk.css",
-    "static/js/2.54e309a5.chunk.js",
+    "static/js/2.1507c5cd.chunk.js",
     "static/css/main.b8305f81.chunk.css",
-    "static/js/main.19af1023.chunk.js"
+    "static/js/main.d136c4d1.chunk.js"
   ]
 }
