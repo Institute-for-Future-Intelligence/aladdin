@@ -168,12 +168,12 @@ export const WallMenu = () => {
       <Lock />
       <Menu>
         <Menu.Item key={'wall-change-texture'} style={{ paddingLeft: paddingLeft }}>
-          <Space style={{ width: '60px' }}>{i18n.t('wallMenu.Texture', lang)}: </Space>
+          <Space style={{ width: '60px' }}>{i18n.t('word.Texture', lang)}: </Space>
           <WallSelection key={'walls'} />
         </Menu.Item>
       </Menu>
       <Menu.Item onClick={onClickSize} style={{ paddingLeft: paddingLeft }}>
-        {i18n.t('wallMenu.Size', lang)}...
+        {i18n.t('word.Size', lang)}...
       </Menu.Item>
       <>
         <Modal
@@ -215,7 +215,7 @@ export const WallMenu = () => {
               }
             }}
           />
-          <Space style={{ width: '70px' }}>{`${i18n.t('wallMenu.Thickness', lang)}:`}</Space>
+          <Space style={{ width: '70px' }}>{`${i18n.t('word.Thickness', lang)}:`}</Space>
           <InputNumber
             min={0.1}
             max={3}
