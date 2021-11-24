@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { Plane } from '@react-three/drei';
-import { Box3, DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
+import { Box3, DoubleSide, Euler, Mesh, Object3D, Raycaster, Vector2, Vector3 } from 'three';
 import { IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -404,6 +404,17 @@ const Ground = () => {
     }
   };
 
+  const fetchElements = (currentId: string, obj: Object3D, arr: Object3D[]) => {
+    if (obj.userData['simulation'] && obj.uuid !== currentId) {
+      arr.push(obj);
+    }
+    if (obj.children.length > 0) {
+      for (const c of obj.children) {
+        fetchElements(currentId, c, arr);
+      }
+    }
+  };
+
   const handleGroudPointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
       const mouse = new Vector2();
@@ -419,6 +430,17 @@ const Ground = () => {
             if (intersects.length > 0) {
               const p = intersects[0].point;
               setElementPosition(grabRef.current.id, p.x, p.y);
+              ray.set(p, Util.UNIT_VECTOR_NEG_Z);
+              const content = scene.children.filter((c) => c.name === 'Content');
+              const objects: Object3D[] = [];
+              if (content.length > 0) {
+                const components = content[0].children;
+                for (const c of components) {
+                  fetchElements(grabRef.current.id, c, objects);
+                }
+                const intersects = ray.intersectObjects(objects);
+                console.log(intersects[0]);
+              }
             }
           }
           break;

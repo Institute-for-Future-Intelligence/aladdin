@@ -562,7 +562,7 @@ const SolarPanel = ({
       )}
 
       {/* draw tilt handles */}
-      {selected && !locked && trackerType === TrackerType.NO_TRACKER && faceUp && (
+      {selected && !locked && trackerType === TrackerType.NO_TRACKER && faceUp && Math.abs(poleHeight) > 0.1 && (
         <>
           {/* ring handles */}
           <Ring

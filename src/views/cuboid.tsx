@@ -168,7 +168,7 @@ const Cuboid = ({
 
   // only these elements are allowed to be on the cuboid
   const legalOnCuboid = (type: ObjectType) => {
-    return type === ObjectType.Sensor || type === ObjectType.SolarPanel;
+    return type === ObjectType.Human || type === ObjectType.Sensor || type === ObjectType.SolarPanel;
   };
 
   const setupGridHelper = (face: Vector3) => {

@@ -135,8 +135,8 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>
-              {i18n.t('sensorPanel.LightSensor', lang)}:{i18n.t('sensorPanel.WeatherDataFrom', lang)}
-              {city} | {moment(now).format('MM/DD')}
+              {i18n.t('sensorPanel.LightSensor', lang)}: {i18n.t('sensorPanel.WeatherDataFrom', lang)}
+              {' ' + city} | {moment(now).format('MM/DD')}
             </span>
             <span
               style={{ cursor: 'pointer' }}

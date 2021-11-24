@@ -70,13 +70,13 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     return false;
   };
 
-  const getSimulationElement = (panelId: string, obj: Object3D, arr: Object3D[]) => {
-    if (obj.userData['simulation'] && obj.uuid !== panelId) {
+  const getSimulationElement = (sensorId: string, obj: Object3D, arr: Object3D[]) => {
+    if (obj.userData['simulation'] && obj.uuid !== sensorId) {
       arr.push(obj);
     }
     if (obj.children.length > 0) {
       for (const c of obj.children) {
-        getSimulationElement(panelId, c, arr);
+        getSimulationElement(sensorId, c, arr);
       }
     }
   };

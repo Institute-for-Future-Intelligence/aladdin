@@ -172,8 +172,9 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>
-              {i18n.t('solarPanelYieldPanel.SolarPanelYearlyYield', lang)}:{i18n.t('sensorPanel.WeatherDataFrom', lang)}{' '}
-              {city}
+              {i18n.t('solarPanelYieldPanel.SolarPanelYearlyYield', lang)}:{' '}
+              {i18n.t('sensorPanel.WeatherDataFrom', lang)}
+              {' ' + city}
             </span>
             <span
               style={{ cursor: 'pointer' }}

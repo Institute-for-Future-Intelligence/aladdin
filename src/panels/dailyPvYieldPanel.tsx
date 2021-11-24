@@ -170,8 +170,8 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>
-              {i18n.t('solarPanelYieldPanel.SolarPanelDailyYield', lang)}:{i18n.t('sensorPanel.WeatherDataFrom', lang)}
-              {city} | {moment(now).format('MM/DD')}
+              {i18n.t('solarPanelYieldPanel.SolarPanelDailyYield', lang)}: {i18n.t('sensorPanel.WeatherDataFrom', lang)}
+              {' ' + city} | {moment(now).format('MM/DD')}
             </span>
             <span
               style={{ cursor: 'pointer' }}

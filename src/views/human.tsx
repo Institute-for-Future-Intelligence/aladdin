@@ -35,7 +35,7 @@ import { Billboard, Plane, Sphere } from '@react-three/drei';
 import { MOVE_HANDLE_RADIUS } from '../constants';
 import { HumanName, ObjectType } from '../types';
 
-const Human = ({ id, cx, cy, name = HumanName.Jack, selected = false, locked = false, ...props }: HumanModel) => {
+const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked = false, ...props }: HumanModel) => {
   const setCommonStore = useStore(Selector.set);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const selectMe = useStore(Selector.selectMe);
@@ -202,7 +202,7 @@ const Human = ({ id, cx, cy, name = HumanName.Jack, selected = false, locked = f
   }, [cameraX, cameraY, cx, cy]);
 
   return (
-    <group name={'Human Group ' + id} position={[cx, cy, height / 2]}>
+    <group name={'Human Group ' + id} position={[cx, cy, cz + height / 2]}>
       <Billboard
         uuid={id}
         ref={meshRef}
