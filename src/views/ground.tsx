@@ -53,6 +53,7 @@ const Ground = () => {
     gl: { domElement },
     scene,
   } = useThree();
+  const standObjectsRef = useRef<Object3D[]>([]);
   const groundPlaneRef = useRef<Mesh>();
   const intersectionPlaneRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
@@ -338,8 +339,17 @@ const Ground = () => {
                 state.enableOrbitController = false;
               });
             }
-
-            if (selectedElement.type === ObjectType.Foundation) {
+            // allow humans and trees to stand on top of a "stand" surface (defined in userData)
+            if (selectedElement.type === ObjectType.Human || selectedElement.type === ObjectType.Tree) {
+              const content = scene.children.filter((c) => c.name === 'Content');
+              standObjectsRef.current = [];
+              if (content.length > 0) {
+                const components = content[0].children;
+                for (const c of components) {
+                  fetchStandElements(grabRef.current.id, c, standObjectsRef.current);
+                }
+              }
+            } else if (selectedElement.type === ObjectType.Foundation) {
               const map = new Map<string, WallAbsPos>();
               const parentCenter = new Vector3(selectedElement.cx, selectedElement.cy);
               for (const e of useStore.getState().elements) {
@@ -406,13 +416,13 @@ const Ground = () => {
     }
   };
 
-  const fetchElements = (currentId: string, obj: Object3D, arr: Object3D[]) => {
+  const fetchStandElements = (currentId: string, obj: Object3D, arr: Object3D[]) => {
     if (obj.userData['stand'] && obj.uuid !== currentId) {
       arr.push(obj);
     }
     if (obj.children.length > 0) {
       for (const c of obj.children) {
-        fetchElements(currentId, c, arr);
+        fetchStandElements(currentId, c, arr);
       }
     }
   };
@@ -427,14 +437,8 @@ const Ground = () => {
       switch (grabRef.current.type) {
         case ObjectType.Human:
         case ObjectType.Tree:
-          const content = scene.children.filter((c) => c.name === 'Content');
-          const objects: Object3D[] = [];
-          if (content.length > 0) {
-            const components = content[0].children;
-            for (const c of components) {
-              fetchElements(grabRef.current.id, c, objects);
-            }
-            intersects = ray.intersectObjects(objects);
+          if (standObjectsRef.current.length > 0) {
+            intersects = ray.intersectObjects(standObjectsRef.current);
             if (intersects.length > 0) {
               const p = intersects[0].point;
               setElementPosition(grabRef.current.id, p.x, p.y, p.z);
