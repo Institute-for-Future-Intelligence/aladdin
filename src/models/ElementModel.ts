@@ -2,9 +2,11 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import { ObjectType } from '../types';
+
 export interface ElementModel {
   id: string;
-  type: string;
+  type: ObjectType;
   cx: number; // x coordinate of the center
   cy: number; // y coordinate of the center
   cz: number; // z coordinate of the center

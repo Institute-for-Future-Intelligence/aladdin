@@ -252,7 +252,7 @@ const Cuboid = ({
     } else {
       // a child of this cuboid is clicked
       if (selectedElement && selectedElement.parentId === id) {
-        if (legalOnCuboid(selectedElement.type as ObjectType)) {
+        if (legalOnCuboid(selectedElement.type)) {
           setShowGrid(true);
           grabRef.current = selectedElement;
           let face;

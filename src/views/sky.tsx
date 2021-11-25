@@ -109,7 +109,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
       } else {
         const selectedElement = getSelectedElement();
         if (selectedElement) {
-          if (legalOnGround(selectedElement.type as ObjectType)) {
+          if (legalOnGround(selectedElement.type)) {
             grabRef.current = selectedElement;
             if (selectedElement.type !== ObjectType.Foundation && selectedElement.type !== ObjectType.Cuboid) {
               setCommonStore((state) => {

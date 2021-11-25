@@ -461,7 +461,7 @@ const Foundation = ({
     // a child of this foundation is clicked
     else {
       if (selectedElement && selectedElement.parentId === id) {
-        if (legalOnFoundation(selectedElement.type as ObjectType)) {
+        if (legalOnFoundation(selectedElement.type)) {
           grabRef.current = selectedElement;
           setShowGrid(true);
           oldPositionRef.current.x = selectedElement.cx;

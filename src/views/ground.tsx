@@ -17,7 +17,6 @@ import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableRotate } from '../undo/UndoableRotate';
 import { UndoableAdd } from '../undo/UndoableAdd';
 import { WallModel } from 'src/models/WallModel';
-import { SolarPanelModel } from '../models/SolarPanelModel';
 
 interface WallAbsPos {
   leftPointAbsPos: Vector2;
@@ -327,8 +326,9 @@ const Ground = () => {
       } else {
         const selectedElement = getSelectedElement();
         if (selectedElement) {
-          if (legalOnGround(selectedElement.type as ObjectType)) {
+          if (legalOnGround(selectedElement.type)) {
             grabRef.current = selectedElement;
+            // save info for undo
             oldPositionRef.current.x = selectedElement.cx;
             oldPositionRef.current.y = selectedElement.cy;
             oldPositionRef.current.z = selectedElement.cz;
@@ -336,80 +336,92 @@ const Ground = () => {
             oldDimensionRef.current.y = selectedElement.ly;
             oldDimensionRef.current.z = selectedElement.lz;
             oldRotationRef.current = [...selectedElement.rotation];
+            // allow the view to rotate when pressing down on the elements excluded as follows
             if (selectedElement.type !== ObjectType.Foundation && selectedElement.type !== ObjectType.Cuboid) {
               setCommonStore((state) => {
                 state.enableOrbitController = false;
               });
             }
             // allow humans and trees to stand on top of a "stand" surface (defined in userData)
-            if (selectedElement.type === ObjectType.Human || selectedElement.type === ObjectType.Tree) {
-              const content = scene.children.filter((c) => c.name === 'Content');
-              standObjectsRef.current = [];
-              if (content.length > 0) {
-                const components = content[0].children;
-                for (const c of components) {
-                  fetchStandElements(grabRef.current.id, c, standObjectsRef.current);
-                }
-              }
-            } else if (selectedElement.type === ObjectType.Foundation) {
-              const parentCenter = new Vector2(selectedElement.cx, selectedElement.cy);
-              absPosMapRef.current.clear();
-              wallsAbsPosMapRef.current.clear();
-              for (const e of useStore.getState().elements) {
-                if (e.parentId === selectedElement.id) {
-                  const v0 = new Vector2(0, 0);
-                  const a = selectedElement.rotation[2];
-                  switch (e.type) {
-                    case ObjectType.Wall:
-                      const wall = e as WallModel;
-                      const centerPointAbsPos = new Vector2(wall.cx, wall.cy).rotateAround(v0, a);
-                      centerPointAbsPos.add(parentCenter);
-                      const leftPointAbsPos = new Vector2(wall.leftPoint[0], wall.leftPoint[1]).rotateAround(v0, a);
-                      leftPointAbsPos.add(parentCenter);
-                      const rightPointAbsPos = new Vector2(wall.rightPoint[0], wall.rightPoint[1]).rotateAround(v0, a);
-                      rightPointAbsPos.add(parentCenter);
-                      wallsAbsPosMapRef.current.set(wall.id, { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos });
-                      break;
-                    case ObjectType.SolarPanel:
-                    case ObjectType.Sensor:
-                      const centerAbsPos = new Vector2(
-                        e.cx * selectedElement.lx,
-                        e.cy * selectedElement.ly,
-                      ).rotateAround(v0, a);
-                      centerAbsPos.add(parentCenter);
-                      absPosMapRef.current.set(e.id, centerAbsPos);
-                      break;
+            switch (selectedElement.type) {
+              case ObjectType.Human:
+              case ObjectType.Tree:
+                const content = scene.children.filter((c) => c.name === 'Content');
+                standObjectsRef.current = [];
+                if (content.length > 0) {
+                  const components = content[0].children;
+                  for (const c of components) {
+                    fetchStandElements(grabRef.current.id, c, standObjectsRef.current);
                   }
                 }
-              }
-
-              const min = new Vector3(+Infinity, +Infinity, +Infinity);
-              const max = new Vector3(-Infinity, -Infinity, -Infinity);
-              for (const content of scene.children) {
-                if (content.name === 'Content') {
-                  const children = content.children.filter((c) => c.userData['parentId'] === selectedElement.id);
-                  for (const c of children) {
-                    const box = new Box3().setFromObject(c);
-                    min.min(box.min);
-                    max.max(box.max);
+                break;
+              case ObjectType.Foundation:
+                // getting ready for resizing even though it may not happen
+                const parentCenter = new Vector2(selectedElement.cx, selectedElement.cy);
+                absPosMapRef.current.clear();
+                wallsAbsPosMapRef.current.clear();
+                for (const e of useStore.getState().elements) {
+                  if (e.parentId === selectedElement.id) {
+                    const v0 = new Vector2(0, 0);
+                    const a = selectedElement.rotation[2];
+                    switch (e.type) {
+                      case ObjectType.Wall:
+                        const wall = e as WallModel;
+                        const centerPointAbsPos = new Vector2(wall.cx, wall.cy).rotateAround(v0, a);
+                        centerPointAbsPos.add(parentCenter);
+                        const leftPointAbsPos = new Vector2(wall.leftPoint[0], wall.leftPoint[1]).rotateAround(v0, a);
+                        leftPointAbsPos.add(parentCenter);
+                        const rightPointAbsPos = new Vector2(wall.rightPoint[0], wall.rightPoint[1]).rotateAround(
+                          v0,
+                          a,
+                        );
+                        rightPointAbsPos.add(parentCenter);
+                        wallsAbsPosMapRef.current.set(wall.id, {
+                          centerPointAbsPos,
+                          leftPointAbsPos,
+                          rightPointAbsPos,
+                        });
+                        break;
+                      case ObjectType.SolarPanel:
+                      case ObjectType.Sensor:
+                        const centerAbsPos = new Vector2(
+                          e.cx * selectedElement.lx,
+                          e.cy * selectedElement.ly,
+                        ).rotateAround(v0, a);
+                        centerAbsPos.add(parentCenter);
+                        absPosMapRef.current.set(e.id, centerAbsPos);
+                        break;
+                    }
                   }
                 }
-              }
-              const p = e.intersections[0].point;
-              if (p.x > max.x) {
-                setMinX(max.x + 1);
-                setMaxX(null);
-              } else if (p.x < min.x) {
-                setMaxX(min.x - 1);
-                setMinX(null);
-              }
-              if (p.y > max.y) {
-                setMinY(max.y + 1);
-                setMaxY(null);
-              } else if (p.y < min.y) {
-                setMaxY(min.y - 1);
-                setMinY(null);
-              }
+                const min = new Vector3(+Infinity, +Infinity, +Infinity);
+                const max = new Vector3(-Infinity, -Infinity, -Infinity);
+                for (const content of scene.children) {
+                  if (content.name === 'Content') {
+                    const children = content.children.filter((c) => c.userData['parentId'] === selectedElement.id);
+                    for (const c of children) {
+                      const box = new Box3().setFromObject(c);
+                      min.min(box.min);
+                      max.max(box.max);
+                    }
+                  }
+                }
+                const p = e.intersections[0].point;
+                if (p.x > max.x) {
+                  setMinX(max.x + 1);
+                  setMaxX(null);
+                } else if (p.x < min.x) {
+                  setMaxX(min.x - 1);
+                  setMinX(null);
+                }
+                if (p.y > max.y) {
+                  setMinY(max.y + 1);
+                  setMaxY(null);
+                } else if (p.y < min.y) {
+                  setMaxY(min.y - 1);
+                  setMinY(null);
+                }
+                break;
             }
           }
         }
