@@ -6,6 +6,7 @@ import { Vector3 } from 'three';
 import { Util } from '../Util';
 import { AirMass, ASHRAE_C, SOLAR_CONSTANT } from './analysisConstants';
 import { GroundModel } from '../models/GroundModel';
+import { UNIT_VECTOR_POS_Z } from '../constants';
 
 export const TILT_ANGLE = (23.45 / 180.0) * Math.PI;
 
@@ -62,10 +63,10 @@ const computeAirMass = (airMassType: AirMass, sunDirection: Vector3, altitude: n
     case AirMass.NONE:
       return 1;
     case AirMass.KASTEN_YOUNG:
-      zenithAngle = sunDirection.angleTo(Util.UNIT_VECTOR_POS_Z);
+      zenithAngle = sunDirection.angleTo(UNIT_VECTOR_POS_Z);
       return 1 / (Math.cos(zenithAngle) + 0.50572 * Math.pow(96.07995 - (zenithAngle / Math.PI) * 180, -1.6364));
     default:
-      zenithAngle = sunDirection.angleTo(Util.UNIT_VECTOR_POS_Z);
+      zenithAngle = sunDirection.angleTo(UNIT_VECTOR_POS_Z);
       const cos = Math.cos(zenithAngle);
       const r = 708;
       const c = altitude / 9000;
@@ -96,7 +97,7 @@ export const calculateDiffuseAndReflectedRadiation = (
   peakRadiation: number,
 ) => {
   let result = 0;
-  const cos = normal.dot(Util.UNIT_VECTOR_POS_Z);
+  const cos = normal.dot(UNIT_VECTOR_POS_Z);
   const viewFactorWithSky = 0.5 * (1 + cos);
   if (viewFactorWithSky > 0) {
     // diffuse irradiance from the sky

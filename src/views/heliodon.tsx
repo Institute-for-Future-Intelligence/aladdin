@@ -20,6 +20,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useLoader } from '@react-three/fiber';
 import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
+import { UNIT_VECTOR_POS_Y } from '../constants';
 
 const HOUR_DIVISIONS = 96;
 const BASE_DIVISIONS = 72;
@@ -280,7 +281,7 @@ const Heliodon = () => {
                   color={[1, 1, 0]}
                   transparent
                   opacity={0.5}
-                  clippingPlanes={[new Plane(Util.UNIT_VECTOR_POS_Y, 0)]}
+                  clippingPlanes={[new Plane(UNIT_VECTOR_POS_Y, 0)]}
                 />
               </mesh>
               <mesh position={sunPosition}>

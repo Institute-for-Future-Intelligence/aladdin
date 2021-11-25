@@ -19,6 +19,11 @@ import {
   MOVE_HANDLE_COLOR_1,
   MOVE_HANDLE_COLOR_2,
   MOVE_HANDLE_COLOR_3,
+  UNIT_VECTOR_POS_X,
+  UNIT_VECTOR_POS_Z,
+  UNIT_VECTOR_NEG_X,
+  UNIT_VECTOR_NEG_Y,
+  UNIT_VECTOR_POS_Y,
 } from '../constants';
 import { Util } from '../Util';
 import { ElementModel } from '../models/ElementModel';
@@ -79,7 +84,7 @@ const Cuboid = ({
   const cuboidModel = getElementById(id) as CuboidModel;
   const baseRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
-  const faceNormalRef = useRef<Vector3>(Util.UNIT_VECTOR_POS_Z);
+  const faceNormalRef = useRef<Vector3>(UNIT_VECTOR_POS_Z);
   const gridLength = useRef<number>(10);
   const gridPositionRef = useRef<Vector3>(new Vector3(0, 0, 0));
   const gridRotationRef = useRef<Euler>(new Euler(0, 0, 0));
@@ -178,30 +183,30 @@ const Cuboid = ({
 
   const setupGridHelper = (face: Vector3) => {
     faceNormalRef.current = face;
-    if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_Z)) {
+    if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_POS_Z)) {
       gridLength.current = Math.max(lx, ly);
       gridPositionRef.current = new Vector3(0, 0, hz);
       gridRotationRef.current = new Euler(Math.PI / 2, 0, 0);
       gridScale.current = new Vector3(lx / gridLength.current, 1, ly / gridLength.current);
-    } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_X)) {
+    } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_POS_X)) {
       // east face in view coordinate system
       gridLength.current = Math.max(ly, lz);
       gridPositionRef.current = new Vector3(hx, 0, 0);
       gridRotationRef.current = new Euler(0, 0, Util.HALF_PI);
       gridScale.current = new Vector3(ly / gridLength.current, 1, lz / gridLength.current);
-    } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_NEG_X)) {
+    } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_NEG_X)) {
       // west face in view coordinate system
       gridLength.current = Math.max(ly, lz);
       gridPositionRef.current = new Vector3(-hx, 0, 0);
       gridRotationRef.current = new Euler(0, 0, -Util.HALF_PI);
       gridScale.current = new Vector3(ly / gridLength.current, 1, lz / gridLength.current);
-    } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_NEG_Y)) {
+    } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_NEG_Y)) {
       // south face in the view coordinate system
       gridLength.current = Math.max(lx, lz);
       gridPositionRef.current = new Vector3(0, -hy, 0);
       gridRotationRef.current = new Euler(0, 0, 0);
       gridScale.current = new Vector3(lx / gridLength.current, 1, lz / gridLength.current);
-    } else if (Util.isSame(faceNormalRef.current, Util.UNIT_VECTOR_POS_Y)) {
+    } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_POS_Y)) {
       // north face in the view coordinate system
       gridLength.current = Math.max(lx, lz);
       gridPositionRef.current = new Vector3(0, hy, 0);

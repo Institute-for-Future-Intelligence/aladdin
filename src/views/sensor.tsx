@@ -9,7 +9,15 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { SensorModel } from '../models/SensorModel';
 import { useThree } from '@react-three/fiber';
-import { HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS } from '../constants';
+import {
+  HIGHLIGHT_HANDLE_COLOR,
+  MOVE_HANDLE_RADIUS,
+  UNIT_VECTOR_NEG_X,
+  UNIT_VECTOR_NEG_Y,
+  UNIT_VECTOR_POS_X,
+  UNIT_VECTOR_POS_Y,
+  UNIT_VECTOR_POS_Z,
+} from '../constants';
 import { ActionType, ObjectType } from '../types';
 import { Util } from '../Util';
 import Wireframe from '../components/wireframe';
@@ -57,7 +65,7 @@ const Sensor = ({
           } else {
             // we must rotate the real length, not normalized length
             const v = new Vector3(cx * p.lx, cy * p.ly, 0);
-            v.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, rotation[2]);
+            v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
             cx = p.cx + v.x;
             cy = p.cy + v.y;
           }
@@ -70,7 +78,7 @@ const Sensor = ({
           } else {
             // we must rotate the real length, not normalized length
             const v = new Vector3(cx * p.lx, cy * p.ly, cz * p.lz);
-            v.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, rotation[2]);
+            v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
             cx = p.cx + v.x;
             cy = p.cy + v.y;
             cz = p.cz + v.z;
@@ -84,19 +92,19 @@ const Sensor = ({
 
   const euler = useMemo(() => {
     const v = new Vector3().fromArray(normal);
-    if (Util.isSame(v, Util.UNIT_VECTOR_POS_Z)) {
+    if (Util.isSame(v, UNIT_VECTOR_POS_Z)) {
       // top face in model coordinate system
       return new Euler(0, 0, rotation[2]);
-    } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_X)) {
+    } else if (Util.isSame(v, UNIT_VECTOR_POS_X)) {
       // east face in model coordinate system
       return new Euler(0, Util.HALF_PI, rotation[2], 'ZXY');
-    } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_X)) {
+    } else if (Util.isSame(v, UNIT_VECTOR_NEG_X)) {
       // west face in model coordinate system
       return new Euler(0, -Util.HALF_PI, rotation[2], 'ZXY');
-    } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_Y)) {
+    } else if (Util.isSame(v, UNIT_VECTOR_POS_Y)) {
       // south face in the model coordinate system
       return new Euler(-Util.HALF_PI, 0, rotation[2], 'ZXY');
-    } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_Y)) {
+    } else if (Util.isSame(v, UNIT_VECTOR_NEG_Y)) {
       // north face in the model coordinate system
       return new Euler(Util.HALF_PI, 0, rotation[2], 'ZXY');
     }

@@ -26,6 +26,7 @@ import {
   MOVE_HANDLE_RADIUS,
   RESIZE_HANDLE_COLOR,
   RESIZE_HANDLE_SIZE,
+  UNIT_VECTOR_POS_Z,
 } from '../constants';
 import { Util } from '../Util';
 import { ElementModel } from '../models/ElementModel';
@@ -1124,7 +1125,7 @@ const Foundation = ({
           state.contextMenuObjectType = ObjectType.Foundation;
         }
       }
-      state.pasteNormal = Util.UNIT_VECTOR_POS_Z;
+      state.pasteNormal = UNIT_VECTOR_POS_Z;
     });
   };
 

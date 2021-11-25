@@ -7,32 +7,9 @@ import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import { Orientation } from './types';
 import { PvModel } from './models/PvModel';
+import { UNIT_VECTOR_POS_Z } from './constants';
 
 export class Util {
-  static get UNIT_VECTOR_POS_X() {
-    return new Vector3(1, 0, 0);
-  }
-
-  static get UNIT_VECTOR_NEG_X() {
-    return new Vector3(-1, 0, 0);
-  }
-
-  static get UNIT_VECTOR_POS_Y() {
-    return new Vector3(0, 1, 0);
-  }
-
-  static get UNIT_VECTOR_NEG_Y() {
-    return new Vector3(0, -1, 0);
-  }
-
-  static get UNIT_VECTOR_POS_Z() {
-    return new Vector3(0, 0, 1);
-  }
-
-  static get UNIT_VECTOR_NEG_Z() {
-    return new Vector3(0, 0, -1);
-  }
-
   static panelizeLx(solarPanel: SolarPanelModel, pvModel: PvModel, value: number) {
     const dx = solarPanel.orientation === Orientation.portrait ? pvModel.width : pvModel.length;
     let lx = value ?? 1;
@@ -111,7 +88,7 @@ export class Util {
     const parentPos = new Vector3(parent.cx, parent.cy);
     return new Vector3().addVectors(
       parentPos,
-      new Vector3(v.x, v.y).applyAxisAngle(Util.UNIT_VECTOR_POS_Z, parent.rotation[2]),
+      new Vector3(v.x, v.y).applyAxisAngle(UNIT_VECTOR_POS_Z, parent.rotation[2]),
     );
   }
 
@@ -119,7 +96,7 @@ export class Util {
     const parentPos = new Vector3(parent.cx, parent.cy);
     return new Vector3()
       .subVectors(new Vector3(v.x, v.y), parentPos)
-      .applyAxisAngle(Util.UNIT_VECTOR_POS_Z, -parent.rotation[2]);
+      .applyAxisAngle(UNIT_VECTOR_POS_Z, -parent.rotation[2]);
   }
 
   static toRadians(degrees: number) {

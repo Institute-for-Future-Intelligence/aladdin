@@ -23,6 +23,7 @@ import SolarPanelRelativeAzimuthInput from './solarPanelRelativeAzimuthInput';
 import SolarPanelTrackerSelection from './solarPanelTrackerSelection';
 import SolarPanelPoleHeightInput from './solarPanelPoleHeightInput';
 import SolarPanelPoleSpacingInput from './solarPanelPoleSpacingInput';
+import { UNIT_VECTOR_POS_Z } from '../../../constants';
 
 export const SolarPanelMenu = () => {
   const language = useStore(Selector.language);
@@ -180,7 +181,7 @@ export const SolarPanelMenu = () => {
             {i18n.t('word.Length', lang)} ...
           </Menu.Item>
 
-          {panelNormal && Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z) && (
+          {panelNormal && Util.isSame(panelNormal, UNIT_VECTOR_POS_Z) && (
             <>
               {/* tilt angle */}
               <SolarPanelTiltAngleInput

@@ -8,7 +8,17 @@ import { DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vect
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_RADIUS, RESIZE_HANDLE_COLOR, RESIZE_HANDLE_SIZE } from '../constants';
+import {
+  HIGHLIGHT_HANDLE_COLOR,
+  MOVE_HANDLE_RADIUS,
+  RESIZE_HANDLE_COLOR,
+  RESIZE_HANDLE_SIZE,
+  UNIT_VECTOR_NEG_X,
+  UNIT_VECTOR_NEG_Y,
+  UNIT_VECTOR_POS_X,
+  UNIT_VECTOR_POS_Y,
+  UNIT_VECTOR_POS_Z,
+} from '../constants';
 import {
   ActionType,
   MoveHandleType,
@@ -108,7 +118,7 @@ const SolarPanel = ({
           } else {
             // we must rotate the real length, not normalized length
             const v = new Vector3(cx * p.lx, cy * p.ly, 0);
-            v.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, rotation[2]);
+            v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
             cx = p.cx + v.x;
             cy = p.cy + v.y;
           }
@@ -120,11 +130,11 @@ const SolarPanel = ({
           } else {
             // we must rotate the real length, not normalized length
             const v = new Vector3(cx * p.lx, cy * p.ly, cz * p.lz);
-            v.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, rotation[2]);
+            v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
             cx = p.cx + v.x;
             cy = p.cy + v.y;
           }
-          if (Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z)) {
+          if (Util.isSame(panelNormal, UNIT_VECTOR_POS_Z)) {
             cz = poleHeight + lz / 2 + p.lz;
           } else {
             cz = p.cz + cz * p.lz;
@@ -178,7 +188,7 @@ const SolarPanel = ({
   }, []);
 
   useEffect(() => {
-    setFaceUp(Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z));
+    setFaceUp(Util.isSame(panelNormal, UNIT_VECTOR_POS_Z));
   }, [normal]);
 
   const texture = useMemo(() => {
@@ -212,19 +222,19 @@ const SolarPanel = ({
 
   const euler = useMemo(() => {
     const v = panelNormal;
-    if (Util.isSame(v, Util.UNIT_VECTOR_POS_Z)) {
+    if (Util.isSame(v, UNIT_VECTOR_POS_Z)) {
       // top face in model coordinate system
       return new Euler(0, 0, rotation[2], 'ZXY');
-    } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_X)) {
+    } else if (Util.isSame(v, UNIT_VECTOR_POS_X)) {
       // east face in model coordinate system
       return new Euler(Util.HALF_PI, 0, rotation[2] + Util.HALF_PI, 'ZXY');
-    } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_X)) {
+    } else if (Util.isSame(v, UNIT_VECTOR_NEG_X)) {
       // west face in model coordinate system
       return new Euler(Util.HALF_PI, 0, rotation[2] - Util.HALF_PI, 'ZXY');
-    } else if (Util.isSame(v, Util.UNIT_VECTOR_POS_Y)) {
+    } else if (Util.isSame(v, UNIT_VECTOR_POS_Y)) {
       // north face in the model coordinate system
       return new Euler(Util.HALF_PI, 0, rotation[2] + Math.PI, 'ZXY');
-    } else if (Util.isSame(v, Util.UNIT_VECTOR_NEG_Y)) {
+    } else if (Util.isSame(v, UNIT_VECTOR_NEG_Y)) {
       // south face in the model coordinate system
       return new Euler(Util.HALF_PI, 0, rotation[2], 'ZXY');
     }
@@ -260,10 +270,10 @@ const SolarPanel = ({
     return getSunDirection(new Date(date), latitude);
   }, [date, latitude]);
   const rot = getElementById(parentId)?.rotation[2];
-  const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(Util.UNIT_VECTOR_POS_Z, -rot) : sunDirection;
+  const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot) : sunDirection;
 
   const relativeEuler = useMemo(() => {
-    if (Util.isSame(panelNormal, Util.UNIT_VECTOR_POS_Z)) {
+    if (Util.isSame(panelNormal, UNIT_VECTOR_POS_Z)) {
       if (sunDirection.z > 0) {
         switch (trackerType) {
           case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:

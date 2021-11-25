@@ -10,7 +10,7 @@ import { useStore } from '../stores/common';
 import { DatumEntry, ObjectType } from '../types';
 import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
-import { MONTHS } from '../constants';
+import { MONTHS, UNIT_VECTOR_POS_Z } from '../constants';
 import { SensorModel } from '../models/SensorModel';
 import * as Selector from '../stores/selector';
 
@@ -112,7 +112,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     const position = Util.absoluteCoordinates(sensor.cx, sensor.cy, sensor.cz, parent);
     const normal = new Vector3().fromArray(sensor.normal);
     // TODO: right now we assume a parent rotation is always around the z-axis
-    normal.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, parent.rotation[2]);
+    normal.applyAxisAngle(UNIT_VECTOR_POS_Z, parent.rotation[2]);
     const result = new Array(24).fill(0);
     const year = now.getFullYear();
     const month = now.getMonth();
@@ -186,7 +186,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     const position = Util.absoluteCoordinates(sensor.cx, sensor.cy, sensor.cz, parent);
     const normal = new Vector3().fromArray(sensor.normal);
     // TODO: right now we assume a parent rotation is always around the z-axis
-    normal.applyAxisAngle(Util.UNIT_VECTOR_POS_Z, parent.rotation[2]);
+    normal.applyAxisAngle(UNIT_VECTOR_POS_Z, parent.rotation[2]);
     const year = now.getFullYear();
     const date = 15;
     for (let month = 0; month < 12; month++) {

@@ -10,7 +10,7 @@ import { Box3, DoubleSide, Euler, Mesh, Object3D, Raycaster, Vector2, Vector3 } 
 import { IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS } from '../constants';
+import { MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS, UNIT_VECTOR_POS_Z, UNIT_VECTOR_POS_Z_ARRAY } from '../constants';
 import { Util } from '../Util';
 import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
@@ -130,7 +130,7 @@ const Ground = () => {
           state.pastePoint.copy(e.intersections[0].point);
           state.clickObjectType = ObjectType.Ground;
           state.contextMenuObjectType = ObjectType.Ground;
-          state.pasteNormal = Util.UNIT_VECTOR_POS_Z;
+          state.pasteNormal = UNIT_VECTOR_POS_Z;
         });
       }
     }
@@ -366,12 +366,14 @@ const Ground = () => {
                     switch (e.type) {
                       case ObjectType.SolarPanel:
                       case ObjectType.Sensor:
-                        const centerAbsPos = new Vector2(
-                          e.cx * selectedElement.lx,
-                          e.cy * selectedElement.ly,
-                        ).rotateAround(v0, a);
-                        centerAbsPos.add(cuboidCenter);
-                        absPosMapRef.current.set(e.id, centerAbsPos);
+                        if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+                          const centerAbsPos = new Vector2(
+                            e.cx * selectedElement.lx,
+                            e.cy * selectedElement.ly,
+                          ).rotateAround(v0, a);
+                          centerAbsPos.add(cuboidCenter);
+                          absPosMapRef.current.set(e.id, centerAbsPos);
+                        }
                         break;
                     }
                   }
