@@ -17,6 +17,7 @@ import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableRotate } from '../undo/UndoableRotate';
 import { UndoableAdd } from '../undo/UndoableAdd';
 import { WallModel } from 'src/models/WallModel';
+import { SolarPanelModel } from '../models/SolarPanelModel';
 
 interface WallAbsPos {
   leftPointAbsPos: Vector2;
@@ -63,6 +64,7 @@ const Ground = () => {
   const newDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const oldRotationRef = useRef<number[]>([0, 0, 1]);
   const newRotationRef = useRef<number[]>([0, 0, 1]);
+  const absPosMapRef = useRef<Map<string, Vector2>>(new Map());
   const wallsAbsPosMapRef = useRef<Map<string, WallAbsPos>>(new Map());
 
   useEffect(() => {
@@ -350,7 +352,7 @@ const Ground = () => {
                 }
               }
             } else if (selectedElement.type === ObjectType.Foundation) {
-              const map = new Map<string, WallAbsPos>();
+              wallsAbsPosMapRef.current.clear();
               const parentCenter = new Vector2(selectedElement.cx, selectedElement.cy);
               for (const e of useStore.getState().elements) {
                 if (e.parentId === selectedElement.id) {
@@ -365,16 +367,20 @@ const Ground = () => {
                       leftPointAbsPos.add(parentCenter);
                       const rightPointAbsPos = new Vector2(wall.rightPoint[0], wall.rightPoint[1]).rotateAround(v0, a);
                       rightPointAbsPos.add(parentCenter);
-                      map.set(wall.id, { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos });
+                      wallsAbsPosMapRef.current.set(wall.id, { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos });
                       break;
                     case ObjectType.SolarPanel:
-                      break;
                     case ObjectType.Sensor:
+                      const centerAbsPos = new Vector2(
+                        e.cx * selectedElement.lx,
+                        e.cy * selectedElement.ly,
+                      ).rotateAround(v0, a);
+                      centerAbsPos.add(parentCenter);
+                      absPosMapRef.current.set(e.id, centerAbsPos);
                       break;
                   }
                 }
               }
-              wallsAbsPosMapRef.current = map;
 
               const min = new Vector3(+Infinity, +Infinity, +Infinity);
               const max = new Vector3(-Infinity, -Infinity, -Infinity);
@@ -559,11 +565,11 @@ const Ground = () => {
           switch (e.type) {
             case ObjectType.Wall:
               const wall = e as WallModel;
-              const wallPos = wallsAbsPosMapRef.current.get(e.id);
-              if (wallPos) {
+              const wallAbsPos = wallsAbsPosMapRef.current.get(e.id);
+              if (wallAbsPos) {
                 const a = -grabRef.current!.rotation[2];
                 const v0 = new Vector2(0, 0);
-                const { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos } = wallPos;
+                const { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos } = wallAbsPos;
                 const centerPointRelativePos = new Vector2().subVectors(centerPointAbsPos, center).rotateAround(v0, a);
                 const leftPointRelativePos = new Vector2().subVectors(leftPointAbsPos, center).rotateAround(v0, a);
                 const rightPointRelativePos = new Vector2().subVectors(rightPointAbsPos, center).rotateAround(v0, a);
@@ -571,6 +577,21 @@ const Ground = () => {
                 e.cy = centerPointRelativePos.y;
                 wall.leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, grabRef.current!.lz];
                 wall.rightPoint = [rightPointRelativePos.x, rightPointRelativePos.y, grabRef.current!.lz];
+              }
+              break;
+            case ObjectType.SolarPanel:
+            case ObjectType.Sensor:
+              const centerAbsPos = absPosMapRef.current.get(e.id);
+              if (centerAbsPos) {
+                const a = -grabRef.current!.rotation[2];
+                const v0 = new Vector2(0, 0);
+                const relativePos = new Vector2().subVectors(centerAbsPos, center).rotateAround(v0, a);
+                const elem = getSelectedElement();
+                // don't use grabRef.current as it doesn't carry the latest lx and ly
+                if (elem) {
+                  e.cx = relativePos.x / elem.lx;
+                  e.cy = relativePos.y / elem.ly;
+                }
               }
               break;
           }
