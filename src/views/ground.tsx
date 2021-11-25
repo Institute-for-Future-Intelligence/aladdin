@@ -355,9 +355,31 @@ const Ground = () => {
                   }
                 }
                 break;
+              case ObjectType.Cuboid:
+                // getting ready for resizing even though it may not happen
+                const cuboidCenter = new Vector2(selectedElement.cx, selectedElement.cy);
+                absPosMapRef.current.clear();
+                for (const e of useStore.getState().elements) {
+                  if (e.parentId === selectedElement.id) {
+                    const v0 = new Vector2(0, 0);
+                    const a = selectedElement.rotation[2];
+                    switch (e.type) {
+                      case ObjectType.SolarPanel:
+                      case ObjectType.Sensor:
+                        const centerAbsPos = new Vector2(
+                          e.cx * selectedElement.lx,
+                          e.cy * selectedElement.ly,
+                        ).rotateAround(v0, a);
+                        centerAbsPos.add(cuboidCenter);
+                        absPosMapRef.current.set(e.id, centerAbsPos);
+                        break;
+                    }
+                  }
+                }
+                break;
               case ObjectType.Foundation:
                 // getting ready for resizing even though it may not happen
-                const parentCenter = new Vector2(selectedElement.cx, selectedElement.cy);
+                const foundationCenter = new Vector2(selectedElement.cx, selectedElement.cy);
                 absPosMapRef.current.clear();
                 wallsAbsPosMapRef.current.clear();
                 for (const e of useStore.getState().elements) {
@@ -368,14 +390,14 @@ const Ground = () => {
                       case ObjectType.Wall:
                         const wall = e as WallModel;
                         const centerPointAbsPos = new Vector2(wall.cx, wall.cy).rotateAround(v0, a);
-                        centerPointAbsPos.add(parentCenter);
+                        centerPointAbsPos.add(foundationCenter);
                         const leftPointAbsPos = new Vector2(wall.leftPoint[0], wall.leftPoint[1]).rotateAround(v0, a);
-                        leftPointAbsPos.add(parentCenter);
+                        leftPointAbsPos.add(foundationCenter);
                         const rightPointAbsPos = new Vector2(wall.rightPoint[0], wall.rightPoint[1]).rotateAround(
                           v0,
                           a,
                         );
-                        rightPointAbsPos.add(parentCenter);
+                        rightPointAbsPos.add(foundationCenter);
                         wallsAbsPosMapRef.current.set(wall.id, {
                           centerPointAbsPos,
                           leftPointAbsPos,
@@ -388,7 +410,7 @@ const Ground = () => {
                           e.cx * selectedElement.lx,
                           e.cy * selectedElement.ly,
                         ).rotateAround(v0, a);
-                        centerAbsPos.add(parentCenter);
+                        centerAbsPos.add(foundationCenter);
                         absPosMapRef.current.set(e.id, centerAbsPos);
                         break;
                     }
