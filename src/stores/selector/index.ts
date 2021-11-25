@@ -220,6 +220,10 @@ export const updateSolarPanelPoleSpacingForAll = (state: CommonStoreState) => st
 
 export const updateSolarPanelDrawSunBeamById = (state: CommonStoreState) => state.updateSolarPanelDrawSunBeamById;
 
+export const wallActionScope = (state: CommonStoreState) => state.wallActionScope;
+
+export const setWallActionScope = (state: CommonStoreState) => state.setWallActionScope;
+
 export const updateWallRelativeAngleById = (state: CommonStoreState) => state.updateWallRelativeAngleById;
 
 export const updateWallLeftOffsetById = (state: CommonStoreState) => state.updateWallLeftOffsetById;
@@ -235,6 +239,10 @@ export const updateWallLeftPointById = (state: CommonStoreState) => state.update
 export const updateWallRightPointById = (state: CommonStoreState) => state.updateWallRightPointById;
 
 export const updateWallTextureById = (state: CommonStoreState) => state.updateWallTextureById;
+
+export const updateWallTextureAboveFoundation = (state: CommonStoreState) => state.updateWallTextureAboveFoundation;
+
+export const updateWallTextureForAll = (state: CommonStoreState) => state.updateWallTextureForAll;
 
 export const updateTreeTypeById = (state: CommonStoreState) => state.updateTreeTypeById;
 

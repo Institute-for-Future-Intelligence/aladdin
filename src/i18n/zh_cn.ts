@@ -190,6 +190,7 @@ export const i18n_zh_cn = {
     foundationMenu: {
       RemoveAllSolarPanels: '删除此地基上所有的光伏板',
       RemoveAllSensors: '删除此地基上所有的传感器',
+      RemoveAllWalls: '删除此地基上所有的墙',
       Racks: '支架',
       Texture1: '一号材质',
       Texture2: '二号材质',
@@ -197,6 +198,8 @@ export const i18n_zh_cn = {
       DoYouReallyWantToRemoveAllSolarPanelsOnFoundation: '你确定删除此地基上所有的光伏板吗',
       Sensors: '传感器',
       DoYouReallyWantToRemoveAllSensorsOnFoundation: '你确定删除此地基上所有的传感器吗',
+      Walls: '墙',
+      DoYouReallyWantToRemoveAllWallsOnFoundation: '你确定删除此地基上所有的墙吗',
       OnlyThisFoundation: '只这块地基',
       AllConnectedFoundations: '所有相连的地基',
       AllFoundations: '所有的地基',
@@ -275,10 +278,18 @@ export const i18n_zh_cn = {
     },
 
     wallMenu: {
+      Texture1: '一号材质',
+      Texture2: '二号材质',
+      Texture3: '三号材质',
+      Texture4: '四号材质',
+      Texture5: '五号材质',
+      Texture6: '六号材质',
+      Texture7: '七号材质',
+      Texture8: '八号材质',
       SizeOfWall: '墙的尺寸',
-      OnlyThisWall: '仅对选中的墙生效',
-      WallsOnFoundation: '对这块地基上所有的墙生效',
-      AllWalls: '对所有的墙生效',
+      OnlyThisWall: '只这堵墙',
+      AllWallsAboveFoundation: '同一地基上所有的墙',
+      AllWalls: '所有的墙',
     },
 
     windowMenu: {},

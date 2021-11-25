@@ -38,6 +38,7 @@ export const FoundationMenu = () => {
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
   const selectedElement = getSelectedElement();
+  const wallCountFoundation = selectedElement ? countAllChildElementsByType(selectedElement.id, ObjectType.Wall) : 0;
   const sensorCountFoundation = selectedElement
     ? countAllChildElementsByType(selectedElement.id, ObjectType.Sensor)
     : 0;
@@ -53,106 +54,151 @@ export const FoundationMenu = () => {
       <Copy />
       <Cut />
       <Lock />
-      {(sensorCountFoundation > 0 || solarPanelCountFoundation > 0) && contextMenuObjectType && (
-        <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
-          {sensorCountFoundation > 0 && (
-            <Menu.Item
-              key={'remove-all-sensors-on-foundation'}
-              onClick={() => {
-                Modal.confirm({
-                  title:
-                    i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSensorsOnFoundation', lang) +
-                    ' (' +
-                    sensorCountFoundation +
-                    ' ' +
-                    i18n.t('foundationMenu.Sensors', lang) +
-                    ')?',
-                  icon: <ExclamationCircleOutlined />,
-                  onOk: () => {
-                    if (selectedElement) {
-                      const removed = elements.filter(
-                        (e) => e.type === ObjectType.Sensor && e.parentId === selectedElement.id,
-                      );
-                      removeAllChildElementsByType(selectedElement.id, ObjectType.Sensor);
-                      const removedElements = JSON.parse(JSON.stringify(removed));
-                      const undoableRemoveAllSensorChildren = {
-                        name: 'Remove All Sensors on Foundation',
-                        timestamp: Date.now(),
-                        parentId: selectedElement.id,
-                        removedElements: removedElements,
-                        undo: () => {
-                          setCommonStore((state) => {
-                            state.elements.push(...undoableRemoveAllSensorChildren.removedElements);
-                          });
-                        },
-                        redo: () => {
-                          removeAllChildElementsByType(undoableRemoveAllSensorChildren.parentId, ObjectType.Sensor);
-                        },
-                      } as UndoableRemoveAllChildren;
-                      addUndoable(undoableRemoveAllSensorChildren);
-                    }
-                  },
-                });
-              }}
-            >
-              {i18n.t('foundationMenu.RemoveAllSensors', lang)} ({sensorCountFoundation})
-            </Menu.Item>
-          )}
+      {(sensorCountFoundation > 0 || solarPanelCountFoundation > 0 || wallCountFoundation > 0) &&
+        contextMenuObjectType && (
+          <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
+            {wallCountFoundation > 0 && (
+              <Menu.Item
+                key={'remove-all-walls-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllWallsOnFoundation', lang) +
+                      ' (' +
+                      wallCountFoundation +
+                      ' ' +
+                      i18n.t('foundationMenu.Walls', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (selectedElement) {
+                        const removed = elements.filter(
+                          (e) => e.type === ObjectType.Wall && e.parentId === selectedElement.id,
+                        );
+                        removeAllChildElementsByType(selectedElement.id, ObjectType.Wall);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllWallChildren = {
+                          name: 'Remove All Walls on Foundation',
+                          timestamp: Date.now(),
+                          parentId: selectedElement.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllWallChildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(undoableRemoveAllWallChildren.parentId, ObjectType.Wall);
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllWallChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllWalls', lang)} ({wallCountFoundation})
+              </Menu.Item>
+            )}
 
-          {solarPanelCountFoundation > 0 && (
-            <Menu.Item
-              key={'remove-all-solar-panels-on-foundation'}
-              onClick={() => {
-                Modal.confirm({
-                  title:
-                    i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSolarPanelsOnFoundation', lang) +
-                    ' (' +
-                    solarPanelCountFoundation +
-                    ' ' +
-                    i18n.t('foundationMenu.SolarPanels', lang) +
-                    ', ' +
-                    solarRackCountFoundation +
-                    ' ' +
-                    i18n.t('foundationMenu.Racks', lang) +
-                    ')?',
-                  icon: <ExclamationCircleOutlined />,
-                  onOk: () => {
-                    if (selectedElement) {
-                      const removed = elements.filter(
-                        (e) => e.type === ObjectType.SolarPanel && e.parentId === selectedElement.id,
-                      );
-                      removeAllChildElementsByType(selectedElement.id, ObjectType.SolarPanel);
-                      const removedElements = JSON.parse(JSON.stringify(removed));
-                      const undoableRemoveAllSolarPanelChildren = {
-                        name: 'Remove All Solar Panels on Foundation',
-                        timestamp: Date.now(),
-                        parentId: selectedElement.id,
-                        removedElements: removedElements,
-                        undo: () => {
-                          setCommonStore((state) => {
-                            state.elements.push(...undoableRemoveAllSolarPanelChildren.removedElements);
-                          });
-                        },
-                        redo: () => {
-                          removeAllChildElementsByType(
-                            undoableRemoveAllSolarPanelChildren.parentId,
-                            ObjectType.SolarPanel,
-                          );
-                        },
-                      } as UndoableRemoveAllChildren;
-                      addUndoable(undoableRemoveAllSolarPanelChildren);
-                    }
-                  },
-                });
-              }}
-            >
-              {i18n.t('foundationMenu.RemoveAllSolarPanels', lang)}&nbsp; ({solarPanelCountFoundation}{' '}
-              {i18n.t('foundationMenu.SolarPanels', lang)}, {solarRackCountFoundation}{' '}
-              {i18n.t('foundationMenu.Racks', lang)})
-            </Menu.Item>
-          )}
-        </SubMenu>
-      )}
+            {sensorCountFoundation > 0 && (
+              <Menu.Item
+                key={'remove-all-sensors-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSensorsOnFoundation', lang) +
+                      ' (' +
+                      sensorCountFoundation +
+                      ' ' +
+                      i18n.t('foundationMenu.Sensors', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (selectedElement) {
+                        const removed = elements.filter(
+                          (e) => e.type === ObjectType.Sensor && e.parentId === selectedElement.id,
+                        );
+                        removeAllChildElementsByType(selectedElement.id, ObjectType.Sensor);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllSensorChildren = {
+                          name: 'Remove All Sensors on Foundation',
+                          timestamp: Date.now(),
+                          parentId: selectedElement.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllSensorChildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(undoableRemoveAllSensorChildren.parentId, ObjectType.Sensor);
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllSensorChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllSensors', lang)} ({sensorCountFoundation})
+              </Menu.Item>
+            )}
+
+            {solarPanelCountFoundation > 0 && (
+              <Menu.Item
+                key={'remove-all-solar-panels-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSolarPanelsOnFoundation', lang) +
+                      ' (' +
+                      solarPanelCountFoundation +
+                      ' ' +
+                      i18n.t('foundationMenu.SolarPanels', lang) +
+                      ', ' +
+                      solarRackCountFoundation +
+                      ' ' +
+                      i18n.t('foundationMenu.Racks', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (selectedElement) {
+                        const removed = elements.filter(
+                          (e) => e.type === ObjectType.SolarPanel && e.parentId === selectedElement.id,
+                        );
+                        removeAllChildElementsByType(selectedElement.id, ObjectType.SolarPanel);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllSolarPanelChildren = {
+                          name: 'Remove All Solar Panels on Foundation',
+                          timestamp: Date.now(),
+                          parentId: selectedElement.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllSolarPanelChildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(
+                              undoableRemoveAllSolarPanelChildren.parentId,
+                              ObjectType.SolarPanel,
+                            );
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllSolarPanelChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllSolarPanels', lang)}&nbsp; ({solarPanelCountFoundation}{' '}
+                {i18n.t('foundationMenu.SolarPanels', lang)}, {solarRackCountFoundation}{' '}
+                {i18n.t('foundationMenu.Racks', lang)})
+              </Menu.Item>
+            )}
+          </SubMenu>
+        )}
 
       <FoundationColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
       <Menu.Item

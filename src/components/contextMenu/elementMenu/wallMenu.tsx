@@ -8,10 +8,10 @@ import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
-import WallSelection from './wallSelection';
 import { ElementModel } from '../../../models/ElementModel';
 import { WallModel } from '../../../models/WallModel';
 import { ObjectType } from '../../../types';
+import WallTextureSelection from './wallTextureSelection';
 
 export const WallMenu = () => {
   const language = useStore(Selector.language);
@@ -19,6 +19,7 @@ export const WallMenu = () => {
   const setCommonStore = useStore(Selector.set);
   const setElementSize = useStore(Selector.setElementSize);
 
+  const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [radioGroup, setRadioGroup] = useState(1);
   const [inputHeightValue, setInputHeightValue] = useState(1);
@@ -166,12 +167,19 @@ export const WallMenu = () => {
       <Copy />
       <Cut />
       <Lock />
-      <Menu>
-        <Menu.Item key={'wall-change-texture'} style={{ paddingLeft: paddingLeft }}>
-          <Space style={{ width: '60px' }}>{i18n.t('word.Texture', lang)}: </Space>
-          <WallSelection key={'walls'} />
-        </Menu.Item>
-      </Menu>
+      <WallTextureSelection
+        textureDialogVisible={textureDialogVisible}
+        setTextureDialogVisible={setTextureDialogVisible}
+      />
+      <Menu.Item
+        key={'wall-texture'}
+        style={{ paddingLeft: paddingLeft }}
+        onClick={() => {
+          setTextureDialogVisible(true);
+        }}
+      >
+        {i18n.t('word.Texture', lang)} ...
+      </Menu.Item>
       <Menu.Item onClick={onClickSize} style={{ paddingLeft: paddingLeft }}>
         {i18n.t('word.Size', lang)}...
       </Menu.Item>
@@ -186,7 +194,7 @@ export const WallMenu = () => {
           <Radio.Group onChange={onRadioChange} value={radioGroup}>
             <Space direction="vertical">
               <Radio value={1}>{i18n.t('wallMenu.OnlyThisWall', lang)}</Radio>
-              <Radio value={2}>{i18n.t('wallMenu.WallsOnFoundation', lang)}</Radio>
+              <Radio value={2}>{i18n.t('wallMenu.AllWallsAboveFoundation', lang)}</Radio>
               <Radio value={3}>{i18n.t('wallMenu.AllWalls', lang)}</Radio>
             </Space>
           </Radio.Group>

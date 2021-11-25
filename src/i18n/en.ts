@@ -190,6 +190,7 @@ export const i18n_en = {
     foundationMenu: {
       RemoveAllSolarPanels: 'Remove All Solar Panels',
       RemoveAllSensors: 'Remove All Sensors',
+      RemoveAllWalls: 'Remove All Walls',
       Racks: 'Racks',
       Texture1: 'Texture 1',
       Texture2: 'Texture 2',
@@ -198,6 +199,8 @@ export const i18n_en = {
         'Do you really want to remove all the solar panels on this foundation',
       Sensors: 'Sensors',
       DoYouReallyWantToRemoveAllSensorsOnFoundation: 'Do you really want to remove all the sensors on this foundation',
+      Walls: 'Walls',
+      DoYouReallyWantToRemoveAllWallsOnFoundation: 'Do you really want to remove all the walls on this foundation',
       OnlyThisFoundation: 'Only This Foundation',
       AllConnectedFoundations: 'All Connected Foundations',
       AllFoundations: 'All Foundations',
@@ -259,10 +262,18 @@ export const i18n_en = {
     },
 
     wallMenu: {
+      Texture1: 'Texture 1',
+      Texture2: 'Texture 2',
+      Texture3: 'Texture 3',
+      Texture4: 'Texture 4',
+      Texture5: 'Texture 5',
+      Texture6: 'Texture 6',
+      Texture7: 'Texture 7',
+      Texture8: 'Texture 8',
       SizeOfWall: 'Size of Wall',
-      OnlyThisWall: 'Apply to only this wall',
-      WallsOnFoundation: 'Apply to all walls on this foundation',
-      AllWalls: 'Apply to all walls',
+      OnlyThisWall: 'Only This Wall',
+      AllWallsAboveFoundation: 'All Walls Above the Same foundation',
+      AllWalls: 'All Walls',
     },
 
     windowMenu: {},

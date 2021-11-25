@@ -204,6 +204,10 @@ export interface CommonStoreState {
 
   updateSolarPanelDrawSunBeamById: (id: string, drawSunBeam: boolean) => void;
 
+  // for walls
+  wallActionScope: Scope;
+  setWallActionScope: (scope: Scope) => void;
+
   updateWallRelativeAngleById: (id: string, angle: number) => void;
   updateWallLeftOffsetById: (id: string, offset: number) => void;
   updateWallRightOffsetById: (id: string, offset: number) => void;
@@ -211,7 +215,10 @@ export interface CommonStoreState {
   updateWallRightJointsById: (id: string, joints: string[]) => void;
   updateWallLeftPointById: (id: string, point: number[]) => void;
   updateWallRightPointById: (id: string, point: number[]) => void;
+
   updateWallTextureById: (id: string, texture: WallTexture) => void;
+  updateWallTextureAboveFoundation: (foundationId: string, texture: WallTexture) => void;
+  updateWallTextureForAll: (texture: WallTexture) => void;
 
   updateTreeTypeById: (id: string, type: TreeType) => void;
   updateTreeShowModelById: (id: string, showModel: boolean) => void;
@@ -1305,6 +1312,14 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          // for walls
+          wallActionScope: Scope.OnlyThisObject,
+          setWallActionScope(scope: Scope) {
+            immerSet((state: CommonStoreState) => {
+              state.wallActionScope = scope;
+            });
+          },
+
           updateWallRelativeAngleById(id, angle) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -1375,12 +1390,31 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+
           updateWallTextureById(id, texture) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Wall && e.id === id) {
                   (e as WallModel).textureType = texture;
                   break;
+                }
+              }
+            });
+          },
+          updateWallTextureAboveFoundation(foundationId, texture) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.foundationId === foundationId) {
+                  (e as WallModel).textureType = texture;
+                }
+              }
+            });
+          },
+          updateWallTextureForAll(texture) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall) {
+                  (e as WallModel).textureType = texture;
                 }
               }
             });
