@@ -220,6 +220,18 @@ export interface CommonStoreState {
   updateWallTextureAboveFoundation: (foundationId: string, texture: WallTexture) => void;
   updateWallTextureForAll: (texture: WallTexture) => void;
 
+  updateWallColorById: (id: string, color: string) => void;
+  updateWallColorAboveFoundation: (foundationId: string, color: string) => void;
+  updateWallColorForAll: (color: string) => void;
+
+  updateWallHeightById: (id: string, height: number) => void;
+  updateWallHeightAboveFoundation: (foundationId: string, height: number) => void;
+  updateWallHeightForAll: (height: number) => void;
+
+  updateWallThicknessById: (id: string, thickness: number) => void;
+  updateWallThicknessAboveFoundation: (foundationId: string, thickness: number) => void;
+  updateWallThicknessForAll: (thickness: number) => void;
+
   updateTreeTypeById: (id: string, type: TreeType) => void;
   updateTreeShowModelById: (id: string, showModel: boolean) => void;
 
@@ -1415,6 +1427,93 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Wall) {
                   (e as WallModel).textureType = texture;
+                }
+              }
+            });
+          },
+
+          updateWallColorById(id, color) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.id === id) {
+                  e.color = color;
+                  break;
+                }
+              }
+            });
+          },
+          updateWallColorAboveFoundation(foundationId, color) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.foundationId === foundationId) {
+                  e.color = color;
+                }
+              }
+            });
+          },
+          updateWallColorForAll(color) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall) {
+                  e.color = color;
+                }
+              }
+            });
+          },
+
+          updateWallHeightById(id, height) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.id === id) {
+                  e.lz = height;
+                  break;
+                }
+              }
+            });
+          },
+          updateWallHeightAboveFoundation(foundationId, height) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.foundationId === foundationId) {
+                  e.lz = height;
+                }
+              }
+            });
+          },
+          updateWallHeightForAll(height) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall) {
+                  e.lz = height;
+                }
+              }
+            });
+          },
+
+          updateWallThicknessById(id, thickness) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.id === id) {
+                  (e as WallModel).thickness = thickness;
+                  break;
+                }
+              }
+            });
+          },
+          updateWallThicknessAboveFoundation(foundationId, thickness) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.foundationId === foundationId) {
+                  (e as WallModel).thickness = thickness;
+                }
+              }
+            });
+          },
+          updateWallThicknessForAll(thickness) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall) {
+                  (e as WallModel).thickness = thickness;
                 }
               }
             });

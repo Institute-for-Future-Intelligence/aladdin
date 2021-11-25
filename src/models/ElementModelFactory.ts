@@ -166,6 +166,7 @@ export class ElementModelFactory {
       lx: 0,
       ly: 0.25,
       lz: 5,
+      thickness: 0.3,
       relativeAngle: 0,
       leftPoint: [],
       rightPoint: [],

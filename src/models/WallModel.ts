@@ -6,6 +6,7 @@ import { ElementModel } from './ElementModel';
 import { WallTexture } from 'src/types';
 
 export interface WallModel extends ElementModel {
+  thickness: number;
   relativeAngle: number;
   leftPoint: number[];
   rightPoint: number[];

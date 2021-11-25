@@ -618,16 +618,18 @@ const Ground = () => {
               break;
             case ObjectType.SolarPanel:
             case ObjectType.Sensor:
-              const centerAbsPos = absPosMapRef.current.get(e.id);
-              if (centerAbsPos) {
-                const a = -grabRef.current!.rotation[2];
-                const v0 = new Vector2(0, 0);
-                const relativePos = new Vector2().subVectors(centerAbsPos, center).rotateAround(v0, a);
-                const elem = getSelectedElement();
-                // don't use grabRef.current as it doesn't carry the latest lx and ly
-                if (elem) {
-                  e.cx = relativePos.x / elem.lx;
-                  e.cy = relativePos.y / elem.ly;
+              if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+                const centerAbsPos = absPosMapRef.current.get(e.id);
+                if (centerAbsPos) {
+                  const a = -grabRef.current!.rotation[2];
+                  const v0 = new Vector2(0, 0);
+                  const relativePos = new Vector2().subVectors(centerAbsPos, center).rotateAround(v0, a);
+                  const elem = getSelectedElement();
+                  // don't use grabRef.current as it doesn't carry the latest lx and ly
+                  if (elem) {
+                    e.cx = relativePos.x / elem.lx;
+                    e.cy = relativePos.y / elem.ly;
+                  }
                 }
               }
               break;

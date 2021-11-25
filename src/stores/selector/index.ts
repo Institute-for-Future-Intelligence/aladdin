@@ -244,6 +244,24 @@ export const updateWallTextureAboveFoundation = (state: CommonStoreState) => sta
 
 export const updateWallTextureForAll = (state: CommonStoreState) => state.updateWallTextureForAll;
 
+export const updateWallColorById = (state: CommonStoreState) => state.updateWallColorById;
+
+export const updateWallColorAboveFoundation = (state: CommonStoreState) => state.updateWallColorAboveFoundation;
+
+export const updateWallColorForAll = (state: CommonStoreState) => state.updateWallColorForAll;
+
+export const updateWallHeightById = (state: CommonStoreState) => state.updateWallHeightById;
+
+export const updateWallHeightAboveFoundation = (state: CommonStoreState) => state.updateWallHeightAboveFoundation;
+
+export const updateWallHeightForAll = (state: CommonStoreState) => state.updateWallHeightForAll;
+
+export const updateWallThicknessById = (state: CommonStoreState) => state.updateWallThicknessById;
+
+export const updateWallThicknessAboveFoundation = (state: CommonStoreState) => state.updateWallThicknessAboveFoundation;
+
+export const updateWallThicknessForAll = (state: CommonStoreState) => state.updateWallThicknessForAll;
+
 export const updateTreeTypeById = (state: CommonStoreState) => state.updateTreeTypeById;
 
 export const updateTreeShowModelById = (state: CommonStoreState) => state.updateTreeShowModelById;
