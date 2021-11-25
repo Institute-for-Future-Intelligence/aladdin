@@ -352,8 +352,9 @@ const Ground = () => {
                 }
               }
             } else if (selectedElement.type === ObjectType.Foundation) {
-              wallsAbsPosMapRef.current.clear();
               const parentCenter = new Vector2(selectedElement.cx, selectedElement.cy);
+              absPosMapRef.current.clear();
+              wallsAbsPosMapRef.current.clear();
               for (const e of useStore.getState().elements) {
                 if (e.parentId === selectedElement.id) {
                   const v0 = new Vector2(0, 0);
