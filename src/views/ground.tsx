@@ -19,9 +19,9 @@ import { UndoableAdd } from '../undo/UndoableAdd';
 import { WallModel } from 'src/models/WallModel';
 
 interface WallAbsPos {
-  leftPointAbsPos: Vector3;
-  rightPointAbsPos: Vector3;
-  centerPointAbsPos: Vector3;
+  leftPointAbsPos: Vector2;
+  rightPointAbsPos: Vector2;
+  centerPointAbsPos: Vector2;
 }
 
 const Ground = () => {
@@ -351,32 +351,26 @@ const Ground = () => {
               }
             } else if (selectedElement.type === ObjectType.Foundation) {
               const map = new Map<string, WallAbsPos>();
-              const parentCenter = new Vector3(selectedElement.cx, selectedElement.cy);
+              const parentCenter = new Vector2(selectedElement.cx, selectedElement.cy);
               for (const e of useStore.getState().elements) {
                 if (e.parentId === selectedElement.id) {
-                  if (e.type === ObjectType.Wall) {
-                    const wall = e as WallModel;
-                    const centerPointAbsPos = new Vector3().addVectors(
-                      parentCenter,
-                      new Vector3(wall.cx, wall.cy).applyEuler(new Euler(0, 0, selectedElement.rotation[2])),
-                    );
-                    const leftPointAbsPos = new Vector3().addVectors(
-                      parentCenter,
-                      new Vector3(wall.leftPoint[0], wall.leftPoint[1]).applyEuler(
-                        new Euler(0, 0, selectedElement.rotation[2]),
-                      ),
-                    );
-                    const rightPointAbsPos = new Vector3().addVectors(
-                      parentCenter,
-                      new Vector3(wall.rightPoint[0], wall.rightPoint[1]).applyEuler(
-                        new Euler(0, 0, selectedElement.rotation[2]),
-                      ),
-                    );
-                    map.set(wall.id, { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos });
-                  } else if (e.type === ObjectType.SolarPanel) {
-                    // to do
-                  } else if (e.type === ObjectType.Sensor) {
-                    // to do
+                  const v0 = new Vector2(0, 0);
+                  const a = selectedElement.rotation[2];
+                  switch (e.type) {
+                    case ObjectType.Wall:
+                      const wall = e as WallModel;
+                      const centerPointAbsPos = new Vector2(wall.cx, wall.cy).rotateAround(v0, a);
+                      centerPointAbsPos.add(parentCenter);
+                      const leftPointAbsPos = new Vector2(wall.leftPoint[0], wall.leftPoint[1]).rotateAround(v0, a);
+                      leftPointAbsPos.add(parentCenter);
+                      const rightPointAbsPos = new Vector2(wall.rightPoint[0], wall.rightPoint[1]).rotateAround(v0, a);
+                      rightPointAbsPos.add(parentCenter);
+                      map.set(wall.id, { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos });
+                      break;
+                    case ObjectType.SolarPanel:
+                      break;
+                    case ObjectType.Sensor:
+                      break;
                   }
                 }
               }
@@ -536,8 +530,8 @@ const Ground = () => {
   };
 
   const handleResize = (p: Vector3) => {
-    let px = p.x,
-      py = p.y;
+    let px = p.x;
+    let py = p.y;
     if (minX !== null) {
       px = Math.max(p.x, minX);
     }
@@ -550,34 +544,35 @@ const Ground = () => {
     if (maxY != null) {
       py = Math.min(p.y, maxY);
     }
-    const P = new Vector3(px, py);
-    const resizeAnchor2D = new Vector3(resizeAnchor.x, resizeAnchor.y);
-    const R = resizeAnchor2D.distanceTo(P);
-    const angle = Math.atan2(P.x - resizeAnchor.x, P.y - resizeAnchor.y) + grabRef.current!.rotation[2];
-    const lx = Math.abs(R * Math.sin(angle));
-    const ly = Math.abs(R * Math.cos(angle));
-    const c = new Vector3().addVectors(P, resizeAnchor2D).divideScalar(2);
+    const point = new Vector2(px, py);
+    const anchor = new Vector2(resizeAnchor.x, resizeAnchor.y);
+    const distance = anchor.distanceTo(point);
+    const angle = Math.atan2(point.x - resizeAnchor.x, point.y - resizeAnchor.y) + grabRef.current!.rotation[2];
+    const lx = Math.abs(distance * Math.sin(angle));
+    const ly = Math.abs(distance * Math.cos(angle));
+    const center = new Vector2().addVectors(point, anchor).multiplyScalar(0.5);
     setElementSize(grabRef.current!.id, lx, ly);
-    setElementPosition(grabRef.current!.id, c.x, c.y);
+    setElementPosition(grabRef.current!.id, center.x, center.y);
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.parentId === grabRef.current!.id) {
-          const wall = wallsAbsPosMapRef.current.get(e.id);
-          if (wall) {
-            const { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos } = wall;
-            const centerPointRelativePos = new Vector3()
-              .subVectors(centerPointAbsPos, c)
-              .applyEuler(new Euler(0, 0, -grabRef.current!.rotation[2]));
-            const leftPointRelativePos = new Vector3()
-              .subVectors(leftPointAbsPos, c)
-              .applyEuler(new Euler(0, 0, -grabRef.current!.rotation[2]));
-            const rightPointRelativePos = new Vector3()
-              .subVectors(rightPointAbsPos, c)
-              .applyEuler(new Euler(0, 0, -grabRef.current!.rotation[2]));
-            e.cx = centerPointRelativePos.x;
-            e.cy = centerPointRelativePos.y;
-            (e as WallModel).leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, grabRef.current!.lz];
-            (e as WallModel).rightPoint = [rightPointRelativePos.x, rightPointRelativePos.y, grabRef.current!.lz];
+          switch (e.type) {
+            case ObjectType.Wall:
+              const wall = e as WallModel;
+              const wallPos = wallsAbsPosMapRef.current.get(e.id);
+              if (wallPos) {
+                const a = -grabRef.current!.rotation[2];
+                const v0 = new Vector2(0, 0);
+                const { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos } = wallPos;
+                const centerPointRelativePos = new Vector2().subVectors(centerPointAbsPos, center).rotateAround(v0, a);
+                const leftPointRelativePos = new Vector2().subVectors(leftPointAbsPos, center).rotateAround(v0, a);
+                const rightPointRelativePos = new Vector2().subVectors(rightPointAbsPos, center).rotateAround(v0, a);
+                e.cx = centerPointRelativePos.x;
+                e.cy = centerPointRelativePos.y;
+                wall.leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, grabRef.current!.lz];
+                wall.rightPoint = [rightPointRelativePos.x, rightPointRelativePos.y, grabRef.current!.lz];
+              }
+              break;
           }
         }
       }
@@ -652,5 +647,4 @@ const Ground = () => {
     </>
   );
 };
-
 export default React.memo(Ground);
