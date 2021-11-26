@@ -7,9 +7,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Camera, useFrame, useThree } from '@react-three/fiber';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
-import { Util } from './Util';
 import { Vector3 } from 'three';
-import { WORKSPACE_SIZE } from './constants';
+import { HALF_PI, WORKSPACE_SIZE } from './constants';
 
 export interface OrbitControllerProps {
   orbitControlsRef?: React.MutableRefObject<OrbitControls | undefined>;
@@ -158,7 +157,7 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
       target={panCenter ? new Vector3().copy(panCenter) : new Vector3()} // panCenter was moved from model to viewState
       maxAzimuthAngle={Infinity}
       minAzimuthAngle={-Infinity}
-      maxPolarAngle={Util.HALF_PI}
+      maxPolarAngle={HALF_PI}
       minPolarAngle={0}
     />
   );

@@ -10,7 +10,7 @@ import helvetikerFont from './fonts/helvetiker_regular.typeface.fnt';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { ElementModel } from './models/ElementModel';
-import { Util } from './Util';
+import { HALF_PI } from './constants';
 
 export const VerticalRuler = ({ element }: { element: ElementModel }) => {
   const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
@@ -42,7 +42,7 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
       const cameraDir = getCameraDirection();
       const rotation = -Math.atan2(cameraDir.x, cameraDir.y) + Math.PI;
       setPostion(new Vector3(handlePos.x, handlePos.y, 0));
-      setRotation(new Euler(Util.HALF_PI, 0, rotation, 'ZXY'));
+      setRotation(new Euler(HALF_PI, 0, rotation, 'ZXY'));
     }
   }, [resizeHandleType]);
 

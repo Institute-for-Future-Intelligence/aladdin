@@ -7,7 +7,7 @@ import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import { Orientation } from './types';
 import { PvModel } from './models/PvModel';
-import { UNIT_VECTOR_POS_Z } from './constants';
+import { UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from './constants';
 
 export class Util {
   static panelizeLx(solarPanel: SolarPanelModel, pvModel: PvModel, value: number) {
@@ -28,9 +28,9 @@ export class Util {
 
   static isSame(u: Vector3, v: Vector3) {
     return (
-      Math.abs(u.x - v.x) < Util.ZERO_TOLERANCE &&
-      Math.abs(u.y - v.y) < Util.ZERO_TOLERANCE &&
-      Math.abs(u.z - v.z) < Util.ZERO_TOLERANCE
+      Math.abs(u.x - v.x) < ZERO_TOLERANCE &&
+      Math.abs(u.y - v.y) < ZERO_TOLERANCE &&
+      Math.abs(u.z - v.z) < ZERO_TOLERANCE
     );
   }
 
@@ -38,25 +38,13 @@ export class Util {
     if (!u || !v || u.length !== v.length) return false;
     if (u === v) return true;
     for (let i = 0; i < u.length; i++) {
-      if (Math.abs(u[i] - v[i]) > Util.ZERO_TOLERANCE) return false;
+      if (Math.abs(u[i] - v[i]) > ZERO_TOLERANCE) return false;
     }
     return true;
   }
 
   static isZero(x: number) {
-    return Math.abs(x) < Util.ZERO_TOLERANCE;
-  }
-
-  static get ZERO_TOLERANCE() {
-    return 0.0001;
-  }
-
-  static get HALF_PI() {
-    return Math.PI / 2;
-  }
-
-  static get TWO_PI() {
-    return Math.PI * 2;
+    return Math.abs(x) < ZERO_TOLERANCE;
   }
 
   static deleteElement(a: any[], e: any) {

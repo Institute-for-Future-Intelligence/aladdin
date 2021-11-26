@@ -20,7 +20,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useLoader } from '@react-three/fiber';
 import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
-import { UNIT_VECTOR_POS_Y } from '../constants';
+import { HALF_PI, TWO_PI, UNIT_VECTOR_POS_Y, ZERO_TOLERANCE } from '../constants';
 
 const HOUR_DIVISIONS = 96;
 const BASE_DIVISIONS = 72;
@@ -95,10 +95,10 @@ const Heliodon = () => {
     const lineGeometry = new BufferGeometry();
     const basePoints: Vector3[] = [];
     const tickPoints: Vector3[] = [];
-    const step = Util.TWO_PI / BASE_DIVISIONS;
+    const step = TWO_PI / BASE_DIVISIONS;
     let counter = 0;
-    for (let angle = 0; angle < Util.TWO_PI + step / 2.0; angle += step) {
-      const theta = Math.min(angle, Util.TWO_PI);
+    for (let angle = 0; angle < TWO_PI + step / 2.0; angle += step) {
+      const theta = Math.min(angle, TWO_PI);
       let width = 0.05 * radius;
       // TODO: This is inefficient. We should use indexed buffer to share vertices
       basePoints.push(Util.sphericalToCartesianZ(new Vector3(radius, theta, 0)));
@@ -108,7 +108,7 @@ const Heliodon = () => {
       basePoints.push(Util.sphericalToCartesianZ(new Vector3(radius + width, theta + step, 0)));
       basePoints.push(Util.sphericalToCartesianZ(new Vector3(radius, theta + step, 0)));
       let p;
-      if (Util.TWO_PI - theta > Util.ZERO_TOLERANCE) {
+      if (TWO_PI - theta > ZERO_TOLERANCE) {
         width = 0.05 * radius + (counter % 3 === 0 ? 0.2 : 0);
         p = new Vector3(radius, theta, 0);
         p.z = 0.002;
@@ -149,7 +149,7 @@ const Heliodon = () => {
   }, [radius]);
 
   const sunPathPoints = useMemo(() => {
-    const step = Util.TWO_PI / HOUR_DIVISIONS;
+    const step = TWO_PI / HOUR_DIVISIONS;
     const points = [];
     for (let h = -Math.PI; h < Math.PI + step / 2.0; h += step) {
       const v = computeSunLocation(radius, h, declinationAngle, latitude);
@@ -161,7 +161,7 @@ const Heliodon = () => {
   }, [latitude, radius, declinationAngle]);
 
   const getSunPathPointsByDate = (d: number) => {
-    const step = Util.TWO_PI / HOUR_DIVISIONS;
+    const step = TWO_PI / HOUR_DIVISIONS;
     const points = [];
     for (let h = -Math.PI; h < Math.PI + step / 2.0; h += step) {
       const v = computeSunLocation(radius, h, d, latitude);
@@ -189,7 +189,7 @@ const Heliodon = () => {
 
   const sunbeltGeometry = useMemo(() => {
     const declinationStep = (2.0 * TILT_ANGLE) / DECLINATION_DIVISIONS;
-    const hourStep = Util.TWO_PI / HOUR_DIVISIONS;
+    const hourStep = TWO_PI / HOUR_DIVISIONS;
     const geometry = new BufferGeometry();
     let verticesCount = 0;
     const vertices: Vector3[] = [];
@@ -232,8 +232,8 @@ const Heliodon = () => {
         if (times === -nLabels) times = nLabels;
         const offset = getOffset(Math.abs(times));
         return (
-          <group key={i} rotation={[Util.HALF_PI, (times * Math.PI) / nLabels, 0]}>
-            <mesh position={[offset, 0, -radius * 1.1]} rotation={[-Util.HALF_PI, 0, 0]}>
+          <group key={i} rotation={[HALF_PI, (times * Math.PI) / nLabels, 0]}>
+            <mesh position={[offset, 0, -radius * 1.1]} rotation={[-HALF_PI, 0, 0]}>
               <textGeometry args={[`${(180 / nLabels) * times}°`, textGeometryParams]} />
               <meshStandardMaterial attach="material" color={'lightGray'} />
             </mesh>

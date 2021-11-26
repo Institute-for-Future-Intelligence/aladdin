@@ -10,6 +10,7 @@ import * as Selector from '../stores/selector';
 import { SensorModel } from '../models/SensorModel';
 import { useThree } from '@react-three/fiber';
 import {
+  HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
   MOVE_HANDLE_RADIUS,
   UNIT_VECTOR_NEG_X,
@@ -97,16 +98,16 @@ const Sensor = ({
       return new Euler(0, 0, rotation[2]);
     } else if (Util.isSame(v, UNIT_VECTOR_POS_X)) {
       // east face in model coordinate system
-      return new Euler(0, Util.HALF_PI, rotation[2], 'ZXY');
+      return new Euler(0, HALF_PI, rotation[2], 'ZXY');
     } else if (Util.isSame(v, UNIT_VECTOR_NEG_X)) {
       // west face in model coordinate system
-      return new Euler(0, -Util.HALF_PI, rotation[2], 'ZXY');
+      return new Euler(0, -HALF_PI, rotation[2], 'ZXY');
     } else if (Util.isSame(v, UNIT_VECTOR_POS_Y)) {
       // south face in the model coordinate system
-      return new Euler(-Util.HALF_PI, 0, rotation[2], 'ZXY');
+      return new Euler(-HALF_PI, 0, rotation[2], 'ZXY');
     } else if (Util.isSame(v, UNIT_VECTOR_NEG_Y)) {
       // north face in the model coordinate system
-      return new Euler(Util.HALF_PI, 0, rotation[2], 'ZXY');
+      return new Euler(HALF_PI, 0, rotation[2], 'ZXY');
     }
     return new Euler(0, 0, rotation[2]);
   }, [normal, rotation]);

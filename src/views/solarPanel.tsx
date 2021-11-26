@@ -9,6 +9,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
+  HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
   MOVE_HANDLE_RADIUS,
   RESIZE_HANDLE_COLOR,
@@ -227,16 +228,16 @@ const SolarPanel = ({
       return new Euler(0, 0, rotation[2], 'ZXY');
     } else if (Util.isSame(v, UNIT_VECTOR_POS_X)) {
       // east face in model coordinate system
-      return new Euler(Util.HALF_PI, 0, rotation[2] + Util.HALF_PI, 'ZXY');
+      return new Euler(HALF_PI, 0, rotation[2] + HALF_PI, 'ZXY');
     } else if (Util.isSame(v, UNIT_VECTOR_NEG_X)) {
       // west face in model coordinate system
-      return new Euler(Util.HALF_PI, 0, rotation[2] - Util.HALF_PI, 'ZXY');
+      return new Euler(HALF_PI, 0, rotation[2] - HALF_PI, 'ZXY');
     } else if (Util.isSame(v, UNIT_VECTOR_POS_Y)) {
       // north face in the model coordinate system
-      return new Euler(Util.HALF_PI, 0, rotation[2] + Math.PI, 'ZXY');
+      return new Euler(HALF_PI, 0, rotation[2] + Math.PI, 'ZXY');
     } else if (Util.isSame(v, UNIT_VECTOR_NEG_Y)) {
       // south face in the model coordinate system
-      return new Euler(Util.HALF_PI, 0, rotation[2], 'ZXY');
+      return new Euler(HALF_PI, 0, rotation[2], 'ZXY');
     }
     return new Euler(0, 0, rotation[2]);
   }, [normal, rotation]);
@@ -281,13 +282,13 @@ const SolarPanel = ({
             return new Euler(
               Math.atan2(r, rotatedSunDirection.z),
               0,
-              Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + Util.HALF_PI,
+              Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + HALF_PI,
               'ZXY',
             );
           case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
             return new Euler(0, Math.atan2(rotatedSunDirection.x, rotatedSunDirection.z), 0, 'ZXY');
           case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
-            return new Euler(0, 0, Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + Util.HALF_PI, 'ZXY');
+            return new Euler(0, 0, Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + HALF_PI, 'ZXY');
         }
       }
       return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');

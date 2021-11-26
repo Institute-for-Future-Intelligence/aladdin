@@ -23,6 +23,7 @@ import {
   RotateHandleType,
 } from '../types';
 import {
+  HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
   MOVE_HANDLE_COLOR_1,
   MOVE_HANDLE_COLOR_2,
@@ -172,37 +173,36 @@ const Cuboid = ({
   };
 
   const textureLoaderEast = useMemo(() => {
-    console.log(textureTypes, 'East');
     return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[0]) : Facade_Texture_00, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
       let offsetX = 0;
       let offsetY = 0;
-      let repeatX = lx / 40;
+      let repeatX = ly / 40;
       let repeatY = lz / 23;
       t.offset.set(offsetX, offsetY);
       t.repeat.set(repeatX, repeatY);
+      t.rotation = HALF_PI;
       setTextureEast(t);
     });
   }, [textureTypes[0], lx, ly, lz]);
   const [textureEast, setTextureEast] = useState(textureLoaderEast);
 
   const textureLoaderWest = useMemo(() => {
-    console.log(textureTypes, 'west');
     return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[1]) : Facade_Texture_00, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
       let offsetX = 0;
       let offsetY = 0;
-      let repeatX = lx / 40;
+      let repeatX = ly / 40;
       let repeatY = lz / 23;
       t.offset.set(offsetX, offsetY);
       t.repeat.set(repeatX, repeatY);
+      t.rotation = 3 * HALF_PI;
       setTextureWest(t);
     });
   }, [textureTypes[1], lx, ly, lz]);
   const [textureWest, setTextureWest] = useState(textureLoaderWest);
 
   const textureLoaderNorth = useMemo(() => {
-    console.log(textureTypes, 'north');
     return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[2]) : Facade_Texture_00, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
       let offsetX = 0;
@@ -211,13 +211,13 @@ const Cuboid = ({
       let repeatY = lz / 23;
       t.offset.set(offsetX, offsetY);
       t.repeat.set(repeatX, repeatY);
+      t.rotation = Math.PI;
       setTextureNorth(t);
     });
   }, [textureTypes[2], lx, ly, lz]);
   const [textureNorth, setTextureNorth] = useState(textureLoaderNorth);
 
   const textureLoaderSouth = useMemo(() => {
-    console.log(textureTypes, 'south');
     return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[3]) : Facade_Texture_00, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
       let offsetX = 0;
@@ -232,7 +232,6 @@ const Cuboid = ({
   const [textureSouth, setTextureSouth] = useState(textureLoaderSouth);
 
   const textureLoaderTop = useMemo(() => {
-    console.log(textureTypes, 'top');
     return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[4]) : Facade_Texture_00, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
       let offsetX = 0;
@@ -298,13 +297,13 @@ const Cuboid = ({
       // east face in view coordinate system
       gridLength.current = Math.max(ly, lz);
       gridPositionRef.current = new Vector3(hx, 0, 0);
-      gridRotationRef.current = new Euler(0, 0, Util.HALF_PI);
+      gridRotationRef.current = new Euler(0, 0, HALF_PI);
       gridScale.current = new Vector3(ly / gridLength.current, 1, lz / gridLength.current);
     } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_NEG_X)) {
       // west face in view coordinate system
       gridLength.current = Math.max(ly, lz);
       gridPositionRef.current = new Vector3(-hx, 0, 0);
-      gridRotationRef.current = new Euler(0, 0, -Util.HALF_PI);
+      gridRotationRef.current = new Euler(0, 0, -HALF_PI);
       gridScale.current = new Vector3(ly / gridLength.current, 1, lz / gridLength.current);
     } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_NEG_Y)) {
       // south face in the view coordinate system

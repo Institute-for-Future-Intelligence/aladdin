@@ -35,6 +35,12 @@ export const HIGHLIGHT_HANDLE_COLOR = 'red';
 
 export const GROUND_ID = 'Ground';
 
+export const HALF_PI = Math.PI / 2;
+
+export const TWO_PI = Math.PI * 2;
+
+export const ZERO_TOLERANCE = 0.0001;
+
 export const UNIT_VECTOR_POS_Z_ARRAY = [0, 0, 1];
 
 export const UNIT_VECTOR_POS_X = new Vector3(1, 0, 0);

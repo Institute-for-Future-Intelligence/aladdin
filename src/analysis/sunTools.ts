@@ -6,13 +6,13 @@ import { Vector3 } from 'three';
 import { Util } from '../Util';
 import { AirMass, ASHRAE_C, SOLAR_CONSTANT } from './analysisConstants';
 import { GroundModel } from '../models/GroundModel';
-import { UNIT_VECTOR_POS_Z } from '../constants';
+import { TWO_PI, UNIT_VECTOR_POS_Z } from '../constants';
 
 export const TILT_ANGLE = (23.45 / 180.0) * Math.PI;
 
 export const computeDeclinationAngle = (date: Date) => {
   const days = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
-  return TILT_ANGLE * Math.sin((Util.TWO_PI * (284 + days)) / 365.25);
+  return TILT_ANGLE * Math.sin((TWO_PI * (284 + days)) / 365.25);
 };
 
 export const computeHourAngle = (date: Date) => {
@@ -50,7 +50,7 @@ export const computeSunLocation = (radius: number, hourAngle: number, declinatio
 // Solar radiation incident outside the earth's atmosphere is called extraterrestrial radiation.
 // https://pvpmc.sandia.gov/modeling-steps/1-weather-design-inputs/irradiance-and-insolation-2/extraterrestrial-radiation/
 const getExtraterrestrialRadiation = (dayOfYear: number) => {
-  const b = (Util.TWO_PI * dayOfYear) / 365;
+  const b = (TWO_PI * dayOfYear) / 365;
   const er =
     1.00011 + 0.034221 * Math.cos(b) + 0.00128 * Math.sin(b) + 0.000719 * Math.cos(2 * b) + 0.000077 * Math.sin(2 * b);
   return SOLAR_CONSTANT * er;

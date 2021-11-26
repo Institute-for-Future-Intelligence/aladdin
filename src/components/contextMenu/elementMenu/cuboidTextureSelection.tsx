@@ -56,7 +56,7 @@ const CuboidTextureSelection = ({
           : CuboidTexture.NoTexture,
       );
     }
-  }, [cuboid]);
+  }, [cuboid, selectedSideIndex]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setCuboidActionScope(e.target.value);
@@ -94,7 +94,6 @@ const CuboidTextureSelection = ({
         updateCuboidTextureForAll(value);
         break;
       case Scope.OnlyThisSide:
-        console.log(cuboid);
         if (cuboid && selectedSideIndex >= 0) {
           const oldTexture = cuboid.textureTypes ? cuboid.textureTypes[selectedSideIndex] : CuboidTexture.NoTexture;
           const undoableChange = {

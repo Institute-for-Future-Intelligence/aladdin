@@ -22,10 +22,9 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useThree } from '@react-three/fiber';
 import { Billboard, Cone, Plane, Sphere } from '@react-three/drei';
-import { MOVE_HANDLE_RADIUS } from '../constants';
+import { MOVE_HANDLE_RADIUS, TWO_PI } from '../constants';
 import { TreeModel } from '../models/TreeModel';
 import { ObjectType, TreeType } from '../types';
-import { Util } from '../Util';
 
 const Tree = ({
   id,
@@ -146,7 +145,7 @@ const Tree = ({
           visible={(showModel && !noLeaves) || orthographic}
           userData={{ simulation: !noLeaves }}
           name={name + ' Model'}
-          args={[lx / 2, 8, 8, 0, Util.TWO_PI, 0, theta]}
+          args={[lx / 2, 8, 8, 0, TWO_PI, 0, theta]}
           scale={[1, lz / lx, 1]}
           rotation={[Math.PI / 2, 0, 0]}
         >
