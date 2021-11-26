@@ -3,8 +3,9 @@
  */
 
 import { Undoable } from './Undoable';
+import { CuboidTexture } from '../types';
 
 export interface UndoableChange extends Undoable {
-  oldValue: string | number;
-  newValue: string | number;
+  oldValue: string | number | string[] | CuboidTexture[];
+  newValue: string | number | string[] | CuboidTexture[];
 }

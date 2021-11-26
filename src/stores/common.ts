@@ -14,6 +14,7 @@ import Papa from 'papaparse';
 import { Util } from '../Util';
 import {
   ActionType,
+  CuboidTexture,
   DatumEntry,
   FoundationTexture,
   HumanName,
@@ -145,6 +146,9 @@ export interface CommonStoreState {
   updateCuboidColorBySide: (side: number, id: string, color: string) => void;
   updateCuboidColorById: (id: string, color: string) => void;
   updateCuboidColorForAll: (color: string) => void;
+  updateCuboidTextureBySide: (side: number, id: string, texture: CuboidTexture) => void;
+  updateCuboidTextureById: (id: string, texture: CuboidTexture) => void;
+  updateCuboidTextureForAll: (texture: CuboidTexture) => void;
 
   // for solar panels
   solarPanelActionScope: Scope;
@@ -841,6 +845,42 @@ export const useStore = create<CommonStoreState>(
                   const cuboid = e as CuboidModel;
                   if (!cuboid.faceColors) cuboid.faceColors = new Array<string>(6);
                   cuboid.faceColors.fill(color);
+                }
+              }
+            });
+          },
+
+          updateCuboidTextureBySide(side: number, id, texture) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Cuboid && e.id === id) {
+                  const cuboid = e as CuboidModel;
+                  if (!cuboid.textureTypes) cuboid.textureTypes = new Array<CuboidTexture>(6);
+                  cuboid.textureTypes[side] = texture;
+                  break;
+                }
+              }
+            });
+          },
+          updateCuboidTextureById(id, texture) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Cuboid && e.id === id) {
+                  const cuboid = e as CuboidModel;
+                  if (!cuboid.textureTypes) cuboid.textureTypes = new Array<CuboidTexture>(6);
+                  cuboid.textureTypes.fill(texture);
+                  break;
+                }
+              }
+            });
+          },
+          updateCuboidTextureForAll(texture) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Cuboid) {
+                  const cuboid = e as CuboidModel;
+                  if (!cuboid.textureTypes) cuboid.textureTypes = new Array<CuboidTexture>(6);
+                  cuboid.textureTypes.fill(texture);
                 }
               }
             });

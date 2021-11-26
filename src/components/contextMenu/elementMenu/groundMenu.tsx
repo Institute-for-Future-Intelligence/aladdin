@@ -30,6 +30,7 @@ export const GroundMenu = () => {
   const treeCount = countElementsByType(ObjectType.Tree);
   const humanCount = countElementsByType(ObjectType.Human);
   const foundationCount = countElementsByType(ObjectType.Foundation);
+  const cuboidCount = countElementsByType(ObjectType.Cuboid);
 
   const lang = { lng: language };
 
@@ -87,6 +88,7 @@ export const GroundMenu = () => {
           {i18n.t('groundMenu.RemoveAllPeople', lang)} ({humanCount})
         </Menu.Item>
       )}
+
       {treeCount > 0 && (
         <Menu.Item
           style={{ paddingLeft: '36px' }}
@@ -120,6 +122,7 @@ export const GroundMenu = () => {
           {i18n.t('groundMenu.RemoveAllTrees', lang)} ({treeCount})
         </Menu.Item>
       )}
+
       {foundationCount > 0 && (
         <Menu.Item
           style={{ paddingLeft: '36px' }}
@@ -153,6 +156,41 @@ export const GroundMenu = () => {
           {i18n.t('groundMenu.RemoveAllFoundations', lang)} ({foundationCount})
         </Menu.Item>
       )}
+
+      {cuboidCount > 0 && (
+        <Menu.Item
+          style={{ paddingLeft: '36px' }}
+          key={'ground-remove-all-cuboids'}
+          onClick={() => {
+            Modal.confirm({
+              title: i18n.t('groundMenu.DoYouReallyWantToRemoveAllCuboids', lang) + ' (' + cuboidCount + ')?',
+              icon: <ExclamationCircleOutlined />,
+              onOk: () => {
+                const removed = elements.filter((e) => e.type === ObjectType.Cuboid);
+                removeElementsByType(ObjectType.Cuboid);
+                const removedElements = JSON.parse(JSON.stringify(removed));
+                const undoableRemoveAll = {
+                  name: 'Remove All',
+                  timestamp: Date.now(),
+                  removedElements: removedElements,
+                  undo: () => {
+                    setCommonStore((state) => {
+                      state.elements.push(...undoableRemoveAll.removedElements);
+                    });
+                  },
+                  redo: () => {
+                    removeElementsByType(ObjectType.Cuboid);
+                  },
+                } as UndoableRemoveAll;
+                addUndoable(undoableRemoveAll);
+              },
+            });
+          }}
+        >
+          {i18n.t('groundMenu.RemoveAllCuboids', lang)} ({cuboidCount})
+        </Menu.Item>
+      )}
+
       <Menu>
         <Menu.Item style={{ paddingLeft: '36px' }} key={'ground-albedo'}>
           <Space style={{ width: '60px' }}>{i18n.t('groundMenu.Albedo', lang)}:</Space>
@@ -185,6 +223,7 @@ export const GroundMenu = () => {
           />
         </Menu.Item>
       </Menu>
+
       <Menu.Item key={'image-on-ground'}>
         <Checkbox
           checked={groundImage}
@@ -208,6 +247,7 @@ export const GroundMenu = () => {
           {i18n.t('groundMenu.ImageOnGround', lang)}
         </Checkbox>
       </Menu.Item>
+
       <SubMenu key={'ground-color'} title={i18n.t('word.Color', { lng: language })} style={{ paddingLeft: '24px' }}>
         <CompactPicker
           color={groundColor}

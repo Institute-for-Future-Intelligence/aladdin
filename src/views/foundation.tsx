@@ -41,9 +41,9 @@ import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableChange } from '../undo/UndoableChange';
 import { ElementGrid } from './elementGrid';
-import Foundation_Texture_00 from '../resources/foundation_00.png';
-import Foundation_Texture_01 from '../resources/foundation_01.png';
-import Foundation_Texture_02 from '../resources/foundation_02.png';
+import FoundationTexture00 from '../resources/foundation_00.png';
+import FoundationTexture01 from '../resources/foundation_01.png';
+import FoundationTexture02 from '../resources/foundation_02.png';
 
 const Foundation = ({
   id,
@@ -194,13 +194,13 @@ const Foundation = ({
     let textureImg;
     switch (textureType) {
       case FoundationTexture.Texture01:
-        textureImg = Foundation_Texture_01;
+        textureImg = FoundationTexture01;
         break;
       case FoundationTexture.Texture02:
-        textureImg = Foundation_Texture_02;
+        textureImg = FoundationTexture02;
         break;
       default:
-        textureImg = Foundation_Texture_00;
+        textureImg = FoundationTexture00;
     }
     return new TextureLoader().load(textureImg, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;

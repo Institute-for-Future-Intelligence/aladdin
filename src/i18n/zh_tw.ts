@@ -182,9 +182,11 @@ export const i18n_zh_tw = {
       RemoveAllTrees: '刪除所有的樹木',
       RemoveAllPeople: '删除所有的人物',
       RemoveAllFoundations: '删除所有的地基',
+      RemoveAllCuboids: '删除所有的長方體',
       DoYouReallyWantToRemoveAllPeople: '你確定刪除所有的人物嗎',
       DoYouReallyWantToRemoveAllTrees: '你確定刪除所有的樹木嗎',
       DoYouReallyWantToRemoveAllFoundations: '你確定刪除所有的地基嗎',
+      DoYouReallyWantToRemoveAllCuboids: '你確定刪除所有的長方體嗎',
     },
 
     foundationMenu: {
@@ -192,8 +194,8 @@ export const i18n_zh_tw = {
       RemoveAllSensors: '刪除此地基上所有的傳感器',
       RemoveAllWalls: '刪除此地基上所有的牆',
       Racks: '支架',
-      Texture1: '一號材質',
-      Texture2: '二號材質',
+      Texture01: '一號材質',
+      Texture02: '二號材質',
       SolarPanels: '光伏板',
       DoYouReallyWantToRemoveAllSolarPanelsOnFoundation: '你確定刪除此地基上所有的光伏板嗎',
       Sensors: '傳感器',
@@ -206,6 +208,7 @@ export const i18n_zh_tw = {
     },
 
     cuboidMenu: {
+      Texture01: '一号材質',
       RemoveAllSolarPanels: '刪除此長方體表面上所有的光伏板',
       RemoveAllSensors: '刪除此長方體表面上所有的傳感器',
       Racks: '支架',

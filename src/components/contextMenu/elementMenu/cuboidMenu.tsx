@@ -17,6 +17,7 @@ import CuboidWidthInput from './cuboidWidthInput';
 import CuboidLengthInput from './cuboidLengthInput';
 import CuboidHeightInput from './cuboidHeightInput';
 import CuboidAzimuthInput from './cuboidAzimuthInput';
+import CuboidTextureSelection from './cuboidTextureSelection';
 
 export const CuboidMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -31,6 +32,7 @@ export const CuboidMenu = () => {
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
 
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
+  const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
@@ -158,6 +160,20 @@ export const CuboidMenu = () => {
         }}
       >
         {i18n.t('word.Color', lang)} ...
+      </Menu.Item>
+
+      <CuboidTextureSelection
+        textureDialogVisible={textureDialogVisible}
+        setTextureDialogVisible={setTextureDialogVisible}
+      />
+      <Menu.Item
+        key={'cuboid-texture'}
+        style={{ paddingLeft: '36px' }}
+        onClick={() => {
+          setTextureDialogVisible(true);
+        }}
+      >
+        {i18n.t('word.Texture', lang)} ...
       </Menu.Item>
 
       <CuboidWidthInput widthDialogVisible={widthDialogVisible} setWidthDialogVisible={setWidthDialogVisible} />

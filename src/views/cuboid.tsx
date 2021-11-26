@@ -59,7 +59,14 @@ const Cuboid = ({
   lineWidth = 0.1,
   selected = false,
   locked = false,
-  textureType = CuboidTexture.Facade01,
+  textureTypes = [
+    CuboidTexture.NoTexture,
+    CuboidTexture.NoTexture,
+    CuboidTexture.NoTexture,
+    CuboidTexture.NoTexture,
+    CuboidTexture.NoTexture,
+    CuboidTexture.NoTexture,
+  ],
 }: CuboidModel) => {
   const setCommonStore = useStore(Selector.set);
   const moveHandleType = useStore(Selector.moveHandleType);
@@ -152,31 +159,23 @@ const Cuboid = ({
   }, []);
 
   const textureLoader = useMemo(() => {
-    let textureImg;
-    switch (textureType) {
-      case CuboidTexture.Facade01:
-        textureImg = Facade_Texture_01;
-        break;
-      default:
-        textureImg = Facade_Texture_00;
+    let img = Facade_Texture_00;
+    if (textureTypes) {
+      if (textureTypes[0] === CuboidTexture.Facade01) {
+        img = Facade_Texture_01;
+      }
     }
-    return new TextureLoader().load(textureImg, (t) => {
+    return new TextureLoader().load(img, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
-      let repeatX = 1;
-      let repeatY = 1;
       let offsetX = 0;
       let offsetY = 0;
-      switch (textureType) {
-        case CuboidTexture.Facade01:
-          repeatX = lx / 40;
-          repeatY = lz / 23;
-          break;
-      }
+      let repeatX = lx / 40;
+      let repeatY = lz / 23;
       t.offset.set(offsetX, offsetY);
       t.repeat.set(repeatX, repeatY);
       setTexture(t);
     });
-  }, [textureType, lx, lz]);
+  }, [textureTypes, lx, ly, lz]);
   const [texture, setTexture] = useState(textureLoader);
 
   const hoverHandle = useCallback(
@@ -619,7 +618,9 @@ const Cuboid = ({
       >
         {cuboidModel.faceColors ? (
           cuboidModel.faceColors.map((e, index) => {
-            if (textureType === CuboidTexture.NoTexture) {
+            if (textureTypes && textureTypes[index] !== CuboidTexture.NoTexture) {
+              return <meshStandardMaterial key={index} attachArray="material" color={'white'} map={texture} />;
+            } else {
               return (
                 <meshStandardMaterial
                   key={index}
@@ -628,15 +629,7 @@ const Cuboid = ({
                   map={texture}
                 />
               );
-            } else {
-              return <meshStandardMaterial key={index} attachArray="material" color={'white'} map={texture} />;
             }
-            // return (
-            //   <meshStandardMaterial
-            //     attachArray="material"
-            //     color={cuboidModel.faceColors ? cuboidModel.faceColors[index] : color}
-            //   />
-            // );
           })
         ) : (
           <meshStandardMaterial attach="material" color={color} />

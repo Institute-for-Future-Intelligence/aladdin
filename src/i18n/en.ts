@@ -182,9 +182,11 @@ export const i18n_en = {
       RemoveAllTrees: 'Remove All Trees',
       RemoveAllPeople: 'Remove All People',
       RemoveAllFoundations: 'Remove All Foundations',
+      RemoveAllCuboids: 'Remove All Cuboids',
       DoYouReallyWantToRemoveAllPeople: 'Do you really want to remove all the people',
       DoYouReallyWantToRemoveAllTrees: 'Do you really want to remove all the trees',
       DoYouReallyWantToRemoveAllFoundations: 'Do you really want to remove all the foundations',
+      DoYouReallyWantToRemoveAllCuboids: 'Do you really want to remove all the cuboids',
     },
 
     foundationMenu: {
@@ -192,8 +194,8 @@ export const i18n_en = {
       RemoveAllSensors: 'Remove All Sensors',
       RemoveAllWalls: 'Remove All Walls',
       Racks: 'Racks',
-      Texture1: 'Texture 1',
-      Texture2: 'Texture 2',
+      Texture01: 'Texture 1',
+      Texture02: 'Texture 2',
       SolarPanels: 'Solar Panels',
       DoYouReallyWantToRemoveAllSolarPanelsOnFoundation:
         'Do you really want to remove all the solar panels on this foundation',
@@ -207,6 +209,7 @@ export const i18n_en = {
     },
 
     cuboidMenu: {
+      Texture01: 'Texture 1',
       RemoveAllSolarPanels: 'Remove All Solar Panels',
       RemoveAllSensors: 'Remove All Sensors',
       Racks: 'Racks',
