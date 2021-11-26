@@ -594,11 +594,14 @@ const Ground = () => {
     const lx = Math.abs(distance * Math.sin(angle));
     const ly = Math.abs(distance * Math.cos(angle));
     const center = new Vector2().addVectors(point, anchor).multiplyScalar(0.5);
-    setElementSize(grabRef.current!.id, lx, ly);
-    setElementPosition(grabRef.current!.id, center.x, center.y);
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.parentId === grabRef.current!.id) {
+        if (e.id === grabRef.current!.id) {
+          e.lx = lx;
+          e.ly = ly;
+          e.cx = center.x;
+          e.cy = center.y;
+        } else if (e.parentId === grabRef.current!.id) {
           switch (e.type) {
             case ObjectType.Wall:
               const wall = e as WallModel;
@@ -624,12 +627,8 @@ const Ground = () => {
                   const a = -grabRef.current!.rotation[2];
                   const v0 = new Vector2(0, 0);
                   const relativePos = new Vector2().subVectors(centerAbsPos, center).rotateAround(v0, a);
-                  const elem = getSelectedElement();
-                  // don't use grabRef.current as it doesn't carry the latest lx and ly
-                  if (elem) {
-                    e.cx = relativePos.x / elem.lx;
-                    e.cy = relativePos.y / elem.ly;
-                  }
+                  e.cx = relativePos.x / lx;
+                  e.cy = relativePos.y / ly;
                 }
               }
               break;

@@ -1356,7 +1356,7 @@ const Foundation = ({
       )}
 
       {/* wireFrame */}
-      {!selected && <Wireframe args={[lx, ly, lz]} />}
+      {!selected && <Wireframe hx={hx} hy={hy} hz={hz} />}
 
       {/* draw handles */}
       {selected && !locked && (

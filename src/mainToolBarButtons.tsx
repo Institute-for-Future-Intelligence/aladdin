@@ -39,7 +39,6 @@ const MainToolBarButtons = () => {
   const clearContent = useStore(Selector.clearContent);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const addUndoable = useStore(Selector.addUndoable);
-  const elements = useStore(Selector.elements);
 
   const lang = { lng: language };
 
@@ -54,7 +53,7 @@ const MainToolBarButtons = () => {
       title: i18n.t('toolbar.DoYouReallyWantToClearContent', lang) + '?',
       icon: <ExclamationCircleOutlined />,
       onOk: () => {
-        const removedElements = JSON.parse(JSON.stringify(elements));
+        const removedElements = JSON.parse(JSON.stringify(useStore.getState().elements));
         clearContent();
         const undoableClearContent = {
           name: 'Clear Scene',

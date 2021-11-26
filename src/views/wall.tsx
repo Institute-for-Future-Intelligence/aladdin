@@ -282,7 +282,6 @@ const Wall = ({
         }
       });
       outSideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
-      gl.render(scene, camera);
     }
   }, [init, lx, lz, windows]);
 
@@ -302,7 +301,6 @@ const Wall = ({
 
       insideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
       insideWallRef.current.material = whiteWallMaterial;
-      gl.render(scene, camera);
     }
   }, [init, leftOffsetState, rightOffsetState, lx, ly, lz, windows]);
 
@@ -313,7 +311,6 @@ const Wall = ({
       drawTopSurface(topSurfaceShape, lx, ly, leftOffsetState, rightOffsetState);
       topSurfaceRef.current.geometry = new ShapeBufferGeometry(topSurfaceShape);
       topSurfaceRef.current.material = whiteWallMaterial;
-      gl.render(scene, camera);
     }
   }, [init, leftOffsetState, rightOffsetState, lx, ly, lz]);
 

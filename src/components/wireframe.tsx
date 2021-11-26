@@ -9,20 +9,19 @@ import { useStore } from 'src/stores/common';
 import * as Selector from '../stores/selector';
 
 export interface WireframeProps {
-  args: [x: number, y: number, z: number];
+  hx: number;
+  hy: number;
+  hz: number;
   lineColor?: string;
   lineWidth?: number;
 }
 
-const Wireframe = ({ args, lineColor = 'black', lineWidth = 0.2 }: WireframeProps) => {
+const Wireframe = ({ hx, hy, hz, lineColor = 'black', lineWidth = 0.2 }: WireframeProps) => {
   const groundImage = useStore(Selector.viewState.groundImage);
 
   const [wireframeColor, setWireframeColor] = useState(lineColor);
   const [wireframeWidth, setWireframeWidth] = useState(lineWidth);
 
-  const hx = args[0] / 2;
-  const hy = args[1] / 2;
-  const hz = args[2] / 2;
   const positionLL = useMemo(() => new Vector3(-hx, -hy, hz), [hx, hy, hz]);
   const positionUL = useMemo(() => new Vector3(-hx, hy, hz), [hx, hy, hz]);
   const positionLR = useMemo(() => new Vector3(hx, -hy, hz), [hx, hy, hz]);
