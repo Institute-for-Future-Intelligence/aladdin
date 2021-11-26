@@ -92,6 +92,7 @@ export interface CommonStoreState {
   showAccountSettingsPanel: boolean;
   selectedElement: ElementModel | null;
   getSelectedElement: () => ElementModel | null;
+  selectedSideIndex: number;
   getResizeHandlePosition: (e: ElementModel, type: ResizeHandleType) => Vector3;
   getElementById: (id: string) => ElementModel | null;
   selectMe: (id: string, e: ThreeEvent<MouseEvent>, action?: ActionType) => void;
@@ -427,6 +428,8 @@ export const useStore = create<CommonStoreState>(
             }
             return null;
           },
+
+          selectedSideIndex: -1,
 
           getResizeHandlePosition(e: ElementModel, type: ResizeHandleType) {
             const { cx, cy, cz, lx, ly, rotation } = e;

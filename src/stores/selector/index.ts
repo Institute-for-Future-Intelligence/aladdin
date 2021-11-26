@@ -62,6 +62,8 @@ export const getElementById = (state: CommonStoreState) => state.getElementById;
 
 export const getSelectedElement = (state: CommonStoreState) => state.getSelectedElement;
 
+export const selectedSideIndex = (state: CommonStoreState) => state.selectedSideIndex;
+
 export const getAllWallsIdOnFoundation = (state: CommonStoreState) => state.getAllWallsIdOnFoundation;
 
 export const setElementPosition = (state: CommonStoreState) => state.setElementPosition;

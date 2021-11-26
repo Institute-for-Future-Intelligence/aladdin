@@ -30,10 +30,10 @@ const CuboidColorSelection = ({
   const addUndoable = useStore(Selector.addUndoable);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
+  const selectedSideIndex = useStore(Selector.selectedSideIndex);
 
   const cuboid = getSelectedElement() as CuboidModel;
   const [selectedColor, setSelectedColor] = useState<string>(cuboid?.color ?? 'gray');
-  const [sideIndex, setSideIndex] = useState<number>(0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -79,22 +79,22 @@ const CuboidColorSelection = ({
         updateCuboidColorForAll(value);
         break;
       case Scope.OnlyThisSide:
-        if (cuboid) {
-          const oldColor = cuboid.faceColors ? cuboid.faceColors[sideIndex] : cuboid.color;
+        if (cuboid && selectedSideIndex >= 0) {
+          const oldColor = cuboid.faceColors ? cuboid.faceColors[selectedSideIndex] : cuboid.color;
           const undoableChange = {
             name: 'Set Color for Selected Side of Cuboid',
             timestamp: Date.now(),
             oldValue: oldColor,
             newValue: value,
             undo: () => {
-              updateCuboidColorBySide(sideIndex, cuboid.id, undoableChange.oldValue as string);
+              updateCuboidColorBySide(selectedSideIndex, cuboid.id, undoableChange.oldValue as string);
             },
             redo: () => {
-              updateCuboidColorBySide(sideIndex, cuboid.id, undoableChange.newValue as string);
+              updateCuboidColorBySide(selectedSideIndex, cuboid.id, undoableChange.newValue as string);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateCuboidColorBySide(sideIndex, cuboid.id, value);
+          updateCuboidColorBySide(selectedSideIndex, cuboid.id, value);
         }
         break;
       default:

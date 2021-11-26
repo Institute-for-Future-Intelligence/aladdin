@@ -538,6 +538,17 @@ const Cuboid = ({
       const face = e.intersections[0].face;
       if (face) {
         state.pasteNormal = face.normal.clone();
+        if (Util.isSame(face.normal, UNIT_VECTOR_POS_X)) {
+          state.selectedSideIndex = 0;
+        } else if (Util.isSame(face.normal, UNIT_VECTOR_NEG_X)) {
+          state.selectedSideIndex = 1;
+        } else if (Util.isSame(face.normal, UNIT_VECTOR_POS_Y)) {
+          state.selectedSideIndex = 2;
+        } else if (Util.isSame(face.normal, UNIT_VECTOR_NEG_Y)) {
+          state.selectedSideIndex = 3;
+        } else if (Util.isSame(face.normal, UNIT_VECTOR_POS_Z)) {
+          state.selectedSideIndex = 4;
+        }
       }
       state.clickObjectType = ObjectType.Cuboid;
       if (e.intersections.length > 0) {
@@ -573,8 +584,6 @@ const Cuboid = ({
               <meshStandardMaterial
                 attachArray="material"
                 color={cuboidModel.faceColors ? cuboidModel.faceColors[index] : color}
-                transparent={index === 0}
-                opacity={0.5}
               />
             );
           })
