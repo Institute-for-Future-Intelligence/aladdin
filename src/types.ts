@@ -130,6 +130,7 @@ export enum Scope {
   AllObjectsOfThisTypeAboveFoundation = 3,
   AllObjectsOfThisType = 4,
   AllConnectedObjects = 5,
+  OnlyThisSide = 6,
 }
 
 export enum Orientation {

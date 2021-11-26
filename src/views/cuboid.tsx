@@ -567,7 +567,20 @@ const Cuboid = ({
         onPointerOver={handlePointerOver}
         onPointerOut={(e) => setHovered(false)}
       >
-        <meshStandardMaterial attach="material" color={color} />
+        {cuboidModel.faceColors ? (
+          cuboidModel.faceColors.map((e, index) => {
+            return (
+              <meshStandardMaterial
+                attachArray="material"
+                color={cuboidModel.faceColors ? cuboidModel.faceColors[index] : color}
+                transparent={index === 0}
+                opacity={0.5}
+              />
+            );
+          })
+        ) : (
+          <meshStandardMaterial attach="material" color={color} />
+        )}
       </Box>
 
       {showGrid && (

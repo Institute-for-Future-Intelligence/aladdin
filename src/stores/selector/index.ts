@@ -128,6 +128,12 @@ export const cuboidActionScope = (state: CommonStoreState) => state.cuboidAction
 
 export const setCuboidActionScope = (state: CommonStoreState) => state.setCuboidActionScope;
 
+export const updateCuboidColorBySide = (state: CommonStoreState) => state.updateCuboidColorBySide;
+
+export const updateCuboidColorById = (state: CommonStoreState) => state.updateCuboidColorById;
+
+export const updateCuboidColorForAll = (state: CommonStoreState) => state.updateCuboidColorForAll;
+
 export const solarPanelActionScope = (state: CommonStoreState) => state.solarPanelActionScope;
 
 export const setSolarPanelActionScope = (state: CommonStoreState) => state.setSolarPanelActionScope;

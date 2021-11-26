@@ -48,6 +48,7 @@ import UndoManager from 'undo-manager';
 import { TreeModel } from '../models/TreeModel';
 import { HumanModel } from '../models/HumanModel';
 import { FoundationModel } from '../models/FoundationModel';
+import { CuboidModel } from '../models/CuboidModel';
 
 enableMapSet();
 
@@ -140,6 +141,9 @@ export interface CommonStoreState {
   // for cuboids
   cuboidActionScope: Scope;
   setCuboidActionScope: (scope: Scope) => void;
+  updateCuboidColorBySide: (side: number, id: string, color: string) => void;
+  updateCuboidColorById: (id: string, color: string) => void;
+  updateCuboidColorForAll: (color: string) => void;
 
   // for solar panels
   solarPanelActionScope: Scope;
@@ -796,6 +800,46 @@ export const useStore = create<CommonStoreState>(
           setCuboidActionScope(scope: Scope) {
             immerSet((state: CommonStoreState) => {
               state.cuboidActionScope = scope;
+            });
+          },
+          updateCuboidColorBySide(side: number, id, color) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Cuboid && e.id === id) {
+                  const cuboid = e as CuboidModel;
+                  if (!cuboid.faceColors) {
+                    cuboid.faceColors = new Array<string>(6);
+                    cuboid.faceColors.fill(cuboid.color ?? color);
+                  }
+                  cuboid.faceColors[side] = color;
+                  break;
+                }
+              }
+            });
+          },
+          updateCuboidColorById(id, color) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Cuboid && e.id === id) {
+                  e.color = color;
+                  const cuboid = e as CuboidModel;
+                  if (!cuboid.faceColors) cuboid.faceColors = new Array<string>(6);
+                  cuboid.faceColors.fill(color);
+                  break;
+                }
+              }
+            });
+          },
+          updateCuboidColorForAll(color) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Cuboid) {
+                  e.color = color;
+                  const cuboid = e as CuboidModel;
+                  if (!cuboid.faceColors) cuboid.faceColors = new Array<string>(6);
+                  cuboid.faceColors.fill(color);
+                }
+              }
             });
           },
 

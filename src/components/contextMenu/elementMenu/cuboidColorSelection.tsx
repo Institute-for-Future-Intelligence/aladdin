@@ -23,8 +23,9 @@ const CuboidColorSelection = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateElementColorById = useStore(Selector.updateElementColorById);
-  const updateElementColorForAll = useStore(Selector.updateElementColorForAll);
+  const updateCuboidColorBySide = useStore(Selector.updateCuboidColorBySide);
+  const updateCuboidColorById = useStore(Selector.updateCuboidColorById);
+  const updateCuboidColorForAll = useStore(Selector.updateCuboidColorForAll);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
@@ -32,6 +33,7 @@ const CuboidColorSelection = ({
 
   const cuboid = getSelectedElement() as CuboidModel;
   const [selectedColor, setSelectedColor] = useState<string>(cuboid?.color ?? 'gray');
+  const [sideIndex, setSideIndex] = useState<number>(0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -66,33 +68,52 @@ const CuboidColorSelection = ({
           newValue: value,
           undo: () => {
             for (const [id, color] of undoableChangeAll.oldValues.entries()) {
-              updateElementColorById(id, color as string);
+              updateCuboidColorById(id, color as string);
             }
           },
           redo: () => {
-            updateElementColorForAll(ObjectType.Cuboid, undoableChangeAll.newValue as string);
+            updateCuboidColorForAll(undoableChangeAll.newValue as string);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateElementColorForAll(ObjectType.Cuboid, value);
+        updateCuboidColorForAll(value);
+        break;
+      case Scope.OnlyThisSide:
+        if (cuboid) {
+          const oldColor = cuboid.faceColors ? cuboid.faceColors[sideIndex] : cuboid.color;
+          const undoableChange = {
+            name: 'Set Color for Selected Side of Cuboid',
+            timestamp: Date.now(),
+            oldValue: oldColor,
+            newValue: value,
+            undo: () => {
+              updateCuboidColorBySide(sideIndex, cuboid.id, undoableChange.oldValue as string);
+            },
+            redo: () => {
+              updateCuboidColorBySide(sideIndex, cuboid.id, undoableChange.newValue as string);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateCuboidColorBySide(sideIndex, cuboid.id, value);
+        }
         break;
       default:
         if (cuboid) {
           const oldColor = cuboid.color;
           const undoableChange = {
-            name: 'Set Color of Selected Cuboid',
+            name: 'Set Color for All Sides of Selected Cuboid',
             timestamp: Date.now(),
             oldValue: oldColor,
             newValue: value,
             undo: () => {
-              updateElementColorById(cuboid.id, undoableChange.oldValue as string);
+              updateCuboidColorById(cuboid.id, undoableChange.oldValue as string);
             },
             redo: () => {
-              updateElementColorById(cuboid.id, undoableChange.newValue as string);
+              updateCuboidColorById(cuboid.id, undoableChange.newValue as string);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateElementColorById(cuboid.id, value);
+          updateCuboidColorById(cuboid.id, value);
         }
     }
     setUpdateFlag(!updateFlag);
@@ -186,8 +207,9 @@ const CuboidColorSelection = ({
           >
             <Radio.Group onChange={onScopeChange} value={cuboidActionScope}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.OnlyThisCuboid', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('cuboidMenu.AllCuboids', lang)}</Radio>
+                <Radio value={Scope.OnlyThisSide}>{i18n.t('cuboidMenu.OnlyThisSide', lang)}</Radio>
+                <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.AllSidesOfThisCuboid', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('cuboidMenu.AllSidesOfAllCuboids', lang)}</Radio>
               </Space>
             </Radio.Group>
           </Col>

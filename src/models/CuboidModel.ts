@@ -4,4 +4,6 @@
 
 import { ElementModel } from './ElementModel';
 
-export interface CuboidModel extends ElementModel {}
+export interface CuboidModel extends ElementModel {
+  faceColors?: string[]; // if defined, these colors supercede the color attribute
+}

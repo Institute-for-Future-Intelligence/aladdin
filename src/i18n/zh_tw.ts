@@ -215,6 +215,9 @@ export const i18n_zh_tw = {
       DoYouReallyWantToRemoveAllSensorsOnCuboid: '你確定刪除此長方體表面上所有的傳感器嗎',
       OnlyThisCuboid: '只這個長方體',
       AllCuboids: '所有的長方體',
+      OnlyThisSide: '只這個表面',
+      AllSidesOfThisCuboid: '這個長方體所有的表面',
+      AllSidesOfAllCuboids: '所有的長方體所有的表面',
     },
 
     treeMenu: {

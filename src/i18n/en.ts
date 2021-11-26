@@ -215,7 +215,10 @@ export const i18n_en = {
       Sensors: 'Sensors',
       DoYouReallyWantToRemoveAllSensorsOnCuboid: 'Do you really want to remove all the sensors on this cuboid',
       OnlyThisCuboid: 'Only This Cuboid',
-      AllCuboids: 'All Cuboids',
+      AllCuboids: 'Only This Cuboid',
+      OnlyThisSide: 'Only This Side',
+      AllSidesOfThisCuboid: 'All Sides of This Cuboid',
+      AllSidesOfAllCuboids: 'All Sides of All Cuboids',
     },
 
     treeMenu: {
