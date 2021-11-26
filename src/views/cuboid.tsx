@@ -2,6 +2,10 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import Facade_Texture_00 from '../resources/building_facade_00.png';
+import Facade_Texture_01 from '../resources/building_facade_01.png';
+import Facade_Texture_02 from '../resources/building_facade_02.png';
+
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Sphere } from '@react-three/drei';
 import { Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
@@ -43,8 +47,6 @@ import { UndoableAdd } from '../undo/UndoableAdd';
 import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableChange } from '../undo/UndoableChange';
-import Facade_Texture_00 from '../resources/building_facade_00.png';
-import Facade_Texture_01 from '../resources/building_facade_01.png';
 
 const Cuboid = ({
   id,
@@ -158,14 +160,20 @@ const Cuboid = ({
     };
   }, []);
 
-  const textureLoader = useMemo(() => {
-    let img = Facade_Texture_00;
-    if (textureTypes) {
-      if (textureTypes[0] === CuboidTexture.Facade01) {
-        img = Facade_Texture_01;
-      }
+  const fetchTextureImage = (textureType: CuboidTexture) => {
+    switch (textureType) {
+      case CuboidTexture.Facade01:
+        return Facade_Texture_01;
+      case CuboidTexture.Facade02:
+        return Facade_Texture_02;
+      default:
+        return Facade_Texture_00;
     }
-    return new TextureLoader().load(img, (t) => {
+  };
+
+  const textureLoaderEast = useMemo(() => {
+    console.log(textureTypes, 'East');
+    return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[0]) : Facade_Texture_00, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
       let offsetX = 0;
       let offsetY = 0;
@@ -173,10 +181,70 @@ const Cuboid = ({
       let repeatY = lz / 23;
       t.offset.set(offsetX, offsetY);
       t.repeat.set(repeatX, repeatY);
-      setTexture(t);
+      setTextureEast(t);
     });
-  }, [textureTypes, lx, ly, lz]);
-  const [texture, setTexture] = useState(textureLoader);
+  }, [textureTypes[0], lx, ly, lz]);
+  const [textureEast, setTextureEast] = useState(textureLoaderEast);
+
+  const textureLoaderWest = useMemo(() => {
+    console.log(textureTypes, 'west');
+    return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[1]) : Facade_Texture_00, (t) => {
+      t.wrapS = t.wrapT = RepeatWrapping;
+      let offsetX = 0;
+      let offsetY = 0;
+      let repeatX = lx / 40;
+      let repeatY = lz / 23;
+      t.offset.set(offsetX, offsetY);
+      t.repeat.set(repeatX, repeatY);
+      setTextureWest(t);
+    });
+  }, [textureTypes[1], lx, ly, lz]);
+  const [textureWest, setTextureWest] = useState(textureLoaderWest);
+
+  const textureLoaderNorth = useMemo(() => {
+    console.log(textureTypes, 'north');
+    return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[2]) : Facade_Texture_00, (t) => {
+      t.wrapS = t.wrapT = RepeatWrapping;
+      let offsetX = 0;
+      let offsetY = 0;
+      let repeatX = lx / 40;
+      let repeatY = lz / 23;
+      t.offset.set(offsetX, offsetY);
+      t.repeat.set(repeatX, repeatY);
+      setTextureNorth(t);
+    });
+  }, [textureTypes[2], lx, ly, lz]);
+  const [textureNorth, setTextureNorth] = useState(textureLoaderNorth);
+
+  const textureLoaderSouth = useMemo(() => {
+    console.log(textureTypes, 'south');
+    return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[3]) : Facade_Texture_00, (t) => {
+      t.wrapS = t.wrapT = RepeatWrapping;
+      let offsetX = 0;
+      let offsetY = 0;
+      let repeatX = lx / 40;
+      let repeatY = lz / 23;
+      t.offset.set(offsetX, offsetY);
+      t.repeat.set(repeatX, repeatY);
+      setTextureSouth(t);
+    });
+  }, [textureTypes[3], lx, ly, lz]);
+  const [textureSouth, setTextureSouth] = useState(textureLoaderSouth);
+
+  const textureLoaderTop = useMemo(() => {
+    console.log(textureTypes, 'top');
+    return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[4]) : Facade_Texture_00, (t) => {
+      t.wrapS = t.wrapT = RepeatWrapping;
+      let offsetX = 0;
+      let offsetY = 0;
+      let repeatX = lx / 40;
+      let repeatY = lz / 23;
+      t.offset.set(offsetX, offsetY);
+      t.repeat.set(repeatX, repeatY);
+      setTextureTop(t);
+    });
+  }, [textureTypes[4], lx, ly]);
+  const [textureTop, setTextureTop] = useState(textureLoaderTop);
 
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
@@ -618,15 +686,16 @@ const Cuboid = ({
       >
         {cuboidModel.faceColors ? (
           cuboidModel.faceColors.map((e, index) => {
+            const textures = [textureEast, textureWest, textureNorth, textureSouth, textureTop, null];
             if (textureTypes && textureTypes[index] !== CuboidTexture.NoTexture) {
-              return <meshStandardMaterial key={index} attachArray="material" color={'white'} map={texture} />;
+              return <meshStandardMaterial key={index} attachArray="material" color={'white'} map={textures[index]} />;
             } else {
               return (
                 <meshStandardMaterial
                   key={index}
                   attachArray="material"
                   color={cuboidModel.faceColors ? cuboidModel.faceColors[index] : color}
-                  map={texture}
+                  map={textures[index]}
                 />
               );
             }

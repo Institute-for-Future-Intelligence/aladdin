@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import { HumanName, ObjectType, Orientation, TrackerType, TreeType, WallTexture } from '../types';
+import { CuboidTexture, HumanName, ObjectType, Orientation, TrackerType, TreeType, WallTexture } from '../types';
 import short from 'short-uuid';
 import { Vector3 } from 'three';
 import { ElementModel } from './ElementModel';
@@ -59,6 +59,15 @@ export class ElementModelFactory {
       ly: 2,
       lz: 4,
       color: 'gray',
+      faceColors: ['gray', 'gray', 'gray', 'gray', 'gray', 'gray'],
+      textureTypes: [
+        CuboidTexture.NoTexture,
+        CuboidTexture.NoTexture,
+        CuboidTexture.NoTexture,
+        CuboidTexture.NoTexture,
+        CuboidTexture.NoTexture,
+        CuboidTexture.NoTexture,
+      ],
       normal: [0, 0, 1],
       rotation: [0, 0, 0],
       parentId: GROUND_ID,

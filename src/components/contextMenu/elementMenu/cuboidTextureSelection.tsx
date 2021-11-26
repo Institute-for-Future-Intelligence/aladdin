@@ -3,6 +3,7 @@
  */
 
 import CuboidTexture01Icon from '../../../resources/building_facade_01_menu.png';
+import CuboidTexture02Icon from '../../../resources/building_facade_02_menu.png';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
@@ -93,6 +94,7 @@ const CuboidTextureSelection = ({
         updateCuboidTextureForAll(value);
         break;
       case Scope.OnlyThisSide:
+        console.log(cuboid);
         if (cuboid && selectedSideIndex >= 0) {
           const oldTexture = cuboid.textureTypes ? cuboid.textureTypes[selectedSideIndex] : CuboidTexture.NoTexture;
           const undoableChange = {
@@ -227,6 +229,7 @@ const CuboidTextureSelection = ({
                 </div>
                 {i18n.t('shared.NoTexture', lang)}
               </Option>
+
               <Option key={CuboidTexture.Facade01} value={CuboidTexture.Facade01}>
                 <img
                   alt={CuboidTexture.Facade01}
@@ -236,6 +239,17 @@ const CuboidTextureSelection = ({
                   style={{ paddingRight: '8px' }}
                 />{' '}
                 {i18n.t('cuboidMenu.Texture01', lang)}
+              </Option>
+
+              <Option key={CuboidTexture.Facade02} value={CuboidTexture.Facade02}>
+                <img
+                  alt={CuboidTexture.Facade02}
+                  src={CuboidTexture02Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('cuboidMenu.Texture02', lang)}
               </Option>
             </Select>
           </Col>

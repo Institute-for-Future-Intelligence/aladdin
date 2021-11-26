@@ -869,6 +869,7 @@ export const useStore = create<CommonStoreState>(
                   const cuboid = e as CuboidModel;
                   if (!cuboid.textureTypes) cuboid.textureTypes = new Array<CuboidTexture>(6);
                   cuboid.textureTypes.fill(texture);
+                  cuboid.textureTypes[5] = CuboidTexture.NoTexture;
                   break;
                 }
               }
@@ -881,6 +882,7 @@ export const useStore = create<CommonStoreState>(
                   const cuboid = e as CuboidModel;
                   if (!cuboid.textureTypes) cuboid.textureTypes = new Array<CuboidTexture>(6);
                   cuboid.textureTypes.fill(texture);
+                  cuboid.textureTypes[5] = CuboidTexture.NoTexture;
                 }
               }
             });

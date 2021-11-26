@@ -209,6 +209,15 @@ export const i18n_zh_tw = {
 
     cuboidMenu: {
       Texture01: '一号材質',
+      Texture02: '二号材質',
+      Texture03: '三号材質',
+      Texture04: '四号材質',
+      Texture05: '五号材質',
+      Texture06: '六号材質',
+      Texture07: '七号材質',
+      Texture08: '八号材質',
+      Texture09: '九号材質',
+      Texture10: '十号材質',
       RemoveAllSolarPanels: '刪除此長方體表面上所有的光伏板',
       RemoveAllSensors: '刪除此長方體表面上所有的傳感器',
       Racks: '支架',

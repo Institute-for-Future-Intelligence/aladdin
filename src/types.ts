@@ -201,6 +201,14 @@ export enum FoundationTexture {
 export enum CuboidTexture {
   Facade01 = 'Facade #1',
   Facade02 = 'Facade #2',
+  Facade03 = 'Facade #3',
+  Facade04 = 'Facade #4',
+  Facade05 = 'Facade #5',
+  Facade06 = 'Facade #6',
+  Facade07 = 'Facade #7',
+  Facade08 = 'Facade #8',
+  Facade09 = 'Facade #9',
+  Facade10 = 'Facade #10',
   NoTexture = 'No Facade Texture',
 }
 
