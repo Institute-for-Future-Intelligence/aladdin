@@ -2,14 +2,16 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import Wall_01_Menu_Img from '../../../resources/wall_01_menu.png';
-import Wall_02_Menu_Img from '../../../resources/wall_02_menu.png';
-import Wall_03_Menu_Img from '../../../resources/wall_03_menu.png';
-import Wall_04_Menu_Img from '../../../resources/wall_04_menu.png';
-import Wall_05_Menu_Img from '../../../resources/wall_05_menu.png';
-import Wall_06_Menu_Img from '../../../resources/wall_06_menu.png';
-import Wall_07_Menu_Img from '../../../resources/wall_07_menu.png';
-import Wall_08_Menu_Img from '../../../resources/wall_08_menu.png';
+import WallTexture01Icon from '../../../resources/wall_01_menu.png';
+import WallTexture02Icon from '../../../resources/wall_02_menu.png';
+import WallTexture03Icon from '../../../resources/wall_03_menu.png';
+import WallTexture04Icon from '../../../resources/wall_04_menu.png';
+import WallTexture05Icon from '../../../resources/wall_05_menu.png';
+import WallTexture06Icon from '../../../resources/wall_06_menu.png';
+import WallTexture07Icon from '../../../resources/wall_07_menu.png';
+import WallTexture08Icon from '../../../resources/wall_08_menu.png';
+import WallTexture09Icon from '../../../resources/wall_09_menu.png';
+import WallTexture10Icon from '../../../resources/wall_10_menu.png';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
@@ -231,92 +233,114 @@ const WallTextureSelection = ({
                 {i18n.t('shared.NoTexture', lang)}
               </Option>
 
-              <Option key={WallTexture.Texture_1} value={WallTexture.Texture_1}>
+              <Option key={WallTexture.Texture01} value={WallTexture.Texture01}>
                 <img
-                  alt={WallTexture.Texture_1}
-                  src={Wall_01_Menu_Img}
+                  alt={WallTexture.Texture01}
+                  src={WallTexture01Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.Texture1', lang)}
+                {i18n.t('wallMenu.Texture01', lang)}
               </Option>
 
-              <Option key={WallTexture.Texture_2} value={WallTexture.Texture_2}>
+              <Option key={WallTexture.Texture02} value={WallTexture.Texture02}>
                 <img
-                  alt={WallTexture.Texture_2}
-                  src={Wall_02_Menu_Img}
+                  alt={WallTexture.Texture02}
+                  src={WallTexture02Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.Texture2', lang)}
+                {i18n.t('wallMenu.Texture02', lang)}
               </Option>
 
-              <Option key={WallTexture.Texture_3} value={WallTexture.Texture_3}>
+              <Option key={WallTexture.Texture03} value={WallTexture.Texture03}>
                 <img
-                  alt={WallTexture.Texture_3}
-                  src={Wall_03_Menu_Img}
+                  alt={WallTexture.Texture03}
+                  src={WallTexture03Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.Texture3', lang)}
+                {i18n.t('wallMenu.Texture03', lang)}
               </Option>
 
-              <Option key={WallTexture.Texture_4} value={WallTexture.Texture_4}>
+              <Option key={WallTexture.Texture04} value={WallTexture.Texture04}>
                 <img
-                  alt={WallTexture.Texture_4}
-                  src={Wall_04_Menu_Img}
+                  alt={WallTexture.Texture04}
+                  src={WallTexture04Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.Texture4', lang)}
+                {i18n.t('wallMenu.Texture04', lang)}
               </Option>
 
-              <Option key={WallTexture.Texture_5} value={WallTexture.Texture_5}>
+              <Option key={WallTexture.Texture05} value={WallTexture.Texture05}>
                 <img
-                  alt={WallTexture.Texture_5}
-                  src={Wall_05_Menu_Img}
+                  alt={WallTexture.Texture05}
+                  src={WallTexture05Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.Texture5', lang)}
+                {i18n.t('wallMenu.Texture05', lang)}
               </Option>
 
-              <Option key={WallTexture.Texture_6} value={WallTexture.Texture_6}>
+              <Option key={WallTexture.Texture06} value={WallTexture.Texture06}>
                 <img
-                  alt={WallTexture.Texture_6}
-                  src={Wall_06_Menu_Img}
+                  alt={WallTexture.Texture06}
+                  src={WallTexture06Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.Texture6', lang)}
+                {i18n.t('wallMenu.Texture06', lang)}
               </Option>
 
-              <Option key={WallTexture.Texture_7} value={WallTexture.Texture_7}>
+              <Option key={WallTexture.Texture07} value={WallTexture.Texture07}>
                 <img
-                  alt={WallTexture.Texture_7}
-                  src={Wall_07_Menu_Img}
+                  alt={WallTexture.Texture07}
+                  src={WallTexture07Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.Texture7', lang)}
+                {i18n.t('wallMenu.Texture07', lang)}
               </Option>
 
-              <Option key={WallTexture.Texture_8} value={WallTexture.Texture_8}>
+              <Option key={WallTexture.Texture08} value={WallTexture.Texture08}>
                 <img
-                  alt={WallTexture.Texture_8}
-                  src={Wall_08_Menu_Img}
+                  alt={WallTexture.Texture08}
+                  src={WallTexture08Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.Texture8', lang)}
+                {i18n.t('wallMenu.Texture08', lang)}
+              </Option>
+
+              <Option key={WallTexture.Texture09} value={WallTexture.Texture09}>
+                <img
+                  alt={WallTexture.Texture09}
+                  src={WallTexture09Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('wallMenu.Texture09', lang)}
+              </Option>
+
+              <Option key={WallTexture.Texture10} value={WallTexture.Texture10}>
+                <img
+                  alt={WallTexture.Texture10}
+                  src={WallTexture10Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('wallMenu.Texture10', lang)}
               </Option>
             </Select>
           </Col>

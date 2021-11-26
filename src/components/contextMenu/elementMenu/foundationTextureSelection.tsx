@@ -192,9 +192,9 @@ const FoundationTextureSelection = ({
                 </div>
                 {i18n.t('shared.NoTexture', lang)}
               </Option>
-              <Option key={FoundationTexture.Texture_1} value={FoundationTexture.Texture_1}>
+              <Option key={FoundationTexture.Texture01} value={FoundationTexture.Texture01}>
                 <img
-                  alt={FoundationTexture.Texture_1}
+                  alt={FoundationTexture.Texture01}
                   src={Foundation_Texture_01_Menu}
                   height={20}
                   width={40}
@@ -202,9 +202,9 @@ const FoundationTextureSelection = ({
                 />{' '}
                 {i18n.t('foundationMenu.Texture1', lang)}
               </Option>
-              <Option key={FoundationTexture.Texture_2} value={FoundationTexture.Texture_2}>
+              <Option key={FoundationTexture.Texture02} value={FoundationTexture.Texture02}>
                 <img
-                  alt={FoundationTexture.Texture_2}
+                  alt={FoundationTexture.Texture02}
                   src={Foundation_Texture_02_Menu}
                   height={20}
                   width={40}

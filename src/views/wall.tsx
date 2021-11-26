@@ -2,15 +2,17 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import Wall_00_Img from '../resources/wall_00.png';
-import Wall_01_Img from '../resources/wall_01.png';
-import Wall_02_Img from '../resources/wall_02.png';
-import Wall_03_Img from '../resources/wall_03.png';
-import Wall_04_Img from '../resources/wall_04.png';
-import Wall_05_Img from '../resources/wall_05.png';
-import Wall_06_Img from '../resources/wall_06.png';
-import Wall_07_Img from '../resources/wall_07.png';
-import Wall_08_Img from '../resources/wall_08.png';
+import WallTexture00 from '../resources/wall_00.png';
+import WallTexture01 from '../resources/wall_01.png';
+import WallTexture02 from '../resources/wall_02.png';
+import WallTexture03 from '../resources/wall_03.png';
+import WallTexture04 from '../resources/wall_04.png';
+import WallTexture05 from '../resources/wall_05.png';
+import WallTexture06 from '../resources/wall_06.png';
+import WallTexture07 from '../resources/wall_07.png';
+import WallTexture08 from '../resources/wall_08.png';
+import WallTexture09 from '../resources/wall_09.png';
+import WallTexture10 from '../resources/wall_10.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -93,40 +95,58 @@ const Wall = ({
     let textureImg;
     switch (textureType) {
       case WallTexture.NoTexture:
-        textureImg = Wall_00_Img;
+        textureImg = WallTexture00;
         break;
-      case WallTexture.Texture_1:
-        textureImg = Wall_01_Img;
+      case WallTexture.Texture01:
+        textureImg = WallTexture01;
         break;
-      case WallTexture.Texture_2:
-        textureImg = Wall_02_Img;
+      case WallTexture.Texture02:
+        textureImg = WallTexture02;
         break;
-      case WallTexture.Texture_3:
-        textureImg = Wall_03_Img;
+      case WallTexture.Texture03:
+        textureImg = WallTexture03;
         break;
-      case WallTexture.Texture_4:
-        textureImg = Wall_04_Img;
+      case WallTexture.Texture04:
+        textureImg = WallTexture04;
         break;
-      case WallTexture.Texture_5:
-        textureImg = Wall_05_Img;
+      case WallTexture.Texture05:
+        textureImg = WallTexture05;
         break;
-      case WallTexture.Texture_6:
-        textureImg = Wall_06_Img;
+      case WallTexture.Texture06:
+        textureImg = WallTexture06;
         break;
-      case WallTexture.Texture_7:
-        textureImg = Wall_07_Img;
+      case WallTexture.Texture07:
+        textureImg = WallTexture07;
         break;
-      case WallTexture.Texture_8:
-        textureImg = Wall_08_Img;
+      case WallTexture.Texture08:
+        textureImg = WallTexture08;
+        break;
+      case WallTexture.Texture09:
+        textureImg = WallTexture09;
+        break;
+      case WallTexture.Texture10:
+        textureImg = WallTexture10;
         break;
       default:
-        textureImg = Wall_00_Img;
+        textureImg = WallTexture00;
     }
 
     return new TextureLoader().load(textureImg, (texture) => {
       texture.wrapS = texture.wrapT = RepeatWrapping;
       texture.offset.set(0, 0);
-      texture.repeat.set(0.6, 0.6);
+      let repeatX = 0.6;
+      let repeatY = 0.6;
+      switch (textureType) {
+        case WallTexture.Texture03:
+          repeatX = 2;
+          repeatY = 1;
+          break;
+        case WallTexture.Texture06:
+          repeatX = 1;
+          repeatY = 1;
+          break;
+      }
+      texture.repeat.set(repeatX, repeatY);
       setTexture(texture);
     });
   }, [textureType]);

@@ -193,10 +193,10 @@ const Foundation = ({
   const textureLoader = useMemo(() => {
     let textureImg;
     switch (textureType) {
-      case FoundationTexture.Texture_1:
+      case FoundationTexture.Texture01:
         textureImg = Foundation_Texture_01;
         break;
-      case FoundationTexture.Texture_2:
+      case FoundationTexture.Texture02:
         textureImg = Foundation_Texture_02;
         break;
       default:
@@ -207,10 +207,10 @@ const Foundation = ({
       t.offset.set(0, 0);
       let repeat = 1;
       switch (textureType) {
-        case FoundationTexture.Texture_1:
+        case FoundationTexture.Texture01:
           repeat = 10;
           break;
-        case FoundationTexture.Texture_2:
+        case FoundationTexture.Texture02:
           repeat = 8;
           break;
       }

@@ -4,26 +4,34 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Sphere } from '@react-three/drei';
-import { Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
+import { Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { CuboidModel } from '../models/CuboidModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType } from '../types';
 import {
-  RESIZE_HANDLE_SIZE,
-  MOVE_HANDLE_OFFSET,
-  MOVE_HANDLE_RADIUS,
+  ActionType,
+  CuboidTexture,
+  MoveHandleType,
+  ObjectType,
+  Orientation,
+  ResizeHandleType,
+  RotateHandleType,
+} from '../types';
+import {
   HIGHLIGHT_HANDLE_COLOR,
-  RESIZE_HANDLE_COLOR,
   MOVE_HANDLE_COLOR_1,
   MOVE_HANDLE_COLOR_2,
   MOVE_HANDLE_COLOR_3,
-  UNIT_VECTOR_POS_X,
-  UNIT_VECTOR_POS_Z,
+  MOVE_HANDLE_OFFSET,
+  MOVE_HANDLE_RADIUS,
+  RESIZE_HANDLE_COLOR,
+  RESIZE_HANDLE_SIZE,
   UNIT_VECTOR_NEG_X,
   UNIT_VECTOR_NEG_Y,
+  UNIT_VECTOR_POS_X,
   UNIT_VECTOR_POS_Y,
+  UNIT_VECTOR_POS_Z,
 } from '../constants';
 import { Util } from '../Util';
 import { ElementModel } from '../models/ElementModel';
@@ -35,6 +43,8 @@ import { UndoableAdd } from '../undo/UndoableAdd';
 import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableChange } from '../undo/UndoableChange';
+import Facade_Texture_00 from '../resources/building_facade_00.png';
+import Facade_Texture_01 from '../resources/building_facade_01.png';
 
 const Cuboid = ({
   id,
@@ -49,6 +59,7 @@ const Cuboid = ({
   lineWidth = 0.1,
   selected = false,
   locked = false,
+  textureType = CuboidTexture.Facade01,
 }: CuboidModel) => {
   const setCommonStore = useStore(Selector.set);
   const moveHandleType = useStore(Selector.moveHandleType);
@@ -139,6 +150,34 @@ const Cuboid = ({
       window.removeEventListener('poinerup', handlePointerUp);
     };
   }, []);
+
+  const textureLoader = useMemo(() => {
+    let textureImg;
+    switch (textureType) {
+      case CuboidTexture.Facade01:
+        textureImg = Facade_Texture_01;
+        break;
+      default:
+        textureImg = Facade_Texture_00;
+    }
+    return new TextureLoader().load(textureImg, (t) => {
+      t.wrapS = t.wrapT = RepeatWrapping;
+      let repeatX = 1;
+      let repeatY = 1;
+      let offsetX = 0;
+      let offsetY = 0;
+      switch (textureType) {
+        case CuboidTexture.Facade01:
+          repeatX = lx / 40;
+          repeatY = lz / 23;
+          break;
+      }
+      t.offset.set(offsetX, offsetY);
+      t.repeat.set(repeatX, repeatY);
+      setTexture(t);
+    });
+  }, [textureType, lx, lz]);
+  const [texture, setTexture] = useState(textureLoader);
 
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
@@ -580,12 +619,24 @@ const Cuboid = ({
       >
         {cuboidModel.faceColors ? (
           cuboidModel.faceColors.map((e, index) => {
-            return (
-              <meshStandardMaterial
-                attachArray="material"
-                color={cuboidModel.faceColors ? cuboidModel.faceColors[index] : color}
-              />
-            );
+            if (textureType === CuboidTexture.NoTexture) {
+              return (
+                <meshStandardMaterial
+                  key={index}
+                  attachArray="material"
+                  color={cuboidModel.faceColors ? cuboidModel.faceColors[index] : color}
+                  map={texture}
+                />
+              );
+            } else {
+              return <meshStandardMaterial key={index} attachArray="material" color={'white'} map={texture} />;
+            }
+            // return (
+            //   <meshStandardMaterial
+            //     attachArray="material"
+            //     color={cuboidModel.faceColors ? cuboidModel.faceColors[index] : color}
+            //   />
+            // );
           })
         ) : (
           <meshStandardMaterial attach="material" color={color} />

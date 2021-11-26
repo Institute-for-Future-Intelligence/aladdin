@@ -193,20 +193,28 @@ export enum HumanName {
 }
 
 export enum FoundationTexture {
-  Texture_1 = 'Foundation Texture #1',
-  Texture_2 = 'Foundation Texture #2',
+  Texture01 = 'Foundation Texture #1',
+  Texture02 = 'Foundation Texture #2',
   NoTexture = 'No Foundation Texture',
 }
 
+export enum CuboidTexture {
+  Facade01 = 'Facade #1',
+  Facade02 = 'Facade #2',
+  NoTexture = 'No Facade Texture',
+}
+
 export enum WallTexture {
-  Texture_1 = 'Wall Texture #1',
-  Texture_2 = 'Wall Texture #2',
-  Texture_3 = 'Wall Texture #3',
-  Texture_4 = 'Wall Texture #4',
-  Texture_5 = 'Wall Texture #5',
-  Texture_6 = 'Wall Texture #6',
-  Texture_7 = 'Wall Texture #7',
-  Texture_8 = 'Wall Texture #8',
+  Texture01 = 'Wall Texture #1',
+  Texture02 = 'Wall Texture #2',
+  Texture03 = 'Wall Texture #3',
+  Texture04 = 'Wall Texture #4',
+  Texture05 = 'Wall Texture #5',
+  Texture06 = 'Wall Texture #6',
+  Texture07 = 'Wall Texture #7',
+  Texture08 = 'Wall Texture #8',
+  Texture09 = 'Wall Texture #9',
+  Texture10 = 'Wall Texture #10',
   NoTexture = 'No Wall Texture',
 }
 
