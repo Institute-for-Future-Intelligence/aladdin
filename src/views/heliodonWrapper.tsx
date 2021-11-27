@@ -33,7 +33,7 @@ interface HeliodonProps {
 }
 
 const HeliodonWrapper = () => {
-  const heliodon = useStore(Selector.viewState.showHeliodonAfterBondingBox);
+  const heliodon = useStore(Selector.viewState.showHeliodonAfterBoundingBox);
   const heliodonRadius = useStore(Selector.heliodonRadius);
   const worldLatitude = useStore(Selector.world.latitude);
   const dateString = useStore(Selector.world.date);

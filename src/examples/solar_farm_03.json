@@ -410,6 +410,22 @@
         0,
         0
       ],
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
       "parentId": "Ground",
       "id": "1x2m4C7FHzAwDkHxXXdvsn",
       "selected": false

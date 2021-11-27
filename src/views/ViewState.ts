@@ -16,7 +16,7 @@ export interface ViewState {
   shadowEnabled: boolean;
   theme: string;
   heliodon: boolean;
-  showHeliodonAfterBondingBox: boolean;
+  showHeliodonAfterBoundingBox: boolean;
   groundImage: boolean;
   groundColor: string;
 

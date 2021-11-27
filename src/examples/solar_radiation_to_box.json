@@ -93,6 +93,22 @@
         0,
         1
       ],
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
       "ly": 3.646712311386908,
       "cy": 0.10935014088128625,
       "rotation": [

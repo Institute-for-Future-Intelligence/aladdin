@@ -28,7 +28,7 @@ export const cameraZoom = (state: CommonStoreState) => state.viewState.cameraZoo
 
 export const heliodon = (state: CommonStoreState) => state.viewState.heliodon;
 
-export const showHeliodonAfterBondingBox = (state: CommonStoreState) => state.viewState.showHeliodonAfterBondingBox;
+export const showHeliodonAfterBoundingBox = (state: CommonStoreState) => state.viewState.showHeliodonAfterBoundingBox;
 
 export const mapZoom = (state: CommonStoreState) => state.viewState.mapZoom;
 
