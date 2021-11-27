@@ -2,6 +2,14 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import Foundation_Texture_01_Menu from '../../../resources/foundation_01_menu.png';
+import Foundation_Texture_02_Menu from '../../../resources/foundation_02_menu.png';
+import Foundation_Texture_03_Menu from '../../../resources/foundation_03_menu.png';
+import Foundation_Texture_04_Menu from '../../../resources/foundation_04_menu.png';
+import Foundation_Texture_05_Menu from '../../../resources/foundation_05_menu.png';
+import Foundation_Texture_06_Menu from '../../../resources/foundation_06_menu.png';
+import Foundation_Texture_07_Menu from '../../../resources/foundation_07_menu.png';
+
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
@@ -12,8 +20,6 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
-import Foundation_Texture_01_Menu from '../../../resources/foundation_01_menu.png';
-import Foundation_Texture_02_Menu from '../../../resources/foundation_02_menu.png';
 
 const FoundationTextureSelection = ({
   textureDialogVisible,
@@ -192,6 +198,7 @@ const FoundationTextureSelection = ({
                 </div>
                 {i18n.t('shared.NoTexture', lang)}
               </Option>
+
               <Option key={FoundationTexture.Texture01} value={FoundationTexture.Texture01}>
                 <img
                   alt={FoundationTexture.Texture01}
@@ -202,6 +209,7 @@ const FoundationTextureSelection = ({
                 />{' '}
                 {i18n.t('foundationMenu.Texture01', lang)}
               </Option>
+
               <Option key={FoundationTexture.Texture02} value={FoundationTexture.Texture02}>
                 <img
                   alt={FoundationTexture.Texture02}
@@ -211,6 +219,61 @@ const FoundationTextureSelection = ({
                   style={{ paddingRight: '8px' }}
                 />{' '}
                 {i18n.t('foundationMenu.Texture02', lang)}
+              </Option>
+
+              <Option key={FoundationTexture.Texture03} value={FoundationTexture.Texture03}>
+                <img
+                  alt={FoundationTexture.Texture03}
+                  src={Foundation_Texture_03_Menu}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('foundationMenu.Texture03', lang)}
+              </Option>
+
+              <Option key={FoundationTexture.Texture04} value={FoundationTexture.Texture04}>
+                <img
+                  alt={FoundationTexture.Texture04}
+                  src={Foundation_Texture_04_Menu}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('foundationMenu.Texture04', lang)}
+              </Option>
+
+              <Option key={FoundationTexture.Texture05} value={FoundationTexture.Texture05}>
+                <img
+                  alt={FoundationTexture.Texture05}
+                  src={Foundation_Texture_05_Menu}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('foundationMenu.Texture05', lang)}
+              </Option>
+
+              <Option key={FoundationTexture.Texture06} value={FoundationTexture.Texture06}>
+                <img
+                  alt={FoundationTexture.Texture06}
+                  src={Foundation_Texture_06_Menu}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('foundationMenu.Texture06', lang)}
+              </Option>
+
+              <Option key={FoundationTexture.Texture07} value={FoundationTexture.Texture07}>
+                <img
+                  alt={FoundationTexture.Texture07}
+                  src={Foundation_Texture_07_Menu}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('foundationMenu.Texture07', lang)}
               </Option>
             </Select>
           </Col>
