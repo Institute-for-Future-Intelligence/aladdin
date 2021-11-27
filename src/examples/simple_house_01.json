@@ -1,6 +1,6 @@
 {
-  "docid": "bJH1mgJA6tf2e9cmk4tjKV",
-  "timestamp": 1637366974246,
+  "docid": "saitgLgniz2js9XgRPywPE",
+  "timestamp": 1637978276712,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -62,7 +62,8 @@
       ],
       "id": "gKtCDo6vdsdKsNWyrYnEMY",
       "selected": false,
-      "parentId": "Ground"
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #2"
     },
     {
       "type": "Wall",
@@ -429,7 +430,7 @@
       "leftOffset": 0.04999999999999995,
       "rightOffset": 0,
       "parentId": "gKtCDo6vdsdKsNWyrYnEMY",
-      "textureType": "Texture #7"
+      "textureType": "Wall Texture #9"
     },
     {
       "type": "Wall",
@@ -808,7 +809,7 @@
       "rightOffset": 0.04999999999999995,
       "leftOffset": 0,
       "parentId": "gKtCDo6vdsdKsNWyrYnEMY",
-      "textureType": "Texture #7"
+      "textureType": "Wall Texture #9"
     },
     {
       "type": "Wall",
@@ -1187,7 +1188,7 @@
       "leftOffset": 0,
       "rightOffset": 0,
       "parentId": "gKtCDo6vdsdKsNWyrYnEMY",
-      "textureType": "Texture #7"
+      "textureType": "Wall Texture #9"
     },
     {
       "type": "Wall",
@@ -1347,7 +1348,7 @@
       "leftOffset": 0,
       "rightOffset": 0,
       "parentId": "gKtCDo6vdsdKsNWyrYnEMY",
-      "textureType": "Texture #7"
+      "textureType": "Wall Texture #9"
     },
     {
       "type": "Roof",
@@ -1435,35 +1436,11 @@
       "parentId": "Ground"
     },
     {
-      "type": "Tree",
-      "name": "Linden",
-      "cx": 16.972161816871502,
-      "cy": -8.256656024451912,
-      "cz": 6,
-      "lx": 22,
-      "lz": 12,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "id": "m6pgzs71YLiJpPcn2hhaSB",
-      "selected": false,
-      "evergreen": false,
-      "showModel": false,
-      "parentId": "Ground"
-    },
-    {
       "type": "Human",
       "name": "Jose",
-      "cx": 17.671965749348416,
-      "cy": 2.5508598794686463,
-      "cz": 0,
+      "cx": 16.706152667661947,
+      "cy": -0.17235405544282045,
+      "cz": 8.881784197001252e-16,
       "normal": [
         0,
         0,
@@ -1481,9 +1458,9 @@
     {
       "type": "Human",
       "name": "Jena",
-      "cx": 12.290160709120787,
-      "cy": -8.955788175823052,
-      "cz": 0,
+      "cx": 10.504481568007938,
+      "cy": -3.397610181623937,
+      "cz": 0.20000000149011612,
       "normal": [
         0,
         0,
@@ -1578,29 +1555,6 @@
       ],
       "id": "gnCtJpiu4kh4GN1FeL1jB8",
       "parentId": "gKtCDo6vdsdKsNWyrYnEMY"
-    },
-    {
-      "type": "Tree",
-      "name": "Pine",
-      "cx": 0.598537489860675,
-      "cy": 10.525834886809236,
-      "cz": 7.5,
-      "lx": 4,
-      "lz": 15,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "id": "mopayetZxhsFgkpDNCdBzW",
-      "selected": false,
-      "evergreen": true,
-      "parentId": "Ground"
     },
     {
       "type": "Window",
@@ -1701,6 +1655,52 @@
       "parentId": "oKhEE6pqiRVMDi3gyzbuwY",
       "foundationId": "gKtCDo6vdsdKsNWyrYnEMY",
       "id": "4oMgdGwUtSdi8cLpTdv4cP"
+    },
+    {
+      "type": "Tree",
+      "name": "Linden",
+      "cx": 13.059190415598103,
+      "cy": -10.386234844056435,
+      "cz": -4.440892098500626e-16,
+      "lx": 20,
+      "lz": 15,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "8gskUfYWSh2LcdEDkrCejk",
+      "selected": false,
+      "evergreen": false
+    },
+    {
+      "type": "Tree",
+      "name": "Pine",
+      "cx": 3.184480990755045,
+      "cy": 11.32542257649331,
+      "cz": 4.440892098500626e-16,
+      "lx": 5,
+      "lz": 14,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "t3jxLXtB6QQr94umXX5prq",
+      "selected": false,
+      "evergreen": true
     }
   ],
   "view": {
@@ -1734,13 +1734,13 @@
     "yearlyLightSensorPanelX": -905,
     "showHeliodonPanel": false,
     "cameraPosition": {
-      "x": 20.923058974204416,
-      "y": 15.707231603829056,
-      "z": 3.217948586752983
+      "x": 19.632948571660634,
+      "y": 16.620449241176456,
+      "z": 2.958832861159702
     },
     "panCenter": {
-      "x": 4.68638225767228,
-      "y": -5.879072926840836,
+      "x": 4.715597744712173,
+      "y": -5.89927543193535,
       "z": 2.9588328611596983
     },
     "orthographic": false,

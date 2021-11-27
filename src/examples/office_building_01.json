@@ -1,6 +1,6 @@
 {
-  "docid": "ukrscye5v8er2bXBvTNZwC",
-  "timestamp": 1636313078966,
+  "docid": "nEGM2APSWAuycg8YhMvk7V",
+  "timestamp": 1637978918123,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -43,7 +43,7 @@
   },
   "elements": [
     {
-      "cz": 1.4502691440327642e-15,
+      "cz": 0.10000000074506517,
       "id": "2gPWTJVs8iqE6rVTtrnnd8",
       "name": "Jack",
       "normal": [
@@ -51,73 +51,27 @@
         1,
         0
       ],
-      "cy": -31.35396312047363,
+      "cy": -19.528888002511724,
       "type": "Human",
-      "cx": 6.607841476408449,
+      "cx": 13.490029797984572,
       "rotation": [
         0,
         0,
         0
       ],
       "selected": false,
-      "parentId": "Ground"
-    },
-    {
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "lz": 24,
-      "lx": 36,
-      "color": "gray",
-      "cz": 12,
-      "selected": false,
-      "id": "5437SFtFqSx2YBCwkTr9pR",
-      "cy": -11.558489831681165,
-      "ly": 18,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "cx": 14.97174844787697,
-      "type": "Cuboid",
-      "parentId": "Ground"
-    },
-    {
-      "ly": 2,
-      "cz": 2,
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "selected": false,
-      "cx": -4.402898230351792,
-      "cy": -12.168934050865687,
-      "id": "aVvzhfQYWoiEmZmecKaTXb",
-      "color": "gray",
-      "lx": 2,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "type": "Cuboid",
-      "lz": 4,
       "parentId": "Ground"
     },
     {
       "ly": 17.026616933032848,
-      "cy": -28.827610434247095,
+      "cy": -19.859023165912554,
       "cz": 0.05,
       "lz": 0.1,
       "selected": false,
       "lx": 36.16252356452459,
       "type": "Foundation",
       "id": "dqxcN6K9GVQLtZRykzonbS",
-      "cx": 14.986009894498842,
+      "cx": 0.03966683604024013,
       "normal": [
         0,
         0,
@@ -128,53 +82,8 @@
         0,
         0
       ],
-      "parentId": "Ground"
-    },
-    {
-      "selected": false,
-      "cy": -37.45525333890478,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "type": "Tree",
-      "lx": 20,
-      "cz": 5,
-      "id": "7eDNB6acZgaay7ax4skeDW",
-      "evergreen": false,
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "lz": 10,
-      "cx": 27.66042308437673,
-      "name": "Linden",
-      "parentId": "Ground"
-    },
-    {
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "lx": 3,
-      "evergreen": true,
-      "id": "vNTvcNkAEuKbiZwrmFTThR",
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "type": "Tree",
-      "cz": 4,
-      "name": "Pine",
-      "selected": false,
-      "cx": -7.544075470411535,
-      "lz": 8,
-      "cy": -7.7921281267799,
-      "parentId": "Ground"
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #2"
     },
     {
       "normal": [
@@ -188,13 +97,13 @@
         0,
         0
       ],
-      "lx": 3,
-      "cx": -7.489892609774451,
+      "lx": 4,
+      "cx": -21.679262420444417,
       "id": "ibv7qyFAZNTUiSKfRnG81J",
-      "cz": -3.635193663950044e-15,
+      "cz": -7.105427357601002e-15,
       "selected": false,
-      "cy": -16.371456830385007,
-      "lz": 8,
+      "cy": -4.94325953849427,
+      "lz": 10,
       "name": "Pine",
       "parentId": "Ground"
     },
@@ -234,16 +143,16 @@
     },
     {
       "id": "5wtQcSRJfXRx7dRi95EJjx",
-      "cy": -39.306631291677,
+      "cy": -17.66536908075935,
       "type": "Human",
       "rotation": [
         0,
         0,
         0
       ],
-      "cz": -9.595411222094811e-15,
+      "cz": 0.10000000074505806,
       "selected": false,
-      "cx": 21.944426599548834,
+      "cx": 7.100228690010481,
       "normal": [
         0,
         1,
@@ -253,9 +162,9 @@
       "parentId": "Ground"
     },
     {
-      "cx": -5.807305966540342,
+      "cx": -23.71712820078877,
       "evergreen": false,
-      "cz": -1.2770747175057603e-14,
+      "cz": -7.105427357601002e-15,
       "id": "tJeB5NfeXNiu4x7bJzUo9c",
       "selected": false,
       "rotation": [
@@ -272,22 +181,22 @@
       ],
       "type": "Tree",
       "lx": 10,
-      "cy": -27.497868860590664,
+      "cy": -16.21725603874046,
       "parentId": "Ground"
     },
     {
       "type": "Human",
       "name": "Jedi",
       "id": "wizaQCLaDPXxAgvgzpYzE5",
-      "cy": -40.80759075522136,
+      "cy": -26.52645438589241,
       "rotation": [
         0,
         0,
         0
       ],
-      "cx": 10.407694553599299,
+      "cx": -20.391856797710087,
       "selected": false,
-      "cz": -9.061105367185487e-15,
+      "cz": -7.105427357601002e-15,
       "normal": [
         0,
         1,
@@ -323,21 +232,21 @@
         0
       ],
       "id": "tSCfpjZEaf2LdYnKVymp8f",
-      "cx": 3.67995672320556,
-      "cy": -41.407427811971,
+      "cx": -23.913570227955294,
+      "cy": -9.372301870818516,
       "normal": [
         0,
         1,
         0
       ],
-      "cz": -9.194295949470854e-15,
+      "cz": -7.105427357601002e-15,
       "name": "Judd",
       "type": "Human",
       "parentId": "Ground"
     },
     {
       "type": "Human",
-      "cy": -39.707665221329364,
+      "cy": -26.346953604384606,
       "name": "Jeff",
       "normal": [
         0,
@@ -345,8 +254,8 @@
         0
       ],
       "selected": false,
-      "cx": -2.0894497376075947,
-      "cz": -8.816872836565485e-15,
+      "cx": -14.95104385552803,
+      "cz": 0.10000000074506517,
       "rotation": [
         0,
         0,
@@ -357,7 +266,7 @@
     },
     {
       "id": "v8yuSV55idFvdSiztzVfkc",
-      "cz": -7.538368848568199e-15,
+      "cz": 0.10000000074506517,
       "type": "Human",
       "normal": [
         0,
@@ -365,8 +274,8 @@
         0
       ],
       "selected": false,
-      "cy": -30.965815439327145,
-      "cx": 5.810842081723248,
+      "cy": -25.080741421179635,
+      "cx": -1.3149126517891083,
       "rotation": [
         0,
         0,
@@ -374,6 +283,91 @@
       ],
       "name": "Jena",
       "parentId": "Ground"
+    },
+    {
+      "type": "Tree",
+      "name": "Linden",
+      "cx": 30.437792865488664,
+      "cy": -17.386067284775812,
+      "cz": -7.105427357601002e-15,
+      "lx": 23,
+      "lz": 17,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "rWrzivW4afibFuZheu2ZqV",
+      "selected": false,
+      "evergreen": false
+    },
+    {
+      "type": "Tree",
+      "name": "Pine",
+      "cx": -21.097702474739503,
+      "cy": 4.55555290802413,
+      "cz": -7.105427357601002e-15,
+      "lx": 4,
+      "lz": 10,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "rd1CFzdzbUa21QJwgHv8cP",
+      "selected": false,
+      "evergreen": true
+    },
+    {
+      "type": "Cuboid",
+      "cx": -0.09692665761748831,
+      "cy": -0.09694518863336476,
+      "cz": 10.01793918410506,
+      "lx": 36.06261166884342,
+      "ly": 21.672025065737824,
+      "lz": 18.410192174768163,
+      "color": "gray",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "Facade #10",
+        "Facade #10",
+        "Facade #10",
+        "Facade #10",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "aj9AkMLHmiC7fiuGVPs4H7",
+      "selected": false
     }
   ],
   "view": {
@@ -409,18 +403,18 @@
     "groundPanelY": 0,
     "showMapPanel": false,
     "cameraPosition": {
-      "x": -17.668848257510255,
-      "y": -65.45421281350046,
-      "z": 12.832574660125607
+      "x": -39.71505714545702,
+      "y": -57.391200085828345,
+      "z": 13.571386583301912
     },
     "panCenter": {
-      "x": 20.495070580620855,
-      "y": -14.153872732756408,
-      "z": 5.49618729325895
+      "x": 2.1268141574348576,
+      "y": -9.161736732265924,
+      "z": 5.496187293258948
     },
     "orthographic": false,
     "enableRotate": true,
-    "cameraZoom": 15.475618749999999,
+    "cameraZoom": 8.802533373035308,
     "showInstructionPanel": true
   },
   "notes": [
