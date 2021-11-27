@@ -175,70 +175,59 @@ const Cuboid = ({
   const textureLoaderEast = useMemo(() => {
     return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[0]) : Facade_Texture_00, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
-      let offsetX = 0;
-      let offsetY = 0;
-      let repeatX = ly / 40;
-      let repeatY = lz / 23;
-      t.offset.set(offsetX, offsetY);
+      let repeatX = ly / 14;
+      let repeatY = lz / 6.5;
       t.repeat.set(repeatX, repeatY);
       t.rotation = HALF_PI;
+      t.center.x = 1;
+      t.center.y = 0;
       setTextureEast(t);
     });
-  }, [textureTypes[0], lx, ly, lz]);
+  }, [textureTypes[0], ly, lz]);
   const [textureEast, setTextureEast] = useState(textureLoaderEast);
 
   const textureLoaderWest = useMemo(() => {
     return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[1]) : Facade_Texture_00, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
-      let offsetX = 0;
-      let offsetY = 0;
-      let repeatX = ly / 40;
-      let repeatY = lz / 23;
-      t.offset.set(offsetX, offsetY);
+      let repeatX = ly / 14;
+      let repeatY = lz / 6.5;
       t.repeat.set(repeatX, repeatY);
-      t.rotation = 3 * HALF_PI;
+      t.rotation = -HALF_PI;
       setTextureWest(t);
     });
-  }, [textureTypes[1], lx, ly, lz]);
+  }, [textureTypes[1], ly, lz]);
   const [textureWest, setTextureWest] = useState(textureLoaderWest);
 
   const textureLoaderNorth = useMemo(() => {
     return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[2]) : Facade_Texture_00, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
-      let offsetX = 0;
-      let offsetY = 0;
-      let repeatX = lx / 40;
-      let repeatY = lz / 23;
-      t.offset.set(offsetX, offsetY);
+      let repeatX = lx / 14;
+      let repeatY = lz / 6.5;
       t.repeat.set(repeatX, repeatY);
       t.rotation = Math.PI;
+      t.center.x = 0;
+      t.center.y = 1;
       setTextureNorth(t);
     });
-  }, [textureTypes[2], lx, ly, lz]);
+  }, [textureTypes[2], lx, lz]);
   const [textureNorth, setTextureNorth] = useState(textureLoaderNorth);
 
   const textureLoaderSouth = useMemo(() => {
     return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[3]) : Facade_Texture_00, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
-      let offsetX = 0;
-      let offsetY = 0;
-      let repeatX = lx / 40;
-      let repeatY = lz / 23;
-      t.offset.set(offsetX, offsetY);
+      let repeatX = lx / 14;
+      let repeatY = lz / 6.5;
       t.repeat.set(repeatX, repeatY);
       setTextureSouth(t);
     });
-  }, [textureTypes[3], lx, ly, lz]);
+  }, [textureTypes[3], lx, lz]);
   const [textureSouth, setTextureSouth] = useState(textureLoaderSouth);
 
   const textureLoaderTop = useMemo(() => {
     return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[4]) : Facade_Texture_00, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
-      let offsetX = 0;
-      let offsetY = 0;
-      let repeatX = lx / 40;
-      let repeatY = lz / 23;
-      t.offset.set(offsetX, offsetY);
+      let repeatX = lx / 14;
+      let repeatY = lz / 6.5;
       t.repeat.set(repeatX, repeatY);
       setTextureTop(t);
     });

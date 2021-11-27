@@ -228,8 +228,8 @@ export const i18n_zh_cn = {
       OnlyThisCuboid: '只这个长方体',
       AllCuboids: '所有的长方体',
       OnlyThisSide: '只这个表面',
-      AllSidesOfThisCuboid: '这个长方体所有的表面',
-      AllSidesOfAllCuboids: '所有的长方体所有的表面',
+      AllSidesOfThisCuboid: '这个长方体所有的侧面',
+      AllSidesOfAllCuboids: '所有的长方体所有的侧面',
     },
 
     treeMenu: {

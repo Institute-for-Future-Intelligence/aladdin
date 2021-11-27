@@ -4,7 +4,7 @@
 
 import short from 'short-uuid';
 import { HumanModel } from './HumanModel';
-import { ObjectType } from '../types';
+import { CuboidTexture, ObjectType } from '../types';
 import { TreeModel } from './TreeModel';
 import { SensorModel } from './SensorModel';
 import { FoundationModel } from './FoundationModel';
@@ -159,6 +159,16 @@ export class ElementModelCloner {
       lz: cuboid.lz,
       color: cuboid.color,
       faceColors: cuboid.faceColors ? [...cuboid.faceColors] : undefined,
+      textureTypes: cuboid.textureTypes
+        ? [...cuboid.textureTypes]
+        : [
+            CuboidTexture.NoTexture,
+            CuboidTexture.NoTexture,
+            CuboidTexture.NoTexture,
+            CuboidTexture.NoTexture,
+            CuboidTexture.NoTexture,
+            CuboidTexture.NoTexture,
+          ],
       normal: [...cuboid.normal],
       rotation: [...cuboid.rotation],
       parentId: cuboid.parentId,

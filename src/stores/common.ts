@@ -147,8 +147,8 @@ export interface CommonStoreState {
   updateCuboidColorById: (id: string, color: string) => void;
   updateCuboidColorForAll: (color: string) => void;
   updateCuboidTextureBySide: (side: number, id: string, texture: CuboidTexture) => void;
-  updateCuboidTextureById: (id: string, texture: CuboidTexture) => void;
-  updateCuboidTextureForAll: (texture: CuboidTexture) => void;
+  updateCuboidFacadeTextureById: (id: string, texture: CuboidTexture) => void;
+  updateCuboidFacadeTextureForAll: (texture: CuboidTexture) => void;
 
   // for solar panels
   solarPanelActionScope: Scope;
@@ -803,7 +803,7 @@ export const useStore = create<CommonStoreState>(
           },
 
           // for cuboids
-          cuboidActionScope: Scope.OnlyThisObject,
+          cuboidActionScope: Scope.OnlyThisSide,
           setCuboidActionScope(scope: Scope) {
             immerSet((state: CommonStoreState) => {
               state.cuboidActionScope = scope;
@@ -831,7 +831,9 @@ export const useStore = create<CommonStoreState>(
                   e.color = color;
                   const cuboid = e as CuboidModel;
                   if (!cuboid.faceColors) cuboid.faceColors = new Array<string>(6);
-                  cuboid.faceColors.fill(color);
+                  for (let i = 0; i < 4; i++) {
+                    cuboid.faceColors[i] = color;
+                  }
                   break;
                 }
               }
@@ -844,7 +846,9 @@ export const useStore = create<CommonStoreState>(
                   e.color = color;
                   const cuboid = e as CuboidModel;
                   if (!cuboid.faceColors) cuboid.faceColors = new Array<string>(6);
-                  cuboid.faceColors.fill(color);
+                  for (let i = 0; i < 4; i++) {
+                    cuboid.faceColors[i] = color;
+                  }
                 }
               }
             });
@@ -855,34 +859,45 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Cuboid && e.id === id) {
                   const cuboid = e as CuboidModel;
-                  if (!cuboid.textureTypes) cuboid.textureTypes = new Array<CuboidTexture>(6);
+                  if (!cuboid.textureTypes) {
+                    cuboid.textureTypes = new Array<CuboidTexture>(6);
+                    cuboid.textureTypes.fill(CuboidTexture.NoTexture);
+                  }
                   cuboid.textureTypes[side] = texture;
                   break;
                 }
               }
             });
           },
-          updateCuboidTextureById(id, texture) {
+          updateCuboidFacadeTextureById(id, texture) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Cuboid && e.id === id) {
                   const cuboid = e as CuboidModel;
-                  if (!cuboid.textureTypes) cuboid.textureTypes = new Array<CuboidTexture>(6);
-                  cuboid.textureTypes.fill(texture);
-                  cuboid.textureTypes[5] = CuboidTexture.NoTexture;
+                  if (!cuboid.textureTypes) {
+                    cuboid.textureTypes = new Array<CuboidTexture>(6);
+                    cuboid.textureTypes.fill(CuboidTexture.NoTexture);
+                  }
+                  for (let i = 0; i < 4; i++) {
+                    cuboid.textureTypes[i] = texture;
+                  }
                   break;
                 }
               }
             });
           },
-          updateCuboidTextureForAll(texture) {
+          updateCuboidFacadeTextureForAll(texture) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Cuboid) {
                   const cuboid = e as CuboidModel;
-                  if (!cuboid.textureTypes) cuboid.textureTypes = new Array<CuboidTexture>(6);
-                  cuboid.textureTypes.fill(texture);
-                  cuboid.textureTypes[5] = CuboidTexture.NoTexture;
+                  if (!cuboid.textureTypes) {
+                    cuboid.textureTypes = new Array<CuboidTexture>(6);
+                    cuboid.textureTypes.fill(CuboidTexture.NoTexture);
+                  }
+                  for (let i = 0; i < 4; i++) {
+                    cuboid.textureTypes[i] = texture;
+                  }
                 }
               }
             });
