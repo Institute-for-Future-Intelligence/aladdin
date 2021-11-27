@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.b8305f81.chunk.css",
-    "main.js": "/aladdin/static/js/main.5e3c812e.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.5e3c812e.chunk.js.map",
-    "runtime-main.js": "/aladdin/static/js/runtime-main.e8091437.js",
-    "runtime-main.js.map": "/aladdin/static/js/runtime-main.e8091437.js.map",
+    "main.js": "/aladdin/static/js/main.a7b5be52.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.a7b5be52.chunk.js.map",
+    "runtime-main.js": "/aladdin/static/js/runtime-main.2b6a613b.js",
+    "runtime-main.js.map": "/aladdin/static/js/runtime-main.2b6a613b.js.map",
     "static/css/2.a95be28f.chunk.css": "/aladdin/static/css/2.a95be28f.chunk.css",
-    "static/js/2.ba631175.chunk.js": "/aladdin/static/js/2.ba631175.chunk.js",
-    "static/js/2.ba631175.chunk.js.map": "/aladdin/static/js/2.ba631175.chunk.js.map",
-    "static/js/3.98fe06c2.chunk.js": "/aladdin/static/js/3.98fe06c2.chunk.js",
-    "static/js/3.98fe06c2.chunk.js.map": "/aladdin/static/js/3.98fe06c2.chunk.js.map",
+    "static/js/2.f5680a3e.chunk.js": "/aladdin/static/js/2.f5680a3e.chunk.js",
+    "static/js/2.f5680a3e.chunk.js.map": "/aladdin/static/js/2.f5680a3e.chunk.js.map",
+    "static/js/3.b1adf6cb.chunk.js": "/aladdin/static/js/3.b1adf6cb.chunk.js",
+    "static/js/3.b1adf6cb.chunk.js.map": "/aladdin/static/js/3.b1adf6cb.chunk.js.map",
     "index.html": "/aladdin/index.html",
     "static/css/2.a95be28f.chunk.css.map": "/aladdin/static/css/2.a95be28f.chunk.css.map",
     "static/css/main.b8305f81.chunk.css.map": "/aladdin/static/css/main.b8305f81.chunk.css.map",
-    "static/js/2.ba631175.chunk.js.LICENSE.txt": "/aladdin/static/js/2.ba631175.chunk.js.LICENSE.txt",
+    "static/js/2.f5680a3e.chunk.js.LICENSE.txt": "/aladdin/static/js/2.f5680a3e.chunk.js.LICENSE.txt",
     "static/media/building_facade_01.15119408.png": "/aladdin/static/media/building_facade_01.15119408.png",
     "static/media/building_facade_02.a8bad934.png": "/aladdin/static/media/building_facade_02.a8bad934.png",
     "static/media/building_facade_03.60816e85.png": "/aladdin/static/media/building_facade_03.60816e85.png",
@@ -41,6 +41,15 @@
     "static/media/forest.1016063e.jpg": "/aladdin/static/media/forest.1016063e.jpg",
     "static/media/foundation_01.bda6fc00.png": "/aladdin/static/media/foundation_01.bda6fc00.png",
     "static/media/foundation_02.a1240091.png": "/aladdin/static/media/foundation_02.a1240091.png",
+    "static/media/foundation_03.6be5f733.png": "/aladdin/static/media/foundation_03.6be5f733.png",
+    "static/media/foundation_03_menu.1a0820a4.png": "/aladdin/static/media/foundation_03_menu.1a0820a4.png",
+    "static/media/foundation_04.8100e8d2.png": "/aladdin/static/media/foundation_04.8100e8d2.png",
+    "static/media/foundation_04_menu.cfdf351d.png": "/aladdin/static/media/foundation_04_menu.cfdf351d.png",
+    "static/media/foundation_05.8164fdc8.png": "/aladdin/static/media/foundation_05.8164fdc8.png",
+    "static/media/foundation_05_menu.7f382511.png": "/aladdin/static/media/foundation_05_menu.7f382511.png",
+    "static/media/foundation_06.fc1babc0.png": "/aladdin/static/media/foundation_06.fc1babc0.png",
+    "static/media/foundation_07.e759a1c6.png": "/aladdin/static/media/foundation_07.e759a1c6.png",
+    "static/media/foundation_07_menu.cf056d65.png": "/aladdin/static/media/foundation_07_menu.cf056d65.png",
     "static/media/grassland-night.fa2ff11e.jpg": "/aladdin/static/media/grassland-night.fa2ff11e.jpg",
     "static/media/grassland.d74bba81.jpg": "/aladdin/static/media/grassland.d74bba81.jpg",
     "static/media/helvetiker_regular.typeface.9a3651b4.fnt": "/aladdin/static/media/helvetiker_regular.typeface.9a3651b4.fnt",
@@ -82,10 +91,10 @@
     "static/media/xiaoming.787a8ea5.png": "/aladdin/static/media/xiaoming.787a8ea5.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.e8091437.js",
+    "static/js/runtime-main.2b6a613b.js",
     "static/css/2.a95be28f.chunk.css",
-    "static/js/2.ba631175.chunk.js",
+    "static/js/2.f5680a3e.chunk.js",
     "static/css/main.b8305f81.chunk.css",
-    "static/js/main.5e3c812e.chunk.js"
+    "static/js/main.a7b5be52.chunk.js"
   ]
 }
