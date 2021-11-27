@@ -77,7 +77,8 @@ const CuboidTextureSelection = ({
         const oldTexturesAll = new Map<string, CuboidTexture[] | undefined>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Cuboid) {
-            oldTexturesAll.set(elem.id, (elem as CuboidModel).textureTypes);
+            const cm = elem as CuboidModel;
+            oldTexturesAll.set(elem.id, cm.textureTypes ? [...cm.textureTypes] : undefined);
           }
         }
         const undoableChangeAll = {
@@ -89,7 +90,7 @@ const CuboidTextureSelection = ({
             for (const [id, tx] of undoableChangeAll.oldValues.entries()) {
               if (tx && Array.isArray(tx)) {
                 for (let i = 0; i < tx.length; i++) {
-                  updateCuboidTextureById(id, tx[i] as CuboidTexture);
+                  updateCuboidTextureBySide(i, id, tx[i] as CuboidTexture);
                 }
               }
             }
@@ -103,7 +104,7 @@ const CuboidTextureSelection = ({
         break;
       case Scope.OnlyThisObject:
         if (cuboid) {
-          const oldTextures = cuboid.textureTypes;
+          const oldTextures = cuboid.textureTypes ? [...cuboid.textureTypes] : undefined;
           const undoableChange = {
             name: 'Set Texture for All Sides of Selected Cuboid',
             timestamp: Date.now(),
@@ -112,7 +113,7 @@ const CuboidTextureSelection = ({
             undo: () => {
               if (undoableChange.oldValue && Array.isArray(undoableChange.oldValue)) {
                 for (let i = 0; i < undoableChange.oldValue.length; i++) {
-                  updateCuboidTextureById(cuboid.id, undoableChange.oldValue[i] as CuboidTexture);
+                  updateCuboidTextureBySide(i, cuboid.id, undoableChange.oldValue[i] as CuboidTexture);
                 }
               }
             },
