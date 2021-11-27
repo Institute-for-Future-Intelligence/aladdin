@@ -5,6 +5,14 @@
 import Facade_Texture_00 from '../resources/building_facade_00.png';
 import Facade_Texture_01 from '../resources/building_facade_01.png';
 import Facade_Texture_02 from '../resources/building_facade_02.png';
+import Facade_Texture_03 from '../resources/building_facade_03.png';
+import Facade_Texture_04 from '../resources/building_facade_04.png';
+import Facade_Texture_05 from '../resources/building_facade_05.png';
+import Facade_Texture_06 from '../resources/building_facade_06.png';
+import Facade_Texture_07 from '../resources/building_facade_07.png';
+import Facade_Texture_08 from '../resources/building_facade_08.png';
+import Facade_Texture_09 from '../resources/building_facade_09.png';
+import Facade_Texture_10 from '../resources/building_facade_10.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Sphere } from '@react-three/drei';
@@ -167,20 +175,62 @@ const Cuboid = ({
         return Facade_Texture_01;
       case CuboidTexture.Facade02:
         return Facade_Texture_02;
+      case CuboidTexture.Facade03:
+        return Facade_Texture_03;
+      case CuboidTexture.Facade04:
+        return Facade_Texture_04;
+      case CuboidTexture.Facade05:
+        return Facade_Texture_05;
+      case CuboidTexture.Facade06:
+        return Facade_Texture_06;
+      case CuboidTexture.Facade07:
+        return Facade_Texture_07;
+      case CuboidTexture.Facade08:
+        return Facade_Texture_08;
+      case CuboidTexture.Facade09:
+        return Facade_Texture_09;
+      case CuboidTexture.Facade10:
+        return Facade_Texture_10;
       default:
         return Facade_Texture_00;
     }
   };
 
+  const fetchRepeatDividers = (textureType: CuboidTexture) => {
+    switch (textureType) {
+      case CuboidTexture.Facade01:
+        return { x: 14, y: 6.5 };
+      case CuboidTexture.Facade02:
+        return { x: 14, y: 6.5 };
+      case CuboidTexture.Facade03:
+        return { x: 10, y: 12 };
+      case CuboidTexture.Facade04:
+        return { x: 20, y: 11 };
+      case CuboidTexture.Facade05:
+        return { x: 15, y: 10 };
+      case CuboidTexture.Facade06:
+        return { x: 11, y: 3.5 };
+      case CuboidTexture.Facade07:
+        return { x: 11, y: 10 };
+      case CuboidTexture.Facade08:
+        return { x: 16, y: 9 };
+      case CuboidTexture.Facade09:
+        return { x: 10, y: 9 };
+      case CuboidTexture.Facade10:
+        return { x: 12, y: 9 };
+      default:
+        return { x: 1, y: 1 }; // maybe for rooftop
+    }
+  };
+
   const textureLoaderEast = useMemo(() => {
     return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[0]) : Facade_Texture_00, (t) => {
-      t.wrapS = t.wrapT = RepeatWrapping;
-      let repeatX = ly / 14;
-      let repeatY = lz / 6.5;
-      t.repeat.set(repeatX, repeatY);
+      const param = fetchRepeatDividers(textureTypes[0]);
+      t.repeat.set(ly / param.x, lz / param.y);
       t.rotation = HALF_PI;
       t.center.x = 1;
       t.center.y = 0;
+      t.wrapS = t.wrapT = RepeatWrapping;
       setTextureEast(t);
     });
   }, [textureTypes[0], ly, lz]);
@@ -188,11 +238,10 @@ const Cuboid = ({
 
   const textureLoaderWest = useMemo(() => {
     return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[1]) : Facade_Texture_00, (t) => {
-      t.wrapS = t.wrapT = RepeatWrapping;
-      let repeatX = ly / 14;
-      let repeatY = lz / 6.5;
-      t.repeat.set(repeatX, repeatY);
+      const param = fetchRepeatDividers(textureTypes[1]);
+      t.repeat.set(ly / param.x, lz / param.y);
       t.rotation = -HALF_PI;
+      t.wrapS = t.wrapT = RepeatWrapping;
       setTextureWest(t);
     });
   }, [textureTypes[1], ly, lz]);
@@ -200,13 +249,12 @@ const Cuboid = ({
 
   const textureLoaderNorth = useMemo(() => {
     return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[2]) : Facade_Texture_00, (t) => {
-      t.wrapS = t.wrapT = RepeatWrapping;
-      let repeatX = lx / 14;
-      let repeatY = lz / 6.5;
-      t.repeat.set(repeatX, repeatY);
+      const param = fetchRepeatDividers(textureTypes[2]);
+      t.repeat.set(lx / param.x, lz / param.y);
       t.rotation = Math.PI;
       t.center.x = 0;
       t.center.y = 1;
+      t.wrapS = t.wrapT = RepeatWrapping;
       setTextureNorth(t);
     });
   }, [textureTypes[2], lx, lz]);
@@ -214,10 +262,9 @@ const Cuboid = ({
 
   const textureLoaderSouth = useMemo(() => {
     return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[3]) : Facade_Texture_00, (t) => {
+      const param = fetchRepeatDividers(textureTypes[3]);
+      t.repeat.set(lx / param.x, lz / param.y);
       t.wrapS = t.wrapT = RepeatWrapping;
-      let repeatX = lx / 14;
-      let repeatY = lz / 6.5;
-      t.repeat.set(repeatX, repeatY);
       setTextureSouth(t);
     });
   }, [textureTypes[3], lx, lz]);
@@ -225,10 +272,9 @@ const Cuboid = ({
 
   const textureLoaderTop = useMemo(() => {
     return new TextureLoader().load(textureTypes ? fetchTextureImage(textureTypes[4]) : Facade_Texture_00, (t) => {
+      const param = fetchRepeatDividers(textureTypes[4]);
+      t.repeat.set(lx / param.x, ly / param.y);
       t.wrapS = t.wrapT = RepeatWrapping;
-      let repeatX = lx / 14;
-      let repeatY = lz / 6.5;
-      t.repeat.set(repeatX, repeatY);
       setTextureTop(t);
     });
   }, [textureTypes[4], lx, ly]);

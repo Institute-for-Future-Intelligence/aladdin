@@ -4,6 +4,14 @@
 
 import CuboidTexture01Icon from '../../../resources/building_facade_01_menu.png';
 import CuboidTexture02Icon from '../../../resources/building_facade_02_menu.png';
+import CuboidTexture03Icon from '../../../resources/building_facade_03_menu.png';
+import CuboidTexture04Icon from '../../../resources/building_facade_04_menu.png';
+import CuboidTexture05Icon from '../../../resources/building_facade_05_menu.png';
+import CuboidTexture06Icon from '../../../resources/building_facade_06_menu.png';
+import CuboidTexture07Icon from '../../../resources/building_facade_07_menu.png';
+import CuboidTexture08Icon from '../../../resources/building_facade_08_menu.png';
+import CuboidTexture09Icon from '../../../resources/building_facade_09_menu.png';
+import CuboidTexture10Icon from '../../../resources/building_facade_10_menu.png';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
@@ -249,6 +257,94 @@ const CuboidTextureSelection = ({
                   style={{ paddingRight: '8px' }}
                 />{' '}
                 {i18n.t('cuboidMenu.Texture02', lang)}
+              </Option>
+
+              <Option key={CuboidTexture.Facade03} value={CuboidTexture.Facade03}>
+                <img
+                  alt={CuboidTexture.Facade03}
+                  src={CuboidTexture03Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('cuboidMenu.Texture03', lang)}
+              </Option>
+
+              <Option key={CuboidTexture.Facade04} value={CuboidTexture.Facade04}>
+                <img
+                  alt={CuboidTexture.Facade04}
+                  src={CuboidTexture04Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('cuboidMenu.Texture04', lang)}
+              </Option>
+
+              <Option key={CuboidTexture.Facade05} value={CuboidTexture.Facade05}>
+                <img
+                  alt={CuboidTexture.Facade05}
+                  src={CuboidTexture05Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('cuboidMenu.Texture05', lang)}
+              </Option>
+
+              <Option key={CuboidTexture.Facade06} value={CuboidTexture.Facade06}>
+                <img
+                  alt={CuboidTexture.Facade06}
+                  src={CuboidTexture06Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('cuboidMenu.Texture06', lang)}
+              </Option>
+
+              <Option key={CuboidTexture.Facade07} value={CuboidTexture.Facade07}>
+                <img
+                  alt={CuboidTexture.Facade07}
+                  src={CuboidTexture07Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('cuboidMenu.Texture07', lang)}
+              </Option>
+
+              <Option key={CuboidTexture.Facade08} value={CuboidTexture.Facade08}>
+                <img
+                  alt={CuboidTexture.Facade08}
+                  src={CuboidTexture08Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('cuboidMenu.Texture08', lang)}
+              </Option>
+
+              <Option key={CuboidTexture.Facade09} value={CuboidTexture.Facade09}>
+                <img
+                  alt={CuboidTexture.Facade09}
+                  src={CuboidTexture09Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('cuboidMenu.Texture09', lang)}
+              </Option>
+
+              <Option key={CuboidTexture.Facade10} value={CuboidTexture.Facade10}>
+                <img
+                  alt={CuboidTexture.Facade10}
+                  src={CuboidTexture10Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('cuboidMenu.Texture10', lang)}
               </Option>
             </Select>
           </Col>
