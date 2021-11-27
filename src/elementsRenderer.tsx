@@ -61,11 +61,13 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
             if (!isNaN(r) && isFinite(r)) {
               // have to round this, otherwise the result is different even if nothing moved.
               state.heliodonRadius = Math.round(Math.max(10, r * 1.25)); // make it 25% larger than the bounding box
-              state.viewState.showHeliodonAfterBoundingBox = true;
             }
           });
         }
       }
+      setCommonStore((state) => {
+        state.viewState.showHeliodonAfterBoundingBox = true;
+      });
     } else {
       setCommonStore((state) => {
         state.viewState.showHeliodonAfterBoundingBox = false;
