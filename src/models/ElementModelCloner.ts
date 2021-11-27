@@ -14,26 +14,34 @@ import { SolarPanelModel } from './SolarPanelModel';
 
 export class ElementModelCloner {
   static clone(parent: ElementModel | null, e: ElementModel, x: number, y: number, z?: number) {
-    if (parent) {
-      switch (e.type) {
-        case ObjectType.Sensor:
-          return ElementModelCloner.cloneSensor(parent, e as SensorModel, x, y, z);
-        case ObjectType.SolarPanel:
-          return ElementModelCloner.cloneSolarPanel(parent, e as SolarPanelModel, x, y, z);
-      }
-    } else {
-      switch (e.type) {
-        case ObjectType.Human:
-          return ElementModelCloner.cloneHuman(e as HumanModel, x, y, z);
-        case ObjectType.Tree:
-          return ElementModelCloner.cloneTree(e as TreeModel, x, y, z);
-        case ObjectType.Foundation:
-          return ElementModelCloner.cloneFoundation(e as FoundationModel, x, y);
-        case ObjectType.Cuboid:
-          return ElementModelCloner.cloneCuboid(e as CuboidModel, x, y);
-      }
+    let clone = null;
+    switch (e.type) {
+      case ObjectType.Sensor:
+        if (parent) {
+          // must have a parent
+          clone = ElementModelCloner.cloneSensor(parent, e as SensorModel, x, y, z);
+        }
+        break;
+      case ObjectType.SolarPanel:
+        if (parent) {
+          // must have a parent
+          clone = ElementModelCloner.cloneSolarPanel(parent, e as SolarPanelModel, x, y, z);
+        }
+        break;
+      case ObjectType.Human:
+        clone = ElementModelCloner.cloneHuman(e as HumanModel, x, y, z);
+        break;
+      case ObjectType.Tree:
+        clone = ElementModelCloner.cloneTree(e as TreeModel, x, y, z);
+        break;
+      case ObjectType.Foundation:
+        clone = ElementModelCloner.cloneFoundation(e as FoundationModel, x, y);
+        break;
+      case ObjectType.Cuboid:
+        clone = ElementModelCloner.cloneCuboid(e as CuboidModel, x, y);
+        break;
     }
-    return null;
+    return clone;
   }
 
   private static cloneHuman(human: HumanModel, x: number, y: number, z?: number) {
@@ -144,6 +152,8 @@ export class ElementModelCloner {
       normal: [...foundation.normal],
       rotation: [...foundation.rotation],
       parentId: foundation.parentId,
+      color: foundation.color,
+      textureType: foundation.textureType,
       id: short.generate() as string,
     } as FoundationModel;
   }
@@ -158,7 +168,7 @@ export class ElementModelCloner {
       ly: cuboid.ly,
       lz: cuboid.lz,
       color: cuboid.color,
-      faceColors: cuboid.faceColors ? [...cuboid.faceColors] : undefined,
+      faceColors: cuboid.faceColors ? [...cuboid.faceColors] : ['gray', 'gray', 'gray', 'gray', 'gray', 'gray'],
       textureTypes: cuboid.textureTypes
         ? [...cuboid.textureTypes]
         : [

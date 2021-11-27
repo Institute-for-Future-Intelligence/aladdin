@@ -2,6 +2,15 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import FoundationTexture00 from '../resources/foundation_00.png';
+import FoundationTexture01 from '../resources/foundation_01.png';
+import FoundationTexture02 from '../resources/foundation_02.png';
+import FoundationTexture03 from '../resources/foundation_03.png';
+import FoundationTexture04 from '../resources/foundation_04.png';
+import FoundationTexture05 from '../resources/foundation_05.png';
+import FoundationTexture06 from '../resources/foundation_06.png';
+import FoundationTexture07 from '../resources/foundation_07.png';
+
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Plane, Sphere } from '@react-three/drei';
 import { Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
@@ -41,9 +50,6 @@ import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableChange } from '../undo/UndoableChange';
 import { ElementGrid } from './elementGrid';
-import FoundationTexture00 from '../resources/foundation_00.png';
-import FoundationTexture01 from '../resources/foundation_01.png';
-import FoundationTexture02 from '../resources/foundation_02.png';
 
 const Foundation = ({
   id,
@@ -190,6 +196,27 @@ const Foundation = ({
     }
   }, [deletedWallID]);
 
+  const fetchRepeatDividers = (textureType: FoundationTexture) => {
+    switch (textureType) {
+      case FoundationTexture.Texture01:
+        return { x: 1, y: 1 };
+      case FoundationTexture.Texture02:
+        return { x: 2, y: 2 };
+      case FoundationTexture.Texture03:
+        return { x: 0.4, y: 0.4 };
+      case FoundationTexture.Texture04:
+        return { x: 0.25, y: 0.25 };
+      case FoundationTexture.Texture05:
+        return { x: 5, y: 5 };
+      case FoundationTexture.Texture06:
+        return { x: 1, y: 1 };
+      case FoundationTexture.Texture07:
+        return { x: 1, y: 1 };
+      default:
+        return { x: 1, y: 1 };
+    }
+  };
+
   const textureLoader = useMemo(() => {
     let textureImg;
     switch (textureType) {
@@ -199,25 +226,31 @@ const Foundation = ({
       case FoundationTexture.Texture02:
         textureImg = FoundationTexture02;
         break;
+      case FoundationTexture.Texture03:
+        textureImg = FoundationTexture03;
+        break;
+      case FoundationTexture.Texture04:
+        textureImg = FoundationTexture04;
+        break;
+      case FoundationTexture.Texture05:
+        textureImg = FoundationTexture05;
+        break;
+      case FoundationTexture.Texture06:
+        textureImg = FoundationTexture06;
+        break;
+      case FoundationTexture.Texture07:
+        textureImg = FoundationTexture07;
+        break;
       default:
         textureImg = FoundationTexture00;
     }
     return new TextureLoader().load(textureImg, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
-      t.offset.set(0, 0);
-      let repeat = 1;
-      switch (textureType) {
-        case FoundationTexture.Texture01:
-          repeat = 10;
-          break;
-        case FoundationTexture.Texture02:
-          repeat = 8;
-          break;
-      }
-      t.repeat.set(repeat, repeat);
+      const param = fetchRepeatDividers(textureType);
+      t.repeat.set(lx / param.x, ly / param.y);
       setTexture(t);
     });
-  }, [textureType]);
+  }, [textureType, lx, ly]);
   const [texture, setTexture] = useState(textureLoader);
 
   const hoverHandle = useCallback(

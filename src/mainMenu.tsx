@@ -10,6 +10,7 @@ import solar_farm_02 from './examples/solar_farm_02.json';
 import solar_farm_03 from './examples/solar_farm_03.json';
 import solar_trackers from './examples/solar_trackers.json';
 import simple_house_01 from './examples/simple_house_01.json';
+import hotel_01 from './examples/hotel_01.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -119,6 +120,9 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
         break;
       case 'office_building_01':
         input = office_building_01;
+        break;
+      case 'hotel_01':
+        input = hotel_01;
         break;
       case 'solar_farm_01':
         input = solar_farm_01;
@@ -515,6 +519,9 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
           </Menu.Item>
           <Menu.Item key="office_building_01" onClick={loadFile}>
             {i18n.t('menu.examples.OfficeBuilding', lang)}
+          </Menu.Item>
+          <Menu.Item key="hotel_01" onClick={loadFile}>
+            {i18n.t('menu.examples.Hotel', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>
