@@ -33,7 +33,7 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
   const groupRef = useRef<Group>();
 
   useEffect(() => {
-    if (groupRef.current && heliodon) {
+    if (groupRef.current) {
       const boxes = [];
       for (const group of groupRef.current.children) {
         const children = group.children.filter((x) => x.userData['aabb']);
