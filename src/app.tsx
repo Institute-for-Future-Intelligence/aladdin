@@ -56,6 +56,7 @@ const App = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const locale = useStore(Selector.locale);
+  const viewOnly = useStore(Selector.viewOnly);
   const loadWeatherData = useStore(Selector.loadWeatherData);
   const getClosestCity = useStore(Selector.getClosestCity);
   const worldLatitude = useStore(Selector.world.latitude);
@@ -275,7 +276,7 @@ const App = () => {
           <LocalFileManager />
           <AnalysisManager />
           <MainMenu canvas={canvasRef.current} set2DView={set2DView} resetView={resetView} zoomView={zoomView} />
-          <MainToolBar />
+          {!viewOnly && <MainToolBar />}
           {showMapPanel && <MapPanel />}
           {showHeliodonPanel && <HeliodonPanel />}
           {showStickyNotePanel && <StickyNotePanel />}
@@ -406,7 +407,7 @@ const App = () => {
             </div>
           </DropdownContextMenu>
           {!orthographic && <CompassContainer />}
-          <AcceptCookie />
+          {!viewOnly && <AcceptCookie />}
         </div>
       </ErrorPage>
     </ConfigProvider>
