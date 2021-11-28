@@ -297,7 +297,7 @@ const App = () => {
                 shadows={true}
                 gl={{ preserveDrawingBuffer: true }}
                 frameloop={'demand'}
-                style={{ height: 'calc(100vh - 70px)', backgroundColor: 'black' }}
+                style={{ height: 'calc(100vh - 72px)', backgroundColor: 'black' }}
               >
                 {/*
             The following is for switching camera between the orthographic and perspective modes from the menu.
