@@ -33,25 +33,43 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
   const groupRef = useRef<Group>();
 
   useEffect(() => {
-    if (groupRef.current) {
-      const boxes = [];
-      for (const group of groupRef.current.children) {
-        const children = group.children.filter((x) => x.userData['aabb']);
-        for (const c of children) {
-          boxes.push(new Box3().setFromObject(c));
+    if (heliodon) {
+      if (groupRef.current) {
+        const boxes = [];
+        for (const group of groupRef.current.children) {
+          const children = group.children.filter((x) => x.userData['aabb']);
+          for (const c of children) {
+            boxes.push(new Box3().setFromObject(c));
+          }
+        }
+        if (boxes.length > 0) {
+          const min = new Vector3();
+          const max = new Vector3();
+          for (const box of boxes) {
+            min.min(box.min);
+            max.max(box.max);
+          }
+
+          let r = Math.abs(min.x);
+          if (r < Math.abs(min.y)) r = Math.abs(min.y);
+          if (r < Math.abs(min.z)) r = Math.abs(min.z);
+          if (r < Math.abs(max.x)) r = Math.abs(max.x);
+          if (r < Math.abs(max.y)) r = Math.abs(max.y);
+          if (r < Math.abs(max.z)) r = Math.abs(max.z);
+          setCommonStore((state) => {
+            state.aabb = new Box3(min, max);
+            if (!isNaN(r) && isFinite(r)) {
+              // have to round this, otherwise the result is different even if nothing moved.
+              state.heliodonRadius = Math.round(Math.max(10, r * 1.25)); // make it 25% larger than the bounding box
+              state.viewState.showHeliodonAfterBoundingBox = true;
+            }
+          });
         }
       }
-      if (boxes.length > 0) {
-        const min = new Vector3();
-        const max = new Vector3();
-        for (const box of boxes) {
-          min.min(box.min);
-          max.max(box.max);
-        }
-        setCommonStore((state) => {
-          state.aabb = new Box3(min, max);
-        });
-      }
+    } else {
+      setCommonStore((state) => {
+        state.viewState.showHeliodonAfterBoundingBox = false;
+      });
     }
   }, [elements, heliodon]);
 

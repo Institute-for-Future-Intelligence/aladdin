@@ -52,9 +52,9 @@ export const aabb = (state: CommonStoreState) => state.aabb;
 
 export const animateSun = (state: CommonStoreState) => state.animateSun;
 
-export const sceneRadius = (state: CommonStoreState) => state.sceneRadius;
+export const heliodonRadius = (state: CommonStoreState) => state.heliodonRadius;
 
-export const setSceneRadius = (state: CommonStoreState) => state.setSceneRadius;
+export const setHeliodonRadius = (state: CommonStoreState) => state.setHeliodonRadius;
 
 export const cameraDirection = (state: CommonStoreState) => state.cameraDirection;
 

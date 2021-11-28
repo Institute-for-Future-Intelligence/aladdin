@@ -15,7 +15,7 @@ import Sky from './views/sky';
 import Axes from './views/axes';
 import ElementsRenderer from './elementsRenderer';
 import Ground from './views/ground';
-import Heliodon from './views/heliodon';
+import Heliodon from './views/heliodonWrapper';
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from './mainMenu';
 import MapPanel from './panels/mapPanel';
@@ -66,7 +66,7 @@ const App = () => {
   const simulationInProgress = useStore(Selector.simulationInProgress);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const loadPvModules = useStore(Selector.loadPvModules);
-  const sceneRadius = useStore(Selector.sceneRadius);
+  const heliodonRadius = useStore(Selector.heliodonRadius);
   const cameraZoom = useStore(Selector.viewState.cameraZoom) ?? 20;
   const cloudFile = useStore(Selector.cloudFile);
   const axes = useStore(Selector.viewState.axes);
@@ -152,7 +152,7 @@ const App = () => {
     if (orbitControlsRef.current) {
       // I don't know why the reset method results in a black screen.
       // So we are resetting it here to a predictable position.
-      const z = Math.min(50, sceneRadius * 4);
+      const z = Math.min(50, heliodonRadius * 4);
       orbitControlsRef.current.object.position.set(z, z, z);
       orbitControlsRef.current.target.set(0, 0, 0);
       orbitControlsRef.current.update();
@@ -185,7 +185,7 @@ const App = () => {
         state.savedPanCenter.z = state.viewState.panCenter.z;
         state.viewState.cameraPosition.x = 0;
         state.viewState.cameraPosition.y = 0;
-        state.viewState.cameraPosition.z = Math.min(50, sceneRadius * 4);
+        state.viewState.cameraPosition.z = Math.min(50, heliodonRadius * 4);
         state.viewState.panCenter.x = 0;
         state.viewState.panCenter.y = 0;
         state.viewState.panCenter.z = 0;
@@ -308,7 +308,7 @@ const App = () => {
                   (orthographic ? (
                     <OrthographicCamera
                       zoom={cameraZoom}
-                      position={[0, 0, Math.min(50, sceneRadius * 4)]}
+                      position={[0, 0, Math.min(50, heliodonRadius * 4)]}
                       makeDefault={true}
                       ref={camRef}
                     />

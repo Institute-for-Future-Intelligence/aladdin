@@ -26,17 +26,43 @@ const HOUR_DIVISIONS = 96;
 const BASE_DIVISIONS = 72;
 const DECLINATION_DIVISIONS = 12;
 
-const Heliodon = () => {
-  const heliodon = useStore(Selector.viewState.heliodon);
+interface HeliodonProps {
+  hourAngle: number;
+  declinationAngle: number;
+  worldLatitude: number;
+}
+
+const HeliodonWrapper = () => {
+  const heliodon = useStore(Selector.viewState.showHeliodonAfterBoundingBox);
+  const heliodonRadius = useStore(Selector.heliodonRadius);
   const worldLatitude = useStore(Selector.world.latitude);
   const dateString = useStore(Selector.world.date);
-  const aabb = useStore(Selector.aabb);
-  const radius = useStore(Selector.sceneRadius);
-  const setRadius = useStore(Selector.setSceneRadius);
   const setSunlightDirection = useStore(Selector.setSunlightDirection);
 
   const [hourAngle, setHourAngle] = useState<number>(0);
   const [declinationAngle, setDeclinationAngle] = useState<number>(0);
+
+  useEffect(() => {
+    const date = new Date(dateString);
+    setHourAngle(computeHourAngle(date));
+    setDeclinationAngle(computeDeclinationAngle(date));
+  }, [dateString]);
+
+  useEffect(() => {
+    setSunlightDirection(
+      computeSunLocation(heliodonRadius, hourAngle, declinationAngle, Util.toRadians(worldLatitude)),
+    );
+  }, [worldLatitude, hourAngle, declinationAngle, heliodonRadius]);
+
+  return (
+    <React.Fragment>
+      {heliodon && <Heliodon hourAngle={hourAngle} declinationAngle={declinationAngle} worldLatitude={worldLatitude} />}
+    </React.Fragment>
+  );
+};
+
+const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps) => {
+  const radius = useStore(Selector.heliodonRadius);
   const [latitude, setLatitude] = useState<number>(Util.toRadians(42));
 
   const font = useLoader(FontLoader, helvetikerFont);
@@ -63,31 +89,6 @@ const Heliodon = () => {
   useEffect(() => {
     setLatitude(Util.toRadians(worldLatitude));
   }, [worldLatitude]);
-
-  useEffect(() => {
-    const date = new Date(dateString);
-    setHourAngle(computeHourAngle(date));
-    setDeclinationAngle(computeDeclinationAngle(date));
-  }, [dateString]);
-
-  useEffect(() => {
-    const min = aabb.min;
-    const max = aabb.max;
-    let r = Math.abs(min.x);
-    if (r < Math.abs(min.y)) r = Math.abs(min.y);
-    if (r < Math.abs(min.z)) r = Math.abs(min.z);
-    if (r < Math.abs(max.x)) r = Math.abs(max.x);
-    if (r < Math.abs(max.y)) r = Math.abs(max.y);
-    if (r < Math.abs(max.z)) r = Math.abs(max.z);
-    if (!isNaN(r) && isFinite(r)) {
-      // have to round this, otherwise the result is different even if nothing moved.
-      setRadius(Math.round(Math.max(10, r * 1.25))); // make it 25% larger than the bounding box
-    }
-  }, [aabb]);
-
-  useEffect(() => {
-    setSunlightDirection(computeSunLocation(radius, hourAngle, declinationAngle, Util.toRadians(worldLatitude)));
-  }, [worldLatitude, hourAngle, declinationAngle, radius]);
 
   const nRibLines = 5;
 
@@ -227,77 +228,73 @@ const Heliodon = () => {
   }, [latitude, radius]);
 
   return (
-    <>
-      {heliodon && (
-        <group>
-          {tickLabels.map((v, i) => {
-            let times = Math.ceil(i / 2) * (i % 2 === 0 ? 1 : -1);
-            if (times === -nLabels) times = nLabels;
-            const offset = getOffset(Math.abs(times));
-            return (
-              <group key={i} rotation={[HALF_PI, (times * Math.PI) / nLabels, 0]}>
-                <mesh position={[offset, 0, -radius * 1.1]} rotation={[-HALF_PI, 0, 0]}>
-                  <textGeometry args={[`${(180 / nLabels) * times}°`, textGeometryParams]} />
-                  <meshStandardMaterial attach="material" color={'lightGray'} />
-                </mesh>
-              </group>
-            );
-          })}
-          <mesh rotation={new Euler(0, 0, 0)} name={'Heliodon'}>
-            {/* draw base */}
-            <mesh>
-              <bufferGeometry {...baseGeometry} />
-              <meshBasicMaterial
-                side={DoubleSide}
-                vertexColors
-                polygonOffset
-                polygonOffsetFactor={-0.7}
-                polygonOffsetUnits={-2}
-              />
+    <group>
+      {tickLabels.map((v, i) => {
+        let times = Math.ceil(i / 2) * (i % 2 === 0 ? 1 : -1);
+        if (times === -nLabels) times = nLabels;
+        const offset = getOffset(Math.abs(times));
+        return (
+          <group key={i} rotation={[HALF_PI, (times * Math.PI) / nLabels, 0]}>
+            <mesh position={[offset, 0, -radius * 1.1]} rotation={[-HALF_PI, 0, 0]}>
+              <textGeometry args={[`${(180 / nLabels) * times}°`, textGeometryParams]} />
+              <meshStandardMaterial attach="material" color={'lightGray'} />
             </mesh>
-            <lineSegments>
-              <bufferGeometry {...lineGeometry} />
-              <meshBasicMaterial color={0x000000} />
-            </lineSegments>
-            {/* draw sun path*/}
-            <mesh>
-              {sunPathPoints.length > 3 && <Line lineWidth={2} points={sunPathPoints} color={'yellow'} />}
-              {pointArraySunPaths
-                .filter((a) => a.length > 3)
-                .map((a, index) => {
-                  return (
-                    <Line
-                      key={index}
-                      opacity={index === 0 || index === nRibLines ? 1 : 0.5}
-                      lineWidth={index === 0 || index === nRibLines ? 1 : 0.5}
-                      points={a}
-                      color={'#999'}
-                    />
-                  );
-                })}
-              <mesh args={[sunbeltGeometry]}>
-                <meshBasicMaterial
-                  side={DoubleSide}
-                  color={[1, 1, 0]}
-                  transparent
-                  opacity={0.5}
-                  clippingPlanes={[new Plane(UNIT_VECTOR_POS_Y, 0)]}
+          </group>
+        );
+      })}
+      <mesh rotation={new Euler(0, 0, 0)} name={'Heliodon'}>
+        {/* draw base */}
+        <mesh>
+          <bufferGeometry {...baseGeometry} />
+          <meshBasicMaterial
+            side={DoubleSide}
+            vertexColors
+            polygonOffset
+            polygonOffsetFactor={-0.7}
+            polygonOffsetUnits={-2}
+          />
+        </mesh>
+        <lineSegments>
+          <bufferGeometry {...lineGeometry} />
+          <meshBasicMaterial color={0x000000} />
+        </lineSegments>
+        {/* draw sun path*/}
+        <mesh>
+          {sunPathPoints.length > 3 && <Line lineWidth={2} points={sunPathPoints} color={'yellow'} />}
+          {pointArraySunPaths
+            .filter((a) => a.length > 3)
+            .map((a, index) => {
+              return (
+                <Line
+                  key={index}
+                  opacity={index === 0 || index === nRibLines ? 1 : 0.5}
+                  lineWidth={index === 0 || index === nRibLines ? 1 : 0.5}
+                  points={a}
+                  color={'#999'}
                 />
-              </mesh>
-              <mesh position={sunPosition}>
-                <sphereGeometry args={[0.05 * radius, 10, 10]} />
-                <meshBasicMaterial color={0xffffff00} />
-              </mesh>
-            </mesh>
+              );
+            })}
+          <mesh args={[sunbeltGeometry]}>
+            <meshBasicMaterial
+              side={DoubleSide}
+              color={[1, 1, 0]}
+              transparent
+              opacity={0.5}
+              clippingPlanes={[new Plane(UNIT_VECTOR_POS_Y, 0)]}
+            />
           </mesh>
-          {/* use this plane to hide the uneven edge */}
-          <Drei_Plane args={[10000, 10000]} renderOrder={-1}>
-            <meshBasicMaterial transparent={true} opacity={0} />
-          </Drei_Plane>
-        </group>
-      )}
-    </>
+          <mesh position={sunPosition}>
+            <sphereGeometry args={[0.05 * radius, 10, 10]} />
+            <meshBasicMaterial color={0xffffff00} />
+          </mesh>
+        </mesh>
+      </mesh>
+      {/* use this plane to hide the uneven edge */}
+      <Drei_Plane args={[10000, 10000]} renderOrder={-1}>
+        <meshBasicMaterial transparent={true} opacity={0} />
+      </Drei_Plane>
+    </group>
   );
 };
 
-export default React.memo(Heliodon);
+export default React.memo(HeliodonWrapper);
