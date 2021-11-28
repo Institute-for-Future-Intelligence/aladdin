@@ -289,8 +289,8 @@ export interface CommonStoreState {
   cameraDirection: Vector3;
   getCameraDirection: () => Vector3;
 
-  heliodonRadius: number;
-  setHeliodonRadius: (radius: number) => void;
+  sceneRadius: number;
+  setSceneRadius: (radius: number) => void;
 
   selectedElementAngle: number;
   selectedElementHeight: number;
@@ -2105,10 +2105,10 @@ export const useStore = create<CommonStoreState>(
             return get().cameraDirection;
           },
 
-          heliodonRadius: 10,
-          setHeliodonRadius(radius: number) {
+          sceneRadius: 10,
+          setSceneRadius(radius: number) {
             immerSet((state: CommonStoreState) => {
-              state.heliodonRadius = radius;
+              state.sceneRadius = radius;
             });
           },
 
