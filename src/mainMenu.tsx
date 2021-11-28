@@ -147,6 +147,7 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
         state.elements = input.elements;
         state.notes = input.notes ?? [];
         state.cloudFile = undefined;
+        state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
       });
     }
   };

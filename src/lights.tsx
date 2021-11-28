@@ -9,6 +9,7 @@ import { DEFAULT_FAR, DEFAULT_SHADOW_CAMERA_OFFSET } from './constants';
 
 const Lights = () => {
   const sunlightDirection = useStore(Selector.sunlightDirection);
+  const sceneRadius = useStore(Selector.sceneRadius);
 
   return (
     <>
@@ -16,7 +17,7 @@ const Lights = () => {
       <directionalLight
         name={'Directional Light'}
         color="white"
-        position={sunlightDirection.normalize().multiplyScalar(100)}
+        position={sunlightDirection.normalize().multiplyScalar(sceneRadius * 2)}
         intensity={sunlightDirection.z > 0 ? 0.5 : 0}
         castShadow
         shadow-mapSize-height={4096}

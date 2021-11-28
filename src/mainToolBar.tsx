@@ -273,6 +273,7 @@ const MainToolBar = () => {
               state.elements = data.elements;
               state.notes = data.notes ?? [];
               state.cloudFile = title;
+              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
             });
             setLoading(false);
           } else {

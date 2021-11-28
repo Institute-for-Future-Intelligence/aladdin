@@ -86,6 +86,7 @@ const LocalFileManager = () => {
               state.elements = input.elements;
               state.notes = input.notes ?? [];
               state.cloudFile = undefined;
+              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
             });
           }
           fileDialog.value = '';

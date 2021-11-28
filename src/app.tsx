@@ -51,6 +51,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCloud } from '@fortawesome/free-solid-svg-icons';
 import LocalFileManager from './localFileManager';
 import AnalysisManager from './analysisManager';
+import SceneRadiusCalculator from './sceneRadiusCalculator';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);
@@ -324,7 +325,7 @@ const App = () => {
 
                 <ElementsRenderer />
                 {axes && <Axes />}
-
+                <SceneRadiusCalculator />
                 <SensorSimulation city={city} />
                 <SolarPanelSimulation city={city} />
                 <Suspense fallback={null}>

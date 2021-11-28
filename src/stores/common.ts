@@ -289,6 +289,7 @@ export interface CommonStoreState {
   cameraDirection: Vector3;
   getCameraDirection: () => Vector3;
 
+  updateSceneRadiusFlag: boolean;
   sceneRadius: number;
   setSceneRadius: (radius: number) => void;
 
@@ -2105,6 +2106,7 @@ export const useStore = create<CommonStoreState>(
             return get().cameraDirection;
           },
 
+          updateSceneRadiusFlag: false,
           sceneRadius: 10,
           setSceneRadius(radius: number) {
             immerSet((state: CommonStoreState) => {
