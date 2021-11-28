@@ -34,7 +34,7 @@ interface HeliodonProps {
 
 const HeliodonWrapper = () => {
   const heliodon = useStore(Selector.viewState.showHeliodonAfterBoundingBox);
-  const heliodonRadius = useStore(Selector.heliodonRadius);
+  const heliodonRadius = useStore(Selector.sceneRadius);
   const worldLatitude = useStore(Selector.world.latitude);
   const dateString = useStore(Selector.world.date);
   const setSunlightDirection = useStore(Selector.setSunlightDirection);
@@ -62,7 +62,7 @@ const HeliodonWrapper = () => {
 };
 
 const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps) => {
-  const radius = useStore(Selector.heliodonRadius);
+  const radius = useStore(Selector.sceneRadius);
   const [latitude, setLatitude] = useState<number>(Util.toRadians(42));
 
   const font = useLoader(FontLoader, helvetikerFont);
