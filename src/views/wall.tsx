@@ -152,8 +152,11 @@ const Wall = ({
   }, [textureType]);
   const [texture, setTexture] = useState(textureLoader);
 
-  const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
+  const parent = getElementById(parentId) as ElementModel;
+  const wallModel = getElementById(id) as WallModel;
+
+  const setCommonStore = useStore(Selector.set);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const selectMe = useStore(Selector.selectMe);
   const elements = useStore(Selector.elements);
@@ -172,147 +175,23 @@ const Wall = ({
   const topSurfaceRef = useRef<Mesh>(null);
   const grabRef = useRef<ElementModel | null>(null);
 
-  const [x, setX] = useState(lx / 2);
-  const [y, setY] = useState(ly / 2);
-  const [z, setZ] = useState(lz / 2);
-  const [wallAbsPosition, setWallAbsPosition] = useState<Vector3>();
-  const [wallAbsAngle, setWallAbsAngle] = useState<number>();
-  const [leftOffsetState, setLeftOffsetState] = useState(leftOffset);
-  const [rightOffsetState, setRightOffsetState] = useState(rightOffset);
-  const [init, setInit] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
-
   const [windows, setWindows] = useState<WindowModel[]>([]);
   const [isBuildingNewWindow, setIsBuildingNewWindow] = useState(false);
   const [invalidWindowID, setInvalidWindowID] = useState<string | null>(null);
   const [originElements, setOriginElements] = useState<ElementModel[]>([]);
 
-  const parentSelector = useCallback((state: CommonStoreState) => {
-    for (const e of state.elements) {
-      if (e.id === parentId) {
-        return e;
-      }
-    }
-    return null;
-  }, []);
-
-  const parent = useStore(parentSelector);
-  const wallModel = getElementById(id) as WallModel;
-  const highLight = lx === 0;
-
-  const { camera, gl, scene } = useThree();
+  const { camera, gl } = useThree();
 
   const ray = useMemo(() => new Raycaster(), []);
-
   const whiteWallMaterial = useMemo(() => new MeshStandardMaterial({ color: 'white', side: DoubleSide }), []);
 
-  // subscribe common store
-  useEffect(() => {
-    useStore.subscribe((state) => (objectTypeToAddRef.current = state.objectTypeToAdd));
-    useStore.subscribe((state) => (moveHandleTypeRef.current = state.moveHandleType));
-    useStore.subscribe((state) => (resizeHandleTypeRef.current = state.resizeHandleType));
-    useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
-    useStore.subscribe((state) => (buildingWallIDRef.current = state.buildingWallID));
-    useStore.subscribe((state) => (enableFineGridRef.current = state.enableFineGrid));
-  }, []);
-
-  useEffect(() => {
-    setX(lx / 2);
-    setY(ly / 2);
-    setZ(lz / 2);
-  }, [lx, ly, lz]);
-
-  // wall position and rotation
-  useEffect(() => {
-    if (parent) {
-      setWallAbsPosition(Util.wallAbsolutePosition(new Vector3(cx, cy), parent).setZ(lz / 2 + parent.lz));
-      setWallAbsAngle(parent.rotation[2] + relativeAngle);
-      setInit(true);
-    }
-  }, [cx, cy, lz, parent?.cx, parent?.cy, parent?.cz, parent?.rotation, relativeAngle]);
-
-  // wall offset state
-  useEffect(() => {
-    setLeftOffsetState(leftOffset);
-  }, [leftOffset]);
-
-  useEffect(() => {
-    setRightOffsetState(rightOffset);
-  }, [rightOffset]);
-
-  useEffect(() => {
-    if (leftJoints.length > 0) {
-      const targetWall = getElementById(leftJoints[0]) as WallModel;
-      if (targetWall) {
-        const deltaAngle = (Math.PI * 3 - (relativeAngle - targetWall.relativeAngle)) % (Math.PI * 2);
-        if (deltaAngle < Math.PI / 2 && deltaAngle > 0) {
-          const offset = ly / Math.tan(deltaAngle);
-          setLeftOffsetState(offset);
-        }
-      }
-    }
-    if (rightJoints.length > 0) {
-      const targetWall = getElementById(rightJoints[0]) as WallModel;
-      if (targetWall) {
-        const deltaAngle = (Math.PI * 3 + relativeAngle - targetWall.relativeAngle) % (Math.PI * 2);
-        if (deltaAngle < Math.PI / 2 && deltaAngle > 0) {
-          const offset = ly / Math.tan(deltaAngle);
-          setRightOffsetState(offset);
-        }
-      }
-    }
-  }, [ly]);
-
-  // windows
-  useEffect(() => {
-    setWindows(elements.filter((e) => e.type === ObjectType.Window && e.parentId === id));
-  }, [elements]);
-
-  // outside wall
-  useEffect(() => {
-    if (outSideWallRef.current) {
-      const wallShape = new Shape();
-      drawRectangle(wallShape, lx, lz);
-
-      windows.forEach((w) => {
-        if (w.id !== invalidWindowID) {
-          const window = new Shape();
-          drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
-          wallShape.holes.push(window);
-        }
-      });
-      outSideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
-    }
-  }, [init, lx, lz, windows]);
-
-  // inside wall
-  useEffect(() => {
-    if (insideWallRef.current) {
-      const wallShape = new Shape();
-      drawRectangle(wallShape, lx, lz, 0, 0, leftOffsetState, rightOffsetState);
-
-      windows.forEach((w) => {
-        if (w.id !== invalidWindowID) {
-          const window = new Shape();
-          drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
-          wallShape.holes.push(window);
-        }
-      });
-
-      insideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
-      insideWallRef.current.material = whiteWallMaterial;
-    }
-  }, [init, leftOffsetState, rightOffsetState, lx, ly, lz, windows]);
-
-  // top surface
-  useEffect(() => {
-    if (topSurfaceRef.current) {
-      const topSurfaceShape = new Shape();
-      drawTopSurface(topSurfaceShape, lx, ly, leftOffsetState, rightOffsetState);
-      topSurfaceRef.current.geometry = new ShapeBufferGeometry(topSurfaceShape);
-      topSurfaceRef.current.material = whiteWallMaterial;
-    }
-  }, [init, leftOffsetState, rightOffsetState, lx, ly, lz]);
+  const hx = lx / 2;
+  const hy = ly / 2;
+  const hz = lz / 2;
+  const highLight = lx === 0;
+  const wallAbsPosition = Util.wallAbsolutePosition(new Vector3(cx, cy), parent).setZ(lz / 2 + parent.lz);
+  const wallAbsAngle = parent.rotation[2] + relativeAngle;
 
   const drawTopSurface = (shape: Shape, lx: number, ly: number, leftOffsetState: number, rightOffsetState: number) => {
     const x = lx / 2;
@@ -342,6 +221,81 @@ const Wall = ({
     shape.lineTo(cx - x + leftOffsetState, cy - y);
   };
 
+  if (leftJoints.length > 0) {
+    const targetWall = getElementById(leftJoints[0]) as WallModel;
+    if (targetWall) {
+      const deltaAngle = (Math.PI * 3 - (relativeAngle - targetWall.relativeAngle)) % (Math.PI * 2);
+      if (deltaAngle < Math.PI / 2 && deltaAngle > 0) {
+        leftOffset = ly / Math.tan(deltaAngle);
+      }
+    }
+  }
+
+  if (rightJoints.length > 0) {
+    const targetWall = getElementById(rightJoints[0]) as WallModel;
+    if (targetWall) {
+      const deltaAngle = (Math.PI * 3 + relativeAngle - targetWall.relativeAngle) % (Math.PI * 2);
+      if (deltaAngle < Math.PI / 2 && deltaAngle > 0) {
+        rightOffset = ly / Math.tan(deltaAngle);
+      }
+    }
+  }
+
+  // outside wall
+  if (outSideWallRef.current) {
+    const wallShape = new Shape();
+    drawRectangle(wallShape, lx, lz);
+
+    windows.forEach((w) => {
+      if (w.id !== invalidWindowID) {
+        const window = new Shape();
+        drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
+        wallShape.holes.push(window);
+      }
+    });
+    outSideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
+  }
+
+  // inside wall
+  if (insideWallRef.current) {
+    const wallShape = new Shape();
+    drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
+
+    windows.forEach((w) => {
+      if (w.id !== invalidWindowID) {
+        const window = new Shape();
+        drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
+        wallShape.holes.push(window);
+      }
+    });
+
+    insideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
+    insideWallRef.current.material = whiteWallMaterial;
+  }
+
+  // top surface
+  if (topSurfaceRef.current) {
+    const topSurfaceShape = new Shape();
+    drawTopSurface(topSurfaceShape, lx, ly, leftOffset, rightOffset);
+    topSurfaceRef.current.geometry = new ShapeBufferGeometry(topSurfaceShape);
+    topSurfaceRef.current.material = whiteWallMaterial;
+  }
+
+  // subscribe common store
+  useEffect(() => {
+    useStore.subscribe((state) => (objectTypeToAddRef.current = state.objectTypeToAdd));
+    useStore.subscribe((state) => (moveHandleTypeRef.current = state.moveHandleType));
+    useStore.subscribe((state) => (resizeHandleTypeRef.current = state.resizeHandleType));
+    useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
+    useStore.subscribe((state) => (buildingWallIDRef.current = state.buildingWallID));
+    useStore.subscribe((state) => (enableFineGridRef.current = state.enableFineGrid));
+  }, []);
+
+  // windows
+  useEffect(() => {
+    setWindows(elements.filter((e) => e.type === ObjectType.Window && e.parentId === id));
+  }, [elements]);
+
   const getWindowRelativePos = (p: Vector3, wall: WallModel) => {
     const { cx, cy, cz } = wall;
     const foundation = getElementById(wall.parentId);
@@ -353,11 +307,11 @@ const Wall = ({
     return new Vector3();
   };
 
-  const stickToNormalGrid = (v: Vector3) => {
+  const snapToNormalGrid = (v: Vector3) => {
     return new Vector3(Math.round(v.x), v.y, Math.round(v.z));
   };
 
-  const stickToFineGrid = (v: Vector3) => {
+  const snapToFineGrid = (v: Vector3) => {
     const x = parseFloat((Math.round(v.x / 0.2) * 0.2).toFixed(1));
     const z = parseFloat((Math.round(v.z / 0.2) * 0.2).toFixed(1));
     return new Vector3(x, v.y, z);
@@ -451,9 +405,9 @@ const Wall = ({
 
   const getPositionOnGrid = (p: Vector3) => {
     if (enableFineGridRef.current) {
-      p = stickToFineGrid(p);
+      p = snapToFineGrid(p);
     } else {
-      p = stickToNormalGrid(p);
+      p = snapToNormalGrid(p);
     }
     return p;
   };
@@ -520,7 +474,7 @@ const Wall = ({
           <mesh
             name={'Top Wall'}
             ref={topSurfaceRef}
-            position={[0, y, z]}
+            position={[0, hy, hz]}
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
             onPointerDown={(e) => {
@@ -530,10 +484,10 @@ const Wall = ({
           />
 
           {/* side surfaces */}
-          {leftOffsetState === 0 && (
+          {leftOffset === 0 && (
             <Plane
               args={[lz, ly]}
-              position={[-x + 0.01, y, 0]}
+              position={[-hx + 0.01, hy, 0]}
               rotation={[0, Math.PI / 2, 0]}
               onPointerDown={(e) => {
                 if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
@@ -543,10 +497,10 @@ const Wall = ({
               <meshStandardMaterial color={'white'} side={DoubleSide} />
             </Plane>
           )}
-          {rightOffsetState === 0 && (
+          {rightOffset === 0 && (
             <Plane
               args={[lz, ly]}
-              position={[x - 0.01, y, 0]}
+              position={[hx - 0.01, hy, 0]}
               rotation={[0, Math.PI / 2, 0]}
               onPointerDown={(e) => {
                 if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
@@ -734,11 +688,11 @@ const Wall = ({
           })}
 
           {/* wireFrame */}
-          <WallWireFrame x={x} z={z} />
+          <WallWireFrame x={hx} z={hz} />
 
           {/* handles */}
           {selected && !locked && (
-            <WallResizeHandleWarpper x={x} z={z} id={id} highLight={highLight} setShowGrid={setShowGrid} />
+            <WallResizeHandleWarpper x={hx} z={hz} id={id} highLight={highLight} setShowGrid={setShowGrid} />
           )}
 
           {/* grid */}
