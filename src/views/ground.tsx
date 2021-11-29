@@ -200,6 +200,7 @@ const Ground = () => {
           addUndoable(undoableResize);
         }
         setCommonStore((state) => {
+          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
           state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
         });
       } else if (rotateHandleType) {
@@ -269,6 +270,9 @@ const Ground = () => {
             },
           } as UndoableMove;
           addUndoable(undoableMove);
+          setCommonStore((state) => {
+            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+          });
         }
       }
       grabRef.current = null;

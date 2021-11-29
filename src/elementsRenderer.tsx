@@ -38,14 +38,6 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
     });
   }, [elements, heliodon]);
 
-  useEffect(() => {
-    if (heliodon) {
-      setCommonStore((state) => {
-        state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-      });
-    }
-  }, [elements]);
-
   return (
     <group name={'Content'} ref={groupRef}>
       {elements.map((e) => {
