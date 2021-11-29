@@ -16,7 +16,6 @@ export class DefaultViewState implements ViewState {
   shadowEnabled: boolean;
   theme: string;
   heliodon: boolean;
-  showHeliodonAfterBoundingBox: boolean;
   groundImage: boolean;
   groundColor: string;
 
@@ -65,7 +64,6 @@ export class DefaultViewState implements ViewState {
     this.shadowEnabled = true;
     this.theme = 'Default';
     this.heliodon = false;
-    this.showHeliodonAfterBoundingBox = false;
     this.groundImage = false;
     this.groundColor = 'forestgreen';
 

@@ -10,7 +10,7 @@ import * as Selector from '../stores/selector';
 import Heliodon from './heliodon';
 
 const HeliodonWrapper = () => {
-  const heliodon = useStore(Selector.viewState.showHeliodonAfterBoundingBox);
+  const heliodon = useStore(Selector.viewState.heliodon);
   const heliodonRadius = useStore(Selector.sceneRadius);
   const worldLatitude = useStore(Selector.world.latitude);
   const dateString = useStore(Selector.world.date);

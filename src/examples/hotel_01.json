@@ -576,7 +576,6 @@
     "yearlyLightSensorPanelX": -905,
     "enableRotate": true,
     "dailyLightSensorPanelY": 15,
-    "showHeliodonAfterBoundingBox": false,
     "mapZoom": 16,
     "weatherPanelY": 0,
     "cameraZoom": 23.32701559994169,

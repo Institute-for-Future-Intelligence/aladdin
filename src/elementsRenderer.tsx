@@ -2,10 +2,9 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
-import { Box3, Group, Vector3 } from 'three';
 import { ObjectType } from './types';
 import { FoundationModel } from './models/FoundationModel';
 import Foundation from './views/foundation';
@@ -27,19 +26,10 @@ import { RoofModel } from './models/RoofModel';
 export interface ElementsRendererProps {}
 
 const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererProps) => {
-  const setCommonStore = useStore(Selector.set);
-  const heliodon = useStore(Selector.viewState.heliodon);
   const elements = useStore(Selector.elements);
-  const groupRef = useRef<Group>();
-
-  useEffect(() => {
-    setCommonStore((state) => {
-      state.viewState.showHeliodonAfterBoundingBox = heliodon;
-    });
-  }, [elements, heliodon]);
 
   return (
-    <group name={'Content'} ref={groupRef}>
+    <group name={'Content'}>
       {elements.map((e) => {
         switch (e.type) {
           case ObjectType.Foundation:
