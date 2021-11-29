@@ -2,19 +2,19 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import WallTexture00 from '../resources/wall_00.png';
-import WallTexture01 from '../resources/wall_01.png';
-import WallTexture02 from '../resources/wall_02.png';
-import WallTexture03 from '../resources/wall_03.png';
-import WallTexture04 from '../resources/wall_04.png';
-import WallTexture05 from '../resources/wall_05.png';
-import WallTexture06 from '../resources/wall_06.png';
-import WallTexture07 from '../resources/wall_07.png';
-import WallTexture08 from '../resources/wall_08.png';
-import WallTexture09 from '../resources/wall_09.png';
-import WallTexture10 from '../resources/wall_10.png';
+import WallTexture00 from '../../resources/wall_00.png';
+import WallTexture01 from '../../resources/wall_01.png';
+import WallTexture02 from '../../resources/wall_02.png';
+import WallTexture03 from '../../resources/wall_03.png';
+import WallTexture04 from '../../resources/wall_04.png';
+import WallTexture05 from '../../resources/wall_05.png';
+import WallTexture06 from '../../resources/wall_06.png';
+import WallTexture07 from '../../resources/wall_07.png';
+import WallTexture08 from '../../resources/wall_08.png';
+import WallTexture09 from '../../resources/wall_09.png';
+import WallTexture10 from '../../resources/wall_10.png';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   DoubleSide,
   Euler,
@@ -29,50 +29,20 @@ import {
   Vector3,
 } from 'three';
 import { useThree } from '@react-three/fiber';
-import { Box, Line, Plane } from '@react-three/drei';
-import {
-  ActionType,
-  MoveHandleType,
-  ObjectType,
-  ResizeHandleType,
-  ResizeHandleType as RType,
-  WallTexture,
-} from 'src/types';
-import { Util } from '../Util';
-import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from '../constants';
-import { CommonStoreState, useStore } from '../stores/common';
-import { ElementModel } from '../models/ElementModel';
-import { WindowModel } from '../models/WindowModel';
-import { WallModel } from '../models/WallModel';
-import { ElementModelFactory } from '../models/ElementModelFactory';
-import { RoofPoint } from '../models/RoofModel';
-import { ElementGrid } from './elementGrid';
-import Window from './window';
-import * as Selector from '../stores/selector';
-
-interface ResizeHandlesProps {
-  x: number;
-  z: number;
-  id: string;
-  handleType: RType;
-  highLight: boolean;
-  handleSize?: number;
-  setShowGrid: (b: boolean) => void;
-}
-
-interface WallResizeHandleWarpperProps {
-  x: number;
-  z: number;
-  id: string;
-  highLight: boolean;
-  setShowGrid: (b: boolean) => void;
-}
-
-interface WallWireFrameProps {
-  x: number;
-  z: number;
-  lineWidth?: number;
-}
+import { Plane } from '@react-three/drei';
+import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, WallTexture } from 'src/types';
+import { Util } from '../../Util';
+import { useStore } from '../../stores/common';
+import { ElementModel } from '../../models/ElementModel';
+import { WindowModel } from '../../models/WindowModel';
+import { WallModel } from '../../models/WallModel';
+import { ElementModelFactory } from '../../models/ElementModelFactory';
+import { RoofPoint } from '../../models/RoofModel';
+import { ElementGrid } from '../elementGrid';
+import Window from '../window';
+import WallWireFrame from './wallWireFrame';
+import WallResizeHandleWarpper from './wallResizeHandleWarpper';
+import * as Selector from '../../stores/selector';
 
 const Wall = ({
   id,
@@ -691,9 +661,7 @@ const Wall = ({
           <WallWireFrame x={hx} z={hz} />
 
           {/* handles */}
-          {selected && !locked && (
-            <WallResizeHandleWarpper x={hx} z={hz} id={id} highLight={highLight} setShowGrid={setShowGrid} />
-          )}
+          {selected && !locked && <WallResizeHandleWarpper x={hx} z={hz} id={id} highLight={highLight} />}
 
           {/* grid */}
           {showGrid && (
@@ -706,157 +674,5 @@ const Wall = ({
     </>
   );
 };
-
-const WallResizeHandle = React.memo(
-  ({ x, z, id, handleType, highLight, handleSize = 0.3, setShowGrid }: ResizeHandlesProps) => {
-    const setCommonStore = useStore(Selector.set);
-    const selectMe = useStore(Selector.selectMe);
-    const resizeHandleType = useStore(Selector.resizeHandleType);
-    const buildingWallID = useStore(Selector.buildingWallID);
-
-    const [hovered, setHovered] = useState(false);
-
-    const handleRef = useRef<Mesh>(null);
-
-    const color = // handleType === RType.UpperRight ? 'blue' : 'white';
-      highLight ||
-      hovered ||
-      handleType === resizeHandleType ||
-      (buildingWallID && (handleType === RType.LowerRight || handleType === RType.UpperRight))
-        ? HIGHLIGHT_HANDLE_COLOR
-        : RESIZE_HANDLE_COLOR;
-
-    let lx = handleSize,
-      ly = handleSize,
-      lz = handleSize;
-    if (handleType === RType.LowerRight || handleType === RType.LowerLeft) {
-      lx = handleSize * 1.7;
-    } else {
-      ly = handleSize / 2;
-      lz = handleSize * 1.7;
-    }
-    return (
-      <Box
-        name={handleType}
-        ref={handleRef}
-        args={[lx, ly, lz]}
-        position={[x, 0, z]}
-        onPointerOver={() => {
-          setHovered(true);
-        }}
-        onPointerOut={() => {
-          setHovered(false);
-        }}
-        onPointerDown={(e) => {
-          if (!buildingWallID) {
-            selectMe(id, e, ActionType.Resize);
-          }
-          if (handleRef) {
-            if (handleType === ResizeHandleType.LowerLeft || handleType === ResizeHandleType.LowerRight) {
-              setCommonStore((state) => {
-                const anchor = handleRef.current!.localToWorld(new Vector3(-x * 2, 0, 0));
-                state.resizeAnchor.copy(anchor);
-              });
-            } else if (handleType === ResizeHandleType.UpperLeft || handleType === ResizeHandleType.UpperRight) {
-              setCommonStore((state) => {
-                const anchor = handleRef.current!.localToWorld(new Vector3(0, 0, -z * 2));
-                state.resizeAnchor.copy(anchor);
-              });
-              // setShowGrid(true);
-            }
-          }
-        }}
-        onPointerUp={() => {
-          setCommonStore((state) => {
-            state.enableOrbitController = true;
-          });
-        }}
-      >
-        <meshStandardMaterial color={color} />
-      </Box>
-    );
-  },
-);
-
-const WallResizeHandleWarpper = React.memo(({ x, z, id, highLight, setShowGrid }: WallResizeHandleWarpperProps) => {
-  const orthographic = useStore(Selector.viewState.orthographic);
-  return (
-    <React.Fragment>
-      <WallResizeHandle
-        x={-x}
-        z={-z}
-        id={id}
-        handleType={RType.LowerLeft}
-        highLight={highLight}
-        setShowGrid={setShowGrid}
-      />
-      <WallResizeHandle
-        x={x}
-        z={-z}
-        id={id}
-        handleType={RType.LowerRight}
-        highLight={highLight}
-        setShowGrid={setShowGrid}
-      />
-      {!orthographic && (
-        <WallResizeHandle
-          x={-x}
-          z={z}
-          id={id}
-          handleType={RType.UpperLeft}
-          highLight={highLight}
-          setShowGrid={setShowGrid}
-        />
-      )}
-      {!orthographic && (
-        <WallResizeHandle
-          x={x}
-          z={z}
-          id={id}
-          handleType={RType.UpperRight}
-          highLight={highLight}
-          setShowGrid={setShowGrid}
-        />
-      )}
-    </React.Fragment>
-  );
-});
-
-const WallWireFrame = React.memo(({ x, z, lineWidth = 0.2 }: WallWireFrameProps) => {
-  return (
-    <React.Fragment>
-      <group rotation={[Math.PI / 2, 0, 0]}>
-        <Line
-          points={[
-            [-x, -z, 0],
-            [-x, z, 0],
-          ]}
-          lineWidth={lineWidth}
-        />
-        <Line
-          points={[
-            [-x, -z, 0],
-            [x, -z, 0],
-          ]}
-          lineWidth={lineWidth}
-        />
-        <Line
-          points={[
-            [x, z, 0],
-            [-x, z, 0],
-          ]}
-          lineWidth={lineWidth}
-        />
-        <Line
-          points={[
-            [x, z, 0],
-            [x, -z, 0],
-          ]}
-          lineWidth={lineWidth}
-        />
-      </group>
-    </React.Fragment>
-  );
-});
 
 export default React.memo(Wall);
