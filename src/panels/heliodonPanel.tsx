@@ -184,17 +184,26 @@ const HeliodonPanel = () => {
                     undo: () => {
                       setCommonStore((state) => {
                         state.viewState.heliodon = !undoableCheck.checked;
+                        if (state.viewState.heliodon) {
+                          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+                        }
                       });
                     },
                     redo: () => {
                       setCommonStore((state) => {
                         state.viewState.heliodon = undoableCheck.checked;
+                        if (state.viewState.heliodon) {
+                          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+                        }
                       });
                     },
                   } as UndoableCheck;
                   addUndoable(undoableCheck);
                   setCommonStore((state) => {
                     state.viewState.heliodon = checked;
+                    if (state.viewState.heliodon) {
+                      state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+                    }
                   });
                 }}
               />

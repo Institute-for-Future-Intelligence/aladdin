@@ -82,17 +82,26 @@ const MainToolBarButtons = () => {
       undo: () => {
         setCommonStore((state) => {
           state.viewState.shadowEnabled = !undoableCheck.checked;
+          if (state.viewState.shadowEnabled) {
+            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+          }
         });
       },
       redo: () => {
         setCommonStore((state) => {
           state.viewState.shadowEnabled = undoableCheck.checked;
+          if (state.viewState.shadowEnabled) {
+            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+          }
         });
       },
     } as UndoableCheck;
     addUndoable(undoableCheck);
     setCommonStore((state) => {
       state.viewState.shadowEnabled = !state.viewState.shadowEnabled;
+      if (state.viewState.shadowEnabled) {
+        state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+      }
     });
     resetToSelectMode();
   };

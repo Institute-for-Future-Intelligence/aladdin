@@ -39,9 +39,11 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
   }, [elements, heliodon]);
 
   useEffect(() => {
-    setCommonStore((state) => {
-      state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-    });
+    if (heliodon) {
+      setCommonStore((state) => {
+        state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+      });
+    }
   }, [elements]);
 
   return (
