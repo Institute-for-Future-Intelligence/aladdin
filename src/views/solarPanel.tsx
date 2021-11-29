@@ -330,7 +330,7 @@ const SolarPanel = ({
   const [showTiltAngle, setShowTiltAngle] = useState(false);
 
   return (
-    <group name={'Solar Panel Group ' + id} userData={{ aabb: true }} rotation={euler} position={[cx, cy, cz + hz]}>
+    <group name={'Solar Panel Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
       <group rotation={relativeEuler}>
         {/* draw panel */}
         <Box
