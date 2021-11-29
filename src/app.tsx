@@ -52,6 +52,7 @@ import { faCloud } from '@fortawesome/free-solid-svg-icons';
 import LocalFileManager from './localFileManager';
 import AnalysisManager from './analysisManager';
 import SceneRadiusCalculator from './sceneRadiusCalculator';
+import { Beforeunload } from 'react-beforeunload';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);
@@ -207,233 +208,236 @@ const App = () => {
   return (
     <ConfigProvider locale={locale}>
       <ErrorPage>
-        <div className="App">
-          {(loading || simulationInProgress) && <Spinner />}
-          <div
-            style={{
-              backgroundColor: 'lightblue',
-              height: '72px',
-              paddingTop: '10px',
-              textAlign: 'start',
-              userSelect: 'none',
-              fontSize: '30px',
-            }}
-          >
-            <span
+        {/* the return message is no longer supported by most browsers, but the function is still required */}
+        <Beforeunload onBeforeunload={() => 'Save your design!'}>
+          <div className="App">
+            {(loading || simulationInProgress) && <Spinner />}
+            <div
               style={{
-                marginLeft: '120px',
-                verticalAlign: 'middle',
-                cursor: 'pointer',
+                backgroundColor: 'lightblue',
+                height: '72px',
+                paddingTop: '10px',
+                textAlign: 'start',
                 userSelect: 'none',
+                fontSize: '30px',
               }}
-              title={i18n.t('tooltip.visitAladdinHomePage', lang)}
-              onClick={visitHomepage}
             >
-              {i18n.t('name.Aladdin', lang)}
-            </span>
-            {cloudFile && (
               <span
                 style={{
-                  marginLeft: '20px',
-                  fontSize: '14px',
-                  verticalAlign: 'center',
+                  marginLeft: '120px',
+                  verticalAlign: 'middle',
+                  cursor: 'pointer',
                   userSelect: 'none',
                 }}
-                title={i18n.t('toolbar.CloudFile', lang)}
+                title={i18n.t('tooltip.visitAladdinHomePage', lang)}
+                onClick={visitHomepage}
               >
-                <FontAwesomeIcon
-                  title={i18n.t('toolbar.CloudFile', lang)}
-                  icon={faCloud}
-                  size={'lg'}
-                  color={'#888888'}
-                  style={{ paddingRight: '8px' }}
-                />
-                {cloudFile}
+                {i18n.t('name.Aladdin', lang)}
               </span>
-            )}
-          </div>
-          {viewOnly ? (
-            <div
-              style={{
-                position: 'absolute',
-                bottom: '10px',
-                left: '10px',
-                zIndex: 999,
-                fontSize: '12px',
-                userSelect: 'none',
-                color: 'antiquewhite',
-              }}
-            >
-              <img
-                alt="IFI Logo"
-                src={ifiLogo}
-                height="30px"
-                style={{ verticalAlign: 'bottom', cursor: 'pointer' }}
-                title={i18n.t('tooltip.gotoIFI', lang)}
-                onClick={visitIFI}
-              />
+              {cloudFile && (
+                <span
+                  style={{
+                    marginLeft: '20px',
+                    fontSize: '14px',
+                    verticalAlign: 'center',
+                    userSelect: 'none',
+                  }}
+                  title={i18n.t('toolbar.CloudFile', lang)}
+                >
+                  <FontAwesomeIcon
+                    title={i18n.t('toolbar.CloudFile', lang)}
+                    icon={faCloud}
+                    size={'lg'}
+                    color={'#888888'}
+                    style={{ paddingRight: '8px' }}
+                  />
+                  {cloudFile}
+                </span>
+              )}
             </div>
-          ) : (
-            <div
-              style={{
-                position: 'absolute',
-                bottom: '10px',
-                left: '10px',
-                zIndex: 999,
-                fontSize: '12px',
-                userSelect: 'none',
-                color: 'antiquewhite',
-              }}
-            >
-              <img
-                alt="IFI Logo"
-                src={ifiLogo}
-                height="40px"
-                style={{ verticalAlign: 'bottom', cursor: 'pointer' }}
-                title={i18n.t('tooltip.gotoIFI', lang)}
-                onClick={visitIFI}
-              />
-              &nbsp;&nbsp; &copy;{new Date().getFullYear()} {i18n.t('name.IFI', lang)}
-              &nbsp;
-              {i18n.t('word.Version', lang) + ' ' + VERSION + '. ' + i18n.t('word.AllRightsReserved', lang) + '. '}
-            </div>
-          )}
-          <LocalFileManager />
-          <AnalysisManager />
-          <MainMenu canvas={canvasRef.current} set2DView={set2DView} resetView={resetView} zoomView={zoomView} />
-          {!viewOnly && <MainToolBar />}
-          {showMapPanel && <MapPanel />}
-          {showHeliodonPanel && <HeliodonPanel />}
-          {showStickyNotePanel && <StickyNotePanel />}
-          {showInfoPanel && <InfoPanel city={city} />}
-          {showInstructionPanel && <InstructionPanel />}
-          {showWeatherPanel && (
-            <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]} />
-          )}
-          {showYearlyLightSensorPanel && <YearlyLightSensorPanel city={city} />}
-          {showDailyLightSensorPanel && <DailyLightSensorPanel city={city} />}
-          {showYearlyPvYieldPanel && <YearlyPvYieldPanel city={city} />}
-          {showDailyPvYieldPanel && <DailyPvYieldPanel city={city} />}
-          <DropdownContextMenu>
-            <div>
-              <Canvas
-                orthographic={orthographic}
-                camera={{ zoom: orthographic ? cameraZoom : 1, fov: DEFAULT_FOV, far: DEFAULT_FAR }}
-                shadows={true}
-                gl={{ preserveDrawingBuffer: true }}
-                frameloop={'demand'}
-                style={{ height: 'calc(100vh - 72px)', backgroundColor: 'black' }}
+            {viewOnly ? (
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: '10px',
+                  left: '10px',
+                  zIndex: 999,
+                  fontSize: '12px',
+                  userSelect: 'none',
+                  color: 'antiquewhite',
+                }}
               >
-                {/*
+                <img
+                  alt="IFI Logo"
+                  src={ifiLogo}
+                  height="30px"
+                  style={{ verticalAlign: 'bottom', cursor: 'pointer' }}
+                  title={i18n.t('tooltip.gotoIFI', lang)}
+                  onClick={visitIFI}
+                />
+              </div>
+            ) : (
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: '10px',
+                  left: '10px',
+                  zIndex: 999,
+                  fontSize: '12px',
+                  userSelect: 'none',
+                  color: 'antiquewhite',
+                }}
+              >
+                <img
+                  alt="IFI Logo"
+                  src={ifiLogo}
+                  height="40px"
+                  style={{ verticalAlign: 'bottom', cursor: 'pointer' }}
+                  title={i18n.t('tooltip.gotoIFI', lang)}
+                  onClick={visitIFI}
+                />
+                &nbsp;&nbsp; &copy;{new Date().getFullYear()} {i18n.t('name.IFI', lang)}
+                &nbsp;
+                {i18n.t('word.Version', lang) + ' ' + VERSION + '. ' + i18n.t('word.AllRightsReserved', lang) + '. '}
+              </div>
+            )}
+            <LocalFileManager />
+            <AnalysisManager />
+            <MainMenu canvas={canvasRef.current} set2DView={set2DView} resetView={resetView} zoomView={zoomView} />
+            {!viewOnly && <MainToolBar />}
+            {showMapPanel && <MapPanel />}
+            {showHeliodonPanel && <HeliodonPanel />}
+            {showStickyNotePanel && <StickyNotePanel />}
+            {showInfoPanel && <InfoPanel city={city} />}
+            {showInstructionPanel && <InstructionPanel />}
+            {showWeatherPanel && (
+              <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]} />
+            )}
+            {showYearlyLightSensorPanel && <YearlyLightSensorPanel city={city} />}
+            {showDailyLightSensorPanel && <DailyLightSensorPanel city={city} />}
+            {showYearlyPvYieldPanel && <YearlyPvYieldPanel city={city} />}
+            {showDailyPvYieldPanel && <DailyPvYieldPanel city={city} />}
+            <DropdownContextMenu>
+              <div>
+                <Canvas
+                  orthographic={orthographic}
+                  camera={{ zoom: orthographic ? cameraZoom : 1, fov: DEFAULT_FOV, far: DEFAULT_FAR }}
+                  shadows={true}
+                  gl={{ preserveDrawingBuffer: true }}
+                  frameloop={'demand'}
+                  style={{ height: 'calc(100vh - 72px)', backgroundColor: 'black' }}
+                >
+                  {/*
             The following is for switching camera between the orthographic and perspective modes from the menu.
             For some reason, the above code does not trigger the camera to change unless we reload the entire page,
              which is not desirable. So we have to do it this way.
              */}
-                {orthographicChanged &&
-                  (orthographic ? (
-                    <OrthographicCamera
-                      zoom={cameraZoom}
-                      position={[0, 0, Math.min(50, sceneRadius * 4)]}
-                      makeDefault={true}
-                      ref={camRef}
-                    />
-                  ) : (
-                    <PerspectiveCamera zoom={1} fov={DEFAULT_FOV} far={DEFAULT_FAR} makeDefault={true} ref={camRef} />
-                  ))}
-                <OrbitController
-                  orbitControlsRef={orbitControlsRef}
-                  canvasRef={canvasRef}
-                  currentCamera={camRef.current}
-                />
-                <Lights />
+                  {orthographicChanged &&
+                    (orthographic ? (
+                      <OrthographicCamera
+                        zoom={cameraZoom}
+                        position={[0, 0, Math.min(50, sceneRadius * 4)]}
+                        makeDefault={true}
+                        ref={camRef}
+                      />
+                    ) : (
+                      <PerspectiveCamera zoom={1} fov={DEFAULT_FOV} far={DEFAULT_FAR} makeDefault={true} ref={camRef} />
+                    ))}
+                  <OrbitController
+                    orbitControlsRef={orbitControlsRef}
+                    canvasRef={canvasRef}
+                    currentCamera={camRef.current}
+                  />
+                  <Lights />
 
-                <ElementsRenderer />
-                {axes && <Axes />}
-                <SceneRadiusCalculator />
-                <SensorSimulation city={city} />
-                <SolarPanelSimulation city={city} />
-                <Suspense fallback={null}>
-                  <Heliodon />
-                  <Ground />
-                  <Auxiliary />
-                  {groundImage && <GroundImage />}
-                  {/* <Obj/> */}
-                </Suspense>
-                <Suspense fallback={null}>
-                  <Sky theme={theme} />
-                </Suspense>
-              </Canvas>
-              <KeyboardListener
-                keyFlag={keyFlag}
-                keyName={keyName.current}
-                keyDown={keyDown.current}
-                keyUp={keyUp.current}
-                canvas={canvasRef.current}
-                set2DView={set2DView}
-                resetView={resetView}
-                zoomView={zoomView}
-              />
-              <KeyboardEventHandler
-                handleKeys={[
-                  'left',
-                  'up',
-                  'right',
-                  'down',
-                  'ctrl+o',
-                  'meta+o',
-                  'ctrl+s',
-                  'meta+s',
-                  'ctrl+c',
-                  'meta+c',
-                  'ctrl+x',
-                  'meta+x',
-                  'ctrl+v',
-                  'meta+v',
-                  'ctrl+[',
-                  'meta+[',
-                  'ctrl+]',
-                  'meta+]',
-                  'ctrl+z',
-                  'meta+z',
-                  'ctrl+y',
-                  'meta+y',
-                  'shift',
-                  'esc',
-                ]}
-                handleEventType={'keydown'}
-                onKeyEvent={(key, e) => {
-                  e.preventDefault();
-                  handleKeyEvent(key, true, e);
-                }}
-              />
-              <KeyboardEventHandler
-                handleKeys={[
-                  'ctrl+v', // we want the paste action to be fired only when the key is up, but we also need to add
-                  'meta+v', // these keyboard shortcuts to the keydown handler so that the browser's default can be prevented
-                  'ctrl+z',
-                  'meta+z',
-                  'ctrl+y',
-                  'meta+y',
-                  'ctrl+home',
-                  'meta+home',
-                  'ctrl+shift+s',
-                  'meta+shift+s',
-                  'delete',
-                  'f2',
-                  'f4',
-                  'shift',
-                ]}
-                handleEventType={'keyup'}
-                onKeyEvent={(key, e) => {
-                  e.preventDefault();
-                  handleKeyEvent(key, false, e);
-                }}
-              />
-            </div>
-          </DropdownContextMenu>
-          {!orthographic && <CompassContainer />}
-          {!viewOnly && <AcceptCookie />}
-        </div>
+                  <ElementsRenderer />
+                  {axes && <Axes />}
+                  <SceneRadiusCalculator />
+                  <SensorSimulation city={city} />
+                  <SolarPanelSimulation city={city} />
+                  <Suspense fallback={null}>
+                    <Heliodon />
+                    <Ground />
+                    <Auxiliary />
+                    {groundImage && <GroundImage />}
+                    {/* <Obj/> */}
+                  </Suspense>
+                  <Suspense fallback={null}>
+                    <Sky theme={theme} />
+                  </Suspense>
+                </Canvas>
+                <KeyboardListener
+                  keyFlag={keyFlag}
+                  keyName={keyName.current}
+                  keyDown={keyDown.current}
+                  keyUp={keyUp.current}
+                  canvas={canvasRef.current}
+                  set2DView={set2DView}
+                  resetView={resetView}
+                  zoomView={zoomView}
+                />
+                <KeyboardEventHandler
+                  handleKeys={[
+                    'left',
+                    'up',
+                    'right',
+                    'down',
+                    'ctrl+o',
+                    'meta+o',
+                    'ctrl+s',
+                    'meta+s',
+                    'ctrl+c',
+                    'meta+c',
+                    'ctrl+x',
+                    'meta+x',
+                    'ctrl+v',
+                    'meta+v',
+                    'ctrl+[',
+                    'meta+[',
+                    'ctrl+]',
+                    'meta+]',
+                    'ctrl+z',
+                    'meta+z',
+                    'ctrl+y',
+                    'meta+y',
+                    'shift',
+                    'esc',
+                  ]}
+                  handleEventType={'keydown'}
+                  onKeyEvent={(key, e) => {
+                    e.preventDefault();
+                    handleKeyEvent(key, true, e);
+                  }}
+                />
+                <KeyboardEventHandler
+                  handleKeys={[
+                    'ctrl+v', // we want the paste action to be fired only when the key is up, but we also need to add
+                    'meta+v', // these keyboard shortcuts to the keydown handler so that the browser's default can be prevented
+                    'ctrl+z',
+                    'meta+z',
+                    'ctrl+y',
+                    'meta+y',
+                    'ctrl+home',
+                    'meta+home',
+                    'ctrl+shift+s',
+                    'meta+shift+s',
+                    'delete',
+                    'f2',
+                    'f4',
+                    'shift',
+                  ]}
+                  handleEventType={'keyup'}
+                  onKeyEvent={(key, e) => {
+                    e.preventDefault();
+                    handleKeyEvent(key, false, e);
+                  }}
+                />
+              </div>
+            </DropdownContextMenu>
+            {!orthographic && <CompassContainer />}
+            {!viewOnly && <AcceptCookie />}
+          </div>
+        </Beforeunload>
       </ErrorPage>
     </ConfigProvider>
   );
