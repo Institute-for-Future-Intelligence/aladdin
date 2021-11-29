@@ -33,17 +33,16 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
   const groupRef = useRef<Group>();
 
   useEffect(() => {
-    if (heliodon) {
-      setCommonStore((state) => {
-        state.viewState.showHeliodonAfterBoundingBox = true;
-        state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-      });
-    } else {
-      setCommonStore((state) => {
-        state.viewState.showHeliodonAfterBoundingBox = false;
-      });
-    }
+    setCommonStore((state) => {
+      state.viewState.showHeliodonAfterBoundingBox = heliodon;
+    });
   }, [elements, heliodon]);
+
+  useEffect(() => {
+    setCommonStore((state) => {
+      state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+    });
+  }, [elements]);
 
   return (
     <group name={'Content'} ref={groupRef}>

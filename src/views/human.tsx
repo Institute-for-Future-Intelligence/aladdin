@@ -202,15 +202,8 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
   }, [cameraX, cameraY, cx, cy]);
 
   return (
-    <group name={'Human Group ' + id} position={[cx, cy, (cz ?? 0) + height / 2]}>
-      <Billboard
-        uuid={id}
-        ref={meshRef}
-        name={name}
-        userData={{ aabb: true }}
-        follow={orthographic}
-        rotation={rotation}
-      >
+    <group name={'Human Group ' + id} userData={{ aabb: true }} position={[cx, cy, (cz ?? 0) + height / 2]}>
+      <Billboard uuid={id} ref={meshRef} name={name} follow={orthographic} rotation={rotation}>
         <Plane
           args={[width, height]}
           onContextMenu={(e) => {

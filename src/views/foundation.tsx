@@ -1323,13 +1323,18 @@ const Foundation = ({
   const opacity = groundImage ? 0.5 : 1;
 
   return (
-    <group name={'Foundation Group ' + id} position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
+    <group
+      name={'Foundation Group ' + id}
+      userData={{ aabb: true }}
+      position={[cx, cy, hz]}
+      rotation={[0, 0, rotation[2]]}
+    >
       {/* draw rectangle */}
       <Box
         castShadow={shadowEnabled}
         receiveShadow={shadowEnabled}
         uuid={id}
-        userData={{ simulation: true, aabb: true, stand: true }}
+        userData={{ simulation: true, stand: true }}
         ref={baseRef}
         name={'Foundation'}
         args={[lx, ly, lz]}

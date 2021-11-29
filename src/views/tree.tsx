@@ -125,8 +125,8 @@ const Tree = ({
 
   // IMPORTANT: model mesh must use double side in order to intercept sunlight
   return (
-    <group name={'Tree Group ' + id} position={[cx, cy, (cz ?? 0) + lz / 2]}>
-      <Billboard uuid={id} name={name} userData={{ aabb: true }} follow={false} rotation={solidTreeRotation}>
+    <group name={'Tree Group ' + id} userData={{ aabb: true }} position={[cx, cy, (cz ?? 0) + lz / 2]}>
+      <Billboard uuid={id} name={name} follow={false} rotation={solidTreeRotation}>
         <Plane args={[lx, lz]}>
           <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
         </Plane>
