@@ -122,11 +122,6 @@ const MainToolBar = () => {
     if (query.userid && query.title) {
       openCloudFile(query.userid.toString(), query.title.toString());
     }
-    if (query.viewonly) {
-      setCommonStore((state) => {
-        state.viewOnly = query.viewonly === 'true';
-      });
-    }
   };
 
   const resetToSelectMode = () => {

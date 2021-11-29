@@ -44,8 +44,6 @@ export const exportContent = (state: CommonStoreState) => state.exportContent;
 
 export const clearContent = (state: CommonStoreState) => state.clearContent;
 
-export const viewOnly = (state: CommonStoreState) => state.viewOnly;
-
 export const grid = (state: CommonStoreState) => state.grid;
 
 export const aabb = (state: CommonStoreState) => state.aabb;

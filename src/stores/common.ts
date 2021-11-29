@@ -79,7 +79,6 @@ export interface CommonStoreState {
   getPvModule: (name: string) => PvModel;
   loadPvModules: () => void;
 
-  viewOnly: boolean;
   grid: boolean; // this should only show up when editing
   aabb: Box3; // axis-aligned bounding box of elements
   animateSun: boolean;
@@ -411,7 +410,6 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          viewOnly: false,
           grid: false,
           aabb: new Box3(),
           animateSun: false,
