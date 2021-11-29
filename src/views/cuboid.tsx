@@ -700,6 +700,9 @@ const Cuboid = ({
     });
   };
 
+  const faces: number[] = [0, 1, 2, 3, 4, 5];
+  const textures = [textureEast, textureWest, textureNorth, textureSouth, textureTop, null];
+
   return (
     <group name={'Cuboid Group ' + id} userData={{ aabb: true }} position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
       {/* draw rectangular cuboid */}
@@ -718,18 +721,17 @@ const Cuboid = ({
         onPointerOver={handlePointerOver}
         onPointerOut={(e) => setHovered(false)}
       >
-        {cuboidModel.faceColors ? (
-          cuboidModel.faceColors.map((e, index) => {
-            const textures = [textureEast, textureWest, textureNorth, textureSouth, textureTop, null];
-            if (textureTypes && textureTypes[index] !== CuboidTexture.NoTexture) {
-              return <meshStandardMaterial key={index} attachArray="material" color={'white'} map={textures[index]} />;
+        {cuboidModel && cuboidModel.faceColors ? (
+          faces.map((i) => {
+            if (textureTypes && textureTypes[i] !== CuboidTexture.NoTexture) {
+              return <meshStandardMaterial key={i} attachArray="material" color={'white'} map={textures[i]} />;
             } else {
               return (
                 <meshStandardMaterial
-                  key={index}
+                  key={i}
                   attachArray="material"
-                  color={cuboidModel.faceColors ? cuboidModel.faceColors[index] : color}
-                  map={textures[index]}
+                  color={cuboidModel.faceColors ? cuboidModel.faceColors[i] : color}
+                  map={textures[i]}
                 />
               );
             }

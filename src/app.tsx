@@ -252,28 +252,52 @@ const App = () => {
               </span>
             )}
           </div>
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '10px',
-              left: '10px',
-              zIndex: 999,
-              fontSize: '12px',
-              userSelect: 'none',
-              color: 'antiquewhite',
-            }}
-          >
-            <img
-              alt="IFI Logo"
-              src={ifiLogo}
-              height="40px"
-              style={{ verticalAlign: 'bottom', cursor: 'pointer' }}
-              title={i18n.t('tooltip.gotoIFI', lang)}
-              onClick={visitIFI}
-            />
-            &nbsp;&nbsp; &copy;{new Date().getFullYear()} {i18n.t('name.IFI', lang)}
-            &nbsp;{i18n.t('word.Version', lang) + ' ' + VERSION + '. ' + i18n.t('word.AllRightsReserved', lang) + '. '}
-          </div>
+          {viewOnly ? (
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '10px',
+                left: '10px',
+                zIndex: 999,
+                fontSize: '12px',
+                userSelect: 'none',
+                color: 'antiquewhite',
+              }}
+            >
+              <img
+                alt="IFI Logo"
+                src={ifiLogo}
+                height="30px"
+                style={{ verticalAlign: 'bottom', cursor: 'pointer' }}
+                title={i18n.t('tooltip.gotoIFI', lang)}
+                onClick={visitIFI}
+              />
+            </div>
+          ) : (
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '10px',
+                left: '10px',
+                zIndex: 999,
+                fontSize: '12px',
+                userSelect: 'none',
+                color: 'antiquewhite',
+              }}
+            >
+              <img
+                alt="IFI Logo"
+                src={ifiLogo}
+                height="40px"
+                style={{ verticalAlign: 'bottom', cursor: 'pointer' }}
+                title={i18n.t('tooltip.gotoIFI', lang)}
+                onClick={visitIFI}
+              />
+              &nbsp;&nbsp; &copy;{new Date().getFullYear()} {i18n.t('name.IFI', lang)}
+              &nbsp;
+              {i18n.t('word.Version', lang) + ' ' + VERSION + '. ' + i18n.t('word.AllRightsReserved', lang) + '. '}
+            </div>
+          )}
           <LocalFileManager />
           <AnalysisManager />
           <MainMenu canvas={canvasRef.current} set2DView={set2DView} resetView={resetView} zoomView={zoomView} />
