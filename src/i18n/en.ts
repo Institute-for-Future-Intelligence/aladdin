@@ -118,7 +118,7 @@ export const i18n_en = {
         SiteInformation: 'Site Information',
         Instruction: 'Instruction',
         StickyNote: 'Sticky Note',
-        ShowShadow: 'Show shadow',
+        ShowShadow: 'Show Shadow',
       },
       toolSubMenu: 'Tool',
       tool: {

@@ -9,6 +9,7 @@ import * as Selector from './stores/selector';
 import { ElementModel } from './models/ElementModel';
 import { UndoableDelete } from './undo/UndoableDelete';
 import { UndoablePaste } from './undo/UndoablePaste';
+import { UndoableCheck } from './undo/UndoableCheck';
 
 export interface KeyboardListenerProps {
   keyFlag: boolean; // flip this every time to ensure that handleKey is called in useEffect
@@ -57,6 +58,25 @@ const KeyboardListener = ({
     if (canvas) {
       canvas.style.cursor = 'default'; // if an element is deleted but the cursor is not default
     }
+  };
+
+  const toggle2DView = (on: boolean) => {
+    const undoableCheck = {
+      name: 'Set 2D View',
+      timestamp: Date.now(),
+      checked: !orthographic,
+      undo: () => {
+        set2DView(!undoableCheck.checked);
+      },
+      redo: () => {
+        set2DView(undoableCheck.checked);
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    set2DView(on);
+    setCommonStore((state) => {
+      state.viewState.autoRotate = false;
+    });
   };
 
   const handleKey = () => {
@@ -233,10 +253,7 @@ const KeyboardListener = ({
         }
         break;
       case 'f2':
-        setCommonStore((state) => {
-          state.viewState.autoRotate = false;
-        });
-        set2DView(!orthographic);
+        toggle2DView(!orthographic);
         break;
       case 'f4':
         if (!orthographic) {

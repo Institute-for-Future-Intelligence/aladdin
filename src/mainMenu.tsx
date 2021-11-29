@@ -31,6 +31,7 @@ import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
 import { Util } from './Util';
 import { UndoableCheck } from './undo/UndoableCheck';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 const { SubMenu } = Menu;
 const { Option } = Select;
@@ -209,6 +210,25 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
     });
   };
 
+  const toggle2DView = (e: CheckboxChangeEvent) => {
+    const undoableCheck = {
+      name: 'Toggle 2D View',
+      timestamp: Date.now(),
+      checked: !orthographic,
+      undo: () => {
+        set2DView(!undoableCheck.checked);
+      },
+      redo: () => {
+        set2DView(undoableCheck.checked);
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    set2DView(e.target.checked);
+    setCommonStore((state) => {
+      state.viewState.autoRotate = false;
+    });
+  };
+
   const menu = (
     <Menu>
       {/*file menu*/}
@@ -308,15 +328,7 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
           <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+[)</label>
         </Menu.Item>
         <Menu.Item key={'orthographic-check-box'}>
-          <Checkbox
-            checked={orthographic}
-            onChange={(e) => {
-              set2DView(e.target.checked);
-              setCommonStore((state) => {
-                state.viewState.autoRotate = false;
-              });
-            }}
-          >
+          <Checkbox checked={orthographic} onChange={toggle2DView}>
             {i18n.t('menu.view.TwoDimensionalView', lang)}
             <label style={{ paddingLeft: '2px', fontSize: 9 }}>(F2)</label>
           </Checkbox>
