@@ -30,7 +30,6 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const setCommonStore = useStore(Selector.set);
   const selectNone = useStore(Selector.selectNone);
   const getSelectedElement = useStore(Selector.getSelectedElement);
-  const updateElementLzById = useStore(Selector.updateElementLzById);
   const getCameraDirection = useStore(Selector.getCameraDirection);
   const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
   const resizeHandleType = useStore(Selector.resizeHandleType);
@@ -108,6 +107,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         });
       } else {
         const selectedElement = getSelectedElement();
+        const wallResizeHandle = useStore.getState().resizeHandleType;
         if (selectedElement) {
           if (legalOnGround(selectedElement.type)) {
             grabRef.current = selectedElement;
@@ -116,6 +116,11 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                 state.enableOrbitController = false;
               });
             }
+          } else if (
+            selectedElement.type === ObjectType.Wall &&
+            (wallResizeHandle === ResizeHandleType.UpperLeft || wallResizeHandle === ResizeHandleType.UpperRight)
+          ) {
+            grabRef.current = selectedElement;
           }
         }
       }
@@ -129,19 +134,43 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
       mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
       ray.setFromCamera(mouse, camera);
       let intersects;
-      if (
-        grabRef.current.type === ObjectType.Cuboid &&
-        intersectionPlaneRef.current &&
-        intersectionPlaneType === IntersectionPlaneType.Vertical &&
-        (resizeHandleType === ResizeHandleType.LowerLeftTop ||
-          resizeHandleType === ResizeHandleType.UpperLeftTop ||
-          resizeHandleType === ResizeHandleType.LowerRightTop ||
-          resizeHandleType === ResizeHandleType.UpperRightTop)
-      ) {
+      if (intersectionPlaneRef.current && intersectionPlaneType === IntersectionPlaneType.Vertical) {
         intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-        if (intersects.length > 0) {
+        if (intersects && intersects.length > 0) {
           const p = intersects[0].point;
-          updateElementLzById(grabRef.current.id, Math.max(1, p.z));
+          switch (grabRef.current.type) {
+            case ObjectType.Cuboid:
+              if (
+                resizeHandleType === ResizeHandleType.LowerLeftTop ||
+                resizeHandleType === ResizeHandleType.UpperLeftTop ||
+                resizeHandleType === ResizeHandleType.LowerRightTop ||
+                resizeHandleType === ResizeHandleType.UpperRightTop
+              ) {
+                setCommonStore((state) => {
+                  for (const e of state.elements) {
+                    if (e.id === grabRef.current?.id) {
+                      e.cz = Math.max(0.5, p.z / 2);
+                      e.lz = Math.max(1, p.z);
+                    }
+                  }
+                  state.selectedElementHeight = Math.max(1, p.z);
+                });
+              }
+              break;
+            case ObjectType.Wall:
+              if (resizeHandleType === ResizeHandleType.UpperLeft || resizeHandleType === ResizeHandleType.UpperRight) {
+                setCommonStore((state) => {
+                  for (const e of state.elements) {
+                    if (e.id === grabRef.current?.id) {
+                      e.cz = Math.max(0.5, p.z / 2);
+                      e.lz = Math.max(1, p.z);
+                    }
+                  }
+                  state.selectedElementHeight = Math.max(1, p.z);
+                });
+              }
+              break;
+          }
         }
       }
     }

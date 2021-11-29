@@ -436,26 +436,56 @@ export const useStore = create<CommonStoreState>(
 
           selectedSideIndex: -1,
 
-          getResizeHandlePosition(e: ElementModel, type: ResizeHandleType) {
-            const { cx, cy, cz, lx, ly, rotation } = e;
-            const p = new Vector3();
+          getResizeHandlePosition(e: ElementModel, handleType: ResizeHandleType) {
+            const { cx, cy, cz, lx, ly, lz, rotation, type, parentId } = e;
+            let p = new Vector3();
             const v = new Vector2();
             switch (type) {
-              case ResizeHandleType.LowerLeftTop:
-                v.set(-lx / 2, -ly / 2);
+              case ObjectType.Cuboid:
+                switch (handleType) {
+                  case ResizeHandleType.LowerLeftTop:
+                    v.set(-lx / 2, -ly / 2);
+                    break;
+                  case ResizeHandleType.LowerRightTop:
+                    v.set(lx / 2, -ly / 2);
+                    break;
+                  case ResizeHandleType.UpperLeftTop:
+                    v.set(-lx / 2, ly / 2);
+                    break;
+                  case ResizeHandleType.UpperRightTop:
+                    v.set(lx / 2, ly / 2);
+                    break;
+                }
+                v.rotateAround(new Vector2(0, 0), rotation[2]);
+                p.set(cx + v.x, cy + v.y, cz);
                 break;
-              case ResizeHandleType.LowerRightTop:
-                v.set(lx / 2, -ly / 2);
-                break;
-              case ResizeHandleType.UpperLeftTop:
-                v.set(-lx / 2, ly / 2);
-                break;
-              case ResizeHandleType.UpperRightTop:
-                v.set(lx / 2, ly / 2);
-                break;
+              case ObjectType.Wall:
+                const elements = get().elements;
+                let parent: ElementModel | null = null;
+                const wall = e as WallModel;
+                for (const e of elements) {
+                  if (e.id === parentId) {
+                    parent = e;
+                  }
+                }
+                if (parent) {
+                  const parentPosition = new Vector3(parent.cx, parent.cy, parent.cz);
+                  switch (handleType) {
+                    case ResizeHandleType.UpperLeft: {
+                      const handleRelativePos = new Vector3(wall.leftPoint[0], wall.leftPoint[1], wall.leftPoint[2]);
+                      const haneldAbsPosition = new Vector3().addVectors(parentPosition, handleRelativePos);
+                      p = haneldAbsPosition;
+                      break;
+                    }
+                    case ResizeHandleType.UpperRight: {
+                      const handleRelativePos = new Vector3(wall.rightPoint[0], wall.rightPoint[1], wall.rightPoint[2]);
+                      const haneldAbsPosition = new Vector3().addVectors(parentPosition, handleRelativePos);
+                      p = haneldAbsPosition;
+                      break;
+                    }
+                  }
+                }
             }
-            v.rotateAround(new Vector2(0, 0), rotation[2]);
-            p.set(cx + v.x, cy + v.y, cz);
             return p;
           },
           getElementById(id: string) {

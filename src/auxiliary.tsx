@@ -28,7 +28,9 @@ export const Auxiliary = () => {
         resizeHandleType === ResizeHandleType.LowerLeftTop ||
         resizeHandleType === ResizeHandleType.LowerRightTop ||
         resizeHandleType === ResizeHandleType.UpperLeftTop ||
-        resizeHandleType === ResizeHandleType.UpperRightTop;
+        resizeHandleType === ResizeHandleType.UpperRightTop ||
+        (resizeHandleType === ResizeHandleType.UpperLeft && element?.type === ObjectType.Wall) ||
+        (resizeHandleType === ResizeHandleType.UpperRight && element?.type === ObjectType.Wall);
       setShowGrid(!changeHeight);
       setshowVerticalRuler(changeHeight);
     } else {
@@ -50,16 +52,16 @@ export const Auxiliary = () => {
 
   return (
     <>
-      {!enableOrbitController && legalOnGround() && !groundImage && (
+      {!enableOrbitController && (
         <>
-          {(showGrid || moveHandleType) && (
+          {(showGrid || moveHandleType) && !groundImage && legalOnGround() && (
             <gridHelper
               rotation={[Math.PI / 2, 0, 0]}
               name={'Grid'}
               args={[WORKSPACE_SIZE, WORKSPACE_SIZE, 'gray', '#444444']}
             />
           )}
-          {rotateHandleType && element && <PolarGrid element={element} />}
+          {rotateHandleType && element && !groundImage && legalOnGround() && <PolarGrid element={element} />}
           {showVerticalRuler && element && <VerticalRuler element={element} />}
         </>
       )}

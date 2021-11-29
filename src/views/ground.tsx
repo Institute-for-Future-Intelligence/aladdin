@@ -36,8 +36,6 @@ const Ground = () => {
   const setElementPosition = useStore(Selector.setElementPosition);
   const setElementSize = useStore(Selector.setElementSize);
   const setElementRotation = useStore(Selector.updateElementRotationById);
-  const updateElementCzById = useStore(Selector.updateElementCzById);
-  const updateElementLzById = useStore(Selector.updateElementLzById);
   const addElement = useStore(Selector.addElement);
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
@@ -102,9 +100,9 @@ const Ground = () => {
       moveHandleType === MoveHandleType.Lower ||
       moveHandleType === MoveHandleType.Upper ||
       resizeHandleType === ResizeHandleType.LowerLeft ||
-      resizeHandleType === ResizeHandleType.UpperLeft ||
+      (resizeHandleType === ResizeHandleType.UpperLeft && grabRef.current.type !== ObjectType.Wall) ||
       resizeHandleType === ResizeHandleType.LowerRight ||
-      resizeHandleType === ResizeHandleType.UpperRight ||
+      (resizeHandleType === ResizeHandleType.UpperRight && grabRef.current.type !== ObjectType.Wall) ||
       rotateHandleType === RotateHandleType.Lower ||
       rotateHandleType === RotateHandleType.Upper
     ) {
@@ -334,6 +332,7 @@ const Ground = () => {
         }
       } else {
         const selectedElement = getSelectedElement();
+        const wallResizeHandle = useStore.getState().resizeHandleType;
         if (selectedElement) {
           if (legalOnGround(selectedElement.type)) {
             grabRef.current = selectedElement;
@@ -456,6 +455,11 @@ const Ground = () => {
                 }
                 break;
             }
+          } else if (
+            selectedElement.type === ObjectType.Wall &&
+            (wallResizeHandle === ResizeHandleType.UpperLeft || wallResizeHandle === ResizeHandleType.UpperRight)
+          ) {
+            grabRef.current = selectedElement;
           }
         }
       }
@@ -546,25 +550,41 @@ const Ground = () => {
       mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
       ray.setFromCamera(mouse, camera);
       let intersects;
-      if (
-        grabRef.current.type === ObjectType.Cuboid &&
-        intersectionPlaneRef.current &&
-        intersectionPlaneType === IntersectionPlaneType.Vertical
-      ) {
-        if (
-          resizeHandleType === ResizeHandleType.LowerLeftTop ||
-          resizeHandleType === ResizeHandleType.UpperLeftTop ||
-          resizeHandleType === ResizeHandleType.LowerRightTop ||
-          resizeHandleType === ResizeHandleType.UpperRightTop
-        ) {
-          intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-          if (intersects.length > 0) {
-            const p = intersects[0].point;
-            updateElementCzById(grabRef.current.id, Math.max(0.5, p.z / 2));
-            updateElementLzById(grabRef.current.id, Math.max(1, p.z));
-            setCommonStore((state) => {
-              state.selectedElementHeight = Math.max(1, p.z);
-            });
+      if (intersectionPlaneRef.current && intersectionPlaneType === IntersectionPlaneType.Vertical) {
+        intersects = ray.intersectObjects([intersectionPlaneRef.current]);
+        if (intersects && intersects.length > 0) {
+          const p = intersects[0].point;
+          switch (grabRef.current.type) {
+            case ObjectType.Cuboid:
+              if (
+                resizeHandleType === ResizeHandleType.LowerLeftTop ||
+                resizeHandleType === ResizeHandleType.UpperLeftTop ||
+                resizeHandleType === ResizeHandleType.LowerRightTop ||
+                resizeHandleType === ResizeHandleType.UpperRightTop
+              ) {
+                setCommonStore((state) => {
+                  for (const e of state.elements) {
+                    if (e.id === grabRef.current?.id) {
+                      e.cz = Math.max(0.5, p.z / 2);
+                      e.lz = Math.max(1, p.z);
+                    }
+                  }
+                  state.selectedElementHeight = Math.max(1, p.z);
+                });
+              }
+              break;
+            case ObjectType.Wall:
+              if (resizeHandleType === ResizeHandleType.UpperLeft || resizeHandleType === ResizeHandleType.UpperRight) {
+                setCommonStore((state) => {
+                  for (const e of state.elements) {
+                    if (e.id === grabRef.current?.id) {
+                      e.cz = Math.max(0.5, p.z / 2);
+                      e.lz = Math.max(1, p.z);
+                    }
+                  }
+                  state.selectedElementHeight = Math.max(1, p.z);
+                });
+              }
           }
         }
       }
