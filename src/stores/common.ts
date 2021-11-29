@@ -1598,8 +1598,8 @@ export const useStore = create<CommonStoreState>(
           updateWallThicknessById(id, thickness) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id) {
-                  (e as WallModel).thickness = thickness;
+                if (e.id === id) {
+                  (e as WallModel).ly = thickness;
                   break;
                 }
               }
@@ -1609,7 +1609,7 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Wall && e.foundationId === foundationId) {
-                  (e as WallModel).thickness = thickness;
+                  (e as WallModel).ly = thickness;
                 }
               }
             });
@@ -1618,7 +1618,7 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Wall) {
-                  (e as WallModel).thickness = thickness;
+                  (e as WallModel).ly = thickness;
                 }
               }
             });

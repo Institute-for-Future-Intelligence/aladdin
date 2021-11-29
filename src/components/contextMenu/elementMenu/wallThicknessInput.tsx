@@ -31,7 +31,7 @@ const WallThicknessInput = ({
   const setWallActionScope = useStore(Selector.setWallActionScope);
 
   const wall = getSelectedElement() as WallModel;
-  const [inputThickness, setInputThickness] = useState<number>(wall?.thickness ?? 0.3);
+  const [inputThickness, setInputThickness] = useState<number>(wall?.ly ?? 0.3);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -41,7 +41,7 @@ const WallThicknessInput = ({
 
   useEffect(() => {
     if (wall) {
-      setInputThickness(wall?.thickness ?? 0.3);
+      setInputThickness(wall?.ly ?? 0.3);
     }
   }, [wall]);
 
@@ -56,7 +56,7 @@ const WallThicknessInput = ({
         const oldThicknessesAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Wall) {
-            oldThicknessesAll.set(elem.id, (elem as WallModel).thickness);
+            oldThicknessesAll.set(elem.id, (elem as WallModel).ly);
           }
         }
         const undoableChangeAll = {
@@ -81,7 +81,7 @@ const WallThicknessInput = ({
           const oldThicknessesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.Wall && elem.foundationId === wall.foundationId) {
-              oldThicknessesAboveFoundation.set(elem.id, (elem as WallModel).thickness);
+              oldThicknessesAboveFoundation.set(elem.id, (elem as WallModel).ly);
             }
           }
           const undoableChangeAboveFoundation = {
@@ -110,7 +110,7 @@ const WallThicknessInput = ({
         break;
       default:
         if (wall) {
-          const oldThickness = wall.thickness ?? 0.3;
+          const oldThickness = wall.ly ?? 0.3;
           const undoableChange = {
             name: 'Set Wall Thickness',
             timestamp: Date.now(),
@@ -170,7 +170,7 @@ const WallThicknessInput = ({
           <Button
             key="Cancel"
             onClick={() => {
-              setInputThickness(wall.thickness ?? 0.3);
+              setInputThickness(wall.ly ?? 0.3);
               setThicknessDialogVisible(false);
             }}
           >
@@ -189,7 +189,7 @@ const WallThicknessInput = ({
         ]}
         // this must be specified for the x button at the upper-right corner to work
         onCancel={() => {
-          setInputThickness(wall.thickness ?? 0.3);
+          setInputThickness(wall.ly ?? 0.3);
           setThicknessDialogVisible(false);
         }}
         destroyOnClose={false}
