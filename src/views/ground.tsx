@@ -314,17 +314,22 @@ const Ground = () => {
             addedElement: addedElement,
             undo: () => {
               removeElementById(undoableAdd.addedElement.id, false);
+              setCommonStore((state) => {
+                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+              });
             },
             redo: () => {
               setCommonStore((state) => {
                 state.elements.push(undoableAdd.addedElement);
                 state.selectedElement = undoableAdd.addedElement;
+                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
               });
             },
           } as UndoableAdd;
           addUndoable(undoableAdd);
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
+            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
           });
         }
       } else {

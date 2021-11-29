@@ -30,6 +30,7 @@ import { Discretization, Language, ObjectType } from './types';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
 import { Util } from './Util';
+import { UndoableCheck } from './undo/UndoableCheck';
 
 const { SubMenu } = Menu;
 const { Option } = Select;
@@ -88,6 +89,9 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
   const showMapPanel = useStore(Selector.viewState.showMapPanel);
   const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
   const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
+  const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const addUndoable = useStore(Selector.addUndoable);
 
   const [aboutUs, setAboutUs] = useState(false);
 
@@ -150,6 +154,59 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
         state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
       });
     }
+  };
+
+  const toggleShadow = () => {
+    const undoableCheck = {
+      name: 'Show Shadow',
+      timestamp: Date.now(),
+      checked: !shadowEnabled,
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.shadowEnabled = !undoableCheck.checked;
+          if (state.viewState.shadowEnabled) {
+            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+          }
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.shadowEnabled = undoableCheck.checked;
+          if (state.viewState.shadowEnabled) {
+            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+          }
+        });
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    setCommonStore((state) => {
+      state.viewState.shadowEnabled = !state.viewState.shadowEnabled;
+      if (state.viewState.shadowEnabled) {
+        state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+      }
+    });
+  };
+
+  const toggleHelidonPanel = () => {
+    const undoableCheck = {
+      name: 'Show Heliodon Control Panel',
+      timestamp: Date.now(),
+      checked: !showHeliodonPanel,
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.showHeliodonPanel = !undoableCheck.checked;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.showHeliodonPanel = undoableCheck.checked;
+        });
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    setCommonStore((state) => {
+      state.viewState.showHeliodonPanel = !state.viewState.showHeliodonPanel;
+    });
   };
 
   const menu = (
@@ -282,6 +339,11 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
             </Checkbox>
           </Menu.Item>
         )}
+        <Menu.Item key={'shadow-check-box'}>
+          <Checkbox checked={shadowEnabled} onChange={toggleShadow}>
+            {i18n.t('menu.view.ShowShadow', lang)}
+          </Checkbox>
+        </Menu.Item>
         <Menu.Item key={'info-panel-check-box'}>
           <Checkbox
             checked={showInfoPanel}
@@ -322,6 +384,11 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
 
       {/*tool menu */}
       <SubMenu key={'tool'} title={i18n.t('menu.toolSubMenu', lang)}>
+        <Menu.Item key={'heliodon-panel-check-box'}>
+          <Checkbox checked={showHeliodonPanel} onChange={toggleHelidonPanel}>
+            {i18n.t('menu.tool.Heliodon', lang)}
+          </Checkbox>
+        </Menu.Item>
         <Menu.Item key={'map-panel-check-box'}>
           <Checkbox
             checked={showMapPanel}

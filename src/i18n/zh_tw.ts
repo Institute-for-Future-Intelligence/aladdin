@@ -118,11 +118,13 @@ export const i18n_zh_tw = {
         SiteInformation: '地理位置資訊',
         Instruction: '操作說明',
         StickyNote: '便簽',
+        ShowShadow: '顯示陰影',
       },
       toolSubMenu: '工具',
       tool: {
         Map: '地圖',
         WeatherData: '氣象數據',
+        Heliodon: '日影儀',
       },
       analysisSubMenu: '分析',
       sensorsSubMenu: '傳感器',

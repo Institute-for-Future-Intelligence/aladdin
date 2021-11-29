@@ -299,7 +299,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       <LocalFileManager />
       <AnalysisManager />
       <MainMenu canvas={canvasRef.current} set2DView={set2DView} resetView={resetView} zoomView={zoomView} />
-      {!viewOnly && <MainToolBar />}
+      <MainToolBar viewOnly={viewOnly} />
       {showMapPanel && <MapPanel />}
       {showHeliodonPanel && <HeliodonPanel />}
       {showStickyNotePanel && <StickyNotePanel />}

@@ -35,7 +35,11 @@ const ButtonsContainer = styled.div`
   z-index: 9;
 `;
 
-const MainToolBar = () => {
+export interface MainToolBarProps {
+  viewOnly: boolean;
+}
+
+const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const user = useStore(Selector.user);
@@ -417,7 +421,9 @@ const MainToolBar = () => {
     }
   };
 
-  return (
+  return viewOnly ? (
+    <></>
+  ) : (
     <>
       <Modal
         title={

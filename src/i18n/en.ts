@@ -118,11 +118,13 @@ export const i18n_en = {
         SiteInformation: 'Site Information',
         Instruction: 'Instruction',
         StickyNote: 'Sticky Note',
+        ShowShadow: 'Show shadow',
       },
       toolSubMenu: 'Tool',
       tool: {
         Map: 'Map',
         WeatherData: 'Weather Data',
+        Heliodon: 'Heliodon',
       },
       analysisSubMenu: 'Analysis',
       sensorsSubMenu: 'Sensors',

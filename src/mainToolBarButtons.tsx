@@ -4,7 +4,6 @@
 
 import FoundationImage from './resources/foundation.png';
 import SolarPanelImage from './resources/solar-panel.png';
-import ShadowImage from './resources/shadow.png';
 import WallImage from './resources/wall.png';
 import WindowImage from './resources/window.png';
 import RoofImage from './resources/roof.png';
@@ -35,7 +34,6 @@ const MainToolBarButtons = () => {
   const language = useStore(Selector.language);
   const selectNone = useStore(Selector.selectNone);
   const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const clearContent = useStore(Selector.clearContent);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const addUndoable = useStore(Selector.addUndoable);
@@ -74,43 +72,26 @@ const MainToolBarButtons = () => {
     resetToSelectMode();
   };
 
-  const toggleShadow = () => {
+  const toggleHelidonPanel = () => {
     const undoableCheck = {
-      name: 'Show Shadow',
+      name: 'Show Heliodon Control Panel',
       timestamp: Date.now(),
-      checked: !shadowEnabled,
+      checked: !showHeliodonPanel,
       undo: () => {
         setCommonStore((state) => {
-          state.viewState.shadowEnabled = !undoableCheck.checked;
-          if (state.viewState.shadowEnabled) {
-            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-          }
+          state.viewState.showHeliodonPanel = !undoableCheck.checked;
         });
       },
       redo: () => {
         setCommonStore((state) => {
-          state.viewState.shadowEnabled = undoableCheck.checked;
-          if (state.viewState.shadowEnabled) {
-            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-          }
+          state.viewState.showHeliodonPanel = undoableCheck.checked;
         });
       },
     } as UndoableCheck;
     addUndoable(undoableCheck);
     setCommonStore((state) => {
-      state.viewState.shadowEnabled = !state.viewState.shadowEnabled;
-      if (state.viewState.shadowEnabled) {
-        state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-      }
-    });
-    resetToSelectMode();
-  };
-
-  const toggleHelidonPanel = () => {
-    setCommonStore((state) => {
       state.viewState.showHeliodonPanel = !state.viewState.showHeliodonPanel;
     });
-    resetToSelectMode();
   };
 
   return (
@@ -301,23 +282,6 @@ const MainToolBarButtons = () => {
         color={showHeliodonPanel ? 'antiquewhite' : '#666666'}
         style={{ paddingRight: '12px', cursor: 'pointer' }}
         onClick={toggleHelidonPanel}
-      />
-      <img
-        title={i18n.t('toolbar.ShowShadow', lang)}
-        alt={'Shadow effect'}
-        src={ShadowImage}
-        height={48}
-        width={36}
-        style={{
-          paddingRight: '2px',
-          paddingBottom: '20px',
-          filter: shadowEnabled
-            ? 'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)'
-            : 'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)',
-          cursor: 'pointer',
-          verticalAlign: 'middle',
-        }}
-        onClick={toggleShadow}
       />
     </div>
   );
