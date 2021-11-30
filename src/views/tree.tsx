@@ -22,7 +22,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useThree } from '@react-three/fiber';
 import { Billboard, Cone, Plane, Sphere } from '@react-three/drei';
-import { MOVE_HANDLE_RADIUS, TWO_PI } from '../constants';
+import { HALF_PI, MOVE_HANDLE_RADIUS, TWO_PI } from '../constants';
 import { TreeModel } from '../models/TreeModel';
 import { ObjectType, TreeType } from '../types';
 
@@ -116,11 +116,11 @@ const Tree = ({
   }, [name]);
 
   const solidTreeRotation = useMemo(() => {
-    return new Euler(Math.PI / 2, -Math.atan2(cameraX - cx, cameraZ - cy), 0);
+    return new Euler(HALF_PI, -Math.atan2(cameraX - cx, cameraZ - cy), 0);
   }, [cameraX, cameraZ, cx, cy]);
 
   const shadowTreeRotation = useMemo(() => {
-    return new Euler(Math.PI / 2, -Math.atan2(sunlightX, sunlightZ), 0);
+    return new Euler(HALF_PI, -Math.atan2(sunlightX, sunlightZ), 0);
   }, [sunlightX, sunlightZ]);
 
   // IMPORTANT: model mesh must use double side in order to intercept sunlight
@@ -147,7 +147,7 @@ const Tree = ({
           name={name + ' Model'}
           args={[lx / 2, 8, 8, 0, TWO_PI, 0, theta]}
           scale={[1, lz / lx, 1]}
-          rotation={[Math.PI / 2, 0, 0]}
+          rotation={[HALF_PI, 0, 0]}
         >
           <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75} />
         </Sphere>
@@ -159,7 +159,7 @@ const Tree = ({
           position={[0, 0, lz * 0.1]}
           args={[lx / 2, lz, 8, 8, true]}
           scale={[1, 1, 1]}
-          rotation={[Math.PI / 2, 0, 0]}
+          rotation={[HALF_PI, 0, 0]}
         >
           <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75} />
         </Cone>

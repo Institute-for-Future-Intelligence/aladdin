@@ -20,7 +20,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { IntersectionPlaneType, ObjectType, ResizeHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
-import { DEFAULT_SKY_RADIUS } from '../constants';
+import { DEFAULT_SKY_RADIUS, HALF_PI, TWO_PI } from '../constants';
 
 export interface SkyProps {
   theme?: string;
@@ -55,7 +55,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
     const cameraDir = getCameraDirection();
     const rotation = -Math.atan2(cameraDir.x, cameraDir.y);
     intersectionPlanePosition.set(handlePosition.x, handlePosition.y, 0);
-    intersectionPlaneAngle.set(-Math.PI / 2, 0, rotation, 'ZXY');
+    intersectionPlaneAngle.set(-HALF_PI, 0, rotation, 'ZXY');
   }
 
   const scale = useMemo(() => {
@@ -201,9 +201,9 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
           });
           clickSky(e);
         }}
-        rotation={[Math.PI / 2, 0, 0]}
+        rotation={[HALF_PI, 0, 0]}
       >
-        <sphereBufferGeometry args={[DEFAULT_SKY_RADIUS, 16, 8, 0, 2 * Math.PI, 0, Math.PI / 2]} />
+        <sphereBufferGeometry args={[DEFAULT_SKY_RADIUS, 16, 8, 0, TWO_PI, 0, HALF_PI]} />
         <meshBasicMaterial map={texture} side={BackSide} opacity={1} color={'skyblue'} />
       </mesh>
       {grabRef.current && intersectionPlaneType !== IntersectionPlaneType.Sky && (

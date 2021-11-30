@@ -32,7 +32,7 @@ import * as Selector from '../stores/selector';
 import { useThree } from '@react-three/fiber';
 import { HumanModel } from '../models/HumanModel';
 import { Billboard, Plane, Sphere } from '@react-three/drei';
-import { MOVE_HANDLE_RADIUS } from '../constants';
+import { HALF_PI, MOVE_HANDLE_RADIUS } from '../constants';
 import { HumanName, ObjectType } from '../types';
 
 const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked = false, ...props }: HumanModel) => {
@@ -198,7 +198,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
   }, [name]);
 
   const rotation = useMemo(() => {
-    return new Euler(Math.PI / 2, -Math.atan2(cameraX - cx, cameraY - cy), 0);
+    return new Euler(HALF_PI, -Math.atan2(cameraX - cx, cameraY - cy), 0);
   }, [cameraX, cameraY, cx, cy]);
 
   return (

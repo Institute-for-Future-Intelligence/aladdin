@@ -7,7 +7,6 @@
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from 'src/stores/selector';
-import './app.css';
 import { Camera, Canvas } from '@react-three/fiber';
 import OrbitController from './orbitController';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';

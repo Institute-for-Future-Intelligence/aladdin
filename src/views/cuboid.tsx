@@ -40,6 +40,7 @@ import {
   MOVE_HANDLE_RADIUS,
   RESIZE_HANDLE_COLOR,
   RESIZE_HANDLE_SIZE,
+  TWO_PI,
   UNIT_VECTOR_NEG_X,
   UNIT_VECTOR_NEG_Y,
   UNIT_VECTOR_POS_X,
@@ -326,7 +327,7 @@ const Cuboid = ({
     if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_POS_Z)) {
       gridLength.current = Math.max(lx, ly);
       gridPositionRef.current = new Vector3(0, 0, hz);
-      gridRotationRef.current = new Euler(Math.PI / 2, 0, 0);
+      gridRotationRef.current = new Euler(HALF_PI, 0, 0);
       gridScale.current = new Vector3(lx / gridLength.current, 1, ly / gridLength.current);
     } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_POS_X)) {
       // east face in view coordinate system
@@ -467,7 +468,7 @@ const Cuboid = ({
                   -pr +
                   Math.atan2(-p.x + wc.x, p.y - wc.y) +
                   (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
-                const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0; // make sure angle is between -PI to PI
+                const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * TWO_PI : 0; // make sure angle is between -PI to PI
                 if (grabRef.current?.type === ObjectType.SolarPanel) {
                   updateSolarPanelRelativeAzimuthById(grabRef.current.id, rotation + offset);
                   newAzimuthRef.current = rotation + offset;

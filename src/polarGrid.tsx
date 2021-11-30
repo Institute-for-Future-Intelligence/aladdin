@@ -69,7 +69,7 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
       {position && (
         <group position={position} rotation={[HALF_PI, 0, 0]} name={'Polar Auxiliary'}>
           <polarGridHelper args={[radius, 24, 6, 120, 'gray', 'gray']} />
-          <Ring args={[radius * 0.98, radius, 24, 1, Math.PI / 2, angle]} rotation={[-HALF_PI, 0, 0]}>
+          <Ring args={[radius * 0.98, radius, 24, 1, HALF_PI, angle]} rotation={[-HALF_PI, 0, 0]}>
             <meshBasicMaterial side={DoubleSide} color={'yellow'} />
           </Ring>
 

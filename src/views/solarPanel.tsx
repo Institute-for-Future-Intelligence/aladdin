@@ -339,7 +339,7 @@ const SolarPanel = ({
           uuid={id}
           ref={baseRef}
           args={[lx, lz, ly]}
-          rotation={[Math.PI / 2, 0, 0]}
+          rotation={[HALF_PI, 0, 0]}
           name={'Solar Panel'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
@@ -577,8 +577,8 @@ const SolarPanel = ({
           {/* ring handles */}
           <Ring
             name={RotateHandleType.Tilt}
-            args={[tiltHandleSize, 1.1 * tiltHandleSize, 18, 2, -Math.PI / 2, Math.PI]}
-            rotation={[0, -Math.PI / 2, relativeEuler.z, 'ZXY']}
+            args={[tiltHandleSize, 1.1 * tiltHandleSize, 18, 2, -HALF_PI, Math.PI]}
+            rotation={[0, -HALF_PI, relativeEuler.z, 'ZXY']}
             onPointerOver={(e) => {
               hoverHandle(e, RotateHandleType.Tilt);
             }}
@@ -610,8 +610,8 @@ const SolarPanel = ({
               <Ring
                 ref={tiltHandleRef}
                 name={'Solar panel tilt handle'}
-                args={[tiltHandleSize, 2 * tiltHandleSize, 18, 2, -Math.PI / 2, Math.PI]}
-                rotation={[0, -Math.PI / 2, relativeEuler.z, 'ZXY']}
+                args={[tiltHandleSize, 2 * tiltHandleSize, 18, 2, -HALF_PI, Math.PI]}
+                rotation={[0, -HALF_PI, relativeEuler.z, 'ZXY']}
                 onPointerDown={(e) => {}}
                 onPointerUp={(e) => {
                   const undoableChange = {
@@ -670,7 +670,7 @@ const SolarPanel = ({
               {/* scale */}
               {degree.map((e, i) => {
                 return (
-                  <group key={i} rotation={new Euler((Math.PI / 12) * i - Math.PI / 2, 0, relativeEuler.z, 'ZXY')}>
+                  <group key={i} rotation={new Euler((Math.PI / 12) * i - HALF_PI, 0, relativeEuler.z, 'ZXY')}>
                     <Line
                       points={[
                         [0, 0, 1.8 * tiltHandleSize],
@@ -717,7 +717,7 @@ const SolarPanel = ({
               receiveShadow={shadowEnabled}
               args={[poleRadius, poleRadius, poleHeight + (p.z - poleZ) * 2 + lz, 6, 2]}
               position={p}
-              rotation={[Math.PI / 2, 0, 0]}
+              rotation={[HALF_PI, 0, 0]}
             >
               <meshStandardMaterial attach="material" color={color} />
             </Cylinder>
@@ -759,7 +759,7 @@ const SolarPanel = ({
           />
           <group
             position={normalVector.clone().multiplyScalar(0.75)}
-            rotation={[Math.PI / 2 + euler.x + relativeEuler.x, 0, euler.z + relativeEuler.z, 'ZXY']}
+            rotation={[HALF_PI + euler.x + relativeEuler.x, 0, euler.z + relativeEuler.z, 'ZXY']}
           >
             <Cone args={[0.04, 0.2, 4, 2]} name={'Normal Vector Arrow Head'} rotation={[0, 0, -relativeEuler.y]}>
               <meshStandardMaterial attach="material" color={'white'} />

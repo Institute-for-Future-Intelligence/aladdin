@@ -28,6 +28,7 @@ import {
   WallSide,
 } from '../types';
 import {
+  HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
   MOVE_HANDLE_COLOR_1,
   MOVE_HANDLE_COLOR_2,
@@ -35,6 +36,7 @@ import {
   MOVE_HANDLE_RADIUS,
   RESIZE_HANDLE_COLOR,
   RESIZE_HANDLE_SIZE,
+  TWO_PI,
   UNIT_VECTOR_POS_Z,
 } from '../constants';
 import { Util } from '../Util';
@@ -395,7 +397,7 @@ const Foundation = ({
       let totalNumber = 0;
       while (wall && wall.leftJoints.length > 0) {
         const targetWall = wallsOnThisFoundation.get(wall.leftJoints[0]);
-        const deltaAngle = (Math.PI * 3 - (wall.relativeAngle - targetWall!.relativeAngle)) % (Math.PI * 2);
+        const deltaAngle = (Math.PI * 3 - (wall.relativeAngle - targetWall!.relativeAngle)) % TWO_PI;
         totalAngle += deltaAngle;
         totalNumber += 1;
         wall = targetWall;
@@ -407,14 +409,13 @@ const Foundation = ({
       // check if need flip
       if (totalAngle > (totalNumber - 2) * Math.PI + 0.1) {
         while (wall && wall.leftJoints.length > 0) {
-          const angle = (wall.relativeAngle + Math.PI) % (Math.PI * 2);
+          const angle = (wall.relativeAngle + Math.PI) % TWO_PI;
           const targetWall = wallsOnThisFoundation.get(wall.leftJoints[0]);
-          const deltaAngle =
-            Math.PI * 2 - ((Math.PI * 3 - (wall.relativeAngle - targetWall!.relativeAngle)) % (Math.PI * 2));
+          const deltaAngle = TWO_PI - ((Math.PI * 3 - (wall.relativeAngle - targetWall!.relativeAngle)) % TWO_PI);
 
           let wallRightOffset = 0;
           let targetWallLeftOffset = 0;
-          if (deltaAngle < Math.PI / 2 && deltaAngle > 0.1) {
+          if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
             const tan = Math.tan(deltaAngle);
             wallRightOffset = wall.ly / tan;
             targetWallLeftOffset = targetWall!.ly / tan;
@@ -777,7 +778,7 @@ const Foundation = ({
               let angle =
                 Math.atan2(p.y - relativResizeAnchor.y, p.x - relativResizeAnchor.x) -
                 (resizeHandleType === ResizeHandleType.LowerLeft ? Math.PI : 0);
-              angle = angle >= 0 ? angle : (Math.PI * 2 + angle) % (Math.PI * 2);
+              angle = angle >= 0 ? angle : (TWO_PI + angle) % TWO_PI;
               const leftPoint = resizeHandleType === ResizeHandleType.LowerLeft ? p : relativResizeAnchor;
               const rightPoint = resizeHandleType === ResizeHandleType.LowerLeft ? relativResizeAnchor : p;
               setCommonStore((state) => {
@@ -801,10 +802,10 @@ const Foundation = ({
                   const targetJoint = currWall.leftJoints[0];
                   const targetWall = getElementById(targetJoint) as WallModel;
                   if (targetWall) {
-                    const deltaAngle = (Math.PI * 3 - (angle - targetWall.relativeAngle)) % (Math.PI * 2);
+                    const deltaAngle = (Math.PI * 3 - (angle - targetWall.relativeAngle)) % TWO_PI;
                     let currLeftOffset = 0;
                     let targetRightOffset = 0;
-                    if (deltaAngle < Math.PI / 2 && deltaAngle > 0.1) {
+                    if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
                       const tan = Math.tan(deltaAngle);
                       currLeftOffset = currWall.ly / tan;
                       targetRightOffset = targetWall.ly / tan;
@@ -825,10 +826,10 @@ const Foundation = ({
                 } else if (resizeHandleType === ResizeHandleType.LowerLeft && currWall.rightJoints.length > 0) {
                   const targetWall = getElementById(currWall.rightJoints[0]) as WallModel;
                   if (targetWall) {
-                    const deltaAngle = (Math.PI * 3 + angle - targetWall.relativeAngle) % (Math.PI * 2);
+                    const deltaAngle = (Math.PI * 3 + angle - targetWall.relativeAngle) % TWO_PI;
                     let currRightOffset = 0;
                     let targetLeftOffset = 0;
-                    if (deltaAngle < Math.PI / 2 && deltaAngle > 0.1) {
+                    if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
                       const tan = Math.tan(deltaAngle);
                       currRightOffset = currWall.ly / tan;
                       targetLeftOffset = targetWall.ly / tan;
@@ -871,7 +872,7 @@ const Foundation = ({
                       let flipWall = currWall;
 
                       while (flipWall) {
-                        const angle = (flipWall.relativeAngle + Math.PI) % (Math.PI * 2);
+                        const angle = (flipWall.relativeAngle + Math.PI) % TWO_PI;
                         let flipWallLeftOffset = 0;
                         let nextWallRightOffset = 0;
                         let nextWall: WallModel | undefined = undefined;
@@ -880,8 +881,8 @@ const Foundation = ({
                           nextWall = wallsOnThisFoundation.get(flipWall.rightJoints[0]);
                           if (nextWall) {
                             const deltaAngle =
-                              (Math.PI * 3 - (flipWall.relativeAngle - nextWall.relativeAngle)) % (Math.PI * 2);
-                            if (deltaAngle < Math.PI / 2 && deltaAngle > 0.1) {
+                              (Math.PI * 3 - (flipWall.relativeAngle - nextWall.relativeAngle)) % TWO_PI;
+                            if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
                               const tan = Math.tan(deltaAngle);
                               flipWallLeftOffset = flipWall.ly / tan;
                               nextWallRightOffset = nextWall.ly / tan;
@@ -913,11 +914,11 @@ const Foundation = ({
                         }
                       }
                       setCommonStore((state) => {
-                        const angle = (flipWallHead.relativeAngle + Math.PI) % (Math.PI * 2);
-                        const deltaAngle = (Math.PI * 3 + angle - stableWall.relativeAngle) % (Math.PI * 2);
+                        const angle = (flipWallHead.relativeAngle + Math.PI) % TWO_PI;
+                        const deltaAngle = (Math.PI * 3 + angle - stableWall.relativeAngle) % TWO_PI;
                         let flipWallRightOffset = 0;
                         let stableWallLeftOffset = 0;
-                        if (deltaAngle < Math.PI / 2 && deltaAngle > 0.1) {
+                        if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
                           const tan = Math.tan(deltaAngle);
                           flipWallRightOffset = flipWall.ly / tan;
                           stableWallLeftOffset = stableWall.ly / tan;
@@ -949,7 +950,7 @@ const Foundation = ({
                       let flipWall = currWall;
 
                       while (flipWall) {
-                        const angle = (flipWall.relativeAngle + Math.PI) % (Math.PI * 2);
+                        const angle = (flipWall.relativeAngle + Math.PI) % TWO_PI;
                         let flipWallLeftOffset = 0;
                         let nextWallRightOffset = 0;
                         let nextWall: WallModel | undefined = undefined;
@@ -957,9 +958,8 @@ const Foundation = ({
                         if (flipWall.leftJoints.length > 0) {
                           nextWall = wallsOnThisFoundation.get(flipWall.leftJoints[0]);
                           if (nextWall) {
-                            const deltaAngle =
-                              (Math.PI * 3 + flipWall.relativeAngle - nextWall.relativeAngle) % (Math.PI * 2);
-                            if (deltaAngle < Math.PI / 2 && deltaAngle > 0.1) {
+                            const deltaAngle = (Math.PI * 3 + flipWall.relativeAngle - nextWall.relativeAngle) % TWO_PI;
+                            if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
                               const tan = Math.tan(deltaAngle);
                               flipWallLeftOffset = flipWall.ly / tan;
                               nextWallRightOffset = nextWall.ly / tan;
@@ -991,11 +991,11 @@ const Foundation = ({
                         }
                       }
                       setCommonStore((state) => {
-                        const angle = (flipWallHead.relativeAngle + Math.PI) % (Math.PI * 2);
-                        const deltaAngle = (Math.PI * 3 - (angle - stableWall.relativeAngle)) % (Math.PI * 2);
+                        const angle = (flipWallHead.relativeAngle + Math.PI) % TWO_PI;
+                        const deltaAngle = (Math.PI * 3 - (angle - stableWall.relativeAngle)) % TWO_PI;
                         let flipWallLeftOffset = 0;
                         let stableWallRightOffset = 0;
-                        if (deltaAngle < Math.PI / 2 && deltaAngle > 0.1) {
+                        if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
                           const tan = Math.tan(deltaAngle);
                           flipWallLeftOffset = flipWall.ly / tan;
                           stableWallRightOffset = stableWall.ly / tan;
@@ -1024,10 +1024,10 @@ const Foundation = ({
                       targetWall.leftJoints.length === 0 &&
                       targetWall.rightJoints[0] !== currWall.id
                     ) {
-                      const deltaAngle = (Math.PI * 3 + angle - targetWall.relativeAngle) % (Math.PI * 2);
+                      const deltaAngle = (Math.PI * 3 + angle - targetWall.relativeAngle) % TWO_PI;
                       let currRightOffset = 0;
                       let targetLeftOffset = 0;
-                      if (deltaAngle < Math.PI / 2 && deltaAngle > 0.1) {
+                      if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
                         const tan = Math.tan(deltaAngle);
                         currRightOffset = currWall.ly / tan;
                         targetLeftOffset = targetWall.ly / tan;
@@ -1052,10 +1052,10 @@ const Foundation = ({
                       targetWall.rightJoints.length === 0 &&
                       targetWall.leftJoints[0] !== currWall.id
                     ) {
-                      const deltaAngle = (Math.PI * 3 - (angle - targetWall.relativeAngle)) % (Math.PI * 2);
+                      const deltaAngle = (Math.PI * 3 - (angle - targetWall.relativeAngle)) % TWO_PI;
                       let currLeftOffset = 0;
                       let targetRightOffset = 0;
-                      if (deltaAngle < Math.PI / 2 && deltaAngle > 0.1) {
+                      if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
                         const tan = Math.tan(deltaAngle);
                         currLeftOffset = currWall.ly / tan;
                         targetRightOffset = targetWall.ly / tan;
@@ -1192,7 +1192,7 @@ const Foundation = ({
               const wc = new Vector2().addVectors(cc, pc); //world current center
               const rotation =
                 -pr + Math.atan2(-p.x + wc.x, p.y - wc.y) + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
-              const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0; // make sure angle is between -PI to PI
+              const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * TWO_PI : 0; // make sure angle is between -PI to PI
               updateSolarPanelRelativeAzimuthById(grabRef.current.id, rotation + offset);
               newAzimuthRef.current = rotation + offset;
               setCommonStore((state) => {
@@ -1208,7 +1208,7 @@ const Foundation = ({
                   const d = wp.distanceTo(resizeAnchor2D);
                   const angle = solarPanel.relativeAzimuth + rotation[2]; // world panel azimuth
                   const rp = new Vector2().subVectors(wp, resizeAnchor2D); // relative vector from anchor to pointer
-                  const theta = -angle + rp.angle() + Math.PI / 2;
+                  const theta = -angle + rp.angle() + HALF_PI;
                   let dyl = d * Math.cos(theta);
                   if (solarPanel.orientation === Orientation.portrait) {
                     const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));
@@ -1234,7 +1234,7 @@ const Foundation = ({
                   const d = wp.distanceTo(resizeAnchor2D);
                   const angle = solarPanel.relativeAzimuth + rotation[2];
                   const rp = new Vector2().subVectors(wp, resizeAnchor2D);
-                  const theta = -angle + rp.angle() - Math.PI / 2;
+                  const theta = -angle + rp.angle() - HALF_PI;
                   let dyl = d * Math.cos(theta);
                   if (solarPanel.orientation === Orientation.portrait) {
                     const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));

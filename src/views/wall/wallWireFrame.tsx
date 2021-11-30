@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { Line } from '@react-three/drei';
+import { HALF_PI } from '../../constants';
 
 interface WallWireFrameProps {
   x: number;
@@ -14,7 +15,7 @@ interface WallWireFrameProps {
 const WallWireFrame = React.memo(({ x, z, lineWidth = 0.2 }: WallWireFrameProps) => {
   return (
     <React.Fragment>
-      <group rotation={[Math.PI / 2, 0, 0]}>
+      <group rotation={[HALF_PI, 0, 0]}>
         <Line
           points={[
             [-x, -z, 0],

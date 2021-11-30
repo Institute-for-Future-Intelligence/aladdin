@@ -43,6 +43,7 @@ import Window from '../window';
 import WallWireFrame from './wallWireFrame';
 import WallResizeHandleWarpper from './wallResizeHandleWarpper';
 import * as Selector from '../../stores/selector';
+import { HALF_PI, TWO_PI } from '../../constants';
 
 const Wall = ({
   id,
@@ -194,8 +195,8 @@ const Wall = ({
   if (leftJoints.length > 0) {
     const targetWall = getElementById(leftJoints[0]) as WallModel;
     if (targetWall) {
-      const deltaAngle = (Math.PI * 3 - (relativeAngle - targetWall.relativeAngle)) % (Math.PI * 2);
-      if (deltaAngle < Math.PI / 2 && deltaAngle > 0) {
+      const deltaAngle = (Math.PI * 3 - (relativeAngle - targetWall.relativeAngle)) % TWO_PI;
+      if (deltaAngle < HALF_PI && deltaAngle > 0) {
         leftOffset = ly / Math.tan(deltaAngle);
       }
     }
@@ -204,8 +205,8 @@ const Wall = ({
   if (rightJoints.length > 0) {
     const targetWall = getElementById(rightJoints[0]) as WallModel;
     if (targetWall) {
-      const deltaAngle = (Math.PI * 3 + relativeAngle - targetWall.relativeAngle) % (Math.PI * 2);
-      if (deltaAngle < Math.PI / 2 && deltaAngle > 0) {
+      const deltaAngle = (Math.PI * 3 + relativeAngle - targetWall.relativeAngle) % TWO_PI;
+      if (deltaAngle < HALF_PI && deltaAngle > 0) {
         rightOffset = ly / Math.tan(deltaAngle);
       }
     }
@@ -397,7 +398,7 @@ const Wall = ({
             uuid={id}
             userData={{ simulation: true }}
             ref={outSideWallRef}
-            rotation={[Math.PI / 2, 0, 0]}
+            rotation={[HALF_PI, 0, 0]}
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
             onContextMenu={(e) => {
@@ -431,7 +432,7 @@ const Wall = ({
             name={'Inside Wall'}
             ref={insideWallRef}
             position={[0, ly, 0]}
-            rotation={[Math.PI / 2, 0, 0]}
+            rotation={[HALF_PI, 0, 0]}
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
             onPointerDown={(e) => {
@@ -458,7 +459,7 @@ const Wall = ({
             <Plane
               args={[lz, ly]}
               position={[-hx + 0.01, hy, 0]}
-              rotation={[0, Math.PI / 2, 0]}
+              rotation={[0, HALF_PI, 0]}
               onPointerDown={(e) => {
                 if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
                 selectMe(id, e, ActionType.Select);
@@ -471,7 +472,7 @@ const Wall = ({
             <Plane
               args={[lz, ly]}
               position={[hx - 0.01, hy, 0]}
-              rotation={[0, Math.PI / 2, 0]}
+              rotation={[0, HALF_PI, 0]}
               onPointerDown={(e) => {
                 if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
                 selectMe(id, e, ActionType.Select);
@@ -487,7 +488,7 @@ const Wall = ({
             ref={intersectionPlaneRef}
             args={[lx, lz]}
             position={[0, ly / 2 + 0.01, 0]}
-            rotation={[Math.PI / 2, 0, 0]}
+            rotation={[HALF_PI, 0, 0]}
             visible={false}
             onPointerMove={(e) => {
               setRayCast(e);
@@ -665,7 +666,7 @@ const Wall = ({
 
           {/* grid */}
           {showGrid && (
-            <group position={[0, -0.001, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <group position={[0, -0.001, 0]} rotation={[HALF_PI, 0, 0]}>
               <ElementGrid args={[lx, lz, 0]} objectType={ObjectType.Wall} />
             </group>
           )}

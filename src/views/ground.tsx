@@ -10,7 +10,14 @@ import { Box3, DoubleSide, Euler, Mesh, Object3D, Raycaster, Vector2, Vector3 } 
 import { IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS, UNIT_VECTOR_POS_Z, UNIT_VECTOR_POS_Z_ARRAY } from '../constants';
+import {
+  HALF_PI,
+  MOVE_HANDLE_OFFSET,
+  MOVE_HANDLE_RADIUS,
+  TWO_PI,
+  UNIT_VECTOR_POS_Z,
+  UNIT_VECTOR_POS_Z_ARRAY,
+} from '../constants';
 import { Util } from '../Util';
 import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
@@ -115,7 +122,7 @@ const Ground = () => {
       const cameraDir = getCameraDirection();
       const rotation = -Math.atan2(cameraDir.x, cameraDir.y);
       intersectionPlanePosition.set(handlePosition.x, handlePosition.y, 0);
-      intersectionPlaneAngle.set(-Math.PI / 2, 0, rotation, 'ZXY');
+      intersectionPlaneAngle.set(-HALF_PI, 0, rotation, 'ZXY');
     }
   }
 
@@ -670,7 +677,7 @@ const Ground = () => {
   const handleRotate = (p: Vector3) => {
     const { cx, cy } = grabRef.current!;
     const rotation = Math.atan2(cx - p.x, p.y - cy) + (rotateHandleType === RotateHandleType.Upper ? 0 : Math.PI);
-    const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * Math.PI * 2 : 0;
+    const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * TWO_PI : 0;
     setElementRotation(grabRef.current!.id, 0, 0, rotation + offset);
   };
 

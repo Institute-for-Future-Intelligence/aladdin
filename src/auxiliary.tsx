@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { WORKSPACE_SIZE } from './constants';
+import { HALF_PI, WORKSPACE_SIZE } from './constants';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { ObjectType, ResizeHandleType } from './types';
@@ -56,7 +56,7 @@ export const Auxiliary = () => {
         <>
           {(showGrid || moveHandleType) && !groundImage && legalOnGround() && (
             <gridHelper
-              rotation={[Math.PI / 2, 0, 0]}
+              rotation={[HALF_PI, 0, 0]}
               name={'Grid'}
               args={[WORKSPACE_SIZE, WORKSPACE_SIZE, 'gray', '#444444']}
             />

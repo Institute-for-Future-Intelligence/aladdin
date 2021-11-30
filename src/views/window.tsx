@@ -8,8 +8,8 @@ import { Box, Line, Plane, Sphere } from '@react-three/drei';
 import { WindowModel } from 'src/models/WindowModel';
 import { CommonStoreState, useStore } from 'src/stores/common';
 import { ActionType, MoveHandleType, ObjectType, ResizeHandleType } from 'src/types';
-import { ElementModel } from 'src/models/ElementModel';
 import * as Selector from '../stores/selector';
+import { HALF_PI } from '../constants';
 
 interface WindowWireFrameProps {
   x: number;
@@ -73,7 +73,7 @@ const Window = ({ id, parentId, lx, lz, cx, cz, selected, locked, color }: Windo
       <Plane
         name={'window ' + id}
         args={[wlx, wlz]}
-        rotation={[Math.PI / 2, 0, 0]}
+        rotation={[HALF_PI, 0, 0]}
         onContextMenu={(e) => {
           if (!selected) {
             selectMe(id, e, ActionType.Select);
