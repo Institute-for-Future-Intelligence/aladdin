@@ -165,12 +165,14 @@ const SolarPanel = ({
   const element = getElementById(id);
 
   useEffect(() => {
-    if (orientation === Orientation.portrait) {
-      setNx(Math.max(1, Math.round(lx / pvModel.width)));
-      setNy(Math.max(1, Math.round(ly / pvModel.length)));
-    } else {
-      setNx(Math.max(1, Math.round(lx / pvModel.length)));
-      setNy(Math.max(1, Math.round(ly / pvModel.width)));
+    if (pvModel) {
+      if (orientation === Orientation.portrait) {
+        setNx(Math.max(1, Math.round(lx / pvModel.width)));
+        setNy(Math.max(1, Math.round(ly / pvModel.length)));
+      } else {
+        setNx(Math.max(1, Math.round(lx / pvModel.length)));
+        setNy(Math.max(1, Math.round(ly / pvModel.width)));
+      }
     }
   }, [orientation, pvModelName, lx, ly]);
 
@@ -198,7 +200,7 @@ const SolarPanel = ({
     switch (orientation) {
       case Orientation.portrait:
         tex = loader.load(
-          pvModel.color === 'Blue' ? SolarPanelBluePortraitImage : SolarPanelBlackPortraitImage,
+          pvModel?.color === 'Blue' ? SolarPanelBluePortraitImage : SolarPanelBlackPortraitImage,
           (t) => {
             t.wrapS = t.wrapT = RepeatWrapping;
             t.offset.set(0, 0);
@@ -209,7 +211,7 @@ const SolarPanel = ({
         break;
       default:
         tex = loader.load(
-          pvModel.color === 'Blue' ? SolarPanelBlueLandscapeImage : SolarPanelBlackLandscapeImage,
+          pvModel?.color === 'Blue' ? SolarPanelBlueLandscapeImage : SolarPanelBlackLandscapeImage,
           (t) => {
             t.wrapS = t.wrapT = RepeatWrapping;
             t.offset.set(0, 0);
@@ -219,7 +221,7 @@ const SolarPanel = ({
         );
     }
     return tex;
-  }, [orientation, pvModel.color, nx, ny]);
+  }, [orientation, pvModel?.color, nx, ny]);
 
   const euler = useMemo(() => {
     const v = panelNormal;

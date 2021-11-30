@@ -11,6 +11,7 @@ import { WeatherModel } from '../models/WeatherModel';
 import weather from '../resources/weather.csv';
 import pvmodules from '../resources/pvmodules.csv';
 import Papa from 'papaparse';
+import queryString from 'querystring';
 import { Util } from '../Util';
 import {
   ActionType,
@@ -2182,6 +2183,11 @@ export const useStore = create<CommonStoreState>(
       },
       {
         name: 'aladdin-storage',
+        getStorage: () => {
+          const query = queryString.parse(window.location.search);
+          const viewOnly = query.viewonly === 'true';
+          return viewOnly ? sessionStorage : localStorage;
+        },
         whitelist: [
           'language',
           'cloudFile',
