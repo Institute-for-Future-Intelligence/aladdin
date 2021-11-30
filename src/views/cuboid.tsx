@@ -81,6 +81,7 @@ const Cuboid = ({
   ],
 }: CuboidModel) => {
   const setCommonStore = useStore(Selector.set);
+  const orthographic = useStore(Selector.viewState.orthographic);
   const moveHandleType = useStore(Selector.moveHandleType);
   const rotateHandleType = useStore(Selector.rotateHandleType);
   const resizeHandleType = useStore(Selector.resizeHandleType);
@@ -765,102 +766,112 @@ const Cuboid = ({
       {selected && !locked && (
         <>
           {/* resize handles */}
-          <Box
-            ref={resizeHandleLLTopRef}
-            name={ResizeHandleType.LowerLeftTop}
-            args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={positionLLTop}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Resize);
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, ResizeHandleType.LowerLeftTop);
-            }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
-          >
-            <meshStandardMaterial
-              attach="material"
-              color={
-                hoveredHandle === ResizeHandleType.LowerLeftTop || resizeHandleType === ResizeHandleType.LowerLeftTop
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : RESIZE_HANDLE_COLOR
-              }
-            />
-          </Box>
-          <Box
-            ref={resizeHandleULTopRef}
-            name={ResizeHandleType.UpperLeftTop}
-            args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={positionULTop}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Resize);
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, ResizeHandleType.UpperLeftTop);
-            }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
-          >
-            <meshStandardMaterial
-              attach="material"
-              color={
-                hoveredHandle === ResizeHandleType.UpperLeftTop || resizeHandleType === ResizeHandleType.UpperLeftTop
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : RESIZE_HANDLE_COLOR
-              }
-            />
-          </Box>
-          <Box
-            ref={resizeHandleLRTopRef}
-            name={ResizeHandleType.LowerRightTop}
-            args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={positionLRTop}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Resize);
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, ResizeHandleType.LowerRightTop);
-            }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
-          >
-            <meshStandardMaterial
-              attach="material"
-              color={
-                hoveredHandle === ResizeHandleType.LowerRightTop || resizeHandleType === ResizeHandleType.LowerRightTop
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : RESIZE_HANDLE_COLOR
-              }
-            />
-          </Box>
-          <Box
-            ref={resizeHandleURTopRef}
-            name={ResizeHandleType.UpperRightTop}
-            args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={positionURTop}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Resize);
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, ResizeHandleType.UpperRightTop);
-            }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
-          >
-            <meshStandardMaterial
-              attach="material"
-              color={
-                hoveredHandle === ResizeHandleType.UpperRightTop || resizeHandleType === ResizeHandleType.UpperRightTop
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : RESIZE_HANDLE_COLOR
-              }
-            />
-          </Box>
+          {!orthographic && (
+            <Box
+              ref={resizeHandleLLTopRef}
+              name={ResizeHandleType.LowerLeftTop}
+              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
+              position={positionLLTop}
+              onPointerDown={(e) => {
+                selectMe(id, e, ActionType.Resize);
+              }}
+              onPointerOver={(e) => {
+                hoverHandle(e, ResizeHandleType.LowerLeftTop);
+              }}
+              onPointerOut={(e) => {
+                noHoverHandle();
+              }}
+            >
+              <meshStandardMaterial
+                attach="material"
+                color={
+                  hoveredHandle === ResizeHandleType.LowerLeftTop || resizeHandleType === ResizeHandleType.LowerLeftTop
+                    ? HIGHLIGHT_HANDLE_COLOR
+                    : RESIZE_HANDLE_COLOR
+                }
+              />
+            </Box>
+          )}
+          {!orthographic && (
+            <Box
+              ref={resizeHandleULTopRef}
+              name={ResizeHandleType.UpperLeftTop}
+              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
+              position={positionULTop}
+              onPointerDown={(e) => {
+                selectMe(id, e, ActionType.Resize);
+              }}
+              onPointerOver={(e) => {
+                hoverHandle(e, ResizeHandleType.UpperLeftTop);
+              }}
+              onPointerOut={(e) => {
+                noHoverHandle();
+              }}
+            >
+              <meshStandardMaterial
+                attach="material"
+                color={
+                  hoveredHandle === ResizeHandleType.UpperLeftTop || resizeHandleType === ResizeHandleType.UpperLeftTop
+                    ? HIGHLIGHT_HANDLE_COLOR
+                    : RESIZE_HANDLE_COLOR
+                }
+              />
+            </Box>
+          )}
+          {!orthographic && (
+            <Box
+              ref={resizeHandleLRTopRef}
+              name={ResizeHandleType.LowerRightTop}
+              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
+              position={positionLRTop}
+              onPointerDown={(e) => {
+                selectMe(id, e, ActionType.Resize);
+              }}
+              onPointerOver={(e) => {
+                hoverHandle(e, ResizeHandleType.LowerRightTop);
+              }}
+              onPointerOut={(e) => {
+                noHoverHandle();
+              }}
+            >
+              <meshStandardMaterial
+                attach="material"
+                color={
+                  hoveredHandle === ResizeHandleType.LowerRightTop ||
+                  resizeHandleType === ResizeHandleType.LowerRightTop
+                    ? HIGHLIGHT_HANDLE_COLOR
+                    : RESIZE_HANDLE_COLOR
+                }
+              />
+            </Box>
+          )}
+          {!orthographic && (
+            <Box
+              ref={resizeHandleURTopRef}
+              name={ResizeHandleType.UpperRightTop}
+              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
+              position={positionURTop}
+              onPointerDown={(e) => {
+                selectMe(id, e, ActionType.Resize);
+              }}
+              onPointerOver={(e) => {
+                hoverHandle(e, ResizeHandleType.UpperRightTop);
+              }}
+              onPointerOut={(e) => {
+                noHoverHandle();
+              }}
+            >
+              <meshStandardMaterial
+                attach="material"
+                color={
+                  hoveredHandle === ResizeHandleType.UpperRightTop ||
+                  resizeHandleType === ResizeHandleType.UpperRightTop
+                    ? HIGHLIGHT_HANDLE_COLOR
+                    : RESIZE_HANDLE_COLOR
+                }
+              />
+            </Box>
+          )}
           <Box
             ref={resizeHandleLLBotRef}
             name={ResizeHandleType.LowerLeft}
