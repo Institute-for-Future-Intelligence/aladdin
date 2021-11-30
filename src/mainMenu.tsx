@@ -32,6 +32,7 @@ import i18n from './i18n/i18n';
 import { Util } from './Util';
 import { UndoableCheck } from './undo/UndoableCheck';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { UndoableResetView } from './undo/UndoableResetView';
 
 const { SubMenu } = Menu;
 const { Option } = Select;
@@ -78,8 +79,9 @@ export interface MainMenuProps {
 
 const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => {
   const setCommonStore = useStore(Selector.set);
-  const undoManager = useStore(Selector.undoManager);
   const language = useStore(Selector.language);
+  const undoManager = useStore(Selector.undoManager);
+  const addUndoable = useStore(Selector.addUndoable);
   const timesPerHour = useStore(Selector.world.timesPerHour);
   const discretization = useStore(Selector.world.discretization);
   const solarPanelGridCellSize = useStore(Selector.world.solarPanelGridCellSize);
@@ -92,7 +94,8 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
   const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
   const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const addUndoable = useStore(Selector.addUndoable);
+  const cameraPosition = useStore(Selector.viewState.cameraPosition);
+  const panCenter = useStore(Selector.viewState.panCenter);
 
   const [aboutUs, setAboutUs] = useState(false);
 
@@ -386,6 +389,27 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
             key={'reset-view'}
             onClick={() => {
               if (!orthographic) {
+                const undoableResetView = {
+                  name: 'Reset View',
+                  timestamp: Date.now(),
+                  oldCameraPosition: { ...cameraPosition },
+                  oldPanCenter: { ...panCenter },
+                  undo: () => {
+                    setCommonStore((state) => {
+                      const v = state.viewState;
+                      v.cameraPosition.x = undoableResetView.oldCameraPosition.x;
+                      v.cameraPosition.y = undoableResetView.oldCameraPosition.y;
+                      v.cameraPosition.z = undoableResetView.oldCameraPosition.z;
+                      v.panCenter.x = undoableResetView.oldPanCenter.x;
+                      v.panCenter.y = undoableResetView.oldPanCenter.y;
+                      v.panCenter.z = undoableResetView.oldPanCenter.z;
+                    });
+                  },
+                  redo: () => {
+                    resetView();
+                  },
+                } as UndoableResetView;
+                addUndoable(undoableResetView);
                 set2DView(false);
                 resetView();
                 setCommonStore((state) => {

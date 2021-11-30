@@ -10,6 +10,7 @@ import { ElementModel } from './models/ElementModel';
 import { UndoableDelete } from './undo/UndoableDelete';
 import { UndoablePaste } from './undo/UndoablePaste';
 import { UndoableCheck } from './undo/UndoableCheck';
+import { UndoableResetView } from './undo/UndoableResetView';
 
 export interface KeyboardListenerProps {
   keyFlag: boolean; // flip this every time to ensure that handleKey is called in useEffect
@@ -46,6 +47,8 @@ const KeyboardListener = ({
   const setEnableFineGrid = useStore(Selector.setEnableFineGrid);
   const localFileDialogRequested = useStore(Selector.localFileDialogRequested);
   const buildingWallID = useStore(Selector.buildingWallID);
+  const cameraPosition = useStore(Selector.viewState.cameraPosition);
+  const panCenter = useStore(Selector.viewState.panCenter);
 
   const moveStepRelative = 0.01;
   const moveStepAbsolute = 0.1;
@@ -272,6 +275,27 @@ const KeyboardListener = ({
       case 'ctrl+home':
       case 'meta+home': // for Mac
         if (!orthographic) {
+          const undoableResetView = {
+            name: 'Reset View',
+            timestamp: Date.now(),
+            oldCameraPosition: { ...cameraPosition },
+            oldPanCenter: { ...panCenter },
+            undo: () => {
+              setCommonStore((state) => {
+                const v = state.viewState;
+                v.cameraPosition.x = undoableResetView.oldCameraPosition.x;
+                v.cameraPosition.y = undoableResetView.oldCameraPosition.y;
+                v.cameraPosition.z = undoableResetView.oldCameraPosition.z;
+                v.panCenter.x = undoableResetView.oldPanCenter.x;
+                v.panCenter.y = undoableResetView.oldPanCenter.y;
+                v.panCenter.z = undoableResetView.oldPanCenter.z;
+              });
+            },
+            redo: () => {
+              resetView();
+            },
+          } as UndoableResetView;
+          addUndoable(undoableResetView);
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
             state.viewState.orthographic = false;

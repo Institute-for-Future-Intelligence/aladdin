@@ -158,7 +158,7 @@ const WallTextureSelection = ({
   return (
     <>
       <Modal
-        width={500}
+        width={550}
         visible={textureDialogVisible}
         title={
           <div
@@ -215,7 +215,7 @@ const WallTextureSelection = ({
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={10}>
+          <Col className="gutter-row" span={9}>
             <Select style={{ width: '150px' }} value={selectedTexture} onChange={(value) => setSelectedTexture(value)}>
               <Option key={WallTexture.NoTexture} value={WallTexture.NoTexture}>
                 <div
@@ -347,7 +347,7 @@ const WallTextureSelection = ({
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={14}
+            span={15}
           >
             <Radio.Group onChange={onScopeChange} value={wallActionScope}>
               <Space direction="vertical">

@@ -300,7 +300,7 @@ export const i18n_en = {
       Texture10: 'Texture 10',
       SizeOfWall: 'Size of Wall',
       OnlyThisWall: 'Only This Wall',
-      AllWallsAboveFoundation: 'All Walls Above the Same foundation',
+      AllWallsAboveFoundation: 'All Walls Above the Same Foundation',
       AllWalls: 'All Walls',
     },
 
