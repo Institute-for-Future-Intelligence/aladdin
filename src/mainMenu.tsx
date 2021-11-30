@@ -279,6 +279,50 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
     });
   };
 
+  const toggleMapPanel = () => {
+    const undoableCheck = {
+      name: 'Show Maps',
+      timestamp: Date.now(),
+      checked: !showMapPanel,
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.showMapPanel = !undoableCheck.checked;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.showMapPanel = undoableCheck.checked;
+        });
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    setCommonStore((state) => {
+      state.viewState.showMapPanel = !state.viewState.showMapPanel;
+    });
+  };
+
+  const toggleWeatherPanel = () => {
+    const undoableCheck = {
+      name: 'Show Weather Panel',
+      timestamp: Date.now(),
+      checked: !showWeatherPanel,
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.showWeatherPanel = !undoableCheck.checked;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.showWeatherPanel = undoableCheck.checked;
+        });
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    setCommonStore((state) => {
+      state.viewState.showWeatherPanel = !state.viewState.showWeatherPanel;
+    });
+  };
+
   const toggle2DView = (e: CheckboxChangeEvent) => {
     const undoableCheck = {
       name: 'Toggle 2D View',
@@ -488,26 +532,12 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'map-panel-check-box'}>
-          <Checkbox
-            checked={showMapPanel}
-            onChange={(e) => {
-              setCommonStore((state) => {
-                state.viewState.showMapPanel = e.target.checked;
-              });
-            }}
-          >
+          <Checkbox checked={showMapPanel} onChange={toggleMapPanel}>
             {i18n.t('menu.tool.Map', lang)}
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'weather-panel-check-box'}>
-          <Checkbox
-            checked={showWeatherPanel}
-            onChange={(e) => {
-              setCommonStore((state) => {
-                state.viewState.showWeatherPanel = e.target.checked;
-              });
-            }}
-          >
+          <Checkbox checked={showWeatherPanel} onChange={toggleWeatherPanel}>
             {i18n.t('menu.tool.WeatherData', lang)}
           </Checkbox>
         </Menu.Item>
