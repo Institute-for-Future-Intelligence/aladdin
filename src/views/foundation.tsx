@@ -100,10 +100,9 @@ const Foundation = ({
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [showGrid, setShowGrid] = useState<boolean>(false);
 
-  const buildingWallIDRef = useRef<string | null>(null);
+  const isSettingWallStartPointRef = useRef(false);
+  const isSettingWallEndPointRef = useRef(false);
   const [buildingWallID, setBuildingWallID] = useState<string | null>(null);
-  const [isSettingWallStartPoint, setIsSettingWallStartPoint] = useState(false);
-  const [isSettingWallEndPoint, setIsSettingWallEndPoint] = useState(false);
   const [wallPoints, setWallPoints] = useState<Map<string, { leftPoint: Vector3 | null; rightPoint: Vector3 | null }>>(
     new Map(),
   );
@@ -188,8 +187,8 @@ const Foundation = ({
   useEffect(() => {
     if (deletedWallID) {
       wallPoints.delete(deletedWallID);
-      setIsSettingWallStartPoint(false);
-      setIsSettingWallEndPoint(false);
+      isSettingWallStartPointRef.current = false;
+      isSettingWallEndPointRef.current = false;
       setBuildingWallID(null);
       setCommonStore((state) => {
         state.buildingWallID = null;
@@ -344,11 +343,11 @@ const Foundation = ({
     return { targetID, targetPoint, targetSide };
   };
 
-  const stickToNormalGrid = (v: Vector3) => {
+  const snapToNormalGrid = (v: Vector3) => {
     return new Vector3(Math.round(v.x), Math.round(v.y), v.z);
   };
 
-  const stickToFineGrid = (v: Vector3) => {
+  const snapToFineGrid = (v: Vector3) => {
     const x = parseFloat((Math.round(v.x / 0.2) * 0.2).toFixed(1));
     const y = parseFloat((Math.round(v.y / 0.2) * 0.2).toFixed(1));
     return new Vector3(x, y, v.z);
@@ -359,10 +358,10 @@ const Foundation = ({
       if (targetPoint) {
         p = targetPoint;
       } else {
-        p = stickToNormalGrid(p);
+        p = snapToNormalGrid(p);
       }
     } else {
-      p = stickToFineGrid(p);
+      p = snapToFineGrid(p);
       targetPoint = null;
     }
     return p;
@@ -512,7 +511,7 @@ const Foundation = ({
       }
     }
 
-    if (isSettingWallStartPoint && buildingWallID && baseRef.current) {
+    if (isSettingWallStartPointRef.current && buildingWallID && baseRef.current) {
       const intersects = ray.intersectObjects([baseRef.current]);
       let p = Util.wallRelativePosition(intersects[0].point, foundationModel);
       let targetID: string | null = null;
@@ -574,8 +573,8 @@ const Foundation = ({
         setElementPosition(buildingWallID, p.x, p.y);
       }
 
-      setIsSettingWallStartPoint(false);
-      setIsSettingWallEndPoint(true);
+      isSettingWallStartPointRef.current = false;
+      isSettingWallEndPointRef.current = true;
       setWallPoints(wallPoints.set(buildingWallID, { leftPoint: p, rightPoint: null }));
       updateWallLeftPointById(buildingWallID, [p.x, p.y, p.z]);
       setCommonStore((state) => {
@@ -717,15 +716,14 @@ const Foundation = ({
     if (!buildingWallID) {
       setShowGrid(false);
     }
-    if (isSettingWallEndPoint && buildingWallID && baseRef.current) {
+    if (isSettingWallEndPointRef.current && buildingWallID && baseRef.current) {
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.None;
         state.buildingWallID = null;
         state.enableOrbitController = true;
       });
-      setIsSettingWallEndPoint(false);
+      isSettingWallEndPointRef.current = false;
       setBuildingWallID(null);
-      buildingWallIDRef.current = null;
     }
   };
 
@@ -1114,24 +1112,23 @@ const Foundation = ({
             break;
         }
       }
-      if (objectTypeToAdd === ObjectType.Wall) {
+      if (objectTypeToAdd === ObjectType.Wall && !isSettingWallStartPointRef.current) {
         const addedWall = addElement(foundationModel, p) as WallModel;
         grabRef.current = addedWall;
-        buildingWallIDRef.current = addedWall.id;
         setBuildingWallID(addedWall.id);
-        setIsSettingWallStartPoint(true);
+        isSettingWallStartPointRef.current = true;
         setShowGrid(true);
         setCommonStore((state) => {
           state.buildingWallID = addedWall.id;
-          state.objectTypeToAdd = ObjectType.None;
           state.enableOrbitController = false;
+          state.objectTypeToAdd = ObjectType.None;
         });
       }
-      if (buildingWallID && isSettingWallStartPoint) {
+      if (buildingWallID && isSettingWallStartPointRef.current) {
         p = Util.wallRelativePosition(intersects[0].point, foundationModel);
         const { targetPoint } = findMagnetPoint(wallPoints, p, 1.5);
         p = updatePointer(p, targetPoint);
-        if (isSettingWallStartPoint) {
+        if (isSettingWallStartPointRef.current) {
           setElementPosition(buildingWallID, p.x, p.y);
         }
       }
@@ -1160,6 +1157,19 @@ const Foundation = ({
       }
       state.pasteNormal = UNIT_VECTOR_POS_Z;
     });
+  };
+
+  const handlePointerOut = (e: ThreeEvent<MouseEvent>) => {
+    setHovered(false);
+    if (isSettingWallStartPointRef.current && grabRef.current) {
+      removeElementById(grabRef.current.id, false);
+      isSettingWallStartPointRef.current = false;
+      setShowGrid(false);
+      setCommonStore((state) => {
+        state.buildingWallID = null;
+        state.objectTypeToAdd = ObjectType.Wall;
+      });
+    }
   };
 
   const handleSolarPanelMove = (e: ThreeEvent<PointerEvent>) => {
@@ -1343,7 +1353,7 @@ const Foundation = ({
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerMove={handlePointerMove}
-        onPointerOut={(e) => setHovered(false)}
+        onPointerOut={handlePointerOut}
       >
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
