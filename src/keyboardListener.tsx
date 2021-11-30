@@ -49,6 +49,7 @@ const KeyboardListener = ({
   const buildingWallID = useStore(Selector.buildingWallID);
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const panCenter = useStore(Selector.viewState.panCenter);
+  const buildingWindowID = useStore(Selector.buildingWindowID);
 
   const moveStepRelative = 0.01;
   const moveStepAbsolute = 0.1;
@@ -384,8 +385,15 @@ const KeyboardListener = ({
         }
         break;
       case 'esc':
-        if (keyDown && buildingWallID) {
-          removeElementById(buildingWallID, false);
+        if (keyDown) {
+          if (buildingWallID) {
+            removeElementById(buildingWallID, false);
+          } else if (buildingWindowID) {
+            removeElementById(buildingWindowID, false);
+          }
+          setCommonStore((state) => {
+            state.objectTypeToAdd = ObjectType.None;
+          });
         }
         break;
     }

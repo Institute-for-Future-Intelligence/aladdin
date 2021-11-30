@@ -236,48 +236,6 @@ export const updateSolarPanelPoleSpacingForAll = (state: CommonStoreState) => st
 
 export const updateSolarPanelDrawSunBeamById = (state: CommonStoreState) => state.updateSolarPanelDrawSunBeamById;
 
-export const wallActionScope = (state: CommonStoreState) => state.wallActionScope;
-
-export const setWallActionScope = (state: CommonStoreState) => state.setWallActionScope;
-
-export const updateWallRelativeAngleById = (state: CommonStoreState) => state.updateWallRelativeAngleById;
-
-export const updateWallLeftOffsetById = (state: CommonStoreState) => state.updateWallLeftOffsetById;
-
-export const updateWallRightOffsetById = (state: CommonStoreState) => state.updateWallRightOffsetById;
-
-export const updateWallLeftJointsById = (state: CommonStoreState) => state.updateWallLeftJointsById;
-
-export const updateWallRightJointsById = (state: CommonStoreState) => state.updateWallRightJointsById;
-
-export const updateWallLeftPointById = (state: CommonStoreState) => state.updateWallLeftPointById;
-
-export const updateWallRightPointById = (state: CommonStoreState) => state.updateWallRightPointById;
-
-export const updateWallTextureById = (state: CommonStoreState) => state.updateWallTextureById;
-
-export const updateWallTextureAboveFoundation = (state: CommonStoreState) => state.updateWallTextureAboveFoundation;
-
-export const updateWallTextureForAll = (state: CommonStoreState) => state.updateWallTextureForAll;
-
-export const updateWallColorById = (state: CommonStoreState) => state.updateWallColorById;
-
-export const updateWallColorAboveFoundation = (state: CommonStoreState) => state.updateWallColorAboveFoundation;
-
-export const updateWallColorForAll = (state: CommonStoreState) => state.updateWallColorForAll;
-
-export const updateWallHeightById = (state: CommonStoreState) => state.updateWallHeightById;
-
-export const updateWallHeightAboveFoundation = (state: CommonStoreState) => state.updateWallHeightAboveFoundation;
-
-export const updateWallHeightForAll = (state: CommonStoreState) => state.updateWallHeightForAll;
-
-export const updateWallThicknessById = (state: CommonStoreState) => state.updateWallThicknessById;
-
-export const updateWallThicknessAboveFoundation = (state: CommonStoreState) => state.updateWallThicknessAboveFoundation;
-
-export const updateWallThicknessForAll = (state: CommonStoreState) => state.updateWallThicknessForAll;
-
 export const updateTreeTypeById = (state: CommonStoreState) => state.updateTreeTypeById;
 
 export const updateTreeShowModelById = (state: CommonStoreState) => state.updateTreeShowModelById;
@@ -305,10 +263,6 @@ export const selectNone = (state: CommonStoreState) => state.selectNone;
 export const addElement = (state: CommonStoreState) => state.addElement;
 
 export const objectTypeToAdd = (state: CommonStoreState) => state.objectTypeToAdd;
-
-export const deletedWallID = (state: CommonStoreState) => state.deletedWallID;
-
-export const updateWallPointOnFoundation = (state: CommonStoreState) => state.updateWallPointOnFoundation;
 
 export const countElementsByType = (state: CommonStoreState) => state.countElementsByType;
 
@@ -396,7 +350,58 @@ export const rotateHandleType = (state: CommonStoreState) => state.rotateHandleT
 
 export const resizeAnchor = (state: CommonStoreState) => state.resizeAnchor;
 
+// wall and window
 export const buildingWallID = (state: CommonStoreState) => state.buildingWallID;
+
+export const deletedWallID = (state: CommonStoreState) => state.deletedWallID;
+
+export const buildingWindowID = (state: CommonStoreState) => state.buildingWindowID;
+
+export const deletedWindowID = (state: CommonStoreState) => state.deletedWindowID;
+
+export const updateWallPointOnFoundation = (state: CommonStoreState) => state.updateWallPointOnFoundation;
+
+export const wallActionScope = (state: CommonStoreState) => state.wallActionScope;
+
+export const setWallActionScope = (state: CommonStoreState) => state.setWallActionScope;
+
+export const updateWallRelativeAngleById = (state: CommonStoreState) => state.updateWallRelativeAngleById;
+
+export const updateWallLeftOffsetById = (state: CommonStoreState) => state.updateWallLeftOffsetById;
+
+export const updateWallRightOffsetById = (state: CommonStoreState) => state.updateWallRightOffsetById;
+
+export const updateWallLeftJointsById = (state: CommonStoreState) => state.updateWallLeftJointsById;
+
+export const updateWallRightJointsById = (state: CommonStoreState) => state.updateWallRightJointsById;
+
+export const updateWallLeftPointById = (state: CommonStoreState) => state.updateWallLeftPointById;
+
+export const updateWallRightPointById = (state: CommonStoreState) => state.updateWallRightPointById;
+
+export const updateWallTextureById = (state: CommonStoreState) => state.updateWallTextureById;
+
+export const updateWallTextureAboveFoundation = (state: CommonStoreState) => state.updateWallTextureAboveFoundation;
+
+export const updateWallTextureForAll = (state: CommonStoreState) => state.updateWallTextureForAll;
+
+export const updateWallColorById = (state: CommonStoreState) => state.updateWallColorById;
+
+export const updateWallColorAboveFoundation = (state: CommonStoreState) => state.updateWallColorAboveFoundation;
+
+export const updateWallColorForAll = (state: CommonStoreState) => state.updateWallColorForAll;
+
+export const updateWallHeightById = (state: CommonStoreState) => state.updateWallHeightById;
+
+export const updateWallHeightAboveFoundation = (state: CommonStoreState) => state.updateWallHeightAboveFoundation;
+
+export const updateWallHeightForAll = (state: CommonStoreState) => state.updateWallHeightForAll;
+
+export const updateWallThicknessById = (state: CommonStoreState) => state.updateWallThicknessById;
+
+export const updateWallThicknessAboveFoundation = (state: CommonStoreState) => state.updateWallThicknessAboveFoundation;
+
+export const updateWallThicknessForAll = (state: CommonStoreState) => state.updateWallThicknessForAll;
 
 export * as viewState from './viewState';
 

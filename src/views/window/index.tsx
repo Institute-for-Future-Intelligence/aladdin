@@ -17,6 +17,9 @@ const Window = ({ id, parentId, lx, lz, cx, cz, selected, locked, color }: Windo
   const selectMe = useStore(Selector.selectMe);
 
   const buildingWallIDRef = useRef(useStore.getState().buildingWallID);
+  const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
+  const moveHandleTypeRef = useRef(useStore.getState().moveHandleType);
+  const resizeHandleTypeRef = useRef(useStore.getState().resizeHandleType);
 
   const [wlx, setWlx] = useState(lx);
   const [wlz, setWlz] = useState(lz);
@@ -37,6 +40,9 @@ const Window = ({ id, parentId, lx, lz, cx, cz, selected, locked, color }: Windo
   // subscribe common store
   useEffect(() => {
     useStore.subscribe((state) => (buildingWallIDRef.current = state.buildingWallID));
+    useStore.subscribe((state) => (objectTypeToAddRef.current = state.objectTypeToAdd));
+    useStore.subscribe((state) => (moveHandleTypeRef.current = state.moveHandleType));
+    useStore.subscribe((state) => (resizeHandleTypeRef.current = state.resizeHandleType));
   }, []);
 
   useEffect(() => {
@@ -46,7 +52,7 @@ const Window = ({ id, parentId, lx, lz, cx, cz, selected, locked, color }: Windo
       setWcx(cx * parent.lx);
       setWcz(cz * parent.lz);
     }
-  }, [lx, lz, cx, cz, parent?.lx, parent?.lx]);
+  }, [lx, lz, cx, cz, parent?.lx, parent?.lz]);
 
   return (
     <group key={id} name={`Window group ${id}`} position={[wcx, 0, wcz]} castShadow receiveShadow>
@@ -67,7 +73,12 @@ const Window = ({ id, parentId, lx, lz, cx, cz, selected, locked, color }: Windo
         onPointerDown={(e) => {
           if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
           if (e.intersections[0].object.name === 'window ' + id) {
-            if (!selected) {
+            if (
+              !moveHandleTypeRef.current &&
+              !resizeHandleTypeRef.current &&
+              objectTypeToAddRef.current === ObjectType.None &&
+              !selected
+            ) {
               selectMe(id, e, ActionType.Select);
             }
           }

@@ -193,6 +193,7 @@ const Foundation = ({
       setCommonStore((state) => {
         state.buildingWallID = null;
         state.deletedWallID = null;
+        state.enableOrbitController = true;
       });
     }
   }, [deletedWallID]);
@@ -462,7 +463,11 @@ const Foundation = ({
     setCommonStore((state) => {
       state.contextMenuObjectType = null;
     });
-    if (!buildingWallID) {
+    if (
+      objectTypeToAddRef.current !== ObjectType.Window &&
+      !useStore.getState().buildingWallID &&
+      !useStore.getState().buildingWindowID
+    ) {
       selectMe(id, e, ActionType.Select);
     }
     const selectedElement = getSelectedElement();
@@ -580,6 +585,7 @@ const Foundation = ({
       setCommonStore((state) => {
         state.resizeHandleType = resizeHandleType;
         state.resizeAnchor = Util.wallAbsolutePosition(p, foundationModel);
+        state.enableOrbitController = false;
       });
       grabRef.current = selectedElement;
     }

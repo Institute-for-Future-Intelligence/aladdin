@@ -369,7 +369,9 @@ const Cuboid = ({
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2) return; // ignore right-click
-    selectMe(id, e, ActionType.Select);
+    if (!useStore.getState().buildingWindowID && !useStore.getState().buildingWallID) {
+      selectMe(id, e, ActionType.Select);
+    }
     const selectedElement = getSelectedElement();
     if (selectedElement?.id === id) {
       // no child of this cuboid is clicked

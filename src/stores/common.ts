@@ -301,6 +301,9 @@ export interface CommonStoreState {
   updateWallPointOnFoundation: boolean;
   getAllWallsIdOnFoundation: (parentID: string) => string[];
 
+  buildingWindowID: string | null;
+  deletedWindowID: string | null;
+
   orthographicChanged: boolean;
   simulationInProgress: boolean;
   locale: Locale;
@@ -1846,6 +1849,8 @@ export const useStore = create<CommonStoreState>(
                       }
                     }
                     state.deletedWallID = elem.id;
+                  } else if (elem.type === ObjectType.Window) {
+                    state.deletedWindowID = elem.id;
                   }
                   break;
                 }
@@ -2159,6 +2164,9 @@ export const useStore = create<CommonStoreState>(
             }
             return wallsID;
           },
+
+          buildingWindowID: null,
+          deletedWindowID: null,
 
           orthographicChanged: false,
           simulationInProgress: false,

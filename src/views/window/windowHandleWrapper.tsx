@@ -13,12 +13,17 @@ interface WindowHandleWrapperProps {
 }
 
 const WindowHandleWrapper = ({ lx, lz }: WindowHandleWrapperProps) => {
+  const isSettingNewWindow = lx === 0 && lz === 0;
   return (
     <group>
-      <WindowResizeHandle x={-lx / 2} z={lz / 2} handleType={ResizeHandleType.UpperLeft} />
-      <WindowResizeHandle x={lx / 2} z={lz / 2} handleType={ResizeHandleType.UpperRight} />
-      <WindowResizeHandle x={-lx / 2} z={-lz / 2} handleType={ResizeHandleType.LowerLeft} />
-      <WindowResizeHandle x={lx / 2} z={-lz / 2} handleType={ResizeHandleType.LowerRight} />
+      {!isSettingNewWindow && (
+        <>
+          <WindowResizeHandle x={-lx / 2} z={lz / 2} handleType={ResizeHandleType.UpperLeft} />
+          <WindowResizeHandle x={lx / 2} z={lz / 2} handleType={ResizeHandleType.UpperRight} />
+          <WindowResizeHandle x={-lx / 2} z={-lz / 2} handleType={ResizeHandleType.LowerLeft} />
+          <WindowResizeHandle x={lx / 2} z={-lz / 2} handleType={ResizeHandleType.LowerRight} />
+        </>
+      )}
       <WindowMoveHandle handleType={MoveHandleType.Mid} />
     </group>
   );
