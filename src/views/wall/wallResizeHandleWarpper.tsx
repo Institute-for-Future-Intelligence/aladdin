@@ -7,8 +7,8 @@ import { Box } from '@react-three/drei';
 import { Mesh, Vector3 } from 'three';
 import { useStore } from 'src/stores/common';
 import { ActionType, ResizeHandleType, ResizeHandleType as RType } from 'src/types';
-import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from '../../constants';
-import * as Selector from '../../stores/selector';
+import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from 'src/constants';
+import * as Selector from 'src/stores/selector';
 
 interface ResizeHandlesProps {
   x: number;

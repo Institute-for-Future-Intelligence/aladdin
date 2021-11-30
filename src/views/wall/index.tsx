@@ -2,17 +2,17 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import WallTexture00 from '../../resources/wall_00.png';
-import WallTexture01 from '../../resources/wall_01.png';
-import WallTexture02 from '../../resources/wall_02.png';
-import WallTexture03 from '../../resources/wall_03.png';
-import WallTexture04 from '../../resources/wall_04.png';
-import WallTexture05 from '../../resources/wall_05.png';
-import WallTexture06 from '../../resources/wall_06.png';
-import WallTexture07 from '../../resources/wall_07.png';
-import WallTexture08 from '../../resources/wall_08.png';
-import WallTexture09 from '../../resources/wall_09.png';
-import WallTexture10 from '../../resources/wall_10.png';
+import WallTexture00 from 'src/resources/wall_00.png';
+import WallTexture01 from 'src/resources/wall_01.png';
+import WallTexture02 from 'src/resources/wall_02.png';
+import WallTexture03 from 'src/resources/wall_03.png';
+import WallTexture04 from 'src/resources/wall_04.png';
+import WallTexture05 from 'src/resources/wall_05.png';
+import WallTexture06 from 'src/resources/wall_06.png';
+import WallTexture07 from 'src/resources/wall_07.png';
+import WallTexture08 from 'src/resources/wall_08.png';
+import WallTexture09 from 'src/resources/wall_09.png';
+import WallTexture10 from 'src/resources/wall_10.png';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -31,13 +31,13 @@ import {
 import { useThree } from '@react-three/fiber';
 import { Plane } from '@react-three/drei';
 import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, WallTexture } from 'src/types';
-import { Util } from '../../Util';
-import { useStore } from '../../stores/common';
-import { ElementModel } from '../../models/ElementModel';
-import { WindowModel } from '../../models/WindowModel';
-import { WallModel } from '../../models/WallModel';
-import { ElementModelFactory } from '../../models/ElementModelFactory';
-import { RoofPoint } from '../../models/RoofModel';
+import { Util } from 'src/Util';
+import { useStore } from 'src/stores/common';
+import { ElementModel } from 'src/models/ElementModel';
+import { WindowModel } from 'src/models/WindowModel';
+import { WallModel } from 'src/models/WallModel';
+import { ElementModelFactory } from 'src/models/ElementModelFactory';
+import { RoofPoint } from 'src/models/RoofModel';
 import { ElementGrid } from '../elementGrid';
 import Window from '../window';
 import WallWireFrame from './wallWireFrame';
