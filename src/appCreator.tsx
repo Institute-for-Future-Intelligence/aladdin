@@ -50,6 +50,7 @@ import { faCloud } from '@fortawesome/free-solid-svg-icons';
 import LocalFileManager from './localFileManager';
 import AnalysisManager from './analysisManager';
 import SceneRadiusCalculator from './sceneRadiusCalculator';
+import { UndoableChange } from './undo/UndoableChange';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -58,6 +59,7 @@ export interface AppCreatorProps {
 const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
+  const addUndoable = useStore(Selector.addUndoable);
   const loadWeatherData = useStore(Selector.loadWeatherData);
   const getClosestCity = useStore(Selector.getClosestCity);
   const worldLatitude = useStore(Selector.world.latitude);
@@ -126,8 +128,27 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
 
   const zoomView = (scale: number) => {
     if (orthographic) {
+      const oldZoom = cameraZoom;
+      const newZoom = cameraZoom * scale;
+      const undoableChange = {
+        name: 'Zoom',
+        timestamp: Date.now(),
+        oldValue: oldZoom,
+        newValue: newZoom,
+        undo: () => {
+          setCommonStore((state) => {
+            state.viewState.cameraZoom = undoableChange.oldValue as number;
+          });
+        },
+        redo: () => {
+          setCommonStore((state) => {
+            state.viewState.cameraZoom = undoableChange.newValue as number;
+          });
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
       setCommonStore((state) => {
-        state.viewState.cameraZoom = cameraZoom * scale;
+        state.viewState.cameraZoom = newZoom;
       });
     } else {
       if (orbitControlsRef.current) {

@@ -188,6 +188,72 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
     });
   };
 
+  const toggleInfoPanel = () => {
+    const undoableCheck = {
+      name: 'Show Information Panel',
+      timestamp: Date.now(),
+      checked: !showInfoPanel,
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.showInfoPanel = !undoableCheck.checked;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.showInfoPanel = undoableCheck.checked;
+        });
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    setCommonStore((state) => {
+      state.viewState.showInfoPanel = !state.viewState.showInfoPanel;
+    });
+  };
+
+  const toggleInstructionPanel = () => {
+    const undoableCheck = {
+      name: 'Show Instruction Panel',
+      timestamp: Date.now(),
+      checked: !showInstructionPanel,
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.showInstructionPanel = !undoableCheck.checked;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.showInstructionPanel = undoableCheck.checked;
+        });
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    setCommonStore((state) => {
+      state.viewState.showInstructionPanel = !state.viewState.showInstructionPanel;
+    });
+  };
+
+  const toggleStickyNote = () => {
+    const undoableCheck = {
+      name: 'Show Sticky Note',
+      timestamp: Date.now(),
+      checked: !showStickyNotePanel,
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.showStickyNotePanel = !undoableCheck.checked;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.showStickyNotePanel = undoableCheck.checked;
+        });
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    setCommonStore((state) => {
+      state.viewState.showStickyNotePanel = !state.viewState.showStickyNotePanel;
+    });
+  };
+
   const toggleHelidonPanel = () => {
     const undoableCheck = {
       name: 'Show Heliodon Control Panel',
@@ -227,6 +293,33 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
     setCommonStore((state) => {
       state.viewState.autoRotate = false;
     });
+  };
+
+  const toggleAutoRotate = () => {
+    if (!orthographic) {
+      const undoableCheck = {
+        name: 'Auto Rotate',
+        timestamp: Date.now(),
+        checked: !autoRotate,
+        undo: () => {
+          setCommonStore((state) => {
+            state.objectTypeToAdd = ObjectType.None;
+            state.viewState.autoRotate = !undoableCheck.checked;
+          });
+        },
+        redo: () => {
+          setCommonStore((state) => {
+            state.objectTypeToAdd = ObjectType.None;
+            state.viewState.autoRotate = undoableCheck.checked;
+          });
+        },
+      } as UndoableCheck;
+      addUndoable(undoableCheck);
+      setCommonStore((state) => {
+        state.objectTypeToAdd = ObjectType.None;
+        state.viewState.autoRotate = !state.viewState.autoRotate;
+      });
+    }
   };
 
   const menu = (
@@ -335,17 +428,7 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
         </Menu.Item>
         {!orthographic && (
           <Menu.Item key={'auto-rotate-check-box'}>
-            <Checkbox
-              checked={autoRotate}
-              onChange={(e) => {
-                if (!orthographic) {
-                  setCommonStore((state) => {
-                    state.objectTypeToAdd = ObjectType.None;
-                    state.viewState.autoRotate = !state.viewState.autoRotate;
-                  });
-                }
-              }}
-            >
+            <Checkbox checked={autoRotate} onChange={toggleAutoRotate}>
               {i18n.t('menu.view.AutoRotate', lang)}
               <label style={{ paddingLeft: '2px', fontSize: 9 }}>(F4)</label>
             </Checkbox>
@@ -357,38 +440,17 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'info-panel-check-box'}>
-          <Checkbox
-            checked={showInfoPanel}
-            onChange={(e) => {
-              setCommonStore((state) => {
-                state.viewState.showInfoPanel = e.target.checked;
-              });
-            }}
-          >
+          <Checkbox checked={showInfoPanel} onChange={toggleInfoPanel}>
             {i18n.t('menu.view.SiteInformation', lang)}
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'instruction-panel-check-box'}>
-          <Checkbox
-            checked={showInstructionPanel}
-            onChange={(e) => {
-              setCommonStore((state) => {
-                state.viewState.showInstructionPanel = e.target.checked;
-              });
-            }}
-          >
+          <Checkbox checked={showInstructionPanel} onChange={toggleInstructionPanel}>
             {i18n.t('menu.view.Instruction', lang)}
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'sticky-note-panel-check-box'}>
-          <Checkbox
-            checked={showStickyNotePanel}
-            onChange={(e) => {
-              setCommonStore((state) => {
-                state.viewState.showStickyNotePanel = e.target.checked;
-              });
-            }}
-          >
+          <Checkbox checked={showStickyNotePanel} onChange={toggleStickyNote}>
             {i18n.t('menu.view.StickyNote', lang)}
           </Checkbox>
         </Menu.Item>

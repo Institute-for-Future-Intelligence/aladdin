@@ -36,6 +36,7 @@ const KeyboardListener = ({
   const undoManager = useStore(Selector.undoManager);
   const addUndoable = useStore(Selector.addUndoable);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
+  const autoRotate = useStore(Selector.viewState.autoRotate);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const copyElementById = useStore(Selector.copyElementById);
   const removeElementById = useStore(Selector.removeElementById);
@@ -60,7 +61,7 @@ const KeyboardListener = ({
     }
   };
 
-  const toggle2DView = (on: boolean) => {
+  const toggle2DView = () => {
     const undoableCheck = {
       name: 'Set 2D View',
       timestamp: Date.now(),
@@ -73,10 +74,37 @@ const KeyboardListener = ({
       },
     } as UndoableCheck;
     addUndoable(undoableCheck);
-    set2DView(on);
+    set2DView(!orthographic);
     setCommonStore((state) => {
       state.viewState.autoRotate = false;
     });
+  };
+
+  const toggleAutoRotate = () => {
+    if (!orthographic) {
+      const undoableCheck = {
+        name: 'Auto Rotate',
+        timestamp: Date.now(),
+        checked: !autoRotate,
+        undo: () => {
+          setCommonStore((state) => {
+            state.objectTypeToAdd = ObjectType.None;
+            state.viewState.autoRotate = !undoableCheck.checked;
+          });
+        },
+        redo: () => {
+          setCommonStore((state) => {
+            state.objectTypeToAdd = ObjectType.None;
+            state.viewState.autoRotate = undoableCheck.checked;
+          });
+        },
+      } as UndoableCheck;
+      addUndoable(undoableCheck);
+      setCommonStore((state) => {
+        state.objectTypeToAdd = ObjectType.None;
+        state.viewState.autoRotate = !state.viewState.autoRotate;
+      });
+    }
   };
 
   const handleKey = () => {
@@ -253,15 +281,10 @@ const KeyboardListener = ({
         }
         break;
       case 'f2':
-        toggle2DView(!orthographic);
+        toggle2DView();
         break;
       case 'f4':
-        if (!orthographic) {
-          setCommonStore((state) => {
-            state.objectTypeToAdd = ObjectType.None;
-            state.viewState.autoRotate = !state.viewState.autoRotate;
-          });
-        }
+        toggleAutoRotate();
         break;
       case 'ctrl+o':
       case 'meta+o': // for Mac
