@@ -32,9 +32,14 @@ export const language = (state: CommonStoreState) => state.language;
 
 export const locale = (state: CommonStoreState) => state.locale;
 
+export const showCloudFileTitleDialog = (state: CommonStoreState) => state.showCloudFileTitleDialog;
+
 export const cloudFile = (state: CommonStoreState) => state.cloudFile;
 
 export const updateCloudFileFlag = (state: CommonStoreState) => state.updateCloudFileFlag;
+
+export const localContentToImportAfterCloudFileUpdate = (state: CommonStoreState) =>
+  state.localContentToImportAfterCloudFileUpdate;
 
 export const localFileName = (state: CommonStoreState) => state.localFileName;
 

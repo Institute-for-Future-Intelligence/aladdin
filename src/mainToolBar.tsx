@@ -47,8 +47,10 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const showAccountSettingsPanel = useStore(Selector.showAccountSettingsPanel);
   const cloudFile = useStore(Selector.cloudFile);
   const updateCloudFileFlag = useStore(Selector.updateCloudFileFlag);
+  const showCloudFileTitleDialog = useStore(Selector.showCloudFileTitleDialog);
   const importContent = useStore(Selector.importContent);
   const changed = useStore(Selector.changed);
+  const localContentToImportAfterCloudFileUpdate = useStore(Selector.localContentToImportAfterCloudFileUpdate);
 
   const [loading, setLoading] = useState(false);
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
@@ -122,6 +124,10 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       updateCloudFile();
     }
   }, [updateCloudFileFlag]);
+
+  useEffect(() => {
+    setTitleDialogVisible(showCloudFileTitleDialog);
+  }, [showCloudFileTitleDialog]);
 
   const init = () => {
     if (query.userid && query.title) {
@@ -222,7 +228,11 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
                 setLoading(false);
                 setCommonStore((state) => {
                   state.cloudFile = t;
+                  state.changed = false;
                 });
+                if (localContentToImportAfterCloudFileUpdate) {
+                  importContent(localContentToImportAfterCloudFileUpdate);
+                }
               })
               .catch((error) => {
                 console.log('Error saving file:', error);
@@ -235,6 +245,26 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       setTitleDialogVisible(false);
     } else {
       showError(i18n.t('avatarMenu.SavingAbortedMustHaveValidTitle', lang) + '.');
+    }
+  };
+
+  const openCloudFileWithSaveReminder = (userid: string, title: string) => {
+    if (changed) {
+      Modal.confirm({
+        title: i18n.t('shared.DoYouWantToSaveChanges', lang),
+        icon: <ExclamationCircleOutlined />,
+        onOk: () => {
+          if (cloudFile) {
+            saveToCloud(cloudFile);
+          }
+          openCloudFile(userid, title);
+        },
+        onCancel: () => openCloudFile(userid, title),
+        okText: i18n.t('word.Yes', lang),
+        cancelText: i18n.t('word.No', lang),
+      });
+    } else {
+      openCloudFile(userid, title);
     }
   };
 
@@ -251,18 +281,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         .then((doc) => {
           const data = doc.data();
           if (data) {
-            if (changed) {
-              Modal.confirm({
-                title: i18n.t('shared.DoYouWantToSaveChanges', lang),
-                icon: <ExclamationCircleOutlined />,
-                onOk: () => importContent(data, title),
-                onCancel: () => importContent(data, title),
-                okText: i18n.t('word.Yes', lang),
-                cancelText: i18n.t('word.No', lang),
-              });
-            } else {
-              importContent(data, title);
-            }
+            importContent(data, title);
             setLoading(false);
           } else {
             showInfo('Sorry, ' + title + ' was not found. It may have been deleted by its owner.');
@@ -425,10 +444,18 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           </div>
         }
         visible={titleDialogVisible}
-        onOk={() => saveToCloud(title)}
+        onOk={() => {
+          saveToCloud(title);
+          setCommonStore((state) => {
+            state.showCloudFileTitleDialog = false;
+          });
+        }}
         confirmLoading={loading}
         onCancel={() => {
           setTitleDialogVisible(false);
+          setCommonStore((state) => {
+            state.showCloudFileTitleDialog = false;
+          });
         }}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
@@ -476,7 +503,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       {showCloudFilePanel && cloudFiles.current && (
         <CloudFilePanel
           cloudFileArray={cloudFileArray}
-          openCloudFile={openCloudFile}
+          openCloudFile={openCloudFileWithSaveReminder}
           deleteCloudFile={deleteCloudFile}
           renameCloudFile={renameCloudFile}
         />

@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { saveAs } from 'file-saver';
-import { showError } from './helpers';
+import { showError, showInfo } from './helpers';
 import i18n from './i18n/i18n';
 import { Input, Modal } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
@@ -22,6 +22,8 @@ const LocalFileManager = () => {
   const exportContent = useStore(Selector.exportContent);
   const importContent = useStore(Selector.importContent);
   const changed = useStore(Selector.changed);
+  const cloudFile = useStore(Selector.cloudFile);
+  const user = useStore(Selector.user);
 
   const lang = { lng: language };
   const firstOpenCall = useRef<boolean>(true);
@@ -48,6 +50,34 @@ const LocalFileManager = () => {
   }, [saveLocalFileFlag]);
 
   const readLocalFile = () => {
+    if (changed) {
+      Modal.confirm({
+        title: i18n.t('shared.DoYouWantToSaveChanges', lang),
+        icon: <ExclamationCircleOutlined />,
+        onOk: () => {
+          if (user.uid) {
+            if (cloudFile) {
+              loadLocalFile(true);
+            } else {
+              // no cloud file has been created
+              setCommonStore((state) => {
+                state.showCloudFileTitleDialog = true;
+              });
+            }
+          } else {
+            showInfo(i18n.t('avatarMenu.ToSaveYourWorkPleaseSignIn', lang));
+          }
+        },
+        onCancel: () => loadLocalFile(false),
+        okText: i18n.t('word.Yes', lang),
+        cancelText: i18n.t('word.No', lang),
+      });
+    } else {
+      loadLocalFile(false);
+    }
+  };
+
+  const loadLocalFile = (saveFirst: boolean) => {
     document.body.onfocus = () => {
       setCommonStore((state) => {
         state.localFileDialogRequested = false;
@@ -65,15 +95,13 @@ const LocalFileManager = () => {
         reader.onload = (e) => {
           if (reader.result) {
             const input = JSON.parse(reader.result.toString());
-            if (changed) {
-              Modal.confirm({
-                title: i18n.t('shared.DoYouWantToSaveChanges', lang),
-                icon: <ExclamationCircleOutlined />,
-                onOk: () => importContent(input),
-                onCancel: () => importContent(input),
-                okText: i18n.t('word.Yes', lang),
-                cancelText: i18n.t('word.No', lang),
-              });
+            if (saveFirst) {
+              if (cloudFile) {
+                setCommonStore((state) => {
+                  state.localContentToImportAfterCloudFileUpdate = input;
+                  state.updateCloudFileFlag = !state.updateCloudFileFlag;
+                });
+              }
             } else {
               importContent(input);
             }

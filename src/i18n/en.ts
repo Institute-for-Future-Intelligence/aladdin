@@ -171,6 +171,7 @@ export const i18n_en = {
       AccountSettings: 'Account Settings',
       SignIn: 'Sign In',
       SignOut: 'Sign Out',
+      ToSaveYourWorkPleaseSignIn: 'To save your work, please sign in.',
     },
 
     skyMenu: {

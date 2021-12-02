@@ -25,7 +25,7 @@ import { Checkbox, Dropdown, InputNumber, Menu, Modal, Radio, Select, Space } fr
 import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
 import About from './about';
-import { saveImage } from './helpers';
+import { saveImage, showInfo } from './helpers';
 import { Discretization, Language, ObjectType } from './types';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
@@ -99,6 +99,8 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
   const panCenter = useStore(Selector.viewState.panCenter);
   const importContent = useStore(Selector.importContent);
   const changed = useStore(Selector.changed);
+  const cloudFile = useStore(Selector.cloudFile);
+  const user = useStore(Selector.user);
 
   const [aboutUs, setAboutUs] = useState(false);
 
@@ -156,13 +158,32 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
         Modal.confirm({
           title: i18n.t('shared.DoYouWantToSaveChanges', lang),
           icon: <ExclamationCircleOutlined />,
-          onOk: () => importContent(input),
+          onOk: () => saveAndImport(input),
           onCancel: () => importContent(input),
           okText: i18n.t('word.Yes', lang),
           cancelText: i18n.t('word.No', lang),
         });
       } else {
         importContent(input);
+      }
+    }
+  };
+
+  const saveAndImport = (input: any) => {
+    if (cloudFile) {
+      setCommonStore((state) => {
+        state.localContentToImportAfterCloudFileUpdate = input;
+        state.updateCloudFileFlag = !state.updateCloudFileFlag;
+      });
+    } else {
+      if (user.uid) {
+        // no cloud file has been created
+        setCommonStore((state) => {
+          state.localContentToImportAfterCloudFileUpdate = input;
+          state.showCloudFileTitleDialog = true;
+        });
+      } else {
+        showInfo(i18n.t('avatarMenu.ToSaveYourWorkPleaseSignIn', lang));
       }
     }
   };

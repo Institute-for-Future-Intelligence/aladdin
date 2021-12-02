@@ -171,6 +171,7 @@ export const i18n_zh_cn = {
       AccountSettings: '账号设定',
       SignIn: '登录',
       SignOut: '退出账号',
+      ToSaveYourWorkPleaseSignIn: '为了保存您的文件，请您先登陆。',
     },
 
     skyMenu: {

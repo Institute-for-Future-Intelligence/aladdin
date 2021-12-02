@@ -318,11 +318,14 @@ export interface CommonStoreState {
   openLocalFileFlag: boolean;
   saveLocalFileFlag: boolean;
   saveLocalFileDialogVisible: boolean;
-  updateCloudFileFlag: boolean;
   savedCameraPosition: Vector3;
   savedPanCenter: Vector3;
   enableFineGrid: boolean;
   setEnableFineGrid: (b: boolean) => void;
+
+  showCloudFileTitleDialog: boolean;
+  updateCloudFileFlag: boolean;
+  localContentToImportAfterCloudFileUpdate: any;
 
   // the following is to fix the bug that when ctrl+o is pressed, the file dialog gets fired up multiple times
   localFileDialogRequested: boolean;
@@ -368,29 +371,30 @@ export const useStore = create<CommonStoreState>(
           importContent(content: any, title) {
             immerSet((state: CommonStoreState) => {
               // remove old properties
-              if (content.world.hasOwnProperty('cameraPosition')) delete content.world.cameraPosition;
-              if (content.world.hasOwnProperty('panCenter')) delete content.world.panCenter;
-              if (!content.view.hasOwnProperty('cameraPosition')) content.view.cameraPosition = new Vector3(0, -5, 0);
-              if (!content.view.hasOwnProperty('panCenter')) content.view.panCenter = new Vector3(0, 0, 0);
+              // if (content.world.hasOwnProperty('cameraPosition')) delete content.world.cameraPosition;
+              // if (content.world.hasOwnProperty('panCenter')) delete content.world.panCenter;
+              // if (!content.view.hasOwnProperty('cameraPosition')) content.view.cameraPosition = new Vector3(0, -5, 0);
+              // if (!content.view.hasOwnProperty('panCenter')) content.view.panCenter = new Vector3(0, 0, 0);
               state.world = content.world;
               state.viewState = content.view;
               // remove old properties
-              for (const elem of content.elements) {
-                if (elem.hasOwnProperty('parent')) {
-                  if (!elem.hasOwnProperty('parentId')) elem.parentId = elem.parent.id ?? GROUND_ID;
-                  delete elem.parent;
-                }
-                if (elem.hasOwnProperty('pvModel')) {
-                  if (!elem.hasOwnProperty('pvModelName')) elem.pvModelName = elem.pvModel.name ?? 'SPR-X21-335-BLK';
-                  delete elem.pvModel;
-                }
-              }
+              // for (const elem of content.elements) {
+              //   if (elem.hasOwnProperty('parent')) {
+              //     if (!elem.hasOwnProperty('parentId')) elem.parentId = elem.parent.id ?? GROUND_ID;
+              //     delete elem.parent;
+              //   }
+              //   if (elem.hasOwnProperty('pvModel')) {
+              //     if (!elem.hasOwnProperty('pvModelName')) elem.pvModelName = elem.pvModel.name ?? 'SPR-X21-335-BLK';
+              //     delete elem.pvModel;
+              //   }
+              // }
               state.elements = content.elements;
               state.notes = content.notes ?? [];
               state.cloudFile = title;
               state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
               state.changed = false;
               state.skipChange = true;
+              state.localContentToImportAfterCloudFileUpdate = undefined;
             });
           },
           exportContent() {
@@ -2223,11 +2227,13 @@ export const useStore = create<CommonStoreState>(
           openLocalFileFlag: false,
           saveLocalFileFlag: false,
           saveLocalFileDialogVisible: false,
-          updateCloudFileFlag: false,
           localFileDialogRequested: false,
           pvModelDialogVisible: false,
           savedCameraPosition: new Vector3(0, -5, 0),
           savedPanCenter: new Vector3(),
+          showCloudFileTitleDialog: false,
+          updateCloudFileFlag: false,
+          localContentToImportAfterCloudFileUpdate: undefined,
 
           enableFineGrid: false,
           setEnableFineGrid(b: boolean) {

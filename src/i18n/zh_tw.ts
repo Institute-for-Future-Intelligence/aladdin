@@ -171,6 +171,7 @@ export const i18n_zh_tw = {
       AccountSettings: '賬號設定',
       SignIn: '登錄',
       SignOut: '退出賬號',
+      ToSaveYourWorkPleaseSignIn: '為了保存您的文檔，請您先登陸。',
     },
 
     skyMenu: {
