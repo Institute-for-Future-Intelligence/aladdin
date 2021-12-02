@@ -9,7 +9,7 @@ import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { ObjectType } from '../../../types';
+import { FoundationTexture, ObjectType } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 import FoundationColorSelection from './foundationColorSelection';
@@ -18,6 +18,7 @@ import FoundationLengthInput from './foundationLengthInput';
 import FoundationHeightInput from './foundationHeightInput';
 import FoundationAzimuthInput from './foundationAzimuthInput';
 import FoundationTextureSelection from './foundationTextureSelection';
+import { FoundationModel } from '../../../models/FoundationModel';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -37,15 +38,11 @@ export const FoundationMenu = () => {
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
-  const selectedElement = getSelectedElement();
-  const wallCountFoundation = selectedElement ? countAllChildElementsByType(selectedElement.id, ObjectType.Wall) : 0;
-  const sensorCountFoundation = selectedElement
-    ? countAllChildElementsByType(selectedElement.id, ObjectType.Sensor)
-    : 0;
-  const solarRackCountFoundation = selectedElement
-    ? countAllChildElementsByType(selectedElement.id, ObjectType.SolarPanel)
-    : 0;
-  const solarPanelCountFoundation = selectedElement ? countAllChildSolarPanels(selectedElement.id) : 0;
+  const foundation = getSelectedElement() as FoundationModel;
+  const wallCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Wall) : 0;
+  const sensorCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Sensor) : 0;
+  const solarRackCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.SolarPanel) : 0;
+  const solarPanelCountFoundation = foundation ? countAllChildSolarPanels(foundation.id) : 0;
   const lang = { lng: language };
 
   return (
@@ -71,16 +68,16 @@ export const FoundationMenu = () => {
                       ')?',
                     icon: <ExclamationCircleOutlined />,
                     onOk: () => {
-                      if (selectedElement) {
+                      if (foundation) {
                         const removed = elements.filter(
-                          (e) => e.type === ObjectType.Wall && e.parentId === selectedElement.id,
+                          (e) => e.type === ObjectType.Wall && e.parentId === foundation.id,
                         );
-                        removeAllChildElementsByType(selectedElement.id, ObjectType.Wall);
+                        removeAllChildElementsByType(foundation.id, ObjectType.Wall);
                         const removedElements = JSON.parse(JSON.stringify(removed));
                         const undoableRemoveAllWallChildren = {
                           name: 'Remove All Walls on Foundation',
                           timestamp: Date.now(),
-                          parentId: selectedElement.id,
+                          parentId: foundation.id,
                           removedElements: removedElements,
                           undo: () => {
                             setCommonStore((state) => {
@@ -115,16 +112,16 @@ export const FoundationMenu = () => {
                       ')?',
                     icon: <ExclamationCircleOutlined />,
                     onOk: () => {
-                      if (selectedElement) {
+                      if (foundation) {
                         const removed = elements.filter(
-                          (e) => e.type === ObjectType.Sensor && e.parentId === selectedElement.id,
+                          (e) => e.type === ObjectType.Sensor && e.parentId === foundation.id,
                         );
-                        removeAllChildElementsByType(selectedElement.id, ObjectType.Sensor);
+                        removeAllChildElementsByType(foundation.id, ObjectType.Sensor);
                         const removedElements = JSON.parse(JSON.stringify(removed));
                         const undoableRemoveAllSensorChildren = {
                           name: 'Remove All Sensors on Foundation',
                           timestamp: Date.now(),
-                          parentId: selectedElement.id,
+                          parentId: foundation.id,
                           removedElements: removedElements,
                           undo: () => {
                             setCommonStore((state) => {
@@ -163,16 +160,16 @@ export const FoundationMenu = () => {
                       ')?',
                     icon: <ExclamationCircleOutlined />,
                     onOk: () => {
-                      if (selectedElement) {
+                      if (foundation) {
                         const removed = elements.filter(
-                          (e) => e.type === ObjectType.SolarPanel && e.parentId === selectedElement.id,
+                          (e) => e.type === ObjectType.SolarPanel && e.parentId === foundation.id,
                         );
-                        removeAllChildElementsByType(selectedElement.id, ObjectType.SolarPanel);
+                        removeAllChildElementsByType(foundation.id, ObjectType.SolarPanel);
                         const removedElements = JSON.parse(JSON.stringify(removed));
                         const undoableRemoveAllSolarPanelChildren = {
                           name: 'Remove All Solar Panels on Foundation',
                           timestamp: Date.now(),
-                          parentId: selectedElement.id,
+                          parentId: foundation.id,
                           removedElements: removedElements,
                           undo: () => {
                             setCommonStore((state) => {
@@ -201,15 +198,17 @@ export const FoundationMenu = () => {
         )}
 
       <FoundationColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
-      <Menu.Item
-        key={'foundation-color'}
-        style={{ paddingLeft: '36px' }}
-        onClick={() => {
-          setColorDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Color', lang)} ...
-      </Menu.Item>
+      {(!foundation.textureType || foundation.textureType === FoundationTexture.NoTexture) && (
+        <Menu.Item
+          key={'foundation-color'}
+          style={{ paddingLeft: '36px' }}
+          onClick={() => {
+            setColorDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Color', lang)} ...
+        </Menu.Item>
+      )}
 
       <FoundationTextureSelection
         textureDialogVisible={textureDialogVisible}

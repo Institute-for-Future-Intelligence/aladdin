@@ -9,7 +9,7 @@ import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { ObjectType } from '../../../types';
+import { CuboidTexture, ObjectType } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 import CuboidColorSelection from './cuboidColorSelection';
@@ -18,18 +18,19 @@ import CuboidLengthInput from './cuboidLengthInput';
 import CuboidHeightInput from './cuboidHeightInput';
 import CuboidAzimuthInput from './cuboidAzimuthInput';
 import CuboidTextureSelection from './cuboidTextureSelection';
+import { CuboidModel } from '../../../models/CuboidModel';
 
 export const CuboidMenu = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getSelectedElement = useStore(Selector.getSelectedElement);
-  const selectedElement = getSelectedElement();
   const addUndoable = useStore(Selector.addUndoable);
   const countAllChildElementsByType = useStore(Selector.countAllChildElementsByType);
   const countAllChildSolarPanels = useStore(Selector.countAllChildSolarPanels);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
+  const selectedSideIndex = useStore(Selector.selectedSideIndex);
 
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
@@ -38,11 +39,10 @@ export const CuboidMenu = () => {
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
-  const sensorCountCuboid = selectedElement ? countAllChildElementsByType(selectedElement.id, ObjectType.Sensor) : 0;
-  const solarRackCountCuboid = selectedElement
-    ? countAllChildElementsByType(selectedElement.id, ObjectType.SolarPanel)
-    : 0;
-  const solarPanelCountCuboid = selectedElement ? countAllChildSolarPanels(selectedElement.id) : 0;
+  const cuboid = getSelectedElement() as CuboidModel;
+  const sensorCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Sensor) : 0;
+  const solarRackCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.SolarPanel) : 0;
+  const solarPanelCountCuboid = cuboid ? countAllChildSolarPanels(cuboid.id) : 0;
   const lang = { lng: language };
 
   return (
@@ -68,16 +68,14 @@ export const CuboidMenu = () => {
                     ')?',
                   icon: <ExclamationCircleOutlined />,
                   onOk: () => {
-                    if (selectedElement) {
-                      const removed = elements.filter(
-                        (e) => e.type === ObjectType.Sensor && e.parentId === selectedElement.id,
-                      );
-                      removeAllChildElementsByType(selectedElement.id, ObjectType.Sensor);
+                    if (cuboid) {
+                      const removed = elements.filter((e) => e.type === ObjectType.Sensor && e.parentId === cuboid.id);
+                      removeAllChildElementsByType(cuboid.id, ObjectType.Sensor);
                       const removedElements = JSON.parse(JSON.stringify(removed));
                       const undoableRemoveAllSensorChildren = {
                         name: 'Remove All Sensors on Cuboid',
                         timestamp: Date.now(),
-                        parentId: selectedElement.id,
+                        parentId: cuboid.id,
                         removedElements: removedElements,
                         undo: () => {
                           setCommonStore((state) => {
@@ -115,16 +113,16 @@ export const CuboidMenu = () => {
                     ')?',
                   icon: <ExclamationCircleOutlined />,
                   onOk: () => {
-                    if (selectedElement) {
+                    if (cuboid) {
                       const removed = elements.filter(
-                        (e) => e.type === ObjectType.SolarPanel && e.parentId === selectedElement.id,
+                        (e) => e.type === ObjectType.SolarPanel && e.parentId === cuboid.id,
                       );
-                      removeAllChildElementsByType(selectedElement.id, ObjectType.SolarPanel);
+                      removeAllChildElementsByType(cuboid.id, ObjectType.SolarPanel);
                       const removedElements = JSON.parse(JSON.stringify(removed));
                       const undoableRemoveAllSolarPanelChildren = {
                         name: 'Remove All Solar Panels on Cuboid',
                         timestamp: Date.now(),
-                        parentId: selectedElement.id,
+                        parentId: cuboid.id,
                         removedElements: removedElements,
                         undo: () => {
                           setCommonStore((state) => {
@@ -152,15 +150,18 @@ export const CuboidMenu = () => {
       )}
 
       <CuboidColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
-      <Menu.Item
-        key={'cuboid-color'}
-        style={{ paddingLeft: '36px' }}
-        onClick={() => {
-          setColorDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Color', lang)} ...
-      </Menu.Item>
+      {(!cuboid.textureTypes ||
+        (selectedSideIndex >= 0 && cuboid.textureTypes[selectedSideIndex] === CuboidTexture.NoTexture)) && (
+        <Menu.Item
+          key={'cuboid-color'}
+          style={{ paddingLeft: '36px' }}
+          onClick={() => {
+            setColorDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Color', lang)} ...
+        </Menu.Item>
+      )}
 
       <CuboidTextureSelection
         textureDialogVisible={textureDialogVisible}

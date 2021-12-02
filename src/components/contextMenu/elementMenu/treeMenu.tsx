@@ -114,7 +114,7 @@ export const TreeMenu = () => {
             max={50}
             step={1}
             precision={1}
-            value={tree.lx ?? 1}
+            value={tree?.lx ?? 1}
             formatter={(x) => Number(x).toFixed(1)}
             onChange={(value) => setSpread(value)}
           />
@@ -130,7 +130,7 @@ export const TreeMenu = () => {
             max={30}
             step={1}
             precision={1}
-            value={tree.lz ?? 1}
+            value={tree?.lz ?? 1}
             formatter={(x) => Number(x).toFixed(1)}
             onChange={(value) => setHeight(value)}
           />
