@@ -52,6 +52,8 @@ export const i18n_zh_cn = {
       Texture: '材质',
       Thickness: '厚度',
       Size: '尺寸',
+      Yes: '要',
+      No: '不要',
       OK: '确定',
       Cancel: '取消',
       Apply: '应用',

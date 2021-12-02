@@ -10,6 +10,7 @@ import { showError } from './helpers';
 import i18n from './i18n/i18n';
 import { Input, Modal } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const LocalFileManager = () => {
   const setCommonStore = useStore(Selector.set);
@@ -20,6 +21,7 @@ const LocalFileManager = () => {
   const saveLocalFileDialogVisible = useStore(Selector.saveLocalFileDialogVisible);
   const exportContent = useStore(Selector.exportContent);
   const importContent = useStore(Selector.importContent);
+  const changed = useStore(Selector.changed);
 
   const lang = { lng: language };
   const firstOpenCall = useRef<boolean>(true);
@@ -62,7 +64,19 @@ const LocalFileManager = () => {
         });
         reader.onload = (e) => {
           if (reader.result) {
-            importContent(JSON.parse(reader.result.toString()));
+            const input = JSON.parse(reader.result.toString());
+            if (changed) {
+              Modal.confirm({
+                title: i18n.t('shared.DoYouWantToSaveChanges', lang),
+                icon: <ExclamationCircleOutlined />,
+                onOk: () => importContent(input),
+                onCancel: () => importContent(input),
+                okText: i18n.t('word.Yes', lang),
+                cancelText: i18n.t('word.No', lang),
+              });
+            } else {
+              importContent(input);
+            }
           }
           fileDialog.value = '';
         };

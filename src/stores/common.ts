@@ -66,8 +66,11 @@ export interface CommonStoreState {
   user: User;
   language: string;
   cloudFile: string | undefined;
+
   changed: boolean;
   setChanged: (b: boolean) => void;
+  skipChange: boolean;
+  setSkipChange: (b: boolean) => void;
 
   importContent: (input: any, title?: string) => void;
   exportContent: () => {};
@@ -355,6 +358,12 @@ export const useStore = create<CommonStoreState>(
               state.changed = b;
             });
           },
+          skipChange: true,
+          setSkipChange(b: boolean) {
+            immerSet((state: CommonStoreState) => {
+              state.skipChange = b;
+            });
+          },
 
           importContent(content: any, title) {
             immerSet((state: CommonStoreState) => {
@@ -381,6 +390,7 @@ export const useStore = create<CommonStoreState>(
               state.cloudFile = title;
               state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
               state.changed = false;
+              state.skipChange = true;
             });
           },
           exportContent() {

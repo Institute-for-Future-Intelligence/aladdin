@@ -12,9 +12,13 @@ export const changed = (state: CommonStoreState) => state.changed;
 
 export const setChanged = (state: CommonStoreState) => state.setChanged;
 
-export const notes = (state: CommonStoreState) => state.notes;
+export const skipChange = (state: CommonStoreState) => state.skipChange;
+
+export const setSkipChange = (state: CommonStoreState) => state.setSkipChange;
 
 export const elements = (state: CommonStoreState) => state.elements;
+
+export const notes = (state: CommonStoreState) => state.notes;
 
 export const pvModules = (state: CommonStoreState) => state.pvModules;
 

@@ -52,6 +52,8 @@ export const i18n_en = {
       Texture: 'Texture',
       Size: 'Size',
       Thickness: 'Thickness',
+      Yes: 'Yes',
+      No: 'No',
       OK: 'OK',
       Cancel: 'Cancel',
       Apply: 'Apply',

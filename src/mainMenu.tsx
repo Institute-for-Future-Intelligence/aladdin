@@ -157,7 +157,9 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
           title: i18n.t('shared.DoYouWantToSaveChanges', lang),
           icon: <ExclamationCircleOutlined />,
           onOk: () => importContent(input),
-          onCancel: () => {},
+          onCancel: () => importContent(input),
+          okText: i18n.t('word.Yes', lang),
+          cancelText: i18n.t('word.No', lang),
         });
       } else {
         importContent(input);

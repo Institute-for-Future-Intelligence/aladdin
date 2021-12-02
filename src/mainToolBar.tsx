@@ -20,6 +20,7 @@ import i18n from './i18n/i18n';
 import { Util } from './Util';
 import MainToolBarButtons from './mainToolBarButtons';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const ButtonsContainer = styled.div`
   position: absolute;
@@ -47,6 +48,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const cloudFile = useStore(Selector.cloudFile);
   const updateCloudFileFlag = useStore(Selector.updateCloudFileFlag);
   const importContent = useStore(Selector.importContent);
+  const changed = useStore(Selector.changed);
 
   const [loading, setLoading] = useState(false);
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
@@ -249,7 +251,18 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         .then((doc) => {
           const data = doc.data();
           if (data) {
-            importContent(data, title);
+            if (changed) {
+              Modal.confirm({
+                title: i18n.t('shared.DoYouWantToSaveChanges', lang),
+                icon: <ExclamationCircleOutlined />,
+                onOk: () => importContent(data, title),
+                onCancel: () => importContent(data, title),
+                okText: i18n.t('word.Yes', lang),
+                cancelText: i18n.t('word.No', lang),
+              });
+            } else {
+              importContent(data, title);
+            }
             setLoading(false);
           } else {
             showInfo('Sorry, ' + title + ' was not found. It may have been deleted by its owner.');

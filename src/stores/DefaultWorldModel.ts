@@ -40,9 +40,9 @@ export class DefaultWorldModel implements WorldModel {
       snowReflectionFactors: new Array(12).fill(0),
     } as GroundModel;
 
-    this.timesPerHour = 20; // how many times per hour to collect data
+    this.timesPerHour = 4; // how many times per hour to collect data
     this.solarPanelGridCellSize = 0.5;
-    this.discretization = Discretization.EXACT;
+    this.discretization = Discretization.APPROXIMATE;
   }
 
   getElements() {
