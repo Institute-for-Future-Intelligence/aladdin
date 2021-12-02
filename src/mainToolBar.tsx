@@ -205,6 +205,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           state.user.email = null;
           state.user.displayName = null;
           state.user.photoURL = null;
+          state.cloudFile = undefined; // if there is a current cloud file
         });
       })
       .catch((error) => {
