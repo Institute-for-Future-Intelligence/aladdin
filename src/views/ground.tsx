@@ -141,7 +141,8 @@ const Ground = () => {
     }
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (e: PointerEvent) => {
+    if (e.button === 2) return;
     if (grabRef.current) {
       const elem = getElementById(grabRef.current.id);
       if (resizeHandleType) {

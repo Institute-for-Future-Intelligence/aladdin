@@ -719,9 +719,7 @@ const Foundation = ({
         grabRef.current = null;
       }
     }
-    if (!buildingWallID) {
-      setShowGrid(false);
-    }
+    setShowGrid(false);
     if (isSettingWallEndPointRef.current && buildingWallID && baseRef.current) {
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.None;

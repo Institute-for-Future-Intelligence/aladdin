@@ -393,6 +393,9 @@ const KeyboardListener = ({
           }
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
+            state.moveHandleType = null;
+            state.resizeHandleType = null;
+            state.enableOrbitController = true;
           });
         }
         break;

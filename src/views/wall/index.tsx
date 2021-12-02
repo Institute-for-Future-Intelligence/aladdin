@@ -132,7 +132,7 @@ const Wall = ({
   const selectMe = useStore(Selector.selectMe);
   const removeElementById = useStore(Selector.removeElementById);
   const elements = useStore(Selector.elements);
-  const deletedWindowID = useStore(Selector.deletedWindowID);
+  const deletedWindowAndParentID = useStore(Selector.deletedWindowAndParentID);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
@@ -147,13 +147,15 @@ const Wall = ({
   const insideWallRef = useRef<Mesh>(null);
   const topSurfaceRef = useRef<Mesh>(null);
   const grabRef = useRef<ElementModel | null>(null);
+
+  const buildingWindowIDRef = useRef<string | null>(null);
   const isSettingWindowStartPointRef = useRef(false);
   const isSettingWindowEndPointRef = useRef(false);
+  const invalidWindowIDRef = useRef<string | null>(null);
 
+  const [originElements, setOriginElements] = useState<ElementModel[] | null>([]);
   const [showGrid, setShowGrid] = useState(false);
   const [windows, setWindows] = useState<WindowModel[]>([]);
-  const [invalidWindowID, setInvalidWindowID] = useState<string | null>(null);
-  const [originElements, setOriginElements] = useState<ElementModel[]>([]);
 
   const { camera, gl } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
@@ -220,7 +222,7 @@ const Wall = ({
     drawRectangle(wallShape, lx, lz);
 
     windows.forEach((w) => {
-      if (w.id !== invalidWindowID) {
+      if (w.id !== invalidWindowIDRef.current) {
         const window = new Shape();
         drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
         wallShape.holes.push(window);
@@ -235,7 +237,7 @@ const Wall = ({
     drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
 
     windows.forEach((w) => {
-      if (w.id !== invalidWindowID) {
+      if (w.id !== invalidWindowIDRef.current) {
         const window = new Shape();
         drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
         wallShape.holes.push(window);
@@ -265,17 +267,14 @@ const Wall = ({
   }, []);
 
   useEffect(() => {
-    if (deletedWindowID) {
-      isSettingWindowStartPointRef.current = false;
-      isSettingWindowEndPointRef.current = false;
+    if (deletedWindowAndParentID && deletedWindowAndParentID[1] === id) {
+      resetCurrentState();
       setShowGrid(false);
       setCommonStore((state) => {
-        state.buildingWindowID = null;
-        state.deletedWallID = null;
-        state.enableOrbitController = true;
+        state.deletedWindowAndParentID = null;
       });
     }
-  }, [deletedWindowID]);
+  }, [deletedWindowAndParentID]);
 
   // windows
   useEffect(() => {
@@ -332,7 +331,7 @@ const Wall = ({
 
   const checkWindowCollision = (id: string, p: Vector3, wlx: number, wlz: number) => {
     if (wlx < 0.1 || wlz < 0.1) {
-      setInvalidWindowID(id);
+      invalidWindowIDRef.current = id;
       return false;
     }
     for (const w of windows) {
@@ -355,12 +354,12 @@ const Wall = ({
             (minZ >= wMinZ && minZ <= wMaxZ) ||
             (maxZ >= wMinZ && maxZ <= wMaxZ))
         ) {
-          setInvalidWindowID(id);
+          invalidWindowIDRef.current = id;
           return false; // has collision
         }
       }
     }
-    setInvalidWindowID(null);
+    invalidWindowIDRef.current = null;
     return true; // no collision
   };
 
@@ -407,6 +406,245 @@ const Wall = ({
     return false;
   };
 
+  const checkIfCanSelectMe = (e: ThreeEvent<PointerEvent>) => {
+    if (
+      e.button === 2 ||
+      buildingWallIDRef.current ||
+      buildingWindowIDRef.current ||
+      moveHandleTypeRef.current ||
+      resizeHandleTypeRef.current ||
+      useStore.getState().objectTypeToAdd !== ObjectType.None ||
+      selected
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  const resetCurrentState = () => {
+    grabRef.current = null;
+    buildingWindowIDRef.current = null;
+    isSettingWindowStartPointRef.current = false;
+    isSettingWindowEndPointRef.current = false;
+    invalidWindowIDRef.current = null;
+  };
+
+  const handleIntersectionPointerDown = (e: ThreeEvent<PointerEvent>) => {
+    // return on right-click or not first wall
+    if (e.button === 2 || buildingWallIDRef.current || !checkIsFirstWall(e)) {
+      return;
+    }
+
+    setRayCast(e);
+
+    if (intersectionPlaneRef.current) {
+      const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
+
+      if (intersects.length > 0) {
+        const pointer = intersects[0].point;
+
+        // set window start point
+        if (isSettingWindowStartPointRef.current) {
+          setCommonStore((state) => {
+            state.enableOrbitController = false;
+            state.moveHandleType = null;
+            state.resizeHandleType = ResizeHandleType.LowerRight;
+            state.resizeAnchor.copy(pointer);
+          });
+          isSettingWindowStartPointRef.current = false;
+          isSettingWindowEndPointRef.current = true;
+          return;
+        }
+
+        // add new elements
+        switch (objectTypeToAddRef.current) {
+          case ObjectType.Roof: {
+            const points = checkWallLoop(wallModel.id);
+            if (points && parent) {
+              const roof = ElementModelFactory.makeRoof(lz, parent, points);
+              setCommonStore((state) => {
+                state.elements.push(roof);
+              });
+            }
+            setCommonStore((state) => {
+              state.objectTypeToAdd = ObjectType.None;
+            });
+            return;
+          }
+        }
+
+        const selectedElement = getSelectedElement();
+
+        // a child of this wall is clicked
+        if (selectedElement && selectedElement.parentId === id) {
+          grabRef.current = selectedElement;
+          if (moveHandleTypeRef.current || resizeHandleTypeRef.current) {
+            setShowGrid(true);
+            setOriginElements([...elements]);
+          }
+        }
+      }
+    }
+  };
+
+  const handleIntersectionPointerUp = (e: ThreeEvent<PointerEvent>) => {
+    if (e.button === 2 || grabRef.current === null || grabRef.current.parentId !== id) {
+      return;
+    }
+    if (invalidWindowIDRef.current) {
+      if (isSettingWindowEndPointRef.current) {
+        setCommonStore((state) => {
+          state.elements.pop();
+        });
+      } else {
+        setCommonStore((state) => {
+          if (originElements) {
+            state.elements = [...originElements];
+          }
+        });
+      }
+      invalidWindowIDRef.current = null;
+      setOriginElements(null);
+    }
+    setCommonStore((state) => {
+      state.moveHandleType = null;
+      state.resizeHandleType = null;
+      state.enableOrbitController = true;
+      state.buildingWindowID = null;
+    });
+    setShowGrid(false);
+    resetCurrentState();
+  };
+
+  const handleIntersectionPointerMove = (e: ThreeEvent<PointerEvent>) => {
+    // return if it's not first wall when adding new window
+    if (isSettingWindowStartPointRef.current && !checkIsFirstWall(e)) {
+      if (grabRef.current) {
+        removeElementById(grabRef.current.id, false);
+      }
+      setCommonStore((state) => {
+        state.objectTypeToAdd = ObjectType.Window;
+        state.buildingWindowID = null;
+      });
+      setShowGrid(false);
+      resetCurrentState();
+      return;
+    }
+
+    setRayCast(e);
+
+    if (intersectionPlaneRef.current) {
+      const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
+      if (intersects.length > 0) {
+        const pointer = intersects[0].point;
+
+        // move or resize
+        if (grabRef.current && grabRef.current.parentId === id) {
+          const moveHandleType = moveHandleTypeRef.current;
+          const resizeHandleType = resizeHandleTypeRef.current;
+
+          switch (grabRef.current.type) {
+            case ObjectType.Window: {
+              let p = getWindowRelativePos(pointer, wallModel);
+              p = getPositionOnGrid(p);
+
+              if (moveHandleType) {
+                p = movingWindowInsideWall(p, grabRef.current.lx * lx, grabRef.current.lz * lz);
+                checkWindowCollision(grabRef.current.id, p, grabRef.current.lx * lx, grabRef.current.lz * lz);
+                setCommonStore((state) => {
+                  for (const e of state.elements) {
+                    if (e.id === grabRef.current?.id) {
+                      e.cx = p.x / lx;
+                      e.cz = p.z / lz;
+                      e.color = e.id === invalidWindowIDRef.current ? 'red' : '#477395';
+                    }
+                  }
+                });
+              } else if (resizeHandleType) {
+                p = resizingWindowInsideWall(p);
+                let resizeAnchor = getWindowRelativePos(resizeAnchorRef.current, wallModel);
+                if (isSettingWindowEndPointRef.current) {
+                  resizeAnchor = getPositionOnGrid(resizeAnchor);
+                }
+                const v = new Vector3().subVectors(resizeAnchor, p); // window diagonal vector
+                let relativePos = new Vector3().addVectors(resizeAnchor, p).divideScalar(2);
+                checkWindowCollision(grabRef.current.id, relativePos, Math.abs(v.x), Math.abs(v.z));
+                setCommonStore((state) => {
+                  for (const e of state.elements) {
+                    if (e.id === grabRef.current?.id) {
+                      e.lx = Math.abs(v.x) / lx;
+                      e.lz = Math.abs(v.z) / lz;
+                      e.cx = relativePos.x / lx;
+                      e.cz = relativePos.z / lz;
+                      e.color = e.id === invalidWindowIDRef.current ? 'red' : '#477395';
+                    }
+                  }
+                });
+              }
+              break;
+            }
+            case ObjectType.SolarPanel: {
+              break;
+            }
+            case ObjectType.Sensor: {
+              break;
+            }
+          }
+        }
+
+        // add new element
+        switch (objectTypeToAddRef.current) {
+          case ObjectType.Window: {
+            let relativePos = getWindowRelativePos(pointer, wallModel);
+            relativePos = getPositionOnGrid(relativePos);
+
+            const newWindow = ElementModelFactory.makeWindow(wallModel, relativePos.x / lx, 0, relativePos.z / lz);
+            setCommonStore((state) => {
+              state.enableOrbitController = false;
+              state.objectTypeToAdd = ObjectType.None;
+              state.elements.push(newWindow);
+              state.moveHandleType = MoveHandleType.Mid;
+              state.selectedElement = newWindow;
+              state.buildingWindowID = newWindow.id;
+            });
+            setShowGrid(true);
+            grabRef.current = newWindow;
+            buildingWindowIDRef.current = newWindow.id;
+            isSettingWindowStartPointRef.current = true;
+            break;
+          }
+          case ObjectType.SolarPanel: {
+            break;
+          }
+          case ObjectType.Sensor: {
+            break;
+          }
+        }
+      }
+    }
+  };
+
+  const handleIntersectionPointerOut = (e: ThreeEvent<PointerEvent>) => {
+    if (isSettingWindowStartPointRef.current && grabRef.current) {
+      removeElementById(grabRef.current.id, false);
+      setCommonStore((state) => {
+        state.objectTypeToAdd = ObjectType.Window;
+        state.buildingWindowID = null;
+      });
+      setShowGrid(false);
+      resetCurrentState();
+    }
+  };
+
+  const handleWallBodyPointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (checkIfCanSelectMe(e)) {
+      setCommonStore((state) => {
+        state.contextMenuObjectType = null;
+      });
+      selectMe(id, e, ActionType.Select);
+    }
+  };
+
   return (
     <>
       {wallAbsPosition && wallAbsAngle !== undefined && (
@@ -426,6 +664,9 @@ const Wall = ({
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
             onContextMenu={(e) => {
+              if (grabRef.current) {
+                return;
+              }
               selectMe(id, e, ActionType.Select);
               setCommonStore((state) => {
                 if (e.intersections.length > 0 && e.intersections[0].object === outSideWallRef.current) {
@@ -433,21 +674,7 @@ const Wall = ({
                 }
               });
             }}
-            onPointerDown={(e) => {
-              if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
-              setCommonStore((state) => {
-                state.contextMenuObjectType = null;
-              });
-
-              if (
-                !moveHandleTypeRef.current &&
-                !resizeHandleTypeRef.current &&
-                useStore.getState().objectTypeToAdd === ObjectType.None &&
-                !selected
-              ) {
-                selectMe(id, e, ActionType.Select);
-              }
-            }}
+            onPointerDown={handleWallBodyPointerDown}
           >
             <meshBasicMaterial map={texture} side={DoubleSide} />
           </mesh>
@@ -460,17 +687,7 @@ const Wall = ({
             rotation={[HALF_PI, 0, 0]}
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
-            onPointerDown={(e) => {
-              if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
-              if (
-                !moveHandleTypeRef.current &&
-                !resizeHandleTypeRef.current &&
-                useStore.getState().objectTypeToAdd === ObjectType.None &&
-                !selected
-              ) {
-                selectMe(id, e, ActionType.Select);
-              }
-            }}
+            onPointerDown={handleWallBodyPointerDown}
           />
 
           {/* top surface */}
@@ -480,17 +697,7 @@ const Wall = ({
             position={[0, hy, hz]}
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
-            onPointerDown={(e) => {
-              if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
-              if (
-                !moveHandleTypeRef.current &&
-                !resizeHandleTypeRef.current &&
-                useStore.getState().objectTypeToAdd === ObjectType.None &&
-                !selected
-              ) {
-                selectMe(id, e, ActionType.Select);
-              }
-            }}
+            onPointerDown={handleWallBodyPointerDown}
           />
 
           {/* side surfaces */}
@@ -499,17 +706,7 @@ const Wall = ({
               args={[lz, ly]}
               position={[-hx + 0.01, hy, 0]}
               rotation={[0, HALF_PI, 0]}
-              onPointerDown={(e) => {
-                if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
-                if (
-                  !moveHandleTypeRef.current &&
-                  !resizeHandleTypeRef.current &&
-                  useStore.getState().objectTypeToAdd === ObjectType.None &&
-                  !selected
-                ) {
-                  selectMe(id, e, ActionType.Select);
-                }
-              }}
+              onPointerDown={handleWallBodyPointerDown}
             >
               <meshStandardMaterial color={'white'} side={DoubleSide} />
             </Plane>
@@ -519,17 +716,7 @@ const Wall = ({
               args={[lz, ly]}
               position={[hx - 0.01, hy, 0]}
               rotation={[0, HALF_PI, 0]}
-              onPointerDown={(e) => {
-                if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
-                if (
-                  !moveHandleTypeRef.current &&
-                  !resizeHandleTypeRef.current &&
-                  useStore.getState().objectTypeToAdd === ObjectType.None &&
-                  !selected
-                ) {
-                  selectMe(id, e, ActionType.Select);
-                }
-              }}
+              onPointerDown={handleWallBodyPointerDown}
             >
               <meshStandardMaterial color={'white'} side={DoubleSide} />
             </Plane>
@@ -543,193 +730,10 @@ const Wall = ({
             position={[0, ly / 2 + 0.01, 0]}
             rotation={[HALF_PI, 0, 0]}
             visible={false}
-            onPointerMove={(e) => {
-              if (isSettingWindowStartPointRef.current && grabRef.current && !checkIsFirstWall(e)) {
-                removeElementById(grabRef.current.id, false);
-                isSettingWindowStartPointRef.current = false;
-                setShowGrid(false);
-                setCommonStore((state) => {
-                  state.objectTypeToAdd = ObjectType.Window;
-                });
-                return;
-              }
-
-              setRayCast(e);
-
-              if (intersectionPlaneRef.current) {
-                const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-                if (intersects.length > 0) {
-                  const pointer = intersects[0].point;
-
-                  // move or resize
-                  if (grabRef.current?.parentId === id) {
-                    const moveHandleType = moveHandleTypeRef.current;
-                    const resizeHandleType = resizeHandleTypeRef.current;
-
-                    if (grabRef.current?.type === ObjectType.Window) {
-                      let p = getWindowRelativePos(pointer, wallModel);
-                      p = getPositionOnGrid(p);
-
-                      if (moveHandleType) {
-                        p = movingWindowInsideWall(p, grabRef.current.lx * lx, grabRef.current.lz * lz);
-                        checkWindowCollision(grabRef.current.id, p, grabRef.current.lx * lx, grabRef.current.lz * lz);
-                        setCommonStore((state) => {
-                          for (const e of state.elements) {
-                            if (e.id === grabRef.current?.id) {
-                              e.cx = p.x / lx;
-                              e.cz = p.z / lz;
-                              e.color = e.id === invalidWindowID ? 'red' : '#477395';
-                            }
-                          }
-                        });
-                      } else if (resizeHandleType) {
-                        p = resizingWindowInsideWall(p);
-                        let resizeAnchor = getWindowRelativePos(resizeAnchorRef.current, wallModel);
-                        if (isSettingWindowEndPointRef.current) {
-                          resizeAnchor = getPositionOnGrid(resizeAnchor);
-                        }
-                        const v = new Vector3().subVectors(resizeAnchor, p); // window diagonal vector
-                        let relativePos = new Vector3().addVectors(resizeAnchor, p).divideScalar(2);
-                        checkWindowCollision(grabRef.current.id, relativePos, Math.abs(v.x), Math.abs(v.z));
-                        setCommonStore((state) => {
-                          for (const e of state.elements) {
-                            if (e.id === grabRef.current?.id) {
-                              e.lx = Math.abs(v.x) / lx;
-                              e.lz = Math.abs(v.z) / lz;
-                              e.cx = relativePos.x / lx;
-                              e.cz = relativePos.z / lz;
-                              e.color = e.id === invalidWindowID ? 'red' : '#477395';
-                            }
-                          }
-                        });
-                      }
-                    } else if (grabRef.current?.type === ObjectType.SolarPanel) {
-                    } else if (grabRef.current?.type === ObjectType.Sensor) {
-                    }
-                  }
-
-                  // add new element
-                  switch (objectTypeToAddRef.current) {
-                    case ObjectType.Window: {
-                      let relativePos = getWindowRelativePos(pointer, wallModel);
-                      relativePos = getPositionOnGrid(relativePos);
-
-                      const newWindow = ElementModelFactory.makeWindow(
-                        wallModel,
-                        relativePos.x / lx,
-                        0,
-                        relativePos.z / lz,
-                      );
-                      setCommonStore((state) => {
-                        state.enableOrbitController = false;
-                        state.objectTypeToAdd = ObjectType.None;
-                        state.elements.push(newWindow);
-                        state.selectedElement = newWindow;
-                        state.moveHandleType = MoveHandleType.Mid;
-                        state.buildingWindowID = newWindow.id;
-                      });
-                      setShowGrid(true);
-                      isSettingWindowStartPointRef.current = true;
-                      grabRef.current = newWindow;
-                      break;
-                    }
-                    case ObjectType.SolarPanel: {
-                      break;
-                    }
-                    case ObjectType.Sensor: {
-                      break;
-                    }
-                  }
-                }
-              }
-            }}
-            onPointerDown={(e) => {
-              if (e.button === 2 || buildingWallIDRef.current) return; // ignore right-click
-              setRayCast(e);
-
-              if (intersectionPlaneRef.current) {
-                const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-
-                if (intersects.length > 0) {
-                  const pointer = intersects[0].point;
-
-                  // set window start point
-                  if (isSettingWindowStartPointRef.current) {
-                    setCommonStore((state) => {
-                      state.moveHandleType = null;
-                      state.resizeHandleType = ResizeHandleType.LowerRight;
-                      state.resizeAnchor.copy(pointer);
-                    });
-                    isSettingWindowStartPointRef.current = false;
-                    isSettingWindowEndPointRef.current = true;
-                  }
-
-                  const selectedElement = getSelectedElement();
-                  grabRef.current = selectedElement;
-
-                  if (objectTypeToAddRef.current === ObjectType.Roof) {
-                    const points = checkWallLoop(wallModel.id);
-                    if (points && parent) {
-                      const roof = ElementModelFactory.makeRoof(lz, parent, points);
-                      setCommonStore((state) => {
-                        state.elements.push(roof);
-                      });
-                    }
-                    setCommonStore((state) => {
-                      state.objectTypeToAdd = ObjectType.None;
-                    });
-                  }
-
-                  if (selectedElement && selectedElement.parentId === id) {
-                    if (selectedElement.id === id) {
-                      // no child of this wall is clicked
-                    } else {
-                      // a child of this wall is clicked
-                      if (moveHandleTypeRef.current || resizeHandleTypeRef.current) {
-                        setShowGrid(true);
-                      }
-                    }
-                  }
-                  setOriginElements([...elements]);
-                }
-              }
-            }}
-            onPointerUp={() => {
-              if (invalidWindowID) {
-                if (isSettingWindowEndPointRef.current) {
-                  setCommonStore((state) => {
-                    state.elements.pop();
-                  });
-                } else {
-                  setCommonStore((state) => {
-                    if (originElements) {
-                      state.elements = [...originElements];
-                    }
-                  });
-                }
-                setInvalidWindowID(null);
-                setOriginElements([]);
-              }
-              setCommonStore((state) => {
-                state.moveHandleType = null;
-                state.resizeHandleType = null;
-                state.enableOrbitController = true;
-                state.buildingWindowID = null;
-              });
-              setShowGrid(false);
-              isSettingWindowEndPointRef.current = false;
-              grabRef.current = null;
-            }}
-            onPointerOut={() => {
-              if (isSettingWindowStartPointRef.current && grabRef.current) {
-                removeElementById(grabRef.current.id, false);
-                isSettingWindowStartPointRef.current = false;
-                setShowGrid(false);
-                setCommonStore((state) => {
-                  state.objectTypeToAdd = ObjectType.Window;
-                });
-              }
-            }}
+            onPointerDown={handleIntersectionPointerDown}
+            onPointerUp={handleIntersectionPointerUp}
+            onPointerMove={handleIntersectionPointerMove}
+            onPointerOut={handleIntersectionPointerOut}
           />
 
           {windows.map((e) => {

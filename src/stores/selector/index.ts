@@ -372,7 +372,7 @@ export const deletedWallID = (state: CommonStoreState) => state.deletedWallID;
 
 export const buildingWindowID = (state: CommonStoreState) => state.buildingWindowID;
 
-export const deletedWindowID = (state: CommonStoreState) => state.deletedWindowID;
+export const deletedWindowAndParentID = (state: CommonStoreState) => state.deletedWindowAndParentID;
 
 export const updateWallPointOnFoundation = (state: CommonStoreState) => state.updateWallPointOnFoundation;
 
