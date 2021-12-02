@@ -150,18 +150,19 @@ export const CuboidMenu = () => {
       )}
 
       <CuboidColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
-      {(!cuboid.textureTypes ||
-        (selectedSideIndex >= 0 && cuboid.textureTypes[selectedSideIndex] === CuboidTexture.NoTexture)) && (
-        <Menu.Item
-          key={'cuboid-color'}
-          style={{ paddingLeft: '36px' }}
-          onClick={() => {
-            setColorDialogVisible(true);
-          }}
-        >
-          {i18n.t('word.Color', lang)} ...
-        </Menu.Item>
-      )}
+      {cuboid &&
+        (!cuboid.textureTypes ||
+          (selectedSideIndex >= 0 && cuboid.textureTypes[selectedSideIndex] === CuboidTexture.NoTexture)) && (
+          <Menu.Item
+            key={'cuboid-color'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setColorDialogVisible(true);
+            }}
+          >
+            {i18n.t('word.Color', lang)} ...
+          </Menu.Item>
+        )}
 
       <CuboidTextureSelection
         textureDialogVisible={textureDialogVisible}

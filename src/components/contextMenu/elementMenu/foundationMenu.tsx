@@ -198,7 +198,7 @@ export const FoundationMenu = () => {
         )}
 
       <FoundationColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
-      {(!foundation.textureType || foundation.textureType === FoundationTexture.NoTexture) && (
+      {foundation && (!foundation.textureType || foundation.textureType === FoundationTexture.NoTexture) && (
         <Menu.Item
           key={'foundation-color'}
           style={{ paddingLeft: '36px' }}
