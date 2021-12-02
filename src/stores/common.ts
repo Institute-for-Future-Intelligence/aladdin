@@ -51,6 +51,7 @@ import { TreeModel } from '../models/TreeModel';
 import { HumanModel } from '../models/HumanModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
+import { GROUND_ID } from '../constants';
 
 enableMapSet();
 
@@ -65,7 +66,10 @@ export interface CommonStoreState {
   user: User;
   language: string;
   cloudFile: string | undefined;
+  changed: boolean;
+  setChanged: (b: boolean) => void;
 
+  importContent: (input: any, title?: string) => void;
   exportContent: () => {};
   clearContent: () => void;
   undoManager: UndoManager;
@@ -345,6 +349,40 @@ export const useStore = create<CommonStoreState>(
           user: {} as User,
           language: 'en',
           cloudFile: undefined,
+          changed: false,
+          setChanged(b: boolean) {
+            immerSet((state: CommonStoreState) => {
+              state.changed = b;
+            });
+          },
+
+          importContent(content: any, title) {
+            immerSet((state: CommonStoreState) => {
+              // remove old properties
+              if (content.world.hasOwnProperty('cameraPosition')) delete content.world.cameraPosition;
+              if (content.world.hasOwnProperty('panCenter')) delete content.world.panCenter;
+              if (!content.view.hasOwnProperty('cameraPosition')) content.view.cameraPosition = new Vector3(0, -5, 0);
+              if (!content.view.hasOwnProperty('panCenter')) content.view.panCenter = new Vector3(0, 0, 0);
+              state.world = content.world;
+              state.viewState = content.view;
+              // remove old properties
+              for (const elem of content.elements) {
+                if (elem.hasOwnProperty('parent')) {
+                  if (!elem.hasOwnProperty('parentId')) elem.parentId = elem.parent.id ?? GROUND_ID;
+                  delete elem.parent;
+                }
+                if (elem.hasOwnProperty('pvModel')) {
+                  if (!elem.hasOwnProperty('pvModelName')) elem.pvModelName = elem.pvModel.name ?? 'SPR-X21-335-BLK';
+                  delete elem.pvModel;
+                }
+              }
+              state.elements = content.elements;
+              state.notes = content.notes ?? [];
+              state.cloudFile = title;
+              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+              state.changed = false;
+            });
+          },
           exportContent() {
             const state = get();
             return {

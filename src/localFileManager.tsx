@@ -5,8 +5,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
-import { Vector3 } from 'three';
-import { GROUND_ID } from './constants';
 import { saveAs } from 'file-saver';
 import { showError } from './helpers';
 import i18n from './i18n/i18n';
@@ -21,6 +19,7 @@ const LocalFileManager = () => {
   const saveLocalFileFlag = useStore(Selector.saveLocalFileFlag);
   const saveLocalFileDialogVisible = useStore(Selector.saveLocalFileDialogVisible);
   const exportContent = useStore(Selector.exportContent);
+  const importContent = useStore(Selector.importContent);
 
   const lang = { lng: language };
   const firstOpenCall = useRef<boolean>(true);
@@ -63,31 +62,7 @@ const LocalFileManager = () => {
         });
         reader.onload = (e) => {
           if (reader.result) {
-            const input = JSON.parse(reader.result.toString());
-            setCommonStore((state) => {
-              // remove old properties
-              if (input.world.hasOwnProperty('cameraPosition')) delete input.world.cameraPosition;
-              if (input.world.hasOwnProperty('panCenter')) delete input.world.panCenter;
-              if (!input.view.hasOwnProperty('cameraPosition')) input.view.cameraPosition = new Vector3(0, -5, 0);
-              if (!input.view.hasOwnProperty('panCenter')) input.view.panCenter = new Vector3(0, 0, 0);
-              state.world = input.world;
-              state.viewState = input.view;
-              // remove old properties
-              for (const elem of input.elements) {
-                if (elem.hasOwnProperty('parent')) {
-                  if (!elem.hasOwnProperty('parentId')) elem.parentId = elem.parent.id ?? GROUND_ID;
-                  delete elem.parent;
-                }
-                if (elem.hasOwnProperty('pvModel')) {
-                  if (!elem.hasOwnProperty('pvModelName')) elem.pvModelName = elem.pvModel.name ?? 'SPR-X21-335-BLK';
-                  delete elem.pvModel;
-                }
-              }
-              state.elements = input.elements;
-              state.notes = input.notes ?? [];
-              state.cloudFile = undefined;
-              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-            });
+            importContent(JSON.parse(reader.result.toString()));
           }
           fileDialog.value = '';
         };

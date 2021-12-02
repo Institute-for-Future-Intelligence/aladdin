@@ -90,6 +90,7 @@ export const i18n_zh_cn = {
       AzimuthOfNorthIsZero: '正北的方位角为零度',
       CounterclockwiseAzimuthIsPositive: '逆时针为正',
       NoTexture: '无材质',
+      DoYouWantToSaveChanges: '您要保存当前文件吗？',
     },
 
     menu: {

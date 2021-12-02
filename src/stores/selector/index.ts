@@ -8,6 +8,10 @@ export const set = (state: CommonStoreState) => state.set;
 
 export const user = (state: CommonStoreState) => state.user;
 
+export const changed = (state: CommonStoreState) => state.changed;
+
+export const setChanged = (state: CommonStoreState) => state.setChanged;
+
 export const notes = (state: CommonStoreState) => state.notes;
 
 export const elements = (state: CommonStoreState) => state.elements;
@@ -39,6 +43,8 @@ export const saveLocalFileDialogVisible = (state: CommonStoreState) => state.sav
 export const undoManager = (state: CommonStoreState) => state.undoManager;
 
 export const addUndoable = (state: CommonStoreState) => state.addUndoable;
+
+export const importContent = (state: CommonStoreState) => state.importContent;
 
 export const exportContent = (state: CommonStoreState) => state.exportContent;
 

@@ -21,7 +21,7 @@ import enUS from 'antd/lib/locale/en_US';
 import React, { useState } from 'react';
 import { useStore } from './stores/common';
 import styled from 'styled-components';
-import { Checkbox, Dropdown, InputNumber, Menu, Radio, Select, Space } from 'antd';
+import { Checkbox, Dropdown, InputNumber, Menu, Modal, Radio, Select, Space } from 'antd';
 import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
 import About from './about';
@@ -33,6 +33,7 @@ import { Util } from './Util';
 import { UndoableCheck } from './undo/UndoableCheck';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { UndoableResetView } from './undo/UndoableResetView';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { SubMenu } = Menu;
 const { Option } = Select;
@@ -96,6 +97,8 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const panCenter = useStore(Selector.viewState.panCenter);
+  const importContent = useStore(Selector.importContent);
+  const changed = useStore(Selector.changed);
 
   const [aboutUs, setAboutUs] = useState(false);
 
@@ -149,14 +152,16 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
         break;
     }
     if (input) {
-      setCommonStore((state) => {
-        state.world = input.world;
-        state.viewState = input.view;
-        state.elements = input.elements;
-        state.notes = input.notes ?? [];
-        state.cloudFile = undefined;
-        state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-      });
+      if (changed) {
+        Modal.confirm({
+          title: i18n.t('shared.DoYouWantToSaveChanges', lang),
+          icon: <ExclamationCircleOutlined />,
+          onOk: () => importContent(input),
+          onCancel: () => {},
+        });
+      } else {
+        importContent(input);
+      }
     }
   };
 

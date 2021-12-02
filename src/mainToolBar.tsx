@@ -17,8 +17,6 @@ import CloudFilePanel from './panels/cloudFilePanel';
 import Spinner from './components/spinner';
 import AccountSettingsPanel from './panels/accountSettingsPanel';
 import i18n from './i18n/i18n';
-import { Vector3 } from 'three';
-import { GROUND_ID } from './constants';
 import { Util } from './Util';
 import MainToolBarButtons from './mainToolBarButtons';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
@@ -48,6 +46,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const showAccountSettingsPanel = useStore(Selector.showAccountSettingsPanel);
   const cloudFile = useStore(Selector.cloudFile);
   const updateCloudFileFlag = useStore(Selector.updateCloudFileFlag);
+  const importContent = useStore(Selector.importContent);
 
   const [loading, setLoading] = useState(false);
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
@@ -250,30 +249,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         .then((doc) => {
           const data = doc.data();
           if (data) {
-            setCommonStore((state) => {
-              // remove old properties
-              if (data.world.hasOwnProperty('cameraPosition')) delete data.world.cameraPosition;
-              if (data.world.hasOwnProperty('panCenter')) delete data.world.panCenter;
-              if (!data.view.hasOwnProperty('cameraPosition')) data.view.cameraPosition = { ...new Vector3(0, -5, 0) };
-              if (!data.view.hasOwnProperty('panCenter')) data.view.panCenter = { ...new Vector3(0, 0, 0) };
-              state.world = data.world;
-              state.viewState = data.view;
-              // remove old properties
-              for (const elem of data.elements) {
-                if (elem.hasOwnProperty('parent')) {
-                  if (!elem.hasOwnProperty('parentId')) elem.parentId = elem.parent.id ?? GROUND_ID;
-                  delete elem.parent;
-                }
-                if (elem.hasOwnProperty('pvModel')) {
-                  if (!elem.hasOwnProperty('pvModelName')) elem.pvModelName = elem.pvModel.name ?? 'SPR-X21-335-BLK';
-                  delete elem.pvModel;
-                }
-              }
-              state.elements = data.elements;
-              state.notes = data.notes ?? [];
-              state.cloudFile = title;
-              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-            });
+            importContent(data, title);
             setLoading(false);
           } else {
             showInfo('Sorry, ' + title + ' was not found. It may have been deleted by its owner.');

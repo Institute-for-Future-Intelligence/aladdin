@@ -90,6 +90,7 @@ export const i18n_en = {
       AzimuthOfNorthIsZero: 'Azimuth of north is 0°',
       CounterclockwiseAzimuthIsPositive: 'Counter-clockwise is positive',
       NoTexture: 'No Texture',
+      DoYouWantToSaveChanges: 'Do you want to save changes?',
     },
 
     menu: {

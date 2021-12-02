@@ -90,6 +90,7 @@ export const i18n_zh_tw = {
       AzimuthOfNorthIsZero: '正北的方位角為零度',
       CounterclockwiseAzimuthIsPositive: '逆時針為正',
       NoTexture: '無材質',
+      DoYouWantToSaveChanges: '您要保存當前文檔嗎？',
     },
 
     menu: {
