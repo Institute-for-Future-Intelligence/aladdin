@@ -30,7 +30,6 @@ const App = () => {
   const loadPvModules = useStore(Selector.loadPvModules);
 
   useEffect(() => {
-    console.log('a');
     loadWeatherData();
     loadPvModules();
   }, []);
