@@ -71,6 +71,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       state.simulationInProgress = false;
       console.log('simulation ended', state.simulationInProgress);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dailyPvFlag]);
 
   useEffect(() => {
@@ -85,6 +86,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     setCommonStore((state) => {
       state.simulationInProgress = false;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearlyPvFlag]);
 
   useEffect(() => {
@@ -97,6 +99,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         setCurrentTemperature(c);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [city, world.date]);
 
   const inShadow = (panelId: string, position: Vector3, sunDirection: Vector3) => {

@@ -47,6 +47,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     } else {
       loadedDaily.current = true;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dailyLightSensorFlag]);
 
   useEffect(() => {
@@ -58,6 +59,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     } else {
       loadedYearly.current = true;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearlyLightSensorFlag]);
 
   const inShadow = (content: Object3D[], objects: Object3D[], position: Vector3, sunDirection: Vector3) => {

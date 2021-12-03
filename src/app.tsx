@@ -23,6 +23,7 @@ const App = () => {
   const elements = useStore((state: CommonStoreState) => state.elements);
   const viewState = useStore((state: CommonStoreState) => state.viewState);
   const notes = useStore((state: CommonStoreState) => state.notes);
+  const changed = useStore(Selector.changed);
   const setChanged = useStore(Selector.setChanged);
   const skipChange = useStore(Selector.skipChange);
   const setSkipChange = useStore(Selector.setSkipChange);
@@ -32,14 +33,16 @@ const App = () => {
   useEffect(() => {
     loadWeatherData();
     loadPvModules();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (skipChange) {
       setSkipChange(false);
-    } else if (!useStore.getState().changed) {
+    } else if (!changed) {
       setChanged(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [world, viewState, elements, notes]);
 
   const viewOnly = query.viewonly === 'true';

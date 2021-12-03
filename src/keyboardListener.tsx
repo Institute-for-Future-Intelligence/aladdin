@@ -56,6 +56,7 @@ const KeyboardListener = ({
 
   useEffect(() => {
     handleKey();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keyFlag, keyName, keyDown, keyUp]);
 
   const removeElement = (elem: ElementModel, cut: boolean) => {

@@ -23,9 +23,7 @@ import Wall from './views/wall';
 import Roof from './views/roof';
 import { RoofModel } from './models/RoofModel';
 
-export interface ElementsRendererProps {}
-
-const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererProps) => {
+const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
 
   return (
@@ -48,6 +46,8 @@ const ElementsRenderer: React.FC<ElementsRendererProps> = ({}: ElementsRendererP
             return <Wall key={e.id} {...(e as WallModel)} />;
           case ObjectType.Roof:
             return <Roof key={e.id} {...(e as RoofModel)} />;
+          default:
+            return <></>;
         }
       })}
     </group>

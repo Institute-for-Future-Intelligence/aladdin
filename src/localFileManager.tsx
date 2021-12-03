@@ -43,6 +43,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
     } else {
       readLocalFile();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openLocalFileFlag]);
 
   useEffect(() => {
@@ -51,6 +52,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
     } else {
       writeLocalFile();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [saveLocalFileFlag]);
 
   const readLocalFile = () => {

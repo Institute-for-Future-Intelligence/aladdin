@@ -9,7 +9,9 @@ import { Avatar, Button, Dropdown, Input, Menu, Modal, Space } from 'antd';
 import dayjs from 'dayjs';
 import 'antd/dist/antd.css';
 import styled from 'styled-components';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
 import { showError, showInfo } from './helpers';
 import { CloudFileInfo, ObjectType, User } from './types';
 import queryString from 'querystring';
@@ -96,6 +98,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       }
       init(); // load the initial state after we recognize the user
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -115,6 +118,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       arr.sort((a, b) => b.timestamp - a.timestamp);
       setCloudFileArray(arr);
     }
+    // FIXME: React says that the dependency of the mutable cloudFiles.current is unnecessary,
+    //  but we need this for the code to work.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cloudFiles.current]);
 
   useEffect(() => {
@@ -123,6 +129,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     } else {
       updateCloudFile();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateCloudFileFlag]);
 
   useEffect(() => {

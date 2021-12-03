@@ -37,6 +37,7 @@ const AnalysisManager = () => {
         state.viewState.showDailyLightSensorPanel = true;
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dailyLightSensorFlag]);
 
   useEffect(() => {
@@ -52,6 +53,7 @@ const AnalysisManager = () => {
         state.viewState.showYearlyLightSensorPanel = true;
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearlyLightSensorFlag]);
 
   useEffect(() => {
@@ -67,6 +69,7 @@ const AnalysisManager = () => {
         state.viewState.showDailyPvYieldPanel = true;
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dailyPvFlag]);
 
   useEffect(() => {
@@ -82,6 +85,7 @@ const AnalysisManager = () => {
         state.viewState.showYearlyPvYieldPanel = true;
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearlyPvFlag]);
 
   return <></>;
