@@ -68,6 +68,10 @@ const HeliodonPanel = () => {
   const heliodonPanelX = useStore(Selector.viewState.heliodonPanelX);
   const heliodonPanelY = useStore(Selector.viewState.heliodonPanelY);
 
+  // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
+  // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
+  const nodeRef = React.useRef(null);
+
   const requestRef = useRef<number>(0);
   const previousFrameTime = useRef<number>(-1);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -149,6 +153,7 @@ const HeliodonPanel = () => {
 
   return (
     <ReactDraggable
+      nodeRef={nodeRef}
       handle={'.handle'}
       bounds={'parent'}
       axis="both"
@@ -156,7 +161,7 @@ const HeliodonPanel = () => {
       onDrag={onDrag}
       onStop={onDragEnd}
     >
-      <Container>
+      <Container ref={nodeRef}>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>{i18n.t('heliodonPanel.HeliodonSettings', lang)}</span>

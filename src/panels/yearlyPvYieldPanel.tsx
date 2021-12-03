@@ -18,8 +18,8 @@ import i18n from '../i18n/i18n';
 
 const Container = styled.div`
   position: fixed;
-  top: 80px;
-  right: 10px;
+  top: 70px;
+  right: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -76,6 +76,10 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const countElementsByType = useStore(Selector.countElementsByType);
   const yearlyPvYieldPanelX = useStore(Selector.viewState.yearlyPvYieldPanelX);
   const yearlyPvYieldPanelY = useStore(Selector.viewState.yearlyPvYieldPanelY);
+
+  // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
+  // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
+  const nodeRef = React.useRef(null);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
@@ -163,6 +167,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
 
   return (
     <ReactDraggable
+      nodeRef={nodeRef}
       handle={'.handle'}
       bounds={'parent'}
       axis="both"
@@ -170,7 +175,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
       onDrag={onDrag}
       onStop={onDragEnd}
     >
-      <Container>
+      <Container ref={nodeRef}>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>

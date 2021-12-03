@@ -87,6 +87,10 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
     y: isNaN(yearlyLightSensorPanelY) ? 0 : Math.min(yearlyLightSensorPanelY, window.innerHeight - hOffset),
   });
 
+  // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
+  // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
+  const nodeRef = React.useRef(null);
+
   const lang = { lng: language };
   const responsiveHeight = 100;
   const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
@@ -131,6 +135,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
 
   return (
     <ReactDraggable
+      nodeRef={nodeRef}
       handle={'.handle'}
       bounds={'parent'}
       axis="both"
@@ -138,7 +143,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
       onDrag={onDrag}
       onStop={onDragEnd}
     >
-      <Container>
+      <Container ref={nodeRef}>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>

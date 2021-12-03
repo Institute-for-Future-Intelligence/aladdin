@@ -72,6 +72,10 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
   const weatherPanelX = useStore(Selector.viewState.weatherPanelX);
   const weatherPanelY = useStore(Selector.viewState.weatherPanelY);
 
+  // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
+  // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
+  const nodeRef = React.useRef(null);
+
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 540;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
@@ -166,6 +170,7 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
 
   return (
     <ReactDraggable
+      nodeRef={nodeRef}
       handle={'.handle'}
       bounds={'parent'}
       axis="both"
@@ -173,7 +178,7 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
       onDrag={onDrag}
       onStop={onDragEnd}
     >
-      <Container>
+      <Container ref={nodeRef}>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>
