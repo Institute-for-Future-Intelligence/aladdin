@@ -340,7 +340,7 @@ export const i18n_zh_cn = {
       Zoom: '缩放',
       MouseWheelOrKeys: '鼠标滚轮或者Ctrl+[和Ctrl+]',
       Pan: '平移',
-      HoldCtrlDragMouse: '按下Ctrl键或鼠标右键并拖动鼠标',
+      HoldCtrlDragMouse: '按下Ctrl键并拖动鼠标',
       Toggle2D3D: '二维/三维切换',
       ResetView: '重置视角',
       AutoRotate: '自动旋转',

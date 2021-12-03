@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { HALF_PI, WORKSPACE_SIZE } from './constants';
+import { HALF_PI } from './constants';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { ObjectType, ResizeHandleType } from './types';
@@ -17,6 +17,7 @@ export const Auxiliary = () => {
   const rotateHandleType = useStore(Selector.rotateHandleType);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const groundImage = useStore(Selector.viewState.groundImage);
+  const sceneRadius = useStore(Selector.sceneRadius);
 
   const [showGrid, setShowGrid] = useState(false);
   const [showVerticalRuler, setshowVerticalRuler] = useState(false);
@@ -55,11 +56,7 @@ export const Auxiliary = () => {
       {!enableOrbitController && (
         <>
           {(showGrid || moveHandleType) && !groundImage && legalOnGround() && (
-            <gridHelper
-              rotation={[HALF_PI, 0, 0]}
-              name={'Grid'}
-              args={[WORKSPACE_SIZE, WORKSPACE_SIZE, 'gray', '#444444']}
-            />
+            <gridHelper rotation={[HALF_PI, 0, 0]} name={'Grid'} args={[2 * sceneRadius, 100, 'gray', '#444444']} />
           )}
           {rotateHandleType && element && !groundImage && legalOnGround() && <PolarGrid element={element} />}
           {showVerticalRuler && element && <VerticalRuler element={element} />}

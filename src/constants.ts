@@ -20,8 +20,6 @@ export const DEFAULT_SKY_RADIUS = 5000;
 export const DEFAULT_FOV = 45;
 export const DEFAULT_FAR = 1000000;
 
-export const WORKSPACE_SIZE = 100;
-
 export const MOVE_HANDLE_OFFSET = 0.12;
 export const MOVE_HANDLE_RADIUS = 0.1;
 export const RESIZE_HANDLE_SIZE = 0.16;

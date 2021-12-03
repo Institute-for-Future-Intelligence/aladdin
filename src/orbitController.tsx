@@ -8,7 +8,7 @@ import { Camera, useFrame, useThree } from '@react-three/fiber';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { Vector3 } from 'three';
-import { HALF_PI, WORKSPACE_SIZE } from './constants';
+import { HALF_PI } from './constants';
 
 export interface OrbitControllerProps {
   orbitControlsRef?: React.MutableRefObject<OrbitControls | undefined>;
@@ -28,6 +28,7 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
   const enableOrbitController = useStore(Selector.enableOrbitController);
   const autoRotate = useStore(Selector.viewState.autoRotate);
   const setCommonStore = useStore(Selector.set);
+  const sceneRadius = useStore(Selector.sceneRadius);
 
   const { camera, gl, scene } = useThree();
   camera.up.set(0, 0, 1);
@@ -35,8 +36,10 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
   const setThree = useThree((state) => state.set);
   // Ref to the controls, so that we can update them on every frame using useFrame
   const controls = useRef<OrbitControls>(null);
-  const minPan = useMemo(() => new Vector3(-WORKSPACE_SIZE / 2, -WORKSPACE_SIZE / 2, 0), []);
-  const maxPan = useMemo(() => new Vector3(WORKSPACE_SIZE / 2, WORKSPACE_SIZE / 2, WORKSPACE_SIZE / 8), []);
+  const cameraPositionLength = Math.hypot(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+  const panRadius = (orthographic ? cameraZoom * 50 : cameraPositionLength * 10) * sceneRadius;
+  const minPan = useMemo(() => new Vector3(-panRadius, -panRadius, 0), [panRadius]);
+  const maxPan = useMemo(() => new Vector3(panRadius, panRadius, panRadius / 2), [panRadius]);
 
   useEffect(() => {
     // we have to manually set the camera position when loading a state from a file (as world is reconstructed)

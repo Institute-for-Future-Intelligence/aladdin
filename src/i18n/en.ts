@@ -341,7 +341,7 @@ export const i18n_en = {
       Zoom: 'Zoom',
       MouseWheelOrKeys: 'Rotate mouse wheel or press Ctrl+[ or Ctrl+]',
       Pan: 'Pan',
-      HoldCtrlDragMouse: 'Hold Ctrl or mouse right button and drag mouse',
+      HoldCtrlDragMouse: 'Hold Ctrl and drag mouse',
       Toggle2D3D: 'Toggle 2D/3D',
       ResetView: 'Reset',
       AutoRotate: 'Auto rotate',
