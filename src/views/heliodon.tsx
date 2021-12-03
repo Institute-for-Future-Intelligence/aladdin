@@ -154,6 +154,7 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
       arr.push(getSunPathPointsByDate(dMin + i * delta));
     }
     return arr;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [latitude, radius]);
 
   const sunPosition = useMemo(() => {

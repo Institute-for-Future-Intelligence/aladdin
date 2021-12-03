@@ -62,6 +62,7 @@ const PvModelSelection = ({
         i18n.t('pvModelPanel.Cells', lang) +
         ')',
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pvModel]);
 
   useEffect(() => {

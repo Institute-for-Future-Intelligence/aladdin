@@ -73,6 +73,10 @@ const MapPanel = () => {
   const mapWeatherStations = useStore(Selector.viewState.mapWeatherStations);
   const mapZoom = useStore(Selector.viewState.mapZoom);
 
+  // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
+  // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
+  const nodeRef = React.useRef(null);
+
   const searchBox = useRef<google.maps.places.SearchBox>();
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 460;
@@ -95,6 +99,7 @@ const MapPanel = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { isLoaded, loadError } = useJsApiLoader({
@@ -149,6 +154,7 @@ const MapPanel = () => {
 
   return (
     <ReactDraggable
+      nodeRef={nodeRef}
       handle={'.handle'}
       bounds={'parent'}
       axis="both"
@@ -156,7 +162,7 @@ const MapPanel = () => {
       onDrag={onDrag}
       onStop={onDragEnd}
     >
-      <Container>
+      <Container ref={nodeRef}>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>{i18n.t('menu.tool.Map', lang)}</span>

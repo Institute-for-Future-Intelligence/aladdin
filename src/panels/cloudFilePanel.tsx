@@ -75,6 +75,10 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
 
+  // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
+  // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
+  const nodeRef = React.useRef(null);
+
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 680;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
@@ -184,6 +188,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
         />
       </Modal>
       <ReactDraggable
+        nodeRef={nodeRef}
         handle={'.handle'}
         bounds={'parent'}
         axis="both"
@@ -191,7 +196,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
         onDrag={onDrag}
         onStop={onDragEnd}
       >
-        <Container>
+        <Container ref={nodeRef}>
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle">
               <span>{i18n.t('cloudFilePanel.MyCloudFiles', lang)}</span>

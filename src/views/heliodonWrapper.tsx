@@ -29,6 +29,7 @@ const HeliodonWrapper = () => {
     setSunlightDirection(
       computeSunLocation(heliodonRadius, hourAngle, declinationAngle, Util.toRadians(worldLatitude)),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [worldLatitude, hourAngle, declinationAngle, heliodonRadius]);
 
   return (
