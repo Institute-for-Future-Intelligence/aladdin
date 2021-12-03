@@ -76,22 +76,12 @@ const Ground = () => {
     return () => {
       window.removeEventListener('pointerup', handlePointerUp);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const ray = useMemo(() => new Raycaster(), []);
-  const cosAngle = useMemo(() => {
-    if (grabRef.current) {
-      return Math.cos(grabRef.current.rotation[2]);
-    }
-    return 1;
-  }, [grabRef.current?.rotation]);
-  const sinAngle = useMemo(() => {
-    if (grabRef.current) {
-      return Math.sin(grabRef.current.rotation[2]);
-    }
-    return 0;
-  }, [grabRef.current?.rotation]);
-
+  const cosAngle = grabRef.current ? Math.cos(grabRef.current.rotation[2]) : 1;
+  const sinAngle = grabRef.current ? Math.sin(grabRef.current.rotation[2]) : 0;
   let intersectionPlaneType = IntersectionPlaneType.Ground;
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
   const intersectionPlaneAngle = useMemo(() => new Euler(), []);
