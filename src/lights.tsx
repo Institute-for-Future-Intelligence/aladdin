@@ -24,12 +24,12 @@ const Lights = () => {
         castShadow
         shadow-mapSize-height={4096}
         shadow-mapSize-width={4096}
-        shadowCameraNear={1}
-        shadowCameraFar={DEFAULT_FAR}
-        shadowCameraLeft={-cameraExtent}
-        shadowCameraRight={cameraExtent}
-        shadowCameraTop={cameraExtent}
-        shadowCameraBottom={-cameraExtent}
+        shadow-camera-near={1}
+        shadow-camera-far={DEFAULT_FAR}
+        shadow-camera-left={-cameraExtent}
+        shadow-camera-right={cameraExtent}
+        shadow-camera-top={cameraExtent}
+        shadow-camera-bottom={-cameraExtent}
       />
     </>
   );
