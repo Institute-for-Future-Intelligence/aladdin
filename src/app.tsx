@@ -13,6 +13,8 @@ import { Beforeunload } from 'react-beforeunload';
 import { ConfigProvider } from 'antd';
 import AppCreator from './appCreator';
 import queryString from 'querystring';
+import LocalFileManager from './localFileManager';
+import AnalysisManager from './analysisManager';
 
 const App = () => {
   const locale = useStore(Selector.locale);
@@ -24,8 +26,14 @@ const App = () => {
   const setChanged = useStore(Selector.setChanged);
   const skipChange = useStore(Selector.skipChange);
   const setSkipChange = useStore(Selector.setSkipChange);
+  const loadWeatherData = useStore(Selector.loadWeatherData);
+  const loadPvModules = useStore(Selector.loadPvModules);
 
-  console.log('a');
+  useEffect(() => {
+    console.log('a');
+    loadWeatherData();
+    loadPvModules();
+  }, []);
 
   useEffect(() => {
     if (skipChange) {
@@ -35,16 +43,20 @@ const App = () => {
     }
   }, [world, viewState, elements, notes]);
 
+  const viewOnly = query.viewonly === 'true';
+
   return (
     <ConfigProvider locale={locale}>
       <ErrorPage>
-        {query.viewonly === 'true' ? (
+        {viewOnly ? (
           <AppCreator viewOnly={true} />
         ) : (
           <Beforeunload onBeforeunload={() => ''}>
             <AppCreator viewOnly={false} />{' '}
           </Beforeunload>
         )}
+        <LocalFileManager viewOnly={viewOnly} />
+        <AnalysisManager />
       </ErrorPage>
     </ConfigProvider>
   );

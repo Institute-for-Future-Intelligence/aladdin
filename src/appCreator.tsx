@@ -46,8 +46,6 @@ import KeyboardEventHandler from 'react-keyboard-event-handler';
 import KeyboardListener from './keyboardListener';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCloud } from '@fortawesome/free-solid-svg-icons';
-import LocalFileManager from './localFileManager';
-import AnalysisManager from './analysisManager';
 import SceneRadiusCalculator from './sceneRadiusCalculator';
 import { UndoableChange } from './undo/UndoableChange';
 
@@ -59,7 +57,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
-  const loadWeatherData = useStore(Selector.loadWeatherData);
   const getClosestCity = useStore(Selector.getClosestCity);
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
@@ -67,7 +64,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const orthographicChanged = useStore(Selector.orthographicChanged);
   const simulationInProgress = useStore(Selector.simulationInProgress);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
-  const loadPvModules = useStore(Selector.loadPvModules);
   const sceneRadius = useStore(Selector.sceneRadius);
   const cameraZoom = useStore(Selector.viewState.cameraZoom) ?? 20;
   const cloudFile = useStore(Selector.cloudFile);
@@ -99,8 +95,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const lang = { lng: language };
 
   useEffect(() => {
-    loadWeatherData();
-    loadPvModules();
     setLoading(false);
   }, []);
 
@@ -316,8 +310,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
           {i18n.t('word.Version', lang) + ' ' + VERSION + '. ' + i18n.t('word.AllRightsReserved', lang) + '. '}
         </div>
       )}
-      <LocalFileManager viewOnly={viewOnly} />
-      <AnalysisManager />
       <MainMenu
         viewOnly={viewOnly}
         canvas={canvasRef.current}
