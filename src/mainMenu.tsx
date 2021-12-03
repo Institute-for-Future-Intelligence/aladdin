@@ -72,13 +72,14 @@ const LabelContainer = styled.div`
 `;
 
 export interface MainMenuProps {
+  viewOnly: boolean;
   set2DView: (selected: boolean) => void;
   resetView: () => void;
   zoomView: (scale: number) => void;
   canvas?: HTMLCanvasElement;
 }
 
-const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => {
+const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenuProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const undoManager = useStore(Selector.undoManager);
@@ -154,7 +155,7 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
         break;
     }
     if (input) {
-      if (changed) {
+      if (!viewOnly && changed) {
         Modal.confirm({
           title: i18n.t('shared.DoYouWantToSaveChanges', lang),
           icon: <ExclamationCircleOutlined />,
@@ -482,7 +483,6 @@ const MainMenu = ({ set2DView, resetView, zoomView, canvas }: MainMenuProps) => 
                   },
                 } as UndoableResetView;
                 addUndoable(undoableResetView);
-                set2DView(false);
                 resetView();
                 setCommonStore((state) => {
                   state.objectTypeToAdd = ObjectType.None;

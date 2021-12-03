@@ -332,9 +332,15 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
           {i18n.t('word.Version', lang) + ' ' + VERSION + '. ' + i18n.t('word.AllRightsReserved', lang) + '. '}
         </div>
       )}
-      <LocalFileManager />
+      <LocalFileManager viewOnly={viewOnly} />
       <AnalysisManager />
-      <MainMenu canvas={canvasRef.current} set2DView={set2DView} resetView={resetView} zoomView={zoomView} />
+      <MainMenu
+        viewOnly={viewOnly}
+        canvas={canvasRef.current}
+        set2DView={set2DView}
+        resetView={resetView}
+        zoomView={zoomView}
+      />
       <MainToolBar viewOnly={viewOnly} />
       {showMapPanel && <MapPanel />}
       {showHeliodonPanel && <HeliodonPanel />}

@@ -12,7 +12,11 @@ import { Input, Modal } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
-const LocalFileManager = () => {
+export interface LocalFileManagerProps {
+  viewOnly: boolean;
+}
+
+const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const localFileName = useStore(Selector.localFileName);
@@ -50,7 +54,7 @@ const LocalFileManager = () => {
   }, [saveLocalFileFlag]);
 
   const readLocalFile = () => {
-    if (changed) {
+    if (!viewOnly && changed) {
       Modal.confirm({
         title: i18n.t('shared.DoYouWantToSaveChanges', lang),
         icon: <ExclamationCircleOutlined />,

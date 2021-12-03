@@ -301,7 +301,6 @@ const KeyboardListener = ({
             state.objectTypeToAdd = ObjectType.None;
             state.viewState.orthographic = false;
           });
-          set2DView(false);
           resetView();
         }
         break;
