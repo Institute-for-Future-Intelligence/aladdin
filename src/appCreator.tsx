@@ -5,7 +5,7 @@
  */
 
 import React, { Suspense, useEffect, useRef, useState } from 'react';
-import { CommonStoreState, useStore } from './stores/common';
+import { useStore } from './stores/common';
 import * as Selector from 'src/stores/selector';
 import { Camera, Canvas } from '@react-three/fiber';
 import OrbitController from './orbitController';
@@ -58,9 +58,6 @@ export interface AppCreatorProps {
 const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  const setChanged = useStore(Selector.setChanged);
-  const skipChange = useStore(Selector.skipChange);
-  const setSkipChange = useStore(Selector.setSkipChange);
   const addUndoable = useStore(Selector.addUndoable);
   const loadWeatherData = useStore(Selector.loadWeatherData);
   const getClosestCity = useStore(Selector.getClosestCity);
@@ -88,11 +85,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showDailyPvYieldPanel = useStore(Selector.viewState.showDailyPvYieldPanel);
   const showYearlyPvYieldPanel = useStore(Selector.viewState.showYearlyPvYieldPanel);
 
-  const world = useStore((state: CommonStoreState) => state.world);
-  const elements = useStore((state: CommonStoreState) => state.elements);
-  const viewState = useStore((state: CommonStoreState) => state.viewState);
-  const notes = useStore((state: CommonStoreState) => state.notes);
-
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);
   const [city, setCity] = useState<string | null>('Boston MA, USA');
@@ -105,14 +97,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const canvasRef = useRef<HTMLCanvasElement>();
   const camRef = useRef<Camera>();
   const lang = { lng: language };
-
-  useEffect(() => {
-    if (skipChange) {
-      setSkipChange(false);
-    } else {
-      setChanged(true);
-    }
-  }, [world, viewState, elements, notes]);
 
   useEffect(() => {
     loadWeatherData();

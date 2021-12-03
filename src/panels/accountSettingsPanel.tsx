@@ -8,6 +8,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
+import { Input, Space } from 'antd';
 
 const Container = styled.div`
   position: fixed;
@@ -25,8 +26,8 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 600px;
-  height: 500px;
+  width: 400px;
+  height: 600px;
   padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
@@ -123,6 +124,17 @@ const AccountSettingsPanel = ({}: AccountSettingsPanelProps) => {
                 {i18n.t('word.Close', lang)}
               </span>
             </Header>
+            <Space style={{ paddingTop: '10px', paddingLeft: '10px' }}>
+              <Space style={{ width: '260px' }}>{i18n.t('avatarMenu.IfYouAreAStudent', lang)}</Space>
+            </Space>
+            <Space style={{ paddingTop: '10px', paddingLeft: '10px' }}>
+              <Space style={{ width: '100px' }}>{i18n.t('word.Teacher', lang) + ':'}</Space>
+              <Input style={{ width: '160px' }} />
+            </Space>
+            <Space style={{ paddingTop: '10px', paddingLeft: '10px' }}>
+              <Space style={{ width: '100px' }}>{i18n.t('word.Class', lang) + ':'}</Space>
+              <Input style={{ width: '160px' }} />
+            </Space>
           </ColumnWrapper>
         </Container>
       </ReactDraggable>

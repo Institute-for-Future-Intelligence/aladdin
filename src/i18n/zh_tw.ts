@@ -36,6 +36,8 @@ export const i18n_zh_tw = {
       MaximumNumber: '最多',
       Or: '或',
       None: '無',
+      Teacher: '老師',
+      Class: '班級',
       Total: '總數',
       Range: '範圍',
       Press: '按',
@@ -172,6 +174,7 @@ export const i18n_zh_tw = {
       SignIn: '登錄',
       SignOut: '退出賬號',
       ToSaveYourWorkPleaseSignIn: '為了保存您的文檔，請您先登陸。',
+      IfYouAreAStudent: '如果您是一個學生',
     },
 
     skyMenu: {

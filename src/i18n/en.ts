@@ -36,6 +36,8 @@ export const i18n_en = {
       MaximumNumber: 'Maximum Number',
       Or: 'Or',
       None: 'None',
+      Teacher: 'Teacher',
+      Class: 'Class',
       Total: 'Total',
       Range: 'Range',
       Press: 'Press',
@@ -172,6 +174,7 @@ export const i18n_en = {
       SignIn: 'Sign In',
       SignOut: 'Sign Out',
       ToSaveYourWorkPleaseSignIn: 'To save your work, please sign in.',
+      IfYouAreAStudent: 'If you are a student',
     },
 
     skyMenu: {
