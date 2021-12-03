@@ -37,7 +37,7 @@ const App = () => {
   useEffect(() => {
     if (skipChange) {
       setSkipChange(false);
-    } else {
+    } else if (!useStore.getState().changed) {
       setChanged(true);
     }
   }, [world, viewState, elements, notes]);
