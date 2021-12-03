@@ -77,6 +77,7 @@ const InfoPanel = ({ city }: InfoPanelProps) => {
         setCurrentTemperature(c);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [city, dateString]);
 
   const color = daytime ? 'navajowhite' : 'antiquewhite';

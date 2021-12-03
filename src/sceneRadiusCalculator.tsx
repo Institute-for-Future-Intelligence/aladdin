@@ -48,6 +48,7 @@ const SceneRadiusCalculator = () => {
         }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateSceneRadiusFlag]);
 
   const fetchAabbElements = (obj: Object3D, arr: Object3D[]) => {

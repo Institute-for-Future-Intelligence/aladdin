@@ -119,6 +119,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
@@ -148,6 +149,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
         state.yearlyPvIndividualOutputs = false;
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solarPanelCount]);
 
   const labelX = 'Month';

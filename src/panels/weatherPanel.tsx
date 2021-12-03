@@ -93,6 +93,7 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const responsiveHeight = useMemo(() => {
@@ -132,6 +133,7 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
       }
     }
     return result;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphs, city]);
 
   const yNames = [

@@ -52,6 +52,7 @@ const SolarPanelLengthInput = ({
       setDy(solarPanel.orientation === Orientation.portrait ? pvModel.length : pvModel.width);
       setInputLength(solarPanel.ly);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solarPanel]);
 
   const onScopeChange = (e: RadioChangeEvent) => {

@@ -47,6 +47,7 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
     if (cam) {
       cam.zoom = orthographic ? cameraZoom : 1;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cameraPosition, currentCamera]);
 
   useEffect(() => {
@@ -59,6 +60,7 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
 
   useEffect(() => {
     setThree({ frameloop: autoRotate ? 'always' : 'demand' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoRotate]);
 
   useEffect(() => {
@@ -83,6 +85,7 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
         c.removeEventListener('change', render);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCamera]);
 
   const getCameraDirection = (cam: Camera) => {

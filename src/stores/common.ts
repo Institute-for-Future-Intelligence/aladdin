@@ -51,7 +51,6 @@ import { TreeModel } from '../models/TreeModel';
 import { HumanModel } from '../models/HumanModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
-import { GROUND_ID } from '../constants';
 
 enableMapSet();
 
@@ -493,7 +492,7 @@ export const useStore = create<CommonStoreState>(
           selectedSideIndex: -1,
 
           getResizeHandlePosition(e: ElementModel, handleType: ResizeHandleType) {
-            const { cx, cy, cz, lx, ly, lz, rotation, type, parentId } = e;
+            const { cx, cy, cz, lx, ly, rotation, type, parentId } = e;
             let p = new Vector3();
             const v = new Vector2();
             switch (type) {
@@ -522,6 +521,7 @@ export const useStore = create<CommonStoreState>(
                 for (const e of elements) {
                   if (e.id === parentId) {
                     parent = e;
+                    break;
                   }
                 }
                 if (parent) {
@@ -529,14 +529,12 @@ export const useStore = create<CommonStoreState>(
                   switch (handleType) {
                     case ResizeHandleType.UpperLeft: {
                       const handleRelativePos = new Vector3(wall.leftPoint[0], wall.leftPoint[1], wall.leftPoint[2]);
-                      const haneldAbsPosition = new Vector3().addVectors(parentPosition, handleRelativePos);
-                      p = haneldAbsPosition;
+                      p.addVectors(parentPosition, handleRelativePos);
                       break;
                     }
                     case ResizeHandleType.UpperRight: {
                       const handleRelativePos = new Vector3(wall.rightPoint[0], wall.rightPoint[1], wall.rightPoint[2]);
-                      const haneldAbsPosition = new Vector3().addVectors(parentPosition, handleRelativePos);
-                      p = haneldAbsPosition;
+                      p.addVectors(parentPosition, handleRelativePos);
                       break;
                     }
                   }

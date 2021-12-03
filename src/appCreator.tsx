@@ -100,6 +100,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
 
   useEffect(() => {
     setCity(getClosestCity(worldLatitude, worldLongitude));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [worldLatitude, worldLongitude]);
 
   useEffect(() => {
@@ -110,6 +111,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
 
   useEffect(() => {
     setUpdate(!update);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orthographic]);
 
   const handleKeyEvent = (key: string, down: boolean, e: KeyboardEvent) => {
