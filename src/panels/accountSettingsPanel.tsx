@@ -55,9 +55,7 @@ const Header = styled.div`
   }
 `;
 
-export interface AccountSettingsPanelProps {}
-
-const AccountSettingsPanel = ({}: AccountSettingsPanelProps) => {
+const AccountSettingsPanel = () => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
 
@@ -79,6 +77,7 @@ const AccountSettingsPanel = ({}: AccountSettingsPanelProps) => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onDrag: DraggableEventHandler = (e, ui) => {

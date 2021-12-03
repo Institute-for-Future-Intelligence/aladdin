@@ -97,6 +97,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onDrag: DraggableEventHandler = (e, ui) => {

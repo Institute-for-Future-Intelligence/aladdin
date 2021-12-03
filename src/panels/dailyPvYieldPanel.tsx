@@ -103,6 +103,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
       }
     }
     setSum(s);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dailyYield]);
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
@@ -117,6 +118,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
@@ -146,6 +148,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
         state.dailyPvIndividualOutputs = false;
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solarPanelCount]);
 
   const labelX = 'Hour';
