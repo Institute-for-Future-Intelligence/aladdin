@@ -165,8 +165,10 @@ const Wall = ({
   const hy = ly / 2;
   const hz = lz / 2;
   const highLight = lx === 0;
-  const wallAbsPosition = Util.wallAbsolutePosition(new Vector3(cx, cy), parent).setZ(lz / 2 + parent.lz);
-  const wallAbsAngle = parent.rotation[2] + relativeAngle;
+  const wallAbsPosition = parent
+    ? Util.wallAbsolutePosition(new Vector3(cx, cy), parent).setZ(hz + parent.lz)
+    : new Vector3(cx, cy, hz);
+  const wallAbsAngle = parent ? parent.rotation[2] + relativeAngle : relativeAngle;
 
   const drawTopSurface = (shape: Shape, lx: number, ly: number, leftOffsetState: number, rightOffsetState: number) => {
     const x = lx / 2;
@@ -647,7 +649,7 @@ const Wall = ({
 
   return (
     <>
-      {wallAbsPosition && wallAbsAngle !== undefined && (
+      {parent && wallAbsPosition && wallAbsAngle !== undefined && (
         <group
           name={`Wall Group ${id}`}
           position={wallAbsPosition}
