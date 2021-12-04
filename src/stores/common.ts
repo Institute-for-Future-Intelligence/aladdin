@@ -2073,8 +2073,6 @@ export const useStore = create<CommonStoreState>(
                   }
                   if (e) {
                     map.set(oldElem, e);
-                  }
-                  if (e) {
                     state.elements.push(e);
                     pastedElements.push(e);
                   }

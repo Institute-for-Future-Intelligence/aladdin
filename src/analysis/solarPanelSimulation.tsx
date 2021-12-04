@@ -201,6 +201,12 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     let count = 0;
     let lx, ly, lz, nx: number, ny: number;
     const pvModel = getPvModule(panel.pvModelName);
+    if (!pvModel) {
+      // return an empty array so that it doesn't crash
+      const empty = new Array(24);
+      empty.fill(0);
+      return empty;
+    }
     if (world.discretization === Discretization.EXACT) {
       lx = panel.lx;
       ly = panel.ly * Math.cos(panel.tiltAngle);
@@ -437,6 +443,12 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const date = 15;
     let lx, ly, lz, nx: number, ny: number;
     const pvModel = getPvModule(panel.pvModelName);
+    if (!pvModel) {
+      // return an empty array so that it doesn't crash
+      const empty = new Array(12);
+      empty.fill(0);
+      return empty;
+    }
     if (world.discretization === Discretization.EXACT) {
       lx = panel.lx;
       ly = panel.ly * Math.cos(panel.tiltAngle);
