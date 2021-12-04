@@ -13,6 +13,7 @@ import { ElementModel } from './ElementModel';
 import { SolarPanelModel } from './SolarPanelModel';
 import { WallModel } from './WallModel';
 import { WindowModel } from './WindowModel';
+import { RoofModel } from './RoofModel';
 
 export class ElementModelCloner {
   static clone(parent: ElementModel | null, e: ElementModel, x: number, y: number, z?: number) {
@@ -39,6 +40,12 @@ export class ElementModelCloner {
         if (parent) {
           // must have a parent
           clone = ElementModelCloner.cloneWindow(parent, e as WindowModel, x, y, z);
+        }
+        break;
+      case ObjectType.Roof:
+        if (parent) {
+          // must have a parent
+          clone = ElementModelCloner.cloneRoof(parent, e as RoofModel, x, y, z);
         }
         break;
       case ObjectType.Human:
@@ -251,5 +258,24 @@ export class ElementModelCloner {
       parentId: parent.id,
       foundationId: foundationId,
     } as WindowModel;
+  }
+
+  private static cloneRoof(parent: ElementModel, roof: RoofModel, x: number, y: number, z?: number) {
+    return {
+      type: ObjectType.Roof,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: roof.lx,
+      ly: roof.ly,
+      lz: roof.lz,
+      points: [...roof.points],
+      color: roof.color,
+      normal: [...roof.normal],
+      rotation: [...roof.rotation],
+      id: short.generate() as string,
+      parentId: parent.id,
+      foundationId: parent.id,
+    } as RoofModel;
   }
 }
