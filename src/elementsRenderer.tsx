@@ -25,7 +25,7 @@ import { RoofModel } from './models/RoofModel';
 
 const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
-  console.log(elements);
+
   return (
     <group name={'Content'}>
       {elements.map((e) => {
