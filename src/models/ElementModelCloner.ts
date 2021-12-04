@@ -31,7 +31,9 @@ export class ElementModelCloner {
         }
         break;
       case ObjectType.Wall:
-        clone = ElementModelCloner.cloneWall(e as WallModel, x, y, z);
+        if (parent) {
+          clone = ElementModelCloner.cloneWall(parent, e as WallModel, x, y, z);
+        }
         break;
       case ObjectType.Window:
         if (parent) {
@@ -197,7 +199,7 @@ export class ElementModelCloner {
     } as CuboidModel;
   }
 
-  private static cloneWall(wall: WallModel, x: number, y: number, z?: number) {
+  private static cloneWall(parent: ElementModel, wall: WallModel, x: number, y: number, z?: number) {
     return {
       type: ObjectType.Wall,
       cx: x,
@@ -218,8 +220,8 @@ export class ElementModelCloner {
       normal: [...wall.normal],
       rotation: [...wall.rotation],
       id: short.generate() as string,
-      parentId: wall.parentId,
-      foundationId: wall.parentId,
+      parentId: parent.id,
+      foundationId: parent.id,
     } as WallModel;
   }
 
