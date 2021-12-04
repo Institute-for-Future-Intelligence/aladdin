@@ -1999,23 +1999,22 @@ export const useStore = create<CommonStoreState>(
                   if (state.pasteNormal) {
                     e.normal = state.pasteNormal.toArray();
                   }
-                  state.elements.push(e);
-                  pastedElements.push(e);
                   if (e.type === ObjectType.Foundation || e.type === ObjectType.Cuboid) {
                     for (const child of state.elements) {
                       if (child.parentId === elem.id) {
                         const newChild = ElementModelCloner.clone(e, child, child.cx, child.cy, child.cz);
-                        console.log(newChild);
                         if (newChild) {
-                          if (state.pasteNormal) {
-                            newChild.normal = state.pasteNormal.toArray();
+                          if (e.normal) {
+                            newChild.normal = [...e.normal];
                           }
-                          state.elements.push(newChild);
                           pastedElements.push(newChild);
                         }
                       }
                     }
+                    state.elements.push(...pastedElements);
                   }
+                  state.elements.push(e);
+                  pastedElements.push(e);
                 }
               }
             });
