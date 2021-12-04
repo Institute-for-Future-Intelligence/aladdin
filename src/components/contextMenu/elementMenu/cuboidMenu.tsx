@@ -31,6 +31,7 @@ export const CuboidMenu = () => {
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
   const selectedSideIndex = useStore(Selector.selectedSideIndex);
+  const elementsToPaste = useStore(Selector.elementsToPaste);
 
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
@@ -45,9 +46,25 @@ export const CuboidMenu = () => {
   const solarPanelCountCuboid = cuboid ? countAllChildSolarPanels(cuboid.id) : 0;
   const lang = { lng: language };
 
+  const legalToPaste = () => {
+    if (elementsToPaste && elementsToPaste.length > 0) {
+      for (const e of elementsToPaste) {
+        if (
+          e.type === ObjectType.Human ||
+          e.type === ObjectType.Tree ||
+          e.type === ObjectType.Sensor ||
+          e.type === ObjectType.SolarPanel
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
   return (
     <Menu.ItemGroup>
-      <Paste />
+      {legalToPaste() && <Paste />}
       <Copy />
       <Cut />
       <Lock />

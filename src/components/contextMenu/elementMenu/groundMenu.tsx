@@ -26,6 +26,7 @@ export const GroundMenu = () => {
   const addUndoable = useStore(Selector.addUndoable);
   const elements = useStore(Selector.elements);
   const groundImage = useStore(Selector.viewState.groundImage);
+  const elementsToPaste = useStore(Selector.elementsToPaste);
 
   const treeCount = countElementsByType(ObjectType.Tree);
   const humanCount = countElementsByType(ObjectType.Human);
@@ -52,9 +53,25 @@ export const GroundMenu = () => {
     });
   };
 
+  const legalToPaste = () => {
+    if (elementsToPaste && elementsToPaste.length > 0) {
+      for (const e of elementsToPaste) {
+        if (
+          e.type === ObjectType.Human ||
+          e.type === ObjectType.Tree ||
+          e.type === ObjectType.Cuboid ||
+          e.type === ObjectType.Foundation
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
   return (
     <>
-      <Paste />
+      {legalToPaste() && <Paste />}
       {humanCount > 0 && (
         <Menu.Item
           style={{ paddingLeft: '36px' }}

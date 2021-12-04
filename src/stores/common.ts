@@ -1984,27 +1984,37 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               if (state.elementsToPaste.length > 0) {
                 let m = state.pastePoint;
+                const elem = state.elementsToPaste[0];
                 const newParent = state.getSelectedElement();
-                const oldParent = state.getElementById(state.elementsToPaste[0].parentId);
+                const oldParent = state.getElementById(elem.parentId);
                 if (newParent) {
                   // if parent is ground, it has no type definition but we use it to check its type
                   if (oldParent && oldParent.type) {
-                    state.elementsToPaste[0].parentId = newParent.id;
+                    elem.parentId = newParent.id;
                     m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
                   }
                 }
-                const e = ElementModelCloner.clone(newParent, state.elementsToPaste[0], m.x, m.y, m.z);
+                const e = ElementModelCloner.clone(newParent, elem, m.x, m.y, m.z);
                 if (e) {
                   if (state.pasteNormal) {
                     e.normal = state.pasteNormal.toArray();
                   }
                   state.elements.push(e);
                   pastedElements.push(e);
-                }
-                if (state.elementsToPaste.length > 1) {
-                  // paste children, too
-                  for (let i = 1; i < state.elementsToPaste.length; i++) {
-                    // TODO
+                  if (e.type === ObjectType.Foundation || e.type === ObjectType.Cuboid) {
+                    for (const child of state.elements) {
+                      if (child.parentId === elem.id) {
+                        const newChild = ElementModelCloner.clone(e, child, child.cx, child.cy, child.cz);
+                        console.log(newChild);
+                        if (newChild) {
+                          if (state.pasteNormal) {
+                            newChild.normal = state.pasteNormal.toArray();
+                          }
+                          state.elements.push(newChild);
+                          pastedElements.push(newChild);
+                        }
+                      }
+                    }
                   }
                 }
               }
