@@ -11,6 +11,8 @@ import { FoundationModel } from './FoundationModel';
 import { CuboidModel } from './CuboidModel';
 import { ElementModel } from './ElementModel';
 import { SolarPanelModel } from './SolarPanelModel';
+import { WallModel } from './WallModel';
+import { WindowModel } from './WindowModel';
 
 export class ElementModelCloner {
   static clone(parent: ElementModel | null, e: ElementModel, x: number, y: number, z?: number) {
@@ -26,6 +28,15 @@ export class ElementModelCloner {
         if (parent) {
           // must have a parent
           clone = ElementModelCloner.cloneSolarPanel(parent, e as SolarPanelModel, x, y, z);
+        }
+        break;
+      case ObjectType.Wall:
+        clone = ElementModelCloner.cloneWall(e as WallModel, x, y, z);
+        break;
+      case ObjectType.Window:
+        if (parent) {
+          // must have a parent
+          clone = ElementModelCloner.cloneWindow(parent, e as WindowModel, x, y, z);
         }
         break;
       case ObjectType.Human:
@@ -184,5 +195,59 @@ export class ElementModelCloner {
       parentId: cuboid.parentId,
       id: short.generate() as string,
     } as CuboidModel;
+  }
+
+  private static cloneWall(wall: WallModel, x: number, y: number, z?: number) {
+    return {
+      type: ObjectType.Wall,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: wall.lx,
+      ly: wall.ly,
+      lz: wall.lz,
+      leftOffset: wall.leftOffset,
+      rightOffset: wall.rightOffset,
+      leftJoints: [...wall.leftJoints],
+      rightJoints: [...wall.rightJoints],
+      leftPoint: [...wall.leftPoint],
+      rightPoint: [...wall.rightPoint],
+      relativeAngle: wall.relativeAngle,
+      textureType: wall.textureType,
+      color: wall.color,
+      normal: [...wall.normal],
+      rotation: [...wall.rotation],
+      id: short.generate() as string,
+      parentId: wall.parentId,
+      foundationId: wall.parentId,
+    } as WallModel;
+  }
+
+  private static cloneWindow(parent: ElementModel, window: WindowModel, x: number, y: number, z?: number) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+      case ObjectType.Wall:
+      case ObjectType.Roof:
+        foundationId = parent.parentId;
+        break;
+    }
+    return {
+      type: ObjectType.Window,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: window.lx,
+      ly: window.ly,
+      lz: window.lz,
+      color: window.color,
+      normal: [...window.normal],
+      rotation: [...window.rotation],
+      id: short.generate() as string,
+      parentId: window.parentId,
+      foundationId: foundationId,
+    } as WindowModel;
   }
 }
