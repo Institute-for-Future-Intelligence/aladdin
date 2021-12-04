@@ -2008,6 +2008,26 @@ export const useStore = create<CommonStoreState>(
                             newChild.normal = [...e.normal];
                           }
                           pastedElements.push(newChild);
+
+                          if (newChild?.type === ObjectType.Wall || newChild?.type === ObjectType.Roof) {
+                            for (const grandChild of state.elements) {
+                              if (grandChild.parentId === child.id) {
+                                const newGrandChild = ElementModelCloner.clone(
+                                  newChild,
+                                  grandChild,
+                                  grandChild.cx,
+                                  grandChild.cy,
+                                  grandChild.cz,
+                                );
+                                if (newGrandChild) {
+                                  if (child.normal) {
+                                    grandChild.normal = [...child.normal];
+                                  }
+                                  pastedElements.push(newGrandChild);
+                                }
+                              }
+                            }
+                          }
                         }
                       }
                     }

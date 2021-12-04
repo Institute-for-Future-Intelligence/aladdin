@@ -248,7 +248,7 @@ export class ElementModelCloner {
       normal: [...window.normal],
       rotation: [...window.rotation],
       id: short.generate() as string,
-      parentId: window.parentId,
+      parentId: parent.id,
       foundationId: foundationId,
     } as WindowModel;
   }
