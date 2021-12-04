@@ -2,27 +2,28 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import WallTexture01Icon from '../../../resources/wall_01_menu.png';
-import WallTexture02Icon from '../../../resources/wall_02_menu.png';
-import WallTexture03Icon from '../../../resources/wall_03_menu.png';
-import WallTexture04Icon from '../../../resources/wall_04_menu.png';
-import WallTexture05Icon from '../../../resources/wall_05_menu.png';
-import WallTexture06Icon from '../../../resources/wall_06_menu.png';
-import WallTexture07Icon from '../../../resources/wall_07_menu.png';
-import WallTexture08Icon from '../../../resources/wall_08_menu.png';
-import WallTexture09Icon from '../../../resources/wall_09_menu.png';
-import WallTexture10Icon from '../../../resources/wall_10_menu.png';
+import WallTextureDefaultIcon from 'src/resources/wall_edge.png';
+import WallTexture01Icon from 'src/resources/wall_01_menu.png';
+import WallTexture02Icon from 'src/resources/wall_02_menu.png';
+import WallTexture03Icon from 'src/resources/wall_03_menu.png';
+import WallTexture04Icon from 'src/resources/wall_04_menu.png';
+import WallTexture05Icon from 'src/resources/wall_05_menu.png';
+import WallTexture06Icon from 'src/resources/wall_06_menu.png';
+import WallTexture07Icon from 'src/resources/wall_07_menu.png';
+import WallTexture08Icon from 'src/resources/wall_08_menu.png';
+import WallTexture09Icon from 'src/resources/wall_09_menu.png';
+import WallTexture10Icon from 'src/resources/wall_10_menu.png';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { ObjectType, Scope, WallTexture } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { WallModel } from '../../../models/WallModel';
+import { useStore } from 'src/stores/common';
+import * as Selector from 'src/stores/selector';
+import { ObjectType, Scope, WallTexture } from 'src/types';
+import i18n from 'src/i18n/i18n';
+import { UndoableChange } from 'src/undo/UndoableChange';
+import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
+import { WallModel } from 'src/models/WallModel';
 
 const WallTextureSelection = ({
   textureDialogVisible,
@@ -42,7 +43,7 @@ const WallTextureSelection = ({
   const setWallActionScope = useStore(Selector.setWallActionScope);
 
   const wall = getSelectedElement() as WallModel;
-  const [selectedTexture, setSelectedTexture] = useState<WallTexture>(wall?.textureType ?? WallTexture.NoTexture);
+  const [selectedTexture, setSelectedTexture] = useState<WallTexture>(wall?.textureType ?? WallTexture.Default);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -53,7 +54,7 @@ const WallTextureSelection = ({
 
   useEffect(() => {
     if (wall) {
-      setSelectedTexture(wall?.textureType ?? WallTexture.NoTexture);
+      setSelectedTexture(wall?.textureType ?? WallTexture.Default);
     }
   }, [wall]);
 
@@ -68,7 +69,7 @@ const WallTextureSelection = ({
         const oldTexturesAll = new Map<string, WallTexture>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Wall) {
-            oldTexturesAll.set(elem.id, (elem as WallModel).textureType ?? WallTexture.NoTexture);
+            oldTexturesAll.set(elem.id, (elem as WallModel).textureType ?? WallTexture.Default);
           }
         }
         const undoableChangeAll = {
@@ -231,6 +232,17 @@ const WallTextureSelection = ({
                   {' '}
                 </div>
                 {i18n.t('shared.NoTexture', lang)}
+              </Option>
+
+              <Option key={WallTexture.Default} value={WallTexture.Default}>
+                <img
+                  alt={WallTexture.Default}
+                  src={WallTextureDefaultIcon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('wallMenu.TextureDefault', lang)}
               </Option>
 
               <Option key={WallTexture.Texture01} value={WallTexture.Texture01}>

@@ -295,6 +295,7 @@ export const i18n_en = {
     },
 
     wallMenu: {
+      TextureDefault: 'Default',
       Texture01: 'Texture 1',
       Texture02: 'Texture 2',
       Texture03: 'Texture 3',

@@ -311,6 +311,7 @@ export const i18n_zh_tw = {
     },
 
     wallMenu: {
+      TextureDefault: '默認材質',
       Texture01: '一號材質',
       Texture02: '二號材質',
       Texture03: '三號材質',

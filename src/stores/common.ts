@@ -566,6 +566,7 @@ export const useStore = create<CommonStoreState>(
                   for (const elem of state.elements) {
                     if (elem.id === id) {
                       elem.selected = true;
+                      state.selectedElement = elem;
                       state.selectedElementHeight = elem.lz;
                     } else {
                       elem.selected = false;

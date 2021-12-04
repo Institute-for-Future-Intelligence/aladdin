@@ -2,6 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import WallTextureDefault from 'src/resources/wall_edge.png';
 import WallTexture00 from 'src/resources/wall_00.png';
 import WallTexture01 from 'src/resources/wall_01.png';
 import WallTexture02 from 'src/resources/wall_02.png';
@@ -42,8 +43,8 @@ import { ElementGrid } from '../elementGrid';
 import Window from '../window';
 import WallWireFrame from './wallWireFrame';
 import WallResizeHandleWarpper from './wallResizeHandleWarpper';
-import * as Selector from '../../stores/selector';
-import { HALF_PI, TWO_PI } from '../../constants';
+import * as Selector from 'src/stores/selector';
+import { HALF_PI, TWO_PI } from 'src/constants';
 
 const Wall = ({
   id,
@@ -58,6 +59,7 @@ const Wall = ({
   leftJoints,
   rightJoints,
   textureType,
+  color,
   parentId,
   selected = false,
   locked = false,
@@ -65,6 +67,9 @@ const Wall = ({
   const textureLoader = useMemo(() => {
     let textureImg;
     switch (textureType) {
+      case WallTexture.Default:
+        textureImg = WallTextureDefault;
+        break;
       case WallTexture.NoTexture:
         textureImg = WallTexture00;
         break;
@@ -108,6 +113,10 @@ const Wall = ({
       let repeatX = 0.6;
       let repeatY = 0.6;
       switch (textureType) {
+        case WallTexture.Default:
+          repeatX = 2;
+          repeatY = 2;
+          break;
         case WallTexture.Texture03:
           repeatX = 2;
           repeatY = 1;
@@ -678,7 +687,11 @@ const Wall = ({
             }}
             onPointerDown={handleWallBodyPointerDown}
           >
-            <meshBasicMaterial map={texture} side={DoubleSide} />
+            <meshBasicMaterial
+              color={textureType === WallTexture.Default || textureType === WallTexture.NoTexture ? color : 'white'}
+              map={texture}
+              side={DoubleSide}
+            />
           </mesh>
 
           {/* inside wall */}

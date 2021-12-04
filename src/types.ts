@@ -221,6 +221,7 @@ export enum CuboidTexture {
 }
 
 export enum WallTexture {
+  Default = 'Wall Texture Default',
   Texture01 = 'Wall Texture #1',
   Texture02 = 'Wall Texture #2',
   Texture03 = 'Wall Texture #3',

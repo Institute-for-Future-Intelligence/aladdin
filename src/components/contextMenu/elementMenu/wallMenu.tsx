@@ -12,8 +12,11 @@ import WallTextureSelection from './wallTextureSelection';
 import WallHeightInput from './wallHeightInput';
 import WallThicknessInput from './wallThicknessInput';
 import WallColorSelection from './wallColorSelection';
+import { WallModel } from 'src/models/WallModel';
+import { WallTexture } from 'src/types';
 
 export const WallMenu = () => {
+  const getSelectedElement = useStore(Selector.getSelectedElement);
   const language = useStore(Selector.language);
 
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
@@ -23,6 +26,8 @@ export const WallMenu = () => {
 
   const lang = { lng: language };
   const paddingLeft = '36px';
+
+  const wallModel = getSelectedElement() as WallModel;
 
   return (
     <>
@@ -45,15 +50,17 @@ export const WallMenu = () => {
       </Menu.Item>
 
       <WallColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
-      <Menu.Item
-        key={'wall-color'}
-        style={{ paddingLeft: paddingLeft }}
-        onClick={() => {
-          setColorDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Color', lang)} ...
-      </Menu.Item>
+      {wallModel && (wallModel.textureType === WallTexture.NoTexture || wallModel.textureType === WallTexture.Default) && (
+        <Menu.Item
+          key={'wall-color'}
+          style={{ paddingLeft: paddingLeft }}
+          onClick={() => {
+            setColorDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Color', lang)} ...
+        </Menu.Item>
+      )}
 
       <WallHeightInput heightDialogVisible={heightDialogVisible} setHeightDialogVisible={setHeightDialogVisible} />
       <Menu.Item
