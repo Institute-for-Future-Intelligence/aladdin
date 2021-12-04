@@ -1876,6 +1876,7 @@ export const useStore = create<CommonStoreState>(
               for (const elem of state.elements) {
                 if (elem.id === id) {
                   if (cut) {
+                    // the first element must be the parent if there are children needed to be removed as well
                     state.elementsToPaste = [elem];
                   }
                   elem.selected = false;
@@ -1982,7 +1983,9 @@ export const useStore = create<CommonStoreState>(
           pasteElementsToPoint() {
             const pastedElements: ElementModel[] = [];
             immerSet((state: CommonStoreState) => {
-              if (state.elementsToPaste.length > 0) {
+              if (state.elementsToPaste.length === 1) {
+                // only the parent element is included in elementsToPaste when copied,
+                // so we have to copy its children and grandchildren from existing elements
                 let m = state.pastePoint;
                 const elem = state.elementsToPaste[0];
                 const newParent = state.getSelectedElement();
@@ -2008,7 +2011,6 @@ export const useStore = create<CommonStoreState>(
                             newChild.normal = [...e.normal];
                           }
                           pastedElements.push(newChild);
-
                           if (newChild?.type === ObjectType.Wall || newChild?.type === ObjectType.Roof) {
                             for (const grandChild of state.elements) {
                               if (grandChild.parentId === child.id) {
@@ -2035,6 +2037,26 @@ export const useStore = create<CommonStoreState>(
                   }
                   state.elements.push(e);
                   pastedElements.push(e);
+                }
+              } else if (state.elementsToPaste.length > 1) {
+                // when a parent with children is cut, the removed children are no longer in elements array,
+                // so we have to restore them from elementsToPaste.
+                const m = state.pastePoint;
+                let newParent = null;
+                for (let i = 0; i < state.elementsToPaste.length; i++) {
+                  const oldElem = state.elementsToPaste[i];
+                  let e: ElementModel | null;
+                  if (i === 0) {
+                    // the first element is the parent
+                    e = ElementModelCloner.clone(state.getElementById(oldElem.parentId), oldElem, m.x, m.y, m.z);
+                    newParent = e;
+                  } else {
+                    e = ElementModelCloner.clone(newParent, oldElem, oldElem.cx, oldElem.cy, oldElem.cz);
+                  }
+                  if (e) {
+                    state.elements.push(e);
+                    pastedElements.push(e);
+                  }
                 }
               }
             });
