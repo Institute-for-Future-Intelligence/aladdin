@@ -1892,12 +1892,13 @@ export const useStore = create<CommonStoreState>(
                       rightWallId = state.getElementById(currentWall.rightJoints[0])?.id ?? '';
                     }
                     for (const w of state.elements) {
+                      const wall = w as WallModel;
                       if (w.id === leftWallId) {
-                        (w as WallModel).rightOffset = 0;
-                        (w as WallModel).rightJoints = [];
+                        wall.rightOffset = 0;
+                        wall.rightJoints = [];
                       } else if (w.id === rightWallId) {
-                        (w as WallModel).leftOffset = 0;
-                        (w as WallModel).leftJoints = [];
+                        wall.leftOffset = 0;
+                        wall.leftJoints = [];
                       }
                     }
                     state.deletedWallID = elem.id;
@@ -1908,9 +1909,14 @@ export const useStore = create<CommonStoreState>(
                 }
               }
               if (cut) {
-                for (const e of state.elements) {
-                  if (e.parentId === id) {
-                    state.elementsToPaste.push(e);
+                for (const child of state.elements) {
+                  if (child.parentId === id) {
+                    state.elementsToPaste.push(child);
+                    for (const grandchild of state.elements) {
+                      if (grandchild.parentId === child.id) {
+                        state.elementsToPaste.push(grandchild);
+                      }
+                    }
                   }
                 }
               }
@@ -2013,18 +2019,18 @@ export const useStore = create<CommonStoreState>(
                           }
                           pastedElements.push(newChild);
                           if (newChild?.type === ObjectType.Wall || newChild?.type === ObjectType.Roof) {
-                            for (const grandChild of state.elements) {
-                              if (grandChild.parentId === child.id) {
+                            for (const grandchild of state.elements) {
+                              if (grandchild.parentId === child.id) {
                                 const newGrandChild = ElementModelCloner.clone(
                                   newChild,
-                                  grandChild,
-                                  grandChild.cx,
-                                  grandChild.cy,
-                                  grandChild.cz,
+                                  grandchild,
+                                  grandchild.cx,
+                                  grandchild.cy,
+                                  grandchild.cz,
                                 );
                                 if (newGrandChild) {
                                   if (child.normal) {
-                                    grandChild.normal = [...child.normal];
+                                    grandchild.normal = [...child.normal];
                                   }
                                   pastedElements.push(newGrandChild);
                                 }
@@ -2043,16 +2049,30 @@ export const useStore = create<CommonStoreState>(
                 // when a parent with children is cut, the removed children are no longer in elements array,
                 // so we have to restore them from elementsToPaste.
                 const m = state.pastePoint;
-                let newParent = null;
+                const map = new Map<ElementModel, ElementModel>();
                 for (let i = 0; i < state.elementsToPaste.length; i++) {
                   const oldElem = state.elementsToPaste[i];
-                  let e: ElementModel | null;
+                  let e: ElementModel | null = null;
                   if (i === 0) {
                     // the first element is the parent
                     e = ElementModelCloner.clone(state.getElementById(oldElem.parentId), oldElem, m.x, m.y, m.z);
-                    newParent = e;
                   } else {
-                    e = ElementModelCloner.clone(newParent, oldElem, oldElem.cx, oldElem.cy, oldElem.cz);
+                    let oldParent = null;
+                    for (const c of state.elementsToPaste) {
+                      if (oldElem.parentId === c.id) {
+                        oldParent = c;
+                        break;
+                      }
+                    }
+                    if (oldParent) {
+                      const newParent = map.get(oldParent);
+                      if (newParent) {
+                        e = ElementModelCloner.clone(newParent, oldElem, oldElem.cx, oldElem.cy, oldElem.cz);
+                      }
+                    }
+                  }
+                  if (e) {
+                    map.set(oldElem, e);
                   }
                   if (e) {
                     state.elements.push(e);
