@@ -282,6 +282,17 @@ const Cuboid = ({
   }, [textureTypes[4], lx, ly]);
   const [textureTop, setTextureTop] = useState(textureLoaderTop);
 
+  // dispose texture loaders to avoid memory leak
+  useEffect(() => {
+    return () => {
+      textureLoaderEast.dispose();
+      textureLoaderWest.dispose();
+      textureLoaderNorth.dispose();
+      textureLoaderSouth.dispose();
+      textureLoaderTop.dispose();
+    };
+  }, [textureLoaderEast, textureLoaderWest, textureLoaderNorth, textureLoaderSouth, textureLoaderTop]);
+
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
       if (e.intersections.length > 0) {

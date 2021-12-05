@@ -253,6 +253,13 @@ const Foundation = ({
   }, [textureType, lx, ly]);
   const [texture, setTexture] = useState(textureLoader);
 
+  // dispose the texture loader to avoid memory leak
+  useEffect(() => {
+    return () => {
+      textureLoader.dispose();
+    };
+  }, [textureLoader]);
+
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
       if (e.intersections.length > 0) {
