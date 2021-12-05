@@ -283,6 +283,7 @@ const Cuboid = ({
   const [textureTop, setTextureTop] = useState(textureLoaderTop);
 
   // dispose texture loaders to avoid memory leak
+  // (not sure why, but we must dispose textureLoaderEast etc. instead of textureEast etc.)
   useEffect(() => {
     return () => {
       textureLoaderEast.dispose();

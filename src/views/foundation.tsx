@@ -254,6 +254,7 @@ const Foundation = ({
   const [texture, setTexture] = useState(textureLoader);
 
   // dispose the texture loader to avoid memory leak
+  // (not sure why, but we must dispose textureLoader instead of texture)
   useEffect(() => {
     return () => {
       textureLoader.dispose();
