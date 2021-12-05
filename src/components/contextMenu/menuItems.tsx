@@ -86,27 +86,27 @@ export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getElementById = useStore(Selector.getElementById);
   const addUndoable = useStore(Selector.addUndoable);
+  const copyCutElements = useStore(Selector.copyCutElements);
   const isMac = Util.getOS()?.startsWith('Mac');
 
   const cut = () => {
     const selectedElement = getSelectedElement();
     if (selectedElement) {
       removeElementById(selectedElement.id, true);
-      // do not use {...selectedElement} as it does not do deep copy
-      const clonedElement = JSON.parse(JSON.stringify(selectedElement));
-      clonedElement.selected = false;
+      const cutElements = copyCutElements();
       const undoableCut = {
         name: 'Cut',
         timestamp: Date.now(),
-        deletedElements: clonedElement,
+        deletedElements: cutElements,
         undo: () => {
           setCommonStore((state) => {
             if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
-              state.elements.push(undoableCut.deletedElements[0]);
+              for (const e of undoableCut.deletedElements) {
+                state.elements.push(e);
+              }
               state.selectedElement = undoableCut.deletedElements[0];
             }
           });
-          // clonedElement.selected = true; FIXME: Why does this become readonly?
         },
         redo: () => {
           if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {

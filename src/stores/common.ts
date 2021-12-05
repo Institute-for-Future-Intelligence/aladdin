@@ -258,7 +258,8 @@ export interface CommonStoreState {
 
   pastePoint: Vector3;
   pasteNormal: Vector3 | undefined;
-  elementsToPaste: ElementModel[];
+  elementsToPaste: ElementModel[]; // this is for undoing cut and pasting
+  deletedElements: ElementModel[]; // this is for undoing deletion
   copyElementById: (id: string) => void;
   removeElementById: (id: string, cut: boolean) => void; // set cut to false for deletion
   copyCutElements: () => ElementModel[];
@@ -1861,6 +1862,7 @@ export const useStore = create<CommonStoreState>(
           },
 
           elementsToPaste: [],
+          deletedElements: [],
           pastePoint: new Vector3(),
           pasteNormal: undefined,
           copyElementById(id) {
@@ -1877,9 +1879,11 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const elem of state.elements) {
                 if (elem.id === id) {
+                  // the first element must be the parent if there are children needed to be removed as well
                   if (cut) {
-                    // the first element must be the parent if there are children needed to be removed as well
                     state.elementsToPaste = [elem];
+                  } else {
+                    state.deletedElements = [elem];
                   }
                   elem.selected = false;
                   if (elem.type === ObjectType.Wall) {
@@ -1916,6 +1920,17 @@ export const useStore = create<CommonStoreState>(
                     for (const grandchild of state.elements) {
                       if (grandchild.parentId === child.id) {
                         state.elementsToPaste.push(grandchild);
+                      }
+                    }
+                  }
+                }
+              } else {
+                for (const child of state.elements) {
+                  if (child.parentId === id) {
+                    state.deletedElements.push(child);
+                    for (const grandchild of state.elements) {
+                      if (grandchild.parentId === child.id) {
+                        state.deletedElements.push(grandchild);
                       }
                     }
                   }
@@ -1988,6 +2003,9 @@ export const useStore = create<CommonStoreState>(
             return count;
           },
 
+          // must copy the elements because they may be pasted multiple times.
+          // so we must treat them as newly added elements each time.
+          // note that the case of deletion is treated differently because the deleted elements cannot be pasted.
           copyCutElements() {
             const copiedElements: ElementModel[] = [];
             immerSet((state: CommonStoreState) => {

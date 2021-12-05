@@ -226,11 +226,11 @@ const KeyboardListener = ({
       case 'meta+x': // for Mac
         if (selectedElement) {
           removeElement(selectedElement, true);
-          const deletedElements = copyCutElements();
+          const cutElements = copyCutElements();
           const undoableCut = {
             name: 'Cut',
             timestamp: Date.now(),
-            deletedElements: deletedElements,
+            deletedElements: cutElements,
             undo: () => {
               setCommonStore((state) => {
                 if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
@@ -341,32 +341,34 @@ const KeyboardListener = ({
       case 'delete':
         if (selectedElement) {
           removeElement(selectedElement, false);
-          // do not use {...selectedElement} as it does not do deep copy
-          const clonedElement = JSON.parse(JSON.stringify(selectedElement));
-          clonedElement.selected = false;
-          const undoableDelete = {
-            name: 'Delete',
-            timestamp: Date.now(),
-            deletedElements: clonedElement,
-            undo: () => {
-              setCommonStore((state) => {
+          const deletedElements = useStore.getState().deletedElements;
+          if (deletedElements.length > 0) {
+            const undoableDelete = {
+              name: 'Delete',
+              timestamp: Date.now(),
+              deletedElements: deletedElements,
+              undo: () => {
+                setCommonStore((state) => {
+                  if (undoableDelete.deletedElements && undoableDelete.deletedElements.length > 0) {
+                    for (const e of undoableDelete.deletedElements) {
+                      state.elements.push(e);
+                    }
+                    state.selectedElement = undoableDelete.deletedElements[0];
+                  }
+                });
+                // clonedElement.selected = true; FIXME: Why does this become readonly?
+              },
+              redo: () => {
                 if (undoableDelete.deletedElements && undoableDelete.deletedElements.length > 0) {
-                  state.elements.push(undoableDelete.deletedElements[0]);
-                  state.selectedElement = undoableDelete.deletedElements[0];
+                  const elem = getElementById(undoableDelete.deletedElements[0].id);
+                  if (elem) {
+                    removeElement(elem, false);
+                  }
                 }
-              });
-              // clonedElement.selected = true; FIXME: Why does this become readonly?
-            },
-            redo: () => {
-              if (undoableDelete.deletedElements && undoableDelete.deletedElements.length > 0) {
-                const elem = getElementById(undoableDelete.deletedElements[0].id);
-                if (elem) {
-                  removeElement(elem, false);
-                }
-              }
-            },
-          } as UndoableDelete;
-          addUndoable(undoableDelete);
+              },
+            } as UndoableDelete;
+            addUndoable(undoableDelete);
+          }
         }
         break;
       case 'ctrl+z':

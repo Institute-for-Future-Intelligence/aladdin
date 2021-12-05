@@ -124,6 +124,9 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
     if (fn.length > 0) {
       const blob = new Blob([JSON.stringify(exportContent())], { type: 'application/json' });
       saveAs(blob, fn);
+      setCommonStore((state) => {
+        state.cloudFile = undefined;
+      });
       return true;
     } else {
       showError(i18n.t('menu.file.SavingAbortedMustHaveValidFileName', lang) + '.');
