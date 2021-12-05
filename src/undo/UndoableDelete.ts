@@ -6,5 +6,5 @@ import { Undoable } from './Undoable';
 import { ElementModel } from '../models/ElementModel';
 
 export interface UndoableDelete extends Undoable {
-  deletedElement: ElementModel;
+  deletedElements: ElementModel[];
 }

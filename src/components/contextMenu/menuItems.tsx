@@ -98,18 +98,22 @@ export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
       const undoableCut = {
         name: 'Cut',
         timestamp: Date.now(),
-        deletedElement: clonedElement,
+        deletedElements: clonedElement,
         undo: () => {
           setCommonStore((state) => {
-            state.elements.push(undoableCut.deletedElement);
-            state.selectedElement = undoableCut.deletedElement;
+            if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
+              state.elements.push(undoableCut.deletedElements[0]);
+              state.selectedElement = undoableCut.deletedElements[0];
+            }
           });
           // clonedElement.selected = true; FIXME: Why does this become readonly?
         },
         redo: () => {
-          const elem = getElementById(undoableCut.deletedElement.id);
-          if (elem) {
-            removeElementById(elem.id, true);
+          if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
+            const elem = getElementById(undoableCut.deletedElements[0].id);
+            if (elem) {
+              removeElementById(elem.id, true);
+            }
           }
         },
       } as UndoableDelete;

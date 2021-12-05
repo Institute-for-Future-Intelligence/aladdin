@@ -48,15 +48,14 @@ export const CuboidMenu = () => {
 
   const legalToPaste = () => {
     if (elementsToPaste && elementsToPaste.length > 0) {
-      for (const e of elementsToPaste) {
-        if (
-          e.type === ObjectType.Human ||
-          e.type === ObjectType.Tree ||
-          e.type === ObjectType.Sensor ||
-          e.type === ObjectType.SolarPanel
-        ) {
-          return true;
-        }
+      const e = elementsToPaste[0];
+      if (
+        e.type === ObjectType.Human ||
+        e.type === ObjectType.Tree ||
+        e.type === ObjectType.Sensor ||
+        e.type === ObjectType.SolarPanel
+      ) {
+        return true;
       }
     }
     return false;

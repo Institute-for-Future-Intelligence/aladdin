@@ -50,6 +50,7 @@ const KeyboardListener = ({
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const panCenter = useStore(Selector.viewState.panCenter);
   const buildingWindowID = useStore(Selector.buildingWindowID);
+  const elementsToPaste = useStore(Selector.elementsToPaste);
 
   const moveStepRelative = 0.01;
   const moveStepAbsolute = 0.1;
@@ -231,18 +232,22 @@ const KeyboardListener = ({
           const undoableCut = {
             name: 'Cut',
             timestamp: Date.now(),
-            deletedElement: clonedElement,
+            deletedElements: clonedElement,
             undo: () => {
               setCommonStore((state) => {
-                state.elements.push(undoableCut.deletedElement);
-                state.selectedElement = undoableCut.deletedElement;
+                if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
+                  state.elements.push(undoableCut.deletedElements[0]);
+                  state.selectedElement = undoableCut.deletedElements[0];
+                }
               });
               // clonedElement.selected = true; FIXME: Why does this become readonly?
             },
             redo: () => {
-              const elem = getElementById(undoableCut.deletedElement.id);
-              if (elem) {
-                removeElement(elem, true);
+              if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
+                const elem = getElementById(undoableCut.deletedElements[0].id);
+                if (elem) {
+                  removeElement(elem, true);
+                }
               }
             },
           } as UndoableDelete;
@@ -343,18 +348,22 @@ const KeyboardListener = ({
           const undoableDelete = {
             name: 'Delete',
             timestamp: Date.now(),
-            deletedElement: clonedElement,
+            deletedElements: clonedElement,
             undo: () => {
               setCommonStore((state) => {
-                state.elements.push(undoableDelete.deletedElement);
-                state.selectedElement = undoableDelete.deletedElement;
+                if (undoableDelete.deletedElements && undoableDelete.deletedElements.length > 0) {
+                  state.elements.push(undoableDelete.deletedElements[0]);
+                  state.selectedElement = undoableDelete.deletedElements[0];
+                }
               });
               // clonedElement.selected = true; FIXME: Why does this become readonly?
             },
             redo: () => {
-              const elem = getElementById(undoableDelete.deletedElement.id);
-              if (elem) {
-                removeElement(elem, false);
+              if (undoableDelete.deletedElements && undoableDelete.deletedElements.length > 0) {
+                const elem = getElementById(undoableDelete.deletedElements[0].id);
+                if (elem) {
+                  removeElement(elem, false);
+                }
               }
             },
           } as UndoableDelete;

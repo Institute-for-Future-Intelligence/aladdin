@@ -47,7 +47,7 @@ const ElementsRenderer: React.FC = () => {
           case ObjectType.Roof:
             return <Roof key={e.id} {...(e as RoofModel)} />;
           default:
-            return <></>;
+            return <React.Fragment key={e.id} />;
         }
       })}
     </group>
