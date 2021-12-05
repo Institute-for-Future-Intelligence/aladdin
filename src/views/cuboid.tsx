@@ -167,7 +167,7 @@ const Cuboid = ({
     };
     window.addEventListener('pointerup', handlePointerUp);
     return () => {
-      window.removeEventListener('poinerup', handlePointerUp);
+      window.removeEventListener('pointerup', handlePointerUp);
     };
   }, []);
 
