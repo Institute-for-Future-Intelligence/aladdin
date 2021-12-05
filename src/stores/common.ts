@@ -1922,7 +1922,7 @@ export const useStore = create<CommonStoreState>(
                 }
               }
               state.elements = state.elements.filter((e) => {
-                return !(e.id === id || e.parentId === id);
+                return !(e.id === id || e.parentId === id || e.foundationId === id);
               });
               state.selectedElement = null;
             });
