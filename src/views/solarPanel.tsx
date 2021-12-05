@@ -290,7 +290,7 @@ const SolarPanel = ({
           case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
             return new Euler(0, Math.atan2(rotatedSunDirection.x, rotatedSunDirection.z), 0, 'ZXY');
           case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
-            return new Euler(0, 0, Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + HALF_PI, 'ZXY');
+            return new Euler(tiltAngle, 0, Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + HALF_PI, 'ZXY');
         }
       }
       return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
