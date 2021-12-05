@@ -261,6 +261,7 @@ export interface CommonStoreState {
   elementsToPaste: ElementModel[];
   copyElementById: (id: string) => void;
   removeElementById: (id: string, cut: boolean) => void; // set cut to false for deletion
+  copyCutElements: () => ElementModel[];
   pasteElementsToPoint: () => ElementModel[];
   pasteElementsByKey: () => ElementModel[];
   countElementsByType: (type: ObjectType) => number;
@@ -1987,6 +1988,46 @@ export const useStore = create<CommonStoreState>(
             return count;
           },
 
+          copyCutElements() {
+            const copiedElements: ElementModel[] = [];
+            immerSet((state: CommonStoreState) => {
+              const map = new Map<ElementModel, ElementModel>();
+              for (let i = 0; i < state.elementsToPaste.length; i++) {
+                const oldElem = state.elementsToPaste[i];
+                let e: ElementModel | null = null;
+                if (i === 0) {
+                  // the first element is the parent
+                  e = ElementModelCloner.clone(
+                    state.getElementById(oldElem.parentId),
+                    oldElem,
+                    oldElem.cx,
+                    oldElem.cy,
+                    oldElem.cz,
+                  );
+                } else {
+                  let oldParent = null;
+                  for (const c of state.elementsToPaste) {
+                    if (oldElem.parentId === c.id) {
+                      oldParent = c;
+                      break;
+                    }
+                  }
+                  if (oldParent) {
+                    const newParent = map.get(oldParent);
+                    if (newParent) {
+                      e = ElementModelCloner.clone(newParent, oldElem, oldElem.cx, oldElem.cy, oldElem.cz);
+                    }
+                  }
+                }
+                if (e) {
+                  map.set(oldElem, e);
+                  copiedElements.push(e);
+                }
+              }
+            });
+            return copiedElements;
+          },
+
           pasteElementsToPoint() {
             const pastedElements: ElementModel[] = [];
             immerSet((state: CommonStoreState) => {
@@ -2049,34 +2090,12 @@ export const useStore = create<CommonStoreState>(
                 // when a parent with children is cut, the removed children are no longer in elements array,
                 // so we have to restore them from elementsToPaste.
                 const m = state.pastePoint;
-                const map = new Map<ElementModel, ElementModel>();
-                for (let i = 0; i < state.elementsToPaste.length; i++) {
-                  const oldElem = state.elementsToPaste[i];
-                  let e: ElementModel | null = null;
-                  if (i === 0) {
-                    // the first element is the parent
-                    e = ElementModelCloner.clone(state.getElementById(oldElem.parentId), oldElem, m.x, m.y, m.z);
-                  } else {
-                    let oldParent = null;
-                    for (const c of state.elementsToPaste) {
-                      if (oldElem.parentId === c.id) {
-                        oldParent = c;
-                        break;
-                      }
-                    }
-                    if (oldParent) {
-                      const newParent = map.get(oldParent);
-                      if (newParent) {
-                        e = ElementModelCloner.clone(newParent, oldElem, oldElem.cx, oldElem.cy, oldElem.cz);
-                      }
-                    }
-                  }
-                  if (e) {
-                    map.set(oldElem, e);
-                    state.elements.push(e);
-                    pastedElements.push(e);
-                  }
-                }
+                const cutElements = state.copyCutElements();
+                cutElements[0].cx = m.x;
+                cutElements[0].cy = m.y;
+                cutElements[0].cz = m.z;
+                state.elements.push(...cutElements);
+                pastedElements.push(...cutElements);
               }
             });
             return pastedElements;

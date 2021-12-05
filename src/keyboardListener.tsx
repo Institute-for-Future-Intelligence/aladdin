@@ -50,7 +50,7 @@ const KeyboardListener = ({
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const panCenter = useStore(Selector.viewState.panCenter);
   const buildingWindowID = useStore(Selector.buildingWindowID);
-  const elementsToPaste = useStore(Selector.elementsToPaste);
+  const copyCutElements = useStore(Selector.copyCutElements);
 
   const moveStepRelative = 0.01;
   const moveStepAbsolute = 0.1;
@@ -226,21 +226,20 @@ const KeyboardListener = ({
       case 'meta+x': // for Mac
         if (selectedElement) {
           removeElement(selectedElement, true);
-          // do not use {...selectedElement} as it does not do deep copy
-          const clonedElement = JSON.parse(JSON.stringify(selectedElement));
-          clonedElement.selected = false;
+          const deletedElements = copyCutElements();
           const undoableCut = {
             name: 'Cut',
             timestamp: Date.now(),
-            deletedElements: clonedElement,
+            deletedElements: deletedElements,
             undo: () => {
               setCommonStore((state) => {
                 if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
-                  state.elements.push(undoableCut.deletedElements[0]);
+                  for (const e of undoableCut.deletedElements) {
+                    state.elements.push(e);
+                  }
                   state.selectedElement = undoableCut.deletedElements[0];
                 }
               });
-              // clonedElement.selected = true; FIXME: Why does this become readonly?
             },
             redo: () => {
               if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
