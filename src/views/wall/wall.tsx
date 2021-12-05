@@ -40,7 +40,7 @@ import { WallModel } from 'src/models/WallModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { RoofPoint } from 'src/models/RoofModel';
 import { ElementGrid } from '../elementGrid';
-import Window from '../window';
+import Window from '../window/window';
 import WallWireFrame from './wallWireFrame';
 import WallResizeHandleWarpper from './wallResizeHandleWarpper';
 import * as Selector from 'src/stores/selector';

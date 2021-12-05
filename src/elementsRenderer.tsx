@@ -19,7 +19,7 @@ import Tree from './views/tree';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import SolarPanel from './views/solarPanel';
 import { WallModel } from './models/WallModel';
-import Wall from './views/wall';
+import Wall from './views/wall/wall';
 import Roof from './views/roof';
 import { RoofModel } from './models/RoofModel';
 
