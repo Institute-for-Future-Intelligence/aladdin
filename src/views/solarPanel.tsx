@@ -162,7 +162,7 @@ const SolarPanel = ({
   const positionUL = new Vector3(-hx, hy, hz);
   const positionLR = new Vector3(hx, -hy, hz);
   const positionUR = new Vector3(hx, hy, hz);
-  const element = getElementById(id);
+  const solarPanel = getElementById(id) as SolarPanelModel;
 
   useEffect(() => {
     if (pvModel) {
@@ -644,14 +644,18 @@ const SolarPanel = ({
                         if (parent) {
                           const ov = parent.position; // rotate point in world coordinate
                           const cv = new Vector3().subVectors(p, ov);
-                          const wr = relativeAzimuth + rotation[2];
-                          const sign =
-                            wr % Math.PI === 0
-                              ? Math.sign(-cv.y) * Math.sign(Math.cos(wr))
-                              : Math.sign(cv.x) * Math.sign(Math.sin(wr));
-                          const angle = cv.angleTo(new Vector3(0, 0, 1)) * sign;
-                          updateSolarPanelTiltAngleById(id, angle);
-                          newTiltAngleRef.current = angle;
+                          let angle = cv.angleTo(UNIT_VECTOR_POS_Z);
+                          const touch = 0.5 * solarPanel.ly * Math.abs(Math.sin(angle)) > solarPanel.poleHeight;
+                          if (!touch) {
+                            const wr = relativeAzimuth + rotation[2];
+                            const sign =
+                              wr % Math.PI === 0
+                                ? Math.sign(-cv.y) * Math.sign(Math.cos(wr))
+                                : Math.sign(cv.x) * Math.sign(Math.sin(wr));
+                            angle *= sign;
+                            updateSolarPanelTiltAngleById(id, angle);
+                            newTiltAngleRef.current = angle;
+                          }
                         }
                       }
                     }
@@ -774,7 +778,7 @@ const SolarPanel = ({
       {(hovered || showLabel) && !selected && (
         <textSprite
           name={'Label'}
-          text={element?.label ? element.label : 'Solar Panel'}
+          text={solarPanel?.label ? solarPanel.label : 'Solar Panel'}
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}

@@ -39,6 +39,7 @@ const SolarPanelTiltAngleInput = ({
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const rejectRef = useRef<boolean>(false);
 
   const lang = { lng: language };
 
@@ -165,20 +166,25 @@ const SolarPanelTiltAngleInput = ({
       default:
         if (solarPanel) {
           const oldTiltAngle = solarPanel.tiltAngle;
-          const undoableChange = {
-            name: 'Set Solar Panel Array Tilt Angle',
-            timestamp: Date.now(),
-            oldValue: oldTiltAngle,
-            newValue: value,
-            undo: () => {
-              updateSolarPanelTiltAngleById(solarPanel.id, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateSolarPanelTiltAngleById(solarPanel.id, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateSolarPanelTiltAngleById(solarPanel.id, value);
+          rejectRef.current = 0.5 * solarPanel.ly * Math.abs(Math.sin(value)) > solarPanel.poleHeight;
+          if (rejectRef.current) {
+            setInputTiltAngle(oldTiltAngle);
+          } else {
+            const undoableChange = {
+              name: 'Set Solar Panel Array Tilt Angle',
+              timestamp: Date.now(),
+              oldValue: oldTiltAngle,
+              newValue: value,
+              undo: () => {
+                updateSolarPanelTiltAngleById(solarPanel.id, undoableChange.oldValue as number);
+              },
+              redo: () => {
+                updateSolarPanelTiltAngleById(solarPanel.id, undoableChange.newValue as number);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            updateSolarPanelTiltAngleById(solarPanel.id, value);
+          }
           setUpdateFlag(!updateFlag);
         }
     }
@@ -210,6 +216,9 @@ const SolarPanelTiltAngleInput = ({
             onMouseOut={() => setDragEnabled(false)}
           >
             {i18n.t('solarPanelMenu.TiltAngle', lang)}
+            <label style={{ color: 'red', fontWeight: 'bold' }}>
+              {rejectRef.current ? ': ' + i18n.t('shared.CannotChangeToThisValue', lang) : ''}
+            </label>
           </div>
         }
         footer={[
@@ -225,6 +234,7 @@ const SolarPanelTiltAngleInput = ({
             key="Cancel"
             onClick={() => {
               setInputTiltAngle(solarPanel.tiltAngle);
+              rejectRef.current = false;
               setTiltDialogVisible(false);
             }}
           >
@@ -235,7 +245,9 @@ const SolarPanelTiltAngleInput = ({
             type="primary"
             onClick={() => {
               setTiltAngle(inputTiltAngle);
-              setTiltDialogVisible(false);
+              if (!rejectRef.current) {
+                setTiltDialogVisible(false);
+              }
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -244,6 +256,7 @@ const SolarPanelTiltAngleInput = ({
         // this must be specified for the x button at the upper-right corner to work
         onCancel={() => {
           setInputTiltAngle(solarPanel.tiltAngle);
+          rejectRef.current = false;
           setTiltDialogVisible(false);
         }}
         destroyOnClose={false}
