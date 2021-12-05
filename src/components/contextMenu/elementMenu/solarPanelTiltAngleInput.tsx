@@ -57,66 +57,92 @@ const SolarPanelTiltAngleInput = ({
   const setTiltAngle = (value: number) => {
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldTiltAnglesAll = new Map<string, number>();
+        rejectRef.current = false;
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel) {
-            oldTiltAnglesAll.set(elem.id, (elem as SolarPanelModel).tiltAngle);
+            if (0.5 * elem.ly * Math.abs(Math.sin(value)) > (elem as SolarPanelModel).poleHeight) {
+              rejectRef.current = true;
+              break;
+            }
           }
         }
-        const undoableChangeAll = {
-          name: 'Set Tilt Angle for All Solar Panel Arrays',
-          timestamp: Date.now(),
-          oldValues: oldTiltAnglesAll,
-          newValue: value,
-          undo: () => {
-            for (const [id, ta] of undoableChangeAll.oldValues.entries()) {
-              updateSolarPanelTiltAngleById(id, ta as number);
-            }
-          },
-          redo: () => {
-            updateSolarPanelTiltAngleForAll(undoableChangeAll.newValue as number);
-          },
-        } as UndoableChangeGroup;
-        addUndoable(undoableChangeAll);
-        updateSolarPanelTiltAngleForAll(value);
-        break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (solarPanel.foundationId) {
-          const oldTiltAnglesAboveFoundation = new Map<string, number>();
+        if (rejectRef.current) {
+          setInputTiltAngle(solarPanel.tiltAngle);
+        } else {
+          const oldTiltAnglesAll = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
-              oldTiltAnglesAboveFoundation.set(elem.id, (elem as SolarPanelModel).tiltAngle);
+            if (elem.type === ObjectType.SolarPanel) {
+              oldTiltAnglesAll.set(elem.id, (elem as SolarPanelModel).tiltAngle);
             }
           }
-          const undoableChangeAboveFoundation = {
-            name: 'Set Tilt Angle for All Solar Panel Arrays Above Foundation',
+          const undoableChangeAll = {
+            name: 'Set Tilt Angle for All Solar Panel Arrays',
             timestamp: Date.now(),
-            oldValues: oldTiltAnglesAboveFoundation,
+            oldValues: oldTiltAnglesAll,
             newValue: value,
-            groupId: solarPanel.foundationId,
             undo: () => {
-              for (const [id, ta] of undoableChangeAboveFoundation.oldValues.entries()) {
+              for (const [id, ta] of undoableChangeAll.oldValues.entries()) {
                 updateSolarPanelTiltAngleById(id, ta as number);
               }
             },
             redo: () => {
-              if (undoableChangeAboveFoundation.groupId) {
-                updateSolarPanelTiltAngleAboveFoundation(
-                  undoableChangeAboveFoundation.groupId,
-                  undoableChangeAboveFoundation.newValue as number,
-                );
-              }
+              updateSolarPanelTiltAngleForAll(undoableChangeAll.newValue as number);
             },
           } as UndoableChangeGroup;
-          addUndoable(undoableChangeAboveFoundation);
-          updateSolarPanelTiltAngleAboveFoundation(solarPanel.foundationId, value);
+          addUndoable(undoableChangeAll);
+          updateSolarPanelTiltAngleForAll(value);
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        if (solarPanel.foundationId) {
+          rejectRef.current = false;
+          for (const elem of elements) {
+            if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
+              if (0.5 * elem.ly * Math.abs(Math.sin(value)) > (elem as SolarPanelModel).poleHeight) {
+                rejectRef.current = true;
+                break;
+              }
+            }
+          }
+          if (rejectRef.current) {
+            setInputTiltAngle(solarPanel.tiltAngle);
+          } else {
+            const oldTiltAnglesAboveFoundation = new Map<string, number>();
+            for (const elem of elements) {
+              if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
+                oldTiltAnglesAboveFoundation.set(elem.id, (elem as SolarPanelModel).tiltAngle);
+              }
+            }
+            const undoableChangeAboveFoundation = {
+              name: 'Set Tilt Angle for All Solar Panel Arrays Above Foundation',
+              timestamp: Date.now(),
+              oldValues: oldTiltAnglesAboveFoundation,
+              newValue: value,
+              groupId: solarPanel.foundationId,
+              undo: () => {
+                for (const [id, ta] of undoableChangeAboveFoundation.oldValues.entries()) {
+                  updateSolarPanelTiltAngleById(id, ta as number);
+                }
+              },
+              redo: () => {
+                if (undoableChangeAboveFoundation.groupId) {
+                  updateSolarPanelTiltAngleAboveFoundation(
+                    undoableChangeAboveFoundation.groupId,
+                    undoableChangeAboveFoundation.newValue as number,
+                  );
+                }
+              },
+            } as UndoableChangeGroup;
+            addUndoable(undoableChangeAboveFoundation);
+            updateSolarPanelTiltAngleAboveFoundation(solarPanel.foundationId, value);
+          }
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
         if (solarPanel.parentId) {
           const parent = getElementById(solarPanel.parentId);
           if (parent) {
-            const oldTiltAnglesOnSurface = new Map<string, number>();
+            rejectRef.current = false;
             const isParentCuboid = parent.type === ObjectType.Cuboid;
             if (isParentCuboid) {
               for (const elem of elements) {
@@ -125,41 +151,71 @@ const SolarPanelTiltAngleInput = ({
                   elem.parentId === solarPanel.parentId &&
                   Util.isIdentical(elem.normal, solarPanel.normal)
                 ) {
-                  oldTiltAnglesOnSurface.set(elem.id, (elem as SolarPanelModel).tiltAngle);
+                  // tilt is only allowed for the top surface of a cuboid
+                  if (0.5 * elem.ly * Math.abs(Math.sin(value)) > (elem as SolarPanelModel).poleHeight) {
+                    rejectRef.current = true;
+                    break;
+                  }
                 }
               }
             } else {
+              // tilt is only allowed on top of a foundation or a roof
               for (const elem of elements) {
                 if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                  oldTiltAnglesOnSurface.set(elem.id, (elem as SolarPanelModel).tiltAngle);
+                  if (0.5 * elem.ly * Math.abs(Math.sin(value)) > (elem as SolarPanelModel).poleHeight) {
+                    rejectRef.current = true;
+                    break;
+                  }
                 }
               }
             }
-            const normal = isParentCuboid ? solarPanel.normal : undefined;
-            const undoableChangeOnSurface = {
-              name: 'Set Tilt Angle for All Solar Panel Arrays on Surface',
-              timestamp: Date.now(),
-              oldValues: oldTiltAnglesOnSurface,
-              newValue: value,
-              groupId: solarPanel.parentId,
-              normal: normal,
-              undo: () => {
-                for (const [id, ta] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateSolarPanelTiltAngleById(id, ta as number);
+            if (rejectRef.current) {
+              setInputTiltAngle(solarPanel.tiltAngle);
+            } else {
+              const oldTiltAnglesOnSurface = new Map<string, number>();
+              if (isParentCuboid) {
+                for (const elem of elements) {
+                  if (
+                    elem.type === ObjectType.SolarPanel &&
+                    elem.parentId === solarPanel.parentId &&
+                    Util.isIdentical(elem.normal, solarPanel.normal)
+                  ) {
+                    oldTiltAnglesOnSurface.set(elem.id, (elem as SolarPanelModel).tiltAngle);
+                  }
                 }
-              },
-              redo: () => {
-                if (undoableChangeOnSurface.groupId) {
-                  updateSolarPanelTiltAngleOnSurface(
-                    undoableChangeOnSurface.groupId,
-                    undoableChangeOnSurface.normal,
-                    undoableChangeOnSurface.newValue as number,
-                  );
+              } else {
+                for (const elem of elements) {
+                  if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
+                    oldTiltAnglesOnSurface.set(elem.id, (elem as SolarPanelModel).tiltAngle);
+                  }
                 }
-              },
-            } as UndoableChangeGroup;
-            addUndoable(undoableChangeOnSurface);
-            updateSolarPanelTiltAngleOnSurface(solarPanel.parentId, normal, value);
+              }
+              const normal = isParentCuboid ? solarPanel.normal : undefined;
+              const undoableChangeOnSurface = {
+                name: 'Set Tilt Angle for All Solar Panel Arrays on Surface',
+                timestamp: Date.now(),
+                oldValues: oldTiltAnglesOnSurface,
+                newValue: value,
+                groupId: solarPanel.parentId,
+                normal: normal,
+                undo: () => {
+                  for (const [id, ta] of undoableChangeOnSurface.oldValues.entries()) {
+                    updateSolarPanelTiltAngleById(id, ta as number);
+                  }
+                },
+                redo: () => {
+                  if (undoableChangeOnSurface.groupId) {
+                    updateSolarPanelTiltAngleOnSurface(
+                      undoableChangeOnSurface.groupId,
+                      undoableChangeOnSurface.normal,
+                      undoableChangeOnSurface.newValue as number,
+                    );
+                  }
+                },
+              } as UndoableChangeGroup;
+              addUndoable(undoableChangeOnSurface);
+              updateSolarPanelTiltAngleOnSurface(solarPanel.parentId, normal, value);
+            }
           }
         }
         break;
@@ -185,7 +241,6 @@ const SolarPanelTiltAngleInput = ({
             addUndoable(undoableChange);
             updateSolarPanelTiltAngleById(solarPanel.id, value);
           }
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);
