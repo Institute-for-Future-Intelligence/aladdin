@@ -132,13 +132,17 @@ const Wall = ({
   }, [textureType]);
   const [texture, setTexture] = useState(textureLoader);
 
-  // dispose the texture loader to avoid memory leak
-  // (not sure why, but we must dispose textureLoader instead of texture)
+  // dispose textures when unmounted to avoid memory leak (not sure why textures need this)
   useEffect(() => {
     return () => {
       textureLoader.dispose();
     };
   }, [textureLoader]);
+  useEffect(() => {
+    return () => {
+      texture.dispose();
+    };
+  }, [texture]);
 
   const getElementById = useStore(Selector.getElementById);
   const parent = getElementById(parentId) as ElementModel;

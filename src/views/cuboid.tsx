@@ -282,17 +282,61 @@ const Cuboid = ({
   }, [textureTypes[4], lx, ly]);
   const [textureTop, setTextureTop] = useState(textureLoaderTop);
 
-  // dispose texture loaders to avoid memory leak
-  // (not sure why, but we must dispose textureLoaderEast etc. instead of textureEast etc.)
+  // dispose textures when unmounted to avoid memory leak (not sure why textures need this)
   useEffect(() => {
     return () => {
       textureLoaderEast.dispose();
+    };
+  }, [textureLoaderEast]);
+  useEffect(() => {
+    return () => {
+      textureEast.dispose();
+    };
+  }, [textureEast]);
+
+  useEffect(() => {
+    return () => {
       textureLoaderWest.dispose();
+    };
+  }, [textureLoaderWest]);
+  useEffect(() => {
+    return () => {
+      textureWest.dispose();
+    };
+  }, [textureWest]);
+
+  useEffect(() => {
+    return () => {
       textureLoaderNorth.dispose();
+    };
+  }, [textureLoaderNorth]);
+  useEffect(() => {
+    return () => {
+      textureNorth.dispose();
+    };
+  }, [textureNorth]);
+
+  useEffect(() => {
+    return () => {
       textureLoaderSouth.dispose();
+    };
+  }, [textureLoaderSouth]);
+  useEffect(() => {
+    return () => {
+      textureSouth.dispose();
+    };
+  }, [textureSouth]);
+
+  useEffect(() => {
+    return () => {
       textureLoaderTop.dispose();
     };
-  }, [textureLoaderEast, textureLoaderWest, textureLoaderNorth, textureLoaderSouth, textureLoaderTop]);
+  }, [textureLoaderTop]);
+  useEffect(() => {
+    return () => {
+      textureTop.dispose();
+    };
+  }, [textureTop]);
 
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
