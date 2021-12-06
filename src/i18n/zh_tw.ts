@@ -95,7 +95,7 @@ export const i18n_zh_tw = {
       CounterclockwiseAzimuthIsPositive: '逆時針為正',
       NoTexture: '無材質',
       DoYouWantToSaveChanges: '您要保存當前文檔嗎？',
-      CannotChangeToThisValue: '恕不能改到這個值',
+      CannotChangeToInputValue: '恕不能改到這個值',
     },
 
     menu: {

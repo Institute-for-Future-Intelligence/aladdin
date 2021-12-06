@@ -40,6 +40,7 @@ const SolarPanelPoleHeightInput = ({
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
+  const rejectedValue = useRef<number | undefined>();
 
   const lang = { lng: language };
 
@@ -55,6 +56,7 @@ const SolarPanelPoleHeightInput = ({
   };
 
   const setPoleHeight = (value: number) => {
+    rejectedValue.current = undefined;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
         rejectRef.current = false;
@@ -67,6 +69,7 @@ const SolarPanelPoleHeightInput = ({
           }
         }
         if (rejectRef.current) {
+          rejectedValue.current = value;
           setInputPoleHeight(solarPanel.poleHeight);
         } else {
           const oldPoleHeightsAll = new Map<string, number>();
@@ -105,6 +108,7 @@ const SolarPanelPoleHeightInput = ({
             }
           }
           if (rejectRef.current) {
+            rejectedValue.current = value;
             setInputPoleHeight(solarPanel.poleHeight);
           } else {
             const oldPoleHeightsAboveFoundation = new Map<string, number>();
@@ -170,6 +174,7 @@ const SolarPanelPoleHeightInput = ({
               }
             }
             if (rejectRef.current) {
+              rejectedValue.current = value;
               setInputPoleHeight(solarPanel.poleHeight);
             } else {
               const oldPoleHeightsOnSurface = new Map<string, number>();
@@ -225,6 +230,7 @@ const SolarPanelPoleHeightInput = ({
           const oldPoleHeight = solarPanel.poleHeight;
           rejectRef.current = 0.5 * solarPanel.ly * Math.abs(Math.sin(solarPanel.tiltAngle)) > value;
           if (rejectRef.current) {
+            rejectedValue.current = value;
             setInputPoleHeight(oldPoleHeight);
           } else {
             const undoableChange = {
@@ -273,7 +279,11 @@ const SolarPanelPoleHeightInput = ({
           >
             {i18n.t('solarPanelMenu.PoleHeight', lang)}
             <label style={{ color: 'red', fontWeight: 'bold' }}>
-              {rejectRef.current ? ': ' + i18n.t('shared.CannotChangeToThisValue', lang) : ''}
+              {rejectRef.current
+                ? ': ' +
+                  i18n.t('shared.CannotChangeToInputValue', lang) +
+                  (rejectedValue.current ? ' (' + rejectedValue.current.toFixed(1) + ')' : '')
+                : ''}
             </label>
           </div>
         }

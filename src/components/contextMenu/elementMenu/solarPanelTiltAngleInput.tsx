@@ -40,6 +40,7 @@ const SolarPanelTiltAngleInput = ({
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
+  const rejectedValue = useRef<number | undefined>();
 
   const lang = { lng: language };
 
@@ -55,6 +56,7 @@ const SolarPanelTiltAngleInput = ({
   };
 
   const setTiltAngle = (value: number) => {
+    rejectedValue.current = undefined;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
         rejectRef.current = false;
@@ -67,6 +69,7 @@ const SolarPanelTiltAngleInput = ({
           }
         }
         if (rejectRef.current) {
+          rejectedValue.current = value;
           setInputTiltAngle(solarPanel.tiltAngle);
         } else {
           const oldTiltAnglesAll = new Map<string, number>();
@@ -105,6 +108,7 @@ const SolarPanelTiltAngleInput = ({
             }
           }
           if (rejectRef.current) {
+            rejectedValue.current = value;
             setInputTiltAngle(solarPanel.tiltAngle);
           } else {
             const oldTiltAnglesAboveFoundation = new Map<string, number>();
@@ -170,6 +174,7 @@ const SolarPanelTiltAngleInput = ({
               }
             }
             if (rejectRef.current) {
+              rejectedValue.current = value;
               setInputTiltAngle(solarPanel.tiltAngle);
             } else {
               const oldTiltAnglesOnSurface = new Map<string, number>();
@@ -224,6 +229,7 @@ const SolarPanelTiltAngleInput = ({
           const oldTiltAngle = solarPanel.tiltAngle;
           rejectRef.current = 0.5 * solarPanel.ly * Math.abs(Math.sin(value)) > solarPanel.poleHeight;
           if (rejectRef.current) {
+            rejectedValue.current = value;
             setInputTiltAngle(oldTiltAngle);
           } else {
             const undoableChange = {
@@ -272,7 +278,11 @@ const SolarPanelTiltAngleInput = ({
           >
             {i18n.t('solarPanelMenu.TiltAngle', lang)}
             <label style={{ color: 'red', fontWeight: 'bold' }}>
-              {rejectRef.current ? ': ' + i18n.t('shared.CannotChangeToThisValue', lang) : ''}
+              {rejectRef.current
+                ? ': ' +
+                  i18n.t('shared.CannotChangeToInputValue', lang) +
+                  (rejectedValue.current ? ' (' + Util.toDegrees(rejectedValue.current).toFixed(1) + '°)' : '')
+                : ''}
             </label>
           </div>
         }

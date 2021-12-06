@@ -43,6 +43,8 @@ const SolarPanelLengthInput = ({
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const rejectRef = useRef<boolean>(false);
+  const rejectedValue = useRef<number | undefined>();
 
   const lang = { lng: language };
 
@@ -61,6 +63,7 @@ const SolarPanelLengthInput = ({
   };
 
   const setLength = (value: number) => {
+    rejectedValue.current = undefined;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldLengthsAll = new Map<string, number>();
@@ -172,20 +175,35 @@ const SolarPanelLengthInput = ({
       default:
         if (solarPanel) {
           const oldLength = solarPanel.ly;
-          const undoableChange = {
-            name: 'Set Solar Panel Array Length',
-            timestamp: Date.now(),
-            oldValue: oldLength,
-            newValue: value,
-            undo: () => {
-              updateSolarPanelLyById(solarPanel.id, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateSolarPanelLyById(solarPanel.id, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateSolarPanelLyById(solarPanel.id, value);
+          rejectRef.current = false;
+          if (
+            solarPanel.tiltAngle !== 0 &&
+            0.5 * value * Math.abs(Math.sin(solarPanel.tiltAngle)) > solarPanel.poleHeight
+          ) {
+            // check if the new length will cause the solar panel to intersect with the base surface
+            rejectRef.current = true;
+          } else {
+            // check if the new length will cause the solar panel to be out of the bound
+          }
+          if (rejectRef.current) {
+            rejectedValue.current = value;
+            setInputLength(oldLength);
+          } else {
+            const undoableChange = {
+              name: 'Set Solar Panel Array Length',
+              timestamp: Date.now(),
+              oldValue: oldLength,
+              newValue: value,
+              undo: () => {
+                updateSolarPanelLyById(solarPanel.id, undoableChange.oldValue as number);
+              },
+              redo: () => {
+                updateSolarPanelLyById(solarPanel.id, undoableChange.newValue as number);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            updateSolarPanelLyById(solarPanel.id, value);
+          }
         }
     }
     setUpdateFlag(!updateFlag);
@@ -223,6 +241,13 @@ const SolarPanelLengthInput = ({
             onMouseOut={() => setDragEnabled(false)}
           >
             {i18n.t('word.Length', lang)}
+            <label style={{ color: 'red', fontWeight: 'bold' }}>
+              {rejectRef.current
+                ? ': ' +
+                  i18n.t('shared.CannotChangeToInputValue', lang) +
+                  (rejectedValue.current ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
+                : ''}
+            </label>
           </div>
         }
         footer={[
@@ -238,6 +263,7 @@ const SolarPanelLengthInput = ({
             key="Cancel"
             onClick={() => {
               setInputLength(solarPanel.ly);
+              rejectRef.current = false;
               setLengthDialogVisible(false);
             }}
           >
@@ -248,7 +274,9 @@ const SolarPanelLengthInput = ({
             type="primary"
             onClick={() => {
               setLength(inputLength);
-              setLengthDialogVisible(false);
+              if (!rejectRef.current) {
+                setLengthDialogVisible(false);
+              }
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -257,6 +285,7 @@ const SolarPanelLengthInput = ({
         // this must be specified for the x button at the upper-right corner to work
         onCancel={() => {
           setInputLength(solarPanel.ly);
+          rejectRef.current = false;
           setLengthDialogVisible(false);
         }}
         destroyOnClose={false}
