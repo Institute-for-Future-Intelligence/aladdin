@@ -93,7 +93,6 @@ const CuboidAzimuthInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateElementRotationById(cuboid.id, 0, 0, value);
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);

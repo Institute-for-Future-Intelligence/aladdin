@@ -92,7 +92,6 @@ const CuboidWidthInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateElementLxById(cuboid.id, value);
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);

@@ -186,7 +186,6 @@ const SolarPanelLengthInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateSolarPanelLyById(solarPanel.id, value);
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);

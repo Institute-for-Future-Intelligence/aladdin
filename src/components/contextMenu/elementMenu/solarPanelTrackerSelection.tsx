@@ -182,7 +182,6 @@ const SolarPanelTrackerSelection = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateSolarPanelTrackerTypeById(solarPanel.id, value);
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);

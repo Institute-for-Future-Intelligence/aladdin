@@ -92,7 +92,6 @@ const FoundationLengthInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateElementLyById(foundation.id, value);
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);

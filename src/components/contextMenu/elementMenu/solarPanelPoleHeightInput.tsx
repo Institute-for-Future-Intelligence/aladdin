@@ -39,6 +39,7 @@ const SolarPanelPoleHeightInput = ({
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const rejectRef = useRef<boolean>(false);
 
   const lang = { lng: language };
 
@@ -56,66 +57,92 @@ const SolarPanelPoleHeightInput = ({
   const setPoleHeight = (value: number) => {
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldPoleHeightsAll = new Map<string, number>();
+        rejectRef.current = false;
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel) {
-            oldPoleHeightsAll.set(elem.id, (elem as SolarPanelModel).poleHeight);
+            if (0.5 * elem.ly * Math.abs(Math.sin((elem as SolarPanelModel).tiltAngle)) > value) {
+              rejectRef.current = true;
+              break;
+            }
           }
         }
-        const undoableChangeAll = {
-          name: 'Set Pole Height for All Solar Panel Arrays',
-          timestamp: Date.now(),
-          oldValues: oldPoleHeightsAll,
-          newValue: value,
-          undo: () => {
-            for (const [id, ph] of undoableChangeAll.oldValues.entries()) {
-              updateSolarPanelPoleHeightById(id, ph as number);
-            }
-          },
-          redo: () => {
-            updateSolarPanelPoleHeightForAll(undoableChangeAll.newValue as number);
-          },
-        } as UndoableChangeGroup;
-        addUndoable(undoableChangeAll);
-        updateSolarPanelPoleHeightForAll(value);
-        break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (solarPanel.foundationId) {
-          const oldPoleHeightsAboveFoundation = new Map<string, number>();
+        if (rejectRef.current) {
+          setInputPoleHeight(solarPanel.poleHeight);
+        } else {
+          const oldPoleHeightsAll = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
-              oldPoleHeightsAboveFoundation.set(elem.id, (elem as SolarPanelModel).poleHeight);
+            if (elem.type === ObjectType.SolarPanel) {
+              oldPoleHeightsAll.set(elem.id, (elem as SolarPanelModel).poleHeight);
             }
           }
-          const undoableChangeAboveFoundation = {
-            name: 'Set Pole Height for All Solar Panel Arrays Above Foundation',
+          const undoableChangeAll = {
+            name: 'Set Pole Height for All Solar Panel Arrays',
             timestamp: Date.now(),
-            oldValues: oldPoleHeightsAboveFoundation,
+            oldValues: oldPoleHeightsAll,
             newValue: value,
-            groupId: solarPanel.foundationId,
             undo: () => {
-              for (const [id, ph] of undoableChangeAboveFoundation.oldValues.entries()) {
+              for (const [id, ph] of undoableChangeAll.oldValues.entries()) {
                 updateSolarPanelPoleHeightById(id, ph as number);
               }
             },
             redo: () => {
-              if (undoableChangeAboveFoundation.groupId) {
-                updateSolarPanelPoleHeightAboveFoundation(
-                  undoableChangeAboveFoundation.groupId,
-                  undoableChangeAboveFoundation.newValue as number,
-                );
-              }
+              updateSolarPanelPoleHeightForAll(undoableChangeAll.newValue as number);
             },
           } as UndoableChangeGroup;
-          addUndoable(undoableChangeAboveFoundation);
-          updateSolarPanelPoleHeightAboveFoundation(solarPanel.foundationId, value);
+          addUndoable(undoableChangeAll);
+          updateSolarPanelPoleHeightForAll(value);
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        if (solarPanel.foundationId) {
+          rejectRef.current = false;
+          for (const elem of elements) {
+            if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
+              if (0.5 * elem.ly * Math.abs(Math.sin((elem as SolarPanelModel).tiltAngle)) > value) {
+                rejectRef.current = true;
+                break;
+              }
+            }
+          }
+          if (rejectRef.current) {
+            setInputPoleHeight(solarPanel.poleHeight);
+          } else {
+            const oldPoleHeightsAboveFoundation = new Map<string, number>();
+            for (const elem of elements) {
+              if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
+                oldPoleHeightsAboveFoundation.set(elem.id, (elem as SolarPanelModel).poleHeight);
+              }
+            }
+            const undoableChangeAboveFoundation = {
+              name: 'Set Pole Height for All Solar Panel Arrays Above Foundation',
+              timestamp: Date.now(),
+              oldValues: oldPoleHeightsAboveFoundation,
+              newValue: value,
+              groupId: solarPanel.foundationId,
+              undo: () => {
+                for (const [id, ph] of undoableChangeAboveFoundation.oldValues.entries()) {
+                  updateSolarPanelPoleHeightById(id, ph as number);
+                }
+              },
+              redo: () => {
+                if (undoableChangeAboveFoundation.groupId) {
+                  updateSolarPanelPoleHeightAboveFoundation(
+                    undoableChangeAboveFoundation.groupId,
+                    undoableChangeAboveFoundation.newValue as number,
+                  );
+                }
+              },
+            } as UndoableChangeGroup;
+            addUndoable(undoableChangeAboveFoundation);
+            updateSolarPanelPoleHeightAboveFoundation(solarPanel.foundationId, value);
+          }
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
         if (solarPanel.parentId) {
           const parent = getElementById(solarPanel.parentId);
           if (parent) {
-            const oldPoleHeightsOnSurface = new Map<string, number>();
+            rejectRef.current = false;
             const isParentCuboid = parent.type === ObjectType.Cuboid;
             if (isParentCuboid) {
               for (const elem of elements) {
@@ -124,62 +151,97 @@ const SolarPanelPoleHeightInput = ({
                   elem.parentId === solarPanel.parentId &&
                   Util.isIdentical(elem.normal, solarPanel.normal)
                 ) {
-                  oldPoleHeightsOnSurface.set(elem.id, (elem as SolarPanelModel).poleHeight);
+                  // tilt is only allowed for the top surface of a cuboid
+                  if (0.5 * elem.ly * Math.abs(Math.sin((elem as SolarPanelModel).tiltAngle)) > value) {
+                    rejectRef.current = true;
+                    break;
+                  }
                 }
               }
             } else {
+              // tilt is only allowed on top of a foundation or a roof
               for (const elem of elements) {
                 if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                  oldPoleHeightsOnSurface.set(elem.id, (elem as SolarPanelModel).poleHeight);
+                  if (0.5 * elem.ly * Math.abs(Math.sin((elem as SolarPanelModel).tiltAngle)) > value) {
+                    rejectRef.current = true;
+                    break;
+                  }
                 }
               }
             }
-            const normal = isParentCuboid ? solarPanel.normal : undefined;
-            const undoableChangeOnSurface = {
-              name: 'Set Pole Height for All Solar Panel Arrays on Surface',
-              timestamp: Date.now(),
-              oldValues: oldPoleHeightsOnSurface,
-              newValue: value,
-              groupId: solarPanel.parentId,
-              normal: normal,
-              undo: () => {
-                for (const [id, ph] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateSolarPanelPoleHeightById(id, ph as number);
+            if (rejectRef.current) {
+              setInputPoleHeight(solarPanel.poleHeight);
+            } else {
+              const oldPoleHeightsOnSurface = new Map<string, number>();
+              const isParentCuboid = parent.type === ObjectType.Cuboid;
+              if (isParentCuboid) {
+                for (const elem of elements) {
+                  if (
+                    elem.type === ObjectType.SolarPanel &&
+                    elem.parentId === solarPanel.parentId &&
+                    Util.isIdentical(elem.normal, solarPanel.normal)
+                  ) {
+                    oldPoleHeightsOnSurface.set(elem.id, (elem as SolarPanelModel).poleHeight);
+                  }
                 }
-              },
-              redo: () => {
-                if (undoableChangeOnSurface.groupId) {
-                  updateSolarPanelPoleHeightOnSurface(
-                    undoableChangeOnSurface.groupId,
-                    undoableChangeOnSurface.normal,
-                    undoableChangeOnSurface.newValue as number,
-                  );
+              } else {
+                for (const elem of elements) {
+                  if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
+                    oldPoleHeightsOnSurface.set(elem.id, (elem as SolarPanelModel).poleHeight);
+                  }
                 }
-              },
-            } as UndoableChangeGroup;
-            addUndoable(undoableChangeOnSurface);
-            updateSolarPanelPoleHeightOnSurface(solarPanel.parentId, normal, value);
+              }
+              const normal = isParentCuboid ? solarPanel.normal : undefined;
+              const undoableChangeOnSurface = {
+                name: 'Set Pole Height for All Solar Panel Arrays on Surface',
+                timestamp: Date.now(),
+                oldValues: oldPoleHeightsOnSurface,
+                newValue: value,
+                groupId: solarPanel.parentId,
+                normal: normal,
+                undo: () => {
+                  for (const [id, ph] of undoableChangeOnSurface.oldValues.entries()) {
+                    updateSolarPanelPoleHeightById(id, ph as number);
+                  }
+                },
+                redo: () => {
+                  if (undoableChangeOnSurface.groupId) {
+                    updateSolarPanelPoleHeightOnSurface(
+                      undoableChangeOnSurface.groupId,
+                      undoableChangeOnSurface.normal,
+                      undoableChangeOnSurface.newValue as number,
+                    );
+                  }
+                },
+              } as UndoableChangeGroup;
+              addUndoable(undoableChangeOnSurface);
+              updateSolarPanelPoleHeightOnSurface(solarPanel.parentId, normal, value);
+            }
           }
         }
         break;
       default:
         if (solarPanel) {
           const oldPoleHeight = solarPanel.poleHeight;
-          const undoableChange = {
-            name: 'Set Solar Panel Array Pole Height',
-            timestamp: Date.now(),
-            oldValue: oldPoleHeight,
-            newValue: value,
-            undo: () => {
-              updateSolarPanelPoleHeightById(solarPanel.id, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateSolarPanelPoleHeightById(solarPanel.id, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateSolarPanelPoleHeightById(solarPanel.id, value);
-          setUpdateFlag(!updateFlag);
+          rejectRef.current = 0.5 * solarPanel.ly * Math.abs(Math.sin(solarPanel.tiltAngle)) > value;
+          if (rejectRef.current) {
+            setInputPoleHeight(oldPoleHeight);
+          } else {
+            const undoableChange = {
+              name: 'Set Solar Panel Array Pole Height',
+              timestamp: Date.now(),
+              oldValue: oldPoleHeight,
+              newValue: value,
+              undo: () => {
+                updateSolarPanelPoleHeightById(solarPanel.id, undoableChange.oldValue as number);
+              },
+              redo: () => {
+                updateSolarPanelPoleHeightById(solarPanel.id, undoableChange.newValue as number);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            updateSolarPanelPoleHeightById(solarPanel.id, value);
+          }
         }
     }
     setUpdateFlag(!updateFlag);
@@ -210,6 +272,9 @@ const SolarPanelPoleHeightInput = ({
             onMouseOut={() => setDragEnabled(false)}
           >
             {i18n.t('solarPanelMenu.PoleHeight', lang)}
+            <label style={{ color: 'red', fontWeight: 'bold' }}>
+              {rejectRef.current ? ': ' + i18n.t('shared.CannotChangeToThisValue', lang) : ''}
+            </label>
           </div>
         }
         footer={[
@@ -225,6 +290,7 @@ const SolarPanelPoleHeightInput = ({
             key="Cancel"
             onClick={() => {
               setInputPoleHeight(solarPanel.poleHeight);
+              rejectRef.current = false;
               setPoleHeightDialogVisible(false);
             }}
           >
@@ -235,7 +301,9 @@ const SolarPanelPoleHeightInput = ({
             type="primary"
             onClick={() => {
               setPoleHeight(inputPoleHeight);
-              setPoleHeightDialogVisible(false);
+              if (!rejectRef.current) {
+                setPoleHeightDialogVisible(false);
+              }
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -244,6 +312,7 @@ const SolarPanelPoleHeightInput = ({
         // this must be specified for the x button at the upper-right corner to work
         onCancel={() => {
           setInputPoleHeight(solarPanel.poleHeight);
+          rejectRef.current = false;
           setPoleHeightDialogVisible(false);
         }}
         destroyOnClose={false}

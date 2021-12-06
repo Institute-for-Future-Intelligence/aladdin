@@ -179,7 +179,6 @@ const SolarPanelPoleSpacingInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateSolarPanelPoleSpacingById(solarPanel.id, value);
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);

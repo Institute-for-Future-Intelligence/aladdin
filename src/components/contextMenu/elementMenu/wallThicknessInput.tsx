@@ -125,7 +125,6 @@ const WallThicknessInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateWallThicknessById(wall.id, value);
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);

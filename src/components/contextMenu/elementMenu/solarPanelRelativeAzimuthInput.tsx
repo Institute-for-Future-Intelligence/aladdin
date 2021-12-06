@@ -181,7 +181,6 @@ const SolarPanelRelativeAzimuthInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateSolarPanelRelativeAzimuthById(solarPanel.id, value);
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);

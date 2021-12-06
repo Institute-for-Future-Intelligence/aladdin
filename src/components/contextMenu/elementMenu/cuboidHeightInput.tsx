@@ -102,7 +102,6 @@ const CuboidHeightInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateLzAndCz(cuboid.id, value);
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);

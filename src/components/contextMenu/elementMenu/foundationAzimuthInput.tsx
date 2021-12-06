@@ -93,7 +93,6 @@ const FoundationAzimuthInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateElementRotationById(foundation.id, 0, 0, value);
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);

@@ -92,7 +92,6 @@ const CuboidLengthInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateElementLyById(cuboid.id, value);
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);

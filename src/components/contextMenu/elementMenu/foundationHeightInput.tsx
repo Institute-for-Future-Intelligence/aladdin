@@ -102,7 +102,6 @@ const FoundationHeightInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateLzAndCz(foundation.id, value);
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);

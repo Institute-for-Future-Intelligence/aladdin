@@ -125,7 +125,6 @@ const WallHeightInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateWallHeightById(wall.id, value);
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);

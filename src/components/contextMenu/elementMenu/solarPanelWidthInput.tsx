@@ -186,7 +186,6 @@ const SolarPanelWidthInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateSolarPanelLxById(solarPanel.id, value);
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);

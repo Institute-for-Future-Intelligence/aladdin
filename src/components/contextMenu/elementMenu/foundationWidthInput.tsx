@@ -92,7 +92,6 @@ const FoundationWidthInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateElementLxById(foundation.id, value);
-          setUpdateFlag(!updateFlag);
         }
     }
     setUpdateFlag(!updateFlag);
