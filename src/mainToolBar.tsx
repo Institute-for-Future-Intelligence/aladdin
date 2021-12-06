@@ -14,7 +14,6 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import { showError, showInfo } from './helpers';
 import { CloudFileInfo, ObjectType, User } from './types';
-import queryString from 'querystring';
 import CloudFilePanel from './panels/cloudFilePanel';
 import Spinner from './components/spinner';
 import AccountSettingsPanel from './panels/accountSettingsPanel';
@@ -65,7 +64,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const firstCall = useRef<boolean>(true);
 
   const isMac = Util.getOS()?.startsWith('Mac');
-  const query = queryString.parse(window.location.search);
+  const params = new URLSearchParams(window.location.search);
   const lang = { lng: language };
 
   useEffect(() => {
@@ -137,8 +136,10 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   }, [showCloudFileTitleDialog]);
 
   const init = () => {
-    if (query.userid && query.title) {
-      openCloudFile(query.userid.toString(), query.title.toString());
+    const userid = params.get('userid');
+    const title = params.get('title');
+    if (userid && title) {
+      openCloudFile(userid, title);
     }
   };
 

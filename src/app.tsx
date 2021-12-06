@@ -12,13 +12,11 @@ import ErrorPage from './ErrorPage';
 import { Beforeunload } from 'react-beforeunload';
 import { ConfigProvider } from 'antd';
 import AppCreator from './appCreator';
-import queryString from 'querystring';
 import LocalFileManager from './localFileManager';
 import AnalysisManager from './analysisManager';
 
 const App = () => {
   const locale = useStore(Selector.locale);
-  const query = queryString.parse(window.location.search);
   const world = useStore((state: CommonStoreState) => state.world);
   const elements = useStore((state: CommonStoreState) => state.elements);
   const viewState = useStore((state: CommonStoreState) => state.viewState);
@@ -43,7 +41,8 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [world, viewState, elements, notes]);
 
-  const viewOnly = query.viewonly === 'true';
+  const params = new URLSearchParams(window.location.search);
+  const viewOnly = params.get('viewonly') === 'true';
 
   return (
     <ConfigProvider locale={locale}>

@@ -11,7 +11,6 @@ import { WeatherModel } from '../models/WeatherModel';
 import weather from '../resources/weather.csv';
 import pvmodules from '../resources/pvmodules.csv';
 import Papa from 'papaparse';
-import queryString from 'querystring';
 import { Util } from '../Util';
 import {
   ActionType,
@@ -417,9 +416,9 @@ export const useStore = create<CommonStoreState>(
             });
           },
           undoManager: new UndoManager(),
-          addUndoable(undable: Undoable) {
+          addUndoable(undoable: Undoable) {
             immerSet((state: CommonStoreState) => {
-              state.undoManager.add(undable);
+              state.undoManager.add(undoable);
             });
           },
 
@@ -2057,7 +2056,7 @@ export const useStore = create<CommonStoreState>(
                 const newParent = state.getSelectedElement();
                 const oldParent = state.getElementById(elem.parentId);
                 if (newParent) {
-                  // if parent is ground, it has no type definition but we use it to check its type
+                  // if parent is ground, it has no type definition, but we use it to check its type
                   if (oldParent && oldParent.type) {
                     elem.parentId = newParent.id;
                     m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
@@ -2351,8 +2350,8 @@ export const useStore = create<CommonStoreState>(
       {
         name: 'aladdin-storage',
         getStorage: () => {
-          const query = queryString.parse(window.location.search);
-          const viewOnly = query.viewonly === 'true';
+          const params = new URLSearchParams(window.location.search);
+          const viewOnly = params.get('viewonly') === 'true';
           return viewOnly ? sessionStorage : localStorage;
         },
         whitelist: [
