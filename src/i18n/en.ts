@@ -95,7 +95,7 @@ export const i18n_en = {
       CounterclockwiseAzimuthIsPositive: 'Counter-clockwise is positive',
       NoTexture: 'No Texture',
       DoYouWantToSaveChanges: 'Do you want to save changes?',
-      CannotChangeToInputValue: 'Cannot change to your input value',
+      NotApplicableToSelectedAction: 'Not Applicable to Selected Action',
     },
 
     menu: {

@@ -128,41 +128,55 @@ const SolarPanelLengthInput = ({
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (solarPanel.foundationId) {
-          const oldLengthsAboveFoundation = new Map<string, number>();
+          rejectRef.current = false;
           for (const elem of elements) {
             if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
-              oldLengthsAboveFoundation.set(elem.id, elem.ly);
+              if (rejectChange(elem as SolarPanelModel, value)) {
+                rejectRef.current = true;
+                break;
+              }
             }
           }
-          const undoableChangeAboveFoundation = {
-            name: 'Set Length for All Solar Panel Arrays Above Foundation',
-            timestamp: Date.now(),
-            oldValues: oldLengthsAboveFoundation,
-            newValue: value,
-            groupId: solarPanel.foundationId,
-            undo: () => {
-              for (const [id, ly] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updateSolarPanelLyById(id, ly as number);
+          if (rejectRef.current) {
+            rejectedValue.current = value;
+            setInputLength(solarPanel.ly);
+          } else {
+            const oldLengthsAboveFoundation = new Map<string, number>();
+            for (const elem of elements) {
+              if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
+                oldLengthsAboveFoundation.set(elem.id, elem.ly);
               }
-            },
-            redo: () => {
-              if (undoableChangeAboveFoundation.groupId) {
-                updateSolarPanelLyAboveFoundation(
-                  undoableChangeAboveFoundation.groupId,
-                  undoableChangeAboveFoundation.newValue as number,
-                );
-              }
-            },
-          } as UndoableChangeGroup;
-          addUndoable(undoableChangeAboveFoundation);
-          updateSolarPanelLyAboveFoundation(solarPanel.foundationId, value);
+            }
+            const undoableChangeAboveFoundation = {
+              name: 'Set Length for All Solar Panel Arrays Above Foundation',
+              timestamp: Date.now(),
+              oldValues: oldLengthsAboveFoundation,
+              newValue: value,
+              groupId: solarPanel.foundationId,
+              undo: () => {
+                for (const [id, ly] of undoableChangeAboveFoundation.oldValues.entries()) {
+                  updateSolarPanelLyById(id, ly as number);
+                }
+              },
+              redo: () => {
+                if (undoableChangeAboveFoundation.groupId) {
+                  updateSolarPanelLyAboveFoundation(
+                    undoableChangeAboveFoundation.groupId,
+                    undoableChangeAboveFoundation.newValue as number,
+                  );
+                }
+              },
+            } as UndoableChangeGroup;
+            addUndoable(undoableChangeAboveFoundation);
+            updateSolarPanelLyAboveFoundation(solarPanel.foundationId, value);
+          }
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
         if (solarPanel.parentId) {
           const parent = getElementById(solarPanel.parentId);
           if (parent) {
-            const oldLengthsOnSurface = new Map<string, number>();
+            rejectRef.current = false;
             const isParentCuboid = parent.type === ObjectType.Cuboid;
             if (isParentCuboid) {
               for (const elem of elements) {
@@ -171,41 +185,71 @@ const SolarPanelLengthInput = ({
                   elem.parentId === solarPanel.parentId &&
                   Util.isIdentical(elem.normal, solarPanel.normal)
                 ) {
-                  oldLengthsOnSurface.set(elem.id, elem.ly);
+                  if (rejectChange(elem as SolarPanelModel, value)) {
+                    rejectRef.current = true;
+                    break;
+                  }
                 }
               }
             } else {
               for (const elem of elements) {
                 if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                  oldLengthsOnSurface.set(elem.id, elem.ly);
+                  if (rejectChange(elem as SolarPanelModel, value)) {
+                    rejectRef.current = true;
+                    break;
+                  }
                 }
               }
             }
-            const normal = isParentCuboid ? solarPanel.normal : undefined;
-            const undoableChangeOnSurface = {
-              name: 'Set Length for All Solar Panel Arrays on Surface',
-              timestamp: Date.now(),
-              oldValues: oldLengthsOnSurface,
-              newValue: value,
-              groupId: solarPanel.parentId,
-              normal: normal,
-              undo: () => {
-                for (const [id, ly] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateSolarPanelLyById(id, ly as number);
+            if (rejectRef.current) {
+              rejectedValue.current = value;
+              setInputLength(solarPanel.ly);
+            } else {
+              const oldLengthsOnSurface = new Map<string, number>();
+              const isParentCuboid = parent.type === ObjectType.Cuboid;
+              if (isParentCuboid) {
+                for (const elem of elements) {
+                  if (
+                    elem.type === ObjectType.SolarPanel &&
+                    elem.parentId === solarPanel.parentId &&
+                    Util.isIdentical(elem.normal, solarPanel.normal)
+                  ) {
+                    oldLengthsOnSurface.set(elem.id, elem.ly);
+                  }
                 }
-              },
-              redo: () => {
-                if (undoableChangeOnSurface.groupId) {
-                  updateSolarPanelLyOnSurface(
-                    undoableChangeOnSurface.groupId,
-                    undoableChangeOnSurface.normal,
-                    undoableChangeOnSurface.newValue as number,
-                  );
+              } else {
+                for (const elem of elements) {
+                  if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
+                    oldLengthsOnSurface.set(elem.id, elem.ly);
+                  }
                 }
-              },
-            } as UndoableChangeGroup;
-            addUndoable(undoableChangeOnSurface);
-            updateSolarPanelLyOnSurface(solarPanel.parentId, normal, value);
+              }
+              const normal = isParentCuboid ? solarPanel.normal : undefined;
+              const undoableChangeOnSurface = {
+                name: 'Set Length for All Solar Panel Arrays on Surface',
+                timestamp: Date.now(),
+                oldValues: oldLengthsOnSurface,
+                newValue: value,
+                groupId: solarPanel.parentId,
+                normal: normal,
+                undo: () => {
+                  for (const [id, ly] of undoableChangeOnSurface.oldValues.entries()) {
+                    updateSolarPanelLyById(id, ly as number);
+                  }
+                },
+                redo: () => {
+                  if (undoableChangeOnSurface.groupId) {
+                    updateSolarPanelLyOnSurface(
+                      undoableChangeOnSurface.groupId,
+                      undoableChangeOnSurface.normal,
+                      undoableChangeOnSurface.newValue as number,
+                    );
+                  }
+                },
+              } as UndoableChangeGroup;
+              addUndoable(undoableChangeOnSurface);
+              updateSolarPanelLyOnSurface(solarPanel.parentId, normal, value);
+            }
           }
         }
         break;
@@ -272,7 +316,7 @@ const SolarPanelLengthInput = ({
             <label style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +
-                  i18n.t('shared.CannotChangeToInputValue', lang) +
+                  i18n.t('shared.NotApplicableToSelectedAction', lang) +
                   (rejectedValue.current ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
                 : ''}
             </label>

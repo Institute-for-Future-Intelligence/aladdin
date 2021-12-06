@@ -281,7 +281,7 @@ const SolarPanelPoleHeightInput = ({
             <label style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +
-                  i18n.t('shared.CannotChangeToInputValue', lang) +
+                  i18n.t('shared.NotApplicableToSelectedAction', lang) +
                   (rejectedValue.current ? ' (' + rejectedValue.current.toFixed(1) + ')' : '')
                 : ''}
             </label>
