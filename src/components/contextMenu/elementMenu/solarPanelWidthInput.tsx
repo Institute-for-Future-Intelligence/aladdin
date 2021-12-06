@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
+import { UNIT_VECTOR_POS_Z_ARRAY } from '../../../constants';
 
 const SolarPanelWidthInput = ({
   widthDialogVisible,
@@ -43,6 +44,8 @@ const SolarPanelWidthInput = ({
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const rejectRef = useRef<boolean>(false);
+  const rejectedValue = useRef<number | undefined>();
 
   const lang = { lng: language };
 
@@ -60,69 +63,121 @@ const SolarPanelWidthInput = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const withinParent = (sp: SolarPanelModel, lx: number) => {
+    const parent = getElementById(sp.parentId);
+    if (parent) {
+      if (parent.type === ObjectType.Cuboid && !Util.isIdentical(sp.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+        // TODO: cuboid vertical sides
+        return true;
+      }
+      const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
+      clone.lx = lx;
+      return Util.isSolarPanelWithin(clone, parent);
+    }
+    return false;
+  };
+
+  const rejectChange = (sp: SolarPanelModel, lx: number) => {
+    // check if the new width will cause the solar panel to be out of the bound
+    if (!withinParent(sp, lx)) {
+      return true;
+    }
+    // other check?
+    return false;
+  };
+
   const setWidth = (value: number) => {
+    rejectedValue.current = undefined;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldWidthsAll = new Map<string, number>();
+        rejectRef.current = false;
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel) {
-            oldWidthsAll.set(elem.id, elem.lx);
+            if (rejectChange(elem as SolarPanelModel, value)) {
+              rejectRef.current = true;
+              break;
+            }
           }
         }
-        const undoableChangeAll = {
-          name: 'Set Width for All Solar Panel Arrays',
-          timestamp: Date.now(),
-          oldValues: oldWidthsAll,
-          newValue: value,
-          undo: () => {
-            for (const [id, lx] of undoableChangeAll.oldValues.entries()) {
-              updateSolarPanelLxById(id, lx as number);
-            }
-          },
-          redo: () => {
-            updateSolarPanelLxForAll(undoableChangeAll.newValue as number);
-          },
-        } as UndoableChangeGroup;
-        addUndoable(undoableChangeAll);
-        updateSolarPanelLxForAll(value);
-        break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (solarPanel.foundationId) {
-          const oldWidthsAboveFoundation = new Map<string, number>();
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputWidth(solarPanel.lx);
+        } else {
+          const oldWidthsAll = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
-              oldWidthsAboveFoundation.set(elem.id, elem.lx);
+            if (elem.type === ObjectType.SolarPanel) {
+              oldWidthsAll.set(elem.id, elem.lx);
             }
           }
-          const undoableChangeAboveFoundation = {
-            name: 'Set Width for All Solar Panel Arrays Above Foundation',
+          const undoableChangeAll = {
+            name: 'Set Width for All Solar Panel Arrays',
             timestamp: Date.now(),
-            oldValues: oldWidthsAboveFoundation,
+            oldValues: oldWidthsAll,
             newValue: value,
-            groupId: solarPanel.foundationId,
             undo: () => {
-              for (const [id, lx] of undoableChangeAboveFoundation.oldValues.entries()) {
+              for (const [id, lx] of undoableChangeAll.oldValues.entries()) {
                 updateSolarPanelLxById(id, lx as number);
               }
             },
             redo: () => {
-              if (undoableChangeAboveFoundation.groupId) {
-                updateSolarPanelLxAboveFoundation(
-                  undoableChangeAboveFoundation.groupId,
-                  undoableChangeAboveFoundation.newValue as number,
-                );
-              }
+              updateSolarPanelLxForAll(undoableChangeAll.newValue as number);
             },
           } as UndoableChangeGroup;
-          addUndoable(undoableChangeAboveFoundation);
-          updateSolarPanelLxAboveFoundation(solarPanel.foundationId, value);
+          addUndoable(undoableChangeAll);
+          updateSolarPanelLxForAll(value);
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        if (solarPanel.foundationId) {
+          rejectRef.current = false;
+          for (const elem of elements) {
+            if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
+              if (rejectChange(elem as SolarPanelModel, value)) {
+                rejectRef.current = true;
+                break;
+              }
+            }
+          }
+          if (rejectRef.current) {
+            rejectedValue.current = value;
+            setInputWidth(solarPanel.lx);
+          } else {
+            const oldWidthsAboveFoundation = new Map<string, number>();
+            for (const elem of elements) {
+              if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
+                oldWidthsAboveFoundation.set(elem.id, elem.lx);
+              }
+            }
+            const undoableChangeAboveFoundation = {
+              name: 'Set Width for All Solar Panel Arrays Above Foundation',
+              timestamp: Date.now(),
+              oldValues: oldWidthsAboveFoundation,
+              newValue: value,
+              groupId: solarPanel.foundationId,
+              undo: () => {
+                for (const [id, lx] of undoableChangeAboveFoundation.oldValues.entries()) {
+                  updateSolarPanelLxById(id, lx as number);
+                }
+              },
+              redo: () => {
+                if (undoableChangeAboveFoundation.groupId) {
+                  updateSolarPanelLxAboveFoundation(
+                    undoableChangeAboveFoundation.groupId,
+                    undoableChangeAboveFoundation.newValue as number,
+                  );
+                }
+              },
+            } as UndoableChangeGroup;
+            addUndoable(undoableChangeAboveFoundation);
+            updateSolarPanelLxAboveFoundation(solarPanel.foundationId, value);
+          }
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
         if (solarPanel.parentId) {
           const parent = getElementById(solarPanel.parentId);
           if (parent) {
-            const oldWidthsOnSurface = new Map<string, number>();
+            rejectRef.current = false;
             const isParentCuboid = parent.type === ObjectType.Cuboid;
             if (isParentCuboid) {
               for (const elem of elements) {
@@ -131,61 +186,97 @@ const SolarPanelWidthInput = ({
                   elem.parentId === solarPanel.parentId &&
                   Util.isIdentical(elem.normal, solarPanel.normal)
                 ) {
-                  oldWidthsOnSurface.set(elem.id, elem.lx);
+                  if (rejectChange(elem as SolarPanelModel, value)) {
+                    rejectRef.current = true;
+                    break;
+                  }
                 }
               }
             } else {
               for (const elem of elements) {
                 if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                  oldWidthsOnSurface.set(elem.id, elem.lx);
+                  if (rejectChange(elem as SolarPanelModel, value)) {
+                    rejectRef.current = true;
+                    break;
+                  }
                 }
               }
             }
-            const normal = isParentCuboid ? solarPanel.normal : undefined;
-            const undoableChangeOnSurface = {
-              name: 'Set Width for All Solar Panel Arrays on Surface',
-              timestamp: Date.now(),
-              oldValues: oldWidthsOnSurface,
-              newValue: value,
-              groupId: solarPanel.parentId,
-              normal: normal,
-              undo: () => {
-                for (const [id, lx] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateSolarPanelLxById(id, lx as number);
+            if (rejectRef.current) {
+              rejectedValue.current = value;
+              setInputWidth(solarPanel.lx);
+            } else {
+              const oldWidthsOnSurface = new Map<string, number>();
+              const isParentCuboid = parent.type === ObjectType.Cuboid;
+              if (isParentCuboid) {
+                for (const elem of elements) {
+                  if (
+                    elem.type === ObjectType.SolarPanel &&
+                    elem.parentId === solarPanel.parentId &&
+                    Util.isIdentical(elem.normal, solarPanel.normal)
+                  ) {
+                    oldWidthsOnSurface.set(elem.id, elem.lx);
+                  }
                 }
-              },
-              redo: () => {
-                if (undoableChangeOnSurface.groupId) {
-                  updateSolarPanelLxOnSurface(
-                    undoableChangeOnSurface.groupId,
-                    undoableChangeOnSurface.normal,
-                    undoableChangeOnSurface.newValue as number,
-                  );
+              } else {
+                for (const elem of elements) {
+                  if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
+                    oldWidthsOnSurface.set(elem.id, elem.lx);
+                  }
                 }
-              },
-            } as UndoableChangeGroup;
-            addUndoable(undoableChangeOnSurface);
-            updateSolarPanelLxOnSurface(solarPanel.parentId, normal, value);
+              }
+              const normal = isParentCuboid ? solarPanel.normal : undefined;
+              const undoableChangeOnSurface = {
+                name: 'Set Width for All Solar Panel Arrays on Surface',
+                timestamp: Date.now(),
+                oldValues: oldWidthsOnSurface,
+                newValue: value,
+                groupId: solarPanel.parentId,
+                normal: normal,
+                undo: () => {
+                  for (const [id, lx] of undoableChangeOnSurface.oldValues.entries()) {
+                    updateSolarPanelLxById(id, lx as number);
+                  }
+                },
+                redo: () => {
+                  if (undoableChangeOnSurface.groupId) {
+                    updateSolarPanelLxOnSurface(
+                      undoableChangeOnSurface.groupId,
+                      undoableChangeOnSurface.normal,
+                      undoableChangeOnSurface.newValue as number,
+                    );
+                  }
+                },
+              } as UndoableChangeGroup;
+              addUndoable(undoableChangeOnSurface);
+              updateSolarPanelLxOnSurface(solarPanel.parentId, normal, value);
+            }
           }
         }
         break;
       default:
         if (solarPanel) {
           const oldWidth = solarPanel.lx;
-          const undoableChange = {
-            name: 'Set Solar Panel Array Width',
-            timestamp: Date.now(),
-            oldValue: oldWidth,
-            newValue: value,
-            undo: () => {
-              updateSolarPanelLxById(solarPanel.id, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateSolarPanelLxById(solarPanel.id, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateSolarPanelLxById(solarPanel.id, value);
+          rejectRef.current = rejectChange(solarPanel, value);
+          if (rejectRef.current) {
+            rejectedValue.current = value;
+            setInputWidth(oldWidth);
+          } else {
+            const undoableChange = {
+              name: 'Set Solar Panel Array Width',
+              timestamp: Date.now(),
+              oldValue: oldWidth,
+              newValue: value,
+              undo: () => {
+                updateSolarPanelLxById(solarPanel.id, undoableChange.oldValue as number);
+              },
+              redo: () => {
+                updateSolarPanelLxById(solarPanel.id, undoableChange.newValue as number);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            updateSolarPanelLxById(solarPanel.id, value);
+          }
         }
     }
     setUpdateFlag(!updateFlag);
@@ -223,6 +314,13 @@ const SolarPanelWidthInput = ({
             onMouseOut={() => setDragEnabled(false)}
           >
             {i18n.t('word.Width', lang)}
+            <label style={{ color: 'red', fontWeight: 'bold' }}>
+              {rejectRef.current
+                ? ': ' +
+                  i18n.t('shared.NotApplicableToSelectedAction', lang) +
+                  (rejectedValue.current ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
+                : ''}
+            </label>
           </div>
         }
         footer={[
@@ -238,6 +336,7 @@ const SolarPanelWidthInput = ({
             key="Cancel"
             onClick={() => {
               setInputWidth(solarPanel.lx);
+              rejectRef.current = false;
               setWidthDialogVisible(false);
             }}
           >
@@ -248,7 +347,9 @@ const SolarPanelWidthInput = ({
             type="primary"
             onClick={() => {
               setWidth(inputWidth);
-              setWidthDialogVisible(false);
+              if (!rejectRef.current) {
+                setWidthDialogVisible(false);
+              }
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -257,6 +358,7 @@ const SolarPanelWidthInput = ({
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputWidth(solarPanel.lx);
+          rejectRef.current = false;
           setWidthDialogVisible(false);
         }}
         destroyOnClose={false}

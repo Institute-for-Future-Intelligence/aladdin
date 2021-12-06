@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
+import { UNIT_VECTOR_POS_Z_ARRAY } from '../../../constants';
 
 const SolarPanelLengthInput = ({
   lengthDialogVisible,
@@ -65,6 +66,10 @@ const SolarPanelLengthInput = ({
   const withinParent = (sp: SolarPanelModel, ly: number) => {
     const parent = getElementById(sp.parentId);
     if (parent) {
+      if (parent.type === ObjectType.Cuboid && !Util.isIdentical(sp.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+        // TODO: cuboid vertical sides
+        return true;
+      }
       const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
       clone.ly = ly;
       return Util.isSolarPanelWithin(clone, parent);
