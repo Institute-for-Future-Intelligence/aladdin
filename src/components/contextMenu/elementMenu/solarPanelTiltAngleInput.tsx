@@ -318,7 +318,7 @@ const SolarPanelTiltAngleInput = ({
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
-        // this must be specified for the x button at the upper-right corner to work
+        // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputTiltAngle(solarPanel.tiltAngle);
           rejectRef.current = false;
@@ -342,7 +342,7 @@ const SolarPanelTiltAngleInput = ({
               step={1}
               formatter={(a) => Number(a).toFixed(1) + '°'}
               onChange={(value) => setInputTiltAngle(Util.toRadians(value))}
-              onPressEnter={(event) => {
+              onPressEnter={() => {
                 setTiltAngle(inputTiltAngle);
                 setTiltDialogVisible(false);
               }}

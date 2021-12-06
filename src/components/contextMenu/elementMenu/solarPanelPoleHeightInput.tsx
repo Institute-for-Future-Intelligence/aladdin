@@ -319,7 +319,7 @@ const SolarPanelPoleHeightInput = ({
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
-        // this must be specified for the x button at the upper-right corner to work
+        // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputPoleHeight(solarPanel.poleHeight);
           rejectRef.current = false;
@@ -343,7 +343,7 @@ const SolarPanelPoleHeightInput = ({
               value={inputPoleHeight}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => setInputPoleHeight(value)}
-              onPressEnter={(event) => {
+              onPressEnter={() => {
                 setPoleHeight(inputPoleHeight);
                 setPoleHeightDialogVisible(false);
               }}

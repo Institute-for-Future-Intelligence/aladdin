@@ -240,7 +240,7 @@ const SolarPanelPoleSpacingInput = ({
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
-        // this must be specified for the x button at the upper-right corner to work
+        // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputPoleSpacing(solarPanel.poleSpacing);
           setPoleSpacingDialogVisible(false);
@@ -263,7 +263,7 @@ const SolarPanelPoleSpacingInput = ({
               value={inputPoleSpacing}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => setInputPoleSpacing(value)}
-              onPressEnter={(event) => {
+              onPressEnter={() => {
                 setPoleSpacing(inputPoleSpacing);
                 setPoleSpacingDialogVisible(false);
               }}

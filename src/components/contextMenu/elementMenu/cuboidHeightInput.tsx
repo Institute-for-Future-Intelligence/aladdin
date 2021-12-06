@@ -163,7 +163,7 @@ const CuboidHeightInput = ({
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
-        // this must be specified for the x button at the upper-right corner to work
+        // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputLz(cuboid?.lz);
           setHeightDialogVisible(false);
@@ -186,7 +186,7 @@ const CuboidHeightInput = ({
               value={inputLz}
               formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => setInputLz(value)}
-              onPressEnter={(event) => {
+              onPressEnter={() => {
                 setLz(inputLz);
                 setHeightDialogVisible(false);
               }}

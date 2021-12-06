@@ -243,7 +243,7 @@ const SolarPanelTrackerSelection = ({
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
-        // this must be specified for the x button at the upper-right corner to work
+        // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setSelectedTrackerType(solarPanel.trackerType);
           setTrackerDialogVisible(false);

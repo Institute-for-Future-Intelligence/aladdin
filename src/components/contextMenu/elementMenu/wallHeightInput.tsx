@@ -186,7 +186,7 @@ const WallHeightInput = ({
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
-        // this must be specified for the x button at the upper-right corner to work
+        // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputHeight(wall.lz);
           setHeightDialogVisible(false);
@@ -209,7 +209,7 @@ const WallHeightInput = ({
               value={inputHeight}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => setInputHeight(value)}
-              onPressEnter={(event) => {
+              onPressEnter={() => {
                 setHeight(inputHeight);
                 setHeightDialogVisible(false);
               }}

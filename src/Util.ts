@@ -35,7 +35,7 @@ export class Util {
     const dy = parent.ly * 0.5;
     const rx = solarPanel.lx * 0.5;
     const ry = solarPanel.ly * 0.5;
-    // vertex 1:
+    // vertex 1
     let x = x0 + rx * cosaz - ry * sinaz;
     let y = y0 + rx * sinaz + ry * cosaz;
     if (Math.abs(x) > dx || Math.abs(y) > dy) return false;

@@ -154,7 +154,7 @@ const CuboidAzimuthInput = ({
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
-        // this must be specified for the x button at the upper-right corner to work
+        // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputAzimuth(cuboid?.rotation[2]);
           setAzimuthDialogVisible(false);
@@ -177,7 +177,7 @@ const CuboidAzimuthInput = ({
               value={Util.toDegrees(inputAzimuth)}
               formatter={(a) => Number(a).toFixed(1) + '°'}
               onChange={(value) => setInputAzimuth(Util.toRadians(value))}
-              onPressEnter={(event) => {
+              onPressEnter={() => {
                 setAzimuth(inputAzimuth);
                 setAzimuthDialogVisible(false);
               }}

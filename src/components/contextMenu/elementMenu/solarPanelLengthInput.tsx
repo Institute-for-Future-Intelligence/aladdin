@@ -62,32 +62,69 @@ const SolarPanelLengthInput = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const withinParent = (sp: SolarPanelModel, ly: number) => {
+    const parent = getElementById(sp.parentId);
+    if (parent) {
+      const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
+      clone.ly = ly;
+      return Util.isSolarPanelWithin(clone, parent);
+    }
+    return false;
+  };
+
+  const rejectChange = (sp: SolarPanelModel, ly: number) => {
+    if (sp.tiltAngle !== 0 && 0.5 * ly * Math.abs(Math.sin(sp.tiltAngle)) > sp.poleHeight) {
+      // check if the new length will cause the solar panel to intersect with the base surface
+      return true;
+    }
+    // check if the new length will cause the solar panel to be out of the bound
+    if (!withinParent(sp, ly)) {
+      return true;
+    }
+    // other check?
+    return false;
+  };
+
   const setLength = (value: number) => {
     rejectedValue.current = undefined;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldLengthsAll = new Map<string, number>();
+        rejectRef.current = false;
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel) {
-            oldLengthsAll.set(elem.id, elem.ly);
+            if (rejectChange(elem as SolarPanelModel, value)) {
+              rejectRef.current = true;
+              break;
+            }
           }
         }
-        const undoableChangeAll = {
-          name: 'Set Length for All Solar Panel Arrays',
-          timestamp: Date.now(),
-          oldValues: oldLengthsAll,
-          newValue: value,
-          undo: () => {
-            for (const [id, ly] of undoableChangeAll.oldValues.entries()) {
-              updateSolarPanelLyById(id, ly as number);
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputLength(solarPanel.ly);
+        } else {
+          const oldLengthsAll = new Map<string, number>();
+          for (const elem of elements) {
+            if (elem.type === ObjectType.SolarPanel) {
+              oldLengthsAll.set(elem.id, elem.ly);
             }
-          },
-          redo: () => {
-            updateSolarPanelLyForAll(undoableChangeAll.newValue as number);
-          },
-        } as UndoableChangeGroup;
-        addUndoable(undoableChangeAll);
-        updateSolarPanelLyForAll(value);
+          }
+          const undoableChangeAll = {
+            name: 'Set Length for All Solar Panel Arrays',
+            timestamp: Date.now(),
+            oldValues: oldLengthsAll,
+            newValue: value,
+            undo: () => {
+              for (const [id, ly] of undoableChangeAll.oldValues.entries()) {
+                updateSolarPanelLyById(id, ly as number);
+              }
+            },
+            redo: () => {
+              updateSolarPanelLyForAll(undoableChangeAll.newValue as number);
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeAll);
+          updateSolarPanelLyForAll(value);
+        }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (solarPanel.foundationId) {
@@ -175,24 +212,7 @@ const SolarPanelLengthInput = ({
       default:
         if (solarPanel) {
           const oldLength = solarPanel.ly;
-          rejectRef.current = false;
-          if (
-            solarPanel.tiltAngle !== 0 &&
-            0.5 * value * Math.abs(Math.sin(solarPanel.tiltAngle)) > solarPanel.poleHeight
-          ) {
-            // check if the new length will cause the solar panel to intersect with the base surface
-            rejectRef.current = true;
-          } else {
-            // check if the new length will cause the solar panel to be out of the bound
-            const parent = getElementById(solarPanel.parentId);
-            if (parent) {
-              const clone = JSON.parse(JSON.stringify(solarPanel)) as SolarPanelModel;
-              clone.ly = value;
-              if (!Util.isSolarPanelWithin(clone, parent)) {
-                rejectRef.current = true;
-              }
-            }
-          }
+          rejectRef.current = rejectChange(solarPanel, value);
           if (rejectRef.current) {
             rejectedValue.current = value;
             setInputLength(oldLength);
@@ -290,7 +310,7 @@ const SolarPanelLengthInput = ({
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
-        // this must be specified for the x button at the upper-right corner to work
+        // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputLength(solarPanel.ly);
           rejectRef.current = false;
@@ -314,7 +334,7 @@ const SolarPanelLengthInput = ({
               value={inputLength}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => setInputLength(panelize(value))}
-              onPressEnter={(event) => {
+              onPressEnter={() => {
                 setLength(inputLength);
                 setLengthDialogVisible(false);
               }}

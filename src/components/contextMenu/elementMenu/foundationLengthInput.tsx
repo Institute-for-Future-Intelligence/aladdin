@@ -153,7 +153,7 @@ const FoundationLengthInput = ({
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
-        // this must be specified for the x button at the upper-right corner to work
+        // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputLy(foundation?.ly);
           setLengthDialogVisible(false);
@@ -176,7 +176,7 @@ const FoundationLengthInput = ({
               value={inputLy}
               formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => setInputLy(value)}
-              onPressEnter={(event) => {
+              onPressEnter={() => {
                 setLy(inputLy);
                 setLengthDialogVisible(false);
               }}

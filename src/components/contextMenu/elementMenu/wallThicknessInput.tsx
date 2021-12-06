@@ -186,7 +186,7 @@ const WallThicknessInput = ({
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
-        // this must be specified for the x button at the upper-right corner to work
+        // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputThickness(wall.ly ?? 0.3);
           setThicknessDialogVisible(false);
@@ -209,7 +209,7 @@ const WallThicknessInput = ({
               value={inputThickness}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => setInputThickness(value)}
-              onPressEnter={(event) => {
+              onPressEnter={() => {
                 setThickness(inputThickness);
                 setThicknessDialogVisible(false);
               }}
