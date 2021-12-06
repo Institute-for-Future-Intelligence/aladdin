@@ -322,7 +322,7 @@ const SolarPanelLengthInput = ({
               {rejectRef.current
                 ? ': ' +
                   i18n.t('shared.NotApplicableToSelectedAction', lang) +
-                  (rejectedValue.current ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
+                  (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
                 : ''}
             </label>
           </div>
@@ -385,7 +385,9 @@ const SolarPanelLengthInput = ({
               onChange={(value) => setInputLength(panelize(value))}
               onPressEnter={() => {
                 setLength(inputLength);
-                setLengthDialogVisible(false);
+                if (!rejectRef.current) {
+                  setLengthDialogVisible(false);
+                }
               }}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
+import { UNIT_VECTOR_POS_Z_ARRAY } from '../../../constants';
 
 const SolarPanelRelativeAzimuthInput = ({
   azimuthDialogVisible,
@@ -41,6 +42,8 @@ const SolarPanelRelativeAzimuthInput = ({
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const rejectRef = useRef<boolean>(false);
+  const rejectedValue = useRef<number | undefined>();
 
   const lang = { lng: language };
 
@@ -55,69 +58,121 @@ const SolarPanelRelativeAzimuthInput = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const withinParent = (sp: SolarPanelModel, azimuth: number) => {
+    const parent = getElementById(sp.parentId);
+    if (parent) {
+      if (parent.type === ObjectType.Cuboid && !Util.isIdentical(sp.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+        // azimuth should not be changed for solar panels on a vertical side of a cuboid
+        return true;
+      }
+      const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
+      clone.relativeAzimuth = azimuth;
+      return Util.isSolarPanelWithin(clone, parent);
+    }
+    return false;
+  };
+
+  const rejectChange = (sp: SolarPanelModel, azimuth: number) => {
+    // check if the new relative azimuth will cause the solar panel to be out of the bound
+    if (!withinParent(sp, azimuth)) {
+      return true;
+    }
+    // other check?
+    return false;
+  };
+
   const setRelativeAzimuth = (value: number) => {
+    rejectedValue.current = undefined;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldRelativeAzimuthsAll = new Map<string, number>();
+        rejectRef.current = false;
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel) {
-            oldRelativeAzimuthsAll.set(elem.id, (elem as SolarPanelModel).relativeAzimuth);
+            if (rejectChange(elem as SolarPanelModel, value)) {
+              rejectRef.current = true;
+              break;
+            }
           }
         }
-        const undoableChangeAll = {
-          name: 'Set Relative Azimuth for All Solar Panel Arrays',
-          timestamp: Date.now(),
-          oldValues: oldRelativeAzimuthsAll,
-          newValue: value,
-          undo: () => {
-            for (const [id, ta] of undoableChangeAll.oldValues.entries()) {
-              updateSolarPanelRelativeAzimuthById(id, ta as number);
-            }
-          },
-          redo: () => {
-            updateSolarPanelRelativeAzimuthForAll(undoableChangeAll.newValue as number);
-          },
-        } as UndoableChangeGroup;
-        addUndoable(undoableChangeAll);
-        updateSolarPanelRelativeAzimuthForAll(value);
-        break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (solarPanel.foundationId) {
-          const oldRelativeAzimuthsAboveFoundation = new Map<string, number>();
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputRelativeAzimuth(solarPanel.relativeAzimuth);
+        } else {
+          const oldRelativeAzimuthsAll = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
-              oldRelativeAzimuthsAboveFoundation.set(elem.id, (elem as SolarPanelModel).relativeAzimuth);
+            if (elem.type === ObjectType.SolarPanel) {
+              oldRelativeAzimuthsAll.set(elem.id, (elem as SolarPanelModel).relativeAzimuth);
             }
           }
-          const undoableChangeAboveFoundation = {
-            name: 'Set Relative Azimuth for All Solar Panel Arrays Above Foundation',
+          const undoableChangeAll = {
+            name: 'Set Relative Azimuth for All Solar Panel Arrays',
             timestamp: Date.now(),
-            oldValues: oldRelativeAzimuthsAboveFoundation,
+            oldValues: oldRelativeAzimuthsAll,
             newValue: value,
-            groupId: solarPanel.foundationId,
             undo: () => {
-              for (const [id, ta] of undoableChangeAboveFoundation.oldValues.entries()) {
+              for (const [id, ta] of undoableChangeAll.oldValues.entries()) {
                 updateSolarPanelRelativeAzimuthById(id, ta as number);
               }
             },
             redo: () => {
-              if (undoableChangeAboveFoundation.groupId) {
-                updateSolarPanelRelativeAzimuthAboveFoundation(
-                  undoableChangeAboveFoundation.groupId,
-                  undoableChangeAboveFoundation.newValue as number,
-                );
-              }
+              updateSolarPanelRelativeAzimuthForAll(undoableChangeAll.newValue as number);
             },
           } as UndoableChangeGroup;
-          addUndoable(undoableChangeAboveFoundation);
-          updateSolarPanelRelativeAzimuthAboveFoundation(solarPanel.foundationId, value);
+          addUndoable(undoableChangeAll);
+          updateSolarPanelRelativeAzimuthForAll(value);
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        if (solarPanel.foundationId) {
+          rejectRef.current = false;
+          for (const elem of elements) {
+            if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
+              if (rejectChange(elem as SolarPanelModel, value)) {
+                rejectRef.current = true;
+                break;
+              }
+            }
+          }
+          if (rejectRef.current) {
+            rejectedValue.current = value;
+            setInputRelativeAzimuth(solarPanel.relativeAzimuth);
+          } else {
+            const oldRelativeAzimuthsAboveFoundation = new Map<string, number>();
+            for (const elem of elements) {
+              if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
+                oldRelativeAzimuthsAboveFoundation.set(elem.id, (elem as SolarPanelModel).relativeAzimuth);
+              }
+            }
+            const undoableChangeAboveFoundation = {
+              name: 'Set Relative Azimuth for All Solar Panel Arrays Above Foundation',
+              timestamp: Date.now(),
+              oldValues: oldRelativeAzimuthsAboveFoundation,
+              newValue: value,
+              groupId: solarPanel.foundationId,
+              undo: () => {
+                for (const [id, ta] of undoableChangeAboveFoundation.oldValues.entries()) {
+                  updateSolarPanelRelativeAzimuthById(id, ta as number);
+                }
+              },
+              redo: () => {
+                if (undoableChangeAboveFoundation.groupId) {
+                  updateSolarPanelRelativeAzimuthAboveFoundation(
+                    undoableChangeAboveFoundation.groupId,
+                    undoableChangeAboveFoundation.newValue as number,
+                  );
+                }
+              },
+            } as UndoableChangeGroup;
+            addUndoable(undoableChangeAboveFoundation);
+            updateSolarPanelRelativeAzimuthAboveFoundation(solarPanel.foundationId, value);
+          }
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
         if (solarPanel.parentId) {
           const parent = getElementById(solarPanel.parentId);
           if (parent) {
-            const oldRelativeAzimuthsOnSurface = new Map<string, number>();
+            rejectRef.current = false;
             const isParentCuboid = parent.type === ObjectType.Cuboid;
             if (isParentCuboid) {
               for (const elem of elements) {
@@ -126,61 +181,97 @@ const SolarPanelRelativeAzimuthInput = ({
                   elem.parentId === solarPanel.parentId &&
                   Util.isIdentical(elem.normal, solarPanel.normal)
                 ) {
-                  oldRelativeAzimuthsOnSurface.set(elem.id, (elem as SolarPanelModel).relativeAzimuth);
+                  if (rejectChange(elem as SolarPanelModel, value)) {
+                    rejectRef.current = true;
+                    break;
+                  }
                 }
               }
             } else {
               for (const elem of elements) {
                 if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                  oldRelativeAzimuthsOnSurface.set(elem.id, (elem as SolarPanelModel).relativeAzimuth);
+                  if (rejectChange(elem as SolarPanelModel, value)) {
+                    rejectRef.current = true;
+                    break;
+                  }
                 }
               }
             }
-            const normal = isParentCuboid ? solarPanel.normal : undefined;
-            const undoableChangeOnSurface = {
-              name: 'Set Relative Azimuth for All Solar Panel Arrays on Surface',
-              timestamp: Date.now(),
-              oldValues: oldRelativeAzimuthsOnSurface,
-              newValue: value,
-              groupId: solarPanel.parentId,
-              normal: normal,
-              undo: () => {
-                for (const [id, ta] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateSolarPanelRelativeAzimuthById(id, ta as number);
+            if (rejectRef.current) {
+              rejectedValue.current = value;
+              setInputRelativeAzimuth(solarPanel.relativeAzimuth);
+            } else {
+              const oldRelativeAzimuthsOnSurface = new Map<string, number>();
+              const isParentCuboid = parent.type === ObjectType.Cuboid;
+              if (isParentCuboid) {
+                for (const elem of elements) {
+                  if (
+                    elem.type === ObjectType.SolarPanel &&
+                    elem.parentId === solarPanel.parentId &&
+                    Util.isIdentical(elem.normal, solarPanel.normal)
+                  ) {
+                    oldRelativeAzimuthsOnSurface.set(elem.id, (elem as SolarPanelModel).relativeAzimuth);
+                  }
                 }
-              },
-              redo: () => {
-                if (undoableChangeOnSurface.groupId) {
-                  updateSolarPanelRelativeAzimuthOnSurface(
-                    undoableChangeOnSurface.groupId,
-                    undoableChangeOnSurface.normal,
-                    undoableChangeOnSurface.newValue as number,
-                  );
+              } else {
+                for (const elem of elements) {
+                  if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
+                    oldRelativeAzimuthsOnSurface.set(elem.id, (elem as SolarPanelModel).relativeAzimuth);
+                  }
                 }
-              },
-            } as UndoableChangeGroup;
-            addUndoable(undoableChangeOnSurface);
-            updateSolarPanelRelativeAzimuthOnSurface(solarPanel.parentId, normal, value);
+              }
+              const normal = isParentCuboid ? solarPanel.normal : undefined;
+              const undoableChangeOnSurface = {
+                name: 'Set Relative Azimuth for All Solar Panel Arrays on Surface',
+                timestamp: Date.now(),
+                oldValues: oldRelativeAzimuthsOnSurface,
+                newValue: value,
+                groupId: solarPanel.parentId,
+                normal: normal,
+                undo: () => {
+                  for (const [id, ta] of undoableChangeOnSurface.oldValues.entries()) {
+                    updateSolarPanelRelativeAzimuthById(id, ta as number);
+                  }
+                },
+                redo: () => {
+                  if (undoableChangeOnSurface.groupId) {
+                    updateSolarPanelRelativeAzimuthOnSurface(
+                      undoableChangeOnSurface.groupId,
+                      undoableChangeOnSurface.normal,
+                      undoableChangeOnSurface.newValue as number,
+                    );
+                  }
+                },
+              } as UndoableChangeGroup;
+              addUndoable(undoableChangeOnSurface);
+              updateSolarPanelRelativeAzimuthOnSurface(solarPanel.parentId, normal, value);
+            }
           }
         }
         break;
       default:
         if (solarPanel) {
           const oldRelativeAzimuth = solarPanel.relativeAzimuth;
-          const undoableChange = {
-            name: 'Set Solar Panel Array Relative Azimuth',
-            timestamp: Date.now(),
-            oldValue: oldRelativeAzimuth,
-            newValue: value,
-            undo: () => {
-              updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateSolarPanelRelativeAzimuthById(solarPanel.id, value);
+          rejectRef.current = rejectChange(solarPanel, value);
+          if (rejectRef.current) {
+            rejectedValue.current = value;
+            setInputRelativeAzimuth(oldRelativeAzimuth);
+          } else {
+            const undoableChange = {
+              name: 'Set Solar Panel Array Relative Azimuth',
+              timestamp: Date.now(),
+              oldValue: oldRelativeAzimuth,
+              newValue: value,
+              undo: () => {
+                updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableChange.oldValue as number);
+              },
+              redo: () => {
+                updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableChange.newValue as number);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            updateSolarPanelRelativeAzimuthById(solarPanel.id, value);
+          }
         }
     }
     setUpdateFlag(!updateFlag);
@@ -211,6 +302,15 @@ const SolarPanelRelativeAzimuthInput = ({
             onMouseOut={() => setDragEnabled(false)}
           >
             {i18n.t('solarPanelMenu.RelativeAzimuth', lang)}
+            <label style={{ color: 'red', fontWeight: 'bold' }}>
+              {rejectRef.current
+                ? ': ' +
+                  i18n.t('shared.NotApplicableToSelectedAction', lang) +
+                  (rejectedValue.current !== undefined
+                    ? ' (' + Util.toDegrees(rejectedValue.current).toFixed(1) + '°)'
+                    : '')
+                : ''}
+            </label>
           </div>
         }
         footer={[
@@ -226,6 +326,7 @@ const SolarPanelRelativeAzimuthInput = ({
             key="Cancel"
             onClick={() => {
               setInputRelativeAzimuth(solarPanel.relativeAzimuth);
+              rejectRef.current = false;
               setAzimuthDialogVisible(false);
             }}
           >
@@ -236,7 +337,9 @@ const SolarPanelRelativeAzimuthInput = ({
             type="primary"
             onClick={() => {
               setRelativeAzimuth(inputRelativeAzimuth);
-              setAzimuthDialogVisible(false);
+              if (!rejectRef.current) {
+                setAzimuthDialogVisible(false);
+              }
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -245,6 +348,7 @@ const SolarPanelRelativeAzimuthInput = ({
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputRelativeAzimuth(solarPanel.relativeAzimuth);
+          rejectRef.current = false;
           setAzimuthDialogVisible(false);
         }}
         destroyOnClose={false}
@@ -267,7 +371,9 @@ const SolarPanelRelativeAzimuthInput = ({
               onChange={(value) => setInputRelativeAzimuth(Util.toRadians(value))}
               onPressEnter={() => {
                 setRelativeAzimuth(inputRelativeAzimuth);
-                setAzimuthDialogVisible(false);
+                if (!rejectRef.current) {
+                  setAzimuthDialogVisible(false);
+                }
               }}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

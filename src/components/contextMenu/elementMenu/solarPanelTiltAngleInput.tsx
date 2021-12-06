@@ -281,7 +281,9 @@ const SolarPanelTiltAngleInput = ({
               {rejectRef.current
                 ? ': ' +
                   i18n.t('shared.NotApplicableToSelectedAction', lang) +
-                  (rejectedValue.current ? ' (' + Util.toDegrees(rejectedValue.current).toFixed(1) + '°)' : '')
+                  (rejectedValue.current !== undefined
+                    ? ' (' + Util.toDegrees(rejectedValue.current).toFixed(1) + '°)'
+                    : '')
                 : ''}
             </label>
           </div>
@@ -344,7 +346,9 @@ const SolarPanelTiltAngleInput = ({
               onChange={(value) => setInputTiltAngle(Util.toRadians(value))}
               onPressEnter={() => {
                 setTiltAngle(inputTiltAngle);
-                setTiltDialogVisible(false);
+                if (!rejectRef.current) {
+                  setTiltDialogVisible(false);
+                }
               }}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

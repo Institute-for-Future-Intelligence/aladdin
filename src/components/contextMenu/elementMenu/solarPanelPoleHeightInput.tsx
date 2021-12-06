@@ -282,7 +282,7 @@ const SolarPanelPoleHeightInput = ({
               {rejectRef.current
                 ? ': ' +
                   i18n.t('shared.NotApplicableToSelectedAction', lang) +
-                  (rejectedValue.current ? ' (' + rejectedValue.current.toFixed(1) + ')' : '')
+                  (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(1) + ')' : '')
                 : ''}
             </label>
           </div>
@@ -345,7 +345,9 @@ const SolarPanelPoleHeightInput = ({
               onChange={(value) => setInputPoleHeight(value)}
               onPressEnter={() => {
                 setPoleHeight(inputPoleHeight);
-                setPoleHeightDialogVisible(false);
+                if (!rejectRef.current) {
+                  setPoleHeightDialogVisible(false);
+                }
               }}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

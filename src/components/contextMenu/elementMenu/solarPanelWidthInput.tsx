@@ -318,7 +318,7 @@ const SolarPanelWidthInput = ({
               {rejectRef.current
                 ? ': ' +
                   i18n.t('shared.NotApplicableToSelectedAction', lang) +
-                  (rejectedValue.current ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
+                  (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
                 : ''}
             </label>
           </div>
@@ -381,7 +381,9 @@ const SolarPanelWidthInput = ({
               onChange={(value) => setInputWidth(panelize(value))}
               onPressEnter={() => {
                 setWidth(inputWidth);
-                setWidthDialogVisible(false);
+                if (!rejectRef.current) {
+                  setWidthDialogVisible(false);
+                }
               }}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
