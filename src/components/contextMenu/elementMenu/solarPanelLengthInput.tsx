@@ -184,6 +184,14 @@ const SolarPanelLengthInput = ({
             rejectRef.current = true;
           } else {
             // check if the new length will cause the solar panel to be out of the bound
+            const parent = getElementById(solarPanel.parentId);
+            if (parent) {
+              const clone = JSON.parse(JSON.stringify(solarPanel)) as SolarPanelModel;
+              clone.ly = value;
+              if (!Util.isSolarPanelWithin(clone, parent)) {
+                rejectRef.current = true;
+              }
+            }
           }
           if (rejectRef.current) {
             rejectedValue.current = value;

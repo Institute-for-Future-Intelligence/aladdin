@@ -26,6 +26,33 @@ export class Util {
     return ly;
   }
 
+  static isSolarPanelWithin(solarPanel: SolarPanelModel, parent: ElementModel) {
+    const x0 = solarPanel.cx * parent.lx;
+    const y0 = solarPanel.cy * parent.ly;
+    const cosaz = Math.cos(solarPanel.relativeAzimuth);
+    const sinaz = Math.sin(solarPanel.relativeAzimuth);
+    const dx = parent.lx * 0.5;
+    const dy = parent.ly * 0.5;
+    const rx = solarPanel.lx * 0.5;
+    const ry = solarPanel.ly * 0.5;
+    // vertex 1:
+    let x = x0 + rx * cosaz - ry * sinaz;
+    let y = y0 + rx * sinaz + ry * cosaz;
+    if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
+    // vertex 2
+    x = x0 + rx * cosaz + ry * sinaz;
+    y = y0 + rx * sinaz - ry * cosaz;
+    if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
+    // vertex 3
+    x = x0 - rx * cosaz - ry * sinaz;
+    y = y0 - rx * sinaz + ry * cosaz;
+    if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
+    x = x0 - rx * cosaz + ry * sinaz;
+    y = y0 - rx * sinaz - ry * cosaz;
+    if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
+    return true;
+  }
+
   static isSame(u: Vector3, v: Vector3) {
     return (
       Math.abs(u.x - v.x) < ZERO_TOLERANCE &&
