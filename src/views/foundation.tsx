@@ -1203,6 +1203,33 @@ const Foundation = ({
     }
   };
 
+  const isSolarPanelNewPositionOk = (sp: SolarPanelModel, cx: number, cy: number) => {
+    const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
+    clone.cx = cx;
+    clone.cy = cy;
+    return Util.isSolarPanelWithin(clone, foundationModel);
+  };
+
+  const isSolarPanelNewAzimuthOk = (sp: SolarPanelModel, az: number) => {
+    const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
+    clone.relativeAzimuth = az;
+    return Util.isSolarPanelWithin(clone, foundationModel);
+  };
+
+  const isSolarPanelNewSizeOk = (sp: SolarPanelModel, cx: number, cy: number, lx: number, ly: number) => {
+    // check if the new length will cause the solar panel to intersect with the foundation
+    if (sp.tiltAngle !== 0 && 0.5 * ly * Math.abs(Math.sin(sp.tiltAngle)) > sp.poleHeight) {
+      return false;
+    }
+    // check if the new size will be within the foundation
+    const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
+    clone.cx = cx;
+    clone.cy = cy;
+    clone.lx = lx;
+    clone.ly = ly;
+    return Util.isSolarPanelWithin(clone, foundationModel);
+  };
+
   const handleSolarPanelMove = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current) {
       const mouse = new Vector2();
@@ -1222,7 +1249,9 @@ const Foundation = ({
           const resizeAnchor = resizeAnchorRef.current;
           if (moveHandleType && foundationModel) {
             p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
-            setElementPosition(solarPanel.id, p.x, p.y); //Relative coordinate
+            if (isSolarPanelNewPositionOk(solarPanel, p.x, p.y)) {
+              setElementPosition(solarPanel.id, p.x, p.y); //Relative coordinate
+            }
           } else if (rotateHandleType) {
             const parent = getElementById(solarPanel.parentId);
             if (parent) {
@@ -1234,11 +1263,14 @@ const Foundation = ({
               const rotation =
                 -pr + Math.atan2(-p.x + wc.x, p.y - wc.y) + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
               const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * TWO_PI : 0; // make sure angle is between -PI to PI
-              updateSolarPanelRelativeAzimuthById(grabRef.current.id, rotation + offset);
-              newAzimuthRef.current = rotation + offset;
-              setCommonStore((state) => {
-                state.selectedElementAngle = rotation + offset;
-              });
+              const newAzimuth = rotation + offset;
+              if (isSolarPanelNewAzimuthOk(solarPanel, newAzimuth)) {
+                updateSolarPanelRelativeAzimuthById(grabRef.current.id, newAzimuth);
+                newAzimuthRef.current = newAzimuth;
+                setCommonStore((state) => {
+                  state.selectedElementAngle = newAzimuth;
+                });
+              }
             }
           } else if (resizeHandleType) {
             switch (resizeHandleType) {
@@ -1258,14 +1290,17 @@ const Foundation = ({
                     const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
                     dyl = nx * pvModel.width;
                   }
-                  updateElementLyById(solarPanel.id, dyl);
-
                   const wcx = resizeAnchor.x + (dyl * Math.sin(angle)) / 2;
                   const wcy = resizeAnchor.y - (dyl * Math.cos(angle)) / 2;
                   const wc = new Vector2(wcx, wcy); // world panel center
                   const wbc = new Vector2(cx, cy); // world foundation center
                   const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
-                  setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
+                  const newCx = rc.x / lx;
+                  const newCy = rc.y / ly;
+                  if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, solarPanel.lx, dyl)) {
+                    updateElementLyById(solarPanel.id, dyl);
+                    setElementPosition(solarPanel.id, newCx, newCy);
+                  }
                 }
                 break;
               case ResizeHandleType.Upper:
@@ -1284,14 +1319,17 @@ const Foundation = ({
                     const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
                     dyl = nx * pvModel.width;
                   }
-                  updateElementLyById(solarPanel.id, dyl);
-
                   const wcx = resizeAnchor.x - (dyl * Math.sin(angle)) / 2;
                   const wcy = resizeAnchor.y + (dyl * Math.cos(angle)) / 2;
                   const wc = new Vector2(wcx, wcy);
                   const wbc = new Vector2(cx, cy);
                   const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
-                  setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
+                  const newCx = rc.x / lx;
+                  const newCy = rc.y / ly;
+                  if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, solarPanel.lx, dyl)) {
+                    updateElementLyById(solarPanel.id, dyl);
+                    setElementPosition(solarPanel.id, newCx, newCy);
+                  }
                 }
                 break;
               case ResizeHandleType.Left:
@@ -1310,14 +1348,17 @@ const Foundation = ({
                     const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
                     dxl = nx * pvModel.length;
                   }
-                  updateElementLxById(solarPanel.id, dxl);
-
                   const wcx = resizeAnchor.x - (dxl * Math.cos(angle)) / 2;
                   const wcy = resizeAnchor.y - (dxl * Math.sin(angle)) / 2;
                   const wc = new Vector2(wcx, wcy);
                   const wbc = new Vector2(cx, cy);
                   const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
-                  setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
+                  const newCx = rc.x / lx;
+                  const newCy = rc.y / ly;
+                  if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, dxl, solarPanel.ly)) {
+                    updateElementLxById(solarPanel.id, dxl);
+                    setElementPosition(solarPanel.id, newCx, newCy);
+                  }
                 }
                 break;
               case ResizeHandleType.Right:
@@ -1336,14 +1377,17 @@ const Foundation = ({
                     const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
                     dxl = nx * pvModel.length;
                   }
-                  updateElementLxById(solarPanel.id, dxl);
-
                   const wcx = resizeAnchor.x + (dxl * Math.cos(angle)) / 2;
                   const wcy = resizeAnchor.y + (dxl * Math.sin(angle)) / 2;
                   const wc = new Vector2(wcx, wcy);
                   const wbc = new Vector2(cx, cy);
                   const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
-                  setElementPosition(solarPanel.id, rc.x / lx, rc.y / ly);
+                  const newCx = rc.x / lx;
+                  const newCy = rc.y / ly;
+                  if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, dxl, solarPanel.ly)) {
+                    updateElementLxById(solarPanel.id, dxl);
+                    setElementPosition(solarPanel.id, newCx, newCy);
+                  }
                 }
                 break;
             }
