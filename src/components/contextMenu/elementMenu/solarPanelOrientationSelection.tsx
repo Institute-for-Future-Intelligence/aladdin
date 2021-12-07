@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
+import { UNIT_VECTOR_POS_Z_ARRAY } from '../../../constants';
 
 const { Option } = Select;
 
@@ -45,6 +46,8 @@ const SolarPanelOrientationSelection = ({
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const rejectRef = useRef<boolean>(false);
+  const rejectedValue = useRef<Orientation | undefined>();
 
   const lang = { lng: language };
 
@@ -80,69 +83,135 @@ const SolarPanelOrientationSelection = ({
     }
   };
 
+  const withinParent = (sp: SolarPanelModel, orientation: Orientation) => {
+    const parent = getElementById(sp.parentId);
+    if (parent) {
+      if (parent.type === ObjectType.Cuboid && !Util.isIdentical(sp.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+        // TODO: cuboid vertical sides
+        return true;
+      }
+      const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
+      clone.orientation = orientation;
+      const pvModel = getPvModule(clone.pvModelName);
+      if (orientation === Orientation.portrait) {
+        // calculate the current x-y layout
+        const nx = Math.max(1, Math.round(clone.lx / pvModel.width));
+        const ny = Math.max(1, Math.round(clone.ly / pvModel.length));
+        clone.lx = nx * pvModel.width;
+        clone.ly = ny * pvModel.length;
+      } else {
+        // calculate the current x-y layout
+        const nx = Math.max(1, Math.round(clone.lx / pvModel.length));
+        const ny = Math.max(1, Math.round(clone.ly / pvModel.width));
+        clone.lx = nx * pvModel.length;
+        clone.ly = ny * pvModel.width;
+      }
+      return Util.isSolarPanelWithin(clone, parent);
+    }
+    return false;
+  };
+
+  const rejectChange = (sp: SolarPanelModel, orientation: Orientation) => {
+    // check if the new orientation will cause the solar panel to be out of the bound
+    if (!withinParent(sp, orientation)) {
+      return true;
+    }
+    // other check?
+    return false;
+  };
+
   const setOrientation = (value: Orientation) => {
+    rejectedValue.current = undefined;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldOrientationsAll = new Map<string, Orientation>();
+        rejectRef.current = false;
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel) {
-            oldOrientationsAll.set(elem.id, (elem as SolarPanelModel).orientation);
+            if (rejectChange(elem as SolarPanelModel, value)) {
+              rejectRef.current = true;
+              break;
+            }
           }
         }
-        const undoableChangeAll = {
-          name: 'Set Orientation for All Solar Panels',
-          timestamp: Date.now(),
-          oldValues: oldOrientationsAll,
-          newValue: value,
-          undo: () => {
-            for (const [id, orientation] of undoableChangeAll.oldValues.entries()) {
-              updateSolarPanelOrientationById(id, orientation as Orientation);
-            }
-          },
-          redo: () => {
-            updateSolarPanelOrientationForAll(undoableChangeAll.newValue as Orientation);
-          },
-        } as UndoableChangeGroup;
-        addUndoable(undoableChangeAll);
-        updateSolarPanelOrientationForAll(value);
-        break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (solarPanel.foundationId) {
-          const oldOrientationsAboveFoundation = new Map<string, Orientation>();
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setSelectedOrientation(solarPanel.orientation);
+        } else {
+          const oldOrientationsAll = new Map<string, Orientation>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
-              oldOrientationsAboveFoundation.set(elem.id, (elem as SolarPanelModel).orientation);
+            if (elem.type === ObjectType.SolarPanel) {
+              oldOrientationsAll.set(elem.id, (elem as SolarPanelModel).orientation);
             }
           }
-          const undoableChangeAboveFoundation = {
-            name: 'Set Orientation for All Solar Panels Above Foundation',
+          const undoableChangeAll = {
+            name: 'Set Orientation for All Solar Panels',
             timestamp: Date.now(),
-            oldValues: oldOrientationsAboveFoundation,
+            oldValues: oldOrientationsAll,
             newValue: value,
-            groupId: solarPanel.foundationId,
             undo: () => {
-              for (const [id, orientation] of undoableChangeAboveFoundation.oldValues.entries()) {
+              for (const [id, orientation] of undoableChangeAll.oldValues.entries()) {
                 updateSolarPanelOrientationById(id, orientation as Orientation);
               }
             },
             redo: () => {
-              if (undoableChangeAboveFoundation.groupId) {
-                updateSolarPanelOrientationAboveFoundation(
-                  undoableChangeAboveFoundation.groupId,
-                  undoableChangeAboveFoundation.newValue as Orientation,
-                );
-              }
+              updateSolarPanelOrientationForAll(undoableChangeAll.newValue as Orientation);
             },
           } as UndoableChangeGroup;
-          addUndoable(undoableChangeAboveFoundation);
-          updateSolarPanelOrientationAboveFoundation(solarPanel.foundationId, value);
+          addUndoable(undoableChangeAll);
+          updateSolarPanelOrientationForAll(value);
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        if (solarPanel.foundationId) {
+          rejectRef.current = false;
+          for (const elem of elements) {
+            if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
+              if (rejectChange(elem as SolarPanelModel, value)) {
+                rejectRef.current = true;
+                break;
+              }
+            }
+          }
+          if (rejectRef.current) {
+            rejectedValue.current = value;
+            setSelectedOrientation(solarPanel.orientation);
+          } else {
+            const oldOrientationsAboveFoundation = new Map<string, Orientation>();
+            for (const elem of elements) {
+              if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
+                oldOrientationsAboveFoundation.set(elem.id, (elem as SolarPanelModel).orientation);
+              }
+            }
+            const undoableChangeAboveFoundation = {
+              name: 'Set Orientation for All Solar Panels Above Foundation',
+              timestamp: Date.now(),
+              oldValues: oldOrientationsAboveFoundation,
+              newValue: value,
+              groupId: solarPanel.foundationId,
+              undo: () => {
+                for (const [id, orientation] of undoableChangeAboveFoundation.oldValues.entries()) {
+                  updateSolarPanelOrientationById(id, orientation as Orientation);
+                }
+              },
+              redo: () => {
+                if (undoableChangeAboveFoundation.groupId) {
+                  updateSolarPanelOrientationAboveFoundation(
+                    undoableChangeAboveFoundation.groupId,
+                    undoableChangeAboveFoundation.newValue as Orientation,
+                  );
+                }
+              },
+            } as UndoableChangeGroup;
+            addUndoable(undoableChangeAboveFoundation);
+            updateSolarPanelOrientationAboveFoundation(solarPanel.foundationId, value);
+          }
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
         if (solarPanel.parentId) {
           const parent = getElementById(solarPanel.parentId);
           if (parent) {
-            const oldOrientationsOnSurface = new Map<string, Orientation>();
+            rejectRef.current = false;
             const isParentCuboid = parent.type === ObjectType.Cuboid;
             if (isParentCuboid) {
               for (const elem of elements) {
@@ -151,61 +220,97 @@ const SolarPanelOrientationSelection = ({
                   elem.parentId === solarPanel.parentId &&
                   Util.isIdentical(elem.normal, solarPanel.normal)
                 ) {
-                  oldOrientationsOnSurface.set(elem.id, (elem as SolarPanelModel).orientation);
+                  if (rejectChange(elem as SolarPanelModel, value)) {
+                    rejectRef.current = true;
+                    break;
+                  }
                 }
               }
             } else {
               for (const elem of elements) {
                 if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                  oldOrientationsOnSurface.set(elem.id, (elem as SolarPanelModel).orientation);
+                  if (rejectChange(elem as SolarPanelModel, value)) {
+                    rejectRef.current = true;
+                    break;
+                  }
                 }
               }
             }
-            const normal = isParentCuboid ? solarPanel.normal : undefined;
-            const undoableChangeOnSurface = {
-              name: 'Set Orientation for All Solar Panels on Surface',
-              timestamp: Date.now(),
-              oldValues: oldOrientationsOnSurface,
-              newValue: value,
-              groupId: solarPanel.parentId,
-              normal: normal,
-              undo: () => {
-                for (const [id, orientation] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateSolarPanelOrientationById(id, orientation as Orientation);
+            if (rejectRef.current) {
+              rejectedValue.current = value;
+              setSelectedOrientation(solarPanel.orientation);
+            } else {
+              const oldOrientationsOnSurface = new Map<string, Orientation>();
+              const isParentCuboid = parent.type === ObjectType.Cuboid;
+              if (isParentCuboid) {
+                for (const elem of elements) {
+                  if (
+                    elem.type === ObjectType.SolarPanel &&
+                    elem.parentId === solarPanel.parentId &&
+                    Util.isIdentical(elem.normal, solarPanel.normal)
+                  ) {
+                    oldOrientationsOnSurface.set(elem.id, (elem as SolarPanelModel).orientation);
+                  }
                 }
-              },
-              redo: () => {
-                if (undoableChangeOnSurface.groupId) {
-                  updateSolarPanelOrientationOnSurface(
-                    undoableChangeOnSurface.groupId,
-                    undoableChangeOnSurface.normal,
-                    undoableChangeOnSurface.newValue as Orientation,
-                  );
+              } else {
+                for (const elem of elements) {
+                  if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
+                    oldOrientationsOnSurface.set(elem.id, (elem as SolarPanelModel).orientation);
+                  }
                 }
-              },
-            } as UndoableChangeGroup;
-            addUndoable(undoableChangeOnSurface);
-            updateSolarPanelOrientationOnSurface(solarPanel.parentId, normal, value);
+              }
+              const normal = isParentCuboid ? solarPanel.normal : undefined;
+              const undoableChangeOnSurface = {
+                name: 'Set Orientation for All Solar Panels on Surface',
+                timestamp: Date.now(),
+                oldValues: oldOrientationsOnSurface,
+                newValue: value,
+                groupId: solarPanel.parentId,
+                normal: normal,
+                undo: () => {
+                  for (const [id, orientation] of undoableChangeOnSurface.oldValues.entries()) {
+                    updateSolarPanelOrientationById(id, orientation as Orientation);
+                  }
+                },
+                redo: () => {
+                  if (undoableChangeOnSurface.groupId) {
+                    updateSolarPanelOrientationOnSurface(
+                      undoableChangeOnSurface.groupId,
+                      undoableChangeOnSurface.normal,
+                      undoableChangeOnSurface.newValue as Orientation,
+                    );
+                  }
+                },
+              } as UndoableChangeGroup;
+              addUndoable(undoableChangeOnSurface);
+              updateSolarPanelOrientationOnSurface(solarPanel.parentId, normal, value);
+            }
           }
         }
         break;
       default:
         if (solarPanel) {
           const oldOrientation = solarPanel.orientation;
-          const undoableChange = {
-            name: 'Set Orientation of Selected Solar Panel',
-            timestamp: Date.now(),
-            oldValue: oldOrientation,
-            newValue: value,
-            undo: () => {
-              changeOrientation(undoableChange.oldValue as Orientation);
-            },
-            redo: () => {
-              changeOrientation(undoableChange.newValue as Orientation);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          changeOrientation(value);
+          rejectRef.current = rejectChange(solarPanel, value);
+          if (rejectRef.current) {
+            rejectedValue.current = value;
+            setSelectedOrientation(oldOrientation);
+          } else {
+            const undoableChange = {
+              name: 'Set Orientation of Selected Solar Panel',
+              timestamp: Date.now(),
+              oldValue: oldOrientation,
+              newValue: value,
+              undo: () => {
+                changeOrientation(undoableChange.oldValue as Orientation);
+              },
+              redo: () => {
+                changeOrientation(undoableChange.newValue as Orientation);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            changeOrientation(value);
+          }
         }
     }
     setUpdateFlag(!updateFlag);
@@ -236,6 +341,19 @@ const SolarPanelOrientationSelection = ({
             onMouseOut={() => setDragEnabled(false)}
           >
             {i18n.t('solarPanelMenu.Orientation', lang)}
+            <label style={{ color: 'red', fontWeight: 'bold' }}>
+              {rejectRef.current
+                ? ': ' +
+                  i18n.t('shared.NotApplicableToSelectedAction', lang) +
+                  (rejectedValue.current
+                    ? ' (' +
+                      (rejectedValue.current === Orientation.portrait
+                        ? i18n.t('solarPanelMenu.Portrait', lang)
+                        : i18n.t('solarPanelMenu.Landscape', lang)) +
+                      ')'
+                    : '')
+                : ''}
+            </label>
           </div>
         }
         footer={[
@@ -251,6 +369,7 @@ const SolarPanelOrientationSelection = ({
             key="Cancel"
             onClick={() => {
               setSelectedOrientation(solarPanel.orientation);
+              rejectRef.current = false;
               setOrientationDialogVisible(false);
             }}
           >
@@ -261,7 +380,9 @@ const SolarPanelOrientationSelection = ({
             type="primary"
             onClick={() => {
               setOrientation(selectedOrientation);
-              setOrientationDialogVisible(false);
+              if (!rejectRef.current) {
+                setOrientationDialogVisible(false);
+              }
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -270,6 +391,7 @@ const SolarPanelOrientationSelection = ({
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setSelectedOrientation(solarPanel.orientation);
+          rejectRef.current = false;
           setOrientationDialogVisible(false);
         }}
         destroyOnClose={false}
