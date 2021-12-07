@@ -419,6 +419,13 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               'meta+y',
               'shift',
               'esc',
+              'ctrl+home',
+              'meta+home',
+              'ctrl+shift+s',
+              'meta+shift+s',
+              'delete',
+              'f2',
+              'f4',
             ]}
             handleEventType={'keydown'}
             onKeyEvent={(key, e) => {
@@ -456,6 +463,13 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               'meta+y',
               'shift',
               'esc',
+              'ctrl+home',
+              'meta+home',
+              'ctrl+shift+s',
+              'meta+shift+s',
+              'delete',
+              'f2',
+              'f4',
             ]}
             handleEventType={'keyup'}
             onKeyEvent={(key, e) => {
