@@ -96,6 +96,40 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const camRef = useRef<Camera>();
   const lang = { lng: language };
 
+  const handleKeys = [
+    'left',
+    'up',
+    'right',
+    'down',
+    'ctrl+o',
+    'meta+o',
+    'ctrl+s',
+    'meta+s',
+    'ctrl+c',
+    'meta+c',
+    'ctrl+x',
+    'meta+x',
+    'ctrl+v',
+    'meta+v',
+    'ctrl+[',
+    'meta+[',
+    'ctrl+]',
+    'meta+]',
+    'ctrl+z',
+    'meta+z',
+    'ctrl+y',
+    'meta+y',
+    'shift',
+    'esc',
+    'ctrl+home',
+    'meta+home',
+    'ctrl+shift+s',
+    'meta+shift+s',
+    'delete',
+    'f2',
+    'f4',
+  ];
+
   useEffect(() => {
     setLoading(false);
   }, []);
@@ -394,39 +428,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             zoomView={zoomView}
           />
           <KeyboardEventHandler
-            handleKeys={[
-              'left',
-              'up',
-              'right',
-              'down',
-              'ctrl+o',
-              'meta+o',
-              'ctrl+s',
-              'meta+s',
-              'ctrl+c',
-              'meta+c',
-              'ctrl+x',
-              'meta+x',
-              'ctrl+v',
-              'meta+v',
-              'ctrl+[',
-              'meta+[',
-              'ctrl+]',
-              'meta+]',
-              'ctrl+z',
-              'meta+z',
-              'ctrl+y',
-              'meta+y',
-              'shift',
-              'esc',
-              'ctrl+home',
-              'meta+home',
-              'ctrl+shift+s',
-              'meta+shift+s',
-              'delete',
-              'f2',
-              'f4',
-            ]}
+            handleKeys={handleKeys}
             handleEventType={'keydown'}
             onKeyEvent={(key, e) => {
               e.preventDefault();
@@ -438,39 +440,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             }}
           />
           <KeyboardEventHandler
-            handleKeys={[
-              'left',
-              'up',
-              'right',
-              'down',
-              'ctrl+o',
-              'meta+o',
-              'ctrl+s',
-              'meta+s',
-              'ctrl+c',
-              'meta+c',
-              'ctrl+x',
-              'meta+x',
-              'ctrl+v',
-              'meta+v',
-              'ctrl+[',
-              'meta+[',
-              'ctrl+]',
-              'meta+]',
-              'ctrl+z',
-              'meta+z',
-              'ctrl+y',
-              'meta+y',
-              'shift',
-              'esc',
-              'ctrl+home',
-              'meta+home',
-              'ctrl+shift+s',
-              'meta+shift+s',
-              'delete',
-              'f2',
-              'f4',
-            ]}
+            handleKeys={handleKeys}
             handleEventType={'keyup'}
             onKeyEvent={(key, e) => {
               e.preventDefault();
