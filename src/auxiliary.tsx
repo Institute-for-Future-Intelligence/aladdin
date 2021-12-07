@@ -48,7 +48,7 @@ export const Auxiliary = () => {
       setShowGrid(false);
       setshowVerticalRuler(false);
     }
-  }, [resizeHandleType, buildingCuboidID, buildingFoundationID]);
+  }, [resizeHandleType]);
 
   // only these elements are allowed to be on the ground
   const legalOnGround = () => {
