@@ -13,8 +13,7 @@ import { UndoableCheck } from './undo/UndoableCheck';
 import { UndoableResetView } from './undo/UndoableResetView';
 
 export interface KeyboardListenerProps {
-  keyFlag: boolean; // flip this every time to ensure that handleKey is called in useEffect
-  keyName: string | undefined;
+  keyName: string | null;
   keyDown: boolean;
   keyUp: boolean;
   canvas?: HTMLCanvasElement;
@@ -24,7 +23,6 @@ export interface KeyboardListenerProps {
 }
 
 const KeyboardListener = ({
-  keyFlag,
   keyName,
   keyDown,
   keyUp,
@@ -58,9 +56,14 @@ const KeyboardListener = ({
   const moveStepAbsolute = 0.1;
 
   useEffect(() => {
-    handleKey();
+    if (keyDown) {
+      handleKeyDown();
+    }
+    if (keyUp) {
+      handleKeyUp();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [keyFlag, keyName, keyDown, keyUp]);
+  }, [keyDown, keyUp]);
 
   const removeElement = (elem: ElementModel, cut: boolean) => {
     removeElementById(elem.id, cut);
@@ -115,7 +118,7 @@ const KeyboardListener = ({
     }
   };
 
-  const handleKey = () => {
+  const handleKeyDown = () => {
     const selectedElement = getSelectedElement();
     switch (keyName) {
       case 'left':
@@ -257,27 +260,25 @@ const KeyboardListener = ({
         break;
       case 'ctrl+v':
       case 'meta+v': // for Mac
-        if (keyUp) {
-          const pastedElements = pasteElements();
-          if (pastedElements.length > 0) {
-            const undoablePaste = {
-              name: 'Paste by Key',
-              timestamp: Date.now(),
-              pastedElements: JSON.parse(JSON.stringify(pastedElements)),
-              undo: () => {
-                for (const elem of undoablePaste.pastedElements) {
-                  removeElementById(elem.id, false);
-                }
-              },
-              redo: () => {
-                setCommonStore((state) => {
-                  state.elements.push(...undoablePaste.pastedElements);
-                  state.selectedElement = undoablePaste.pastedElements[0];
-                });
-              },
-            } as UndoablePaste;
-            addUndoable(undoablePaste);
-          }
+        const pastedElements = pasteElements();
+        if (pastedElements.length > 0) {
+          const undoablePaste = {
+            name: 'Paste by Key',
+            timestamp: Date.now(),
+            pastedElements: JSON.parse(JSON.stringify(pastedElements)),
+            undo: () => {
+              for (const elem of undoablePaste.pastedElements) {
+                removeElementById(elem.id, false);
+              }
+            },
+            redo: () => {
+              setCommonStore((state) => {
+                state.elements.push(...undoablePaste.pastedElements);
+                state.selectedElement = undoablePaste.pastedElements[0];
+              });
+            },
+          } as UndoablePaste;
+          addUndoable(undoablePaste);
         }
         break;
       case 'ctrl+home':
@@ -334,11 +335,9 @@ const KeyboardListener = ({
         break;
       case 'ctrl+shift+s':
       case 'meta+shift+s': // for Mac
-        if (keyUp) {
-          setCommonStore((state) => {
-            state.updateCloudFileFlag = !state.updateCloudFileFlag;
-          });
-        }
+        setCommonStore((state) => {
+          state.updateCloudFileFlag = !state.updateCloudFileFlag;
+        });
         break;
       case 'delete':
         if (selectedElement) {
@@ -375,46 +374,45 @@ const KeyboardListener = ({
         break;
       case 'ctrl+z':
       case 'meta+z': // for Mac
-        if (keyUp) {
-          if (undoManager.hasUndo()) {
-            undoManager.undo();
-          }
+        if (undoManager.hasUndo()) {
+          undoManager.undo();
         }
         break;
       case 'ctrl+y':
       case 'meta+y': // for Mac
-        if (keyUp) {
-          if (undoManager.hasRedo()) {
-            undoManager.redo();
-          }
+        if (undoManager.hasRedo()) {
+          undoManager.redo();
         }
         break;
       case 'shift':
-        if (keyDown) {
-          setEnableFineGrid(true);
-        } else if (keyUp) {
-          setEnableFineGrid(false);
-        }
+        setEnableFineGrid(true);
         break;
       case 'esc':
-        if (keyDown) {
-          if (buildingFoundationID) {
-            removeElementById(buildingFoundationID, false);
-          } else if (buildingCuboidID) {
-            removeElementById(buildingCuboidID, false);
-          } else if (buildingWallID) {
-            removeElementById(buildingWallID, false);
-          } else if (buildingWindowID) {
-            removeElementById(buildingWindowID, false);
-          }
-          setCommonStore((state) => {
-            state.objectTypeToAdd = ObjectType.None;
-            state.moveHandleType = null;
-            state.resizeHandleType = null;
-            state.enableOrbitController = true;
-          });
+        if (buildingFoundationID) {
+          removeElementById(buildingFoundationID, false);
+        } else if (buildingCuboidID) {
+          removeElementById(buildingCuboidID, false);
+        } else if (buildingWallID) {
+          removeElementById(buildingWallID, false);
+        } else if (buildingWindowID) {
+          removeElementById(buildingWindowID, false);
         }
+        setCommonStore((state) => {
+          state.objectTypeToAdd = ObjectType.None;
+          state.moveHandleType = null;
+          state.resizeHandleType = null;
+          state.enableOrbitController = true;
+        });
         break;
+    }
+  };
+
+  const handleKeyUp = () => {
+    switch (keyName) {
+      case 'shift': {
+        setEnableFineGrid(false);
+        break;
+      }
     }
   };
 

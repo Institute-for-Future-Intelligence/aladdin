@@ -86,10 +86,10 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);
   const [city, setCity] = useState<string | null>('Boston MA, USA');
-  const keyName = useRef<string | undefined>(undefined);
-  const keyDown = useRef<boolean>(false);
-  const keyUp = useRef<boolean>(false);
-  const [keyFlag, setKeyFlag] = useState<boolean>(false);
+  const [keyPressed, setKeyPressed] = useState(false);
+  const [keyName, setKeyName] = useState<string | null>(null);
+  const [keyDown, setKeyDown] = useState(false);
+  const [keyUp, setKeyUp] = useState(false);
 
   const orbitControlsRef = useRef<OrbitControls>();
   const canvasRef = useRef<HTMLCanvasElement>();
@@ -118,10 +118,14 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   }, [orthographic]);
 
   const handleKeyEvent = (key: string, down: boolean, e: KeyboardEvent) => {
-    keyName.current = key;
-    keyDown.current = down;
-    keyUp.current = !down;
-    setKeyFlag(!keyFlag);
+    if (down) {
+      setKeyName(key);
+      setKeyUp(false);
+      setKeyDown(true);
+    } else {
+      setKeyDown(false);
+      setKeyUp(true);
+    }
   };
 
   const zoomView = (scale: number) => {
@@ -381,10 +385,9 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             </Suspense>
           </Canvas>
           <KeyboardListener
-            keyFlag={keyFlag}
-            keyName={keyName.current}
-            keyDown={keyDown.current}
-            keyUp={keyUp.current}
+            keyName={keyName}
+            keyDown={keyDown}
+            keyUp={keyUp}
             canvas={canvasRef.current}
             set2DView={set2DView}
             resetView={resetView}
@@ -420,29 +423,44 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             handleEventType={'keydown'}
             onKeyEvent={(key, e) => {
               e.preventDefault();
+              if (keyPressed) {
+                return;
+              }
+              setKeyPressed(true);
               handleKeyEvent(key, true, e);
             }}
           />
           <KeyboardEventHandler
             handleKeys={[
-              'ctrl+v', // we want the paste action to be fired only when the key is up, but we also need to add
-              'meta+v', // these keyboard shortcuts to the keydown handler so that the browser's default can be prevented
+              'left',
+              'up',
+              'right',
+              'down',
+              'ctrl+o',
+              'meta+o',
+              'ctrl+s',
+              'meta+s',
+              'ctrl+c',
+              'meta+c',
+              'ctrl+x',
+              'meta+x',
+              'ctrl+v',
+              'meta+v',
+              'ctrl+[',
+              'meta+[',
+              'ctrl+]',
+              'meta+]',
               'ctrl+z',
               'meta+z',
               'ctrl+y',
               'meta+y',
-              'ctrl+home',
-              'meta+home',
-              'ctrl+shift+s',
-              'meta+shift+s',
-              'delete',
-              'f2',
-              'f4',
               'shift',
+              'esc',
             ]}
             handleEventType={'keyup'}
             onKeyEvent={(key, e) => {
               e.preventDefault();
+              setKeyPressed(false);
               handleKeyEvent(key, false, e);
             }}
           />
