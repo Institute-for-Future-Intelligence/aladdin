@@ -303,6 +303,13 @@ export interface CommonStoreState {
   selectedElementAngle: number;
   selectedElementHeight: number;
 
+  isBuildingElement: () => boolean;
+  buildingFoundationID: string | null;
+  deletedFoundationID: string | null;
+
+  buildingCuboidID: string | null;
+  deletedCuboidID: string | null;
+
   buildingWallID: string | null;
   deletedWallID: string | null;
   updateWallPointOnFoundation: boolean;
@@ -1885,29 +1892,42 @@ export const useStore = create<CommonStoreState>(
                     state.deletedElements = [elem];
                   }
                   elem.selected = false;
-                  if (elem.type === ObjectType.Wall) {
-                    const currentWall = elem as WallModel;
-                    let leftWallId = '';
-                    let rightWallId = '';
-                    if (currentWall.leftJoints.length > 0) {
-                      leftWallId = state.getElementById(currentWall.leftJoints[0])?.id ?? '';
-                    }
-                    if (currentWall.rightJoints.length > 0) {
-                      rightWallId = state.getElementById(currentWall.rightJoints[0])?.id ?? '';
-                    }
-                    for (const w of state.elements) {
-                      const wall = w as WallModel;
-                      if (w.id === leftWallId) {
-                        wall.rightOffset = 0;
-                        wall.rightJoints = [];
-                      } else if (w.id === rightWallId) {
-                        wall.leftOffset = 0;
-                        wall.leftJoints = [];
+                  switch (elem.type) {
+                    case ObjectType.Wall: {
+                      const currentWall = elem as WallModel;
+                      let leftWallId = '';
+                      let rightWallId = '';
+                      if (currentWall.leftJoints.length > 0) {
+                        leftWallId = state.getElementById(currentWall.leftJoints[0])?.id ?? '';
                       }
+                      if (currentWall.rightJoints.length > 0) {
+                        rightWallId = state.getElementById(currentWall.rightJoints[0])?.id ?? '';
+                      }
+                      for (const w of state.elements) {
+                        const wall = w as WallModel;
+                        if (w.id === leftWallId) {
+                          wall.rightOffset = 0;
+                          wall.rightJoints = [];
+                        } else if (w.id === rightWallId) {
+                          wall.leftOffset = 0;
+                          wall.leftJoints = [];
+                        }
+                      }
+                      state.deletedWallID = elem.id;
+                      break;
                     }
-                    state.deletedWallID = elem.id;
-                  } else if (elem.type === ObjectType.Window) {
-                    state.deletedWindowAndParentID = [elem.id, elem.parentId];
+                    case ObjectType.Window: {
+                      state.deletedWindowAndParentID = [elem.id, elem.parentId];
+                      break;
+                    }
+                    case ObjectType.Foundation: {
+                      state.deletedFoundationID = elem.id;
+                      break;
+                    }
+                    case ObjectType.Cuboid: {
+                      state.deletedCuboidID = elem.id;
+                      break;
+                    }
                   }
                   break;
                 }
@@ -2306,6 +2326,24 @@ export const useStore = create<CommonStoreState>(
 
           selectedElementAngle: 0,
           selectedElementHeight: 0,
+
+          isBuildingElement() {
+            if (
+              get().buildingCuboidID ||
+              get().buildingFoundationID ||
+              get().buildingWallID ||
+              get().buildingWindowID
+            ) {
+              return true;
+            }
+            return false;
+          },
+
+          buildingFoundationID: null,
+          deletedFoundationID: null,
+
+          buildingCuboidID: null,
+          deletedCuboidID: null,
 
           buildingWallID: null,
           deletedWallID: null,

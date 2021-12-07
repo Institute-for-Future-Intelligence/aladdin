@@ -46,11 +46,13 @@ const KeyboardListener = ({
   const setElementPosition = useStore(Selector.setElementPosition);
   const setEnableFineGrid = useStore(Selector.setEnableFineGrid);
   const localFileDialogRequested = useStore(Selector.localFileDialogRequested);
-  const buildingWallID = useStore(Selector.buildingWallID);
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const panCenter = useStore(Selector.viewState.panCenter);
-  const buildingWindowID = useStore(Selector.buildingWindowID);
   const copyCutElements = useStore(Selector.copyCutElements);
+  const buildingFoundationID = useStore(Selector.buildingFoundationID);
+  const buildingCuboidID = useStore(Selector.buildingCuboidID);
+  const buildingWallID = useStore(Selector.buildingWallID);
+  const buildingWindowID = useStore(Selector.buildingWindowID);
 
   const moveStepRelative = 0.01;
   const moveStepAbsolute = 0.1;
@@ -396,7 +398,11 @@ const KeyboardListener = ({
         break;
       case 'esc':
         if (keyDown) {
-          if (buildingWallID) {
+          if (buildingFoundationID) {
+            removeElementById(buildingFoundationID, false);
+          } else if (buildingCuboidID) {
+            removeElementById(buildingCuboidID, false);
+          } else if (buildingWallID) {
             removeElementById(buildingWallID, false);
           } else if (buildingWindowID) {
             removeElementById(buildingWindowID, false);

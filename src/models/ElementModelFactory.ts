@@ -55,8 +55,8 @@ export class ElementModelFactory {
       cx: x,
       cy: y,
       cz: 2,
-      lx: 2,
-      ly: 2,
+      lx: 0.1,
+      ly: 0.1,
       lz: 4,
       color: 'gray',
       faceColors: ['gray', 'gray', 'gray', 'gray', 'gray', 'gray'],
@@ -71,6 +71,7 @@ export class ElementModelFactory {
       normal: [0, 0, 1],
       rotation: [0, 0, 0],
       parentId: GROUND_ID,
+      selected: true,
       id: short.generate() as string,
     } as CuboidModel;
   }
@@ -81,12 +82,13 @@ export class ElementModelFactory {
       cx: x,
       cy: y,
       cz: 0.05,
-      lx: 4,
-      ly: 4,
+      lx: 0,
+      ly: 0,
       lz: 0.1,
       normal: [0, 0, 1],
       rotation: [0, 0, 0],
       parentId: GROUND_ID,
+      selected: true,
       id: short.generate() as string,
     } as FoundationModel;
   }

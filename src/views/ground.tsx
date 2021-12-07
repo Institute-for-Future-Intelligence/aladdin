@@ -52,6 +52,8 @@ const Ground = () => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const groundColor = useStore(Selector.viewState.groundColor);
   const groundModel = useStore((state) => state.world.ground);
+  const deletedFoundationID = useStore(Selector.deletedFoundationID);
+  const deletedCuboidID = useStore(Selector.deletedCuboidID);
 
   const {
     camera,
@@ -70,6 +72,10 @@ const Ground = () => {
   const newRotationRef = useRef<number[]>([0, 0, 1]);
   const absPosMapRef = useRef<Map<string, Vector2>>(new Map());
   const wallsAbsPosMapRef = useRef<Map<string, WallAbsPos>>(new Map());
+  const isSettingFoundationStartPointRef = useRef(false);
+  const isSettingFoundationEndPointRef = useRef(false);
+  const isSettingCuboidStartPointRef = useRef(false);
+  const isSettingCuboidEndPointRef = useRef(false);
 
   useEffect(() => {
     window.addEventListener('pointerup', handlePointerUp);
@@ -79,12 +85,39 @@ const Ground = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (deletedFoundationID) {
+      setCommonStore((state) => {
+        state.buildingFoundationID = null;
+        state.deletedFoundationID = null;
+      });
+      isSettingFoundationStartPointRef.current = false;
+      isSettingFoundationEndPointRef.current = false;
+    }
+  }, [deletedFoundationID]);
+
+  useEffect(() => {
+    if (deletedCuboidID) {
+      setCommonStore((state) => {
+        state.buildingCuboidID = null;
+        state.deletedCuboidID = null;
+      });
+      isSettingCuboidStartPointRef.current = false;
+      isSettingCuboidEndPointRef.current = false;
+    }
+  }, [deletedCuboidID]);
+
   const ray = useMemo(() => new Raycaster(), []);
   const cosAngle = grabRef.current ? Math.cos(grabRef.current.rotation[2]) : 1;
   const sinAngle = grabRef.current ? Math.sin(grabRef.current.rotation[2]) : 0;
   let intersectionPlaneType = IntersectionPlaneType.Ground;
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
   const intersectionPlaneAngle = useMemo(() => new Euler(), []);
+
+  const [minX, setMinX] = useState<number | null>(null);
+  const [maxX, setMaxX] = useState<number | null>(null);
+  const [minY, setMinY] = useState<number | null>(null);
+  const [maxY, setMaxY] = useState<number | null>(null);
 
   if (grabRef.current) {
     if (moveHandleType === MoveHandleType.Top) {
@@ -116,6 +149,24 @@ const Ground = () => {
     }
   }
 
+  const setRayCast = (e: PointerEvent) => {
+    const mouse = new Vector2();
+    mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
+    mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
+    ray.setFromCamera(mouse, camera);
+  };
+
+  const fetchStandElements = (currentId: string, obj: Object3D, arr: Object3D[]) => {
+    if (obj.userData['stand'] && obj.uuid !== currentId) {
+      arr.push(obj);
+    }
+    if (obj.children.length > 0) {
+      for (const c of obj.children) {
+        fetchStandElements(currentId, c, arr);
+      }
+    }
+  };
+
   const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
     if (e.intersections.length > 0) {
       const groundClicked = e.intersections[0].object === groundPlaneRef.current;
@@ -133,167 +184,258 @@ const Ground = () => {
 
   const handlePointerUp = (e: PointerEvent) => {
     if (e.button === 2) return;
-    if (grabRef.current) {
-      const elem = getElementById(grabRef.current.id);
-      if (resizeHandleType) {
-        if (elem) {
+
+    const elem = getElementById(grabRef.current?.id ?? '');
+    if (elem) {
+      // set building foundation end point
+      if (isSettingFoundationEndPointRef.current) {
+        isSettingFoundationStartPointRef.current = false;
+        isSettingFoundationEndPointRef.current = false;
+        setCommonStore((state) => {
+          state.buildingFoundationID = null;
+          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+        });
+        if (elem.lx <= 0.1 || elem.ly <= 0.1) {
+          removeElementById(elem.id, false);
+        } else {
+          const undoableAdd = {
+            name: 'Add',
+            timestamp: Date.now(),
+            addedElement: elem,
+            undo: () => {
+              removeElementById(undoableAdd.addedElement.id, false);
+              setCommonStore((state) => {
+                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+              });
+            },
+            redo: () => {
+              setCommonStore((state) => {
+                state.elements.push(undoableAdd.addedElement);
+                state.selectedElement = undoableAdd.addedElement;
+                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+              });
+            },
+          } as UndoableAdd;
+          addUndoable(undoableAdd);
+        }
+      }
+      // set building cuboid end point
+      else if (isSettingCuboidEndPointRef.current) {
+        isSettingCuboidStartPointRef.current = false;
+        isSettingCuboidEndPointRef.current = false;
+        setCommonStore((state) => {
+          state.buildingCuboidID = null;
+          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+        });
+        if (elem.lx <= 0.1 || elem.ly <= 0.1) {
+          removeElementById(elem.id, false);
+        } else {
+          const undoableAdd = {
+            name: 'Add',
+            timestamp: Date.now(),
+            addedElement: elem,
+            undo: () => {
+              removeElementById(undoableAdd.addedElement.id, false);
+              setCommonStore((state) => {
+                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+              });
+            },
+            redo: () => {
+              setCommonStore((state) => {
+                state.elements.push(undoableAdd.addedElement);
+                state.selectedElement = undoableAdd.addedElement;
+                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+              });
+            },
+          } as UndoableAdd;
+          addUndoable(undoableAdd);
+        }
+      }
+      //
+      else {
+        if (resizeHandleType) {
           newPositionRef.current.x = elem.cx;
           newPositionRef.current.y = elem.cy;
           newPositionRef.current.z = elem.cz;
           newDimensionRef.current.x = elem.lx;
           newDimensionRef.current.y = elem.ly;
           newDimensionRef.current.z = elem.lz;
-        }
-        if (
-          newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001 &&
-          newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > 0.0001
-        ) {
-          const undoableResize = {
-            name: 'Resize',
-            timestamp: Date.now(),
-            resizedElement: grabRef.current,
-            oldCx: oldPositionRef.current.x,
-            oldCy: oldPositionRef.current.y,
-            oldCz: oldPositionRef.current.z,
-            newCx: newPositionRef.current.x,
-            newCy: newPositionRef.current.y,
-            newCz: newPositionRef.current.z,
-            oldLx: oldDimensionRef.current.x,
-            oldLy: oldDimensionRef.current.y,
-            oldLz: oldDimensionRef.current.z,
-            newLx: newDimensionRef.current.x,
-            newLy: newDimensionRef.current.y,
-            newLz: newDimensionRef.current.z,
-            undo: () => {
-              setElementPosition(
-                undoableResize.resizedElement.id,
-                undoableResize.oldCx,
-                undoableResize.oldCy,
-                undoableResize.oldCz,
-              );
-              setElementSize(
-                undoableResize.resizedElement.id,
-                undoableResize.oldLx,
-                undoableResize.oldLy,
-                undoableResize.oldLz,
-              );
-            },
-            redo: () => {
-              setElementPosition(
-                undoableResize.resizedElement.id,
-                undoableResize.newCx,
-                undoableResize.newCy,
-                undoableResize.newCz,
-              );
-              setElementSize(
-                undoableResize.resizedElement.id,
-                undoableResize.newLx,
-                undoableResize.newLy,
-                undoableResize.newLz,
-              );
-            },
-          } as UndoableResize;
-          addUndoable(undoableResize);
-        }
-        setCommonStore((state) => {
-          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-          state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
-        });
-      } else if (rotateHandleType) {
-        if (elem) {
+          if (
+            newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001 &&
+            newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > 0.0001
+          ) {
+            const undoableResize = {
+              name: 'Resize',
+              timestamp: Date.now(),
+              resizedElement: grabRef.current,
+              oldCx: oldPositionRef.current.x,
+              oldCy: oldPositionRef.current.y,
+              oldCz: oldPositionRef.current.z,
+              newCx: newPositionRef.current.x,
+              newCy: newPositionRef.current.y,
+              newCz: newPositionRef.current.z,
+              oldLx: oldDimensionRef.current.x,
+              oldLy: oldDimensionRef.current.y,
+              oldLz: oldDimensionRef.current.z,
+              newLx: newDimensionRef.current.x,
+              newLy: newDimensionRef.current.y,
+              newLz: newDimensionRef.current.z,
+              undo: () => {
+                setElementPosition(
+                  undoableResize.resizedElement.id,
+                  undoableResize.oldCx,
+                  undoableResize.oldCy,
+                  undoableResize.oldCz,
+                );
+                setElementSize(
+                  undoableResize.resizedElement.id,
+                  undoableResize.oldLx,
+                  undoableResize.oldLy,
+                  undoableResize.oldLz,
+                );
+              },
+              redo: () => {
+                setElementPosition(
+                  undoableResize.resizedElement.id,
+                  undoableResize.newCx,
+                  undoableResize.newCy,
+                  undoableResize.newCz,
+                );
+                setElementSize(
+                  undoableResize.resizedElement.id,
+                  undoableResize.newLx,
+                  undoableResize.newLy,
+                  undoableResize.newLz,
+                );
+              },
+            } as UndoableResize;
+            addUndoable(undoableResize);
+          }
+          setCommonStore((state) => {
+            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+            state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
+          });
+        } else if (rotateHandleType) {
           newRotationRef.current = [...elem.rotation];
-        }
-        const oldRotation = new Vector3().fromArray(oldRotationRef.current);
-        const newRotation = new Vector3().fromArray(newRotationRef.current);
-        if (newRotation.distanceToSquared(oldRotation) > 0.0001) {
-          const undoableRotate = {
-            name: 'Rotate',
-            timestamp: Date.now(),
-            rotatedElement: grabRef.current,
-            oldRotation: oldRotationRef.current,
-            newRotation: newRotationRef.current,
-            undo: () => {
-              setElementRotation(
-                undoableRotate.rotatedElement.id,
-                undoableRotate.oldRotation[0],
-                undoableRotate.oldRotation[1],
-                undoableRotate.oldRotation[2],
-              );
-            },
-            redo: () => {
-              setElementRotation(
-                undoableRotate.rotatedElement.id,
-                undoableRotate.newRotation[0],
-                undoableRotate.newRotation[1],
-                undoableRotate.newRotation[2],
-              );
-            },
-          } as UndoableRotate;
-          addUndoable(undoableRotate);
-        }
-      } else {
-        if (elem) {
+          const oldRotation = new Vector3().fromArray(oldRotationRef.current);
+          const newRotation = new Vector3().fromArray(newRotationRef.current);
+          if (newRotation.distanceToSquared(oldRotation) > 0.0001) {
+            const undoableRotate = {
+              name: 'Rotate',
+              timestamp: Date.now(),
+              rotatedElement: grabRef.current,
+              oldRotation: oldRotationRef.current,
+              newRotation: newRotationRef.current,
+              undo: () => {
+                setElementRotation(
+                  undoableRotate.rotatedElement.id,
+                  undoableRotate.oldRotation[0],
+                  undoableRotate.oldRotation[1],
+                  undoableRotate.oldRotation[2],
+                );
+              },
+              redo: () => {
+                setElementRotation(
+                  undoableRotate.rotatedElement.id,
+                  undoableRotate.newRotation[0],
+                  undoableRotate.newRotation[1],
+                  undoableRotate.newRotation[2],
+                );
+              },
+            } as UndoableRotate;
+            addUndoable(undoableRotate);
+          }
+        } else {
           newPositionRef.current.x = elem.cx;
           newPositionRef.current.y = elem.cy;
           newPositionRef.current.z = elem.cz;
-        }
-        if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001) {
-          const undoableMove = {
-            name: 'Move',
-            timestamp: Date.now(),
-            movedElement: grabRef.current,
-            oldCx: oldPositionRef.current.x,
-            oldCy: oldPositionRef.current.y,
-            oldCz: oldPositionRef.current.z,
-            newCx: newPositionRef.current.x,
-            newCy: newPositionRef.current.y,
-            newCz: newPositionRef.current.z,
-            undo: () => {
-              setElementPosition(
-                undoableMove.movedElement.id,
-                undoableMove.oldCx,
-                undoableMove.oldCy,
-                undoableMove.oldCz,
-              );
-            },
-            redo: () => {
-              setElementPosition(
-                undoableMove.movedElement.id,
-                undoableMove.newCx,
-                undoableMove.newCy,
-                undoableMove.newCz,
-              );
-            },
-          } as UndoableMove;
-          addUndoable(undoableMove);
-          setCommonStore((state) => {
-            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-          });
+          if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001) {
+            const undoableMove = {
+              name: 'Move',
+              timestamp: Date.now(),
+              movedElement: grabRef.current,
+              oldCx: oldPositionRef.current.x,
+              oldCy: oldPositionRef.current.y,
+              oldCz: oldPositionRef.current.z,
+              newCx: newPositionRef.current.x,
+              newCy: newPositionRef.current.y,
+              newCz: newPositionRef.current.z,
+              undo: () => {
+                setElementPosition(
+                  undoableMove.movedElement.id,
+                  undoableMove.oldCx,
+                  undoableMove.oldCy,
+                  undoableMove.oldCz,
+                );
+              },
+              redo: () => {
+                setElementPosition(
+                  undoableMove.movedElement.id,
+                  undoableMove.newCx,
+                  undoableMove.newCy,
+                  undoableMove.newCz,
+                );
+              },
+            } as UndoableMove;
+            addUndoable(undoableMove);
+            setCommonStore((state) => {
+              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+            });
+          }
         }
       }
-      grabRef.current = null;
     }
+    grabRef.current = null;
+
     setCommonStore((state) => {
       state.moveHandleType = null;
       state.resizeHandleType = null;
       state.rotateHandleType = null;
       state.enableOrbitController = true;
     });
+
     setMinX(null);
     setMaxX(null);
   };
-
-  const [minX, setMinX] = useState<number | null>(null);
-  const [maxX, setMaxX] = useState<number | null>(null);
-  const [minY, setMinY] = useState<number | null>(null);
-  const [maxY, setMaxY] = useState<number | null>(null);
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2) return; // ignore right-click
     setCommonStore((state) => {
       state.contextMenuObjectType = null;
     });
-    if (e.intersections.length > 0) {
+
+    if (e.intersections.length > 0 && groundPlaneRef.current) {
+      // set building foundation start point
+      if (isSettingFoundationStartPointRef.current) {
+        setRayCast(e);
+        const intersects = ray.intersectObjects([groundPlaneRef.current]);
+        const p = positionOnGrid(intersects[0].point);
+        setCommonStore((state) => {
+          state.enableOrbitController = false;
+          state.moveHandleType = null;
+          state.resizeHandleType = ResizeHandleType.LowerRight;
+          state.resizeAnchor.copy(p);
+        });
+        isSettingFoundationStartPointRef.current = false;
+        isSettingFoundationEndPointRef.current = true;
+        return;
+      }
+      // set building cuboid start point
+      else if (isSettingCuboidStartPointRef.current) {
+        setRayCast(e);
+        const intersects = ray.intersectObjects([groundPlaneRef.current]);
+        const p = positionOnGrid(intersects[0].point);
+        setCommonStore((state) => {
+          state.enableOrbitController = false;
+          state.moveHandleType = null;
+          state.resizeHandleType = ResizeHandleType.LowerRight;
+          state.resizeAnchor.copy(p);
+        });
+        isSettingCuboidStartPointRef.current = false;
+        isSettingCuboidEndPointRef.current = true;
+        return;
+      }
+
       const groundClicked = e.intersections[0].object === groundPlaneRef.current;
       if (groundClicked) {
         setCommonStore((state) => {
@@ -464,23 +606,9 @@ const Ground = () => {
     }
   };
 
-  const fetchStandElements = (currentId: string, obj: Object3D, arr: Object3D[]) => {
-    if (obj.userData['stand'] && obj.uuid !== currentId) {
-      arr.push(obj);
-    }
-    if (obj.children.length > 0) {
-      for (const c of obj.children) {
-        fetchStandElements(currentId, c, arr);
-      }
-    }
-  };
-
   const handleGroudPointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
-      const mouse = new Vector2();
-      mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
-      mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
-      ray.setFromCamera(mouse, camera);
+      setRayCast(e);
       let intersects;
       switch (grabRef.current.type) {
         case ObjectType.Human:
@@ -505,13 +633,14 @@ const Ground = () => {
           if (intersectionPlaneRef.current) {
             intersects = ray.intersectObjects([intersectionPlaneRef.current]);
             if (intersects.length > 0) {
-              const p = intersects[0].point;
+              const pointer = intersects[0].point;
+              const p = positionOnGrid(pointer);
               if (moveHandleType) {
                 handleMove(p);
               } else if (resizeHandleType) {
                 handleResize(p);
               } else if (rotateHandleType) {
-                handleRotate(p);
+                handleRotate(pointer);
               }
             }
           }
@@ -521,7 +650,8 @@ const Ground = () => {
             if (intersectionPlaneType === IntersectionPlaneType.Horizontal) {
               intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects.length > 0) {
-                const p = intersects[0].point;
+                const pointer = intersects[0].point;
+                const p = positionOnGrid(pointer);
                 if (moveHandleType) {
                   if (moveHandleType === MoveHandleType.Top) {
                     setElementPosition(grabRef.current.id, p.x, p.y);
@@ -531,7 +661,7 @@ const Ground = () => {
                 } else if (resizeHandleType) {
                   handleResize(p);
                 } else if (rotateHandleType) {
-                  handleRotate(p);
+                  handleRotate(pointer);
                 }
               }
             }
@@ -539,14 +669,83 @@ const Ground = () => {
           break;
       }
     }
+
+    // add drag and draw element
+    if (groundPlaneRef.current) {
+      // add new element
+      if (objectTypeToAdd) {
+        setRayCast(e);
+        const intersects = ray.intersectObjects([groundPlaneRef.current]);
+        const p = intersects[0].point;
+
+        switch (objectTypeToAdd) {
+          case ObjectType.Foundation: {
+            const foundation = addElement(groundModel, p);
+            if (foundation) {
+              setCommonStore((state) => {
+                state.buildingFoundationID = foundation.id;
+                state.objectTypeToAdd = ObjectType.None;
+              });
+              grabRef.current = foundation;
+              isSettingFoundationStartPointRef.current = true;
+            }
+            break;
+          }
+          case ObjectType.Cuboid: {
+            const cuboid = addElement(groundModel, p);
+            if (cuboid) {
+              setCommonStore((state) => {
+                state.buildingCuboidID = cuboid.id;
+                state.objectTypeToAdd = ObjectType.None;
+              });
+              grabRef.current = cuboid;
+              isSettingCuboidStartPointRef.current = true;
+            }
+            break;
+          }
+        }
+      }
+
+      // setting start point
+      if (grabRef.current && (isSettingFoundationStartPointRef.current || isSettingCuboidStartPointRef.current)) {
+        setRayCast(e);
+        const intersects = ray.intersectObjects([groundPlaneRef.current]);
+        const p = positionOnGrid(intersects[0].point);
+        setElementPosition(grabRef.current.id, p.x, p.y);
+      }
+    }
+  };
+
+  const handleGroundPointerOut = (e: ThreeEvent<PointerEvent>) => {
+    const buildingFoundationID = useStore.getState().buildingFoundationID;
+    const buildingCuboidID = useStore.getState().buildingCuboidID;
+    if (buildingFoundationID) {
+      removeElementById(buildingFoundationID, false);
+      setCommonStore((state) => {
+        state.objectTypeToAdd = ObjectType.Foundation;
+        state.buildingFoundationID = null;
+        state.enableOrbitController = true;
+      });
+      grabRef.current = null;
+      isSettingFoundationStartPointRef.current = false;
+      isSettingFoundationEndPointRef.current = false;
+    }
+    if (buildingCuboidID) {
+      removeElementById(buildingCuboidID, false);
+      setCommonStore((state) => {
+        state.objectTypeToAdd = ObjectType.Cuboid;
+        state.buildingCuboidID = null;
+        state.enableOrbitController = true;
+      });
+      grabRef.current = null;
+      isSettingCuboidStartPointRef.current = false;
+      isSettingCuboidEndPointRef.current = false;
+    }
   };
 
   const handleIntersectionPointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
-      const mouse = new Vector2();
-      mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
-      mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
-      ray.setFromCamera(mouse, camera);
+      setRayCast(e);
       let intersects;
       if (intersectionPlaneRef.current && intersectionPlaneType === IntersectionPlaneType.Vertical) {
         intersects = ray.intersectObjects([intersectionPlaneRef.current]);
@@ -597,6 +796,22 @@ const Ground = () => {
       type === ObjectType.Tree ||
       type === ObjectType.Human
     );
+  };
+
+  const positionOnGrid = (p: Vector3) => {
+    return useStore.getState().enableFineGrid ? snapToFineGrid(p) : snapToNormalGrid(p);
+  };
+
+  const snapToNormalGrid = (v: Vector3) => {
+    const scale = Math.floor(useStore.getState().sceneRadius / 50) + 1;
+    return new Vector3(Math.round(v.x / scale) * scale, Math.round(v.y / scale) * scale, v.z);
+  };
+
+  const snapToFineGrid = (v: Vector3) => {
+    const scale = (Math.floor(useStore.getState().sceneRadius / 50) + 1) / 5;
+    const x = parseFloat((Math.round(v.x / scale) * scale).toFixed(1));
+    const y = parseFloat((Math.round(v.y / scale) * scale).toFixed(1));
+    return new Vector3(x, y, v.z);
   };
 
   const handleResize = (p: Vector3) => {
@@ -674,8 +889,8 @@ const Ground = () => {
 
   const handleMove = (p: Vector3) => {
     let x0, y0;
-    const hx = grabRef.current!.lx / 2 + MOVE_HANDLE_OFFSET;
-    const hy = grabRef.current!.ly / 2 + MOVE_HANDLE_OFFSET;
+    const hx = grabRef.current!.lx / 2;
+    const hy = grabRef.current!.ly / 2;
     switch (moveHandleType) {
       case MoveHandleType.Upper:
         x0 = p.x + sinAngle * hy;
@@ -727,6 +942,7 @@ const Ground = () => {
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerMove={handleGroudPointerMove}
+        onPointerOut={handleGroundPointerOut}
       >
         <meshStandardMaterial depthTest={false} color={groundColor} />
       </Plane>

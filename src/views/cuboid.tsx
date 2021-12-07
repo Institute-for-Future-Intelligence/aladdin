@@ -101,6 +101,8 @@ const Cuboid = ({
   const getPvModule = useStore(Selector.getPvModule);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const addUndoable = useStore(Selector.addUndoable);
+  const buildingCuboidID = useStore(Selector.buildingCuboidID);
+  const isBuildingElement = useStore(Selector.isBuildingElement);
 
   const {
     camera,
@@ -300,7 +302,7 @@ const Cuboid = ({
           } else if (handle === RotateHandleType.Upper || handle === RotateHandleType.Lower) {
             domElement.style.cursor = 'grab';
           } else {
-            domElement.style.cursor = 'pointer';
+            domElement.style.cursor = useStore.getState().buildingCuboidID ? 'crosshair' : 'pointer';
           }
         }
       }
@@ -310,7 +312,7 @@ const Cuboid = ({
 
   const noHoverHandle = useCallback(() => {
     setHoveredHandle(null);
-    domElement.style.cursor = 'default';
+    domElement.style.cursor = useStore.getState().buildingCuboidID ? 'crosshair' : 'default';
   }, []);
 
   // only these elements are allowed to be on the cuboid
@@ -369,7 +371,7 @@ const Cuboid = ({
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2) return; // ignore right-click
-    if (!useStore.getState().buildingWindowID && !useStore.getState().buildingWallID) {
+    if (!isBuildingElement()) {
       selectMe(id, e, ActionType.Select);
     }
     const selectedElement = getSelectedElement();
@@ -995,155 +997,159 @@ const Cuboid = ({
             />
           </Box>
 
-          {/* move handles */}
-          <Sphere
-            ref={moveHandleLowerFaceRef}
-            args={[moveHandleSize, 6, 6]}
-            name={MoveHandleType.Lower}
-            position={positionLowerFace}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Move);
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, MoveHandleType.Lower);
-            }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
-          >
-            <meshStandardMaterial
-              attach="material"
-              color={
-                hoveredHandle === MoveHandleType.Lower || moveHandleType === MoveHandleType.Lower
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : MOVE_HANDLE_COLOR_2
-              }
-            />
-          </Sphere>
-          <Sphere
-            ref={moveHandleUpperFaceRef}
-            args={[moveHandleSize, 6, 6]}
-            name={MoveHandleType.Upper}
-            position={positionUpperFace}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Move);
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, MoveHandleType.Upper);
-            }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
-          >
-            <meshStandardMaterial
-              attach="material"
-              color={
-                hoveredHandle === MoveHandleType.Upper || moveHandleType === MoveHandleType.Upper
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : MOVE_HANDLE_COLOR_2
-              }
-            />
-          </Sphere>
-          <Sphere
-            ref={moveHandleLeftFaceRef}
-            args={[moveHandleSize, 6, 6]}
-            name={MoveHandleType.Left}
-            position={positionLeftFace}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Move);
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, MoveHandleType.Left);
-            }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
-          >
-            <meshStandardMaterial
-              attach="material"
-              color={
-                hoveredHandle === MoveHandleType.Left || moveHandleType === MoveHandleType.Left
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : MOVE_HANDLE_COLOR_1
-              }
-            />
-          </Sphere>
-          <Sphere
-            ref={moveHandleRightFaceRef}
-            args={[moveHandleSize, 6, 6]}
-            name={MoveHandleType.Right}
-            position={positionRightFace}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Move);
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, MoveHandleType.Right);
-            }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
-          >
-            <meshStandardMaterial
-              attach="material"
-              color={
-                hoveredHandle === MoveHandleType.Right || moveHandleType === MoveHandleType.Right
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : MOVE_HANDLE_COLOR_1
-              }
-            />
-          </Sphere>
-          <Sphere
-            ref={moveHandleTopFaceRef}
-            args={[moveHandleSize, 6, 6]}
-            name={MoveHandleType.Top}
-            position={positionTopFace}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Move);
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, MoveHandleType.Top);
-            }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
-          >
-            <meshStandardMaterial
-              attach="material"
-              color={
-                hoveredHandle === MoveHandleType.Top || moveHandleType === MoveHandleType.Top
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : MOVE_HANDLE_COLOR_3
-              }
-            />
-          </Sphere>
+          {!buildingCuboidID && (
+            <>
+              {/* move handles */}
+              <Sphere
+                ref={moveHandleLowerFaceRef}
+                args={[moveHandleSize, 6, 6]}
+                name={MoveHandleType.Lower}
+                position={positionLowerFace}
+                onPointerDown={(e) => {
+                  selectMe(id, e, ActionType.Move);
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, MoveHandleType.Lower);
+                }}
+                onPointerOut={(e) => {
+                  noHoverHandle();
+                }}
+              >
+                <meshStandardMaterial
+                  attach="material"
+                  color={
+                    hoveredHandle === MoveHandleType.Lower || moveHandleType === MoveHandleType.Lower
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : MOVE_HANDLE_COLOR_2
+                  }
+                />
+              </Sphere>
+              <Sphere
+                ref={moveHandleUpperFaceRef}
+                args={[moveHandleSize, 6, 6]}
+                name={MoveHandleType.Upper}
+                position={positionUpperFace}
+                onPointerDown={(e) => {
+                  selectMe(id, e, ActionType.Move);
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, MoveHandleType.Upper);
+                }}
+                onPointerOut={(e) => {
+                  noHoverHandle();
+                }}
+              >
+                <meshStandardMaterial
+                  attach="material"
+                  color={
+                    hoveredHandle === MoveHandleType.Upper || moveHandleType === MoveHandleType.Upper
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : MOVE_HANDLE_COLOR_2
+                  }
+                />
+              </Sphere>
+              <Sphere
+                ref={moveHandleLeftFaceRef}
+                args={[moveHandleSize, 6, 6]}
+                name={MoveHandleType.Left}
+                position={positionLeftFace}
+                onPointerDown={(e) => {
+                  selectMe(id, e, ActionType.Move);
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, MoveHandleType.Left);
+                }}
+                onPointerOut={(e) => {
+                  noHoverHandle();
+                }}
+              >
+                <meshStandardMaterial
+                  attach="material"
+                  color={
+                    hoveredHandle === MoveHandleType.Left || moveHandleType === MoveHandleType.Left
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : MOVE_HANDLE_COLOR_1
+                  }
+                />
+              </Sphere>
+              <Sphere
+                ref={moveHandleRightFaceRef}
+                args={[moveHandleSize, 6, 6]}
+                name={MoveHandleType.Right}
+                position={positionRightFace}
+                onPointerDown={(e) => {
+                  selectMe(id, e, ActionType.Move);
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, MoveHandleType.Right);
+                }}
+                onPointerOut={(e) => {
+                  noHoverHandle();
+                }}
+              >
+                <meshStandardMaterial
+                  attach="material"
+                  color={
+                    hoveredHandle === MoveHandleType.Right || moveHandleType === MoveHandleType.Right
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : MOVE_HANDLE_COLOR_1
+                  }
+                />
+              </Sphere>
+              <Sphere
+                ref={moveHandleTopFaceRef}
+                args={[moveHandleSize, 6, 6]}
+                name={MoveHandleType.Top}
+                position={positionTopFace}
+                onPointerDown={(e) => {
+                  selectMe(id, e, ActionType.Move);
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, MoveHandleType.Top);
+                }}
+                onPointerOut={(e) => {
+                  noHoverHandle();
+                }}
+              >
+                <meshStandardMaterial
+                  attach="material"
+                  color={
+                    hoveredHandle === MoveHandleType.Top || moveHandleType === MoveHandleType.Top
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : MOVE_HANDLE_COLOR_3
+                  }
+                />
+              </Sphere>
 
-          {/* rotate handles */}
-          <RotateHandle
-            id={id}
-            position={lowerRotateHandlePosition}
-            color={
-              hoveredHandle === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Lower
-                ? HIGHLIGHT_HANDLE_COLOR
-                : RESIZE_HANDLE_COLOR
-            }
-            ratio={ratio}
-            handleType={RotateHandleType.Lower}
-            hoverHandle={hoverHandle}
-            noHoverHandle={noHoverHandle}
-          />
-          <RotateHandle
-            id={id}
-            position={upperRotateHandlePosition}
-            color={
-              hoveredHandle === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Upper
-                ? HIGHLIGHT_HANDLE_COLOR
-                : RESIZE_HANDLE_COLOR
-            }
-            ratio={ratio}
-            handleType={RotateHandleType.Upper}
-            hoverHandle={hoverHandle}
-            noHoverHandle={noHoverHandle}
-          />
+              {/* rotate handles */}
+              <RotateHandle
+                id={id}
+                position={lowerRotateHandlePosition}
+                color={
+                  hoveredHandle === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Lower
+                    ? HIGHLIGHT_HANDLE_COLOR
+                    : RESIZE_HANDLE_COLOR
+                }
+                ratio={ratio}
+                handleType={RotateHandleType.Lower}
+                hoverHandle={hoverHandle}
+                noHoverHandle={noHoverHandle}
+              />
+              <RotateHandle
+                id={id}
+                position={upperRotateHandlePosition}
+                color={
+                  hoveredHandle === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Upper
+                    ? HIGHLIGHT_HANDLE_COLOR
+                    : RESIZE_HANDLE_COLOR
+                }
+                ratio={ratio}
+                handleType={RotateHandleType.Upper}
+                hoverHandle={hoverHandle}
+                noHoverHandle={noHoverHandle}
+              />
+            </>
+          )}
         </>
       )}
 

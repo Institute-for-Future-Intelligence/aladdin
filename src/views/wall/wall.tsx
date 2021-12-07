@@ -143,6 +143,7 @@ const Wall = ({
   const elements = useStore(Selector.elements);
   const deletedWindowAndParentID = useStore(Selector.deletedWindowAndParentID);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const isBuildingElement = useStore(Selector.isBuildingElement);
 
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
   const moveHandleTypeRef = useRef(useStore.getState().moveHandleType);
@@ -425,7 +426,8 @@ const Wall = ({
       moveHandleTypeRef.current ||
       resizeHandleTypeRef.current ||
       useStore.getState().objectTypeToAdd !== ObjectType.None ||
-      selected
+      selected ||
+      isBuildingElement()
     ) {
       return false;
     }

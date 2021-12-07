@@ -86,7 +86,9 @@ const Foundation = ({
   const updateWallPointOnFoundation = useStore(Selector.updateWallPointOnFoundation);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const groundImage = useStore(Selector.viewState.groundImage);
+  const buildingFoundationID = useStore(Selector.buildingFoundationID);
   const addUndoable = useStore(Selector.addUndoable);
+  const isBuildingElement = useStore(Selector.isBuildingElement);
 
   const {
     camera,
@@ -270,7 +272,7 @@ const Foundation = ({
           } else if (handle === RotateHandleType.Lower || handle === RotateHandleType.Upper) {
             domElement.style.cursor = 'grab';
           } else {
-            domElement.style.cursor = 'pointer';
+            domElement.style.cursor = useStore.getState().buildingFoundationID ? 'crosshair' : 'pointer';
           }
           switch (handle) {
             case ResizeHandleType.LowerLeft:
@@ -298,7 +300,7 @@ const Foundation = ({
     setHoveredResizeHandleUL(false);
     setHoveredResizeHandleLR(false);
     setHoveredResizeHandleUR(false);
-    domElement.style.cursor = 'default';
+    domElement.style.cursor = useStore.getState().buildingFoundationID ? 'crosshair' : 'default';
   }, []);
 
   // only these elements are allowed to be on the foundation
@@ -465,11 +467,7 @@ const Foundation = ({
     setCommonStore((state) => {
       state.contextMenuObjectType = null;
     });
-    if (
-      objectTypeToAddRef.current !== ObjectType.Window &&
-      !useStore.getState().buildingWallID &&
-      !useStore.getState().buildingWindowID
-    ) {
+    if (objectTypeToAddRef.current !== ObjectType.Window && !isBuildingElement()) {
       selectMe(id, e, ActionType.Select);
     }
     const selectedElement = getSelectedElement();
@@ -1568,187 +1566,193 @@ const Foundation = ({
             />
           </Box>
 
-          {/* move handles */}
-          <Sphere
-            ref={moveHandleLowerRef}
-            args={[moveHandleSize, 6, 6]}
-            position={[0, -hy - MOVE_HANDLE_OFFSET, handleLift]}
-            name={MoveHandleType.Lower}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Move);
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, MoveHandleType.Lower);
-            }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
-          >
-            <meshStandardMaterial
-              attach="material"
-              color={
-                hoveredHandle === MoveHandleType.Lower || moveHandleTypeRef.current === MoveHandleType.Lower
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : MOVE_HANDLE_COLOR_2
-              }
-            />
-          </Sphere>
-          <Sphere
-            ref={moveHandleUpperRef}
-            args={[moveHandleSize, 6, 6]}
-            position={[0, hy + MOVE_HANDLE_OFFSET, handleLift]}
-            name={MoveHandleType.Upper}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Move);
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, MoveHandleType.Upper);
-            }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
-          >
-            <meshStandardMaterial
-              attach="material"
-              color={
-                hoveredHandle === MoveHandleType.Upper || moveHandleTypeRef.current === MoveHandleType.Upper
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : MOVE_HANDLE_COLOR_2
-              }
-            />
-          </Sphere>
-          <Sphere
-            ref={moveHandleLeftRef}
-            args={[moveHandleSize, 6, 6]}
-            position={[-hx - MOVE_HANDLE_OFFSET, handleLift, 0]}
-            name={MoveHandleType.Left}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Move);
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, MoveHandleType.Left);
-            }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
-          >
-            <meshStandardMaterial
-              attach="material"
-              color={
-                hoveredHandle === MoveHandleType.Left || moveHandleTypeRef.current === MoveHandleType.Left
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : MOVE_HANDLE_COLOR_1
-              }
-            />
-          </Sphere>
-          <Sphere
-            ref={moveHandleRightRef}
-            args={[moveHandleSize, 6, 6]}
-            position={[hx + MOVE_HANDLE_OFFSET, 0, handleLift]}
-            name={MoveHandleType.Right}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Move);
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, MoveHandleType.Right);
-            }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
-          >
-            <meshStandardMaterial
-              attach="material"
-              color={
-                hoveredHandle === MoveHandleType.Right || moveHandleTypeRef.current === MoveHandleType.Right
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : MOVE_HANDLE_COLOR_1
-              }
-            />
-          </Sphere>
+          {!buildingFoundationID && (
+            <>
+              {/* move handles */}
+              <Sphere
+                ref={moveHandleLowerRef}
+                args={[moveHandleSize, 6, 6]}
+                position={[0, -hy - MOVE_HANDLE_OFFSET, handleLift]}
+                name={MoveHandleType.Lower}
+                onPointerDown={(e) => {
+                  selectMe(id, e, ActionType.Move);
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, MoveHandleType.Lower);
+                }}
+                onPointerOut={(e) => {
+                  noHoverHandle();
+                }}
+              >
+                <meshStandardMaterial
+                  attach="material"
+                  color={
+                    hoveredHandle === MoveHandleType.Lower || moveHandleTypeRef.current === MoveHandleType.Lower
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : MOVE_HANDLE_COLOR_2
+                  }
+                />
+              </Sphere>
+              <Sphere
+                ref={moveHandleUpperRef}
+                args={[moveHandleSize, 6, 6]}
+                position={[0, hy + MOVE_HANDLE_OFFSET, handleLift]}
+                name={MoveHandleType.Upper}
+                onPointerDown={(e) => {
+                  selectMe(id, e, ActionType.Move);
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, MoveHandleType.Upper);
+                }}
+                onPointerOut={(e) => {
+                  noHoverHandle();
+                }}
+              >
+                <meshStandardMaterial
+                  attach="material"
+                  color={
+                    hoveredHandle === MoveHandleType.Upper || moveHandleTypeRef.current === MoveHandleType.Upper
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : MOVE_HANDLE_COLOR_2
+                  }
+                />
+              </Sphere>
+              <Sphere
+                ref={moveHandleLeftRef}
+                args={[moveHandleSize, 6, 6]}
+                position={[-hx - MOVE_HANDLE_OFFSET, handleLift, 0]}
+                name={MoveHandleType.Left}
+                onPointerDown={(e) => {
+                  selectMe(id, e, ActionType.Move);
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, MoveHandleType.Left);
+                }}
+                onPointerOut={(e) => {
+                  noHoverHandle();
+                }}
+              >
+                <meshStandardMaterial
+                  attach="material"
+                  color={
+                    hoveredHandle === MoveHandleType.Left || moveHandleTypeRef.current === MoveHandleType.Left
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : MOVE_HANDLE_COLOR_1
+                  }
+                />
+              </Sphere>
+              <Sphere
+                ref={moveHandleRightRef}
+                args={[moveHandleSize, 6, 6]}
+                position={[hx + MOVE_HANDLE_OFFSET, 0, handleLift]}
+                name={MoveHandleType.Right}
+                onPointerDown={(e) => {
+                  selectMe(id, e, ActionType.Move);
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, MoveHandleType.Right);
+                }}
+                onPointerOut={(e) => {
+                  noHoverHandle();
+                }}
+              >
+                <meshStandardMaterial
+                  attach="material"
+                  color={
+                    hoveredHandle === MoveHandleType.Right || moveHandleTypeRef.current === MoveHandleType.Right
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : MOVE_HANDLE_COLOR_1
+                  }
+                />
+              </Sphere>
 
-          {/* rotation handle */}
-          <RotateHandle
-            id={id}
-            position={lowerRotateHandlePosition}
-            color={
-              hoveredHandle === RotateHandleType.Lower || rotateHandleTypeRef.current === RotateHandleType.Lower
-                ? HIGHLIGHT_HANDLE_COLOR
-                : RESIZE_HANDLE_COLOR
-            }
-            ratio={rotateHandleSize}
-            handleType={RotateHandleType.Lower}
-            hoverHandle={hoverHandle}
-            noHoverHandle={noHoverHandle}
-          />
-          <RotateHandle
-            id={id}
-            position={upperRotateHandlePosition}
-            color={
-              hoveredHandle === RotateHandleType.Upper || rotateHandleTypeRef.current === RotateHandleType.Upper
-                ? HIGHLIGHT_HANDLE_COLOR
-                : RESIZE_HANDLE_COLOR
-            }
-            ratio={rotateHandleSize}
-            handleType={RotateHandleType.Upper}
-            hoverHandle={hoverHandle}
-            noHoverHandle={noHoverHandle}
-          />
+              {/* rotation handle */}
+              <RotateHandle
+                id={id}
+                position={lowerRotateHandlePosition}
+                color={
+                  hoveredHandle === RotateHandleType.Lower || rotateHandleTypeRef.current === RotateHandleType.Lower
+                    ? HIGHLIGHT_HANDLE_COLOR
+                    : RESIZE_HANDLE_COLOR
+                }
+                ratio={rotateHandleSize}
+                handleType={RotateHandleType.Lower}
+                hoverHandle={hoverHandle}
+                noHoverHandle={noHoverHandle}
+              />
+              <RotateHandle
+                id={id}
+                position={upperRotateHandlePosition}
+                color={
+                  hoveredHandle === RotateHandleType.Upper || rotateHandleTypeRef.current === RotateHandleType.Upper
+                    ? HIGHLIGHT_HANDLE_COLOR
+                    : RESIZE_HANDLE_COLOR
+                }
+                ratio={rotateHandleSize}
+                handleType={RotateHandleType.Upper}
+                hoverHandle={hoverHandle}
+                noHoverHandle={noHoverHandle}
+              />
+            </>
+          )}
         </>
       )}
 
       {/* text */}
-      <>
-        {hovered && !selected && (
-          <textSprite
-            name={'Label'}
-            text={'Foundation'}
-            fontSize={20}
-            fontFace={'Times Roman'}
-            textHeight={0.2}
-            position={[0, 0, hz + 0.2]}
-          />
-        )}
-        {!locked && hoveredResizeHandleLL && (
-          <textSprite
-            name={'Label'}
-            text={'LL'}
-            fontSize={20}
-            fontFace={'Times Roman'}
-            textHeight={0.2}
-            position={[-hx, -hy, hz + 0.2]}
-          />
-        )}
-        {!locked && hoveredResizeHandleUL && (
-          <textSprite
-            name={'Label'}
-            text={'UL'}
-            fontSize={20}
-            fontFace={'Times Roman'}
-            textHeight={0.2}
-            position={[-hx, hy, hz + 0.2]}
-          />
-        )}
-        {!locked && hoveredResizeHandleLR && (
-          <textSprite
-            name={'Label'}
-            text={'LR'}
-            fontSize={20}
-            fontFace={'Times Roman'}
-            textHeight={0.2}
-            position={[hx, -hy, hz + 0.2]}
-          />
-        )}
-        {!locked && hoveredResizeHandleUR && (
-          <textSprite
-            name={'Label'}
-            text={'UR'}
-            fontSize={20}
-            fontFace={'Times Roman'}
-            textHeight={0.2}
-            position={[hx, hy, hz + 0.2]}
-          />
-        )}
-      </>
+      {!buildingFoundationID && (
+        <>
+          {hovered && !selected && (
+            <textSprite
+              name={'Label'}
+              text={'Foundation'}
+              fontSize={20}
+              fontFace={'Times Roman'}
+              textHeight={0.2}
+              position={[0, 0, hz + 0.2]}
+            />
+          )}
+          {!locked && hoveredResizeHandleLL && (
+            <textSprite
+              name={'Label'}
+              text={'LL'}
+              fontSize={20}
+              fontFace={'Times Roman'}
+              textHeight={0.2}
+              position={[-hx, -hy, hz + 0.2]}
+            />
+          )}
+          {!locked && hoveredResizeHandleUL && (
+            <textSprite
+              name={'Label'}
+              text={'UL'}
+              fontSize={20}
+              fontFace={'Times Roman'}
+              textHeight={0.2}
+              position={[-hx, hy, hz + 0.2]}
+            />
+          )}
+          {!locked && hoveredResizeHandleLR && (
+            <textSprite
+              name={'Label'}
+              text={'LR'}
+              fontSize={20}
+              fontFace={'Times Roman'}
+              textHeight={0.2}
+              position={[hx, -hy, hz + 0.2]}
+            />
+          )}
+          {!locked && hoveredResizeHandleUR && (
+            <textSprite
+              name={'Label'}
+              text={'UR'}
+              fontSize={20}
+              fontFace={'Times Roman'}
+              textHeight={0.2}
+              position={[hx, hy, hz + 0.2]}
+            />
+          )}
+        </>
+      )}
     </group>
   );
 };

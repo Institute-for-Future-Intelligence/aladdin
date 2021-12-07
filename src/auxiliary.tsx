@@ -12,16 +12,26 @@ import { VerticalRuler } from './verticalRuler';
 
 export const Auxiliary = () => {
   const getSelectedElement = useStore(Selector.getSelectedElement);
-  const enableOrbitController = useStore(Selector.enableOrbitController);
   const moveHandleType = useStore(Selector.moveHandleType);
   const rotateHandleType = useStore(Selector.rotateHandleType);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const groundImage = useStore(Selector.viewState.groundImage);
   const sceneRadius = useStore(Selector.sceneRadius);
+  const buildingCuboidID = useStore(Selector.buildingCuboidID);
+  const buildingFoundationID = useStore(Selector.buildingFoundationID);
 
   const [showGrid, setShowGrid] = useState(false);
   const [showVerticalRuler, setshowVerticalRuler] = useState(false);
+  const [gridSize, setGridSize] = useState(2 * sceneRadius);
+  const [gridDivisions, setDivisions] = useState(2 * sceneRadius);
   const element = getSelectedElement();
+
+  useEffect(() => {
+    const unit = Math.floor(sceneRadius / 50) + 1;
+    const dividsions = Math.round(sceneRadius / unit) * 2;
+    setGridSize(dividsions * unit);
+    setDivisions(dividsions);
+  }, [sceneRadius]);
 
   useEffect(() => {
     if (resizeHandleType) {
@@ -38,7 +48,7 @@ export const Auxiliary = () => {
       setShowGrid(false);
       setshowVerticalRuler(false);
     }
-  }, [resizeHandleType]);
+  }, [resizeHandleType, buildingCuboidID, buildingFoundationID]);
 
   // only these elements are allowed to be on the ground
   const legalOnGround = () => {
@@ -53,15 +63,13 @@ export const Auxiliary = () => {
 
   return (
     <>
-      {!enableOrbitController && (
-        <>
-          {(showGrid || moveHandleType) && !groundImage && legalOnGround() && (
-            <gridHelper rotation={[HALF_PI, 0, 0]} name={'Grid'} args={[2 * sceneRadius, 100, 'gray', '#444444']} />
-          )}
-          {rotateHandleType && element && !groundImage && legalOnGround() && <PolarGrid element={element} />}
-          {showVerticalRuler && element && <VerticalRuler element={element} />}
-        </>
+      {(((showGrid || moveHandleType) && !groundImage && legalOnGround()) ||
+        buildingCuboidID ||
+        buildingFoundationID) && (
+        <gridHelper rotation={[HALF_PI, 0, 0]} name={'Grid'} args={[gridSize, gridDivisions, 'gray', '#444444']} />
       )}
+      {rotateHandleType && element && !groundImage && legalOnGround() && <PolarGrid element={element} />}
+      {showVerticalRuler && element && <VerticalRuler element={element} />}
     </>
   );
 };

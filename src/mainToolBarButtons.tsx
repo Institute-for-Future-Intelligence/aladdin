@@ -125,6 +125,7 @@ const MainToolBarButtons = () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.Foundation;
           });
+          selectNone();
         }}
       />
       <img
@@ -207,6 +208,7 @@ const MainToolBarButtons = () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.Cuboid;
           });
+          selectNone();
         }}
       />
       <FontAwesomeIcon
@@ -219,6 +221,7 @@ const MainToolBarButtons = () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.Sensor;
           });
+          selectNone();
         }}
       />
       <img
@@ -241,6 +244,7 @@ const MainToolBarButtons = () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.SolarPanel;
           });
+          selectNone();
         }}
       />
       <FontAwesomeIcon
@@ -253,6 +257,7 @@ const MainToolBarButtons = () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.Tree;
           });
+          selectNone();
         }}
       />
       <FontAwesomeIcon
@@ -265,6 +270,7 @@ const MainToolBarButtons = () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.Human;
           });
+          selectNone();
         }}
       />
       <FontAwesomeIcon

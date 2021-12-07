@@ -15,6 +15,7 @@ import WindowHandleWrapper from './windowHandleWrapper';
 const Window = ({ id, parentId, lx, lz, cx, cz, selected, locked, color }: WindowModel) => {
   const setCommonStore = useStore(Selector.set);
   const selectMe = useStore(Selector.selectMe);
+  const isBuildingElement = useStore(Selector.isBuildingElement);
 
   const buildingWallIDRef = useRef(useStore.getState().buildingWallID);
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
@@ -77,7 +78,8 @@ const Window = ({ id, parentId, lx, lz, cx, cz, selected, locked, color }: Windo
               !moveHandleTypeRef.current &&
               !resizeHandleTypeRef.current &&
               objectTypeToAddRef.current === ObjectType.None &&
-              !selected
+              !selected &&
+              !isBuildingElement()
             ) {
               selectMe(id, e, ActionType.Select);
             }
