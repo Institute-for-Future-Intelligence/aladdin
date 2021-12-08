@@ -1474,7 +1474,7 @@ const Foundation = ({
             <PolarGrid element={grabRef.current} height={(grabRef.current as SolarPanelModel).poleHeight + hz} />
           )}
           {(moveHandleTypeRef.current || resizeHandleTypeRef.current || buildingWallID) && (
-            <ElementGrid args={[lx, ly, lz]} objectType={ObjectType.Foundation} />
+            <ElementGrid hx={hx} hy={hy} hz={hz} objectType={ObjectType.Foundation} />
           )}
         </>
       )}

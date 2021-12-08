@@ -766,7 +766,7 @@ const Wall = ({
           {/* grid */}
           {showGrid && (moveHandleTypeRef.current || resizeHandleTypeRef.current) && (
             <group position={[0, -0.001, 0]} rotation={[HALF_PI, 0, 0]}>
-              <ElementGrid args={[lx, lz, 0]} objectType={ObjectType.Wall} />
+              <ElementGrid hx={hx} hy={hz} hz={0} objectType={ObjectType.Wall} />
             </group>
           )}
         </group>
