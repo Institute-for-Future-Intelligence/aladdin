@@ -213,7 +213,7 @@ const Wall = ({
     if (targetWall) {
       const deltaAngle = (Math.PI * 3 - (relativeAngle - targetWall.relativeAngle)) % TWO_PI;
       if (deltaAngle < HALF_PI && deltaAngle > 0) {
-        leftOffset = ly / Math.tan(deltaAngle);
+        leftOffset = Math.min(ly / Math.tan(deltaAngle), lx);
       }
     }
   }
@@ -223,7 +223,7 @@ const Wall = ({
     if (targetWall) {
       const deltaAngle = (Math.PI * 3 + relativeAngle - targetWall.relativeAngle) % TWO_PI;
       if (deltaAngle < HALF_PI && deltaAngle > 0) {
-        rightOffset = ly / Math.tan(deltaAngle);
+        rightOffset = Math.min(ly / Math.tan(deltaAngle), lx);
       }
     }
   }
