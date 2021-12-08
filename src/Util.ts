@@ -73,9 +73,11 @@ export class Util {
     x = x0 - rx * cosaz - ry * sinaz;
     y = y0 - rx * sinaz + ry * cosaz;
     if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
+    // vertex 4
     x = x0 - rx * cosaz + ry * sinaz;
     y = y0 - rx * sinaz - ry * cosaz;
     if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
+    // all in
     return true;
   }
 
