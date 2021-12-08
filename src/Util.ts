@@ -5,9 +5,11 @@
 import { Euler, Vector3 } from 'three';
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
-import { Orientation } from './types';
+import { ObjectType, Orientation } from './types';
 import { PvModel } from './models/PvModel';
 import { UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from './constants';
+import { FoundationModel } from './models/FoundationModel';
+import { SensorModel } from './models/SensorModel';
 
 export class Util {
   static panelizeLx(solarPanel: SolarPanelModel, pvModel: PvModel, value: number) {
@@ -24,6 +26,30 @@ export class Util {
     const n = Math.max(1, Math.ceil((ly - dy / 2) / dy));
     ly = n * dy;
     return ly;
+  }
+
+  static doesFoundationContain(foundation: FoundationModel, children: ElementModel[]) {
+    for (const e of children) {
+      switch (e.type) {
+        case ObjectType.SolarPanel:
+          if (!Util.isSolarPanelWithin(e as SolarPanelModel, foundation)) {
+            return false;
+          }
+          break;
+        case ObjectType.Sensor:
+          if (!Util.isSensorWithin(e as SensorModel, foundation)) {
+            return false;
+          }
+          break;
+        case ObjectType.Wall:
+          break;
+      }
+    }
+    return true;
+  }
+
+  static isSensorWithin(sensor: SensorModel, parent: ElementModel) {
+    return Math.abs(sensor.cx) < 0.5 - sensor.lx / parent.lx && Math.abs(sensor.cy) < 0.5 - sensor.ly / parent.ly;
   }
 
   static isSolarPanelWithin(solarPanel: SolarPanelModel, parent: ElementModel) {

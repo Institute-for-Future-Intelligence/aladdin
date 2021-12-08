@@ -44,7 +44,7 @@ import Window from '../window/window';
 import WallWireFrame from './wallWireFrame';
 import WallResizeHandleWarpper from './wallResizeHandleWarpper';
 import * as Selector from 'src/stores/selector';
-import { HALF_PI, TWO_PI } from 'src/constants';
+import { FINE_GRID_SCALE, HALF_PI, TWO_PI } from 'src/constants';
 
 const Wall = ({
   id,
@@ -309,8 +309,8 @@ const Wall = ({
   };
 
   const snapToFineGrid = (v: Vector3) => {
-    const x = parseFloat((Math.round(v.x / 0.2) * 0.2).toFixed(1));
-    const z = parseFloat((Math.round(v.z / 0.2) * 0.2).toFixed(1));
+    const x = parseFloat((Math.round(v.x / FINE_GRID_SCALE) * FINE_GRID_SCALE).toFixed(1));
+    const z = parseFloat((Math.round(v.z / FINE_GRID_SCALE) * FINE_GRID_SCALE).toFixed(1));
     return new Vector3(x, v.y, z);
   };
 

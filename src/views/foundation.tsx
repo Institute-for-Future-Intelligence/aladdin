@@ -28,6 +28,7 @@ import {
   WallSide,
 } from '../types';
 import {
+  FINE_GRID_SCALE,
   HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
   MOVE_HANDLE_COLOR_1,
@@ -349,8 +350,8 @@ const Foundation = ({
   };
 
   const snapToFineGrid = (v: Vector3) => {
-    const x = parseFloat((Math.round(v.x / 0.2) * 0.2).toFixed(1));
-    const y = parseFloat((Math.round(v.y / 0.2) * 0.2).toFixed(1));
+    const x = parseFloat((Math.round(v.x / FINE_GRID_SCALE) * FINE_GRID_SCALE).toFixed(1));
+    const y = parseFloat((Math.round(v.y / FINE_GRID_SCALE) * FINE_GRID_SCALE).toFixed(1));
     return new Vector3(x, y, v.z);
   };
 

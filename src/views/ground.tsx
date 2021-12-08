@@ -11,6 +11,7 @@ import { IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, Ro
 import { ElementModel } from '../models/ElementModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
+  FINE_GRID_SCALE,
   HALF_PI,
   MOVE_HANDLE_OFFSET,
   MOVE_HANDLE_RADIUS,
@@ -24,6 +25,7 @@ import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableRotate } from '../undo/UndoableRotate';
 import { UndoableAdd } from '../undo/UndoableAdd';
 import { WallModel } from 'src/models/WallModel';
+import { FoundationModel } from '../models/FoundationModel';
 
 interface WallAbsPos {
   leftPointAbsPos: Vector2;
@@ -808,7 +810,7 @@ const Ground = () => {
   };
 
   const snapToFineGrid = (v: Vector3) => {
-    const scale = (Math.floor(useStore.getState().sceneRadius / 50) + 1) / 5;
+    const scale = (Math.floor(useStore.getState().sceneRadius / 50) + 1) * FINE_GRID_SCALE;
     const x = parseFloat((Math.round(v.x / scale) * scale).toFixed(1));
     const y = parseFloat((Math.round(v.y / scale) * scale).toFixed(1));
     return new Vector3(x, y, v.z);
@@ -837,43 +839,84 @@ const Ground = () => {
     const ly = Math.abs(distance * Math.cos(angle));
     const center = new Vector2().addVectors(point, anchor).multiplyScalar(0.5);
     setCommonStore((state) => {
+      let sizeOk = false;
       for (const e of state.elements) {
         if (e.id === grabRef.current!.id) {
-          e.lx = lx;
-          e.ly = ly;
-          e.cx = center.x;
-          e.cy = center.y;
-        } else if (e.parentId === grabRef.current!.id) {
           switch (e.type) {
-            case ObjectType.Wall:
-              const wall = e as WallModel;
-              const wallAbsPos = wallsAbsPosMapRef.current.get(e.id);
-              if (wallAbsPos) {
-                const a = -grabRef.current!.rotation[2];
-                const v0 = new Vector2(0, 0);
-                const { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos } = wallAbsPos;
-                const centerPointRelativePos = new Vector2().subVectors(centerPointAbsPos, center).rotateAround(v0, a);
-                const leftPointRelativePos = new Vector2().subVectors(leftPointAbsPos, center).rotateAround(v0, a);
-                const rightPointRelativePos = new Vector2().subVectors(rightPointAbsPos, center).rotateAround(v0, a);
-                e.cx = centerPointRelativePos.x;
-                e.cy = centerPointRelativePos.y;
-                wall.leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, grabRef.current!.lz];
-                wall.rightPoint = [rightPointRelativePos.x, rightPointRelativePos.y, grabRef.current!.lz];
-              }
-              break;
-            case ObjectType.SolarPanel:
-            case ObjectType.Sensor:
-              if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
-                const centerAbsPos = absPosMapRef.current.get(e.id);
-                if (centerAbsPos) {
-                  const a = -grabRef.current!.rotation[2];
-                  const v0 = new Vector2(0, 0);
-                  const relativePos = new Vector2().subVectors(centerAbsPos, center).rotateAround(v0, a);
-                  e.cx = relativePos.x / lx;
-                  e.cy = relativePos.y / ly;
+            case ObjectType.Foundation:
+              // basically, we have to create a copy of everything, set them to the new values,
+              // check if the new values are OK, proceed to change the original elements in
+              // the common store only when they are OK.
+              const childrenClone: ElementModel[] = [];
+              for (const c of state.elements) {
+                if (c.parentId === e.id) {
+                  const childClone = JSON.parse(JSON.stringify(c));
+                  childrenClone.push(childClone);
+                  if (Util.isIdentical(childClone.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+                    const centerAbsPos = absPosMapRef.current.get(c.id);
+                    if (centerAbsPos) {
+                      const a = -e.rotation[2];
+                      const v0 = new Vector2(0, 0);
+                      const relativePos = new Vector2().subVectors(centerAbsPos, center).rotateAround(v0, a);
+                      childClone.cx = relativePos.x / lx;
+                      childClone.cy = relativePos.y / ly;
+                    }
+                  }
                 }
               }
+              const foundationClone = JSON.parse(JSON.stringify(e)) as FoundationModel;
+              foundationClone.lx = lx;
+              foundationClone.ly = ly;
+              foundationClone.cx = center.x;
+              foundationClone.cy = center.y;
+              if (Util.doesFoundationContain(foundationClone, childrenClone)) {
+                e.lx = lx;
+                e.ly = ly;
+                e.cx = center.x;
+                e.cy = center.y;
+                sizeOk = true;
+              }
               break;
+          }
+        }
+      }
+      // if the new size is okay, we can then change the relative positions of the children.
+      if (sizeOk) {
+        for (const e of state.elements) {
+          if (e.parentId === grabRef.current!.id) {
+            switch (e.type) {
+              case ObjectType.Wall:
+                const wall = e as WallModel;
+                const wallAbsPos = wallsAbsPosMapRef.current.get(e.id);
+                if (wallAbsPos) {
+                  const a = -grabRef.current!.rotation[2];
+                  const v0 = new Vector2(0, 0);
+                  const { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos } = wallAbsPos;
+                  const centerPointRelativePos = new Vector2()
+                    .subVectors(centerPointAbsPos, center)
+                    .rotateAround(v0, a);
+                  const leftPointRelativePos = new Vector2().subVectors(leftPointAbsPos, center).rotateAround(v0, a);
+                  const rightPointRelativePos = new Vector2().subVectors(rightPointAbsPos, center).rotateAround(v0, a);
+                  e.cx = centerPointRelativePos.x;
+                  e.cy = centerPointRelativePos.y;
+                  wall.leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, grabRef.current!.lz];
+                  wall.rightPoint = [rightPointRelativePos.x, rightPointRelativePos.y, grabRef.current!.lz];
+                }
+                break;
+              case ObjectType.SolarPanel:
+              case ObjectType.Sensor:
+                if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+                  const centerAbsPos = absPosMapRef.current.get(e.id);
+                  if (centerAbsPos) {
+                    const a = -grabRef.current!.rotation[2];
+                    const v0 = new Vector2(0, 0);
+                    const relativePos = new Vector2().subVectors(centerAbsPos, center).rotateAround(v0, a);
+                    e.cx = relativePos.x / lx;
+                    e.cy = relativePos.y / ly;
+                  }
+                }
+                break;
+            }
           }
         }
       }
