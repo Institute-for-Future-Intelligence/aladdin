@@ -118,11 +118,6 @@ const Ground = () => {
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
   const intersectionPlaneAngle = useMemo(() => new Euler(), []);
 
-  const [minX, setMinX] = useState<number | null>(null);
-  const [maxX, setMaxX] = useState<number | null>(null);
-  const [minY, setMinY] = useState<number | null>(null);
-  const [maxY, setMaxY] = useState<number | null>(null);
-
   if (grabRef.current) {
     if (moveHandleType === MoveHandleType.Top) {
       intersectionPlaneType = IntersectionPlaneType.Horizontal;
@@ -397,9 +392,6 @@ const Ground = () => {
       state.rotateHandleType = null;
       state.enableOrbitController = true;
     });
-
-    setMinX(null);
-    setMaxX(null);
   };
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
@@ -569,33 +561,6 @@ const Ground = () => {
                         break;
                     }
                   }
-                }
-                const min = new Vector3(+Infinity, +Infinity, +Infinity);
-                const max = new Vector3(-Infinity, -Infinity, -Infinity);
-                for (const content of scene.children) {
-                  if (content.name === 'Content') {
-                    const children = content.children.filter((c) => c.userData['parentId'] === selectedElement.id);
-                    for (const c of children) {
-                      const box = new Box3().setFromObject(c);
-                      min.min(box.min);
-                      max.max(box.max);
-                    }
-                  }
-                }
-                const p = e.intersections[0].point;
-                if (p.x > max.x) {
-                  setMinX(max.x + 1);
-                  setMaxX(null);
-                } else if (p.x < min.x) {
-                  setMaxX(min.x - 1);
-                  setMinX(null);
-                }
-                if (p.y > max.y) {
-                  setMinY(max.y + 1);
-                  setMaxY(null);
-                } else if (p.y < min.y) {
-                  setMaxY(min.y - 1);
-                  setMinY(null);
                 }
                 break;
             }
@@ -819,21 +784,7 @@ const Ground = () => {
   };
 
   const handleResize = (p: Vector3) => {
-    let px = p.x;
-    let py = p.y;
-    if (minX !== null) {
-      px = Math.max(p.x, minX);
-    }
-    if (maxX != null) {
-      px = Math.min(p.x, maxX);
-    }
-    if (minY !== null) {
-      py = Math.max(p.y, minY);
-    }
-    if (maxY != null) {
-      py = Math.min(p.y, maxY);
-    }
-    const point = new Vector2(px, py);
+    const point = new Vector2(p.x, p.y);
     const anchor = new Vector2(resizeAnchor.x, resizeAnchor.y);
     const distance = anchor.distanceTo(point);
     const angle = Math.atan2(point.x - resizeAnchor.x, point.y - resizeAnchor.y) + grabRef.current!.rotation[2];
@@ -857,13 +808,35 @@ const Ground = () => {
                   const childClone = JSON.parse(JSON.stringify(c));
                   childrenClone.push(childClone);
                   if (Util.isIdentical(childClone.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
-                    const centerAbsPos = absPosMapRef.current.get(c.id);
-                    if (centerAbsPos) {
-                      const a = -e.rotation[2];
-                      const v0 = new Vector2(0, 0);
-                      const relativePos = new Vector2().subVectors(centerAbsPos, center).rotateAround(v0, a);
-                      childClone.cx = relativePos.x / lx;
-                      childClone.cy = relativePos.y / ly;
+                    if (c.type === ObjectType.Wall) {
+                      const wallAbsPos = wallsAbsPosMapRef.current.get(c.id);
+                      if (wallAbsPos) {
+                        const a = -e.rotation[2];
+                        const v0 = new Vector2(0, 0);
+                        const { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos } = wallAbsPos;
+                        const centerPointRelativePos = new Vector2()
+                          .subVectors(centerPointAbsPos, center)
+                          .rotateAround(v0, a);
+                        const leftPointRelativePos = new Vector2()
+                          .subVectors(leftPointAbsPos, center)
+                          .rotateAround(v0, a);
+                        const rightPointRelativePos = new Vector2()
+                          .subVectors(rightPointAbsPos, center)
+                          .rotateAround(v0, a);
+                        childClone.cx = centerPointRelativePos.x;
+                        childClone.cy = centerPointRelativePos.y;
+                        childClone.leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, e.lz];
+                        childClone.rightPoint = [rightPointRelativePos.x, rightPointRelativePos.y, e.lz];
+                      }
+                    } else {
+                      const centerAbsPos = absPosMapRef.current.get(c.id);
+                      if (centerAbsPos) {
+                        const a = -e.rotation[2];
+                        const v0 = new Vector2(0, 0);
+                        const relativePos = new Vector2().subVectors(centerAbsPos, center).rotateAround(v0, a);
+                        childClone.cx = relativePos.x / lx;
+                        childClone.cy = relativePos.y / ly;
+                      }
                     }
                   }
                 }

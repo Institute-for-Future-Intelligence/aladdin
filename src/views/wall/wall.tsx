@@ -665,7 +665,7 @@ const Wall = ({
           name={`Wall Group ${id}`}
           position={wallAbsPosition}
           rotation={[0, 0, wallAbsAngle]}
-          userData={{ parentId: parentId, aabb: true }}
+          userData={{ aabb: true }}
         >
           {/* outside wall */}
           <mesh

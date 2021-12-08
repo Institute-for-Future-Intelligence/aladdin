@@ -4,12 +4,13 @@
 
 import { UNIT_VECTOR_POS_Z, UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from './constants';
 import { Euler, Vector2, Vector3 } from 'three';
-import { ObjectType, Orientation } from './types';
 import { ElementModel } from './models/ElementModel';
-import { PvModel } from './models/PvModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
+import { ObjectType, Orientation } from './types';
+import { PvModel } from './models/PvModel';
 import { SensorModel } from './models/SensorModel';
 import { FoundationModel } from './models/FoundationModel';
+import { WallModel } from './models/WallModel';
 
 export class Util {
   static panelizeLx(solarPanel: SolarPanelModel, pvModel: PvModel, value: number) {
@@ -82,8 +83,27 @@ export class Util {
           }
           break;
         case ObjectType.Wall:
+          if (!Util.isWallWithin(e as WallModel, parent)) {
+            return false;
+          }
           break;
       }
+    }
+    return true;
+  }
+
+  static isWallWithin(wall: WallModel, parent: ElementModel) {
+    const dx = parent.lx * 0.5;
+    const dy = parent.ly * 0.5;
+    const lx = wall.leftPoint[0]; // left point x
+    const ly = wall.leftPoint[1]; // left point y
+    if (Math.abs(lx) >= dx || Math.abs(ly) >= dy) {
+      return false;
+    }
+    const rx = wall.rightPoint[0]; // right point x
+    const ry = wall.rightPoint[1]; // right point y
+    if (Math.abs(rx) >= dx || Math.abs(ry) >= dy) {
+      return false;
     }
     return true;
   }
