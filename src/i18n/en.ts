@@ -103,6 +103,7 @@ export const i18n_en = {
       cloudMenu: 'Cloud Menu',
       fileSubMenu: 'File',
       file: {
+        CreateNewFile: 'Create New File',
         OpenLocalFile: 'Open Local File',
         SaveToDownloadFolder: 'Save to Download Folder',
         DownloadAs: 'Download as',

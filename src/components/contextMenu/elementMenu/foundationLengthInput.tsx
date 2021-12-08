@@ -12,6 +12,9 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
+import { Util } from '../../../Util';
+import { ElementModel } from '../../../models/ElementModel';
+import { Vector2 } from 'three';
 
 const FoundationLengthInput = ({
   lengthDialogVisible,
@@ -35,6 +38,8 @@ const FoundationLengthInput = ({
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const rejectRef = useRef<boolean>(false);
+  const rejectedValue = useRef<number | undefined>();
 
   const lang = { lng: language };
 
@@ -49,7 +54,67 @@ const FoundationLengthInput = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const containsAllChildren = (ly: number) => {
+    if (foundation) {
+      const children: ElementModel[] = [];
+      for (const c of elements) {
+        if (c.parentId === foundation.id) {
+          children.push(c);
+        }
+      }
+      if (children.length === 0) {
+        return true;
+      }
+      const oldFoundationCenter = new Vector2(foundation.cx, foundation.cy);
+      const newFoundationCenter = new Vector2(foundation.cx, foundation.cy + (ly - foundation.ly) / 2);
+      const childAbsPosMap = new Map<string, Vector2>();
+      const v0 = new Vector2(0, 0);
+      for (const c of children) {
+        switch (c.type) {
+          case ObjectType.Wall:
+            // TODO
+            break;
+          case ObjectType.SolarPanel:
+          case ObjectType.Sensor:
+            const absPos = new Vector2(c.cx * foundation.lx, c.cy * foundation.ly).rotateAround(
+              v0,
+              foundation.rotation[2],
+            );
+            absPos.add(oldFoundationCenter);
+            childAbsPosMap.set(c.id, absPos);
+            break;
+        }
+      }
+      const childrenClone: ElementModel[] = [];
+      for (const c of children) {
+        const childClone = JSON.parse(JSON.stringify(c));
+        childrenClone.push(childClone);
+        const childAbsPos = childAbsPosMap.get(c.id);
+        if (childAbsPos) {
+          const relativePos = new Vector2()
+            .subVectors(childAbsPos, newFoundationCenter)
+            .rotateAround(v0, -c.rotation[2]);
+          childClone.cy = relativePos.y / ly;
+        }
+      }
+      const parentClone = JSON.parse(JSON.stringify(foundation)) as FoundationModel;
+      parentClone.ly = ly;
+      return Util.doesParentContainAllChildren(parentClone, childrenClone);
+    }
+    return false;
+  };
+
+  const rejectChange = (ly: number) => {
+    // check if the new length will still contain all children
+    if (!containsAllChildren(ly)) {
+      return true;
+    }
+    // other check?
+    return false;
+  };
+
   const setLy = (value: number) => {
+    rejectedValue.current = undefined;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldLysAll = new Map<string, number>();
@@ -78,20 +143,26 @@ const FoundationLengthInput = ({
       default:
         if (foundation) {
           const oldLy = foundation.ly;
-          const undoableChange = {
-            name: 'Set Foundation Length',
-            timestamp: Date.now(),
-            oldValue: oldLy,
-            newValue: value,
-            undo: () => {
-              updateElementLyById(foundation.id, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateElementLyById(foundation.id, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateElementLyById(foundation.id, value);
+          rejectRef.current = rejectChange(value);
+          if (rejectRef.current) {
+            rejectedValue.current = value;
+            setInputLy(oldLy);
+          } else {
+            const undoableChange = {
+              name: 'Set Foundation Length',
+              timestamp: Date.now(),
+              oldValue: oldLy,
+              newValue: value,
+              undo: () => {
+                updateElementLyById(foundation.id, undoableChange.oldValue as number);
+              },
+              redo: () => {
+                updateElementLyById(foundation.id, undoableChange.newValue as number);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            updateElementLyById(foundation.id, value);
+          }
         }
     }
     setUpdateFlag(!updateFlag);
@@ -122,6 +193,13 @@ const FoundationLengthInput = ({
             onMouseOut={() => setDragEnabled(false)}
           >
             {i18n.t('word.Length', lang)}
+            <label style={{ color: 'red', fontWeight: 'bold' }}>
+              {rejectRef.current
+                ? ': ' +
+                  i18n.t('shared.NotApplicableToSelectedAction', lang) +
+                  (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
+                : ''}
+            </label>
           </div>
         }
         footer={[
@@ -137,6 +215,7 @@ const FoundationLengthInput = ({
             key="Cancel"
             onClick={() => {
               setInputLy(foundation?.ly);
+              rejectRef.current = false;
               setLengthDialogVisible(false);
             }}
           >
@@ -147,7 +226,9 @@ const FoundationLengthInput = ({
             type="primary"
             onClick={() => {
               setLy(inputLy);
-              setLengthDialogVisible(false);
+              if (!rejectRef.current) {
+                setLengthDialogVisible(false);
+              }
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -156,6 +237,7 @@ const FoundationLengthInput = ({
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputLy(foundation?.ly);
+          rejectRef.current = false;
           setLengthDialogVisible(false);
         }}
         destroyOnClose={false}
@@ -178,7 +260,9 @@ const FoundationLengthInput = ({
               onChange={(value) => setInputLy(value)}
               onPressEnter={() => {
                 setLy(inputLy);
-                setLengthDialogVisible(false);
+                if (!rejectRef.current) {
+                  setLengthDialogVisible(false);
+                }
               }}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

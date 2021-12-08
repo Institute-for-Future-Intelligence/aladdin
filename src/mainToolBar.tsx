@@ -50,8 +50,10 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const updateCloudFileFlag = useStore(Selector.updateCloudFileFlag);
   const showCloudFileTitleDialog = useStore(Selector.showCloudFileTitleDialog);
   const importContent = useStore(Selector.importContent);
+  const clearContent = useStore(Selector.clearContent);
   const changed = useStore(Selector.changed);
   const localContentToImportAfterCloudFileUpdate = useStore(Selector.localContentToImportAfterCloudFileUpdate);
+  const undoManager = useStore(Selector.undoManager);
 
   const [loading, setLoading] = useState(false);
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
@@ -240,7 +242,14 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
                   state.changed = false;
                 });
                 if (localContentToImportAfterCloudFileUpdate) {
-                  importContent(localContentToImportAfterCloudFileUpdate);
+                  if (localContentToImportAfterCloudFileUpdate === 'CLEAR') {
+                    clearContent();
+                    setCommonStore((state) => {
+                      state.cloudFile = undefined;
+                    });
+                  } else {
+                    importContent(localContentToImportAfterCloudFileUpdate);
+                  }
                 }
               })
               .catch((error) => {
@@ -279,6 +288,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
 
   const openCloudFile = (userid: string, title: string) => {
     if (userid && title) {
+      undoManager.clear();
       setLoading(true);
       firebase
         .firestore()

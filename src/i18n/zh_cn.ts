@@ -103,6 +103,7 @@ export const i18n_zh_cn = {
       cloudMenu: '云菜单',
       fileSubMenu: '文件',
       file: {
+        CreateNewFile: '创建新文件',
         OpenLocalFile: '打开本地文件',
         SaveToDownloadFolder: '保存到下载文件夹',
         DownloadAs: '下载文件名',
