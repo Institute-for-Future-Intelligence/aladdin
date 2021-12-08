@@ -845,12 +845,18 @@ const Ground = () => {
           switch (e.type) {
             case ObjectType.Cuboid: // we can only deal with the top surface of a cuboid now
             case ObjectType.Foundation:
-              // basically, we have to create a copy of everything, set them to the new values,
-              // check if the new values are OK, proceed to change the original elements in
-              // the common store only when they are OK.
-              const childrenClone: ElementModel[] = [];
+              const children: ElementModel[] = [];
               for (const c of state.elements) {
                 if (c.parentId === e.id) {
+                  children.push(c);
+                }
+              }
+              if (children.length > 0) {
+                // basically, we have to create a copy of parent and children, set them to the new values,
+                // check if the new values are OK, proceed to change the original elements in
+                // the common store only when they are OK.
+                const childrenClone: ElementModel[] = [];
+                for (const c of children) {
                   const childClone = JSON.parse(JSON.stringify(c));
                   childrenClone.push(childClone);
                   if (Util.isIdentical(childClone.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
@@ -864,17 +870,20 @@ const Ground = () => {
                     }
                   }
                 }
-              }
-              const parentClone = JSON.parse(JSON.stringify(e)) as ElementModel;
-              parentClone.lx = lx;
-              parentClone.ly = ly;
-              parentClone.cx = center.x;
-              parentClone.cy = center.y;
-              if (Util.doesParentContainAllChildren(parentClone, childrenClone)) {
-                e.lx = lx;
-                e.ly = ly;
-                e.cx = center.x;
-                e.cy = center.y;
+                const parentClone = JSON.parse(JSON.stringify(e)) as ElementModel;
+                parentClone.lx = lx;
+                parentClone.ly = ly;
+                parentClone.cx = center.x;
+                parentClone.cy = center.y;
+                if (Util.doesParentContainAllChildren(parentClone, childrenClone)) {
+                  e.lx = lx;
+                  e.ly = ly;
+                  e.cx = center.x;
+                  e.cy = center.y;
+                  sizeOk = true;
+                }
+              } else {
+                // any size is okay for a childless parent
                 sizeOk = true;
               }
               break;
