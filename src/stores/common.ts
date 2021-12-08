@@ -2394,6 +2394,7 @@ export const useStore = create<CommonStoreState>(
         },
         whitelist: [
           'language',
+          'locale',
           'cloudFile',
           'world',
           'elements',
