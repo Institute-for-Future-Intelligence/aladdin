@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.b8305f81.chunk.css",
-    "main.js": "/aladdin/static/js/main.8745985f.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.8745985f.chunk.js.map",
-    "runtime-main.js": "/aladdin/static/js/runtime-main.a74adb54.js",
-    "runtime-main.js.map": "/aladdin/static/js/runtime-main.a74adb54.js.map",
+    "main.js": "/aladdin/static/js/main.233b67d1.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.233b67d1.chunk.js.map",
+    "runtime-main.js": "/aladdin/static/js/runtime-main.eafe3145.js",
+    "runtime-main.js.map": "/aladdin/static/js/runtime-main.eafe3145.js.map",
     "static/css/2.cc069be8.chunk.css": "/aladdin/static/css/2.cc069be8.chunk.css",
-    "static/js/2.9d1c32de.chunk.js": "/aladdin/static/js/2.9d1c32de.chunk.js",
-    "static/js/2.9d1c32de.chunk.js.map": "/aladdin/static/js/2.9d1c32de.chunk.js.map",
-    "static/js/3.1d0b8d23.chunk.js": "/aladdin/static/js/3.1d0b8d23.chunk.js",
-    "static/js/3.1d0b8d23.chunk.js.map": "/aladdin/static/js/3.1d0b8d23.chunk.js.map",
+    "static/js/2.c2952cd1.chunk.js": "/aladdin/static/js/2.c2952cd1.chunk.js",
+    "static/js/2.c2952cd1.chunk.js.map": "/aladdin/static/js/2.c2952cd1.chunk.js.map",
+    "static/js/3.06b85d48.chunk.js": "/aladdin/static/js/3.06b85d48.chunk.js",
+    "static/js/3.06b85d48.chunk.js.map": "/aladdin/static/js/3.06b85d48.chunk.js.map",
     "index.html": "/aladdin/index.html",
     "static/css/2.cc069be8.chunk.css.map": "/aladdin/static/css/2.cc069be8.chunk.css.map",
     "static/css/main.b8305f81.chunk.css.map": "/aladdin/static/css/main.b8305f81.chunk.css.map",
-    "static/js/2.9d1c32de.chunk.js.LICENSE.txt": "/aladdin/static/js/2.9d1c32de.chunk.js.LICENSE.txt",
+    "static/js/2.c2952cd1.chunk.js.LICENSE.txt": "/aladdin/static/js/2.c2952cd1.chunk.js.LICENSE.txt",
     "static/media/building_facade_01.15119408.png": "/aladdin/static/media/building_facade_01.15119408.png",
     "static/media/building_facade_02.a8bad934.png": "/aladdin/static/media/building_facade_02.a8bad934.png",
     "static/media/building_facade_03.60816e85.png": "/aladdin/static/media/building_facade_03.60816e85.png",
@@ -91,10 +91,10 @@
     "static/media/xiaoming.787a8ea5.png": "/aladdin/static/media/xiaoming.787a8ea5.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.a74adb54.js",
+    "static/js/runtime-main.eafe3145.js",
     "static/css/2.cc069be8.chunk.css",
-    "static/js/2.9d1c32de.chunk.js",
+    "static/js/2.c2952cd1.chunk.js",
     "static/css/main.b8305f81.chunk.css",
-    "static/js/main.8745985f.chunk.js"
+    "static/js/main.233b67d1.chunk.js"
   ]
 }
