@@ -4,17 +4,17 @@
 
 import { extend, Object3DNode } from '@react-three/fiber';
 import TextSprite from 'three-spritetext';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { MyOrbitControls } from './js/MyOrbitControls';
 
 // Extend makes these JSX elements (with the first character lower-cased)
 extend({ TextSprite });
-extend({ OrbitControls });
+extend({ MyOrbitControls });
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
       textSprite: Object3DNode<TextSprite, typeof TextSprite>;
-      orbitControls: Object3DNode<OrbitControls, typeof OrbitControls>;
+      myOrbitControls: Object3DNode<MyOrbitControls, typeof MyOrbitControls>;
     }
   }
 }

@@ -1208,13 +1208,13 @@ const Foundation = ({
     const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
     clone.cx = cx;
     clone.cy = cy;
-    return Util.isSolarPanelWithin(clone, foundationModel);
+    return Util.isSolarPanelWithinHorizontalSurface(clone, foundationModel);
   };
 
   const isSolarPanelNewAzimuthOk = (sp: SolarPanelModel, az: number) => {
     const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
     clone.relativeAzimuth = az;
-    return Util.isSolarPanelWithin(clone, foundationModel);
+    return Util.isSolarPanelWithinHorizontalSurface(clone, foundationModel);
   };
 
   const isSolarPanelNewSizeOk = (sp: SolarPanelModel, cx: number, cy: number, lx: number, ly: number) => {
@@ -1228,7 +1228,7 @@ const Foundation = ({
     clone.cy = cy;
     clone.lx = lx;
     clone.ly = ly;
-    return Util.isSolarPanelWithin(clone, foundationModel);
+    return Util.isSolarPanelWithinHorizontalSurface(clone, foundationModel);
   };
 
   const handleSolarPanelMove = (e: ThreeEvent<PointerEvent>) => {

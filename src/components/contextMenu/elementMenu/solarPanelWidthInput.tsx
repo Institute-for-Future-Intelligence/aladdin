@@ -72,7 +72,7 @@ const SolarPanelWidthInput = ({
       }
       const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
       clone.lx = lx;
-      return Util.isSolarPanelWithin(clone, parent);
+      return Util.isSolarPanelWithinHorizontalSurface(clone, parent);
     }
     return false;
   };

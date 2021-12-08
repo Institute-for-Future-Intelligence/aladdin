@@ -67,7 +67,7 @@ const SolarPanelRelativeAzimuthInput = ({
       }
       const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
       clone.relativeAzimuth = azimuth;
-      return Util.isSolarPanelWithin(clone, parent);
+      return Util.isSolarPanelWithinHorizontalSurface(clone, parent);
     }
     return false;
   };

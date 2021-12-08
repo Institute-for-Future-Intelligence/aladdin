@@ -106,7 +106,7 @@ const SolarPanelOrientationSelection = ({
         clone.lx = nx * pvModel.length;
         clone.ly = ny * pvModel.width;
       }
-      return Util.isSolarPanelWithin(clone, parent);
+      return Util.isSolarPanelWithinHorizontalSurface(clone, parent);
     }
     return false;
   };

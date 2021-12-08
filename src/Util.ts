@@ -2,13 +2,12 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import { UNIT_VECTOR_POS_Z, UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from './constants';
 import { Euler, Vector3 } from 'three';
-import { ElementModel } from './models/ElementModel';
-import { SolarPanelModel } from './models/SolarPanelModel';
 import { ObjectType, Orientation } from './types';
+import { ElementModel } from './models/ElementModel';
 import { PvModel } from './models/PvModel';
-import { UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from './constants';
-import { FoundationModel } from './models/FoundationModel';
+import { SolarPanelModel } from './models/SolarPanelModel';
 import { SensorModel } from './models/SensorModel';
 
 export class Util {
@@ -28,17 +27,22 @@ export class Util {
     return ly;
   }
 
-  static doesFoundationContain(foundation: FoundationModel, children: ElementModel[]) {
+  // TODO: Vertical surfaces
+  static doesParentContainAllChildren(parent: ElementModel, children: ElementModel[]) {
     for (const e of children) {
       switch (e.type) {
         case ObjectType.SolarPanel:
-          if (!Util.isSolarPanelWithin(e as SolarPanelModel, foundation)) {
-            return false;
+          if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+            if (!Util.isSolarPanelWithinHorizontalSurface(e as SolarPanelModel, parent)) {
+              return false;
+            }
           }
           break;
         case ObjectType.Sensor:
-          if (!Util.isSensorWithin(e as SensorModel, foundation)) {
-            return false;
+          if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+            if (!Util.isSensorWithin(e as SensorModel, parent)) {
+              return false;
+            }
           }
           break;
         case ObjectType.Wall:
@@ -52,7 +56,7 @@ export class Util {
     return Math.abs(sensor.cx) < 0.5 - sensor.lx / parent.lx && Math.abs(sensor.cy) < 0.5 - sensor.ly / parent.ly;
   }
 
-  static isSolarPanelWithin(solarPanel: SolarPanelModel, parent: ElementModel) {
+  static isSolarPanelWithinHorizontalSurface(solarPanel: SolarPanelModel, parent: ElementModel) {
     const x0 = solarPanel.cx * parent.lx;
     const y0 = solarPanel.cy * parent.ly;
     const cosaz = Math.cos(solarPanel.relativeAzimuth);

@@ -9,7 +9,7 @@ import { useStore } from './stores/common';
 import * as Selector from 'src/stores/selector';
 import { Camera, Canvas } from '@react-three/fiber';
 import OrbitController from './orbitController';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { MyOrbitControls } from './js/MyOrbitControls';
 import Sky from './views/sky';
 import Axes from './views/axes';
 import ElementsRenderer from './elementsRenderer';
@@ -91,7 +91,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const [keyDown, setKeyDown] = useState(false);
   const [keyUp, setKeyUp] = useState(false);
 
-  const orbitControlsRef = useRef<OrbitControls>();
+  const orbitControlsRef = useRef<MyOrbitControls>();
   const canvasRef = useRef<HTMLCanvasElement>();
   const camRef = useRef<Camera>();
   const lang = { lng: language };
@@ -151,7 +151,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orthographic]);
 
-  const handleKeyEvent = (key: string, down: boolean, e: KeyboardEvent) => {
+  const handleKeyEvent = (key: string, down: boolean) => {
     if (down) {
       setKeyName(key);
       setKeyUp(false);
@@ -436,7 +436,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
                 return;
               }
               setKeyPressed(true);
-              handleKeyEvent(key, true, e);
+              handleKeyEvent(key, true);
             }}
           />
           <KeyboardEventHandler
@@ -445,7 +445,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             onKeyEvent={(key, e) => {
               e.preventDefault();
               setKeyPressed(false);
-              handleKeyEvent(key, false, e);
+              handleKeyEvent(key, false);
             }}
           />
         </div>

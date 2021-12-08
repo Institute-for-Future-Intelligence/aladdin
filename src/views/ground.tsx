@@ -843,13 +843,7 @@ const Ground = () => {
       for (const e of state.elements) {
         if (e.id === grabRef.current!.id) {
           switch (e.type) {
-            case ObjectType.Cuboid:
-              e.lx = lx;
-              e.ly = ly;
-              e.cx = center.x;
-              e.cy = center.y;
-              sizeOk = true;
-              break;
+            case ObjectType.Cuboid: // we can only deal with the top surface of a cuboid now
             case ObjectType.Foundation:
               // basically, we have to create a copy of everything, set them to the new values,
               // check if the new values are OK, proceed to change the original elements in
@@ -871,12 +865,12 @@ const Ground = () => {
                   }
                 }
               }
-              const foundationClone = JSON.parse(JSON.stringify(e)) as FoundationModel;
-              foundationClone.lx = lx;
-              foundationClone.ly = ly;
-              foundationClone.cx = center.x;
-              foundationClone.cy = center.y;
-              if (Util.doesFoundationContain(foundationClone, childrenClone)) {
+              const parentClone = JSON.parse(JSON.stringify(e)) as ElementModel;
+              parentClone.lx = lx;
+              parentClone.ly = ly;
+              parentClone.cx = center.x;
+              parentClone.cy = center.y;
+              if (Util.doesParentContainAllChildren(parentClone, childrenClone)) {
                 e.lx = lx;
                 e.ly = ly;
                 e.cx = center.x;

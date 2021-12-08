@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { MyOrbitControls } from './js/MyOrbitControls';
 import { Camera, useFrame, useThree } from '@react-three/fiber';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
@@ -11,7 +11,7 @@ import { Vector3 } from 'three';
 import { HALF_PI } from './constants';
 
 export interface OrbitControllerProps {
-  orbitControlsRef?: React.MutableRefObject<OrbitControls | undefined>;
+  orbitControlsRef?: React.MutableRefObject<MyOrbitControls | undefined>;
   canvasRef?: React.MutableRefObject<HTMLCanvasElement | undefined>;
   currentCamera?: Camera;
 }
@@ -35,7 +35,7 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
   const cam = currentCamera ?? camera; // just in case the camera has not been set up yet
   const setThree = useThree((state) => state.set);
   // Ref to the controls, so that we can update them on every frame using useFrame
-  const controls = useRef<OrbitControls>(null);
+  const controls = useRef<MyOrbitControls>(null);
   const cameraPositionLength = Math.hypot(cameraPosition.x, cameraPosition.y, cameraPosition.z);
   const panRadius = (orthographic ? cameraZoom * 50 : cameraPositionLength * 10) * sceneRadius;
   const minPan = useMemo(() => new Vector3(-panRadius, -panRadius, 0), [panRadius]);
@@ -151,7 +151,7 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
 
   // do not enable damping, it messes up with rotation state persistence
   return (
-    <orbitControls
+    <myOrbitControls
       ref={controls}
       args={[cam, gl.domElement]}
       autoRotate={autoRotate}

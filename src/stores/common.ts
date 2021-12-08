@@ -2093,7 +2093,7 @@ export const useStore = create<CommonStoreState>(
                         const newChild = ElementModelCloner.clone(e, child, child.cx, child.cy, child.cz);
                         if (newChild) {
                           if (e.normal) {
-                            newChild.normal = [...e.normal];
+                            newChild.normal = [...child.normal];
                           }
                           pastedElements.push(newChild);
                           if (newChild?.type === ObjectType.Wall || newChild?.type === ObjectType.Roof) {
