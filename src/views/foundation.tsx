@@ -83,11 +83,11 @@ const Foundation = ({
   const selectMe = useStore(Selector.selectMe);
   const addElement = useStore(Selector.addElement);
   const getPvModule = useStore(Selector.getPvModule);
-  const deletedWallID = useStore(Selector.deletedWallID);
+  const deletedWallID = useStore(Selector.deletedWallId);
   const updateWallPointOnFoundation = useStore(Selector.updateWallPointOnFoundation);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const groundImage = useStore(Selector.viewState.groundImage);
-  const buildingFoundationID = useStore(Selector.buildingFoundationID);
+  const buildingFoundationID = useStore(Selector.buildingFoundationId);
   const addUndoable = useStore(Selector.addUndoable);
   const isBuildingElement = useStore(Selector.isBuildingElement);
 
@@ -192,8 +192,8 @@ const Foundation = ({
       isSettingWallEndPointRef.current = false;
       setBuildingWallID(null);
       setCommonStore((state) => {
-        state.buildingWallID = null;
-        state.deletedWallID = null;
+        state.buildingWallId = null;
+        state.deletedWallId = null;
         state.enableOrbitController = true;
       });
     }
@@ -273,7 +273,7 @@ const Foundation = ({
           } else if (handle === RotateHandleType.Lower || handle === RotateHandleType.Upper) {
             domElement.style.cursor = 'grab';
           } else {
-            domElement.style.cursor = useStore.getState().buildingFoundationID ? 'crosshair' : 'pointer';
+            domElement.style.cursor = useStore.getState().buildingFoundationId ? 'crosshair' : 'pointer';
           }
           switch (handle) {
             case ResizeHandleType.LowerLeft:
@@ -301,7 +301,7 @@ const Foundation = ({
     setHoveredResizeHandleUL(false);
     setHoveredResizeHandleLR(false);
     setHoveredResizeHandleUR(false);
-    domElement.style.cursor = useStore.getState().buildingFoundationID ? 'crosshair' : 'default';
+    domElement.style.cursor = useStore.getState().buildingFoundationId ? 'crosshair' : 'default';
   }, []);
 
   // only these elements are allowed to be on the foundation
@@ -736,7 +736,7 @@ const Foundation = ({
     if (isSettingWallEndPointRef.current && buildingWallID && baseRef.current) {
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.None;
-        state.buildingWallID = null;
+        state.buildingWallId = null;
         state.enableOrbitController = true;
         for (const e of state.elements) {
           if (e.id === buildingWallID && e.lx === 0) {
@@ -1151,7 +1151,7 @@ const Foundation = ({
         isSettingWallStartPointRef.current = true;
         setShowGrid(true);
         setCommonStore((state) => {
-          state.buildingWallID = addedWall.id;
+          state.buildingWallId = addedWall.id;
           state.enableOrbitController = false;
           state.objectTypeToAdd = ObjectType.None;
         });
@@ -1198,7 +1198,7 @@ const Foundation = ({
       isSettingWallStartPointRef.current = false;
       setShowGrid(false);
       setCommonStore((state) => {
-        state.buildingWallID = null;
+        state.buildingWallId = null;
         state.objectTypeToAdd = ObjectType.Wall;
       });
     }

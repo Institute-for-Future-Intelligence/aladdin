@@ -101,7 +101,7 @@ const Cuboid = ({
   const getPvModule = useStore(Selector.getPvModule);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const addUndoable = useStore(Selector.addUndoable);
-  const buildingCuboidID = useStore(Selector.buildingCuboidID);
+  const buildingCuboidId = useStore(Selector.buildingCuboidId);
   const isBuildingElement = useStore(Selector.isBuildingElement);
 
   const {
@@ -302,7 +302,7 @@ const Cuboid = ({
           } else if (handle === RotateHandleType.Upper || handle === RotateHandleType.Lower) {
             domElement.style.cursor = 'grab';
           } else {
-            domElement.style.cursor = useStore.getState().buildingCuboidID ? 'crosshair' : 'pointer';
+            domElement.style.cursor = useStore.getState().buildingCuboidId ? 'crosshair' : 'pointer';
           }
         }
       }
@@ -312,7 +312,7 @@ const Cuboid = ({
 
   const noHoverHandle = useCallback(() => {
     setHoveredHandle(null);
-    domElement.style.cursor = useStore.getState().buildingCuboidID ? 'crosshair' : 'default';
+    domElement.style.cursor = useStore.getState().buildingCuboidId ? 'crosshair' : 'default';
   }, []);
 
   // only these elements are allowed to be on the cuboid
@@ -997,7 +997,7 @@ const Cuboid = ({
             />
           </Box>
 
-          {!buildingCuboidID && (
+          {!buildingCuboidId && (
             <>
               {/* move handles */}
               <Sphere

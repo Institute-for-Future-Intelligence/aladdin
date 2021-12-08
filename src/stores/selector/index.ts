@@ -77,6 +77,8 @@ export const getCameraDirection = (state: CommonStoreState) => state.getCameraDi
 
 export const getElementById = (state: CommonStoreState) => state.getElementById;
 
+export const getChildren = (state: CommonStoreState) => state.getChildren;
+
 export const getSelectedElement = (state: CommonStoreState) => state.getSelectedElement;
 
 export const selectedSideIndex = (state: CommonStoreState) => state.selectedSideIndex;
@@ -370,21 +372,21 @@ export const resizeAnchor = (state: CommonStoreState) => state.resizeAnchor;
 // elements
 export const isBuildingElement = (state: CommonStoreState) => state.isBuildingElement;
 
-export const buildingFoundationID = (state: CommonStoreState) => state.buildingFoundationID;
+export const buildingFoundationId = (state: CommonStoreState) => state.buildingFoundationId;
 
-export const deletedFoundationID = (state: CommonStoreState) => state.deletedFoundationID;
+export const deletedFoundationId = (state: CommonStoreState) => state.deletedFoundationId;
 
-export const buildingCuboidID = (state: CommonStoreState) => state.buildingCuboidID;
+export const buildingCuboidId = (state: CommonStoreState) => state.buildingCuboidId;
 
-export const deletedCuboidID = (state: CommonStoreState) => state.deletedCuboidID;
+export const deletedCuboidId = (state: CommonStoreState) => state.deletedCuboidId;
 
-export const buildingWallID = (state: CommonStoreState) => state.buildingWallID;
+export const buildingWallId = (state: CommonStoreState) => state.buildingWallId;
 
-export const deletedWallID = (state: CommonStoreState) => state.deletedWallID;
+export const deletedWallId = (state: CommonStoreState) => state.deletedWallId;
 
-export const buildingWindowID = (state: CommonStoreState) => state.buildingWindowID;
+export const buildingWindowId = (state: CommonStoreState) => state.buildingWindowId;
 
-export const deletedWindowAndParentID = (state: CommonStoreState) => state.deletedWindowAndParentID;
+export const deletedWindowAndParentId = (state: CommonStoreState) => state.deletedWindowAndParentId;
 
 export const updateWallPointOnFoundation = (state: CommonStoreState) => state.updateWallPointOnFoundation;
 

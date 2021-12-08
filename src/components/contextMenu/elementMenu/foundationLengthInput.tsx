@@ -13,8 +13,6 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { Util } from '../../../Util';
-import { ElementModel } from '../../../models/ElementModel';
-import { Vector2 } from 'three';
 
 const FoundationLengthInput = ({
   lengthDialogVisible,
@@ -28,6 +26,7 @@ const FoundationLengthInput = ({
   const updateElementLyById = useStore(Selector.updateElementLyById);
   const updateElementLyForAll = useStore(Selector.updateElementLyForAll);
   const getSelectedElement = useStore(Selector.getSelectedElement);
+  const getChildren = useStore(Selector.getChildren);
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
@@ -56,50 +55,11 @@ const FoundationLengthInput = ({
 
   const containsAllChildren = (ly: number) => {
     if (foundation) {
-      const children: ElementModel[] = [];
-      for (const c of elements) {
-        if (c.parentId === foundation.id) {
-          children.push(c);
-        }
-      }
+      const children = getChildren(foundation.id);
       if (children.length === 0) {
         return true;
       }
-      const oldFoundationCenter = new Vector2(foundation.cx, foundation.cy);
-      const newFoundationCenter = new Vector2(foundation.cx, foundation.cy + (ly - foundation.ly) / 2);
-      const childAbsPosMap = new Map<string, Vector2>();
-      const v0 = new Vector2(0, 0);
-      for (const c of children) {
-        switch (c.type) {
-          case ObjectType.Wall:
-            // TODO
-            break;
-          case ObjectType.SolarPanel:
-          case ObjectType.Sensor:
-            const absPos = new Vector2(c.cx * foundation.lx, c.cy * foundation.ly).rotateAround(
-              v0,
-              foundation.rotation[2],
-            );
-            absPos.add(oldFoundationCenter);
-            childAbsPosMap.set(c.id, absPos);
-            break;
-        }
-      }
-      const childrenClone: ElementModel[] = [];
-      for (const c of children) {
-        const childClone = JSON.parse(JSON.stringify(c));
-        childrenClone.push(childClone);
-        const childAbsPos = childAbsPosMap.get(c.id);
-        if (childAbsPos) {
-          const relativePos = new Vector2()
-            .subVectors(childAbsPos, newFoundationCenter)
-            .rotateAround(v0, -c.rotation[2]);
-          childClone.cy = relativePos.y / ly;
-        }
-      }
-      const parentClone = JSON.parse(JSON.stringify(foundation)) as FoundationModel;
-      parentClone.ly = ly;
-      return Util.doesParentContainAllChildren(parentClone, childrenClone);
+      return Util.doesNewSizeContainAllChildren(foundation, children, foundation.lx, ly);
     }
     return false;
   };

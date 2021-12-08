@@ -30,7 +30,7 @@ const WallResizeHandle = React.memo(({ x, z, id, handleType, highLight, handleSi
   const setCommonStore = useStore(Selector.set);
   const selectMe = useStore(Selector.selectMe);
   const resizeHandleType = useStore(Selector.resizeHandleType);
-  const buildingWallID = useStore(Selector.buildingWallID);
+  const buildingWallID = useStore(Selector.buildingWallId);
 
   const [hovered, setHovered] = useState(false);
 

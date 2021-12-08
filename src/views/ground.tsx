@@ -25,7 +25,6 @@ import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableRotate } from '../undo/UndoableRotate';
 import { UndoableAdd } from '../undo/UndoableAdd';
 import { WallModel } from 'src/models/WallModel';
-import { FoundationModel } from '../models/FoundationModel';
 
 interface WallAbsPos {
   leftPointAbsPos: Vector2;
@@ -36,6 +35,7 @@ interface WallAbsPos {
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
   const getSelectedElement = useStore(Selector.getSelectedElement);
+  const getChildren = useStore(Selector.getChildren);
   const selectNone = useStore(Selector.selectNone);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const moveHandleType = useStore(Selector.moveHandleType);
@@ -54,8 +54,8 @@ const Ground = () => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const groundColor = useStore(Selector.viewState.groundColor);
   const groundModel = useStore((state) => state.world.ground);
-  const deletedFoundationID = useStore(Selector.deletedFoundationID);
-  const deletedCuboidID = useStore(Selector.deletedCuboidID);
+  const deletedFoundationId = useStore(Selector.deletedFoundationId);
+  const deletedCuboidId = useStore(Selector.deletedCuboidId);
 
   const {
     camera,
@@ -88,26 +88,28 @@ const Ground = () => {
   }, []);
 
   useEffect(() => {
-    if (deletedFoundationID) {
+    if (deletedFoundationId) {
       setCommonStore((state) => {
-        state.buildingFoundationID = null;
-        state.deletedFoundationID = null;
+        state.buildingFoundationId = null;
+        state.deletedFoundationId = null;
       });
       isSettingFoundationStartPointRef.current = false;
       isSettingFoundationEndPointRef.current = false;
     }
-  }, [deletedFoundationID]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deletedFoundationId]);
 
   useEffect(() => {
-    if (deletedCuboidID) {
+    if (deletedCuboidId) {
       setCommonStore((state) => {
-        state.buildingCuboidID = null;
-        state.deletedCuboidID = null;
+        state.buildingCuboidId = null;
+        state.deletedCuboidId = null;
       });
       isSettingCuboidStartPointRef.current = false;
       isSettingCuboidEndPointRef.current = false;
     }
-  }, [deletedCuboidID]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deletedCuboidId]);
 
   const ray = useMemo(() => new Raycaster(), []);
   const cosAngle = grabRef.current ? Math.cos(grabRef.current.rotation[2]) : 1;
@@ -194,7 +196,7 @@ const Ground = () => {
         isSettingFoundationStartPointRef.current = false;
         isSettingFoundationEndPointRef.current = false;
         setCommonStore((state) => {
-          state.buildingFoundationID = null;
+          state.buildingFoundationId = null;
           state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
         });
         if (elem.lx <= 0.1 || elem.ly <= 0.1) {
@@ -226,7 +228,7 @@ const Ground = () => {
         isSettingCuboidStartPointRef.current = false;
         isSettingCuboidEndPointRef.current = false;
         setCommonStore((state) => {
-          state.buildingCuboidID = null;
+          state.buildingCuboidId = null;
           state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
         });
         if (elem.lx <= 0.1 || elem.ly <= 0.1) {
@@ -608,7 +610,7 @@ const Ground = () => {
     }
   };
 
-  const handleGroudPointerMove = (e: ThreeEvent<PointerEvent>) => {
+  const handleGroundPointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
       setRayCast(e);
       let intersects;
@@ -685,7 +687,7 @@ const Ground = () => {
             const foundation = addElement(groundModel, p);
             if (foundation) {
               setCommonStore((state) => {
-                state.buildingFoundationID = foundation.id;
+                state.buildingFoundationId = foundation.id;
                 state.objectTypeToAdd = ObjectType.None;
               });
               grabRef.current = foundation;
@@ -697,7 +699,7 @@ const Ground = () => {
             const cuboid = addElement(groundModel, p);
             if (cuboid) {
               setCommonStore((state) => {
-                state.buildingCuboidID = cuboid.id;
+                state.buildingCuboidId = cuboid.id;
                 state.objectTypeToAdd = ObjectType.None;
               });
               grabRef.current = cuboid;
@@ -718,14 +720,14 @@ const Ground = () => {
     }
   };
 
-  const handleGroundPointerOut = (e: ThreeEvent<PointerEvent>) => {
-    const buildingFoundationID = useStore.getState().buildingFoundationID;
-    const buildingCuboidID = useStore.getState().buildingCuboidID;
+  const handleGroundPointerOut = () => {
+    const buildingFoundationID = useStore.getState().buildingFoundationId;
+    const buildingCuboidID = useStore.getState().buildingCuboidId;
     if (buildingFoundationID) {
       removeElementById(buildingFoundationID, false);
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.Foundation;
-        state.buildingFoundationID = null;
+        state.buildingFoundationId = null;
         state.enableOrbitController = true;
       });
       grabRef.current = null;
@@ -736,7 +738,7 @@ const Ground = () => {
       removeElementById(buildingCuboidID, false);
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.Cuboid;
-        state.buildingCuboidID = null;
+        state.buildingCuboidId = null;
         state.enableOrbitController = true;
       });
       grabRef.current = null;
@@ -845,12 +847,7 @@ const Ground = () => {
           switch (e.type) {
             case ObjectType.Cuboid: // we can only deal with the top surface of a cuboid now
             case ObjectType.Foundation:
-              const children: ElementModel[] = [];
-              for (const c of state.elements) {
-                if (c.parentId === e.id) {
-                  children.push(c);
-                }
-              }
+              const children = getChildren(e.id);
               if (children.length > 0) {
                 // basically, we have to create a copy of parent and children, set them to the new values,
                 // check if the new values are OK, proceed to change the original elements in
@@ -978,7 +975,7 @@ const Ground = () => {
         <Plane
           ref={intersectionPlaneRef}
           visible={false}
-          name={'Groud Intersection Plane'}
+          name={'Ground Intersection Plane'}
           rotation={intersectionPlaneAngle}
           position={intersectionPlanePosition}
           args={[1000, 1000]}
@@ -998,7 +995,7 @@ const Ground = () => {
         onContextMenu={handleContextMenu}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
-        onPointerMove={handleGroudPointerMove}
+        onPointerMove={handleGroundPointerMove}
         onPointerOut={handleGroundPointerOut}
       >
         <meshStandardMaterial depthTest={false} color={groundColor} />

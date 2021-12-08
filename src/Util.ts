@@ -3,12 +3,13 @@
  */
 
 import { UNIT_VECTOR_POS_Z, UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from './constants';
-import { Euler, Vector3 } from 'three';
+import { Euler, Vector2, Vector3 } from 'three';
 import { ObjectType, Orientation } from './types';
 import { ElementModel } from './models/ElementModel';
 import { PvModel } from './models/PvModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import { SensorModel } from './models/SensorModel';
+import { FoundationModel } from './models/FoundationModel';
 
 export class Util {
   static panelizeLx(solarPanel: SolarPanelModel, pvModel: PvModel, value: number) {
@@ -25,6 +26,41 @@ export class Util {
     const n = Math.max(1, Math.ceil((ly - dy / 2) / dy));
     ly = n * dy;
     return ly;
+  }
+
+  static doesNewSizeContainAllChildren(parent: ElementModel, children: ElementModel[], lx: number, ly: number) {
+    const oldFoundationCenter = new Vector2(parent.cx, parent.cy);
+    const newFoundationCenter = new Vector2(parent.cx + (lx - parent.lx) / 2, parent.cy + (ly - parent.ly) / 2);
+    const childAbsPosMap = new Map<string, Vector2>();
+    const v0 = new Vector2(0, 0);
+    for (const c of children) {
+      switch (c.type) {
+        case ObjectType.Wall:
+          // TODO
+          break;
+        case ObjectType.SolarPanel:
+        case ObjectType.Sensor:
+          const absPos = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(v0, parent.rotation[2]);
+          absPos.add(oldFoundationCenter);
+          childAbsPosMap.set(c.id, absPos);
+          break;
+      }
+    }
+    const childrenClone: ElementModel[] = [];
+    for (const c of children) {
+      const childClone = JSON.parse(JSON.stringify(c));
+      childrenClone.push(childClone);
+      const childAbsPos = childAbsPosMap.get(c.id);
+      if (childAbsPos) {
+        const relativePos = new Vector2().subVectors(childAbsPos, newFoundationCenter).rotateAround(v0, -c.rotation[2]);
+        childClone.cx = relativePos.y / lx;
+        childClone.cy = relativePos.y / ly;
+      }
+    }
+    const parentClone = JSON.parse(JSON.stringify(parent)) as FoundationModel;
+    parentClone.lx = lx;
+    parentClone.ly = ly;
+    return Util.doesParentContainAllChildren(parentClone, childrenClone);
   }
 
   // TODO: Vertical surfaces

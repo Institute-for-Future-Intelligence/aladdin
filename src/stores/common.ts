@@ -266,6 +266,7 @@ export interface CommonStoreState {
   pasteElementsByKey: () => ElementModel[];
   countElementsByType: (type: ObjectType) => number;
   removeElementsByType: (type: ObjectType) => void;
+  getChildren: (id: string) => ElementModel[];
   countAllChildElementsByType: (parentId: string, type: ObjectType) => number;
   countAllChildSolarPanels: (parentId: string) => number; // special case as a rack may have many solar panels
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
@@ -304,19 +305,19 @@ export interface CommonStoreState {
   selectedElementHeight: number;
 
   isBuildingElement: () => boolean;
-  buildingFoundationID: string | null;
-  deletedFoundationID: string | null;
+  buildingFoundationId: string | null;
+  deletedFoundationId: string | null;
 
-  buildingCuboidID: string | null;
-  deletedCuboidID: string | null;
+  buildingCuboidId: string | null;
+  deletedCuboidId: string | null;
 
-  buildingWallID: string | null;
-  deletedWallID: string | null;
+  buildingWallId: string | null;
+  deletedWallId: string | null;
   updateWallPointOnFoundation: boolean;
-  getAllWallsIdOnFoundation: (parentID: string) => string[];
+  getAllWallsIdOnFoundation: (parentId: string) => string[];
 
-  buildingWindowID: string | null;
-  deletedWindowAndParentID: string[] | null;
+  buildingWindowId: string | null;
+  deletedWindowAndParentId: string[] | null;
 
   orthographicChanged: boolean;
   simulationInProgress: boolean;
@@ -1913,19 +1914,19 @@ export const useStore = create<CommonStoreState>(
                           wall.leftJoints = [];
                         }
                       }
-                      state.deletedWallID = elem.id;
+                      state.deletedWallId = elem.id;
                       break;
                     }
                     case ObjectType.Window: {
-                      state.deletedWindowAndParentID = [elem.id, elem.parentId];
+                      state.deletedWindowAndParentId = [elem.id, elem.parentId];
                       break;
                     }
                     case ObjectType.Foundation: {
-                      state.deletedFoundationID = elem.id;
+                      state.deletedFoundationId = elem.id;
                       break;
                     }
                     case ObjectType.Cuboid: {
-                      state.deletedCuboidID = elem.id;
+                      state.deletedCuboidId = elem.id;
                       break;
                     }
                   }
@@ -1984,6 +1985,15 @@ export const useStore = create<CommonStoreState>(
             return count;
           },
 
+          getChildren(id: string) {
+            const children: ElementModel[] = [];
+            for (const e of get().elements) {
+              if (e.parentId === id) {
+                children.push(e);
+              }
+            }
+            return children;
+          },
           removeAllChildElementsByType(parentId: string, type: ObjectType) {
             immerSet((state: CommonStoreState) => {
               state.elements = state.elements.filter((x) => x.type !== type || x.parentId !== parentId);
@@ -2329,24 +2339,24 @@ export const useStore = create<CommonStoreState>(
 
           isBuildingElement() {
             if (
-              get().buildingCuboidID ||
-              get().buildingFoundationID ||
-              get().buildingWallID ||
-              get().buildingWindowID
+              get().buildingCuboidId ||
+              get().buildingFoundationId ||
+              get().buildingWallId ||
+              get().buildingWindowId
             ) {
               return true;
             }
             return false;
           },
 
-          buildingFoundationID: null,
-          deletedFoundationID: null,
+          buildingFoundationId: null,
+          deletedFoundationId: null,
 
-          buildingCuboidID: null,
-          deletedCuboidID: null,
+          buildingCuboidId: null,
+          deletedCuboidId: null,
 
-          buildingWallID: null,
-          deletedWallID: null,
+          buildingWallId: null,
+          deletedWallId: null,
           updateWallPointOnFoundation: false,
           getAllWallsIdOnFoundation(parentID: string) {
             const state = get();
@@ -2359,8 +2369,8 @@ export const useStore = create<CommonStoreState>(
             return wallsID;
           },
 
-          buildingWindowID: null,
-          deletedWindowAndParentID: null,
+          buildingWindowId: null,
+          deletedWindowAndParentId: null,
 
           orthographicChanged: false,
           simulationInProgress: false,

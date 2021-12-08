@@ -47,10 +47,10 @@ const KeyboardListener = ({
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const panCenter = useStore(Selector.viewState.panCenter);
   const copyCutElements = useStore(Selector.copyCutElements);
-  const buildingFoundationID = useStore(Selector.buildingFoundationID);
-  const buildingCuboidID = useStore(Selector.buildingCuboidID);
-  const buildingWallID = useStore(Selector.buildingWallID);
-  const buildingWindowID = useStore(Selector.buildingWindowID);
+  const buildingFoundationId = useStore(Selector.buildingFoundationId);
+  const buildingCuboidId = useStore(Selector.buildingCuboidId);
+  const buildingWallId = useStore(Selector.buildingWallId);
+  const buildingWindowId = useStore(Selector.buildingWindowId);
 
   const moveStepRelative = 0.01;
   const moveStepAbsolute = 0.1;
@@ -388,14 +388,14 @@ const KeyboardListener = ({
         setEnableFineGrid(true);
         break;
       case 'esc':
-        if (buildingFoundationID) {
-          removeElementById(buildingFoundationID, false);
-        } else if (buildingCuboidID) {
-          removeElementById(buildingCuboidID, false);
-        } else if (buildingWallID) {
-          removeElementById(buildingWallID, false);
-        } else if (buildingWindowID) {
-          removeElementById(buildingWindowID, false);
+        if (buildingFoundationId) {
+          removeElementById(buildingFoundationId, false);
+        } else if (buildingCuboidId) {
+          removeElementById(buildingCuboidId, false);
+        } else if (buildingWallId) {
+          removeElementById(buildingWallId, false);
+        } else if (buildingWindowId) {
+          removeElementById(buildingWindowId, false);
         }
         setCommonStore((state) => {
           state.objectTypeToAdd = ObjectType.None;

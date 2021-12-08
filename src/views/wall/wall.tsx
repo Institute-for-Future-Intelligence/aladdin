@@ -141,7 +141,7 @@ const Wall = ({
   const selectMe = useStore(Selector.selectMe);
   const removeElementById = useStore(Selector.removeElementById);
   const elements = useStore(Selector.elements);
-  const deletedWindowAndParentID = useStore(Selector.deletedWindowAndParentID);
+  const deletedWindowAndParentId = useStore(Selector.deletedWindowAndParentId);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const isBuildingElement = useStore(Selector.isBuildingElement);
 
@@ -149,7 +149,7 @@ const Wall = ({
   const moveHandleTypeRef = useRef(useStore.getState().moveHandleType);
   const resizeHandleTypeRef = useRef(useStore.getState().resizeHandleType);
   const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
-  const buildingWallIDRef = useRef(useStore.getState().buildingWallID);
+  const buildingWallIdRef = useRef(useStore.getState().buildingWallId);
   const enableFineGridRef = useRef(useStore.getState().enableFineGrid);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
@@ -158,10 +158,10 @@ const Wall = ({
   const topSurfaceRef = useRef<Mesh>(null);
   const grabRef = useRef<ElementModel | null>(null);
 
-  const buildingWindowIDRef = useRef<string | null>(null);
+  const buildingWindowIdRef = useRef<string | null>(null);
   const isSettingWindowStartPointRef = useRef(false);
   const isSettingWindowEndPointRef = useRef(false);
-  const invalidWindowIDRef = useRef<string | null>(null);
+  const invalidWindowIdRef = useRef<string | null>(null);
 
   const [originElements, setOriginElements] = useState<ElementModel[] | null>([]);
   const [showGrid, setShowGrid] = useState(false);
@@ -234,7 +234,7 @@ const Wall = ({
     drawRectangle(wallShape, lx, lz);
 
     windows.forEach((w) => {
-      if (w.id !== invalidWindowIDRef.current) {
+      if (w.id !== invalidWindowIdRef.current) {
         const window = new Shape();
         drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
         wallShape.holes.push(window);
@@ -249,7 +249,7 @@ const Wall = ({
     drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
 
     windows.forEach((w) => {
-      if (w.id !== invalidWindowIDRef.current) {
+      if (w.id !== invalidWindowIdRef.current) {
         const window = new Shape();
         drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
         wallShape.holes.push(window);
@@ -274,19 +274,19 @@ const Wall = ({
     useStore.subscribe((state) => (moveHandleTypeRef.current = state.moveHandleType));
     useStore.subscribe((state) => (resizeHandleTypeRef.current = state.resizeHandleType));
     useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
-    useStore.subscribe((state) => (buildingWallIDRef.current = state.buildingWallID));
+    useStore.subscribe((state) => (buildingWallIdRef.current = state.buildingWallId));
     useStore.subscribe((state) => (enableFineGridRef.current = state.enableFineGrid));
   }, []);
 
   useEffect(() => {
-    if (deletedWindowAndParentID && deletedWindowAndParentID[1] === id) {
+    if (deletedWindowAndParentId && deletedWindowAndParentId[1] === id) {
       resetCurrentState();
       setShowGrid(false);
       setCommonStore((state) => {
-        state.deletedWindowAndParentID = null;
+        state.deletedWindowAndParentId = null;
       });
     }
-  }, [deletedWindowAndParentID]);
+  }, [deletedWindowAndParentId]);
 
   // windows
   useEffect(() => {
@@ -343,7 +343,7 @@ const Wall = ({
 
   const checkWindowCollision = (id: string, p: Vector3, wlx: number, wlz: number) => {
     if (wlx < 0.1 || wlz < 0.1) {
-      invalidWindowIDRef.current = id;
+      invalidWindowIdRef.current = id;
       return false;
     }
     for (const w of windows) {
@@ -366,12 +366,12 @@ const Wall = ({
             (minZ >= wMinZ && minZ <= wMaxZ) ||
             (maxZ >= wMinZ && maxZ <= wMaxZ))
         ) {
-          invalidWindowIDRef.current = id;
+          invalidWindowIdRef.current = id;
           return false; // has collision
         }
       }
     }
-    invalidWindowIDRef.current = null;
+    invalidWindowIdRef.current = null;
     return true; // no collision
   };
 
@@ -421,8 +421,8 @@ const Wall = ({
   const checkIfCanSelectMe = (e: ThreeEvent<PointerEvent>) => {
     if (
       e.button === 2 ||
-      buildingWallIDRef.current ||
-      buildingWindowIDRef.current ||
+      buildingWallIdRef.current ||
+      buildingWindowIdRef.current ||
       moveHandleTypeRef.current ||
       resizeHandleTypeRef.current ||
       useStore.getState().objectTypeToAdd !== ObjectType.None ||
@@ -436,15 +436,15 @@ const Wall = ({
 
   const resetCurrentState = () => {
     grabRef.current = null;
-    buildingWindowIDRef.current = null;
+    buildingWindowIdRef.current = null;
     isSettingWindowStartPointRef.current = false;
     isSettingWindowEndPointRef.current = false;
-    invalidWindowIDRef.current = null;
+    invalidWindowIdRef.current = null;
   };
 
   const handleIntersectionPointerDown = (e: ThreeEvent<PointerEvent>) => {
     // return on right-click or not first wall
-    if (e.button === 2 || buildingWallIDRef.current || !checkIsFirstWall(e)) {
+    if (e.button === 2 || buildingWallIdRef.current || !checkIsFirstWall(e)) {
       return;
     }
 
@@ -504,7 +504,7 @@ const Wall = ({
     if (e.button === 2 || grabRef.current === null || grabRef.current.parentId !== id) {
       return;
     }
-    if (invalidWindowIDRef.current) {
+    if (invalidWindowIdRef.current) {
       if (isSettingWindowEndPointRef.current) {
         setCommonStore((state) => {
           state.elements.pop();
@@ -516,14 +516,14 @@ const Wall = ({
           }
         });
       }
-      invalidWindowIDRef.current = null;
+      invalidWindowIdRef.current = null;
       setOriginElements(null);
     }
     setCommonStore((state) => {
       state.moveHandleType = null;
       state.resizeHandleType = null;
       state.enableOrbitController = true;
-      state.buildingWindowID = null;
+      state.buildingWindowId = null;
     });
     setShowGrid(false);
     resetCurrentState();
@@ -537,7 +537,7 @@ const Wall = ({
       }
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.Window;
-        state.buildingWindowID = null;
+        state.buildingWindowId = null;
       });
       setShowGrid(false);
       resetCurrentState();
@@ -569,7 +569,7 @@ const Wall = ({
                     if (e.id === grabRef.current?.id) {
                       e.cx = p.x / lx;
                       e.cz = p.z / lz;
-                      e.color = e.id === invalidWindowIDRef.current ? 'red' : '#477395';
+                      e.color = e.id === invalidWindowIdRef.current ? 'red' : '#477395';
                     }
                   }
                 });
@@ -589,7 +589,7 @@ const Wall = ({
                       e.lz = Math.abs(v.z) / lz;
                       e.cx = relativePos.x / lx;
                       e.cz = relativePos.z / lz;
-                      e.color = e.id === invalidWindowIDRef.current ? 'red' : '#477395';
+                      e.color = e.id === invalidWindowIdRef.current ? 'red' : '#477395';
                     }
                   }
                 });
@@ -618,11 +618,11 @@ const Wall = ({
               state.elements.push(newWindow);
               state.moveHandleType = MoveHandleType.Mid;
               state.selectedElement = newWindow;
-              state.buildingWindowID = newWindow.id;
+              state.buildingWindowId = newWindow.id;
             });
             setShowGrid(true);
             grabRef.current = newWindow;
-            buildingWindowIDRef.current = newWindow.id;
+            buildingWindowIdRef.current = newWindow.id;
             isSettingWindowStartPointRef.current = true;
             break;
           }
@@ -642,7 +642,7 @@ const Wall = ({
       removeElementById(grabRef.current.id, false);
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.Window;
-        state.buildingWindowID = null;
+        state.buildingWindowId = null;
       });
       setShowGrid(false);
       resetCurrentState();
