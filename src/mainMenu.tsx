@@ -100,6 +100,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const panCenter = useStore(Selector.viewState.panCenter);
   const importContent = useStore(Selector.importContent);
   const clearContent = useStore(Selector.clearContent);
+  const clearSettings = useStore(Selector.clearSettings);
   const changed = useStore(Selector.changed);
   const cloudFile = useStore(Selector.cloudFile);
   const user = useStore(Selector.user);
@@ -424,12 +425,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       },
       onCancel: () => {
         clearContent();
-        if (cloudFile) {
-          setCommonStore((state) => {
-            state.cloudFile = undefined;
-            state.changed = false;
-          });
-        }
+        clearSettings();
       },
     });
     undoManager.clear();

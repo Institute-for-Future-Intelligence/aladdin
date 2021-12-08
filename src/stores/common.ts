@@ -73,6 +73,7 @@ export interface CommonStoreState {
   importContent: (input: any, title?: string) => void;
   exportContent: () => {};
   clearContent: () => void;
+  clearSettings: () => void;
   undoManager: UndoManager;
   addUndoable: (undoable: Undoable) => void;
 
@@ -421,6 +422,16 @@ export const useStore = create<CommonStoreState>(
           clearContent() {
             immerSet((state: CommonStoreState) => {
               state.elements = [];
+            });
+          },
+          clearSettings() {
+            immerSet((state: CommonStoreState) => {
+              state.viewState = new DefaultViewState();
+              state.cloudFile = undefined;
+              state.changed = false;
+              state.skipChange = true;
+              state.localContentToImportAfterCloudFileUpdate = undefined;
+              state.notes = [];
             });
           },
           undoManager: new UndoManager(),
