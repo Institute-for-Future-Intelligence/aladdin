@@ -843,6 +843,13 @@ const Ground = () => {
       for (const e of state.elements) {
         if (e.id === grabRef.current!.id) {
           switch (e.type) {
+            case ObjectType.Cuboid:
+              e.lx = lx;
+              e.ly = ly;
+              e.cx = center.x;
+              e.cy = center.y;
+              sizeOk = true;
+              break;
             case ObjectType.Foundation:
               // basically, we have to create a copy of everything, set them to the new values,
               // check if the new values are OK, proceed to change the original elements in
