@@ -897,11 +897,13 @@ const Ground = () => {
                 }
               } else {
                 // any size is okay for a childless parent
-                e.lx = lx;
-                e.ly = ly;
-                e.cx = center.x;
-                e.cy = center.y;
-                sizeOk = true;
+                if (lx > 0.99 && ly > 0.99) {
+                  e.lx = lx;
+                  e.ly = ly;
+                  e.cx = center.x;
+                  e.cy = center.y;
+                  sizeOk = true;
+                }
               }
               break;
           }
