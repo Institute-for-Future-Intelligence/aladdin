@@ -403,13 +403,13 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             <Lights />
 
             <ElementsRenderer />
+            <Ground />
             {axes && <Axes />}
             <SceneRadiusCalculator />
             <SensorSimulation city={city} />
             <SolarPanelSimulation city={city} />
             <Suspense fallback={null}>
               <Heliodon />
-              <Ground />
               <Auxiliary />
               {groundImage && <GroundImage />}
               {/* <Obj/> */}
