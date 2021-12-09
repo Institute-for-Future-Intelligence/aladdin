@@ -9,7 +9,6 @@ import { SolarPanelModel } from './models/SolarPanelModel';
 import { ObjectType, Orientation } from './types';
 import { PvModel } from './models/PvModel';
 import { SensorModel } from './models/SensorModel';
-import { FoundationModel } from './models/FoundationModel';
 import { WallModel } from './models/WallModel';
 
 export class Util {
@@ -29,9 +28,8 @@ export class Util {
     return ly;
   }
 
+  // note: this assumes that the center of the parent does NOT change
   static doesNewSizeContainAllChildren(parent: ElementModel, children: ElementModel[], lx: number, ly: number) {
-    const oldFoundationCenter = new Vector2(parent.cx, parent.cy);
-    const newFoundationCenter = new Vector2(parent.cx + (lx - parent.lx) / 2, parent.cy + (ly - parent.ly) / 2);
     const childAbsPosMap = new Map<string, Vector2>();
     const v0 = new Vector2(0, 0);
     for (const c of children) {
@@ -42,7 +40,6 @@ export class Util {
         case ObjectType.SolarPanel:
         case ObjectType.Sensor:
           const absPos = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(v0, parent.rotation[2]);
-          absPos.add(oldFoundationCenter);
           childAbsPosMap.set(c.id, absPos);
           break;
       }
@@ -53,12 +50,12 @@ export class Util {
       childrenClone.push(childClone);
       const childAbsPos = childAbsPosMap.get(c.id);
       if (childAbsPos) {
-        const relativePos = new Vector2().subVectors(childAbsPos, newFoundationCenter).rotateAround(v0, -c.rotation[2]);
-        childClone.cx = relativePos.y / lx;
+        const relativePos = new Vector2(childAbsPos.x, childAbsPos.y).rotateAround(v0, -c.rotation[2]);
+        childClone.cx = relativePos.x / lx;
         childClone.cy = relativePos.y / ly;
       }
     }
-    const parentClone = JSON.parse(JSON.stringify(parent)) as FoundationModel;
+    const parentClone = JSON.parse(JSON.stringify(parent));
     parentClone.lx = lx;
     parentClone.ly = ly;
     return Util.doesParentContainAllChildren(parentClone, childrenClone);

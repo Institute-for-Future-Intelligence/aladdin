@@ -13,6 +13,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { Util } from '../../../Util';
+import { Vector2 } from 'three';
 
 const FoundationLengthInput = ({
   lengthDialogVisible,
@@ -24,6 +25,7 @@ const FoundationLengthInput = ({
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateElementLyById = useStore(Selector.updateElementLyById);
+  const updateElementCyById = useStore(Selector.updateElementCyById);
   const updateElementLyForAll = useStore(Selector.updateElementLyForAll);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getChildren = useStore(Selector.getChildren);
@@ -36,6 +38,8 @@ const FoundationLengthInput = ({
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
+
+  const unnormalizedPosMapRef = useRef<Map<string, Vector2>>(new Map());
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
@@ -71,6 +75,41 @@ const FoundationLengthInput = ({
     }
     // other check?
     return false;
+  };
+
+  const updateLyWithChildren = (value: number, updateMap: boolean) => {
+    // store children's relative positions
+    const children = getChildren(foundation.id);
+    const orgin = new Vector2(0, 0);
+    const azimuth = foundation.rotation[2];
+    if (updateMap) {
+      unnormalizedPosMapRef.current.clear();
+      if (children.length > 0) {
+        for (const c of children) {
+          switch (c.type) {
+            case ObjectType.Wall:
+              break;
+            case ObjectType.SolarPanel:
+            case ObjectType.Sensor:
+              const centerPos = new Vector2(c.cx * foundation.lx, c.cy * foundation.ly).rotateAround(orgin, azimuth);
+              unnormalizedPosMapRef.current.set(c.id, centerPos);
+              break;
+          }
+        }
+      }
+    }
+    // update foundation's length
+    updateElementLyById(foundation.id, value);
+    // update children's relative positions
+    if (children.length > 0) {
+      for (const c of children) {
+        const p = unnormalizedPosMapRef.current.get(c.id);
+        if (p) {
+          const relativePos = new Vector2(p.x, p.y).rotateAround(orgin, -azimuth);
+          updateElementCyById(c.id, relativePos.y / value);
+        }
+      }
+    }
   };
 
   const setLy = (value: number) => {
@@ -114,14 +153,14 @@ const FoundationLengthInput = ({
               oldValue: oldLy,
               newValue: value,
               undo: () => {
-                updateElementLyById(foundation.id, undoableChange.oldValue as number);
+                updateLyWithChildren(undoableChange.oldValue as number, false);
               },
               redo: () => {
-                updateElementLyById(foundation.id, undoableChange.newValue as number);
+                updateLyWithChildren(undoableChange.newValue as number, false);
               },
             } as UndoableChange;
             addUndoable(undoableChange);
-            updateElementLyById(foundation.id, value);
+            updateLyWithChildren(value, true);
           }
         }
     }
