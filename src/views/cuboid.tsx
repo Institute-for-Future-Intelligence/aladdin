@@ -618,7 +618,7 @@ const Cuboid = ({
             const undoableMove = {
               name: 'Move',
               timestamp: Date.now(),
-              movedElement: grabRef.current,
+              movedElementId: grabRef.current.id,
               oldCx: oldPositionRef.current.x,
               oldCy: oldPositionRef.current.y,
               oldCz: oldPositionRef.current.z,
@@ -629,14 +629,14 @@ const Cuboid = ({
               newNormal: newNormalRef.current.clone(),
               undo: () => {
                 setElementPosition(
-                  undoableMove.movedElement.id,
+                  undoableMove.movedElementId,
                   undoableMove.oldCx,
                   undoableMove.oldCy,
                   undoableMove.oldCz,
                 );
                 if (undoableMove.oldNormal) {
                   setElementNormal(
-                    undoableMove.movedElement.id,
+                    undoableMove.movedElementId,
                     undoableMove.oldNormal.x,
                     undoableMove.oldNormal.y,
                     undoableMove.oldNormal.z,
@@ -645,14 +645,14 @@ const Cuboid = ({
               },
               redo: () => {
                 setElementPosition(
-                  undoableMove.movedElement.id,
+                  undoableMove.movedElementId,
                   undoableMove.newCx,
                   undoableMove.newCy,
                   undoableMove.newCz,
                 );
                 if (undoableMove.newNormal) {
                   setElementNormal(
-                    undoableMove.movedElement.id,
+                    undoableMove.movedElementId,
                     undoableMove.newNormal.x,
                     undoableMove.newNormal.y,
                     undoableMove.newNormal.z,

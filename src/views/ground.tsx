@@ -322,12 +322,12 @@ const Ground = () => {
             const undoableRotate = {
               name: 'Rotate',
               timestamp: Date.now(),
-              rotatedElement: grabRef.current,
+              rotatedElementId: grabRef.current.id,
               oldRotation: oldRotationRef.current,
               newRotation: newRotationRef.current,
               undo: () => {
                 setElementRotation(
-                  undoableRotate.rotatedElement.id,
+                  undoableRotate.rotatedElementId,
                   undoableRotate.oldRotation[0],
                   undoableRotate.oldRotation[1],
                   undoableRotate.oldRotation[2],
@@ -335,7 +335,7 @@ const Ground = () => {
               },
               redo: () => {
                 setElementRotation(
-                  undoableRotate.rotatedElement.id,
+                  undoableRotate.rotatedElementId,
                   undoableRotate.newRotation[0],
                   undoableRotate.newRotation[1],
                   undoableRotate.newRotation[2],
@@ -352,7 +352,7 @@ const Ground = () => {
             const undoableMove = {
               name: 'Move',
               timestamp: Date.now(),
-              movedElement: grabRef.current,
+              movedElementId: grabRef.current.id,
               oldCx: oldPositionRef.current.x,
               oldCy: oldPositionRef.current.y,
               oldCz: oldPositionRef.current.z,
@@ -361,7 +361,7 @@ const Ground = () => {
               newCz: newPositionRef.current.z,
               undo: () => {
                 setElementPosition(
-                  undoableMove.movedElement.id,
+                  undoableMove.movedElementId,
                   undoableMove.oldCx,
                   undoableMove.oldCy,
                   undoableMove.oldCz,
@@ -369,7 +369,7 @@ const Ground = () => {
               },
               redo: () => {
                 setElementPosition(
-                  undoableMove.movedElement.id,
+                  undoableMove.movedElementId,
                   undoableMove.newCx,
                   undoableMove.newCy,
                   undoableMove.newCz,

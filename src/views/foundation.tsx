@@ -701,7 +701,7 @@ const Foundation = ({
               const undoableMove = {
                 name: 'Move',
                 timestamp: Date.now(),
-                movedElement: grabRef.current,
+                movedElementId: grabRef.current.id,
                 oldCx: oldPositionRef.current.x,
                 oldCy: oldPositionRef.current.y,
                 oldCz: oldPositionRef.current.z,
@@ -710,7 +710,7 @@ const Foundation = ({
                 newCz: newPositionRef.current.z,
                 undo: () => {
                   setElementPosition(
-                    undoableMove.movedElement.id,
+                    undoableMove.movedElementId,
                     undoableMove.oldCx,
                     undoableMove.oldCy,
                     undoableMove.oldCz,
@@ -718,7 +718,7 @@ const Foundation = ({
                 },
                 redo: () => {
                   setElementPosition(
-                    undoableMove.movedElement.id,
+                    undoableMove.movedElementId,
                     undoableMove.newCx,
                     undoableMove.newCy,
                     undoableMove.newCz,
