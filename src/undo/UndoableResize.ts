@@ -3,6 +3,7 @@
  */
 
 import { Undoable } from './Undoable';
+import { Vector3 } from 'three';
 
 export interface UndoableResize extends Undoable {
   oldCx: number;
@@ -20,4 +21,7 @@ export interface UndoableResize extends Undoable {
   newLz: number;
 
   resizedElementId: string;
+
+  oldChildrenPositionsMap: Map<string, Vector3>;
+  newChildrenPositionsMap: Map<string, Vector3>;
 }

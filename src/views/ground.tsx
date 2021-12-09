@@ -68,6 +68,8 @@ const Ground = () => {
   const grabRef = useRef<ElementModel | null>(null);
   const oldPositionRef = useRef<Vector3>(new Vector3());
   const newPositionRef = useRef<Vector3>(new Vector3());
+  const oldChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
+  const newChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
   const oldDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const newDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const oldRotationRef = useRef<number[]>([0, 0, 1]);
@@ -263,6 +265,21 @@ const Ground = () => {
             newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001 &&
             newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > 0.0001
           ) {
+            // store the new positions of the children if the selected element may be a parent
+            if (
+              elem.type === ObjectType.Wall ||
+              elem.type === ObjectType.Roof ||
+              elem.type === ObjectType.Foundation ||
+              elem.type === ObjectType.Cuboid
+            ) {
+              const children = getChildren(elem.id);
+              newChildrenPositionsMapRef.current.clear();
+              if (children.length > 0) {
+                for (const c of children) {
+                  newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+                }
+              }
+            }
             const undoableResize = {
               name: 'Resize',
               timestamp: Date.now(),
@@ -279,6 +296,8 @@ const Ground = () => {
               newLx: newDimensionRef.current.x,
               newLy: newDimensionRef.current.y,
               newLz: newDimensionRef.current.z,
+              oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+              newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
               undo: () => {
                 setElementPosition(
                   undoableResize.resizedElementId,
@@ -292,6 +311,11 @@ const Ground = () => {
                   undoableResize.oldLy,
                   undoableResize.oldLz,
                 );
+                if (undoableResize.oldChildrenPositionsMap.size > 0) {
+                  for (const [id, p] of undoableResize.oldChildrenPositionsMap.entries()) {
+                    setElementPosition(id, p.x, p.y, p.z);
+                  }
+                }
               },
               redo: () => {
                 setElementPosition(
@@ -306,6 +330,11 @@ const Ground = () => {
                   undoableResize.newLy,
                   undoableResize.newLz,
                 );
+                if (undoableResize.newChildrenPositionsMap.size > 0) {
+                  for (const [id, p] of undoableResize.newChildrenPositionsMap.entries()) {
+                    setElementPosition(id, p.x, p.y, p.z);
+                  }
+                }
               },
             } as UndoableResize;
             addUndoable(undoableResize);
@@ -480,6 +509,21 @@ const Ground = () => {
             oldDimensionRef.current.y = selectedElement.ly;
             oldDimensionRef.current.z = selectedElement.lz;
             oldRotationRef.current = [...selectedElement.rotation];
+            // store the positions of the children if the selected element may be a parent
+            if (
+              selectedElement.type === ObjectType.Wall ||
+              selectedElement.type === ObjectType.Roof ||
+              selectedElement.type === ObjectType.Foundation ||
+              selectedElement.type === ObjectType.Cuboid
+            ) {
+              const children = getChildren(selectedElement.id);
+              oldChildrenPositionsMapRef.current.clear();
+              if (children.length > 0) {
+                for (const c of children) {
+                  oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+                }
+              }
+            }
             // allow the view to rotate when pressing down on the elements excluded as follows
             if (selectedElement.type !== ObjectType.Foundation && selectedElement.type !== ObjectType.Cuboid) {
               setCommonStore((state) => {
