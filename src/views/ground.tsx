@@ -2,11 +2,11 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { Plane } from '@react-three/drei';
-import { Box3, DoubleSide, Euler, Mesh, Object3D, Raycaster, Vector2, Vector3 } from 'three';
+import { DoubleSide, Euler, Mesh, Object3D, Raycaster, Vector2, Vector3 } from 'three';
 import { IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -582,18 +582,21 @@ const Ground = () => {
       switch (grabRef.current.type) {
         case ObjectType.Human:
         case ObjectType.Tree:
+          let hit = false;
           if (standObjectsRef.current.length > 0) {
             intersects = ray.intersectObjects(standObjectsRef.current);
             if (intersects.length > 0) {
               const p = intersects[0].point;
               setElementPosition(grabRef.current.id, p.x, p.y, p.z);
-            } else {
-              if (groundPlaneRef.current) {
-                intersects = ray.intersectObjects([groundPlaneRef.current]);
-                if (intersects.length > 0) {
-                  const p = intersects[0].point;
-                  setElementPosition(grabRef.current.id, p.x, p.y, p.z);
-                }
+              hit = true;
+            }
+          }
+          if (!hit) {
+            if (groundPlaneRef.current) {
+              intersects = ray.intersectObjects([groundPlaneRef.current]);
+              if (intersects.length > 0) {
+                const p = intersects[0].point;
+                setElementPosition(grabRef.current.id, p.x, p.y, p.z);
               }
             }
           }

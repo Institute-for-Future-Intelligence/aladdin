@@ -96,7 +96,7 @@ export class DefaultViewState implements ViewState {
     this.yearlyPvYieldPanelX = 0;
     this.yearlyPvYieldPanelY = 0;
 
-    this.mapZoom = 16;
+    this.mapZoom = 18;
     this.mapType = 'roadmap';
     this.mapTilt = 0;
     this.mapWeatherStations = false;
