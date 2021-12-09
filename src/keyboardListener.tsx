@@ -318,6 +318,12 @@ const KeyboardListener = ({
       case 'f4':
         toggleAutoRotate();
         break;
+      case 'ctrl+f':
+      case 'meta+f': // for Mac
+        setCommonStore((state) => {
+          state.createNewFileFlag = !state.createNewFileFlag;
+        });
+        break;
       case 'ctrl+o':
       case 'meta+o': // for Mac
         if (!localFileDialogRequested) {

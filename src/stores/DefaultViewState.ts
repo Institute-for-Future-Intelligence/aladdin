@@ -101,4 +101,57 @@ export class DefaultViewState implements ViewState {
     this.mapTilt = 0;
     this.mapWeatherStations = false;
   }
+
+  static resetViewState(viewState: ViewState) {
+    viewState.panCenter.x = 0;
+    viewState.panCenter.y = 0;
+    viewState.panCenter.z = 0;
+    viewState.orthographic = false;
+    viewState.enableRotate = true;
+    viewState.cameraPosition.x = 0;
+    viewState.cameraPosition.y = -20;
+    viewState.cameraPosition.z = 0;
+    viewState.cameraZoom = 20;
+
+    viewState.axes = true;
+    viewState.shadowEnabled = true;
+    viewState.theme = 'Default';
+    viewState.heliodon = false;
+    viewState.groundImage = false;
+    viewState.groundColor = 'forestgreen';
+
+    viewState.showMapPanel = false;
+    viewState.showHeliodonPanel = false;
+    viewState.showWeatherPanel = false;
+    viewState.showStickyNotePanel = false;
+    viewState.showInfoPanel = true;
+    viewState.showInstructionPanel = true;
+    viewState.showDailyLightSensorPanel = false;
+    viewState.showYearlyLightSensorPanel = false;
+    viewState.showDailyPvYieldPanel = false;
+    viewState.showYearlyPvYieldPanel = false;
+    viewState.autoRotate = false;
+
+    viewState.heliodonPanelX = 0;
+    viewState.heliodonPanelY = 0;
+    viewState.mapPanelX = 0;
+    viewState.mapPanelY = 0;
+    viewState.weatherPanelX = 0;
+    viewState.weatherPanelY = 0;
+    viewState.stickyNotePanelX = 0;
+    viewState.stickyNotePanelY = 0;
+    viewState.dailyLightSensorPanelX = 0;
+    viewState.dailyLightSensorPanelY = 0;
+    viewState.yearlyLightSensorPanelX = 0;
+    viewState.yearlyLightSensorPanelY = 0;
+    viewState.dailyPvYieldPanelX = 0;
+    viewState.dailyPvYieldPanelY = 0;
+    viewState.yearlyPvYieldPanelX = 0;
+    viewState.yearlyPvYieldPanelY = 0;
+
+    viewState.mapZoom = 18;
+    viewState.mapType = 'roadmap';
+    viewState.mapTilt = 0;
+    viewState.mapWeatherStations = false;
+  }
 }

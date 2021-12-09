@@ -99,8 +99,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const panCenter = useStore(Selector.viewState.panCenter);
   const importContent = useStore(Selector.importContent);
-  const clearContent = useStore(Selector.clearContent);
-  const clearSettings = useStore(Selector.clearSettings);
   const changed = useStore(Selector.changed);
   const cloudFile = useStore(Selector.cloudFile);
   const user = useStore(Selector.user);
@@ -400,47 +398,22 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     }
   };
 
-  const createNewFile = () => {
-    Modal.confirm({
-      title: i18n.t('shared.DoYouWantToSaveChanges', lang),
-      icon: <ExclamationCircleOutlined />,
-      okText: i18n.t('word.Yes', lang),
-      cancelText: i18n.t('word.No', lang),
-      onOk: () => {
-        if (user.uid) {
-          if (cloudFile) {
-            setCommonStore((state) => {
-              state.localContentToImportAfterCloudFileUpdate = 'CLEAR';
-              state.updateCloudFileFlag = !state.updateCloudFileFlag;
-            });
-          } else {
-            // no cloud file has been created
-            setCommonStore((state) => {
-              state.showCloudFileTitleDialog = true;
-            });
-          }
-        } else {
-          showInfo(i18n.t('avatarMenu.ToSaveYourWorkPleaseSignIn', lang));
-        }
-      },
-      onCancel: () => {
-        clearContent();
-        clearSettings();
-      },
-    });
-    undoManager.clear();
-    setCommonStore((state) => {
-      state.objectTypeToAdd = ObjectType.None;
-    });
-  };
-
   const menu = (
     <Menu>
       {/*file menu*/}
       <SubMenu key={'file'} title={i18n.t('menu.fileSubMenu', lang)}>
-        <Menu.Item key="create-new-file" onClick={createNewFile}>
+        <Menu.Item
+          key="create-new-file"
+          onClick={() => {
+            undoManager.clear();
+            setCommonStore((state) => {
+              state.createNewFileFlag = !state.createNewFileFlag;
+              state.objectTypeToAdd = ObjectType.None;
+            });
+          }}
+        >
           {i18n.t('menu.file.CreateNewFile', lang)}
-          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+N)</label>
+          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+F)</label>
         </Menu.Item>
         <Menu.Item
           key="open-local-file"
@@ -448,6 +421,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             undoManager.clear();
             setCommonStore((state) => {
               state.openLocalFileFlag = !state.openLocalFileFlag;
+              state.objectTypeToAdd = ObjectType.None;
             });
           }}
         >

@@ -101,6 +101,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
     'up',
     'right',
     'down',
+    'ctrl+f',
+    'meta+f',
     'ctrl+o',
     'meta+o',
     'ctrl+s',

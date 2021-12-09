@@ -50,8 +50,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const updateCloudFileFlag = useStore(Selector.updateCloudFileFlag);
   const showCloudFileTitleDialog = useStore(Selector.showCloudFileTitleDialog);
   const importContent = useStore(Selector.importContent);
-  const clearContent = useStore(Selector.clearContent);
-  const clearSettings = useStore(Selector.clearSettings);
+  const createEmptyFile = useStore(Selector.createEmptyFile);
   const changed = useStore(Selector.changed);
   const localContentToImportAfterCloudFileUpdate = useStore(Selector.localContentToImportAfterCloudFileUpdate);
   const undoManager = useStore(Selector.undoManager);
@@ -243,9 +242,8 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
                   state.changed = false;
                 });
                 if (localContentToImportAfterCloudFileUpdate) {
-                  if (localContentToImportAfterCloudFileUpdate === 'CLEAR') {
-                    clearContent();
-                    clearSettings();
+                  if (localContentToImportAfterCloudFileUpdate === 'CREATE_NEW_FILE') {
+                    createEmptyFile();
                   } else {
                     importContent(localContentToImportAfterCloudFileUpdate);
                   }

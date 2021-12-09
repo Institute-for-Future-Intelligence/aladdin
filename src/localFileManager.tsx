@@ -20,6 +20,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const localFileName = useStore(Selector.localFileName);
+  const createNewFileFlag = useStore(Selector.createNewFileFlag);
   const openLocalFileFlag = useStore(Selector.openLocalFileFlag);
   const saveLocalFileFlag = useStore(Selector.saveLocalFileFlag);
   const saveLocalFileDialogVisible = useStore(Selector.saveLocalFileDialogVisible);
@@ -28,14 +29,25 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   const changed = useStore(Selector.changed);
   const cloudFile = useStore(Selector.cloudFile);
   const user = useStore(Selector.user);
+  const createEmptyFile = useStore(Selector.createEmptyFile);
 
   const lang = { lng: language };
-  const firstOpenCall = useRef<boolean>(true);
+  const firstNewCall = useRef<boolean>(true);
   const firstSaveCall = useRef<boolean>(true);
+  const firstOpenCall = useRef<boolean>(true);
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (firstNewCall.current) {
+      firstNewCall.current = false;
+    } else {
+      createNewFile();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createNewFileFlag]);
 
   useEffect(() => {
     if (firstOpenCall.current) {
@@ -54,6 +66,35 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [saveLocalFileFlag]);
+
+  const createNewFile = () => {
+    Modal.confirm({
+      title: i18n.t('shared.DoYouWantToSaveChanges', lang),
+      icon: <ExclamationCircleOutlined />,
+      okText: i18n.t('word.Yes', lang),
+      cancelText: i18n.t('word.No', lang),
+      onOk: () => {
+        if (user.uid) {
+          if (cloudFile) {
+            setCommonStore((state) => {
+              state.localContentToImportAfterCloudFileUpdate = 'CREATE_NEW_FILE';
+              state.updateCloudFileFlag = !state.updateCloudFileFlag;
+            });
+          } else {
+            // no cloud file has been created
+            setCommonStore((state) => {
+              state.showCloudFileTitleDialog = true;
+            });
+          }
+        } else {
+          showInfo(i18n.t('avatarMenu.ToSaveYourWorkPleaseSignIn', lang));
+        }
+      },
+      onCancel: () => {
+        createEmptyFile();
+      },
+    });
+  };
 
   const readLocalFile = () => {
     if (!viewOnly && changed) {
@@ -90,7 +131,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
       });
     };
     const fileDialog = document.getElementById('file-dialog') as HTMLInputElement;
-    fileDialog.onchange = (e) => {
+    fileDialog.onchange = () => {
       if (fileDialog.files && fileDialog.files.length > 0) {
         const reader = new FileReader();
         reader.readAsText(fileDialog.files[0]);
@@ -98,7 +139,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
         setCommonStore((state) => {
           state.localFileName = fn;
         });
-        reader.onload = (e) => {
+        reader.onload = () => {
           if (reader.result) {
             const input = JSON.parse(reader.result.toString());
             if (saveFirst) {

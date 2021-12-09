@@ -43,6 +43,8 @@ export const localContentToImportAfterCloudFileUpdate = (state: CommonStoreState
 
 export const localFileName = (state: CommonStoreState) => state.localFileName;
 
+export const createNewFileFlag = (state: CommonStoreState) => state.createNewFileFlag;
+
 export const openLocalFileFlag = (state: CommonStoreState) => state.openLocalFileFlag;
 
 export const saveLocalFileFlag = (state: CommonStoreState) => state.saveLocalFileFlag;
@@ -59,7 +61,7 @@ export const exportContent = (state: CommonStoreState) => state.exportContent;
 
 export const clearContent = (state: CommonStoreState) => state.clearContent;
 
-export const clearSettings = (state: CommonStoreState) => state.clearSettings;
+export const createEmptyFile = (state: CommonStoreState) => state.createEmptyFile;
 
 export const grid = (state: CommonStoreState) => state.grid;
 

@@ -73,7 +73,7 @@ export interface CommonStoreState {
   importContent: (input: any, title?: string) => void;
   exportContent: () => {};
   clearContent: () => void;
-  clearSettings: () => void;
+  createEmptyFile: () => void;
   undoManager: UndoManager;
   addUndoable: (undoable: Undoable) => void;
 
@@ -324,6 +324,7 @@ export interface CommonStoreState {
   simulationInProgress: boolean;
   locale: Locale;
   localFileName: string;
+  createNewFileFlag: boolean;
   openLocalFileFlag: boolean;
   saveLocalFileFlag: boolean;
   saveLocalFileDialogVisible: boolean;
@@ -424,10 +425,11 @@ export const useStore = create<CommonStoreState>(
               state.elements = [];
             });
           },
-          clearSettings() {
+          createEmptyFile() {
             immerSet((state: CommonStoreState) => {
-              state.viewState = new DefaultViewState();
+              DefaultViewState.resetViewState(state.viewState);
               state.world = new DefaultWorldModel();
+              state.elements = [];
               state.cloudFile = undefined;
               state.changed = false;
               state.skipChange = true;
@@ -2388,6 +2390,7 @@ export const useStore = create<CommonStoreState>(
           simulationInProgress: false,
           locale: enUS,
           localFileName: 'aladdin.ala',
+          createNewFileFlag: false,
           openLocalFileFlag: false,
           saveLocalFileFlag: false,
           saveLocalFileDialogVisible: false,
