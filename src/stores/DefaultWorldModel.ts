@@ -5,12 +5,10 @@
 import { ElementModel } from '../models/ElementModel';
 import { Discretization, FoundationTexture, HumanName, ObjectType } from '../types';
 import { FoundationModel } from '../models/FoundationModel';
-import { CuboidModel } from '../models/CuboidModel';
 import { SensorModel } from '../models/SensorModel';
 import { WorldModel } from '../models/WorldModel';
 import { GroundModel } from '../models/GroundModel';
 import { HumanModel } from '../models/HumanModel';
-import { TreeModel } from '../models/TreeModel';
 import short from 'short-uuid';
 import { GROUND_ID } from '../constants';
 
@@ -31,7 +29,7 @@ export class DefaultWorldModel implements WorldModel {
     this.latitude = 42.2844063;
     this.longitude = -71.3488548;
     this.address = 'Natick, MA';
-    this.date = new Date(2021, 5, 22, 12).toString();
+    this.date = new Date(new Date().getFullYear(), 5, 22, 12).toString();
 
     this.name = 'default';
     this.ground = {
@@ -47,13 +45,14 @@ export class DefaultWorldModel implements WorldModel {
 
   getElements() {
     const elements: ElementModel[] = [];
+
     const foundation = {
       type: ObjectType.Foundation,
       cx: 0,
       cy: 0,
       cz: 0.05,
-      lx: 4,
-      ly: 3,
+      lx: 10,
+      ly: 10,
       lz: 0.1,
       normal: [0, 0, 1],
       rotation: [0, 0, 0],
@@ -61,9 +60,11 @@ export class DefaultWorldModel implements WorldModel {
       textureType: FoundationTexture.NoTexture,
       id: short.generate() as string,
     } as FoundationModel;
+    elements.push(foundation);
+
     const sensor = {
       type: ObjectType.Sensor,
-      cx: 0,
+      cx: -0.1,
       cy: 0,
       cz: 0.105,
       lx: 0.1,
@@ -78,80 +79,20 @@ export class DefaultWorldModel implements WorldModel {
       light: true,
       heatFlux: false,
     } as SensorModel;
-    elements.push(foundation);
     elements.push(sensor);
 
-    const cuboid = {
-      type: ObjectType.Cuboid,
-      cx: 0,
-      cy: 5,
-      cz: 2,
-      lx: 2,
-      ly: 2,
-      lz: 4,
-      color: 'gray',
-      normal: [0, 0, 1],
-      rotation: [0, 0, Math.PI / 6],
-      parentId: GROUND_ID,
-      id: short.generate() as string,
-    } as CuboidModel;
-    elements.push(cuboid);
-
-    const man = {
-      type: ObjectType.Human,
-      name: HumanName.Jack,
-      cx: 2,
-      cy: 2,
-      cz: 0,
-      normal: [1, 0, 0],
-      rotation: [0, 0, 0],
-      parentId: GROUND_ID,
-      id: short.generate() as string,
-    } as HumanModel;
     const woman = {
       type: ObjectType.Human,
       name: HumanName.Jill,
-      cx: -2,
-      cy: 2,
+      cx: 1,
+      cy: -1,
       cz: 0,
       normal: [1, 0, 0],
       rotation: [0, 0, 0],
       parentId: GROUND_ID,
       id: short.generate() as string,
     } as HumanModel;
-    elements.push(man);
     elements.push(woman);
-
-    const tree1 = {
-      type: ObjectType.Tree,
-      name: 'Dogwood',
-      evergreen: false,
-      cx: 5,
-      cy: 5,
-      cz: 0,
-      lx: 3,
-      lz: 4,
-      normal: [1, 0, 0],
-      rotation: [0, 0, 0],
-      parentId: GROUND_ID,
-      id: short.generate() as string,
-    } as TreeModel;
-    const tree2 = {
-      type: ObjectType.Tree,
-      name: 'Pine',
-      evergreen: true,
-      cx: -5,
-      cy: 5,
-      cz: 0,
-      lx: 2,
-      lz: 6,
-      normal: [1, 0, 0],
-      rotation: [0, 0, 0],
-      parentId: GROUND_ID,
-      id: short.generate() as string,
-    } as TreeModel;
-    elements.push(tree1);
-    elements.push(tree2);
 
     return elements;
   }

@@ -57,7 +57,7 @@ export class DefaultViewState implements ViewState {
     this.panCenter = new Vector3(0, 0, 0);
     this.orthographic = false;
     this.enableRotate = true;
-    this.cameraPosition = new Vector3(0, -5, 0);
+    this.cameraPosition = new Vector3(0, -20, 0);
     this.cameraZoom = 20;
 
     this.axes = true;

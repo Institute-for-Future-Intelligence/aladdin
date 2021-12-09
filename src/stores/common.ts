@@ -427,6 +427,7 @@ export const useStore = create<CommonStoreState>(
           clearSettings() {
             immerSet((state: CommonStoreState) => {
               state.viewState = new DefaultViewState();
+              state.world = new DefaultWorldModel();
               state.cloudFile = undefined;
               state.changed = false;
               state.skipChange = true;

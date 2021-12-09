@@ -71,11 +71,11 @@ const InstructionPanel = () => {
         <label>
           <b>{i18n.t('instructionPanel.Toggle2D3D', lang)}</b>: {i18n.t('word.Press', lang)} F2
         </label>
-        {!orthographic && (
-          <label>
-            <b>{i18n.t('instructionPanel.AutoRotate', lang)}</b>: {i18n.t('instructionPanel.StartOrStop', lang)}
-          </label>
-        )}
+        {/*{!orthographic && (*/}
+        {/*  <label>*/}
+        {/*    <b>{i18n.t('instructionPanel.AutoRotate', lang)}</b>: {i18n.t('instructionPanel.StartOrStop', lang)}*/}
+        {/*  </label>*/}
+        {/*)}*/}
       </ColumnWrapper>
     </Container>
   );
