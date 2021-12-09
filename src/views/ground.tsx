@@ -266,12 +266,7 @@ const Ground = () => {
             newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > 0.0001
           ) {
             // store the new positions of the children if the selected element may be a parent
-            if (
-              elem.type === ObjectType.Wall ||
-              elem.type === ObjectType.Roof ||
-              elem.type === ObjectType.Foundation ||
-              elem.type === ObjectType.Cuboid
-            ) {
+            if (elem.type === ObjectType.Foundation || elem.type === ObjectType.Cuboid) {
               const children = getChildren(elem.id);
               newChildrenPositionsMapRef.current.clear();
               if (children.length > 0) {
@@ -510,12 +505,7 @@ const Ground = () => {
             oldDimensionRef.current.z = selectedElement.lz;
             oldRotationRef.current = [...selectedElement.rotation];
             // store the positions of the children if the selected element may be a parent
-            if (
-              selectedElement.type === ObjectType.Wall ||
-              selectedElement.type === ObjectType.Roof ||
-              selectedElement.type === ObjectType.Foundation ||
-              selectedElement.type === ObjectType.Cuboid
-            ) {
+            if (selectedElement.type === ObjectType.Foundation || selectedElement.type === ObjectType.Cuboid) {
               const children = getChildren(selectedElement.id);
               oldChildrenPositionsMapRef.current.clear();
               if (children.length > 0) {
@@ -545,12 +535,13 @@ const Ground = () => {
                 break;
               case ObjectType.Cuboid:
                 // getting ready for resizing even though it may not happen
-                const cuboidCenter = new Vector2(selectedElement.cx, selectedElement.cy);
                 absPosMapRef.current.clear();
-                for (const e of useStore.getState().elements) {
-                  if (e.parentId === selectedElement.id) {
-                    const v0 = new Vector2(0, 0);
-                    const a = selectedElement.rotation[2];
+                const cuboidCenter = new Vector2(selectedElement.cx, selectedElement.cy);
+                const cuboidChildren = getChildren(selectedElement.id);
+                if (cuboidChildren.length > 0) {
+                  const v0 = new Vector2(0, 0);
+                  const a = selectedElement.rotation[2];
+                  for (const e of cuboidChildren) {
                     switch (e.type) {
                       case ObjectType.SolarPanel:
                       case ObjectType.Sensor:
@@ -569,13 +560,14 @@ const Ground = () => {
                 break;
               case ObjectType.Foundation:
                 // getting ready for resizing even though it may not happen
-                const foundationCenter = new Vector2(selectedElement.cx, selectedElement.cy);
                 absPosMapRef.current.clear();
                 wallsAbsPosMapRef.current.clear();
-                for (const e of useStore.getState().elements) {
-                  if (e.parentId === selectedElement.id) {
-                    const v0 = new Vector2(0, 0);
-                    const a = selectedElement.rotation[2];
+                const foundationCenter = new Vector2(selectedElement.cx, selectedElement.cy);
+                const foundationChildren = getChildren(selectedElement.id);
+                if (foundationChildren.length > 0) {
+                  const v0 = new Vector2(0, 0);
+                  const a = selectedElement.rotation[2];
+                  for (const e of foundationChildren) {
                     switch (e.type) {
                       case ObjectType.Wall:
                         const wall = e as WallModel;
@@ -831,17 +823,19 @@ const Ground = () => {
   };
 
   const handleResize = (p: Vector3) => {
+    if (!grabRef.current) return;
     const point = new Vector2(p.x, p.y);
     const anchor = new Vector2(resizeAnchor.x, resizeAnchor.y);
     const distance = anchor.distanceTo(point);
-    const angle = Math.atan2(point.x - resizeAnchor.x, point.y - resizeAnchor.y) + grabRef.current!.rotation[2];
+    const angle = Math.atan2(point.x - resizeAnchor.x, point.y - resizeAnchor.y) + grabRef.current.rotation[2];
     const lx = Math.abs(distance * Math.sin(angle));
     const ly = Math.abs(distance * Math.cos(angle));
     const center = new Vector2().addVectors(point, anchor).multiplyScalar(0.5);
     setCommonStore((state) => {
+      if (!grabRef.current) return;
       let sizeOk = false;
       for (const e of state.elements) {
-        if (e.id === grabRef.current!.id) {
+        if (e.id === grabRef.current.id) {
           switch (e.type) {
             case ObjectType.Cuboid: // we can only deal with the top surface of a cuboid now
             case ObjectType.Foundation:
@@ -909,6 +903,7 @@ const Ground = () => {
               }
               break;
           }
+          break;
         }
       }
       // if the new size is okay, we can then change the relative positions of the children.
