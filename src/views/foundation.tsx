@@ -629,7 +629,7 @@ const Foundation = ({
               const undoableResize = {
                 name: 'Resize',
                 timestamp: Date.now(),
-                resizedElement: grabRef.current,
+                resizedElementId: grabRef.current.id,
                 oldCx: oldPositionRef.current.x,
                 oldCy: oldPositionRef.current.y,
                 oldCz: oldPositionRef.current.z,
@@ -644,13 +644,13 @@ const Foundation = ({
                 newLz: newDimensionRef.current.z,
                 undo: () => {
                   setElementPosition(
-                    undoableResize.resizedElement.id,
+                    undoableResize.resizedElementId,
                     undoableResize.oldCx,
                     undoableResize.oldCy,
                     undoableResize.oldCz,
                   );
                   setElementSize(
-                    undoableResize.resizedElement.id,
+                    undoableResize.resizedElementId,
                     undoableResize.oldLx,
                     undoableResize.oldLy,
                     undoableResize.oldLz,
@@ -658,13 +658,13 @@ const Foundation = ({
                 },
                 redo: () => {
                   setElementPosition(
-                    undoableResize.resizedElement.id,
+                    undoableResize.resizedElementId,
                     undoableResize.newCx,
                     undoableResize.newCy,
                     undoableResize.newCz,
                   );
                   setElementSize(
-                    undoableResize.resizedElement.id,
+                    undoableResize.resizedElementId,
                     undoableResize.newLx,
                     undoableResize.newLy,
                     undoableResize.newLz,

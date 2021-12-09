@@ -3,7 +3,6 @@
  */
 
 import { Undoable } from './Undoable';
-import { ElementModel } from '../models/ElementModel';
 
 export interface UndoableResize extends Undoable {
   oldCx: number;
@@ -20,5 +19,5 @@ export interface UndoableResize extends Undoable {
   newLy: number;
   newLz: number;
 
-  resizedElement: ElementModel;
+  resizedElementId: string;
 }
