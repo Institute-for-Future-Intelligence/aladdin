@@ -184,231 +184,233 @@ const Ground = () => {
   };
 
   const handlePointerUp = (e: PointerEvent) => {
-    if (e.button === 2 || !grabRef.current) return;
+    if (e.button === 2) return;
 
-    const elem = getElementById(grabRef.current.id ?? '');
-    if (elem) {
-      // set building foundation end point
-      if (isSettingFoundationEndPointRef.current) {
-        isSettingFoundationStartPointRef.current = false;
-        isSettingFoundationEndPointRef.current = false;
-        setCommonStore((state) => {
-          state.buildingFoundationId = null;
-          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-        });
-        if (elem.lx <= 0.1 || elem.ly <= 0.1) {
-          removeElementById(elem.id, false);
-        } else {
-          const undoableAdd = {
-            name: 'Add',
-            timestamp: Date.now(),
-            addedElement: elem,
-            undo: () => {
-              removeElementById(undoableAdd.addedElement.id, false);
-              setCommonStore((state) => {
-                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-              });
-            },
-            redo: () => {
-              setCommonStore((state) => {
-                state.elements.push(undoableAdd.addedElement);
-                state.selectedElement = undoableAdd.addedElement;
-                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-              });
-            },
-          } as UndoableAdd;
-          addUndoable(undoableAdd);
+    if (grabRef.current) {
+      const elem = getElementById(grabRef.current.id);
+      if (elem) {
+        // set building foundation end point
+        if (isSettingFoundationEndPointRef.current) {
+          isSettingFoundationStartPointRef.current = false;
+          isSettingFoundationEndPointRef.current = false;
+          setCommonStore((state) => {
+            state.buildingFoundationId = null;
+            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+          });
+          if (elem.lx <= 0.1 || elem.ly <= 0.1) {
+            removeElementById(elem.id, false);
+          } else {
+            const undoableAdd = {
+              name: 'Add',
+              timestamp: Date.now(),
+              addedElement: elem,
+              undo: () => {
+                removeElementById(undoableAdd.addedElement.id, false);
+                setCommonStore((state) => {
+                  state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+                });
+              },
+              redo: () => {
+                setCommonStore((state) => {
+                  state.elements.push(undoableAdd.addedElement);
+                  state.selectedElement = undoableAdd.addedElement;
+                  state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+                });
+              },
+            } as UndoableAdd;
+            addUndoable(undoableAdd);
+          }
         }
-      }
-      // set building cuboid end point
-      else if (isSettingCuboidEndPointRef.current) {
-        isSettingCuboidStartPointRef.current = false;
-        isSettingCuboidEndPointRef.current = false;
-        setCommonStore((state) => {
-          state.buildingCuboidId = null;
-          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-        });
-        if (elem.lx <= 0.1 || elem.ly <= 0.1) {
-          removeElementById(elem.id, false);
-        } else {
-          const undoableAdd = {
-            name: 'Add',
-            timestamp: Date.now(),
-            addedElement: elem,
-            undo: () => {
-              removeElementById(undoableAdd.addedElement.id, false);
-              setCommonStore((state) => {
-                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-              });
-            },
-            redo: () => {
-              setCommonStore((state) => {
-                state.elements.push(undoableAdd.addedElement);
-                state.selectedElement = undoableAdd.addedElement;
-                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-              });
-            },
-          } as UndoableAdd;
-          addUndoable(undoableAdd);
+        // set building cuboid end point
+        else if (isSettingCuboidEndPointRef.current) {
+          isSettingCuboidStartPointRef.current = false;
+          isSettingCuboidEndPointRef.current = false;
+          setCommonStore((state) => {
+            state.buildingCuboidId = null;
+            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+          });
+          if (elem.lx <= 0.1 || elem.ly <= 0.1) {
+            removeElementById(elem.id, false);
+          } else {
+            const undoableAdd = {
+              name: 'Add',
+              timestamp: Date.now(),
+              addedElement: elem,
+              undo: () => {
+                removeElementById(undoableAdd.addedElement.id, false);
+                setCommonStore((state) => {
+                  state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+                });
+              },
+              redo: () => {
+                setCommonStore((state) => {
+                  state.elements.push(undoableAdd.addedElement);
+                  state.selectedElement = undoableAdd.addedElement;
+                  state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+                });
+              },
+            } as UndoableAdd;
+            addUndoable(undoableAdd);
+          }
         }
-      }
-      //
-      else {
-        if (resizeHandleType) {
-          newPositionRef.current.x = elem.cx;
-          newPositionRef.current.y = elem.cy;
-          newPositionRef.current.z = elem.cz;
-          newDimensionRef.current.x = elem.lx;
-          newDimensionRef.current.y = elem.ly;
-          newDimensionRef.current.z = elem.lz;
-          if (
-            newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001 &&
-            newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > 0.0001
-          ) {
-            // store the new positions of the children if the selected element may be a parent
-            if (elem.type === ObjectType.Foundation || elem.type === ObjectType.Cuboid) {
-              const children = getChildren(elem.id);
-              newChildrenPositionsMapRef.current.clear();
-              if (children.length > 0) {
-                for (const c of children) {
-                  newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+        //
+        else {
+          if (resizeHandleType) {
+            newPositionRef.current.x = elem.cx;
+            newPositionRef.current.y = elem.cy;
+            newPositionRef.current.z = elem.cz;
+            newDimensionRef.current.x = elem.lx;
+            newDimensionRef.current.y = elem.ly;
+            newDimensionRef.current.z = elem.lz;
+            if (
+              newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001 &&
+              newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > 0.0001
+            ) {
+              // store the new positions of the children if the selected element may be a parent
+              if (elem.type === ObjectType.Foundation || elem.type === ObjectType.Cuboid) {
+                const children = getChildren(elem.id);
+                newChildrenPositionsMapRef.current.clear();
+                if (children.length > 0) {
+                  for (const c of children) {
+                    newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+                  }
                 }
               }
+              const undoableResize = {
+                name: 'Resize',
+                timestamp: Date.now(),
+                resizedElementId: grabRef.current.id,
+                oldCx: oldPositionRef.current.x,
+                oldCy: oldPositionRef.current.y,
+                oldCz: oldPositionRef.current.z,
+                newCx: newPositionRef.current.x,
+                newCy: newPositionRef.current.y,
+                newCz: newPositionRef.current.z,
+                oldLx: oldDimensionRef.current.x,
+                oldLy: oldDimensionRef.current.y,
+                oldLz: oldDimensionRef.current.z,
+                newLx: newDimensionRef.current.x,
+                newLy: newDimensionRef.current.y,
+                newLz: newDimensionRef.current.z,
+                oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+                newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+                undo: () => {
+                  setElementPosition(
+                    undoableResize.resizedElementId,
+                    undoableResize.oldCx,
+                    undoableResize.oldCy,
+                    undoableResize.oldCz,
+                  );
+                  setElementSize(
+                    undoableResize.resizedElementId,
+                    undoableResize.oldLx,
+                    undoableResize.oldLy,
+                    undoableResize.oldLz,
+                  );
+                  if (undoableResize.oldChildrenPositionsMap.size > 0) {
+                    for (const [id, p] of undoableResize.oldChildrenPositionsMap.entries()) {
+                      setElementPosition(id, p.x, p.y, p.z);
+                    }
+                  }
+                },
+                redo: () => {
+                  setElementPosition(
+                    undoableResize.resizedElementId,
+                    undoableResize.newCx,
+                    undoableResize.newCy,
+                    undoableResize.newCz,
+                  );
+                  setElementSize(
+                    undoableResize.resizedElementId,
+                    undoableResize.newLx,
+                    undoableResize.newLy,
+                    undoableResize.newLz,
+                  );
+                  if (undoableResize.newChildrenPositionsMap.size > 0) {
+                    for (const [id, p] of undoableResize.newChildrenPositionsMap.entries()) {
+                      setElementPosition(id, p.x, p.y, p.z);
+                    }
+                  }
+                },
+              } as UndoableResize;
+              addUndoable(undoableResize);
             }
-            const undoableResize = {
-              name: 'Resize',
-              timestamp: Date.now(),
-              resizedElementId: grabRef.current.id,
-              oldCx: oldPositionRef.current.x,
-              oldCy: oldPositionRef.current.y,
-              oldCz: oldPositionRef.current.z,
-              newCx: newPositionRef.current.x,
-              newCy: newPositionRef.current.y,
-              newCz: newPositionRef.current.z,
-              oldLx: oldDimensionRef.current.x,
-              oldLy: oldDimensionRef.current.y,
-              oldLz: oldDimensionRef.current.z,
-              newLx: newDimensionRef.current.x,
-              newLy: newDimensionRef.current.y,
-              newLz: newDimensionRef.current.z,
-              oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
-              newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
-              undo: () => {
-                setElementPosition(
-                  undoableResize.resizedElementId,
-                  undoableResize.oldCx,
-                  undoableResize.oldCy,
-                  undoableResize.oldCz,
-                );
-                setElementSize(
-                  undoableResize.resizedElementId,
-                  undoableResize.oldLx,
-                  undoableResize.oldLy,
-                  undoableResize.oldLz,
-                );
-                if (undoableResize.oldChildrenPositionsMap.size > 0) {
-                  for (const [id, p] of undoableResize.oldChildrenPositionsMap.entries()) {
-                    setElementPosition(id, p.x, p.y, p.z);
-                  }
-                }
-              },
-              redo: () => {
-                setElementPosition(
-                  undoableResize.resizedElementId,
-                  undoableResize.newCx,
-                  undoableResize.newCy,
-                  undoableResize.newCz,
-                );
-                setElementSize(
-                  undoableResize.resizedElementId,
-                  undoableResize.newLx,
-                  undoableResize.newLy,
-                  undoableResize.newLz,
-                );
-                if (undoableResize.newChildrenPositionsMap.size > 0) {
-                  for (const [id, p] of undoableResize.newChildrenPositionsMap.entries()) {
-                    setElementPosition(id, p.x, p.y, p.z);
-                  }
-                }
-              },
-            } as UndoableResize;
-            addUndoable(undoableResize);
-          }
-          setCommonStore((state) => {
-            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-            state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
-          });
-        } else if (rotateHandleType) {
-          newRotationRef.current = [...elem.rotation];
-          const oldRotation = new Vector3().fromArray(oldRotationRef.current);
-          const newRotation = new Vector3().fromArray(newRotationRef.current);
-          if (newRotation.distanceToSquared(oldRotation) > 0.0001) {
-            const undoableRotate = {
-              name: 'Rotate',
-              timestamp: Date.now(),
-              rotatedElementId: grabRef.current.id,
-              oldRotation: oldRotationRef.current,
-              newRotation: newRotationRef.current,
-              undo: () => {
-                setElementRotation(
-                  undoableRotate.rotatedElementId,
-                  undoableRotate.oldRotation[0],
-                  undoableRotate.oldRotation[1],
-                  undoableRotate.oldRotation[2],
-                );
-              },
-              redo: () => {
-                setElementRotation(
-                  undoableRotate.rotatedElementId,
-                  undoableRotate.newRotation[0],
-                  undoableRotate.newRotation[1],
-                  undoableRotate.newRotation[2],
-                );
-              },
-            } as UndoableRotate;
-            addUndoable(undoableRotate);
-          }
-        } else {
-          newPositionRef.current.x = elem.cx;
-          newPositionRef.current.y = elem.cy;
-          newPositionRef.current.z = elem.cz;
-          if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001) {
-            const undoableMove = {
-              name: 'Move',
-              timestamp: Date.now(),
-              movedElementId: grabRef.current.id,
-              oldCx: oldPositionRef.current.x,
-              oldCy: oldPositionRef.current.y,
-              oldCz: oldPositionRef.current.z,
-              newCx: newPositionRef.current.x,
-              newCy: newPositionRef.current.y,
-              newCz: newPositionRef.current.z,
-              undo: () => {
-                setElementPosition(
-                  undoableMove.movedElementId,
-                  undoableMove.oldCx,
-                  undoableMove.oldCy,
-                  undoableMove.oldCz,
-                );
-              },
-              redo: () => {
-                setElementPosition(
-                  undoableMove.movedElementId,
-                  undoableMove.newCx,
-                  undoableMove.newCy,
-                  undoableMove.newCz,
-                );
-              },
-            } as UndoableMove;
-            addUndoable(undoableMove);
             setCommonStore((state) => {
               state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+              state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
             });
+          } else if (rotateHandleType) {
+            newRotationRef.current = [...elem.rotation];
+            const oldRotation = new Vector3().fromArray(oldRotationRef.current);
+            const newRotation = new Vector3().fromArray(newRotationRef.current);
+            if (newRotation.distanceToSquared(oldRotation) > 0.0001) {
+              const undoableRotate = {
+                name: 'Rotate',
+                timestamp: Date.now(),
+                rotatedElementId: grabRef.current.id,
+                oldRotation: oldRotationRef.current,
+                newRotation: newRotationRef.current,
+                undo: () => {
+                  setElementRotation(
+                    undoableRotate.rotatedElementId,
+                    undoableRotate.oldRotation[0],
+                    undoableRotate.oldRotation[1],
+                    undoableRotate.oldRotation[2],
+                  );
+                },
+                redo: () => {
+                  setElementRotation(
+                    undoableRotate.rotatedElementId,
+                    undoableRotate.newRotation[0],
+                    undoableRotate.newRotation[1],
+                    undoableRotate.newRotation[2],
+                  );
+                },
+              } as UndoableRotate;
+              addUndoable(undoableRotate);
+            }
+          } else {
+            newPositionRef.current.x = elem.cx;
+            newPositionRef.current.y = elem.cy;
+            newPositionRef.current.z = elem.cz;
+            if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001) {
+              const undoableMove = {
+                name: 'Move',
+                timestamp: Date.now(),
+                movedElementId: grabRef.current.id,
+                oldCx: oldPositionRef.current.x,
+                oldCy: oldPositionRef.current.y,
+                oldCz: oldPositionRef.current.z,
+                newCx: newPositionRef.current.x,
+                newCy: newPositionRef.current.y,
+                newCz: newPositionRef.current.z,
+                undo: () => {
+                  setElementPosition(
+                    undoableMove.movedElementId,
+                    undoableMove.oldCx,
+                    undoableMove.oldCy,
+                    undoableMove.oldCz,
+                  );
+                },
+                redo: () => {
+                  setElementPosition(
+                    undoableMove.movedElementId,
+                    undoableMove.newCx,
+                    undoableMove.newCy,
+                    undoableMove.newCz,
+                  );
+                },
+              } as UndoableMove;
+              addUndoable(undoableMove);
+              setCommonStore((state) => {
+                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+              });
+            }
           }
         }
       }
+      grabRef.current = null;
     }
-    grabRef.current = null;
 
     setCommonStore((state) => {
       state.moveHandleType = null;
