@@ -42,14 +42,22 @@ const CuboidColorSelection = ({
   const lang = { lng: language };
 
   useEffect(() => {
-    if (cuboid) {
-      setSelectedColor(cuboid?.color ?? 'gray');
-    }
-  }, [cuboid]);
+    updateSelectedColor();
+  }, [cuboid, selectedSideIndex]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setCuboidActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
+  };
+
+  const updateSelectedColor = () => {
+    if (cuboid) {
+      if (selectedSideIndex >= 0 && cuboid.faceColors) {
+        setSelectedColor(cuboid.faceColors[selectedSideIndex]);
+      } else {
+        setSelectedColor(cuboid.color ?? 'gray');
+      }
+    }
   };
 
   const needChange = (color: string) => {
@@ -59,8 +67,9 @@ const CuboidColorSelection = ({
           if (e.type === ObjectType.Cuboid) {
             const cm = e as CuboidModel;
             if (cm.faceColors) {
-              for (const c of cm.faceColors) {
-                if (color !== c) {
+              // do not check the top and bottom sides, check only the vertical sides (the first four)
+              for (let i = 0; i < 4; i++) {
+                if (color !== cm.faceColors[i]) {
                   return true;
                 }
               }
@@ -74,8 +83,9 @@ const CuboidColorSelection = ({
         break;
       case Scope.OnlyThisObject:
         if (cuboid.faceColors) {
-          for (const c of cuboid.faceColors) {
-            if (color !== c) {
+          // do not check the top and bottom sides, check only the vertical sides (the first four)
+          for (let i = 0; i < 4; i++) {
+            if (color !== cuboid.faceColors[i]) {
               return true;
             }
           }
@@ -231,9 +241,7 @@ const CuboidColorSelection = ({
           <Button
             key="Cancel"
             onClick={() => {
-              if (cuboid?.color) {
-                setSelectedColor(cuboid.color);
-              }
+              updateSelectedColor();
               setColorDialogVisible(false);
             }}
           >
@@ -252,9 +260,7 @@ const CuboidColorSelection = ({
         ]}
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
-          if (cuboid?.color) {
-            setSelectedColor(cuboid.color);
-          }
+          updateSelectedColor();
           setColorDialogVisible(false);
         }}
         destroyOnClose={false}

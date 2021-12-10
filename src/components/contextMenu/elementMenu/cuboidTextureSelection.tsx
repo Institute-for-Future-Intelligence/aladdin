@@ -71,8 +71,46 @@ const CuboidTextureSelection = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const needChange = (texture: CuboidTexture) => {
+    switch (cuboidActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Cuboid) {
+            const cm = e as CuboidModel;
+            if (cm.textureTypes) {
+              // do not check the top and bottom sides, check only the vertical sides (the first four)
+              for (let i = 0; i < 4; i++) {
+                if (texture !== cm.textureTypes[i]) {
+                  return true;
+                }
+              }
+            }
+          }
+        }
+        break;
+      case Scope.OnlyThisObject:
+        if (cuboid.textureTypes) {
+          // do not check the top and bottom sides, check only the vertical sides (the first four)
+          for (let i = 0; i < 4; i++) {
+            if (texture !== cuboid.textureTypes[i]) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (selectedSideIndex >= 0 && cuboid.textureTypes) {
+          if (texture !== cuboid.textureTypes[selectedSideIndex]) {
+            return true;
+          }
+        }
+    }
+    return false;
+  };
+
   const setTexture = (value: CuboidTexture) => {
     if (!cuboid) return;
+    if (!needChange(value)) return;
     switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldTexturesAll = new Map<string, CuboidTexture[] | undefined>();
