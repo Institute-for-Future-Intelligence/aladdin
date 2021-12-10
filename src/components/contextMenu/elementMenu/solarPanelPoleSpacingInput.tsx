@@ -54,6 +54,7 @@ const SolarPanelPoleSpacingInput = ({
   };
 
   const setPoleSpacing = (value: number) => {
+    if (!solarPanel) return;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldPoleSpacingsAll = new Map<string, number>();

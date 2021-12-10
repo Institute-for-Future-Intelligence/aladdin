@@ -51,6 +51,7 @@ const WallThicknessInput = ({
   };
 
   const setThickness = (value: number) => {
+    if (!wall) return;
     switch (wallActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldThicknessesAll = new Map<string, number>();

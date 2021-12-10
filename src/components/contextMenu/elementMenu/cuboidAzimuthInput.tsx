@@ -51,6 +51,7 @@ const CuboidAzimuthInput = ({
   };
 
   const setAzimuth = (value: number) => {
+    if (!cuboid) return;
     switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldAzimuthsAll = new Map<string, number>();

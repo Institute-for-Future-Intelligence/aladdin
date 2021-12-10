@@ -121,6 +121,7 @@ const SolarPanelOrientationSelection = ({
   };
 
   const setOrientation = (value: Orientation) => {
+    if (!solarPanel) return;
     rejectedValue.current = undefined;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:

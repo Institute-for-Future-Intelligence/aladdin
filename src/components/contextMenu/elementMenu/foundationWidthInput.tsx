@@ -143,7 +143,7 @@ const FoundationWidthInput = ({
         }
         break;
       default:
-        if (Math.abs(foundation.lx - lx) > ZERO_TOLERANCE) {
+        if (Math.abs(foundation?.lx - lx) > ZERO_TOLERANCE) {
           return true;
         }
     }
@@ -151,6 +151,7 @@ const FoundationWidthInput = ({
   };
 
   const setLx = (value: number) => {
+    if (!foundation) return;
     if (!needChange(value)) return;
     const oldLx = foundation.lx;
     rejectedValue.current = undefined;

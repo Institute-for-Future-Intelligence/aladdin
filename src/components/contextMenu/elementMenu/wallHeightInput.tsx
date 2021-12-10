@@ -51,6 +51,7 @@ const WallHeightInput = ({
   };
 
   const setHeight = (value: number) => {
+    if (!wall) return;
     switch (wallActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldHeightsAll = new Map<string, number>();

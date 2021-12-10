@@ -11,6 +11,8 @@ import { UndoableDelete } from './undo/UndoableDelete';
 import { UndoablePaste } from './undo/UndoablePaste';
 import { UndoableCheck } from './undo/UndoableCheck';
 import { UndoableResetView } from './undo/UndoableResetView';
+import { showInfo } from './helpers';
+import i18n from './i18n/i18n';
 
 export interface KeyboardListenerProps {
   keyName: string | null;
@@ -32,6 +34,7 @@ const KeyboardListener = ({
   zoomView,
 }: KeyboardListenerProps) => {
   const setCommonStore = useStore(Selector.set);
+  const language = useStore(Selector.language);
   const undoManager = useStore(Selector.undoManager);
   const addUndoable = useStore(Selector.addUndoable);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
@@ -54,6 +57,7 @@ const KeyboardListener = ({
 
   const moveStepRelative = 0.01;
   const moveStepAbsolute = 0.1;
+  const lang = { lng: language };
 
   useEffect(() => {
     if (keyDown) {
@@ -347,34 +351,38 @@ const KeyboardListener = ({
         break;
       case 'delete':
         if (selectedElement) {
-          removeElement(selectedElement, false);
-          const deletedElements = useStore.getState().deletedElements;
-          if (deletedElements.length > 0) {
-            const undoableDelete = {
-              name: 'Delete',
-              timestamp: Date.now(),
-              deletedElements: deletedElements,
-              undo: () => {
-                setCommonStore((state) => {
-                  if (undoableDelete.deletedElements && undoableDelete.deletedElements.length > 0) {
-                    for (const e of undoableDelete.deletedElements) {
-                      state.elements.push(e);
+          if (selectedElement.locked) {
+            showInfo(i18n.t('shared.ThisElementIsLocked', lang));
+          } else {
+            removeElement(selectedElement, false);
+            const deletedElements = useStore.getState().deletedElements;
+            if (deletedElements.length > 0) {
+              const undoableDelete = {
+                name: 'Delete',
+                timestamp: Date.now(),
+                deletedElements: deletedElements,
+                undo: () => {
+                  setCommonStore((state) => {
+                    if (undoableDelete.deletedElements && undoableDelete.deletedElements.length > 0) {
+                      for (const e of undoableDelete.deletedElements) {
+                        state.elements.push(e);
+                      }
+                      state.selectedElement = undoableDelete.deletedElements[0];
                     }
-                    state.selectedElement = undoableDelete.deletedElements[0];
+                  });
+                  // clonedElement.selected = true; FIXME: Why does this become readonly?
+                },
+                redo: () => {
+                  if (undoableDelete.deletedElements && undoableDelete.deletedElements.length > 0) {
+                    const elem = getElementById(undoableDelete.deletedElements[0].id);
+                    if (elem) {
+                      removeElement(elem, false);
+                    }
                   }
-                });
-                // clonedElement.selected = true; FIXME: Why does this become readonly?
-              },
-              redo: () => {
-                if (undoableDelete.deletedElements && undoableDelete.deletedElements.length > 0) {
-                  const elem = getElementById(undoableDelete.deletedElements[0].id);
-                  if (elem) {
-                    removeElement(elem, false);
-                  }
-                }
-              },
-            } as UndoableDelete;
-            addUndoable(undoableDelete);
+                },
+              } as UndoableDelete;
+              addUndoable(undoableDelete);
+            }
           }
         }
         break;

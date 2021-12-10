@@ -57,6 +57,7 @@ const CuboidHeightInput = ({
   };
 
   const setLz = (value: number) => {
+    if (!cuboid) return;
     switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldLzsAll = new Map<string, number>();

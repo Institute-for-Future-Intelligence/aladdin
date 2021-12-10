@@ -53,6 +53,7 @@ const CuboidColorSelection = ({
   };
 
   const setColor = (value: string) => {
+    if (!cuboid) return;
     switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldColorsAll = new Map<string, string[]>();

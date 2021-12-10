@@ -96,6 +96,7 @@ export const i18n_zh_tw = {
       NoTexture: '無材質',
       DoYouWantToSaveChanges: '您要保存當前文檔嗎？',
       NotApplicableToSelectedAction: '此值不適用於當前選擇範圍',
+      ThisElementIsLocked: '這個部件被鎖定。',
     },
 
     menu: {

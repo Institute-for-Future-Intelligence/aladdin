@@ -96,6 +96,7 @@ export const i18n_en = {
       NoTexture: 'No Texture',
       DoYouWantToSaveChanges: 'Do you want to save changes?',
       NotApplicableToSelectedAction: 'Not Applicable to Selected Action',
+      ThisElementIsLocked: 'This element is locked.',
     },
 
     menu: {

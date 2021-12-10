@@ -56,6 +56,7 @@ const SolarPanelPoleHeightInput = ({
   };
 
   const setPoleHeight = (value: number) => {
+    if (!solarPanel) return;
     rejectedValue.current = undefined;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:

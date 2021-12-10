@@ -143,7 +143,7 @@ const FoundationLengthInput = ({
         }
         break;
       default:
-        if (Math.abs(foundation.ly - ly) > ZERO_TOLERANCE) {
+        if (Math.abs(foundation?.ly - ly) > ZERO_TOLERANCE) {
           return true;
         }
     }
@@ -151,6 +151,7 @@ const FoundationLengthInput = ({
   };
 
   const setLy = (value: number) => {
+    if (!foundation) return;
     if (!needChange(value)) return;
     const oldLy = foundation.ly;
     rejectedValue.current = undefined;

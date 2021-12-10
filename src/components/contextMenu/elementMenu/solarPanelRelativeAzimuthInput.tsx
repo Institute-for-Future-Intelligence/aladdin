@@ -82,6 +82,7 @@ const SolarPanelRelativeAzimuthInput = ({
   };
 
   const setRelativeAzimuth = (value: number) => {
+    if (!solarPanel) return;
     rejectedValue.current = undefined;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:

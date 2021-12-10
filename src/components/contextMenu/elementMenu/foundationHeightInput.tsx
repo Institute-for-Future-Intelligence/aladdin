@@ -70,7 +70,7 @@ const FoundationHeightInput = ({
         }
         break;
       default:
-        if (Math.abs(foundation.lz - lz) > ZERO_TOLERANCE) {
+        if (Math.abs(foundation?.lz - lz) > ZERO_TOLERANCE) {
           return true;
         }
     }
@@ -78,6 +78,7 @@ const FoundationHeightInput = ({
   };
 
   const setLz = (value: number) => {
+    if (!foundation) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:

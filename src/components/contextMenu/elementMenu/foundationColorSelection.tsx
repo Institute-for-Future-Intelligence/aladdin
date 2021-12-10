@@ -63,7 +63,7 @@ const FoundationColorSelection = ({
         }
         break;
       default:
-        if (color !== foundation.color) {
+        if (color !== foundation?.color) {
           return true;
         }
     }
@@ -71,6 +71,7 @@ const FoundationColorSelection = ({
   };
 
   const setColor = (value: string) => {
+    if (!foundation) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:

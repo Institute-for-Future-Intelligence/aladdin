@@ -64,7 +64,7 @@ const FoundationAzimuthInput = ({
         }
         break;
       default:
-        if (Math.abs(foundation.rotation[2] - azimuth) > ZERO_TOLERANCE) {
+        if (Math.abs(foundation?.rotation[2] - azimuth) > ZERO_TOLERANCE) {
           return true;
         }
     }
@@ -72,6 +72,7 @@ const FoundationAzimuthInput = ({
   };
 
   const setAzimuth = (value: number) => {
+    if (!foundation) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:

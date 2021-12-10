@@ -57,6 +57,7 @@ const SolarPanelTrackerSelection = ({
   };
 
   const setTrackerType = (value: TrackerType) => {
+    if (!solarPanel) return;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldTrackerTypesAll = new Map<string, TrackerType>();

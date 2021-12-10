@@ -91,6 +91,7 @@ const SolarPanelLengthInput = ({
   };
 
   const setLength = (value: number) => {
+    if (!solarPanel) return;
     rejectedValue.current = undefined;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:

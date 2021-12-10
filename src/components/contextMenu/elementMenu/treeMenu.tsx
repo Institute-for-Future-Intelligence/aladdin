@@ -64,6 +64,7 @@ export const TreeMenu = () => {
   };
 
   const setHeight = (value: number) => {
+    if (!tree) return;
     if (!value || value === tree.lz) return;
     const oldHeight = tree.lz;
     const undoableChange = {

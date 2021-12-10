@@ -50,6 +50,7 @@ const CuboidLengthInput = ({
   };
 
   const setLy = (value: number) => {
+    if (!cuboid) return;
     switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldLysAll = new Map<string, number>();

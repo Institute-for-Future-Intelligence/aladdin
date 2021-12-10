@@ -27,7 +27,7 @@ export const WallMenu = () => {
   const lang = { lng: language };
   const paddingLeft = '36px';
 
-  const wallModel = getSelectedElement() as WallModel;
+  const wall = getSelectedElement() as WallModel;
 
   return (
     <>
@@ -50,7 +50,7 @@ export const WallMenu = () => {
       </Menu.Item>
 
       <WallColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
-      {wallModel && (wallModel.textureType === WallTexture.NoTexture || wallModel.textureType === WallTexture.Default) && (
+      {wall && (wall.textureType === WallTexture.NoTexture || wall.textureType === WallTexture.Default) && (
         <Menu.Item
           key={'wall-color'}
           style={{ paddingLeft: paddingLeft }}

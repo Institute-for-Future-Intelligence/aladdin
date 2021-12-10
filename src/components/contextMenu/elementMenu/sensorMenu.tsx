@@ -11,6 +11,7 @@ import { Copy, Cut } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
+import { SensorModel } from '../../../models/SensorModel';
 
 export const SensorMenu = () => {
   const language = useStore(Selector.language);
@@ -19,45 +20,45 @@ export const SensorMenu = () => {
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
 
-  const selectedElement = getSelectedElement();
-  const [labelText, setLabelText] = useState<string>(selectedElement?.label ?? '');
+  const sensor = getSelectedElement() as SensorModel;
+  const [labelText, setLabelText] = useState<string>(sensor?.label ?? '');
   const lang = { lng: language };
 
   const updateElementLabelText = () => {
-    if (selectedElement) {
-      const oldLabel = selectedElement.label;
+    if (sensor) {
+      const oldLabel = sensor.label;
       const undoableChange = {
         name: 'Set Sensor Label',
         timestamp: Date.now(),
         oldValue: oldLabel,
         newValue: labelText,
         undo: () => {
-          updateElementLabelById(selectedElement.id, undoableChange.oldValue as string);
+          updateElementLabelById(sensor.id, undoableChange.oldValue as string);
         },
         redo: () => {
-          updateElementLabelById(selectedElement.id, undoableChange.newValue as string);
+          updateElementLabelById(sensor.id, undoableChange.newValue as string);
         },
       } as UndoableChange;
       addUndoable(undoableChange);
-      updateElementLabelById(selectedElement.id, labelText);
+      updateElementLabelById(sensor.id, labelText);
     }
   };
 
   const showElementLabel = (e: CheckboxChangeEvent) => {
-    if (selectedElement) {
+    if (sensor) {
       const undoableCheck = {
         name: 'Show Sensor Label',
         timestamp: Date.now(),
-        checked: !selectedElement.showLabel,
+        checked: !sensor.showLabel,
         undo: () => {
-          updateElementShowLabelById(selectedElement.id, !undoableCheck.checked);
+          updateElementShowLabelById(sensor.id, !undoableCheck.checked);
         },
         redo: () => {
-          updateElementShowLabelById(selectedElement.id, undoableCheck.checked);
+          updateElementShowLabelById(sensor.id, undoableCheck.checked);
         },
       } as UndoableCheck;
       addUndoable(undoableCheck);
-      updateElementShowLabelById(selectedElement.id, e.target.checked);
+      updateElementShowLabelById(sensor.id, e.target.checked);
     }
   };
 
@@ -66,7 +67,7 @@ export const SensorMenu = () => {
       <Copy keyName={'sensor-copy'} />
       <Cut keyName={'sensor-cut'} />
       <Menu.Item key={'sensor-show-label'}>
-        <Checkbox checked={!!selectedElement?.showLabel} onChange={showElementLabel}>
+        <Checkbox checked={!!sensor?.showLabel} onChange={showElementLabel}>
           {i18n.t('sensorMenu.KeepShowingLabel', lang)}
         </Checkbox>
       </Menu.Item>

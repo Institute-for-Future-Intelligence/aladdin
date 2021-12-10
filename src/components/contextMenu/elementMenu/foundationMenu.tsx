@@ -61,11 +61,13 @@ export const FoundationMenu = () => {
     return false;
   };
 
+  const editable = !foundation?.locked;
+
   return (
     <Menu.ItemGroup>
       {legalToPaste() && <Paste keyName={'foundation-paste'} />}
       <Copy keyName={'foundation-copy'} />
-      <Cut keyName={'foundation-cut'} />
+      {editable && <Cut keyName={'foundation-cut'} />}
       <Lock keyName={'foundation-lock'} />
       {(sensorCountFoundation > 0 || solarPanelCountFoundation > 0 || wallCountFoundation > 0) &&
         contextMenuObjectType && (
@@ -214,7 +216,7 @@ export const FoundationMenu = () => {
         )}
 
       <FoundationColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
-      {foundation && (!foundation.textureType || foundation.textureType === FoundationTexture.NoTexture) && (
+      {editable && foundation && (!foundation.textureType || foundation.textureType === FoundationTexture.NoTexture) && (
         <Menu.Item
           key={'foundation-color'}
           style={{ paddingLeft: '36px' }}
@@ -230,68 +232,78 @@ export const FoundationMenu = () => {
         textureDialogVisible={textureDialogVisible}
         setTextureDialogVisible={setTextureDialogVisible}
       />
-      <Menu.Item
-        key={'foundation-texture'}
-        style={{ paddingLeft: '36px' }}
-        onClick={() => {
-          setTextureDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Texture', lang)} ...
-      </Menu.Item>
+      {editable && (
+        <Menu.Item
+          key={'foundation-texture'}
+          style={{ paddingLeft: '36px' }}
+          onClick={() => {
+            setTextureDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Texture', lang)} ...
+        </Menu.Item>
+      )}
 
       <FoundationWidthInput widthDialogVisible={widthDialogVisible} setWidthDialogVisible={setWidthDialogVisible} />
-      <Menu.Item
-        key={'foundation-width'}
-        style={{ paddingLeft: '36px' }}
-        onClick={() => {
-          setWidthDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Width', lang)} ...
-      </Menu.Item>
+      {editable && (
+        <Menu.Item
+          key={'foundation-width'}
+          style={{ paddingLeft: '36px' }}
+          onClick={() => {
+            setWidthDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Width', lang)} ...
+        </Menu.Item>
+      )}
 
       <FoundationLengthInput
         lengthDialogVisible={lengthDialogVisible}
         setLengthDialogVisible={setLengthDialogVisible}
       />
-      <Menu.Item
-        key={'foundation-length'}
-        style={{ paddingLeft: '36px' }}
-        onClick={() => {
-          setLengthDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Length', lang)} ...
-      </Menu.Item>
+      {editable && (
+        <Menu.Item
+          key={'foundation-length'}
+          style={{ paddingLeft: '36px' }}
+          onClick={() => {
+            setLengthDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Length', lang)} ...
+        </Menu.Item>
+      )}
 
       <FoundationHeightInput
         heightDialogVisible={heightDialogVisible}
         setHeightDialogVisible={setHeightDialogVisible}
       />
-      <Menu.Item
-        key={'foundation-height'}
-        style={{ paddingLeft: '36px' }}
-        onClick={() => {
-          setHeightDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Height', lang)} ...
-      </Menu.Item>
+      {editable && (
+        <Menu.Item
+          key={'foundation-height'}
+          style={{ paddingLeft: '36px' }}
+          onClick={() => {
+            setHeightDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Height', lang)} ...
+        </Menu.Item>
+      )}
 
       <FoundationAzimuthInput
         azimuthDialogVisible={azimuthDialogVisible}
         setAzimuthDialogVisible={setAzimuthDialogVisible}
       />
-      <Menu.Item
-        key={'foundation-azimuth'}
-        style={{ paddingLeft: '36px' }}
-        onClick={() => {
-          setAzimuthDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Azimuth', lang)} ...
-      </Menu.Item>
+      {editable && (
+        <Menu.Item
+          key={'foundation-azimuth'}
+          style={{ paddingLeft: '36px' }}
+          onClick={() => {
+            setAzimuthDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Azimuth', lang)} ...
+        </Menu.Item>
+      )}
     </Menu.ItemGroup>
   );
 };

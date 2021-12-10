@@ -73,7 +73,7 @@ const FoundationTextureSelection = ({
         }
         break;
       default:
-        if (texture !== foundation.textureType) {
+        if (texture !== foundation?.textureType) {
           return true;
         }
     }
@@ -81,6 +81,7 @@ const FoundationTextureSelection = ({
   };
 
   const setTexture = (value: FoundationTexture) => {
+    if (!foundation) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:

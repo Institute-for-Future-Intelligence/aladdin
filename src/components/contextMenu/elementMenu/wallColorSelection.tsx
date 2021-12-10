@@ -52,6 +52,7 @@ const WallColorSelection = ({
   };
 
   const setColor = (value: string) => {
+    if (!wall) return;
     switch (wallActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldColorsAll = new Map<string, string>();

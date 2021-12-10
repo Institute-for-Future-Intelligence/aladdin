@@ -72,6 +72,7 @@ const CuboidTextureSelection = ({
   };
 
   const setTexture = (value: CuboidTexture) => {
+    if (!cuboid) return;
     switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldTexturesAll = new Map<string, CuboidTexture[] | undefined>();

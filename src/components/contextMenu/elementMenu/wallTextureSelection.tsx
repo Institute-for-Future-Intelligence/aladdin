@@ -64,6 +64,7 @@ const WallTextureSelection = ({
   };
 
   const setTexture = (value: WallTexture) => {
+    if (!wall) return;
     switch (wallActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldTexturesAll = new Map<string, WallTexture>();

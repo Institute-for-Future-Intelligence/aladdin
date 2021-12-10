@@ -75,6 +75,7 @@ const PvModelSelection = ({
   };
 
   const setPvModel = (value: string) => {
+    if (!solarPanel) return;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldModelsAll = new Map<string, string>();
