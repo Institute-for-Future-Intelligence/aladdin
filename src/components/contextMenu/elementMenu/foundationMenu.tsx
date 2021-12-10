@@ -63,10 +63,10 @@ export const FoundationMenu = () => {
 
   return (
     <Menu.ItemGroup>
-      {legalToPaste() && <Paste />}
-      <Copy />
-      <Cut />
-      <Lock />
+      {legalToPaste() && <Paste keyName={'foundation-paste'} />}
+      <Copy keyName={'foundation-copy'} />
+      <Cut keyName={'foundation-cut'} />
+      <Lock keyName={'foundation-lock'} />
       {(sensorCountFoundation > 0 || solarPanelCountFoundation > 0 || wallCountFoundation > 0) &&
         contextMenuObjectType && (
           <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>

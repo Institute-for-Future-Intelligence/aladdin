@@ -13,9 +13,9 @@ export const WindowMenu = () => {
 
   return (
     <>
-      <Copy />
-      <Cut />
-      <Lock />
+      <Copy keyName={'window-copy'} />
+      <Cut keyName={'window-cut'} />
+      <Lock keyName={'window-lock'} />
     </>
   );
 };

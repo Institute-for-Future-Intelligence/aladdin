@@ -63,10 +63,10 @@ export const CuboidMenu = () => {
 
   return (
     <Menu.ItemGroup>
-      {legalToPaste() && <Paste />}
-      <Copy />
-      <Cut />
-      <Lock />
+      {legalToPaste() && <Paste keyName={'cuboid-paste'} />}
+      <Copy keyName={'cuboid-copy'} />
+      <Cut keyName={'cuboid-cut'} />
+      <Lock keyName={'cuboid-lock'} />
 
       {(sensorCountCuboid > 0 || solarPanelCountCuboid > 0) && contextMenuObjectType && (
         <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>

@@ -15,7 +15,7 @@ import { UndoablePaste } from '../../undo/UndoablePaste';
 import { UndoableCheck } from '../../undo/UndoableCheck';
 import { UndoableChange } from '../../undo/UndoableChange';
 
-export const Paste = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
+export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; keyName: string }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const pasteElements = useStore(Selector.pasteElementsToPoint);
@@ -51,14 +51,14 @@ export const Paste = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   };
 
   return (
-    <Menu.Item key={'ground-paste'} onClick={paste} style={{ paddingLeft: paddingLeft }}>
+    <Menu.Item key={keyName} onClick={paste} style={{ paddingLeft: paddingLeft }}>
       {i18n.t('word.Paste', { lng: language })}
       <label style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+V)</label>
     </Menu.Item>
   );
 };
 
-export const Copy = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
+export const Copy = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; keyName: string }) => {
   const language = useStore(Selector.language);
   const copyElementById = useStore(Selector.copyElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -72,14 +72,14 @@ export const Copy = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   };
 
   return (
-    <Menu.Item key={'foundation-copy'} onClick={copyElement} style={{ paddingLeft: paddingLeft }}>
+    <Menu.Item key={keyName} onClick={copyElement} style={{ paddingLeft: paddingLeft }}>
       {i18n.t('word.Copy', { lng: language })}
       <label style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+C)</label>
     </Menu.Item>
   );
 };
 
-export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
+export const Cut = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; keyName: string }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const removeElementById = useStore(Selector.removeElementById);
@@ -122,14 +122,14 @@ export const Cut = ({ paddingLeft = '36px' }: { paddingLeft?: string }) => {
   };
 
   return (
-    <Menu.Item key={'foundation-cut'} onClick={cut} style={{ paddingLeft: paddingLeft }}>
+    <Menu.Item key={keyName} onClick={cut} style={{ paddingLeft: paddingLeft }}>
       {i18n.t('word.Cut', { lng: language })}
       <label style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+X)</label>
     </Menu.Item>
   );
 };
 
-export const Lock = () => {
+export const Lock = ({ keyName }: { keyName: string }) => {
   const language = useStore(Selector.language);
   const updateElementLockById = useStore(Selector.updateElementLockById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -139,12 +139,11 @@ export const Lock = () => {
   const lockElement = (on: boolean) => {
     if (selectedElement) {
       updateElementLockById(selectedElement.id, on);
-      // setUpdateFlag(!updateFlag);
     }
   };
 
   return (
-    <Menu.Item key={'foundation-lock'}>
+    <Menu.Item key={keyName}>
       <Checkbox
         checked={selectedElement?.locked}
         onChange={(e) => {
@@ -170,7 +169,7 @@ export const Lock = () => {
   );
 };
 
-export const ColorPicker = () => {
+export const ColorPicker = ({ keyName }: { keyName: string }) => {
   const language = useStore(Selector.language);
   const updateElementColorById = useStore(Selector.updateElementColorById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -199,7 +198,7 @@ export const ColorPicker = () => {
   };
 
   return (
-    <SubMenu key={'color'} title={i18n.t('word.Color', { lng: language })} style={{ paddingLeft: '24px' }}>
+    <SubMenu key={keyName} title={i18n.t('word.Color', { lng: language })} style={{ paddingLeft: '24px' }}>
       <CompactPicker color={selectedElement?.color} onChangeComplete={changeElementColor} />
     </SubMenu>
   );

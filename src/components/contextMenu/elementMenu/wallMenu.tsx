@@ -31,9 +31,9 @@ export const WallMenu = () => {
 
   return (
     <>
-      <Copy />
-      <Cut />
-      <Lock />
+      <Copy keyName={'wall-copy'} />
+      <Cut keyName={'wall-cut'} />
+      <Lock keyName={'wall-lock'} />
 
       <WallTextureSelection
         textureDialogVisible={textureDialogVisible}

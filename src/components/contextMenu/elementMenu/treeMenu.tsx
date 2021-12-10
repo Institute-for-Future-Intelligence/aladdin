@@ -85,9 +85,9 @@ export const TreeMenu = () => {
 
   return (
     <>
-      <Copy />
-      <Cut />
-      <Lock />
+      <Copy keyName={'tree-copy'} />
+      <Cut keyName={'tree-cut'} />
+      <Lock keyName={'tree-lock'} />
       <Menu.Item key={'tree-show-model'}>
         <Checkbox
           checked={tree?.showModel && tree.type === ObjectType.Tree}

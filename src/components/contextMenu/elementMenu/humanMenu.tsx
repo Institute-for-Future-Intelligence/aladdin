@@ -14,9 +14,9 @@ export const HumanMenu = () => {
   const language = useStore(Selector.language);
   return (
     <>
-      <Copy />
-      <Cut />
-      <Lock />
+      <Copy keyName={'human-copy'} />
+      <Cut keyName={'human-cut'} />
+      <Lock keyName={'human-lock'} />
       <Menu>
         <Menu.Item key={'human-change-person'} style={{ paddingLeft: '36px' }}>
           <Space style={{ width: '120px' }}>{i18n.t('peopleMenu.ChangePerson', { lng: language })}: </Space>

@@ -70,7 +70,7 @@ export const GroundMenu = () => {
 
   return (
     <>
-      {legalToPaste() && <Paste />}
+      {legalToPaste() && <Paste keyName={'ground-paste'} />}
       {humanCount > 0 && (
         <Menu.Item
           style={{ paddingLeft: '36px' }}

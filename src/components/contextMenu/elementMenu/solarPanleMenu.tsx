@@ -120,8 +120,8 @@ export const SolarPanelMenu = () => {
 
   return (
     <>
-      <Copy paddingLeft={'36px'} />
-      <Cut paddingLeft={'36px'} />
+      <Copy keyName={'solar-panel-copy'} paddingLeft={'36px'} />
+      <Cut paddingLeft={'36px'} keyName={'solar-panel-cut'} />
       {solarPanel && (
         <>
           {/* pv model */}

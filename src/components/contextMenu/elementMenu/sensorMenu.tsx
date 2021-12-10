@@ -63,8 +63,8 @@ export const SensorMenu = () => {
 
   return (
     <>
-      <Copy />
-      <Cut />
+      <Copy keyName={'sensor-copy'} />
+      <Cut keyName={'sensor-cut'} />
       <Menu.Item key={'sensor-show-label'}>
         <Checkbox checked={!!selectedElement?.showLabel} onChange={showElementLabel}>
           {i18n.t('sensorMenu.KeepShowingLabel', lang)}
