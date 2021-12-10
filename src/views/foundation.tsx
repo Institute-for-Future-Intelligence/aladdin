@@ -53,6 +53,7 @@ import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableChange } from '../undo/UndoableChange';
 import { ElementGrid } from './elementGrid';
+import i18n from '../i18n/i18n';
 
 const Foundation = ({
   id,
@@ -69,6 +70,7 @@ const Foundation = ({
   selected = false,
   textureType = FoundationTexture.NoTexture,
 }: FoundationModel) => {
+  const language = useStore(Selector.language);
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getAllWallsIdOnFoundation = useStore(Selector.getAllWallsIdOnFoundation);
@@ -133,6 +135,7 @@ const Foundation = ({
   const oldAzimuthRef = useRef<number>(0);
   const newAzimuthRef = useRef<number>(0);
 
+  const lang = { lng: language };
   const ray = useMemo(() => new Raycaster(), []);
   const foundationModel = getElementById(id) as FoundationModel;
   const handleLift = MOVE_HANDLE_RADIUS / 2;
@@ -1749,7 +1752,10 @@ const Foundation = ({
           {hovered && !selected && (
             <textSprite
               name={'Label'}
-              text={'Foundation'}
+              text={
+                i18n.t('shared.FoundationElement', lang) +
+                (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
+              }
               fontSize={20}
               fontFace={'Times Roman'}
               textHeight={0.2}
@@ -1758,7 +1764,7 @@ const Foundation = ({
           )}
           {!locked && hoveredResizeHandleLL && (
             <textSprite
-              name={'Label'}
+              name={'Label-LL'}
               text={'LL'}
               fontSize={20}
               fontFace={'Times Roman'}
@@ -1768,7 +1774,7 @@ const Foundation = ({
           )}
           {!locked && hoveredResizeHandleUL && (
             <textSprite
-              name={'Label'}
+              name={'Label-UL'}
               text={'UL'}
               fontSize={20}
               fontFace={'Times Roman'}
@@ -1778,7 +1784,7 @@ const Foundation = ({
           )}
           {!locked && hoveredResizeHandleLR && (
             <textSprite
-              name={'Label'}
+              name={'Label-LR'}
               text={'LR'}
               fontSize={20}
               fontFace={'Times Roman'}
@@ -1788,7 +1794,7 @@ const Foundation = ({
           )}
           {!locked && hoveredResizeHandleUR && (
             <textSprite
-              name={'Label'}
+              name={'Label-UR'}
               text={'UR'}
               fontSize={20}
               fontFace={'Times Roman'}

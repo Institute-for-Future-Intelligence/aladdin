@@ -97,6 +97,11 @@ export const i18n_zh_tw = {
       DoYouWantToSaveChanges: '您要保存當前文檔嗎？',
       NotApplicableToSelectedAction: '此值不適用於當前選擇範圍',
       ThisElementIsLocked: '這個部件被鎖定。',
+      FoundationElement: '地基',
+      CuboidElement: '長方體',
+      SensorElement: '傳感器',
+      SolarPanelElement: '光伏板',
+      ElementLocked: '固定',
     },
 
     menu: {

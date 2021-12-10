@@ -39,6 +39,7 @@ import { getSunDirection } from '../analysis/sunTools';
 import RotateHandle from '../components/rotateHandle';
 import Wireframe from '../components/wireframe';
 import { UndoableChange } from '../undo/UndoableChange';
+import i18n from '../i18n/i18n';
 
 const SolarPanel = ({
   id,
@@ -68,6 +69,7 @@ const SolarPanel = ({
   orientation = Orientation.portrait,
 }: SolarPanelModel) => {
   const setCommonStore = useStore(Selector.set);
+  const language = useStore(Selector.language);
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -106,6 +108,7 @@ const SolarPanel = ({
   const sunBeamLength = Math.max(100, sceneRadius);
   const panelNormal = new Vector3().fromArray(normal);
   const pvModel = getPvModule(pvModelName) ?? getPvModule('SPR-X21-335-BLK');
+  const lang = { lng: language };
 
   if (parentId) {
     const p = getElementById(parentId);
@@ -783,7 +786,10 @@ const SolarPanel = ({
       {(hovered || showLabel) && !selected && (
         <textSprite
           name={'Label'}
-          text={solarPanel?.label ? solarPanel.label : 'Solar Panel'}
+          text={
+            (solarPanel?.label ? solarPanel.label : i18n.t('shared.SolarPanelElement', lang)) +
+            (solarPanel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
+          }
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}

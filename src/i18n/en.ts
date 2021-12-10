@@ -97,6 +97,11 @@ export const i18n_en = {
       DoYouWantToSaveChanges: 'Do you want to save changes?',
       NotApplicableToSelectedAction: 'Not Applicable to Selected Action',
       ThisElementIsLocked: 'This element is locked.',
+      FoundationElement: 'Foundation',
+      CuboidElement: 'Cuboid',
+      SensorElement: 'Sensor',
+      SolarPanelElement: 'Solar Panel',
+      ElementLocked: 'Locked',
     },
 
     menu: {

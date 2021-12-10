@@ -25,6 +25,7 @@ import { Billboard, Cone, Plane, Sphere } from '@react-three/drei';
 import { HALF_PI, MOVE_HANDLE_RADIUS, TWO_PI } from '../constants';
 import { TreeModel } from '../models/TreeModel';
 import { ObjectType, TreeType } from '../types';
+import i18n from '../i18n/i18n';
 
 const Tree = ({
   id,
@@ -41,6 +42,7 @@ const Tree = ({
   ...props
 }: TreeModel) => {
   const setCommonStore = useStore(Selector.set);
+  const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const date = useStore(Selector.world.date);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -58,6 +60,7 @@ const Tree = ({
 
   const month = now.getMonth() + 1;
   const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
+  const lang = { lng: language };
 
   useStore(Selector.cameraDirection);
   const sunlightX = sunlightDirection.x;
@@ -93,6 +96,25 @@ const Tree = ({
       setUpdateFlag(!updateFlag);
     });
   }, [name, noLeaves]);
+
+  const labelText = useMemo(() => {
+    switch (name) {
+      case TreeType.Cottonwood:
+        return i18n.t('tree.Cottonwood', lang);
+      case TreeType.Dogwood:
+        return i18n.t('tree.Dogwood', lang);
+      case TreeType.Elm:
+        return i18n.t('tree.Elm', lang);
+      case TreeType.Linden:
+        return i18n.t('tree.Linden', lang);
+      case TreeType.Maple:
+        return i18n.t('tree.Maple', lang);
+      case TreeType.Oak:
+        return i18n.t('tree.Oak', lang);
+      default:
+        return i18n.t('tree.Pine', lang);
+    }
+  }, [name]);
 
   const customDepthMaterial = new MeshDepthMaterial({
     depthPacking: RGBADepthPacking,
@@ -223,7 +245,7 @@ const Tree = ({
       {hovered && !selected && (
         <textSprite
           name={'Label'}
-          text={name}
+          text={labelText}
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}

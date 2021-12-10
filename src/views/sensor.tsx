@@ -22,6 +22,7 @@ import {
 import { ActionType, ObjectType } from '../types';
 import { Util } from '../Util';
 import Wireframe from '../components/wireframe';
+import i18n from '../i18n/i18n';
 
 const Sensor = ({
   id,
@@ -43,6 +44,7 @@ const Sensor = ({
   heatFlux = false,
 }: SensorModel) => {
   const setCommonStore = useStore(Selector.set);
+  const language = useStore(Selector.language);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
@@ -53,6 +55,8 @@ const Sensor = ({
   const [hovered, setHovered] = useState(false);
   const baseRef = useRef<Mesh>();
   const handleRef = useRef<Mesh>();
+
+  const lang = { lng: language };
 
   if (parentId) {
     const p = getElementById(parentId);
@@ -174,7 +178,10 @@ const Sensor = ({
       {(hovered || showLabel) && !selected && (
         <textSprite
           name={'Label'}
-          text={sensorModel?.label ? sensorModel.label : 'Sensor'}
+          text={
+            (sensorModel?.label ? sensorModel.label : i18n.t('shared.SensorElement', lang)) +
+            (sensorModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
+          }
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}

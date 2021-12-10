@@ -34,9 +34,11 @@ import { HumanModel } from '../models/HumanModel';
 import { Billboard, Plane, Sphere } from '@react-three/drei';
 import { HALF_PI, MOVE_HANDLE_RADIUS } from '../constants';
 import { HumanName, ObjectType } from '../types';
+import i18n from '../i18n/i18n';
 
 const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked = false, ...props }: HumanModel) => {
   const setCommonStore = useStore(Selector.set);
+  const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const selectMe = useStore(Selector.selectMe);
 
@@ -52,6 +54,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
   useStore(Selector.cameraDirection);
   const cameraX = camera.position.x;
   const cameraY = camera.position.y;
+  const lang = { lng: language };
 
   const texture = useMemo(() => {
     let textureImg;
@@ -197,6 +200,55 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
     }
   }, [name]);
 
+  const labelText = useMemo(() => {
+    switch (name) {
+      case HumanName.Jade:
+        return i18n.t('people.Jade', lang);
+      case HumanName.Jane:
+        return i18n.t('people.Jane', lang);
+      case HumanName.Jaye:
+        return i18n.t('people.Jaye', lang);
+      case HumanName.Jean:
+        return i18n.t('people.Jean', lang);
+      case HumanName.Jedi:
+        return i18n.t('people.Jedi', lang);
+      case HumanName.Jeff:
+        return i18n.t('people.Jeff', lang);
+      case HumanName.Jena:
+        return i18n.t('people.Jena', lang);
+      case HumanName.Jeni:
+        return i18n.t('people.Jeni', lang);
+      case HumanName.Jess:
+        return i18n.t('people.Jess', lang);
+      case HumanName.Jett:
+        return i18n.t('people.Jett', lang);
+      case HumanName.Jill:
+        return i18n.t('people.Jill', lang);
+      case HumanName.Joan:
+        return i18n.t('people.Joan', lang);
+      case HumanName.Joel:
+        return i18n.t('people.Joel', lang);
+      case HumanName.John:
+        return i18n.t('people.John', lang);
+      case HumanName.Jose:
+        return i18n.t('people.Jose', lang);
+      case HumanName.Judd:
+        return i18n.t('people.Judd', lang);
+      case HumanName.Judy:
+        return i18n.t('people.Judy', lang);
+      case HumanName.June:
+        return i18n.t('people.June', lang);
+      case HumanName.Juro:
+        return i18n.t('people.Juro', lang);
+      case HumanName.Xiaoming:
+        return i18n.t('people.Xiaoming', lang);
+      case HumanName.Xiaoli:
+        return i18n.t('people.Xiaoli', lang);
+      default:
+        return i18n.t('people.Jack', lang);
+    }
+  }, [name]);
+
   const rotation = useMemo(() => {
     return new Euler(HALF_PI, -Math.atan2(cameraX - cx, cameraY - cy), 0);
   }, [cameraX, cameraY, cx, cy]);
@@ -261,7 +313,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
       {hovered && !selected && (
         <textSprite
           name={'Label'}
-          text={name}
+          text={labelText}
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}

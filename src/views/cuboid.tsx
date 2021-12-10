@@ -57,6 +57,7 @@ import { UndoableAdd } from '../undo/UndoableAdd';
 import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableChange } from '../undo/UndoableChange';
+import i18n from '../i18n/i18n';
 
 const Cuboid = ({
   id,
@@ -81,6 +82,7 @@ const Cuboid = ({
   ],
 }: CuboidModel) => {
   const setCommonStore = useStore(Selector.set);
+  const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic);
   const moveHandleType = useStore(Selector.moveHandleType);
   const rotateHandleType = useStore(Selector.rotateHandleType);
@@ -144,6 +146,7 @@ const Cuboid = ({
   const oldAzimuthRef = useRef<number>(0);
   const newAzimuthRef = useRef<number>(0);
 
+  const lang = { lng: language };
   const hx = lx / 2;
   const hy = ly / 2;
   const hz = lz / 2;
@@ -1156,7 +1159,9 @@ const Cuboid = ({
       {hovered && !selected && (
         <textSprite
           name={'Label'}
-          text={'Box'}
+          text={
+            i18n.t('shared.CuboidElement', lang) + (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
+          }
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}
