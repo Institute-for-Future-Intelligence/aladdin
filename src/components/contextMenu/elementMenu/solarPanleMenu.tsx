@@ -10,7 +10,7 @@ import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { ObjectType } from '../../../types';
 import { Util } from '../../../Util';
-import { Copy, Cut } from '../menuItems';
+import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
@@ -118,11 +118,14 @@ export const SolarPanelMenu = () => {
     }
   };
 
+  const editable = !solarPanel?.locked;
+
   return (
     <>
       <Copy keyName={'solar-panel-copy'} paddingLeft={'36px'} />
-      <Cut paddingLeft={'36px'} keyName={'solar-panel-cut'} />
-      {solarPanel && (
+      {editable && <Cut keyName={'solar-panel-cut'} paddingLeft={'36px'} />}
+      <Lock keyName={'solar-panel-lock'} />
+      {solarPanel && editable && (
         <>
           {/* pv model */}
           <PvModelSelection

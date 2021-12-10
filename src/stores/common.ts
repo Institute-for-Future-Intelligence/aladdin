@@ -638,7 +638,7 @@ export const useStore = create<CommonStoreState>(
           updateElementLabelById(id, label) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.id === id) {
+                if (e.id === id && !e.locked) {
                   e.label = label;
                   break;
                 }
@@ -648,7 +648,7 @@ export const useStore = create<CommonStoreState>(
           updateElementShowLabelById(id, showLabel) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.id === id) {
+                if (e.id === id && !e.locked) {
                   e.showLabel = showLabel;
                   break;
                 }
@@ -660,7 +660,7 @@ export const useStore = create<CommonStoreState>(
           updateElementColorById(id, color) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.id === id) {
+                if (e.id === id && !e.locked) {
                   e.color = color;
                   break;
                 }
@@ -670,7 +670,7 @@ export const useStore = create<CommonStoreState>(
           updateElementColorForAll(type, color) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === type) {
+                if (e.type === type && !e.locked) {
                   e.color = color;
                 }
               }
@@ -680,7 +680,7 @@ export const useStore = create<CommonStoreState>(
           updateElementCxById(id, cx) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.id === id) {
+                if (e.id === id && !e.locked) {
                   e.cx = cx;
                   break;
                 }
@@ -690,7 +690,7 @@ export const useStore = create<CommonStoreState>(
           updateElementCyById(id, cy) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.id === id) {
+                if (e.id === id && !e.locked) {
                   e.cy = cy;
                   break;
                 }
@@ -700,7 +700,7 @@ export const useStore = create<CommonStoreState>(
           updateElementCzById(id, cz) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.id === id) {
+                if (e.id === id && !e.locked) {
                   e.cz = cz;
                   break;
                 }
@@ -710,7 +710,7 @@ export const useStore = create<CommonStoreState>(
           updateElementCzForAll(type, cz) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === type) {
+                if (e.type === type && !e.locked) {
                   e.cz = cz;
                 }
               }
@@ -721,7 +721,7 @@ export const useStore = create<CommonStoreState>(
           updateElementLxById(id, lx) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.id === id) {
+                if (e.id === id && !e.locked) {
                   e.lx = lx;
                   break;
                 }
@@ -731,7 +731,7 @@ export const useStore = create<CommonStoreState>(
           updateElementLxAboveFoundation(type, foundationId, lx) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === type && e.foundationId === foundationId) {
+                if (e.type === type && e.foundationId === foundationId && !e.locked) {
                   e.lx = lx;
                 }
               }
@@ -740,7 +740,7 @@ export const useStore = create<CommonStoreState>(
           updateElementLxOnSurface(type, parentId, normal, lx) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === type) {
+                if (e.type === type && !e.locked) {
                   let found;
                   if (normal) {
                     found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -757,7 +757,7 @@ export const useStore = create<CommonStoreState>(
           updateElementLxForAll(type, lx) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === type) {
+                if (e.type === type && !e.locked) {
                   e.lx = lx;
                 }
               }
@@ -768,7 +768,7 @@ export const useStore = create<CommonStoreState>(
           updateElementLyById(id, ly) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.id === id) {
+                if (e.id === id && !e.locked) {
                   e.ly = ly;
                   break;
                 }
@@ -778,7 +778,7 @@ export const useStore = create<CommonStoreState>(
           updateElementLyAboveFoundation(type, foundationId, ly) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === type && e.foundationId === foundationId) {
+                if (e.type === type && e.foundationId === foundationId && !e.locked) {
                   e.ly = ly;
                 }
               }
@@ -787,7 +787,7 @@ export const useStore = create<CommonStoreState>(
           updateElementLyOnSurface(type, parentId, normal, ly) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === type) {
+                if (e.type === type && !e.locked) {
                   let found;
                   if (normal) {
                     found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -804,7 +804,7 @@ export const useStore = create<CommonStoreState>(
           updateElementLyForAll(type, ly) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === type) {
+                if (e.type === type && !e.locked) {
                   e.ly = ly;
                 }
               }
@@ -815,7 +815,7 @@ export const useStore = create<CommonStoreState>(
           updateElementLzById(id, lz) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.id === id) {
+                if (e.id === id && !e.locked) {
                   e.lz = lz;
                   break;
                 }
@@ -825,7 +825,7 @@ export const useStore = create<CommonStoreState>(
           updateElementLzAboveFoundation(type, foundationId, lz) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === type && e.foundationId === foundationId) {
+                if (e.type === type && e.foundationId === foundationId && !e.locked) {
                   e.lz = lz;
                 }
               }
@@ -834,7 +834,7 @@ export const useStore = create<CommonStoreState>(
           updateElementLzOnSurface(type, parentId, normal, lz) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === type) {
+                if (e.type === type && !e.locked) {
                   let found;
                   if (normal) {
                     found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -851,7 +851,7 @@ export const useStore = create<CommonStoreState>(
           updateElementLzForAll(type, lz) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === type) {
+                if (e.type === type && !e.locked) {
                   e.lz = lz;
                 }
               }
@@ -860,12 +860,15 @@ export const useStore = create<CommonStoreState>(
 
           updateElementRotationById(id, x, y, z) {
             immerSet((state: CommonStoreState) => {
-              for (const [i, e] of state.elements.entries()) {
-                if (e.id === id || e.parentId === id) {
-                  const elem = state.elements[i];
-                  elem.rotation[0] = x;
-                  elem.rotation[1] = y;
-                  elem.rotation[2] = z;
+              for (const e of state.elements) {
+                if (e.id === id && !e.locked) {
+                  e.rotation[0] = x;
+                  e.rotation[1] = y;
+                  e.rotation[2] = z;
+                } else if (e.parentId === id) {
+                  e.rotation[0] = x;
+                  e.rotation[1] = y;
+                  e.rotation[2] = z;
                 }
               }
               state.selectedElementAngle = z;
@@ -875,9 +878,18 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === type) {
-                  e.rotation[0] = x;
-                  e.rotation[1] = y;
-                  e.rotation[2] = z;
+                  if (!e.locked) {
+                    e.rotation[0] = x;
+                    e.rotation[1] = y;
+                    e.rotation[2] = z;
+                  }
+                } else {
+                  const parent = state.getElementById(e.parentId);
+                  if (parent && !parent.locked && parent.type === type) {
+                    e.rotation[0] = x;
+                    e.rotation[1] = y;
+                    e.rotation[2] = z;
+                  }
                 }
               }
             });
@@ -894,7 +906,7 @@ export const useStore = create<CommonStoreState>(
           updateFoundationTextureById(id, texture) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
                   (e as FoundationModel).textureType = texture;
                   break;
                 }
@@ -904,7 +916,7 @@ export const useStore = create<CommonStoreState>(
           updateFoundationTextureForAll(texture) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
                   (e as FoundationModel).textureType = texture;
                 }
               }
@@ -921,7 +933,7 @@ export const useStore = create<CommonStoreState>(
           updateCuboidColorBySide(side: number, id, color) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Cuboid && e.id === id) {
+                if (e.type === ObjectType.Cuboid && e.id === id && !e.locked) {
                   const cuboid = e as CuboidModel;
                   if (!cuboid.faceColors) {
                     cuboid.faceColors = new Array<string>(6);
@@ -936,7 +948,7 @@ export const useStore = create<CommonStoreState>(
           updateCuboidColorById(id, color) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Cuboid && e.id === id) {
+                if (e.type === ObjectType.Cuboid && e.id === id && !e.locked) {
                   e.color = color;
                   const cuboid = e as CuboidModel;
                   if (!cuboid.faceColors) cuboid.faceColors = new Array<string>(6);
@@ -951,7 +963,7 @@ export const useStore = create<CommonStoreState>(
           updateCuboidColorForAll(color) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Cuboid) {
+                if (e.type === ObjectType.Cuboid && !e.locked) {
                   e.color = color;
                   const cuboid = e as CuboidModel;
                   if (!cuboid.faceColors) cuboid.faceColors = new Array<string>(6);
@@ -966,7 +978,7 @@ export const useStore = create<CommonStoreState>(
           updateCuboidTextureBySide(side: number, id, texture) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Cuboid && e.id === id) {
+                if (e.type === ObjectType.Cuboid && e.id === id && !e.locked) {
                   const cuboid = e as CuboidModel;
                   if (!cuboid.textureTypes) {
                     cuboid.textureTypes = new Array<CuboidTexture>(6);
@@ -981,7 +993,7 @@ export const useStore = create<CommonStoreState>(
           updateCuboidFacadeTextureById(id, texture) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Cuboid && e.id === id) {
+                if (e.type === ObjectType.Cuboid && e.id === id && !e.locked) {
                   const cuboid = e as CuboidModel;
                   if (!cuboid.textureTypes) {
                     cuboid.textureTypes = new Array<CuboidTexture>(6);
@@ -998,7 +1010,7 @@ export const useStore = create<CommonStoreState>(
           updateCuboidFacadeTextureForAll(texture) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Cuboid) {
+                if (e.type === ObjectType.Cuboid && !e.locked) {
                   const cuboid = e as CuboidModel;
                   if (!cuboid.textureTypes) {
                     cuboid.textureTypes = new Array<CuboidTexture>(6);
@@ -1023,7 +1035,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelModelById(id, pvModelName) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.pvModelName = pvModelName;
                   const pvModel = state.pvModules[pvModelName];
@@ -1049,7 +1061,7 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               const pvModel = state.pvModules[pvModelName];
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.pvModelName = pvModelName;
                   if (sp.orientation === Orientation.portrait) {
@@ -1073,7 +1085,7 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               const pvModel = state.pvModules[pvModelName];
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   let found;
                   if (normal) {
                     found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -1105,7 +1117,7 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               const pvModel = state.pvModules[pvModelName];
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.pvModelName = pvModelName;
                   if (sp.orientation === Orientation.portrait) {
@@ -1129,7 +1141,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelLxById(id, lx) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
                   const sp = e as SolarPanelModel;
                   const pv = state.getPvModule(sp.pvModelName);
                   e.lx = Util.panelizeLx(sp, pv, lx);
@@ -1141,7 +1153,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelLxAboveFoundation(foundationId, lx) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
                   const sp = e as SolarPanelModel;
                   const pv = state.getPvModule(sp.pvModelName);
                   e.lx = Util.panelizeLx(sp, pv, lx);
@@ -1152,7 +1164,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelLxOnSurface(parentId, normal, lx) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   let found;
                   if (normal) {
                     found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -1171,7 +1183,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelLxForAll(lx) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   const sp = e as SolarPanelModel;
                   const pv = state.getPvModule(sp.pvModelName);
                   e.lx = Util.panelizeLx(sp, pv, lx);
@@ -1183,7 +1195,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelLyById(id, ly) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
                   const sp = e as SolarPanelModel;
                   const pv = state.getPvModule(sp.pvModelName);
                   e.ly = Util.panelizeLy(sp, pv, ly);
@@ -1195,7 +1207,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelLyAboveFoundation(foundationId, ly) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
                   const sp = e as SolarPanelModel;
                   const pv = state.getPvModule(sp.pvModelName);
                   e.ly = Util.panelizeLy(sp, pv, ly);
@@ -1206,7 +1218,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelLyOnSurface(parentId, normal, ly) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   let found;
                   if (normal) {
                     found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -1225,7 +1237,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelLyForAll(ly) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   const sp = e as SolarPanelModel;
                   const pv = state.getPvModule(sp.pvModelName);
                   e.ly = Util.panelizeLy(sp, pv, ly);
@@ -1237,7 +1249,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelTiltAngleById(id, tiltAngle) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.tiltAngle = tiltAngle;
                   break;
@@ -1248,7 +1260,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelTiltAngleAboveFoundation(foundationId, tiltAngle) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.tiltAngle = tiltAngle;
                 }
@@ -1258,7 +1270,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelTiltAngleOnSurface(parentId, normal, tiltAngle) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   let found;
                   if (normal) {
                     found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -1276,7 +1288,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelTiltAngleForAll(tiltAngle) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.tiltAngle = tiltAngle;
                 }
@@ -1287,7 +1299,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelRelativeAzimuthById(id, relativeAzimuth) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.relativeAzimuth = relativeAzimuth;
                   break;
@@ -1298,7 +1310,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelRelativeAzimuthAboveFoundation(foundationId, relativeAzimuth) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.relativeAzimuth = relativeAzimuth;
                 }
@@ -1308,7 +1320,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelRelativeAzimuthOnSurface(parentId, normal, relativeAzimuth) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   let found;
                   if (normal) {
                     found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -1326,7 +1338,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelRelativeAzimuthForAll(relativeAzimuth) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.relativeAzimuth = relativeAzimuth;
                 }
@@ -1337,7 +1349,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelOrientationById(id, orientation) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
                   (e as SolarPanelModel).orientation = orientation;
                   break;
                 }
@@ -1347,7 +1359,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelOrientationAboveFoundation(foundationId, orientation) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
                   (e as SolarPanelModel).orientation = orientation;
                 }
               }
@@ -1356,7 +1368,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelOrientationOnSurface(parentId, normal, orientation) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   let found;
                   if (normal) {
                     found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -1373,7 +1385,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelOrientationForAll(orientation) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   (e as SolarPanelModel).orientation = orientation;
                 }
               }
@@ -1383,7 +1395,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelTrackerTypeById(id, trackerType) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
                   (e as SolarPanelModel).trackerType = trackerType;
                   break;
                 }
@@ -1393,7 +1405,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelTrackerTypeAboveFoundation(foundationId, trackerType) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
                   (e as SolarPanelModel).trackerType = trackerType;
                 }
               }
@@ -1402,7 +1414,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelTrackerTypeOnSurface(parentId, normal, trackerType) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   let found;
                   if (normal) {
                     found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -1419,7 +1431,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelTrackerTypeForAll(trackerType) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   (e as SolarPanelModel).trackerType = trackerType;
                 }
               }
@@ -1429,7 +1441,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelPoleHeightById(id, poleHeight) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.poleHeight = poleHeight;
                   break;
@@ -1440,7 +1452,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelPoleHeightAboveFoundation(foundationId, poleHeight) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.poleHeight = poleHeight;
                 }
@@ -1450,7 +1462,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelPoleHeightOnSurface(parentId, normal, poleHeight) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   let found;
                   if (normal) {
                     found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -1468,7 +1480,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelPoleHeightForAll(poleHeight) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.poleHeight = poleHeight;
                 }
@@ -1479,7 +1491,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelPoleSpacingById(id, poleSpacing) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.poleSpacing = poleSpacing;
                   break;
@@ -1490,7 +1502,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelPoleSpacingAboveFoundation(foundationId, poleSpacing) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.poleSpacing = poleSpacing;
                 }
@@ -1500,7 +1512,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelPoleSpacingOnSurface(parentId, normal, poleSpacing) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   let found;
                   if (normal) {
                     found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -1518,7 +1530,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelPoleSpacingForAll(poleSpacing) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.poleSpacing = poleSpacing;
                 }
@@ -1548,7 +1560,7 @@ export const useStore = create<CommonStoreState>(
           updateWallRelativeAngleById(id, angle) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id) {
+                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
                   (e as WallModel).relativeAngle = angle;
                   break;
                 }
@@ -1558,7 +1570,7 @@ export const useStore = create<CommonStoreState>(
           updateWallLeftOffsetById(id, offset) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id) {
+                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
                   (e as WallModel).leftOffset = offset;
                   break;
                 }
@@ -1568,7 +1580,7 @@ export const useStore = create<CommonStoreState>(
           updateWallRightOffsetById(id, offset) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id) {
+                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
                   (e as WallModel).rightOffset = offset;
                   break;
                 }
@@ -1578,7 +1590,7 @@ export const useStore = create<CommonStoreState>(
           updateWallLeftJointsById(id, joints) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id) {
+                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
                   (e as WallModel).leftJoints = joints;
                   break;
                 }
@@ -1588,7 +1600,7 @@ export const useStore = create<CommonStoreState>(
           updateWallRightJointsById(id, joints) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id) {
+                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
                   (e as WallModel).rightJoints = joints;
                   break;
                 }
@@ -1598,7 +1610,7 @@ export const useStore = create<CommonStoreState>(
           updateWallLeftPointById(id, point) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id) {
+                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
                   (e as WallModel).leftPoint = point;
                   break;
                 }
@@ -1608,7 +1620,7 @@ export const useStore = create<CommonStoreState>(
           updateWallRightPointById(id, point) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id) {
+                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
                   (e as WallModel).rightPoint = point;
                   break;
                 }
@@ -1619,7 +1631,7 @@ export const useStore = create<CommonStoreState>(
           updateWallTextureById(id, texture) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id) {
+                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
                   (e as WallModel).textureType = texture;
                   break;
                 }
@@ -1629,7 +1641,7 @@ export const useStore = create<CommonStoreState>(
           updateWallTextureAboveFoundation(foundationId, texture) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.foundationId === foundationId) {
+                if (e.type === ObjectType.Wall && e.foundationId === foundationId && !e.locked) {
                   (e as WallModel).textureType = texture;
                 }
               }
@@ -1638,7 +1650,7 @@ export const useStore = create<CommonStoreState>(
           updateWallTextureForAll(texture) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall) {
+                if (e.type === ObjectType.Wall && !e.locked) {
                   (e as WallModel).textureType = texture;
                 }
               }
@@ -1648,7 +1660,7 @@ export const useStore = create<CommonStoreState>(
           updateWallColorById(id, color) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id) {
+                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
                   e.color = color;
                   break;
                 }
@@ -1658,7 +1670,7 @@ export const useStore = create<CommonStoreState>(
           updateWallColorAboveFoundation(foundationId, color) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.foundationId === foundationId) {
+                if (e.type === ObjectType.Wall && e.foundationId === foundationId && !e.locked) {
                   e.color = color;
                 }
               }
@@ -1667,7 +1679,7 @@ export const useStore = create<CommonStoreState>(
           updateWallColorForAll(color) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall) {
+                if (e.type === ObjectType.Wall && !e.locked) {
                   e.color = color;
                 }
               }
@@ -1677,7 +1689,7 @@ export const useStore = create<CommonStoreState>(
           updateWallHeightById(id, height) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id) {
+                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
                   e.lz = height;
                   break;
                 }
@@ -1687,7 +1699,7 @@ export const useStore = create<CommonStoreState>(
           updateWallHeightAboveFoundation(foundationId, height) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.foundationId === foundationId) {
+                if (e.type === ObjectType.Wall && e.foundationId === foundationId && !e.locked) {
                   e.lz = height;
                 }
               }
@@ -1696,7 +1708,7 @@ export const useStore = create<CommonStoreState>(
           updateWallHeightForAll(height) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall) {
+                if (e.type === ObjectType.Wall && !e.locked) {
                   e.lz = height;
                 }
               }
@@ -1706,7 +1718,7 @@ export const useStore = create<CommonStoreState>(
           updateWallThicknessById(id, thickness) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.id === id) {
+                if (e.id === id && !e.locked) {
                   (e as WallModel).ly = thickness;
                   break;
                 }
@@ -1716,7 +1728,7 @@ export const useStore = create<CommonStoreState>(
           updateWallThicknessAboveFoundation(foundationId, thickness) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.foundationId === foundationId) {
+                if (e.type === ObjectType.Wall && e.foundationId === foundationId && !e.locked) {
                   (e as WallModel).ly = thickness;
                 }
               }
@@ -1725,7 +1737,7 @@ export const useStore = create<CommonStoreState>(
           updateWallThicknessForAll(thickness) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall) {
+                if (e.type === ObjectType.Wall && !e.locked) {
                   (e as WallModel).ly = thickness;
                 }
               }

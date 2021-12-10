@@ -28,6 +28,7 @@ export const TreeMenu = () => {
   const tree = getSelectedElement() as TreeModel;
 
   const showTreeModel = (on: boolean) => {
+    if (!tree) return;
     const undoableCheck = {
       name: 'Show Tree Model',
       timestamp: Date.now(),
@@ -44,6 +45,7 @@ export const TreeMenu = () => {
   };
 
   const setSpread = (value: number) => {
+    if (!tree) return;
     if (!value || value === tree.lx) return;
     const oldSpread = tree.lx;
     const undoableChange = {
@@ -84,14 +86,16 @@ export const TreeMenu = () => {
     setUpdateFlag(!updateFlag);
   };
 
+  const editable = !tree?.locked;
+
   return (
     <>
       <Copy keyName={'tree-copy'} />
-      <Cut keyName={'tree-cut'} />
+      {editable && <Cut keyName={'tree-cut'} />}
       <Lock keyName={'tree-lock'} />
       <Menu.Item key={'tree-show-model'}>
         <Checkbox
-          checked={tree?.showModel && tree.type === ObjectType.Tree}
+          checked={tree?.showModel && tree?.type === ObjectType.Tree}
           onChange={(e) => showTreeModel(e.target.checked)}
         >
           {i18n.t('treeMenu.ShowModel', lang)}
@@ -99,44 +103,46 @@ export const TreeMenu = () => {
       </Menu.Item>
 
       {/* have to wrap the text field with a Menu so that it can stay open when the user types in it */}
-      <Menu>
-        <Menu.Item key={'tree-change-type'} style={{ paddingLeft: '36px' }}>
-          <Space style={{ width: '100px' }}>{i18n.t('treeMenu.Type', lang)}: </Space>
-          <TreeSelection key={'trees'} />
-        </Menu.Item>
+      {editable && (
+        <Menu>
+          <Menu.Item key={'tree-change-type'} style={{ paddingLeft: '36px' }}>
+            <Space style={{ width: '100px' }}>{i18n.t('treeMenu.Type', lang)}: </Space>
+            <TreeSelection key={'trees'} />
+          </Menu.Item>
 
-        <Menu.Item key={'tree-spread'} style={{ paddingLeft: '36px' }}>
-          <Space style={{ width: '100px' }}>
-            {i18n.t('treeMenu.Spread', lang) + ' (' + i18n.t('word.MeterAbbreviation', lang) + ')'}:
-          </Space>
-          <InputNumber
-            style={{ width: '160px' }}
-            min={1}
-            max={50}
-            step={1}
-            precision={1}
-            value={tree?.lx ?? 1}
-            formatter={(x) => Number(x).toFixed(1)}
-            onChange={(value) => setSpread(value)}
-          />
-        </Menu.Item>
+          <Menu.Item key={'tree-spread'} style={{ paddingLeft: '36px' }}>
+            <Space style={{ width: '100px' }}>
+              {i18n.t('treeMenu.Spread', lang) + ' (' + i18n.t('word.MeterAbbreviation', lang) + ')'}:
+            </Space>
+            <InputNumber
+              style={{ width: '160px' }}
+              min={1}
+              max={50}
+              step={1}
+              precision={1}
+              value={tree?.lx ?? 1}
+              formatter={(x) => Number(x).toFixed(1)}
+              onChange={(value) => setSpread(value)}
+            />
+          </Menu.Item>
 
-        <Menu.Item key={'tree-height'} style={{ paddingLeft: '36px' }}>
-          <Space style={{ width: '100px' }}>
-            {i18n.t('word.Height', lang) + ' (' + i18n.t('word.MeterAbbreviation', lang) + ')'}:
-          </Space>
-          <InputNumber
-            style={{ width: '160px' }}
-            min={1}
-            max={30}
-            step={1}
-            precision={1}
-            value={tree?.lz ?? 1}
-            formatter={(x) => Number(x).toFixed(1)}
-            onChange={(value) => setHeight(value)}
-          />
-        </Menu.Item>
-      </Menu>
+          <Menu.Item key={'tree-height'} style={{ paddingLeft: '36px' }}>
+            <Space style={{ width: '100px' }}>
+              {i18n.t('word.Height', lang) + ' (' + i18n.t('word.MeterAbbreviation', lang) + ')'}:
+            </Space>
+            <InputNumber
+              style={{ width: '160px' }}
+              min={1}
+              max={30}
+              step={1}
+              precision={1}
+              value={tree?.lz ?? 1}
+              formatter={(x) => Number(x).toFixed(1)}
+              onChange={(value) => setHeight(value)}
+            />
+          </Menu.Item>
+        </Menu>
+      )}
     </>
   );
 };

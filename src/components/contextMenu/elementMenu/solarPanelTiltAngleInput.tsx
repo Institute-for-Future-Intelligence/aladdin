@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
+import { ZERO_TOLERANCE } from '../../../constants';
 
 const SolarPanelTiltAngleInput = ({
   tiltDialogVisible,
@@ -55,8 +56,72 @@ const SolarPanelTiltAngleInput = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const needChange = (tiltAngle: number) => {
+    switch (solarPanelActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel) {
+            const sp = e as SolarPanelModel;
+            if (Math.abs(sp.tiltAngle - tiltAngle) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId) {
+            const sp = e as SolarPanelModel;
+            if (Math.abs(sp.tiltAngle - tiltAngle) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        if (solarPanel?.parentId) {
+          const parent = getElementById(solarPanel.parentId);
+          if (parent) {
+            const isParentCuboid = parent.type === ObjectType.Cuboid;
+            if (isParentCuboid) {
+              for (const e of elements) {
+                if (
+                  e.type === ObjectType.SolarPanel &&
+                  e.parentId === solarPanel.parentId &&
+                  Util.isIdentical(e.normal, solarPanel.normal)
+                ) {
+                  // tilt is only allowed for the top surface of a cuboid
+                  const sp = e as SolarPanelModel;
+                  if (Math.abs(sp.tiltAngle - tiltAngle) > ZERO_TOLERANCE) {
+                    return true;
+                  }
+                }
+              }
+            } else {
+              // tilt is only allowed on top of a foundation or a roof
+              for (const e of elements) {
+                if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId) {
+                  const sp = e as SolarPanelModel;
+                  if (Math.abs(sp.tiltAngle - tiltAngle) > ZERO_TOLERANCE) {
+                    return true;
+                  }
+                }
+              }
+            }
+          }
+        }
+        break;
+      default:
+        if (Math.abs(solarPanel?.tiltAngle - tiltAngle) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const setTiltAngle = (value: number) => {
     if (!solarPanel) return;
+    if (!needChange(value)) return;
     rejectedValue.current = undefined;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:

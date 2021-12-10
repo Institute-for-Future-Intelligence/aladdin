@@ -19,6 +19,7 @@ import {
   UNIT_VECTOR_POS_X,
   UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
+  ZERO_TOLERANCE,
 } from '../constants';
 import {
   ActionType,
@@ -624,19 +625,21 @@ const SolarPanel = ({
                 rotation={[0, -HALF_PI, relativeEuler.z, 'ZXY']}
                 onPointerDown={(e) => {}}
                 onPointerUp={(e) => {
-                  const undoableChange = {
-                    name: 'Set Solar Panel Array Tilt Angle',
-                    timestamp: Date.now(),
-                    oldValue: oldTiltAngleRef.current,
-                    newValue: newTiltAngleRef.current,
-                    undo: () => {
-                      updateSolarPanelTiltAngleById(id, undoableChange.oldValue as number);
-                    },
-                    redo: () => {
-                      updateSolarPanelTiltAngleById(id, undoableChange.newValue as number);
-                    },
-                  } as UndoableChange;
-                  addUndoable(undoableChange);
+                  if (Math.abs(newTiltAngleRef.current - oldTiltAngleRef.current) > ZERO_TOLERANCE) {
+                    const undoableChange = {
+                      name: 'Set Solar Panel Array Tilt Angle',
+                      timestamp: Date.now(),
+                      oldValue: oldTiltAngleRef.current,
+                      newValue: newTiltAngleRef.current,
+                      undo: () => {
+                        updateSolarPanelTiltAngleById(id, undoableChange.oldValue as number);
+                      },
+                      redo: () => {
+                        updateSolarPanelTiltAngleById(id, undoableChange.newValue as number);
+                      },
+                    } as UndoableChange;
+                    addUndoable(undoableChange);
+                  }
                 }}
                 onPointerMove={(e) => {
                   if (pointerDown.current) {

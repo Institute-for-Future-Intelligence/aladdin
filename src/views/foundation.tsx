@@ -39,6 +39,7 @@ import {
   RESIZE_HANDLE_SIZE,
   TWO_PI,
   UNIT_VECTOR_POS_Z,
+  ZERO_TOLERANCE,
 } from '../constants';
 import { Util } from '../Util';
 import { ElementModel } from '../models/ElementModel';
@@ -626,8 +627,8 @@ const Foundation = ({
             newDimensionRef.current.y = elem.ly;
             newDimensionRef.current.z = elem.lz;
             if (
-              newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001 &&
-              newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > 0.0001
+              newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE &&
+              newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > ZERO_TOLERANCE
             ) {
               const undoableResize = {
                 name: 'Resize',
@@ -679,7 +680,7 @@ const Foundation = ({
           } else if (rotateHandleTypeRef.current) {
             if (grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
               const solarPanel = grabRef.current as SolarPanelModel;
-              if (Math.abs(newAzimuthRef.current - oldAzimuthRef.current) > 0.001) {
+              if (Math.abs(newAzimuthRef.current - oldAzimuthRef.current) > ZERO_TOLERANCE) {
                 const undoableRotate = {
                   name: 'Rotate',
                   timestamp: Date.now(),
@@ -700,7 +701,7 @@ const Foundation = ({
             newPositionRef.current.x = elem.cx;
             newPositionRef.current.y = elem.cy;
             newPositionRef.current.z = elem.cz;
-            if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > 0.0001) {
+            if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
               const undoableMove = {
                 name: 'Move',
                 timestamp: Date.now(),

@@ -245,7 +245,7 @@ const Tree = ({
       {hovered && !selected && (
         <textSprite
           name={'Label'}
-          text={labelText}
+          text={labelText + (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')}
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}
