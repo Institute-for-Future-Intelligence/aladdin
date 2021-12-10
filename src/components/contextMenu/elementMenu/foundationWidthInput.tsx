@@ -14,6 +14,7 @@ import { Vector2 } from 'three';
 import { Util } from '../../../Util';
 import { UndoableSizeGroupChange } from '../../../undo/UndoableSizeGroupChange';
 import { UndoableSizeChange } from '../../../undo/UndoableSizeChange';
+import { ZERO_TOLERANCE } from '../../../constants';
 
 const FoundationWidthInput = ({
   widthDialogVisible,
@@ -129,7 +130,28 @@ const FoundationWidthInput = ({
     }
   };
 
+  const needChange = (lx: number) => {
+    switch (foundationActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation) {
+            const f = e as FoundationModel;
+            if (Math.abs(f.lx - lx) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (Math.abs(foundation.lx - lx) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const setLx = (value: number) => {
+    if (!needChange(value)) return;
     const oldLx = foundation.lx;
     rejectedValue.current = undefined;
     rejectRef.current = rejectChange(value);

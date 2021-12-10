@@ -60,7 +60,28 @@ const FoundationTextureSelection = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const needChange = (texture: FoundationTexture) => {
+    switch (foundationActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation) {
+            const f = e as FoundationModel;
+            if (texture !== f.textureType) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (texture !== foundation.textureType) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const setTexture = (value: FoundationTexture) => {
+    if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldTexturesAll = new Map<string, FoundationTexture>();
@@ -285,9 +306,6 @@ const FoundationTextureSelection = ({
             <Radio.Group onChange={onScopeChange} value={foundationActionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
-                <Radio value={Scope.AllConnectedObjects}>
-                  {i18n.t('foundationMenu.AllConnectedFoundations', lang)}
-                </Radio>
                 <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
               </Space>
             </Radio.Group>

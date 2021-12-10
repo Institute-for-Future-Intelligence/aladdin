@@ -50,7 +50,28 @@ const FoundationColorSelection = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const needChange = (color: string) => {
+    switch (foundationActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation) {
+            const f = e as FoundationModel;
+            if (color !== f.color) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (color !== foundation.color) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const setColor = (value: string) => {
+    if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldColorsAll = new Map<string, string>();
@@ -187,9 +208,6 @@ const FoundationColorSelection = ({
             <Radio.Group onChange={onScopeChange} value={foundationActionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
-                <Radio value={Scope.AllConnectedObjects}>
-                  {i18n.t('foundationMenu.AllConnectedFoundations', lang)}
-                </Radio>
                 <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
               </Space>
             </Radio.Group>

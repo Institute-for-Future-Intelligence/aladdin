@@ -12,6 +12,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
+import { ZERO_TOLERANCE } from '../../../constants';
 
 const FoundationHeightInput = ({
   heightDialogVisible,
@@ -56,7 +57,28 @@ const FoundationHeightInput = ({
     updateElementCzById(id, value / 2);
   };
 
+  const needChange = (lz: number) => {
+    switch (foundationActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation) {
+            const f = e as FoundationModel;
+            if (Math.abs(f.lz - lz) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (Math.abs(foundation.lz - lz) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const setLz = (value: number) => {
+    if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldLzsAll = new Map<string, number>();
@@ -206,9 +228,6 @@ const FoundationHeightInput = ({
             <Radio.Group onChange={onScopeChange} value={foundationActionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
-                <Radio value={Scope.AllConnectedObjects}>
-                  {i18n.t('foundationMenu.AllConnectedFoundations', lang)}
-                </Radio>
                 <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
               </Space>
             </Radio.Group>

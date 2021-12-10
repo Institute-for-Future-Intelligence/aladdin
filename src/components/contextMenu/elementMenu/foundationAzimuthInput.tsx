@@ -13,6 +13,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { Util } from '../../../Util';
+import { ZERO_TOLERANCE } from '../../../constants';
 
 const FoundationAzimuthInput = ({
   azimuthDialogVisible,
@@ -50,7 +51,28 @@ const FoundationAzimuthInput = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const needChange = (azimuth: number) => {
+    switch (foundationActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation) {
+            const f = e as FoundationModel;
+            if (Math.abs(f.rotation[2] - azimuth) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (Math.abs(foundation.rotation[2] - azimuth) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const setAzimuth = (value: number) => {
+    if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldAzimuthsAll = new Map<string, number>();
@@ -198,9 +220,6 @@ const FoundationAzimuthInput = ({
             <Radio.Group onChange={onScopeChange} value={foundationActionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
-                <Radio value={Scope.AllConnectedObjects}>
-                  {i18n.t('foundationMenu.AllConnectedFoundations', lang)}
-                </Radio>
                 <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
               </Space>
             </Radio.Group>

@@ -14,6 +14,7 @@ import { Util } from '../../../Util';
 import { Vector2 } from 'three';
 import { UndoableSizeChange } from '../../../undo/UndoableSizeChange';
 import { UndoableSizeGroupChange } from '../../../undo/UndoableSizeGroupChange';
+import { ZERO_TOLERANCE } from '../../../constants';
 
 const FoundationLengthInput = ({
   lengthDialogVisible,
@@ -129,7 +130,28 @@ const FoundationLengthInput = ({
     }
   };
 
+  const needChange = (ly: number) => {
+    switch (foundationActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation) {
+            const f = e as FoundationModel;
+            if (Math.abs(f.ly - ly) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (Math.abs(foundation.ly - ly) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const setLy = (value: number) => {
+    if (!needChange(value)) return;
     const oldLy = foundation.ly;
     rejectedValue.current = undefined;
     rejectRef.current = rejectChange(value);
