@@ -128,7 +128,12 @@ const Sensor = ({
         onContextMenu={(e) => {
           selectMe(id, e);
           setCommonStore((state) => {
-            state.contextMenuObjectType = ObjectType.Sensor;
+            if (e.intersections.length > 0) {
+              const intersected = e.intersections[0].object === baseRef.current;
+              if (intersected) {
+                state.contextMenuObjectType = ObjectType.Sensor;
+              }
+            }
           });
         }}
         onPointerOver={(e) => {

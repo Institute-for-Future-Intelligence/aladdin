@@ -350,7 +350,12 @@ const SolarPanel = ({
           onContextMenu={(e) => {
             selectMe(id, e, ActionType.Select);
             setCommonStore((state) => {
-              state.contextMenuObjectType = ObjectType.SolarPanel;
+              if (e.intersections.length > 0) {
+                const intersected = e.intersections[0].object === baseRef.current;
+                if (intersected) {
+                  state.contextMenuObjectType = ObjectType.SolarPanel;
+                }
+              }
             });
           }}
           onPointerOver={(e) => {

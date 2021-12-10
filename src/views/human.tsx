@@ -203,13 +203,20 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
 
   return (
     <group name={'Human Group ' + id} userData={{ aabb: true }} position={[cx, cy, (cz ?? 0) + height / 2]}>
-      <Billboard uuid={id} ref={meshRef} name={name} follow={orthographic} rotation={rotation}>
+      <Billboard uuid={id} name={name} follow={orthographic} rotation={rotation}>
         <Plane
+          ref={meshRef}
+          name={name + ' plane'}
           args={[width, height]}
           onContextMenu={(e) => {
             selectMe(id, e);
             setCommonStore((state) => {
-              state.contextMenuObjectType = ObjectType.Human;
+              if (e.intersections.length > 0) {
+                const intersected = e.intersections[0].object === meshRef.current;
+                if (intersected) {
+                  state.contextMenuObjectType = ObjectType.Human;
+                }
+              }
             });
           }}
           onPointerDown={(e) => {

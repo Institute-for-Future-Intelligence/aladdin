@@ -166,13 +166,20 @@ const Tree = ({
       )}
 
       {/* billboard for interactions (don't use a plane as it may become unselected at some angle) */}
-      <Billboard ref={meshRef} name={'Interaction Billboard'} visible={false} position={[0, 0, -lz / 2 + 0.5]}>
+      <Billboard name={'Interaction Billboard'} visible={false} position={[0, 0, -lz / 2 + 0.5]}>
         <Plane
+          ref={meshRef}
+          name={name + ' plane'}
           args={[lx / 2, 1]}
           onContextMenu={(e) => {
             selectMe(id, e);
             setCommonStore((state) => {
-              state.contextMenuObjectType = ObjectType.Tree;
+              if (e.intersections.length > 0) {
+                const intersected = e.intersections[0].object === meshRef.current;
+                if (intersected) {
+                  state.contextMenuObjectType = ObjectType.Tree;
+                }
+              }
             });
           }}
           onPointerDown={(e) => {
