@@ -997,7 +997,7 @@ const Ground = () => {
           name={'Ground Intersection Plane'}
           rotation={intersectionPlaneAngle}
           position={intersectionPlanePosition}
-          args={[1000, 1000]}
+          args={[100000, 100000]}
           onPointerMove={handleIntersectionPointerMove}
         >
           <meshStandardMaterial side={DoubleSide} />
