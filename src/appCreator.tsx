@@ -56,6 +56,7 @@ export interface AppCreatorProps {
 const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
+  const changed = useStore(Selector.changed);
   const addUndoable = useStore(Selector.addUndoable);
   const getClosestCity = useStore(Selector.getClosestCity);
   const worldLatitude = useStore(Selector.world.latitude);
@@ -305,7 +306,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               color={'#888888'}
               style={{ paddingRight: '8px' }}
             />
-            {cloudFile}
+            {cloudFile + (changed ? ' *' : '')}
           </span>
         )}
       </div>

@@ -52,8 +52,57 @@ const CuboidColorSelection = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const needChange = (color: string) => {
+    switch (cuboidActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Cuboid) {
+            const cm = e as CuboidModel;
+            if (cm.faceColors) {
+              for (const c of cm.faceColors) {
+                if (color !== c) {
+                  return true;
+                }
+              }
+            } else {
+              if (color !== cm.color) {
+                return true;
+              }
+            }
+          }
+        }
+        break;
+      case Scope.OnlyThisObject:
+        if (cuboid.faceColors) {
+          for (const c of cuboid.faceColors) {
+            if (color !== c) {
+              return true;
+            }
+          }
+        } else {
+          if (color !== cuboid?.color) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (selectedSideIndex >= 0) {
+          const oldColor = cuboid?.faceColors ? cuboid?.faceColors[selectedSideIndex] : cuboid?.color;
+          if (color !== oldColor) {
+            return true;
+          }
+        } else {
+          if (color !== cuboid?.color) {
+            return true;
+          }
+        }
+    }
+    return false;
+  };
+
   const setColor = (value: string) => {
     if (!cuboid) return;
+    if (!needChange(value)) return;
     switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldColorsAll = new Map<string, string[]>();
@@ -153,6 +202,9 @@ const CuboidColorSelection = ({
     }
   };
 
+  const currentColor =
+    selectedSideIndex >= 0 && cuboid?.faceColors ? cuboid.faceColors[selectedSideIndex] : cuboid?.color ?? 'gray';
+
   return (
     <>
       <Modal
@@ -215,7 +267,7 @@ const CuboidColorSelection = ({
         <Row gutter={6}>
           <Col className="gutter-row" span={12}>
             <CompactPicker
-              color={cuboid?.color ?? 'gray'}
+              color={currentColor}
               onChangeComplete={(colorResult) => {
                 setSelectedColor(colorResult.hex);
               }}

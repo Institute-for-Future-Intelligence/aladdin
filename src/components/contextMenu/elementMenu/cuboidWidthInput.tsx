@@ -12,6 +12,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { CuboidModel } from '../../../models/CuboidModel';
+import { ZERO_TOLERANCE } from '../../../constants';
 
 const CuboidWidthInput = ({
   widthDialogVisible,
@@ -49,8 +50,29 @@ const CuboidWidthInput = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const needChange = (lx: number) => {
+    switch (cuboidActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Cuboid) {
+            const c = e as CuboidModel;
+            if (Math.abs(c.lx - lx) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (Math.abs(cuboid?.lx - lx) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const setLx = (value: number) => {
     if (!cuboid) return;
+    if (!needChange(value)) return;
     switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldLxsAll = new Map<string, number>();

@@ -9,7 +9,7 @@ import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { CuboidTexture, ObjectType } from '../../../types';
+import { CuboidTexture, ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 import CuboidColorSelection from './cuboidColorSelection';
@@ -32,6 +32,8 @@ export const CuboidMenu = () => {
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
   const selectedSideIndex = useStore(Selector.selectedSideIndex);
   const elementsToPaste = useStore(Selector.elementsToPaste);
+  const cuboidActionScope = useStore(Selector.cuboidActionScope);
+  const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
 
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
@@ -61,11 +63,13 @@ export const CuboidMenu = () => {
     return false;
   };
 
+  const editable = !cuboid?.locked;
+
   return (
     <Menu.ItemGroup>
       {legalToPaste() && <Paste keyName={'cuboid-paste'} />}
       <Copy keyName={'cuboid-copy'} />
-      <Cut keyName={'cuboid-cut'} />
+      {editable && <Cut keyName={'cuboid-cut'} />}
       <Lock keyName={'cuboid-lock'} />
 
       {(sensorCountCuboid > 0 || solarPanelCountCuboid > 0) && contextMenuObjectType && (
@@ -167,6 +171,7 @@ export const CuboidMenu = () => {
 
       <CuboidColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
       {cuboid &&
+        editable &&
         (!cuboid.textureTypes ||
           (selectedSideIndex >= 0 && cuboid.textureTypes[selectedSideIndex] === CuboidTexture.NoTexture)) && (
           <Menu.Item
@@ -184,62 +189,88 @@ export const CuboidMenu = () => {
         textureDialogVisible={textureDialogVisible}
         setTextureDialogVisible={setTextureDialogVisible}
       />
-      <Menu.Item
-        key={'cuboid-texture'}
-        style={{ paddingLeft: '36px' }}
-        onClick={() => {
-          setTextureDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Texture', lang)} ...
-      </Menu.Item>
+      {editable && (
+        <Menu.Item
+          key={'cuboid-texture'}
+          style={{ paddingLeft: '36px' }}
+          onClick={() => {
+            setTextureDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Texture', lang)} ...
+        </Menu.Item>
+      )}
 
       <CuboidWidthInput widthDialogVisible={widthDialogVisible} setWidthDialogVisible={setWidthDialogVisible} />
-      <Menu.Item
-        key={'cuboid-width'}
-        style={{ paddingLeft: '36px' }}
-        onClick={() => {
-          setWidthDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Width', lang)} ...
-      </Menu.Item>
+      {editable && (
+        <Menu.Item
+          key={'cuboid-width'}
+          style={{ paddingLeft: '36px' }}
+          onClick={() => {
+            // no side selection for width
+            if (cuboidActionScope === Scope.OnlyThisSide) {
+              setCuboidActionScope(Scope.OnlyThisObject);
+            }
+            setWidthDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Width', lang)} ...
+        </Menu.Item>
+      )}
 
       <CuboidLengthInput lengthDialogVisible={lengthDialogVisible} setLengthDialogVisible={setLengthDialogVisible} />
-      <Menu.Item
-        key={'cuboid-length'}
-        style={{ paddingLeft: '36px' }}
-        onClick={() => {
-          setLengthDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Length', lang)} ...
-      </Menu.Item>
+      {editable && (
+        <Menu.Item
+          key={'cuboid-length'}
+          style={{ paddingLeft: '36px' }}
+          onClick={() => {
+            // no side selection for length
+            if (cuboidActionScope === Scope.OnlyThisSide) {
+              setCuboidActionScope(Scope.OnlyThisObject);
+            }
+            setLengthDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Length', lang)} ...
+        </Menu.Item>
+      )}
 
       <CuboidHeightInput heightDialogVisible={heightDialogVisible} setHeightDialogVisible={setHeightDialogVisible} />
-      <Menu.Item
-        key={'cuboid-height'}
-        style={{ paddingLeft: '36px' }}
-        onClick={() => {
-          setHeightDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Height', lang)} ...
-      </Menu.Item>
+      {editable && (
+        <Menu.Item
+          key={'cuboid-height'}
+          style={{ paddingLeft: '36px' }}
+          onClick={() => {
+            // no side selection for height
+            if (cuboidActionScope === Scope.OnlyThisSide) {
+              setCuboidActionScope(Scope.OnlyThisObject);
+            }
+            setHeightDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Height', lang)} ...
+        </Menu.Item>
+      )}
 
       <CuboidAzimuthInput
         azimuthDialogVisible={azimuthDialogVisible}
         setAzimuthDialogVisible={setAzimuthDialogVisible}
       />
-      <Menu.Item
-        key={'cuboid-azimuth'}
-        style={{ paddingLeft: '36px' }}
-        onClick={() => {
-          setAzimuthDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Azimuth', lang)} ...
-      </Menu.Item>
+      {editable && (
+        <Menu.Item
+          key={'cuboid-azimuth'}
+          style={{ paddingLeft: '36px' }}
+          onClick={() => {
+            // no side selection for azimuth
+            if (cuboidActionScope === Scope.OnlyThisSide) {
+              setCuboidActionScope(Scope.OnlyThisObject);
+            }
+            setAzimuthDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Azimuth', lang)} ...
+        </Menu.Item>
+      )}
     </Menu.ItemGroup>
   );
 };

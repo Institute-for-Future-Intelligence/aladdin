@@ -13,6 +13,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 import { CuboidModel } from '../../../models/CuboidModel';
+import { ZERO_TOLERANCE } from '../../../constants';
 
 const CuboidAzimuthInput = ({
   azimuthDialogVisible,
@@ -50,8 +51,29 @@ const CuboidAzimuthInput = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const needChange = (azimuth: number) => {
+    switch (cuboidActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Cuboid) {
+            const c = e as CuboidModel;
+            if (Math.abs(c.rotation[2] - azimuth) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (Math.abs(cuboid?.rotation[2] - azimuth) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const setAzimuth = (value: number) => {
     if (!cuboid) return;
+    if (!needChange(value)) return;
     switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldAzimuthsAll = new Map<string, number>();

@@ -12,6 +12,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { CuboidModel } from '../../../models/CuboidModel';
+import { ZERO_TOLERANCE } from '../../../constants';
 
 const CuboidLengthInput = ({
   lengthDialogVisible,
@@ -49,8 +50,29 @@ const CuboidLengthInput = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const needChange = (ly: number) => {
+    switch (cuboidActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Cuboid) {
+            const c = e as CuboidModel;
+            if (Math.abs(c.ly - ly) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (Math.abs(cuboid?.ly - ly) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const setLy = (value: number) => {
     if (!cuboid) return;
+    if (!needChange(value)) return;
     switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldLysAll = new Map<string, number>();

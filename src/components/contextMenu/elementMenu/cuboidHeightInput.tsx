@@ -12,6 +12,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { CuboidModel } from '../../../models/CuboidModel';
+import { ZERO_TOLERANCE } from '../../../constants';
 
 const CuboidHeightInput = ({
   heightDialogVisible,
@@ -56,8 +57,29 @@ const CuboidHeightInput = ({
     updateElementCzById(id, value / 2);
   };
 
+  const needChange = (lz: number) => {
+    switch (cuboidActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Cuboid) {
+            const c = e as CuboidModel;
+            if (Math.abs(c.lz - lz) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (Math.abs(cuboid?.lz - lz) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const setLz = (value: number) => {
     if (!cuboid) return;
+    if (!needChange(value)) return;
     switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldLzsAll = new Map<string, number>();
