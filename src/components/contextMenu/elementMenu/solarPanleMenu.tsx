@@ -14,7 +14,7 @@ import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
-import PvModelSelection from './pvModelSelection';
+import SolarPanelModelSelection from './solarPanelModelSelection';
 import SolarPanelOrientationSelection from './solarPanelOrientationSelection';
 import SolarPanelWidthInput from './solarPanelWidthInput';
 import SolarPanelLengthInput from './solarPanelLengthInput';
@@ -128,7 +128,7 @@ export const SolarPanelMenu = () => {
       {solarPanel && editable && (
         <>
           {/* pv model */}
-          <PvModelSelection
+          <SolarPanelModelSelection
             pvModelDialogVisible={pvModelDialogVisible}
             setPvModelDialogVisible={setPvModelDialogVisible}
           />

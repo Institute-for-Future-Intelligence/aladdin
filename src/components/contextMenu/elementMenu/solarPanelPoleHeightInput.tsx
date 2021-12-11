@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
+import { ZERO_TOLERANCE } from '../../../constants';
 
 const SolarPanelPoleHeightInput = ({
   poleHeightDialogVisible,
@@ -55,8 +56,71 @@ const SolarPanelPoleHeightInput = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const needChange = (poleHeight: number) => {
+    switch (solarPanelActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && !e.locked) {
+            const sp = e as SolarPanelModel;
+            if (Math.abs(sp.poleHeight - poleHeight) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
+            const sp = e as SolarPanelModel;
+            if (Math.abs(sp.poleHeight - poleHeight) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        if (solarPanel?.parentId) {
+          const parent = getElementById(solarPanel.parentId);
+          if (parent) {
+            const isParentCuboid = parent.type === ObjectType.Cuboid;
+            if (isParentCuboid) {
+              for (const e of elements) {
+                if (
+                  e.type === ObjectType.SolarPanel &&
+                  e.parentId === solarPanel.parentId &&
+                  Util.isIdentical(e.normal, solarPanel.normal) &&
+                  !e.locked
+                ) {
+                  const sp = e as SolarPanelModel;
+                  if (Math.abs(sp.poleHeight - poleHeight) > ZERO_TOLERANCE) {
+                    return true;
+                  }
+                }
+              }
+            } else {
+              for (const e of elements) {
+                if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
+                  const sp = e as SolarPanelModel;
+                  if (Math.abs(sp.poleHeight - poleHeight) > ZERO_TOLERANCE) {
+                    return true;
+                  }
+                }
+              }
+            }
+          }
+        }
+        break;
+      default:
+        if (Math.abs(solarPanel?.poleHeight - poleHeight) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const setPoleHeight = (value: number) => {
     if (!solarPanel) return;
+    if (!needChange(value)) return;
     rejectedValue.current = undefined;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:

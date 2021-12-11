@@ -56,8 +56,71 @@ const SolarPanelTrackerSelection = ({
     setUpdateFlag(!updateFlag);
   };
 
+  const needChange = (tracker: TrackerType) => {
+    switch (solarPanelActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && !e.locked) {
+            const sp = e as SolarPanelModel;
+            if (sp.trackerType !== tracker) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
+            const sp = e as SolarPanelModel;
+            if (sp.trackerType !== tracker) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        if (solarPanel?.parentId) {
+          const parent = getElementById(solarPanel.parentId);
+          if (parent) {
+            const isParentCuboid = parent.type === ObjectType.Cuboid;
+            if (isParentCuboid) {
+              for (const e of elements) {
+                if (
+                  e.type === ObjectType.SolarPanel &&
+                  e.parentId === solarPanel.parentId &&
+                  Util.isIdentical(e.normal, solarPanel.normal) &&
+                  !e.locked
+                ) {
+                  const sp = e as SolarPanelModel;
+                  if (sp.trackerType !== tracker) {
+                    return true;
+                  }
+                }
+              }
+            } else {
+              for (const e of elements) {
+                if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
+                  const sp = e as SolarPanelModel;
+                  if (sp.trackerType !== tracker) {
+                    return true;
+                  }
+                }
+              }
+            }
+          }
+        }
+        break;
+      default:
+        if (solarPanel?.trackerType !== tracker) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const setTrackerType = (value: TrackerType) => {
     if (!solarPanel) return;
+    if (!needChange(value)) return;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldTrackerTypesAll = new Map<string, TrackerType>();

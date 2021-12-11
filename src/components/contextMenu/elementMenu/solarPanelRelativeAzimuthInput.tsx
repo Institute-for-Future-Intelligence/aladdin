@@ -13,7 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
-import { UNIT_VECTOR_POS_Z_ARRAY } from '../../../constants';
+import { UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../../../constants';
 
 const SolarPanelRelativeAzimuthInput = ({
   azimuthDialogVisible,
@@ -81,8 +81,73 @@ const SolarPanelRelativeAzimuthInput = ({
     return false;
   };
 
+  const needChange = (azimuth: number) => {
+    switch (solarPanelActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && !e.locked) {
+            const sp = e as SolarPanelModel;
+            if (Math.abs(sp.relativeAzimuth - azimuth) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
+            const sp = e as SolarPanelModel;
+            if (Math.abs(sp.relativeAzimuth - azimuth) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        if (solarPanel?.parentId) {
+          const parent = getElementById(solarPanel.parentId);
+          if (parent) {
+            const isParentCuboid = parent.type === ObjectType.Cuboid;
+            if (isParentCuboid) {
+              for (const e of elements) {
+                if (
+                  e.type === ObjectType.SolarPanel &&
+                  e.parentId === solarPanel.parentId &&
+                  Util.isIdentical(e.normal, solarPanel.normal) &&
+                  !e.locked
+                ) {
+                  // azimuth change is only allowed for the top surface of a cuboid
+                  const sp = e as SolarPanelModel;
+                  if (Math.abs(sp.relativeAzimuth - azimuth) > ZERO_TOLERANCE) {
+                    return true;
+                  }
+                }
+              }
+            } else {
+              // azimuth change is only allowed on top of a foundation or a roof
+              for (const e of elements) {
+                if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
+                  const sp = e as SolarPanelModel;
+                  if (Math.abs(sp.relativeAzimuth - azimuth) > ZERO_TOLERANCE) {
+                    return true;
+                  }
+                }
+              }
+            }
+          }
+        }
+        break;
+      default:
+        if (Math.abs(solarPanel?.relativeAzimuth - azimuth) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const setRelativeAzimuth = (value: number) => {
     if (!solarPanel) return;
+    if (!needChange(value)) return;
     rejectedValue.current = undefined;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:

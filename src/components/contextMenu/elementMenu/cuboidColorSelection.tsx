@@ -64,7 +64,7 @@ const CuboidColorSelection = ({
     switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Cuboid) {
+          if (e.type === ObjectType.Cuboid && !e.locked) {
             const cm = e as CuboidModel;
             if (cm.faceColors) {
               // do not check the top and bottom sides, check only the vertical sides (the first four)

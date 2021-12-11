@@ -64,7 +64,7 @@ const FoundationTextureSelection = ({
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Foundation) {
+          if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
             if (texture !== f.textureType) {
               return true;

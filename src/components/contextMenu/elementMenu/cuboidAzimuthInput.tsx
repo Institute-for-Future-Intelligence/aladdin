@@ -55,7 +55,7 @@ const CuboidAzimuthInput = ({
     switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Cuboid) {
+          if (e.type === ObjectType.Cuboid && !e.locked) {
             const c = e as CuboidModel;
             if (Math.abs(c.rotation[2] - azimuth) > ZERO_TOLERANCE) {
               return true;

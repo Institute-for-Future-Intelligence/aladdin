@@ -120,8 +120,71 @@ const SolarPanelOrientationSelection = ({
     return false;
   };
 
+  const needChange = (orientation: Orientation) => {
+    switch (solarPanelActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && !e.locked) {
+            const sp = e as SolarPanelModel;
+            if (sp.orientation !== orientation) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
+            const sp = e as SolarPanelModel;
+            if (sp.orientation !== orientation) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        if (solarPanel?.parentId) {
+          const parent = getElementById(solarPanel.parentId);
+          if (parent) {
+            const isParentCuboid = parent.type === ObjectType.Cuboid;
+            if (isParentCuboid) {
+              for (const e of elements) {
+                if (
+                  e.type === ObjectType.SolarPanel &&
+                  e.parentId === solarPanel.parentId &&
+                  Util.isIdentical(e.normal, solarPanel.normal) &&
+                  !e.locked
+                ) {
+                  const sp = e as SolarPanelModel;
+                  if (sp.orientation !== orientation) {
+                    return true;
+                  }
+                }
+              }
+            } else {
+              for (const e of elements) {
+                if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
+                  const sp = e as SolarPanelModel;
+                  if (sp.orientation !== orientation) {
+                    return true;
+                  }
+                }
+              }
+            }
+          }
+        }
+        break;
+      default:
+        if (solarPanel?.orientation !== orientation) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const setOrientation = (value: Orientation) => {
     if (!solarPanel) return;
+    if (!needChange(value)) return;
     rejectedValue.current = undefined;
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
