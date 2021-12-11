@@ -50,7 +50,7 @@ import { WallModel } from '../models/WallModel';
 import RotateHandle from '../components/rotateHandle';
 import Wireframe from '../components/wireframe';
 import * as Selector from '../stores/selector';
-import { UndoableAdd } from '../undo/UndoableAdd';
+import { UndoableAdd, UndoableAddWall } from '../undo/UndoableAdd';
 import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableChange } from '../undo/UndoableChange';
@@ -111,6 +111,7 @@ const Foundation = ({
   const isSettingWallStartPointRef = useRef(false);
   const isSettingWallEndPointRef = useRef(false);
   const wallPointsRef = useRef<Map<string, { leftPoint: Vector3 | null; rightPoint: Vector3 | null }>>(new Map());
+  const wallsOnThisFoundationMapRef = useRef<Map<string, WallModel>>(new Map());
   const elementsStateBeforeResizingRef = useRef<ElementModel[] | null>(null);
 
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
@@ -382,23 +383,75 @@ const Foundation = ({
     return p;
   };
 
+  const flipWalls = (currentWallId: string) => {
+    let wall = wallsOnThisFoundationMapRef.current.get(currentWallId);
+    while (wall && wall.leftJoints.length > 0) {
+      const wallCopy = wallsOnThisFoundationMapRef.current.get(wall.id) as WallModel;
+      if (!wallCopy) {
+        break;
+      }
+      const angle = (wallCopy.relativeAngle + Math.PI) % TWO_PI;
+      const targetWall = wallsOnThisFoundationMapRef.current.get(wallCopy.leftJoints[0]);
+      const deltaAngle = TWO_PI - ((Math.PI * 3 - (wallCopy.relativeAngle - targetWall!.relativeAngle)) % TWO_PI);
+
+      let wallRightOffset = 0;
+      let targetWallLeftOffset = 0;
+      if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
+        const tan = Math.tan(deltaAngle);
+        wallRightOffset = wallCopy.ly / tan;
+        targetWallLeftOffset = targetWall!.ly / tan;
+      }
+      setCommonStore((state) => {
+        if (wallCopy && targetWall) {
+          for (const e of state.elements) {
+            if (e.id === wallCopy.id) {
+              const w = e as WallModel;
+              w.relativeAngle = angle;
+              w.leftPoint = [...wallCopy.rightPoint];
+              w.rightPoint = [...wallCopy.leftPoint];
+              w.leftJoints = [wallCopy.rightJoints[0]];
+              w.rightJoints = [wallCopy.leftJoints[0]];
+              w.rightOffset = wallRightOffset;
+            }
+            if (e.id === targetWall.id) {
+              (e as WallModel).leftOffset = targetWallLeftOffset;
+            }
+          }
+        }
+      });
+
+      wall = wallsOnThisFoundationMapRef.current.get(wall.leftJoints[0]);
+      if (wall && wall!.id === currentWallId) {
+        break;
+      }
+    }
+
+    setCommonStore((state) => {
+      state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
+      state.resizeHandleType =
+        resizeHandleTypeRef.current === ResizeHandleType.LowerLeft
+          ? ResizeHandleType.LowerRight
+          : ResizeHandleType.LowerLeft;
+    });
+  };
+
   const checkWallLoop = (currentWallId: string) => {
     let wall: WallModel | undefined = undefined;
 
-    const wallsOnThisFoundation = new Map<string, WallModel>();
+    wallsOnThisFoundationMapRef.current.clear();
     for (const e of useStore.getState().elements) {
       if (e.id === currentWallId) {
         wall = e as WallModel;
       }
       if (e.type === ObjectType.Wall && e.parentId === id) {
-        wallsOnThisFoundation.set(e.id, e as WallModel);
+        wallsOnThisFoundationMapRef.current.set(e.id, e as WallModel);
       }
     }
 
     // check is loop closed
     let isClosed = false;
     while (wall && wall.leftJoints.length > 0) {
-      wall = wallsOnThisFoundation.get(wall.leftJoints[0]);
+      wall = wallsOnThisFoundationMapRef.current.get(wall.leftJoints[0]);
       if (wall?.id === currentWallId) {
         isClosed = true;
         break;
@@ -410,7 +463,7 @@ const Foundation = ({
       let totalAngle = 0;
       let totalNumber = 0;
       while (wall && wall.leftJoints.length > 0) {
-        const targetWall = wallsOnThisFoundation.get(wall.leftJoints[0]);
+        const targetWall = wallsOnThisFoundationMapRef.current.get(wall.leftJoints[0]);
         const deltaAngle = (Math.PI * 3 - (wall.relativeAngle - targetWall!.relativeAngle)) % TWO_PI;
         totalAngle += deltaAngle;
         totalNumber += 1;
@@ -422,58 +475,80 @@ const Foundation = ({
 
       // check if it needs a flip
       if (totalAngle > (totalNumber - 2) * Math.PI + 0.1) {
-        while (wall && wall.leftJoints.length > 0) {
-          const wallCopy = getElementById(wall.id) as WallModel;
-          if (!wallCopy) {
-            break;
-          }
-          const angle = (wallCopy.relativeAngle + Math.PI) % TWO_PI;
-          const targetWall = wallsOnThisFoundation.get(wallCopy.leftJoints[0]);
-          const deltaAngle = TWO_PI - ((Math.PI * 3 - (wallCopy.relativeAngle - targetWall!.relativeAngle)) % TWO_PI);
-
-          let wallRightOffset = 0;
-          let targetWallLeftOffset = 0;
-          if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
-            const tan = Math.tan(deltaAngle);
-            wallRightOffset = wallCopy.ly / tan;
-            targetWallLeftOffset = targetWall!.ly / tan;
-          }
-          setCommonStore((state) => {
-            if (wallCopy && targetWall) {
-              for (const e of state.elements) {
-                if (e.id === wallCopy.id) {
-                  const w = e as WallModel;
-                  w.relativeAngle = angle;
-                  w.leftPoint = [...wallCopy.rightPoint];
-                  w.rightPoint = [...wallCopy.leftPoint];
-                  w.leftJoints = [wallCopy.rightJoints[0]];
-                  w.rightJoints = [wallCopy.leftJoints[0]];
-                  w.rightOffset = wallRightOffset;
-                }
-                if (e.id === targetWall.id) {
-                  (e as WallModel).leftOffset = targetWallLeftOffset;
-                }
-              }
-            }
-          });
-
-          wall = wallsOnThisFoundation.get(wall.leftJoints[0]);
-          if (wall!.id === currentWallId) {
-            break;
-          }
-        }
-
-        setCommonStore((state) => {
-          state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
-          state.resizeHandleType =
-            resizeHandleTypeRef.current === ResizeHandleType.LowerLeft
-              ? ResizeHandleType.LowerRight
-              : ResizeHandleType.LowerLeft;
-        });
+        flipWalls(currentWallId);
       }
     }
 
     return isClosed;
+  };
+
+  const handleUndoableAdd = (element: ElementModel) => {
+    const undoableAdd = {
+      name: 'Add',
+      timestamp: Date.now(),
+      addedElement: element,
+      undo: () => {
+        removeElementById(undoableAdd.addedElement.id, false);
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.elements.push(undoableAdd.addedElement);
+          state.selectedElement = undoableAdd.addedElement;
+        });
+      },
+    } as UndoableAdd;
+    addUndoable(undoableAdd);
+  };
+
+  const handleUndoableAddWall = (wall: WallModel) => {
+    let leftWallOffset = 0,
+      rightWallOffset = 0;
+    if (wall.leftJoints.length > 0) {
+      const leftWall = getElementById(wall.leftJoints[0]);
+      if (leftWall) {
+        leftWallOffset = (leftWall as WallModel).rightOffset;
+      }
+    }
+    if (wall.rightJoints.length > 0) {
+      const rightWall = getElementById(wall.rightJoints[0]);
+      if (rightWall) {
+        rightWallOffset = (rightWall as WallModel).leftOffset;
+      }
+    }
+    const undoableAdd = {
+      name: 'Add',
+      timestamp: Date.now(),
+      addedElement: wall,
+      leftWallOffset: leftWallOffset,
+      rightWallOffset: rightWallOffset,
+      undo: () => {
+        removeElementById(undoableAdd.addedElement.id, false);
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          if (leftWallOffset !== 0 && wall.leftJoints.length > 0) {
+            for (const e of state.elements) {
+              if (e.id === wall.leftJoints[0]) {
+                (e as WallModel).rightOffset = leftWallOffset;
+                (e as WallModel).rightJoints[0] = undoableAdd.addedElement.id;
+                break;
+              }
+            }
+            for (const e of state.elements) {
+              if (e.id === wall.rightJoints[0]) {
+                (e as WallModel).leftOffset = rightWallOffset;
+                (e as WallModel).leftJoints[0] = undoableAdd.addedElement.id;
+                break;
+              }
+            }
+          }
+          state.elements.push(undoableAdd.addedElement);
+          state.selectedElement = undoableAdd.addedElement;
+          state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
+        });
+      },
+    } as UndoableAddWall;
+    addUndoable(undoableAdd);
   };
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
@@ -491,21 +566,9 @@ const Foundation = ({
         setShowGrid(true);
         const position = e.intersections[0].point;
         const addedElement = addElement(foundationModel, position);
-        const undoableAdd = {
-          name: 'Add',
-          timestamp: Date.now(),
-          addedElement: addedElement,
-          undo: () => {
-            removeElementById(undoableAdd.addedElement.id, false);
-          },
-          redo: () => {
-            setCommonStore((state) => {
-              state.elements.push(undoableAdd.addedElement);
-              state.selectedElement = undoableAdd.addedElement;
-            });
-          },
-        } as UndoableAdd;
-        addUndoable(undoableAdd);
+        if (addedElement) {
+          handleUndoableAdd(addedElement);
+        }
         setCommonStore((state) => {
           state.objectTypeToAdd = ObjectType.None;
         });
@@ -619,6 +682,7 @@ const Foundation = ({
             const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1], wall.leftPoint[2]);
             const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1], wall.rightPoint[2]);
             wallPointsRef.current.set(grabRef.current.id, { leftPoint: leftPoint, rightPoint: rightPoint });
+            handleUndoableAddWall(wall as WallModel);
           } else {
             setCommonStore((state) => {
               if (elementsStateBeforeResizingRef.current) {

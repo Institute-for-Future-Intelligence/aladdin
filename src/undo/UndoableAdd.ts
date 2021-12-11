@@ -8,3 +8,8 @@ import { ElementModel } from '../models/ElementModel';
 export interface UndoableAdd extends Undoable {
   addedElement: ElementModel;
 }
+
+export interface UndoableAddWall extends UndoableAdd {
+  leftWallOffset: number;
+  rightWallOffset: number;
+}
