@@ -9,10 +9,12 @@ import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { CuboidModel } from '../../../models/CuboidModel';
 import { ZERO_TOLERANCE } from '../../../constants';
+import { Vector2 } from 'three';
+import { Util } from '../../../Util';
+import { UndoableSizeGroupChange } from '../../../undo/UndoableSizeGroupChange';
+import { UndoableSizeChange } from '../../../undo/UndoableSizeChange';
 
 const CuboidWidthInput = ({
   widthDialogVisible,
@@ -23,8 +25,11 @@ const CuboidWidthInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getChildren = useStore(Selector.getChildren);
+  const updateElementCxById = useStore(Selector.updateElementCxById);
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLxForAll = useStore(Selector.updateElementLxForAll);
+  const setElementPosition = useStore(Selector.setElementPosition);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
@@ -35,7 +40,13 @@ const CuboidWidthInput = ({
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
+
+  const oldChildrenPositionsMapRef = useRef<Map<string, Vector2>>(new Map<string, Vector2>());
+  const newChildrenPositionsMapRef = useRef<Map<string, Vector2>>(new Map<string, Vector2>());
+  const unnormalizedPosMapRef = useRef<Map<string, Vector2>>(new Map());
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const rejectRef = useRef<boolean>(false);
+  const rejectedValue = useRef<number | undefined>();
 
   const lang = { lng: language };
 
@@ -48,6 +59,73 @@ const CuboidWidthInput = ({
   const onScopeChange = (e: RadioChangeEvent) => {
     setCuboidActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
+  };
+
+  const containsAllChildren = (lx: number) => {
+    switch (cuboidActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Cuboid) {
+            const c = e as CuboidModel;
+            const children = getChildren(c.id);
+            if (children.length > 0) {
+              if (!Util.doesNewSizeContainAllChildren(c, children, lx, c.ly)) {
+                return false;
+              }
+            }
+          }
+        }
+        break;
+      default:
+        const children = getChildren(cuboid.id);
+        if (children.length > 0) {
+          return Util.doesNewSizeContainAllChildren(cuboid, children, lx, cuboid.ly);
+        }
+    }
+    return true;
+  };
+
+  const rejectChange = (lx: number) => {
+    // check if the new width will still contain all children of the cuboids in the selected scope
+    if (!containsAllChildren(lx)) {
+      return true;
+    }
+    // other check?
+    return false;
+  };
+
+  const updateLxWithChildren = (parent: CuboidModel, value: number) => {
+    // store children's relative positions
+    const children = getChildren(parent.id);
+    const origin = new Vector2(0, 0);
+    const azimuth = parent.rotation[2];
+    unnormalizedPosMapRef.current.clear(); // this map is for one-time use with each cuboid
+    if (children.length > 0) {
+      for (const c of children) {
+        switch (c.type) {
+          case ObjectType.SolarPanel:
+          case ObjectType.Sensor:
+            const p = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(origin, azimuth);
+            unnormalizedPosMapRef.current.set(c.id, p);
+            oldChildrenPositionsMapRef.current.set(c.id, new Vector2(c.cx, c.cy));
+            break;
+        }
+      }
+    }
+    // update cuboid width
+    updateElementLxById(parent.id, value);
+    // update children's relative positions
+    if (children.length > 0) {
+      for (const c of children) {
+        const p = unnormalizedPosMapRef.current.get(c.id);
+        if (p) {
+          const relativePos = new Vector2(p.x, p.y).rotateAround(origin, -azimuth);
+          const newCx = relativePos.x / value;
+          updateElementCxById(c.id, newCx);
+          newChildrenPositionsMapRef.current.set(c.id, new Vector2(newCx, c.cy));
+        }
+      }
+    }
   };
 
   const needChange = (lx: number) => {
@@ -73,49 +151,86 @@ const CuboidWidthInput = ({
   const setLx = (value: number) => {
     if (!cuboid) return;
     if (!needChange(value)) return;
-    switch (cuboidActionScope) {
-      case Scope.AllObjectsOfThisType:
-        const oldLxsAll = new Map<string, number>();
-        for (const elem of elements) {
-          if (elem.type === ObjectType.Cuboid) {
-            oldLxsAll.set(elem.id, elem.lx);
-          }
-        }
-        const undoableChangeAll = {
-          name: 'Set Width for All Cuboids',
-          timestamp: Date.now(),
-          oldValues: oldLxsAll,
-          newValue: value,
-          undo: () => {
-            for (const [id, lx] of undoableChangeAll.oldValues.entries()) {
-              updateElementLxById(id, lx as number);
+    const oldLx = cuboid.lx;
+    rejectedValue.current = undefined;
+    rejectRef.current = rejectChange(value);
+    if (rejectRef.current) {
+      rejectedValue.current = value;
+      setInputLx(oldLx);
+    } else {
+      oldChildrenPositionsMapRef.current.clear();
+      newChildrenPositionsMapRef.current.clear();
+      switch (cuboidActionScope) {
+        case Scope.AllObjectsOfThisType:
+          const oldLxsAll = new Map<string, number>();
+          for (const elem of elements) {
+            if (elem.type === ObjectType.Cuboid) {
+              oldLxsAll.set(elem.id, elem.lx);
             }
-          },
-          redo: () => {
-            updateElementLxForAll(ObjectType.Cuboid, undoableChangeAll.newValue as number);
-          },
-        } as UndoableChangeGroup;
-        addUndoable(undoableChangeAll);
-        updateElementLxForAll(ObjectType.Cuboid, value);
-        break;
-      default:
-        if (cuboid) {
-          const oldLx = cuboid.lx;
+          }
+          // the following also populates the above two maps in ref
+          for (const elem of elements) {
+            if (elem.type === ObjectType.Cuboid) {
+              updateLxWithChildren(elem as CuboidModel, value);
+            }
+          }
+          const undoableChangeAll = {
+            name: 'Set Width for All Cuboids',
+            timestamp: Date.now(),
+            oldSizes: oldLxsAll,
+            newSize: value,
+            oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+            newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+            undo: () => {
+              for (const [id, lx] of undoableChangeAll.oldSizes.entries()) {
+                updateElementLxById(id, lx as number);
+              }
+              if (undoableChangeAll.oldChildrenPositionsMap.size > 0) {
+                for (const [id, p] of undoableChangeAll.oldChildrenPositionsMap.entries()) {
+                  setElementPosition(id, p.x, p.y);
+                }
+              }
+            },
+            redo: () => {
+              updateElementLxForAll(ObjectType.Cuboid, undoableChangeAll.newSize as number);
+              if (undoableChangeAll.newChildrenPositionsMap.size > 0) {
+                for (const [id, p] of undoableChangeAll.newChildrenPositionsMap.entries()) {
+                  setElementPosition(id, p.x, p.y);
+                }
+              }
+            },
+          } as UndoableSizeGroupChange;
+          addUndoable(undoableChangeAll);
+          break;
+        default:
+          updateLxWithChildren(cuboid, value);
           const undoableChange = {
             name: 'Set Cuboid Width',
             timestamp: Date.now(),
-            oldValue: oldLx,
-            newValue: value,
+            oldSize: oldLx,
+            newSize: value,
+            resizedElementId: cuboid.id,
+            oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+            newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
             undo: () => {
-              updateElementLxById(cuboid.id, undoableChange.oldValue as number);
+              updateElementLxById(cuboid.id, undoableChange.oldSize as number);
+              if (undoableChange.oldChildrenPositionsMap.size > 0) {
+                for (const [id, p] of undoableChange.oldChildrenPositionsMap.entries()) {
+                  setElementPosition(id, p.x, p.y);
+                }
+              }
             },
             redo: () => {
-              updateElementLxById(cuboid.id, undoableChange.newValue as number);
+              updateElementLxById(cuboid.id, undoableChange.newSize as number);
+              if (undoableChange.newChildrenPositionsMap.size > 0) {
+                for (const [id, p] of undoableChange.newChildrenPositionsMap.entries()) {
+                  setElementPosition(id, p.x, p.y);
+                }
+              }
             },
-          } as UndoableChange;
+          } as UndoableSizeChange;
           addUndoable(undoableChange);
-          updateElementLxById(cuboid.id, value);
-        }
+      }
     }
     setUpdateFlag(!updateFlag);
   };
@@ -145,6 +260,13 @@ const CuboidWidthInput = ({
             onMouseOut={() => setDragEnabled(false)}
           >
             {i18n.t('word.Width', lang)}
+            <label style={{ color: 'red', fontWeight: 'bold' }}>
+              {rejectRef.current
+                ? ': ' +
+                  i18n.t('shared.NotApplicableToSelectedAction', lang) +
+                  (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
+                : ''}
+            </label>
           </div>
         }
         footer={[
@@ -160,6 +282,7 @@ const CuboidWidthInput = ({
             key="Cancel"
             onClick={() => {
               setInputLx(cuboid?.lx);
+              rejectRef.current = false;
               setWidthDialogVisible(false);
             }}
           >
@@ -170,7 +293,9 @@ const CuboidWidthInput = ({
             type="primary"
             onClick={() => {
               setLx(inputLx);
-              setWidthDialogVisible(false);
+              if (!rejectRef.current) {
+                setWidthDialogVisible(false);
+              }
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -179,6 +304,7 @@ const CuboidWidthInput = ({
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputLx(cuboid?.lx);
+          rejectRef.current = false;
           setWidthDialogVisible(false);
         }}
         destroyOnClose={false}
@@ -201,7 +327,9 @@ const CuboidWidthInput = ({
               onChange={(value) => setInputLx(value)}
               onPressEnter={() => {
                 setLx(inputLx);
-                setWidthDialogVisible(false);
+                if (!rejectRef.current) {
+                  setWidthDialogVisible(false);
+                }
               }}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

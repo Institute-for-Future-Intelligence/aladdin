@@ -11,7 +11,6 @@ import { IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, Ro
 import { ElementModel } from '../models/ElementModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
-  FINE_GRID_SCALE,
   HALF_PI,
   MOVE_HANDLE_OFFSET,
   MOVE_HANDLE_RADIUS,

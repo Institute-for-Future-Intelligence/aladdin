@@ -28,7 +28,7 @@ const Wireframe = ({ hx, hy, hz, lineColor = 'black', lineWidth = 0.2 }: Wirefra
   const positionUR = useMemo(() => new Vector3(hx, hy, hz), [hx, hy, hz]);
 
   useEffect(() => {
-    setWireframeColor(groundImage ? 'white' : lineColor);
+    setWireframeColor(groundImage ? 'gray' : lineColor);
     setWireframeWidth(groundImage ? lineWidth * 2 : lineWidth);
   }, [groundImage]);
 

@@ -120,7 +120,7 @@ const Foundation = ({
   const enableFineGridRef = useRef(useStore.getState().enableFineGrid);
   const baseRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
-  const intersecPlaneRef = useRef<Mesh>();
+  const intersectPlaneRef = useRef<Mesh>();
   const resizeHandleLLRef = useRef<Mesh>();
   const resizeHandleULRef = useRef<Mesh>();
   const resizeHandleLRRef = useRef<Mesh>();
@@ -1242,10 +1242,10 @@ const Foundation = ({
       mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
       ray.setFromCamera(mouse, camera);
       let intersects;
-      if (intersecPlaneRef.current) {
+      if (intersectPlaneRef.current) {
         const solarPanel = grabRef.current as SolarPanelModel;
         const pvModel = getPvModule(solarPanel.pvModelName);
-        intersects = ray.intersectObjects([intersecPlaneRef.current]);
+        intersects = ray.intersectObjects([intersectPlaneRef.current]);
         if (intersects.length > 0) {
           let p = intersects[0].point; //World coordinate
           const moveHandleType = moveHandleTypeRef.current;
@@ -1462,7 +1462,8 @@ const Foundation = ({
       {/* intersection plane */}
       {grabRef.current?.type === ObjectType.SolarPanel && !grabRef.current.locked && (
         <Plane
-          ref={intersecPlaneRef}
+          ref={intersectPlaneRef}
+          name={'Foundation Intersection Plane'}
           position={intersectionPlanePosition}
           rotation={intersectionPlaneRotation}
           args={[lx, ly]}
