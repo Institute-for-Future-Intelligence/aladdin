@@ -33,7 +33,7 @@ const ColumnWrapper = styled.div`
   position: absolute;
   left: 0;
   top: 0;
-  width: 500px;
+  width: 410px;
   padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
@@ -211,7 +211,7 @@ const MapPanel = () => {
                       style={{
                         boxSizing: `border-box`,
                         border: `1px solid transparent`,
-                        width: `480px`,
+                        width: `400px`,
                         height: `32px`,
                         padding: `0 12px`,
                         borderRadius: `3px`,

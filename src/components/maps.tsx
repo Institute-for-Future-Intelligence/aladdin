@@ -9,8 +9,8 @@ import * as Selector from '../stores/selector';
 
 const containerStyle = {
   border: '1px solid',
-  width: '480px',
-  height: '480px',
+  width: '400px',
+  height: '400px',
 };
 
 const Maps = () => {

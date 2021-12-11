@@ -102,6 +102,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const changed = useStore(Selector.changed);
   const cloudFile = useStore(Selector.cloudFile);
   const user = useStore(Selector.user);
+  const axes = useStore(Selector.viewState.axes);
 
   const [aboutUs, setAboutUs] = useState(false);
 
@@ -352,6 +353,29 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     });
   };
 
+  const toggleAxes = (e: CheckboxChangeEvent) => {
+    const checked = e.target.checked;
+    const undoableCheck = {
+      name: 'Show Axes',
+      timestamp: Date.now(),
+      checked: checked,
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.axes = !undoableCheck.checked;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.axes = undoableCheck.checked;
+        });
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    setCommonStore((state) => {
+      state.viewState.axes = checked;
+    });
+  };
+
   const toggle2DView = (e: CheckboxChangeEvent) => {
     const undoableCheck = {
       name: 'Toggle 2D View',
@@ -445,30 +469,36 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       </SubMenu>
 
       {/*edit menu*/}
-      <SubMenu key={'edit'} title={i18n.t('menu.editSubMenu', lang)}>
-        <Menu.Item
-          key="undo"
-          onClick={() => {
-            if (undoManager.hasUndo()) {
-              undoManager.undo();
-            }
-          }}
-        >
-          {i18n.t('menu.edit.Undo', lang)}
-          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Z)</label>
-        </Menu.Item>
-        <Menu.Item
-          key="redo"
-          onClick={() => {
-            if (undoManager.hasRedo()) {
-              undoManager.redo();
-            }
-          }}
-        >
-          {i18n.t('menu.edit.Redo', lang)}
-          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Y)</label>
-        </Menu.Item>
-      </SubMenu>
+      {(undoManager.hasUndo() || undoManager.hasRedo()) && (
+        <SubMenu key={'edit'} title={i18n.t('menu.editSubMenu', lang)}>
+          {undoManager.hasUndo() && (
+            <Menu.Item
+              key="undo"
+              onClick={() => {
+                if (undoManager.hasUndo()) {
+                  undoManager.undo();
+                }
+              }}
+            >
+              {i18n.t('menu.edit.Undo', lang)}
+              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Z)</label>
+            </Menu.Item>
+          )}
+          {undoManager.hasRedo() && (
+            <Menu.Item
+              key="redo"
+              onClick={() => {
+                if (undoManager.hasRedo()) {
+                  undoManager.redo();
+                }
+              }}
+            >
+              {i18n.t('menu.edit.Redo', lang)}
+              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Y)</label>
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )}
 
       {/*view menu */}
       <SubMenu key={'view'} title={i18n.t('menu.viewSubMenu', lang)}>
@@ -530,6 +560,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         >
           {i18n.t('menu.view.ZoomIn', lang)}
           <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+[)</label>
+        </Menu.Item>
+        <Menu.Item key={'axes-check-box'}>
+          <Checkbox checked={axes} onChange={toggleAxes}>
+            {i18n.t('skyMenu.Axes', lang)}
+          </Checkbox>
         </Menu.Item>
         <Menu.Item key={'orthographic-check-box'}>
           <Checkbox checked={orthographic} onChange={toggle2DView}>
