@@ -52,7 +52,6 @@ const Tree = ({
   const now = new Date(date);
   const [hovered, setHovered] = useState(false);
   const trunkMeshRef = useRef<Mesh>(null!);
-  const fullMeshRef = useRef<Mesh>(null!);
   const {
     gl: { domElement },
     camera,
@@ -150,25 +149,7 @@ const Tree = ({
   return (
     <group name={'Tree Group ' + id} userData={{ aabb: true }} position={[cx, cy, (cz ?? 0) + lz / 2]}>
       <Billboard uuid={id} name={name} follow={false} rotation={solidTreeRotation}>
-        <Plane
-          ref={fullMeshRef}
-          args={[lx, lz]}
-          onPointerDown={(e) => {
-            // even though we do nothing here, adding this method prevents objects
-            // behind this tree from being selected
-          }}
-          onPointerOver={(e) => {
-            if (e.intersections.length > 0) {
-              const intersected = e.intersections[0].object === fullMeshRef.current;
-              if (intersected) {
-                setHovered(true);
-              }
-            }
-          }}
-          onPointerOut={(e) => {
-            setHovered(false);
-          }}
-        >
+        <Plane args={[lx, lz]}>
           <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
         </Plane>
       </Billboard>
