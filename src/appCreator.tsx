@@ -89,51 +89,11 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);
   const [city, setCity] = useState<string | null>('Boston MA, USA');
-  const [keyPressed, setKeyPressed] = useState(false);
-  const [keyName, setKeyName] = useState<string | null>(null);
-  const [keyDown, setKeyDown] = useState(false);
-  const [keyUp, setKeyUp] = useState(false);
 
   const orbitControlsRef = useRef<MyOrbitControls>();
   const canvasRef = useRef<HTMLCanvasElement>();
   const camRef = useRef<Camera>();
   const lang = { lng: language };
-
-  const handleKeys = [
-    'left',
-    'up',
-    'right',
-    'down',
-    'ctrl+f',
-    'meta+f',
-    'ctrl+o',
-    'meta+o',
-    'ctrl+s',
-    'meta+s',
-    'ctrl+c',
-    'meta+c',
-    'ctrl+x',
-    'meta+x',
-    'ctrl+v',
-    'meta+v',
-    'ctrl+[',
-    'meta+[',
-    'ctrl+]',
-    'meta+]',
-    'ctrl+z',
-    'meta+z',
-    'ctrl+y',
-    'meta+y',
-    'shift',
-    'esc',
-    'ctrl+home',
-    'meta+home',
-    'ctrl+shift+s',
-    'meta+shift+s',
-    'delete',
-    'f2',
-    'f4',
-  ];
 
   useEffect(() => {
     setLoading(false);
@@ -155,17 +115,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
     setUpdate(!update);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orthographic]);
-
-  const handleKeyEvent = (key: string, down: boolean) => {
-    if (down) {
-      setKeyName(key);
-      setKeyUp(false);
-      setKeyDown(true);
-    } else {
-      setKeyDown(false);
-      setKeyUp(true);
-    }
-  };
 
   const zoomView = (scale: number) => {
     if (orthographic) {
@@ -425,34 +374,10 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             </Suspense>
           </Canvas>
           <KeyboardListener
-            keyName={keyName}
-            keyDown={keyDown}
-            keyUp={keyUp}
             canvas={canvasRef.current}
             set2DView={set2DView}
             resetView={resetView}
             zoomView={zoomView}
-          />
-          <KeyboardEventHandler
-            handleKeys={handleKeys}
-            handleEventType={'keydown'}
-            onKeyEvent={(key, e) => {
-              e.preventDefault();
-              if (keyPressed) {
-                return;
-              }
-              setKeyPressed(true);
-              handleKeyEvent(key, true);
-            }}
-          />
-          <KeyboardEventHandler
-            handleKeys={handleKeys}
-            handleEventType={'keyup'}
-            onKeyEvent={(key, e) => {
-              e.preventDefault();
-              setKeyPressed(false);
-              handleKeyEvent(key, false);
-            }}
           />
         </div>
       </DropdownContextMenu>

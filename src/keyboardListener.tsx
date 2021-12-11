@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ObjectType } from './types';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
@@ -15,27 +15,18 @@ import { showInfo } from './helpers';
 import i18n from './i18n/i18n';
 import { UndoableHorizontalMove } from './undo/UndoableHorizontalMove';
 import { UndoableVerticalMove } from './undo/UndoableVerticalMove';
+import KeyboardEventHandler from 'react-keyboard-event-handler';
 
 export interface KeyboardListenerProps {
-  keyName: string | null;
-  keyDown: boolean;
-  keyUp: boolean;
   canvas?: HTMLCanvasElement;
   set2DView: (selected: boolean) => void;
   resetView: () => void;
   zoomView: (scale: number) => void;
 }
 
-const KeyboardListener = ({
-  keyName,
-  keyDown,
-  keyUp,
-  canvas,
-  set2DView,
-  resetView,
-  zoomView,
-}: KeyboardListenerProps) => {
+const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardListenerProps) => {
   const setCommonStore = useStore(Selector.set);
+  const selectNone = useStore(Selector.selectNone);
   const language = useStore(Selector.language);
   const undoManager = useStore(Selector.undoManager);
   const addUndoable = useStore(Selector.addUndoable);
@@ -58,9 +49,50 @@ const KeyboardListener = ({
   const addedWallId = useStore(Selector.addedWallId);
   const addedWindowId = useStore(Selector.addedWindowId);
 
+  const [keyPressed, setKeyPressed] = useState(false);
+  const [keyName, setKeyName] = useState<string | null>(null);
+  const [keyDown, setKeyDown] = useState(false);
+  const [keyUp, setKeyUp] = useState(false);
+
   const moveStepRelative = 0.01;
   const moveStepAbsolute = 0.1;
   const lang = { lng: language };
+
+  const handleKeys = [
+    'left',
+    'up',
+    'right',
+    'down',
+    'ctrl+f',
+    'meta+f',
+    'ctrl+o',
+    'meta+o',
+    'ctrl+s',
+    'meta+s',
+    'ctrl+c',
+    'meta+c',
+    'ctrl+x',
+    'meta+x',
+    'ctrl+v',
+    'meta+v',
+    'ctrl+[',
+    'meta+[',
+    'ctrl+]',
+    'meta+]',
+    'ctrl+z',
+    'meta+z',
+    'ctrl+y',
+    'meta+y',
+    'shift',
+    'esc',
+    'ctrl+home',
+    'meta+home',
+    'ctrl+shift+s',
+    'meta+shift+s',
+    'delete',
+    'f2',
+    'f4',
+  ];
 
   useEffect(() => {
     if (keyDown) {
@@ -122,6 +154,17 @@ const KeyboardListener = ({
         state.objectTypeToAdd = ObjectType.None;
         state.viewState.autoRotate = !state.viewState.autoRotate;
       });
+    }
+  };
+
+  const handleKeyEvent = (key: string, down: boolean) => {
+    if (down) {
+      setKeyName(key);
+      setKeyUp(false);
+      setKeyDown(true);
+    } else {
+      setKeyDown(false);
+      setKeyUp(true);
     }
   };
 
@@ -514,6 +557,7 @@ const KeyboardListener = ({
           state.resizeHandleType = null;
           state.enableOrbitController = true;
         });
+        selectNone();
         break;
     }
   };
@@ -527,7 +571,31 @@ const KeyboardListener = ({
     }
   };
 
-  return <></>;
+  return (
+    <>
+      <KeyboardEventHandler
+        handleKeys={handleKeys}
+        handleEventType={'keydown'}
+        onKeyEvent={(key, e) => {
+          e.preventDefault();
+          if (keyPressed) {
+            return;
+          }
+          setKeyPressed(true);
+          handleKeyEvent(key, true);
+        }}
+      />
+      <KeyboardEventHandler
+        handleKeys={handleKeys}
+        handleEventType={'keyup'}
+        onKeyEvent={(key, e) => {
+          e.preventDefault();
+          setKeyPressed(false);
+          handleKeyEvent(key, false);
+        }}
+      />
+    </>
+  );
 };
 
 export default React.memo(KeyboardListener);
