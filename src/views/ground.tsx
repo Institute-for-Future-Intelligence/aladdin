@@ -432,12 +432,11 @@ const Ground = () => {
       if (isSettingFoundationStartPointRef.current) {
         setRayCast(e);
         const intersects = ray.intersectObjects([groundPlaneRef.current]);
-        const p = positionOnGrid(intersects[0].point);
         setCommonStore((state) => {
           state.enableOrbitController = false;
           state.moveHandleType = null;
           state.resizeHandleType = ResizeHandleType.LowerRight;
-          state.resizeAnchor.copy(p);
+          state.resizeAnchor.copy(intersects[0].point);
         });
         isSettingFoundationStartPointRef.current = false;
         isSettingFoundationEndPointRef.current = true;
@@ -447,12 +446,11 @@ const Ground = () => {
       else if (isSettingCuboidStartPointRef.current) {
         setRayCast(e);
         const intersects = ray.intersectObjects([groundPlaneRef.current]);
-        const p = positionOnGrid(intersects[0].point);
         setCommonStore((state) => {
           state.enableOrbitController = false;
           state.moveHandleType = null;
           state.resizeHandleType = ResizeHandleType.LowerRight;
-          state.resizeAnchor.copy(p);
+          state.resizeAnchor.copy(intersects[0].point);
         });
         isSettingCuboidStartPointRef.current = false;
         isSettingCuboidEndPointRef.current = true;
@@ -644,14 +642,12 @@ const Ground = () => {
           if (intersectionPlaneRef.current) {
             intersects = ray.intersectObjects([intersectionPlaneRef.current]);
             if (intersects.length > 0) {
-              const pointer = intersects[0].point;
-              //const p = positionOnGrid(pointer);
               if (moveHandleType) {
-                handleMove(pointer);
+                handleMove(intersects[0].point);
               } else if (resizeHandleType) {
-                handleResize(pointer);
+                handleResize(intersects[0].point);
               } else if (rotateHandleType) {
-                handleRotate(pointer);
+                handleRotate(intersects[0].point);
               }
             }
           }
@@ -661,18 +657,17 @@ const Ground = () => {
             if (intersectionPlaneType === IntersectionPlaneType.Horizontal) {
               intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects.length > 0) {
-                const pointer = intersects[0].point;
-                //const p = positionOnGrid(pointer);
+                const p = intersects[0].point;
                 if (moveHandleType) {
                   if (moveHandleType === MoveHandleType.Top) {
-                    setElementPosition(grabRef.current.id, pointer.x, pointer.y);
+                    setElementPosition(grabRef.current.id, p.x, p.y);
                   } else {
-                    handleMove(pointer);
+                    handleMove(p);
                   }
                 } else if (resizeHandleType) {
-                  handleResize(pointer);
+                  handleResize(p);
                 } else if (rotateHandleType) {
-                  handleRotate(pointer);
+                  handleRotate(p);
                 }
               }
             }
@@ -721,7 +716,7 @@ const Ground = () => {
       if (grabRef.current && (isSettingFoundationStartPointRef.current || isSettingCuboidStartPointRef.current)) {
         setRayCast(e);
         const intersects = ray.intersectObjects([groundPlaneRef.current]);
-        const p = positionOnGrid(intersects[0].point);
+        const p = intersects[0].point;
         setElementPosition(grabRef.current.id, p.x, p.y);
       }
     }
@@ -809,21 +804,26 @@ const Ground = () => {
     );
   };
 
-  const positionOnGrid = (p: Vector3) => {
-    return useStore.getState().enableFineGrid ? snapToFineGrid(p) : snapToNormalGrid(p);
-  };
-
-  const snapToNormalGrid = (v: Vector3) => {
-    const scale = Math.floor(useStore.getState().sceneRadius / 50) + 1;
-    return new Vector3(Math.round(v.x / scale) * scale, Math.round(v.y / scale) * scale, v.z);
-  };
-
-  const snapToFineGrid = (v: Vector3) => {
-    const scale = (Math.floor(useStore.getState().sceneRadius / 50) + 1) * FINE_GRID_SCALE;
-    const x = parseFloat((Math.round(v.x / scale) * scale).toFixed(1));
-    const y = parseFloat((Math.round(v.y / scale) * scale).toFixed(1));
-    return new Vector3(x, y, v.z);
-  };
+  // The snapping of foundations and cuboids are really unnecessary because they can have arbitrary azimuths.
+  // So if we have one vertex snapping to the grid, the other three most likely will be knocked off if the azimuth
+  // is not 0, 90, 180, or 270 degrees. Snapping is only useful in those special cases. I decided not to bother
+  // to make it work for those cases because the gain is too small to complicate the code.
+  //
+  // const positionOnGrid = (p: Vector3) => {
+  //   return useStore.getState().enableFineGrid ? snapToFineGrid(p) : snapToNormalGrid(p);
+  // };
+  //
+  // const snapToNormalGrid = (v: Vector3) => {
+  //   const scale = Math.floor(useStore.getState().sceneRadius / 50) + 1;
+  //   return new Vector3(Math.round(v.x / scale) * scale, Math.round(v.y / scale) * scale, v.z);
+  // };
+  //
+  // const snapToFineGrid = (v: Vector3) => {
+  //   const scale = (Math.floor(useStore.getState().sceneRadius / 50) + 1) * FINE_GRID_SCALE;
+  //   const x = parseFloat((Math.round(v.x / scale) * scale).toFixed(1));
+  //   const y = parseFloat((Math.round(v.y / scale) * scale).toFixed(1));
+  //   return new Vector3(x, y, v.z);
+  // };
 
   const handleResize = (p: Vector3) => {
     if (!grabRef.current) return;
