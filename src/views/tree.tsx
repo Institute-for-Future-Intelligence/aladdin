@@ -24,7 +24,7 @@ import { useThree } from '@react-three/fiber';
 import { Billboard, Cone, Plane, Sphere } from '@react-three/drei';
 import { HALF_PI, MOVE_HANDLE_RADIUS, TWO_PI } from '../constants';
 import { TreeModel } from '../models/TreeModel';
-import { ObjectType, TreeType } from '../types';
+import { ActionType, ObjectType, TreeType } from '../types';
 import i18n from '../i18n/i18n';
 
 const Tree = ({
@@ -191,6 +191,7 @@ const Tree = ({
       <Billboard name={'Interaction Billboard'} visible={false} position={[0, 0, -lz / 2 + 0.5]}>
         <Plane
           ref={trunkMeshRef}
+          renderOrder={3}
           name={name + ' plane'}
           args={[lx / 2, 1]}
           onContextMenu={(e) => {
@@ -230,7 +231,7 @@ const Tree = ({
           name={'Handle'}
           renderOrder={2}
           onPointerDown={(e) => {
-            selectMe(id, e);
+            selectMe(id, e, ActionType.Move);
           }}
           onPointerOver={(e) => {
             domElement.style.cursor = 'move';

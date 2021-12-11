@@ -21,16 +21,16 @@ export const Auxiliary = () => {
   const addedFoundationId = useStore(Selector.addedFoundationId);
 
   const [showGrid, setShowGrid] = useState(false);
-  const [showVerticalRuler, setshowVerticalRuler] = useState(false);
+  const [showVerticalRuler, setShowVerticalRuler] = useState(false);
   const [gridSize, setGridSize] = useState(2 * sceneRadius);
   const [gridDivisions, setDivisions] = useState(2 * sceneRadius);
   const element = getSelectedElement();
 
   useEffect(() => {
     const unit = Math.floor(sceneRadius / 50) + 1;
-    const dividsions = Math.round(sceneRadius / unit) * 2;
-    setGridSize(dividsions * unit);
-    setDivisions(dividsions);
+    const divisions = Math.round(sceneRadius / unit) * 2;
+    setGridSize(divisions * unit);
+    setDivisions(divisions);
   }, [sceneRadius]);
 
   useEffect(() => {
@@ -43,10 +43,10 @@ export const Auxiliary = () => {
         (resizeHandleType === ResizeHandleType.UpperLeft && element?.type === ObjectType.Wall) ||
         (resizeHandleType === ResizeHandleType.UpperRight && element?.type === ObjectType.Wall);
       setShowGrid(!changeHeight);
-      setshowVerticalRuler(changeHeight);
+      setShowVerticalRuler(changeHeight);
     } else {
       setShowGrid(false);
-      setshowVerticalRuler(false);
+      setShowVerticalRuler(false);
     }
   }, [resizeHandleType]);
 
@@ -71,5 +71,3 @@ export const Auxiliary = () => {
     </>
   );
 };
-
-export default React.memo(Auxiliary);
