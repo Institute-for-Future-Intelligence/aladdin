@@ -37,21 +37,23 @@ const TreeSelection = () => {
       onChange={(value) => {
         if (tree) {
           const oldTree = tree.name;
-          const undoableChange = {
-            name: 'Change Tree',
-            timestamp: Date.now(),
-            oldValue: oldTree,
-            newValue: value,
-            undo: () => {
-              updateTreeTypeById(tree.id, undoableChange.oldValue as TreeType);
-            },
-            redo: () => {
-              updateTreeTypeById(tree.id, undoableChange.newValue as TreeType);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateTreeTypeById(tree.id, value);
-          setSelectValue(value);
+          if (oldTree !== value) {
+            const undoableChange = {
+              name: 'Change Tree',
+              timestamp: Date.now(),
+              oldValue: oldTree,
+              newValue: value,
+              undo: () => {
+                updateTreeTypeById(tree.id, undoableChange.oldValue as TreeType);
+              },
+              redo: () => {
+                updateTreeTypeById(tree.id, undoableChange.newValue as TreeType);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            updateTreeTypeById(tree.id, value);
+            setSelectValue(value);
+          }
         }
       }}
     >

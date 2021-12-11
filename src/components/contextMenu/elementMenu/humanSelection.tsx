@@ -52,21 +52,23 @@ const HumanSelection = () => {
       onChange={(value) => {
         if (human) {
           const oldPerson = human.name;
-          const undoableChange = {
-            name: 'Change People',
-            timestamp: Date.now(),
-            oldValue: oldPerson,
-            newValue: value,
-            undo: () => {
-              updateHumanNameById(human.id, undoableChange.oldValue as HumanName);
-            },
-            redo: () => {
-              updateHumanNameById(human.id, undoableChange.newValue as HumanName);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateHumanNameById(human.id, value);
-          setSelectionValue(value);
+          if (oldPerson !== value) {
+            const undoableChange = {
+              name: 'Change People',
+              timestamp: Date.now(),
+              oldValue: oldPerson,
+              newValue: value,
+              undo: () => {
+                updateHumanNameById(human.id, undoableChange.oldValue as HumanName);
+              },
+              redo: () => {
+                updateHumanNameById(human.id, undoableChange.newValue as HumanName);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            updateHumanNameById(human.id, value);
+            setSelectionValue(value);
+          }
         }
       }}
     >
