@@ -81,8 +81,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showYearlyLightSensorPanel = useStore(Selector.viewState.showYearlyLightSensorPanel);
   const showDailyPvYieldPanel = useStore(Selector.viewState.showDailyPvYieldPanel);
   const showYearlyPvYieldPanel = useStore(Selector.viewState.showYearlyPvYieldPanel);
-  const buildingFoundationId = useStore(Selector.buildingFoundationId);
-  const buildingCuboidId = useStore(Selector.buildingCuboidId);
+  const addedFoundationId = useStore(Selector.addedFoundationId);
+  const addedCuboidId = useStore(Selector.addedCuboidId);
 
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);
@@ -145,9 +145,9 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   useEffect(() => {
     if (canvasRef.current) {
       canvasRef.current.style.cursor =
-        objectTypeToAdd !== ObjectType.None || buildingCuboidId || buildingFoundationId ? 'crosshair' : 'default';
+        objectTypeToAdd !== ObjectType.None || addedCuboidId || addedFoundationId ? 'crosshair' : 'default';
     }
-  }, [objectTypeToAdd, buildingCuboidId, buildingFoundationId]);
+  }, [objectTypeToAdd, addedCuboidId, addedFoundationId]);
 
   useEffect(() => {
     setUpdate(!update);

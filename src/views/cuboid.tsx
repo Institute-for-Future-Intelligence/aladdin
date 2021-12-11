@@ -104,8 +104,8 @@ const Cuboid = ({
   const getPvModule = useStore(Selector.getPvModule);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const addUndoable = useStore(Selector.addUndoable);
-  const buildingCuboidId = useStore(Selector.buildingCuboidId);
-  const isBuildingElement = useStore(Selector.isBuildingElement);
+  const addedCuboidId = useStore(Selector.addedCuboidId);
+  const isAddingElement = useStore(Selector.isAddingElement);
 
   const {
     camera,
@@ -306,7 +306,7 @@ const Cuboid = ({
           } else if (handle === RotateHandleType.Upper || handle === RotateHandleType.Lower) {
             domElement.style.cursor = 'grab';
           } else {
-            domElement.style.cursor = useStore.getState().buildingCuboidId ? 'crosshair' : 'pointer';
+            domElement.style.cursor = useStore.getState().addedCuboidId ? 'crosshair' : 'pointer';
           }
         }
       }
@@ -316,7 +316,7 @@ const Cuboid = ({
 
   const noHoverHandle = useCallback(() => {
     setHoveredHandle(null);
-    domElement.style.cursor = useStore.getState().buildingCuboidId ? 'crosshair' : 'default';
+    domElement.style.cursor = useStore.getState().addedCuboidId ? 'crosshair' : 'default';
   }, []);
 
   // only these elements are allowed to be on the cuboid
@@ -375,7 +375,7 @@ const Cuboid = ({
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2) return; // ignore right-click
-    if (!isBuildingElement()) {
+    if (!isAddingElement()) {
       selectMe(id, e, ActionType.Select);
     }
     const selectedElement = getSelectedElement();
@@ -1001,7 +1001,7 @@ const Cuboid = ({
             />
           </Box>
 
-          {!buildingCuboidId && (
+          {!addedCuboidId && (
             <>
               {/* move handles */}
               <Sphere

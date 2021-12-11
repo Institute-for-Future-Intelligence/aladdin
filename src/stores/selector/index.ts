@@ -374,21 +374,21 @@ export const rotateHandleType = (state: CommonStoreState) => state.rotateHandleT
 export const resizeAnchor = (state: CommonStoreState) => state.resizeAnchor;
 
 // elements
-export const isBuildingElement = (state: CommonStoreState) => state.isBuildingElement;
+export const isAddingElement = (state: CommonStoreState) => state.isAddingElement;
 
-export const buildingFoundationId = (state: CommonStoreState) => state.buildingFoundationId;
+export const addedFoundationId = (state: CommonStoreState) => state.addedFoundationId;
 
 export const deletedFoundationId = (state: CommonStoreState) => state.deletedFoundationId;
 
-export const buildingCuboidId = (state: CommonStoreState) => state.buildingCuboidId;
+export const addedCuboidId = (state: CommonStoreState) => state.addedCuboidId;
 
 export const deletedCuboidId = (state: CommonStoreState) => state.deletedCuboidId;
 
-export const buildingWallId = (state: CommonStoreState) => state.buildingWallId;
+export const addedWallId = (state: CommonStoreState) => state.addedWallId;
 
 export const deletedWallId = (state: CommonStoreState) => state.deletedWallId;
 
-export const buildingWindowId = (state: CommonStoreState) => state.buildingWindowId;
+export const addedWindowId = (state: CommonStoreState) => state.addedWindowId;
 
 export const deletedWindowAndParentId = (state: CommonStoreState) => state.deletedWindowAndParentId;
 

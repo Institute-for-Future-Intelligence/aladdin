@@ -15,9 +15,9 @@ import WindowHandleWrapper from './windowHandleWrapper';
 const Window = ({ id, parentId, lx, lz, cx, cz, selected, locked, color }: WindowModel) => {
   const setCommonStore = useStore(Selector.set);
   const selectMe = useStore(Selector.selectMe);
-  const isBuildingElement = useStore(Selector.isBuildingElement);
+  const isAddingElement = useStore(Selector.isAddingElement);
 
-  const buildingWallIdRef = useRef(useStore.getState().buildingWallId);
+  const addedWallIdRef = useRef(useStore.getState().addedWallId);
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
   const moveHandleTypeRef = useRef(useStore.getState().moveHandleType);
   const resizeHandleTypeRef = useRef(useStore.getState().resizeHandleType);
@@ -40,7 +40,7 @@ const Window = ({ id, parentId, lx, lz, cx, cz, selected, locked, color }: Windo
 
   // subscribe common store
   useEffect(() => {
-    useStore.subscribe((state) => (buildingWallIdRef.current = state.buildingWallId));
+    useStore.subscribe((state) => (addedWallIdRef.current = state.addedWallId));
     useStore.subscribe((state) => (objectTypeToAddRef.current = state.objectTypeToAdd));
     useStore.subscribe((state) => (moveHandleTypeRef.current = state.moveHandleType));
     useStore.subscribe((state) => (resizeHandleTypeRef.current = state.resizeHandleType));
@@ -72,14 +72,14 @@ const Window = ({ id, parentId, lx, lz, cx, cz, selected, locked, color }: Windo
           }
         }}
         onPointerDown={(e) => {
-          if (e.button === 2 || buildingWallIdRef.current) return; // ignore right-click
+          if (e.button === 2 || addedWallIdRef.current) return; // ignore right-click
           if (e.intersections[0].object.name === 'window ' + id) {
             if (
               !moveHandleTypeRef.current &&
               !resizeHandleTypeRef.current &&
               objectTypeToAddRef.current === ObjectType.None &&
               !selected &&
-              !isBuildingElement()
+              !isAddingElement()
             ) {
               selectMe(id, e, ActionType.Select);
             }

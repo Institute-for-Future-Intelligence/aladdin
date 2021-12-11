@@ -30,7 +30,7 @@ const WallResizeHandle = React.memo(({ x, z, id, handleType, highLight, handleSi
   const setCommonStore = useStore(Selector.set);
   const selectMe = useStore(Selector.selectMe);
   const resizeHandleType = useStore(Selector.resizeHandleType);
-  const buildingWallID = useStore(Selector.buildingWallId);
+  const addedWallID = useStore(Selector.addedWallId);
 
   const [hovered, setHovered] = useState(false);
 
@@ -40,7 +40,7 @@ const WallResizeHandle = React.memo(({ x, z, id, handleType, highLight, handleSi
     highLight ||
     hovered ||
     handleType === resizeHandleType ||
-    (buildingWallID && (handleType === RType.LowerRight || handleType === RType.UpperRight))
+    (addedWallID && (handleType === RType.LowerRight || handleType === RType.UpperRight))
       ? HIGHLIGHT_HANDLE_COLOR
       : RESIZE_HANDLE_COLOR;
 
@@ -66,7 +66,7 @@ const WallResizeHandle = React.memo(({ x, z, id, handleType, highLight, handleSi
         setHovered(false);
       }}
       onPointerDown={(e) => {
-        if (!buildingWallID) {
+        if (!addedWallID) {
           selectMe(id, e, ActionType.Resize);
         }
         if (handleRef) {

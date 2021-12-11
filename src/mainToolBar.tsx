@@ -479,19 +479,22 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           </Draggable>
         )}
       >
-        <Input
-          placeholder="Title"
-          value={cloudFile ?? title}
-          onPressEnter={() => saveToCloud(title)}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            let t = e.target.value;
-            if (t) t = t.trim();
-            setTitle(t);
-            setCommonStore((state) => {
-              state.cloudFile = t;
-            });
-          }}
-        />
+        <Space direction={'horizontal'}>
+          <label>{i18n.t('word.Title', lang)}:</label>
+          <Input
+            placeholder="Title"
+            value={cloudFile ?? title}
+            onPressEnter={() => saveToCloud(title)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              let t = e.target.value;
+              if (t) t = t.trim();
+              setTitle(t);
+              setCommonStore((state) => {
+                state.cloudFile = t;
+              });
+            }}
+          />
+        </Space>
       </Modal>
       {loading && <Spinner />}
       <ButtonsContainer>

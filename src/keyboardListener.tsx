@@ -53,10 +53,10 @@ const KeyboardListener = ({
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const panCenter = useStore(Selector.viewState.panCenter);
   const copyCutElements = useStore(Selector.copyCutElements);
-  const buildingFoundationId = useStore(Selector.buildingFoundationId);
-  const buildingCuboidId = useStore(Selector.buildingCuboidId);
-  const buildingWallId = useStore(Selector.buildingWallId);
-  const buildingWindowId = useStore(Selector.buildingWindowId);
+  const addedFoundationId = useStore(Selector.addedFoundationId);
+  const addedCuboidId = useStore(Selector.addedCuboidId);
+  const addedWallId = useStore(Selector.addedWallId);
+  const addedWindowId = useStore(Selector.addedWindowId);
 
   const moveStepRelative = 0.01;
   const moveStepAbsolute = 0.1;
@@ -499,14 +499,14 @@ const KeyboardListener = ({
         setEnableFineGrid(true);
         break;
       case 'esc':
-        if (buildingFoundationId) {
-          removeElementById(buildingFoundationId, false);
-        } else if (buildingCuboidId) {
-          removeElementById(buildingCuboidId, false);
-        } else if (buildingWallId) {
-          removeElementById(buildingWallId, false);
-        } else if (buildingWindowId) {
-          removeElementById(buildingWindowId, false);
+        if (addedFoundationId) {
+          removeElementById(addedFoundationId, false);
+        } else if (addedCuboidId) {
+          removeElementById(addedCuboidId, false);
+        } else if (addedWallId) {
+          removeElementById(addedWallId, false);
+        } else if (addedWindowId) {
+          removeElementById(addedWindowId, false);
         }
         setCommonStore((state) => {
           state.objectTypeToAdd = ObjectType.None;

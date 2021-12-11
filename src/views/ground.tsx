@@ -93,7 +93,7 @@ const Ground = () => {
   useEffect(() => {
     if (deletedFoundationId) {
       setCommonStore((state) => {
-        state.buildingFoundationId = null;
+        state.addedFoundationId = null;
         state.deletedFoundationId = null;
       });
       isSettingFoundationStartPointRef.current = false;
@@ -105,7 +105,7 @@ const Ground = () => {
   useEffect(() => {
     if (deletedCuboidId) {
       setCommonStore((state) => {
-        state.buildingCuboidId = null;
+        state.addedCuboidId = null;
         state.deletedCuboidId = null;
       });
       isSettingCuboidStartPointRef.current = false;
@@ -190,12 +190,12 @@ const Ground = () => {
     if (grabRef.current) {
       const elem = getElementById(grabRef.current.id);
       if (elem) {
-        // set building foundation end point
+        // adding foundation end point
         if (isSettingFoundationEndPointRef.current) {
           isSettingFoundationStartPointRef.current = false;
           isSettingFoundationEndPointRef.current = false;
           setCommonStore((state) => {
-            state.buildingFoundationId = null;
+            state.addedFoundationId = null;
             state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
           });
           if (elem.lx <= 0.1 || elem.ly <= 0.1) {
@@ -222,12 +222,12 @@ const Ground = () => {
             addUndoable(undoableAdd);
           }
         }
-        // set building cuboid end point
+        // adding cuboid end point
         else if (isSettingCuboidEndPointRef.current) {
           isSettingCuboidStartPointRef.current = false;
           isSettingCuboidEndPointRef.current = false;
           setCommonStore((state) => {
-            state.buildingCuboidId = null;
+            state.addedCuboidId = null;
             state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
           });
           if (elem.lx <= 0.1 || elem.ly <= 0.1) {
@@ -428,7 +428,7 @@ const Ground = () => {
     });
 
     if (e.intersections.length > 0 && groundPlaneRef.current) {
-      // set building foundation start point
+      // adding foundation start point
       if (isSettingFoundationStartPointRef.current) {
         setRayCast(e);
         const intersects = ray.intersectObjects([groundPlaneRef.current]);
@@ -443,7 +443,7 @@ const Ground = () => {
         isSettingFoundationEndPointRef.current = true;
         return;
       }
-      // set building cuboid start point
+      // adding cuboid start point
       else if (isSettingCuboidStartPointRef.current) {
         setRayCast(e);
         const intersects = ray.intersectObjects([groundPlaneRef.current]);
@@ -645,11 +645,11 @@ const Ground = () => {
             intersects = ray.intersectObjects([intersectionPlaneRef.current]);
             if (intersects.length > 0) {
               const pointer = intersects[0].point;
-              const p = positionOnGrid(pointer);
+              //const p = positionOnGrid(pointer);
               if (moveHandleType) {
-                handleMove(p);
+                handleMove(pointer);
               } else if (resizeHandleType) {
-                handleResize(p);
+                handleResize(pointer);
               } else if (rotateHandleType) {
                 handleRotate(pointer);
               }
@@ -662,15 +662,15 @@ const Ground = () => {
               intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects.length > 0) {
                 const pointer = intersects[0].point;
-                const p = positionOnGrid(pointer);
+                //const p = positionOnGrid(pointer);
                 if (moveHandleType) {
                   if (moveHandleType === MoveHandleType.Top) {
-                    setElementPosition(grabRef.current.id, p.x, p.y);
+                    setElementPosition(grabRef.current.id, pointer.x, pointer.y);
                   } else {
-                    handleMove(p);
+                    handleMove(pointer);
                   }
                 } else if (resizeHandleType) {
-                  handleResize(p);
+                  handleResize(pointer);
                 } else if (rotateHandleType) {
                   handleRotate(pointer);
                 }
@@ -694,7 +694,7 @@ const Ground = () => {
             const foundation = addElement(groundModel, p);
             if (foundation) {
               setCommonStore((state) => {
-                state.buildingFoundationId = foundation.id;
+                state.addedFoundationId = foundation.id;
                 state.objectTypeToAdd = ObjectType.None;
               });
               grabRef.current = foundation;
@@ -706,7 +706,7 @@ const Ground = () => {
             const cuboid = addElement(groundModel, p);
             if (cuboid) {
               setCommonStore((state) => {
-                state.buildingCuboidId = cuboid.id;
+                state.addedCuboidId = cuboid.id;
                 state.objectTypeToAdd = ObjectType.None;
               });
               grabRef.current = cuboid;
@@ -728,24 +728,24 @@ const Ground = () => {
   };
 
   const handleGroundPointerOut = () => {
-    const buildingFoundationID = useStore.getState().buildingFoundationId;
-    const buildingCuboidID = useStore.getState().buildingCuboidId;
-    if (buildingFoundationID) {
-      removeElementById(buildingFoundationID, false);
+    const addedFoundationID = useStore.getState().addedFoundationId;
+    const addedCuboidID = useStore.getState().addedCuboidId;
+    if (addedFoundationID) {
+      removeElementById(addedFoundationID, false);
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.Foundation;
-        state.buildingFoundationId = null;
+        state.addedFoundationId = null;
         state.enableOrbitController = true;
       });
       grabRef.current = null;
       isSettingFoundationStartPointRef.current = false;
       isSettingFoundationEndPointRef.current = false;
     }
-    if (buildingCuboidID) {
-      removeElementById(buildingCuboidID, false);
+    if (addedCuboidID) {
+      removeElementById(addedCuboidID, false);
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.Cuboid;
-        state.buildingCuboidId = null;
+        state.addedCuboidId = null;
         state.enableOrbitController = true;
       });
       grabRef.current = null;

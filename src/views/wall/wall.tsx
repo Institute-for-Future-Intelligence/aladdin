@@ -143,13 +143,13 @@ const Wall = ({
   const elements = useStore(Selector.elements);
   const deletedWindowAndParentId = useStore(Selector.deletedWindowAndParentId);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const isBuildingElement = useStore(Selector.isBuildingElement);
+  const isAddingElement = useStore(Selector.isAddingElement);
 
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
   const moveHandleTypeRef = useRef(useStore.getState().moveHandleType);
   const resizeHandleTypeRef = useRef(useStore.getState().resizeHandleType);
   const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
-  const buildingWallIdRef = useRef(useStore.getState().buildingWallId);
+  const addedWallIdRef = useRef(useStore.getState().addedWallId);
   const enableFineGridRef = useRef(useStore.getState().enableFineGrid);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
@@ -158,7 +158,7 @@ const Wall = ({
   const topSurfaceRef = useRef<Mesh>(null);
   const grabRef = useRef<ElementModel | null>(null);
 
-  const buildingWindowIdRef = useRef<string | null>(null);
+  const addedWindowIdRef = useRef<string | null>(null);
   const isSettingWindowStartPointRef = useRef(false);
   const isSettingWindowEndPointRef = useRef(false);
   const invalidWindowIdRef = useRef<string | null>(null);
@@ -274,7 +274,7 @@ const Wall = ({
     useStore.subscribe((state) => (moveHandleTypeRef.current = state.moveHandleType));
     useStore.subscribe((state) => (resizeHandleTypeRef.current = state.resizeHandleType));
     useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
-    useStore.subscribe((state) => (buildingWallIdRef.current = state.buildingWallId));
+    useStore.subscribe((state) => (addedWallIdRef.current = state.addedWallId));
     useStore.subscribe((state) => (enableFineGridRef.current = state.enableFineGrid));
   }, []);
 
@@ -421,13 +421,13 @@ const Wall = ({
   const checkIfCanSelectMe = (e: ThreeEvent<PointerEvent>) => {
     if (
       e.button === 2 ||
-      buildingWallIdRef.current ||
-      buildingWindowIdRef.current ||
+      addedWallIdRef.current ||
+      addedWindowIdRef.current ||
       moveHandleTypeRef.current ||
       resizeHandleTypeRef.current ||
       useStore.getState().objectTypeToAdd !== ObjectType.None ||
       selected ||
-      isBuildingElement()
+      isAddingElement()
     ) {
       return false;
     }
@@ -436,7 +436,7 @@ const Wall = ({
 
   const resetCurrentState = () => {
     grabRef.current = null;
-    buildingWindowIdRef.current = null;
+    addedWindowIdRef.current = null;
     isSettingWindowStartPointRef.current = false;
     isSettingWindowEndPointRef.current = false;
     invalidWindowIdRef.current = null;
@@ -444,7 +444,7 @@ const Wall = ({
 
   const handleIntersectionPointerDown = (e: ThreeEvent<PointerEvent>) => {
     // return on right-click or not first wall
-    if (e.button === 2 || buildingWallIdRef.current || !checkIsFirstWall(e)) {
+    if (e.button === 2 || addedWallIdRef.current || !checkIsFirstWall(e)) {
       return;
     }
 
@@ -523,7 +523,7 @@ const Wall = ({
       state.moveHandleType = null;
       state.resizeHandleType = null;
       state.enableOrbitController = true;
-      state.buildingWindowId = null;
+      state.addedWindowId = null;
     });
     setShowGrid(false);
     resetCurrentState();
@@ -537,7 +537,7 @@ const Wall = ({
       }
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.Window;
-        state.buildingWindowId = null;
+        state.addedWindowId = null;
       });
       setShowGrid(false);
       resetCurrentState();
@@ -618,11 +618,11 @@ const Wall = ({
               state.elements.push(newWindow);
               state.moveHandleType = MoveHandleType.Mid;
               state.selectedElement = newWindow;
-              state.buildingWindowId = newWindow.id;
+              state.addedWindowId = newWindow.id;
             });
             setShowGrid(true);
             grabRef.current = newWindow;
-            buildingWindowIdRef.current = newWindow.id;
+            addedWindowIdRef.current = newWindow.id;
             isSettingWindowStartPointRef.current = true;
             break;
           }
@@ -642,7 +642,7 @@ const Wall = ({
       removeElementById(grabRef.current.id, false);
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.Window;
-        state.buildingWindowId = null;
+        state.addedWindowId = null;
       });
       setShowGrid(false);
       resetCurrentState();

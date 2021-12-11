@@ -90,9 +90,9 @@ const Foundation = ({
   const updateWallPointOnFoundation = useStore(Selector.updateWallPointOnFoundation);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const groundImage = useStore(Selector.viewState.groundImage);
-  const buildingFoundationID = useStore(Selector.buildingFoundationId);
+  const addedFoundationID = useStore(Selector.addedFoundationId);
   const addUndoable = useStore(Selector.addUndoable);
-  const isBuildingElement = useStore(Selector.isBuildingElement);
+  const isAddingElement = useStore(Selector.isAddingElement);
 
   const {
     camera,
@@ -105,7 +105,7 @@ const Foundation = ({
   const [hoveredResizeHandleUR, setHoveredResizeHandleUR] = useState(false);
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [showGrid, setShowGrid] = useState<boolean>(false);
-  const [buildingWallID, setBuildingWallID] = useState<string | null>(null);
+  const [addedWallID, setAddedWallID] = useState<string | null>(null);
 
   const isSettingWallStartPointRef = useRef(false);
   const isSettingWallEndPointRef = useRef(false);
@@ -194,9 +194,9 @@ const Foundation = ({
       wallPointsRef.current.delete(deletedWallID);
       isSettingWallStartPointRef.current = false;
       isSettingWallEndPointRef.current = false;
-      setBuildingWallID(null);
+      setAddedWallID(null);
       setCommonStore((state) => {
-        state.buildingWallId = null;
+        state.addedWallId = null;
         state.deletedWallId = null;
         state.enableOrbitController = true;
       });
@@ -277,7 +277,7 @@ const Foundation = ({
           } else if (handle === RotateHandleType.Lower || handle === RotateHandleType.Upper) {
             domElement.style.cursor = 'grab';
           } else {
-            domElement.style.cursor = useStore.getState().buildingFoundationId ? 'crosshair' : 'pointer';
+            domElement.style.cursor = useStore.getState().addedFoundationId ? 'crosshair' : 'pointer';
           }
           switch (handle) {
             case ResizeHandleType.LowerLeft:
@@ -305,7 +305,7 @@ const Foundation = ({
     setHoveredResizeHandleUL(false);
     setHoveredResizeHandleLR(false);
     setHoveredResizeHandleUR(false);
-    domElement.style.cursor = useStore.getState().buildingFoundationId ? 'crosshair' : 'default';
+    domElement.style.cursor = useStore.getState().addedFoundationId ? 'crosshair' : 'default';
   }, []);
 
   // only these elements are allowed to be on the foundation
@@ -332,7 +332,7 @@ const Foundation = ({
     let targetID: string | null = null;
     let targetSide: WallSide | null = null;
     for (const [id, points] of wallPoints) {
-      if (id === buildingWallID || (grabRef.current && id === grabRef.current.id)) continue;
+      if (id === addedWallID || (grabRef.current && id === grabRef.current.id)) continue;
       const { leftPoint, rightPoint } = points;
       const distStart = leftPoint?.distanceTo(pointer) ?? Number.MAX_VALUE;
       const distEnd = rightPoint?.distanceTo(pointer) ?? Number.MAX_VALUE;
@@ -472,7 +472,7 @@ const Foundation = ({
     setCommonStore((state) => {
       state.contextMenuObjectType = null;
     });
-    if (objectTypeToAddRef.current !== ObjectType.Window && !isBuildingElement()) {
+    if (objectTypeToAddRef.current !== ObjectType.Window && !isAddingElement()) {
       selectMe(id, e, ActionType.Select);
     }
     const selectedElement = getSelectedElement();
@@ -524,7 +524,7 @@ const Foundation = ({
       }
     }
 
-    if (isSettingWallStartPointRef.current && buildingWallID && baseRef.current) {
+    if (isSettingWallStartPointRef.current && addedWallID && baseRef.current) {
       const intersects = ray.intersectObjects([baseRef.current]);
       let p = Util.wallRelativePosition(intersects[0].point, foundationModel);
       let targetID: string | null = null;
@@ -547,7 +547,7 @@ const Foundation = ({
         if (targetSide === WallSide.Right) {
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.id === buildingWallID) {
+              if (e.id === addedWallID) {
                 const wall = e as WallModel;
                 wall.cx = p.x;
                 wall.cy = p.y;
@@ -556,7 +556,7 @@ const Foundation = ({
                 }
               }
               if (e.id === targetID && targetWall.rightJoints.length === 0) {
-                (e as WallModel).rightJoints = [buildingWallID];
+                (e as WallModel).rightJoints = [addedWallID];
               }
             }
           });
@@ -565,7 +565,7 @@ const Foundation = ({
         else if (targetSide === WallSide.Left) {
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.id === buildingWallID) {
+              if (e.id === addedWallID) {
                 const wall = e as WallModel;
                 wall.cx = p.x;
                 wall.cy = p.y;
@@ -574,7 +574,7 @@ const Foundation = ({
                 }
               }
               if (e.id === targetID && targetWall.leftJoints.length === 0) {
-                (e as WallModel).leftJoints = [buildingWallID];
+                (e as WallModel).leftJoints = [addedWallID];
               }
             }
           });
@@ -583,13 +583,13 @@ const Foundation = ({
       }
       // no attach to wall
       else {
-        setElementPosition(buildingWallID, p.x, p.y);
+        setElementPosition(addedWallID, p.x, p.y);
       }
 
       isSettingWallStartPointRef.current = false;
       isSettingWallEndPointRef.current = true;
-      wallPointsRef.current.set(buildingWallID, { leftPoint: p, rightPoint: null });
-      updateWallLeftPointById(buildingWallID, [p.x, p.y, p.z]);
+      wallPointsRef.current.set(addedWallID, { leftPoint: p, rightPoint: null });
+      updateWallLeftPointById(addedWallID, [p.x, p.y, p.z]);
       setCommonStore((state) => {
         state.resizeHandleType = resizeHandleType;
         state.resizeAnchor = Util.wallAbsolutePosition(p, foundationModel);
@@ -737,21 +737,21 @@ const Foundation = ({
       }
     }
     setShowGrid(false);
-    if (isSettingWallEndPointRef.current && buildingWallID && baseRef.current) {
+    if (isSettingWallEndPointRef.current && addedWallID && baseRef.current) {
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.None;
-        state.buildingWallId = null;
+        state.addedWallId = null;
         state.enableOrbitController = true;
         for (const e of state.elements) {
-          if (e.id === buildingWallID && e.lx === 0) {
+          if (e.id === addedWallID && e.lx === 0) {
             state.elements.pop();
-            wallPointsRef.current.delete(buildingWallID);
+            wallPointsRef.current.delete(addedWallID);
             break;
           }
         }
       });
       isSettingWallEndPointRef.current = false;
-      setBuildingWallID(null);
+      setAddedWallID(null);
     }
   };
 
@@ -760,7 +760,7 @@ const Foundation = ({
     const resizeHandleType = resizeHandleTypeRef.current;
     const resizeAnchor = resizeAnchorRef.current;
 
-    if (!grabRef.current && !buildingWallID && objectTypeToAdd !== ObjectType.Wall) {
+    if (!grabRef.current && !addedWallID && objectTypeToAdd !== ObjectType.Wall) {
       return;
     }
     if (grabRef.current?.parentId !== id && objectTypeToAdd === ObjectType.None) return;
@@ -1151,21 +1151,21 @@ const Foundation = ({
       if (objectTypeToAdd === ObjectType.Wall && !isSettingWallStartPointRef.current) {
         const addedWall = addElement(foundationModel, p) as WallModel;
         grabRef.current = addedWall;
-        setBuildingWallID(addedWall.id);
+        setAddedWallID(addedWall.id);
         isSettingWallStartPointRef.current = true;
         setShowGrid(true);
         setCommonStore((state) => {
-          state.buildingWallId = addedWall.id;
+          state.addedWallId = addedWall.id;
           state.enableOrbitController = false;
           state.objectTypeToAdd = ObjectType.None;
         });
       }
-      if (buildingWallID && isSettingWallStartPointRef.current) {
+      if (addedWallID && isSettingWallStartPointRef.current) {
         p = Util.wallRelativePosition(intersects[0].point, foundationModel);
         const { targetPoint } = findMagnetPoint(wallPointsRef.current, p, 1.5);
         p = updatePointer(p, targetPoint);
         if (isSettingWallStartPointRef.current) {
-          setElementPosition(buildingWallID, p.x, p.y);
+          setElementPosition(addedWallID, p.x, p.y);
         }
       }
     }
@@ -1202,7 +1202,7 @@ const Foundation = ({
       isSettingWallStartPointRef.current = false;
       setShowGrid(false);
       setCommonStore((state) => {
-        state.buildingWallId = null;
+        state.addedWallId = null;
         state.objectTypeToAdd = ObjectType.Wall;
       });
     }
@@ -1477,7 +1477,7 @@ const Foundation = ({
           {rotateHandleTypeRef.current && grabRef.current?.type === ObjectType.SolarPanel && (
             <PolarGrid element={grabRef.current} height={(grabRef.current as SolarPanelModel).poleHeight + hz} />
           )}
-          {(moveHandleTypeRef.current || resizeHandleTypeRef.current || buildingWallID) && (
+          {(moveHandleTypeRef.current || resizeHandleTypeRef.current || addedWallID) && (
             <ElementGrid hx={hx} hy={hy} hz={hz} objectType={ObjectType.Foundation} />
           )}
         </>
@@ -1615,7 +1615,7 @@ const Foundation = ({
             />
           </Box>
 
-          {!buildingFoundationID && (
+          {!addedFoundationID && (
             <>
               {/* move handles */}
               <Sphere
@@ -1748,7 +1748,7 @@ const Foundation = ({
       )}
 
       {/* text */}
-      {!buildingFoundationID && (
+      {!addedFoundationID && (
         <>
           {hovered && !selected && (
             <textSprite

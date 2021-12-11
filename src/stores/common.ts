@@ -305,19 +305,19 @@ export interface CommonStoreState {
   selectedElementAngle: number;
   selectedElementHeight: number;
 
-  isBuildingElement: () => boolean;
-  buildingFoundationId: string | null;
+  isAddingElement: () => boolean;
+  addedFoundationId: string | null;
   deletedFoundationId: string | null;
 
-  buildingCuboidId: string | null;
+  addedCuboidId: string | null;
   deletedCuboidId: string | null;
 
-  buildingWallId: string | null;
+  addedWallId: string | null;
   deletedWallId: string | null;
   updateWallPointOnFoundation: boolean;
   getAllWallsIdOnFoundation: (parentId: string) => string[];
 
-  buildingWindowId: string | null;
+  addedWindowId: string | null;
   deletedWindowAndParentId: string[] | null;
 
   orthographicChanged: boolean;
@@ -2363,25 +2363,20 @@ export const useStore = create<CommonStoreState>(
           selectedElementAngle: 0,
           selectedElementHeight: 0,
 
-          isBuildingElement() {
-            if (
-              get().buildingCuboidId ||
-              get().buildingFoundationId ||
-              get().buildingWallId ||
-              get().buildingWindowId
-            ) {
+          isAddingElement() {
+            if (get().addedCuboidId || get().addedFoundationId || get().addedWallId || get().addedWindowId) {
               return true;
             }
             return false;
           },
 
-          buildingFoundationId: null,
+          addedFoundationId: null,
           deletedFoundationId: null,
 
-          buildingCuboidId: null,
+          addedCuboidId: null,
           deletedCuboidId: null,
 
-          buildingWallId: null,
+          addedWallId: null,
           deletedWallId: null,
           updateWallPointOnFoundation: false,
           getAllWallsIdOnFoundation(parentID: string) {
@@ -2395,7 +2390,7 @@ export const useStore = create<CommonStoreState>(
             return wallsID;
           },
 
-          buildingWindowId: null,
+          addedWindowId: null,
           deletedWindowAndParentId: null,
 
           orthographicChanged: false,

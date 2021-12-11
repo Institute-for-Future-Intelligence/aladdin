@@ -17,8 +17,8 @@ export const Auxiliary = () => {
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const groundImage = useStore(Selector.viewState.groundImage);
   const sceneRadius = useStore(Selector.sceneRadius);
-  const buildingCuboidId = useStore(Selector.buildingCuboidId);
-  const buildingFoundationId = useStore(Selector.buildingFoundationId);
+  const addedCuboidId = useStore(Selector.addedCuboidId);
+  const addedFoundationId = useStore(Selector.addedFoundationId);
 
   const [showGrid, setShowGrid] = useState(false);
   const [showVerticalRuler, setshowVerticalRuler] = useState(false);
@@ -63,9 +63,7 @@ export const Auxiliary = () => {
 
   return (
     <>
-      {(((showGrid || moveHandleType) && !groundImage && legalOnGround()) ||
-        buildingCuboidId ||
-        buildingFoundationId) && (
+      {(((showGrid || moveHandleType) && !groundImage && legalOnGround()) || addedCuboidId || addedFoundationId) && (
         <gridHelper rotation={[HALF_PI, 0, 0]} name={'Grid'} args={[gridSize, gridDivisions, 'gray', '#444444']} />
       )}
       {rotateHandleType && element && !groundImage && legalOnGround() && <PolarGrid element={element} />}
