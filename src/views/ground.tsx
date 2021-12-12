@@ -14,6 +14,7 @@ import {
   HALF_PI,
   MOVE_HANDLE_OFFSET,
   MOVE_HANDLE_RADIUS,
+  ORIGIN_VECTOR2,
   TWO_PI,
   UNIT_VECTOR_POS_Z,
   UNIT_VECTOR_POS_Z_ARRAY,
@@ -539,7 +540,6 @@ const Ground = () => {
                 const cuboidCenter = new Vector2(selectedElement.cx, selectedElement.cy);
                 const cuboidChildren = getChildren(selectedElement.id);
                 if (cuboidChildren.length > 0) {
-                  const v0 = new Vector2(0, 0);
                   const a = selectedElement.rotation[2];
                   for (const e of cuboidChildren) {
                     switch (e.type) {
@@ -549,7 +549,7 @@ const Ground = () => {
                           const centerAbsPos = new Vector2(
                             e.cx * selectedElement.lx,
                             e.cy * selectedElement.ly,
-                          ).rotateAround(v0, a);
+                          ).rotateAround(ORIGIN_VECTOR2, a);
                           centerAbsPos.add(cuboidCenter);
                           absPosMapRef.current.set(e.id, centerAbsPos);
                         }
@@ -565,18 +565,20 @@ const Ground = () => {
                 const foundationCenter = new Vector2(selectedElement.cx, selectedElement.cy);
                 const foundationChildren = getChildren(selectedElement.id);
                 if (foundationChildren.length > 0) {
-                  const v0 = new Vector2(0, 0);
                   const a = selectedElement.rotation[2];
                   for (const e of foundationChildren) {
                     switch (e.type) {
                       case ObjectType.Wall:
                         const wall = e as WallModel;
-                        const centerPointAbsPos = new Vector2(wall.cx, wall.cy).rotateAround(v0, a);
+                        const centerPointAbsPos = new Vector2(wall.cx, wall.cy).rotateAround(ORIGIN_VECTOR2, a);
                         centerPointAbsPos.add(foundationCenter);
-                        const leftPointAbsPos = new Vector2(wall.leftPoint[0], wall.leftPoint[1]).rotateAround(v0, a);
+                        const leftPointAbsPos = new Vector2(wall.leftPoint[0], wall.leftPoint[1]).rotateAround(
+                          ORIGIN_VECTOR2,
+                          a,
+                        );
                         leftPointAbsPos.add(foundationCenter);
                         const rightPointAbsPos = new Vector2(wall.rightPoint[0], wall.rightPoint[1]).rotateAround(
-                          v0,
+                          ORIGIN_VECTOR2,
                           a,
                         );
                         rightPointAbsPos.add(foundationCenter);
@@ -591,7 +593,7 @@ const Ground = () => {
                         const centerAbsPos = new Vector2(
                           e.cx * selectedElement.lx,
                           e.cy * selectedElement.ly,
-                        ).rotateAround(v0, a);
+                        ).rotateAround(ORIGIN_VECTOR2, a);
                         centerAbsPos.add(foundationCenter);
                         absPosMapRef.current.set(e.id, centerAbsPos);
                         break;
@@ -855,17 +857,16 @@ const Ground = () => {
                       const wallAbsPos = wallsAbsPosMapRef.current.get(c.id);
                       if (wallAbsPos) {
                         const a = -e.rotation[2];
-                        const v0 = new Vector2(0, 0);
                         const { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos } = wallAbsPos;
                         const centerPointRelativePos = new Vector2()
                           .subVectors(centerPointAbsPos, center)
-                          .rotateAround(v0, a);
+                          .rotateAround(ORIGIN_VECTOR2, a);
                         const leftPointRelativePos = new Vector2()
                           .subVectors(leftPointAbsPos, center)
-                          .rotateAround(v0, a);
+                          .rotateAround(ORIGIN_VECTOR2, a);
                         const rightPointRelativePos = new Vector2()
                           .subVectors(rightPointAbsPos, center)
-                          .rotateAround(v0, a);
+                          .rotateAround(ORIGIN_VECTOR2, a);
                         childClone.cx = centerPointRelativePos.x;
                         childClone.cy = centerPointRelativePos.y;
                         childClone.leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, e.lz];
@@ -875,8 +876,9 @@ const Ground = () => {
                       const centerAbsPos = absPosMapRef.current.get(c.id);
                       if (centerAbsPos) {
                         const a = -e.rotation[2];
-                        const v0 = new Vector2(0, 0);
-                        const relativePos = new Vector2().subVectors(centerAbsPos, center).rotateAround(v0, a);
+                        const relativePos = new Vector2()
+                          .subVectors(centerAbsPos, center)
+                          .rotateAround(ORIGIN_VECTOR2, a);
                         childClone.cx = relativePos.x / lx;
                         childClone.cy = relativePos.y / ly;
                       }
@@ -920,13 +922,16 @@ const Ground = () => {
                 const wallAbsPos = wallsAbsPosMapRef.current.get(e.id);
                 if (wallAbsPos) {
                   const a = -grabRef.current!.rotation[2];
-                  const v0 = new Vector2(0, 0);
                   const { centerPointAbsPos, leftPointAbsPos, rightPointAbsPos } = wallAbsPos;
                   const centerPointRelativePos = new Vector2()
                     .subVectors(centerPointAbsPos, center)
-                    .rotateAround(v0, a);
-                  const leftPointRelativePos = new Vector2().subVectors(leftPointAbsPos, center).rotateAround(v0, a);
-                  const rightPointRelativePos = new Vector2().subVectors(rightPointAbsPos, center).rotateAround(v0, a);
+                    .rotateAround(ORIGIN_VECTOR2, a);
+                  const leftPointRelativePos = new Vector2()
+                    .subVectors(leftPointAbsPos, center)
+                    .rotateAround(ORIGIN_VECTOR2, a);
+                  const rightPointRelativePos = new Vector2()
+                    .subVectors(rightPointAbsPos, center)
+                    .rotateAround(ORIGIN_VECTOR2, a);
                   e.cx = centerPointRelativePos.x;
                   e.cy = centerPointRelativePos.y;
                   wall.leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, grabRef.current!.lz];
@@ -938,9 +943,9 @@ const Ground = () => {
                 if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
                   const centerAbsPos = absPosMapRef.current.get(e.id);
                   if (centerAbsPos) {
-                    const a = -grabRef.current!.rotation[2];
-                    const v0 = new Vector2(0, 0);
-                    const relativePos = new Vector2().subVectors(centerAbsPos, center).rotateAround(v0, a);
+                    const relativePos = new Vector2()
+                      .subVectors(centerAbsPos, center)
+                      .rotateAround(ORIGIN_VECTOR2, -grabRef.current!.rotation[2]);
                     e.cx = relativePos.x / lx;
                     e.cy = relativePos.y / ly;
                   }

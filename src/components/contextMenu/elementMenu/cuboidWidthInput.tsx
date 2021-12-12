@@ -10,7 +10,7 @@ import * as Selector from '../../../stores/selector';
 import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { CuboidModel } from '../../../models/CuboidModel';
-import { ZERO_TOLERANCE } from '../../../constants';
+import { ORIGIN_VECTOR2, ZERO_TOLERANCE } from '../../../constants';
 import { Vector2 } from 'three';
 import { Util } from '../../../Util';
 import { UndoableSizeGroupChange } from '../../../undo/UndoableSizeGroupChange';
@@ -97,7 +97,6 @@ const CuboidWidthInput = ({
   const updateLxWithChildren = (parent: CuboidModel, value: number) => {
     // store children's relative positions
     const children = getChildren(parent.id);
-    const origin = new Vector2(0, 0);
     const azimuth = parent.rotation[2];
     unnormalizedPosMapRef.current.clear(); // this map is for one-time use with each cuboid
     if (children.length > 0) {
@@ -105,7 +104,7 @@ const CuboidWidthInput = ({
         switch (c.type) {
           case ObjectType.SolarPanel:
           case ObjectType.Sensor:
-            const p = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(origin, azimuth);
+            const p = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(ORIGIN_VECTOR2, azimuth);
             unnormalizedPosMapRef.current.set(c.id, p);
             oldChildrenPositionsMapRef.current.set(c.id, new Vector2(c.cx, c.cy));
             break;
@@ -119,7 +118,7 @@ const CuboidWidthInput = ({
       for (const c of children) {
         const p = unnormalizedPosMapRef.current.get(c.id);
         if (p) {
-          const relativePos = new Vector2(p.x, p.y).rotateAround(origin, -azimuth);
+          const relativePos = new Vector2(p.x, p.y).rotateAround(ORIGIN_VECTOR2, -azimuth);
           const newCx = relativePos.x / value;
           updateElementCxById(c.id, newCx);
           newChildrenPositionsMapRef.current.set(c.id, new Vector2(newCx, c.cy));

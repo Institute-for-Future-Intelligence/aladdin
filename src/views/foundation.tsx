@@ -35,6 +35,7 @@ import {
   MOVE_HANDLE_COLOR_2,
   MOVE_HANDLE_OFFSET,
   MOVE_HANDLE_RADIUS,
+  ORIGIN_VECTOR2,
   RESIZE_HANDLE_COLOR,
   RESIZE_HANDLE_SIZE,
   TWO_PI,
@@ -1264,7 +1265,7 @@ const Foundation = ({
           const pr = foundationModel.rotation[2]; // parent rotation
           const pc = new Vector2(foundationModel.cx, foundationModel.cy); // world parent center
           const cc = new Vector2(foundationModel.lx * solarPanel.cx, foundationModel.ly * solarPanel.cy) //local current center
-            .rotateAround(new Vector2(0, 0), pr); // add parent rotation
+            .rotateAround(ORIGIN_VECTOR2, pr); // add parent rotation
           const wc = new Vector2().addVectors(cc, pc); // world current center
           const rotation =
             Math.atan2(-p.x + wc.x, p.y - wc.y) - pr + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
@@ -1301,7 +1302,7 @@ const Foundation = ({
                 const wcy = resizeAnchor.y - (dyl * Math.cos(angle)) / 2;
                 const wc = new Vector2(wcx, wcy); // world panel center
                 const wbc = new Vector2(cx, cy); // world foundation center
-                const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
+                const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
                 const newCx = rc.x / lx;
                 const newCy = rc.y / ly;
                 if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, solarPanel.lx, dyl)) {
@@ -1330,7 +1331,7 @@ const Foundation = ({
                 const wcy = resizeAnchor.y + (dyl * Math.cos(angle)) / 2;
                 const wc = new Vector2(wcx, wcy);
                 const wbc = new Vector2(cx, cy);
-                const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
+                const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
                 const newCx = rc.x / lx;
                 const newCy = rc.y / ly;
                 if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, solarPanel.lx, dyl)) {
@@ -1359,7 +1360,7 @@ const Foundation = ({
                 const wcy = resizeAnchor.y - (dxl * Math.sin(angle)) / 2;
                 const wc = new Vector2(wcx, wcy);
                 const wbc = new Vector2(cx, cy);
-                const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
+                const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
                 const newCx = rc.x / lx;
                 const newCy = rc.y / ly;
                 if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, dxl, solarPanel.ly)) {
@@ -1388,7 +1389,7 @@ const Foundation = ({
                 const wcy = resizeAnchor.y + (dxl * Math.sin(angle)) / 2;
                 const wc = new Vector2(wcx, wcy);
                 const wbc = new Vector2(cx, cy);
-                const rc = new Vector2().subVectors(wc, wbc).rotateAround(new Vector2(0, 0), -rotation[2]);
+                const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
                 const newCx = rc.x / lx;
                 const newCy = rc.y / ly;
                 if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, dxl, solarPanel.ly)) {

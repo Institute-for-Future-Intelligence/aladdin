@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import { Vector3 } from 'three';
+import { Vector2, Vector3 } from 'three';
 
 export const VERSION = '0.0.2';
 
@@ -53,3 +53,5 @@ export const UNIT_VECTOR_NEG_Y = new Vector3(0, -1, 0);
 export const UNIT_VECTOR_POS_Z = new Vector3(0, 0, 1);
 
 export const UNIT_VECTOR_NEG_Z = new Vector3(0, 0, -1);
+
+export const ORIGIN_VECTOR2 = new Vector2(0, 0);

@@ -38,6 +38,7 @@ import {
   MOVE_HANDLE_COLOR_3,
   MOVE_HANDLE_OFFSET,
   MOVE_HANDLE_RADIUS,
+  ORIGIN_VECTOR2,
   RESIZE_HANDLE_COLOR,
   RESIZE_HANDLE_SIZE,
   TWO_PI,
@@ -542,7 +543,7 @@ const Cuboid = ({
           const pr = cuboidModel.rotation[2]; //parent rotation
           const pc = new Vector2(cuboidModel.cx, cuboidModel.cy); //world parent center
           const cc = new Vector2(cuboidModel.lx * solarPanel.cx, cuboidModel.ly * solarPanel.cy) //local current center
-            .rotateAround(new Vector2(0, 0), pr); //add parent rotation
+            .rotateAround(ORIGIN_VECTOR2, pr); //add parent rotation
           const wc = new Vector2().addVectors(cc, pc); //world current center
           const rotation =
             -pr + Math.atan2(-p.x + wc.x, p.y - wc.y) + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);

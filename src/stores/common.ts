@@ -50,6 +50,7 @@ import { TreeModel } from '../models/TreeModel';
 import { HumanModel } from '../models/HumanModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
+import { ORIGIN_VECTOR2 } from '../constants';
 
 enableMapSet();
 
@@ -534,7 +535,7 @@ export const useStore = create<CommonStoreState>(
                     v.set(lx / 2, ly / 2);
                     break;
                 }
-                v.rotateAround(new Vector2(0, 0), rotation[2]);
+                v.rotateAround(ORIGIN_VECTOR2, rotation[2]);
                 p.set(cx + v.x, cy + v.y, cz);
                 break;
               case ObjectType.Wall:

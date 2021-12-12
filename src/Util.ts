@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import { UNIT_VECTOR_POS_Z, UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from './constants';
+import { ORIGIN_VECTOR2, UNIT_VECTOR_POS_Z, UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from './constants';
 import { Euler, Vector2, Vector3 } from 'three';
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
@@ -31,7 +31,6 @@ export class Util {
   // note: this assumes that the center of the parent does NOT change
   static doesNewSizeContainAllChildren(parent: ElementModel, children: ElementModel[], lx: number, ly: number) {
     const childAbsPosMap = new Map<string, Vector2>();
-    const v0 = new Vector2(0, 0);
     for (const c of children) {
       switch (c.type) {
         case ObjectType.Wall:
@@ -39,7 +38,10 @@ export class Util {
           break;
         case ObjectType.SolarPanel:
         case ObjectType.Sensor:
-          const absPos = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(v0, parent.rotation[2]);
+          const absPos = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(
+            ORIGIN_VECTOR2,
+            parent.rotation[2],
+          );
           childAbsPosMap.set(c.id, absPos);
           break;
       }
@@ -50,7 +52,7 @@ export class Util {
       childrenClone.push(childClone);
       const childAbsPos = childAbsPosMap.get(c.id);
       if (childAbsPos) {
-        const relativePos = new Vector2(childAbsPos.x, childAbsPos.y).rotateAround(v0, -c.rotation[2]);
+        const relativePos = new Vector2(childAbsPos.x, childAbsPos.y).rotateAround(ORIGIN_VECTOR2, -c.rotation[2]);
         childClone.cx = relativePos.x / lx;
         childClone.cy = relativePos.y / ly;
       }
