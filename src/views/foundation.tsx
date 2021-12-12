@@ -760,17 +760,19 @@ const Foundation = ({
   };
 
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
+    if (!foundationModel) return;
     if (grabRef.current?.type === ObjectType.SolarPanel) return;
     const objectTypeToAdd = objectTypeToAddRef.current;
     if (!grabRef.current && !addedWallID && objectTypeToAdd !== ObjectType.Wall) return;
     if (grabRef.current?.parentId !== id && objectTypeToAdd === ObjectType.None) return;
     const resizeHandleType = resizeHandleTypeRef.current;
     const resizeAnchor = resizeAnchorRef.current;
-    const mouse = new Vector2();
-    mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
-    mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
+    const mouse = new Vector2(
+      (e.offsetX / domElement.clientWidth) * 2 - 1,
+      1 - (e.offsetY / domElement.clientHeight) * 2,
+    );
     ray.setFromCamera(mouse, camera);
-    if (baseRef.current && foundationModel) {
+    if (baseRef.current) {
       const intersects = ray.intersectObjects([baseRef.current]);
       let p = intersects[0].point;
       if (grabRef.current && grabRef.current.type && !grabRef.current.locked && intersects.length > 0) {
@@ -1244,7 +1246,7 @@ const Foundation = ({
       const solarPanel = grabRef.current as SolarPanelModel;
       const mouse = new Vector2(
         (e.offsetX / domElement.clientWidth) * 2 - 1,
-        -(e.offsetY / domElement.clientHeight) * 2 + 1,
+        1 - (e.offsetY / domElement.clientHeight) * 2,
       );
       ray.setFromCamera(mouse, camera);
       const intersects = ray.intersectObjects([intersectPlaneRef.current]);
