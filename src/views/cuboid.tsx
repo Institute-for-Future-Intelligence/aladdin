@@ -46,6 +46,7 @@ import {
   UNIT_VECTOR_POS_X,
   UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
+  UNIT_VECTOR_POS_Z_ARRAY,
   ZERO_TOLERANCE,
 } from '../constants';
 import { Util } from '../Util';
@@ -98,8 +99,6 @@ const Cuboid = ({
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const selectMe = useStore(Selector.selectMe);
   const updateSolarPanelRelativeAzimuthById = useStore(Selector.updateSolarPanelRelativeAzimuthById);
-  const updateElementLxById = useStore(Selector.updateElementLxById);
-  const updateElementLyById = useStore(Selector.updateElementLyById);
   const resizeAnchor = useStore(Selector.resizeAnchor);
   const getPvModule = useStore(Selector.getPvModule);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -441,6 +440,33 @@ const Cuboid = ({
     }
   };
 
+  const isSolarPanelNewPositionOk = (sp: SolarPanelModel, cx: number, cy: number) => {
+    const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
+    clone.cx = cx;
+    clone.cy = cy;
+    return Util.isSolarPanelWithinHorizontalSurface(clone, cuboidModel);
+  };
+
+  const isSolarPanelNewAzimuthOk = (sp: SolarPanelModel, az: number) => {
+    const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
+    clone.relativeAzimuth = az;
+    return Util.isSolarPanelWithinHorizontalSurface(clone, cuboidModel);
+  };
+
+  const isSolarPanelNewSizeOk = (sp: SolarPanelModel, cx: number, cy: number, lx: number, ly: number) => {
+    // check if the new length will cause the solar panel to intersect with the foundation
+    if (sp.tiltAngle !== 0 && 0.5 * ly * Math.abs(Math.sin(sp.tiltAngle)) > sp.poleHeight) {
+      return false;
+    }
+    // check if the new size will be within the foundation
+    const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
+    clone.cx = cx;
+    clone.cy = cy;
+    clone.lx = lx;
+    clone.ly = ly;
+    return Util.isSolarPanelWithinHorizontalSurface(clone, cuboidModel);
+  };
+
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current && !grabRef.current.locked) {
       if (grabRef.current.parentId === id && grabRef.current.type) {
@@ -464,27 +490,44 @@ const Cuboid = ({
                 setElementNormal(grabRef.current.id, n.x, n.y, n.z);
               }
               p = Util.relativeCoordinates(p.x, p.y, p.z, cuboidModel);
-              setElementPosition(grabRef.current.id, p.x, p.y, p.z);
+              if (grabRef.current.type === ObjectType.SolarPanel) {
+                const solarPanel = grabRef.current as SolarPanelModel;
+                if (Util.isIdentical(solarPanel.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+                  if (isSolarPanelNewPositionOk(solarPanel, p.x, p.y)) {
+                    setElementPosition(grabRef.current.id, p.x, p.y, p.z);
+                  }
+                } else {
+                  // TODO: Vertical sides
+                  setElementPosition(grabRef.current.id, p.x, p.y, p.z);
+                }
+              } else {
+                setElementPosition(grabRef.current.id, p.x, p.y, p.z);
+              }
             } else if (rotateHandleType) {
               const parent = getElementById(grabRef.current.parentId);
               if (parent) {
-                const pr = parent.rotation[2]; //parent rotation
-                const pc = new Vector2(parent.cx, parent.cy); //world parent center
-                const cc = new Vector2(parent.lx * grabRef.current.cx, parent.ly * grabRef.current.cy) //local current center
-                  .rotateAround(new Vector2(0, 0), pr); //add parent rotation
-                const wc = new Vector2().addVectors(cc, pc); //world current center
-                const rotation =
-                  -pr +
-                  Math.atan2(-p.x + wc.x, p.y - wc.y) +
-                  (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
-                const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * TWO_PI : 0; // make sure angle is between -PI to PI
+                // no need to check if this solar panel is on the top surface
+                // because the UI for rotation is disabled for solar panels on side surfaces
                 if (grabRef.current?.type === ObjectType.SolarPanel) {
-                  updateSolarPanelRelativeAzimuthById(grabRef.current.id, rotation + offset);
-                  newAzimuthRef.current = rotation + offset;
+                  const pr = parent.rotation[2]; //parent rotation
+                  const pc = new Vector2(parent.cx, parent.cy); //world parent center
+                  const cc = new Vector2(parent.lx * grabRef.current.cx, parent.ly * grabRef.current.cy) //local current center
+                    .rotateAround(new Vector2(0, 0), pr); //add parent rotation
+                  const wc = new Vector2().addVectors(cc, pc); //world current center
+                  const rotation =
+                    -pr +
+                    Math.atan2(-p.x + wc.x, p.y - wc.y) +
+                    (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
+                  const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * TWO_PI : 0; // make sure angle is between -PI to PI
+                  const newAzimuth = rotation + offset;
+                  if (isSolarPanelNewAzimuthOk(grabRef.current as SolarPanelModel, newAzimuth)) {
+                    updateSolarPanelRelativeAzimuthById(grabRef.current.id, newAzimuth);
+                    newAzimuthRef.current = newAzimuth;
+                    setCommonStore((state) => {
+                      state.selectedElementAngle = newAzimuth;
+                    });
+                  }
                 }
-                setCommonStore((state) => {
-                  state.selectedElementAngle = rotation + offset;
-                });
               }
             } else if (resizeHandleType && cuboidModel) {
               const solarPanel = grabRef.current as SolarPanelModel;
@@ -494,36 +537,46 @@ const Cuboid = ({
                 Util.absoluteCoordinates(solarPanel.cx, solarPanel.cy, solarPanel.cz, cuboidModel),
                 resizeAnchor,
               );
-              if (normal && normal.z === 1) {
+              if (normal && Math.abs(normal.z - 1) < ZERO_TOLERANCE) {
                 vh.setZ(0);
               }
               const vhd = vd.projectOnVector(vh);
-              let d = vhd.length();
+              const d = vhd.length();
               const pvModel = getPvModule(solarPanel.pvModelName);
+              let newLx = solarPanel.lx;
+              let newLy = solarPanel.ly;
               if (solarPanel.orientation === Orientation.portrait) {
                 if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
                   const nx = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
-                  d = nx * pvModel.width;
-                  updateElementLxById(solarPanel.id, d);
+                  newLx = nx * pvModel.width;
+                  //updateElementLxById(solarPanel.id, d);
                 } else {
                   const ny = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
-                  d = ny * pvModel.length;
-                  updateElementLyById(solarPanel.id, d);
+                  newLy = ny * pvModel.length;
+                  //updateElementLyById(solarPanel.id, d);
                 }
               } else {
                 if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
                   const nx = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
-                  d = nx * pvModel.length;
-                  updateElementLxById(solarPanel.id, d);
+                  newLx = nx * pvModel.length;
+                  //updateElementLxById(solarPanel.id, d);
                 } else {
                   const ny = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
-                  d = ny * pvModel.width;
-                  updateElementLyById(solarPanel.id, d);
+                  newLy = ny * pvModel.width;
+                  //updateElementLyById(solarPanel.id, d);
                 }
               }
               const wc = new Vector3().addVectors(resizeAnchor, vhd.normalize().multiplyScalar(d / 2));
               const rc = Util.relativeCoordinates(wc.x, wc.y, wc.z, cuboidModel);
-              setElementPosition(solarPanel.id, rc.x, rc.y, rc.z);
+              if (Util.isIdentical(solarPanel.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+                if (isSolarPanelNewSizeOk(solarPanel, rc.x, rc.y, newLx, newLy)) {
+                  setElementSize(solarPanel.id, newLx, newLy);
+                  setElementPosition(solarPanel.id, rc.x, rc.y);
+                }
+              } else {
+                // TODO: Side surfaces
+                setElementPosition(solarPanel.id, rc.x, rc.y, rc.z);
+              }
             }
           }
         }
