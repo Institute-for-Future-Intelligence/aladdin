@@ -40,10 +40,15 @@ const Window = ({ id, parentId, lx, lz, cx, cz, selected, locked, color }: Windo
 
   // subscribe common store
   useEffect(() => {
-    useStore.subscribe((state) => (addedWallIdRef.current = state.addedWallId));
-    useStore.subscribe((state) => (objectTypeToAddRef.current = state.objectTypeToAdd));
-    useStore.subscribe((state) => (moveHandleTypeRef.current = state.moveHandleType));
-    useStore.subscribe((state) => (resizeHandleTypeRef.current = state.resizeHandleType));
+    const unsubscribe = useStore.subscribe((state) => {
+      addedWallIdRef.current = state.addedWallId;
+      objectTypeToAddRef.current = state.objectTypeToAdd;
+      moveHandleTypeRef.current = state.moveHandleType;
+      resizeHandleTypeRef.current = state.resizeHandleType;
+    });
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {

@@ -169,12 +169,17 @@ const Foundation = ({
   }
 
   useEffect(() => {
-    useStore.subscribe((state) => (objectTypeToAddRef.current = state.objectTypeToAdd));
-    useStore.subscribe((state) => (moveHandleTypeRef.current = state.moveHandleType));
-    useStore.subscribe((state) => (resizeHandleTypeRef.current = state.resizeHandleType));
-    useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
-    useStore.subscribe((state) => (rotateHandleTypeRef.current = state.rotateHandleType));
-    useStore.subscribe((state) => (enableFineGridRef.current = state.enableFineGrid));
+    const unsubscribe = useStore.subscribe((state) => {
+      objectTypeToAddRef.current = state.objectTypeToAdd;
+      moveHandleTypeRef.current = state.moveHandleType;
+      resizeHandleTypeRef.current = state.resizeHandleType;
+      resizeAnchorRef.current = state.resizeAnchor;
+      rotateHandleTypeRef.current = state.rotateHandleType;
+      enableFineGridRef.current = state.enableFineGrid;
+    });
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {

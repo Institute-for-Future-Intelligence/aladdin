@@ -270,12 +270,16 @@ const Wall = ({
 
   // subscribe common store
   useEffect(() => {
-    useStore.subscribe((state) => (objectTypeToAddRef.current = state.objectTypeToAdd));
-    useStore.subscribe((state) => (moveHandleTypeRef.current = state.moveHandleType));
-    useStore.subscribe((state) => (resizeHandleTypeRef.current = state.resizeHandleType));
-    useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
-    useStore.subscribe((state) => (addedWallIdRef.current = state.addedWallId));
-    useStore.subscribe((state) => (enableFineGridRef.current = state.enableFineGrid));
+    const unsubscribe = useStore.subscribe((state) => {
+      objectTypeToAddRef.current = state.objectTypeToAdd;
+      moveHandleTypeRef.current = state.moveHandleType;
+      resizeHandleTypeRef.current = state.resizeHandleType;
+      addedWallIdRef.current = state.addedWallId;
+      enableFineGridRef.current = state.enableFineGrid;
+    });
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
