@@ -155,9 +155,11 @@ const Foundation = ({
 
   const lowerRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
     return [0, -hy - rotateHandleSize, 0];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hy]);
   const upperRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
     return [0, hy + rotateHandleSize, 0];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hy]);
 
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
@@ -175,15 +177,16 @@ const Foundation = ({
   }, []);
 
   useEffect(() => {
-    const wallsID = getAllWallsIdOnFoundation(id);
-    for (const id of wallsID) {
-      const wall = getElementById(id) as WallModel;
+    const wallsId = getAllWallsIdOnFoundation(id);
+    for (const wid of wallsId) {
+      const wall = getElementById(wid) as WallModel;
       if (wall) {
         const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1]);
         const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1]);
-        wallPointsRef.current.set(id, { leftPoint, rightPoint });
+        wallPointsRef.current.set(wid, { leftPoint, rightPoint });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateWallPointOnFoundation]);
 
   useEffect(() => {
@@ -198,6 +201,7 @@ const Foundation = ({
         state.enableOrbitController = true;
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deletedWallID]);
 
   const fetchRepeatDividers = (textureType: FoundationTexture) => {
@@ -264,7 +268,7 @@ const Foundation = ({
         if (intersected) {
           setHoveredHandle(handle);
           if (
-            // unfortunately, I cannot find a way to tell the type of an enum variable
+            // unfortunately, I cannot find a way to tell the type of enum variable
             handle === MoveHandleType.Upper ||
             handle === MoveHandleType.Lower ||
             handle === MoveHandleType.Left ||
@@ -292,6 +296,7 @@ const Foundation = ({
           }
         }
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
     [],
   );
@@ -303,6 +308,7 @@ const Foundation = ({
     setHoveredResizeHandleLR(false);
     setHoveredResizeHandleUR(false);
     domElement.style.cursor = useStore.getState().addedFoundationId ? 'crosshair' : 'default';
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // only these elements are allowed to be on the foundation
@@ -408,7 +414,7 @@ const Foundation = ({
         }
       }
 
-      // check if need flip
+      // check if it needs a flip
       if (totalAngle > (totalNumber - 2) * Math.PI + 0.1) {
         while (wall && wall.leftJoints.length > 0) {
           const wallCopy = getElementById(wall.id) as WallModel;
@@ -675,7 +681,8 @@ const Foundation = ({
               addUndoable(undoableResize);
             }
           } else if (rotateHandleTypeRef.current) {
-            if (grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
+            // currently, only solar panels can be rotated
+            if (grabRef.current.type === ObjectType.SolarPanel) {
               const solarPanel = grabRef.current as SolarPanelModel;
               if (Math.abs(newAzimuthRef.current - oldAzimuthRef.current) > ZERO_TOLERANCE) {
                 const undoableRotate = {
@@ -733,7 +740,6 @@ const Foundation = ({
         grabRef.current = null;
       }
     }
-    setShowGrid(false);
     if (isSettingWallEndPointRef.current && addedWallID && baseRef.current) {
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.None;
@@ -750,17 +756,16 @@ const Foundation = ({
       isSettingWallEndPointRef.current = false;
       setAddedWallID(null);
     }
+    setShowGrid(false);
   };
 
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
+    if (grabRef.current?.type === ObjectType.SolarPanel) return;
     const objectTypeToAdd = objectTypeToAddRef.current;
+    if (!grabRef.current && !addedWallID && objectTypeToAdd !== ObjectType.Wall) return;
+    if (grabRef.current?.parentId !== id && objectTypeToAdd === ObjectType.None) return;
     const resizeHandleType = resizeHandleTypeRef.current;
     const resizeAnchor = resizeAnchorRef.current;
-
-    if (!grabRef.current && !addedWallID && objectTypeToAdd !== ObjectType.Wall) {
-      return;
-    }
-    if (grabRef.current?.parentId !== id && objectTypeToAdd === ObjectType.None) return;
     const mouse = new Vector2();
     mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
@@ -792,15 +797,15 @@ const Foundation = ({
               p = updatePointer(p, targetPoint);
 
               // update length
-              const relativResizeAnchor = Util.wallRelativePosition(resizeAnchor, foundationModel);
-              const lx = p.distanceTo(relativResizeAnchor);
-              const relativeCenter = new Vector3().addVectors(p, relativResizeAnchor).divideScalar(2);
+              const relativeResizeAnchor = Util.wallRelativePosition(resizeAnchor, foundationModel);
+              const lx = p.distanceTo(relativeResizeAnchor);
+              const relativeCenter = new Vector3().addVectors(p, relativeResizeAnchor).divideScalar(2);
               let angle =
-                Math.atan2(p.y - relativResizeAnchor.y, p.x - relativResizeAnchor.x) -
+                Math.atan2(p.y - relativeResizeAnchor.y, p.x - relativeResizeAnchor.x) -
                 (resizeHandleType === ResizeHandleType.LowerLeft ? Math.PI : 0);
               angle = angle >= 0 ? angle : (TWO_PI + angle) % TWO_PI;
-              const leftPoint = resizeHandleType === ResizeHandleType.LowerLeft ? p : relativResizeAnchor;
-              const rightPoint = resizeHandleType === ResizeHandleType.LowerLeft ? relativResizeAnchor : p;
+              const leftPoint = resizeHandleType === ResizeHandleType.LowerLeft ? p : relativeResizeAnchor;
+              const rightPoint = resizeHandleType === ResizeHandleType.LowerLeft ? relativeResizeAnchor : p;
               setCommonStore((state) => {
                 for (const e of state.elements) {
                   if (e.id === grabRef.current!.id) {
@@ -1192,7 +1197,7 @@ const Foundation = ({
     });
   };
 
-  const handlePointerOut = (e: ThreeEvent<MouseEvent>) => {
+  const handlePointerOut = () => {
     setHovered(false);
     if (isSettingWallStartPointRef.current && grabRef.current) {
       removeElementById(grabRef.current.id, false);
@@ -1232,7 +1237,7 @@ const Foundation = ({
     return Util.isSolarPanelWithinHorizontalSurface(clone, foundationModel);
   };
 
-  const handleSolarPanelMove = (e: ThreeEvent<PointerEvent>) => {
+  const handleSolarPanelPointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current) {
       const mouse = new Vector2();
       mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
@@ -1399,14 +1404,6 @@ const Foundation = ({
     }
   };
 
-  const handleSolarPanelPointerUp = () => {
-    //grabRef.current = null;
-    setShowGrid(false);
-    setCommonStore((state) => {
-      state.enableOrbitController = true;
-    });
-  };
-
   const opacity = groundImage ? 0.5 : 1;
 
   return (
@@ -1464,8 +1461,7 @@ const Foundation = ({
           position={intersectionPlanePosition}
           args={[lx, ly]}
           visible={false}
-          onPointerMove={handleSolarPanelMove}
-          onPointerUp={handleSolarPanelPointerUp}
+          onPointerMove={handleSolarPanelPointerMove}
         />
       )}
 
