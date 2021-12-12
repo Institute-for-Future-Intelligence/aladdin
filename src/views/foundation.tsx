@@ -13,7 +13,7 @@ import FoundationTexture07 from '../resources/foundation_07.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Plane, Sphere } from '@react-three/drei';
-import { Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
+import { Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { FoundationModel } from '../models/FoundationModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -161,11 +161,8 @@ const Foundation = ({
   }, [hy]);
 
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
-  const intersectionPlaneRotation = useMemo(() => new Euler(), []);
-
   if (grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
-    intersectionPlanePosition.set(0, 0, (grabRef.current as SolarPanelModel).poleHeight);
-    intersectionPlaneRotation.set(0, 0, 0);
+    intersectionPlanePosition.set(0, 0, foundationModel.lz / 2 + (grabRef.current as SolarPanelModel).poleHeight);
   }
 
   useEffect(() => {
@@ -1465,7 +1462,6 @@ const Foundation = ({
           ref={intersectPlaneRef}
           name={'Foundation Intersection Plane'}
           position={intersectionPlanePosition}
-          rotation={intersectionPlaneRotation}
           args={[lx, ly]}
           visible={false}
           onPointerMove={handleSolarPanelMove}
