@@ -1281,16 +1281,18 @@ const Foundation = ({
         } else if (resizeHandleType) {
           const resizeAnchor = resizeAnchorRef.current;
           const pvModel = getPvModule(solarPanel.pvModelName);
+          const wp = new Vector2(p.x, p.y);
+          const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
+          const distance = wp.distanceTo(resizeAnchor2D);
+          const angle = solarPanel.relativeAzimuth + rotation[2]; // world panel azimuth
+          const rp = new Vector2().subVectors(wp, resizeAnchor2D); // relative vector from anchor to pointer
           switch (resizeHandleType) {
             case ResizeHandleType.Lower:
+            case ResizeHandleType.Upper:
               {
-                const wp = new Vector2(p.x, p.y);
-                const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
-                const d = wp.distanceTo(resizeAnchor2D);
-                const angle = solarPanel.relativeAzimuth + rotation[2]; // world panel azimuth
-                const rp = new Vector2().subVectors(wp, resizeAnchor2D); // relative vector from anchor to pointer
-                const theta = -angle + rp.angle() + HALF_PI;
-                let dyl = d * Math.cos(theta);
+                const sign = resizeHandleType === ResizeHandleType.Lower ? 1 : -1;
+                const theta = rp.angle() - angle + sign * HALF_PI;
+                let dyl = distance * Math.cos(theta);
                 if (solarPanel.orientation === Orientation.portrait) {
                   const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));
                   dyl = nx * pvModel.length;
@@ -1298,8 +1300,8 @@ const Foundation = ({
                   const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
                   dyl = nx * pvModel.width;
                 }
-                const wcx = resizeAnchor.x + (dyl * Math.sin(angle)) / 2;
-                const wcy = resizeAnchor.y - (dyl * Math.cos(angle)) / 2;
+                const wcx = resizeAnchor.x + (sign * (dyl * Math.sin(angle))) / 2;
+                const wcy = resizeAnchor.y - (sign * (dyl * Math.cos(angle))) / 2;
                 const wc = new Vector2(wcx, wcy); // world panel center
                 const wbc = new Vector2(cx, cy); // world foundation center
                 const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
@@ -1311,73 +1313,12 @@ const Foundation = ({
                 }
               }
               break;
-            case ResizeHandleType.Upper:
-              {
-                const wp = new Vector2(p.x, p.y);
-                const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
-                const d = wp.distanceTo(resizeAnchor2D);
-                const angle = solarPanel.relativeAzimuth + rotation[2];
-                const rp = new Vector2().subVectors(wp, resizeAnchor2D);
-                const theta = -angle + rp.angle() - HALF_PI;
-                let dyl = d * Math.cos(theta);
-                if (solarPanel.orientation === Orientation.portrait) {
-                  const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));
-                  dyl = nx * pvModel.length;
-                } else {
-                  const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
-                  dyl = nx * pvModel.width;
-                }
-                const wcx = resizeAnchor.x - (dyl * Math.sin(angle)) / 2;
-                const wcy = resizeAnchor.y + (dyl * Math.cos(angle)) / 2;
-                const wc = new Vector2(wcx, wcy);
-                const wbc = new Vector2(cx, cy);
-                const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
-                const newCx = rc.x / lx;
-                const newCy = rc.y / ly;
-                if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, solarPanel.lx, dyl)) {
-                  updateElementLyById(solarPanel.id, dyl);
-                  setElementPosition(solarPanel.id, newCx, newCy);
-                }
-              }
-              break;
             case ResizeHandleType.Left:
-              {
-                const wp = new Vector2(p.x, p.y);
-                const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
-                const d = wp.distanceTo(resizeAnchor2D);
-                const angle = solarPanel.relativeAzimuth + rotation[2];
-                const rp = new Vector2().subVectors(wp, resizeAnchor2D);
-                const theta = rp.angle() - angle + Math.PI;
-                let dxl = d * Math.cos(theta);
-                if (solarPanel.orientation === Orientation.portrait) {
-                  const nx = Math.max(1, Math.ceil((dxl - pvModel.width / 2) / pvModel.width));
-                  dxl = nx * pvModel.width;
-                } else {
-                  const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
-                  dxl = nx * pvModel.length;
-                }
-                const wcx = resizeAnchor.x - (dxl * Math.cos(angle)) / 2;
-                const wcy = resizeAnchor.y - (dxl * Math.sin(angle)) / 2;
-                const wc = new Vector2(wcx, wcy);
-                const wbc = new Vector2(cx, cy);
-                const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
-                const newCx = rc.x / lx;
-                const newCy = rc.y / ly;
-                if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, dxl, solarPanel.ly)) {
-                  updateElementLxById(solarPanel.id, dxl);
-                  setElementPosition(solarPanel.id, newCx, newCy);
-                }
-              }
-              break;
             case ResizeHandleType.Right:
               {
-                const wp = new Vector2(p.x, p.y);
-                const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
-                const d = wp.distanceTo(resizeAnchor2D);
-                const angle = solarPanel.relativeAzimuth + rotation[2];
-                const rp = new Vector2().subVectors(wp, resizeAnchor2D);
-                const theta = -angle + rp.angle();
-                let dxl = d * Math.cos(theta);
+                let sign = resizeHandleType === ResizeHandleType.Left ? -1 : 1;
+                const theta = rp.angle() - angle + (resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
+                let dxl = distance * Math.cos(theta);
                 if (solarPanel.orientation === Orientation.portrait) {
                   const nx = Math.max(1, Math.ceil((dxl - pvModel.width / 2) / pvModel.width));
                   dxl = nx * pvModel.width;
@@ -1385,8 +1326,8 @@ const Foundation = ({
                   const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
                   dxl = nx * pvModel.length;
                 }
-                const wcx = resizeAnchor.x + (dxl * Math.cos(angle)) / 2;
-                const wcy = resizeAnchor.y + (dxl * Math.sin(angle)) / 2;
+                const wcx = resizeAnchor.x + (sign * (dxl * Math.cos(angle))) / 2;
+                const wcy = resizeAnchor.y + (sign * (dxl * Math.sin(angle))) / 2;
                 const wc = new Vector2(wcx, wcy);
                 const wbc = new Vector2(cx, cy);
                 const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
@@ -1500,9 +1441,7 @@ const Foundation = ({
             onPointerOver={(e) => {
               hoverHandle(e, ResizeHandleType.LowerLeft);
             }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
+            onPointerOut={noHoverHandle}
           >
             <meshStandardMaterial
               attach="material"
@@ -1531,9 +1470,7 @@ const Foundation = ({
             onPointerOver={(e) => {
               hoverHandle(e, ResizeHandleType.UpperLeft);
             }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
+            onPointerOut={noHoverHandle}
           >
             <meshStandardMaterial
               attach="material"
@@ -1562,9 +1499,7 @@ const Foundation = ({
             onPointerOver={(e) => {
               hoverHandle(e, ResizeHandleType.LowerRight);
             }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
+            onPointerOut={noHoverHandle}
           >
             <meshStandardMaterial
               attach="material"
@@ -1593,9 +1528,7 @@ const Foundation = ({
             onPointerOver={(e) => {
               hoverHandle(e, ResizeHandleType.UpperRight);
             }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
+            onPointerOut={noHoverHandle}
           >
             <meshStandardMaterial
               attach="material"
@@ -1622,9 +1555,7 @@ const Foundation = ({
                 onPointerOver={(e) => {
                   hoverHandle(e, MoveHandleType.Lower);
                 }}
-                onPointerOut={(e) => {
-                  noHoverHandle();
-                }}
+                onPointerOut={noHoverHandle}
               >
                 <meshStandardMaterial
                   attach="material"
@@ -1646,9 +1577,7 @@ const Foundation = ({
                 onPointerOver={(e) => {
                   hoverHandle(e, MoveHandleType.Upper);
                 }}
-                onPointerOut={(e) => {
-                  noHoverHandle();
-                }}
+                onPointerOut={noHoverHandle}
               >
                 <meshStandardMaterial
                   attach="material"
@@ -1670,9 +1599,7 @@ const Foundation = ({
                 onPointerOver={(e) => {
                   hoverHandle(e, MoveHandleType.Left);
                 }}
-                onPointerOut={(e) => {
-                  noHoverHandle();
-                }}
+                onPointerOut={noHoverHandle}
               >
                 <meshStandardMaterial
                   attach="material"
@@ -1694,9 +1621,7 @@ const Foundation = ({
                 onPointerOver={(e) => {
                   hoverHandle(e, MoveHandleType.Right);
                 }}
-                onPointerOut={(e) => {
-                  noHoverHandle();
-                }}
+                onPointerOut={noHoverHandle}
               >
                 <meshStandardMaterial
                   attach="material"

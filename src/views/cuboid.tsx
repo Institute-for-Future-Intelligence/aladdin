@@ -94,6 +94,8 @@ const Cuboid = ({
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addElement = useStore(Selector.addElement);
   const removeElementById = useStore(Selector.removeElementById);
+  const updateElementLxById = useStore(Selector.updateElementLxById);
+  const updateElementLyById = useStore(Selector.updateElementLyById);
   const setElementPosition = useStore(Selector.setElementPosition);
   const setElementSize = useStore(Selector.setElementSize);
   const setElementNormal = useStore(Selector.setElementNormal);
@@ -147,6 +149,7 @@ const Cuboid = ({
   const oldAzimuthRef = useRef<number>(0);
   const newAzimuthRef = useRef<number>(0);
   const intersectPlaneRef = useRef<Mesh>();
+  const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
 
   const lang = { lng: language };
   const hx = lx / 2;
@@ -168,6 +171,10 @@ const Cuboid = ({
   if (grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
     intersectionPlanePosition.set(0, 0, cuboidModel.lz / 2 + (grabRef.current as SolarPanelModel).poleHeight);
   }
+
+  useEffect(() => {
+    useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
+  }, []);
 
   useEffect(() => {
     const handlePointerUp = () => {
@@ -557,42 +564,66 @@ const Cuboid = ({
             });
           }
         } else if (resizeHandleType) {
-          const wp = new Vector3(p.x, p.y, p.z);
-          const vd = new Vector3().subVectors(wp, resizeAnchor);
-          const vh = new Vector3().subVectors(
-            Util.absoluteCoordinates(solarPanel.cx, solarPanel.cy, solarPanel.cz, cuboidModel),
-            resizeAnchor,
-          );
-          if (normal && Math.abs(normal.z - 1) < ZERO_TOLERANCE) {
-            vh.setZ(0);
-          }
-          const vhd = vd.projectOnVector(vh);
-          const d = vhd.length();
+          const resizeAnchor = resizeAnchorRef.current;
           const pvModel = getPvModule(solarPanel.pvModelName);
-          let newLx = solarPanel.lx;
-          let newLy = solarPanel.ly;
-          if (solarPanel.orientation === Orientation.portrait) {
-            if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
-              const nx = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
-              newLx = nx * pvModel.width;
-            } else {
-              const ny = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
-              newLy = ny * pvModel.length;
-            }
-          } else {
-            if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
-              const nx = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
-              newLx = nx * pvModel.length;
-            } else {
-              const ny = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
-              newLy = ny * pvModel.width;
-            }
-          }
-          const wc = new Vector3().addVectors(resizeAnchor, vhd.normalize().multiplyScalar(d / 2));
-          const rc = Util.relativeCoordinates(wc.x, wc.y, wc.z, cuboidModel);
-          if (isSolarPanelNewSizeOk(solarPanel, rc.x, rc.y, newLx, newLy)) {
-            setElementSize(solarPanel.id, newLx, newLy);
-            setElementPosition(solarPanel.id, rc.x, rc.y);
+          const wp = new Vector2(p.x, p.y);
+          const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
+          const distance = wp.distanceTo(resizeAnchor2D);
+          const angle = solarPanel.relativeAzimuth + rotation[2]; // world panel azimuth
+          const rp = new Vector2().subVectors(wp, resizeAnchor2D); // relative vector from anchor to pointer
+          switch (resizeHandleType) {
+            case ResizeHandleType.Lower:
+            case ResizeHandleType.Upper:
+              {
+                const sign = resizeHandleType === ResizeHandleType.Lower ? 1 : -1;
+                const theta = rp.angle() - angle + sign * HALF_PI;
+                let dyl = distance * Math.cos(theta);
+                if (solarPanel.orientation === Orientation.portrait) {
+                  const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));
+                  dyl = nx * pvModel.length;
+                } else {
+                  const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
+                  dyl = nx * pvModel.width;
+                }
+                const wcx = resizeAnchor.x + (sign * (dyl * Math.sin(angle))) / 2;
+                const wcy = resizeAnchor.y - (sign * (dyl * Math.cos(angle))) / 2;
+                const wc = new Vector2(wcx, wcy); // world panel center
+                const wbc = new Vector2(cx, cy); // world foundation center
+                const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
+                const newCx = rc.x / lx;
+                const newCy = rc.y / ly;
+                if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, solarPanel.lx, dyl)) {
+                  updateElementLyById(solarPanel.id, dyl);
+                  setElementPosition(solarPanel.id, newCx, newCy);
+                }
+              }
+              break;
+            case ResizeHandleType.Left:
+            case ResizeHandleType.Right:
+              {
+                let sign = resizeHandleType === ResizeHandleType.Left ? -1 : 1;
+                const theta = rp.angle() - angle + (resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
+                let dxl = distance * Math.cos(theta);
+                if (solarPanel.orientation === Orientation.portrait) {
+                  const nx = Math.max(1, Math.ceil((dxl - pvModel.width / 2) / pvModel.width));
+                  dxl = nx * pvModel.width;
+                } else {
+                  const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
+                  dxl = nx * pvModel.length;
+                }
+                const wcx = resizeAnchor.x + (sign * (dxl * Math.cos(angle))) / 2;
+                const wcy = resizeAnchor.y + (sign * (dxl * Math.sin(angle))) / 2;
+                const wc = new Vector2(wcx, wcy);
+                const wbc = new Vector2(cx, cy);
+                const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
+                const newCx = rc.x / lx;
+                const newCy = rc.y / ly;
+                if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, dxl, solarPanel.ly)) {
+                  updateElementLxById(solarPanel.id, dxl);
+                  setElementPosition(solarPanel.id, newCx, newCy);
+                }
+              }
+              break;
           }
         }
       }
@@ -893,9 +924,7 @@ const Cuboid = ({
               onPointerOver={(e) => {
                 hoverHandle(e, ResizeHandleType.LowerLeftTop);
               }}
-              onPointerOut={(e) => {
-                noHoverHandle();
-              }}
+              onPointerOut={noHoverHandle}
             >
               <meshStandardMaterial
                 attach="material"
@@ -919,9 +948,7 @@ const Cuboid = ({
               onPointerOver={(e) => {
                 hoverHandle(e, ResizeHandleType.UpperLeftTop);
               }}
-              onPointerOut={(e) => {
-                noHoverHandle();
-              }}
+              onPointerOut={noHoverHandle}
             >
               <meshStandardMaterial
                 attach="material"
@@ -945,9 +972,7 @@ const Cuboid = ({
               onPointerOver={(e) => {
                 hoverHandle(e, ResizeHandleType.LowerRightTop);
               }}
-              onPointerOut={(e) => {
-                noHoverHandle();
-              }}
+              onPointerOut={noHoverHandle}
             >
               <meshStandardMaterial
                 attach="material"
@@ -972,9 +997,7 @@ const Cuboid = ({
               onPointerOver={(e) => {
                 hoverHandle(e, ResizeHandleType.UpperRightTop);
               }}
-              onPointerOut={(e) => {
-                noHoverHandle();
-              }}
+              onPointerOut={noHoverHandle}
             >
               <meshStandardMaterial
                 attach="material"
@@ -1004,9 +1027,7 @@ const Cuboid = ({
             onPointerOver={(e) => {
               hoverHandle(e, ResizeHandleType.LowerLeft);
             }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
+            onPointerOut={noHoverHandle}
           >
             <meshStandardMaterial
               attach="material"
@@ -1034,9 +1055,7 @@ const Cuboid = ({
             onPointerOver={(e) => {
               hoverHandle(e, ResizeHandleType.UpperLeft);
             }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
+            onPointerOut={noHoverHandle}
           >
             <meshStandardMaterial
               attach="material"
@@ -1064,9 +1083,7 @@ const Cuboid = ({
             onPointerOver={(e) => {
               hoverHandle(e, ResizeHandleType.LowerRight);
             }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
+            onPointerOut={noHoverHandle}
           >
             <meshStandardMaterial
               attach="material"
@@ -1094,9 +1111,7 @@ const Cuboid = ({
             onPointerOver={(e) => {
               hoverHandle(e, ResizeHandleType.UpperRight);
             }}
-            onPointerOut={(e) => {
-              noHoverHandle();
-            }}
+            onPointerOut={noHoverHandle}
           >
             <meshStandardMaterial
               attach="material"
@@ -1122,9 +1137,7 @@ const Cuboid = ({
                 onPointerOver={(e) => {
                   hoverHandle(e, MoveHandleType.Lower);
                 }}
-                onPointerOut={(e) => {
-                  noHoverHandle();
-                }}
+                onPointerOut={noHoverHandle}
               >
                 <meshStandardMaterial
                   attach="material"
@@ -1146,9 +1159,7 @@ const Cuboid = ({
                 onPointerOver={(e) => {
                   hoverHandle(e, MoveHandleType.Upper);
                 }}
-                onPointerOut={(e) => {
-                  noHoverHandle();
-                }}
+                onPointerOut={noHoverHandle}
               >
                 <meshStandardMaterial
                   attach="material"
@@ -1170,9 +1181,7 @@ const Cuboid = ({
                 onPointerOver={(e) => {
                   hoverHandle(e, MoveHandleType.Left);
                 }}
-                onPointerOut={(e) => {
-                  noHoverHandle();
-                }}
+                onPointerOut={noHoverHandle}
               >
                 <meshStandardMaterial
                   attach="material"
@@ -1194,9 +1203,7 @@ const Cuboid = ({
                 onPointerOver={(e) => {
                   hoverHandle(e, MoveHandleType.Right);
                 }}
-                onPointerOut={(e) => {
-                  noHoverHandle();
-                }}
+                onPointerOut={noHoverHandle}
               >
                 <meshStandardMaterial
                   attach="material"
@@ -1218,9 +1225,7 @@ const Cuboid = ({
                 onPointerOver={(e) => {
                   hoverHandle(e, MoveHandleType.Top);
                 }}
-                onPointerOut={(e) => {
-                  noHoverHandle();
-                }}
+                onPointerOut={noHoverHandle}
               >
                 <meshStandardMaterial
                   attach="material"
