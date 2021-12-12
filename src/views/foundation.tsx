@@ -75,11 +75,9 @@ const Foundation = ({
   const language = useStore(Selector.language);
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
-  const getAllWallsIdOnFoundation = useStore(Selector.getAllWallsIdOnFoundation);
   const setCommonStore = useStore(Selector.set);
   const setElementPosition = useStore(Selector.setElementPosition);
   const setElementSize = useStore(Selector.setElementSize);
-  const updateWallLeftPointById = useStore(Selector.updateWallLeftPointById);
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLyById = useStore(Selector.updateElementLyById);
   const updateSolarPanelRelativeAzimuthById = useStore(Selector.updateSolarPanelRelativeAzimuthById);
@@ -88,7 +86,7 @@ const Foundation = ({
   const addElement = useStore(Selector.addElement);
   const getPvModule = useStore(Selector.getPvModule);
   const deletedWallID = useStore(Selector.deletedWallId);
-  const updateWallPointOnFoundation = useStore(Selector.updateWallPointOnFoundation);
+  const updateWallMapOnFoundation = useStore(Selector.updateWallMapOnFoundation);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const groundImage = useStore(Selector.viewState.groundImage);
   const addedFoundationID = useStore(Selector.addedFoundationId);
@@ -110,9 +108,11 @@ const Foundation = ({
 
   const isSettingWallStartPointRef = useRef(false);
   const isSettingWallEndPointRef = useRef(false);
-  const wallPointsRef = useRef<Map<string, { leftPoint: Vector3 | null; rightPoint: Vector3 | null }>>(new Map());
-  const wallsOnThisFoundationMapRef = useRef<Map<string, WallModel>>(new Map());
   const elementsStateBeforeResizingRef = useRef<ElementModel[] | null>(null);
+
+  // Use 1: Get wall point to snap. Set value at pointer up/down and delete. So only wall left/right point are up-to-date(not undering moving).
+  // Use 2: Wall loop check. Set all value to up-to-date.
+  const wallMapOnFoundation = useRef<Map<string, WallModel>>(new Map());
 
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
   const moveHandleTypeRef = useRef(useStore.getState().moveHandleType);
@@ -184,21 +184,17 @@ const Foundation = ({
   }, []);
 
   useEffect(() => {
-    const wallsId = getAllWallsIdOnFoundation(id);
-    for (const wid of wallsId) {
-      const wall = getElementById(wid) as WallModel;
-      if (wall) {
-        const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1]);
-        const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1]);
-        wallPointsRef.current.set(wid, { leftPoint, rightPoint });
+    wallMapOnFoundation.current.clear();
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.Wall && e.parentId === id) {
+        wallMapOnFoundation.current.set(e.id, e as WallModel);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateWallPointOnFoundation]);
+  }, [updateWallMapOnFoundation]);
 
   useEffect(() => {
     if (deletedWallID) {
-      wallPointsRef.current.delete(deletedWallID);
+      wallMapOnFoundation.current.delete(deletedWallID);
       isSettingWallStartPointRef.current = false;
       isSettingWallEndPointRef.current = false;
       setAddedWallID(null);
@@ -332,18 +328,15 @@ const Foundation = ({
     }
   };
 
-  const findMagnetPoint = (
-    wallPoints: Map<string, { leftPoint: Vector3 | null; rightPoint: Vector3 | null }>,
-    pointer: Vector3,
-    minDist: number,
-  ) => {
+  const findMagnetPoint = (pointer: Vector3, minDist: number) => {
     let min = minDist;
     let targetPoint: Vector3 | null = null;
     let targetID: string | null = null;
     let targetSide: WallSide | null = null;
-    for (const [id, points] of wallPoints) {
+    for (const [id, wall] of wallMapOnFoundation.current) {
       if (id === addedWallID || (grabRef.current && id === grabRef.current.id)) continue;
-      const { leftPoint, rightPoint } = points;
+      const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1], wall.leftPoint[2]);
+      const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1], wall.rightPoint[2]);
       const distStart = leftPoint?.distanceTo(pointer) ?? Number.MAX_VALUE;
       const distEnd = rightPoint?.distanceTo(pointer) ?? Number.MAX_VALUE;
       const flag = distStart <= distEnd;
@@ -384,14 +377,14 @@ const Foundation = ({
   };
 
   const flipWalls = (currentWallId: string) => {
-    let wall = wallsOnThisFoundationMapRef.current.get(currentWallId);
+    let wall = wallMapOnFoundation.current.get(currentWallId);
     while (wall && wall.leftJoints.length > 0) {
-      const wallCopy = wallsOnThisFoundationMapRef.current.get(wall.id) as WallModel;
+      const wallCopy = wallMapOnFoundation.current.get(wall.id) as WallModel;
       if (!wallCopy) {
         break;
       }
       const angle = (wallCopy.relativeAngle + Math.PI) % TWO_PI;
-      const targetWall = wallsOnThisFoundationMapRef.current.get(wallCopy.leftJoints[0]);
+      const targetWall = wallMapOnFoundation.current.get(wallCopy.leftJoints[0]);
       const deltaAngle = TWO_PI - ((Math.PI * 3 - (wallCopy.relativeAngle - targetWall!.relativeAngle)) % TWO_PI);
 
       let wallRightOffset = 0;
@@ -420,14 +413,14 @@ const Foundation = ({
         }
       });
 
-      wall = wallsOnThisFoundationMapRef.current.get(wall.leftJoints[0]);
+      wall = wallMapOnFoundation.current.get(wall.leftJoints[0]);
       if (wall && wall!.id === currentWallId) {
         break;
       }
     }
 
     setCommonStore((state) => {
-      state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
+      state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
       state.resizeHandleType =
         resizeHandleTypeRef.current === ResizeHandleType.LowerLeft
           ? ResizeHandleType.LowerRight
@@ -438,20 +431,20 @@ const Foundation = ({
   const checkWallLoop = (currentWallId: string) => {
     let wall: WallModel | undefined = undefined;
 
-    wallsOnThisFoundationMapRef.current.clear();
+    wallMapOnFoundation.current.clear();
     for (const e of useStore.getState().elements) {
       if (e.id === currentWallId) {
         wall = e as WallModel;
       }
       if (e.type === ObjectType.Wall && e.parentId === id) {
-        wallsOnThisFoundationMapRef.current.set(e.id, e as WallModel);
+        wallMapOnFoundation.current.set(e.id, e as WallModel);
       }
     }
 
     // check is loop closed
     let isClosed = false;
     while (wall && wall.leftJoints.length > 0) {
-      wall = wallsOnThisFoundationMapRef.current.get(wall.leftJoints[0]);
+      wall = wallMapOnFoundation.current.get(wall.leftJoints[0]);
       if (wall?.id === currentWallId) {
         isClosed = true;
         break;
@@ -463,7 +456,7 @@ const Foundation = ({
       let totalAngle = 0;
       let totalNumber = 0;
       while (wall && wall.leftJoints.length > 0) {
-        const targetWall = wallsOnThisFoundationMapRef.current.get(wall.leftJoints[0]);
+        const targetWall = wallMapOnFoundation.current.get(wall.leftJoints[0]);
         const deltaAngle = (Math.PI * 3 - (wall.relativeAngle - targetWall!.relativeAngle)) % TWO_PI;
         totalAngle += deltaAngle;
         totalNumber += 1;
@@ -544,7 +537,7 @@ const Foundation = ({
           }
           state.elements.push(undoableAdd.addedElement);
           state.selectedElement = undoableAdd.addedElement;
-          state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
+          state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
         });
       },
     } as UndoableAddWall;
@@ -603,7 +596,7 @@ const Foundation = ({
       let targetPoint: Vector3 | null = null;
       let targetSide: WallSide | null = null;
       if (!enableFineGridRef.current) {
-        let target = findMagnetPoint(wallPointsRef.current, p, 1.5);
+        let target = findMagnetPoint(p, 1.5);
         targetID = target.targetID;
         targetPoint = target.targetPoint;
         targetSide = target.targetSide;
@@ -660,9 +653,14 @@ const Foundation = ({
 
       isSettingWallStartPointRef.current = false;
       isSettingWallEndPointRef.current = true;
-      wallPointsRef.current.set(addedWallID, { leftPoint: p, rightPoint: null });
-      updateWallLeftPointById(addedWallID, [p.x, p.y, p.z]);
       setCommonStore((state) => {
+        for (const e of state.elements) {
+          if (e.id === addedWallID) {
+            (e as WallModel).leftPoint = [p.x, p.y, p.z];
+            wallMapOnFoundation.current.set(addedWallID, e as WallModel);
+            break;
+          }
+        }
         state.resizeHandleType = resizeHandleType;
         state.resizeAnchor = Util.wallAbsolutePosition(p, foundationModel);
         state.enableOrbitController = false;
@@ -679,9 +677,7 @@ const Foundation = ({
         if (elem.type === ObjectType.Wall) {
           const wall = elem as WallModel;
           if (wall.lx > 0.01) {
-            const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1], wall.leftPoint[2]);
-            const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1], wall.rightPoint[2]);
-            wallPointsRef.current.set(grabRef.current.id, { leftPoint: leftPoint, rightPoint: rightPoint });
+            wallMapOnFoundation.current.set(wall.id, wall);
             handleUndoableAddWall(wall as WallModel);
           } else {
             setCommonStore((state) => {
@@ -818,7 +814,7 @@ const Foundation = ({
         for (const e of state.elements) {
           if (e.id === addedWallID && e.lx === 0) {
             state.elements.pop();
-            wallPointsRef.current.delete(addedWallID);
+            wallMapOnFoundation.current.delete(addedWallID);
             break;
           }
         }
@@ -861,7 +857,7 @@ const Foundation = ({
               let targetPoint: Vector3 | null = null;
               let targetSide: WallSide | null = null;
               if (!enableFineGridRef.current) {
-                let target = findMagnetPoint(wallPointsRef.current, p, 1.5);
+                let target = findMagnetPoint(p, 1.5);
                 targetID = target.targetID;
                 targetPoint = target.targetPoint;
                 targetSide = target.targetSide;
@@ -888,6 +884,7 @@ const Foundation = ({
                     wall.relativeAngle = angle;
                     wall.leftPoint = [leftPoint.x, leftPoint.y, leftPoint.z];
                     wall.rightPoint = [rightPoint.x, rightPoint.y, rightPoint.z];
+                    break;
                   }
                 }
               });
@@ -1037,7 +1034,7 @@ const Foundation = ({
                           }
                         }
 
-                        state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
+                        state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
                         state.resizeHandleType = ResizeHandleType.LowerRight;
                       });
                     }
@@ -1120,7 +1117,7 @@ const Foundation = ({
                           }
                         }
 
-                        state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
+                        state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
                         state.resizeHandleType = ResizeHandleType.LowerLeft;
                       });
                     }
@@ -1236,7 +1233,7 @@ const Foundation = ({
       }
       if (addedWallID && isSettingWallStartPointRef.current) {
         p = Util.wallRelativePosition(intersects[0].point, foundationModel);
-        const { targetPoint } = findMagnetPoint(wallPointsRef.current, p, 1.5);
+        const { targetPoint } = findMagnetPoint(p, 1.5);
         p = updatePointer(p, targetPoint);
         if (isSettingWallStartPointRef.current) {
           setElementPosition(addedWallID, p.x, p.y);

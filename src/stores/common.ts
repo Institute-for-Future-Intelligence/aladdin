@@ -316,8 +316,7 @@ export interface CommonStoreState {
 
   addedWallId: string | null;
   deletedWallId: string | null;
-  updateWallPointOnFoundation: boolean;
-  getAllWallsIdOnFoundation: (parentId: string) => string[];
+  updateWallMapOnFoundation: boolean;
 
   addedWindowId: string | null;
   deletedWindowAndParentId: string[] | null;
@@ -2403,17 +2402,7 @@ export const useStore = create<CommonStoreState>(
 
           addedWallId: null,
           deletedWallId: null,
-          updateWallPointOnFoundation: false,
-          getAllWallsIdOnFoundation(parentID: string) {
-            const state = get();
-            const wallsID: string[] = [];
-            for (const e of state.elements) {
-              if (e.type === ObjectType.Wall && e.parentId === parentID) {
-                wallsID.push(e.id);
-              }
-            }
-            return wallsID;
-          },
+          updateWallMapOnFoundation: false,
 
           addedWindowId: null,
           deletedWindowAndParentId: null,

@@ -338,7 +338,7 @@ const Ground = () => {
             }
             setCommonStore((state) => {
               state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-              state.updateWallPointOnFoundation = !state.updateWallPointOnFoundation;
+              state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
             });
           } else if (rotateHandleType) {
             newRotationRef.current = [...elem.rotation];

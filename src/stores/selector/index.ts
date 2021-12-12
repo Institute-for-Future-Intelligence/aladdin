@@ -87,8 +87,6 @@ export const getSelectedElement = (state: CommonStoreState) => state.getSelected
 
 export const selectedSideIndex = (state: CommonStoreState) => state.selectedSideIndex;
 
-export const getAllWallsIdOnFoundation = (state: CommonStoreState) => state.getAllWallsIdOnFoundation;
-
 export const setElementPosition = (state: CommonStoreState) => state.setElementPosition;
 
 export const setElementSize = (state: CommonStoreState) => state.setElementSize;
@@ -394,7 +392,7 @@ export const addedWindowId = (state: CommonStoreState) => state.addedWindowId;
 
 export const deletedWindowAndParentId = (state: CommonStoreState) => state.deletedWindowAndParentId;
 
-export const updateWallPointOnFoundation = (state: CommonStoreState) => state.updateWallPointOnFoundation;
+export const updateWallMapOnFoundation = (state: CommonStoreState) => state.updateWallMapOnFoundation;
 
 export const wallActionScope = (state: CommonStoreState) => state.wallActionScope;
 
