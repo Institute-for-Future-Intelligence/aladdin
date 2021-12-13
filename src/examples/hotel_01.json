@@ -580,7 +580,7 @@
     "weatherPanelY": 0,
     "cameraZoom": 23.32701559994169,
     "groundPanelX": 0,
-    "showInfoPanel": true,
+    "showSiteInfoPanel": true,
     "showYearlyPvYieldPanel": false,
     "stickyNotePanelY": 0,
     "yearlyLightSensorPanelY": 70,

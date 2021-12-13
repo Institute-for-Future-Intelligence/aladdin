@@ -146,7 +146,7 @@
   "view": {
     "mapWeatherStations": false,
     "showGroundPanel": false,
-    "showInfoPanel": true,
+    "showSiteInfoPanel": true,
     "mapTilt": 0,
     "groundPanelY": 0,
     "yearlyLightSensorPanelY": 0,

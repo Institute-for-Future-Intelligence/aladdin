@@ -89,7 +89,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const solarPanelGridCellSize = useStore(Selector.world.solarPanelGridCellSize);
   const orthographic = useStore(Selector.viewState.orthographic);
   const autoRotate = useStore(Selector.viewState.autoRotate);
-  const showInfoPanel = useStore(Selector.viewState.showInfoPanel);
+  const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
+  const showDesignInfoPanel = useStore(Selector.viewState.showDesignInfoPanel);
   const showInstructionPanel = useStore(Selector.viewState.showInstructionPanel);
   const showMapPanel = useStore(Selector.viewState.showMapPanel);
   const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
@@ -221,25 +222,47 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     });
   };
 
-  const toggleInfoPanel = () => {
+  const toggleSiteInfoPanel = () => {
     const undoableCheck = {
-      name: 'Show Information Panel',
+      name: 'Show Site Information',
       timestamp: Date.now(),
-      checked: !showInfoPanel,
+      checked: !showSiteInfoPanel,
       undo: () => {
         setCommonStore((state) => {
-          state.viewState.showInfoPanel = !undoableCheck.checked;
+          state.viewState.showSiteInfoPanel = !undoableCheck.checked;
         });
       },
       redo: () => {
         setCommonStore((state) => {
-          state.viewState.showInfoPanel = undoableCheck.checked;
+          state.viewState.showSiteInfoPanel = undoableCheck.checked;
         });
       },
     } as UndoableCheck;
     addUndoable(undoableCheck);
     setCommonStore((state) => {
-      state.viewState.showInfoPanel = !state.viewState.showInfoPanel;
+      state.viewState.showSiteInfoPanel = !state.viewState.showSiteInfoPanel;
+    });
+  };
+
+  const toggleDesignInfoPanel = () => {
+    const undoableCheck = {
+      name: 'Show Design Information',
+      timestamp: Date.now(),
+      checked: !showDesignInfoPanel,
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.showDesignInfoPanel = !undoableCheck.checked;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.showDesignInfoPanel = undoableCheck.checked;
+        });
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    setCommonStore((state) => {
+      state.viewState.showDesignInfoPanel = !state.viewState.showDesignInfoPanel;
     });
   };
 
@@ -585,9 +608,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             {i18n.t('menu.view.ShowShadow', lang)}
           </Checkbox>
         </Menu.Item>
-        <Menu.Item key={'info-panel-check-box'}>
-          <Checkbox checked={showInfoPanel} onChange={toggleInfoPanel}>
+        <Menu.Item key={'site-info-panel-check-box'}>
+          <Checkbox checked={showSiteInfoPanel} onChange={toggleSiteInfoPanel}>
             {i18n.t('menu.view.SiteInformation', lang)}
+          </Checkbox>
+        </Menu.Item>
+        <Menu.Item key={'design-info-panel-check-box'}>
+          <Checkbox checked={showDesignInfoPanel} onChange={toggleDesignInfoPanel}>
+            {i18n.t('menu.view.DesignInformation', lang)}
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'instruction-panel-check-box'}>

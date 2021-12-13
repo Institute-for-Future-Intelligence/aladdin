@@ -76,6 +76,7 @@ export const i18n_en = {
       Owner: 'Owner',
       Action: 'Action',
       Rename: 'Rename',
+      Location: 'Location',
       Latitude: 'Latitude',
       Month: 'Month',
       Day: 'Day',
@@ -129,6 +130,7 @@ export const i18n_en = {
         ZoomOut: 'Zoom Out',
         AutoRotate: 'Auto rotate',
         SiteInformation: 'Site Information',
+        DesignInformation: 'Design Information',
         Instruction: 'Instruction',
         StickyNote: 'Sticky Note',
         ShowShadow: 'Show Shadow',
@@ -339,9 +341,13 @@ export const i18n_en = {
       TemperatureCoefficientOfPmax: 'Temperature Coefficient of Pmax',
     },
 
-    infoPanel: {
+    siteInfoPanel: {
       High: 'High',
       Low: 'Low',
+    },
+
+    designInfoPanel: {
+      ClickToRecountSolarPanels: 'Click to recount solar panels',
     },
 
     instructionPanel: {

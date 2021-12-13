@@ -375,7 +375,7 @@
     "showYearlyLightSensorPanel": false,
     "showStickyNotePanel": false,
     "mapTilt": 0,
-    "showInfoPanel": true,
+    "showSiteInfoPanel": true,
     "showHeliodonPanel": false,
     "stickyNotePanelX": 6,
     "groundColor": "forestgreen",

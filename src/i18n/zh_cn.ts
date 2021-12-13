@@ -76,6 +76,7 @@ export const i18n_zh_cn = {
       Owner: '所有者',
       Action: '操作',
       Rename: '改名',
+      Location: '位置',
       Latitude: '纬度',
       Month: '月',
       Day: '天',
@@ -128,7 +129,8 @@ export const i18n_zh_cn = {
         ZoomIn: '放大',
         ZoomOut: '缩小',
         AutoRotate: '自动旋转',
-        SiteInformation: '地理位置信息',
+        SiteInformation: '位置信息',
+        DesignInformation: '设计信息',
         Instruction: '操作说明',
         StickyNote: '便签',
         ShowShadow: '显示阴影',
@@ -338,9 +340,13 @@ export const i18n_zh_cn = {
 
     windowMenu: {},
 
-    infoPanel: {
+    siteInfoPanel: {
       High: '最高温度',
       Low: '最低温度',
+    },
+
+    designInfoPanel: {
+      ClickToRecountSolarPanels: '点击此处重新计算光伏板总数',
     },
 
     instructionPanel: {

@@ -16,16 +16,16 @@ import i18n from '../i18n/i18n';
 
 const Container = styled.div`
   position: absolute;
-  top: 80px;
+  top: 75px;
   left: 0;
-  margin: auto;
+  margin: 0;
   display: flex;
   justify-content: center;
   align-self: center;
   alignment: center;
   align-content: center;
   align-items: center;
-  padding: 16px;
+  padding: 0;
   opacity: 100%;
   user-select: none;
   z-index: 8; // must be less than other panels
@@ -34,25 +34,24 @@ const Container = styled.div`
 const ColumnWrapper = styled.div`
   position: absolute;
   top: 0;
-  left: 0;
+  left: calc(100vw / 2 - 100vw / 4);
   align-self: center;
   alignment: center;
   align-content: center;
   align-items: center;
-  margin: auto;
-  width: calc(100vw - 20px);
-  padding-bottom: 10px;
+  margin: 0;
+  width: calc(100vw / 2);
   display: flex;
   font-size: 12px;
   flex-direction: column;
   opacity: 100%;
 `;
 
-export interface InfoPanelProps {
+export interface SiteInfoPanelProps {
   city: string | null;
 }
 
-const InfoPanel = ({ city }: InfoPanelProps) => {
+const SiteInfoPanel = ({ city }: SiteInfoPanelProps) => {
   const language = useStore(Selector.language);
   const dateString = useStore(Selector.world.date);
   const address = useStore(Selector.world.address);
@@ -87,7 +86,7 @@ const InfoPanel = ({ city }: InfoPanelProps) => {
       <ColumnWrapper>
         <Space direction={'horizontal'} style={{ color: color, fontSize: '10px' }}>
           <FontAwesomeIcon
-            title={'Geo'}
+            title={i18n.t('word.Location', lang)}
             icon={faMapMarkerAlt}
             size={'3x'}
             color={color}
@@ -104,7 +103,7 @@ const InfoPanel = ({ city }: InfoPanelProps) => {
             (longitude > 0 ? 'E' : 'W') +
             ')'}
           <FontAwesomeIcon
-            title={'Date'}
+            title={i18n.t('word.Date', lang)}
             icon={faCalendarDay}
             size={'3x'}
             color={color}
@@ -112,7 +111,7 @@ const InfoPanel = ({ city }: InfoPanelProps) => {
           />
           {dayjs(now).format('MM/DD hh:mm a')}
           <FontAwesomeIcon
-            title={'Weather'}
+            title={i18n.t('word.Weather', lang)}
             icon={faCloudSunRain}
             size={'3x'}
             color={color}
@@ -121,11 +120,11 @@ const InfoPanel = ({ city }: InfoPanelProps) => {
           {dailyTemperatures
             ? currentTemperature.toFixed(1) +
               '°C (' +
-              i18n.t('infoPanel.Low', lang) +
+              i18n.t('siteInfoPanel.Low', lang) +
               ':' +
               dailyTemperatures.low.toFixed(1) +
               '°C, ' +
-              i18n.t('infoPanel.High', lang) +
+              i18n.t('siteInfoPanel.High', lang) +
               ': ' +
               dailyTemperatures.high.toFixed(1) +
               '°C)'
@@ -136,4 +135,4 @@ const InfoPanel = ({ city }: InfoPanelProps) => {
   );
 };
 
-export default React.memo(InfoPanel);
+export default React.memo(SiteInfoPanel);

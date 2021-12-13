@@ -271,6 +271,7 @@ export interface CommonStoreState {
   getChildren: (id: string) => ElementModel[];
   countAllChildElementsByType: (parentId: string, type: ObjectType) => number;
   countAllChildSolarPanels: (parentId: string) => number; // special case as a rack may have many solar panels
+  countAllSolarPanels: () => number;
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
 
   dailyLightSensorData: DatumEntry[];
@@ -2053,6 +2054,29 @@ export const useStore = create<CommonStoreState>(
                     ny = Math.max(1, Math.round(sp.ly / pvModel.width));
                   }
                   count += nx * ny;
+                }
+              }
+            });
+            return count;
+          },
+          countAllSolarPanels() {
+            let count = 0;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  const sp = e as SolarPanelModel;
+                  const pvModel = state.getPvModule(sp.pvModelName);
+                  if (pvModel) {
+                    let nx, ny;
+                    if (sp.orientation === Orientation.portrait) {
+                      nx = Math.max(1, Math.round(sp.lx / pvModel.width));
+                      ny = Math.max(1, Math.round(sp.ly / pvModel.length));
+                    } else {
+                      nx = Math.max(1, Math.round(sp.lx / pvModel.length));
+                      ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+                    }
+                    count += nx * ny;
+                  }
                 }
               }
             });

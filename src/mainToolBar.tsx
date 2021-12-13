@@ -25,9 +25,11 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const ButtonsContainer = styled.div`
   position: absolute;
-  top: 4px;
+  top: 0;
   right: 10px;
-  padding: 16px;
+  margin: 0;
+  padding-bottom: 0;
+  padding-top: 16px;
   display: flex;
   justify-content: center;
   align-items: center;

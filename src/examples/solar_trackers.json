@@ -229,7 +229,7 @@
     "groundPanelX": 0,
     "groundImage": false,
     "dailyLightSensorPanelX": -1277,
-    "showInfoPanel": true,
+    "showSiteInfoPanel": true,
     "mapType": "roadmap",
     "showYearlyLightSensorPanel": false,
     "showDailyLightSensorPanel": false,

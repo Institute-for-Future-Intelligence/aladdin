@@ -36,7 +36,9 @@ export const mapType = (state: CommonStoreState) => state.viewState.mapType;
 
 export const mapWeatherStations = (state: CommonStoreState) => state.viewState.mapWeatherStations;
 
-export const showInfoPanel = (state: CommonStoreState) => state.viewState.showInfoPanel;
+export const showSiteInfoPanel = (state: CommonStoreState) => state.viewState.showSiteInfoPanel;
+
+export const showDesignInfoPanel = (state: CommonStoreState) => state.viewState.showDesignInfoPanel;
 
 export const showInstructionPanel = (state: CommonStoreState) => state.viewState.showInstructionPanel;
 

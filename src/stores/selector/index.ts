@@ -293,6 +293,8 @@ export const countAllChildElementsByType = (state: CommonStoreState) => state.co
 
 export const countAllChildSolarPanels = (state: CommonStoreState) => state.countAllChildSolarPanels;
 
+export const countAllSolarPanels = (state: CommonStoreState) => state.countAllSolarPanels;
+
 export const selectedElementAngle = (state: CommonStoreState) => state.selectedElementAngle;
 
 export const selectedElementHeight = (state: CommonStoreState) => state.selectedElementHeight;

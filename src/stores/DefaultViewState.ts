@@ -23,7 +23,8 @@ export class DefaultViewState implements ViewState {
   showHeliodonPanel: boolean;
   showWeatherPanel: boolean;
   showStickyNotePanel: boolean;
-  showInfoPanel: boolean;
+  showSiteInfoPanel: boolean;
+  showDesignInfoPanel: boolean;
   showInstructionPanel: boolean;
   showDailyLightSensorPanel: boolean;
   showYearlyLightSensorPanel: boolean;
@@ -71,7 +72,8 @@ export class DefaultViewState implements ViewState {
     this.showHeliodonPanel = false;
     this.showWeatherPanel = false;
     this.showStickyNotePanel = false;
-    this.showInfoPanel = true;
+    this.showSiteInfoPanel = true;
+    this.showDesignInfoPanel = false;
     this.showInstructionPanel = true;
     this.showDailyLightSensorPanel = false;
     this.showYearlyLightSensorPanel = false;
@@ -124,7 +126,8 @@ export class DefaultViewState implements ViewState {
     viewState.showHeliodonPanel = false;
     viewState.showWeatherPanel = false;
     viewState.showStickyNotePanel = false;
-    viewState.showInfoPanel = true;
+    viewState.showSiteInfoPanel = true;
+    viewState.showDesignInfoPanel = true;
     viewState.showInstructionPanel = true;
     viewState.showDailyLightSensorPanel = false;
     viewState.showYearlyLightSensorPanel = false;

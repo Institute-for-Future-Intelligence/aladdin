@@ -33,7 +33,6 @@ import DailyLightSensorPanel from './panels/dailyLightSensorPanel';
 import MainToolBar from './mainToolBar';
 import Spinner from './components/spinner';
 import StickyNotePanel from './panels/stickyNotePanel';
-import InfoPanel from './panels/infoPanel';
 import InstructionPanel from './panels/instructionPanel';
 import YearlyPvYieldPanel from './panels/yearlyPvYieldPanel';
 import DailyPvYieldPanel from './panels/dailyPvYieldPanel';
@@ -48,6 +47,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCloud } from '@fortawesome/free-solid-svg-icons';
 import SceneRadiusCalculator from './sceneRadiusCalculator';
 import { UndoableChange } from './undo/UndoableChange';
+import DesignInfoPanel from './panels/designInfoPanel';
+import SiteInfoPanel from './panels/siteInfoPanel';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -71,7 +72,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const axes = useStore(Selector.viewState.axes);
   const theme = useStore(Selector.viewState.theme);
   const groundImage = useStore(Selector.viewState.groundImage);
-  const showInfoPanel = useStore(Selector.viewState.showInfoPanel);
+  const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
+  const showDesignInfoPanel = useStore(Selector.viewState.showDesignInfoPanel);
   const showInstructionPanel = useStore(Selector.viewState.showInstructionPanel);
   const showMapPanel = useStore(Selector.viewState.showMapPanel);
   const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
@@ -367,7 +369,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {showMapPanel && <MapPanel />}
       {showHeliodonPanel && <HeliodonPanel />}
       {showStickyNotePanel && <StickyNotePanel />}
-      {showInfoPanel && <InfoPanel city={city} />}
+      {showSiteInfoPanel && <SiteInfoPanel city={city} />}
+      {showDesignInfoPanel && <DesignInfoPanel />}
       {showInstructionPanel && <InstructionPanel />}
       {showWeatherPanel && (
         <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]} />

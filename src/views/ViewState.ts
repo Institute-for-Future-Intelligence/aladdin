@@ -23,7 +23,8 @@ export interface ViewState {
   showHeliodonPanel: boolean;
   showWeatherPanel: boolean;
   showStickyNotePanel: boolean;
-  showInfoPanel: boolean;
+  showSiteInfoPanel: boolean;
+  showDesignInfoPanel: boolean;
   showInstructionPanel: boolean;
   showDailyLightSensorPanel: boolean;
   showYearlyLightSensorPanel: boolean;
