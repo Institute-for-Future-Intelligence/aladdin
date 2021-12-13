@@ -312,28 +312,35 @@ const Wall = ({
   };
 
   const movingWindowInsideWall = (p: Vector3, wlx: number, wlz: number) => {
+    const margin = 0.1;
     const maxX = (lx - wlx) / 2;
     const maxZ = (lz - wlz) / 2;
     if (p.x > maxX) {
-      p.setX(maxX - 0.1);
+      p.setX(maxX - margin);
     } else if (p.x < -maxX) {
-      p.setX(-maxX + 0.1);
+      p.setX(-maxX + margin);
     }
     if (p.z > maxZ) {
-      p.setZ(maxZ - 0.1);
+      p.setZ(maxZ - margin);
     } else if (p.z < -maxZ) {
-      p.setZ(-maxZ + 0.1);
+      p.setZ(-maxZ + margin);
     }
     return p;
   };
 
   const resizingWindowInsideWall = (p: Vector3) => {
-    p.setZ(Math.min(p.z, lz / 2 - 0.2));
-    if (p.x > lx / 2) {
-      p.setX(lx / 2 - 0.2);
+    const margin = 0.1;
+    if (p.z > hz - margin) {
+      p.setZ(hz - margin);
     }
-    if (p.x < -lx / 2) {
-      p.setX(-lx / 2 + 0.2);
+    if (p.z < -hz + margin) {
+      p.setZ(-hz + margin);
+    }
+    if (p.x > hx - margin) {
+      p.setX(hx - margin);
+    }
+    if (p.x < -hx + margin) {
+      p.setX(-hx + margin);
     }
     return p;
   };
