@@ -463,10 +463,14 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         }
         visible={titleDialogVisible}
         onOk={() => {
-          saveToCloud(title);
-          setCommonStore((state) => {
-            state.showCloudFileTitleDialog = false;
-          });
+          const trimmedTitle = title.trim();
+          if (trimmedTitle.length > 0) {
+            saveToCloud(trimmedTitle);
+            setCommonStore((state) => {
+              state.cloudFile = trimmedTitle;
+              state.showCloudFileTitleDialog = false;
+            });
+          }
         }}
         confirmLoading={loading}
         onCancel={() => {
@@ -484,16 +488,12 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         <Space direction={'horizontal'}>
           <label>{i18n.t('word.Title', lang)}:</label>
           <Input
+            style={{ width: '360px' }}
             placeholder="Title"
             value={cloudFile ?? title}
             onPressEnter={() => saveToCloud(title)}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              let t = e.target.value;
-              if (t) t = t.trim();
-              setTitle(t);
-              setCommonStore((state) => {
-                state.cloudFile = t;
-              });
+              setTitle(e.target.value);
             }}
           />
         </Space>
