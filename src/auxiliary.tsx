@@ -7,8 +7,8 @@ import { HALF_PI } from './constants';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { ObjectType, ResizeHandleType } from './types';
-import { PolarGrid } from './polarGrid';
-import { VerticalRuler } from './verticalRuler';
+import { PolarGrid } from './views/polarGrid';
+import { VerticalRuler } from './views/verticalRuler';
 
 export const Auxiliary = () => {
   const getSelectedElement = useStore(Selector.getSelectedElement);

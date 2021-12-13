@@ -53,7 +53,7 @@ import {
 import { Util } from '../Util';
 import { ElementModel } from '../models/ElementModel';
 import RotateHandle from '../components/rotateHandle';
-import { PolarGrid } from '../polarGrid';
+import { PolarGrid } from './polarGrid';
 import Wireframe from '../components/wireframe';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { UndoableAdd } from '../undo/UndoableAdd';

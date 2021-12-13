@@ -6,11 +6,11 @@ import React, { useEffect, useState } from 'react';
 import { Euler, FontLoader, TextGeometryParameters, Vector3 } from 'three';
 import { useLoader } from '@react-three/fiber';
 import { Line } from '@react-three/drei';
-import helvetikerFont from './fonts/helvetiker_regular.typeface.fnt';
-import { useStore } from './stores/common';
-import * as Selector from './stores/selector';
-import { ElementModel } from './models/ElementModel';
-import { HALF_PI } from './constants';
+import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
+import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
+import { ElementModel } from '../models/ElementModel';
+import { HALF_PI } from '../constants';
 
 export const VerticalRuler = ({ element }: { element: ElementModel }) => {
   const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
