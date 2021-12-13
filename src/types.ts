@@ -77,6 +77,7 @@ export enum ObjectType {
   Cuboid = 'Cuboid',
   Human = 'Human',
   Tree = 'Tree',
+  Polygon = 'Polygon',
   None = 'None',
 }
 

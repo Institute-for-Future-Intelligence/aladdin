@@ -3,8 +3,5 @@
  */
 
 import { ElementModel } from './ElementModel';
-import { Point2 } from './Point2';
 
-export interface RoofModel extends ElementModel {
-  points: Point2[];
-}
+export interface PolygonModel extends ElementModel {}

@@ -38,7 +38,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { WindowModel } from 'src/models/WindowModel';
 import { WallModel } from 'src/models/WallModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
-import { RoofPoint } from 'src/models/RoofModel';
+import { Point2 } from 'src/models/Point2';
 import { ElementGrid } from '../elementGrid';
 import Window from '../window/window';
 import WallWireFrame from './wallWireFrame';
@@ -377,7 +377,7 @@ const Wall = ({
 
   const checkWallLoop = (id: string) => {
     const startID = id;
-    const points: RoofPoint[] = [];
+    const points: Point2[] = [];
 
     let wall = getElementById(id) as WallModel;
     while (wall && wall.leftJoints.length > 0) {
