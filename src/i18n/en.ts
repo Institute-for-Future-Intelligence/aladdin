@@ -348,6 +348,7 @@ export const i18n_en = {
 
     designInfoPanel: {
       ClickToRecountSolarPanels: 'Click to recount solar panels',
+      EstimatedSceneScope: 'Estimated scene scope',
     },
 
     instructionPanel: {

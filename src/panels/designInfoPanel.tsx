@@ -7,7 +7,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSolarPanel } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsAltH, faSolarPanel } from '@fortawesome/free-solid-svg-icons';
 import { Space } from 'antd';
 import i18n from '../i18n/i18n';
 
@@ -32,13 +32,13 @@ const ColumnWrapper = styled.div`
   background: #282c34;
   position: absolute;
   top: 0;
-  left: calc(100vw / 2 - 50px);
+  left: calc(100vw / 2 - 80px);
   align-self: center;
   alignment: center;
   align-content: center;
   align-items: center;
   margin: 0;
-  width: 100px;
+  width: 160px;
   display: flex;
   font-size: 12px;
   flex-direction: column;
@@ -51,12 +51,15 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
   const language = useStore(Selector.language);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const countAllSolarPanels = useStore(Selector.countAllSolarPanels);
+  const sceneRadius = useStore(Selector.sceneRadius);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const daytime = sunlightDirection.y > 0;
   const lang = { lng: language };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setUpdateFlag(!updateFlag);
+  }, [sceneRadius]);
 
   const color = daytime ? 'navajowhite' : 'antiquewhite';
   const solarPanelCount = countAllSolarPanels();
@@ -76,6 +79,17 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
             style={{ paddingLeft: '10px', cursor: 'pointer' }}
           />
           <label>{solarPanelCount}</label>
+          <FontAwesomeIcon
+            title={i18n.t('designInfoPanel.EstimatedSceneScope', lang)}
+            icon={faArrowsAltH}
+            size={'3x'}
+            color={color}
+            onClick={() => {
+              setUpdateFlag(!updateFlag);
+            }}
+            style={{ paddingLeft: '10px', cursor: 'pointer' }}
+          />
+          <label>{sceneRadius * 2 + ' ' + i18n.t('word.MeterAbbreviation', lang)}</label>
         </Space>
       </ColumnWrapper>
     </Container>

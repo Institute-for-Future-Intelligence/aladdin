@@ -347,6 +347,7 @@ export const i18n_zh_tw = {
 
     designInfoPanel: {
       ClickToRecountSolarPanels: '點擊此處重新計算光伏板總數',
+      EstimatedSceneScope: '估算的場景尺寸',
     },
 
     instructionPanel: {

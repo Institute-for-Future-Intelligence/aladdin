@@ -6,7 +6,7 @@ import React, { useRef } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { DEFAULT_FAR } from './constants';
-import { DirectionalLight, Mesh } from 'three';
+import { DirectionalLight } from 'three';
 
 const Lights = () => {
   const sunlightDirection = useStore(Selector.sunlightDirection);
