@@ -579,7 +579,7 @@ const Foundation = ({
       let stableWallLeftOffset = 0;
       if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
         const tan = Math.tan(deltaAngle);
-        flipWallRightOffset = flipWall.ly / tan;
+        flipWallRightOffset = flipWallHead.ly / tan;
         stableWallLeftOffset = stableWall.ly / tan;
       }
 
@@ -687,8 +687,11 @@ const Foundation = ({
       addedElement: wall,
       leftWallOffset: leftWallOffset,
       rightWallOffset: rightWallOffset,
-      flippedWallSide: flippedWallSide.current,
+      flippedWallSide: flippedWallSide.current, // only rightside needs to be considered
       undo: () => {
+        if (undoableAdd.flippedWallSide === FlippedWallSide.right) {
+          // flipWallsCounterClockwise();
+        }
         removeElementById(undoableAdd.addedElement.id, false);
       },
       redo: () => {
