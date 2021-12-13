@@ -12,4 +12,11 @@ export interface UndoableAdd extends Undoable {
 export interface UndoableAddWall extends UndoableAdd {
   leftWallOffset: number;
   rightWallOffset: number;
+  flippedWallSide: FlippedWallSide;
+}
+
+export enum FlippedWallSide {
+  left = 'Left',
+  right = 'Right',
+  null = 'Null',
 }

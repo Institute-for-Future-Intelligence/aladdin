@@ -50,7 +50,7 @@ import { WallModel } from '../models/WallModel';
 import RotateHandle from '../components/rotateHandle';
 import Wireframe from '../components/wireframe';
 import * as Selector from '../stores/selector';
-import { UndoableAdd, UndoableAddWall } from '../undo/UndoableAdd';
+import { UndoableAdd, UndoableAddWall, FlippedWallSide } from '../undo/UndoableAdd';
 import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableChange } from '../undo/UndoableChange';
@@ -109,9 +109,10 @@ const Foundation = ({
   const isSettingWallStartPointRef = useRef(false);
   const isSettingWallEndPointRef = useRef(false);
   const elementsStateBeforeResizingRef = useRef<ElementModel[] | null>(null);
+  const flippedWallSide = useRef<FlippedWallSide>(FlippedWallSide.null);
 
-  // Use 1: Get wall point to snap. Set value at pointer up/down and delete. So only wall left/right point are up-to-date(not undering moving).
-  // Use 2: Wall loop check. Set all value to up-to-date.
+  // Use 1: Directly use to get wall points to snap.
+  // Use 2: Need update first before other use. Intend to reduce call getElementById()
   const wallMapOnFoundation = useRef<Map<string, WallModel>>(new Map());
 
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
@@ -376,7 +377,7 @@ const Foundation = ({
     return p;
   };
 
-  const flipWalls = (currentWallId: string) => {
+  const flipWallLoop = (currentWallId: string) => {
     let wall = wallMapOnFoundation.current.get(currentWallId);
     while (wall && wall.leftJoints.length > 0) {
       const wallCopy = wallMapOnFoundation.current.get(wall.id) as WallModel;
@@ -428,6 +429,178 @@ const Foundation = ({
     });
   };
 
+  const flipWallsClockwise = (targetWall: WallModel, currWall: WallModel) => {
+    wallMapOnFoundation.current.clear();
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.Wall && e.parentId === id) {
+        wallMapOnFoundation.current.set(e.id, e as WallModel);
+      }
+    }
+
+    const stableWall = targetWall;
+    const flipWallHead = currWall;
+    let flipWall = currWall;
+
+    while (flipWall) {
+      const flipWallCopy = wallMapOnFoundation.current.get(flipWall.id) as WallModel;
+      if (!flipWallCopy) {
+        break;
+      }
+      const angle = (flipWallCopy.relativeAngle + Math.PI) % TWO_PI;
+      let flipWallLeftOffset = 0;
+      let nextWallRightOffset = 0;
+      let nextWall: WallModel | undefined = undefined;
+
+      if (flipWallCopy.leftJoints.length > 0) {
+        nextWall = wallMapOnFoundation.current.get(flipWallCopy.leftJoints[0]);
+        if (nextWall) {
+          const deltaAngle = (Math.PI * 3 + flipWallCopy.relativeAngle - nextWall.relativeAngle) % TWO_PI;
+          if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
+            const tan = Math.tan(deltaAngle);
+            flipWallLeftOffset = flipWallCopy.ly / tan;
+            nextWallRightOffset = nextWall.ly / tan;
+          }
+        }
+      }
+
+      setCommonStore((state) => {
+        for (const e of state.elements) {
+          if (flipWallCopy && e.id === flipWallCopy.id) {
+            const wall = e as WallModel;
+            wall.relativeAngle = angle;
+            wall.leftPoint = [...flipWallCopy.rightPoint];
+            wall.rightPoint = [...flipWallCopy.leftPoint];
+            wall.leftJoints = flipWallCopy.rightJoints.length > 0 ? [flipWallCopy.rightJoints[0]] : [];
+            wall.rightJoints = flipWallCopy.leftJoints.length > 0 ? [flipWallCopy.leftJoints[0]] : [];
+            wall.rightOffset = flipWallLeftOffset;
+          }
+          if (nextWall && e.id === nextWall.id) {
+            (e as WallModel).leftOffset = nextWallRightOffset;
+          }
+        }
+      });
+
+      if (nextWall && nextWall.id !== flipWallHead.id) {
+        flipWall = nextWall;
+      } else {
+        break;
+      }
+    }
+    setCommonStore((state) => {
+      const angle = (flipWallHead.relativeAngle + Math.PI) % TWO_PI;
+      const deltaAngle = (Math.PI * 3 - (angle - stableWall.relativeAngle)) % TWO_PI;
+      let flipWallLeftOffset = 0;
+      let stableWallRightOffset = 0;
+      if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
+        const tan = Math.tan(deltaAngle);
+        flipWallLeftOffset = flipWall.ly / tan;
+        stableWallRightOffset = stableWall.ly / tan;
+      }
+
+      for (const e of state.elements) {
+        if (e.id === flipWallHead.id) {
+          (e as WallModel).leftJoints = [stableWall.id];
+          (e as WallModel).leftOffset = flipWallLeftOffset;
+        }
+        if (e.id === stableWall.id) {
+          (e as WallModel).rightJoints = [flipWallHead.id];
+          (e as WallModel).rightOffset = stableWallRightOffset;
+        }
+      }
+
+      state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+      state.resizeHandleType = ResizeHandleType.LowerLeft;
+    });
+
+    flippedWallSide.current = FlippedWallSide.left;
+  };
+
+  const flipWallsCounterClockwise = (targetWall: WallModel, currWall: WallModel) => {
+    wallMapOnFoundation.current.clear();
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.Wall && e.parentId === id) {
+        wallMapOnFoundation.current.set(e.id, e as WallModel);
+      }
+    }
+
+    const stableWall = targetWall;
+    const flipWallHead = currWall;
+    let flipWall = currWall;
+
+    while (flipWall) {
+      const flipWallCopy = wallMapOnFoundation.current.get(flipWall.id) as WallModel;
+      if (!flipWallCopy) {
+        break;
+      }
+      const angle = (flipWallCopy.relativeAngle + Math.PI) % TWO_PI;
+      let flipWallLeftOffset = 0;
+      let nextWallRightOffset = 0;
+      let nextWall: WallModel | undefined = undefined;
+
+      if (flipWallCopy.rightJoints.length > 0) {
+        nextWall = wallMapOnFoundation.current.get(flipWallCopy.rightJoints[0]);
+        if (nextWall) {
+          const deltaAngle = (Math.PI * 3 - (flipWallCopy.relativeAngle - nextWall.relativeAngle)) % TWO_PI;
+          if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
+            const tan = Math.tan(deltaAngle);
+            flipWallLeftOffset = flipWallCopy.ly / tan;
+            nextWallRightOffset = nextWall.ly / tan;
+          }
+        }
+      }
+
+      setCommonStore((state) => {
+        for (const e of state.elements) {
+          if (flipWallCopy && e.id === flipWallCopy.id) {
+            const wall = e as WallModel;
+            wall.relativeAngle = angle;
+            wall.leftPoint = [...flipWallCopy.rightPoint];
+            wall.rightPoint = [...flipWallCopy.leftPoint];
+            wall.leftJoints = flipWallCopy.rightJoints.length > 0 ? [flipWallCopy.rightJoints[0]] : [];
+            wall.rightJoints = flipWallCopy.leftJoints.length > 0 ? [flipWallCopy.leftJoints[0]] : [];
+            wall.leftOffset = flipWallLeftOffset;
+          }
+          if (nextWall && e.id === nextWall.id) {
+            (e as WallModel).rightOffset = nextWallRightOffset;
+          }
+        }
+      });
+
+      if (nextWall && nextWall.id !== flipWallHead.id) {
+        flipWall = nextWall;
+      } else {
+        break;
+      }
+    }
+    setCommonStore((state) => {
+      const angle = (flipWallHead.relativeAngle + Math.PI) % TWO_PI;
+      const deltaAngle = (Math.PI * 3 + angle - stableWall.relativeAngle) % TWO_PI;
+      let flipWallRightOffset = 0;
+      let stableWallLeftOffset = 0;
+      if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
+        const tan = Math.tan(deltaAngle);
+        flipWallRightOffset = flipWall.ly / tan;
+        stableWallLeftOffset = stableWall.ly / tan;
+      }
+
+      for (const e of state.elements) {
+        if (e.id === flipWallHead.id) {
+          (e as WallModel).rightJoints = [stableWall.id];
+          (e as WallModel).rightOffset = flipWallRightOffset;
+        }
+        if (e.id === stableWall.id) {
+          (e as WallModel).leftJoints = [flipWallHead.id];
+          (e as WallModel).leftOffset = stableWallLeftOffset;
+        }
+      }
+
+      state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+      state.resizeHandleType = ResizeHandleType.LowerRight;
+    });
+
+    flippedWallSide.current = FlippedWallSide.right;
+  };
+
   const checkWallLoop = (currentWallId: string) => {
     let wall: WallModel | undefined = undefined;
 
@@ -468,7 +641,7 @@ const Foundation = ({
 
       // check if it needs a flip
       if (totalAngle > (totalNumber - 2) * Math.PI + 0.1) {
-        flipWalls(currentWallId);
+        flipWallLoop(currentWallId);
       }
     }
 
@@ -514,6 +687,7 @@ const Foundation = ({
       addedElement: wall,
       leftWallOffset: leftWallOffset,
       rightWallOffset: rightWallOffset,
+      flippedWallSide: flippedWallSide.current,
       undo: () => {
         removeElementById(undoableAdd.addedElement.id, false);
       },
@@ -947,13 +1121,6 @@ const Foundation = ({
                 if (targetID && targetPoint && targetSide) {
                   const targetWall = getElementById(targetID) as WallModel;
                   if (targetWall) {
-                    const wallsOnThisFoundation = new Map<string, WallModel>();
-                    for (const e of useStore.getState().elements) {
-                      if (e.type === ObjectType.Wall && e.parentId === id) {
-                        wallsOnThisFoundation.set(e.id, e as WallModel);
-                      }
-                    }
-
                     // flip if sides are same
                     // left to left
                     if (
@@ -961,82 +1128,7 @@ const Foundation = ({
                       targetWall.leftJoints.length === 0 &&
                       targetSide === WallSide.Left
                     ) {
-                      const stableWall = targetWall;
-                      const flipWallHead = currWall;
-                      let flipWall = currWall;
-
-                      while (flipWall) {
-                        const flipWallCopy = getElementById(flipWall.id) as WallModel;
-                        if (!flipWallCopy) {
-                          break;
-                        }
-                        const angle = (flipWallCopy.relativeAngle + Math.PI) % TWO_PI;
-                        let flipWallLeftOffset = 0;
-                        let nextWallRightOffset = 0;
-                        let nextWall: WallModel | undefined = undefined;
-
-                        if (flipWallCopy.rightJoints.length > 0) {
-                          nextWall = wallsOnThisFoundation.get(flipWallCopy.rightJoints[0]);
-                          if (nextWall) {
-                            const deltaAngle =
-                              (Math.PI * 3 - (flipWallCopy.relativeAngle - nextWall.relativeAngle)) % TWO_PI;
-                            if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
-                              const tan = Math.tan(deltaAngle);
-                              flipWallLeftOffset = flipWallCopy.ly / tan;
-                              nextWallRightOffset = nextWall.ly / tan;
-                            }
-                          }
-                        }
-
-                        setCommonStore((state) => {
-                          for (const e of state.elements) {
-                            if (flipWallCopy && e.id === flipWallCopy.id) {
-                              const wall = e as WallModel;
-                              wall.relativeAngle = angle;
-                              wall.leftPoint = [...flipWallCopy.rightPoint];
-                              wall.rightPoint = [...flipWallCopy.leftPoint];
-                              wall.leftJoints =
-                                flipWallCopy.rightJoints.length > 0 ? [flipWallCopy.rightJoints[0]] : [];
-                              wall.rightJoints = flipWallCopy.leftJoints.length > 0 ? [flipWallCopy.leftJoints[0]] : [];
-                              wall.leftOffset = flipWallLeftOffset;
-                            }
-                            if (nextWall && e.id === nextWall.id) {
-                              (e as WallModel).rightOffset = nextWallRightOffset;
-                            }
-                          }
-                        });
-
-                        if (nextWall && nextWall.id !== flipWallHead.id) {
-                          flipWall = nextWall;
-                        } else {
-                          break;
-                        }
-                      }
-                      setCommonStore((state) => {
-                        const angle = (flipWallHead.relativeAngle + Math.PI) % TWO_PI;
-                        const deltaAngle = (Math.PI * 3 + angle - stableWall.relativeAngle) % TWO_PI;
-                        let flipWallRightOffset = 0;
-                        let stableWallLeftOffset = 0;
-                        if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
-                          const tan = Math.tan(deltaAngle);
-                          flipWallRightOffset = flipWall.ly / tan;
-                          stableWallLeftOffset = stableWall.ly / tan;
-                        }
-
-                        for (const e of state.elements) {
-                          if (e.id === flipWallHead.id) {
-                            (e as WallModel).rightJoints = [stableWall.id];
-                            (e as WallModel).rightOffset = flipWallRightOffset;
-                          }
-                          if (e.id === stableWall.id) {
-                            (e as WallModel).leftJoints = [flipWallHead.id];
-                            (e as WallModel).leftOffset = stableWallLeftOffset;
-                          }
-                        }
-
-                        state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
-                        state.resizeHandleType = ResizeHandleType.LowerRight;
-                      });
+                      flipWallsCounterClockwise(targetWall, currWall);
                     }
                     // right to right
                     else if (
@@ -1044,82 +1136,7 @@ const Foundation = ({
                       targetWall.rightJoints.length === 0 &&
                       targetSide === WallSide.Right
                     ) {
-                      const stableWall = targetWall;
-                      const flipWallHead = currWall;
-                      let flipWall = currWall;
-
-                      while (flipWall) {
-                        const flipWallCopy = getElementById(flipWall.id) as WallModel;
-                        if (!flipWallCopy) {
-                          break;
-                        }
-                        const angle = (flipWallCopy.relativeAngle + Math.PI) % TWO_PI;
-                        let flipWallLeftOffset = 0;
-                        let nextWallRightOffset = 0;
-                        let nextWall: WallModel | undefined = undefined;
-
-                        if (flipWallCopy.leftJoints.length > 0) {
-                          nextWall = wallsOnThisFoundation.get(flipWallCopy.leftJoints[0]);
-                          if (nextWall) {
-                            const deltaAngle =
-                              (Math.PI * 3 + flipWallCopy.relativeAngle - nextWall.relativeAngle) % TWO_PI;
-                            if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
-                              const tan = Math.tan(deltaAngle);
-                              flipWallLeftOffset = flipWallCopy.ly / tan;
-                              nextWallRightOffset = nextWall.ly / tan;
-                            }
-                          }
-                        }
-
-                        setCommonStore((state) => {
-                          for (const e of state.elements) {
-                            if (flipWallCopy && e.id === flipWallCopy.id) {
-                              const wall = e as WallModel;
-                              wall.relativeAngle = angle;
-                              wall.leftPoint = [...flipWallCopy.rightPoint];
-                              wall.rightPoint = [...flipWallCopy.leftPoint];
-                              wall.leftJoints =
-                                flipWallCopy.rightJoints.length > 0 ? [flipWallCopy.rightJoints[0]] : [];
-                              wall.rightJoints = flipWallCopy.leftJoints.length > 0 ? [flipWallCopy.leftJoints[0]] : [];
-                              wall.rightOffset = flipWallLeftOffset;
-                            }
-                            if (nextWall && e.id === nextWall.id) {
-                              (e as WallModel).leftOffset = nextWallRightOffset;
-                            }
-                          }
-                        });
-
-                        if (nextWall && nextWall.id !== flipWallHead.id) {
-                          flipWall = nextWall;
-                        } else {
-                          break;
-                        }
-                      }
-                      setCommonStore((state) => {
-                        const angle = (flipWallHead.relativeAngle + Math.PI) % TWO_PI;
-                        const deltaAngle = (Math.PI * 3 - (angle - stableWall.relativeAngle)) % TWO_PI;
-                        let flipWallLeftOffset = 0;
-                        let stableWallRightOffset = 0;
-                        if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
-                          const tan = Math.tan(deltaAngle);
-                          flipWallLeftOffset = flipWall.ly / tan;
-                          stableWallRightOffset = stableWall.ly / tan;
-                        }
-
-                        for (const e of state.elements) {
-                          if (e.id === flipWallHead.id) {
-                            (e as WallModel).leftJoints = [stableWall.id];
-                            (e as WallModel).leftOffset = flipWallLeftOffset;
-                          }
-                          if (e.id === stableWall.id) {
-                            (e as WallModel).rightJoints = [flipWallHead.id];
-                            (e as WallModel).rightOffset = stableWallRightOffset;
-                          }
-                        }
-
-                        state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
-                        state.resizeHandleType = ResizeHandleType.LowerLeft;
-                      });
+                      flipWallsClockwise(targetWall, currWall);
                     }
 
                     // attach to left side
