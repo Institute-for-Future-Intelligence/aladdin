@@ -54,8 +54,6 @@ const Wall = ({
   ly = 0.5,
   lz = 4,
   relativeAngle,
-  leftOffset,
-  rightOffset,
   leftJoints,
   rightJoints,
   textureType,
@@ -136,13 +134,13 @@ const Wall = ({
   const parent = getElementById(parentId) as ElementModel;
   const wallModel = getElementById(id) as WallModel;
 
+  const elements = useStore(Selector.elements);
+  const deletedWindowAndParentId = useStore(Selector.deletedWindowAndParentId);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const setCommonStore = useStore(Selector.set);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const selectMe = useStore(Selector.selectMe);
   const removeElementById = useStore(Selector.removeElementById);
-  const elements = useStore(Selector.elements);
-  const deletedWindowAndParentId = useStore(Selector.deletedWindowAndParentId);
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const isAddingElement = useStore(Selector.isAddingElement);
 
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
@@ -180,33 +178,8 @@ const Wall = ({
     : new Vector3(cx, cy, hz);
   const wallAbsAngle = parent ? parent.rotation[2] + relativeAngle : relativeAngle;
 
-  const drawTopSurface = (shape: Shape, lx: number, ly: number, leftOffsetState: number, rightOffsetState: number) => {
-    const x = lx / 2;
-    const y = ly / 2;
-    shape.moveTo(-x, -y);
-    shape.lineTo(x, -y);
-    shape.lineTo(x - rightOffsetState, y);
-    shape.lineTo(-x + leftOffsetState, y);
-    shape.lineTo(-x, -y);
-  };
-
-  const drawRectangle = (
-    shape: Shape,
-    lx: number,
-    ly: number,
-    cx = 0,
-    cy = 0,
-    leftOffsetState = 0,
-    rightOffsetState = 0,
-  ) => {
-    const x = lx / 2;
-    const y = ly / 2;
-    shape.moveTo(cx - x + leftOffsetState, cy - y);
-    shape.lineTo(cx + x - rightOffsetState, cy - y);
-    shape.lineTo(cx + x - rightOffsetState, cy + y);
-    shape.lineTo(cx - x + leftOffsetState, cy + y);
-    shape.lineTo(cx - x + leftOffsetState, cy - y);
-  };
+  let leftOffset = 0;
+  let rightOffset = 0;
 
   if (leftJoints.length > 0) {
     const targetWall = getElementById(leftJoints[0]) as WallModel;
@@ -227,6 +200,26 @@ const Wall = ({
       }
     }
   }
+
+  const drawTopSurface = (shape: Shape, lx: number, ly: number, leftOffset: number, rightOffset: number) => {
+    const x = lx / 2;
+    const y = ly / 2;
+    shape.moveTo(-x, -y);
+    shape.lineTo(x, -y);
+    shape.lineTo(x - rightOffset, y);
+    shape.lineTo(-x + leftOffset, y);
+    shape.lineTo(-x, -y);
+  };
+
+  const drawRectangle = (shape: Shape, lx: number, ly: number, cx = 0, cy = 0, leftOffset = 0, rightOffset = 0) => {
+    const x = lx / 2;
+    const y = ly / 2;
+    shape.moveTo(cx - x + leftOffset, cy - y);
+    shape.lineTo(cx + x - rightOffset, cy - y);
+    shape.lineTo(cx + x - rightOffset, cy + y);
+    shape.lineTo(cx - x + leftOffset, cy + y);
+    shape.lineTo(cx - x + leftOffset, cy - y);
+  };
 
   // outside wall
   if (outSideWallRef.current) {

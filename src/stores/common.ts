@@ -226,8 +226,6 @@ export interface CommonStoreState {
   setWallActionScope: (scope: Scope) => void;
 
   updateWallRelativeAngleById: (id: string, angle: number) => void;
-  updateWallLeftOffsetById: (id: string, offset: number) => void;
-  updateWallRightOffsetById: (id: string, offset: number) => void;
   updateWallLeftJointsById: (id: string, joints: string[]) => void;
   updateWallRightJointsById: (id: string, joints: string[]) => void;
   updateWallLeftPointById: (id: string, point: number[]) => void;
@@ -1568,26 +1566,6 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          updateWallLeftOffsetById(id, offset) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
-                  (e as WallModel).leftOffset = offset;
-                  break;
-                }
-              }
-            });
-          },
-          updateWallRightOffsetById(id, offset) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
-                  (e as WallModel).rightOffset = offset;
-                  break;
-                }
-              }
-            });
-          },
           updateWallLeftJointsById(id, joints) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -1934,10 +1912,8 @@ export const useStore = create<CommonStoreState>(
                       for (const w of state.elements) {
                         const wall = w as WallModel;
                         if (w.id === leftWallId) {
-                          wall.rightOffset = 0;
                           wall.rightJoints = [];
                         } else if (w.id === rightWallId) {
-                          wall.leftOffset = 0;
                           wall.leftJoints = [];
                         }
                       }

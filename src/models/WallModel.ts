@@ -13,6 +13,4 @@ export interface WallModel extends ElementModel {
   leftJoints: string[];
   rightJoints: string[];
   textureType: WallTexture;
-  leftOffset: number;
-  rightOffset: number;
 }

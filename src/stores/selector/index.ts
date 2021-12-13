@@ -400,10 +400,6 @@ export const setWallActionScope = (state: CommonStoreState) => state.setWallActi
 
 export const updateWallRelativeAngleById = (state: CommonStoreState) => state.updateWallRelativeAngleById;
 
-export const updateWallLeftOffsetById = (state: CommonStoreState) => state.updateWallLeftOffsetById;
-
-export const updateWallRightOffsetById = (state: CommonStoreState) => state.updateWallRightOffsetById;
-
 export const updateWallLeftJointsById = (state: CommonStoreState) => state.updateWallLeftJointsById;
 
 export const updateWallRightJointsById = (state: CommonStoreState) => state.updateWallRightJointsById;

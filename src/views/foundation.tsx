@@ -379,37 +379,22 @@ const Foundation = ({
 
   const flipWallLoop = (currentWallId: string) => {
     let wall = wallMapOnFoundation.current.get(currentWallId);
+
     while (wall && wall.leftJoints.length > 0) {
       const wallCopy = wallMapOnFoundation.current.get(wall.id) as WallModel;
       if (!wallCopy) {
         break;
       }
-      const angle = (wallCopy.relativeAngle + Math.PI) % TWO_PI;
-      const targetWall = wallMapOnFoundation.current.get(wallCopy.leftJoints[0]);
-      const deltaAngle = TWO_PI - ((Math.PI * 3 - (wallCopy.relativeAngle - targetWall!.relativeAngle)) % TWO_PI);
 
-      let wallRightOffset = 0;
-      let targetWallLeftOffset = 0;
-      if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
-        const tan = Math.tan(deltaAngle);
-        wallRightOffset = wallCopy.ly / tan;
-        targetWallLeftOffset = targetWall!.ly / tan;
-      }
       setCommonStore((state) => {
-        if (wallCopy && targetWall) {
-          for (const e of state.elements) {
-            if (e.id === wallCopy.id) {
-              const w = e as WallModel;
-              w.relativeAngle = angle;
-              w.leftPoint = [...wallCopy.rightPoint];
-              w.rightPoint = [...wallCopy.leftPoint];
-              w.leftJoints = [wallCopy.rightJoints[0]];
-              w.rightJoints = [wallCopy.leftJoints[0]];
-              w.rightOffset = wallRightOffset;
-            }
-            if (e.id === targetWall.id) {
-              (e as WallModel).leftOffset = targetWallLeftOffset;
-            }
+        for (const e of state.elements) {
+          if (e.id === wallCopy.id) {
+            const w = e as WallModel;
+            w.relativeAngle = (wallCopy.relativeAngle + Math.PI) % TWO_PI;
+            w.leftPoint = [...wallCopy.rightPoint];
+            w.rightPoint = [...wallCopy.leftPoint];
+            w.leftJoints = [wallCopy.rightJoints[0]];
+            w.rightJoints = [wallCopy.leftJoints[0]];
           }
         }
       });
@@ -446,40 +431,24 @@ const Foundation = ({
       if (!flipWallCopy) {
         break;
       }
-      const angle = (flipWallCopy.relativeAngle + Math.PI) % TWO_PI;
-      let flipWallLeftOffset = 0;
-      let nextWallRightOffset = 0;
-      let nextWall: WallModel | undefined = undefined;
-
-      if (flipWallCopy.leftJoints.length > 0) {
-        nextWall = wallMapOnFoundation.current.get(flipWallCopy.leftJoints[0]);
-        if (nextWall) {
-          const deltaAngle = (Math.PI * 3 + flipWallCopy.relativeAngle - nextWall.relativeAngle) % TWO_PI;
-          if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
-            const tan = Math.tan(deltaAngle);
-            flipWallLeftOffset = flipWallCopy.ly / tan;
-            nextWallRightOffset = nextWall.ly / tan;
-          }
-        }
-      }
 
       setCommonStore((state) => {
         for (const e of state.elements) {
           if (flipWallCopy && e.id === flipWallCopy.id) {
             const wall = e as WallModel;
-            wall.relativeAngle = angle;
+            wall.relativeAngle = (flipWallCopy.relativeAngle + Math.PI) % TWO_PI;
             wall.leftPoint = [...flipWallCopy.rightPoint];
             wall.rightPoint = [...flipWallCopy.leftPoint];
             wall.leftJoints = flipWallCopy.rightJoints.length > 0 ? [flipWallCopy.rightJoints[0]] : [];
             wall.rightJoints = flipWallCopy.leftJoints.length > 0 ? [flipWallCopy.leftJoints[0]] : [];
-            wall.rightOffset = flipWallLeftOffset;
-          }
-          if (nextWall && e.id === nextWall.id) {
-            (e as WallModel).leftOffset = nextWallRightOffset;
           }
         }
       });
 
+      let nextWall: WallModel | undefined = undefined;
+      if (flipWallCopy.leftJoints.length > 0) {
+        nextWall = wallMapOnFoundation.current.get(flipWallCopy.leftJoints[0]);
+      }
       if (nextWall && nextWall.id !== flipWallHead.id) {
         flipWall = nextWall;
       } else {
@@ -487,27 +456,14 @@ const Foundation = ({
       }
     }
     setCommonStore((state) => {
-      const angle = (flipWallHead.relativeAngle + Math.PI) % TWO_PI;
-      const deltaAngle = (Math.PI * 3 - (angle - stableWall.relativeAngle)) % TWO_PI;
-      let flipWallLeftOffset = 0;
-      let stableWallRightOffset = 0;
-      if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
-        const tan = Math.tan(deltaAngle);
-        flipWallLeftOffset = flipWall.ly / tan;
-        stableWallRightOffset = stableWall.ly / tan;
-      }
-
       for (const e of state.elements) {
         if (e.id === flipWallHead.id) {
           (e as WallModel).leftJoints = [stableWall.id];
-          (e as WallModel).leftOffset = flipWallLeftOffset;
         }
         if (e.id === stableWall.id) {
           (e as WallModel).rightJoints = [flipWallHead.id];
-          (e as WallModel).rightOffset = stableWallRightOffset;
         }
       }
-
       state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
       state.resizeHandleType = ResizeHandleType.LowerLeft;
     });
@@ -532,40 +488,24 @@ const Foundation = ({
       if (!flipWallCopy) {
         break;
       }
-      const angle = (flipWallCopy.relativeAngle + Math.PI) % TWO_PI;
-      let flipWallLeftOffset = 0;
-      let nextWallRightOffset = 0;
-      let nextWall: WallModel | undefined = undefined;
-
-      if (flipWallCopy.rightJoints.length > 0) {
-        nextWall = wallMapOnFoundation.current.get(flipWallCopy.rightJoints[0]);
-        if (nextWall) {
-          const deltaAngle = (Math.PI * 3 - (flipWallCopy.relativeAngle - nextWall.relativeAngle)) % TWO_PI;
-          if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
-            const tan = Math.tan(deltaAngle);
-            flipWallLeftOffset = flipWallCopy.ly / tan;
-            nextWallRightOffset = nextWall.ly / tan;
-          }
-        }
-      }
 
       setCommonStore((state) => {
         for (const e of state.elements) {
           if (flipWallCopy && e.id === flipWallCopy.id) {
             const wall = e as WallModel;
-            wall.relativeAngle = angle;
+            wall.relativeAngle = (flipWallCopy.relativeAngle + Math.PI) % TWO_PI;
             wall.leftPoint = [...flipWallCopy.rightPoint];
             wall.rightPoint = [...flipWallCopy.leftPoint];
             wall.leftJoints = flipWallCopy.rightJoints.length > 0 ? [flipWallCopy.rightJoints[0]] : [];
             wall.rightJoints = flipWallCopy.leftJoints.length > 0 ? [flipWallCopy.leftJoints[0]] : [];
-            wall.leftOffset = flipWallLeftOffset;
-          }
-          if (nextWall && e.id === nextWall.id) {
-            (e as WallModel).rightOffset = nextWallRightOffset;
           }
         }
       });
 
+      let nextWall: WallModel | undefined = undefined;
+      if (flipWallCopy.rightJoints.length > 0) {
+        nextWall = wallMapOnFoundation.current.get(flipWallCopy.rightJoints[0]);
+      }
       if (nextWall && nextWall.id !== flipWallHead.id) {
         flipWall = nextWall;
       } else {
@@ -573,24 +513,12 @@ const Foundation = ({
       }
     }
     setCommonStore((state) => {
-      const angle = (flipWallHead.relativeAngle + Math.PI) % TWO_PI;
-      const deltaAngle = (Math.PI * 3 + angle - stableWall.relativeAngle) % TWO_PI;
-      let flipWallRightOffset = 0;
-      let stableWallLeftOffset = 0;
-      if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
-        const tan = Math.tan(deltaAngle);
-        flipWallRightOffset = flipWallHead.ly / tan;
-        stableWallLeftOffset = stableWall.ly / tan;
-      }
-
       for (const e of state.elements) {
         if (e.id === flipWallHead.id) {
           (e as WallModel).rightJoints = [stableWall.id];
-          (e as WallModel).rightOffset = flipWallRightOffset;
         }
         if (e.id === stableWall.id) {
           (e as WallModel).leftJoints = [flipWallHead.id];
-          (e as WallModel).leftOffset = stableWallLeftOffset;
         }
       }
 
@@ -667,26 +595,10 @@ const Foundation = ({
   };
 
   const handleUndoableAddWall = (wall: WallModel) => {
-    let leftWallOffset = 0,
-      rightWallOffset = 0;
-    if (wall.leftJoints.length > 0) {
-      const leftWall = getElementById(wall.leftJoints[0]);
-      if (leftWall) {
-        leftWallOffset = (leftWall as WallModel).rightOffset;
-      }
-    }
-    if (wall.rightJoints.length > 0) {
-      const rightWall = getElementById(wall.rightJoints[0]);
-      if (rightWall) {
-        rightWallOffset = (rightWall as WallModel).leftOffset;
-      }
-    }
     const undoableAdd = {
       name: 'Add',
       timestamp: Date.now(),
       addedElement: wall,
-      leftWallOffset: leftWallOffset,
-      rightWallOffset: rightWallOffset,
       flippedWallSide: flippedWallSide.current, // only rightside needs to be considered
       undo: () => {
         if (undoableAdd.flippedWallSide === FlippedWallSide.right) {
@@ -696,19 +608,13 @@ const Foundation = ({
       },
       redo: () => {
         setCommonStore((state) => {
-          if (leftWallOffset !== 0 && wall.leftJoints.length > 0) {
+          if (wall.leftJoints.length > 0) {
             for (const e of state.elements) {
               if (e.id === wall.leftJoints[0]) {
-                (e as WallModel).rightOffset = leftWallOffset;
                 (e as WallModel).rightJoints[0] = undoableAdd.addedElement.id;
-                break;
               }
-            }
-            for (const e of state.elements) {
               if (e.id === wall.rightJoints[0]) {
-                (e as WallModel).leftOffset = rightWallOffset;
                 (e as WallModel).leftJoints[0] = undoableAdd.addedElement.id;
-                break;
               }
             }
           }
@@ -1068,58 +974,6 @@ const Foundation = ({
 
               const currWall = getElementById(grabRef.current.id) as WallModel;
               if (currWall) {
-                // change angle
-                if (resizeHandleType === ResizeHandleType.LowerRight && currWall.leftJoints.length > 0) {
-                  const targetJoint = currWall.leftJoints[0];
-                  const targetWall = getElementById(targetJoint) as WallModel;
-                  if (targetWall) {
-                    const deltaAngle = (Math.PI * 3 - (angle - targetWall.relativeAngle)) % TWO_PI;
-                    let currLeftOffset = 0;
-                    let targetRightOffset = 0;
-                    if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
-                      const tan = Math.tan(deltaAngle);
-                      currLeftOffset = currWall.ly / tan;
-                      targetRightOffset = targetWall.ly / tan;
-                    } else {
-                      // gap
-                    }
-                    setCommonStore((state) => {
-                      for (const e of state.elements) {
-                        if (e.id === currWall.id) {
-                          (e as WallModel).leftOffset = currLeftOffset;
-                        }
-                        if (e.id === targetWall.id) {
-                          (e as WallModel).rightOffset = targetRightOffset;
-                        }
-                      }
-                    });
-                  }
-                } else if (resizeHandleType === ResizeHandleType.LowerLeft && currWall.rightJoints.length > 0) {
-                  const targetWall = getElementById(currWall.rightJoints[0]) as WallModel;
-                  if (targetWall) {
-                    const deltaAngle = (Math.PI * 3 + angle - targetWall.relativeAngle) % TWO_PI;
-                    let currRightOffset = 0;
-                    let targetLeftOffset = 0;
-                    if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
-                      const tan = Math.tan(deltaAngle);
-                      currRightOffset = currWall.ly / tan;
-                      targetLeftOffset = targetWall.ly / tan;
-                    } else {
-                      // gap
-                    }
-                    setCommonStore((state) => {
-                      for (const e of state.elements) {
-                        if (e.id === currWall.id) {
-                          (e as WallModel).rightOffset = currRightOffset;
-                        }
-                        if (e.id === targetWall.id) {
-                          (e as WallModel).leftOffset = targetLeftOffset;
-                        }
-                      }
-                    });
-                  }
-                }
-
                 // attach to other wall
                 if (targetID && targetPoint && targetSide) {
                   const targetWall = getElementById(targetID) as WallModel;
@@ -1149,22 +1003,12 @@ const Foundation = ({
                       targetWall.leftJoints.length === 0 &&
                       targetWall.rightJoints[0] !== currWall.id
                     ) {
-                      const deltaAngle = (Math.PI * 3 + angle - targetWall.relativeAngle) % TWO_PI;
-                      let currRightOffset = 0;
-                      let targetLeftOffset = 0;
-                      if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
-                        const tan = Math.tan(deltaAngle);
-                        currRightOffset = currWall.ly / tan;
-                        targetLeftOffset = targetWall.ly / tan;
-                      }
                       setCommonStore((state) => {
                         for (const e of state.elements) {
                           if (e.id === currWall.id) {
-                            (e as WallModel).rightOffset = currRightOffset;
                             (e as WallModel).rightJoints = [targetWall.id];
                           }
                           if (e.id === targetWall.id) {
-                            (e as WallModel).leftOffset = targetLeftOffset;
                             (e as WallModel).leftJoints = [currWall.id];
                           }
                         }
@@ -1177,22 +1021,12 @@ const Foundation = ({
                       targetWall.rightJoints.length === 0 &&
                       targetWall.leftJoints[0] !== currWall.id
                     ) {
-                      const deltaAngle = (Math.PI * 3 - (angle - targetWall.relativeAngle)) % TWO_PI;
-                      let currLeftOffset = 0;
-                      let targetRightOffset = 0;
-                      if (deltaAngle < HALF_PI && deltaAngle > 0.1) {
-                        const tan = Math.tan(deltaAngle);
-                        currLeftOffset = currWall.ly / tan;
-                        targetRightOffset = targetWall.ly / tan;
-                      }
                       setCommonStore((state) => {
                         for (const e of state.elements) {
                           if (e.id === currWall.id) {
-                            (e as WallModel).leftOffset = currLeftOffset;
                             (e as WallModel).leftJoints = [targetWall.id];
                           }
                           if (e.id === targetWall.id) {
-                            (e as WallModel).rightOffset = targetRightOffset;
                             (e as WallModel).rightJoints = [currWall.id];
                           }
                         }
@@ -1209,11 +1043,9 @@ const Foundation = ({
                     setCommonStore((state) => {
                       for (const e of state.elements) {
                         if (e.id === currWall.id) {
-                          (e as WallModel).rightOffset = 0;
                           (e as WallModel).rightJoints = [];
                         }
                         if (e.id === targetWallId) {
-                          (e as WallModel).leftOffset = 0;
                           (e as WallModel).leftJoints = [];
                         }
                       }
@@ -1223,11 +1055,9 @@ const Foundation = ({
                     setCommonStore((state) => {
                       for (const e of state.elements) {
                         if (e.id === currWall.id) {
-                          (e as WallModel).leftOffset = 0;
                           (e as WallModel).leftJoints = [];
                         }
                         if (e.id === targetWallId) {
-                          (e as WallModel).rightOffset = 0;
                           (e as WallModel).rightJoints = [];
                         }
                       }
