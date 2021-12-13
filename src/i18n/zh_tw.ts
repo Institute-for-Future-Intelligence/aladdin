@@ -62,6 +62,7 @@ export const i18n_zh_tw = {
       Close: '關閉',
       ApplyTo: '適用於',
       Clear: '清空',
+      Warning: '警告',
       Length: '長度',
       Width: '寬度',
       Height: '高度',
@@ -103,6 +104,7 @@ export const i18n_zh_tw = {
       SensorElement: '傳感器',
       SolarPanelElement: '光伏板',
       ElementLocked: '固定',
+      ThisCannotBeUndone: '這個操作一旦執行就不能撤銷。',
     },
 
     menu: {

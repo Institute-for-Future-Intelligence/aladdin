@@ -62,6 +62,7 @@ export const i18n_en = {
       Close: 'Close',
       ApplyTo: 'Apply to',
       Clear: 'Clear',
+      Warning: 'Warning',
       Length: 'Length',
       Width: 'Width',
       Height: 'Height',
@@ -103,6 +104,7 @@ export const i18n_en = {
       SensorElement: 'Sensor',
       SolarPanelElement: 'Solar Panel',
       ElementLocked: 'Locked',
+      ThisCannotBeUndone: 'This cannot be undone.',
     },
 
     menu: {

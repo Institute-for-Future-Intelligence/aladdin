@@ -58,6 +58,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const undoManager = useStore(Selector.undoManager);
 
   const [loading, setLoading] = useState(false);
+  const [updateFlag, setUpdateFlag] = useState(false);
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
   const [title, setTitle] = useState<string>(cloudFile ?? 'My Aladdin File');
   const [titleDialogVisible, setTitleDialogVisible] = useState(false);
@@ -138,6 +139,10 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   useEffect(() => {
     setTitleDialogVisible(showCloudFileTitleDialog);
   }, [showCloudFileTitleDialog]);
+
+  useEffect(() => {
+    setTitle(cloudFile ?? 'My Aladdin File');
+  }, [cloudFile]);
 
   const init = () => {
     const userid = params.get('userid');
@@ -250,6 +255,11 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
                     importContent(localContentToImportAfterCloudFileUpdate);
                   }
                 }
+                if (showCloudFilePanel) {
+                  fetchMyCloudFiles().then(() => {
+                    setUpdateFlag(!updateFlag);
+                  });
+                }
               })
               .catch((error) => {
                 console.log('Error saving file:', error);
@@ -311,36 +321,42 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     }
   };
 
-  const gotoMyCloudFiles = async () => {
-    if (user.email) {
-      setLoading(true);
-      // fetch owner's file information from the cloud
-      cloudFiles.current = await firebase
-        .firestore()
-        .collection('users')
-        .doc(user.email)
-        .collection('files')
-        .get()
-        .then((querySnapshot) => {
-          const a: CloudFileInfo[] = [];
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            a.push({
-              timestamp: data.timestamp,
-              fileName: doc.id,
-              email: data.email,
-              owner: data.owner,
-              uuid: data.docid,
-            } as CloudFileInfo);
-          });
-          setLoading(false);
-          return a;
-        })
-        .catch((error) => {
-          console.log('Error getting files:', error);
+  const fetchMyCloudFiles = async () => {
+    if (!user.email) return;
+    setLoading(true);
+    // fetch owner's file information from the cloud
+    cloudFiles.current = await firebase
+      .firestore()
+      .collection('users')
+      .doc(user.email)
+      .collection('files')
+      .get()
+      .then((querySnapshot) => {
+        const a: CloudFileInfo[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          a.push({
+            timestamp: data.timestamp,
+            fileName: doc.id,
+            email: data.email,
+            owner: data.owner,
+            uuid: data.docid,
+          } as CloudFileInfo);
         });
-      setCommonStore((state) => {
-        state.showCloudFilePanel = true;
+        setLoading(false);
+        return a;
+      })
+      .catch((error) => {
+        console.log('Error getting files:', error);
+      });
+  };
+
+  const listMyCloudFiles = () => {
+    if (user.email) {
+      fetchMyCloudFiles().then(() => {
+        setCommonStore((state) => {
+          state.showCloudFilePanel = true;
+        });
       });
     }
   };
@@ -359,6 +375,11 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             return e.email !== userid || e.title !== title;
           }),
         );
+        setCommonStore((state) => {
+          if (title === state.cloudFile) {
+            state.cloudFile = undefined;
+          }
+        });
       })
       .catch((error) => {
         console.log('Error deleting file:', error);
@@ -422,7 +443,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       <Menu.Item key="save-file-to-cloud" onClick={showTitleDialog}>
         {i18n.t('avatarMenu.SaveFileToCloud', lang)}
       </Menu.Item>
-      <Menu.Item key="my-cloud-files" onClick={gotoMyCloudFiles}>
+      <Menu.Item key="my-cloud-files" onClick={listMyCloudFiles}>
         {i18n.t('avatarMenu.MyCloudFiles', lang)}
       </Menu.Item>
       <Menu.Item key="account" onClick={gotoAccountSettings}>
@@ -452,6 +473,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   ) : (
     <>
       <Modal
+        width={500}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -488,9 +510,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         <Space direction={'horizontal'}>
           <label>{i18n.t('word.Title', lang)}:</label>
           <Input
-            style={{ width: '360px' }}
+            style={{ width: '400px' }}
             placeholder="Title"
-            value={cloudFile ?? title}
+            value={title}
             onPressEnter={() => saveToCloud(title)}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setTitle(e.target.value);

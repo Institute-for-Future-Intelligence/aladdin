@@ -126,7 +126,14 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
 
   const deleteFile = (email: string, title: string) => {
     Modal.confirm({
-      title: i18n.t('cloudFilePanel.DoYouReallyWantToDelete', lang) + ' "' + title + '"?',
+      title:
+        i18n.t('cloudFilePanel.DoYouReallyWantToDelete', lang) +
+        ' "' +
+        title +
+        '"? ' +
+        i18n.t('word.Warning', lang) +
+        ': ' +
+        i18n.t('shared.ThisCannotBeUndone', lang),
       icon: <ExclamationCircleOutlined />,
       onOk: () => {
         deleteCloudFile(email, title);
