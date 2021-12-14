@@ -2001,6 +2001,9 @@ export const useStore = create<CommonStoreState>(
           removeAllChildElementsByType(parentId: string, type: ObjectType) {
             immerSet((state: CommonStoreState) => {
               state.elements = state.elements.filter((x) => x.type !== type || x.parentId !== parentId);
+              if (type === ObjectType.Wall) {
+                state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+              }
             });
           },
           countAllChildElementsByType(parentId: string, type: ObjectType) {

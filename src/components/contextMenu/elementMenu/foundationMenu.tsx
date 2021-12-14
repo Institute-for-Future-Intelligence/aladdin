@@ -100,6 +100,7 @@ export const FoundationMenu = () => {
                           undo: () => {
                             setCommonStore((state) => {
                               state.elements.push(...undoableRemoveAllWallChildren.removedElements);
+                              state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
                             });
                           },
                           redo: () => {
