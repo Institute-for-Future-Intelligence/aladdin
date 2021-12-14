@@ -56,6 +56,7 @@ import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableChange } from '../undo/UndoableChange';
 import { ElementGrid } from './elementGrid';
 import i18n from '../i18n/i18n';
+import { PolygonModel } from '../models/PolygonModel';
 
 const Foundation = ({
   id,
@@ -81,6 +82,7 @@ const Foundation = ({
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLyById = useStore(Selector.updateElementLyById);
   const updateSolarPanelRelativeAzimuthById = useStore(Selector.updateSolarPanelRelativeAzimuthById);
+  const updatePolygonVertexPositionById = useStore(Selector.updatePolygonVertexPositionById);
   const removeElementById = useStore(Selector.removeElementById);
   const selectMe = useStore(Selector.selectMe);
   const addElement = useStore(Selector.addElement);
@@ -933,9 +935,12 @@ const Foundation = ({
             setElementPosition(grabRef.current.id, p.x, p.y);
             break;
           case ObjectType.Polygon:
+            const polygon = grabRef.current as PolygonModel;
+            p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
             if (moveHandleType === MoveHandleType.Default) {
-              p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
-              setElementPosition(grabRef.current.id, p.x, p.y);
+              setElementPosition(polygon.id, p.x, p.y);
+            } else if (resizeHandleType === ResizeHandleType.Default) {
+              updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, p.x, p.y);
             }
             break;
           case ObjectType.Wall:

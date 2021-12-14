@@ -149,6 +149,10 @@ export const updateFoundationTextureById = (state: CommonStoreState) => state.up
 
 export const updateFoundationTextureForAll = (state: CommonStoreState) => state.updateFoundationTextureForAll;
 
+export const updatePolygonSelectedIndexById = (state: CommonStoreState) => state.updatePolygonSelectedIndexById;
+
+export const updatePolygonVertexPositionById = (state: CommonStoreState) => state.updatePolygonVertexPositionById;
+
 export const cuboidActionScope = (state: CommonStoreState) => state.cuboidActionScope;
 
 export const setCuboidActionScope = (state: CommonStoreState) => state.setCuboidActionScope;

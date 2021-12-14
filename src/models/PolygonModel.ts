@@ -8,4 +8,5 @@ import { Point2 } from './Point2';
 export interface PolygonModel extends ElementModel {
   vertices: Point2[];
   filled: boolean;
+  selectedIndex: number;
 }

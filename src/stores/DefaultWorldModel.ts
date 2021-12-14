@@ -80,7 +80,7 @@ export class DefaultWorldModel implements WorldModel {
         { x: 1, y: 1 } as Point2,
         { x: 1, y: -1 } as Point2,
       ],
-
+      selectedIndex: -1,
       parentId: foundation.id,
       filled: true,
       id: short.generate() as string,

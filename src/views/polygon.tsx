@@ -19,7 +19,7 @@ import {
   UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
 } from '../constants';
-import { ActionType, MoveHandleType, ObjectType } from '../types';
+import { ActionType, MoveHandleType, ObjectType, ResizeHandleType } from '../types';
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { PolygonModel } from '../models/PolygonModel';
@@ -48,6 +48,7 @@ const Polygon = ({
   const language = useStore(Selector.language);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
+  const updatePolygonSelectedIndexById = useStore(Selector.updatePolygonSelectedIndexById);
 
   const {
     gl: { domElement },
@@ -212,9 +213,11 @@ const Polygon = ({
             <Box
               key={'resize-handle-' + i}
               position={[p.x, p.y, 0]}
+              name={ResizeHandleType.Default}
               args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
               onPointerDown={(e) => {
                 selectMe(id, e, ActionType.Resize);
+                updatePolygonSelectedIndexById(polygonModel.id, i);
               }}
               onPointerOver={(e) => {}}
               onPointerOut={() => {}}

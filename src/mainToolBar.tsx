@@ -243,7 +243,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       });
   };
 
-  const saveToCloud = (tlt: string) => {
+  const saveToCloud = (tlt: string, silent: boolean) => {
     const t = tlt.trim();
     if (t.length > 0) {
       setLoading(true);
@@ -257,10 +257,12 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
               .set(exportContent())
               .then(() => {
                 setLoading(false);
-                setCommonStore((state) => {
-                  state.cloudFile = t;
-                  state.changed = false;
-                });
+                if (!silent) {
+                  setCommonStore((state) => {
+                    state.cloudFile = t;
+                    state.changed = false;
+                  });
+                }
                 if (localContentToImportAfterCloudFileUpdate) {
                   if (localContentToImportAfterCloudFileUpdate === 'CREATE_NEW_FILE') {
                     createEmptyFile();
@@ -295,7 +297,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         icon: <ExclamationCircleOutlined />,
         onOk: () => {
           if (cloudFile) {
-            saveToCloud(cloudFile);
+            saveToCloud(cloudFile, true);
           }
           openCloudFile(userid, title);
         },
@@ -435,7 +437,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
 
   const updateCloudFile = () => {
     if (cloudFile) {
-      saveToCloud(cloudFile);
+      saveToCloud(cloudFile, false);
       setTitle(cloudFile);
     }
   };
@@ -481,14 +483,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         }
         visible={titleDialogVisible}
         onOk={() => {
-          const trimmedTitle = title.trim();
-          if (trimmedTitle.length > 0) {
-            saveToCloud(trimmedTitle);
-            setCommonStore((state) => {
-              state.cloudFile = trimmedTitle;
-              state.showCloudFileTitleDialog = false;
-            });
-          }
+          saveToCloud(title, false);
         }}
         confirmLoading={loading}
         onCancel={() => {
@@ -509,7 +504,10 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             style={{ width: '400px' }}
             placeholder="Title"
             value={title}
-            onPressEnter={() => saveToCloud(title)}
+            onPressEnter={() => {
+              console.log(title);
+              saveToCloud(title, false);
+            }}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setTitle(e.target.value);
             }}

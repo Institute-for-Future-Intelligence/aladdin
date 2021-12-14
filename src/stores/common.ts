@@ -51,6 +51,7 @@ import { HumanModel } from '../models/HumanModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
 import { ORIGIN_VECTOR2 } from '../constants';
+import { PolygonModel } from '../models/PolygonModel';
 
 enableMapSet();
 
@@ -157,6 +158,10 @@ export interface CommonStoreState {
   updateCuboidTextureBySide: (side: number, id: string, texture: CuboidTexture) => void;
   updateCuboidFacadeTextureById: (id: string, texture: CuboidTexture) => void;
   updateCuboidFacadeTextureForAll: (texture: CuboidTexture) => void;
+
+  // for polygons
+  updatePolygonSelectedIndexById: (id: string, index: number) => void;
+  updatePolygonVertexPositionById: (id: string, index: number, x: number, y: number) => void;
 
   // for solar panels
   solarPanelActionScope: Scope;
@@ -1019,6 +1024,32 @@ export const useStore = create<CommonStoreState>(
                   for (let i = 0; i < 4; i++) {
                     cuboid.textureTypes[i] = texture;
                   }
+                }
+              }
+            });
+          },
+
+          // for polygons
+          updatePolygonSelectedIndexById(id: string, index: number) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Polygon && e.id === id) {
+                  (e as PolygonModel).selectedIndex = index;
+                  break;
+                }
+              }
+            });
+          },
+          updatePolygonVertexPositionById(id: string, index: number, x: number, y: number) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Polygon && e.id === id) {
+                  const p = e as PolygonModel;
+                  if (index >= 0 && index < p.vertices.length) {
+                    p.vertices[index].x = x;
+                    p.vertices[index].y = y;
+                  }
+                  break;
                 }
               }
             });
