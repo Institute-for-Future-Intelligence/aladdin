@@ -50,7 +50,7 @@ import { WallModel } from '../models/WallModel';
 import RotateHandle from '../components/rotateHandle';
 import Wireframe from '../components/wireframe';
 import * as Selector from '../stores/selector';
-import { UndoableAdd, UndoableAddWall, FlippedWallSide } from '../undo/UndoableAdd';
+import { FlippedWallSide, UndoableAdd, UndoableAddWall } from '../undo/UndoableAdd';
 import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableChange } from '../undo/UndoableChange';
@@ -320,6 +320,7 @@ const Foundation = ({
     switch (type) {
       case ObjectType.Human:
       case ObjectType.Tree:
+      case ObjectType.Polygon:
       case ObjectType.Sensor:
       case ObjectType.SolarPanel:
       case ObjectType.Wall:
@@ -914,6 +915,7 @@ const Foundation = ({
     const objectTypeToAdd = objectTypeToAddRef.current;
     if (!grabRef.current && !addedWallID && objectTypeToAdd !== ObjectType.Wall) return;
     if (grabRef.current?.parentId !== id && objectTypeToAdd === ObjectType.None) return;
+    const moveHandleType = moveHandleTypeRef.current;
     const resizeHandleType = resizeHandleTypeRef.current;
     const resizeAnchor = resizeAnchorRef.current;
     const mouse = new Vector2(
@@ -929,6 +931,12 @@ const Foundation = ({
           case ObjectType.Sensor:
             p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
             setElementPosition(grabRef.current.id, p.x, p.y);
+            break;
+          case ObjectType.Polygon:
+            if (moveHandleType === MoveHandleType.Default) {
+              p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
+              setElementPosition(grabRef.current.id, p.x, p.y);
+            }
             break;
           case ObjectType.Wall:
             if (

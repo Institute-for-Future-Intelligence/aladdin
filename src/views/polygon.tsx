@@ -19,7 +19,7 @@ import {
   UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
 } from '../constants';
-import { ActionType, ObjectType } from '../types';
+import { ActionType, MoveHandleType, ObjectType } from '../types';
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { PolygonModel } from '../models/PolygonModel';
@@ -198,7 +198,7 @@ const Polygon = ({
           ref={handleRef}
           position={new Vector3(0, 0, 0)}
           args={[moveHandleSize, 6, 6]}
-          name={'Handle'}
+          name={MoveHandleType.Default}
           onPointerDown={(e) => {
             selectMe(id, e, ActionType.Move);
           }}

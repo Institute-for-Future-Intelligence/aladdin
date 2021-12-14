@@ -33,7 +33,7 @@ import { useThree } from '@react-three/fiber';
 import { HumanModel } from '../models/HumanModel';
 import { Billboard, Plane, Sphere } from '@react-three/drei';
 import { HALF_PI, MOVE_HANDLE_RADIUS } from '../constants';
-import { ActionType, HumanName, ObjectType } from '../types';
+import { ActionType, HumanName, MoveHandleType, ObjectType } from '../types';
 import i18n from '../i18n/i18n';
 
 const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked = false, ...props }: HumanModel) => {
@@ -297,7 +297,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
         <Sphere
           position={new Vector3(0, 0, -height / 2)}
           args={[MOVE_HANDLE_RADIUS * 4, 6, 6]}
-          name={'Handle'}
+          name={MoveHandleType.Default}
           onPointerDown={(e) => {
             selectMe(id, e, ActionType.Move);
           }}

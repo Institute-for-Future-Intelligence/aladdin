@@ -89,6 +89,7 @@ export enum ActionType {
 }
 
 export enum MoveHandleType {
+  Default = 'Move Handle', // used when there is only one handle for moving
   Lower = 'Move Handle Lower',
   Upper = 'Move Handle Upper',
   Left = 'Move Handle Left',
@@ -110,6 +111,7 @@ export enum ResizeHandleType {
   Upper = 'Resize Handle Upper',
   Left = 'Resize Handle Left',
   Right = 'Resize Handle Right',
+  Default = 'Resize Handle', // used for resizing a polygon
 }
 
 export enum RotateHandleType {

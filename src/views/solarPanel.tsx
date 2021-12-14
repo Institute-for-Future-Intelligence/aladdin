@@ -405,7 +405,7 @@ const SolarPanel = ({
               ref={moveHandleRef}
               position={new Vector3(0, 0, 0)}
               args={[moveHandleSize, 6, 6]}
-              name={'Handle'}
+              name={MoveHandleType.Default}
               onPointerOver={(e) => {
                 hoverHandle(e, MoveHandleType.Top);
               }}
