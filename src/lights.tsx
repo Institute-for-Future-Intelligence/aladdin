@@ -5,14 +5,13 @@
 import React, { useRef } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
-import { DEFAULT_FAR } from './constants';
 import { DirectionalLight } from 'three';
 
 const Lights = () => {
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const sceneRadius = useStore(Selector.sceneRadius);
   const positionExtent = 2 * sceneRadius;
-  const cameraExtent = 2 * sceneRadius;
+  const cameraExtent = sceneRadius + 100;
 
   const ref = useRef<DirectionalLight>();
 
@@ -34,10 +33,10 @@ const Lights = () => {
         position={sunlightDirection.normalize().multiplyScalar(positionExtent)}
         intensity={sunlightDirection.z > 0 ? 0.5 : 0}
         castShadow
-        shadow-mapSize-height={4096}
-        shadow-mapSize-width={4096}
+        shadow-mapSize-height={4096 * 4}
+        shadow-mapSize-width={4096 * 4}
         shadow-camera-near={1}
-        shadow-camera-far={DEFAULT_FAR}
+        shadow-camera-far={10_000}
       />
     </>
   );
