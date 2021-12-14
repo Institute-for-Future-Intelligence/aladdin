@@ -415,6 +415,8 @@ const Foundation = ({
           ? ResizeHandleType.LowerRight
           : ResizeHandleType.LowerLeft;
     });
+
+    flippedWallSide.current = FlippedWallSide.right;
   };
 
   const flipWallsClockwise = (currWall: WallModel, targetWall?: WallModel) => {
@@ -472,7 +474,9 @@ const Foundation = ({
       state.resizeHandleType = ResizeHandleType.LowerLeft;
     });
 
-    flippedWallSide.current = FlippedWallSide.right; // side after flip
+    // side after flip
+    flippedWallSide.current =
+      flippedWallSide.current === FlippedWallSide.null ? FlippedWallSide.right : FlippedWallSide.null;
   };
 
   const flipWallsCounterClockwise = (currWall: WallModel, targetWall?: WallModel) => {
@@ -531,7 +535,9 @@ const Foundation = ({
       state.resizeHandleType = ResizeHandleType.LowerRight;
     });
 
-    flippedWallSide.current = FlippedWallSide.left; // side after flip
+    // side after flip
+    flippedWallSide.current =
+      flippedWallSide.current === FlippedWallSide.null ? FlippedWallSide.left : FlippedWallSide.null;
   };
 
   const checkWallLoop = (currentWallId: string) => {
@@ -604,7 +610,7 @@ const Foundation = ({
       name: 'Add',
       timestamp: Date.now(),
       addedElement: wall,
-      flippedWallSide: flippedWallSide.current, // only rightside needs to be considered??? May need to consider resize handle type
+      flippedWallSide: flippedWallSide.current,
       undo: () => {
         const wall = undoableAdd.addedElement as WallModel;
         removeElementById(wall.id, false);
@@ -612,9 +618,11 @@ const Foundation = ({
           const rightWall = getElementById(wall.rightJoints[0]);
           if (rightWall) {
             flipWallsCounterClockwise(rightWall as WallModel);
-            setCommonStore((state) => {
-              state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
-            });
+          }
+        } else if (undoableAdd.flippedWallSide === FlippedWallSide.left && wall.leftJoints.length > 0) {
+          const leftWall = getElementById(wall.leftJoints[0]);
+          if (leftWall) {
+            flipWallsClockwise(leftWall as WallModel);
           }
         }
       },
@@ -624,6 +632,11 @@ const Foundation = ({
           const rightWall = getElementById(wall.rightJoints[0]);
           if (rightWall) {
             flipWallsClockwise(rightWall as WallModel);
+          }
+        } else if (undoableAdd.flippedWallSide === FlippedWallSide.left && wall.leftJoints.length > 0) {
+          const leftWall = getElementById(wall.leftJoints[0]);
+          if (leftWall) {
+            flipWallsCounterClockwise(leftWall as WallModel);
           }
         }
         if (wall.rightJoints.length > 0) {
@@ -785,6 +798,7 @@ const Foundation = ({
               }
             });
           }
+          flippedWallSide.current = FlippedWallSide.null;
         } else {
           if (resizeHandleTypeRef.current) {
             newPositionRef.current.x = elem.cx;
