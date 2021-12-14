@@ -101,6 +101,7 @@ export const i18n_zh_tw = {
       ThisElementIsLocked: '這個部件被鎖定。',
       FoundationElement: '地基',
       CuboidElement: '長方體',
+      PolygonElement: '多邊形',
       SensorElement: '傳感器',
       SolarPanelElement: '光伏板',
       ElementLocked: '固定',

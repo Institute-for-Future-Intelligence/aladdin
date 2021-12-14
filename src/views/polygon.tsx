@@ -4,15 +4,15 @@
 
 import React, { useMemo, useRef, useState } from 'react';
 import { Box, Sphere } from '@react-three/drei';
-import { Euler, Mesh, Vector3 } from 'three';
+import { Euler, Mesh, Shape, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { SensorModel } from '../models/SensorModel';
 import { useThree } from '@react-three/fiber';
 import {
   HALF_PI,
-  HIGHLIGHT_HANDLE_COLOR,
   MOVE_HANDLE_RADIUS,
+  RESIZE_HANDLE_COLOR,
+  RESIZE_HANDLE_SIZE,
   UNIT_VECTOR_NEG_X,
   UNIT_VECTOR_NEG_Y,
   UNIT_VECTOR_POS_X,
@@ -21,31 +21,31 @@ import {
 } from '../constants';
 import { ActionType, ObjectType } from '../types';
 import { Util } from '../Util';
-import Wireframe from '../components/wireframe';
 import i18n from '../i18n/i18n';
+import { PolygonModel } from '../models/PolygonModel';
+import { Line } from '@react-three/drei';
 
-const Sensor = ({
+const Polygon = ({
   id,
   cx,
   cy,
   cz,
-  lx = 1,
-  ly = 1,
+  lx = 0.1,
+  ly = 0.1,
   lz = 0.1,
+  filled = false,
   rotation = [0, 0, 0],
   normal = [0, 0, 1],
-  color = 'white',
+  color = 'yellow',
   lineColor = 'black',
-  lineWidth = 0.1,
+  lineWidth = 1,
   selected = false,
   showLabel = false,
   parentId,
-  light = true,
-  heatFlux = false,
-}: SensorModel) => {
+  vertices,
+}: PolygonModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
 
@@ -57,6 +57,9 @@ const Sensor = ({
   const handleRef = useRef<Mesh>();
 
   const lang = { lng: language };
+  const ratio = Math.max(1, Math.max(lx, ly) / 8);
+  const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
+  const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
 
   if (parentId) {
     const p = getElementById(parentId);
@@ -93,7 +96,7 @@ const Sensor = ({
     }
   }
   const hz = lz / 2;
-  const sensorModel = getElementById(id) as SensorModel;
+  const polygonModel = getElementById(id) as PolygonModel;
 
   const euler = useMemo(() => {
     const v = new Vector3().fromArray(normal);
@@ -116,15 +119,35 @@ const Sensor = ({
     return new Euler(0, 0, rotation[2]);
   }, [normal, rotation]);
 
+  const points = useMemo(() => {
+    const p = new Array<Vector3>(vertices.length);
+    for (const v of vertices) {
+      p.push(new Vector3(v.x, v.y, 0));
+    }
+    // close the polygon
+    p.push(new Vector3(vertices[0].x, vertices[0].y, 0));
+    return p;
+  }, [vertices]);
+
+  const shape = useMemo(() => {
+    const s = new Shape();
+    for (const v of vertices) {
+      s.lineTo(v.x, v.y);
+    }
+    s.lineTo(vertices[0].x, vertices[0].y);
+    return s;
+  }, [vertices]);
+
   return (
-    <group name={'Sensor Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
-      {/* draw rectangle (too small to cast shadow) */}
-      <Box
-        receiveShadow={shadowEnabled}
+    <group name={'Polygon Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
+      <mesh
         uuid={id}
         ref={baseRef}
-        args={[lx, ly, lz]}
-        name={'Sensor'}
+        position={[0, 0, 0]}
+        receiveShadow={true}
+        castShadow={false}
+        visible={filled}
+        name={'Polygon'}
         onPointerDown={(e) => {
           if (e.button === 2) return; // ignore right-click
           selectMe(id, e, ActionType.Move);
@@ -135,7 +158,7 @@ const Sensor = ({
             if (e.intersections.length > 0) {
               const intersected = e.intersections[0].object === baseRef.current;
               if (intersected) {
-                state.contextMenuObjectType = ObjectType.Sensor;
+                state.contextMenuObjectType = ObjectType.Polygon;
               }
             }
           });
@@ -154,18 +177,27 @@ const Sensor = ({
           domElement.style.cursor = 'default';
         }}
       >
-        <meshStandardMaterial attach="material" color={sensorModel?.lit ? HIGHLIGHT_HANDLE_COLOR : color} />
-      </Box>
+        <shapeBufferGeometry attach="geometry" args={[shape]} />
+        <meshBasicMaterial color={color} transparent={true} opacity={0.5} />
+      </mesh>
 
-      {/* wireFrame */}
-      {!selected && <Wireframe hx={lx / 2} hy={ly / 2} hz={lz / 2} />}
+      {/* wireframe */}
+      <Line
+        points={points}
+        color={lineColor}
+        lineWidth={lineWidth}
+        uuid={id}
+        receiveShadow={false}
+        castShadow={false}
+        name={'Polygon Wireframe'}
+      />
 
       {/* draw handle */}
       {selected && (
         <Sphere
           ref={handleRef}
           position={new Vector3(0, 0, 0)}
-          args={[MOVE_HANDLE_RADIUS, 6, 6]}
+          args={[moveHandleSize, 6, 6]}
           name={'Handle'}
           onPointerDown={(e) => {
             selectMe(id, e, ActionType.Move);
@@ -174,13 +206,30 @@ const Sensor = ({
           <meshStandardMaterial attach="material" color={'orange'} />
         </Sphere>
       )}
+      {selected &&
+        polygonModel.vertices.map((p, i) => {
+          return (
+            <Box
+              key={'resize-handle-' + i}
+              position={[p.x, p.y, 0]}
+              args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
+              onPointerDown={(e) => {
+                selectMe(id, e, ActionType.Resize);
+              }}
+              onPointerOver={(e) => {}}
+              onPointerOut={() => {}}
+            >
+              <meshStandardMaterial attach="material" color={RESIZE_HANDLE_COLOR} />
+            </Box>
+          );
+        })}
 
       {(hovered || showLabel) && !selected && (
         <textSprite
           name={'Label'}
           text={
-            (sensorModel?.label ? sensorModel.label : i18n.t('shared.SensorElement', lang)) +
-            (sensorModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
+            (polygonModel?.label ? polygonModel.label : i18n.t('shared.PolygonElement', lang)) +
+            (polygonModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
           }
           fontSize={20}
           fontFace={'Times Roman'}
@@ -194,4 +243,4 @@ const Sensor = ({
 
 // this one may not use React.memo as it needs to move with its parent.
 // there may be a way to notify a memorized component when its parent changes
-export default Sensor;
+export default Polygon;

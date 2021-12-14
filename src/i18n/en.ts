@@ -101,6 +101,7 @@ export const i18n_en = {
       ThisElementIsLocked: 'This element is locked.',
       FoundationElement: 'Foundation',
       CuboidElement: 'Cuboid',
+      PolygonElement: 'Polygon',
       SensorElement: 'Sensor',
       SolarPanelElement: 'Solar Panel',
       ElementLocked: 'Locked',

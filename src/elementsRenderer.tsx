@@ -22,6 +22,8 @@ import { WallModel } from './models/WallModel';
 import Wall from './views/wall/wall';
 import Roof from './views/roof';
 import { RoofModel } from './models/RoofModel';
+import Polygon from './views/polygon';
+import { PolygonModel } from './models/PolygonModel';
 
 const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
@@ -46,6 +48,8 @@ const ElementsRenderer: React.FC = () => {
             return <Wall key={e.id} {...(e as WallModel)} />;
           case ObjectType.Roof:
             return <Roof key={e.id} {...(e as RoofModel)} />;
+          case ObjectType.Polygon:
+            return <Polygon key={e.id} {...(e as PolygonModel)} />;
           default:
             return <React.Fragment key={e.id} />;
         }

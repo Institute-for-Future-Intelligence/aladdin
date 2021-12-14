@@ -11,6 +11,8 @@ import { GroundModel } from '../models/GroundModel';
 import { HumanModel } from '../models/HumanModel';
 import short from 'short-uuid';
 import { GROUND_ID } from '../constants';
+import { PolygonModel } from '../models/PolygonModel';
+import { Point2 } from '../models/Point2';
 
 // default scene
 
@@ -61,6 +63,29 @@ export class DefaultWorldModel implements WorldModel {
       id: short.generate() as string,
     } as FoundationModel;
     elements.push(foundation);
+
+    const polygon = {
+      type: ObjectType.Polygon,
+      cx: 0.2,
+      cy: 0.1,
+      cz: 0.15,
+      lx: 0.1,
+      ly: 0.1,
+      lz: 0.1,
+      normal: [0, 0, 1],
+      rotation: [0, 0, 0],
+      vertices: [
+        { x: -1, y: -2 } as Point2,
+        { x: -1, y: 2 } as Point2,
+        { x: 1, y: 1 } as Point2,
+        { x: 1, y: -1 } as Point2,
+      ],
+
+      parentId: foundation.id,
+      filled: true,
+      id: short.generate() as string,
+    } as PolygonModel;
+    elements.push(polygon);
 
     const sensor = {
       type: ObjectType.Sensor,
