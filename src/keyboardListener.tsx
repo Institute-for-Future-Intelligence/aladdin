@@ -87,6 +87,8 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     'esc',
     'ctrl+home',
     'meta+home',
+    'ctrl+shift+o',
+    'meta+shift+o',
     'ctrl+shift+s',
     'meta+shift+s',
     'delete',
@@ -483,10 +485,16 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           state.saveLocalFileDialogVisible = true;
         });
         break;
+      case 'ctrl+shift+o':
+      case 'meta+shift+o': // for Mac
+        setCommonStore((state) => {
+          state.listCloudFilesFlag = !state.listCloudFilesFlag;
+        });
+        break;
       case 'ctrl+shift+s':
       case 'meta+shift+s': // for Mac
         setCommonStore((state) => {
-          state.updateCloudFileFlag = !state.updateCloudFileFlag;
+          state.saveCloudFileFlag = !state.saveCloudFileFlag;
         });
         break;
       case 'delete':

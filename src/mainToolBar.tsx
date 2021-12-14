@@ -18,7 +18,6 @@ import CloudFilePanel from './panels/cloudFilePanel';
 import Spinner from './components/spinner';
 import AccountSettingsPanel from './panels/accountSettingsPanel';
 import i18n from './i18n/i18n';
-import { Util } from './Util';
 import MainToolBarButtons from './mainToolBarButtons';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -49,7 +48,8 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const showCloudFilePanel = useStore(Selector.showCloudFilePanel);
   const showAccountSettingsPanel = useStore(Selector.showAccountSettingsPanel);
   const cloudFile = useStore(Selector.cloudFile);
-  const updateCloudFileFlag = useStore(Selector.updateCloudFileFlag);
+  const saveCloudFileFlag = useStore(Selector.saveCloudFileFlag);
+  const listCloudFilesFlag = useStore(Selector.listCloudFilesFlag);
   const showCloudFileTitleDialog = useStore(Selector.showCloudFileTitleDialog);
   const importContent = useStore(Selector.importContent);
   const createEmptyFile = useStore(Selector.createEmptyFile);
@@ -66,9 +66,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const cloudFiles = useRef<CloudFileInfo[] | void>();
-  const firstCall = useRef<boolean>(true);
+  const firstCallUpdateCloudFile = useRef<boolean>(true);
+  const firstCallListCloudFiles = useRef<boolean>(true);
 
-  const isMac = Util.getOS()?.startsWith('Mac');
   const params = new URLSearchParams(window.location.search);
   const lang = { lng: language };
 
@@ -128,13 +128,22 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   }, [cloudFiles.current]);
 
   useEffect(() => {
-    if (firstCall.current) {
-      firstCall.current = false;
+    if (firstCallUpdateCloudFile.current) {
+      firstCallUpdateCloudFile.current = false;
     } else {
       updateCloudFile();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateCloudFileFlag]);
+  }, [saveCloudFileFlag]);
+
+  useEffect(() => {
+    if (firstCallListCloudFiles.current) {
+      firstCallListCloudFiles.current = false;
+    } else {
+      listMyCloudFiles();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listCloudFilesFlag]);
 
   useEffect(() => {
     setTitleDialogVisible(showCloudFileTitleDialog);
@@ -170,7 +179,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             state.user.email = result.user.email;
             state.user.displayName = result.user.displayName;
             state.user.photoURL = result.user.photoURL;
-            registerUser({ ...state.user });
+            registerUser({ ...state.user }).then(() => {
+              console.log(state.user);
+            });
           }
         });
       })
@@ -223,6 +234,8 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           state.user.displayName = null;
           state.user.photoURL = null;
           state.cloudFile = undefined; // if there is a current cloud file
+          state.showAccountSettingsPanel = false;
+          state.showCloudFilePanel = false;
         });
       })
       .catch((error) => {
@@ -271,7 +284,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       }
       setTitleDialogVisible(false);
     } else {
-      showError(i18n.t('avatarMenu.SavingAbortedMustHaveValidTitle', lang) + '.');
+      showError(i18n.t('menu.file.SavingAbortedMustHaveValidTitle', lang) + '.');
     }
   };
 
@@ -420,11 +433,6 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     });
   };
 
-  const showTitleDialog = () => {
-    setTitleDialogVisible(true);
-    resetToSelectMode();
-  };
-
   const updateCloudFile = () => {
     if (cloudFile) {
       saveToCloud(cloudFile);
@@ -434,18 +442,6 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
 
   const avatarMenu = (
     <Menu>
-      {cloudFile && (
-        <Menu.Item key="update-cloud-file" onClick={updateCloudFile}>
-          {i18n.t('avatarMenu.UpdateCloudFile', lang)}
-          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+S)</label>
-        </Menu.Item>
-      )}
-      <Menu.Item key="save-file-to-cloud" onClick={showTitleDialog}>
-        {i18n.t('avatarMenu.SaveFileToCloud', lang)}
-      </Menu.Item>
-      <Menu.Item key="my-cloud-files" onClick={listMyCloudFiles}>
-        {i18n.t('avatarMenu.MyCloudFiles', lang)}
-      </Menu.Item>
       <Menu.Item key="account" onClick={gotoAccountSettings}>
         {i18n.t('avatarMenu.AccountSettings', lang)}
       </Menu.Item>
@@ -480,7 +476,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('avatarMenu.SaveFileToCloud', lang)}
+            {i18n.t('menu.file.SaveAsCloudFile', lang)}
           </div>
         }
         visible={titleDialogVisible}

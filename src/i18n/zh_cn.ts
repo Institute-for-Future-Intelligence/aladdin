@@ -115,9 +115,13 @@ export const i18n_zh_cn = {
       file: {
         CreateNewFile: '创建新文件',
         OpenLocalFile: '打开本地文件',
-        SaveToDownloadFolder: '保存到下载文件夹',
-        DownloadAs: '下载文件名',
+        SaveAsLocalFile: '保存为本地文件',
         SavingAbortedMustHaveValidFileName: '文件名无效，保存失败',
+        OpenCloudFile: '打开云端文件',
+        SaveCloudFile: '保存云端文件',
+        SaveAsCloudFile: '保存为云端文件',
+        SavingAbortedMustHaveValidTitle: '云端文件名无效，保存失败',
+        ToSaveYourWorkPleaseSignIn: '为了保存您的云端文件，请您先登录。',
         TakeScreenshot: '截屏',
       },
       editSubMenu: '编辑',
@@ -179,14 +183,9 @@ export const i18n_zh_cn = {
     },
 
     avatarMenu: {
-      UpdateCloudFile: '更新当前云文件',
-      SaveFileToCloud: '保存文件到云端',
-      SavingAbortedMustHaveValidTitle: '文件名无效，保存失败',
-      MyCloudFiles: '我的云端文件',
       AccountSettings: '账号设定',
       SignIn: '登录',
       SignOut: '退出账号',
-      ToSaveYourWorkPleaseSignIn: '为了保存您的文件，请您先登陆。',
       IfYouAreAStudent: '如果您是一个学生',
     },
 

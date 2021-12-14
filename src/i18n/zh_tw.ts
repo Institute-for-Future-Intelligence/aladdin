@@ -115,9 +115,13 @@ export const i18n_zh_tw = {
       file: {
         CreateNewFile: '創建新文檔',
         OpenLocalFile: '打開本地文檔',
-        SaveToDownloadFolder: '保存到下載文檔夾',
-        DownloadAs: '下載文檔名',
+        SaveAsLocalFile: '保存為本地文檔',
         SavingAbortedMustHaveValidFileName: '文檔名無效，保存失敗',
+        OpenCloudFile: '打開雲端文檔',
+        SaveCloudFile: '保存雲端文檔',
+        SaveAsCloudFile: '保存為雲端文檔',
+        SavingAbortedMustHaveValidTitle: '雲端文檔名無效，保存失敗',
+        ToSaveYourWorkPleaseSignIn: '為了保存您的雲端文檔，請您先登錄。',
         TakeScreenshot: '截屏',
       },
       editSubMenu: '編輯',
@@ -179,14 +183,9 @@ export const i18n_zh_tw = {
     },
 
     avatarMenu: {
-      UpdateCloudFile: '更新當前云文檔',
-      SaveFileToCloud: '保存文檔到雲端',
-      SavingAbortedMustHaveValidTitle: '文檔名無效，保存失敗',
-      MyCloudFiles: '我的雲端文檔',
       AccountSettings: '賬號設定',
       SignIn: '登錄',
       SignOut: '退出賬號',
-      ToSaveYourWorkPleaseSignIn: '為了保存您的文檔，請您先登陸。',
       IfYouAreAStudent: '如果您是一個學生',
     },
 

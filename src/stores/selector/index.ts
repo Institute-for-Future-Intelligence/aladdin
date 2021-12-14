@@ -36,7 +36,9 @@ export const showCloudFileTitleDialog = (state: CommonStoreState) => state.showC
 
 export const cloudFile = (state: CommonStoreState) => state.cloudFile;
 
-export const updateCloudFileFlag = (state: CommonStoreState) => state.updateCloudFileFlag;
+export const saveCloudFileFlag = (state: CommonStoreState) => state.saveCloudFileFlag;
+
+export const listCloudFilesFlag = (state: CommonStoreState) => state.listCloudFilesFlag;
 
 export const localContentToImportAfterCloudFileUpdate = (state: CommonStoreState) =>
   state.localContentToImportAfterCloudFileUpdate;

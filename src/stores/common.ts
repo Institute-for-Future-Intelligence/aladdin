@@ -333,7 +333,8 @@ export interface CommonStoreState {
   setEnableFineGrid: (b: boolean) => void;
 
   showCloudFileTitleDialog: boolean;
-  updateCloudFileFlag: boolean;
+  saveCloudFileFlag: boolean;
+  listCloudFilesFlag: boolean;
   localContentToImportAfterCloudFileUpdate: any;
 
   // the following is to fix the bug that when ctrl+o is pressed, the file dialog gets fired up multiple times
@@ -2396,7 +2397,8 @@ export const useStore = create<CommonStoreState>(
           savedCameraPosition: new Vector3(0, -5, 0),
           savedPanCenter: new Vector3(),
           showCloudFileTitleDialog: false,
-          updateCloudFileFlag: false,
+          saveCloudFileFlag: false,
+          listCloudFilesFlag: false,
           localContentToImportAfterCloudFileUpdate: undefined,
 
           enableFineGrid: false,

@@ -78,7 +78,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
           if (cloudFile) {
             setCommonStore((state) => {
               state.localContentToImportAfterCloudFileUpdate = 'CREATE_NEW_FILE';
-              state.updateCloudFileFlag = !state.updateCloudFileFlag;
+              state.saveCloudFileFlag = !state.saveCloudFileFlag;
             });
           } else {
             // no cloud file has been created
@@ -87,7 +87,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
             });
           }
         } else {
-          showInfo(i18n.t('avatarMenu.ToSaveYourWorkPleaseSignIn', lang));
+          showInfo(i18n.t('menu.file.ToSaveYourWorkPleaseSignIn', lang));
         }
       },
       onCancel: () => {
@@ -112,7 +112,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
               });
             }
           } else {
-            showInfo(i18n.t('avatarMenu.ToSaveYourWorkPleaseSignIn', lang));
+            showInfo(i18n.t('menu.file.ToSaveYourWorkPleaseSignIn', lang));
           }
         },
         onCancel: () => loadLocalFile(false),
@@ -146,7 +146,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
               if (cloudFile) {
                 setCommonStore((state) => {
                   state.localContentToImportAfterCloudFileUpdate = input;
-                  state.updateCloudFileFlag = !state.updateCloudFileFlag;
+                  state.saveCloudFileFlag = !state.saveCloudFileFlag;
                 });
               }
             } else {
@@ -207,7 +207,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('menu.file.DownloadAs', lang)}
+            {i18n.t('menu.file.SaveAsLocalFile', lang)}
           </div>
         }
         visible={saveLocalFileDialogVisible}

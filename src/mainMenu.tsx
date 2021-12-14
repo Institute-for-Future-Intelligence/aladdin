@@ -176,7 +176,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     if (cloudFile) {
       setCommonStore((state) => {
         state.localContentToImportAfterCloudFileUpdate = input;
-        state.updateCloudFileFlag = !state.updateCloudFileFlag;
+        state.saveCloudFileFlag = !state.saveCloudFileFlag;
       });
     } else {
       if (user.uid) {
@@ -186,7 +186,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           state.showCloudFileTitleDialog = true;
         });
       } else {
-        showInfo(i18n.t('avatarMenu.ToSaveYourWorkPleaseSignIn', lang));
+        showInfo(i18n.t('menu.file.ToSaveYourWorkPleaseSignIn', lang));
       }
     }
   };
@@ -447,7 +447,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
 
   const menu = (
     <Menu>
-      {/*file menu*/}
+      {/* file menu */}
       <SubMenu key={'file'} title={i18n.t('menu.fileSubMenu', lang)}>
         <Menu.Item
           key="create-new-file"
@@ -462,6 +462,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           {i18n.t('menu.file.CreateNewFile', lang)}
           <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+F)</label>
         </Menu.Item>
+
         <Menu.Item
           key="open-local-file"
           onClick={() => {
@@ -475,6 +476,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           {i18n.t('menu.file.OpenLocalFile', lang)}
           <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+O)</label>
         </Menu.Item>
+
         <Menu.Item
           key="save-local-file"
           onClick={() => {
@@ -483,15 +485,57 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             });
           }}
         >
-          {i18n.t('menu.file.SaveToDownloadFolder', lang)}
+          {i18n.t('menu.file.SaveAsLocalFile', lang)}
           <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+S)</label>
         </Menu.Item>
+
+        {user.uid && (
+          <Menu.Item
+            key="open-cloud-file"
+            onClick={() => {
+              setCommonStore((state) => {
+                state.listCloudFilesFlag = !state.listCloudFilesFlag;
+              });
+            }}
+          >
+            {i18n.t('menu.file.OpenCloudFile', lang)}
+            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+O)</label>
+          </Menu.Item>
+        )}
+
+        {user.uid && cloudFile && (
+          <Menu.Item
+            key="save-cloud-file"
+            onClick={() => {
+              setCommonStore((state) => {
+                state.saveCloudFileFlag = !state.saveCloudFileFlag;
+              });
+            }}
+          >
+            {i18n.t('menu.file.SaveCloudFile', lang)}
+            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+S)</label>
+          </Menu.Item>
+        )}
+
+        {user.uid && (
+          <Menu.Item
+            key="save-as-cloud-file"
+            onClick={() => {
+              setCommonStore((state) => {
+                state.showCloudFileTitleDialog = true;
+              });
+            }}
+          >
+            {i18n.t('menu.file.SaveAsCloudFile', lang)}
+          </Menu.Item>
+        )}
+
         <Menu.Item key="screenshot" onClick={takeScreenshot}>
           {i18n.t('menu.file.TakeScreenshot', lang)}
         </Menu.Item>
       </SubMenu>
 
-      {/*edit menu*/}
+      {/* edit menu */}
       {(undoManager.hasUndo() || undoManager.hasRedo()) && (
         <SubMenu key={'edit'} title={i18n.t('menu.editSubMenu', lang)}>
           {undoManager.hasUndo() && (
@@ -523,7 +567,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </SubMenu>
       )}
 
-      {/*view menu */}
+      {/* view menu */}
       <SubMenu key={'view'} title={i18n.t('menu.viewSubMenu', lang)}>
         {!orthographic && (
           <Menu.Item
@@ -630,7 +674,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </Menu.Item>
       </SubMenu>
 
-      {/*tool menu */}
+      {/* tool menu */}
       <SubMenu key={'tool'} title={i18n.t('menu.toolSubMenu', lang)}>
         <Menu.Item key={'heliodon-panel-check-box'}>
           <Checkbox checked={showHeliodonPanel} onChange={toggleHelidonPanel}>
@@ -649,7 +693,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </Menu.Item>
       </SubMenu>
 
-      {/*analysis menu */}
+      {/* analysis menu */}
       <SubMenu key={'analysis'} title={i18n.t('menu.analysisSubMenu', lang)}>
         {/*sensors*/}
         <SubMenu key={'sensors'} title={i18n.t('menu.sensorsSubMenu', lang)}>
@@ -697,7 +741,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </SubMenu>
         </SubMenu>
 
-        {/*solar panels */}
+        {/* solar panels */}
         <SubMenu key={'solar-panels'} title={i18n.t('menu.solarPanelsSubMenu', lang)}>
           <Menu.Item
             key={'solar-panel-daily-yield'}
@@ -790,9 +834,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </SubMenu>
       </SubMenu>
 
-      {/*example menu */}
+      {/* example menu */}
       <SubMenu key={'examples'} title={i18n.t('menu.examplesSubMenu', lang)}>
-        {/*solar energy */}
+        {/* solar energy */}
         <SubMenu key={'solar-energy'} title={i18n.t('menu.solarEnergySubMenu', lang)}>
           <Menu.Item key="solar_radiation_to_box" onClick={loadFile}>
             {i18n.t('menu.examples.SolarRadiationToBox', lang)}
@@ -814,7 +858,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
         </SubMenu>
 
-        {/*buildings*/}
+        {/* buildings */}
         <SubMenu key={'buildings'} title={i18n.t('menu.buildingsSubMenu', lang)}>
           <Menu.Item key="simple_house_01" onClick={loadFile}>
             {i18n.t('menu.examples.SimpleHouse', lang)}
@@ -872,7 +916,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Radio>
         </Radio.Group>
       </SubMenu>
-      {/*about menu */}
+      {/* about menu */}
       <Menu.Item key="about" onClick={gotoAboutPage}>
         {i18n.t('menu.AboutUs', lang)}
       </Menu.Item>
@@ -884,9 +928,13 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       <Dropdown overlay={menu} trigger={['click']}>
         <StyledImage src={logo} title={i18n.t('tooltip.clickToOpenMenu', lang)} />
       </Dropdown>
-      <LabelContainer>
-        <label style={{ fontSize: '10px', alignContent: 'center' }}>{i18n.t('menu.mainMenu', lang)}</label>
-      </LabelContainer>
+      <Dropdown overlay={menu} trigger={['click']}>
+        <LabelContainer>
+          <label style={{ fontSize: '10px', alignContent: 'center', cursor: 'pointer' }}>
+            {i18n.t('menu.mainMenu', lang)}
+          </label>
+        </LabelContainer>
+      </Dropdown>
       {aboutUs && <About openAboutUs={openAboutUs} />}
     </>
   );

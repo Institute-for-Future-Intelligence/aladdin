@@ -115,9 +115,13 @@ export const i18n_en = {
       file: {
         CreateNewFile: 'Create New File',
         OpenLocalFile: 'Open Local File',
-        SaveToDownloadFolder: 'Save to Download Folder',
-        DownloadAs: 'Download as',
+        SaveAsLocalFile: 'Save as Local File',
         SavingAbortedMustHaveValidFileName: 'Saving aborted! You must have a valid file name',
+        OpenCloudFile: 'Open Cloud File',
+        SaveCloudFile: 'Save Cloud File',
+        SaveAsCloudFile: 'Save as Cloud File',
+        SavingAbortedMustHaveValidTitle: 'Saving aborted! You must have a valid title for a cloud file',
+        ToSaveYourWorkPleaseSignIn: 'To save your work, please sign in.',
         TakeScreenshot: 'Take Screenshot',
       },
       editSubMenu: 'Edit',
@@ -179,14 +183,9 @@ export const i18n_en = {
     },
 
     avatarMenu: {
-      UpdateCloudFile: 'Update This Cloud File',
-      SaveFileToCloud: 'Save File to Cloud',
-      SavingAbortedMustHaveValidTitle: 'Saving aborted! You must have a valid title for a cloud file',
-      MyCloudFiles: 'My Cloud Files',
       AccountSettings: 'Account Settings',
       SignIn: 'Sign In',
       SignOut: 'Sign Out',
-      ToSaveYourWorkPleaseSignIn: 'To save your work, please sign in.',
       IfYouAreAStudent: 'If you are a student',
     },
 
