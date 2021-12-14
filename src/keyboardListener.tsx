@@ -16,6 +16,7 @@ import i18n from './i18n/i18n';
 import { UndoableHorizontalMove } from './undo/UndoableHorizontalMove';
 import { UndoableVerticalMove } from './undo/UndoableVerticalMove';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
+import { WallModel } from './models/WallModel';
 
 export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement;
@@ -39,6 +40,8 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
   const getElementById = useStore(Selector.getElementById);
   const updateElementCxById = useStore(Selector.updateElementCxById);
   const updateElementCyById = useStore(Selector.updateElementCyById);
+  const updateWallLeftJointsById = useStore(Selector.updateWallLeftJointsById);
+  const updateWallRightJointsById = useStore(Selector.updateWallRightJointsById);
   const setEnableFineGrid = useStore(Selector.setEnableFineGrid);
   const localFileDialogRequested = useStore(Selector.localFileDialogRequested);
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
@@ -106,8 +109,8 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keyDown, keyUp]);
 
-  const removeElement = (elem: ElementModel, cut: boolean) => {
-    removeElementById(elem.id, cut);
+  const removeElement = (elemId: string, cut: boolean) => {
+    removeElementById(elemId, cut);
     if (canvas) {
       canvas.style.cursor = 'default'; // if an element is deleted but the cursor is not default
     }
@@ -376,7 +379,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       case 'ctrl+x':
       case 'meta+x': // for Mac
         if (selectedElement) {
-          removeElement(selectedElement, true);
+          removeElement(selectedElement.id, true);
           const cutElements = copyCutElements();
           const undoableCut = {
             name: 'Cut',
@@ -394,10 +397,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             },
             redo: () => {
               if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
-                const elem = getElementById(undoableCut.deletedElements[0].id);
-                if (elem) {
-                  removeElement(elem, true);
-                }
+                removeElement(undoableCut.deletedElements[0].id, true);
               }
             },
           } as UndoableDelete;
@@ -502,7 +502,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           if (selectedElement.locked) {
             showInfo(i18n.t('shared.ThisElementIsLocked', lang));
           } else {
-            removeElement(selectedElement, false);
+            removeElement(selectedElement.id, false);
             const deletedElements = useStore.getState().deletedElements;
             if (deletedElements.length > 0) {
               const undoableDelete = {
@@ -510,22 +510,30 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
                 timestamp: Date.now(),
                 deletedElements: deletedElements,
                 undo: () => {
-                  setCommonStore((state) => {
-                    if (undoableDelete.deletedElements && undoableDelete.deletedElements.length > 0) {
-                      for (const e of undoableDelete.deletedElements) {
+                  const deletedElements = undoableDelete.deletedElements;
+                  if (deletedElements && deletedElements.length > 0) {
+                    if (deletedElements.length === 1 && deletedElements[0].type === ObjectType.Wall) {
+                      const wall = deletedElements[0] as WallModel;
+                      if (wall.leftJoints.length > 0) {
+                        updateWallRightJointsById(wall.leftJoints[0], [wall.id]);
+                      }
+                      if (wall.rightJoints.length > 0) {
+                        updateWallLeftJointsById(wall.rightJoints[0], [wall.id]);
+                      }
+                    }
+                    setCommonStore((state) => {
+                      for (const e of deletedElements) {
                         state.elements.push(e);
                       }
-                      state.selectedElement = undoableDelete.deletedElements[0];
-                    }
-                  });
+                      state.selectedElement = deletedElements[0];
+                      state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+                    });
+                  }
                   // clonedElement.selected = true; FIXME: Why does this become readonly?
                 },
                 redo: () => {
                   if (undoableDelete.deletedElements && undoableDelete.deletedElements.length > 0) {
-                    const elem = getElementById(undoableDelete.deletedElements[0].id);
-                    if (elem) {
-                      removeElement(elem, false);
-                    }
+                    removeElement(undoableDelete.deletedElements[0].id, false);
                   }
                 },
               } as UndoableDelete;

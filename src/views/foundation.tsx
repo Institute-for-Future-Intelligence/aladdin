@@ -81,6 +81,9 @@ const Foundation = ({
   const setElementSize = useStore(Selector.setElementSize);
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLyById = useStore(Selector.updateElementLyById);
+  const updateWallLeftJointsById = useStore(Selector.updateWallLeftJointsById);
+  const updateWallRightJointsById = useStore(Selector.updateWallRightJointsById);
+  const updateWallLeftPointById = useStore(Selector.updateWallLeftPointById);
   const updateSolarPanelRelativeAzimuthById = useStore(Selector.updateSolarPanelRelativeAzimuthById);
   const updatePolygonVertexPositionById = useStore(Selector.updatePolygonVertexPositionById);
   const removeElementById = useStore(Selector.removeElementById);
@@ -415,9 +418,11 @@ const Foundation = ({
           ? ResizeHandleType.LowerRight
           : ResizeHandleType.LowerLeft;
     });
+
+    flippedWallSide.current = FlippedWallSide.right;
   };
 
-  const flipWallsClockwise = (targetWall: WallModel, currWall: WallModel) => {
+  const flipWallsClockwise = (currWall: WallModel, targetWall?: WallModel) => {
     wallMapOnFoundation.current.clear();
     for (const e of useStore.getState().elements) {
       if (e.type === ObjectType.Wall && e.parentId === id) {
@@ -425,7 +430,6 @@ const Foundation = ({
       }
     }
 
-    const stableWall = targetWall;
     const flipWallHead = currWall;
     let flipWall = currWall;
 
@@ -459,22 +463,26 @@ const Foundation = ({
       }
     }
     setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.id === flipWallHead.id) {
-          (e as WallModel).leftJoints = [stableWall.id];
-        }
-        if (e.id === stableWall.id) {
-          (e as WallModel).rightJoints = [flipWallHead.id];
+      if (targetWall) {
+        for (const e of state.elements) {
+          if (e.id === flipWallHead.id) {
+            (e as WallModel).leftJoints = [targetWall.id];
+          }
+          if (e.id === targetWall.id) {
+            (e as WallModel).rightJoints = [flipWallHead.id];
+          }
         }
       }
       state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
       state.resizeHandleType = ResizeHandleType.LowerLeft;
     });
 
-    flippedWallSide.current = FlippedWallSide.left;
+    // side after flip
+    flippedWallSide.current =
+      flippedWallSide.current === FlippedWallSide.null ? FlippedWallSide.right : FlippedWallSide.null;
   };
 
-  const flipWallsCounterClockwise = (targetWall: WallModel, currWall: WallModel) => {
+  const flipWallsCounterClockwise = (currWall: WallModel, targetWall?: WallModel) => {
     wallMapOnFoundation.current.clear();
     for (const e of useStore.getState().elements) {
       if (e.type === ObjectType.Wall && e.parentId === id) {
@@ -482,7 +490,6 @@ const Foundation = ({
       }
     }
 
-    const stableWall = targetWall;
     const flipWallHead = currWall;
     let flipWall = currWall;
 
@@ -516,12 +523,14 @@ const Foundation = ({
       }
     }
     setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.id === flipWallHead.id) {
-          (e as WallModel).rightJoints = [stableWall.id];
-        }
-        if (e.id === stableWall.id) {
-          (e as WallModel).leftJoints = [flipWallHead.id];
+      if (targetWall) {
+        for (const e of state.elements) {
+          if (e.id === flipWallHead.id) {
+            (e as WallModel).rightJoints = [targetWall.id];
+          }
+          if (e.id === targetWall.id) {
+            (e as WallModel).leftJoints = [flipWallHead.id];
+          }
         }
       }
 
@@ -529,7 +538,9 @@ const Foundation = ({
       state.resizeHandleType = ResizeHandleType.LowerRight;
     });
 
-    flippedWallSide.current = FlippedWallSide.right;
+    // side after flip
+    flippedWallSide.current =
+      flippedWallSide.current === FlippedWallSide.null ? FlippedWallSide.left : FlippedWallSide.null;
   };
 
   const checkWallLoop = (currentWallId: string) => {
@@ -602,27 +613,44 @@ const Foundation = ({
       name: 'Add',
       timestamp: Date.now(),
       addedElement: wall,
-      flippedWallSide: flippedWallSide.current, // only rightside needs to be considered
+      flippedWallSide: flippedWallSide.current,
       undo: () => {
-        if (undoableAdd.flippedWallSide === FlippedWallSide.right) {
-          // flipWallsCounterClockwise();
+        const wall = undoableAdd.addedElement as WallModel;
+        removeElementById(wall.id, false);
+        if (undoableAdd.flippedWallSide === FlippedWallSide.right && wall.rightJoints.length > 0) {
+          const rightWall = getElementById(wall.rightJoints[0]);
+          if (rightWall) {
+            flipWallsCounterClockwise(rightWall as WallModel);
+          }
+        } else if (undoableAdd.flippedWallSide === FlippedWallSide.left && wall.leftJoints.length > 0) {
+          const leftWall = getElementById(wall.leftJoints[0]);
+          if (leftWall) {
+            flipWallsClockwise(leftWall as WallModel);
+          }
         }
-        removeElementById(undoableAdd.addedElement.id, false);
       },
       redo: () => {
-        setCommonStore((state) => {
-          if (wall.leftJoints.length > 0) {
-            for (const e of state.elements) {
-              if (e.id === wall.leftJoints[0]) {
-                (e as WallModel).rightJoints[0] = undoableAdd.addedElement.id;
-              }
-              if (e.id === wall.rightJoints[0]) {
-                (e as WallModel).leftJoints[0] = undoableAdd.addedElement.id;
-              }
-            }
+        const wall = undoableAdd.addedElement as WallModel;
+        if (undoableAdd.flippedWallSide === FlippedWallSide.right && wall.rightJoints.length > 0) {
+          const rightWall = getElementById(wall.rightJoints[0]);
+          if (rightWall) {
+            flipWallsClockwise(rightWall as WallModel);
           }
-          state.elements.push(undoableAdd.addedElement);
-          state.selectedElement = undoableAdd.addedElement;
+        } else if (undoableAdd.flippedWallSide === FlippedWallSide.left && wall.leftJoints.length > 0) {
+          const leftWall = getElementById(wall.leftJoints[0]);
+          if (leftWall) {
+            flipWallsCounterClockwise(leftWall as WallModel);
+          }
+        }
+        if (wall.rightJoints.length > 0) {
+          updateWallLeftJointsById(wall.rightJoints[0], [wall.id]);
+        }
+        if (wall.leftJoints.length > 0) {
+          updateWallRightJointsById(wall.leftJoints[0], [wall.id]);
+        }
+        setCommonStore((state) => {
+          state.elements.push(wall);
+          state.selectedElement = wall;
           state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
         });
       },
@@ -739,14 +767,8 @@ const Foundation = ({
 
       isSettingWallStartPointRef.current = false;
       isSettingWallEndPointRef.current = true;
+      updateWallLeftPointById(addedWallID, [p.x, p.y, p.z]);
       setCommonStore((state) => {
-        for (const e of state.elements) {
-          if (e.id === addedWallID) {
-            (e as WallModel).leftPoint = [p.x, p.y, p.z];
-            wallMapOnFoundation.current.set(addedWallID, e as WallModel);
-            break;
-          }
-        }
         state.resizeHandleType = resizeHandleType;
         state.resizeAnchor = Util.wallAbsolutePosition(p, foundationModel);
         state.enableOrbitController = false;
@@ -756,159 +778,159 @@ const Foundation = ({
   };
 
   const handlePointerUp = () => {
-    if (grabRef.current) {
-      if (grabRef.current.parentId !== id) return;
-      const elem = getElementById(grabRef.current.id);
-      if (elem) {
-        if (elem.type === ObjectType.Wall) {
-          const wall = elem as WallModel;
-          if (wall.lx > 0.01) {
-            wallMapOnFoundation.current.set(wall.id, wall);
-            handleUndoableAddWall(wall as WallModel);
-          } else {
-            setCommonStore((state) => {
-              if (elementsStateBeforeResizingRef.current) {
-                state.elements = [...elementsStateBeforeResizingRef.current];
-                elementsStateBeforeResizingRef.current = null;
-              }
-            });
-          }
-        } else {
-          if (resizeHandleTypeRef.current) {
-            newPositionRef.current.x = elem.cx;
-            newPositionRef.current.y = elem.cy;
-            newPositionRef.current.z = elem.cz;
-            newDimensionRef.current.x = elem.lx;
-            newDimensionRef.current.y = elem.ly;
-            newDimensionRef.current.z = elem.lz;
-            if (
-              newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE &&
-              newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > ZERO_TOLERANCE
-            ) {
-              const undoableResize = {
-                name: 'Resize',
-                timestamp: Date.now(),
-                resizedElementId: grabRef.current.id,
-                oldCx: oldPositionRef.current.x,
-                oldCy: oldPositionRef.current.y,
-                oldCz: oldPositionRef.current.z,
-                newCx: newPositionRef.current.x,
-                newCy: newPositionRef.current.y,
-                newCz: newPositionRef.current.z,
-                oldLx: oldDimensionRef.current.x,
-                oldLy: oldDimensionRef.current.y,
-                oldLz: oldDimensionRef.current.z,
-                newLx: newDimensionRef.current.x,
-                newLy: newDimensionRef.current.y,
-                newLz: newDimensionRef.current.z,
-                undo: () => {
-                  setElementPosition(
-                    undoableResize.resizedElementId,
-                    undoableResize.oldCx,
-                    undoableResize.oldCy,
-                    undoableResize.oldCz,
-                  );
-                  setElementSize(
-                    undoableResize.resizedElementId,
-                    undoableResize.oldLx,
-                    undoableResize.oldLy,
-                    undoableResize.oldLz,
-                  );
-                },
-                redo: () => {
-                  setElementPosition(
-                    undoableResize.resizedElementId,
-                    undoableResize.newCx,
-                    undoableResize.newCy,
-                    undoableResize.newCz,
-                  );
-                  setElementSize(
-                    undoableResize.resizedElementId,
-                    undoableResize.newLx,
-                    undoableResize.newLy,
-                    undoableResize.newLz,
-                  );
-                },
-              } as UndoableResize;
-              addUndoable(undoableResize);
-            }
-          } else if (rotateHandleTypeRef.current) {
-            // currently, only solar panels can be rotated
-            if (grabRef.current.type === ObjectType.SolarPanel) {
-              const solarPanel = grabRef.current as SolarPanelModel;
-              if (Math.abs(newAzimuthRef.current - oldAzimuthRef.current) > ZERO_TOLERANCE) {
-                const undoableRotate = {
-                  name: 'Rotate',
-                  timestamp: Date.now(),
-                  oldValue: oldAzimuthRef.current,
-                  newValue: newAzimuthRef.current,
-                  undo: () => {
-                    updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableRotate.oldValue as number);
-                  },
-                  redo: () => {
-                    updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableRotate.newValue as number);
-                  },
-                } as UndoableChange;
-                addUndoable(undoableRotate);
-              }
-            }
-          } else {
-            // for moving sensors and solar panels
-            newPositionRef.current.x = elem.cx;
-            newPositionRef.current.y = elem.cy;
-            newPositionRef.current.z = elem.cz;
-            if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
-              const undoableMove = {
-                name: 'Move',
-                timestamp: Date.now(),
-                movedElementId: grabRef.current.id,
-                oldCx: oldPositionRef.current.x,
-                oldCy: oldPositionRef.current.y,
-                oldCz: oldPositionRef.current.z,
-                newCx: newPositionRef.current.x,
-                newCy: newPositionRef.current.y,
-                newCz: newPositionRef.current.z,
-                undo: () => {
-                  setElementPosition(
-                    undoableMove.movedElementId,
-                    undoableMove.oldCx,
-                    undoableMove.oldCy,
-                    undoableMove.oldCz,
-                  );
-                },
-                redo: () => {
-                  setElementPosition(
-                    undoableMove.movedElementId,
-                    undoableMove.newCx,
-                    undoableMove.newCy,
-                    undoableMove.newCz,
-                  );
-                },
-              } as UndoableMove;
-              addUndoable(undoableMove);
-            }
-          }
-        }
-        grabRef.current = null;
-      }
-    }
-    if (isSettingWallEndPointRef.current && addedWallID && baseRef.current) {
-      setCommonStore((state) => {
-        state.objectTypeToAdd = ObjectType.None;
-        state.addedWallId = null;
-        state.enableOrbitController = true;
-        for (const e of state.elements) {
-          if (e.id === addedWallID && e.lx === 0) {
+    if (!grabRef.current || grabRef.current.parentId !== id) return;
+    const elem = getElementById(grabRef.current.id);
+    if (!elem) return;
+
+    if (elem.type === ObjectType.Wall) {
+      const wall = elem as WallModel;
+      if (isSettingWallEndPointRef.current && addedWallID && baseRef.current) {
+        setCommonStore((state) => {
+          state.objectTypeToAdd = ObjectType.None;
+          state.addedWallId = null;
+          state.enableOrbitController = true;
+          if (wall.lx === 0) {
             state.elements.pop();
             wallMapOnFoundation.current.delete(addedWallID);
-            break;
+          } else {
+            handleUndoableAddWall(wall as WallModel);
+            wallMapOnFoundation.current.set(wall.id, wall);
+          }
+        });
+        setAddedWallID(null);
+        isSettingWallEndPointRef.current = false;
+      } else {
+        if (wall.lx > 0.01) {
+          wallMapOnFoundation.current.set(wall.id, wall);
+          // undo resize
+        } else {
+          setCommonStore((state) => {
+            if (elementsStateBeforeResizingRef.current) {
+              state.elements = [...elementsStateBeforeResizingRef.current];
+              elementsStateBeforeResizingRef.current = null;
+            }
+          });
+        }
+      }
+      flippedWallSide.current = FlippedWallSide.null;
+    } else {
+      if (resizeHandleTypeRef.current) {
+        newPositionRef.current.x = elem.cx;
+        newPositionRef.current.y = elem.cy;
+        newPositionRef.current.z = elem.cz;
+        newDimensionRef.current.x = elem.lx;
+        newDimensionRef.current.y = elem.ly;
+        newDimensionRef.current.z = elem.lz;
+        if (
+          newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE &&
+          newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > ZERO_TOLERANCE
+        ) {
+          const undoableResize = {
+            name: 'Resize',
+            timestamp: Date.now(),
+            resizedElementId: grabRef.current.id,
+            oldCx: oldPositionRef.current.x,
+            oldCy: oldPositionRef.current.y,
+            oldCz: oldPositionRef.current.z,
+            newCx: newPositionRef.current.x,
+            newCy: newPositionRef.current.y,
+            newCz: newPositionRef.current.z,
+            oldLx: oldDimensionRef.current.x,
+            oldLy: oldDimensionRef.current.y,
+            oldLz: oldDimensionRef.current.z,
+            newLx: newDimensionRef.current.x,
+            newLy: newDimensionRef.current.y,
+            newLz: newDimensionRef.current.z,
+            undo: () => {
+              setElementPosition(
+                undoableResize.resizedElementId,
+                undoableResize.oldCx,
+                undoableResize.oldCy,
+                undoableResize.oldCz,
+              );
+              setElementSize(
+                undoableResize.resizedElementId,
+                undoableResize.oldLx,
+                undoableResize.oldLy,
+                undoableResize.oldLz,
+              );
+            },
+            redo: () => {
+              setElementPosition(
+                undoableResize.resizedElementId,
+                undoableResize.newCx,
+                undoableResize.newCy,
+                undoableResize.newCz,
+              );
+              setElementSize(
+                undoableResize.resizedElementId,
+                undoableResize.newLx,
+                undoableResize.newLy,
+                undoableResize.newLz,
+              );
+            },
+          } as UndoableResize;
+          addUndoable(undoableResize);
+        }
+      } else if (rotateHandleTypeRef.current) {
+        // currently, only solar panels can be rotated
+        if (grabRef.current.type === ObjectType.SolarPanel) {
+          const solarPanel = grabRef.current as SolarPanelModel;
+          if (Math.abs(newAzimuthRef.current - oldAzimuthRef.current) > ZERO_TOLERANCE) {
+            const undoableRotate = {
+              name: 'Rotate',
+              timestamp: Date.now(),
+              oldValue: oldAzimuthRef.current,
+              newValue: newAzimuthRef.current,
+              undo: () => {
+                updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableRotate.oldValue as number);
+              },
+              redo: () => {
+                updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableRotate.newValue as number);
+              },
+            } as UndoableChange;
+            addUndoable(undoableRotate);
           }
         }
-      });
-      isSettingWallEndPointRef.current = false;
-      setAddedWallID(null);
+      } else {
+        // for moving sensors and solar panels
+        newPositionRef.current.x = elem.cx;
+        newPositionRef.current.y = elem.cy;
+        newPositionRef.current.z = elem.cz;
+        if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
+          const undoableMove = {
+            name: 'Move',
+            timestamp: Date.now(),
+            movedElementId: grabRef.current.id,
+            oldCx: oldPositionRef.current.x,
+            oldCy: oldPositionRef.current.y,
+            oldCz: oldPositionRef.current.z,
+            newCx: newPositionRef.current.x,
+            newCy: newPositionRef.current.y,
+            newCz: newPositionRef.current.z,
+            undo: () => {
+              setElementPosition(
+                undoableMove.movedElementId,
+                undoableMove.oldCx,
+                undoableMove.oldCy,
+                undoableMove.oldCz,
+              );
+            },
+            redo: () => {
+              setElementPosition(
+                undoableMove.movedElementId,
+                undoableMove.newCx,
+                undoableMove.newCy,
+                undoableMove.newCz,
+              );
+            },
+          } as UndoableMove;
+          addUndoable(undoableMove);
+        }
+      }
     }
     setShowGrid(false);
+    grabRef.current = null;
   };
 
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
@@ -991,14 +1013,13 @@ const Foundation = ({
                 if (targetID && targetPoint && targetSide) {
                   const targetWall = getElementById(targetID) as WallModel;
                   if (targetWall) {
-                    // flip if sides are same
                     // left to left
                     if (
                       resizeHandleType === ResizeHandleType.LowerLeft &&
                       targetWall.leftJoints.length === 0 &&
                       targetSide === WallSide.Left
                     ) {
-                      flipWallsCounterClockwise(targetWall, currWall);
+                      flipWallsCounterClockwise(currWall, targetWall);
                     }
                     // right to right
                     else if (
@@ -1006,11 +1027,10 @@ const Foundation = ({
                       targetWall.rightJoints.length === 0 &&
                       targetSide === WallSide.Right
                     ) {
-                      flipWallsClockwise(targetWall, currWall);
+                      flipWallsClockwise(currWall, targetWall);
                     }
-
-                    // attach to left side
-                    if (
+                    // right to left side
+                    else if (
                       resizeHandleType === ResizeHandleType.LowerRight &&
                       targetSide === WallSide.Left &&
                       targetWall.leftJoints.length === 0 &&
@@ -1027,7 +1047,7 @@ const Foundation = ({
                         }
                       });
                     }
-                    // attach to right side
+                    // left to right side
                     else if (
                       resizeHandleType === ResizeHandleType.LowerLeft &&
                       targetSide === WallSide.Right &&
