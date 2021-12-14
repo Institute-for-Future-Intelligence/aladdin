@@ -526,6 +526,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
                         state.elements.push(e);
                       }
                       state.selectedElement = deletedElements[0];
+                      state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
                     });
                   }
                   // clonedElement.selected = true; FIXME: Why does this become readonly?
