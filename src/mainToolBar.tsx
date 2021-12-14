@@ -180,7 +180,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             state.user.displayName = result.user.displayName;
             state.user.photoURL = result.user.photoURL;
             registerUser({ ...state.user }).then(() => {
-              console.log(state.user);
+              // TODO
             });
           }
         });
