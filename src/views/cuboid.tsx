@@ -173,7 +173,10 @@ const Cuboid = ({
   }
 
   useEffect(() => {
-    useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
+    const unsubscribe = useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {

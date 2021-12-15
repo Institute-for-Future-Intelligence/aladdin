@@ -18,6 +18,7 @@ import { RoofModel } from './RoofModel';
 import { GROUND_ID } from '../constants';
 import { WindowModel } from './WindowModel';
 import { Point2 } from './Point2';
+import { PolygonModel } from './PolygonModel';
 
 export class ElementModelFactory {
   static makeHuman(x: number, y: number, z?: number) {
@@ -92,6 +93,44 @@ export class ElementModelFactory {
       selected: true,
       id: short.generate() as string,
     } as FoundationModel;
+  }
+
+  static makePolygon(parent: ElementModel, x: number, y: number) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+      case ObjectType.Wall:
+      case ObjectType.Roof:
+        foundationId = parent.parentId;
+        break;
+    }
+    return {
+      type: ObjectType.Polygon,
+      cx: 0, // not used
+      cy: 0, // not used
+      cz: 0,
+      lx: 0.1, // not used
+      ly: 0.1, // not used
+      lz: 0.1,
+      color: 'white',
+      normal: [0, 0, 1],
+      rotation: [0, 0, 0],
+      vertices: [
+        { x: Math.max(-0.5, x - 0.2), y: Math.max(-0.5, y - 0.2) } as Point2,
+        { x: Math.max(-0.5, x - 0.2), y: Math.min(0.5, y + 0.2) } as Point2,
+        { x: Math.min(0.5, x + 0.2), y: Math.min(0.5, y + 0.2) } as Point2,
+        { x: Math.min(0.5, x + 0.2), y: Math.max(-0.5, y - 0.2) } as Point2,
+      ],
+      parentId: parent.id,
+      foundationId: foundationId,
+      selected: true,
+      filled: true,
+      selectedIndex: -1,
+      id: short.generate() as string,
+    } as PolygonModel;
   }
 
   static makeSensor(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: number[]) {

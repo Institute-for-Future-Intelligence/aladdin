@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Sphere } from '@react-three/drei';
 import { Euler, Mesh, Shape, Vector3 } from 'three';
 import { useStore } from '../stores/common';
@@ -20,16 +20,17 @@ import {
   UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
 } from '../constants';
-import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
+import { ActionType, MoveHandleType, ObjectType, ResizeHandleType } from '../types';
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { PolygonModel } from '../models/PolygonModel';
 import { Line } from '@react-three/drei';
 import { Point2 } from '../models/Point2';
 
+// TODO: Only on foundation for now
+
 const Polygon = ({
   id,
-  cz,
   lx = 0.1,
   ly = 0.1,
   lz = 0.1,
@@ -58,6 +59,7 @@ const Polygon = ({
   const [centerY, setCenterY] = useState(0);
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
 
+  const resizeHandleTypeRef = useRef(useStore.getState().resizeHandleType);
   const baseRef = useRef<Mesh>();
   const handleRef = useRef<Mesh>();
 
@@ -66,6 +68,15 @@ const Polygon = ({
   const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
   const parent = getElementById(parentId);
+
+  useEffect(() => {
+    const unsubscribe = useStore.subscribe((state) => {
+      resizeHandleTypeRef.current = state.resizeHandleType;
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   const absoluteVertices = useMemo(() => {
     const av = new Array<Point2>();
@@ -91,7 +102,13 @@ const Polygon = ({
     return av;
   }, [vertices, parent]);
 
-  const hz = lz / 2;
+  const cz = useMemo(() => {
+    if (parent) {
+      return parent.cz + (parent.lz + lz) / 2;
+    }
+    return lz / 2 + 0.1;
+  }, [parent]);
+
   const polygonModel = getElementById(id) as PolygonModel;
 
   const euler = useMemo(() => {
@@ -127,10 +144,10 @@ const Polygon = ({
 
   const shape = useMemo(() => {
     const s = new Shape();
-    for (const v of absoluteVertices) {
-      s.lineTo(v.x, v.y);
+    s.moveTo(absoluteVertices[0].x, absoluteVertices[0].y);
+    for (let i = 1; i < absoluteVertices.length; i++) {
+      s.lineTo(absoluteVertices[i].x, absoluteVertices[i].y);
     }
-    s.lineTo(absoluteVertices[0].x, absoluteVertices[0].y);
     return s;
   }, [absoluteVertices]);
 
@@ -151,12 +168,12 @@ const Polygon = ({
 
   const noHoverHandle = useCallback(() => {
     setHoveredHandle(null);
-    domElement.style.cursor = useStore.getState().addedFoundationId ? 'crosshair' : 'default';
+    domElement.style.cursor = 'default';
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <group name={'Polygon Group ' + id} rotation={euler} position={[0, 0, cz + hz]}>
+    <group name={'Polygon Group ' + id} rotation={euler} position={[0, 0, cz]}>
       <mesh
         uuid={id}
         ref={baseRef}
@@ -185,7 +202,6 @@ const Polygon = ({
             const intersected = e.intersections[0].object === baseRef.current;
             if (intersected) {
               setHovered(true);
-              domElement.style.cursor = 'move';
             }
           }
         }}
@@ -236,15 +252,17 @@ const Polygon = ({
                 updatePolygonSelectedIndexById(polygonModel.id, i);
               }}
               onPointerOver={(e) => {
-                updatePolygonSelectedIndexById(polygonModel.id, i);
                 hoverHandle(e, ResizeHandleType.Default);
+                updatePolygonSelectedIndexById(polygonModel.id, i);
               }}
               onPointerOut={noHoverHandle}
             >
               <meshStandardMaterial
                 attach="material"
                 color={
-                  hoveredHandle === ResizeHandleType.Default && polygonModel.selectedIndex === i
+                  (hoveredHandle === ResizeHandleType.Default ||
+                    resizeHandleTypeRef.current === ResizeHandleType.Default) &&
+                  polygonModel.selectedIndex === i
                     ? HIGHLIGHT_HANDLE_COLOR
                     : RESIZE_HANDLE_COLOR
                 }

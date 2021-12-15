@@ -10,6 +10,7 @@ import { ObjectType, Orientation } from './types';
 import { PvModel } from './models/PvModel';
 import { SensorModel } from './models/SensorModel';
 import { WallModel } from './models/WallModel';
+import { PolygonModel } from './models/PolygonModel';
 
 export class Util {
   static panelizeLx(solarPanel: SolarPanelModel, pvModel: PvModel, value: number) {
@@ -26,6 +27,25 @@ export class Util {
     const n = Math.max(1, Math.ceil((ly - dy / 2) / dy));
     ly = n * dy;
     return ly;
+  }
+
+  static translatePolygonCenterTo(polygonModel: PolygonModel, x: number, y: number) {
+    const n = polygonModel.vertices.length;
+    if (n === 0) return;
+    let xc = 0;
+    let yc = 0;
+    for (const v of polygonModel.vertices) {
+      xc += v.x;
+      yc += v.y;
+    }
+    xc /= n;
+    yc /= n;
+    xc = x - xc;
+    yc = y - yc;
+    for (const v of polygonModel.vertices) {
+      v.x += xc;
+      v.y += yc;
+    }
   }
 
   // note: this assumes that the center of the parent does NOT change

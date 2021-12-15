@@ -13,6 +13,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { PolygonModel } from '../../../models/PolygonModel';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { CompactPicker } from 'react-color';
+import { Copy, Cut } from '../menuItems';
 
 export const PolygonMenu = () => {
   const language = useStore(Selector.language);
@@ -44,6 +45,8 @@ export const PolygonMenu = () => {
 
   return (
     <>
+      <Copy keyName={'polygon-copy'} />
+      <Cut keyName={'polygon-cut'} />
       <Menu.Item key={'polygon-filled'}>
         <Checkbox checked={!!polygon?.filled} onChange={togglePolygonFilled}>
           {i18n.t('polygonMenu.Filled', lang)}
@@ -51,8 +54,9 @@ export const PolygonMenu = () => {
       </Menu.Item>
       <SubMenu key={'polygon-color'} title={i18n.t('word.Color', { lng: language })} style={{ paddingLeft: '24px' }}>
         <CompactPicker
-          color={polygon.color}
+          color={polygon?.color}
           onChangeComplete={(colorResult) => {
+            if (!polygon) return;
             const oldColor = polygon.color;
             const newColor = colorResult.hex;
             const undoableChange = {

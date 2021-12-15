@@ -14,11 +14,19 @@ import { SolarPanelModel } from './SolarPanelModel';
 import { WallModel } from './WallModel';
 import { WindowModel } from './WindowModel';
 import { RoofModel } from './RoofModel';
+import { PolygonModel } from './PolygonModel';
+import { Util } from '../Util';
 
 export class ElementModelCloner {
   static clone(parent: ElementModel | null, e: ElementModel, x: number, y: number, z?: number) {
     let clone = null;
     switch (e.type) {
+      case ObjectType.Polygon:
+        if (parent) {
+          // must have a parent
+          clone = ElementModelCloner.clonePolygon(parent, e as PolygonModel, x, y, z);
+        }
+        break;
       case ObjectType.Sensor:
         if (parent) {
           // must have a parent
@@ -92,6 +100,41 @@ export class ElementModelCloner {
       parentId: tree.parentId,
       id: short.generate() as string,
     } as TreeModel;
+  }
+
+  // TODO: Only support foundation for now
+  private static clonePolygon(parent: ElementModel, polygon: PolygonModel, x: number, y: number, z?: number) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+      case ObjectType.Wall:
+      case ObjectType.Roof:
+        foundationId = parent.parentId;
+        break;
+    }
+    const v = JSON.parse(JSON.stringify(polygon.vertices));
+    const pm = {
+      type: ObjectType.Polygon,
+      cx: x, // not used
+      cy: y, // not used
+      cz: z, // not used
+      lx: polygon.lx, // not used
+      ly: polygon.ly, // not used
+      lz: polygon.lz,
+      filled: polygon.filled,
+      color: polygon.color,
+      normal: [...polygon.normal],
+      rotation: polygon.parentId ? [...parent.rotation] : [0, 0, 0],
+      vertices: v,
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as PolygonModel;
+    Util.translatePolygonCenterTo(pm, x, y);
+    return pm;
   }
 
   private static cloneSensor(parent: ElementModel, sensor: SensorModel, x: number, y: number, z?: number) {

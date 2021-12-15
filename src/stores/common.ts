@@ -1869,6 +1869,17 @@ export const useStore = create<CommonStoreState>(
                   model = tree;
                   state.elements.push(tree);
                   break;
+                case ObjectType.Polygon:
+                  const polygonParentModel = parent as ElementModel;
+                  const polygonRelativeCoordinates = Util.relativeCoordinates(m.x, m.y, m.z, polygonParentModel);
+                  const polygon = ElementModelFactory.makePolygon(
+                    polygonParentModel,
+                    polygonRelativeCoordinates.x,
+                    polygonRelativeCoordinates.y,
+                  );
+                  model = polygon;
+                  state.elements.push(polygon);
+                  break;
                 case ObjectType.Sensor:
                   const sensorParentModel = parent as ElementModel;
                   const sensorRelativeCoordinates = Util.relativeCoordinates(m.x, m.y, m.z, sensorParentModel);
