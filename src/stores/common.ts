@@ -161,6 +161,8 @@ export interface CommonStoreState {
 
   // for polygons
   updatePolygonSelectedIndexById: (id: string, index: number) => void;
+  updatePolygonFilledById: (id: string, filled: boolean) => void;
+  updatePolygonFillColorById: (id: string, color: string) => void;
   updatePolygonVertexPositionById: (id: string, index: number, x: number, y: number) => void;
 
   // for solar panels
@@ -1035,6 +1037,26 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Polygon && e.id === id) {
                   (e as PolygonModel).selectedIndex = index;
+                  break;
+                }
+              }
+            });
+          },
+          updatePolygonFilledById(id: string, filled: boolean) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Polygon && e.id === id) {
+                  (e as PolygonModel).filled = filled;
+                  break;
+                }
+              }
+            });
+          },
+          updatePolygonFillColorById(id: string, color: string) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Polygon && e.id === id) {
+                  (e as PolygonModel).color = color;
                   break;
                 }
               }

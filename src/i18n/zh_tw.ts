@@ -262,6 +262,10 @@ export const i18n_zh_tw = {
       AllSidesOfAllCuboids: '所有的長方體所有的側面',
     },
 
+    polygonMenu: {
+      Filled: '填充',
+    },
+
     treeMenu: {
       ShowModel: '顯示近似模型',
       Type: '樹種',

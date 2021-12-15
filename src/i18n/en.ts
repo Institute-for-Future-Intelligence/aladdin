@@ -263,6 +263,10 @@ export const i18n_en = {
       AllSidesOfAllCuboids: 'All Sides of All Cuboids',
     },
 
+    polygonMenu: {
+      Filled: 'Filled',
+    },
+
     treeMenu: {
       ShowModel: 'Show Model',
       Type: 'Type',

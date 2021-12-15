@@ -2,14 +2,15 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Box, Sphere } from '@react-three/drei';
 import { Euler, Mesh, Shape, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { useThree } from '@react-three/fiber';
+import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
   HALF_PI,
+  HIGHLIGHT_HANDLE_COLOR,
   MOVE_HANDLE_RADIUS,
   RESIZE_HANDLE_COLOR,
   RESIZE_HANDLE_SIZE,
@@ -19,7 +20,7 @@ import {
   UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
 } from '../constants';
-import { ActionType, MoveHandleType, ObjectType, ResizeHandleType } from '../types';
+import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { PolygonModel } from '../models/PolygonModel';
@@ -55,6 +56,7 @@ const Polygon = ({
   const [hovered, setHovered] = useState(false);
   const [centerX, setCenterX] = useState(0);
   const [centerY, setCenterY] = useState(0);
+  const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
 
   const baseRef = useRef<Mesh>();
   const handleRef = useRef<Mesh>();
@@ -131,6 +133,27 @@ const Polygon = ({
     s.lineTo(absoluteVertices[0].x, absoluteVertices[0].y);
     return s;
   }, [absoluteVertices]);
+
+  const hoverHandle = useCallback((e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType) => {
+    if (e.intersections.length > 0) {
+      const intersected = e.intersections[0].object === e.eventObject;
+      if (intersected) {
+        setHoveredHandle(handle);
+        if (handle === MoveHandleType.Default) {
+          domElement.style.cursor = 'move';
+        } else {
+          domElement.style.cursor = 'pointer';
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const noHoverHandle = useCallback(() => {
+    setHoveredHandle(null);
+    domElement.style.cursor = useStore.getState().addedFoundationId ? 'crosshair' : 'default';
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <group name={'Polygon Group ' + id} rotation={euler} position={[0, 0, cz + hz]}>
@@ -212,10 +235,20 @@ const Polygon = ({
                 selectMe(id, e, ActionType.Resize);
                 updatePolygonSelectedIndexById(polygonModel.id, i);
               }}
-              onPointerOver={(e) => {}}
-              onPointerOut={() => {}}
+              onPointerOver={(e) => {
+                updatePolygonSelectedIndexById(polygonModel.id, i);
+                hoverHandle(e, ResizeHandleType.Default);
+              }}
+              onPointerOut={noHoverHandle}
             >
-              <meshStandardMaterial attach="material" color={RESIZE_HANDLE_COLOR} />
+              <meshStandardMaterial
+                attach="material"
+                color={
+                  hoveredHandle === ResizeHandleType.Default && polygonModel.selectedIndex === i
+                    ? HIGHLIGHT_HANDLE_COLOR
+                    : RESIZE_HANDLE_COLOR
+                }
+              />
             </Box>
           );
         })}

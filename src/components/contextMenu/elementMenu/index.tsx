@@ -6,6 +6,7 @@ export * from './foundationMenu';
 export * from './cuboidMenu';
 export * from './groundMenu';
 export * from './humanMenu';
+export * from './polygonMenu';
 export * from './sensorMenu';
 export * from './skyMenu';
 export * from './solarPanleMenu';

@@ -12,6 +12,7 @@ import {
   FoundationMenu,
   GroundMenu,
   HumanMenu,
+  PolygonMenu,
   SensorMenu,
   SkyMenu,
   SolarPanelMenu,
@@ -51,6 +52,12 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return (
           <Menu>
             <CuboidMenu />
+          </Menu>
+        );
+      case ObjectType.Polygon:
+        return (
+          <Menu>
+            <PolygonMenu />
           </Menu>
         );
       case ObjectType.SolarPanel:
