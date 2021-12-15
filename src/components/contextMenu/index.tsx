@@ -13,6 +13,7 @@ import {
   GroundMenu,
   HumanMenu,
   PolygonMenu,
+  PolygonVertexMenu,
   SensorMenu,
   SkyMenu,
   SolarPanelMenu,
@@ -58,6 +59,12 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return (
           <Menu>
             <PolygonMenu />
+          </Menu>
+        );
+      case ObjectType.PolygonVertex:
+        return (
+          <Menu>
+            <PolygonVertexMenu />
           </Menu>
         );
       case ObjectType.SolarPanel:

@@ -264,6 +264,8 @@ export const i18n_zh_cn = {
 
     polygonMenu: {
       Filled: '填充',
+      InsertVertex: '插入顶点',
+      DeleteVertex: '移除顶点',
     },
 
     treeMenu: {

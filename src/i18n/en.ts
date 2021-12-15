@@ -265,6 +265,8 @@ export const i18n_en = {
 
     polygonMenu: {
       Filled: 'Filled',
+      InsertVertex: 'Insert Vertex',
+      DeleteVertex: 'Delete Vertex',
     },
 
     treeMenu: {

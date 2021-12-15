@@ -52,6 +52,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
 import { ORIGIN_VECTOR2 } from '../constants';
 import { PolygonModel } from '../models/PolygonModel';
+import { Point2 } from '../models/Point2';
 
 enableMapSet();
 
@@ -160,6 +161,8 @@ export interface CommonStoreState {
   updateCuboidFacadeTextureForAll: (texture: CuboidTexture) => void;
 
   // for polygons
+  deletePolygonVertexByIndex: (id: string, index: number) => void;
+  insertPolygonVertexAfterIndex: (id: string, index: number) => void;
   updatePolygonSelectedIndexById: (id: string, index: number) => void;
   updatePolygonFilledById: (id: string, filled: boolean) => void;
   updatePolygonFillColorById: (id: string, color: string) => void;
@@ -1032,6 +1035,36 @@ export const useStore = create<CommonStoreState>(
           },
 
           // for polygons
+          deletePolygonVertexByIndex(id: string, index: number) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Polygon && e.id === id) {
+                  const p = e as PolygonModel;
+                  p.vertices.splice(index, 1);
+                  break;
+                }
+              }
+            });
+          },
+          insertPolygonVertexAfterIndex(id: string, index: number) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Polygon && e.id === id) {
+                  const p = e as PolygonModel;
+                  if (index >= 0 && index < p.vertices.length - 1) {
+                    const newX = 0.5 * (p.vertices[index].x + p.vertices[index + 1].x);
+                    const newY = 0.5 * (p.vertices[index].y + p.vertices[index + 1].y);
+                    p.vertices.splice(index + 1, 0, { x: newX, y: newY } as Point2);
+                  } else if (index === p.vertices.length - 1) {
+                    const newX = 0.5 * (p.vertices[index].x + p.vertices[0].x);
+                    const newY = 0.5 * (p.vertices[index].y + p.vertices[0].y);
+                    p.vertices.splice(index + 1, 0, { x: newX, y: newY } as Point2);
+                  }
+                  break;
+                }
+              }
+            });
+          },
           updatePolygonSelectedIndexById(id: string, index: number) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {

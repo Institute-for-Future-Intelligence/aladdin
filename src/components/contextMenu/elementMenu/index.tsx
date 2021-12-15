@@ -7,6 +7,7 @@ export * from './cuboidMenu';
 export * from './groundMenu';
 export * from './humanMenu';
 export * from './polygonMenu';
+export * from './polygonVertexMenu';
 export * from './sensorMenu';
 export * from './skyMenu';
 export * from './solarPanleMenu';

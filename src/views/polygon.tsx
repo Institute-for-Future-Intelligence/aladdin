@@ -61,7 +61,7 @@ const Polygon = ({
 
   const resizeHandleTypeRef = useRef(useStore.getState().resizeHandleType);
   const baseRef = useRef<Mesh>();
-  const handleRef = useRef<Mesh>();
+  const centerRef = useRef<Mesh>();
 
   const lang = { lng: language };
   const ratio = Math.max(1, Math.max(lx, ly) / 8);
@@ -133,7 +133,7 @@ const Polygon = ({
   }, [normal, rotation]);
 
   const points = useMemo(() => {
-    const p = new Array<Vector3>(absoluteVertices.length);
+    const p = new Array<Vector3>();
     for (const v of absoluteVertices) {
       p.push(new Vector3(v.x, v.y, 0));
     }
@@ -228,7 +228,7 @@ const Polygon = ({
       {/* draw handle */}
       {selected && (
         <Sphere
-          ref={handleRef}
+          ref={centerRef}
           position={[centerX, centerY, 0]}
           args={[moveHandleSize, 6, 6]}
           name={MoveHandleType.Default}
@@ -244,6 +244,7 @@ const Polygon = ({
           return (
             <Box
               key={'resize-handle-' + i}
+              userData={{ vertexIndex: i }}
               position={[p.x, p.y, 0]}
               name={ResizeHandleType.Default}
               args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
@@ -256,6 +257,17 @@ const Polygon = ({
                 updatePolygonSelectedIndexById(polygonModel.id, i);
               }}
               onPointerOut={noHoverHandle}
+              onContextMenu={(e) => {
+                setCommonStore((state) => {
+                  if (e.intersections.length > 0) {
+                    const vertexIndex = e.intersections[0].object.userData.vertexIndex;
+                    if (vertexIndex !== undefined) {
+                      state.contextMenuObjectType = ObjectType.PolygonVertex;
+                      state.updatePolygonSelectedIndexById(polygonModel.id, vertexIndex);
+                    }
+                  }
+                });
+              }}
             >
               <meshStandardMaterial
                 attach="material"

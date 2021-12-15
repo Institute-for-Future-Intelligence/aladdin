@@ -149,6 +149,10 @@ export const updateFoundationTextureById = (state: CommonStoreState) => state.up
 
 export const updateFoundationTextureForAll = (state: CommonStoreState) => state.updateFoundationTextureForAll;
 
+export const deletePolygonVertexByIndex = (state: CommonStoreState) => state.deletePolygonVertexByIndex;
+
+export const insertPolygonVertexAfterIndex = (state: CommonStoreState) => state.insertPolygonVertexAfterIndex;
+
 export const updatePolygonSelectedIndexById = (state: CommonStoreState) => state.updatePolygonSelectedIndexById;
 
 export const updatePolygonFilledById = (state: CommonStoreState) => state.updatePolygonFilledById;
