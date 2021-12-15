@@ -24,11 +24,10 @@ import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { PolygonModel } from '../models/PolygonModel';
 import { Line } from '@react-three/drei';
+import { Point2 } from '../models/Point2';
 
 const Polygon = ({
   id,
-  cx,
-  cy,
   cz,
   lx = 0.1,
   ly = 0.1,
@@ -54,6 +53,9 @@ const Polygon = ({
     gl: { domElement },
   } = useThree();
   const [hovered, setHovered] = useState(false);
+  const [centerX, setCenterX] = useState(0);
+  const [centerY, setCenterY] = useState(0);
+
   const baseRef = useRef<Mesh>();
   const handleRef = useRef<Mesh>();
 
@@ -61,41 +63,32 @@ const Polygon = ({
   const ratio = Math.max(1, Math.max(lx, ly) / 8);
   const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
+  const parent = getElementById(parentId);
 
-  if (parentId) {
-    const p = getElementById(parentId);
-    if (p) {
-      switch (p.type) {
+  const absoluteVertices = useMemo(() => {
+    const av = new Array<Point2>();
+    if (parent) {
+      switch (parent.type) {
         case ObjectType.Foundation:
-          cz = p.cz + p.lz / 2;
-          if (Util.isZero(rotation[2])) {
-            cx = p.cx + cx * p.lx;
-            cy = p.cy + cy * p.ly;
-          } else {
-            // we must rotate the real length, not normalized length
-            const v = new Vector3(cx * p.lx, cy * p.ly, 0);
-            v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
-            cx = p.cx + v.x;
-            cy = p.cy + v.y;
+          let cx = 0;
+          let cy = 0;
+          for (const v of vertices) {
+            const p2 = { x: parent.cx + v.x * parent.lx, y: parent.cy + v.y * parent.ly } as Point2;
+            av.push(p2);
+            cx += p2.x;
+            cy += p2.y;
           }
+          setCenterX(cx / vertices.length);
+          setCenterY(cy / vertices.length);
           break;
         case ObjectType.Cuboid:
-          if (Util.isZero(rotation[2])) {
-            cx = p.cx + cx * p.lx;
-            cy = p.cy + cy * p.ly;
-            cz = p.cz + cz * p.lz;
-          } else {
-            // we must rotate the real length, not normalized length
-            const v = new Vector3(cx * p.lx, cy * p.ly, cz * p.lz);
-            v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
-            cx = p.cx + v.x;
-            cy = p.cy + v.y;
-            cz = p.cz + v.z;
-          }
+          // TODO
           break;
       }
     }
-  }
+    return av;
+  }, [vertices, parent]);
+
   const hz = lz / 2;
   const polygonModel = getElementById(id) as PolygonModel;
 
@@ -121,26 +114,26 @@ const Polygon = ({
   }, [normal, rotation]);
 
   const points = useMemo(() => {
-    const p = new Array<Vector3>(vertices.length);
-    for (const v of vertices) {
+    const p = new Array<Vector3>(absoluteVertices.length);
+    for (const v of absoluteVertices) {
       p.push(new Vector3(v.x, v.y, 0));
     }
     // close the polygon
-    p.push(new Vector3(vertices[0].x, vertices[0].y, 0));
+    p.push(new Vector3(absoluteVertices[0].x, absoluteVertices[0].y, 0));
     return p;
-  }, [vertices]);
+  }, [absoluteVertices]);
 
   const shape = useMemo(() => {
     const s = new Shape();
-    for (const v of vertices) {
+    for (const v of absoluteVertices) {
       s.lineTo(v.x, v.y);
     }
-    s.lineTo(vertices[0].x, vertices[0].y);
+    s.lineTo(absoluteVertices[0].x, absoluteVertices[0].y);
     return s;
-  }, [vertices]);
+  }, [absoluteVertices]);
 
   return (
-    <group name={'Polygon Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
+    <group name={'Polygon Group ' + id} rotation={euler} position={[0, 0, cz + hz]}>
       <mesh
         uuid={id}
         ref={baseRef}
@@ -197,7 +190,7 @@ const Polygon = ({
       {selected && (
         <Sphere
           ref={handleRef}
-          position={new Vector3(0, 0, 0)}
+          position={[centerX, centerY, 0]}
           args={[moveHandleSize, 6, 6]}
           name={MoveHandleType.Default}
           onPointerDown={(e) => {
@@ -208,7 +201,7 @@ const Polygon = ({
         </Sphere>
       )}
       {selected &&
-        polygonModel.vertices.map((p, i) => {
+        absoluteVertices.map((p, i) => {
           return (
             <Box
               key={'resize-handle-' + i}

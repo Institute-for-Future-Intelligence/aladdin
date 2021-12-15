@@ -505,7 +505,6 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             placeholder="Title"
             value={title}
             onPressEnter={() => {
-              console.log(title);
               saveToCloud(title, false);
             }}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
