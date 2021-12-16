@@ -331,11 +331,12 @@ const SolarPanelWidthInput = ({
               timestamp: Date.now(),
               oldValue: oldWidth,
               newValue: value,
+              changedElementId: solarPanel.id,
               undo: () => {
-                updateSolarPanelLxById(solarPanel.id, undoableChange.oldValue as number);
+                updateSolarPanelLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
               },
               redo: () => {
-                updateSolarPanelLxById(solarPanel.id, undoableChange.newValue as number);
+                updateSolarPanelLxById(undoableChange.changedElementId, undoableChange.newValue as number);
               },
             } as UndoableChange;
             addUndoable(undoableChange);

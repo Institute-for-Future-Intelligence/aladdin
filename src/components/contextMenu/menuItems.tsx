@@ -185,11 +185,12 @@ export const ColorPicker = ({ keyName }: { keyName: string }) => {
         timestamp: Date.now(),
         oldValue: oldColor,
         newValue: newColor,
+        changedElementId: selectedElement.id,
         undo: () => {
-          updateElementColorById(selectedElement.id, undoableChange.oldValue as string);
+          updateElementColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
         },
         redo: () => {
-          updateElementColorById(selectedElement.id, undoableChange.newValue as string);
+          updateElementColorById(undoableChange.changedElementId, undoableChange.newValue as string);
         },
       } as UndoableChange;
       addUndoable(undoableChange);

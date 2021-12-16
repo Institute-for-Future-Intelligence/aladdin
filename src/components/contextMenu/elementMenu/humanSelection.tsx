@@ -58,11 +58,12 @@ const HumanSelection = () => {
               timestamp: Date.now(),
               oldValue: oldPerson,
               newValue: value,
+              changedElementId: human.id,
               undo: () => {
-                updateHumanNameById(human.id, undoableChange.oldValue as HumanName);
+                updateHumanNameById(undoableChange.changedElementId, undoableChange.oldValue as HumanName);
               },
               redo: () => {
-                updateHumanNameById(human.id, undoableChange.newValue as HumanName);
+                updateHumanNameById(undoableChange.changedElementId, undoableChange.newValue as HumanName);
               },
             } as UndoableChange;
             addUndoable(undoableChange);

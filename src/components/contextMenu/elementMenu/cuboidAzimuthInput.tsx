@@ -107,11 +107,12 @@ const CuboidAzimuthInput = ({
             timestamp: Date.now(),
             oldValue: oldAzimuth,
             newValue: value,
+            changedElementId: cuboid.id,
             undo: () => {
-              updateElementRotationById(cuboid.id, 0, 0, undoableChange.oldValue as number);
+              updateElementRotationById(undoableChange.changedElementId, 0, 0, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateElementRotationById(cuboid.id, 0, 0, undoableChange.newValue as number);
+              updateElementRotationById(undoableChange.changedElementId, 0, 0, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);

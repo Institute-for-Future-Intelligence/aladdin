@@ -53,11 +53,12 @@ export const TreeMenu = () => {
       timestamp: Date.now(),
       oldValue: oldSpread,
       newValue: value,
+      changedElementId: tree.id,
       undo: () => {
-        updateElementLxById(tree.id, undoableChange.oldValue as number);
+        updateElementLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
       },
       redo: () => {
-        updateElementLxById(tree.id, undoableChange.newValue as number);
+        updateElementLxById(undoableChange.changedElementId, undoableChange.newValue as number);
       },
     } as UndoableChange;
     addUndoable(undoableChange);
@@ -74,11 +75,12 @@ export const TreeMenu = () => {
       timestamp: Date.now(),
       oldValue: oldHeight,
       newValue: value,
+      changedElementId: tree.id,
       undo: () => {
-        updateElementLzById(tree.id, undoableChange.oldValue as number);
+        updateElementLzById(undoableChange.changedElementId, undoableChange.oldValue as number);
       },
       redo: () => {
-        updateElementLzById(tree.id, undoableChange.newValue as number);
+        updateElementLzById(undoableChange.changedElementId, undoableChange.newValue as number);
       },
     } as UndoableChange;
     addUndoable(undoableChange);

@@ -303,11 +303,12 @@ const SolarPanelPoleHeightInput = ({
               timestamp: Date.now(),
               oldValue: oldPoleHeight,
               newValue: value,
+              changedElementId: solarPanel.id,
               undo: () => {
-                updateSolarPanelPoleHeightById(solarPanel.id, undoableChange.oldValue as number);
+                updateSolarPanelPoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
               },
               redo: () => {
-                updateSolarPanelPoleHeightById(solarPanel.id, undoableChange.newValue as number);
+                updateSolarPanelPoleHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
               },
             } as UndoableChange;
             addUndoable(undoableChange);

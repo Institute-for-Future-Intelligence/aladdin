@@ -237,11 +237,12 @@ const SolarPanelTrackerSelection = ({
             timestamp: Date.now(),
             oldValue: oldTrackerType,
             newValue: value,
+            changedElementId: solarPanel.id,
             undo: () => {
-              updateSolarPanelTrackerTypeById(solarPanel.id, undoableChange.oldValue as TrackerType);
+              updateSolarPanelTrackerTypeById(undoableChange.changedElementId, undoableChange.oldValue as TrackerType);
             },
             redo: () => {
-              updateSolarPanelTrackerTypeById(solarPanel.id, undoableChange.newValue as TrackerType);
+              updateSolarPanelTrackerTypeById(undoableChange.changedElementId, undoableChange.newValue as TrackerType);
             },
           } as UndoableChange;
           addUndoable(undoableChange);

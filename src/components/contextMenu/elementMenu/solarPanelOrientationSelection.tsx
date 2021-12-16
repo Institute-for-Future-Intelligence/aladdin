@@ -365,6 +365,7 @@ const SolarPanelOrientationSelection = ({
               timestamp: Date.now(),
               oldValue: oldOrientation,
               newValue: value,
+              changedElementId: solarPanel.id,
               undo: () => {
                 changeOrientation(undoableChange.oldValue as Orientation);
               },

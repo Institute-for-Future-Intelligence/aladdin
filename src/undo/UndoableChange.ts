@@ -9,4 +9,5 @@ import { Point2 } from '../models/Point2';
 export interface UndoableChange extends Undoable {
   oldValue: string | number | string[] | CuboidTexture[] | Point2[];
   newValue: string | number | string[] | CuboidTexture[] | Point2[];
+  changedElementId: string;
 }

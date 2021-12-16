@@ -118,11 +118,12 @@ const WallColorSelection = ({
             timestamp: Date.now(),
             oldValue: oldColor,
             newValue: value,
+            changedElementId: wall.id,
             undo: () => {
-              updateWallColorById(wall.id, undoableChange.oldValue as string);
+              updateWallColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
             },
             redo: () => {
-              updateWallColorById(wall.id, undoableChange.newValue as string);
+              updateWallColorById(undoableChange.changedElementId, undoableChange.newValue as string);
             },
           } as UndoableChange;
           addUndoable(undoableChange);

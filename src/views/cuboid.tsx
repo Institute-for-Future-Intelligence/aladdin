@@ -731,11 +731,18 @@ const Cuboid = ({
                 timestamp: Date.now(),
                 oldValue: oldAzimuthRef.current,
                 newValue: newAzimuthRef.current,
+                changedElementId: solarPanel.id,
                 undo: () => {
-                  updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableRotate.oldValue as number);
+                  updateSolarPanelRelativeAzimuthById(
+                    undoableRotate.changedElementId,
+                    undoableRotate.oldValue as number,
+                  );
                 },
                 redo: () => {
-                  updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableRotate.newValue as number);
+                  updateSolarPanelRelativeAzimuthById(
+                    undoableRotate.changedElementId,
+                    undoableRotate.newValue as number,
+                  );
                 },
               } as UndoableChange;
               addUndoable(undoableRotate);

@@ -116,11 +116,18 @@ const FoundationTextureSelection = ({
             timestamp: Date.now(),
             oldValue: oldTexture,
             newValue: value,
+            changedElementId: foundation.id,
             undo: () => {
-              updateFoundationTextureById(foundation.id, undoableChange.oldValue as FoundationTexture);
+              updateFoundationTextureById(
+                undoableChange.changedElementId,
+                undoableChange.oldValue as FoundationTexture,
+              );
             },
             redo: () => {
-              updateFoundationTextureById(foundation.id, undoableChange.newValue as FoundationTexture);
+              updateFoundationTextureById(
+                undoableChange.changedElementId,
+                undoableChange.newValue as FoundationTexture,
+              );
             },
           } as UndoableChange;
           addUndoable(undoableChange);

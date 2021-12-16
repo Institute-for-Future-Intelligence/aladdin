@@ -117,11 +117,12 @@ const WallThicknessInput = ({
             timestamp: Date.now(),
             oldValue: oldThickness,
             newValue: value,
+            changedElementId: wall.id,
             undo: () => {
-              updateWallThicknessById(wall.id, undoableChange.oldValue as number);
+              updateWallThicknessById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateWallThicknessById(wall.id, undoableChange.newValue as number);
+              updateWallThicknessById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);

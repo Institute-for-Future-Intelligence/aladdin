@@ -117,11 +117,12 @@ const WallHeightInput = ({
             timestamp: Date.now(),
             oldValue: oldHeight,
             newValue: value,
+            changedElementId: wall.id,
             undo: () => {
-              updateWallHeightById(wall.id, undoableChange.oldValue as number);
+              updateWallHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateWallHeightById(wall.id, undoableChange.newValue as number);
+              updateWallHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);

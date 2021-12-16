@@ -130,11 +130,12 @@ const WallTextureSelection = ({
             timestamp: Date.now(),
             oldValue: oldTexture,
             newValue: value,
+            changedElementId: wall.id,
             undo: () => {
-              updateWallTextureById(wall.id, undoableChange.oldValue as WallTexture);
+              updateWallTextureById(undoableChange.changedElementId, undoableChange.oldValue as WallTexture);
             },
             redo: () => {
-              updateWallTextureById(wall.id, undoableChange.newValue as WallTexture);
+              updateWallTextureById(undoableChange.changedElementId, undoableChange.newValue as WallTexture);
             },
           } as UndoableChange;
           addUndoable(undoableChange);

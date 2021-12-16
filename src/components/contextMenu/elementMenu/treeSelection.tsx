@@ -43,11 +43,12 @@ const TreeSelection = () => {
               timestamp: Date.now(),
               oldValue: oldTree,
               newValue: value,
+              changedElementId: tree.id,
               undo: () => {
-                updateTreeTypeById(tree.id, undoableChange.oldValue as TreeType);
+                updateTreeTypeById(undoableChange.changedElementId, undoableChange.oldValue as TreeType);
               },
               redo: () => {
-                updateTreeTypeById(tree.id, undoableChange.newValue as TreeType);
+                updateTreeTypeById(undoableChange.changedElementId, undoableChange.newValue as TreeType);
               },
             } as UndoableChange;
             addUndoable(undoableChange);

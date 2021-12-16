@@ -38,7 +38,7 @@ export const PolygonVertexMenu = () => {
 
   const changeVertex = (action: PolygonVertexAction) => {
     if (polygon && polygon.selectedIndex >= 0) {
-      const oldVertices = polygon.vertices.map((a) => ({ ...a })); // deep copy
+      const oldVertices = polygon.vertices.map((v) => ({ ...v })); // deep copy
       switch (action) {
         case PolygonVertexAction.Delete:
           deletePolygonVertexByIndex(polygon.id, polygon.selectedIndex);
@@ -50,19 +50,20 @@ export const PolygonVertexMenu = () => {
           insertPolygonVertexAfterIndex(polygon.id, polygon.selectedIndex);
           break;
       }
-      const newVertices = (useStore.getState().getSelectedElement() as PolygonModel).vertices.map((a) => ({ ...a }));
+      const newVertices = (useStore.getState().getSelectedElement() as PolygonModel).vertices.map((v) => ({ ...v }));
       const undoableChange = {
         name: action,
         timestamp: Date.now(),
+        changedElementId: polygon.id,
         oldValue: oldVertices,
         newValue: newVertices,
         undo: () => {
           if (undoableChange.oldValue && Array.isArray(undoableChange.oldValue)) {
-            updatePolygonVerticesById(polygon.id, oldVertices as Point2[]);
+            updatePolygonVerticesById(undoableChange.changedElementId, oldVertices as Point2[]);
           }
         },
         redo: () => {
-          updatePolygonVerticesById(polygon.id, newVertices as Point2[]);
+          updatePolygonVerticesById(undoableChange.changedElementId, newVertices as Point2[]);
         },
       } as UndoableChange;
       addUndoable(undoableChange);

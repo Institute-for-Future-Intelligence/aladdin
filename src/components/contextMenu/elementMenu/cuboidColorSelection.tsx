@@ -162,15 +162,16 @@ const CuboidColorSelection = ({
             timestamp: Date.now(),
             oldValue: oldColors,
             newValue: value,
+            changedElementId: cuboid.id,
             undo: () => {
               if (undoableChange.oldValue && Array.isArray(undoableChange.oldValue)) {
                 for (let i = 0; i < undoableChange.oldValue.length; i++) {
-                  updateCuboidColorBySide(i, cuboid.id, undoableChange.oldValue[i] as string);
+                  updateCuboidColorBySide(i, undoableChange.changedElementId, undoableChange.oldValue[i] as string);
                 }
               }
             },
             redo: () => {
-              updateCuboidColorById(cuboid.id, undoableChange.newValue as string);
+              updateCuboidColorById(undoableChange.changedElementId, undoableChange.newValue as string);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -185,11 +186,20 @@ const CuboidColorSelection = ({
             timestamp: Date.now(),
             oldValue: oldColor,
             newValue: value,
+            changedElementId: cuboid.id,
             undo: () => {
-              updateCuboidColorBySide(selectedSideIndex, cuboid.id, undoableChange.oldValue as string);
+              updateCuboidColorBySide(
+                selectedSideIndex,
+                undoableChange.changedElementId,
+                undoableChange.oldValue as string,
+              );
             },
             redo: () => {
-              updateCuboidColorBySide(selectedSideIndex, cuboid.id, undoableChange.newValue as string);
+              updateCuboidColorBySide(
+                selectedSideIndex,
+                undoableChange.changedElementId,
+                undoableChange.newValue as string,
+              );
             },
           } as UndoableChange;
           addUndoable(undoableChange);

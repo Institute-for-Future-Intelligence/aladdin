@@ -254,11 +254,12 @@ const SolarPanelModelSelection = ({
           timestamp: Date.now(),
           oldValue: oldModel,
           newValue: value,
+          changedElementId: solarPanel.id,
           undo: () => {
-            updateSolarPanelModelById(solarPanel.id, undoableChange.oldValue as string);
+            updateSolarPanelModelById(undoableChange.changedElementId, undoableChange.oldValue as string);
           },
           redo: () => {
-            updateSolarPanelModelById(solarPanel.id, undoableChange.newValue as string);
+            updateSolarPanelModelById(undoableChange.changedElementId, undoableChange.newValue as string);
           },
         } as UndoableChange;
         addUndoable(undoableChange);

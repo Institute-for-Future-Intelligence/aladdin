@@ -32,11 +32,12 @@ export const SensorMenu = () => {
         timestamp: Date.now(),
         oldValue: oldLabel,
         newValue: labelText,
+        changedElementId: sensor.id,
         undo: () => {
-          updateElementLabelById(sensor.id, undoableChange.oldValue as string);
+          updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
         },
         redo: () => {
-          updateElementLabelById(sensor.id, undoableChange.newValue as string);
+          updateElementLabelById(undoableChange.changedElementId, undoableChange.newValue as string);
         },
       } as UndoableChange;
       addUndoable(undoableChange);

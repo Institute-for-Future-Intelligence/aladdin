@@ -116,11 +116,12 @@ const FoundationHeightInput = ({
             timestamp: Date.now(),
             oldValue: oldLz,
             newValue: value,
+            changedElementId: foundation.id,
             undo: () => {
-              updateLzAndCz(foundation.id, undoableChange.oldValue as number);
+              updateLzAndCz(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateLzAndCz(foundation.id, undoableChange.newValue as number);
+              updateLzAndCz(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);

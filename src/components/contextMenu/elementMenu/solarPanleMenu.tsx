@@ -86,11 +86,12 @@ export const SolarPanelMenu = () => {
         timestamp: Date.now(),
         oldValue: oldLabel,
         newValue: labelText,
+        changedElementId: solarPanel.id,
         undo: () => {
-          updateElementLabelById(solarPanel.id, undoableChange.oldValue as string);
+          updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
         },
         redo: () => {
-          updateElementLabelById(solarPanel.id, undoableChange.newValue as string);
+          updateElementLabelById(undoableChange.changedElementId, undoableChange.newValue as string);
         },
       } as UndoableChange;
       addUndoable(undoableChange);

@@ -116,11 +116,12 @@ const CuboidHeightInput = ({
             timestamp: Date.now(),
             oldValue: oldLz,
             newValue: value,
+            changedElementId: cuboid.id,
             undo: () => {
-              updateLzAndCz(cuboid.id, undoableChange.oldValue as number);
+              updateLzAndCz(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateLzAndCz(cuboid.id, undoableChange.newValue as number);
+              updateLzAndCz(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);

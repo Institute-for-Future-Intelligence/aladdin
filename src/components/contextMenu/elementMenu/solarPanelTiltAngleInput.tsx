@@ -304,11 +304,12 @@ const SolarPanelTiltAngleInput = ({
               timestamp: Date.now(),
               oldValue: oldTiltAngle,
               newValue: value,
+              changedElementId: solarPanel.id,
               undo: () => {
-                updateSolarPanelTiltAngleById(solarPanel.id, undoableChange.oldValue as number);
+                updateSolarPanelTiltAngleById(undoableChange.changedElementId, undoableChange.oldValue as number);
               },
               redo: () => {
-                updateSolarPanelTiltAngleById(solarPanel.id, undoableChange.newValue as number);
+                updateSolarPanelTiltAngleById(undoableChange.changedElementId, undoableChange.newValue as number);
               },
             } as UndoableChange;
             addUndoable(undoableChange);

@@ -145,6 +145,8 @@ const Foundation = ({
   const newDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const oldAzimuthRef = useRef<number>(0);
   const newAzimuthRef = useRef<number>(0);
+  const oldVerticesRef = useRef<Point2[]>([]);
+  const newVerticesRef = useRef<Point2[]>([]);
 
   const lang = { lng: language };
   const ray = useMemo(() => new Raycaster(), []);
@@ -698,8 +700,13 @@ const Foundation = ({
           oldDimensionRef.current.x = selectedElement.lx;
           oldDimensionRef.current.y = selectedElement.ly;
           oldDimensionRef.current.z = selectedElement.lz;
-          if (selectedElement.type === ObjectType.SolarPanel) {
-            oldAzimuthRef.current = (selectedElement as SolarPanelModel).relativeAzimuth;
+          switch (selectedElement.type) {
+            case ObjectType.SolarPanel:
+              oldAzimuthRef.current = (selectedElement as SolarPanelModel).relativeAzimuth;
+              break;
+            case ObjectType.Polygon:
+              oldVerticesRef.current = (selectedElement as PolygonModel).vertices.map((v) => ({ ...v }));
+              break;
           }
         }
       }
@@ -783,7 +790,6 @@ const Foundation = ({
     if (!grabRef.current || grabRef.current.parentId !== id) return;
     const elem = getElementById(grabRef.current.id);
     if (!elem) return;
-
     if (elem.type === ObjectType.Wall) {
       const wall = elem as WallModel;
       if (isSettingWallEndPointRef.current && addedWallID && baseRef.current) {
@@ -815,6 +821,24 @@ const Foundation = ({
         }
       }
       flippedWallSide.current = FlippedWallSide.null;
+    } else if (elem.type === ObjectType.Polygon) {
+      if (moveHandleTypeRef.current || resizeHandleTypeRef.current) {
+        newVerticesRef.current = (elem as PolygonModel).vertices.map((v) => ({ ...v }));
+        const undoableEditPolygon = {
+          name: moveHandleTypeRef.current ? 'Move Polygon' : 'Resize Polygon',
+          timestamp: Date.now(),
+          oldValue: oldVerticesRef.current,
+          newValue: newVerticesRef.current,
+          changedElementId: elem.id,
+          undo: () => {
+            updatePolygonVerticesById(undoableEditPolygon.changedElementId, undoableEditPolygon.oldValue as Point2[]);
+          },
+          redo: () => {
+            updatePolygonVerticesById(undoableEditPolygon.changedElementId, undoableEditPolygon.newValue as Point2[]);
+          },
+        } as UndoableChange;
+        addUndoable(undoableEditPolygon);
+      }
     } else {
       if (resizeHandleTypeRef.current) {
         newPositionRef.current.x = elem.cx;
@@ -884,11 +908,12 @@ const Foundation = ({
               timestamp: Date.now(),
               oldValue: oldAzimuthRef.current,
               newValue: newAzimuthRef.current,
+              changedElementId: solarPanel.id,
               undo: () => {
-                updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableRotate.oldValue as number);
+                updateSolarPanelRelativeAzimuthById(undoableRotate.changedElementId, undoableRotate.oldValue as number);
               },
               redo: () => {
-                updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableRotate.newValue as number);
+                updateSolarPanelRelativeAzimuthById(undoableRotate.changedElementId, undoableRotate.newValue as number);
               },
             } as UndoableChange;
             addUndoable(undoableRotate);
@@ -903,7 +928,7 @@ const Foundation = ({
           const undoableMove = {
             name: 'Move',
             timestamp: Date.now(),
-            movedElementId: grabRef.current.id,
+            movedElementId: elem.id,
             oldCx: oldPositionRef.current.x,
             oldCy: oldPositionRef.current.y,
             oldCz: oldPositionRef.current.z,
@@ -965,7 +990,7 @@ const Foundation = ({
               const centroid = Util.calculatePolygonCentroid(polygon.vertices);
               const dx = p.x - centroid.x;
               const dy = p.y - centroid.y;
-              const copy = polygon.vertices.map((a) => ({ ...a }));
+              const copy = polygon.vertices.map((v) => ({ ...v }));
               copy.forEach((v: Point2) => {
                 v.x += dx;
                 v.y += dy;

@@ -328,11 +328,12 @@ const SolarPanelRelativeAzimuthInput = ({
               timestamp: Date.now(),
               oldValue: oldRelativeAzimuth,
               newValue: value,
+              changedElementId: solarPanel.id,
               undo: () => {
-                updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableChange.oldValue as number);
+                updateSolarPanelRelativeAzimuthById(undoableChange.changedElementId, undoableChange.oldValue as number);
               },
               redo: () => {
-                updateSolarPanelRelativeAzimuthById(solarPanel.id, undoableChange.newValue as number);
+                updateSolarPanelRelativeAzimuthById(undoableChange.changedElementId, undoableChange.newValue as number);
               },
             } as UndoableChange;
             addUndoable(undoableChange);

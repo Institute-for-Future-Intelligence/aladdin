@@ -149,15 +149,20 @@ const CuboidTextureSelection = ({
             timestamp: Date.now(),
             oldValue: oldTextures,
             newValue: value,
+            changedElementId: cuboid.id,
             undo: () => {
               if (undoableChange.oldValue && Array.isArray(undoableChange.oldValue)) {
                 for (let i = 0; i < undoableChange.oldValue.length; i++) {
-                  updateCuboidTextureBySide(i, cuboid.id, undoableChange.oldValue[i] as CuboidTexture);
+                  updateCuboidTextureBySide(
+                    i,
+                    undoableChange.changedElementId,
+                    undoableChange.oldValue[i] as CuboidTexture,
+                  );
                 }
               }
             },
             redo: () => {
-              updateCuboidTextureById(cuboid.id, undoableChange.newValue as CuboidTexture);
+              updateCuboidTextureById(undoableChange.changedElementId, undoableChange.newValue as CuboidTexture);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -172,11 +177,20 @@ const CuboidTextureSelection = ({
             timestamp: Date.now(),
             oldValue: oldTexture,
             newValue: value,
+            changedElementId: cuboid.id,
             undo: () => {
-              updateCuboidTextureBySide(selectedSideIndex, cuboid.id, undoableChange.oldValue as CuboidTexture);
+              updateCuboidTextureBySide(
+                selectedSideIndex,
+                undoableChange.changedElementId,
+                undoableChange.oldValue as CuboidTexture,
+              );
             },
             redo: () => {
-              updateCuboidTextureBySide(selectedSideIndex, cuboid.id, undoableChange.newValue as CuboidTexture);
+              updateCuboidTextureBySide(
+                selectedSideIndex,
+                undoableChange.changedElementId,
+                undoableChange.newValue as CuboidTexture,
+              );
             },
           } as UndoableChange;
           addUndoable(undoableChange);

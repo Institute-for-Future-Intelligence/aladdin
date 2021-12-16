@@ -107,11 +107,12 @@ const FoundationAzimuthInput = ({
             timestamp: Date.now(),
             oldValue: oldAzimuth,
             newValue: value,
+            changedElementId: foundation.id,
             undo: () => {
-              updateElementRotationById(foundation.id, 0, 0, undoableChange.oldValue as number);
+              updateElementRotationById(undoableChange.changedElementId, 0, 0, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateElementRotationById(foundation.id, 0, 0, undoableChange.newValue as number);
+              updateElementRotationById(undoableChange.changedElementId, 0, 0, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);

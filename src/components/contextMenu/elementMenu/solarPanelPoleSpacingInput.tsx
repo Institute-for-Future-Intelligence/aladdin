@@ -235,11 +235,12 @@ const SolarPanelPoleSpacingInput = ({
             timestamp: Date.now(),
             oldValue: oldPoleSpacing,
             newValue: value,
+            changedElementId: solarPanel.id,
             undo: () => {
-              updateSolarPanelPoleSpacingById(solarPanel.id, undoableChange.oldValue as number);
+              updateSolarPanelPoleSpacingById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateSolarPanelPoleSpacingById(solarPanel.id, undoableChange.newValue as number);
+              updateSolarPanelPoleSpacingById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);

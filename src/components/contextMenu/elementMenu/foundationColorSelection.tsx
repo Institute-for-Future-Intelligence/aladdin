@@ -106,11 +106,12 @@ const FoundationColorSelection = ({
             timestamp: Date.now(),
             oldValue: oldColor,
             newValue: value,
+            changedElementId: foundation.id,
             undo: () => {
-              updateElementColorById(foundation.id, undoableChange.oldValue as string);
+              updateElementColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
             },
             redo: () => {
-              updateElementColorById(foundation.id, undoableChange.newValue as string);
+              updateElementColorById(undoableChange.changedElementId, undoableChange.newValue as string);
             },
           } as UndoableChange;
           addUndoable(undoableChange);

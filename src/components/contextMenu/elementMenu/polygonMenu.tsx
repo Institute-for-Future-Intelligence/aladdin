@@ -70,11 +70,12 @@ export const PolygonMenu = () => {
                 timestamp: Date.now(),
                 oldValue: oldColor,
                 newValue: newColor,
+                changedElementId: polygon.id,
                 undo: () => {
-                  updatePolygonFillColorById(polygon.id, undoableChange.oldValue as string);
+                  updatePolygonFillColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
                 },
                 redo: () => {
-                  updatePolygonFillColorById(polygon.id, undoableChange.newValue as string);
+                  updatePolygonFillColorById(undoableChange.changedElementId, undoableChange.newValue as string);
                 },
               } as UndoableChange;
               addUndoable(undoableChange);
