@@ -26,12 +26,9 @@ import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableRotate } from '../undo/UndoableRotate';
 import { UndoableAdd } from '../undo/UndoableAdd';
 import { WallModel } from 'src/models/WallModel';
-
-interface WallAbsPos {
-  leftPointAbsPos: Vector2;
-  rightPointAbsPos: Vector2;
-  centerPointAbsPos: Vector2;
-}
+import { PolygonModel } from '../models/PolygonModel';
+import { WallAbsPos } from './wall/WallAbsPos';
+import { Point2 } from '../models/Point2';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
@@ -76,6 +73,7 @@ const Ground = () => {
   const oldRotationRef = useRef<number[]>([0, 0, 1]);
   const newRotationRef = useRef<number[]>([0, 0, 1]);
   const absPosMapRef = useRef<Map<string, Vector2>>(new Map());
+  const polygonsAbsPosMapRef = useRef<Map<string, Vector2[]>>(new Map());
   const wallsAbsPosMapRef = useRef<Map<string, WallAbsPos>>(new Map());
   const isSettingFoundationStartPointRef = useRef(false);
   const isSettingFoundationEndPointRef = useRef(false);
@@ -561,6 +559,7 @@ const Ground = () => {
               case ObjectType.Foundation:
                 // getting ready for resizing even though it may not happen
                 absPosMapRef.current.clear();
+                polygonsAbsPosMapRef.current.clear();
                 wallsAbsPosMapRef.current.clear();
                 const foundationCenter = new Vector2(selectedElement.cx, selectedElement.cy);
                 const foundationChildren = getChildren(selectedElement.id);
@@ -596,6 +595,19 @@ const Ground = () => {
                         ).rotateAround(ORIGIN_VECTOR2, a);
                         centerAbsPos.add(foundationCenter);
                         absPosMapRef.current.set(e.id, centerAbsPos);
+                        break;
+                      case ObjectType.Polygon:
+                        const polygon = e as PolygonModel;
+                        const vertexAbsPosArray: Vector2[] = [];
+                        for (const v of polygon.vertices) {
+                          const vertexAbsPos = new Vector2(
+                            v.x * selectedElement.lx,
+                            v.y * selectedElement.ly,
+                          ).rotateAround(ORIGIN_VECTOR2, a);
+                          vertexAbsPos.add(foundationCenter);
+                          vertexAbsPosArray.push(vertexAbsPos);
+                        }
+                        polygonsAbsPosMapRef.current.set(polygon.id, vertexAbsPosArray);
                         break;
                     }
                   }
@@ -948,6 +960,22 @@ const Ground = () => {
                       .rotateAround(ORIGIN_VECTOR2, -grabRef.current!.rotation[2]);
                     e.cx = relativePos.x / lx;
                     e.cy = relativePos.y / ly;
+                  }
+                }
+                break;
+              case ObjectType.Polygon:
+                if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+                  const polygon = e as PolygonModel;
+                  const verticesAbsPos = polygonsAbsPosMapRef.current.get(polygon.id);
+                  if (verticesAbsPos) {
+                    const newVertices: Point2[] = [];
+                    verticesAbsPos.forEach((v) => {
+                      const relativePos = new Vector2()
+                        .subVectors(v, center)
+                        .rotateAround(ORIGIN_VECTOR2, -grabRef.current!.rotation[2]);
+                      newVertices.push({ x: relativePos.x / lx, y: relativePos.y / ly } as Point2);
+                    });
+                    polygon.vertices = newVertices;
                   }
                 }
                 break;

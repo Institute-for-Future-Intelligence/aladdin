@@ -117,7 +117,7 @@ export class ElementModelFactory {
       lz: 0.1,
       color: 'white',
       normal: [0, 0, 1],
-      rotation: [0, 0, 0],
+      rotation: [...parent.rotation],
       vertices: [
         { x: Math.max(-0.5, x - 0.2), y: Math.max(-0.5, y - 0.2) } as Point2,
         { x: Math.max(-0.5, x - 0.2), y: Math.min(0.5, y + 0.2) } as Point2,

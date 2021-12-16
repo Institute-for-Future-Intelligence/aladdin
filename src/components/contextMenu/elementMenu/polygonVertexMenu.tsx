@@ -18,7 +18,7 @@ export const PolygonVertexMenu = () => {
   const deletePolygonVertexByIndex = useStore(Selector.deletePolygonVertexByIndex);
   const insertPolygonVertexBeforeIndex = useStore(Selector.insertPolygonVertexBeforeIndex);
   const insertPolygonVertexAfterIndex = useStore(Selector.insertPolygonVertexAfterIndex);
-  const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticeById);
+  const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const addUndoable = useStore(Selector.addUndoable);
 
   const polygon = getSelectedElement() as PolygonModel;

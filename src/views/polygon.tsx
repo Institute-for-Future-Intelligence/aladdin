@@ -85,7 +85,7 @@ const Polygon = ({
       switch (parent.type) {
         case ObjectType.Foundation:
           for (const v of vertices) {
-            const p2 = { x: parent.cx + v.x * parent.lx, y: parent.cy + v.y * parent.ly } as Point2;
+            const p2 = { x: v.x * parent.lx, y: v.y * parent.ly } as Point2;
             av.push(p2);
           }
           const centroid = Util.calculatePolygonCentroid(av);
@@ -171,7 +171,7 @@ const Polygon = ({
   }, []);
 
   return (
-    <group name={'Polygon Group ' + id} rotation={euler} position={[0, 0, cz]}>
+    <group name={'Polygon Group ' + id} rotation={euler} position={[parent?.cx ?? 0, parent?.cy ?? 0, cz]}>
       <mesh
         uuid={id}
         ref={baseRef}
