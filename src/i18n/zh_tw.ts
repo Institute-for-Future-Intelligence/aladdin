@@ -265,7 +265,8 @@ export const i18n_zh_tw = {
 
     polygonMenu: {
       Filled: '填充',
-      InsertVertex: '插入頂點',
+      InsertVertexBeforeIndex: '前面插入頂點',
+      InsertVertexAfterIndex: '後面插入頂點',
       DeleteVertex: '移除頂點',
     },
 

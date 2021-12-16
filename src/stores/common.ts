@@ -162,6 +162,7 @@ export interface CommonStoreState {
 
   // for polygons
   deletePolygonVertexByIndex: (id: string, index: number) => void;
+  insertPolygonVertexBeforeIndex: (id: string, index: number) => void;
   insertPolygonVertexAfterIndex: (id: string, index: number) => void;
   updatePolygonSelectedIndexById: (id: string, index: number) => void;
   updatePolygonFilledById: (id: string, filled: boolean) => void;
@@ -1048,19 +1049,40 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+          insertPolygonVertexBeforeIndex(id: string, index: number) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Polygon && e.id === id) {
+                  const p = e as PolygonModel;
+                  const n = p.vertices.length;
+                  if (index > 0 && index < n) {
+                    const newX = 0.5 * (p.vertices[index].x + p.vertices[index - 1].x);
+                    const newY = 0.5 * (p.vertices[index].y + p.vertices[index - 1].y);
+                    p.vertices.splice(index, 0, { x: newX, y: newY } as Point2);
+                  } else if (index === 0) {
+                    const newX = 0.5 * (p.vertices[index].x + p.vertices[n - 1].x);
+                    const newY = 0.5 * (p.vertices[index].y + p.vertices[n - 1].y);
+                    p.vertices.splice(n, 0, { x: newX, y: newY } as Point2);
+                  }
+                  break;
+                }
+              }
+            });
+          },
           insertPolygonVertexAfterIndex(id: string, index: number) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Polygon && e.id === id) {
                   const p = e as PolygonModel;
-                  if (index >= 0 && index < p.vertices.length - 1) {
+                  const n = p.vertices.length;
+                  if (index >= 0 && index < n - 1) {
                     const newX = 0.5 * (p.vertices[index].x + p.vertices[index + 1].x);
                     const newY = 0.5 * (p.vertices[index].y + p.vertices[index + 1].y);
                     p.vertices.splice(index + 1, 0, { x: newX, y: newY } as Point2);
-                  } else if (index === p.vertices.length - 1) {
+                  } else if (index === n - 1) {
                     const newX = 0.5 * (p.vertices[index].x + p.vertices[0].x);
                     const newY = 0.5 * (p.vertices[index].y + p.vertices[0].y);
-                    p.vertices.splice(index + 1, 0, { x: newX, y: newY } as Point2);
+                    p.vertices.splice(n, 0, { x: newX, y: newY } as Point2);
                   }
                   break;
                 }

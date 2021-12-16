@@ -41,6 +41,7 @@ const Polygon = ({
   lineColor = 'black',
   lineWidth = 1,
   selected = false,
+  locked = false,
   showLabel = false,
   parentId,
   vertices,
@@ -223,7 +224,7 @@ const Polygon = ({
       />
 
       {/* draw handle */}
-      {selected && (
+      {selected && !locked && (
         <Sphere
           ref={centerRef}
           position={[centerX, centerY, 0]}
@@ -237,46 +238,58 @@ const Polygon = ({
         </Sphere>
       )}
       {selected &&
+        !locked &&
         absoluteVertices.map((p, i) => {
           return (
-            <Box
-              key={'resize-handle-' + i}
-              userData={{ vertexIndex: i }}
-              position={[p.x, p.y, 0]}
-              name={ResizeHandleType.Default}
-              args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
-              onPointerDown={(e) => {
-                selectMe(id, e, ActionType.Resize);
-                updatePolygonSelectedIndexById(polygonModel.id, i);
-              }}
-              onPointerOver={(e) => {
-                hoverHandle(e, ResizeHandleType.Default);
-                updatePolygonSelectedIndexById(polygonModel.id, i);
-              }}
-              onPointerOut={noHoverHandle}
-              onContextMenu={(e) => {
-                setCommonStore((state) => {
-                  if (e.intersections.length > 0) {
-                    const vertexIndex = e.intersections[0].object.userData.vertexIndex;
-                    if (vertexIndex !== undefined) {
-                      state.contextMenuObjectType = ObjectType.PolygonVertex;
-                      state.updatePolygonSelectedIndexById(polygonModel.id, vertexIndex);
+            <>
+              <Box
+                key={'resize-handle-' + i}
+                userData={{ vertexIndex: i }}
+                position={[p.x, p.y, 0]}
+                name={ResizeHandleType.Default}
+                args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
+                onPointerDown={(e) => {
+                  selectMe(id, e, ActionType.Resize);
+                  updatePolygonSelectedIndexById(polygonModel.id, i);
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, ResizeHandleType.Default);
+                  updatePolygonSelectedIndexById(polygonModel.id, i);
+                }}
+                onPointerOut={noHoverHandle}
+                onContextMenu={(e) => {
+                  setCommonStore((state) => {
+                    if (e.intersections.length > 0) {
+                      const vertexIndex = e.intersections[0].object.userData.vertexIndex;
+                      if (vertexIndex !== undefined) {
+                        state.contextMenuObjectType = ObjectType.PolygonVertex;
+                        state.updatePolygonSelectedIndexById(polygonModel.id, vertexIndex);
+                      }
                     }
+                  });
+                }}
+              >
+                <meshStandardMaterial
+                  attach="material"
+                  color={
+                    (hoveredHandle === ResizeHandleType.Default ||
+                      resizeHandleTypeRef.current === ResizeHandleType.Default) &&
+                    polygonModel.selectedIndex === i
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : RESIZE_HANDLE_COLOR
                   }
-                });
-              }}
-            >
-              <meshStandardMaterial
-                attach="material"
-                color={
-                  (hoveredHandle === ResizeHandleType.Default ||
-                    resizeHandleTypeRef.current === ResizeHandleType.Default) &&
-                  polygonModel.selectedIndex === i
-                    ? HIGHLIGHT_HANDLE_COLOR
-                    : RESIZE_HANDLE_COLOR
-                }
+                />
+              </Box>
+              <textSprite
+                key={'resize-handle-label-' + i}
+                name={'Label ' + i}
+                text={'' + i}
+                fontSize={20}
+                fontFace={'Times Roman'}
+                textHeight={0.2}
+                position={[p.x, p.y, cz + 0.2]}
               />
-            </Box>
+            </>
           );
         })}
 

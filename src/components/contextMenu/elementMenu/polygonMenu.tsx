@@ -13,7 +13,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { PolygonModel } from '../../../models/PolygonModel';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { CompactPicker } from 'react-color';
-import { Copy, Cut } from '../menuItems';
+import { Copy, Cut, Lock } from '../menuItems';
 
 export const PolygonMenu = () => {
   const language = useStore(Selector.language);
@@ -43,39 +43,46 @@ export const PolygonMenu = () => {
     }
   };
 
+  const editable = !polygon?.locked;
+
   return (
     <>
       <Copy keyName={'polygon-copy'} />
-      <Cut keyName={'polygon-cut'} />
-      <Menu.Item key={'polygon-filled'}>
-        <Checkbox checked={!!polygon?.filled} onChange={togglePolygonFilled}>
-          {i18n.t('polygonMenu.Filled', lang)}
-        </Checkbox>
-      </Menu.Item>
-      <SubMenu key={'polygon-color'} title={i18n.t('word.Color', { lng: language })} style={{ paddingLeft: '24px' }}>
-        <CompactPicker
-          color={polygon?.color}
-          onChangeComplete={(colorResult) => {
-            if (!polygon) return;
-            const oldColor = polygon.color;
-            const newColor = colorResult.hex;
-            const undoableChange = {
-              name: 'Set Polygon Fill Color',
-              timestamp: Date.now(),
-              oldValue: oldColor,
-              newValue: newColor,
-              undo: () => {
-                updatePolygonFillColorById(polygon.id, undoableChange.oldValue as string);
-              },
-              redo: () => {
-                updatePolygonFillColorById(polygon.id, undoableChange.newValue as string);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updatePolygonFillColorById(polygon.id, newColor);
-          }}
-        />
-      </SubMenu>
+      {editable && <Cut keyName={'polygon-cut'} />}
+      <Lock keyName={'polygon-lock'} />
+      {editable && (
+        <Menu.Item key={'polygon-filled'}>
+          <Checkbox checked={!!polygon?.filled} onChange={togglePolygonFilled}>
+            {i18n.t('polygonMenu.Filled', lang)}
+          </Checkbox>
+        </Menu.Item>
+      )}
+      {editable && (
+        <SubMenu key={'polygon-color'} title={i18n.t('word.Color', { lng: language })} style={{ paddingLeft: '24px' }}>
+          <CompactPicker
+            color={polygon?.color}
+            onChangeComplete={(colorResult) => {
+              if (!polygon) return;
+              const oldColor = polygon.color;
+              const newColor = colorResult.hex;
+              const undoableChange = {
+                name: 'Set Polygon Fill Color',
+                timestamp: Date.now(),
+                oldValue: oldColor,
+                newValue: newColor,
+                undo: () => {
+                  updatePolygonFillColorById(polygon.id, undoableChange.oldValue as string);
+                },
+                redo: () => {
+                  updatePolygonFillColorById(polygon.id, undoableChange.newValue as string);
+                },
+              } as UndoableChange;
+              addUndoable(undoableChange);
+              updatePolygonFillColorById(polygon.id, newColor);
+            }}
+          />
+        </SubMenu>
+      )}
     </>
   );
 };

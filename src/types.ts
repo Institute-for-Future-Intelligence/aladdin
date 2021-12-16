@@ -121,6 +121,12 @@ export enum RotateHandleType {
   Tilt = 'Rotate Handle Tilt',
 }
 
+export enum PolygonVertexAction {
+  Delete = 'Delete Vertex',
+  InsertBeforeIndex = 'Insert Vertex Before Index',
+  InsertAfterIndex = 'Insert Vertex After Index',
+}
+
 export enum IntersectionPlaneType {
   Horizontal = 'Horizontal',
   Vertical = 'Vertical',

@@ -151,6 +151,8 @@ export const updateFoundationTextureForAll = (state: CommonStoreState) => state.
 
 export const deletePolygonVertexByIndex = (state: CommonStoreState) => state.deletePolygonVertexByIndex;
 
+export const insertPolygonVertexBeforeIndex = (state: CommonStoreState) => state.insertPolygonVertexBeforeIndex;
+
 export const insertPolygonVertexAfterIndex = (state: CommonStoreState) => state.insertPolygonVertexAfterIndex;
 
 export const updatePolygonSelectedIndexById = (state: CommonStoreState) => state.updatePolygonSelectedIndexById;
