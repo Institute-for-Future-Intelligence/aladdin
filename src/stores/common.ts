@@ -167,6 +167,7 @@ export interface CommonStoreState {
   updatePolygonFilledById: (id: string, filled: boolean) => void;
   updatePolygonFillColorById: (id: string, color: string) => void;
   updatePolygonVertexPositionById: (id: string, index: number, x: number, y: number) => void;
+  updatePolygonVerticesById: (id: string, vertices: Point2[]) => void;
 
   // for solar panels
   solarPanelActionScope: Scope;
@@ -1105,6 +1106,17 @@ export const useStore = create<CommonStoreState>(
                     p.vertices[index].x = x;
                     p.vertices[index].y = y;
                   }
+                  break;
+                }
+              }
+            });
+          },
+          updatePolygonVerticesById(id: string, vertices) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Polygon && e.id === id) {
+                  const p = e as PolygonModel;
+                  p.vertices = [...vertices];
                   break;
                 }
               }

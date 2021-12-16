@@ -161,6 +161,8 @@ export const updatePolygonFillColorById = (state: CommonStoreState) => state.upd
 
 export const updatePolygonVertexPositionById = (state: CommonStoreState) => state.updatePolygonVertexPositionById;
 
+export const updatePolygonVerticeById = (state: CommonStoreState) => state.updatePolygonVerticesById;
+
 export const cuboidActionScope = (state: CommonStoreState) => state.cuboidActionScope;
 
 export const setCuboidActionScope = (state: CommonStoreState) => state.setCuboidActionScope;

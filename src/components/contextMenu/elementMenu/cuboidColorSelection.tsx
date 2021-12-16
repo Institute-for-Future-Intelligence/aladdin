@@ -165,7 +165,7 @@ const CuboidColorSelection = ({
             undo: () => {
               if (undoableChange.oldValue && Array.isArray(undoableChange.oldValue)) {
                 for (let i = 0; i < undoableChange.oldValue.length; i++) {
-                  updateCuboidColorBySide(i, cuboid.id, undoableChange.oldValue[i]);
+                  updateCuboidColorBySide(i, cuboid.id, undoableChange.oldValue[i] as string);
                 }
               }
             },

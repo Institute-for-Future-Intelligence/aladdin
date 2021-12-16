@@ -83,16 +83,13 @@ const Polygon = ({
     if (parent) {
       switch (parent.type) {
         case ObjectType.Foundation:
-          let cx = 0;
-          let cy = 0;
           for (const v of vertices) {
             const p2 = { x: parent.cx + v.x * parent.lx, y: parent.cy + v.y * parent.ly } as Point2;
             av.push(p2);
-            cx += p2.x;
-            cy += p2.y;
           }
-          setCenterX(cx / vertices.length);
-          setCenterY(cy / vertices.length);
+          const centroid = Util.calculatePolygonCentroid(av);
+          setCenterX(centroid.x);
+          setCenterY(centroid.y);
           break;
         case ObjectType.Cuboid:
           // TODO

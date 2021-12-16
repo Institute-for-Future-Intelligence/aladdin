@@ -11,6 +11,7 @@ import { PvModel } from './models/PvModel';
 import { SensorModel } from './models/SensorModel';
 import { WallModel } from './models/WallModel';
 import { PolygonModel } from './models/PolygonModel';
+import { Point2 } from './models/Point2';
 
 export class Util {
   static panelizeLx(solarPanel: SolarPanelModel, pvModel: PvModel, value: number) {
@@ -29,22 +30,37 @@ export class Util {
     return ly;
   }
 
+  static calculatePolygonCentroid(vertices: Point2[]) {
+    const pts = [...vertices];
+    const first = pts[0];
+    const last = pts[pts.length - 1];
+    if (first.x !== last.x || first.y !== last.y) pts.push(first);
+    const nPts = pts.length;
+    let twiceArea = 0,
+      x = 0,
+      y = 0;
+    let p1, p2, f;
+    for (let i = 0, j = nPts - 1; i < nPts; j = i++) {
+      p1 = pts[i];
+      p2 = pts[j];
+      f = (p1.y - first.y) * (p2.x - first.x) - (p2.y - first.y) * (p1.x - first.x);
+      twiceArea += f;
+      x += (p1.x + p2.x - 2 * first.x) * f;
+      y += (p1.y + p2.y - 2 * first.y) * f;
+    }
+    f = twiceArea * 3;
+    return { x: x / f + first.x, y: y / f + first.y } as Point2;
+  }
+
   static translatePolygonCenterTo(polygonModel: PolygonModel, x: number, y: number) {
     const n = polygonModel.vertices.length;
     if (n === 0) return;
-    let xc = 0;
-    let yc = 0;
+    const centroid = Util.calculatePolygonCentroid(polygonModel.vertices);
+    let dx = x - centroid.x;
+    let dy = y - centroid.y;
     for (const v of polygonModel.vertices) {
-      xc += v.x;
-      yc += v.y;
-    }
-    xc /= n;
-    yc /= n;
-    xc = x - xc;
-    yc = y - yc;
-    for (const v of polygonModel.vertices) {
-      v.x += xc;
-      v.y += yc;
+      v.x += dx;
+      v.y += dy;
     }
   }
 
