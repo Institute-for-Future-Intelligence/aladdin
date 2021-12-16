@@ -236,6 +236,7 @@ export const i18n_en = {
       OnlyThisFoundation: 'Only This Foundation',
       AllConnectedFoundations: 'All Connected Foundations',
       AllFoundations: 'All Foundations',
+      AddPolygon: 'Add Polygon',
     },
 
     cuboidMenu: {

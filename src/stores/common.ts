@@ -264,6 +264,7 @@ export interface CommonStoreState {
 
   objectTypeToAdd: ObjectType;
   addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => ElementModel | null;
+  insertPolygon: (parent: ElementModel, position: Vector3, normal?: Vector3) => void;
 
   pastePoint: Vector3;
   pasteNormal: Vector3 | undefined;
@@ -1887,24 +1888,23 @@ export const useStore = create<CommonStoreState>(
           },
 
           objectTypeToAdd: ObjectType.None,
-          addElement(parent: ElementModel | GroundModel, position, normal) {
+          addElement(parent: ElementModel | GroundModel, p, normal) {
             let model: ElementModel | null = null;
             immerSet((state: CommonStoreState) => {
-              const m = position;
               switch (state.objectTypeToAdd) {
                 case ObjectType.Human:
-                  const human = ElementModelFactory.makeHuman(m.x, m.y, m.z);
+                  const human = ElementModelFactory.makeHuman(p.x, p.y, p.z);
                   model = human;
                   state.elements.push(human);
                   break;
                 case ObjectType.Tree:
-                  const tree = ElementModelFactory.makeTree(m.x, m.y, m.z);
+                  const tree = ElementModelFactory.makeTree(p.x, p.y, p.z);
                   model = tree;
                   state.elements.push(tree);
                   break;
                 case ObjectType.Polygon:
                   const polygonParentModel = parent as ElementModel;
-                  const polygonRelativeCoordinates = Util.relativeCoordinates(m.x, m.y, m.z, polygonParentModel);
+                  const polygonRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, polygonParentModel);
                   const polygon = ElementModelFactory.makePolygon(
                     polygonParentModel,
                     polygonRelativeCoordinates.x,
@@ -1915,7 +1915,7 @@ export const useStore = create<CommonStoreState>(
                   break;
                 case ObjectType.Sensor:
                   const sensorParentModel = parent as ElementModel;
-                  const sensorRelativeCoordinates = Util.relativeCoordinates(m.x, m.y, m.z, sensorParentModel);
+                  const sensorRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, sensorParentModel);
                   const sensor = ElementModelFactory.makeSensor(
                     sensorParentModel,
                     sensorRelativeCoordinates.x,
@@ -1929,7 +1929,7 @@ export const useStore = create<CommonStoreState>(
                   break;
                 case ObjectType.SolarPanel:
                   const solarPanelParentModel = parent as ElementModel;
-                  const solarPanelRelativeCoordinates = Util.relativeCoordinates(m.x, m.y, m.z, solarPanelParentModel);
+                  const solarPanelRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, solarPanelParentModel);
                   const solarPanel = ElementModelFactory.makeSolarPanel(
                     solarPanelParentModel,
                     state.getPvModule('SPR-X21-335-BLK'),
@@ -1943,18 +1943,18 @@ export const useStore = create<CommonStoreState>(
                   state.elements.push(solarPanel);
                   break;
                 case ObjectType.Foundation:
-                  const foundation = ElementModelFactory.makeFoundation(m.x, m.y);
+                  const foundation = ElementModelFactory.makeFoundation(p.x, p.y);
                   model = foundation;
                   state.elements.push(foundation);
                   break;
                 case ObjectType.Cuboid:
-                  const cuboid = ElementModelFactory.makeCuboid(m.x, m.y);
+                  const cuboid = ElementModelFactory.makeCuboid(p.x, p.y);
                   model = cuboid;
                   state.elements.push(cuboid);
                   break;
                 case ObjectType.Wall:
                   const wallParentModel = parent as ElementModel;
-                  const relativePos = Util.wallRelativePosition(new Vector3(m.x, m.y), wallParentModel);
+                  const relativePos = Util.wallRelativePosition(new Vector3(p.x, p.y), wallParentModel);
                   const wall = ElementModelFactory.makeWall(
                     wallParentModel,
                     relativePos.x,
@@ -1969,6 +1969,18 @@ export const useStore = create<CommonStoreState>(
               }
             });
             return model;
+          },
+          insertPolygon(parent: ElementModel, p, normal) {
+            immerSet((state: CommonStoreState) => {
+              const polygonParentModel = parent as ElementModel;
+              const polygonRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, polygonParentModel);
+              const polygon = ElementModelFactory.makePolygon(
+                polygonParentModel,
+                polygonRelativeCoordinates.x,
+                polygonRelativeCoordinates.y,
+              );
+              state.elements.push(polygon);
+            });
           },
 
           elementsToPaste: [],

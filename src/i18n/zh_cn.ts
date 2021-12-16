@@ -235,6 +235,7 @@ export const i18n_zh_cn = {
       OnlyThisFoundation: '只这块地基',
       AllConnectedFoundations: '所有相连的地基',
       AllFoundations: '所有的地基',
+      AddPolygon: '添加多边形',
     },
 
     cuboidMenu: {

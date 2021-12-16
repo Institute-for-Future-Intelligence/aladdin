@@ -19,6 +19,7 @@ import FoundationHeightInput from './foundationHeightInput';
 import FoundationAzimuthInput from './foundationAzimuthInput';
 import FoundationTextureSelection from './foundationTextureSelection';
 import { FoundationModel } from '../../../models/FoundationModel';
+import { Vector3 } from 'three';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -31,6 +32,7 @@ export const FoundationMenu = () => {
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
   const elementsToPaste = useStore(Selector.elementsToPaste);
+  const insertPolygon = useStore(Selector.insertPolygon);
 
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
@@ -306,6 +308,17 @@ export const FoundationMenu = () => {
           {i18n.t('word.Azimuth', lang)} ...
         </Menu.Item>
       )}
+      <Menu.Item
+        style={{ paddingLeft: '36px' }}
+        key={'add-polygon-on-foundation'}
+        onClick={() => {
+          if (foundation) {
+            insertPolygon(foundation, new Vector3());
+          }
+        }}
+      >
+        {i18n.t('foundationMenu.AddPolygon', lang)}
+      </Menu.Item>
     </Menu.ItemGroup>
   );
 };
