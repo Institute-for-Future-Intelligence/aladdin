@@ -31,6 +31,7 @@ const WallResizeHandle = React.memo(({ x, z, id, handleType, highLight, handleSi
   const selectMe = useStore(Selector.selectMe);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const addedWallID = useStore(Selector.addedWallId);
+  const setEnableOrbitController = useStore(Selector.setEnableOrbitController);
 
   const [hovered, setHovered] = useState(false);
 
@@ -84,9 +85,7 @@ const WallResizeHandle = React.memo(({ x, z, id, handleType, highLight, handleSi
         }
       }}
       onPointerUp={() => {
-        setCommonStore((state) => {
-          state.enableOrbitController = true;
-        });
+        setEnableOrbitController(true);
       }}
     >
       <meshStandardMaterial color={color} />

@@ -112,6 +112,7 @@ const Cuboid = ({
   const isAddingElement = useStore(Selector.isAddingElement);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const updatePolygonVertexPositionById = useStore(Selector.updatePolygonVertexPositionById);
+  const setEnableOrbitController = useStore(Selector.setEnableOrbitController);
 
   const {
     camera,
@@ -189,9 +190,7 @@ const Cuboid = ({
     const handlePointerUp = () => {
       grabRef.current = null;
       setShowGrid(false);
-      setCommonStore((state) => {
-        state.enableOrbitController = true;
-      });
+      setEnableOrbitController(true);
     };
     window.addEventListener('pointerup', handlePointerUp);
     return () => {
@@ -448,9 +447,7 @@ const Cuboid = ({
               setNormal(face.normal);
             }
           }
-          setCommonStore((state) => {
-            state.enableOrbitController = false;
-          });
+          setEnableOrbitController(false);
           oldPositionRef.current.x = selectedElement.cx;
           oldPositionRef.current.y = selectedElement.cy;
           oldPositionRef.current.z = selectedElement.cz;

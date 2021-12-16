@@ -166,6 +166,7 @@ const Wall = ({
   const [windows, setWindows] = useState<WindowModel[]>([]);
 
   const { camera, gl } = useThree();
+  const mouse = useMemo(() => new Vector2(), []);
   const ray = useMemo(() => new Raycaster(), []);
   const whiteWallMaterial = useMemo(() => new MeshStandardMaterial({ color: 'white', side: DoubleSide }), []);
 
@@ -398,7 +399,6 @@ const Wall = ({
   };
 
   const setRayCast = (e: PointerEvent) => {
-    const mouse = new Vector2();
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
     ray.setFromCamera(mouse, camera);
@@ -463,7 +463,7 @@ const Wall = ({
         // set window start point
         if (isSettingWindowStartPointRef.current) {
           setCommonStore((state) => {
-            state.enableOrbitController = false;
+            state.setEnableOrbitController(false);
             state.moveHandleType = null;
             state.resizeHandleType = ResizeHandleType.LowerRight;
             state.resizeAnchor.copy(pointer);
@@ -526,7 +526,7 @@ const Wall = ({
     setCommonStore((state) => {
       state.moveHandleType = null;
       state.resizeHandleType = null;
-      state.enableOrbitController = true;
+      state.setEnableOrbitController(true);
       state.addedWindowId = null;
     });
     setShowGrid(false);
@@ -617,7 +617,7 @@ const Wall = ({
 
             const newWindow = ElementModelFactory.makeWindow(wallModel, relativePos.x / lx, 0, relativePos.z / lz);
             setCommonStore((state) => {
-              state.enableOrbitController = false;
+              state.setEnableOrbitController(false);
               state.objectTypeToAdd = ObjectType.None;
               state.elements.push(newWindow);
               state.moveHandleType = MoveHandleType.Mid;

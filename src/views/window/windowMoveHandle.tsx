@@ -35,7 +35,7 @@ const WindowMoveHandle = ({ handleType }: WindowMoveHandleProps) => {
       name={handleType}
       onPointerDown={(e) => {
         setCommonStore((state) => {
-          state.enableOrbitController = false;
+          state.setEnableOrbitController(false);
           state.moveHandleType = handleType;
         });
       }}

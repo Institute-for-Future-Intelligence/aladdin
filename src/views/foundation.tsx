@@ -149,6 +149,7 @@ const Foundation = ({
   const newVerticesRef = useRef<Point2[]>([]);
 
   const lang = { lng: language };
+  const mouse = useMemo(() => new Vector2(), []);
   const ray = useMemo(() => new Raycaster(), []);
   const foundationModel = getElementById(id) as FoundationModel;
   const handleLift = MOVE_HANDLE_RADIUS / 2;
@@ -211,11 +212,17 @@ const Foundation = ({
       setCommonStore((state) => {
         state.addedWallId = null;
         state.deletedWallId = null;
-        state.enableOrbitController = true;
+        state.setEnableOrbitController(true);
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deletedWallID]);
+
+  const setRayCast = (e: PointerEvent) => {
+    mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
+    mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
+    ray.setFromCamera(mouse, camera);
+  };
 
   const fetchRepeatDividers = (textureType: FoundationTexture) => {
     switch (textureType) {
@@ -780,7 +787,7 @@ const Foundation = ({
       setCommonStore((state) => {
         state.resizeHandleType = resizeHandleType;
         state.resizeAnchor = Util.wallAbsolutePosition(p, foundationModel);
-        state.enableOrbitController = false;
+        state.setEnableOrbitController(false);
       });
       grabRef.current = selectedElement;
     }
@@ -796,7 +803,7 @@ const Foundation = ({
         setCommonStore((state) => {
           state.objectTypeToAdd = ObjectType.None;
           state.addedWallId = null;
-          state.enableOrbitController = true;
+          state.setEnableOrbitController(true);
           if (wall.lx === 0) {
             state.elements.pop();
             wallMapOnFoundation.current.delete(addedWallID);
@@ -969,11 +976,7 @@ const Foundation = ({
     const moveHandleType = moveHandleTypeRef.current;
     const resizeHandleType = resizeHandleTypeRef.current;
     const resizeAnchor = resizeAnchorRef.current;
-    const mouse = new Vector2(
-      (e.offsetX / domElement.clientWidth) * 2 - 1,
-      1 - (e.offsetY / domElement.clientHeight) * 2,
-    );
-    ray.setFromCamera(mouse, camera);
+    setRayCast(e);
     if (baseRef.current) {
       const intersects = ray.intersectObjects([baseRef.current]);
       let p = intersects[0].point;
@@ -1147,7 +1150,7 @@ const Foundation = ({
         setShowGrid(true);
         setCommonStore((state) => {
           state.addedWallId = addedWall.id;
-          state.enableOrbitController = false;
+          state.setEnableOrbitController(false);
           state.objectTypeToAdd = ObjectType.None;
         });
       }
@@ -1231,11 +1234,7 @@ const Foundation = ({
     if (grabRef.current && foundationModel) {
       if (grabRef.current.type !== ObjectType.SolarPanel) return;
       const solarPanel = grabRef.current as SolarPanelModel;
-      const mouse = new Vector2(
-        (e.offsetX / domElement.clientWidth) * 2 - 1,
-        1 - (e.offsetY / domElement.clientHeight) * 2,
-      );
-      ray.setFromCamera(mouse, camera);
+      setRayCast(e);
       const intersects = ray.intersectObjects([intersectPlaneRef.current]);
       if (intersects.length > 0) {
         let p = intersects[0].point; // world coordinate

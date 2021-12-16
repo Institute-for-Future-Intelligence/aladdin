@@ -39,7 +39,7 @@ const WindowResizeHandle = ({ x, z, handleType }: WindowResizeHandleProps) => {
       position={[x, 0, z]}
       onPointerDown={(e) => {
         setCommonStore((state) => {
-          state.enableOrbitController = false;
+          state.setEnableOrbitController(false);
           state.resizeHandleType = handleType;
           if (handleRef.current) {
             const anchor = handleRef.current.localToWorld(new Vector3(-x * 2, 0, -z * 2));

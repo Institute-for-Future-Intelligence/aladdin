@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { Plane } from '@react-three/drei';
-import { DoubleSide, Euler, Mesh, Object3D, Raycaster, Vector2, Vector3 } from 'three';
+import { DoubleSide, Euler, Mesh, Object3D, OrthographicCamera, Raycaster, Vector2, Vector3 } from 'three';
 import { IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -55,6 +55,7 @@ const Ground = () => {
   const deletedFoundationId = useStore(Selector.deletedFoundationId);
   const deletedCuboidId = useStore(Selector.deletedCuboidId);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
+  const setEnableOrbitController = useStore(Selector.setEnableOrbitController);
 
   const {
     camera,
@@ -116,6 +117,7 @@ const Ground = () => {
   }, [deletedCuboidId]);
 
   const ray = useMemo(() => new Raycaster(), []);
+  const mouse = useMemo(() => new Vector2(), []);
   const cosAngle = grabRef.current ? Math.cos(grabRef.current.rotation[2]) : 1;
   const sinAngle = grabRef.current ? Math.sin(grabRef.current.rotation[2]) : 0;
   let intersectionPlaneType = IntersectionPlaneType.Ground;
@@ -153,7 +155,6 @@ const Ground = () => {
   }
 
   const setRayCast = (e: PointerEvent) => {
-    const mouse = new Vector2();
     mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
     ray.setFromCamera(mouse, camera);
@@ -446,7 +447,7 @@ const Ground = () => {
       state.moveHandleType = null;
       state.resizeHandleType = null;
       state.rotateHandleType = null;
-      state.enableOrbitController = true;
+      state.setEnableOrbitController(true);
     });
   };
 
@@ -462,7 +463,7 @@ const Ground = () => {
         setRayCast(e);
         const intersects = ray.intersectObjects([groundPlaneRef.current]);
         setCommonStore((state) => {
-          state.enableOrbitController = false;
+          state.setEnableOrbitController(false);
           state.moveHandleType = null;
           state.resizeHandleType = ResizeHandleType.LowerRight;
           state.resizeAnchor.copy(intersects[0].point);
@@ -476,7 +477,7 @@ const Ground = () => {
         setRayCast(e);
         const intersects = ray.intersectObjects([groundPlaneRef.current]);
         setCommonStore((state) => {
-          state.enableOrbitController = false;
+          state.setEnableOrbitController(false);
           state.moveHandleType = null;
           state.resizeHandleType = ResizeHandleType.LowerRight;
           state.resizeAnchor.copy(intersects[0].point);
@@ -553,9 +554,7 @@ const Ground = () => {
             }
             // allow the view to rotate when pressing down on the elements excluded as follows
             if (selectedElement.type !== ObjectType.Foundation && selectedElement.type !== ObjectType.Cuboid) {
-              setCommonStore((state) => {
-                state.enableOrbitController = false;
-              });
+              setEnableOrbitController(false);
             }
             // allow humans and trees to stand on top of a "stand" surface (defined in userData)
             switch (selectedElement.type) {
@@ -730,7 +729,7 @@ const Ground = () => {
     // add drag and draw element
     if (groundPlaneRef.current) {
       // add new element
-      if (objectTypeToAdd) {
+      if (objectTypeToAdd !== ObjectType.None) {
         setRayCast(e);
         const intersects = ray.intersectObjects([groundPlaneRef.current]);
         const p = intersects[0].point;
@@ -781,7 +780,7 @@ const Ground = () => {
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.Foundation;
         state.addedFoundationId = null;
-        state.enableOrbitController = true;
+        state.setEnableOrbitController(true);
       });
       grabRef.current = null;
       isSettingFoundationStartPointRef.current = false;
@@ -792,7 +791,7 @@ const Ground = () => {
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.Cuboid;
         state.addedCuboidId = null;
-        state.enableOrbitController = true;
+        state.setEnableOrbitController(true);
       });
       grabRef.current = null;
       isSettingCuboidStartPointRef.current = false;

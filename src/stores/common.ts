@@ -53,6 +53,8 @@ import { CuboidModel } from '../models/CuboidModel';
 import { ORIGIN_VECTOR2 } from '../constants';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
+import { RefObject } from 'react';
+import { MyOrbitControls } from 'src/js/MyOrbitControls';
 
 enableMapSet();
 
@@ -92,7 +94,9 @@ export interface CommonStoreState {
   grid: boolean; // this should only show up when editing
   aabb: Box3; // axis-aligned bounding box of elements
   animateSun: boolean;
+  orbitControlsRef: RefObject<MyOrbitControls> | null;
   enableOrbitController: boolean;
+  setEnableOrbitController: (b: boolean) => void;
   clickObjectType: ObjectType | null;
   contextMenuObjectType: ObjectType | null;
   moveHandleType: MoveHandleType | null;
@@ -504,7 +508,16 @@ export const useStore = create<CommonStoreState>(
           grid: false,
           aabb: new Box3(),
           animateSun: false,
+          orbitControlsRef: null,
           enableOrbitController: true,
+          setEnableOrbitController: (b: boolean) => {
+            immerSet((state) => {
+              state.enableOrbitController = b;
+              if (state.orbitControlsRef?.current) {
+                state.orbitControlsRef.current.enabled = b;
+              }
+            });
+          },
           clickObjectType: null,
           contextMenuObjectType: null,
           moveHandleType: null,
@@ -612,23 +625,25 @@ export const useStore = create<CommonStoreState>(
                     state.moveHandleType = null;
                     state.resizeHandleType = null;
                     state.rotateHandleType = null;
-                    state.enableOrbitController = false;
                     switch (action) {
                       case ActionType.Move:
                         state.moveHandleType = e.eventObject.name as MoveHandleType;
+                        state.setEnableOrbitController(false);
                         break;
                       case ActionType.Resize:
                         state.resizeHandleType = e.eventObject.name as ResizeHandleType;
+                        state.setEnableOrbitController(false);
                         break;
                       case ActionType.Rotate:
                         state.rotateHandleType = e.eventObject.name as RotateHandleType;
+                        state.setEnableOrbitController(false);
                         break;
                       case ActionType.Select:
                         state.selectedElementAngle = e.object.parent?.rotation.z ?? 0;
-                        state.enableOrbitController = true;
+                        state.setEnableOrbitController(true);
                         break;
                       default:
-                        state.enableOrbitController = true;
+                        state.setEnableOrbitController(true);
                     }
                   }
                 });

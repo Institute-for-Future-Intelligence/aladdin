@@ -274,7 +274,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
           }}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
-            selectMe(id, e);
+            selectMe(id, e, ActionType.Move);
           }}
           onPointerOver={(e) => {
             if (e.intersections.length > 0) {

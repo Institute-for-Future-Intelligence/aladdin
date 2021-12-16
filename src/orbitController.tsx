@@ -25,7 +25,6 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const cameraZoom = useStore(Selector.viewState.cameraZoom);
   const panCenter = useStore(Selector.viewState.panCenter);
-  const enableOrbitController = useStore(Selector.enableOrbitController);
   const autoRotate = useStore(Selector.viewState.autoRotate);
   const setCommonStore = useStore(Selector.set);
   const sceneRadius = useStore(Selector.sceneRadius);
@@ -40,6 +39,14 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
   const panRadius = (orthographic ? cameraZoom * 50 : cameraPositionLength * 10) * sceneRadius;
   const minPan = useMemo(() => new Vector3(-panRadius, -panRadius, 0), [panRadius]);
   const maxPan = useMemo(() => new Vector3(panRadius, panRadius, panRadius / 2), [panRadius]);
+
+  useEffect(() => {
+    if (controls) {
+      setCommonStore((state) => {
+        state.orbitControlsRef = controls;
+      });
+    }
+  }, []);
 
   useEffect(() => {
     // we have to manually set the camera position when loading a state from a file (as world is reconstructed)
@@ -84,8 +91,8 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
     }
     return () => {
       if (c) {
-        c.removeEventListener('end', onInteractionEnd);
         c.removeEventListener('change', render);
+        c.removeEventListener('end', onInteractionEnd);
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -100,13 +107,15 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
   };
 
   const render = () => {
-    if (controls.current) {
-      controls.current.target.clamp(minPan, maxPan);
+    if (useStore.getState().enableOrbitController) {
+      gl.render(scene, camera);
+      if (controls.current) {
+        controls.current.target.clamp(minPan, maxPan);
+      }
+      setCommonStore((state) => {
+        state.cameraDirection = getCameraDirection(cam);
+      });
     }
-    gl.render(scene, cam);
-    setCommonStore((state) => {
-      state.cameraDirection = getCameraDirection(cam);
-    });
   };
 
   const onInteractionEnd = () => {
@@ -155,7 +164,6 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
       ref={controls}
       args={[cam, gl.domElement]}
       autoRotate={autoRotate}
-      enabled={enableOrbitController}
       enableRotate={enableRotate}
       enablePan={true}
       enableZoom={true}

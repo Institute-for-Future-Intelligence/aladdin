@@ -28,6 +28,8 @@ export const getPvModule = (state: CommonStoreState) => state.getPvModule;
 
 export const enableOrbitController = (state: CommonStoreState) => state.enableOrbitController;
 
+export const setEnableOrbitController = (state: CommonStoreState) => state.setEnableOrbitController;
+
 export const language = (state: CommonStoreState) => state.language;
 
 export const locale = (state: CommonStoreState) => state.locale;

@@ -82,6 +82,7 @@ const SolarPanel = ({
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const rotateHandleType = useStore(Selector.rotateHandleType);
   const addUndoable = useStore(Selector.addUndoable);
+  const setEnableOrbitController = useStore(Selector.setEnableOrbitController);
 
   const {
     gl: { domElement },
@@ -182,9 +183,7 @@ const SolarPanel = ({
 
   useEffect(() => {
     const handlePointerUp = () => {
-      setCommonStore((state) => {
-        state.enableOrbitController = true;
-      });
+      setEnableOrbitController(true);
       pointerDown.current = false;
       setShowTiltAngle(false);
     };
@@ -600,7 +599,7 @@ const SolarPanel = ({
               setShowTiltAngle(true);
               if (hoveredHandle) {
                 setCommonStore((state) => {
-                  state.enableOrbitController = false;
+                  state.setEnableOrbitController(false);
                 });
                 pointerDown.current = true;
                 const sp = getElementById(id) as SolarPanelModel;

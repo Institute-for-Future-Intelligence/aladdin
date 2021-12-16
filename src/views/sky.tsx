@@ -34,6 +34,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const sunlightDirection = useStore(Selector.sunlightDirection);
+  const setEnableOrbitController = useStore(Selector.setEnableOrbitController);
 
   const {
     camera,
@@ -112,9 +113,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
           if (legalOnGround(selectedElement.type)) {
             grabRef.current = selectedElement;
             if (selectedElement.type !== ObjectType.Foundation && selectedElement.type !== ObjectType.Cuboid) {
-              setCommonStore((state) => {
-                state.enableOrbitController = false;
-              });
+              setEnableOrbitController(false);
             }
           } else if (
             selectedElement.type === ObjectType.Wall &&

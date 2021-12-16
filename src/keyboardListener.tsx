@@ -571,7 +571,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           state.objectTypeToAdd = ObjectType.None;
           state.moveHandleType = null;
           state.resizeHandleType = null;
-          state.enableOrbitController = true;
+          state.setEnableOrbitController(true);
         });
         selectNone();
         break;
