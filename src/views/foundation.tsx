@@ -57,6 +57,7 @@ import { UndoableChange } from '../undo/UndoableChange';
 import { ElementGrid } from './elementGrid';
 import i18n from '../i18n/i18n';
 import { PolygonModel } from '../models/PolygonModel';
+import { Point2 } from '../models/Point2';
 
 const Foundation = ({
   id,
@@ -86,6 +87,7 @@ const Foundation = ({
   const updateWallLeftPointById = useStore(Selector.updateWallLeftPointById);
   const updateSolarPanelRelativeAzimuthById = useStore(Selector.updateSolarPanelRelativeAzimuthById);
   const updatePolygonVertexPositionById = useStore(Selector.updatePolygonVertexPositionById);
+  const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticeById);
   const removeElementById = useStore(Selector.removeElementById);
   const selectMe = useStore(Selector.selectMe);
   const addElement = useStore(Selector.addElement);
@@ -960,7 +962,17 @@ const Foundation = ({
             const polygon = grabRef.current as PolygonModel;
             p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
             if (moveHandleType === MoveHandleType.Default) {
-              setElementPosition(polygon.id, p.x, p.y);
+              const centroid = Util.calculatePolygonCentroid(polygon.vertices);
+              const dx = p.x - centroid.x;
+              const dy = p.y - centroid.y;
+              const copy = polygon.vertices.map((a) => ({ ...a }));
+              copy.forEach((v: Point2) => {
+                v.x += dx;
+                v.y += dy;
+              });
+              // update all the vertices at once with the DEEP COPY above
+              // do not update each vertex's position one by one (it is slower)
+              updatePolygonVerticesById(polygon.id, copy);
             } else if (resizeHandleType === ResizeHandleType.Default) {
               updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, p.x, p.y);
             }

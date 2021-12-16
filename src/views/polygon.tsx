@@ -65,10 +65,10 @@ const Polygon = ({
   const centerRef = useRef<Mesh>();
 
   const lang = { lng: language };
-  const ratio = Math.max(1, Math.max(lx, ly) / 8);
+  const parent = getElementById(parentId);
+  const ratio = parent ? Math.max(1, Math.max(parent.lx, parent.ly) / 12) : 1;
   const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
-  const parent = getElementById(parentId);
 
   useEffect(() => {
     const unsubscribe = useStore.subscribe((state) => {
@@ -233,6 +233,10 @@ const Polygon = ({
           onPointerDown={(e) => {
             selectMe(id, e, ActionType.Move);
           }}
+          onPointerOver={(e) => {
+            hoverHandle(e, MoveHandleType.Default);
+          }}
+          onPointerOut={noHoverHandle}
         >
           <meshStandardMaterial attach="material" color={'orange'} />
         </Sphere>
@@ -241,9 +245,8 @@ const Polygon = ({
         !locked &&
         absoluteVertices.map((p, i) => {
           return (
-            <>
+            <React.Fragment key={'resize-handle-' + i}>
               <Box
-                key={'resize-handle-' + i}
                 userData={{ vertexIndex: i }}
                 position={[p.x, p.y, 0]}
                 name={ResizeHandleType.Default}
@@ -281,7 +284,6 @@ const Polygon = ({
                 />
               </Box>
               <textSprite
-                key={'resize-handle-label-' + i}
                 name={'Label ' + i}
                 text={'' + i}
                 fontSize={20}
@@ -289,7 +291,7 @@ const Polygon = ({
                 textHeight={0.2}
                 position={[p.x, p.y, cz + 0.2]}
               />
-            </>
+            </React.Fragment>
           );
         })}
 

@@ -1133,12 +1133,13 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+          // must feed a deep copy of the vertices
           updatePolygonVerticesById(id: string, vertices) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Polygon && e.id === id) {
                   const p = e as PolygonModel;
-                  p.vertices = [...vertices];
+                  p.vertices = vertices;
                   break;
                 }
               }

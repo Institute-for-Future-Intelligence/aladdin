@@ -38,7 +38,7 @@ export const PolygonVertexMenu = () => {
 
   const changeVertex = (action: PolygonVertexAction) => {
     if (polygon && polygon.selectedIndex >= 0) {
-      const oldVertices = [...polygon.vertices];
+      const oldVertices = polygon.vertices.map((a) => ({ ...a })); // deep copy
       switch (action) {
         case PolygonVertexAction.Delete:
           deletePolygonVertexByIndex(polygon.id, polygon.selectedIndex);
@@ -50,7 +50,7 @@ export const PolygonVertexMenu = () => {
           insertPolygonVertexAfterIndex(polygon.id, polygon.selectedIndex);
           break;
       }
-      const newVertices = [...(useStore.getState().getSelectedElement() as PolygonModel).vertices];
+      const newVertices = (useStore.getState().getSelectedElement() as PolygonModel).vertices.map((a) => ({ ...a }));
       const undoableChange = {
         name: action,
         timestamp: Date.now(),

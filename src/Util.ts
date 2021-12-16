@@ -31,6 +31,7 @@ export class Util {
   }
 
   static calculatePolygonCentroid(vertices: Point2[]) {
+    // it is OK to use a shallow copy here since we are not modifying the objects in the array
     const pts = [...vertices];
     const first = pts[0];
     const last = pts[pts.length - 1];
@@ -56,8 +57,8 @@ export class Util {
     const n = polygonModel.vertices.length;
     if (n === 0) return;
     const centroid = Util.calculatePolygonCentroid(polygonModel.vertices);
-    let dx = x - centroid.x;
-    let dy = y - centroid.y;
+    const dx = x - centroid.x;
+    const dy = y - centroid.y;
     for (const v of polygonModel.vertices) {
       v.x += dx;
       v.y += dy;
