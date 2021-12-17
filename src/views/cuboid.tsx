@@ -61,6 +61,8 @@ import { UndoableMove } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableChange } from '../undo/UndoableChange';
 import i18n from '../i18n/i18n';
+import { Point2 } from '../models/Point2';
+import { PolygonModel } from '../models/PolygonModel';
 
 const Cuboid = ({
   id,
@@ -108,6 +110,8 @@ const Cuboid = ({
   const addUndoable = useStore(Selector.addUndoable);
   const addedCuboidId = useStore(Selector.addedCuboidId);
   const isAddingElement = useStore(Selector.isAddingElement);
+  const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
+  const updatePolygonVertexPositionById = useStore(Selector.updatePolygonVertexPositionById);
 
   const {
     camera,
@@ -148,6 +152,8 @@ const Cuboid = ({
   const newDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const oldAzimuthRef = useRef<number>(0);
   const newAzimuthRef = useRef<number>(0);
+  const oldVerticesRef = useRef<Point2[]>([]);
+  const newVerticesRef = useRef<Point2[]>([]);
   const intersectPlaneRef = useRef<Mesh>();
   const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
 
@@ -340,6 +346,7 @@ const Cuboid = ({
     return (
       type === ObjectType.Human ||
       type === ObjectType.Tree ||
+      type === ObjectType.Polygon ||
       type === ObjectType.Sensor ||
       type === ObjectType.SolarPanel
     );
@@ -451,8 +458,13 @@ const Cuboid = ({
           oldDimensionRef.current.x = selectedElement.lx;
           oldDimensionRef.current.y = selectedElement.ly;
           oldDimensionRef.current.z = selectedElement.lz;
-          if (selectedElement.type === ObjectType.SolarPanel) {
-            oldAzimuthRef.current = (selectedElement as SolarPanelModel).relativeAzimuth;
+          switch (selectedElement.type) {
+            case ObjectType.SolarPanel:
+              oldAzimuthRef.current = (selectedElement as SolarPanelModel).relativeAzimuth;
+              break;
+            case ObjectType.Polygon:
+              oldVerticesRef.current = (selectedElement as PolygonModel).vertices.map((v) => ({ ...v }));
+              break;
           }
         }
       }
@@ -483,7 +495,22 @@ const Cuboid = ({
                 setElementNormal(grabRef.current.id, n.x, n.y, n.z);
               }
               p = Util.relativeCoordinates(p.x, p.y, p.z, cuboidModel);
-              setElementPosition(grabRef.current.id, p.x, p.y, p.z);
+              if (grabRef.current.type === ObjectType.Polygon) {
+                const polygon = grabRef.current as PolygonModel;
+                const centroid = Util.calculatePolygonCentroid(polygon.vertices);
+                const dx = p.x - centroid.x;
+                const dy = p.y - centroid.y;
+                const copy = polygon.vertices.map((v) => ({ ...v }));
+                copy.forEach((v: Point2) => {
+                  v.x += dx;
+                  v.y += dy;
+                });
+                // update all the vertices at once with the DEEP COPY above
+                // do not update each vertex's position one by one (it is slower)
+                updatePolygonVerticesById(polygon.id, copy);
+              } else {
+                setElementPosition(grabRef.current.id, p.x, p.y, p.z);
+              }
             } else if (resizeHandleType) {
               if (grabRef.current.type === ObjectType.SolarPanel) {
                 const solarPanel = grabRef.current as SolarPanelModel;
@@ -523,6 +550,10 @@ const Cuboid = ({
                 // TODO: check vertical surfaces
                 setElementSize(solarPanel.id, newLx, newLy);
                 setElementPosition(solarPanel.id, rc.x, rc.y);
+              } else if (grabRef.current.type === ObjectType.Polygon) {
+                const polygon = grabRef.current as PolygonModel;
+                p = Util.relativeCoordinates(p.x, p.y, p.z, cuboidModel);
+                updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, p.x, p.y);
               }
             }
           }
@@ -661,151 +692,163 @@ const Cuboid = ({
   };
 
   const handlePointerUp = () => {
-    if (grabRef.current) {
-      const elem = getElementById(grabRef.current.id);
-      if (elem && elem.parentId === id) {
-        if (resizeHandleType) {
-          newPositionRef.current.x = elem.cx;
-          newPositionRef.current.y = elem.cy;
-          newPositionRef.current.z = elem.cz;
-          newDimensionRef.current.x = elem.lx;
-          newDimensionRef.current.y = elem.ly;
-          newDimensionRef.current.z = elem.lz;
-          if (
-            newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE &&
-            newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > ZERO_TOLERANCE
-          ) {
-            const undoableResize = {
-              name: 'Resize',
+    if (!grabRef.current) return;
+    const elem = getElementById(grabRef.current.id);
+    if (!elem || elem.parentId !== id) return;
+    if (elem.type === ObjectType.Polygon) {
+      if (moveHandleType || resizeHandleType) {
+        newVerticesRef.current = (elem as PolygonModel).vertices.map((v) => ({ ...v }));
+        const undoableEditPolygon = {
+          name: moveHandleType ? 'Move Polygon' : 'Resize Polygon',
+          timestamp: Date.now(),
+          oldValue: oldVerticesRef.current,
+          newValue: newVerticesRef.current,
+          changedElementId: elem.id,
+          undo: () => {
+            updatePolygonVerticesById(undoableEditPolygon.changedElementId, undoableEditPolygon.oldValue as Point2[]);
+          },
+          redo: () => {
+            updatePolygonVerticesById(undoableEditPolygon.changedElementId, undoableEditPolygon.newValue as Point2[]);
+          },
+        } as UndoableChange;
+        addUndoable(undoableEditPolygon);
+      }
+    } else {
+      if (resizeHandleType) {
+        newPositionRef.current.x = elem.cx;
+        newPositionRef.current.y = elem.cy;
+        newPositionRef.current.z = elem.cz;
+        newDimensionRef.current.x = elem.lx;
+        newDimensionRef.current.y = elem.ly;
+        newDimensionRef.current.z = elem.lz;
+        if (
+          newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE &&
+          newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > ZERO_TOLERANCE
+        ) {
+          const undoableResize = {
+            name: 'Resize',
+            timestamp: Date.now(),
+            resizedElementId: grabRef.current.id,
+            oldCx: oldPositionRef.current.x,
+            oldCy: oldPositionRef.current.y,
+            oldCz: oldPositionRef.current.z,
+            newCx: newPositionRef.current.x,
+            newCy: newPositionRef.current.y,
+            newCz: newPositionRef.current.z,
+            oldLx: oldDimensionRef.current.x,
+            oldLy: oldDimensionRef.current.y,
+            oldLz: oldDimensionRef.current.z,
+            newLx: newDimensionRef.current.x,
+            newLy: newDimensionRef.current.y,
+            newLz: newDimensionRef.current.z,
+            undo: () => {
+              setElementPosition(
+                undoableResize.resizedElementId,
+                undoableResize.oldCx,
+                undoableResize.oldCy,
+                undoableResize.oldCz,
+              );
+              setElementSize(
+                undoableResize.resizedElementId,
+                undoableResize.oldLx,
+                undoableResize.oldLy,
+                undoableResize.oldLz,
+              );
+            },
+            redo: () => {
+              setElementPosition(
+                undoableResize.resizedElementId,
+                undoableResize.newCx,
+                undoableResize.newCy,
+                undoableResize.newCz,
+              );
+              setElementSize(
+                undoableResize.resizedElementId,
+                undoableResize.newLx,
+                undoableResize.newLy,
+                undoableResize.newLz,
+              );
+            },
+          } as UndoableResize;
+          addUndoable(undoableResize);
+        }
+      } else if (rotateHandleType) {
+        if (grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
+          const solarPanel = grabRef.current as SolarPanelModel;
+          if (Math.abs(newAzimuthRef.current - oldAzimuthRef.current) > ZERO_TOLERANCE) {
+            const undoableRotate = {
+              name: 'Rotate',
               timestamp: Date.now(),
-              resizedElementId: grabRef.current.id,
-              oldCx: oldPositionRef.current.x,
-              oldCy: oldPositionRef.current.y,
-              oldCz: oldPositionRef.current.z,
-              newCx: newPositionRef.current.x,
-              newCy: newPositionRef.current.y,
-              newCz: newPositionRef.current.z,
-              oldLx: oldDimensionRef.current.x,
-              oldLy: oldDimensionRef.current.y,
-              oldLz: oldDimensionRef.current.z,
-              newLx: newDimensionRef.current.x,
-              newLy: newDimensionRef.current.y,
-              newLz: newDimensionRef.current.z,
+              oldValue: oldAzimuthRef.current,
+              newValue: newAzimuthRef.current,
+              changedElementId: solarPanel.id,
               undo: () => {
-                setElementPosition(
-                  undoableResize.resizedElementId,
-                  undoableResize.oldCx,
-                  undoableResize.oldCy,
-                  undoableResize.oldCz,
-                );
-                setElementSize(
-                  undoableResize.resizedElementId,
-                  undoableResize.oldLx,
-                  undoableResize.oldLy,
-                  undoableResize.oldLz,
-                );
+                updateSolarPanelRelativeAzimuthById(undoableRotate.changedElementId, undoableRotate.oldValue as number);
               },
               redo: () => {
-                setElementPosition(
-                  undoableResize.resizedElementId,
-                  undoableResize.newCx,
-                  undoableResize.newCy,
-                  undoableResize.newCz,
-                );
-                setElementSize(
-                  undoableResize.resizedElementId,
-                  undoableResize.newLx,
-                  undoableResize.newLy,
-                  undoableResize.newLz,
-                );
+                updateSolarPanelRelativeAzimuthById(undoableRotate.changedElementId, undoableRotate.newValue as number);
               },
-            } as UndoableResize;
-            addUndoable(undoableResize);
-          }
-        } else if (rotateHandleType) {
-          if (grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
-            const solarPanel = grabRef.current as SolarPanelModel;
-            if (Math.abs(newAzimuthRef.current - oldAzimuthRef.current) > ZERO_TOLERANCE) {
-              const undoableRotate = {
-                name: 'Rotate',
-                timestamp: Date.now(),
-                oldValue: oldAzimuthRef.current,
-                newValue: newAzimuthRef.current,
-                changedElementId: solarPanel.id,
-                undo: () => {
-                  updateSolarPanelRelativeAzimuthById(
-                    undoableRotate.changedElementId,
-                    undoableRotate.oldValue as number,
-                  );
-                },
-                redo: () => {
-                  updateSolarPanelRelativeAzimuthById(
-                    undoableRotate.changedElementId,
-                    undoableRotate.newValue as number,
-                  );
-                },
-              } as UndoableChange;
-              addUndoable(undoableRotate);
-            }
-          }
-        } else {
-          // for moving sensors and solar panels
-          newPositionRef.current.x = elem.cx;
-          newPositionRef.current.y = elem.cy;
-          newPositionRef.current.z = elem.cz;
-          newNormalRef.current.fromArray(elem.normal);
-          if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
-            const undoableMove = {
-              name: 'Move',
-              timestamp: Date.now(),
-              movedElementId: grabRef.current.id,
-              oldCx: oldPositionRef.current.x,
-              oldCy: oldPositionRef.current.y,
-              oldCz: oldPositionRef.current.z,
-              oldNormal: oldNormalRef.current.clone(),
-              newCx: newPositionRef.current.x,
-              newCy: newPositionRef.current.y,
-              newCz: newPositionRef.current.z,
-              newNormal: newNormalRef.current.clone(),
-              undo: () => {
-                setElementPosition(
-                  undoableMove.movedElementId,
-                  undoableMove.oldCx,
-                  undoableMove.oldCy,
-                  undoableMove.oldCz,
-                );
-                if (undoableMove.oldNormal) {
-                  setElementNormal(
-                    undoableMove.movedElementId,
-                    undoableMove.oldNormal.x,
-                    undoableMove.oldNormal.y,
-                    undoableMove.oldNormal.z,
-                  );
-                }
-              },
-              redo: () => {
-                setElementPosition(
-                  undoableMove.movedElementId,
-                  undoableMove.newCx,
-                  undoableMove.newCy,
-                  undoableMove.newCz,
-                );
-                if (undoableMove.newNormal) {
-                  setElementNormal(
-                    undoableMove.movedElementId,
-                    undoableMove.newNormal.x,
-                    undoableMove.newNormal.y,
-                    undoableMove.newNormal.z,
-                  );
-                }
-              },
-            } as UndoableMove;
-            addUndoable(undoableMove);
+            } as UndoableChange;
+            addUndoable(undoableRotate);
           }
         }
+      } else {
+        // for moving sensors and solar panels
+        newPositionRef.current.x = elem.cx;
+        newPositionRef.current.y = elem.cy;
+        newPositionRef.current.z = elem.cz;
+        newNormalRef.current.fromArray(elem.normal);
+        if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
+          const undoableMove = {
+            name: 'Move',
+            timestamp: Date.now(),
+            movedElementId: grabRef.current.id,
+            oldCx: oldPositionRef.current.x,
+            oldCy: oldPositionRef.current.y,
+            oldCz: oldPositionRef.current.z,
+            oldNormal: oldNormalRef.current.clone(),
+            newCx: newPositionRef.current.x,
+            newCy: newPositionRef.current.y,
+            newCz: newPositionRef.current.z,
+            newNormal: newNormalRef.current.clone(),
+            undo: () => {
+              setElementPosition(
+                undoableMove.movedElementId,
+                undoableMove.oldCx,
+                undoableMove.oldCy,
+                undoableMove.oldCz,
+              );
+              if (undoableMove.oldNormal) {
+                setElementNormal(
+                  undoableMove.movedElementId,
+                  undoableMove.oldNormal.x,
+                  undoableMove.oldNormal.y,
+                  undoableMove.oldNormal.z,
+                );
+              }
+            },
+            redo: () => {
+              setElementPosition(
+                undoableMove.movedElementId,
+                undoableMove.newCx,
+                undoableMove.newCy,
+                undoableMove.newCz,
+              );
+              if (undoableMove.newNormal) {
+                setElementNormal(
+                  undoableMove.movedElementId,
+                  undoableMove.newNormal.x,
+                  undoableMove.newNormal.y,
+                  undoableMove.newNormal.z,
+                );
+              }
+            },
+          } as UndoableMove;
+          addUndoable(undoableMove);
+        }
       }
-      grabRef.current = null;
     }
+    grabRef.current = null;
   };
 
   const handlePointerOver = (e: ThreeEvent<PointerEvent>) => {

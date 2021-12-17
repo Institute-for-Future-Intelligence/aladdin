@@ -44,6 +44,7 @@ export const FoundationMenu = () => {
 
   const foundation = getSelectedElement() as FoundationModel;
   const wallCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Wall) : 0;
+  const polygonCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Polygon) : 0;
   const sensorCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Sensor) : 0;
   const solarRackCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.SolarPanel) : 0;
   const solarPanelCountFoundation = foundation ? countAllChildSolarPanels(foundation.id) : 0;
@@ -73,7 +74,10 @@ export const FoundationMenu = () => {
       <Copy keyName={'foundation-copy'} />
       {editable && <Cut keyName={'foundation-cut'} />}
       <Lock keyName={'foundation-lock'} />
-      {(sensorCountFoundation > 0 || solarPanelCountFoundation > 0 || wallCountFoundation > 0) &&
+      {(sensorCountFoundation > 0 ||
+        solarPanelCountFoundation > 0 ||
+        wallCountFoundation > 0 ||
+        polygonCountFoundation > 0) &&
         contextMenuObjectType && (
           <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
             {wallCountFoundation > 0 && (
@@ -215,6 +219,50 @@ export const FoundationMenu = () => {
                 {i18n.t('foundationMenu.RemoveAllSolarPanels', lang)}&nbsp; ({solarPanelCountFoundation}{' '}
                 {i18n.t('foundationMenu.SolarPanels', lang)}, {solarRackCountFoundation}{' '}
                 {i18n.t('foundationMenu.Racks', lang)})
+              </Menu.Item>
+            )}
+
+            {polygonCountFoundation > 0 && (
+              <Menu.Item
+                key={'remove-all-polygons-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllPolygonsOnFoundation', lang) +
+                      ' (' +
+                      polygonCountFoundation +
+                      ' ' +
+                      i18n.t('foundationMenu.Polygons', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (foundation) {
+                        const removed = elements.filter(
+                          (e) => e.type === ObjectType.Polygon && e.parentId === foundation.id,
+                        );
+                        removeAllChildElementsByType(foundation.id, ObjectType.Polygon);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllPolygonChildren = {
+                          name: 'Remove All Polygons on Foundation',
+                          timestamp: Date.now(),
+                          parentId: foundation.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllPolygonChildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(undoableRemoveAllPolygonChildren.parentId, ObjectType.Polygon);
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllPolygonChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllPolygons', lang)} ({polygonCountFoundation})
               </Menu.Item>
             )}
           </SubMenu>

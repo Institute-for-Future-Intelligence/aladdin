@@ -93,7 +93,13 @@ const Polygon = ({
           setCenterY(centroid.y);
           break;
         case ObjectType.Cuboid:
-          // TODO
+          for (const v of vertices) {
+            const p2 = { x: v.x * parent.lx, y: v.y * parent.ly } as Point2;
+            av.push(p2);
+          }
+          const centroidTop = Util.calculatePolygonCentroid(av);
+          setCenterX(centroidTop.x);
+          setCenterY(centroidTop.y);
           break;
       }
     }

@@ -19,6 +19,7 @@ import CuboidHeightInput from './cuboidHeightInput';
 import CuboidAzimuthInput from './cuboidAzimuthInput';
 import CuboidTextureSelection from './cuboidTextureSelection';
 import { CuboidModel } from '../../../models/CuboidModel';
+import { UndoableAdd } from '../../../undo/UndoableAdd';
 
 export const CuboidMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -34,6 +35,8 @@ export const CuboidMenu = () => {
   const elementsToPaste = useStore(Selector.elementsToPaste);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
+  const addPolygon = useStore(Selector.addPolygon);
+  const removeElementById = useStore(Selector.removeElementById);
 
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
@@ -43,6 +46,7 @@ export const CuboidMenu = () => {
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
   const cuboid = getSelectedElement() as CuboidModel;
+  const polygonCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Polygon) : 0;
   const sensorCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Sensor) : 0;
   const solarRackCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.SolarPanel) : 0;
   const solarPanelCountCuboid = cuboid ? countAllChildSolarPanels(cuboid.id) : 0;
@@ -54,6 +58,7 @@ export const CuboidMenu = () => {
       if (
         e.type === ObjectType.Human ||
         e.type === ObjectType.Tree ||
+        e.type === ObjectType.Polygon ||
         e.type === ObjectType.Sensor ||
         e.type === ObjectType.SolarPanel
       ) {
@@ -72,7 +77,7 @@ export const CuboidMenu = () => {
       {editable && <Cut keyName={'cuboid-cut'} />}
       <Lock keyName={'cuboid-lock'} />
 
-      {(sensorCountCuboid > 0 || solarPanelCountCuboid > 0) && contextMenuObjectType && (
+      {(sensorCountCuboid > 0 || solarPanelCountCuboid > 0 || polygonCountCuboid > 0) && contextMenuObjectType && (
         <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
           {sensorCountCuboid > 0 && (
             <Menu.Item
@@ -115,6 +120,7 @@ export const CuboidMenu = () => {
               {i18n.t('cuboidMenu.RemoveAllSensors', lang)} ({sensorCountCuboid} {i18n.t('cuboidMenu.Sensors', lang)})
             </Menu.Item>
           )}
+
           {solarPanelCountCuboid > 0 && (
             <Menu.Item
               key={'remove-all-solar-panels-on-cuboid'}
@@ -164,6 +170,49 @@ export const CuboidMenu = () => {
             >
               {i18n.t('cuboidMenu.RemoveAllSolarPanels', lang)}&nbsp; ({solarPanelCountCuboid}{' '}
               {i18n.t('cuboidMenu.SolarPanels', lang)},{solarRackCountCuboid} {i18n.t('cuboidMenu.Racks', lang)})
+            </Menu.Item>
+          )}
+
+          {polygonCountCuboid > 0 && (
+            <Menu.Item
+              key={'remove-all-polygons-on-cuboid'}
+              onClick={() => {
+                Modal.confirm({
+                  title:
+                    i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllPolygonsOnCuboid', lang) +
+                    ' (' +
+                    polygonCountCuboid +
+                    ' ' +
+                    i18n.t('cuboidMenu.Polygons', lang) +
+                    ')?',
+                  icon: <ExclamationCircleOutlined />,
+                  onOk: () => {
+                    if (cuboid) {
+                      const removed = elements.filter((e) => e.type === ObjectType.Polygon && e.parentId === cuboid.id);
+                      removeAllChildElementsByType(cuboid.id, ObjectType.Polygon);
+                      const removedElements = JSON.parse(JSON.stringify(removed));
+                      const undoableRemoveAllPolygonChildren = {
+                        name: 'Remove All Polygons on Cuboid',
+                        timestamp: Date.now(),
+                        parentId: cuboid.id,
+                        removedElements: removedElements,
+                        undo: () => {
+                          setCommonStore((state) => {
+                            state.elements.push(...undoableRemoveAllPolygonChildren.removedElements);
+                          });
+                        },
+                        redo: () => {
+                          removeAllChildElementsByType(undoableRemoveAllPolygonChildren.parentId, ObjectType.Polygon);
+                        },
+                      } as UndoableRemoveAllChildren;
+                      addUndoable(undoableRemoveAllPolygonChildren);
+                    }
+                  },
+                });
+              }}
+            >
+              {i18n.t('cuboidMenu.RemoveAllPolygons', lang)} ({polygonCountCuboid} {i18n.t('cuboidMenu.Polygons', lang)}
+              )
             </Menu.Item>
           )}
         </SubMenu>
@@ -271,6 +320,32 @@ export const CuboidMenu = () => {
           {i18n.t('word.Azimuth', lang)} ...
         </Menu.Item>
       )}
+      <Menu.Item
+        style={{ paddingLeft: '36px' }}
+        key={'add-polygon-on-cuboid'}
+        onClick={() => {
+          if (cuboid) {
+            const element = addPolygon(cuboid);
+            const undoableAdd = {
+              name: 'Add',
+              timestamp: Date.now(),
+              addedElement: element,
+              undo: () => {
+                removeElementById(undoableAdd.addedElement.id, false);
+              },
+              redo: () => {
+                setCommonStore((state) => {
+                  state.elements.push(undoableAdd.addedElement);
+                  state.selectedElement = undoableAdd.addedElement;
+                });
+              },
+            } as UndoableAdd;
+            addUndoable(undoableAdd);
+          }
+        }}
+      >
+        {i18n.t('cuboidMenu.AddPolygon', lang)}
+      </Menu.Item>
     </Menu.ItemGroup>
   );
 };
