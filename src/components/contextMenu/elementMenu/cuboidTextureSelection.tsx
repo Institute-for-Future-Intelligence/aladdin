@@ -178,16 +178,17 @@ const CuboidTextureSelection = ({
             oldValue: oldTexture,
             newValue: value,
             changedElementId: cuboid.id,
+            changedSideIndex: selectedSideIndex,
             undo: () => {
               updateCuboidTextureBySide(
-                selectedSideIndex,
+                undoableChange.changedSideIndex,
                 undoableChange.changedElementId,
                 undoableChange.oldValue as CuboidTexture,
               );
             },
             redo: () => {
               updateCuboidTextureBySide(
-                selectedSideIndex,
+                undoableChange.changedSideIndex,
                 undoableChange.changedElementId,
                 undoableChange.newValue as CuboidTexture,
               );

@@ -4,6 +4,7 @@
 
 import { Undoable } from './Undoable';
 import { Vector3 } from 'three';
+import { Point2 } from '../models/Point2';
 
 export interface UndoableResize extends Undoable {
   oldCx: number;
@@ -24,4 +25,6 @@ export interface UndoableResize extends Undoable {
 
   oldChildrenPositionsMap: Map<string, Vector3>;
   newChildrenPositionsMap: Map<string, Vector3>;
+  oldPolygonVerticesMap: Map<string, Point2[]>;
+  newPolygonVerticesMap: Map<string, Point2[]>;
 }

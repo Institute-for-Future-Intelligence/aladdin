@@ -187,16 +187,17 @@ const CuboidColorSelection = ({
             oldValue: oldColor,
             newValue: value,
             changedElementId: cuboid.id,
+            changedSideIndex: selectedSideIndex,
             undo: () => {
               updateCuboidColorBySide(
-                selectedSideIndex,
+                undoableChange.changedSideIndex,
                 undoableChange.changedElementId,
                 undoableChange.oldValue as string,
               );
             },
             redo: () => {
               updateCuboidColorBySide(
-                selectedSideIndex,
+                undoableChange.changedSideIndex,
                 undoableChange.changedElementId,
                 undoableChange.newValue as string,
               );

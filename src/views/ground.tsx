@@ -54,6 +54,7 @@ const Ground = () => {
   const groundModel = useStore((state) => state.world.ground);
   const deletedFoundationId = useStore(Selector.deletedFoundationId);
   const deletedCuboidId = useStore(Selector.deletedCuboidId);
+  const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
 
   const {
     camera,
@@ -68,6 +69,8 @@ const Ground = () => {
   const newPositionRef = useRef<Vector3>(new Vector3());
   const oldChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
   const newChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
+  const oldPolygonVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>());
+  const newPolygonVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>());
   const oldDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const newDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const oldRotationRef = useRef<number[]>([0, 0, 1]);
@@ -271,7 +274,14 @@ const Ground = () => {
                 newChildrenPositionsMapRef.current.clear();
                 if (children.length > 0) {
                   for (const c of children) {
-                    newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+                    if (c.type === ObjectType.Polygon) {
+                      newPolygonVerticesMapRef.current.set(
+                        c.id,
+                        (c as PolygonModel).vertices.map((v) => ({ ...v })),
+                      );
+                    } else {
+                      newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+                    }
                   }
                 }
               }
@@ -293,6 +303,8 @@ const Ground = () => {
                 newLz: newDimensionRef.current.z,
                 oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
                 newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+                oldPolygonVerticesMap: new Map(oldPolygonVerticesMapRef.current),
+                newPolygonVerticesMap: new Map(newPolygonVerticesMapRef.current),
                 undo: () => {
                   setElementPosition(
                     undoableResize.resizedElementId,
@@ -308,7 +320,18 @@ const Ground = () => {
                   );
                   if (undoableResize.oldChildrenPositionsMap.size > 0) {
                     for (const [id, p] of undoableResize.oldChildrenPositionsMap.entries()) {
-                      setElementPosition(id, p.x, p.y, p.z);
+                      const elem = getElementById(id);
+                      if (elem?.type !== ObjectType.Polygon) {
+                        setElementPosition(id, p.x, p.y, p.z);
+                      }
+                    }
+                  }
+                  if (undoableResize.oldPolygonVerticesMap.size > 0) {
+                    for (const [id, vertices] of undoableResize.oldPolygonVerticesMap.entries()) {
+                      const elem = getElementById(id);
+                      if (elem?.type === ObjectType.Polygon) {
+                        updatePolygonVerticesById(id, vertices);
+                      }
                     }
                   }
                 },
@@ -328,6 +351,14 @@ const Ground = () => {
                   if (undoableResize.newChildrenPositionsMap.size > 0) {
                     for (const [id, p] of undoableResize.newChildrenPositionsMap.entries()) {
                       setElementPosition(id, p.x, p.y, p.z);
+                    }
+                  }
+                  if (undoableResize.newPolygonVerticesMap.size > 0) {
+                    for (const [id, vertices] of undoableResize.newPolygonVerticesMap.entries()) {
+                      const elem = getElementById(id);
+                      if (elem?.type === ObjectType.Polygon) {
+                        updatePolygonVerticesById(id, vertices);
+                      }
                     }
                   }
                 },
@@ -509,7 +540,14 @@ const Ground = () => {
               oldChildrenPositionsMapRef.current.clear();
               if (children.length > 0) {
                 for (const c of children) {
-                  oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+                  if (c.type === ObjectType.Polygon) {
+                    oldPolygonVerticesMapRef.current.set(
+                      c.id,
+                      (c as PolygonModel).vertices.map((v) => ({ ...v })),
+                    );
+                  } else {
+                    oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+                  }
                 }
               }
             }
