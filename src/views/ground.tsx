@@ -552,10 +552,6 @@ const Ground = () => {
                 }
               }
             }
-            // allow the view to rotate when pressing down on the elements excluded as follows
-            if (selectedElement.type !== ObjectType.Foundation && selectedElement.type !== ObjectType.Cuboid) {
-              setEnableOrbitController(false);
-            }
             // allow humans and trees to stand on top of a "stand" surface (defined in userData)
             switch (selectedElement.type) {
               case ObjectType.Human:

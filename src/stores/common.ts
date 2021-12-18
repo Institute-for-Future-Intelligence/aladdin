@@ -95,7 +95,6 @@ export interface CommonStoreState {
   aabb: Box3; // axis-aligned bounding box of elements
   animateSun: boolean;
   orbitControlsRef: RefObject<MyOrbitControls> | null;
-  enableOrbitController: boolean;
   setEnableOrbitController: (b: boolean) => void;
   clickObjectType: ObjectType | null;
   contextMenuObjectType: ObjectType | null;
@@ -509,10 +508,8 @@ export const useStore = create<CommonStoreState>(
           aabb: new Box3(),
           animateSun: false,
           orbitControlsRef: null,
-          enableOrbitController: true,
           setEnableOrbitController: (b: boolean) => {
             immerSet((state) => {
-              state.enableOrbitController = b;
               if (state.orbitControlsRef?.current) {
                 state.orbitControlsRef.current.enabled = b;
               }

@@ -107,15 +107,13 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
   };
 
   const render = () => {
-    if (useStore.getState().enableOrbitController) {
-      gl.render(scene, camera);
-      if (controls.current) {
-        controls.current.target.clamp(minPan, maxPan);
-      }
-      setCommonStore((state) => {
-        state.cameraDirection = getCameraDirection(cam);
-      });
+    //gl.render(scene, camera);
+    if (controls.current) {
+      controls.current.target.clamp(minPan, maxPan);
     }
+    setCommonStore((state) => {
+      state.cameraDirection = getCameraDirection(cam);
+    });
   };
 
   const onInteractionEnd = () => {
