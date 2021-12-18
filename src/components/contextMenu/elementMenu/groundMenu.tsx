@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Checkbox, InputNumber, Menu, Modal, Space } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -27,6 +27,8 @@ export const GroundMenu = () => {
   const elements = useStore(Selector.elements);
   const groundImage = useStore(Selector.viewState.groundImage);
   const elementsToPaste = useStore(Selector.elementsToPaste);
+
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
   const treeCount = countElementsByType(ObjectType.Tree);
   const humanCount = countElementsByType(ObjectType.Human);
@@ -207,39 +209,6 @@ export const GroundMenu = () => {
         </Menu.Item>
       )}
 
-      <Menu>
-        <Menu.Item style={{ paddingLeft: '36px' }} key={'ground-albedo'}>
-          <Space style={{ width: '60px' }}>{i18n.t('groundMenu.Albedo', lang)}:</Space>
-          <InputNumber
-            min={0.05}
-            max={1}
-            step={0.01}
-            precision={2}
-            value={albedo}
-            onChange={(value) => {
-              if (value) {
-                const oldAlbedo = albedo;
-                const newAlbedo = value;
-                const undoableChange = {
-                  name: 'Set Albedo',
-                  timestamp: Date.now(),
-                  oldValue: oldAlbedo,
-                  newValue: newAlbedo,
-                  undo: () => {
-                    setAlbedo(undoableChange.oldValue as number);
-                  },
-                  redo: () => {
-                    setAlbedo(undoableChange.newValue as number);
-                  },
-                } as UndoableChange;
-                addUndoable(undoableChange);
-                setAlbedo(newAlbedo);
-              }
-            }}
-          />
-        </Menu.Item>
-      </Menu>
-
       <Menu.Item key={'image-on-ground'}>
         <Checkbox
           checked={groundImage}
@@ -284,9 +253,43 @@ export const GroundMenu = () => {
             } as UndoableChange;
             addUndoable(undoableChange);
             setGroundColor(newColor);
+            setUpdateFlag(!updateFlag);
           }}
         />
       </SubMenu>
+
+      <Menu>
+        <Menu.Item style={{ paddingLeft: '36px' }} key={'ground-albedo'}>
+          <Space style={{ width: '60px' }}>{i18n.t('groundMenu.Albedo', lang)}:</Space>
+          <InputNumber
+            min={0.05}
+            max={1}
+            step={0.01}
+            precision={2}
+            value={albedo}
+            onChange={(value) => {
+              if (value) {
+                const oldAlbedo = albedo;
+                const newAlbedo = value;
+                const undoableChange = {
+                  name: 'Set Albedo',
+                  timestamp: Date.now(),
+                  oldValue: oldAlbedo,
+                  newValue: newAlbedo,
+                  undo: () => {
+                    setAlbedo(undoableChange.oldValue as number);
+                  },
+                  redo: () => {
+                    setAlbedo(undoableChange.newValue as number);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                setAlbedo(newAlbedo);
+              }
+            }}
+          />
+        </Menu.Item>
+      </Menu>
     </>
   );
 };

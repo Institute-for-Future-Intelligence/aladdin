@@ -284,9 +284,10 @@ const CuboidColorSelection = ({
         <Row gutter={6}>
           <Col className="gutter-row" span={12}>
             <CompactPicker
-              color={currentColor}
+              color={selectedColor ?? currentColor}
               onChangeComplete={(colorResult) => {
                 setSelectedColor(colorResult.hex);
+                setUpdateFlag(!updateFlag);
               }}
             />
           </Col>

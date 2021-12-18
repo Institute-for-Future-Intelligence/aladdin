@@ -3,7 +3,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Sphere } from '@react-three/drei';
+import { Box, Line, Sphere } from '@react-three/drei';
 import { Euler, Mesh, Shape, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -24,7 +24,6 @@ import { ActionType, MoveHandleType, ObjectType, ResizeHandleType } from '../typ
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { PolygonModel } from '../models/PolygonModel';
-import { Line } from '@react-three/drei';
 import { Point2 } from '../models/Point2';
 
 // TODO: Only on foundation for now
@@ -51,6 +50,7 @@ const Polygon = ({
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
   const updatePolygonSelectedIndexById = useStore(Selector.updatePolygonSelectedIndexById);
+  const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
 
   const {
     gl: { domElement },
@@ -178,45 +178,52 @@ const Polygon = ({
 
   return (
     <group name={'Polygon Group ' + id} rotation={euler} position={[parent?.cx ?? 0, parent?.cy ?? 0, cz]}>
-      <mesh
-        uuid={id}
-        ref={baseRef}
-        position={[0, 0, 0]}
-        receiveShadow={true}
-        castShadow={false}
-        visible={filled}
-        name={'Polygon'}
-        onPointerDown={(e) => {
-          if (e.button === 2) return; // ignore right-click
-          selectMe(id, e, ActionType.Move);
-        }}
-        onContextMenu={(e) => {
-          selectMe(id, e);
-          setCommonStore((state) => {
+      {filled && (
+        <mesh
+          uuid={id}
+          ref={baseRef}
+          position={[0, 0, 0]}
+          receiveShadow={true}
+          castShadow={false}
+          name={ObjectType.Polygon}
+          onPointerDown={(e) => {
+            if (e.button === 2) return; // ignore right-click
+            if (objectTypeToAdd === ObjectType.None) {
+              selectMe(id, e);
+            }
+          }}
+          onContextMenu={(e) => {
+            selectMe(id, e);
+            setCommonStore((state) => {
+              if (e.intersections.length > 0) {
+                const intersected = e.intersections[0].object === baseRef.current;
+                if (intersected) {
+                  if (e.intersections.length > 1) {
+                    // pass paste point to its parent
+                    state.pastePoint.copy(e.intersections[1].point);
+                  }
+                  state.contextMenuObjectType = ObjectType.Polygon;
+                }
+              }
+            });
+          }}
+          onPointerOver={(e) => {
             if (e.intersections.length > 0) {
               const intersected = e.intersections[0].object === baseRef.current;
               if (intersected) {
-                state.contextMenuObjectType = ObjectType.Polygon;
+                setHovered(true);
               }
             }
-          });
-        }}
-        onPointerOver={(e) => {
-          if (e.intersections.length > 0) {
-            const intersected = e.intersections[0].object === baseRef.current;
-            if (intersected) {
-              setHovered(true);
-            }
-          }
-        }}
-        onPointerOut={() => {
-          setHovered(false);
-          domElement.style.cursor = 'default';
-        }}
-      >
-        <shapeBufferGeometry attach="geometry" args={[shape]} />
-        <meshBasicMaterial color={color} transparent={true} opacity={0.5} />
-      </mesh>
+          }}
+          onPointerOut={() => {
+            setHovered(false);
+            domElement.style.cursor = 'default';
+          }}
+        >
+          <shapeBufferGeometry attach="geometry" args={[shape]} />
+          <meshBasicMaterial color={color} transparent={true} opacity={0.5} />
+        </mesh>
+      )}
 
       {/* wireframe */}
       <Line
@@ -227,6 +234,23 @@ const Polygon = ({
         receiveShadow={false}
         castShadow={false}
         name={'Polygon Wireframe'}
+        onPointerDown={(e) => {
+          if (e.button === 2) return; // ignore right-click
+          selectMe(id, e);
+        }}
+        onContextMenu={(e) => {
+          if (objectTypeToAdd !== ObjectType.None) return;
+          selectMe(id, e);
+          setCommonStore((state) => {
+            if (e.intersections.length > 0) {
+              const obj = e.intersections[0].object;
+              const intersected = obj.name === 'Polygon Wireframe' && obj.uuid === id;
+              if (intersected) {
+                state.contextMenuObjectType = ObjectType.Polygon;
+              }
+            }
+          });
+        }}
       />
 
       {/* draw handle */}

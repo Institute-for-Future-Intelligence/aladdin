@@ -59,8 +59,8 @@ export enum Theme {
 
 export enum Language {
   English = 'English',
-  Chinese_Simplified = '简体中文',
-  Chinese_Traditional = '繁体中文',
+  ChineseSimplified = '简体中文',
+  ChineseTraditional = '繁体中文',
   Turkish = 'Türk',
   Spanish = 'Español',
 }

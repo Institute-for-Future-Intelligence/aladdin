@@ -161,6 +161,8 @@ export const updatePolygonFilledById = (state: CommonStoreState) => state.update
 
 export const updatePolygonFillColorById = (state: CommonStoreState) => state.updatePolygonFillColorById;
 
+export const updatePolygonLineColorById = (state: CommonStoreState) => state.updatePolygonLineColorById;
+
 export const updatePolygonVertexPositionById = (state: CommonStoreState) => state.updatePolygonVertexPositionById;
 
 export const updatePolygonVerticesById = (state: CommonStoreState) => state.updatePolygonVerticesById;

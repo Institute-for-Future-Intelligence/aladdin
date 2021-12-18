@@ -170,6 +170,7 @@ export interface CommonStoreState {
   updatePolygonSelectedIndexById: (id: string, index: number) => void;
   updatePolygonFilledById: (id: string, filled: boolean) => void;
   updatePolygonFillColorById: (id: string, color: string) => void;
+  updatePolygonLineColorById: (id: string, color: string) => void;
   updatePolygonVertexPositionById: (id: string, index: number, x: number, y: number) => void;
   updatePolygonVerticesById: (id: string, vertices: Point2[]) => void;
 
@@ -1126,6 +1127,16 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Polygon && e.id === id) {
                   (e as PolygonModel).color = color;
+                  break;
+                }
+              }
+            });
+          },
+          updatePolygonLineColorById(id: string, color: string) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Polygon && e.id === id) {
+                  e.lineColor = color;
                   break;
                 }
               }
@@ -2274,13 +2285,27 @@ export const useStore = create<CommonStoreState>(
                 // so we have to copy its children and grandchildren from existing elements
                 let m = state.pastePoint;
                 const elem = state.elementsToPaste[0];
-                const newParent = state.getSelectedElement();
+                let newParent = state.getSelectedElement();
                 const oldParent = state.getElementById(elem.parentId);
                 if (newParent) {
-                  // if parent is ground, it has no type definition, but we use it to check its type
-                  if (oldParent && oldParent.type) {
-                    elem.parentId = newParent.id;
-                    m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
+                  if (newParent.type === ObjectType.Polygon) {
+                    // paste action of polygon is passed to its parent
+                    const q = state.getElementById(newParent.parentId);
+                    if (q) {
+                      newParent = q;
+                      elem.parentId = newParent.id;
+                      if (Util.isPositionRelative(elem.type)) {
+                        m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
+                      }
+                    }
+                  } else {
+                    // if parent is ground, it has no type definition, but we use it to check its type
+                    if (oldParent && oldParent.type) {
+                      elem.parentId = newParent.id;
+                      if (Util.isPositionRelative(elem.type)) {
+                        m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
+                      }
+                    }
                   }
                 }
                 const e = ElementModelCloner.clone(newParent, elem, m.x, m.y, m.z);

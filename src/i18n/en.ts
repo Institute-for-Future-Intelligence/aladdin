@@ -274,6 +274,8 @@ export const i18n_en = {
 
     polygonMenu: {
       Filled: 'Filled',
+      FillColor: 'Fill Color',
+      LineColor: 'Line Color',
       InsertVertexBeforeIndex: 'Insert Vertex Before Index',
       InsertVertexAfterIndex: 'Insert Vertex After Index',
       DeleteVertex: 'Delete Vertex',

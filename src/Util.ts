@@ -205,9 +205,20 @@ export class Util {
     }
   }
 
+  static isPositionRelative(objectType: ObjectType) {
+    return (
+      objectType === ObjectType.SolarPanel ||
+      objectType === ObjectType.Sensor ||
+      objectType === ObjectType.Polygon ||
+      objectType === ObjectType.Window ||
+      objectType === ObjectType.Roof ||
+      objectType === ObjectType.Wall
+    );
+  }
+
   static relativeCoordinates(x: number, y: number, z: number, parent: ElementModel) {
     const v = new Vector3(x - parent.cx, y - parent.cy, z - parent.cz);
-    v.applyEuler(new Euler().fromArray(parent.rotation.map((x) => -x)));
+    v.applyEuler(new Euler().fromArray(parent.rotation.map((a) => -a)));
     v.x /= parent.lx;
     v.y /= parent.ly;
     v.z /= parent.lz;

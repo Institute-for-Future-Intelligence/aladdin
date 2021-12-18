@@ -678,8 +678,12 @@ const Foundation = ({
       selectMe(id, e, ActionType.Select);
     }
     const selectedElement = getSelectedElement();
+    let passby = false;
+    if (e.intersections[0].object.name === ObjectType.Polygon && objectTypeToAddRef.current !== ObjectType.None) {
+      passby = true;
+    }
     // no child of this foundation is clicked
-    if (selectedElement?.id === id) {
+    if (selectedElement?.id === id || passby) {
       if (legalOnFoundation(objectTypeToAddRef.current) && foundationModel) {
         setShowGrid(true);
         const position = e.intersections[0].point;

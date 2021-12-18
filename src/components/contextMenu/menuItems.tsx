@@ -6,14 +6,11 @@ import React from 'react';
 import { Checkbox, Menu } from 'antd';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
-import SubMenu from 'antd/lib/menu/SubMenu';
-import { ColorResult, CompactPicker } from 'react-color';
 import i18n from '../../i18n/i18n';
 import { Util } from '../../Util';
 import { UndoableDelete } from '../../undo/UndoableDelete';
 import { UndoablePaste } from '../../undo/UndoablePaste';
 import { UndoableCheck } from '../../undo/UndoableCheck';
-import { UndoableChange } from '../../undo/UndoableChange';
 
 export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; keyName: string }) => {
   const setCommonStore = useStore(Selector.set);
@@ -166,41 +163,5 @@ export const Lock = ({ keyName }: { keyName: string }) => {
         {i18n.t('word.Lock', { lng: language })}
       </Checkbox>
     </Menu.Item>
-  );
-};
-
-export const ColorPicker = ({ keyName }: { keyName: string }) => {
-  const language = useStore(Selector.language);
-  const updateElementColorById = useStore(Selector.updateElementColorById);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
-  const selectedElement = getSelectedElement();
-  const addUndoable = useStore(Selector.addUndoable);
-
-  const changeElementColor = (colorResult: ColorResult) => {
-    if (selectedElement) {
-      const oldColor = selectedElement.color;
-      const newColor = colorResult.hex;
-      const undoableChange = {
-        name: 'Set Element Color',
-        timestamp: Date.now(),
-        oldValue: oldColor,
-        newValue: newColor,
-        changedElementId: selectedElement.id,
-        undo: () => {
-          updateElementColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
-        },
-        redo: () => {
-          updateElementColorById(undoableChange.changedElementId, undoableChange.newValue as string);
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      updateElementColorById(selectedElement.id, newColor);
-    }
-  };
-
-  return (
-    <SubMenu key={keyName} title={i18n.t('word.Color', { lng: language })} style={{ paddingLeft: '24px' }}>
-      <CompactPicker color={selectedElement?.color} onChangeComplete={changeElementColor} />
-    </SubMenu>
   );
 };

@@ -272,6 +272,8 @@ export const i18n_zh_tw = {
 
     polygonMenu: {
       Filled: '填充',
+      FillColor: '填充顏色',
+      LineColor: '線條顏色',
       InsertVertexBeforeIndex: '前面插入頂點',
       InsertVertexAfterIndex: '後面插入頂點',
       DeleteVertex: '移除頂點',

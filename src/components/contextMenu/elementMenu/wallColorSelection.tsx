@@ -208,9 +208,10 @@ const WallColorSelection = ({
         <Row gutter={6}>
           <Col className="gutter-row" span={11}>
             <CompactPicker
-              color={wall?.color ?? 'white'}
+              color={selectedColor ?? wall?.color ?? 'white'}
               onChangeComplete={(colorResult) => {
                 setSelectedColor(colorResult.hex);
+                setUpdateFlag(!updateFlag);
               }}
             />
           </Col>

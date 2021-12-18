@@ -55,7 +55,6 @@ const Ground = () => {
   const deletedFoundationId = useStore(Selector.deletedFoundationId);
   const deletedCuboidId = useStore(Selector.deletedCuboidId);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
-  const setEnableOrbitController = useStore(Selector.setEnableOrbitController);
 
   const {
     camera,
@@ -453,206 +452,204 @@ const Ground = () => {
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2) return; // ignore right-click
+    if (e.intersections.length === 0 || !groundPlaneRef.current) return;
     setCommonStore((state) => {
       state.contextMenuObjectType = null;
     });
+    // adding foundation start point
+    if (isSettingFoundationStartPointRef.current) {
+      setRayCast(e);
+      const intersects = ray.intersectObjects([groundPlaneRef.current]);
+      setCommonStore((state) => {
+        state.setEnableOrbitController(false);
+        state.moveHandleType = null;
+        state.resizeHandleType = ResizeHandleType.LowerRight;
+        state.resizeAnchor.copy(intersects[0].point);
+      });
+      isSettingFoundationStartPointRef.current = false;
+      isSettingFoundationEndPointRef.current = true;
+      return;
+    }
+    // adding cuboid start point
+    else if (isSettingCuboidStartPointRef.current) {
+      setRayCast(e);
+      const intersects = ray.intersectObjects([groundPlaneRef.current]);
+      setCommonStore((state) => {
+        state.setEnableOrbitController(false);
+        state.moveHandleType = null;
+        state.resizeHandleType = ResizeHandleType.LowerRight;
+        state.resizeAnchor.copy(intersects[0].point);
+      });
+      isSettingCuboidStartPointRef.current = false;
+      isSettingCuboidEndPointRef.current = true;
+      return;
+    }
 
-    if (e.intersections.length > 0 && groundPlaneRef.current) {
-      // adding foundation start point
-      if (isSettingFoundationStartPointRef.current) {
-        setRayCast(e);
-        const intersects = ray.intersectObjects([groundPlaneRef.current]);
+    const groundClicked = e.intersections[0].object === groundPlaneRef.current;
+    if (groundClicked) {
+      setCommonStore((state) => {
+        state.clickObjectType = ObjectType.Ground;
+        state.selectedElement = null;
+      });
+      selectNone();
+      if (legalOnGround(objectTypeToAdd)) {
+        const position = e.intersections[0].point;
+        const addedElement = addElement(groundModel, position);
+        const undoableAdd = {
+          name: 'Add',
+          timestamp: Date.now(),
+          addedElement: addedElement,
+          undo: () => {
+            removeElementById(undoableAdd.addedElement.id, false);
+            setCommonStore((state) => {
+              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+            });
+          },
+          redo: () => {
+            setCommonStore((state) => {
+              state.elements.push(undoableAdd.addedElement);
+              state.selectedElement = undoableAdd.addedElement;
+              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+            });
+          },
+        } as UndoableAdd;
+        addUndoable(undoableAdd);
         setCommonStore((state) => {
-          state.setEnableOrbitController(false);
-          state.moveHandleType = null;
-          state.resizeHandleType = ResizeHandleType.LowerRight;
-          state.resizeAnchor.copy(intersects[0].point);
+          state.objectTypeToAdd = ObjectType.None;
+          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
         });
-        isSettingFoundationStartPointRef.current = false;
-        isSettingFoundationEndPointRef.current = true;
-        return;
       }
-      // adding cuboid start point
-      else if (isSettingCuboidStartPointRef.current) {
-        setRayCast(e);
-        const intersects = ray.intersectObjects([groundPlaneRef.current]);
-        setCommonStore((state) => {
-          state.setEnableOrbitController(false);
-          state.moveHandleType = null;
-          state.resizeHandleType = ResizeHandleType.LowerRight;
-          state.resizeAnchor.copy(intersects[0].point);
-        });
-        isSettingCuboidStartPointRef.current = false;
-        isSettingCuboidEndPointRef.current = true;
-        return;
-      }
-
-      const groundClicked = e.intersections[0].object === groundPlaneRef.current;
-      if (groundClicked) {
-        setCommonStore((state) => {
-          state.clickObjectType = ObjectType.Ground;
-          state.selectedElement = null;
-        });
-        selectNone();
-        if (legalOnGround(objectTypeToAdd)) {
-          const position = e.intersections[0].point;
-          const addedElement = addElement(groundModel, position);
-          const undoableAdd = {
-            name: 'Add',
-            timestamp: Date.now(),
-            addedElement: addedElement,
-            undo: () => {
-              removeElementById(undoableAdd.addedElement.id, false);
-              setCommonStore((state) => {
-                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-              });
-            },
-            redo: () => {
-              setCommonStore((state) => {
-                state.elements.push(undoableAdd.addedElement);
-                state.selectedElement = undoableAdd.addedElement;
-                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-              });
-            },
-          } as UndoableAdd;
-          addUndoable(undoableAdd);
-          setCommonStore((state) => {
-            state.objectTypeToAdd = ObjectType.None;
-            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-          });
-        }
-      } else {
-        const selectedElement = getSelectedElement();
-        const wallResizeHandle = useStore.getState().resizeHandleType;
-        if (selectedElement) {
-          if (legalOnGround(selectedElement.type)) {
-            grabRef.current = selectedElement;
-            // save info for undo
-            oldPositionRef.current.x = selectedElement.cx;
-            oldPositionRef.current.y = selectedElement.cy;
-            oldPositionRef.current.z = selectedElement.cz;
-            oldDimensionRef.current.x = selectedElement.lx;
-            oldDimensionRef.current.y = selectedElement.ly;
-            oldDimensionRef.current.z = selectedElement.lz;
-            oldRotationRef.current = [...selectedElement.rotation];
-            // store the positions of the children if the selected element may be a parent
-            if (selectedElement.type === ObjectType.Foundation || selectedElement.type === ObjectType.Cuboid) {
-              const children = getChildren(selectedElement.id);
-              oldChildrenPositionsMapRef.current.clear();
-              if (children.length > 0) {
-                for (const c of children) {
-                  if (c.type === ObjectType.Polygon) {
-                    oldPolygonVerticesMapRef.current.set(
-                      c.id,
-                      (c as PolygonModel).vertices.map((v) => ({ ...v })),
-                    );
-                  } else {
-                    oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
-                  }
+    } else {
+      const selectedElement = getSelectedElement();
+      const wallResizeHandle = useStore.getState().resizeHandleType;
+      if (selectedElement) {
+        if (legalOnGround(selectedElement.type)) {
+          grabRef.current = selectedElement;
+          // save info for undo
+          oldPositionRef.current.x = selectedElement.cx;
+          oldPositionRef.current.y = selectedElement.cy;
+          oldPositionRef.current.z = selectedElement.cz;
+          oldDimensionRef.current.x = selectedElement.lx;
+          oldDimensionRef.current.y = selectedElement.ly;
+          oldDimensionRef.current.z = selectedElement.lz;
+          oldRotationRef.current = [...selectedElement.rotation];
+          // store the positions of the children if the selected element may be a parent
+          if (selectedElement.type === ObjectType.Foundation || selectedElement.type === ObjectType.Cuboid) {
+            const children = getChildren(selectedElement.id);
+            oldChildrenPositionsMapRef.current.clear();
+            if (children.length > 0) {
+              for (const c of children) {
+                if (c.type === ObjectType.Polygon) {
+                  oldPolygonVerticesMapRef.current.set(
+                    c.id,
+                    (c as PolygonModel).vertices.map((v) => ({ ...v })),
+                  );
+                } else {
+                  oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
                 }
               }
             }
-            // allow humans and trees to stand on top of a "stand" surface (defined in userData)
-            switch (selectedElement.type) {
-              case ObjectType.Human:
-              case ObjectType.Tree:
-                const content = scene.children.filter((c) => c.name === 'Content');
-                standObjectsRef.current = [];
-                if (content.length > 0) {
-                  const components = content[0].children;
-                  for (const c of components) {
-                    fetchStandElements(grabRef.current.id, c, standObjectsRef.current);
-                  }
+          }
+          // allow humans and trees to stand on top of a "stand" surface (defined in userData)
+          switch (selectedElement.type) {
+            case ObjectType.Human:
+            case ObjectType.Tree:
+              const content = scene.children.filter((c) => c.name === 'Content');
+              standObjectsRef.current = [];
+              if (content.length > 0) {
+                const components = content[0].children;
+                for (const c of components) {
+                  fetchStandElements(grabRef.current.id, c, standObjectsRef.current);
                 }
-                break;
-              case ObjectType.Cuboid:
-                // getting ready for resizing even though it may not happen
-                absPosMapRef.current.clear();
-                const cuboidCenter = new Vector2(selectedElement.cx, selectedElement.cy);
-                const cuboidChildren = getChildren(selectedElement.id);
-                if (cuboidChildren.length > 0) {
-                  const a = selectedElement.rotation[2];
-                  for (const e of cuboidChildren) {
-                    switch (e.type) {
-                      case ObjectType.SolarPanel:
-                      case ObjectType.Sensor:
-                        if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
-                          const centerAbsPos = new Vector2(
-                            e.cx * selectedElement.lx,
-                            e.cy * selectedElement.ly,
-                          ).rotateAround(ORIGIN_VECTOR2, a);
-                          centerAbsPos.add(cuboidCenter);
-                          absPosMapRef.current.set(e.id, centerAbsPos);
-                        }
-                        break;
-                    }
-                  }
-                }
-                break;
-              case ObjectType.Foundation:
-                // getting ready for resizing even though it may not happen
-                absPosMapRef.current.clear();
-                polygonsAbsPosMapRef.current.clear();
-                wallsAbsPosMapRef.current.clear();
-                const foundationCenter = new Vector2(selectedElement.cx, selectedElement.cy);
-                const foundationChildren = getChildren(selectedElement.id);
-                if (foundationChildren.length > 0) {
-                  const a = selectedElement.rotation[2];
-                  for (const e of foundationChildren) {
-                    switch (e.type) {
-                      case ObjectType.Wall:
-                        const wall = e as WallModel;
-                        const centerPointAbsPos = new Vector2(wall.cx, wall.cy).rotateAround(ORIGIN_VECTOR2, a);
-                        centerPointAbsPos.add(foundationCenter);
-                        const leftPointAbsPos = new Vector2(wall.leftPoint[0], wall.leftPoint[1]).rotateAround(
-                          ORIGIN_VECTOR2,
-                          a,
-                        );
-                        leftPointAbsPos.add(foundationCenter);
-                        const rightPointAbsPos = new Vector2(wall.rightPoint[0], wall.rightPoint[1]).rotateAround(
-                          ORIGIN_VECTOR2,
-                          a,
-                        );
-                        rightPointAbsPos.add(foundationCenter);
-                        wallsAbsPosMapRef.current.set(wall.id, {
-                          centerPointAbsPos,
-                          leftPointAbsPos,
-                          rightPointAbsPos,
-                        });
-                        break;
-                      case ObjectType.SolarPanel:
-                      case ObjectType.Sensor:
+              }
+              break;
+            case ObjectType.Cuboid:
+              // getting ready for resizing even though it may not happen
+              absPosMapRef.current.clear();
+              const cuboidCenter = new Vector2(selectedElement.cx, selectedElement.cy);
+              const cuboidChildren = getChildren(selectedElement.id);
+              if (cuboidChildren.length > 0) {
+                const a = selectedElement.rotation[2];
+                for (const e of cuboidChildren) {
+                  switch (e.type) {
+                    case ObjectType.SolarPanel:
+                    case ObjectType.Sensor:
+                      if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
                         const centerAbsPos = new Vector2(
                           e.cx * selectedElement.lx,
                           e.cy * selectedElement.ly,
                         ).rotateAround(ORIGIN_VECTOR2, a);
-                        centerAbsPos.add(foundationCenter);
+                        centerAbsPos.add(cuboidCenter);
                         absPosMapRef.current.set(e.id, centerAbsPos);
-                        break;
-                      case ObjectType.Polygon:
-                        const polygon = e as PolygonModel;
-                        const vertexAbsPosArray: Vector2[] = [];
-                        for (const v of polygon.vertices) {
-                          const vertexAbsPos = new Vector2(
-                            v.x * selectedElement.lx,
-                            v.y * selectedElement.ly,
-                          ).rotateAround(ORIGIN_VECTOR2, a);
-                          vertexAbsPos.add(foundationCenter);
-                          vertexAbsPosArray.push(vertexAbsPos);
-                        }
-                        polygonsAbsPosMapRef.current.set(polygon.id, vertexAbsPosArray);
-                        break;
-                    }
+                      }
+                      break;
                   }
                 }
-                break;
-            }
-          } else if (
-            selectedElement.type === ObjectType.Wall &&
-            (wallResizeHandle === ResizeHandleType.UpperLeft || wallResizeHandle === ResizeHandleType.UpperRight)
-          ) {
-            grabRef.current = selectedElement;
+              }
+              break;
+            case ObjectType.Foundation:
+              // getting ready for resizing even though it may not happen
+              absPosMapRef.current.clear();
+              polygonsAbsPosMapRef.current.clear();
+              wallsAbsPosMapRef.current.clear();
+              const foundationCenter = new Vector2(selectedElement.cx, selectedElement.cy);
+              const foundationChildren = getChildren(selectedElement.id);
+              if (foundationChildren.length > 0) {
+                const a = selectedElement.rotation[2];
+                for (const e of foundationChildren) {
+                  switch (e.type) {
+                    case ObjectType.Wall:
+                      const wall = e as WallModel;
+                      const centerPointAbsPos = new Vector2(wall.cx, wall.cy).rotateAround(ORIGIN_VECTOR2, a);
+                      centerPointAbsPos.add(foundationCenter);
+                      const leftPointAbsPos = new Vector2(wall.leftPoint[0], wall.leftPoint[1]).rotateAround(
+                        ORIGIN_VECTOR2,
+                        a,
+                      );
+                      leftPointAbsPos.add(foundationCenter);
+                      const rightPointAbsPos = new Vector2(wall.rightPoint[0], wall.rightPoint[1]).rotateAround(
+                        ORIGIN_VECTOR2,
+                        a,
+                      );
+                      rightPointAbsPos.add(foundationCenter);
+                      wallsAbsPosMapRef.current.set(wall.id, {
+                        centerPointAbsPos,
+                        leftPointAbsPos,
+                        rightPointAbsPos,
+                      });
+                      break;
+                    case ObjectType.SolarPanel:
+                    case ObjectType.Sensor:
+                      const centerAbsPos = new Vector2(
+                        e.cx * selectedElement.lx,
+                        e.cy * selectedElement.ly,
+                      ).rotateAround(ORIGIN_VECTOR2, a);
+                      centerAbsPos.add(foundationCenter);
+                      absPosMapRef.current.set(e.id, centerAbsPos);
+                      break;
+                    case ObjectType.Polygon:
+                      const polygon = e as PolygonModel;
+                      const vertexAbsPosArray: Vector2[] = [];
+                      for (const v of polygon.vertices) {
+                        const vertexAbsPos = new Vector2(
+                          v.x * selectedElement.lx,
+                          v.y * selectedElement.ly,
+                        ).rotateAround(ORIGIN_VECTOR2, a);
+                        vertexAbsPos.add(foundationCenter);
+                        vertexAbsPosArray.push(vertexAbsPos);
+                      }
+                      polygonsAbsPosMapRef.current.set(polygon.id, vertexAbsPosArray);
+                      break;
+                  }
+                }
+              }
+              break;
           }
+        } else if (
+          selectedElement.type === ObjectType.Wall &&
+          (wallResizeHandle === ResizeHandleType.UpperLeft || wallResizeHandle === ResizeHandleType.UpperRight)
+        ) {
+          grabRef.current = selectedElement;
         }
       }
     }

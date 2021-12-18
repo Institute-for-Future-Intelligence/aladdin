@@ -196,9 +196,10 @@ const FoundationColorSelection = ({
         <Row gutter={6}>
           <Col className="gutter-row" span={12}>
             <CompactPicker
-              color={foundation?.color ?? 'gray'}
+              color={selectedColor ?? foundation?.color ?? 'gray'}
               onChangeComplete={(colorResult) => {
                 setSelectedColor(colorResult.hex);
+                setUpdateFlag(!updateFlag);
               }}
             />
           </Col>
