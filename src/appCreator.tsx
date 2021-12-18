@@ -363,14 +363,12 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             <SceneRadiusCalculator />
             <SensorSimulation city={city} />
             <SolarPanelSimulation city={city} />
-            <Suspense fallback={null}>
-              <Heliodon />
-              <Auxiliary />
-              {groundImage && <GroundImage />}
-              {/* <Obj/> */}
-            </Suspense>
+            <Auxiliary />
             <Suspense fallback={null}>
               <Sky theme={theme} />
+              <Heliodon />
+              {groundImage && <GroundImage />}
+              {/* <Obj/> */}
             </Suspense>
           </Canvas>
           <KeyboardListener

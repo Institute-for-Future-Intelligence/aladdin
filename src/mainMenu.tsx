@@ -445,6 +445,13 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     }
   };
 
+  const viewAlreadyReset =
+    cameraPosition.x === cameraPosition.y &&
+    cameraPosition.y === cameraPosition.z &&
+    panCenter.x === 0 &&
+    panCenter.y === 0 &&
+    panCenter.z === 0;
+
   const menu = (
     <Menu>
       {/* file menu */}
@@ -569,38 +576,36 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
 
       {/* view menu */}
       <SubMenu key={'view'} title={i18n.t('menu.viewSubMenu', lang)}>
-        {!orthographic && (
+        {!orthographic && !viewAlreadyReset && (
           <Menu.Item
             key={'reset-view'}
             onClick={() => {
-              if (!orthographic) {
-                const undoableResetView = {
-                  name: 'Reset View',
-                  timestamp: Date.now(),
-                  oldCameraPosition: { ...cameraPosition },
-                  oldPanCenter: { ...panCenter },
-                  undo: () => {
-                    setCommonStore((state) => {
-                      const v = state.viewState;
-                      v.cameraPosition.x = undoableResetView.oldCameraPosition.x;
-                      v.cameraPosition.y = undoableResetView.oldCameraPosition.y;
-                      v.cameraPosition.z = undoableResetView.oldCameraPosition.z;
-                      v.panCenter.x = undoableResetView.oldPanCenter.x;
-                      v.panCenter.y = undoableResetView.oldPanCenter.y;
-                      v.panCenter.z = undoableResetView.oldPanCenter.z;
-                    });
-                  },
-                  redo: () => {
-                    resetView();
-                  },
-                } as UndoableResetView;
-                addUndoable(undoableResetView);
-                resetView();
-                setCommonStore((state) => {
-                  state.objectTypeToAdd = ObjectType.None;
-                  state.viewState.orthographic = false;
-                });
-              }
+              const undoableResetView = {
+                name: 'Reset View',
+                timestamp: Date.now(),
+                oldCameraPosition: { ...cameraPosition },
+                oldPanCenter: { ...panCenter },
+                undo: () => {
+                  setCommonStore((state) => {
+                    const v = state.viewState;
+                    v.cameraPosition.x = undoableResetView.oldCameraPosition.x;
+                    v.cameraPosition.y = undoableResetView.oldCameraPosition.y;
+                    v.cameraPosition.z = undoableResetView.oldCameraPosition.z;
+                    v.panCenter.x = undoableResetView.oldPanCenter.x;
+                    v.panCenter.y = undoableResetView.oldPanCenter.y;
+                    v.panCenter.z = undoableResetView.oldPanCenter.z;
+                  });
+                },
+                redo: () => {
+                  resetView();
+                },
+              } as UndoableResetView;
+              addUndoable(undoableResetView);
+              resetView();
+              setCommonStore((state) => {
+                state.objectTypeToAdd = ObjectType.None;
+                state.viewState.orthographic = false;
+              });
             }}
             style={{ paddingLeft: '36px' }}
           >

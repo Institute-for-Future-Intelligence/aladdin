@@ -7,6 +7,7 @@ import { Line } from '@react-three/drei';
 import { useStore } from '../stores/common';
 import { ObjectType } from '../types';
 import * as Selector from '../stores/selector';
+import { FINE_GRID_SCALE } from '../constants';
 
 interface ElementGridProps {
   hx: number;
@@ -25,8 +26,8 @@ export const ElementGrid = React.memo(({ hx, hy, hz, objectType }: ElementGridPr
 
   useEffect(() => {
     if (enableFineGrid) {
-      setStep((Math.floor(maxSize / 25) + 1) / 2);
-      setLineWidth(0.2);
+      setStep((Math.floor(maxSize / 25) + 1) * FINE_GRID_SCALE);
+      setLineWidth(0.1);
     } else {
       setStep(Math.floor(maxSize / 25) + 1);
       setLineWidth(0.5);

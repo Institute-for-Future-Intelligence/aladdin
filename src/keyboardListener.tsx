@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react';
 import { ObjectType } from './types';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
-import { ElementModel } from './models/ElementModel';
 import { UndoableDelete } from './undo/UndoableDelete';
 import { UndoablePaste } from './undo/UndoablePaste';
 import { UndoableCheck } from './undo/UndoableCheck';
@@ -430,32 +429,42 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       case 'ctrl+home':
       case 'meta+home': // for Mac
         if (!orthographic) {
-          const undoableResetView = {
-            name: 'Reset View',
-            timestamp: Date.now(),
-            oldCameraPosition: { ...cameraPosition },
-            oldPanCenter: { ...panCenter },
-            undo: () => {
-              setCommonStore((state) => {
-                const v = state.viewState;
-                v.cameraPosition.x = undoableResetView.oldCameraPosition.x;
-                v.cameraPosition.y = undoableResetView.oldCameraPosition.y;
-                v.cameraPosition.z = undoableResetView.oldCameraPosition.z;
-                v.panCenter.x = undoableResetView.oldPanCenter.x;
-                v.panCenter.y = undoableResetView.oldPanCenter.y;
-                v.panCenter.z = undoableResetView.oldPanCenter.z;
-              });
-            },
-            redo: () => {
-              resetView();
-            },
-          } as UndoableResetView;
-          addUndoable(undoableResetView);
-          setCommonStore((state) => {
-            state.objectTypeToAdd = ObjectType.None;
-            state.viewState.orthographic = false;
-          });
-          resetView();
+          // if not readly reset
+          if (
+            cameraPosition.x !== cameraPosition.y ||
+            cameraPosition.y !== cameraPosition.z ||
+            cameraPosition.x !== cameraPosition.z ||
+            panCenter.x !== 0 ||
+            panCenter.y !== 0 ||
+            panCenter.z !== 0
+          ) {
+            const undoableResetView = {
+              name: 'Reset View',
+              timestamp: Date.now(),
+              oldCameraPosition: { ...cameraPosition },
+              oldPanCenter: { ...panCenter },
+              undo: () => {
+                setCommonStore((state) => {
+                  const v = state.viewState;
+                  v.cameraPosition.x = undoableResetView.oldCameraPosition.x;
+                  v.cameraPosition.y = undoableResetView.oldCameraPosition.y;
+                  v.cameraPosition.z = undoableResetView.oldCameraPosition.z;
+                  v.panCenter.x = undoableResetView.oldPanCenter.x;
+                  v.panCenter.y = undoableResetView.oldPanCenter.y;
+                  v.panCenter.z = undoableResetView.oldPanCenter.z;
+                });
+              },
+              redo: () => {
+                resetView();
+              },
+            } as UndoableResetView;
+            addUndoable(undoableResetView);
+            setCommonStore((state) => {
+              state.objectTypeToAdd = ObjectType.None;
+              state.viewState.orthographic = false;
+            });
+            resetView();
+          }
         }
         break;
       case 'f2':

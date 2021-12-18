@@ -13,7 +13,7 @@ import FoundationTexture07 from '../resources/foundation_07.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Plane, Sphere } from '@react-three/drei';
-import { Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
+import { Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { FoundationModel } from '../models/FoundationModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -992,8 +992,9 @@ const Foundation = ({
             break;
           case ObjectType.Polygon:
             const polygon = grabRef.current as PolygonModel;
-            p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
             if (moveHandleType === MoveHandleType.Default) {
+              // do not snap the centroid to the grid
+              p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
               const centroid = Util.calculatePolygonCentroid(polygon.vertices);
               const dx = p.x - centroid.x;
               const dy = p.y - centroid.y;
@@ -1006,6 +1007,13 @@ const Foundation = ({
               // do not update each vertex's position one by one (it is slower)
               updatePolygonVerticesById(polygon.id, copy);
             } else if (resizeHandleType === ResizeHandleType.Default) {
+              // snap to the grid (do not call Util.relativeCoordinates because we have to snap in the middle)
+              p.x -= foundationModel.cx;
+              p.y -= foundationModel.cy;
+              p.applyEuler(new Euler().fromArray(foundationModel.rotation.map((a) => -a)));
+              p = enableFineGridRef.current ? snapToFineGrid(p) : snapToNormalGrid(p);
+              p.x /= foundationModel.lx;
+              p.y /= foundationModel.ly;
               updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, p.x, p.y);
             }
             break;
