@@ -279,6 +279,9 @@ export const i18n_en = {
       InsertVertexBeforeIndex: 'Insert Vertex Before Index',
       InsertVertexAfterIndex: 'Insert Vertex After Index',
       DeleteVertex: 'Delete Vertex',
+      OnlyThisPolygon: 'Only This Polygon',
+      AllPolygonsAboveFoundation: 'All Polygons Above Foundation',
+      AllPolygons: 'All Polygons',
     },
 
     treeMenu: {

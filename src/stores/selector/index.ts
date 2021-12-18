@@ -135,7 +135,16 @@ export const updateElementLzForAll = (state: CommonStoreState) => state.updateEl
 
 export const updateElementColorById = (state: CommonStoreState) => state.updateElementColorById;
 
+export const updateElementColorAboveFoundation = (state: CommonStoreState) => state.updateElementColorAboveFoundation;
+
 export const updateElementColorForAll = (state: CommonStoreState) => state.updateElementColorForAll;
+
+export const updateElementLineColorById = (state: CommonStoreState) => state.updateElementLineColorById;
+
+export const updateElementLineColorAboveFoundation = (state: CommonStoreState) =>
+  state.updateElementLineColorAboveFoundation;
+
+export const updateElementLineColorForAll = (state: CommonStoreState) => state.updateElementLineColorForAll;
 
 export const updateElementRotationById = (state: CommonStoreState) => state.updateElementRotationById;
 
@@ -149,6 +158,10 @@ export const updateFoundationTextureById = (state: CommonStoreState) => state.up
 
 export const updateFoundationTextureForAll = (state: CommonStoreState) => state.updateFoundationTextureForAll;
 
+export const polygonActionScope = (state: CommonStoreState) => state.polygonActionScope;
+
+export const setPolygonActionScope = (state: CommonStoreState) => state.setPolygonActionScope;
+
 export const deletePolygonVertexByIndex = (state: CommonStoreState) => state.deletePolygonVertexByIndex;
 
 export const insertPolygonVertexBeforeIndex = (state: CommonStoreState) => state.insertPolygonVertexBeforeIndex;
@@ -158,10 +171,6 @@ export const insertPolygonVertexAfterIndex = (state: CommonStoreState) => state.
 export const updatePolygonSelectedIndexById = (state: CommonStoreState) => state.updatePolygonSelectedIndexById;
 
 export const updatePolygonFilledById = (state: CommonStoreState) => state.updatePolygonFilledById;
-
-export const updatePolygonFillColorById = (state: CommonStoreState) => state.updatePolygonFillColorById;
-
-export const updatePolygonLineColorById = (state: CommonStoreState) => state.updatePolygonLineColorById;
 
 export const updatePolygonVertexPositionById = (state: CommonStoreState) => state.updatePolygonVertexPositionById;
 

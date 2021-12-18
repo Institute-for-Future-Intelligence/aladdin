@@ -122,7 +122,11 @@ export interface CommonStoreState {
   updateElementShowLabelById: (id: string, showLabel: boolean) => void;
 
   updateElementColorById: (id: string, color: string) => void;
+  updateElementColorAboveFoundation: (type: ObjectType, foundationId: string, color: string) => void;
   updateElementColorForAll: (type: ObjectType, color: string) => void;
+  updateElementLineColorById: (id: string, color: string) => void;
+  updateElementLineColorAboveFoundation: (type: ObjectType, foundationId: string, color: string) => void;
+  updateElementLineColorForAll: (type: ObjectType, color: string) => void;
 
   updateElementRotationById: (id: string, x: number, y: number, z: number) => void;
   updateElementRotationForAll: (type: ObjectType, x: number, y: number, z: number) => void;
@@ -164,13 +168,13 @@ export interface CommonStoreState {
   updateCuboidFacadeTextureForAll: (texture: CuboidTexture) => void;
 
   // for polygons
+  polygonActionScope: Scope;
+  setPolygonActionScope: (scope: Scope) => void;
   deletePolygonVertexByIndex: (id: string, index: number) => void;
   insertPolygonVertexBeforeIndex: (id: string, index: number) => void;
   insertPolygonVertexAfterIndex: (id: string, index: number) => void;
   updatePolygonSelectedIndexById: (id: string, index: number) => void;
   updatePolygonFilledById: (id: string, filled: boolean) => void;
-  updatePolygonFillColorById: (id: string, color: string) => void;
-  updatePolygonLineColorById: (id: string, color: string) => void;
   updatePolygonVertexPositionById: (id: string, index: number, x: number, y: number) => void;
   updatePolygonVerticesById: (id: string, vertices: Point2[]) => void;
 
@@ -693,11 +697,48 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+          updateElementColorAboveFoundation(type, foundationId, color) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && e.foundationId === foundationId && !e.locked) {
+                  e.color = color;
+                }
+              }
+            });
+          },
           updateElementColorForAll(type, color) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === type && !e.locked) {
                   e.color = color;
+                }
+              }
+            });
+          },
+          updateElementLineColorById(id: string, color: string) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && !e.locked) {
+                  e.lineColor = color;
+                  break;
+                }
+              }
+            });
+          },
+          updateElementLineColorAboveFoundation(type: ObjectType, foundationId, color: string) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && e.foundationId === foundationId && !e.locked) {
+                  e.lineColor = color;
+                }
+              }
+            });
+          },
+          updateElementLineColorForAll(type: ObjectType, color: string) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && !e.locked) {
+                  e.lineColor = color;
                 }
               }
             });
@@ -1051,6 +1092,12 @@ export const useStore = create<CommonStoreState>(
           },
 
           // for polygons
+          polygonActionScope: Scope.OnlyThisObject,
+          setPolygonActionScope(scope: Scope) {
+            immerSet((state: CommonStoreState) => {
+              state.polygonActionScope = scope;
+            });
+          },
           deletePolygonVertexByIndex(id: string, index: number) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -1117,26 +1164,6 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Polygon && e.id === id) {
                   (e as PolygonModel).filled = filled;
-                  break;
-                }
-              }
-            });
-          },
-          updatePolygonFillColorById(id: string, color: string) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Polygon && e.id === id) {
-                  (e as PolygonModel).color = color;
-                  break;
-                }
-              }
-            });
-          },
-          updatePolygonLineColorById(id: string, color: string) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Polygon && e.id === id) {
-                  e.lineColor = color;
                   break;
                 }
               }

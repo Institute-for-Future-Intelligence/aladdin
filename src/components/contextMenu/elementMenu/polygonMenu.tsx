@@ -9,23 +9,21 @@ import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
-import { UndoableChange } from '../../../undo/UndoableChange';
 import { PolygonModel } from '../../../models/PolygonModel';
-import SubMenu from 'antd/lib/menu/SubMenu';
-import { CompactPicker } from 'react-color';
 import { Copy, Cut, Lock, Paste } from '../menuItems';
 import { ObjectType } from '../../../types';
+import PolygonLineColorSelection from './polygonLineColorSelection';
+import PolygonFillColorSelection from './polygonFillColorSelection';
 
 export const PolygonMenu = () => {
   const language = useStore(Selector.language);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const updatePolygonFilledById = useStore(Selector.updatePolygonFilledById);
-  const updatePolygonFillColorById = useStore(Selector.updatePolygonFillColorById);
-  const updatePolygonLineColorById = useStore(Selector.updatePolygonLineColorById);
   const addUndoable = useStore(Selector.addUndoable);
   const elementsToPaste = useStore(Selector.elementsToPaste);
 
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [lineColorDialogVisible, setLineColorDialogVisible] = useState(false);
+  const [fillColorDialogVisible, setFillColorDialogVisible] = useState(false);
   const polygon = getSelectedElement() as PolygonModel;
   const lang = { lng: language };
 
@@ -78,73 +76,35 @@ export const PolygonMenu = () => {
           </Checkbox>
         </Menu.Item>
       )}
+      <PolygonLineColorSelection
+        colorDialogVisible={lineColorDialogVisible}
+        setColorDialogVisible={setLineColorDialogVisible}
+      />
       {editable && (
-        <Menu>
-          <SubMenu
-            key={'polygon-line-color'}
-            title={i18n.t('polygonMenu.LineColor', { lng: language })}
-            style={{ paddingLeft: '24px' }}
-          >
-            <CompactPicker
-              key={'polygon-line-color-picker'}
-              color={polygon?.lineColor}
-              onChangeComplete={(colorResult) => {
-                if (!polygon) return;
-                const oldColor = polygon.lineColor;
-                const newColor = colorResult.hex;
-                const undoableChange = {
-                  name: 'Set Polygon Line Color',
-                  timestamp: Date.now(),
-                  oldValue: oldColor,
-                  newValue: newColor,
-                  changedElementId: polygon.id,
-                  undo: () => {
-                    updatePolygonLineColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
-                  },
-                  redo: () => {
-                    updatePolygonLineColorById(undoableChange.changedElementId, undoableChange.newValue as string);
-                  },
-                } as UndoableChange;
-                addUndoable(undoableChange);
-                updatePolygonLineColorById(polygon.id, newColor);
-                setUpdateFlag(!updateFlag);
-              }}
-            />
-          </SubMenu>
-          {polygon?.filled && (
-            <SubMenu
-              key={'polygon-fill-color'}
-              title={i18n.t('polygonMenu.FillColor', { lng: language })}
-              style={{ paddingLeft: '24px' }}
-            >
-              <CompactPicker
-                key={'polygon-fill-color-picker'}
-                color={polygon?.color}
-                onChangeComplete={(colorResult) => {
-                  if (!polygon) return;
-                  const oldColor = polygon.color;
-                  const newColor = colorResult.hex;
-                  const undoableChange = {
-                    name: 'Set Polygon Fill Color',
-                    timestamp: Date.now(),
-                    oldValue: oldColor,
-                    newValue: newColor,
-                    changedElementId: polygon.id,
-                    undo: () => {
-                      updatePolygonFillColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
-                    },
-                    redo: () => {
-                      updatePolygonFillColorById(undoableChange.changedElementId, undoableChange.newValue as string);
-                    },
-                  } as UndoableChange;
-                  addUndoable(undoableChange);
-                  updatePolygonFillColorById(polygon.id, newColor);
-                  setUpdateFlag(!updateFlag);
-                }}
-              />
-            </SubMenu>
-          )}
-        </Menu>
+        <Menu.Item
+          key={'polygon-line-color'}
+          style={{ paddingLeft: '36px' }}
+          onClick={() => {
+            setLineColorDialogVisible(true);
+          }}
+        >
+          {i18n.t('polygonMenu.LineColor', lang)} ...
+        </Menu.Item>
+      )}
+      <PolygonFillColorSelection
+        colorDialogVisible={fillColorDialogVisible}
+        setColorDialogVisible={setFillColorDialogVisible}
+      />
+      {editable && (
+        <Menu.Item
+          key={'polygon-fill-color'}
+          style={{ paddingLeft: '36px' }}
+          onClick={() => {
+            setFillColorDialogVisible(true);
+          }}
+        >
+          {i18n.t('polygonMenu.FillColor', lang)} ...
+        </Menu.Item>
       )}
     </>
   );
