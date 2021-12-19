@@ -18,6 +18,7 @@ export interface ViewState {
   shadowEnabled: boolean;
   theme: string;
   heliodon: boolean;
+  showSunAngles: boolean;
   groundImage: boolean;
   groundColor: string;
 

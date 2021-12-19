@@ -412,6 +412,7 @@ export const i18n_en = {
 
     heliodonPanel: {
       HeliodonSettings: 'Heliodon Settings',
+      SunAngles: 'Angles',
     },
 
     cloudFilePanel: {

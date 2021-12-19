@@ -18,6 +18,7 @@ export class DefaultViewState implements ViewState {
   shadowEnabled: boolean;
   theme: string;
   heliodon: boolean;
+  showSunAngles: boolean;
   groundImage: boolean;
   groundColor: string;
 
@@ -69,6 +70,7 @@ export class DefaultViewState implements ViewState {
     this.shadowEnabled = true;
     this.theme = 'Default';
     this.heliodon = false;
+    this.showSunAngles = false;
     this.groundImage = false;
     this.groundColor = 'forestgreen';
 
@@ -129,6 +131,7 @@ export class DefaultViewState implements ViewState {
     viewState.shadowEnabled = true;
     viewState.theme = 'Default';
     viewState.heliodon = false;
+    viewState.showSunAngles = false;
     viewState.groundImage = false;
     viewState.groundColor = 'forestgreen';
 

@@ -410,6 +410,7 @@ export const i18n_zh_cn = {
 
     heliodonPanel: {
       HeliodonSettings: '日影仪设置',
+      SunAngles: '角度',
     },
 
     cloudFilePanel: {

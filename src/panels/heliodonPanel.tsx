@@ -64,6 +64,7 @@ const HeliodonPanel = () => {
   const dateString = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
   const animateSun = useStore(Selector.animateSun);
+  const showSunAngles = useStore(Selector.viewState.showSunAngles);
   const heliodon = useStore(Selector.viewState.heliodon);
   const heliodonPanelX = useStore(Selector.viewState.heliodonPanelX);
   const heliodonPanelY = useStore(Selector.viewState.heliodonPanelY);
@@ -216,6 +217,34 @@ const HeliodonPanel = () => {
               />
             </div>
             <div>
+              {i18n.t('heliodonPanel.SunAngles', lang)}
+              <br />
+              <Switch
+                checked={showSunAngles}
+                onChange={(checked) => {
+                  const undoableCheck = {
+                    name: 'Show Sun Angles',
+                    timestamp: Date.now(),
+                    checked: !showSunAngles,
+                    undo: () => {
+                      setCommonStore((state) => {
+                        state.viewState.showSunAngles = !undoableCheck.checked;
+                      });
+                    },
+                    redo: () => {
+                      setCommonStore((state) => {
+                        state.viewState.showSunAngles = undoableCheck.checked;
+                      });
+                    },
+                  } as UndoableCheck;
+                  addUndoable(undoableCheck);
+                  setCommonStore((state) => {
+                    state.viewState.showSunAngles = checked;
+                  });
+                }}
+              />
+            </div>
+            <div>
               {i18n.t('word.Animate', lang)}
               <br />
               <Switch
@@ -274,9 +303,9 @@ const HeliodonPanel = () => {
               />
             </div>
             <div>
-              {i18n.t('word.Latitude', lang)}: {latitude.toFixed(4)}°
+              {i18n.t('word.Latitude', lang)}: {latitude.toFixed(2)}°
               <Slider
-                style={{ width: '150px' }}
+                style={{ width: '120px' }}
                 marks={{ '-90': '-90°', 0: '0°', 90: '90°' }}
                 min={-90}
                 max={90}

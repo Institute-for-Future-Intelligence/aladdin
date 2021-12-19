@@ -20,7 +20,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useLoader } from '@react-three/fiber';
 import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
-import { HALF_PI, TWO_PI, UNIT_VECTOR_POS_Y, ZERO_TOLERANCE } from '../constants';
+import { HALF_PI, TWO_PI, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
 
 const HOUR_DIVISIONS = 96;
 const BASE_DIVISIONS = 72;
@@ -34,8 +34,11 @@ interface HeliodonProps {
 
 const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps) => {
   const radius = useStore(Selector.sceneRadius);
+  const showSunAngles = useStore(Selector.viewState.showSunAngles);
   const [latitude, setLatitude] = useState<number>(Util.toRadians(42));
 
+  const angleArcRadius = 2;
+  const angleLabelHeight = 0.4;
   const font = useLoader(FontLoader, helvetikerFont);
   const fontSize = radius * 0.05;
   const textGeometryParams = {
@@ -161,6 +164,27 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
     return computeSunLocation(radius, hourAngle, declinationAngle, latitude);
   }, [latitude, declinationAngle, hourAngle, radius]);
 
+  const sunDirection = useMemo(() => {
+    return sunPosition.clone().normalize();
+  }, [sunPosition]);
+
+  const sunDirectionOnGround = useMemo(() => {
+    return new Vector3(sunPosition.x, sunPosition.y, 0).normalize();
+  }, [sunPosition]);
+
+  const elevationAngle = useMemo(() => {
+    return Math.asin(sunPosition.z / sunPosition.length());
+  }, [sunPosition]);
+
+  const zenithAngle = useMemo(() => {
+    return Math.acos(sunPosition.z / sunPosition.length());
+  }, [sunPosition]);
+
+  const azimuthAngle = useMemo(() => {
+    const a = Math.acos(sunPosition.y / Math.hypot(sunPosition.x, sunPosition.y));
+    return sunPosition.x > 0 ? -a : a;
+  }, [sunPosition]);
+
   const sunbeltGeometry = useMemo(() => {
     const declinationStep = (2.0 * TILT_ANGLE) / DECLINATION_DIVISIONS;
     const hourStep = TWO_PI / HOUR_DIVISIONS;
@@ -265,6 +289,74 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
       <Drei_Plane args={[10000, 10000]} renderOrder={-1}>
         <meshBasicMaterial transparent={true} opacity={0} />
       </Drei_Plane>
+      {showSunAngles && sunPosition.z > 0 && (
+        <>
+          <Line
+            points={[
+              [0, 0, 0],
+              [sunPosition.x, sunPosition.y, sunPosition.z],
+            ]}
+            name={'Line from origin to sun'}
+            lineWidth={0.5}
+            color={'white'}
+          />
+          <Line
+            points={[
+              [0, 0, 0],
+              [sunPosition.x, sunPosition.y, 0],
+            ]}
+            name={'Line from origin to sun projection on ground'}
+            lineWidth={0.5}
+            color={'white'}
+          />
+          <Line
+            points={[
+              [sunPosition.x, sunPosition.y, 0],
+              [sunPosition.x, sunPosition.y, sunPosition.z],
+            ]}
+            name={'Line from sun projection on ground to sun'}
+            lineWidth={0.5}
+            color={'white'}
+          />
+          <textSprite
+            name={'Elevation Angle'}
+            text={Util.toDegrees(elevationAngle).toFixed(0) + '°'}
+            fontSize={80}
+            fontFace={'Times Roman'}
+            textHeight={angleLabelHeight}
+            position={sunDirection
+              .clone()
+              .multiplyScalar(angleArcRadius)
+              .add(sunDirectionOnGround.clone().multiplyScalar(angleArcRadius))
+              .multiplyScalar(0.5)}
+          />
+          <textSprite
+            name={'Zenith Angle'}
+            text={Util.toDegrees(zenithAngle).toFixed(0) + '°'}
+            fontSize={80}
+            fontFace={'Times Roman'}
+            textHeight={angleLabelHeight}
+            position={sunDirection
+              .clone()
+              .multiplyScalar(angleArcRadius)
+              .add(UNIT_VECTOR_POS_Z.clone().multiplyScalar(angleArcRadius))
+              .multiplyScalar(0.5)}
+          />
+          <textSprite
+            name={'Azimuth Angle'}
+            text={Util.toDegrees(azimuthAngle).toFixed(0) + '°'}
+            fontSize={80}
+            fontFace={'Times Roman'}
+            textHeight={angleLabelHeight}
+            position={sunDirectionOnGround
+              .clone()
+              .multiplyScalar(angleArcRadius)
+              .add(UNIT_VECTOR_POS_Y.clone().multiplyScalar(angleArcRadius))
+              .multiplyScalar(0.5)
+              .add(new Vector3(0, 0, 0.1))}
+          />
+        </>
+      )}
     </group>
   );
 };
