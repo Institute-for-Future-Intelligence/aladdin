@@ -22,7 +22,11 @@ export const enableRotate = (state: CommonStoreState) => state.viewState.enableR
 
 export const cameraPosition = (state: CommonStoreState) => state.viewState.cameraPosition;
 
+export const cameraPosition2D = (state: CommonStoreState) => state.viewState.cameraPosition2D;
+
 export const panCenter = (state: CommonStoreState) => state.viewState.panCenter;
+
+export const panCenter2D = (state: CommonStoreState) => state.viewState.panCenter2D;
 
 export const cameraZoom = (state: CommonStoreState) => state.viewState.cameraZoom;
 

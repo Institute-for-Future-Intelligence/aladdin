@@ -23,8 +23,10 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
   const orthographic = useStore(Selector.viewState.orthographic);
   const enableRotate = useStore(Selector.viewState.enableRotate);
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
+  const cameraPosition2D = useStore(Selector.viewState.cameraPosition2D);
   const cameraZoom = useStore(Selector.viewState.cameraZoom);
   const panCenter = useStore(Selector.viewState.panCenter);
+  const panCenter2D = useStore(Selector.viewState.panCenter2D);
   const autoRotate = useStore(Selector.viewState.autoRotate);
   const setCommonStore = useStore(Selector.set);
   const sceneRadius = useStore(Selector.sceneRadius);
@@ -51,22 +53,30 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
   useEffect(() => {
     // we have to manually set the camera position when loading a state from a file (as world is reconstructed)
     if (controls.current) {
-      if (cameraPosition) controls.current.object.position.copy(cameraPosition);
+      if (orthographic) {
+        if (cameraPosition2D) controls.current.object.position.copy(cameraPosition2D);
+      } else {
+        if (cameraPosition) controls.current.object.position.copy(cameraPosition);
+      }
       controls.current.update();
     }
     if (cam) {
       cam.zoom = orthographic ? cameraZoom : 1;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cameraPosition, currentCamera]);
+  }, [cameraPosition, cameraPosition2D, currentCamera]);
 
   useEffect(() => {
     // we have to manually set the target position when loading a state from a file (as world is reconstructed)
     if (controls.current) {
-      if (panCenter) controls.current.target.copy(panCenter);
+      if (orthographic) {
+        if (panCenter2D) controls.current.target.copy(panCenter2D);
+      } else {
+        if (panCenter) controls.current.target.copy(panCenter);
+      }
       controls.current.update();
     }
-  }, [panCenter]);
+  }, [panCenter, panCenter2D]);
 
   useEffect(() => {
     setThree({ frameloop: autoRotate ? 'always' : 'demand' });
@@ -128,21 +138,23 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
           } else {
             v.cameraZoom = 20;
           }
+          // for old files that do not have cameraPosition2D and panCenter2D (note on 12/19/2021)
+          if (!v.cameraPosition2D) v.cameraPosition2D = new Vector3();
+          if (!v.panCenter2D) v.panCenter2D = new Vector3();
+          v.cameraPosition2D.x = cam.position.x;
+          v.cameraPosition2D.y = cam.position.y;
+          v.cameraPosition2D.z = cam.position.z;
+          v.panCenter2D.x = controls.current.target.x;
+          v.panCenter2D.y = controls.current.target.y;
+          v.panCenter2D.z = controls.current.target.z;
+        } else {
+          v.cameraPosition.x = cam.position.x;
+          v.cameraPosition.y = cam.position.y;
+          v.cameraPosition.z = cam.position.z;
+          v.panCenter.x = controls.current.target.x;
+          v.panCenter.y = controls.current.target.y;
+          v.panCenter.z = controls.current.target.z;
         }
-        if (!v.cameraPosition) {
-          // cameraPosition was moved from model to viewState
-          v.cameraPosition = new Vector3(0, -5, 0);
-        }
-        v.cameraPosition.x = cam.position.x;
-        v.cameraPosition.y = cam.position.y;
-        v.cameraPosition.z = cam.position.z;
-        if (!v.panCenter) {
-          // panCenter was moved from model to viewState
-          v.panCenter = new Vector3();
-        }
-        v.panCenter.x = controls.current.target.x;
-        v.panCenter.y = controls.current.target.y;
-        v.panCenter.z = controls.current.target.z;
       }
     });
   };
@@ -178,7 +190,8 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
       enablePan={true}
       enableZoom={true}
       enableDamping={false}
-      target={panCenter ? new Vector3().copy(panCenter) : new Vector3()} // panCenter was moved from model to viewState
+      // old files have no panCenter2D: 12/19/2021
+      target={orthographic ? new Vector3().copy(panCenter2D ?? new Vector3()) : new Vector3().copy(panCenter)}
       maxAzimuthAngle={Infinity}
       minAzimuthAngle={-Infinity}
       maxPolarAngle={HALF_PI}

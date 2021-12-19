@@ -429,7 +429,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       case 'ctrl+home':
       case 'meta+home': // for Mac
         if (!orthographic) {
-          // if not readly reset
+          // if not already reset
           if (
             cameraPosition.x !== cameraPosition.y ||
             cameraPosition.y !== cameraPosition.z ||

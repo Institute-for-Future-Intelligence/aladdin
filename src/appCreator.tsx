@@ -187,29 +187,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       state.viewState.orthographic = selected;
       state.viewState.enableRotate = !selected;
       state.orthographicChanged = true;
-      if (selected) {
-        // save camera position and pan center before switching to 2D
-        state.savedCameraPosition.x = state.viewState.cameraPosition.x;
-        state.savedCameraPosition.y = state.viewState.cameraPosition.y;
-        state.savedCameraPosition.z = state.viewState.cameraPosition.z;
-        state.savedPanCenter.x = state.viewState.panCenter.x;
-        state.savedPanCenter.y = state.viewState.panCenter.y;
-        state.savedPanCenter.z = state.viewState.panCenter.z;
-        state.viewState.cameraPosition.x = 0;
-        state.viewState.cameraPosition.y = 0;
-        state.viewState.cameraPosition.z = Math.min(50, sceneRadius * 4);
-        state.viewState.panCenter.x = 0;
-        state.viewState.panCenter.y = 0;
-        state.viewState.panCenter.z = 0;
-      } else {
-        // restore camera position and pan center
-        state.viewState.cameraPosition.x = state.savedCameraPosition.x;
-        state.viewState.cameraPosition.y = state.savedCameraPosition.y;
-        state.viewState.cameraPosition.z = state.savedCameraPosition.z;
-        state.viewState.panCenter.x = state.savedPanCenter.x;
-        state.viewState.panCenter.y = state.savedPanCenter.y;
-        state.viewState.panCenter.z = state.savedPanCenter.z;
-      }
     });
   };
 

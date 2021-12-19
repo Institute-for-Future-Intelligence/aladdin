@@ -9,8 +9,10 @@ export class DefaultViewState implements ViewState {
   orthographic: boolean;
   enableRotate: boolean;
   cameraPosition: Vector3;
-  cameraZoom: number;
+  cameraPosition2D: Vector3;
   panCenter: Vector3;
+  panCenter2D: Vector3;
+  cameraZoom: number;
 
   axes: boolean;
   shadowEnabled: boolean;
@@ -55,10 +57,12 @@ export class DefaultViewState implements ViewState {
   mapWeatherStations: boolean;
 
   constructor() {
-    this.panCenter = new Vector3(0, 0, 0);
     this.orthographic = false;
     this.enableRotate = true;
     this.cameraPosition = new Vector3(0, -20, 0);
+    this.cameraPosition2D = new Vector3(0, -10, 0);
+    this.panCenter = new Vector3(0, 0, 0);
+    this.panCenter2D = new Vector3(0, 0, 0);
     this.cameraZoom = 20;
 
     this.axes = true;
@@ -105,15 +109,21 @@ export class DefaultViewState implements ViewState {
   }
 
   static resetViewState(viewState: ViewState) {
-    viewState.panCenter.x = 0;
-    viewState.panCenter.y = 0;
-    viewState.panCenter.z = 0;
     viewState.orthographic = false;
     viewState.enableRotate = true;
     viewState.cameraPosition.x = 0;
     viewState.cameraPosition.y = -20;
     viewState.cameraPosition.z = 0;
+    viewState.panCenter.x = 0;
+    viewState.panCenter.y = 0;
+    viewState.panCenter.z = 0;
     viewState.cameraZoom = 20;
+    viewState.cameraPosition2D.x = 0;
+    viewState.cameraPosition2D.y = -10;
+    viewState.cameraPosition2D.z = 0;
+    viewState.panCenter2D.x = 0;
+    viewState.panCenter2D.y = 0;
+    viewState.panCenter2D.z = 0;
 
     viewState.axes = true;
     viewState.shadowEnabled = true;

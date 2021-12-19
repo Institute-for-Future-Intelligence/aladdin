@@ -7,9 +7,11 @@ import { Vector3 } from 'three';
 export interface ViewState {
   orthographic: boolean;
   enableRotate: boolean;
-  cameraPosition: Vector3;
-  cameraZoom: number; // for orthographic camera
-  panCenter: Vector3;
+  cameraPosition: Vector3; // 3D mode
+  panCenter: Vector3; // 3D mode
+  cameraPosition2D: Vector3;
+  panCenter2D: Vector3;
+  cameraZoom: number; // for orthographic camera in 2D mode
 
   axes: boolean;
   autoRotate: boolean;
