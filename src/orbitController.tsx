@@ -156,11 +156,23 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
     }
   });
 
+  const { get } = useThree();
+
+  const orbitCam = useMemo(() => {
+    return cam;
+  }, []);
+
+  useEffect(() => {
+    if (controls.current) {
+      controls.current.object = get().camera;
+    }
+  }, [orthographic]);
+
   // do not enable damping, it messes up with rotation state persistence
   return (
     <myOrbitControls
       ref={controls}
-      args={[cam, gl.domElement]}
+      args={[orbitCam, gl.domElement]}
       autoRotate={autoRotate}
       enableRotate={enableRotate}
       enablePan={true}
