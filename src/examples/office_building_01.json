@@ -1,6 +1,6 @@
 {
-  "docid": "nEGM2APSWAuycg8YhMvk7V",
-  "timestamp": 1637978918123,
+  "docid": "bmg6P6KQ8uRekE4Ug8TY2V",
+  "timestamp": 1639932362336,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -403,9 +403,9 @@
     "groundPanelY": 0,
     "showMapPanel": false,
     "cameraPosition": {
-      "x": -39.71505714545702,
-      "y": -57.391200085828345,
-      "z": 13.571386583301912
+      "x": -26.98143872995895,
+      "y": -49.21916401002954,
+      "z": 10.797111671469317
     },
     "panCenter": {
       "x": 2.1268141574348576,
@@ -414,8 +414,18 @@
     },
     "orthographic": false,
     "enableRotate": true,
-    "cameraZoom": 8.802533373035308,
-    "showInstructionPanel": true
+    "cameraZoom": 12.604988194492185,
+    "showInstructionPanel": true,
+    "cameraPosition2D": {
+      "x": 4.203619393633803,
+      "y": -8.791827721460434,
+      "z": 49.9999912078788
+    },
+    "panCenter2D": {
+      "x": 4.203619393633803,
+      "y": -8.791777719248431,
+      "z": 0.0000016660811664248792
+    }
   },
   "notes": [
     ""

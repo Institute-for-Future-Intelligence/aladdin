@@ -1,6 +1,6 @@
 {
-  "docid": "iv9yZ3wSSaxLmT73BHhUrr",
-  "timestamp": 1638052849990,
+  "docid": "iBXC77knFDcsxuog5Jmr6z",
+  "timestamp": 1639932402144,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -324,7 +324,7 @@
       "id": "6gVMaHq7VLa19eqMVECxpG",
       "ly": 52.39119915791477,
       "cz": 0.05,
-      "selected": true,
+      "selected": false,
       "cx": -0.6875232985680384,
       "parentId": "Ground",
       "locked": true,
@@ -578,7 +578,7 @@
     "dailyLightSensorPanelY": 15,
     "mapZoom": 16,
     "weatherPanelY": 0,
-    "cameraZoom": 23.32701559994169,
+    "cameraZoom": 15.47561875,
     "groundPanelX": 0,
     "showSiteInfoPanel": true,
     "showYearlyPvYieldPanel": false,
@@ -589,9 +589,9 @@
     "orthographic": false,
     "showWeatherPanel": false,
     "cameraPosition": {
-      "y": -23.253159024625415,
-      "z": 2.047977169020576,
-      "x": 18.30770901711174
+      "y": -21.871452733323405,
+      "z": 3.8384487900999154,
+      "x": 19.87389310844033
     },
     "mapTilt": 0,
     "showMapPanel": false,
@@ -615,7 +615,17 @@
     "mapType": "roadmap",
     "showDailyLightSensorPanel": false,
     "theme": "Forest",
-    "weatherPanelX": 0
+    "weatherPanelX": 0,
+    "cameraPosition2D": {
+      "x": 0.8790434579553117,
+      "y": 3.516123829597026,
+      "z": 50.00000351630349
+    },
+    "panCenter2D": {
+      "x": 0.8790434579553117,
+      "y": 3.5161738318194917,
+      "z": 0.0000035163301233325335
+    }
   },
   "notes": [
     ""

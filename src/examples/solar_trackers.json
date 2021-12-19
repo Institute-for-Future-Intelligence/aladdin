@@ -1,6 +1,6 @@
 {
-  "docid": "bHeDGkVAxwRUZdM4m2YqnP",
-  "timestamp": 1636312973698,
+  "docid": "f9XrD9Umxb1hQ1tbXyGdcm",
+  "timestamp": 1639932096665,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -203,7 +203,7 @@
   ],
   "view": {
     "weatherPanelX": 0,
-    "heliodonPanelY": 314,
+    "heliodonPanelY": 453,
     "showStickyNotePanel": true,
     "dailyPvYieldPanelX": 4,
     "weatherPanelY": 0,
@@ -212,7 +212,7 @@
     "showHeliodonPanel": true,
     "showWeatherPanel": false,
     "yearlyLightSensorPanelY": 0,
-    "heliodonPanelX": -1241,
+    "heliodonPanelX": -1244,
     "theme": "Default",
     "autoRotate": false,
     "groundColor": "forestgreen",
@@ -221,7 +221,7 @@
     "axes": true,
     "showDailyPvYieldPanel": true,
     "mapWeatherStations": false,
-    "dailyPvYieldPanelY": 6,
+    "dailyPvYieldPanelY": 1,
     "showGroundPanel": false,
     "mapTilt": 0,
     "yearlyLightSensorPanelX": 0,
@@ -235,9 +235,9 @@
     "showDailyLightSensorPanel": false,
     "shadowEnabled": true,
     "cameraPosition": {
-      "x": 10.77976186282326,
-      "y": -26.552924681577135,
-      "z": 6.581418182691639
+      "x": 12.032136043105451,
+      "y": -19.27500735361243,
+      "z": 7.568306918458618
     },
     "panCenter": {
       "x": 0,
@@ -246,7 +246,19 @@
     },
     "orthographic": false,
     "enableRotate": true,
-    "cameraZoom": 24.55475326309651
+    "cameraZoom": 41.01092091350052,
+    "stickyNotePanelX": 5,
+    "stickyNotePanelY": 2,
+    "cameraPosition2D": {
+      "x": 0,
+      "y": -0.00004000177797536253,
+      "z": 39.99999999997981
+    },
+    "panCenter2D": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    }
   },
   "notes": [
     "Solar trackers\n\nAs the sun moves across the sky, solar panels do not always face the sun. Solar trackers allow them to follow the sun like sunflowers to maximize their outputs. This model compares the outputs of solar panels driven by the horizontal single-axis tracker (HSAT), the vertical single-axis tracker (VSAT), and the altazimuth dual-axis trackers (AADAT), as well as that of a fixed solar panel. You can also animate the movement of the sun to see how the solar panels follow it."

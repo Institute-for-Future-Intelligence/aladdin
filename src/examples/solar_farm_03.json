@@ -1,6 +1,6 @@
 {
-  "docid": "mwd81QquC6sL2Yh6ZgDSyd",
-  "timestamp": 1637685037169,
+  "docid": "jVgXpfX8GPuumm1TLatZqV",
+  "timestamp": 1639932007841,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -62,7 +62,7 @@
         0
       ],
       "lx": 75.61279135922823,
-      "selected": false,
+      "selected": true,
       "parentId": "Ground"
     },
     {
@@ -484,13 +484,13 @@
     "groundPanelY": 0,
     "groundImage": true,
     "showDailyPvYieldPanel": true,
-    "shadowEnabled": false,
+    "shadowEnabled": true,
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": {
-      "x": 50.281932072837236,
-      "y": 50.335697249065504,
-      "z": 9.4396254637996
+      "x": 49.96881529582469,
+      "y": 50.12691535682727,
+      "z": 12.333658156741397
     },
     "panCenter": {
       "x": -0.16685922023341063,
@@ -499,9 +499,19 @@
     },
     "orthographic": false,
     "enableRotate": true,
-    "cameraZoom": 33.40365140230188,
+    "cameraZoom": 20.000000000000004,
     "showInstructionPanel": true,
-    "showMapPanel": false
+    "showMapPanel": false,
+    "cameraPosition2D": {
+      "x": 8.410285062152344,
+      "y": 12.466838396919735,
+      "z": 50.000012467259715
+    },
+    "panCenter2D": {
+      "x": 8.410285062152344,
+      "y": 12.466888399142201,
+      "z": 0.000012467288726847116
+    }
   },
   "notes": []
 }

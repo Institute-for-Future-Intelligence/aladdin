@@ -1,6 +1,6 @@
 {
-  "docid": "7DsnqH9RqJjYhL5kFwb3mB",
-  "timestamp": 1636312532648,
+  "docid": "v9Q9WypnfENi2Nejtcy77D",
+  "timestamp": 1639931917498,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -246,7 +246,7 @@
     "showDesignInfoPanel": true,
     "showWeatherPanel": false,
     "groundPanelX": 0,
-    "dailyPvYieldPanelX": -23,
+    "dailyPvYieldPanelX": -3,
     "dailyLightSensorPanelY": 232,
     "showDailyLightSensorPanel": false,
     "mapTilt": 0,
@@ -257,7 +257,7 @@
     "heliodon": false,
     "weatherPanelY": 0,
     "heliodonPanelX": -1175,
-    "dailyPvYieldPanelY": 13,
+    "dailyPvYieldPanelY": 8,
     "mapWeatherStations": false,
     "yearlyLightSensorPanelY": 0,
     "showPvDailyYieldPanel": true,
@@ -273,9 +273,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": {
-      "x": 18.37838475180021,
-      "y": -15.281214765146117,
-      "z": 6.448165007731215
+      "x": 11.74122448046227,
+      "y": -13.025406337790638,
+      "z": 3.2189530787973277
     },
     "panCenter": {
       "x": 6.034144127390067,
@@ -285,7 +285,17 @@
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 45.44146361606706,
-    "showInstructionPanel": true
+    "showInstructionPanel": true,
+    "cameraPosition2D": {
+      "x": 2.68477267877577,
+      "y": -0.19810500302601344,
+      "z": 47.99999980190954
+    },
+    "panCenter2D": {
+      "x": 2.68477267877577,
+      "y": -0.19805700089319547,
+      "z": 5.501827899659354e-7
+    }
   },
   "notes": []
 }

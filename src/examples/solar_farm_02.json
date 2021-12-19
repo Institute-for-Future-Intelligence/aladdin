@@ -1,6 +1,6 @@
 {
-  "docid": "e9CRVxPdnDWp8MN9r4MA1W",
-  "timestamp": 1636313041508,
+  "docid": "wHqmaiRXdcWCAzL6wwGxzN",
+  "timestamp": 1639931617997,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -319,7 +319,8 @@
       "selected": false,
       "parentId": "iQNq5wTvhz2y4LnmToU5UD",
       "foundationId": "iQNq5wTvhz2y4LnmToU5UD",
-      "pvModelName": "CS6X-355P-FG"
+      "pvModelName": "CS6X-355P-FG",
+      "drawSunBeam": true
     },
     {
       "type": "Solar Panel",
@@ -615,6 +616,26 @@
       "id": "nSRqRBZwyjaTyApnpzrTp2",
       "selected": false,
       "parentId": "Ground"
+    },
+    {
+      "type": "Human",
+      "name": "Jack",
+      "cx": 42.599480226058056,
+      "cy": -50.56876478738203,
+      "cz": 0.10000000074505806,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "x39m9sBCBue9yx2X6wSnPz",
+      "selected": false
     }
   ],
   "view": {
@@ -650,21 +671,31 @@
     "showDailyLightSensorPanel": false,
     "heliodonPanelY": 7,
     "cameraPosition": {
-      "x": 51.87948960576917,
-      "y": -90.25292092826471,
-      "z": 114.2217846685714
+      "x": 65.93024719503806,
+      "y": -68.07177699725517,
+      "z": 1.0284993047592403
     },
     "panCenter": {
-      "x": 0,
-      "y": 0,
-      "z": 0
+      "x": 25.78746792976546,
+      "y": -26.05417233880427,
+      "z": 0.2143457232456891
     },
     "showMapPanel": false,
     "orthographic": false,
     "enableRotate": true,
-    "cameraZoom": 13.268408625781248,
+    "cameraZoom": 9.265824603195062,
     "showInstructionPanel": true,
-    "showDailyPvYieldPanel": false
+    "showDailyPvYieldPanel": false,
+    "cameraPosition2D": {
+      "x": -3.3546393748050725,
+      "y": -12.234960039075169,
+      "z": 49.99998776456498
+    },
+    "panCenter2D": {
+      "x": -3.3546393748050725,
+      "y": -12.234910036873305,
+      "z": 0.00000836057638522524
+    }
   },
   "notes": [
     ""

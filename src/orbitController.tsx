@@ -31,7 +31,7 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
   const setCommonStore = useStore(Selector.set);
   const sceneRadius = useStore(Selector.sceneRadius);
 
-  const { camera, gl } = useThree();
+  const { camera, gl, scene } = useThree();
   camera.up.set(0, 0, 1);
   const cam = currentCamera ?? camera; // just in case the camera has not been set up yet
   const setThree = useThree((state) => state.set);
@@ -117,7 +117,7 @@ const OrbitController = ({ orbitControlsRef, canvasRef, currentCamera }: OrbitCo
   };
 
   const render = () => {
-    //gl.render(scene, camera);
+    gl.render(scene, camera);
     if (controls.current) {
       controls.current.target.clamp(minPan, maxPan);
     }
