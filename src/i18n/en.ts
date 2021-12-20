@@ -168,6 +168,7 @@ export const i18n_en = {
       solarEnergySubMenu: 'Solar Energy',
       buildingsSubMenu: 'Buildings',
       examples: {
+        SunAngles: 'Sun Angles Relative to an Observer on the Ground',
         SolarRadiationToBox: 'Solar Radiation to a Box',
         SunBeamAndHeliodon: 'Sun Beam and Heliodon',
         SolarFarm: 'Solar Farm',

@@ -8,6 +8,7 @@ import {
   BufferAttribute,
   BufferGeometry,
   DoubleSide,
+  EllipseCurve,
   Euler,
   FontLoader,
   Plane,
@@ -37,8 +38,8 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
   const showSunAngles = useStore(Selector.viewState.showSunAngles);
   const [latitude, setLatitude] = useState<number>(Util.toRadians(42));
 
-  const angleArcRadius = 2;
-  const angleLabelHeight = 0.4;
+  const angleArcRadius = Math.max(2, radius * 0.2);
+  const angleLabelHeight = Math.max(0.4, radius * 0.025);
   const font = useLoader(FontLoader, helvetikerFont);
   const fontSize = radius * 0.05;
   const textGeometryParams = {
@@ -176,14 +177,53 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
     return Math.asin(sunPosition.z / sunPosition.length());
   }, [sunPosition]);
 
+  const elevationAngleArcPoints = useMemo(() => {
+    const curve = new EllipseCurve(0, 0, angleArcRadius, angleArcRadius, 0, elevationAngle, false, 0);
+    const points = curve.getPoints(25);
+    const points3D = new Array<Vector3>();
+    for (const p of points) {
+      points3D.push(new Vector3(p.x, p.y, 0));
+    }
+    return points3D;
+  }, [elevationAngle, sunPosition]);
+
   const zenithAngle = useMemo(() => {
     return Math.acos(sunPosition.z / sunPosition.length());
   }, [sunPosition]);
+
+  const zenithAngleArcPoints = useMemo(() => {
+    const curve = new EllipseCurve(0, 0, angleArcRadius * 0.8, angleArcRadius * 0.8, elevationAngle, HALF_PI, false, 0);
+    const points = curve.getPoints(25);
+    const points3D = new Array<Vector3>();
+    for (const p of points) {
+      points3D.push(new Vector3(p.x, p.y, 0));
+    }
+    return points3D;
+  }, [zenithAngle, sunPosition]);
 
   const azimuthAngle = useMemo(() => {
     const a = Math.acos(sunPosition.y / Math.hypot(sunPosition.x, sunPosition.y));
     return sunPosition.x > 0 ? -a : a;
   }, [sunPosition]);
+
+  const azimuthAngleArcPoints = useMemo(() => {
+    const curve = new EllipseCurve(
+      0,
+      0,
+      angleArcRadius * 1.2,
+      angleArcRadius * 1.2,
+      HALF_PI,
+      HALF_PI + azimuthAngle,
+      sunPosition.x > 0,
+      0,
+    );
+    const points = curve.getPoints(50);
+    const points3D = new Array<Vector3>();
+    for (const p of points) {
+      points3D.push(new Vector3(p.x, p.y, 0));
+    }
+    return points3D;
+  }, [azimuthAngle, sunPosition]);
 
   const sunbeltGeometry = useMemo(() => {
     const declinationStep = (2.0 * TILT_ANGLE) / DECLINATION_DIVISIONS;
@@ -318,8 +358,17 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
             lineWidth={0.5}
             color={'white'}
           />
+          <Line
+            linewidth={0.5}
+            points={elevationAngleArcPoints}
+            position={[0, 0, 0]}
+            rotation={new Euler(HALF_PI, 0, HALF_PI + azimuthAngle, 'ZXY')}
+            color={'white'}
+            name={'Elevation Angle Arc'}
+          />
           <textSprite
             name={'Elevation Angle'}
+            backgroundColor={'indigo'}
             text={Util.toDegrees(elevationAngle).toFixed(0) + '°'}
             fontSize={80}
             fontFace={'Times Roman'}
@@ -328,10 +377,19 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
               .clone()
               .multiplyScalar(angleArcRadius)
               .add(sunDirectionOnGround.clone().multiplyScalar(angleArcRadius))
-              .multiplyScalar(0.5)}
+              .multiplyScalar(0.65)}
+          />
+          <Line
+            linewidth={0.5}
+            points={zenithAngleArcPoints}
+            position={[0, 0, 0]}
+            rotation={new Euler(HALF_PI, 0, HALF_PI + azimuthAngle, 'ZXY')}
+            color={'white'}
+            name={'Zenith Angle Arc'}
           />
           <textSprite
             name={'Zenith Angle'}
+            backgroundColor={'navy'}
             text={Util.toDegrees(zenithAngle).toFixed(0) + '°'}
             fontSize={80}
             fontFace={'Times Roman'}
@@ -340,10 +398,18 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
               .clone()
               .multiplyScalar(angleArcRadius)
               .add(UNIT_VECTOR_POS_Z.clone().multiplyScalar(angleArcRadius))
-              .multiplyScalar(0.5)}
+              .multiplyScalar(0.57)}
+          />
+          <Line
+            linewidth={0.5}
+            points={azimuthAngleArcPoints}
+            position={[0, 0, 0]}
+            color={'white'}
+            name={'Azimuth Angle Arc'}
           />
           <textSprite
             name={'Azimuth Angle'}
+            backgroundColor={'firebrick'}
             text={Util.toDegrees(azimuthAngle).toFixed(0) + '°'}
             fontSize={80}
             fontFace={'Times Roman'}
@@ -352,8 +418,8 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
               .clone()
               .multiplyScalar(angleArcRadius)
               .add(UNIT_VECTOR_POS_Y.clone().multiplyScalar(angleArcRadius))
-              .multiplyScalar(0.5)
-              .add(new Vector3(0, 0, 0.1))}
+              .multiplyScalar(1.1)
+              .add(new Vector3(0, 0, angleLabelHeight / 2))}
           />
         </>
       )}

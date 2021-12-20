@@ -1,0 +1,124 @@
+{
+  "docid": "sLDrHtHmpD1S1JZ3b1YjUs",
+  "timestamp": 1639962408927,
+  "owner": "Charles Xie",
+  "email": "charles@intofuture.org",
+  "world": {
+    "cameraPosition": {
+      "x": -8.088275916198324,
+      "y": 24.25566322143581,
+      "z": 5.53454910256584
+    },
+    "latitude": 42.2844063,
+    "timesPerHour": 20,
+    "date": "Fri Jan 22 2021 09:45:00 GMT-0500 (Eastern Standard Time)",
+    "panCenter": {
+      "z": 1.012159740387775,
+      "x": -1.749495483197602,
+      "y": 1.9482285134722876
+    },
+    "longitude": -71.3488548,
+    "name": "default",
+    "address": "Natick, MA",
+    "ground": {
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "albedo": 0.3,
+      "thermalDiffusivity": 0.05
+    },
+    "orthographic": false,
+    "cameraZoom": 28.63945562104857
+  },
+  "elements": [
+    {
+      "cy": 1.9385448115528998,
+      "name": "Jill",
+      "type": "Human",
+      "cz": 1.1465644746167777e-15,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "cx": -2.72710574788732,
+      "selected": false,
+      "id": "8si9AKQwGf4sYiD91xfFr6",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground"
+    }
+  ],
+  "view": {
+    "mapWeatherStations": false,
+    "showGroundPanel": false,
+    "showSiteInfoPanel": true,
+    "mapTilt": 0,
+    "groundPanelY": 0,
+    "yearlyLightSensorPanelY": 0,
+    "axes": true,
+    "showHeliodonPanel": true,
+    "showWeatherPanel": false,
+    "dailyLightSensorPanelY": 0,
+    "mapType": "roadmap",
+    "groundImage": false,
+    "autoRotate": false,
+    "dailyLightSensorPanelX": 0,
+    "showYearlyLightSensorPanel": false,
+    "weatherPanelY": 0,
+    "heliodonPanelX": -6,
+    "showStickyNotePanel": false,
+    "groundColor": "forestgreen",
+    "weatherPanelX": 0,
+    "heliodonPanelY": 9,
+    "groundPanelX": 0,
+    "shadowEnabled": true,
+    "theme": "Default",
+    "heliodon": true,
+    "stickyNotePanelY": 0,
+    "yearlyLightSensorPanelX": 0,
+    "showDailyLightSensorPanel": false,
+    "mapZoom": 16,
+    "stickyNotePanelX": 0,
+    "cameraPosition": {
+      "x": 9.56658873027612,
+      "y": -17.849925989345532,
+      "z": 4.690133843569779
+    },
+    "panCenter": {
+      "x": 1.9284721678646957,
+      "y": 1.0746189678250615,
+      "z": 2.420128405670479
+    },
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 24.55475326309651,
+    "showInstructionPanel": true,
+    "cameraPosition2D": {
+      "x": 0,
+      "y": -0.00004000177797536253,
+      "z": 39.9999999999799
+    },
+    "panCenter2D": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "showSunAngles": true
+  },
+  "notes": []
+}

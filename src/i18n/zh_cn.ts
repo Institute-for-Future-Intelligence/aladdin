@@ -168,6 +168,7 @@ export const i18n_zh_cn = {
       solarEnergySubMenu: '太阳能',
       buildingsSubMenu: '建筑物',
       examples: {
+        SunAngles: '太阳相对于地面观察者的角度',
         SolarRadiationToBox: '一个长方体受到的太阳能辐射分析',
         SunBeamAndHeliodon: '太阳光束和日影仪',
         SolarFarm: '太阳能农场',

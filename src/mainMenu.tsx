@@ -2,6 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import sun_angles from './examples/sun_angles.json';
 import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
 import sun_beam_at_center from './examples/sun_beam_at_center.json';
 import office_building_01 from './examples/office_building_01.json';
@@ -128,6 +129,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const loadFile = (e: any) => {
     let input: any;
     switch (e.key) {
+      case 'sun_angles':
+        input = sun_angles;
+        break;
       case 'solar_radiation_to_box':
         input = solar_radiation_to_box;
         break;
@@ -843,6 +847,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       <SubMenu key={'examples'} title={i18n.t('menu.examplesSubMenu', lang)}>
         {/* solar energy */}
         <SubMenu key={'solar-energy'} title={i18n.t('menu.solarEnergySubMenu', lang)}>
+          <Menu.Item key="sun_angles" onClick={loadFile}>
+            {i18n.t('menu.examples.SunAngles', lang)}
+          </Menu.Item>
           <Menu.Item key="solar_radiation_to_box" onClick={loadFile}>
             {i18n.t('menu.examples.SolarRadiationToBox', lang)}
           </Menu.Item>
