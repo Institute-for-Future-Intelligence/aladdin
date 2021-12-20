@@ -216,34 +216,36 @@ const HeliodonPanel = () => {
                 }}
               />
             </div>
-            <div>
-              {i18n.t('heliodonPanel.SunAngles', lang)}
-              <br />
-              <Switch
-                checked={showSunAngles}
-                onChange={(checked) => {
-                  const undoableCheck = {
-                    name: 'Show Sun Angles',
-                    timestamp: Date.now(),
-                    checked: !showSunAngles,
-                    undo: () => {
-                      setCommonStore((state) => {
-                        state.viewState.showSunAngles = !undoableCheck.checked;
-                      });
-                    },
-                    redo: () => {
-                      setCommonStore((state) => {
-                        state.viewState.showSunAngles = undoableCheck.checked;
-                      });
-                    },
-                  } as UndoableCheck;
-                  addUndoable(undoableCheck);
-                  setCommonStore((state) => {
-                    state.viewState.showSunAngles = checked;
-                  });
-                }}
-              />
-            </div>
+            {heliodon && (
+              <div>
+                {i18n.t('heliodonPanel.SunAngles', lang)}
+                <br />
+                <Switch
+                  checked={showSunAngles}
+                  onChange={(checked) => {
+                    const undoableCheck = {
+                      name: 'Show Sun Angles',
+                      timestamp: Date.now(),
+                      checked: !showSunAngles,
+                      undo: () => {
+                        setCommonStore((state) => {
+                          state.viewState.showSunAngles = !undoableCheck.checked;
+                        });
+                      },
+                      redo: () => {
+                        setCommonStore((state) => {
+                          state.viewState.showSunAngles = undoableCheck.checked;
+                        });
+                      },
+                    } as UndoableCheck;
+                    addUndoable(undoableCheck);
+                    setCommonStore((state) => {
+                      state.viewState.showSunAngles = checked;
+                    });
+                  }}
+                />
+              </div>
+            )}
             <div>
               {i18n.t('word.Animate', lang)}
               <br />

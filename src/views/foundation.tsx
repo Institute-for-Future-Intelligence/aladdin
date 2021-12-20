@@ -28,7 +28,6 @@ import {
   WallSide,
 } from '../types';
 import {
-  FINE_GRID_SCALE,
   HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
   MOVE_HANDLE_COLOR_1,
@@ -370,25 +369,15 @@ const Foundation = ({
     return { targetID, targetPoint, targetSide };
   };
 
-  const snapToNormalGrid = (v: Vector3) => {
-    return new Vector3(Math.round(v.x), Math.round(v.y), v.z);
-  };
-
-  const snapToFineGrid = (v: Vector3) => {
-    const x = parseFloat((Math.round(v.x / FINE_GRID_SCALE) * FINE_GRID_SCALE).toFixed(1));
-    const y = parseFloat((Math.round(v.y / FINE_GRID_SCALE) * FINE_GRID_SCALE).toFixed(1));
-    return new Vector3(x, y, v.z);
-  };
-
   const updatePointer = (p: Vector3, targetPoint?: Vector3 | null) => {
     if (!enableFineGridRef.current) {
       if (targetPoint) {
         p = targetPoint;
       } else {
-        p = snapToNormalGrid(p);
+        p = Util.snapToNormalGrid(p);
       }
     } else {
-      p = snapToFineGrid(p);
+      p = Util.snapToFineGrid(p);
       targetPoint = null;
     }
     return p;
@@ -1011,7 +1000,7 @@ const Foundation = ({
               p.x -= foundationModel.cx;
               p.y -= foundationModel.cy;
               p.applyEuler(new Euler().fromArray(foundationModel.rotation.map((a) => -a)));
-              p = enableFineGridRef.current ? snapToFineGrid(p) : snapToNormalGrid(p);
+              p = enableFineGridRef.current ? Util.snapToFineGrid(p) : Util.snapToNormalGrid(p);
               p.x /= foundationModel.lx;
               p.y /= foundationModel.ly;
               updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, p.x, p.y);
@@ -1409,7 +1398,7 @@ const Foundation = ({
             <PolarGrid element={grabRef.current} height={(grabRef.current as SolarPanelModel).poleHeight + hz} />
           )}
           {(moveHandleTypeRef.current || resizeHandleTypeRef.current || addedWallID) && (
-            <ElementGrid hx={hx} hy={hy} hz={hz} objectType={ObjectType.Foundation} />
+            <ElementGrid hx={hx} hy={hy} hz={hz} />
           )}
         </>
       )}

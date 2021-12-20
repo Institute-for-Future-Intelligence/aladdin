@@ -63,6 +63,7 @@ import { UndoableChange } from '../undo/UndoableChange';
 import i18n from '../i18n/i18n';
 import { Point2 } from '../models/Point2';
 import { PolygonModel } from '../models/PolygonModel';
+import { ElementGrid } from './elementGrid';
 
 const Cuboid = ({
   id,
@@ -128,10 +129,9 @@ const Cuboid = ({
   const baseRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
   const faceNormalRef = useRef<Vector3>(UNIT_VECTOR_POS_Z);
-  const gridLength = useRef<number>(10);
   const gridPositionRef = useRef<Vector3>(new Vector3(0, 0, 0));
   const gridRotationRef = useRef<Euler>(new Euler(0, 0, 0));
-  const gridScale = useRef<Vector3>(new Vector3(1, 1, 1));
+  const gridDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const resizeHandleLLTopRef = useRef<Mesh>();
   const resizeHandleULTopRef = useRef<Mesh>();
   const resizeHandleLRTopRef = useRef<Mesh>();
@@ -157,6 +157,7 @@ const Cuboid = ({
   const newVerticesRef = useRef<Point2[]>([]);
   const intersectPlaneRef = useRef<Mesh>();
   const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
+  const enableFineGridRef = useRef(useStore.getState().enableFineGrid);
 
   const lang = { lng: language };
   const hx = lx / 2;
@@ -180,7 +181,10 @@ const Cuboid = ({
   }
 
   useEffect(() => {
-    const unsubscribe = useStore.subscribe((state) => (resizeAnchorRef.current = state.resizeAnchor));
+    const unsubscribe = useStore.subscribe((state) => {
+      resizeAnchorRef.current = state.resizeAnchor;
+      enableFineGridRef.current = state.enableFineGrid;
+    });
     return () => {
       unsubscribe();
     };
@@ -351,37 +355,32 @@ const Cuboid = ({
     );
   };
 
-  const setupGridHelper = (face: Vector3) => {
+  const setupGridParams = (face: Vector3) => {
     faceNormalRef.current = face;
     if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_POS_Z)) {
-      gridLength.current = Math.max(lx, ly);
       gridPositionRef.current = new Vector3(0, 0, hz);
-      gridRotationRef.current = new Euler(HALF_PI, 0, 0);
-      gridScale.current = new Vector3(lx / gridLength.current, 1, ly / gridLength.current);
+      gridRotationRef.current = new Euler(0, 0, 0);
+      gridDimensionRef.current.set(hx, hy, hz);
     } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_POS_X)) {
       // east face in view coordinate system
-      gridLength.current = Math.max(ly, lz);
       gridPositionRef.current = new Vector3(hx, 0, 0);
-      gridRotationRef.current = new Euler(0, 0, HALF_PI);
-      gridScale.current = new Vector3(ly / gridLength.current, 1, lz / gridLength.current);
+      gridRotationRef.current = new Euler(0, HALF_PI, 0);
+      gridDimensionRef.current.set(hz, hy, hx);
     } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_NEG_X)) {
       // west face in view coordinate system
-      gridLength.current = Math.max(ly, lz);
       gridPositionRef.current = new Vector3(-hx, 0, 0);
-      gridRotationRef.current = new Euler(0, 0, -HALF_PI);
-      gridScale.current = new Vector3(ly / gridLength.current, 1, lz / gridLength.current);
+      gridRotationRef.current = new Euler(0, -HALF_PI, 0);
+      gridDimensionRef.current.set(hz, hy, hx);
     } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_NEG_Y)) {
       // south face in the view coordinate system
-      gridLength.current = Math.max(lx, lz);
       gridPositionRef.current = new Vector3(0, -hy, 0);
-      gridRotationRef.current = new Euler(0, 0, 0);
-      gridScale.current = new Vector3(lx / gridLength.current, 1, lz / gridLength.current);
+      gridRotationRef.current = new Euler(HALF_PI, 0, 0);
+      gridDimensionRef.current.set(hx, hz, hy);
     } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_POS_Y)) {
       // north face in the view coordinate system
-      gridLength.current = Math.max(lx, lz);
       gridPositionRef.current = new Vector3(0, hy, 0);
-      gridRotationRef.current = new Euler(0, 0, 0);
-      gridScale.current = new Vector3(lx / gridLength.current, 1, lz / gridLength.current);
+      gridRotationRef.current = new Euler(-HALF_PI, 0, 0);
+      gridDimensionRef.current.set(hx, hz, hy);
     }
   };
 
@@ -442,7 +441,7 @@ const Cuboid = ({
             }
           }
           if (face) {
-            setupGridHelper(face.normal);
+            setupGridParams(face.normal);
             if (!normal || !normal.equals(face.normal)) {
               setNormal(face.normal);
             }
@@ -488,69 +487,82 @@ const Cuboid = ({
                 if (normal && !normal.equals(n)) {
                   setNormal(n);
                 }
-                setupGridHelper(n);
+                setupGridParams(n);
                 setElementNormal(grabRef.current.id, n.x, n.y, n.z);
               }
               p = Util.relativeCoordinates(p.x, p.y, p.z, cuboidModel);
               if (grabRef.current.type === ObjectType.Polygon) {
                 const polygon = grabRef.current as PolygonModel;
-                const centroid = Util.calculatePolygonCentroid(polygon.vertices);
-                const dx = p.x - centroid.x;
-                const dy = p.y - centroid.y;
-                const copy = polygon.vertices.map((v) => ({ ...v }));
-                copy.forEach((v: Point2) => {
-                  v.x += dx;
-                  v.y += dy;
-                });
-                // update all the vertices at once with the DEEP COPY above
-                // do not update each vertex's position one by one (it is slower)
-                updatePolygonVerticesById(polygon.id, copy);
+                if (moveHandleType === MoveHandleType.Default) {
+                  const centroid = Util.calculatePolygonCentroid(polygon.vertices);
+                  const dx = p.x - centroid.x;
+                  const dy = p.y - centroid.y;
+                  const copy = polygon.vertices.map((v) => ({ ...v }));
+                  copy.forEach((v: Point2) => {
+                    v.x += dx;
+                    v.y += dy;
+                  });
+                  // update all the vertices at once with the DEEP COPY above
+                  // do not update each vertex's position one by one (it is slower)
+                  updatePolygonVerticesById(polygon.id, copy);
+                }
               } else {
                 setElementPosition(grabRef.current.id, p.x, p.y, p.z);
               }
             } else if (resizeHandleType) {
-              if (grabRef.current.type === ObjectType.SolarPanel) {
-                const solarPanel = grabRef.current as SolarPanelModel;
-                const wp = new Vector3(p.x, p.y, p.z);
-                const vd = new Vector3().subVectors(wp, resizeAnchor);
-                const vh = new Vector3().subVectors(
-                  Util.absoluteCoordinates(solarPanel.cx, solarPanel.cy, solarPanel.cz, cuboidModel),
-                  resizeAnchor,
-                );
-                if (normal && Math.abs(normal.z - 1) < ZERO_TOLERANCE) {
-                  vh.setZ(0);
-                }
-                const vhd = vd.projectOnVector(vh);
-                const d = vhd.length();
-                const pvModel = getPvModule(solarPanel.pvModelName);
-                let newLx = solarPanel.lx;
-                let newLy = solarPanel.ly;
-                if (solarPanel.orientation === Orientation.portrait) {
-                  if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
-                    const nx = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
-                    newLx = nx * pvModel.width;
-                  } else {
-                    const ny = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
-                    newLy = ny * pvModel.length;
+              switch (grabRef.current.type) {
+                case ObjectType.SolarPanel:
+                  const solarPanel = grabRef.current as SolarPanelModel;
+                  const wp = new Vector3(p.x, p.y, p.z);
+                  const vd = new Vector3().subVectors(wp, resizeAnchor);
+                  const vh = new Vector3().subVectors(
+                    Util.absoluteCoordinates(solarPanel.cx, solarPanel.cy, solarPanel.cz, cuboidModel),
+                    resizeAnchor,
+                  );
+                  if (normal && Math.abs(normal.z - 1) < ZERO_TOLERANCE) {
+                    vh.setZ(0);
                   }
-                } else {
-                  if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
-                    const nx = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
-                    newLx = nx * pvModel.length;
+                  const vhd = vd.projectOnVector(vh);
+                  const d = vhd.length();
+                  const pvModel = getPvModule(solarPanel.pvModelName);
+                  let newLx = solarPanel.lx;
+                  let newLy = solarPanel.ly;
+                  if (solarPanel.orientation === Orientation.portrait) {
+                    if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
+                      const nx = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
+                      newLx = nx * pvModel.width;
+                    } else {
+                      const ny = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
+                      newLy = ny * pvModel.length;
+                    }
                   } else {
-                    const ny = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
-                    newLy = ny * pvModel.width;
+                    if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
+                      const nx = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
+                      newLx = nx * pvModel.length;
+                    } else {
+                      const ny = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
+                      newLy = ny * pvModel.width;
+                    }
                   }
-                }
-                const wc = new Vector3().addVectors(resizeAnchor, vhd.normalize().multiplyScalar(d / 2));
-                const rc = Util.relativeCoordinates(wc.x, wc.y, wc.z, cuboidModel);
-                // TODO: check vertical surfaces
-                setElementSize(solarPanel.id, newLx, newLy);
-                setElementPosition(solarPanel.id, rc.x, rc.y);
-              } else if (grabRef.current.type === ObjectType.Polygon) {
-                const polygon = grabRef.current as PolygonModel;
-                p = Util.relativeCoordinates(p.x, p.y, p.z, cuboidModel);
-                updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, p.x, p.y);
+                  const wc = new Vector3().addVectors(resizeAnchor, vhd.normalize().multiplyScalar(d / 2));
+                  const rc = Util.relativeCoordinates(wc.x, wc.y, wc.z, cuboidModel);
+                  // TODO: check vertical surfaces
+                  setElementSize(solarPanel.id, newLx, newLy);
+                  setElementPosition(solarPanel.id, rc.x, rc.y);
+                  break;
+                case ObjectType.Polygon:
+                  if (resizeHandleType === ResizeHandleType.Default) {
+                    const polygon = grabRef.current as PolygonModel;
+                    // snap to the grid (do not call Util.relativeCoordinates because we have to snap in the middle)
+                    p.x -= cuboidModel.cx;
+                    p.y -= cuboidModel.cy;
+                    p.applyEuler(new Euler().fromArray(cuboidModel.rotation.map((a) => -a)));
+                    p = enableFineGridRef.current ? Util.snapToFineGrid(p) : Util.snapToNormalGrid(p);
+                    p.x /= cuboidModel.lx;
+                    p.y /= cuboidModel.ly;
+                    updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, p.x, p.y);
+                  }
+                  break;
               }
             }
           }
@@ -942,12 +954,12 @@ const Cuboid = ({
       {showGrid && (
         <>
           {(moveHandleType || resizeHandleType) && (
-            <gridHelper
-              name={'Cuboid Grid'}
+            <ElementGrid
+              hx={gridDimensionRef.current.x}
+              hy={gridDimensionRef.current.y}
+              hz={gridDimensionRef.current.z}
               position={gridPositionRef.current}
               rotation={gridRotationRef.current}
-              scale={gridScale.current}
-              args={[gridLength.current, 20, 'gray', 'gray']}
             />
           )}
           {rotateHandleType && grabRef.current && grabRef.current.type === ObjectType.SolarPanel && (

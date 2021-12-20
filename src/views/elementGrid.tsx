@@ -2,21 +2,22 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Line } from '@react-three/drei';
 import { useStore } from '../stores/common';
-import { ObjectType } from '../types';
 import * as Selector from '../stores/selector';
 import { FINE_GRID_SCALE } from '../constants';
+import { Euler, Vector3 } from 'three';
 
 interface ElementGridProps {
   hx: number;
   hy: number;
   hz: number;
-  objectType: ObjectType;
+  position?: Vector3;
+  rotation?: Euler;
 }
 
-export const ElementGrid = React.memo(({ hx, hy, hz, objectType }: ElementGridProps) => {
+export const ElementGrid = React.memo(({ hx, hy, hz, position, rotation }: ElementGridProps) => {
   const enableFineGrid = useStore(Selector.enableFineGrid);
   const lineColor = '#444444';
 
@@ -34,21 +35,26 @@ export const ElementGrid = React.memo(({ hx, hy, hz, objectType }: ElementGridPr
     }
   }, [enableFineGrid, maxSize]);
 
-  const pointsX: number[] = [0];
-  const pointsY: number[] = [0];
+  const pointsX = useMemo(() => {
+    const p: number[] = [0];
+    for (let i = step; i <= hx; i += step) {
+      p.push(i);
+      p.push(-i);
+    }
+    return p;
+  }, [step, hx]);
 
-  for (let i = step; i <= hx; i += step) {
-    pointsX.push(i);
-    pointsX.push(-i);
-  }
-
-  for (let i = step; i <= hy; i += step) {
-    pointsY.push(i);
-    pointsY.push(-i);
-  }
+  const pointsY = useMemo(() => {
+    const p: number[] = [0];
+    for (let i = step; i <= hy; i += step) {
+      p.push(i);
+      p.push(-i);
+    }
+    return p;
+  }, [step, hy]);
 
   return (
-    <group position={[0, 0, hz + 0.01]}>
+    <group position={position ?? [0, 0, hz]} rotation={rotation}>
       {pointsX.map((value) => {
         return (
           <Line

@@ -2,7 +2,13 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import { ORIGIN_VECTOR2, UNIT_VECTOR_POS_Z, UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from './constants';
+import {
+  FINE_GRID_SCALE,
+  ORIGIN_VECTOR2,
+  UNIT_VECTOR_POS_Z,
+  UNIT_VECTOR_POS_Z_ARRAY,
+  ZERO_TOLERANCE,
+} from './constants';
 import { Euler, Vector2, Vector3 } from 'three';
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
@@ -203,6 +209,16 @@ export class Util {
     if (i > -1) {
       a.splice(i, 1);
     }
+  }
+
+  static snapToNormalGrid(v: Vector3) {
+    return new Vector3(Math.round(v.x), Math.round(v.y), v.z);
+  }
+
+  static snapToFineGrid(v: Vector3) {
+    const x = parseFloat((Math.round(v.x / FINE_GRID_SCALE) * FINE_GRID_SCALE).toFixed(1));
+    const y = parseFloat((Math.round(v.y / FINE_GRID_SCALE) * FINE_GRID_SCALE).toFixed(1));
+    return new Vector3(x, y, v.z);
   }
 
   static isPositionRelative(objectType: ObjectType) {

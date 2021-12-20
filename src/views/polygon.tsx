@@ -319,7 +319,7 @@ const Polygon = ({
                 fontSize={20}
                 fontFace={'Times Roman'}
                 textHeight={0.2}
-                position={[p.x, p.y, cz + 0.2]}
+                position={[p.x, p.y, 0.3]}
               />
             </React.Fragment>
           );
