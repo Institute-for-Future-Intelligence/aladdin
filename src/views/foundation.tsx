@@ -57,6 +57,7 @@ import { ElementGrid } from './elementGrid';
 import i18n from '../i18n/i18n';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
+import { HorizontalRuler } from './horizontalRuler';
 
 const Foundation = ({
   id,
@@ -1403,8 +1404,11 @@ const Foundation = ({
         </>
       )}
 
+      {/* ruler */}
+      {selected && <HorizontalRuler element={foundationModel} resizeHandleType={resizeHandleTypeRef.current} />}
+
       {/* wireFrame */}
-      {!selected && <Wireframe hx={hx} hy={hy} hz={hz} />}
+      {!selected && <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />}
 
       {/* draw handles */}
       {selected && !locked && (

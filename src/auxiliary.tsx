@@ -42,10 +42,8 @@ export const Auxiliary = () => {
         resizeHandleType === ResizeHandleType.UpperRightTop ||
         (resizeHandleType === ResizeHandleType.UpperLeft && element?.type === ObjectType.Wall) ||
         (resizeHandleType === ResizeHandleType.UpperRight && element?.type === ObjectType.Wall);
-      if (changeHeight) {
-        setShowGrid(false);
-        setShowVerticalRuler(true);
-      }
+      setShowGrid(!changeHeight);
+      setShowVerticalRuler(changeHeight);
     } else {
       setShowGrid(false);
       setShowVerticalRuler(false);

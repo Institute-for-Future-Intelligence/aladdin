@@ -64,6 +64,7 @@ import i18n from '../i18n/i18n';
 import { Point2 } from '../models/Point2';
 import { PolygonModel } from '../models/PolygonModel';
 import { ElementGrid } from './elementGrid';
+import { HorizontalRuler } from './horizontalRuler';
 
 const Cuboid = ({
   id,
@@ -969,7 +970,11 @@ const Cuboid = ({
         </>
       )}
 
-      {!selected && <Wireframe hx={hx} hy={hy} hz={hz} />}
+      {/* ruler */}
+      {selected && <HorizontalRuler element={cuboidModel} resizeHandleType={resizeHandleType} />}
+
+      {/* wireFrame */}
+      {!selected && <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />}
 
       {/* draw handles */}
       {selected && !locked && (

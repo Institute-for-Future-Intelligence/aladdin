@@ -158,7 +158,7 @@ const Sensor = ({
       </Box>
 
       {/* wireFrame */}
-      {!selected && <Wireframe hx={lx / 2} hy={ly / 2} hz={lz / 2} />}
+      {!selected && <Wireframe hx={lx / 2} hy={ly / 2} hz={lz / 2} lineColor={lineColor} lineWidth={lineWidth} />}
 
       {/* draw handle */}
       {selected && (
