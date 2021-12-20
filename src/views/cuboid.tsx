@@ -17,7 +17,7 @@ import Facade_Texture_10 from '../resources/building_facade_10.png';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Plane, Sphere } from '@react-three/drei';
 import { Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
-import { useStore } from '../stores/common';
+import { useRefStore, useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { CuboidModel } from '../models/CuboidModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -114,7 +114,6 @@ const Cuboid = ({
   const isAddingElement = useStore(Selector.isAddingElement);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const updatePolygonVertexPositionById = useStore(Selector.updatePolygonVertexPositionById);
-  const setEnableOrbitController = useStore(Selector.setEnableOrbitController);
 
   const {
     camera,
@@ -195,8 +194,8 @@ const Cuboid = ({
     const handlePointerUp = () => {
       grabRef.current = null;
       setShowGrid(false);
-      setEnableOrbitController(true);
     };
+    useRefStore.getState().setEnableOrbitController(true);
     window.addEventListener('pointerup', handlePointerUp);
     return () => {
       window.removeEventListener('pointerup', handlePointerUp);
@@ -448,7 +447,7 @@ const Cuboid = ({
               setNormal(face.normal);
             }
           }
-          setEnableOrbitController(false);
+          useRefStore.getState().setEnableOrbitController(false);
           oldPositionRef.current.x = selectedElement.cx;
           oldPositionRef.current.y = selectedElement.cy;
           oldPositionRef.current.z = selectedElement.cz;

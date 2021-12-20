@@ -33,7 +33,7 @@ import { ThreeEvent, useThree } from '@react-three/fiber';
 import { Plane } from '@react-three/drei';
 import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, WallTexture } from 'src/types';
 import { Util } from 'src/Util';
-import { useStore } from 'src/stores/common';
+import { useRefStore, useStore } from 'src/stores/common';
 import { ElementModel } from 'src/models/ElementModel';
 import { WindowModel } from 'src/models/WindowModel';
 import { WallModel } from 'src/models/WallModel';
@@ -462,8 +462,8 @@ const Wall = ({
 
         // set window start point
         if (isSettingWindowStartPointRef.current) {
+          useRefStore.getState().setEnableOrbitController(false);
           setCommonStore((state) => {
-            state.setEnableOrbitController(false);
             state.moveHandleType = null;
             state.resizeHandleType = ResizeHandleType.LowerRight;
             state.resizeAnchor.copy(pointer);
@@ -526,9 +526,9 @@ const Wall = ({
     setCommonStore((state) => {
       state.moveHandleType = null;
       state.resizeHandleType = null;
-      state.setEnableOrbitController(true);
       state.addedWindowId = null;
     });
+    useRefStore.getState().setEnableOrbitController(true);
     setShowGrid(false);
     resetCurrentState();
   };
@@ -616,8 +616,8 @@ const Wall = ({
             relativePos = getPositionOnGrid(relativePos);
 
             const newWindow = ElementModelFactory.makeWindow(wallModel, relativePos.x / lx, 0, relativePos.z / lz);
+            useRefStore.getState().setEnableOrbitController(false);
             setCommonStore((state) => {
-              state.setEnableOrbitController(false);
               state.objectTypeToAdd = ObjectType.None;
               state.elements.push(newWindow);
               state.moveHandleType = MoveHandleType.Mid;

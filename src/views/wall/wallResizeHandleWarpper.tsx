@@ -5,7 +5,7 @@
 import React, { useRef, useState } from 'react';
 import { Box } from '@react-three/drei';
 import { Mesh, Vector3 } from 'three';
-import { useStore } from 'src/stores/common';
+import { useRefStore, useStore } from 'src/stores/common';
 import { ActionType, ResizeHandleType, ResizeHandleType as RType } from 'src/types';
 import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from 'src/constants';
 import * as Selector from 'src/stores/selector';
@@ -31,7 +31,6 @@ const WallResizeHandle = React.memo(({ x, z, id, handleType, highLight, handleSi
   const selectMe = useStore(Selector.selectMe);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const addedWallID = useStore(Selector.addedWallId);
-  const setEnableOrbitController = useStore(Selector.setEnableOrbitController);
 
   const [hovered, setHovered] = useState(false);
 
@@ -85,7 +84,7 @@ const WallResizeHandle = React.memo(({ x, z, id, handleType, highLight, handleSi
         }
       }}
       onPointerUp={() => {
-        setEnableOrbitController(true);
+        useRefStore.getState().setEnableOrbitController(true);
       }}
     >
       <meshStandardMaterial color={color} />

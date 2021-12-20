@@ -5,11 +5,9 @@
  */
 
 import React, { Suspense, useEffect, useRef, useState } from 'react';
-import { useStore } from './stores/common';
+import { useRefStore, useStore } from './stores/common';
 import * as Selector from 'src/stores/selector';
-import { Camera, Canvas } from '@react-three/fiber';
-import OrbitController from './orbitController';
-import { MyOrbitControls } from './js/MyOrbitControls';
+import { Canvas } from '@react-three/fiber';
 import Sky from './views/sky';
 import Axes from './views/axes';
 import ElementsRenderer from './elementsRenderer';
@@ -19,7 +17,7 @@ import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from './mainMenu';
 import MapPanel from './panels/mapPanel';
 import HeliodonPanel from './panels/heliodonPanel';
-import { DEFAULT_FAR, DEFAULT_FOV, VERSION } from './constants';
+import { VERSION } from './constants';
 import { visitHomepage, visitIFI } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
@@ -39,9 +37,7 @@ import DailyPvYieldPanel from './panels/dailyPvYieldPanel';
 import Lights from './lights';
 import { Auxiliary } from './auxiliary';
 import CompassContainer from './compassContainer';
-import { OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
 import i18n from './i18n/i18n';
-import KeyboardEventHandler from 'react-keyboard-event-handler';
 import KeyboardListener from './keyboardListener';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCloud } from '@fortawesome/free-solid-svg-icons';
@@ -49,6 +45,7 @@ import SceneRadiusCalculator from './sceneRadiusCalculator';
 import { UndoableChange } from './undo/UndoableChange';
 import DesignInfoPanel from './panels/designInfoPanel';
 import SiteInfoPanel from './panels/siteInfoPanel';
+import CameraController from './cameraController';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -63,7 +60,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
-  const orthographicChanged = useStore(Selector.orthographicChanged);
   const simulationInProgress = useStore(Selector.simulationInProgress);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const sceneRadius = useStore(Selector.sceneRadius);
@@ -87,12 +83,9 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const addedCuboidId = useStore(Selector.addedCuboidId);
 
   const [loading, setLoading] = useState(true);
-  const [update, setUpdate] = useState(false);
   const [city, setCity] = useState<string | null>('Boston MA, USA');
 
-  const orbitControlsRef = useRef<MyOrbitControls>();
   const canvasRef = useRef<HTMLCanvasElement>();
-  const camRef = useRef<Camera>();
   const lang = { lng: language };
 
   useEffect(() => {
@@ -110,11 +103,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         objectTypeToAdd !== ObjectType.None || addedCuboidId || addedFoundationId ? 'crosshair' : 'default';
     }
   }, [objectTypeToAdd, addedCuboidId, addedFoundationId]);
-
-  useEffect(() => {
-    setUpdate(!update);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orthographic]);
 
   const zoomView = (scale: number) => {
     if (orthographic) {
@@ -141,7 +129,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         state.viewState.cameraZoom = newZoom;
       });
     } else {
-      if (orbitControlsRef.current) {
+      const orbitControlsRef = useRefStore.getState().orbitControlsRef;
+      if (orbitControlsRef?.current) {
         const p = orbitControlsRef.current.object.position;
         const x = p.x * scale;
         const y = p.y * scale;
@@ -161,7 +150,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   };
 
   const resetView = () => {
-    if (orbitControlsRef.current) {
+    const orbitControlsRef = useRefStore.getState().orbitControlsRef;
+    if (orbitControlsRef?.current) {
       // I don't know why the reset method results in a black screen.
       // So we are resetting it here to a predictable position.
       const z = Math.min(50, sceneRadius * 4);
@@ -186,7 +176,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
     setCommonStore((state) => {
       state.viewState.orthographic = selected;
       state.viewState.enableRotate = !selected;
-      state.orthographicChanged = true;
     });
   };
 
@@ -308,30 +297,12 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       <DropdownContextMenu>
         <div>
           <Canvas
-            orthographic={orthographic}
-            camera={{ zoom: orthographic ? cameraZoom : 1, fov: DEFAULT_FOV, far: DEFAULT_FAR }}
             shadows={true}
             gl={{ preserveDrawingBuffer: true }}
             frameloop={'demand'}
             style={{ height: 'calc(100vh - 72px)', backgroundColor: 'black' }}
           >
-            {/*
-            The following is for switching camera between the orthographic and perspective modes from the menu.
-            For some reason, the above code does not trigger the camera to change unless we reload the entire page,
-             which is not desirable. So we have to do it this way.
-             */}
-            {orthographicChanged &&
-              (orthographic ? (
-                <OrthographicCamera
-                  zoom={cameraZoom}
-                  position={[0, 0, Math.min(50, sceneRadius * 4)]}
-                  makeDefault={true}
-                  ref={camRef}
-                />
-              ) : (
-                <PerspectiveCamera zoom={1} fov={DEFAULT_FOV} far={DEFAULT_FAR} makeDefault={true} ref={camRef} />
-              ))}
-            <OrbitController orbitControlsRef={orbitControlsRef} canvasRef={canvasRef} currentCamera={camRef.current} />
+            <CameraController />
             <Lights />
 
             <ElementsRenderer />

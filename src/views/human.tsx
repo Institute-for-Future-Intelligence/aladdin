@@ -51,7 +51,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
   } = useThree();
 
   // have to add this to listen to world(camera) change, this is better than memo's shallow campare
-  useStore(Selector.cameraDirection);
+  useStore(Selector.viewState.cameraPosition);
   const cameraX = camera.position.x;
   const cameraY = camera.position.y;
   const lang = { lng: language };

@@ -61,7 +61,7 @@ export class DefaultViewState implements ViewState {
     this.orthographic = false;
     this.enableRotate = true;
     this.cameraPosition = new Vector3(0, -20, 0);
-    this.cameraPosition2D = new Vector3(0, -10, 0);
+    this.cameraPosition2D = new Vector3(0, 0, 20);
     this.panCenter = new Vector3(0, 0, 0);
     this.panCenter2D = new Vector3(0, 0, 0);
     this.cameraZoom = 20;
@@ -121,8 +121,8 @@ export class DefaultViewState implements ViewState {
     viewState.panCenter.z = 0;
     viewState.cameraZoom = 20;
     viewState.cameraPosition2D.x = 0;
-    viewState.cameraPosition2D.y = -10;
-    viewState.cameraPosition2D.z = 0;
+    viewState.cameraPosition2D.y = 0;
+    viewState.cameraPosition2D.z = 20;
     viewState.panCenter2D.x = 0;
     viewState.panCenter2D.y = 0;
     viewState.panCenter2D.z = 0;

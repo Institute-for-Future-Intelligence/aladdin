@@ -16,7 +16,7 @@ import ForestNightSkyImage from '../resources/forest-night.jpg';
 import GrasslandDaySkyImage from '../resources/grassland.jpg';
 import GrasslandNightSkyImage from '../resources/grassland-night.jpg';
 
-import { useStore } from '../stores/common';
+import { useRefStore, useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { IntersectionPlaneType, ObjectType, ResizeHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
@@ -34,7 +34,6 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const sunlightDirection = useStore(Selector.sunlightDirection);
-  const setEnableOrbitController = useStore(Selector.setEnableOrbitController);
 
   const {
     camera,
@@ -113,7 +112,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
           if (legalOnGround(selectedElement.type)) {
             grabRef.current = selectedElement;
             if (selectedElement.type !== ObjectType.Foundation && selectedElement.type !== ObjectType.Cuboid) {
-              setEnableOrbitController(false);
+              useRefStore.getState().setEnableOrbitController(false);
             }
           } else if (
             selectedElement.type === ObjectType.Wall &&

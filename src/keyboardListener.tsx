@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { ObjectType } from './types';
-import { useStore } from './stores/common';
+import { useRefStore, useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { UndoableDelete } from './undo/UndoableDelete';
 import { UndoablePaste } from './undo/UndoablePaste';
@@ -580,8 +580,8 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           state.objectTypeToAdd = ObjectType.None;
           state.moveHandleType = null;
           state.resizeHandleType = null;
-          state.setEnableOrbitController(true);
         });
+        useRefStore.getState().setEnableOrbitController(true);
         selectNone();
         break;
     }

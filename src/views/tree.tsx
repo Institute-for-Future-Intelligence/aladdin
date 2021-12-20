@@ -62,7 +62,7 @@ const Tree = ({
   const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
   const lang = { lng: language };
 
-  useStore(Selector.cameraDirection);
+  useStore(Selector.viewState.cameraPosition);
   const sunlightX = sunlightDirection.x;
   const sunlightZ = sunlightDirection.y;
   const cameraX = camera.position.x;

@@ -5,7 +5,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Cone, Cylinder, Line, Plane, Ring, Sphere } from '@react-three/drei';
 import { DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
-import { useStore } from '../stores/common';
+import { useRefStore, useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
@@ -82,7 +82,6 @@ const SolarPanel = ({
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const rotateHandleType = useStore(Selector.rotateHandleType);
   const addUndoable = useStore(Selector.addUndoable);
-  const setEnableOrbitController = useStore(Selector.setEnableOrbitController);
 
   const {
     gl: { domElement },
@@ -183,7 +182,7 @@ const SolarPanel = ({
 
   useEffect(() => {
     const handlePointerUp = () => {
-      setEnableOrbitController(true);
+      useRefStore.getState().setEnableOrbitController(true);
       pointerDown.current = false;
       setShowTiltAngle(false);
     };
@@ -598,9 +597,7 @@ const SolarPanel = ({
             onPointerDown={(e) => {
               setShowTiltAngle(true);
               if (hoveredHandle) {
-                setCommonStore((state) => {
-                  state.setEnableOrbitController(false);
-                });
+                useRefStore.getState().setEnableOrbitController(false);
                 pointerDown.current = true;
                 const sp = getElementById(id) as SolarPanelModel;
                 oldTiltAngleRef.current = sp.tiltAngle;

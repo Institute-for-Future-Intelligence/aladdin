@@ -5,7 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Mesh, Vector3 } from 'three';
 import { Box } from '@react-three/drei';
-import { useStore } from 'src/stores/common';
+import { useRefStore, useStore } from 'src/stores/common';
 import { ResizeHandleType } from 'src/types';
 import * as Selector from 'src/stores/selector';
 
@@ -38,8 +38,8 @@ const WindowResizeHandle = ({ x, z, handleType }: WindowResizeHandleProps) => {
       args={[0.1, 0.1, 0.1]}
       position={[x, 0, z]}
       onPointerDown={(e) => {
+        useRefStore.getState().setEnableOrbitController(false);
         setCommonStore((state) => {
-          state.setEnableOrbitController(false);
           state.resizeHandleType = handleType;
           if (handleRef.current) {
             const anchor = handleRef.current.localToWorld(new Vector3(-x * 2, 0, -z * 2));

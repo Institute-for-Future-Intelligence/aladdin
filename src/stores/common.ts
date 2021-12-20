@@ -30,7 +30,7 @@ import {
   WallTexture,
 } from '../types';
 import { DefaultWorldModel } from './DefaultWorldModel';
-import { Box3, Vector2, Vector3 } from 'three';
+import { Box3, Group, Vector2, Vector3 } from 'three';
 import { ElementModelCloner } from '../models/ElementModelCloner';
 import { DefaultViewState } from './DefaultViewState';
 import { ViewState } from '../views/ViewState';
@@ -74,6 +74,7 @@ export interface CommonStoreState {
   setChanged: (b: boolean) => void;
   skipChange: boolean;
   setSkipChange: (b: boolean) => void;
+  fileChanged: boolean;
 
   importContent: (input: any, title?: string) => void;
   exportContent: () => {};
@@ -94,8 +95,6 @@ export interface CommonStoreState {
   grid: boolean; // this should only show up when editing
   aabb: Box3; // axis-aligned bounding box of elements
   animateSun: boolean;
-  orbitControlsRef: RefObject<MyOrbitControls> | null;
-  setEnableOrbitController: (b: boolean) => void;
   clickObjectType: ObjectType | null;
   contextMenuObjectType: ObjectType | null;
   moveHandleType: MoveHandleType | null;
@@ -340,7 +339,6 @@ export interface CommonStoreState {
   addedWindowId: string | null;
   deletedWindowAndParentId: string[] | null;
 
-  orthographicChanged: boolean;
   simulationInProgress: boolean;
   locale: Locale;
   localFileName: string;
@@ -396,6 +394,7 @@ export const useStore = create<CommonStoreState>(
               state.skipChange = b;
             });
           },
+          fileChanged: false,
 
           importContent(content: any, title) {
             immerSet((state: CommonStoreState) => {
@@ -424,6 +423,7 @@ export const useStore = create<CommonStoreState>(
               state.changed = false;
               state.skipChange = true;
               state.localContentToImportAfterCloudFileUpdate = undefined;
+              state.fileChanged = !state.fileChanged;
             });
           },
           exportContent() {
@@ -454,6 +454,7 @@ export const useStore = create<CommonStoreState>(
               state.skipChange = true;
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.notes = [];
+              state.fileChanged = !state.fileChanged;
             });
           },
           undoManager: new UndoManager(),
@@ -510,14 +511,6 @@ export const useStore = create<CommonStoreState>(
           grid: false,
           aabb: new Box3(),
           animateSun: false,
-          orbitControlsRef: null,
-          setEnableOrbitController: (b: boolean) => {
-            immerSet((state) => {
-              if (state.orbitControlsRef?.current) {
-                state.orbitControlsRef.current.enabled = b;
-              }
-            });
-          },
           clickObjectType: null,
           contextMenuObjectType: null,
           moveHandleType: null,
@@ -631,6 +624,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
           selectMe(id, e, action) {
+            const setEnableOrbitController = useRefStore.getState().setEnableOrbitController;
             if (e.intersections.length > 0) {
               if (e.intersections[0].object === e.eventObject) {
                 immerSet((state) => {
@@ -650,22 +644,22 @@ export const useStore = create<CommonStoreState>(
                     switch (action) {
                       case ActionType.Move:
                         state.moveHandleType = e.eventObject.name as MoveHandleType;
-                        state.setEnableOrbitController(false);
+                        setEnableOrbitController(false);
                         break;
                       case ActionType.Resize:
                         state.resizeHandleType = e.eventObject.name as ResizeHandleType;
-                        state.setEnableOrbitController(false);
+                        setEnableOrbitController(false);
                         break;
                       case ActionType.Rotate:
                         state.rotateHandleType = e.eventObject.name as RotateHandleType;
-                        state.setEnableOrbitController(false);
+                        setEnableOrbitController(false);
                         break;
                       case ActionType.Select:
                         state.selectedElementAngle = e.object.parent?.rotation.z ?? 0;
-                        state.setEnableOrbitController(true);
+                        setEnableOrbitController(true);
                         break;
                       default:
-                        state.setEnableOrbitController(true);
+                        setEnableOrbitController(true);
                     }
                   }
                 });
@@ -2673,7 +2667,6 @@ export const useStore = create<CommonStoreState>(
           addedWindowId: null,
           deletedWindowAndParentId: null,
 
-          orthographicChanged: false,
           simulationInProgress: false,
           locale: enUS,
           localFileName: 'aladdin.ala',
@@ -2722,3 +2715,23 @@ export const useStore = create<CommonStoreState>(
     ),
   ),
 );
+
+export interface CommonRefStoreState {
+  compassRef: RefObject<Group> | null;
+  orbitControlsRef: RefObject<MyOrbitControls> | null;
+  setEnableOrbitController: (b: boolean) => void;
+}
+
+export const useRefStore = create<CommonRefStoreState>((set, get) => {
+  return {
+    compassRef: null,
+    orbitControlsRef: null,
+    setEnableOrbitController: (b: boolean) => {
+      set((state) => {
+        if (state.orbitControlsRef?.current) {
+          state.orbitControlsRef.current.enabled = b;
+        }
+      });
+    },
+  };
+});

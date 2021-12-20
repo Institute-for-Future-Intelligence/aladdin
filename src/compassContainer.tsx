@@ -19,7 +19,7 @@ const Container = styled.div`
 const CompassContainer = () => {
   return (
     <Container className="compass-container">
-      <Canvas camera={{ fov: 45 }} frameloop="demand">
+      <Canvas camera={{ fov: 45 }}>
         <directionalLight position={[0, 5, 0]} intensity={0.2} />
         <ambientLight intensity={0.1} />
         <Suspense fallback={null}>

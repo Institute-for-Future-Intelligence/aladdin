@@ -26,8 +26,6 @@ export const loadPvModules = (state: CommonStoreState) => state.loadPvModules;
 
 export const getPvModule = (state: CommonStoreState) => state.getPvModule;
 
-export const setEnableOrbitController = (state: CommonStoreState) => state.setEnableOrbitController;
-
 export const language = (state: CommonStoreState) => state.language;
 
 export const locale = (state: CommonStoreState) => state.locale;
@@ -52,6 +50,8 @@ export const openLocalFileFlag = (state: CommonStoreState) => state.openLocalFil
 export const saveLocalFileFlag = (state: CommonStoreState) => state.saveLocalFileFlag;
 
 export const saveLocalFileDialogVisible = (state: CommonStoreState) => state.saveLocalFileDialogVisible;
+
+export const fileChanged = (state: CommonStoreState) => state.fileChanged;
 
 export const undoManager = (state: CommonStoreState) => state.undoManager;
 
@@ -327,8 +327,6 @@ export const countAllSolarPanels = (state: CommonStoreState) => state.countAllSo
 export const selectedElementAngle = (state: CommonStoreState) => state.selectedElementAngle;
 
 export const selectedElementHeight = (state: CommonStoreState) => state.selectedElementHeight;
-
-export const orthographicChanged = (state: CommonStoreState) => state.orthographicChanged;
 
 export const simulationInProgress = (state: CommonStoreState) => state.simulationInProgress;
 
