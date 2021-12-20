@@ -541,27 +541,49 @@ export const useStore = create<CommonStoreState>(
           selectedSideIndex: -1,
 
           getResizeHandlePosition(e: ElementModel, handleType: ResizeHandleType) {
-            const { cx, cy, cz, lx, ly, rotation, type, parentId } = e;
-            let p = new Vector3();
+            const { cx, cy, lx, ly, lz, rotation, type, parentId } = e;
+            let p = new Vector3(cx, cy, 0);
+            // FIXME: It seems the x, y components above are absolute, but the z component is relative.
             const v = new Vector2();
             switch (type) {
               case ObjectType.Cuboid:
                 switch (handleType) {
                   case ResizeHandleType.LowerLeftTop:
                     v.set(-lx / 2, -ly / 2);
+                    p.z = lz / 2;
                     break;
                   case ResizeHandleType.LowerRightTop:
                     v.set(lx / 2, -ly / 2);
+                    p.z = lz / 2;
                     break;
                   case ResizeHandleType.UpperLeftTop:
                     v.set(-lx / 2, ly / 2);
+                    p.z = lz / 2;
                     break;
                   case ResizeHandleType.UpperRightTop:
                     v.set(lx / 2, ly / 2);
+                    p.z = lz / 2;
+                    break;
+                  case ResizeHandleType.LowerLeft:
+                    v.set(-lx / 2, -ly / 2);
+                    p.z = -lz / 2;
+                    break;
+                  case ResizeHandleType.LowerRight:
+                    v.set(lx / 2, -ly / 2);
+                    p.z = -lz / 2;
+                    break;
+                  case ResizeHandleType.UpperLeft:
+                    v.set(-lx / 2, ly / 2);
+                    p.z = -lz / 2;
+                    break;
+                  case ResizeHandleType.UpperRight:
+                    v.set(lx / 2, ly / 2);
+                    p.z = -lz / 2;
                     break;
                 }
                 v.rotateAround(ORIGIN_VECTOR2, rotation[2]);
-                p.set(cx + v.x, cy + v.y, cz);
+                p.x += v.x;
+                p.y += v.y;
                 break;
               case ObjectType.Wall:
                 const elements = get().elements;

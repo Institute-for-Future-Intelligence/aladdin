@@ -9,7 +9,6 @@ import * as Selector from './stores/selector';
 import { ObjectType, ResizeHandleType } from './types';
 import { PolarGrid } from './views/polarGrid';
 import { VerticalRuler } from './views/verticalRuler';
-import { HorizontalRuler } from './views/horizontalRuler';
 
 export const Auxiliary = () => {
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -22,7 +21,6 @@ export const Auxiliary = () => {
   const addedFoundationId = useStore(Selector.addedFoundationId);
 
   const [showGrid, setShowGrid] = useState(false);
-  const [showHorizontalRuler, setShowHorizontalRuler] = useState(false);
   const [showVerticalRuler, setShowVerticalRuler] = useState(false);
   const [gridSize, setGridSize] = useState(2 * sceneRadius);
   const [gridDivisions, setDivisions] = useState(2 * sceneRadius);
@@ -47,21 +45,10 @@ export const Auxiliary = () => {
       if (changeHeight) {
         setShowGrid(false);
         setShowVerticalRuler(true);
-      } else {
-        const changeWidthAndLength =
-          resizeHandleType === ResizeHandleType.LowerLeft ||
-          resizeHandleType === ResizeHandleType.LowerRight ||
-          resizeHandleType === ResizeHandleType.UpperLeft ||
-          resizeHandleType === ResizeHandleType.UpperRight;
-        if (changeWidthAndLength) {
-          setShowGrid(true);
-          setShowHorizontalRuler(true);
-        }
       }
     } else {
       setShowGrid(false);
       setShowVerticalRuler(false);
-      setShowHorizontalRuler(false);
     }
   }, [resizeHandleType]);
 
@@ -83,7 +70,6 @@ export const Auxiliary = () => {
       )}
       {rotateHandleType && element && !groundImage && legalOnGround() && <PolarGrid element={element} />}
       {showVerticalRuler && element && <VerticalRuler element={element} />}
-      {showHorizontalRuler && element && <HorizontalRuler element={element} />}
     </>
   );
 };
