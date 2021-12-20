@@ -357,28 +357,29 @@ const Cuboid = ({
 
   const setupGridParams = (face: Vector3) => {
     faceNormalRef.current = face;
+    const aboveDistance = 0.01;
     if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_POS_Z)) {
-      gridPositionRef.current = new Vector3(0, 0, hz);
+      gridPositionRef.current = new Vector3(0, 0, hz + aboveDistance);
       gridRotationRef.current = new Euler(0, 0, 0);
       gridDimensionRef.current.set(hx, hy, hz);
     } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_POS_X)) {
       // east face in view coordinate system
-      gridPositionRef.current = new Vector3(hx, 0, 0);
+      gridPositionRef.current = new Vector3(hx + aboveDistance, 0, 0);
       gridRotationRef.current = new Euler(0, HALF_PI, 0);
       gridDimensionRef.current.set(hz, hy, hx);
     } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_NEG_X)) {
       // west face in view coordinate system
-      gridPositionRef.current = new Vector3(-hx, 0, 0);
+      gridPositionRef.current = new Vector3(-hx - aboveDistance, 0, 0);
       gridRotationRef.current = new Euler(0, -HALF_PI, 0);
       gridDimensionRef.current.set(hz, hy, hx);
     } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_NEG_Y)) {
       // south face in the view coordinate system
-      gridPositionRef.current = new Vector3(0, -hy, 0);
+      gridPositionRef.current = new Vector3(0, -hy - aboveDistance, 0);
       gridRotationRef.current = new Euler(HALF_PI, 0, 0);
       gridDimensionRef.current.set(hx, hz, hy);
     } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_POS_Y)) {
       // north face in the view coordinate system
-      gridPositionRef.current = new Vector3(0, hy, 0);
+      gridPositionRef.current = new Vector3(0, hy + aboveDistance, 0);
       gridRotationRef.current = new Euler(-HALF_PI, 0, 0);
       gridDimensionRef.current.set(hx, hz, hy);
     }

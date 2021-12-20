@@ -54,7 +54,7 @@ export const ElementGrid = React.memo(({ hx, hy, hz, position, rotation }: Eleme
   }, [step, hy]);
 
   return (
-    <group position={position ?? [0, 0, hz]} rotation={rotation}>
+    <group position={position ?? [0, 0, hz + 0.01]} rotation={rotation}>
       {pointsX.map((value) => {
         return (
           <Line
