@@ -2454,6 +2454,59 @@ export const useStore = create<CommonStoreState>(
                         }
                       }
                       break;
+                    case ObjectType.Polygon:
+                      break;
+                    case ObjectType.Foundation:
+                    case ObjectType.Cuboid:
+                      e.cx += e.lx;
+                      if (state.elementsToPaste.length === 1) {
+                        // When copying from an existing container, elementsToPaste stores only the container.
+                        // So we have to copy its children and grandchildren as well. This differs from the
+                        // situation of cutting, in which case all the children and grandchildren must be
+                        // stored in elementsToPaste.
+                        for (const child of state.elements) {
+                          if (child.parentId === elem.id) {
+                            const newChild = ElementModelCloner.clone(e, child, child.cx, child.cy, child.cz);
+                            if (newChild) {
+                              if (e.normal) {
+                                newChild.normal = [...child.normal];
+                              }
+                              pastedElements.push(newChild);
+                              if (newChild?.type === ObjectType.Wall || newChild?.type === ObjectType.Roof) {
+                                for (const grandchild of state.elements) {
+                                  if (grandchild.parentId === child.id) {
+                                    const newGrandChild = ElementModelCloner.clone(
+                                      newChild,
+                                      grandchild,
+                                      grandchild.cx,
+                                      grandchild.cy,
+                                      grandchild.cz,
+                                    );
+                                    if (newGrandChild) {
+                                      if (child.normal) {
+                                        grandchild.normal = [...child.normal];
+                                      }
+                                      pastedElements.push(newGrandChild);
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                        state.elements.push(...pastedElements);
+                        state.elements.push(e);
+                        state.elementsToPaste = [e];
+                      } else if (state.elementsToPaste.length > 1) {
+                        // when a parent with children is cut, the removed children are no longer in elements array,
+                        // so we have to restore them from elementsToPaste.
+                        const cutElements = state.copyCutElements();
+                        cutElements[0].cx += cutElements[0].lx;
+                        state.elements.push(...cutElements);
+                        pastedElements.push(...cutElements);
+                        state.elementsToPaste = cutElements;
+                      }
+                      break;
                   }
                   pastedElements.push(e);
                 }
