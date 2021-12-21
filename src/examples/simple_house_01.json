@@ -6,17 +6,7 @@
   "world": {
     "date": "Tue Jun 22 2021 08:00:00 GMT-0400 (Eastern Daylight Time)",
     "timesPerHour": 20,
-    "panCenter": {
-      "y": 1.6836126220437808,
-      "x": -4.330520829601653,
-      "z": 2.3435024396864037
-    },
     "address": "Natick, MA",
-    "cameraPosition": {
-      "z": 4.226818457359473,
-      "y": 18.91766831822906,
-      "x": 13.010761147885216
-    },
     "latitude": 42.2844063,
     "longitude": -71.3488548,
     "name": "default",
@@ -587,30 +577,30 @@
     "weatherPanelX": 0,
     "yearlyLightSensorPanelX": -905,
     "showHeliodonPanel": false,
-    "cameraPosition": {
-      "x": 15.978980218916636,
-      "y": 14.804568947478922,
-      "z": 3.1550439418593252
-    },
-    "panCenter": {
-      "x": -2.0331634706726187,
-      "y": -3.467343039870245,
-      "z": 2.682926412351644
-    },
+    "cameraPosition": [
+      15.978980218916636,
+      14.804568947478922,
+      3.1550439418593252
+    ],
+    "panCenter": [
+      -2.0331634706726187,
+      -3.467343039870245,
+      2.682926412351644
+    ],
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 22.160664819944607,
     "showInstructionPanel": true,
-    "cameraPosition2D": {
-      "x": 0,
-      "y": -0.00005000222246565045,
-      "z": 49.99999999997442
-    },
-    "panCenter2D": {
-      "x": 0,
-      "y": 0,
-      "z": 0
-    }
+    "cameraPosition2D": [
+      0,
+      -0.00005000222246565045,
+      49.99999999997442
+    ],
+    "panCenter2D": [
+      0,
+      0,
+      0
+    ]
   },
   "notes": [
     "Solar radiation to a box\n\nThis model shows the solar radiation the five sides (top, west, east, south, and north sides) of a box receives. There is a sensor on each side. Analyze the daily and annual sensor data to compare the solar radiation the five sides receive.\n\nYou can also change the day and the location to investigate the dependency of the results on these factors. "

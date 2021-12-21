@@ -5,18 +5,8 @@
   "email": "charles@intofuture.org",
   "world": {
     "address": "Natick, MA",
-    "panCenter": {
-      "z": 23.24711001025498,
-      "y": 0,
-      "x": -4.681812068863081
-    },
     "latitude": 42.3136803635408,
     "longitude": -71.38295104099733,
-    "cameraPosition": {
-      "z": 38.49631026110457,
-      "x": 10.931389372735923,
-      "y": 14.676741417425333
-    },
     "date": "Wed Sep 22 2021 15:00:00 GMT-0400 (Eastern Daylight Time)",
     "timesPerHour": 4,
     "ground": {
@@ -670,32 +660,32 @@
     "shadowEnabled": true,
     "showDailyLightSensorPanel": false,
     "heliodonPanelY": 7,
-    "cameraPosition": {
-      "x": 65.93024719503806,
-      "y": -68.07177699725517,
-      "z": 1.0284993047592403
-    },
-    "panCenter": {
-      "x": 25.78746792976546,
-      "y": -26.05417233880427,
-      "z": 0.2143457232456891
-    },
+    "cameraPosition": [
+      65.93024719503806,
+      -68.07177699725517,
+      1.0284993047592403
+    ],
+    "panCenter": [
+      25.78746792976546,
+      -26.05417233880427,
+      0.2143457232456891
+    ],
     "showMapPanel": false,
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 9.265824603195062,
     "showInstructionPanel": true,
     "showDailyPvYieldPanel": false,
-    "cameraPosition2D": {
-      "x": -3.3546393748050725,
-      "y": -12.234960039075169,
-      "z": 49.99998776456498
-    },
-    "panCenter2D": {
-      "x": -3.3546393748050725,
-      "y": -12.234910036873305,
-      "z": 0.00000836057638522524
-    }
+    "cameraPosition2D": [
+      -3.3546393748050725,
+      -12.234960039075169,
+      49.99998776456498
+    ],
+    "panCenter2D": [
+      -3.3546393748050725,
+      -12.234910036873305,
+      0.00000836057638522524
+    ]
   },
   "notes": [
     ""

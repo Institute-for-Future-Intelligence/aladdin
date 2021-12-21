@@ -4,19 +4,9 @@
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
-    "cameraPosition": {
-      "x": -8.088275916198324,
-      "y": 24.25566322143581,
-      "z": 5.53454910256584
-    },
     "latitude": 42.2844063,
     "timesPerHour": 20,
     "date": "Fri Jan 22 2021 09:45:00 GMT-0500 (Eastern Standard Time)",
-    "panCenter": {
-      "z": 1.012159740387775,
-      "x": -1.749495483197602,
-      "y": 1.9482285134722876
-    },
     "longitude": -71.3488548,
     "name": "default",
     "address": "Natick, MA",
@@ -94,30 +84,30 @@
     "showDailyLightSensorPanel": false,
     "mapZoom": 16,
     "stickyNotePanelX": 0,
-    "cameraPosition": {
-      "x": 9.56658873027612,
-      "y": -17.849925989345532,
-      "z": 4.690133843569779
-    },
-    "panCenter": {
-      "x": 1.9284721678646957,
-      "y": 1.0746189678250615,
-      "z": 2.420128405670479
-    },
+    "cameraPosition": [
+      9.56658873027612,
+      -17.849925989345532,
+      4.690133843569779
+    ],
+    "panCenter": [
+      1.9284721678646957,
+      1.0746189678250615,
+      2.420128405670479
+    ],
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 24.55475326309651,
     "showInstructionPanel": true,
-    "cameraPosition2D": {
-      "x": 0,
-      "y": -0.00004000177797536253,
-      "z": 39.9999999999799
-    },
-    "panCenter2D": {
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
+    "cameraPosition2D": [
+      0,
+      -0.00004000177797536253,
+      39.9999999999799
+    ],
+    "panCenter2D": [
+      0,
+      0,
+      0
+    ],
     "showSunAngles": true
   },
   "notes": []

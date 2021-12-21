@@ -4,19 +4,9 @@
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
-    "panCenter": {
-      "x": 3.851635917562679,
-      "z": 0,
-      "y": 2.343074680222979
-    },
     "latitude": 42.2844063,
     "solarPanelGridCellSize": 0.5,
     "timesPerHour": 4,
-    "cameraPosition": {
-      "y": -12.58725490609337,
-      "z": 9.385498830248793,
-      "x": 19.706952134681586
-    },
     "longitude": -71.3488548,
     "ground": {
       "albedo": 0.3,
@@ -272,30 +262,30 @@
     "shadowEnabled": true,
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
-    "cameraPosition": {
-      "x": 11.74122448046227,
-      "y": -13.025406337790638,
-      "z": 3.2189530787973277
-    },
-    "panCenter": {
-      "x": 6.034144127390067,
-      "y": 1.7440361662019122,
-      "z": 0.4867338538395529
-    },
+    "cameraPosition": [
+      11.74122448046227,
+      -13.025406337790638,
+      3.2189530787973277
+    ],
+    "panCenter": [
+      6.034144127390067,
+      1.7440361662019122,
+      0.4867338538395529
+    ],
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 45.44146361606706,
     "showInstructionPanel": true,
-    "cameraPosition2D": {
-      "x": 2.68477267877577,
-      "y": -0.19810500302601344,
-      "z": 47.99999980190954
-    },
-    "panCenter2D": {
-      "x": 2.68477267877577,
-      "y": -0.19805700089319547,
-      "z": 5.501827899659354e-7
-    }
+    "cameraPosition2D": [
+      2.68477267877577,
+      -0.19810500302601344,
+      47.99999980190954
+    ],
+    "panCenter2D": [
+      2.68477267877577,
+      -0.19805700089319547,
+      5.501827899659354e-7
+    ]
   },
   "notes": []
 }

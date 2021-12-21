@@ -588,11 +588,11 @@
     "axes": true,
     "orthographic": false,
     "showWeatherPanel": false,
-    "cameraPosition": {
-      "y": -21.871452733323405,
-      "z": 3.8384487900999154,
-      "x": 19.87389310844033
-    },
+    "cameraPosition": [
+      -21.871452733323405,
+      3.8384487900999154,
+      19.87389310844033
+    ],
     "mapTilt": 0,
     "showMapPanel": false,
     "autoRotate": false,
@@ -600,11 +600,11 @@
     "mapWeatherStations": false,
     "showGroundPanel": false,
     "groundColor": "forestgreen",
-    "panCenter": {
-      "x": -0.9217313642426836,
-      "y": 1.2822726937281763,
-      "z": 2.047977169020576
-    },
+    "panCenter": [
+      -0.9217313642426836,
+      1.2822726937281763,
+      2.047977169020576
+    ],
     "showInstructionPanel": true,
     "heliodonPanelX": -1235,
     "dailyLightSensorPanelX": -19,
@@ -616,16 +616,16 @@
     "showDailyLightSensorPanel": false,
     "theme": "Forest",
     "weatherPanelX": 0,
-    "cameraPosition2D": {
-      "x": 0.8790434579553117,
-      "y": 3.516123829597026,
-      "z": 50.00000351630349
-    },
-    "panCenter2D": {
-      "x": 0.8790434579553117,
-      "y": 3.5161738318194917,
-      "z": 0.0000035163301233325335
-    }
+    "cameraPosition2D": [
+      0.8790434579553117,
+      3.516123829597026,
+      50.00000351630349
+    ],
+    "panCenter2D": [
+      0.8790434579553117,
+      3.5161738318194917,
+      0.0000035163301233325335
+    ]
   },
   "notes": [
     ""

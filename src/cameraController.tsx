@@ -17,7 +17,7 @@ const CameraController = () => {
   const sceneRadius = useStore(Selector.sceneRadius);
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const cameraZoom = useStore(Selector.viewState.cameraZoom);
-  const cameraPositionLength = Math.hypot(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+  const cameraPositionLength = Math.hypot(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
   const panRadius = (orthographic ? cameraZoom * 50 : cameraPositionLength * 10) * sceneRadius;
   const minPan = useMemo(() => new Vector3(-panRadius, -panRadius, 0), [panRadius]);
   const maxPan = useMemo(() => new Vector3(panRadius, panRadius, panRadius / 2), [panRadius]);
@@ -63,11 +63,10 @@ const CameraController = () => {
   // open new/other file
   useEffect(() => {
     const viewState = useStore.getState().viewState;
-
     if (orbitControlRef.current) {
       if (persCameraRef.current) {
-        const cameraPosition = getVector(viewState.cameraPosition);
-        const panCenter = getVector(viewState.panCenter);
+        const cameraPosition = getVector(viewState.cameraPosition ?? [0, 0, 20]);
+        const panCenter = getVector(viewState.panCenter ?? [0, 0, 0]);
         persCameraRef.current.position.copy(cameraPosition);
         persCameraRef.current.lookAt(panCenter);
         persCameraRef.current.zoom = 1;
@@ -79,10 +78,8 @@ const CameraController = () => {
 
       if (orthCameraRef.current) {
         // old files have no cameraPosition2D and panCenter2D: 12/19/2021
-        const cameraPosition2D = viewState.cameraPosition2D
-          ? getVector(viewState.cameraPosition2D)
-          : new Vector3(0, 0, 20);
-        const panCenter2D = viewState.panCenter2D ? getVector(viewState.panCenter2D) : cameraPosition2D.clone().setZ(0);
+        const cameraPosition2D = getVector(viewState.cameraPosition2D ?? [0, 0, 20]);
+        const panCenter2D = getVector(viewState.panCenter2D ?? [0, 0, 0]);
         orthCameraRef.current.position.copy(cameraPosition2D);
         orthCameraRef.current.rotation.set(0, 0, 0);
         orthCameraRef.current.lookAt(panCenter2D);
@@ -111,19 +108,13 @@ const CameraController = () => {
     const persCam = persCameraRef.current;
 
     if (orthographic) {
-      const cameraPosition2D = viewState.cameraPosition2D
-        ? getVector(viewState.cameraPosition2D)
-        : new Vector3(0, 0, 20);
-      const panCenter2D = viewState.panCenter2D ? getVector(viewState.panCenter2D) : cameraPosition2D.clone().setZ(0);
-      orthCam.position.copy(cameraPosition2D);
       orthCam.rotation.set(0, 0, 0);
       orbitControl.object = orthCam;
-      orbitControl.target.copy(panCenter2D);
+      orbitControl.target.copy(getVector(viewState.panCenter2D ?? [0, 0, 0]));
       set({ camera: orthCam });
     } else {
-      persCam.position.copy(getVector(viewState.cameraPosition));
       orbitControl.object = persCam;
-      orbitControl.target.copy(getVector(viewState.panCenter));
+      orbitControl.target.copy(getVector(viewState.panCenter ?? [0, 0, 0]));
       set({ camera: persCam });
     }
 
@@ -147,30 +138,19 @@ const CameraController = () => {
       if (orbitControlRef.current) {
         const v = state.viewState;
         const cam = get().camera;
-        const cameraPosition = cam.position.clone();
-        const targetPosition = orbitControlRef.current.target.clone();
+        const cameraPosition = cam.position;
+        const targetPosition = orbitControlRef.current.target;
         if (v.orthographic) {
           if (cam.zoom && !isNaN(cam.zoom)) {
             v.cameraZoom = cam.zoom;
           } else {
             v.cameraZoom = 20;
           }
-          // for old files that do not have cameraPosition2D and panCenter2D (note on 12/19/2021)
-          if (!v.cameraPosition2D) v.cameraPosition2D = new Vector3();
-          if (!v.panCenter2D) v.panCenter2D = new Vector3();
-          v.cameraPosition2D.x = cameraPosition.x;
-          v.cameraPosition2D.y = cameraPosition.y;
-          v.cameraPosition2D.z = cameraPosition.z;
-          v.panCenter2D.x = targetPosition.x;
-          v.panCenter2D.y = targetPosition.y;
-          v.panCenter2D.z = targetPosition.z;
+          v.cameraPosition2D = [cameraPosition.x, cameraPosition.y, cameraPosition.z];
+          v.panCenter2D = [targetPosition.x, targetPosition.y, targetPosition.z];
         } else {
-          v.cameraPosition.x = cameraPosition.x;
-          v.cameraPosition.y = cameraPosition.y;
-          v.cameraPosition.z = cameraPosition.z;
-          v.panCenter.x = targetPosition.x;
-          v.panCenter.y = targetPosition.y;
-          v.panCenter.z = targetPosition.z;
+          v.cameraPosition = [cameraPosition.x, cameraPosition.y, cameraPosition.z];
+          v.panCenter = [targetPosition.x, targetPosition.y, targetPosition.z];
         }
       }
     });
@@ -184,10 +164,15 @@ const CameraController = () => {
     return dir;
   };
 
-  // the vector saved in firebase is serialized, we have to convet them to real vector
-  // the better do it when we load files at the first place
-  const getVector = (v: Vector3) => {
-    return new Vector3(v.x, v.y, v.z);
+  const getVector = (n: number[] | Vector3) => {
+    if (n && Array.isArray(n)) {
+      return new Vector3(n[0], n[1], n[2]);
+    }
+    // some of our old files are saved as vector
+    if (n && n.isVector3) {
+      return new Vector3(n.x, n.y, n.z);
+    }
+    return new Vector3(0, 0, 5);
   };
 
   // animation

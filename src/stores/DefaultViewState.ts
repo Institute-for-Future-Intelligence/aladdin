@@ -8,10 +8,10 @@ import { Vector3 } from 'three';
 export class DefaultViewState implements ViewState {
   orthographic: boolean;
   enableRotate: boolean;
-  cameraPosition: Vector3;
-  cameraPosition2D: Vector3;
-  panCenter: Vector3;
-  panCenter2D: Vector3;
+  cameraPosition: number[];
+  cameraPosition2D: number[];
+  panCenter: number[];
+  panCenter2D: number[];
   cameraZoom: number;
 
   axes: boolean;
@@ -60,10 +60,10 @@ export class DefaultViewState implements ViewState {
   constructor() {
     this.orthographic = false;
     this.enableRotate = true;
-    this.cameraPosition = new Vector3(0, -20, 0);
-    this.cameraPosition2D = new Vector3(0, 0, 20);
-    this.panCenter = new Vector3(0, 0, 0);
-    this.panCenter2D = new Vector3(0, 0, 0);
+    this.cameraPosition = [0, -20, 0];
+    this.cameraPosition2D = [0, 0, 20];
+    this.panCenter = [0, 0, 0];
+    this.panCenter2D = [0, 0, 0];
     this.cameraZoom = 20;
 
     this.axes = true;
@@ -113,19 +113,11 @@ export class DefaultViewState implements ViewState {
   static resetViewState(viewState: ViewState) {
     viewState.orthographic = false;
     viewState.enableRotate = true;
-    viewState.cameraPosition.x = 0;
-    viewState.cameraPosition.y = -20;
-    viewState.cameraPosition.z = 0;
-    viewState.panCenter.x = 0;
-    viewState.panCenter.y = 0;
-    viewState.panCenter.z = 0;
+    viewState.cameraPosition = [0, -20, 0];
+    viewState.panCenter = [0, 0, 0];
     viewState.cameraZoom = 20;
-    viewState.cameraPosition2D.x = 0;
-    viewState.cameraPosition2D.y = 0;
-    viewState.cameraPosition2D.z = 20;
-    viewState.panCenter2D.x = 0;
-    viewState.panCenter2D.y = 0;
-    viewState.panCenter2D.z = 0;
+    viewState.cameraPosition2D = [0, 0, 20];
+    viewState.panCenter2D = [0, 0, 0];
 
     viewState.axes = true;
     viewState.shadowEnabled = true;

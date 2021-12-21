@@ -431,27 +431,23 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         if (!orthographic) {
           // if not already reset
           if (
-            cameraPosition.x !== cameraPosition.y ||
-            cameraPosition.y !== cameraPosition.z ||
-            cameraPosition.x !== cameraPosition.z ||
-            panCenter.x !== 0 ||
-            panCenter.y !== 0 ||
-            panCenter.z !== 0
+            cameraPosition[0] !== cameraPosition[1] ||
+            cameraPosition[1] !== cameraPosition[2] ||
+            cameraPosition[0] !== cameraPosition[2] ||
+            panCenter[0] !== 0 ||
+            panCenter[1] !== 0 ||
+            panCenter[2] !== 0
           ) {
             const undoableResetView = {
               name: 'Reset View',
               timestamp: Date.now(),
-              oldCameraPosition: { ...cameraPosition },
-              oldPanCenter: { ...panCenter },
+              oldCameraPosition: [...cameraPosition],
+              oldPanCenter: [...panCenter],
               undo: () => {
                 setCommonStore((state) => {
                   const v = state.viewState;
-                  v.cameraPosition.x = undoableResetView.oldCameraPosition.x;
-                  v.cameraPosition.y = undoableResetView.oldCameraPosition.y;
-                  v.cameraPosition.z = undoableResetView.oldCameraPosition.z;
-                  v.panCenter.x = undoableResetView.oldPanCenter.x;
-                  v.panCenter.y = undoableResetView.oldPanCenter.y;
-                  v.panCenter.z = undoableResetView.oldPanCenter.z;
+                  v.cameraPosition = [...undoableResetView.oldCameraPosition];
+                  v.panCenter = [...undoableResetView.oldPanCenter];
                 });
               },
               redo: () => {

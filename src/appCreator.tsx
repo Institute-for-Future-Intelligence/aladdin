@@ -141,9 +141,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
           const v = state.viewState;
           // FIXME: why can't set function be used with a proxy?
           // Using set or copy will result in crash in run time.
-          v.cameraPosition.x = x;
-          v.cameraPosition.y = y;
-          v.cameraPosition.z = z;
+          v.cameraPosition = [x, y, z];
         });
       }
     }
@@ -162,12 +160,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         // FIXME: why can't set function be used with a proxy?
         // Using set or copy will result in crash in run time.
         const v = state.viewState;
-        v.cameraPosition.x = z;
-        v.cameraPosition.y = z;
-        v.cameraPosition.z = z;
-        v.panCenter.x = 0;
-        v.panCenter.y = 0;
-        v.panCenter.z = 0;
+        v.cameraPosition = [z, z, z];
+        v.panCenter = [0, 0, 0];
       });
     }
   };

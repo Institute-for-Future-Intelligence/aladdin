@@ -8,11 +8,6 @@
     "address": "Natick, MA",
     "name": "default",
     "longitude": -71.3488548,
-    "cameraPosition": {
-      "x": 18.493393519220277,
-      "z": 5.920411348505066,
-      "y": -15.794463038560236
-    },
     "latitude": 42.2844063,
     "ground": {
       "thermalDiffusivity": 0.05,
@@ -31,11 +26,6 @@
         0,
         0
       ]
-    },
-    "panCenter": {
-      "x": -1.4744053085534197,
-      "y": 1.743145139432153,
-      "z": 0
     },
     "date": "Wed Sep 22 2021 14:00:00 GMT-0400 (Eastern Daylight Time)",
     "orthographic": false,
@@ -234,31 +224,31 @@
     "showYearlyLightSensorPanel": false,
     "showDailyLightSensorPanel": false,
     "shadowEnabled": true,
-    "cameraPosition": {
-      "x": 12.032136043105451,
-      "y": -19.27500735361243,
-      "z": 7.568306918458618
-    },
-    "panCenter": {
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
+    "cameraPosition": [
+      12.032136043105451,
+      -19.27500735361243,
+      7.568306918458618
+    ],
+    "panCenter": [
+      0,
+      0,
+      0
+    ],
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 41.01092091350052,
     "stickyNotePanelX": 5,
     "stickyNotePanelY": 2,
-    "cameraPosition2D": {
-      "x": 0,
-      "y": -0.00004000177797536253,
-      "z": 39.99999999997981
-    },
-    "panCenter2D": {
-      "x": 0,
-      "y": 0,
-      "z": 0
-    }
+    "cameraPosition2D": [
+      0,
+      -0.00004000177797536253,
+      39.99999999997981
+    ],
+    "panCenter2D": [
+      0,
+      0,
+      0
+    ]
   },
   "notes": [
     "Solar trackers\n\nAs the sun moves across the sky, solar panels do not always face the sun. Solar trackers allow them to follow the sun like sunflowers to maximize their outputs. This model compares the outputs of solar panels driven by the horizontal single-axis tracker (HSAT), the vertical single-axis tracker (VSAT), and the altazimuth dual-axis trackers (AADAT), as well as that of a fixed solar panel. You can also animate the movement of the sun to see how the solar panels follow it."

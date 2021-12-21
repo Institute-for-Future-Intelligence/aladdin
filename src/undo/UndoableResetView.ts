@@ -3,9 +3,8 @@
  */
 
 import { Undoable } from './Undoable';
-import { Vector3 } from 'three';
 
 export interface UndoableResetView extends Undoable {
-  oldCameraPosition: Vector3;
-  oldPanCenter: Vector3;
+  oldCameraPosition: number[];
+  oldPanCenter: number[];
 }

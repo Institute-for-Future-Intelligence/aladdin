@@ -2,15 +2,13 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import { Vector3 } from 'three';
-
 export interface ViewState {
   orthographic: boolean;
   enableRotate: boolean;
-  cameraPosition: Vector3; // 3D mode
-  panCenter: Vector3; // 3D mode
-  cameraPosition2D: Vector3;
-  panCenter2D: Vector3;
+  cameraPosition: number[]; // 3D mode
+  panCenter: number[]; // 3D mode
+  cameraPosition2D: number[];
+  panCenter2D: number[];
   cameraZoom: number; // for orthographic camera in 2D mode
 
   axes: boolean;
