@@ -30,7 +30,7 @@ import {
   WallTexture,
 } from '../types';
 import { DefaultWorldModel } from './DefaultWorldModel';
-import { Box3, Group, Vector2, Vector3 } from 'three';
+import { Box3, Vector2, Vector3 } from 'three';
 import { ElementModelCloner } from '../models/ElementModelCloner';
 import { DefaultViewState } from './DefaultViewState';
 import { ViewState } from '../views/ViewState';
@@ -53,8 +53,7 @@ import { CuboidModel } from '../models/CuboidModel';
 import { ORIGIN_VECTOR2 } from '../constants';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
-import { RefObject } from 'react';
-import { MyOrbitControls } from 'src/js/MyOrbitControls';
+import { useStoreRef } from './commonRef';
 
 enableMapSet();
 
@@ -624,7 +623,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
           selectMe(id, e, action) {
-            const setEnableOrbitController = useRefStore.getState().setEnableOrbitController;
+            const setEnableOrbitController = useStoreRef.getState().setEnableOrbitController;
             if (e.intersections.length > 0) {
               if (e.intersections[0].object === e.eventObject) {
                 immerSet((state) => {
@@ -2715,23 +2714,3 @@ export const useStore = create<CommonStoreState>(
     ),
   ),
 );
-
-export interface CommonRefStoreState {
-  compassRef: RefObject<Group> | null;
-  orbitControlsRef: RefObject<MyOrbitControls> | null;
-  setEnableOrbitController: (b: boolean) => void;
-}
-
-export const useRefStore = create<CommonRefStoreState>((set, get) => {
-  return {
-    compassRef: null,
-    orbitControlsRef: null,
-    setEnableOrbitController: (b: boolean) => {
-      set((state) => {
-        if (state.orbitControlsRef?.current) {
-          state.orbitControlsRef.current.enabled = b;
-        }
-      });
-    },
-  };
-});

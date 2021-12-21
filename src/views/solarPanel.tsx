@@ -5,7 +5,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Cone, Cylinder, Line, Plane, Ring, Sphere } from '@react-three/drei';
 import { DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
-import { useRefStore, useStore } from '../stores/common';
+import { useStore } from '../stores/common';
+import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
@@ -182,7 +183,7 @@ const SolarPanel = ({
 
   useEffect(() => {
     const handlePointerUp = () => {
-      useRefStore.getState().setEnableOrbitController(true);
+      useStoreRef.getState().setEnableOrbitController(true);
       pointerDown.current = false;
       setShowTiltAngle(false);
     };
@@ -597,7 +598,7 @@ const SolarPanel = ({
             onPointerDown={(e) => {
               setShowTiltAngle(true);
               if (hoveredHandle) {
-                useRefStore.getState().setEnableOrbitController(false);
+                useStoreRef.getState().setEnableOrbitController(false);
                 pointerDown.current = true;
                 const sp = getElementById(id) as SolarPanelModel;
                 oldTiltAngleRef.current = sp.tiltAngle;

@@ -9,7 +9,7 @@ import WindowImage from './resources/window.png';
 import RoofImage from './resources/roof.png';
 
 import React from 'react';
-import { useRefStore, useStore } from './stores/common';
+import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { Modal } from 'antd';
 import 'antd/dist/antd.css';
@@ -28,6 +28,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import i18n from './i18n/i18n';
 import { UndoableRemoveAll } from './undo/UndoableRemoveAll';
 import { UndoableCheck } from './undo/UndoableCheck';
+import { useStoreRef } from './stores/commonRef';
 
 const MainToolBarButtons = () => {
   const setCommonStore = useStore(Selector.set);
@@ -125,7 +126,7 @@ const MainToolBarButtons = () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.Foundation;
           });
-          useRefStore.getState().setEnableOrbitController(false);
+          useStoreRef.getState().setEnableOrbitController(false);
           selectNone();
         }}
       />
@@ -150,7 +151,7 @@ const MainToolBarButtons = () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.Wall;
           });
-          useRefStore.getState().setEnableOrbitController(false);
+          useStoreRef.getState().setEnableOrbitController(false);
           selectNone();
         }}
       />
@@ -174,7 +175,7 @@ const MainToolBarButtons = () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.Window;
           });
-          useRefStore.getState().setEnableOrbitController(false);
+          useStoreRef.getState().setEnableOrbitController(false);
           selectNone();
         }}
       />
@@ -198,7 +199,7 @@ const MainToolBarButtons = () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.Roof;
           });
-          useRefStore.getState().setEnableOrbitController(false);
+          useStoreRef.getState().setEnableOrbitController(false);
           selectNone();
         }}
       />
@@ -212,7 +213,7 @@ const MainToolBarButtons = () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.Cuboid;
           });
-          useRefStore.getState().setEnableOrbitController(false);
+          useStoreRef.getState().setEnableOrbitController(false);
           selectNone();
         }}
       />
@@ -226,7 +227,7 @@ const MainToolBarButtons = () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.Sensor;
           });
-          useRefStore.getState().setEnableOrbitController(false);
+          useStoreRef.getState().setEnableOrbitController(false);
           selectNone();
         }}
       />
@@ -250,7 +251,7 @@ const MainToolBarButtons = () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.SolarPanel;
           });
-          useRefStore.getState().setEnableOrbitController(false);
+          useStoreRef.getState().setEnableOrbitController(false);
           selectNone();
         }}
       />
@@ -264,7 +265,7 @@ const MainToolBarButtons = () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.Tree;
           });
-          useRefStore.getState().setEnableOrbitController(false);
+          useStoreRef.getState().setEnableOrbitController(false);
           selectNone();
         }}
       />
@@ -278,7 +279,7 @@ const MainToolBarButtons = () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.Human;
           });
-          useRefStore.getState().setEnableOrbitController(false);
+          useStoreRef.getState().setEnableOrbitController(false);
           selectNone();
         }}
       />

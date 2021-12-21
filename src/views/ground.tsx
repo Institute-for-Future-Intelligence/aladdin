@@ -3,7 +3,8 @@
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useRefStore, useStore } from '../stores/common';
+import { useStore } from '../stores/common';
+import { useStoreRef } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
 import { Plane } from '@react-three/drei';
 import { DoubleSide, Euler, Mesh, Object3D, OrthographicCamera, Raycaster, Vector2, Vector3 } from 'three';
@@ -446,7 +447,7 @@ const Ground = () => {
       state.resizeHandleType = null;
       state.rotateHandleType = null;
     });
-    useRefStore.getState().setEnableOrbitController(true);
+    useStoreRef.getState().setEnableOrbitController(true);
   };
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
@@ -459,7 +460,7 @@ const Ground = () => {
     if (isSettingFoundationStartPointRef.current) {
       setRayCast(e);
       const intersects = ray.intersectObjects([groundPlaneRef.current]);
-      useRefStore.getState().setEnableOrbitController(false);
+      useStoreRef.getState().setEnableOrbitController(false);
       setCommonStore((state) => {
         state.moveHandleType = null;
         state.resizeHandleType = ResizeHandleType.LowerRight;
@@ -473,7 +474,7 @@ const Ground = () => {
     else if (isSettingCuboidStartPointRef.current) {
       setRayCast(e);
       const intersects = ray.intersectObjects([groundPlaneRef.current]);
-      useRefStore.getState().setEnableOrbitController(false);
+      useStoreRef.getState().setEnableOrbitController(false);
       setCommonStore((state) => {
         state.moveHandleType = null;
         state.resizeHandleType = ResizeHandleType.LowerRight;
@@ -773,7 +774,7 @@ const Ground = () => {
         state.objectTypeToAdd = ObjectType.Foundation;
         state.addedFoundationId = null;
       });
-      useRefStore.getState().setEnableOrbitController(true);
+      useStoreRef.getState().setEnableOrbitController(true);
       grabRef.current = null;
       isSettingFoundationStartPointRef.current = false;
       isSettingFoundationEndPointRef.current = false;
@@ -784,7 +785,7 @@ const Ground = () => {
         state.objectTypeToAdd = ObjectType.Cuboid;
         state.addedCuboidId = null;
       });
-      useRefStore.getState().setEnableOrbitController(true);
+      useStoreRef.getState().setEnableOrbitController(true);
       grabRef.current = null;
       isSettingCuboidStartPointRef.current = false;
       isSettingCuboidEndPointRef.current = false;

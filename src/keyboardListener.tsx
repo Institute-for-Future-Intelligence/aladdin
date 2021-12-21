@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { ObjectType } from './types';
-import { useRefStore, useStore } from './stores/common';
+import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { UndoableDelete } from './undo/UndoableDelete';
 import { UndoablePaste } from './undo/UndoablePaste';
@@ -16,6 +16,7 @@ import { UndoableHorizontalMove } from './undo/UndoableHorizontalMove';
 import { UndoableVerticalMove } from './undo/UndoableVerticalMove';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
 import { WallModel } from './models/WallModel';
+import { useStoreRef } from './stores/commonRef';
 
 export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement;
@@ -577,7 +578,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           state.moveHandleType = null;
           state.resizeHandleType = null;
         });
-        useRefStore.getState().setEnableOrbitController(true);
+        useStoreRef.getState().setEnableOrbitController(true);
         selectNone();
         break;
     }

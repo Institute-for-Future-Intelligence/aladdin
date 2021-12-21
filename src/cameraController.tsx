@@ -4,7 +4,8 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { Vector3 } from 'three';
 import { DEFAULT_FAR, DEFAULT_FOV, HALF_PI } from './constants';
 import { MyOrbitControls } from './js/MyOrbitControls';
-import { useRefStore, useStore } from './stores/common';
+import { useStore } from './stores/common';
+import { useStoreRef } from './stores/commonRef';
 import * as Selector from './stores/selector';
 
 const CameraController = () => {
@@ -40,7 +41,7 @@ const CameraController = () => {
   // save orbitControlRef to common store
   useEffect(() => {
     if (orbitControlRef && orbitControlRef.current) {
-      useRefStore.setState((state) => {
+      useStoreRef.setState((state) => {
         state.orbitControlsRef = orbitControlRef;
       });
     }
@@ -184,7 +185,7 @@ const CameraController = () => {
 
   // *****
   // other components ref
-  const compassMounted = useRefStore((state) => state.compassRef);
+  const compassMounted = useStoreRef((state) => state.compassRef);
 
   // on mount
   useEffect(() => {
@@ -194,7 +195,7 @@ const CameraController = () => {
   // set element whose rotation is related to camera position
   const handleElementRotation = () => {
     // compass
-    const compassRef = useRefStore.getState().compassRef;
+    const compassRef = useStoreRef.getState().compassRef;
     if (compassRef?.current) {
       const dircXY = getCameraDirection(get().camera);
       const rotationZ = (-Math.PI * 17) / 18 + Math.atan2(dircXY.x, dircXY.y);

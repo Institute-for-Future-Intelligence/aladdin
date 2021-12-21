@@ -5,7 +5,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Mesh, Vector3 } from 'three';
 import { Box } from '@react-three/drei';
-import { useRefStore, useStore } from 'src/stores/common';
+import { useStoreRef } from 'src/stores/commonRef';
+import { useStore } from 'src/stores/common';
 import { ResizeHandleType } from 'src/types';
 import * as Selector from 'src/stores/selector';
 
@@ -38,7 +39,7 @@ const WindowResizeHandle = ({ x, z, handleType }: WindowResizeHandleProps) => {
       args={[0.1, 0.1, 0.1]}
       position={[x, 0, z]}
       onPointerDown={(e) => {
-        useRefStore.getState().setEnableOrbitController(false);
+        useStoreRef.getState().setEnableOrbitController(false);
         setCommonStore((state) => {
           state.resizeHandleType = handleType;
           if (handleRef.current) {

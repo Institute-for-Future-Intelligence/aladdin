@@ -5,7 +5,7 @@
  */
 
 import React, { Suspense, useEffect, useRef, useState } from 'react';
-import { useRefStore, useStore } from './stores/common';
+import { useStore } from './stores/common';
 import * as Selector from 'src/stores/selector';
 import { Canvas } from '@react-three/fiber';
 import Sky from './views/sky';
@@ -46,6 +46,7 @@ import { UndoableChange } from './undo/UndoableChange';
 import DesignInfoPanel from './panels/designInfoPanel';
 import SiteInfoPanel from './panels/siteInfoPanel';
 import CameraController from './cameraController';
+import { useStoreRef } from './stores/commonRef';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -129,7 +130,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         state.viewState.cameraZoom = newZoom;
       });
     } else {
-      const orbitControlsRef = useRefStore.getState().orbitControlsRef;
+      const orbitControlsRef = useStoreRef.getState().orbitControlsRef;
       if (orbitControlsRef?.current) {
         const p = orbitControlsRef.current.object.position;
         const x = p.x * scale;
@@ -148,7 +149,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   };
 
   const resetView = () => {
-    const orbitControlsRef = useRefStore.getState().orbitControlsRef;
+    const orbitControlsRef = useStoreRef.getState().orbitControlsRef;
     if (orbitControlsRef?.current) {
       // I don't know why the reset method results in a black screen.
       // So we are resetting it here to a predictable position.

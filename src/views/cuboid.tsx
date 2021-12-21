@@ -17,7 +17,8 @@ import Facade_Texture_10 from '../resources/building_facade_10.png';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Plane, Sphere } from '@react-three/drei';
 import { Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
-import { useRefStore, useStore } from '../stores/common';
+import { useStore } from '../stores/common';
+import { useStoreRef } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
 import { CuboidModel } from '../models/CuboidModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -195,7 +196,7 @@ const Cuboid = ({
       grabRef.current = null;
       setShowGrid(false);
     };
-    useRefStore.getState().setEnableOrbitController(true);
+    useStoreRef.getState().setEnableOrbitController(true);
     window.addEventListener('pointerup', handlePointerUp);
     return () => {
       window.removeEventListener('pointerup', handlePointerUp);
@@ -447,7 +448,7 @@ const Cuboid = ({
               setNormal(face.normal);
             }
           }
-          useRefStore.getState().setEnableOrbitController(false);
+          useStoreRef.getState().setEnableOrbitController(false);
           oldPositionRef.current.x = selectedElement.cx;
           oldPositionRef.current.y = selectedElement.cy;
           oldPositionRef.current.z = selectedElement.cz;

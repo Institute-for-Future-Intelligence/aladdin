@@ -14,7 +14,8 @@ import FoundationTexture07 from '../resources/foundation_07.png';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Plane, Sphere } from '@react-three/drei';
 import { Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
-import { useRefStore, useStore } from '../stores/common';
+import { useStore } from '../stores/common';
+import { useStoreRef } from '../stores/commonRef';
 import { FoundationModel } from '../models/FoundationModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
@@ -213,7 +214,7 @@ const Foundation = ({
         state.addedWallId = null;
         state.deletedWallId = null;
       });
-      useRefStore.getState().setEnableOrbitController(true);
+      useStoreRef.getState().setEnableOrbitController(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deletedWallID]);
@@ -782,7 +783,7 @@ const Foundation = ({
         state.resizeHandleType = resizeHandleType;
         state.resizeAnchor = Util.wallAbsolutePosition(p, foundationModel);
       });
-      useRefStore.getState().setEnableOrbitController(false);
+      useStoreRef.getState().setEnableOrbitController(false);
       grabRef.current = selectedElement;
     }
   };
@@ -794,7 +795,7 @@ const Foundation = ({
     if (elem.type === ObjectType.Wall) {
       const wall = elem as WallModel;
       if (isSettingWallEndPointRef.current && addedWallID && baseRef.current) {
-        useRefStore.getState().setEnableOrbitController(true);
+        useStoreRef.getState().setEnableOrbitController(true);
         setCommonStore((state) => {
           state.objectTypeToAdd = ObjectType.None;
           state.addedWallId = null;
@@ -1150,7 +1151,7 @@ const Foundation = ({
         setAddedWallID(addedWall.id);
         isSettingWallStartPointRef.current = true;
         setShowGrid(true);
-        useRefStore.getState().setEnableOrbitController(false);
+        useStoreRef.getState().setEnableOrbitController(false);
         setCommonStore((state) => {
           state.addedWallId = addedWall.id;
           state.objectTypeToAdd = ObjectType.None;
