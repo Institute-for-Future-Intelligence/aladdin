@@ -20,7 +20,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { DoubleSide, Euler, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { Billboard, Cone, Plane, Sphere } from '@react-three/drei';
 import { HALF_PI, MOVE_HANDLE_RADIUS, TWO_PI } from '../constants';
 import { TreeModel } from '../models/TreeModel';
@@ -51,24 +51,18 @@ const Tree = ({
 
   const now = new Date(date);
   const [hovered, setHovered] = useState(false);
-  const trunkMeshRef = useRef<Mesh>(null!);
-  const {
-    gl: { domElement },
-    camera,
-  } = useThree();
-  const [updateFlag, setUpdateFlag] = useState(false);
+  const { gl } = useThree();
+  const trunkMeshRef = useRef<Mesh>(null);
+  const solidTreeRef = useRef<Mesh>(null);
 
   const month = now.getMonth() + 1;
   const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
   const lang = { lng: language };
 
-  useStore(Selector.viewState.cameraPosition);
   const sunlightX = sunlightDirection.x;
   const sunlightZ = sunlightDirection.y;
-  const cameraX = camera.position.x;
-  const cameraZ = camera.position.y;
 
-  const texture = useMemo(() => {
+  const textureLoader = useMemo(() => {
     let textureImg;
     switch (name) {
       case TreeType.Cottonwood:
@@ -93,9 +87,11 @@ const Tree = ({
         textureImg = PineImage;
     }
     return new TextureLoader().load(textureImg, (texture) => {
-      setUpdateFlag(!updateFlag);
+      setTexture(texture);
     });
   }, [name, noLeaves]);
+
+  const [texture, setTexture] = useState(textureLoader);
 
   const labelText = useMemo(() => {
     switch (name) {
@@ -137,18 +133,21 @@ const Tree = ({
     }
   }, [name]);
 
-  const solidTreeRotation = useMemo(() => {
-    return new Euler(HALF_PI, -Math.atan2(cameraX - cx, cameraZ - cy), 0);
-  }, [cameraX, cameraZ, cx, cy]);
-
   const shadowTreeRotation = useMemo(() => {
     return new Euler(HALF_PI, -Math.atan2(sunlightX, sunlightZ), 0);
   }, [sunlightX, sunlightZ]);
 
+  useFrame(({ camera }) => {
+    if (solidTreeRef && solidTreeRef.current) {
+      const { x, y } = camera.position;
+      solidTreeRef.current.rotation.set(HALF_PI, -Math.atan2(x - cx, y - cy), 0);
+    }
+  });
+
   // IMPORTANT: model mesh must use double side in order to intercept sunlight
   return (
     <group name={'Tree Group ' + id} userData={{ aabb: true }} position={[cx, cy, (cz ?? 0) + lz / 2]}>
-      <Billboard uuid={id} name={name} follow={false} rotation={solidTreeRotation}>
+      <Billboard ref={solidTreeRef} uuid={id} name={name} follow={false}>
         <Plane args={[lx, lz]}>
           <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
         </Plane>
@@ -234,10 +233,10 @@ const Tree = ({
             selectMe(id, e, ActionType.Move);
           }}
           onPointerOver={(e) => {
-            domElement.style.cursor = 'move';
+            gl.domElement.style.cursor = 'move';
           }}
           onPointerOut={(e) => {
-            domElement.style.cursor = 'default';
+            gl.domElement.style.cursor = 'default';
           }}
         >
           <meshStandardMaterial attach="material" color={'orange'} />

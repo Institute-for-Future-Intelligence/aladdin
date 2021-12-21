@@ -201,10 +201,6 @@ const CameraController = () => {
       const rotationZ = (-Math.PI * 17) / 18 + Math.atan2(dircXY.x, dircXY.y);
       compassRef.current.rotation.set(-Math.PI / 3, 0, rotationZ);
     }
-
-    // human
-
-    // tree
   };
 
   return (

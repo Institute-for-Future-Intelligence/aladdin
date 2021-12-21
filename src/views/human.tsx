@@ -26,10 +26,10 @@ import XiaoliImage from '../resources/xiaoli.png';
 import XiaomingImage from '../resources/xiaoming.png';
 
 import React, { useMemo, useRef, useState } from 'react';
-import { DoubleSide, Euler, Mesh, TextureLoader, Vector3 } from 'three';
+import { DoubleSide, Group, Mesh, TextureLoader } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { HumanModel } from '../models/HumanModel';
 import { Billboard, Plane, Sphere } from '@react-three/drei';
 import { HALF_PI, MOVE_HANDLE_RADIUS } from '../constants';
@@ -42,21 +42,15 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const selectMe = useStore(Selector.selectMe);
 
+  const { gl } = useThree();
   const [hovered, setHovered] = useState(false);
-  const [updateFlag, setUpdateFlag] = useState(false);
-  const meshRef = useRef<Mesh>(null!);
-  const {
-    gl: { domElement },
-    camera,
-  } = useThree();
+  const groupRef = useRef<Group>(null);
+  const billboardRef = useRef<Mesh>(null);
+  const planeRef = useRef<Mesh>(null);
 
-  // have to add this to listen to world(camera) change, this is better than memo's shallow campare
-  useStore(Selector.viewState.cameraPosition);
-  const cameraX = camera.position.x;
-  const cameraY = camera.position.y;
   const lang = { lng: language };
 
-  const texture = useMemo(() => {
+  const textureLoader = useMemo(() => {
     let textureImg;
     switch (name) {
       case HumanName.Jade:
@@ -126,9 +120,11 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
         textureImg = JackImage;
     }
     return new TextureLoader().load(textureImg, (texture) => {
-      setUpdateFlag(!updateFlag);
+      setTexture(texture);
     });
   }, [name]);
+
+  const [texture, setTexture] = useState(textureLoader);
 
   const width = useMemo(() => {
     switch (name) {
@@ -249,15 +245,24 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
     }
   }, [name]);
 
-  const rotation = useMemo(() => {
-    return new Euler(HALF_PI, -Math.atan2(cameraX - cx, cameraY - cy), 0);
-  }, [cameraX, cameraY, cx, cy]);
+  useFrame(({ camera }) => {
+    if (billboardRef?.current && groupRef?.current) {
+      const { x: cameraX, y: cameraY } = camera.position;
+      const { x: currX, y: currY } = groupRef.current.position;
+      billboardRef.current.rotation.set(HALF_PI, -Math.atan2(cameraX - currX, cameraY - currY), 0);
+    }
+  });
 
   return (
-    <group name={'Human Group ' + id} userData={{ aabb: true }} position={[cx, cy, (cz ?? 0) + height / 2]}>
-      <Billboard uuid={id} name={name} follow={orthographic} rotation={rotation}>
+    <group
+      ref={groupRef}
+      name={'Human Group ' + id}
+      userData={{ aabb: true }}
+      position={[cx, cy, (cz ?? 0) + height / 2]}
+    >
+      <Billboard ref={billboardRef} uuid={id} name={name} follow={orthographic}>
         <Plane
-          ref={meshRef}
+          ref={planeRef}
           renderOrder={3}
           name={name + ' plane'}
           args={[width, height]}
@@ -265,7 +270,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
             selectMe(id, e);
             setCommonStore((state) => {
               if (e.intersections.length > 0) {
-                const intersected = e.intersections[0].object === meshRef.current;
+                const intersected = e.intersections[0].object === planeRef.current;
                 if (intersected) {
                   state.contextMenuObjectType = ObjectType.Human;
                 }
@@ -278,7 +283,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
           }}
           onPointerOver={(e) => {
             if (e.intersections.length > 0) {
-              const intersected = e.intersections[0].object === meshRef.current;
+              const intersected = e.intersections[0].object === planeRef.current;
               if (intersected) {
                 setHovered(true);
               }
@@ -295,17 +300,17 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
       {/* draw handle */}
       {selected && !locked && (
         <Sphere
-          position={new Vector3(0, 0, -height / 2)}
+          position={[0, 0, -height / 2]}
           args={[MOVE_HANDLE_RADIUS * 4, 6, 6]}
           name={MoveHandleType.Default}
           onPointerDown={(e) => {
             selectMe(id, e, ActionType.Move);
           }}
           onPointerOver={(e) => {
-            domElement.style.cursor = 'move';
+            gl.domElement.style.cursor = 'move';
           }}
           onPointerOut={(e) => {
-            domElement.style.cursor = 'default';
+            gl.domElement.style.cursor = 'default';
           }}
         >
           <meshStandardMaterial attach="material" color={'orange'} />
