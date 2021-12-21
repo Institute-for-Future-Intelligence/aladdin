@@ -169,8 +169,8 @@ const CameraController = () => {
     if (n && Array.isArray(n)) {
       return new Vector3(n[0], n[1], n[2]);
     }
-    // some of our old files are saved as vector
-    if (n && n.isVector3) {
+    // some of our old files are saved as serialized vector
+    if (n && n.x !== null) {
       return new Vector3(n.x, n.y, n.z);
     }
     return new Vector3(0, 0, 5);
