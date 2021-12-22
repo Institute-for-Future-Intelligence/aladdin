@@ -26,6 +26,7 @@ export const i18n_en = {
       FundingInformation:
         'The National Science Foundation (NSF) generously provided funding for the research and development of this product through grants #2105695 and #2131097. Any opinions, findings, and conclusions or recommendations expressed in this product, however, are those of the authors and do not necessarily reflect the views of NSF.',
       Contact: 'For more information, please contact Charles Xie (charles@intofuture.org).',
+      Translators: 'Translators',
     },
 
     word: {

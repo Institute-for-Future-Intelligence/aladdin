@@ -6,6 +6,7 @@ import React from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
+import { Language } from './types';
 
 export interface TeamProps {
   top: number;
@@ -17,8 +18,8 @@ const Team = ({ top, height, color }: TeamProps) => {
   const language = useStore(Selector.language);
   const lang = { lng: language };
   const linePos = top + 56 + 'px';
-  const top110 = top + 110 + 'px';
-  const top250 = top + 220 + 'px';
+  const top100 = top + 100 + 'px';
+  const top200 = top + 190 + 'px';
 
   return (
     <div>
@@ -69,7 +70,7 @@ const Team = ({ top, height, color }: TeamProps) => {
           style={{
             position: 'absolute',
             border: 'none',
-            top: top110,
+            top: top100,
             left: '10%',
             width: '80%',
             fontSize: 'small',
@@ -119,12 +120,15 @@ const Team = ({ top, height, color }: TeamProps) => {
           position: 'absolute',
           left: '10%',
           marginRight: '10%',
-          top: top250,
-          fontSize: 'small',
+          top: top200,
+          fontSize: 'smaller',
           textAlign: 'justify',
           color: color,
         }}
       >
+        {i18n.t('aboutUs.Translators', lang)}: {Language.Spanish} (Alex Barco), {Language.Turkish} (Hasan Bircan)
+        <br />
+        <br />
         {i18n.t('aboutUs.Acknowledgment', lang)}: {i18n.t('aboutUs.FundingInformation', lang)}{' '}
         {i18n.t('aboutUs.Contact', lang)}
       </div>
