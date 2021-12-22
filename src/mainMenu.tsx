@@ -910,6 +910,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Radio style={radioStyle} value={'en'}>
             {Language.English}
           </Radio>
+          <Radio style={radioStyle} value={'es'}>
+            {Language.Spanish}
+          </Radio>
           <Radio style={radioStyle} value={'zh_cn'}>
             {Language.ChineseSimplified}
           </Radio>
@@ -918,9 +921,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Radio>
           <Radio style={radioStyle} value={'tr'}>
             {Language.Turkish}
-          </Radio>
-          <Radio style={radioStyle} value={'es'}>
-            {Language.Spanish}
           </Radio>
         </Radio.Group>
       </SubMenu>

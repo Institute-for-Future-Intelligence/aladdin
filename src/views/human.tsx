@@ -44,6 +44,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
 
   const { gl } = useThree();
   const [hovered, setHovered] = useState(false);
+  const [updateFlag, setUpdateFlag] = useState(false);
   const groupRef = useRef<Group>(null);
   const billboardRef = useRef<Mesh>(null);
   const planeRef = useRef<Mesh>(null);
@@ -121,6 +122,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
     }
     return new TextureLoader().load(textureImg, (texture) => {
       setTexture(texture);
+      setUpdateFlag(!updateFlag);
     });
   }, [name]);
 

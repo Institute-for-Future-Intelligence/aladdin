@@ -51,6 +51,7 @@ const Tree = ({
 
   const now = new Date(date);
   const [hovered, setHovered] = useState(false);
+  const [updateFlag, setUpdateFlag] = useState(false);
   const { gl } = useThree();
   const trunkMeshRef = useRef<Mesh>(null);
   const solidTreeRef = useRef<Mesh>(null);
@@ -88,6 +89,7 @@ const Tree = ({
     }
     return new TextureLoader().load(textureImg, (texture) => {
       setTexture(texture);
+      setUpdateFlag(!updateFlag);
     });
   }, [name, noLeaves]);
 
