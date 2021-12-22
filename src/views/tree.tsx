@@ -17,7 +17,7 @@ import OakShedImage from '../resources/oak_shed.png';
 import PineImage from '../resources/pine.png';
 
 import React, { useMemo, useRef, useState } from 'react';
-import { DoubleSide, Euler, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3 } from 'three';
+import { DoubleSide, Euler, Group, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useFrame, useThree } from '@react-three/fiber';
@@ -26,6 +26,7 @@ import { HALF_PI, MOVE_HANDLE_RADIUS, TWO_PI } from '../constants';
 import { TreeModel } from '../models/TreeModel';
 import { ActionType, MoveHandleType, ObjectType, TreeType } from '../types';
 import i18n from '../i18n/i18n';
+import { useStoreRef } from 'src/stores/commonRef';
 
 const Tree = ({
   id,
@@ -55,6 +56,7 @@ const Tree = ({
   const { gl } = useThree();
   const trunkMeshRef = useRef<Mesh>(null);
   const solidTreeRef = useRef<Mesh>(null);
+  const groupRef = useRef<Group>(null);
 
   const month = now.getMonth() + 1;
   const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
@@ -140,120 +142,129 @@ const Tree = ({
   }, [sunlightX, sunlightZ]);
 
   useFrame(({ camera }) => {
-    if (solidTreeRef && solidTreeRef.current) {
-      const { x, y } = camera.position;
-      solidTreeRef.current.rotation.set(HALF_PI, -Math.atan2(x - cx, y - cy), 0);
+    if (groupRef?.current && solidTreeRef?.current) {
+      const { x: cameraX, y: cameraY } = camera.position;
+      const { x: currX, y: currY } = groupRef.current.position;
+      solidTreeRef.current.rotation.set(HALF_PI, -Math.atan2(cameraX - currX, cameraY - currY), 0);
     }
   });
 
   // IMPORTANT: model mesh must use double side in order to intercept sunlight
   return (
-    <group name={'Tree Group ' + id} userData={{ aabb: true }} position={[cx, cy, (cz ?? 0) + lz / 2]}>
-      <Billboard ref={solidTreeRef} uuid={id} name={name} follow={false}>
-        <Plane args={[lx, lz]}>
-          <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
-        </Plane>
-      </Billboard>
+    <group ref={groupRef} name={'Tree Group ' + id} userData={{ aabb: true }} position={[cx, cy, cz ?? 0]}>
+      <group position={[0, 0, lz / 2]}>
+        <Billboard ref={solidTreeRef} uuid={id} name={name} follow={false}>
+          <Plane args={[lx, lz]}>
+            <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
+          </Plane>
+        </Billboard>
 
-      {/* cast shadow */}
-      <Billboard name={name + ' Shadow Billboard'} follow={false} rotation={shadowTreeRotation}>
-        <Plane castShadow={shadowEnabled} args={[lx, lz]} customDepthMaterial={customDepthMaterial}>
-          <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0} depthTest={false} />
-        </Plane>
-      </Billboard>
+        {/* cast shadow */}
+        <Billboard name={name + ' Shadow Billboard'} follow={false} rotation={shadowTreeRotation}>
+          <Plane castShadow={shadowEnabled} args={[lx, lz]} customDepthMaterial={customDepthMaterial}>
+            <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0} depthTest={false} />
+          </Plane>
+        </Billboard>
 
-      {/* simulation model */}
-      {name !== TreeType.Pine ? (
-        <Sphere
-          visible={(showModel && !noLeaves) || orthographic}
-          userData={{ simulation: !noLeaves }}
-          name={name + ' Model'}
-          args={[lx / 2, 8, 8, 0, TWO_PI, 0, theta]}
-          scale={[1, lz / lx, 1]}
-          rotation={[HALF_PI, 0, 0]}
-        >
-          <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75} />
-        </Sphere>
-      ) : (
-        <Cone
-          visible={showModel || orthographic}
-          name={name + ' Model'}
-          userData={{ simulation: true }}
-          position={[0, 0, lz * 0.1]}
-          args={[lx / 2, lz, 8, 8, true]}
-          scale={[1, 1, 1]}
-          rotation={[HALF_PI, 0, 0]}
-        >
-          <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75} />
-        </Cone>
-      )}
+        {/* simulation model */}
+        {name !== TreeType.Pine ? (
+          <Sphere
+            visible={(showModel && !noLeaves) || orthographic}
+            userData={{ simulation: !noLeaves }}
+            name={name + ' Model'}
+            args={[lx / 2, 8, 8, 0, TWO_PI, 0, theta]}
+            scale={[1, lz / lx, 1]}
+            rotation={[HALF_PI, 0, 0]}
+          >
+            <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75} />
+          </Sphere>
+        ) : (
+          <Cone
+            visible={showModel || orthographic}
+            name={name + ' Model'}
+            userData={{ simulation: true }}
+            position={[0, 0, lz * 0.1]}
+            args={[lx / 2, lz, 8, 8, true]}
+            scale={[1, 1, 1]}
+            rotation={[HALF_PI, 0, 0]}
+          >
+            <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75} />
+          </Cone>
+        )}
 
-      {/* billboard for interactions (don't use a plane as it may become unselected at some angle) */}
-      <Billboard name={'Interaction Billboard'} visible={false} position={[0, 0, -lz / 2 + 0.5]}>
-        <Plane
-          ref={trunkMeshRef}
-          renderOrder={3}
-          name={name + ' plane'}
-          args={[lx / 2, 1]}
-          onContextMenu={(e) => {
-            selectMe(id, e);
-            setCommonStore((state) => {
+        {/* billboard for interactions (don't use a plane as it may become unselected at some angle) */}
+        <Billboard name={'Interaction Billboard'} visible={false} position={[0, 0, -lz / 2 + 0.5]}>
+          <Plane
+            ref={trunkMeshRef}
+            renderOrder={3}
+            name={name + ' plane'}
+            args={[lx / 2, 1]}
+            onContextMenu={(e) => {
+              selectMe(id, e);
+              setCommonStore((state) => {
+                if (e.intersections.length > 0) {
+                  const intersected = e.intersections[0].object === trunkMeshRef.current;
+                  if (intersected) {
+                    state.contextMenuObjectType = ObjectType.Tree;
+                  }
+                }
+              });
+            }}
+            onPointerDown={(e) => {
+              if (e.button === 2) return; // ignore right-click
+              selectMe(id, e, ActionType.Move);
+              useStoreRef.setState((state) => {
+                state.treeRef = groupRef;
+              });
+            }}
+            onPointerOver={(e) => {
               if (e.intersections.length > 0) {
                 const intersected = e.intersections[0].object === trunkMeshRef.current;
                 if (intersected) {
-                  state.contextMenuObjectType = ObjectType.Tree;
+                  setHovered(true);
                 }
               }
-            });
-          }}
-          onPointerDown={(e) => {
-            if (e.button === 2) return; // ignore right-click
-            selectMe(id, e, ActionType.Move);
-          }}
-          onPointerOver={(e) => {
-            if (e.intersections.length > 0) {
-              const intersected = e.intersections[0].object === trunkMeshRef.current;
-              if (intersected) {
-                setHovered(true);
-              }
-            }
-          }}
-          onPointerOut={(e) => {
-            setHovered(false);
-          }}
-        />
-      </Billboard>
+            }}
+            onPointerOut={(e) => {
+              setHovered(false);
+            }}
+          />
+        </Billboard>
 
-      {/* draw handle */}
-      {selected && !locked && (
-        <Sphere
-          position={new Vector3(0, 0, -lz / 2)}
-          args={[MOVE_HANDLE_RADIUS * 4, 6, 6]}
-          name={MoveHandleType.Default}
-          renderOrder={2}
-          onPointerDown={(e) => {
-            selectMe(id, e, ActionType.Move);
-          }}
-          onPointerOver={(e) => {
-            gl.domElement.style.cursor = 'move';
-          }}
-          onPointerOut={(e) => {
-            gl.domElement.style.cursor = 'default';
-          }}
-        >
-          <meshStandardMaterial attach="material" color={'orange'} />
-        </Sphere>
-      )}
-      {hovered && !selected && (
-        <textSprite
-          name={'Label'}
-          text={labelText + (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')}
-          fontSize={20}
-          fontFace={'Times Roman'}
-          textHeight={0.2}
-          position={[0, 0, lz / 2 + 0.4]}
-        />
-      )}
+        {/* draw handle */}
+        {selected && !locked && (
+          <Sphere
+            position={new Vector3(0, 0, -lz / 2)}
+            args={[MOVE_HANDLE_RADIUS * 4, 6, 6]}
+            name={MoveHandleType.Default}
+            renderOrder={2}
+            onPointerDown={(e) => {
+              selectMe(id, e, ActionType.Move);
+              useStoreRef.setState((state) => {
+                state.treeRef = groupRef;
+              });
+            }}
+            onPointerOver={(e) => {
+              gl.domElement.style.cursor = 'move';
+            }}
+            onPointerOut={(e) => {
+              gl.domElement.style.cursor = 'default';
+            }}
+          >
+            <meshStandardMaterial attach="material" color={'orange'} />
+          </Sphere>
+        )}
+        {hovered && !selected && (
+          <textSprite
+            name={'Label'}
+            text={labelText + (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')}
+            fontSize={20}
+            fontFace={'Times Roman'}
+            textHeight={0.2}
+            position={[0, 0, lz / 2 + 0.4]}
+          />
+        )}
+      </group>
     </group>
   );
 };

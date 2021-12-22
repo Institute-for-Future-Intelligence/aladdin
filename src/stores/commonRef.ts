@@ -11,6 +11,8 @@ export interface CommonStoreRef {
   compassRef: RefObject<Group> | null;
   orbitControlsRef: RefObject<MyOrbitControls> | null;
   setEnableOrbitController: (b: boolean) => void;
+  humanRef: RefObject<Group> | null;
+  treeRef: RefObject<Group> | null;
 }
 
 export const useStoreRef = create<CommonStoreRef>((set, get) => {
@@ -24,5 +26,7 @@ export const useStoreRef = create<CommonStoreRef>((set, get) => {
         }
       });
     },
+    humanRef: null,
+    treeRef: null,
   };
 });
