@@ -2094,6 +2094,12 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.id === id) {
+                  if (e.type === ObjectType.Polygon) {
+                    // set cx and cy for polygon for pasting (otherwise, they may be unset)
+                    const centroid = Util.calculatePolygonCentroid((e as PolygonModel).vertices);
+                    e.cx = centroid.x;
+                    e.cy = centroid.y;
+                  }
                   state.elementsToPaste = [e];
                   break;
                 }
@@ -2106,6 +2112,12 @@ export const useStore = create<CommonStoreState>(
                 if (elem.id === id) {
                   // the first element must be the parent if there are children needed to be removed as well
                   if (cut) {
+                    if (elem.type === ObjectType.Polygon) {
+                      // set cx and cy for polygon for pasting (otherwise, they may be unset)
+                      const centroid = Util.calculatePolygonCentroid((elem as PolygonModel).vertices);
+                      elem.cx = centroid.x;
+                      elem.cy = centroid.y;
+                    }
                     state.elementsToPaste = [elem];
                   } else {
                     state.deletedElements = [elem];
@@ -2448,6 +2460,13 @@ export const useStore = create<CommonStoreState>(
                       }
                       break;
                     case ObjectType.Polygon:
+                      const polygon = e as PolygonModel;
+                      for (const v of polygon.vertices) {
+                        v.x += 0.1;
+                      }
+                      polygon.cx += 0.1;
+                      state.elements.push(polygon);
+                      state.elementsToPaste = [polygon];
                       break;
                     case ObjectType.Foundation:
                     case ObjectType.Cuboid:

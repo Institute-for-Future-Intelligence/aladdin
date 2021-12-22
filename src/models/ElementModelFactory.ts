@@ -109,8 +109,8 @@ export class ElementModelFactory {
     }
     return {
       type: ObjectType.Polygon,
-      cx: 0, // not used
-      cy: 0, // not used
+      cx: x,
+      cy: y,
       cz: 0,
       lx: 0.1, // not used
       ly: 0.1, // not used

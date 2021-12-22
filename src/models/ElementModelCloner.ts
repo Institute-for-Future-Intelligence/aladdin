@@ -115,11 +115,11 @@ export class ElementModelCloner {
         foundationId = parent.parentId;
         break;
     }
-    const v = JSON.parse(JSON.stringify(polygon.vertices));
+    const vertices = polygon.vertices.map((v) => ({ ...v })); // deep copy;
     const pm = {
       type: ObjectType.Polygon,
-      cx: x, // not used
-      cy: y, // not used
+      cx: x,
+      cy: y,
       cz: z, // not used
       lx: polygon.lx, // not used
       ly: polygon.ly, // not used
@@ -128,7 +128,7 @@ export class ElementModelCloner {
       color: polygon.color,
       normal: [...polygon.normal],
       rotation: polygon.parentId ? [...parent.rotation] : [0, 0, 0],
-      vertices: v,
+      vertices: vertices,
       parentId: parent.id,
       foundationId: foundationId,
       id: short.generate() as string,
