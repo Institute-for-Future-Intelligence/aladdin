@@ -152,6 +152,7 @@ const CameraController = () => {
         } else {
           v.cameraPosition = [cameraPosition.x, cameraPosition.y, cameraPosition.z];
           v.panCenter = [targetPosition.x, targetPosition.y, targetPosition.z];
+          state.cameraDirection = getCameraDirection(cam);
         }
       }
     });
