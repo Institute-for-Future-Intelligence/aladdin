@@ -322,7 +322,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
           />
         </div>
       </DropdownContextMenu>
-      {!orthographic && <CompassContainer />}
+      <CompassContainer visible={!orthographic} />
       {!viewOnly && <AcceptCookie />}
     </div>
   );

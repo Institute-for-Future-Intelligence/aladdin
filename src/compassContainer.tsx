@@ -9,16 +9,16 @@ import Compass from './views/compass';
 
 const Container = styled.div`
   position: absolute;
-  bottom: 0px;
-  right: 0px;
+  bottom: 0;
+  right: 0;
   height: 125px;
   width: 200px;
   pointer-events: none;
 `;
 
-const CompassContainer = () => {
+const CompassContainer = ({ visible = true }: { visible: boolean }) => {
   return (
-    <Container className="compass-container">
+    <Container className="compass-container" style={{ visibility: visible ? 'visible' : 'hidden' }}>
       <Canvas camera={{ fov: 45 }}>
         <directionalLight position={[0, 5, 0]} intensity={0.2} />
         <ambientLight intensity={0.1} />

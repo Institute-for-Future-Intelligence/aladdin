@@ -108,7 +108,7 @@ const Polygon = ({
 
   const cz = useMemo(() => {
     if (parent) {
-      return parent.cz + (parent.lz + lz) / 2;
+      return parent.cz + (parent.lz + lz) / 2 + 0.1;
     }
     return lz / 2 + 0.1;
   }, [parent]);
