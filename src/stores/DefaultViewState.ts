@@ -3,7 +3,6 @@
  */
 
 import { ViewState } from '../views/ViewState';
-import { Vector3 } from 'three';
 
 export class DefaultViewState implements ViewState {
   orthographic: boolean;

@@ -312,8 +312,6 @@ export const selectNone = (state: CommonStoreState) => state.selectNone;
 
 export const addElement = (state: CommonStoreState) => state.addElement;
 
-export const addPolygon = (state: CommonStoreState) => state.addPolygon;
-
 export const objectTypeToAdd = (state: CommonStoreState) => state.objectTypeToAdd;
 
 export const countElementsByType = (state: CommonStoreState) => state.countElementsByType;

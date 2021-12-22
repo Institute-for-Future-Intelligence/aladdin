@@ -26,8 +26,6 @@ import i18n from '../i18n/i18n';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
 
-// TODO: Only on foundation for now
-
 const Polygon = ({
   id,
   lx = 0.1,

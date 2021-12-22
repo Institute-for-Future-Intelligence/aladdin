@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2021. Institute for Future Intelligence, Inc.
+ */
+
 import { RefObject } from 'react';
 import { MyOrbitControls } from 'src/js/MyOrbitControls';
 import { Group } from 'three';

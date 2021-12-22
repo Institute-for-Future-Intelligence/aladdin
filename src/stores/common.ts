@@ -272,7 +272,6 @@ export interface CommonStoreState {
 
   objectTypeToAdd: ObjectType;
   addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => ElementModel | null;
-  addPolygon: (parent: ElementModel, position?: Vector3, normal?: Vector3) => ElementModel | null;
 
   pastePoint: Vector3;
   pasteNormal: Vector3 | undefined;
@@ -2065,23 +2064,6 @@ export const useStore = create<CommonStoreState>(
                   model = wall;
                   break;
               }
-            });
-            return model;
-          },
-          addPolygon(parent: ElementModel, position, normal) {
-            let model = null;
-            immerSet((state: CommonStoreState) => {
-              const polygonParentModel = parent as ElementModel;
-              const polygonRelativeCoordinates = position
-                ? Util.relativeCoordinates(position.x, position.y, position.z, polygonParentModel)
-                : new Vector3();
-              const polygon = ElementModelFactory.makePolygon(
-                polygonParentModel,
-                polygonRelativeCoordinates.x,
-                polygonRelativeCoordinates.y,
-              );
-              state.elements.push(polygon);
-              model = polygon;
             });
             return model;
           },

@@ -80,7 +80,7 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
           />
           <label>{solarPanelCount}</label>
           <FontAwesomeIcon
-            title={i18n.t('designInfoPanel.EstimatedSceneScope', lang)}
+            title={i18n.t('designInfoPanel.SceneRadius', lang)}
             icon={faArrowsAltH}
             size={'3x'}
             color={color}
@@ -89,7 +89,7 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
             }}
             style={{ paddingLeft: '10px', cursor: 'pointer' }}
           />
-          <label>{sceneRadius * 2 + ' ' + i18n.t('word.MeterAbbreviation', lang)}</label>
+          <label>{sceneRadius + ' ' + i18n.t('word.MeterAbbreviation', lang)}</label>
         </Space>
       </ColumnWrapper>
     </Container>

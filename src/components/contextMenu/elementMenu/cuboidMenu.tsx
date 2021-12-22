@@ -20,6 +20,8 @@ import CuboidAzimuthInput from './cuboidAzimuthInput';
 import CuboidTextureSelection from './cuboidTextureSelection';
 import { CuboidModel } from '../../../models/CuboidModel';
 import { UndoableAdd } from '../../../undo/UndoableAdd';
+import { UNIT_VECTOR_POS_Z } from '../../../constants';
+import { Vector3 } from 'three';
 
 export const CuboidMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -35,7 +37,7 @@ export const CuboidMenu = () => {
   const elementsToPaste = useStore(Selector.elementsToPaste);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
-  const addPolygon = useStore(Selector.addPolygon);
+  const addElement = useStore(Selector.addElement);
   const removeElementById = useStore(Selector.removeElementById);
 
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
@@ -325,7 +327,10 @@ export const CuboidMenu = () => {
         key={'add-polygon-on-cuboid'}
         onClick={() => {
           if (cuboid) {
-            const element = addPolygon(cuboid);
+            setCommonStore((state) => {
+              state.objectTypeToAdd = ObjectType.Polygon;
+            });
+            const element = addElement(cuboid, new Vector3(cuboid.cx, cuboid.cy, cuboid.lz), UNIT_VECTOR_POS_Z);
             const undoableAdd = {
               name: 'Add',
               timestamp: Date.now(),
@@ -341,6 +346,9 @@ export const CuboidMenu = () => {
               },
             } as UndoableAdd;
             addUndoable(undoableAdd);
+            setCommonStore((state) => {
+              state.objectTypeToAdd = ObjectType.None;
+            });
           }
         }}
       >

@@ -20,6 +20,8 @@ import FoundationAzimuthInput from './foundationAzimuthInput';
 import FoundationTextureSelection from './foundationTextureSelection';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { UndoableAdd } from '../../../undo/UndoableAdd';
+import { Vector3 } from 'three';
+import { UNIT_VECTOR_POS_Z } from '../../../constants';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -32,7 +34,7 @@ export const FoundationMenu = () => {
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
   const elementsToPaste = useStore(Selector.elementsToPaste);
-  const addPolygon = useStore(Selector.addPolygon);
+  const addElement = useStore(Selector.addElement);
   const removeElementById = useStore(Selector.removeElementById);
 
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
@@ -362,7 +364,14 @@ export const FoundationMenu = () => {
         key={'add-polygon-on-foundation'}
         onClick={() => {
           if (foundation) {
-            const element = addPolygon(foundation);
+            setCommonStore((state) => {
+              state.objectTypeToAdd = ObjectType.Polygon;
+            });
+            const element = addElement(
+              foundation,
+              new Vector3(foundation.cx, foundation.cy, foundation.lz),
+              UNIT_VECTOR_POS_Z,
+            );
             const undoableAdd = {
               name: 'Add',
               timestamp: Date.now(),
@@ -378,6 +387,9 @@ export const FoundationMenu = () => {
               },
             } as UndoableAdd;
             addUndoable(undoableAdd);
+            setCommonStore((state) => {
+              state.objectTypeToAdd = ObjectType.None;
+            });
           }
         }}
       >
