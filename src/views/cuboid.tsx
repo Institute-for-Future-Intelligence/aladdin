@@ -404,7 +404,11 @@ const Cuboid = ({
       selectMe(id, e, ActionType.Select);
     }
     const selectedElement = getSelectedElement();
-    if (selectedElement?.id === id) {
+    let bypass = false;
+    if (e.intersections[0].object.name === ObjectType.Polygon && objectTypeToAdd !== ObjectType.None) {
+      bypass = true;
+    }
+    if (selectedElement?.id === id || bypass) {
       // no child of this cuboid is clicked
       if (legalOnCuboid(objectTypeToAdd) && cuboidModel) {
         setShowGrid(true);

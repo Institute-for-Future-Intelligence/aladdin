@@ -7,7 +7,7 @@ import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
 import { Plane } from '@react-three/drei';
-import { DoubleSide, Euler, Mesh, Object3D, OrthographicCamera, Raycaster, Vector2, Vector3 } from 'three';
+import { DoubleSide, Euler, Mesh, Object3D, Raycaster, Vector2, Vector3 } from 'three';
 import { IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -581,6 +581,21 @@ const Ground = () => {
                         ).rotateAround(ORIGIN_VECTOR2, a);
                         centerAbsPos.add(cuboidCenter);
                         absPosMapRef.current.set(e.id, centerAbsPos);
+                      }
+                      break;
+                    case ObjectType.Polygon:
+                      if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+                        const polygon = e as PolygonModel;
+                        const vertexAbsPosArray: Vector2[] = [];
+                        for (const v of polygon.vertices) {
+                          const vertexAbsPos = new Vector2(
+                            v.x * selectedElement.lx,
+                            v.y * selectedElement.ly,
+                          ).rotateAround(ORIGIN_VECTOR2, a);
+                          vertexAbsPos.add(cuboidCenter);
+                          vertexAbsPosArray.push(vertexAbsPos);
+                        }
+                        polygonsAbsPosMapRef.current.set(polygon.id, vertexAbsPosArray);
                       }
                       break;
                   }
