@@ -25,19 +25,30 @@ import JuroImage from '../resources/juro.png';
 import XiaoliImage from '../resources/xiaoli.png';
 import XiaomingImage from '../resources/xiaoming.png';
 
-import React, { useMemo, useRef, useState } from 'react';
-import { DoubleSide, Group, Mesh, TextureLoader } from 'three';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { DoubleSide, Group, Mesh, Object3D, TextureLoader } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useFrame, useThree } from '@react-three/fiber';
 import { HumanModel } from '../models/HumanModel';
 import { Billboard, Plane, Sphere } from '@react-three/drei';
-import { HALF_PI, MOVE_HANDLE_RADIUS } from '../constants';
+import { GROUND_ID, HALF_PI, MOVE_HANDLE_RADIUS } from '../constants';
 import { ActionType, HumanName, MoveHandleType, ObjectType } from '../types';
 import i18n from '../i18n/i18n';
 import { useStoreRef } from 'src/stores/commonRef';
+import { ElementModel } from 'src/models/ElementModel';
 
-const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked = false, ...props }: HumanModel) => {
+const Human = ({
+  id,
+  cx,
+  cy,
+  cz,
+  name = HumanName.Jack,
+  selected = false,
+  locked = false,
+  parentId,
+  ...props
+}: HumanModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
@@ -46,9 +57,12 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
   const { gl } = useThree();
   const [hovered, setHovered] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);
+
+  const contentRef = useStoreRef((state) => state.contentRef);
+  const parentRef = useRef<Object3D | null>(null);
   const groupRef = useRef<Group>(null);
-  const planeRef = useRef<Mesh>(null);
   const billboardRef = useRef<Mesh>(null);
+  const planeRef = useRef<Mesh>(null);
 
   const lang = { lng: language };
 
@@ -248,13 +262,41 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
     }
   }, [name]);
 
+  useEffect(() => {
+    parentRef.current = getParentObject();
+    if (parentRef.current && groupRef.current) {
+      parentRef.current.add(groupRef.current);
+    }
+  }, [contentRef]);
+
+  useEffect(() => {
+    parentRef.current = getParentObject();
+  }, [parentId]);
+
   useFrame(({ camera }) => {
     if (billboardRef?.current && groupRef?.current) {
       const { x: cameraX, y: cameraY } = camera.position;
       const { x: currX, y: currY } = groupRef.current.position;
-      billboardRef.current.rotation.set(HALF_PI, -Math.atan2(cameraX - currX, cameraY - currY), 0);
+      const parentRotationZ = parentRef.current?.rotation.z ?? 0;
+      billboardRef.current.rotation.set(HALF_PI, -Math.atan2(cameraX - currX, cameraY - currY) - parentRotationZ, 0);
     }
   });
+
+  const getObjectId = (obj: Object3D) => {
+    return obj.name.split(' ')[2];
+  };
+
+  // return null if parent is Ground
+  const getParentObject = () => {
+    if (parentId !== GROUND_ID && contentRef?.current) {
+      for (const object of contentRef.current.children) {
+        if (parentId === getObjectId(object)) {
+          return object;
+        }
+      }
+    }
+    return null;
+  };
 
   return (
     <group ref={groupRef} name={'Human Group ' + id} userData={{ aabb: true }} position={[cx, cy, cz ?? 0]}>

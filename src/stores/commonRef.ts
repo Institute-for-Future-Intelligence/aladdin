@@ -8,6 +8,7 @@ import { Group } from 'three';
 import create from 'zustand';
 
 export interface CommonStoreRef {
+  contentRef: RefObject<Group> | null;
   compassRef: RefObject<Group> | null;
   orbitControlsRef: RefObject<MyOrbitControls> | null;
   setEnableOrbitController: (b: boolean) => void;
@@ -17,6 +18,7 @@ export interface CommonStoreRef {
 
 export const useStoreRef = create<CommonStoreRef>((set, get) => {
   return {
+    contentRef: null,
     compassRef: null,
     orbitControlsRef: null,
     setEnableOrbitController: (b: boolean) => {

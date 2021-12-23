@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { ObjectType } from './types';
@@ -24,12 +24,27 @@ import Roof from './views/roof';
 import { RoofModel } from './models/RoofModel';
 import Polygon from './views/polygon';
 import { PolygonModel } from './models/PolygonModel';
+import { Group } from 'three';
+import { useStoreRef } from './stores/commonRef';
 
 const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
 
+  const groupRef = useRef<Group>(null);
+
+  useEffect(() => {
+    if (groupRef) {
+      useStoreRef.setState((state) => {
+        state.contentRef = groupRef;
+      });
+    }
+  }, []);
+
+  // console.log(groupRef)
+  // console.log(elements)
+
   return (
-    <group name={'Content'}>
+    <group ref={groupRef} name={'Content'}>
       {elements.map((e) => {
         switch (e.type) {
           case ObjectType.Foundation:

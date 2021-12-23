@@ -974,6 +974,7 @@ const Foundation = ({
     setRayCast(e);
     if (baseRef.current) {
       const intersects = ray.intersectObjects([baseRef.current]);
+      if (intersects.length === 0) return;
       let p = intersects[0].point;
       if (grabRef.current && grabRef.current.type && !grabRef.current.locked && intersects.length > 0) {
         switch (grabRef.current.type) {

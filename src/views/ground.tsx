@@ -7,11 +7,12 @@ import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
 import { Plane } from '@react-three/drei';
-import { DoubleSide, Euler, Group, Mesh, Object3D, Raycaster, Vector2, Vector3 } from 'three';
+import { DoubleSide, Euler, Group, Intersection, Mesh, Object3D, Raycaster, Vector2, Vector3 } from 'three';
 import { IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
+  GROUND_ID,
   HALF_PI,
   MOVE_HANDLE_OFFSET,
   MOVE_HANDLE_RADIUS,
@@ -172,22 +173,44 @@ const Ground = () => {
     }
   };
 
-  const getIntersectionToStand = (e: ThreeEvent<PointerEvent>) => {
-    for (const intersection of e.intersections) {
-      if (intersection.eventObject.userData.stand) {
+  const getIntersectionToStand = (intersections: Intersection[]) => {
+    for (const intersection of intersections) {
+      if (intersection.object.userData.stand) {
         return intersection;
       }
     }
     return null;
   };
 
-  const handleTreeOrHumanMove = (ref: RefObject<Group> | null, e: ThreeEvent<PointerEvent>) => {
-    if (ref && ref.current) {
-      const intersection = getIntersectionToStand(e);
+  const handleTreeOrHumanRefMove = (elementRef: RefObject<Group> | null, e: ThreeEvent<PointerEvent>) => {
+    if (elementRef && elementRef.current) {
+      const intersection = getIntersectionToStand(e.intersections);
       if (intersection) {
-        const p = intersection.point;
-        ref.current.position.set(p.x, p.y, p.z);
-        invalidate();
+        const intersectionObj = intersection.object;
+        const elementParentRef = elementRef.current.parent;
+
+        if (intersectionObj.name === 'Ground') {
+          if (elementParentRef && elementParentRef.name !== 'Content') {
+            const contentRef = useStoreRef.getState().contentRef;
+            if (contentRef && contentRef.current) {
+              contentRef.current.add(elementRef.current);
+            }
+          }
+          // world position
+          elementRef.current.position.copy(intersection.point);
+          invalidate();
+        } else if (intersectionObj.userData.stand) {
+          // attach: need to consider attach to mesh or group
+          if (elementParentRef && elementParentRef.uuid !== intersectionObj.uuid) {
+            intersectionObj.add(elementRef.current); // attach to mesh
+          }
+          const intersectionObjGroup = intersection.object.parent;
+          if (intersectionObjGroup) {
+            const relPos = new Vector3().subVectors(intersection.point, intersectionObjGroup.position);
+            elementRef.current.position.copy(relPos);
+            invalidate();
+          }
+        }
       }
     }
   };
@@ -205,6 +228,32 @@ const Ground = () => {
         });
       }
     }
+  };
+
+  const getObjectId = (obj: Object3D | null): string => {
+    if (!obj) return '';
+
+    const nameArray = obj.name.split(' ');
+    if (nameArray[2]) {
+      return nameArray[2];
+    }
+
+    return getObjectId(obj.parent);
+  };
+
+  // for tree and human for now
+  const handleElementSateOnPointerUp = (elemId: string, standObjId: string, position: Vector3) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === elemId) {
+          e.parentId = standObjId;
+          e.cx = position.x;
+          e.cy = position.y;
+          e.cz = position.z;
+          break;
+        }
+      }
+    });
   };
 
   const handlePointerUp = (e: PointerEvent) => {
@@ -424,19 +473,37 @@ const Ground = () => {
             newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
 
             // elements modified by reference
-            let grabElementRef: Group | null | undefined = null;
+            let elementRef: Group | null | undefined = null;
             switch (grabRef.current.type) {
               case ObjectType.Tree:
-                grabElementRef = useStoreRef.getState().treeRef?.current;
+                elementRef = useStoreRef.getState().treeRef?.current;
                 break;
               case ObjectType.Human:
-                grabElementRef = useStoreRef.getState().humanRef?.current;
+                elementRef = useStoreRef.getState().humanRef?.current;
                 break;
             }
-            if (grabElementRef) {
-              const p = grabElementRef.position;
-              setElementPosition(grabRef.current.id, p.x, p.y, p.z);
-              newPositionRef.current.copy(p);
+            if (elementRef) {
+              const intersections = ray.intersectObjects(scene.children, true);
+              const intersection = getIntersectionToStand(intersections); // could simplify
+
+              if (intersection) {
+                const p = intersection.point;
+                // on ground
+                if (intersection.object.name === 'Ground') {
+                  handleElementSateOnPointerUp(elem.id, GROUND_ID, p);
+                }
+                // on other standable elements
+                else if (intersection.object.userData.stand) {
+                  const intersectionObjId = getObjectId(intersection.object);
+                  const intersectionObjGroup = intersection.object.parent;
+                  if (intersectionObjGroup) {
+                    const relPos = new Vector3().subVectors(p, intersectionObjGroup.position);
+                    handleElementSateOnPointerUp(elem.id, intersectionObjId, relPos);
+                  }
+                }
+              }
+              // todo
+              // newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
             }
 
             if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
@@ -718,11 +785,11 @@ const Ground = () => {
       switch (grabRef.current.type) {
         case ObjectType.Human:
           const humanRef = useStoreRef.getState().humanRef;
-          handleTreeOrHumanMove(humanRef, e);
+          handleTreeOrHumanRefMove(humanRef, e);
           break;
         case ObjectType.Tree:
           const treeRef = useStoreRef.getState().treeRef;
-          handleTreeOrHumanMove(treeRef, e);
+          handleTreeOrHumanRefMove(treeRef, e);
           break;
         // let hit = false;
         // if (standObjectsRef.current.length > 0) {

@@ -348,11 +348,9 @@ const Cuboid = ({
   // only these elements are allowed to be on the cuboid
   const legalOnCuboid = (type: ObjectType) => {
     return (
-      type === ObjectType.Human ||
-      type === ObjectType.Tree ||
-      type === ObjectType.Polygon ||
-      type === ObjectType.Sensor ||
-      type === ObjectType.SolarPanel
+      // type === ObjectType.Human ||
+      // type === ObjectType.Tree ||
+      type === ObjectType.Polygon || type === ObjectType.Sensor || type === ObjectType.SolarPanel
     );
   };
 

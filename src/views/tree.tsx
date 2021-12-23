@@ -16,19 +16,20 @@ import OakImage from '../resources/oak.png';
 import OakShedImage from '../resources/oak_shed.png';
 import PineImage from '../resources/pine.png';
 
-import React, { useMemo, useRef, useState } from 'react';
-import { DoubleSide, Euler, Group, Mesh, MeshDepthMaterial, RGBADepthPacking, TextureLoader, Vector3 } from 'three';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { DoubleSide, Group, Mesh, MeshDepthMaterial, Object3D, RGBADepthPacking, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Billboard, Cone, Plane, Sphere } from '@react-three/drei';
-import { HALF_PI, MOVE_HANDLE_RADIUS, TWO_PI } from '../constants';
+import { GROUND_ID, HALF_PI, MOVE_HANDLE_RADIUS, TWO_PI } from '../constants';
 import { TreeModel } from '../models/TreeModel';
 import { ActionType, MoveHandleType, ObjectType, TreeType } from '../types';
 import i18n from '../i18n/i18n';
 import { useStoreRef } from 'src/stores/commonRef';
 
 const Tree = ({
+  parentId,
   id,
   cx,
   cy,
@@ -48,22 +49,22 @@ const Tree = ({
   const date = useStore(Selector.world.date);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const selectMe = useStore(Selector.selectMe);
-  const sunlightDirection = useStore(Selector.sunlightDirection);
 
   const now = new Date(date);
   const [hovered, setHovered] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);
   const { gl } = useThree();
-  const trunkMeshRef = useRef<Mesh>(null);
-  const solidTreeRef = useRef<Mesh>(null);
+
+  const contentRef = useStoreRef((state) => state.contentRef);
+  const parentRef = useRef<Object3D | null>(null);
   const groupRef = useRef<Group>(null);
+  const solidTreeRef = useRef<Mesh>(null);
+  const shadowTreeRef = useRef<Mesh>(null);
+  const trunkMeshRef = useRef<Mesh>(null);
 
   const month = now.getMonth() + 1;
   const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
   const lang = { lng: language };
-
-  const sunlightX = sunlightDirection.x;
-  const sunlightZ = sunlightDirection.y;
 
   const textureLoader = useMemo(() => {
     let textureImg;
@@ -137,17 +138,43 @@ const Tree = ({
     }
   }, [name]);
 
-  const shadowTreeRotation = useMemo(() => {
-    return new Euler(HALF_PI, -Math.atan2(sunlightX, sunlightZ), 0);
-  }, [sunlightX, sunlightZ]);
+  useEffect(() => {
+    parentRef.current = getParentObject();
+    if (parentRef.current && groupRef.current) {
+      parentRef.current.add(groupRef.current);
+    }
+  }, [contentRef]);
+
+  useEffect(() => {
+    parentRef.current = getParentObject();
+  }, [parentId]);
 
   useFrame(({ camera }) => {
-    if (groupRef?.current && solidTreeRef?.current) {
+    if (groupRef.current && solidTreeRef.current && shadowTreeRef.current) {
       const { x: cameraX, y: cameraY } = camera.position;
       const { x: currX, y: currY } = groupRef.current.position;
-      solidTreeRef.current.rotation.set(HALF_PI, -Math.atan2(cameraX - currX, cameraY - currY), 0);
+      const { x: sunlightX, y: sunlightY } = useStore.getState().sunlightDirection;
+      const parentRotationZ = parentRef.current?.rotation.z ?? 0;
+      solidTreeRef.current.rotation.set(HALF_PI, -Math.atan2(cameraX - currX, cameraY - currY) - parentRotationZ, 0);
+      shadowTreeRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY) - parentRotationZ, 0);
     }
   });
+
+  const getObjectId = (obj: Object3D) => {
+    return obj.name.split(' ')[2];
+  };
+
+  // return null if parent is Ground
+  const getParentObject = () => {
+    if (parentId !== GROUND_ID && contentRef?.current) {
+      for (const object of contentRef.current.children) {
+        if (parentId === getObjectId(object)) {
+          return object;
+        }
+      }
+    }
+    return null;
+  };
 
   // IMPORTANT: model mesh must use double side in order to intercept sunlight
   return (
@@ -160,7 +187,7 @@ const Tree = ({
         </Billboard>
 
         {/* cast shadow */}
-        <Billboard name={name + ' Shadow Billboard'} follow={false} rotation={shadowTreeRotation}>
+        <Billboard ref={shadowTreeRef} name={name + ' Shadow Billboard'} follow={false}>
           <Plane castShadow={shadowEnabled} args={[lx, lz]} customDepthMaterial={customDepthMaterial}>
             <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0} depthTest={false} />
           </Plane>
