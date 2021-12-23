@@ -35,6 +35,7 @@ import { Billboard, Plane, Sphere } from '@react-three/drei';
 import { HALF_PI, MOVE_HANDLE_RADIUS } from '../constants';
 import { ActionType, HumanName, MoveHandleType, ObjectType } from '../types';
 import i18n from '../i18n/i18n';
+import { useStoreRef } from 'src/stores/commonRef';
 
 const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked = false, ...props }: HumanModel) => {
   const setCommonStore = useStore(Selector.set);
@@ -46,8 +47,8 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
   const [hovered, setHovered] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);
   const groupRef = useRef<Group>(null);
-  const billboardRef = useRef<Mesh>(null);
   const planeRef = useRef<Mesh>(null);
+  const billboardRef = useRef<Mesh>(null);
 
   const lang = { lng: language };
 
@@ -256,78 +257,81 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
   });
 
   return (
-    <group
-      ref={groupRef}
-      name={'Human Group ' + id}
-      userData={{ aabb: true }}
-      position={[cx, cy, (cz ?? 0) + height / 2]}
-    >
-      <Billboard ref={billboardRef} uuid={id} name={name} follow={orthographic}>
-        <Plane
-          ref={planeRef}
-          renderOrder={3}
-          name={name + ' plane'}
-          args={[width, height]}
-          onContextMenu={(e) => {
-            selectMe(id, e);
-            setCommonStore((state) => {
+    <group ref={groupRef} name={'Human Group ' + id} userData={{ aabb: true }} position={[cx, cy, cz ?? 0]}>
+      <group position={[0, 0, height / 2]}>
+        <Billboard ref={billboardRef} uuid={id} name={name} follow={orthographic}>
+          <Plane
+            ref={planeRef}
+            renderOrder={3}
+            name={`Human ${name} plane`}
+            args={[width, height]}
+            onContextMenu={(e) => {
+              selectMe(id, e);
+              setCommonStore((state) => {
+                if (e.intersections.length > 0) {
+                  const intersected = e.intersections[0].object === planeRef.current;
+                  if (intersected) {
+                    state.contextMenuObjectType = ObjectType.Human;
+                  }
+                }
+              });
+            }}
+            onPointerDown={(e) => {
+              if (e.button === 2) return; // ignore right-click
+              selectMe(id, e, ActionType.Move);
+              useStoreRef.setState((state) => {
+                state.humanRef = groupRef;
+              });
+            }}
+            onPointerOver={(e) => {
               if (e.intersections.length > 0) {
                 const intersected = e.intersections[0].object === planeRef.current;
                 if (intersected) {
-                  state.contextMenuObjectType = ObjectType.Human;
+                  setHovered(true);
                 }
               }
-            });
-          }}
-          onPointerDown={(e) => {
-            if (e.button === 2) return; // ignore right-click
-            selectMe(id, e, ActionType.Move);
-          }}
-          onPointerOver={(e) => {
-            if (e.intersections.length > 0) {
-              const intersected = e.intersections[0].object === planeRef.current;
-              if (intersected) {
-                setHovered(true);
-              }
-            }
-          }}
-          onPointerOut={(e) => {
-            setHovered(false);
-          }}
-        >
-          <meshBasicMaterial map={texture} alphaTest={0.5} side={DoubleSide} />
-        </Plane>
-      </Billboard>
+            }}
+            onPointerOut={(e) => {
+              setHovered(false);
+            }}
+          >
+            <meshBasicMaterial map={texture} alphaTest={0.5} side={DoubleSide} />
+          </Plane>
+        </Billboard>
 
-      {/* draw handle */}
-      {selected && !locked && (
-        <Sphere
-          position={[0, 0, -height / 2]}
-          args={[MOVE_HANDLE_RADIUS * 4, 6, 6]}
-          name={MoveHandleType.Default}
-          onPointerDown={(e) => {
-            selectMe(id, e, ActionType.Move);
-          }}
-          onPointerOver={(e) => {
-            gl.domElement.style.cursor = 'move';
-          }}
-          onPointerOut={(e) => {
-            gl.domElement.style.cursor = 'default';
-          }}
-        >
-          <meshStandardMaterial attach="material" color={'orange'} />
-        </Sphere>
-      )}
-      {hovered && !selected && (
-        <textSprite
-          name={'Label'}
-          text={labelText + (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')}
-          fontSize={20}
-          fontFace={'Times Roman'}
-          textHeight={0.2}
-          position={[0, 0, height / 2 + 0.4]}
-        />
-      )}
+        {/* draw handle */}
+        {selected && !locked && (
+          <Sphere
+            position={[0, 0, -height / 2]}
+            args={[MOVE_HANDLE_RADIUS * 4, 6, 6]}
+            name={MoveHandleType.Default}
+            onPointerDown={(e) => {
+              selectMe(id, e, ActionType.Move);
+              useStoreRef.setState((state) => {
+                state.humanRef = groupRef;
+              });
+            }}
+            onPointerOver={(e) => {
+              gl.domElement.style.cursor = 'move';
+            }}
+            onPointerOut={(e) => {
+              gl.domElement.style.cursor = 'default';
+            }}
+          >
+            <meshStandardMaterial attach="material" color={'orange'} />
+          </Sphere>
+        )}
+        {hovered && !selected && (
+          <textSprite
+            name={'Label'}
+            text={labelText + (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')}
+            fontSize={20}
+            fontFace={'Times Roman'}
+            textHeight={0.2}
+            position={[0, 0, height / 2 + 0.4]}
+          />
+        )}
+      </group>
     </group>
   );
 };

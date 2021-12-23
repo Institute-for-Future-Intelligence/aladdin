@@ -2,12 +2,12 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { RefObject, useEffect, useMemo, useRef } from 'react';
 import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
 import { Plane } from '@react-three/drei';
-import { DoubleSide, Euler, Mesh, Object3D, Raycaster, Vector2, Vector3 } from 'three';
+import { DoubleSide, Euler, Group, Mesh, Object3D, Raycaster, Vector2, Vector3 } from 'three';
 import { IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -61,6 +61,7 @@ const Ground = () => {
     camera,
     gl: { domElement },
     scene,
+    invalidate,
   } = useThree();
   const standObjectsRef = useRef<Object3D[]>([]);
   const groundPlaneRef = useRef<Mesh>();
@@ -167,6 +168,26 @@ const Ground = () => {
     if (obj.children.length > 0) {
       for (const c of obj.children) {
         fetchStandElements(currentId, c, arr);
+      }
+    }
+  };
+
+  const getIntersectionToStand = (e: ThreeEvent<PointerEvent>) => {
+    for (const intersection of e.intersections) {
+      if (intersection.eventObject.userData.stand) {
+        return intersection;
+      }
+    }
+    return null;
+  };
+
+  const handleTreeOrHumanMove = (ref: RefObject<Group> | null, e: ThreeEvent<PointerEvent>) => {
+    if (ref && ref.current) {
+      const intersection = getIntersectionToStand(e);
+      if (intersection) {
+        const p = intersection.point;
+        ref.current.position.set(p.x, p.y, p.z);
+        invalidate();
       }
     }
   };
@@ -400,14 +421,29 @@ const Ground = () => {
               addUndoable(undoableRotate);
             }
           } else {
-            newPositionRef.current.x = elem.cx;
-            newPositionRef.current.y = elem.cy;
-            newPositionRef.current.z = elem.cz;
+            newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
+
+            // elements modified by reference
+            let grabElementRef: Group | null | undefined = null;
+            switch (grabRef.current.type) {
+              case ObjectType.Tree:
+                grabElementRef = useStoreRef.getState().treeRef?.current;
+                break;
+              case ObjectType.Human:
+                grabElementRef = useStoreRef.getState().humanRef?.current;
+                break;
+            }
+            if (grabElementRef) {
+              const p = grabElementRef.position;
+              setElementPosition(grabRef.current.id, p.x, p.y, p.z);
+              newPositionRef.current.copy(p);
+            }
+
             if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
               const undoableMove = {
                 name: 'Move',
                 timestamp: Date.now(),
-                movedElementId: grabRef.current.id,
+                movedElementId: elem.id,
                 oldCx: oldPositionRef.current.x,
                 oldCy: oldPositionRef.current.y,
                 oldCz: oldPositionRef.current.z,
@@ -447,7 +483,12 @@ const Ground = () => {
       state.resizeHandleType = null;
       state.rotateHandleType = null;
     });
-    useStoreRef.getState().setEnableOrbitController(true);
+
+    useStoreRef.setState((state) => {
+      state.humanRef = null;
+      state.treeRef = null;
+      state.setEnableOrbitController(true);
+    });
   };
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
@@ -676,26 +717,32 @@ const Ground = () => {
       let intersects;
       switch (grabRef.current.type) {
         case ObjectType.Human:
-        case ObjectType.Tree:
-          let hit = false;
-          if (standObjectsRef.current.length > 0) {
-            intersects = ray.intersectObjects(standObjectsRef.current);
-            if (intersects.length > 0) {
-              const p = intersects[0].point;
-              setElementPosition(grabRef.current.id, p.x, p.y, p.z);
-              hit = true;
-            }
-          }
-          if (!hit) {
-            if (groundPlaneRef.current) {
-              intersects = ray.intersectObjects([groundPlaneRef.current]);
-              if (intersects.length > 0) {
-                const p = intersects[0].point;
-                setElementPosition(grabRef.current.id, p.x, p.y, p.z);
-              }
-            }
-          }
+          const humanRef = useStoreRef.getState().humanRef;
+          handleTreeOrHumanMove(humanRef, e);
           break;
+        case ObjectType.Tree:
+          const treeRef = useStoreRef.getState().treeRef;
+          handleTreeOrHumanMove(treeRef, e);
+          break;
+        // let hit = false;
+        // if (standObjectsRef.current.length > 0) {
+        //   intersects = ray.intersectObjects(standObjectsRef.current);
+        //   if (intersects.length > 0) {
+        //     const p = intersects[0].point;
+        //     setElementPosition(grabRef.current.id, p.x, p.y, p.z);
+        //     hit = true;
+        //   }
+        // }
+        // if (!hit) {
+        //   if (groundPlaneRef.current) {
+        //     intersects = ray.intersectObjects([groundPlaneRef.current]);
+        //     if (intersects.length > 0) {
+        //       const p = intersects[0].point;
+        //       setElementPosition(grabRef.current.id, p.x, p.y, p.z);
+        //     }
+        //   }
+        // }
+        // break;
         case ObjectType.Foundation:
           if (intersectionPlaneRef.current) {
             intersects = ray.intersectObjects([intersectionPlaneRef.current]);
@@ -1085,6 +1132,7 @@ const Ground = () => {
         receiveShadow={shadowEnabled}
         ref={groundPlaneRef}
         name={'Ground'}
+        userData={{ stand: true }}
         rotation={[0, 0, 0]}
         position={[0, 0, 0]}
         args={[10000, 10000]}

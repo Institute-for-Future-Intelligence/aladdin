@@ -1948,7 +1948,7 @@ export const useStore = create<CommonStoreState>(
                 if (e.id === id) {
                   state.elements[i].cx = x;
                   state.elements[i].cy = y;
-                  if (z) {
+                  if (z !== undefined) {
                     state.elements[i].cz = z;
                   }
                   break;
