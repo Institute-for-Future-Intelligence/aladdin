@@ -5,7 +5,7 @@
 export const i18n_es = {
   translation: {
     name: {
-      IFI: 'Institute for Future Intelligence',
+      IFI: 'Instituto de inteligencia futura',
       Aladdin: 'Aladdin',
     },
 

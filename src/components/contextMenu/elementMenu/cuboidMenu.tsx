@@ -20,7 +20,13 @@ import CuboidAzimuthInput from './cuboidAzimuthInput';
 import CuboidTextureSelection from './cuboidTextureSelection';
 import { CuboidModel } from '../../../models/CuboidModel';
 import { UndoableAdd } from '../../../undo/UndoableAdd';
-import { UNIT_VECTOR_POS_Z } from '../../../constants';
+import {
+  UNIT_VECTOR_NEG_X,
+  UNIT_VECTOR_NEG_Y,
+  UNIT_VECTOR_POS_X,
+  UNIT_VECTOR_POS_Y,
+  UNIT_VECTOR_POS_Z,
+} from '../../../constants';
 import { Vector3 } from 'three';
 
 export const CuboidMenu = () => {
@@ -330,7 +336,27 @@ export const CuboidMenu = () => {
             setCommonStore((state) => {
               state.objectTypeToAdd = ObjectType.Polygon;
             });
-            const element = addElement(cuboid, new Vector3(cuboid.cx, cuboid.cy, cuboid.lz), UNIT_VECTOR_POS_Z);
+            let normal = UNIT_VECTOR_POS_Z;
+            const position = new Vector3(cuboid.cx, cuboid.cy, cuboid.lz);
+            switch (selectedSideIndex) {
+              case 0:
+                normal = UNIT_VECTOR_POS_X;
+                position.set(cuboid.cx + cuboid.lx / 2, cuboid.cy, cuboid.cz);
+                break;
+              case 1:
+                normal = UNIT_VECTOR_NEG_X;
+                position.set(cuboid.cx - cuboid.lx / 2, cuboid.cy, cuboid.cz);
+                break;
+              case 2:
+                normal = UNIT_VECTOR_POS_Y;
+                position.set(cuboid.cx, cuboid.cy + cuboid.ly / 2, cuboid.cz);
+                break;
+              case 3:
+                normal = UNIT_VECTOR_NEG_Y;
+                position.set(cuboid.cx, cuboid.cy - cuboid.ly / 2, cuboid.cz);
+                break;
+            }
+            const element = addElement(cuboid, position, normal);
             const undoableAdd = {
               name: 'Add',
               timestamp: Date.now(),

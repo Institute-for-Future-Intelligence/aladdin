@@ -559,14 +559,47 @@ const Cuboid = ({
                 case ObjectType.Polygon:
                   if (resizeHandleType === ResizeHandleType.Default) {
                     const polygon = grabRef.current as PolygonModel;
+                    const n = new Vector3().fromArray(polygon.normal);
+                    let q = new Vector3(p.x, p.y, 0);
+                    let cx = cuboidModel.cx;
+                    let cy = cuboidModel.cy;
+                    let lx = cuboidModel.lx;
+                    let ly = cuboidModel.ly;
+                    if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
+                      // east face in model coordinate system
+                      cx = cuboidModel.cy;
+                      lx = cuboidModel.ly;
+                      cy = cuboidModel.cz;
+                      ly = cuboidModel.lz;
+                      q.x = p.y;
+                      q.y = p.z;
+                    } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
+                      // west face in model coordinate system
+                      cx = cuboidModel.cy;
+                      lx = cuboidModel.ly;
+                      cy = cuboidModel.cz;
+                      ly = cuboidModel.lz;
+                      q.x = p.y;
+                      q.y = p.z;
+                    } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
+                      // south face in the model coordinate system
+                      cy = cuboidModel.cz;
+                      ly = cuboidModel.lz;
+                      q.y = p.z;
+                    } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
+                      // north face in the model coordinate system
+                      cy = cuboidModel.cz;
+                      ly = cuboidModel.lz;
+                      q.y = ly - p.z;
+                    }
                     // snap to the grid (do not call Util.relativeCoordinates because we have to snap in the middle)
-                    p.x -= cuboidModel.cx;
-                    p.y -= cuboidModel.cy;
-                    p.applyEuler(new Euler().fromArray(cuboidModel.rotation.map((a) => -a)));
-                    p = enableFineGridRef.current ? Util.snapToFineGrid(p) : Util.snapToNormalGrid(p);
-                    p.x /= cuboidModel.lx;
-                    p.y /= cuboidModel.ly;
-                    updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, p.x, p.y);
+                    q.x -= cx;
+                    q.y -= cy;
+                    q.applyEuler(new Euler().fromArray(cuboidModel.rotation.map((a) => -a)));
+                    q = enableFineGridRef.current ? Util.snapToFineGrid(q) : Util.snapToNormalGrid(q);
+                    q.x /= lx;
+                    q.y /= ly;
+                    updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, q.x, q.y);
                   }
                   break;
               }

@@ -227,24 +227,24 @@ const SolarPanel = ({
   }, [orientation, pvModel?.color, nx, ny]);
 
   const euler = useMemo(() => {
-    const v = panelNormal;
-    if (Util.isSame(v, UNIT_VECTOR_POS_Z)) {
-      // top face in model coordinate system
-      return new Euler(0, 0, rotation[2], 'ZXY');
-    } else if (Util.isSame(v, UNIT_VECTOR_POS_X)) {
-      // east face in model coordinate system
+    // east face in model coordinate system
+    if (Util.isSame(panelNormal, UNIT_VECTOR_POS_X)) {
       return new Euler(HALF_PI, 0, rotation[2] + HALF_PI, 'ZXY');
-    } else if (Util.isSame(v, UNIT_VECTOR_NEG_X)) {
-      // west face in model coordinate system
+    }
+    // west face in model coordinate system
+    if (Util.isSame(panelNormal, UNIT_VECTOR_NEG_X)) {
       return new Euler(HALF_PI, 0, rotation[2] - HALF_PI, 'ZXY');
-    } else if (Util.isSame(v, UNIT_VECTOR_POS_Y)) {
-      // north face in the model coordinate system
+    }
+    // north face in the model coordinate system
+    if (Util.isSame(panelNormal, UNIT_VECTOR_POS_Y)) {
       return new Euler(HALF_PI, 0, rotation[2] + Math.PI, 'ZXY');
-    } else if (Util.isSame(v, UNIT_VECTOR_NEG_Y)) {
-      // south face in the model coordinate system
+    }
+    // south face in the model coordinate system
+    if (Util.isSame(panelNormal, UNIT_VECTOR_NEG_Y)) {
       return new Euler(HALF_PI, 0, rotation[2], 'ZXY');
     }
-    return new Euler(0, 0, rotation[2]);
+    // top face in model coordinate system
+    return new Euler(0, 0, rotation[2], 'ZXY');
   }, [normal, rotation]);
 
   const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {

@@ -96,23 +96,24 @@ const Sensor = ({
   const sensorModel = getElementById(id) as SensorModel;
 
   const euler = useMemo(() => {
-    const v = new Vector3().fromArray(normal);
-    if (Util.isSame(v, UNIT_VECTOR_POS_Z)) {
-      // top face in model coordinate system
-      return new Euler(0, 0, rotation[2]);
-    } else if (Util.isSame(v, UNIT_VECTOR_POS_X)) {
-      // east face in model coordinate system
+    const n = new Vector3().fromArray(normal);
+    // east face in model coordinate system
+    if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
       return new Euler(0, HALF_PI, rotation[2], 'ZXY');
-    } else if (Util.isSame(v, UNIT_VECTOR_NEG_X)) {
-      // west face in model coordinate system
+    }
+    // west face in model coordinate system
+    if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
       return new Euler(0, -HALF_PI, rotation[2], 'ZXY');
-    } else if (Util.isSame(v, UNIT_VECTOR_POS_Y)) {
-      // south face in the model coordinate system
+    }
+    // south face in the model coordinate system
+    if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
       return new Euler(-HALF_PI, 0, rotation[2], 'ZXY');
-    } else if (Util.isSame(v, UNIT_VECTOR_NEG_Y)) {
-      // north face in the model coordinate system
+    }
+    // north face in the model coordinate system
+    if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
       return new Euler(HALF_PI, 0, rotation[2], 'ZXY');
     }
+    // top face in model coordinate system
     return new Euler(0, 0, rotation[2]);
   }, [normal, rotation]);
 

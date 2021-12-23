@@ -5,6 +5,10 @@
 import {
   FINE_GRID_SCALE,
   ORIGIN_VECTOR2,
+  UNIT_VECTOR_NEG_X,
+  UNIT_VECTOR_NEG_Y,
+  UNIT_VECTOR_POS_X,
+  UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
   UNIT_VECTOR_POS_Z_ARRAY,
   ZERO_TOLERANCE,
@@ -181,6 +185,14 @@ export class Util {
     if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
     // all in
     return true;
+  }
+
+  static isUnitVectorX(v: Vector3) {
+    return Util.isSame(v, UNIT_VECTOR_POS_X) || Util.isSame(v, UNIT_VECTOR_NEG_X);
+  }
+
+  static isUnitVectorY(v: Vector3) {
+    return Util.isSame(v, UNIT_VECTOR_POS_Y) || Util.isSame(v, UNIT_VECTOR_NEG_Y);
   }
 
   static isSame(u: Vector3, v: Vector3) {

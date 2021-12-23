@@ -15,10 +15,11 @@ import { SolarPanelModel } from './SolarPanelModel';
 import { PvModel } from './PvModel';
 import { WallModel } from './WallModel';
 import { RoofModel } from './RoofModel';
-import { GROUND_ID } from '../constants';
+import { GROUND_ID, UNIT_VECTOR_NEG_X, UNIT_VECTOR_NEG_Y, UNIT_VECTOR_POS_X, UNIT_VECTOR_POS_Y } from '../constants';
 import { WindowModel } from './WindowModel';
 import { Point2 } from './Point2';
 import { PolygonModel } from './PolygonModel';
+import { Util } from '../Util';
 
 export class ElementModelFactory {
   static makeHuman(x: number, y: number, z?: number) {
@@ -95,7 +96,7 @@ export class ElementModelFactory {
     } as FoundationModel;
   }
 
-  static makePolygon(parent: ElementModel, x: number, y: number) {
+  static makePolygon(parent: ElementModel, x: number, y: number, z: number, normal?: Vector3, rotation?: number[]) {
     let foundationId;
     switch (parent.type) {
       case ObjectType.Foundation:
@@ -107,22 +108,38 @@ export class ElementModelFactory {
         foundationId = parent.parentId;
         break;
     }
+    const hx = 0.2;
+    const hy = 0.2;
+    const hz = 0.2;
+    let rx = x;
+    let ry = y;
+    // if the parent is a cuboid, determine the 2D coordinates within each face
+    if (parent.type === ObjectType.Cuboid && normal) {
+      if (Util.isUnitVectorX(normal)) {
+        // west and east face
+        rx = y;
+        ry = z;
+      } else if (Util.isUnitVectorY(normal)) {
+        // south and north face
+        ry = z;
+      }
+    }
     return {
       type: ObjectType.Polygon,
-      cx: x,
-      cy: y,
+      cx: rx,
+      cy: ry,
       cz: 0,
-      lx: 0.1, // not used
-      ly: 0.1, // not used
-      lz: 0.1,
+      lx: 2 * hx,
+      ly: 2 * hy,
+      lz: 2 * hz,
       color: 'white',
-      normal: [0, 0, 1],
-      rotation: [...parent.rotation],
+      normal: normal ? normal.toArray() : [0, 0, 1],
+      rotation: rotation ? rotation : [0, 0, 0],
       vertices: [
-        { x: Math.max(-0.5, x - 0.2), y: Math.max(-0.5, y - 0.2) } as Point2,
-        { x: Math.max(-0.5, x - 0.2), y: Math.min(0.5, y + 0.2) } as Point2,
-        { x: Math.min(0.5, x + 0.2), y: Math.min(0.5, y + 0.2) } as Point2,
-        { x: Math.min(0.5, x + 0.2), y: Math.max(-0.5, y - 0.2) } as Point2,
+        { x: Math.max(-0.5, rx - hx), y: Math.max(-0.5, ry - hy) } as Point2,
+        { x: Math.max(-0.5, rx - hx), y: Math.min(0.5, ry + hy) } as Point2,
+        { x: Math.min(0.5, rx + hx), y: Math.min(0.5, ry + hy) } as Point2,
+        { x: Math.min(0.5, rx + hx), y: Math.max(-0.5, ry - hy) } as Point2,
       ],
       parentId: parent.id,
       foundationId: foundationId,

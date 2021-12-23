@@ -2006,6 +2006,9 @@ export const useStore = create<CommonStoreState>(
                     polygonParentModel,
                     polygonRelativeCoordinates.x,
                     polygonRelativeCoordinates.y,
+                    polygonRelativeCoordinates.z,
+                    normal,
+                    'rotation' in parent ? parent.rotation : undefined,
                   );
                   model = polygon;
                   state.elements.push(polygon);

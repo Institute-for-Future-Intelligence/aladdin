@@ -18,7 +18,6 @@ import {
   UNIT_VECTOR_NEG_Y,
   UNIT_VECTOR_POS_X,
   UNIT_VECTOR_POS_Y,
-  UNIT_VECTOR_POS_Z,
 } from '../constants';
 import { ActionType, MoveHandleType, ObjectType, ResizeHandleType } from '../types';
 import { Util } from '../Util';
@@ -91,8 +90,19 @@ const Polygon = ({
           setCenterY(centroid.y);
           break;
         case ObjectType.Cuboid:
+          const n = new Vector3().fromArray(normal);
+          let lx = parent.lx;
+          let ly = parent.ly;
+          if (Util.isUnitVectorX(n)) {
+            // east or west face in model coordinate system
+            lx = parent.ly;
+            ly = parent.lz;
+          } else if (Util.isUnitVectorY(n)) {
+            // south face in the model coordinate system
+            ly = parent.lz;
+          }
           for (const v of vertices) {
-            const p2 = { x: v.x * parent.lx, y: v.y * parent.ly } as Point2;
+            const p2 = { x: v.x * lx, y: v.y * ly } as Point2;
             av.push(p2);
           }
           const centroidTop = Util.calculatePolygonCentroid(av);
@@ -114,25 +124,55 @@ const Polygon = ({
   const polygonModel = getElementById(id) as PolygonModel;
 
   const euler = useMemo(() => {
-    const v = new Vector3().fromArray(normal);
-    if (Util.isSame(v, UNIT_VECTOR_POS_Z)) {
-      // top face in model coordinate system
-      return new Euler(0, 0, rotation[2]);
-    } else if (Util.isSame(v, UNIT_VECTOR_POS_X)) {
-      // east face in model coordinate system
+    const n = new Vector3().fromArray(normal);
+    // east face in model coordinate system
+    if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
       return new Euler(0, HALF_PI, rotation[2], 'ZXY');
-    } else if (Util.isSame(v, UNIT_VECTOR_NEG_X)) {
-      // west face in model coordinate system
+    }
+    // west face in model coordinate system
+    if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
       return new Euler(0, -HALF_PI, rotation[2], 'ZXY');
-    } else if (Util.isSame(v, UNIT_VECTOR_POS_Y)) {
-      // south face in the model coordinate system
+    }
+    // north face in the model coordinate system
+    if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
       return new Euler(-HALF_PI, 0, rotation[2], 'ZXY');
-    } else if (Util.isSame(v, UNIT_VECTOR_NEG_Y)) {
-      // north face in the model coordinate system
+    }
+    // south face in the model coordinate system
+    if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
       return new Euler(HALF_PI, 0, rotation[2], 'ZXY');
     }
-    return new Euler(0, 0, rotation[2]);
+    // top face in model coordinate system
+    return new Euler(0, 0, rotation[2], 'ZXY');
   }, [normal, rotation]);
+
+  const position = useMemo(() => {
+    const p = new Vector3(parent?.cx ?? 0, parent?.cy ?? 0, cz);
+    if (parent) {
+      const n = new Vector3().fromArray(normal);
+      if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
+        // east face in model coordinate system
+        p.x = parent.cx + parent.lx / 2 + 0.01;
+        p.y = parent.cy;
+        p.z = parent.cz;
+      } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
+        // west face in model coordinate system
+        p.x = parent.cx - parent.lx / 2 - 0.01;
+        p.y = parent.cy;
+        p.z = parent.cz;
+      } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
+        // north face in the model coordinate system
+        p.x = parent.cx;
+        p.y = parent.cy + parent.ly / 2 + 0.01;
+        p.z = parent.cz;
+      } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
+        // south face in the model coordinate system
+        p.x = parent.cx;
+        p.y = parent.cy - parent.ly / 2 - 0.01;
+        p.z = parent.cz;
+      }
+    }
+    return p;
+  }, [normal]);
 
   const points = useMemo(() => {
     const p = new Array<Vector3>();
@@ -175,12 +215,11 @@ const Polygon = ({
   }, []);
 
   return (
-    <group name={'Polygon Group ' + id} rotation={euler} position={[parent?.cx ?? 0, parent?.cy ?? 0, cz]}>
+    <group name={'Polygon Group ' + id} rotation={euler} position={position}>
       {filled && (
         <mesh
           uuid={id}
           ref={baseRef}
-          position={[0, 0, 0]}
           receiveShadow={true}
           castShadow={false}
           name={ObjectType.Polygon}
