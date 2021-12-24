@@ -558,10 +558,17 @@ const Cuboid = ({
                   break;
                 case ObjectType.Polygon:
                   if (resizeHandleType === ResizeHandleType.Default) {
+                    // first, apply inverse rotation to p.x and p.y and store the result in r
+                    let r = new Vector3(p.x, p.y, 0);
+                    const reverseRotation = new Euler(0, 0, -cuboidModel.rotation[2], 'ZXY');
+                    r.x -= cuboidModel.cx;
+                    r.y -= cuboidModel.cy;
+                    r.applyEuler(reverseRotation);
+                    // now do the vertex on each face in the de-rotated coordinate system
                     const polygon = grabRef.current as PolygonModel;
                     const n = new Vector3().fromArray(polygon.normal);
-                    let q = new Vector3(p.x, p.y, 0);
                     let cx, cy, lx, ly;
+                    let q = r.clone();
                     if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
                       // east face in model coordinate system
                       cx = cuboidModel.cz;
@@ -569,6 +576,7 @@ const Cuboid = ({
                       cy = cuboidModel.cy;
                       ly = cuboidModel.ly;
                       q.x = lx - p.z;
+                      q.x -= cx;
                     } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
                       // west face
                       cx = cuboidModel.cz;
@@ -576,6 +584,7 @@ const Cuboid = ({
                       cy = cuboidModel.cy;
                       ly = cuboidModel.ly;
                       q.x = p.z;
+                      q.x -= cx;
                     } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
                       // north face
                       cx = cuboidModel.cx;
@@ -583,6 +592,7 @@ const Cuboid = ({
                       cy = cuboidModel.cz;
                       ly = cuboidModel.lz;
                       q.y = ly - p.z;
+                      q.y -= cy;
                     } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
                       // south face
                       cx = cuboidModel.cx;
@@ -590,6 +600,7 @@ const Cuboid = ({
                       cy = cuboidModel.cz;
                       ly = cuboidModel.lz;
                       q.y = p.z;
+                      q.y -= cy;
                     } else {
                       // top face
                       cx = cuboidModel.cx;
@@ -597,10 +608,6 @@ const Cuboid = ({
                       cy = cuboidModel.cy;
                       ly = cuboidModel.ly;
                     }
-                    // snap to the grid (do not call Util.relativeCoordinates because we have to snap in the middle)
-                    q.x -= cx;
-                    q.y -= cy;
-                    q.applyEuler(new Euler(0, 0, -cuboidModel.rotation[2], 'ZXY'));
                     q = enableFineGridRef.current ? Util.snapToFineGrid(q) : Util.snapToNormalGrid(q);
                     q.x /= lx;
                     q.y /= ly;
