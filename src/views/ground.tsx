@@ -461,7 +461,7 @@ const Ground = () => {
 
               // set ref children state
               for (const e of state.elements) {
-                if (e.parentId === elem.id) {
+                if (e.parentId === elem.id && (e.type == ObjectType.Human || e.type == ObjectType.Tree)) {
                   // todo: should fix the position on horizontal plane
                   e.cx = (e.cx / oldDimensionRef.current.x) * newDimensionRef.current.x;
                   e.cy = (e.cy / oldDimensionRef.current.y) * newDimensionRef.current.y;
