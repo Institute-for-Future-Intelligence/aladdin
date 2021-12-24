@@ -17,7 +17,18 @@ import OakShedImage from '../resources/oak_shed.png';
 import PineImage from '../resources/pine.png';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { DoubleSide, Group, Mesh, MeshDepthMaterial, Object3D, RGBADepthPacking, TextureLoader, Vector3 } from 'three';
+import {
+  BoxGeometry,
+  DoubleSide,
+  Euler,
+  Group,
+  Mesh,
+  MeshDepthMaterial,
+  Object3D,
+  RGBADepthPacking,
+  TextureLoader,
+  Vector3,
+} from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useFrame, useThree } from '@react-three/fiber';
@@ -61,6 +72,8 @@ const Tree = ({
   const solidTreeRef = useRef<Mesh>(null);
   const shadowTreeRef = useRef<Mesh>(null);
   const trunkMeshRef = useRef<Mesh>(null);
+
+  const parent = useStore.getState().getElementById(parentId);
 
   const month = now.getMonth() + 1;
   const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
@@ -149,17 +162,6 @@ const Tree = ({
     parentRef.current = getParentObject();
   }, [parentId]);
 
-  useFrame(({ camera }) => {
-    if (groupRef.current && solidTreeRef.current && shadowTreeRef.current) {
-      const { x: cameraX, y: cameraY } = camera.position;
-      const { x: currX, y: currY } = groupRef.current.position;
-      const { x: sunlightX, y: sunlightY } = useStore.getState().sunlightDirection;
-      const parentRotationZ = parentRef.current?.rotation.z ?? 0;
-      solidTreeRef.current.rotation.set(HALF_PI, -Math.atan2(cameraX - currX, cameraY - currY) - parentRotationZ, 0);
-      shadowTreeRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY) - parentRotationZ, 0);
-    }
-  });
-
   const getObjectId = (obj: Object3D) => {
     return obj.name.split(' ')[2];
   };
@@ -175,6 +177,49 @@ const Tree = ({
     }
     return null;
   };
+
+  const getObjectParameters = (obj: Mesh) => {
+    // for foundation and cuoid
+    const geometry = obj.geometry as BoxGeometry;
+    const { width, height, depth } = geometry.parameters;
+    return { plx: width, ply: height, plz: depth };
+  };
+
+  const worldPosition = useMemo(() => new Vector3(), []);
+  const parentRotation = useMemo(() => new Euler(), []);
+
+  useFrame(({ camera }) => {
+    // parent resizing
+    if (parentRef.current && groupRef.current) {
+      const { plx, ply, plz } = getObjectParameters(parentRef.current.children[0] as Mesh);
+      if (parent && (parent.lz !== plz || parent.lx !== plx || parent.ly !== ply)) {
+        groupRef.current.position.set((plx / parent.lx) * cx, (ply / parent.ly) * cy, (plz / parent.lz) * cz);
+      }
+    }
+
+    // rotation
+    if (solidTreeRef.current && groupRef.current && shadowTreeRef.current) {
+      const { x: cameraX, y: cameraY } = camera.position;
+      const { x: currX, y: currY } = groupRef.current.position;
+      const { x: sunlightX, y: sunlightY } = useStore.getState().sunlightDirection;
+      if (parentRef.current) {
+        parentRotation.set(0, 0, parentRef.current.rotation.z);
+        worldPosition.addVectors(
+          groupRef.current.position.clone().applyEuler(parentRotation),
+          parentRef.current.position,
+        );
+        solidTreeRef.current.rotation.set(
+          HALF_PI,
+          -Math.atan2(cameraX - worldPosition.x, cameraY - worldPosition.y) - parentRotation.z,
+          0,
+        );
+        shadowTreeRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY) - parentRotation.z, 0);
+      } else {
+        solidTreeRef.current.rotation.set(HALF_PI, -Math.atan2(cameraX - currX, cameraY - currY), 0);
+        shadowTreeRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY), 0);
+      }
+    }
+  });
 
   // IMPORTANT: model mesh must use double side in order to intercept sunlight
   return (

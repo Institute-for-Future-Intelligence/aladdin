@@ -125,6 +125,7 @@ const Ground = () => {
   let intersectionPlaneType = IntersectionPlaneType.Ground;
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
   const intersectionPlaneAngle = useMemo(() => new Euler(), []);
+  const elementParentRotation = useMemo(() => new Euler(), []);
 
   if (grabRef.current) {
     if (moveHandleType === MoveHandleType.Top) {
@@ -182,32 +183,51 @@ const Ground = () => {
     return null;
   };
 
+  const setParentIdById = (parentId: string, elementId: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === elementId) {
+          e.parentId = parentId;
+          break;
+        }
+      }
+    });
+  };
+
   const handleTreeOrHumanRefMove = (elementRef: RefObject<Group> | null, e: ThreeEvent<PointerEvent>) => {
     if (elementRef && elementRef.current) {
       const intersection = getIntersectionToStand(e.intersections);
       if (intersection) {
-        const intersectionObj = intersection.object;
+        const intersectionObj = intersection.object; // Mesh
         const elementParentRef = elementRef.current.parent;
 
+        // stand on ground
         if (intersectionObj.name === 'Ground') {
+          // change parent: attach dom, set parentId
           if (elementParentRef && elementParentRef.name !== 'Content') {
             const contentRef = useStoreRef.getState().contentRef;
             if (contentRef && contentRef.current) {
               contentRef.current.add(elementRef.current);
+              setParentIdById(GROUND_ID, getObjectId(elementRef.current));
             }
           }
-          // world position
-          elementRef.current.position.copy(intersection.point);
+          elementRef.current.position.copy(intersection.point); // world position
           invalidate();
-        } else if (intersectionObj.userData.stand) {
-          // attach: need to consider attach to mesh or group
-          if (elementParentRef && elementParentRef.uuid !== intersectionObj.uuid) {
-            intersectionObj.add(elementRef.current); // attach to mesh
-          }
-          const intersectionObjGroup = intersection.object.parent;
+        }
+        // stand on standable elements
+        else if (intersectionObj.userData.stand) {
+          const intersectionObjGroup = intersectionObj.parent; // Group
           if (intersectionObjGroup) {
-            const relPos = new Vector3().subVectors(intersection.point, intersectionObjGroup.position);
-            elementRef.current.position.copy(relPos);
+            // change parent: attach dom, set parentId;
+            if (elementParentRef && elementParentRef.uuid !== intersectionObjGroup.uuid) {
+              intersectionObjGroup.add(elementRef.current); // attach to Group
+              setParentIdById(getObjectId(intersectionObjGroup), getObjectId(elementRef.current));
+            }
+            elementParentRotation.set(0, 0, -intersectionObjGroup.rotation.z);
+            const relPos = new Vector3()
+              .subVectors(intersection.point, intersectionObjGroup.position)
+              .applyEuler(elementParentRotation);
+            elementRef.current.position.copy(relPos); // relative abs position
             invalidate();
           }
         }
@@ -242,7 +262,7 @@ const Ground = () => {
   };
 
   // for tree and human for now
-  const handleElementSateOnPointerUp = (elemId: string, standObjId: string, position: Vector3) => {
+  const handleSetElementState = (elemId: string, standObjId: string, position: Vector3) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === elemId) {
@@ -438,6 +458,16 @@ const Ground = () => {
             setCommonStore((state) => {
               state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
               state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+
+              // set ref children state
+              for (const e of state.elements) {
+                if (e.parentId === elem.id) {
+                  // todo: should fix the position on horizontal plane
+                  e.cx = (e.cx / oldDimensionRef.current.x) * newDimensionRef.current.x;
+                  e.cy = (e.cy / oldDimensionRef.current.y) * newDimensionRef.current.y;
+                  e.cz = (e.cz / oldDimensionRef.current.z) * newDimensionRef.current.z;
+                }
+              }
             });
           } else if (rotateHandleType) {
             newRotationRef.current = [...elem.rotation];
@@ -484,26 +514,30 @@ const Ground = () => {
             }
             if (elementRef) {
               const intersections = ray.intersectObjects(scene.children, true);
-              const intersection = getIntersectionToStand(intersections); // could simplify
+              const intersection = getIntersectionToStand(intersections); // could simplify???
 
               if (intersection) {
                 const p = intersection.point;
                 // on ground
                 if (intersection.object.name === 'Ground') {
-                  handleElementSateOnPointerUp(elem.id, GROUND_ID, p);
+                  handleSetElementState(elem.id, GROUND_ID, p);
                 }
                 // on other standable elements
                 else if (intersection.object.userData.stand) {
                   const intersectionObjId = getObjectId(intersection.object);
                   const intersectionObjGroup = intersection.object.parent;
+
                   if (intersectionObjGroup) {
-                    const relPos = new Vector3().subVectors(p, intersectionObjGroup.position);
-                    handleElementSateOnPointerUp(elem.id, intersectionObjId, relPos);
+                    const relPos = new Vector3()
+                      .subVectors(p, intersectionObjGroup.position)
+                      .applyEuler(elementParentRotation);
+                    handleSetElementState(elem.id, intersectionObjId, relPos);
+
+                    // todo: should also handle parent change
+                    newPositionRef.current.set(relPos.x, relPos.y, relPos.z);
                   }
                 }
               }
-              // todo
-              // newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
             }
 
             if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
@@ -1021,6 +1055,9 @@ const Ground = () => {
                 // the common store only when they are OK.
                 const childrenClone: ElementModel[] = [];
                 for (const c of children) {
+                  if (c.type === ObjectType.Human || c.type === ObjectType.Tree) {
+                    continue;
+                  }
                   const childClone = JSON.parse(JSON.stringify(c));
                   childrenClone.push(childClone);
                   if (Util.isIdentical(childClone.normal, UNIT_VECTOR_POS_Z_ARRAY)) {

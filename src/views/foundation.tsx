@@ -1204,6 +1204,15 @@ const Foundation = ({
         state.objectTypeToAdd = ObjectType.Wall;
       });
     }
+    if (grabRef.current?.type === ObjectType.Human || grabRef.current?.type === ObjectType.Tree) {
+      setShowGrid(false);
+    }
+  };
+
+  const handlePointerEnter = () => {
+    if (grabRef.current?.type === ObjectType.Human || grabRef.current?.type === ObjectType.Tree) {
+      setShowGrid(true);
+    }
   };
 
   const isSolarPanelNewPositionOk = (sp: SolarPanelModel, cx: number, cy: number) => {
@@ -1358,6 +1367,7 @@ const Foundation = ({
         onPointerUp={handlePointerUp}
         onPointerMove={handlePointerMove}
         onPointerOut={handlePointerOut}
+        onPointerEnter={handlePointerEnter}
       >
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />

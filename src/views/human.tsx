@@ -26,7 +26,7 @@ import XiaoliImage from '../resources/xiaoli.png';
 import XiaomingImage from '../resources/xiaoming.png';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { DoubleSide, Group, Mesh, Object3D, TextureLoader } from 'three';
+import { BoxGeometry, DoubleSide, Euler, Group, Mesh, Object3D, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useFrame, useThree } from '@react-three/fiber';
@@ -63,6 +63,8 @@ const Human = ({
   const groupRef = useRef<Group>(null);
   const billboardRef = useRef<Mesh>(null);
   const planeRef = useRef<Mesh>(null);
+
+  const parent = useStore.getState().getElementById(parentId);
 
   const lang = { lng: language };
 
@@ -262,6 +264,7 @@ const Human = ({
     }
   }, [name]);
 
+  // attach parent dom element if parent is not Ground
   useEffect(() => {
     parentRef.current = getParentObject();
     if (parentRef.current && groupRef.current) {
@@ -272,15 +275,6 @@ const Human = ({
   useEffect(() => {
     parentRef.current = getParentObject();
   }, [parentId]);
-
-  useFrame(({ camera }) => {
-    if (billboardRef?.current && groupRef?.current) {
-      const { x: cameraX, y: cameraY } = camera.position;
-      const { x: currX, y: currY } = groupRef.current.position;
-      const parentRotationZ = parentRef.current?.rotation.z ?? 0;
-      billboardRef.current.rotation.set(HALF_PI, -Math.atan2(cameraX - currX, cameraY - currY) - parentRotationZ, 0);
-    }
-  });
 
   const getObjectId = (obj: Object3D) => {
     return obj.name.split(' ')[2];
@@ -297,6 +291,46 @@ const Human = ({
     }
     return null;
   };
+
+  const getObjectParameters = (obj: Mesh) => {
+    // for foundation and cuoid
+    const geometry = obj.geometry as BoxGeometry;
+    const { width, height, depth } = geometry.parameters;
+    return { plx: width, ply: height, plz: depth };
+  };
+
+  const worldPosition = useMemo(() => new Vector3(), []);
+  const parentRotation = useMemo(() => new Euler(), []);
+
+  useFrame(({ camera }) => {
+    // parent resizing
+    if (parentRef.current && groupRef.current) {
+      const { plx, ply, plz } = getObjectParameters(parentRef.current.children[0] as Mesh);
+      if (parent && (parent.lx !== plx || parent.ly !== ply || parent.lz !== plz)) {
+        groupRef.current.position.set((plx / parent.lx) * cx, (ply / parent.ly) * cy, (plz / parent.lz) * cz);
+      }
+    }
+
+    // rotation
+    if (billboardRef.current && groupRef.current) {
+      const { x: cameraX, y: cameraY } = camera.position;
+      const { x: currX, y: currY } = groupRef.current.position;
+      if (parentRef.current) {
+        parentRotation.set(0, 0, parentRef.current.rotation.z);
+        worldPosition.addVectors(
+          groupRef.current.position.clone().applyEuler(parentRotation),
+          parentRef.current.position,
+        );
+        billboardRef.current.rotation.set(
+          HALF_PI,
+          -Math.atan2(cameraX - worldPosition.x, cameraY - worldPosition.y) - parentRotation.z,
+          0,
+        );
+      } else {
+        billboardRef.current.rotation.set(HALF_PI, -Math.atan2(cameraX - currX, cameraY - currY), 0);
+      }
+    }
+  });
 
   return (
     <group ref={groupRef} name={'Human Group ' + id} userData={{ aabb: true }} position={[cx, cy, cz ?? 0]}>
