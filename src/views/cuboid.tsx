@@ -501,8 +501,29 @@ const Cuboid = ({
                 const polygon = grabRef.current as PolygonModel;
                 if (moveHandleType === MoveHandleType.Default) {
                   const centroid = Util.calculatePolygonCentroid(polygon.vertices);
-                  const dx = p.x - centroid.x;
-                  const dy = p.y - centroid.y;
+                  const n = new Vector3().fromArray(polygon.normal);
+                  let dx: number, dy: number;
+                  if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
+                    // east face
+                    dx = centroid.x - p.z;
+                    dy = p.y - centroid.y;
+                  } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
+                    // west face
+                    dx = p.z - centroid.x;
+                    dy = p.y - centroid.y;
+                  } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
+                    // north face
+                    dx = p.x - centroid.x;
+                    dy = centroid.y - p.z;
+                  } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
+                    // south face
+                    dx = p.x - centroid.x;
+                    dy = p.z - centroid.y;
+                  } else {
+                    // top face
+                    dx = p.x - centroid.x;
+                    dy = p.y - centroid.y;
+                  }
                   const copy = polygon.vertices.map((v) => ({ ...v }));
                   copy.forEach((v: Point2) => {
                     v.x += dx;
