@@ -341,19 +341,19 @@ export const CuboidMenu = () => {
             switch (selectedSideIndex) {
               case 0:
                 normal = UNIT_VECTOR_POS_X;
-                position.set(cuboid.cx + cuboid.lx / 2, cuboid.cy, cuboid.cz);
+                position.z = cuboid.cz;
                 break;
               case 1:
                 normal = UNIT_VECTOR_NEG_X;
-                position.set(cuboid.cx - cuboid.lx / 2, cuboid.cy, cuboid.cz);
+                position.z = cuboid.cz;
                 break;
               case 2:
                 normal = UNIT_VECTOR_POS_Y;
-                position.set(cuboid.cx, cuboid.cy + cuboid.ly / 2, cuboid.cz);
+                position.z = cuboid.cz;
                 break;
               case 3:
                 normal = UNIT_VECTOR_NEG_Y;
-                position.set(cuboid.cx, cuboid.cy - cuboid.ly / 2, cuboid.cz);
+                position.z = cuboid.cz;
                 break;
             }
             const element = addElement(cuboid, position, normal);

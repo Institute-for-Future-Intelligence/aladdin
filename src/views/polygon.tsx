@@ -85,9 +85,6 @@ const Polygon = ({
             const p2 = { x: v.x * parent.lx, y: v.y * parent.ly } as Point2;
             av.push(p2);
           }
-          const centroid = Util.calculatePolygonCentroid(av);
-          setCenterX(centroid.x);
-          setCenterY(centroid.y);
           break;
         case ObjectType.Cuboid:
           const n = new Vector3().fromArray(normal);
@@ -98,18 +95,18 @@ const Polygon = ({
             lx = parent.ly;
             ly = parent.lz;
           } else if (Util.isUnitVectorY(n)) {
-            // south face in the model coordinate system
+            // south or north face in the model coordinate system
             ly = parent.lz;
           }
           for (const v of vertices) {
             const p2 = { x: v.x * lx, y: v.y * ly } as Point2;
             av.push(p2);
           }
-          const centroidTop = Util.calculatePolygonCentroid(av);
-          setCenterX(centroidTop.x);
-          setCenterY(centroidTop.y);
           break;
       }
+      const centroid = Util.calculatePolygonCentroid(av);
+      setCenterX(centroid.x);
+      setCenterY(centroid.y);
     }
     return av;
   }, [vertices, parent]);
@@ -147,32 +144,36 @@ const Polygon = ({
 
   const position = useMemo(() => {
     const p = new Vector3(parent?.cx ?? 0, parent?.cy ?? 0, cz);
-    if (parent) {
+    if (parent && parent.type === ObjectType.Cuboid) {
       const n = new Vector3().fromArray(normal);
+      let sideFace = false;
+      const shift = new Vector3();
       if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
         // east face in model coordinate system
-        p.x = parent.cx + parent.lx / 2 + 0.01;
-        p.y = parent.cy;
-        p.z = parent.cz;
+        sideFace = true;
+        shift.x = parent.lx / 2 + 0.01;
       } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
         // west face in model coordinate system
-        p.x = parent.cx - parent.lx / 2 - 0.01;
-        p.y = parent.cy;
-        p.z = parent.cz;
+        sideFace = true;
+        shift.x = -parent.lx / 2 - 0.01;
       } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
         // north face in the model coordinate system
-        p.x = parent.cx;
-        p.y = parent.cy + parent.ly / 2 + 0.01;
-        p.z = parent.cz;
+        sideFace = true;
+        shift.y = parent.ly / 2 + 0.01;
       } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
         // south face in the model coordinate system
-        p.x = parent.cx;
-        p.y = parent.cy - parent.ly / 2 - 0.01;
-        p.z = parent.cz;
+        sideFace = true;
+        shift.y = -parent.ly / 2 - 0.01;
+      }
+      if (sideFace) {
+        shift.applyEuler(new Euler(0, 0, rotation[2]));
+        p.x = parent.cx + shift.x;
+        p.y = parent.cy + shift.y;
+        p.z = parent.cz + shift.z;
       }
     }
     return p;
-  }, [normal]);
+  }, [normal, rotation, parent?.cx, parent?.cy, parent?.cz, parent?.lx, parent?.ly, parent?.lz]);
 
   const points = useMemo(() => {
     const p = new Array<Vector3>();
