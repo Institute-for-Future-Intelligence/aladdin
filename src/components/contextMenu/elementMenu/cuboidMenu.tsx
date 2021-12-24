@@ -336,25 +336,24 @@ export const CuboidMenu = () => {
             setCommonStore((state) => {
               state.objectTypeToAdd = ObjectType.Polygon;
             });
-            let normal = UNIT_VECTOR_POS_Z;
-            const position = new Vector3(cuboid.cx, cuboid.cy, cuboid.lz);
+            const position = new Vector3(cuboid.cx, cuboid.cy, cuboid.cz);
+            let normal;
             switch (selectedSideIndex) {
               case 0:
                 normal = UNIT_VECTOR_POS_X;
-                position.z = cuboid.cz;
                 break;
               case 1:
                 normal = UNIT_VECTOR_NEG_X;
-                position.z = cuboid.cz;
                 break;
               case 2:
                 normal = UNIT_VECTOR_POS_Y;
-                position.z = cuboid.cz;
                 break;
               case 3:
                 normal = UNIT_VECTOR_NEG_Y;
-                position.z = cuboid.cz;
                 break;
+              default:
+                normal = UNIT_VECTOR_POS_Z;
+                position.z = cuboid.lz;
             }
             const element = addElement(cuboid, position, normal);
             const undoableAdd = {

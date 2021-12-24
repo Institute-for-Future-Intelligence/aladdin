@@ -117,8 +117,7 @@ export class ElementModelFactory {
     if (parent.type === ObjectType.Cuboid && normal) {
       if (Util.isUnitVectorX(normal)) {
         // west and east face
-        rx = y;
-        ry = z;
+        rx = z;
       } else if (Util.isUnitVectorY(normal)) {
         // south and north face
         ry = z;

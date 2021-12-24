@@ -88,19 +88,22 @@ const Polygon = ({
           break;
         case ObjectType.Cuboid:
           const n = new Vector3().fromArray(normal);
-          let lx = parent.lx;
-          let ly = parent.ly;
+          let lx, ly;
           if (Util.isUnitVectorX(n)) {
             // east or west face in model coordinate system
-            lx = parent.ly;
-            ly = parent.lz;
+            lx = parent.lz;
+            ly = parent.ly;
           } else if (Util.isUnitVectorY(n)) {
-            // south or north face in the model coordinate system
+            // south or north face
+            lx = parent.lx;
             ly = parent.lz;
+          } else {
+            // top face
+            lx = parent.lx;
+            ly = parent.ly;
           }
           for (const v of vertices) {
-            const p2 = { x: v.x * lx, y: v.y * ly } as Point2;
-            av.push(p2);
+            av.push({ x: v.x * lx, y: v.y * ly } as Point2);
           }
           break;
       }

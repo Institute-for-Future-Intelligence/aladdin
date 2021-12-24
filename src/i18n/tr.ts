@@ -5,7 +5,7 @@
 export const i18n_tr = {
   translation: {
     name: {
-      IFI: 'Institute for Future Intelligence',
+      IFI: 'Geleceğin Zekası Enstitüsü',
       Aladdin: 'Aladdin',
     },
 
@@ -61,7 +61,7 @@ export const i18n_tr = {
       OK: 'Tamam',
       Cancel: 'Ýptal',
       Apply: 'Uygula',
-      Close: 'Close',
+      Close: 'Kapat',
       ApplyTo: 'Uygulanacak',
       Clear: 'Temizle',
       Warning: 'Uyarý',

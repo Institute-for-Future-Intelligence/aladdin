@@ -561,41 +561,46 @@ const Cuboid = ({
                     const polygon = grabRef.current as PolygonModel;
                     const n = new Vector3().fromArray(polygon.normal);
                     let q = new Vector3(p.x, p.y, 0);
-                    let cx = cuboidModel.cx;
-                    let cy = cuboidModel.cy;
-                    let lx = cuboidModel.lx;
-                    let ly = cuboidModel.ly;
+                    let cx, cy, lx, ly;
                     if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
                       // east face in model coordinate system
-                      cx = cuboidModel.cy;
-                      lx = cuboidModel.ly;
-                      cy = cuboidModel.cz;
-                      ly = cuboidModel.lz;
-                      q.x = p.y;
-                      q.y = p.z;
+                      cx = cuboidModel.cz;
+                      lx = cuboidModel.lz;
+                      cy = cuboidModel.cy;
+                      ly = cuboidModel.ly;
+                      q.x = lx - p.z;
                     } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
-                      // west face in model coordinate system
-                      cx = cuboidModel.cy;
-                      lx = cuboidModel.ly;
-                      cy = cuboidModel.cz;
-                      ly = cuboidModel.lz;
-                      q.x = p.y;
-                      q.y = p.z;
-                    } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
-                      // south face in the model coordinate system
-                      cy = cuboidModel.cz;
-                      ly = cuboidModel.lz;
-                      q.y = p.z;
+                      // west face
+                      cx = cuboidModel.cz;
+                      lx = cuboidModel.lz;
+                      cy = cuboidModel.cy;
+                      ly = cuboidModel.ly;
+                      q.x = p.z;
                     } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
-                      // north face in the model coordinate system
+                      // north face
+                      cx = cuboidModel.cx;
+                      lx = cuboidModel.lx;
                       cy = cuboidModel.cz;
                       ly = cuboidModel.lz;
                       q.y = ly - p.z;
+                    } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
+                      // south face
+                      cx = cuboidModel.cx;
+                      lx = cuboidModel.lx;
+                      cy = cuboidModel.cz;
+                      ly = cuboidModel.lz;
+                      q.y = p.z;
+                    } else {
+                      // top face
+                      cx = cuboidModel.cx;
+                      lx = cuboidModel.lx;
+                      cy = cuboidModel.cy;
+                      ly = cuboidModel.ly;
                     }
                     // snap to the grid (do not call Util.relativeCoordinates because we have to snap in the middle)
                     q.x -= cx;
                     q.y -= cy;
-                    q.applyEuler(new Euler().fromArray(cuboidModel.rotation.map((a) => -a)));
+                    q.applyEuler(new Euler(0, 0, -cuboidModel.rotation[2], 'ZXY'));
                     q = enableFineGridRef.current ? Util.snapToFineGrid(q) : Util.snapToNormalGrid(q);
                     q.x /= lx;
                     q.y /= ly;
