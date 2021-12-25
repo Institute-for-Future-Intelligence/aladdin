@@ -2405,11 +2405,16 @@ export const useStore = create<CommonStoreState>(
                 // so we have to restore them from elementsToPaste.
                 const m = state.pastePoint;
                 const cutElements = state.copyCutElements();
-                cutElements[0].cx = m.x;
-                cutElements[0].cy = m.y;
-                cutElements[0].cz = m.z;
-                state.elements.push(...cutElements);
-                pastedElements.push(...cutElements);
+                if (cutElements.length > 0) {
+                  cutElements[0].cx = m.x;
+                  cutElements[0].cy = m.y;
+                  cutElements[0].cz = m.z;
+                  if (cutElements[0].type === ObjectType.Cuboid || cutElements[0].type === ObjectType.Foundation) {
+                    cutElements[0].cz += cutElements[0].lz / 2;
+                  }
+                  state.elements.push(...cutElements);
+                  pastedElements.push(...cutElements);
+                }
               }
             });
             return pastedElements;
@@ -2519,14 +2524,16 @@ export const useStore = create<CommonStoreState>(
                         // when a parent with children is cut, the removed children are no longer in elements array,
                         // so we have to restore them from elementsToPaste.
                         const cutElements = state.copyCutElements();
-                        cutElements[0].cx += cutElements[0].lx;
-                        state.elements.push(...cutElements);
-                        pastedElements.push(...cutElements);
-                        state.elementsToPaste = cutElements;
+                        if (cutElements.length > 0) {
+                          cutElements[0].cx += cutElements[0].lx;
+                          state.elements.push(...cutElements);
+                          pastedElements.push(...cutElements);
+                          state.elementsToPaste = cutElements;
+                        }
                       }
                       break;
                   }
-                  pastedElements.push(e);
+                  if (state.elementsToPaste.length === 1) pastedElements.push(e);
                 }
               }
             });

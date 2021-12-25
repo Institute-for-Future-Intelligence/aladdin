@@ -29,7 +29,7 @@ export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string;
         const undoablePaste = {
           name: 'Paste to Point',
           timestamp: Date.now(),
-          pastedElements: JSON.parse(JSON.stringify(pastedElements)),
+          pastedElements: pastedElements.map((m) => ({ ...m })),
           undo: () => {
             for (const elem of undoablePaste.pastedElements) {
               removeElementById(elem.id, false);
