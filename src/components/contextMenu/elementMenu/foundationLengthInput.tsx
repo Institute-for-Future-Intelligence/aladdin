@@ -100,6 +100,26 @@ const FoundationLengthInput = ({
     return false;
   };
 
+  const needChange = (ly: number) => {
+    switch (foundationActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation && !e.locked) {
+            const f = e as FoundationModel;
+            if (Math.abs(f.ly - ly) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (Math.abs(foundation?.ly - ly) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const updateLyWithChildren = (parent: FoundationModel, value: number) => {
     // store children's relative positions
     const children = getChildren(parent.id);
@@ -172,26 +192,6 @@ const FoundationLengthInput = ({
         }
       }
     }
-  };
-
-  const needChange = (ly: number) => {
-    switch (foundationActionScope) {
-      case Scope.AllObjectsOfThisType:
-        for (const e of elements) {
-          if (e.type === ObjectType.Foundation && !e.locked) {
-            const f = e as FoundationModel;
-            if (Math.abs(f.ly - ly) > ZERO_TOLERANCE) {
-              return true;
-            }
-          }
-        }
-        break;
-      default:
-        if (Math.abs(foundation?.ly - ly) > ZERO_TOLERANCE) {
-          return true;
-        }
-    }
-    return false;
   };
 
   const setLy = (value: number) => {

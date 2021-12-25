@@ -10,10 +10,13 @@ import * as Selector from '../../../stores/selector';
 import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { CuboidModel } from '../../../models/CuboidModel';
-import { ZERO_TOLERANCE } from '../../../constants';
+import { ORIGIN_VECTOR2, UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../../../constants';
 import { Util } from '../../../Util';
 import { UndoableSizeGroupChange } from '../../../undo/UndoableSizeGroupChange';
 import { UndoableSizeChange } from '../../../undo/UndoableSizeChange';
+import { Vector2 } from 'three';
+import { PolygonModel } from '../../../models/PolygonModel';
+import { Point2 } from '../../../models/Point2';
 
 const CuboidLengthInput = ({
   lengthDialogVisible,
@@ -25,8 +28,11 @@ const CuboidLengthInput = ({
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getChildren = useStore(Selector.getChildren);
+  const setElementPosition = useStore(Selector.setElementPosition);
+  const updateElementCyById = useStore(Selector.updateElementCyById);
   const updateElementLyById = useStore(Selector.updateElementLyById);
   const updateElementLyForAll = useStore(Selector.updateElementLyForAll);
+  const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
@@ -38,6 +44,12 @@ const CuboidLengthInput = ({
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
 
+  const oldChildrenPositionsMapRef = useRef<Map<string, Vector2>>(new Map<string, Vector2>());
+  const newChildrenPositionsMapRef = useRef<Map<string, Vector2>>(new Map<string, Vector2>());
+  const denormalizedPositionMapRef = useRef<Map<string, Vector2>>(new Map()); // not absolute position, just denormalized
+  const oldChildrenVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>()); // Point2 is used to store vertices
+  const newChildrenVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>());
+  const denormalizedVerticesMapRef = useRef<Map<string, Vector2[]>>(new Map()); // use Vector2's rotation function
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
@@ -108,6 +120,80 @@ const CuboidLengthInput = ({
     return false;
   };
 
+  const updateLyWithChildren = (parent: CuboidModel, value: number) => {
+    // store children's relative positions
+    const children = getChildren(parent.id);
+    const azimuth = parent.rotation[2];
+    denormalizedPositionMapRef.current.clear(); // this map is for one-time use with each foundation
+    denormalizedVerticesMapRef.current.clear();
+    if (children.length > 0) {
+      for (const c of children) {
+        if (Util.isIdentical(c.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+          // top face
+          switch (c.type) {
+            case ObjectType.SolarPanel:
+            case ObjectType.Sensor:
+              const p = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(ORIGIN_VECTOR2, azimuth);
+              denormalizedPositionMapRef.current.set(c.id, p);
+              oldChildrenPositionsMapRef.current.set(c.id, new Vector2(c.cx, c.cy));
+              break;
+            case ObjectType.Polygon:
+              const polygon = c as PolygonModel;
+              const arr: Vector2[] = [];
+              for (const v of polygon.vertices) {
+                arr.push(new Vector2(v.x * parent.lx, v.y * parent.ly).rotateAround(ORIGIN_VECTOR2, azimuth));
+              }
+              denormalizedVerticesMapRef.current.set(c.id, arr);
+              oldChildrenVerticesMapRef.current.set(
+                c.id,
+                polygon.vertices.map((v) => ({ ...v })),
+              );
+              break;
+          }
+        }
+      }
+    }
+    // update cuboid length
+    updateElementLyById(parent.id, value);
+    // update children's relative positions
+    if (children.length > 0) {
+      for (const c of children) {
+        if (Util.isIdentical(c.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+          // top face
+          switch (c.type) {
+            case ObjectType.SolarPanel:
+            case ObjectType.Sensor:
+              const p = denormalizedPositionMapRef.current.get(c.id);
+              if (p) {
+                const relativePos = new Vector2(p.x, p.y).rotateAround(ORIGIN_VECTOR2, -azimuth);
+                const newCy = relativePos.y / value;
+                updateElementCyById(c.id, newCy);
+                newChildrenPositionsMapRef.current.set(c.id, new Vector2(c.cx, newCy));
+              }
+              break;
+            case ObjectType.Polygon:
+              const arr = denormalizedVerticesMapRef.current.get(c.id);
+              if (arr) {
+                const newVertices: Point2[] = [];
+                for (const v of arr) {
+                  const relativePos = v.rotateAround(ORIGIN_VECTOR2, -azimuth);
+                  const newX = relativePos.x / parent.lx;
+                  const newY = relativePos.y / value;
+                  newVertices.push({ x: newX, y: newY } as Point2);
+                }
+                updatePolygonVerticesById(c.id, newVertices);
+                newChildrenVerticesMapRef.current.set(
+                  c.id,
+                  newVertices.map((v) => ({ ...v })),
+                );
+              }
+              break;
+          }
+        }
+      }
+    }
+  };
+
   const setLy = (value: number) => {
     if (!cuboid) return;
     if (!needChange(value)) return;
@@ -118,6 +204,10 @@ const CuboidLengthInput = ({
       rejectedValue.current = value;
       setInputLy(oldLy);
     } else {
+      oldChildrenPositionsMapRef.current.clear();
+      newChildrenPositionsMapRef.current.clear();
+      oldChildrenVerticesMapRef.current.clear();
+      newChildrenVerticesMapRef.current.clear();
       switch (cuboidActionScope) {
         case Scope.AllObjectsOfThisType:
           const oldLysAll = new Map<string, number>();
@@ -129,7 +219,7 @@ const CuboidLengthInput = ({
           // the following also populates the above two maps in ref
           for (const elem of elements) {
             if (elem.type === ObjectType.Cuboid) {
-              updateElementLyById(elem.id, value);
+              updateLyWithChildren(elem as CuboidModel, value);
             }
           }
           const undoableChangeAll = {
@@ -137,30 +227,78 @@ const CuboidLengthInput = ({
             timestamp: Date.now(),
             oldSizes: oldLysAll,
             newSize: value,
+            oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+            newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+            oldChildrenVerticesMap: new Map(oldChildrenVerticesMapRef.current),
+            newChildrenVerticesMap: new Map(newChildrenVerticesMapRef.current),
             undo: () => {
               for (const [id, ly] of undoableChangeAll.oldSizes.entries()) {
                 updateElementLyById(id, ly as number);
               }
+              if (undoableChangeAll.oldChildrenPositionsMap && undoableChangeAll.oldChildrenPositionsMap.size > 0) {
+                for (const [id, ps] of undoableChangeAll.oldChildrenPositionsMap.entries()) {
+                  setElementPosition(id, ps.x, ps.y);
+                }
+              }
+              if (undoableChangeAll.oldChildrenVerticesMap && undoableChangeAll.oldChildrenVerticesMap.size > 0) {
+                for (const [id, vs] of undoableChangeAll.oldChildrenVerticesMap.entries()) {
+                  updatePolygonVerticesById(id, vs);
+                }
+              }
             },
             redo: () => {
               updateElementLyForAll(ObjectType.Cuboid, undoableChangeAll.newSize as number);
+              if (undoableChangeAll.newChildrenPositionsMap && undoableChangeAll.newChildrenPositionsMap.size > 0) {
+                for (const [id, p] of undoableChangeAll.newChildrenPositionsMap.entries()) {
+                  setElementPosition(id, p.x, p.y);
+                }
+              }
+              if (undoableChangeAll.newChildrenVerticesMap && undoableChangeAll.newChildrenVerticesMap.size > 0) {
+                for (const [id, vs] of undoableChangeAll.newChildrenVerticesMap.entries()) {
+                  updatePolygonVerticesById(id, vs);
+                }
+              }
             },
           } as UndoableSizeGroupChange;
           addUndoable(undoableChangeAll);
           break;
         default:
-          updateElementLyById(cuboid.id, value);
+          updateLyWithChildren(cuboid, value);
           const undoableChange = {
             name: 'Set Cuboid Length',
             timestamp: Date.now(),
             oldSize: oldLy,
             newSize: value,
             resizedElementId: cuboid.id,
+            oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+            newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+            oldChildrenVerticesMap: new Map(oldChildrenVerticesMapRef.current),
+            newChildrenVerticesMap: new Map(newChildrenVerticesMapRef.current),
             undo: () => {
               updateElementLyById(cuboid.id, undoableChange.oldSize as number);
+              if (undoableChange.oldChildrenPositionsMap && undoableChange.oldChildrenPositionsMap.size > 0) {
+                for (const [id, ps] of undoableChange.oldChildrenPositionsMap.entries()) {
+                  setElementPosition(id, ps.x, ps.y);
+                }
+              }
+              if (undoableChange.oldChildrenVerticesMap && undoableChange.oldChildrenVerticesMap.size > 0) {
+                for (const [id, vs] of undoableChange.oldChildrenVerticesMap.entries()) {
+                  updatePolygonVerticesById(id, vs);
+                }
+              }
             },
             redo: () => {
               updateElementLyById(cuboid.id, undoableChange.newSize as number);
+              if (undoableChange.newChildrenPositionsMap && undoableChange.newChildrenPositionsMap.size > 0) {
+                for (const [id, ps] of undoableChange.newChildrenPositionsMap.entries()) {
+                  setElementPosition(id, ps.x, ps.y);
+                }
+              }
+              if (undoableChange.newChildrenVerticesMap && undoableChange.newChildrenVerticesMap.size > 0) {
+                for (const [id, vs] of undoableChange.newChildrenVerticesMap.entries()) {
+                  updatePolygonVerticesById(id, vs);
+                }
+              }
             },
           } as UndoableSizeChange;
           addUndoable(undoableChange);

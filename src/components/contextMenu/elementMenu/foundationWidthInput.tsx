@@ -100,11 +100,32 @@ const FoundationWidthInput = ({
     return false;
   };
 
+  const needChange = (lx: number) => {
+    switch (foundationActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation && !e.locked) {
+            const f = e as FoundationModel;
+            if (Math.abs(f.lx - lx) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (Math.abs(foundation?.lx - lx) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
+
   const updateLxWithChildren = (parent: FoundationModel, value: number) => {
     // store children's relative positions
     const children = getChildren(parent.id);
     const azimuth = parent.rotation[2];
     denormalizedPosMapRef.current.clear(); // this map is for one-time use with each foundation
+    denormalizedVerticesMapRef.current.clear();
     if (children.length > 0) {
       for (const c of children) {
         switch (c.type) {
@@ -131,7 +152,7 @@ const FoundationWidthInput = ({
         }
       }
     }
-    // update foundation's length
+    // update foundation's width
     updateElementLxById(parent.id, value);
     // update children's relative positions
     if (children.length > 0) {
@@ -170,26 +191,6 @@ const FoundationWidthInput = ({
         }
       }
     }
-  };
-
-  const needChange = (lx: number) => {
-    switch (foundationActionScope) {
-      case Scope.AllObjectsOfThisType:
-        for (const e of elements) {
-          if (e.type === ObjectType.Foundation && !e.locked) {
-            const f = e as FoundationModel;
-            if (Math.abs(f.lx - lx) > ZERO_TOLERANCE) {
-              return true;
-            }
-          }
-        }
-        break;
-      default:
-        if (Math.abs(foundation?.lx - lx) > ZERO_TOLERANCE) {
-          return true;
-        }
-    }
-    return false;
   };
 
   const setLx = (value: number) => {
