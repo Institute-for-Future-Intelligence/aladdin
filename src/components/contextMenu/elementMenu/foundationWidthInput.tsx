@@ -15,6 +15,8 @@ import { Util } from '../../../Util';
 import { UndoableSizeGroupChange } from '../../../undo/UndoableSizeGroupChange';
 import { UndoableSizeChange } from '../../../undo/UndoableSizeChange';
 import { ORIGIN_VECTOR2, ZERO_TOLERANCE } from '../../../constants';
+import { Point2 } from '../../../models/Point2';
+import { PolygonModel } from '../../../models/PolygonModel';
 
 const FoundationWidthInput = ({
   widthDialogVisible,
@@ -28,6 +30,7 @@ const FoundationWidthInput = ({
   const updateElementCxById = useStore(Selector.updateElementCxById);
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLxForAll = useStore(Selector.updateElementLxForAll);
+  const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getChildren = useStore(Selector.getChildren);
   const setElementPosition = useStore(Selector.setElementPosition);
@@ -43,7 +46,10 @@ const FoundationWidthInput = ({
 
   const oldChildrenPositionsMapRef = useRef<Map<string, Vector2>>(new Map<string, Vector2>());
   const newChildrenPositionsMapRef = useRef<Map<string, Vector2>>(new Map<string, Vector2>());
-  const unnormalizedPosMapRef = useRef<Map<string, Vector2>>(new Map());
+  const denormalizedPosMapRef = useRef<Map<string, Vector2>>(new Map()); // not absolute position, just denormalized
+  const oldChildrenVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>()); // Point2 is used to store vertices
+  const newChildrenVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>());
+  const denormalizedVerticesMapRef = useRef<Map<string, Vector2[]>>(new Map()); // use Vector2's rotation function
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
@@ -98,7 +104,7 @@ const FoundationWidthInput = ({
     // store children's relative positions
     const children = getChildren(parent.id);
     const azimuth = parent.rotation[2];
-    unnormalizedPosMapRef.current.clear(); // this map is for one-time use with each foundation
+    denormalizedPosMapRef.current.clear(); // this map is for one-time use with each foundation
     if (children.length > 0) {
       for (const c of children) {
         switch (c.type) {
@@ -107,8 +113,20 @@ const FoundationWidthInput = ({
           case ObjectType.SolarPanel:
           case ObjectType.Sensor:
             const p = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(ORIGIN_VECTOR2, azimuth);
-            unnormalizedPosMapRef.current.set(c.id, p);
+            denormalizedPosMapRef.current.set(c.id, p);
             oldChildrenPositionsMapRef.current.set(c.id, new Vector2(c.cx, c.cy));
+            break;
+          case ObjectType.Polygon:
+            const polygon = c as PolygonModel;
+            const arr: Vector2[] = [];
+            for (const v of polygon.vertices) {
+              arr.push(new Vector2(v.x * parent.lx, v.y * parent.ly).rotateAround(ORIGIN_VECTOR2, azimuth));
+            }
+            denormalizedVerticesMapRef.current.set(c.id, arr);
+            oldChildrenVerticesMapRef.current.set(
+              c.id,
+              polygon.vertices.map((v) => ({ ...v })),
+            );
             break;
         }
       }
@@ -118,12 +136,37 @@ const FoundationWidthInput = ({
     // update children's relative positions
     if (children.length > 0) {
       for (const c of children) {
-        const p = unnormalizedPosMapRef.current.get(c.id);
-        if (p) {
-          const relativePos = new Vector2(p.x, p.y).rotateAround(ORIGIN_VECTOR2, -azimuth);
-          const newCx = relativePos.x / value;
-          updateElementCxById(c.id, newCx);
-          newChildrenPositionsMapRef.current.set(c.id, new Vector2(newCx, c.cy));
+        switch (c.type) {
+          case ObjectType.Wall:
+            // TODO
+            break;
+          case ObjectType.SolarPanel:
+          case ObjectType.Sensor:
+            const p = denormalizedPosMapRef.current.get(c.id);
+            if (p) {
+              const relativePos = new Vector2(p.x, p.y).rotateAround(ORIGIN_VECTOR2, -azimuth);
+              const newCx = relativePos.x / value;
+              updateElementCxById(c.id, newCx);
+              newChildrenPositionsMapRef.current.set(c.id, new Vector2(newCx, c.cy));
+            }
+            break;
+          case ObjectType.Polygon:
+            const arr = denormalizedVerticesMapRef.current.get(c.id);
+            if (arr) {
+              const newVertices: Point2[] = [];
+              for (const v of arr) {
+                const relativePos = v.rotateAround(ORIGIN_VECTOR2, -azimuth);
+                const newX = relativePos.x / value;
+                const newY = relativePos.y / parent.ly;
+                newVertices.push({ x: newX, y: newY } as Point2);
+              }
+              updatePolygonVerticesById(c.id, newVertices);
+              newChildrenVerticesMapRef.current.set(
+                c.id,
+                newVertices.map((v) => ({ ...v })),
+              );
+            }
+            break;
         }
       }
     }
@@ -161,6 +204,8 @@ const FoundationWidthInput = ({
     } else {
       oldChildrenPositionsMapRef.current.clear();
       newChildrenPositionsMapRef.current.clear();
+      oldChildrenVerticesMapRef.current.clear();
+      newChildrenVerticesMapRef.current.clear();
       switch (foundationActionScope) {
         case Scope.AllObjectsOfThisType:
           const oldLxsAll = new Map<string, number>();
@@ -182,21 +227,33 @@ const FoundationWidthInput = ({
             newSize: value,
             oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
             newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+            oldChildrenVerticesMap: new Map(oldChildrenVerticesMapRef.current),
+            newChildrenVerticesMap: new Map(newChildrenVerticesMapRef.current),
             undo: () => {
               for (const [id, lx] of undoableChangeAll.oldSizes.entries()) {
                 updateElementLxById(id, lx as number);
               }
               if (undoableChangeAll.oldChildrenPositionsMap && undoableChangeAll.oldChildrenPositionsMap.size > 0) {
-                for (const [id, p] of undoableChangeAll.oldChildrenPositionsMap.entries()) {
-                  setElementPosition(id, p.x, p.y);
+                for (const [id, ps] of undoableChangeAll.oldChildrenPositionsMap.entries()) {
+                  setElementPosition(id, ps.x, ps.y);
+                }
+              }
+              if (undoableChangeAll.oldChildrenVerticesMap && undoableChangeAll.oldChildrenVerticesMap.size > 0) {
+                for (const [id, vs] of undoableChangeAll.oldChildrenVerticesMap.entries()) {
+                  updatePolygonVerticesById(id, vs);
                 }
               }
             },
             redo: () => {
               updateElementLxForAll(ObjectType.Foundation, undoableChangeAll.newSize as number);
               if (undoableChangeAll.newChildrenPositionsMap && undoableChangeAll.newChildrenPositionsMap.size > 0) {
-                for (const [id, p] of undoableChangeAll.newChildrenPositionsMap.entries()) {
-                  setElementPosition(id, p.x, p.y);
+                for (const [id, ps] of undoableChangeAll.newChildrenPositionsMap.entries()) {
+                  setElementPosition(id, ps.x, ps.y);
+                }
+              }
+              if (undoableChangeAll.newChildrenVerticesMap && undoableChangeAll.newChildrenVerticesMap.size > 0) {
+                for (const [id, vs] of undoableChangeAll.newChildrenVerticesMap.entries()) {
+                  updatePolygonVerticesById(id, vs);
                 }
               }
             },
@@ -213,11 +270,18 @@ const FoundationWidthInput = ({
             resizedElementId: foundation.id,
             oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
             newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+            oldChildrenVerticesMap: new Map(oldChildrenVerticesMapRef.current),
+            newChildrenVerticesMap: new Map(newChildrenVerticesMapRef.current),
             undo: () => {
               updateElementLxById(foundation.id, undoableChange.oldSize as number);
               if (undoableChange.oldChildrenPositionsMap && undoableChange.oldChildrenPositionsMap.size > 0) {
-                for (const [id, p] of undoableChange.oldChildrenPositionsMap.entries()) {
-                  setElementPosition(id, p.x, p.y);
+                for (const [id, ps] of undoableChange.oldChildrenPositionsMap.entries()) {
+                  setElementPosition(id, ps.x, ps.y);
+                }
+              }
+              if (undoableChange.oldChildrenVerticesMap && undoableChange.oldChildrenVerticesMap.size > 0) {
+                for (const [id, vs] of undoableChange.oldChildrenVerticesMap.entries()) {
+                  updatePolygonVerticesById(id, vs);
                 }
               }
             },
@@ -226,6 +290,11 @@ const FoundationWidthInput = ({
               if (undoableChange.newChildrenPositionsMap && undoableChange.newChildrenPositionsMap.size > 0) {
                 for (const [id, p] of undoableChange.newChildrenPositionsMap.entries()) {
                   setElementPosition(id, p.x, p.y);
+                }
+              }
+              if (undoableChange.newChildrenVerticesMap && undoableChange.newChildrenVerticesMap.size > 0) {
+                for (const [id, vs] of undoableChange.newChildrenVerticesMap.entries()) {
+                  updatePolygonVerticesById(id, vs);
                 }
               }
             },
@@ -302,7 +371,7 @@ const FoundationWidthInput = ({
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
-        // this must be specified for the x button at the upper-right corner to work
+        // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputLx(foundation?.lx);
           rejectRef.current = false;
@@ -326,7 +395,7 @@ const FoundationWidthInput = ({
               value={inputLx}
               formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => setInputLx(value)}
-              onPressEnter={(event) => {
+              onPressEnter={() => {
                 setLx(inputLx);
                 if (!rejectRef.current) {
                   setWidthDialogVisible(false);

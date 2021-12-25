@@ -458,10 +458,9 @@ const Ground = () => {
             setCommonStore((state) => {
               state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
               state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
-
               // set ref children state
               for (const e of state.elements) {
-                if (e.parentId === elem.id && (e.type == ObjectType.Human || e.type == ObjectType.Tree)) {
+                if (e.parentId === elem.id && (e.type === ObjectType.Human || e.type === ObjectType.Tree)) {
                   // todo: should fix the position on horizontal plane
                   e.cx = (e.cx / oldDimensionRef.current.x) * newDimensionRef.current.x;
                   e.cy = (e.cy / oldDimensionRef.current.y) * newDimensionRef.current.y;
