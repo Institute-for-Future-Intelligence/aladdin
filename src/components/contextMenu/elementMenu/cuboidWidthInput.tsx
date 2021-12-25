@@ -10,8 +10,7 @@ import * as Selector from '../../../stores/selector';
 import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { CuboidModel } from '../../../models/CuboidModel';
-import { ORIGIN_VECTOR2, ZERO_TOLERANCE } from '../../../constants';
-import { Vector2 } from 'three';
+import { ZERO_TOLERANCE } from '../../../constants';
 import { Util } from '../../../Util';
 import { UndoableSizeGroupChange } from '../../../undo/UndoableSizeGroupChange';
 import { UndoableSizeChange } from '../../../undo/UndoableSizeChange';
@@ -26,10 +25,8 @@ const CuboidWidthInput = ({
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getChildren = useStore(Selector.getChildren);
-  const updateElementCxById = useStore(Selector.updateElementCxById);
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLxForAll = useStore(Selector.updateElementLxForAll);
-  const setElementPosition = useStore(Selector.setElementPosition);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
@@ -41,9 +38,6 @@ const CuboidWidthInput = ({
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
 
-  const oldChildrenPositionsMapRef = useRef<Map<string, Vector2>>(new Map<string, Vector2>());
-  const newChildrenPositionsMapRef = useRef<Map<string, Vector2>>(new Map<string, Vector2>());
-  const unnormalizedPosMapRef = useRef<Map<string, Vector2>>(new Map());
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
@@ -94,39 +88,6 @@ const CuboidWidthInput = ({
     return false;
   };
 
-  const updateLxWithChildren = (parent: CuboidModel, value: number) => {
-    // store children's relative positions
-    const children = getChildren(parent.id);
-    const azimuth = parent.rotation[2];
-    unnormalizedPosMapRef.current.clear(); // this map is for one-time use with each cuboid
-    if (children.length > 0) {
-      for (const c of children) {
-        switch (c.type) {
-          case ObjectType.SolarPanel:
-          case ObjectType.Sensor:
-            const p = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(ORIGIN_VECTOR2, azimuth);
-            unnormalizedPosMapRef.current.set(c.id, p);
-            oldChildrenPositionsMapRef.current.set(c.id, new Vector2(c.cx, c.cy));
-            break;
-        }
-      }
-    }
-    // update cuboid width
-    updateElementLxById(parent.id, value);
-    // update children's relative positions
-    if (children.length > 0) {
-      for (const c of children) {
-        const p = unnormalizedPosMapRef.current.get(c.id);
-        if (p) {
-          const relativePos = new Vector2(p.x, p.y).rotateAround(ORIGIN_VECTOR2, -azimuth);
-          const newCx = relativePos.x / value;
-          updateElementCxById(c.id, newCx);
-          newChildrenPositionsMapRef.current.set(c.id, new Vector2(newCx, c.cy));
-        }
-      }
-    }
-  };
-
   const needChange = (lx: number) => {
     switch (cuboidActionScope) {
       case Scope.AllObjectsOfThisType:
@@ -157,8 +118,6 @@ const CuboidWidthInput = ({
       rejectedValue.current = value;
       setInputLx(oldLx);
     } else {
-      oldChildrenPositionsMapRef.current.clear();
-      newChildrenPositionsMapRef.current.clear();
       switch (cuboidActionScope) {
         case Scope.AllObjectsOfThisType:
           const oldLxsAll = new Map<string, number>();
@@ -167,10 +126,9 @@ const CuboidWidthInput = ({
               oldLxsAll.set(elem.id, elem.lx);
             }
           }
-          // the following also populates the above two maps in ref
           for (const elem of elements) {
             if (elem.type === ObjectType.Cuboid) {
-              updateLxWithChildren(elem as CuboidModel, value);
+              updateElementLxById(elem.id, value);
             }
           }
           const undoableChangeAll = {
@@ -178,54 +136,30 @@ const CuboidWidthInput = ({
             timestamp: Date.now(),
             oldSizes: oldLxsAll,
             newSize: value,
-            oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
-            newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
             undo: () => {
               for (const [id, lx] of undoableChangeAll.oldSizes.entries()) {
                 updateElementLxById(id, lx as number);
               }
-              if (undoableChangeAll.oldChildrenPositionsMap.size > 0) {
-                for (const [id, p] of undoableChangeAll.oldChildrenPositionsMap.entries()) {
-                  setElementPosition(id, p.x, p.y);
-                }
-              }
             },
             redo: () => {
               updateElementLxForAll(ObjectType.Cuboid, undoableChangeAll.newSize as number);
-              if (undoableChangeAll.newChildrenPositionsMap.size > 0) {
-                for (const [id, p] of undoableChangeAll.newChildrenPositionsMap.entries()) {
-                  setElementPosition(id, p.x, p.y);
-                }
-              }
             },
           } as UndoableSizeGroupChange;
           addUndoable(undoableChangeAll);
           break;
         default:
-          updateLxWithChildren(cuboid, value);
+          updateElementLxById(cuboid.id, value);
           const undoableChange = {
             name: 'Set Cuboid Width',
             timestamp: Date.now(),
             oldSize: oldLx,
             newSize: value,
             resizedElementId: cuboid.id,
-            oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
-            newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
             undo: () => {
               updateElementLxById(cuboid.id, undoableChange.oldSize as number);
-              if (undoableChange.oldChildrenPositionsMap.size > 0) {
-                for (const [id, p] of undoableChange.oldChildrenPositionsMap.entries()) {
-                  setElementPosition(id, p.x, p.y);
-                }
-              }
             },
             redo: () => {
               updateElementLxById(cuboid.id, undoableChange.newSize as number);
-              if (undoableChange.newChildrenPositionsMap.size > 0) {
-                for (const [id, p] of undoableChange.newChildrenPositionsMap.entries()) {
-                  setElementPosition(id, p.x, p.y);
-                }
-              }
             },
           } as UndoableSizeChange;
           addUndoable(undoableChange);

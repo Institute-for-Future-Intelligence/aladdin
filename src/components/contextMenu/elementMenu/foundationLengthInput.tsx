@@ -186,7 +186,7 @@ const FoundationLengthInput = ({
               for (const [id, ly] of undoableChangeAll.oldSizes.entries()) {
                 updateElementLyById(id, ly as number);
               }
-              if (undoableChangeAll.oldChildrenPositionsMap.size > 0) {
+              if (undoableChangeAll.oldChildrenPositionsMap && undoableChangeAll.oldChildrenPositionsMap.size > 0) {
                 for (const [id, p] of undoableChangeAll.oldChildrenPositionsMap.entries()) {
                   setElementPosition(id, p.x, p.y);
                 }
@@ -194,7 +194,7 @@ const FoundationLengthInput = ({
             },
             redo: () => {
               updateElementLyForAll(ObjectType.Foundation, undoableChangeAll.newSize as number);
-              if (undoableChangeAll.newChildrenPositionsMap.size > 0) {
+              if (undoableChangeAll.newChildrenPositionsMap && undoableChangeAll.newChildrenPositionsMap.size > 0) {
                 for (const [id, p] of undoableChangeAll.newChildrenPositionsMap.entries()) {
                   setElementPosition(id, p.x, p.y);
                 }
@@ -215,7 +215,7 @@ const FoundationLengthInput = ({
             newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
             undo: () => {
               updateElementLyById(foundation.id, undoableChange.oldSize as number);
-              if (undoableChange.oldChildrenPositionsMap.size > 0) {
+              if (undoableChange.oldChildrenPositionsMap && undoableChange.oldChildrenPositionsMap.size > 0) {
                 for (const [id, p] of undoableChange.oldChildrenPositionsMap.entries()) {
                   setElementPosition(id, p.x, p.y);
                 }
@@ -223,7 +223,7 @@ const FoundationLengthInput = ({
             },
             redo: () => {
               updateElementLyById(foundation.id, undoableChange.newSize as number);
-              if (undoableChange.newChildrenPositionsMap.size > 0) {
+              if (undoableChange.newChildrenPositionsMap && undoableChange.newChildrenPositionsMap.size > 0) {
                 for (const [id, p] of undoableChange.newChildrenPositionsMap.entries()) {
                   setElementPosition(id, p.x, p.y);
                 }

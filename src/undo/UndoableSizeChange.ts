@@ -11,6 +11,6 @@ export interface UndoableSizeChange extends Undoable {
 
   resizedElementId: string;
 
-  oldChildrenPositionsMap: Map<string, Vector2>;
-  newChildrenPositionsMap: Map<string, Vector2>;
+  oldChildrenPositionsMap?: Map<string, Vector2>;
+  newChildrenPositionsMap?: Map<string, Vector2>;
 }

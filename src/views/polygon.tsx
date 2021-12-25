@@ -129,19 +129,19 @@ const Polygon = ({
     if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
       return new Euler(0, HALF_PI, rotation[2], 'ZXY');
     }
-    // west face in model coordinate system
+    // west face
     if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
       return new Euler(0, -HALF_PI, rotation[2], 'ZXY');
     }
-    // north face in the model coordinate system
+    // north face
     if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
       return new Euler(-HALF_PI, 0, rotation[2], 'ZXY');
     }
-    // south face in the model coordinate system
+    // south face
     if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
       return new Euler(HALF_PI, 0, rotation[2], 'ZXY');
     }
-    // top face in model coordinate system
+    // top face
     return new Euler(0, 0, rotation[2], 'ZXY');
   }, [normal, rotation]);
 
@@ -156,15 +156,15 @@ const Polygon = ({
         sideFace = true;
         shift.x = parent.lx / 2 + 0.01;
       } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
-        // west face in model coordinate system
+        // west face
         sideFace = true;
         shift.x = -parent.lx / 2 - 0.01;
       } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
-        // north face in the model coordinate system
+        // north face
         sideFace = true;
         shift.y = parent.ly / 2 + 0.01;
       } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
-        // south face in the model coordinate system
+        // south face
         sideFace = true;
         shift.y = -parent.ly / 2 - 0.01;
       }
@@ -176,7 +176,7 @@ const Polygon = ({
       }
     }
     return p;
-  }, [normal, rotation, parent?.cx, parent?.cy, parent?.cz, parent?.lx, parent?.ly, parent?.lz]);
+  }, [normal, rotation, cz, parent?.cx, parent?.cy, parent?.cz, parent?.lx, parent?.ly, parent?.lz]);
 
   const points = useMemo(() => {
     const p = new Array<Vector3>();

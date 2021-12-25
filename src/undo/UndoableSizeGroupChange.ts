@@ -11,6 +11,6 @@ export interface UndoableSizeGroupChange extends Undoable {
   // but there is only one new value, so no need to use a map.
   newSize: number;
 
-  oldChildrenPositionsMap: Map<string, Vector2>;
-  newChildrenPositionsMap: Map<string, Vector2>;
+  oldChildrenPositionsMap?: Map<string, Vector2>;
+  newChildrenPositionsMap?: Map<string, Vector2>;
 }
