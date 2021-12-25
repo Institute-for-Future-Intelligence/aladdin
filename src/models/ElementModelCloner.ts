@@ -18,13 +18,13 @@ import { PolygonModel } from './PolygonModel';
 import { Util } from '../Util';
 
 export class ElementModelCloner {
-  static clone(parent: ElementModel | null, e: ElementModel, x: number, y: number, z?: number) {
+  static clone(parent: ElementModel | null, e: ElementModel, x: number, y: number, z?: number, noMove?: boolean) {
     let clone = null;
     switch (e.type) {
       case ObjectType.Polygon:
         if (parent) {
           // must have a parent
-          clone = ElementModelCloner.clonePolygon(parent, e as PolygonModel, x, y, z);
+          clone = ElementModelCloner.clonePolygon(parent, e as PolygonModel, x, y, z, noMove);
         }
         break;
       case ObjectType.Sensor:
@@ -102,8 +102,14 @@ export class ElementModelCloner {
     } as TreeModel;
   }
 
-  // TODO: Only support foundation for now
-  private static clonePolygon(parent: ElementModel, polygon: PolygonModel, x: number, y: number, z?: number) {
+  private static clonePolygon(
+    parent: ElementModel,
+    polygon: PolygonModel,
+    x: number,
+    y: number,
+    z?: number,
+    noMove?: boolean,
+  ) {
     let foundationId;
     switch (parent.type) {
       case ObjectType.Foundation:
@@ -133,7 +139,9 @@ export class ElementModelCloner {
       foundationId: foundationId,
       id: short.generate() as string,
     } as PolygonModel;
-    Util.translatePolygonCenterTo(pm, x, y);
+    if (!noMove) {
+      Util.translatePolygonCenterTo(pm, x, y);
+    }
     return pm;
   }
 

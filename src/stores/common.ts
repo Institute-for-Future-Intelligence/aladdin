@@ -2301,7 +2301,14 @@ export const useStore = create<CommonStoreState>(
                   if (oldParent) {
                     const newParent = map.get(oldParent);
                     if (newParent) {
-                      e = ElementModelCloner.clone(newParent, oldElem, oldElem.cx, oldElem.cy, oldElem.cz);
+                      e = ElementModelCloner.clone(
+                        newParent,
+                        oldElem,
+                        oldElem.cx,
+                        oldElem.cy,
+                        oldElem.cz,
+                        oldElem.type === ObjectType.Polygon,
+                      );
                     }
                   }
                 }
@@ -2353,7 +2360,14 @@ export const useStore = create<CommonStoreState>(
                   if (e.type === ObjectType.Foundation || e.type === ObjectType.Cuboid) {
                     for (const child of state.elements) {
                       if (child.parentId === elem.id) {
-                        const newChild = ElementModelCloner.clone(e, child, child.cx, child.cy, child.cz);
+                        const newChild = ElementModelCloner.clone(
+                          e,
+                          child,
+                          child.cx,
+                          child.cy,
+                          child.cz,
+                          child.type === ObjectType.Polygon,
+                        );
                         if (newChild) {
                           if (e.normal) {
                             newChild.normal = [...child.normal];
@@ -2463,7 +2477,14 @@ export const useStore = create<CommonStoreState>(
                         // stored in elementsToPaste.
                         for (const child of state.elements) {
                           if (child.parentId === elem.id) {
-                            const newChild = ElementModelCloner.clone(e, child, child.cx, child.cy, child.cz);
+                            const newChild = ElementModelCloner.clone(
+                              e,
+                              child,
+                              child.cx,
+                              child.cy,
+                              child.cz,
+                              child.type === ObjectType.Polygon,
+                            );
                             if (newChild) {
                               if (e.normal) {
                                 newChild.normal = [...child.normal];
@@ -2506,12 +2527,6 @@ export const useStore = create<CommonStoreState>(
                       break;
                   }
                   pastedElements.push(e);
-                }
-                if (state.elementsToPaste.length > 1) {
-                  // paste children, too
-                  for (let i = 1; i < state.elementsToPaste.length; i++) {
-                    // TODO
-                  }
                 }
               }
             });
