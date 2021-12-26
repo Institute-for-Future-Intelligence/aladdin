@@ -2352,7 +2352,7 @@ export const useStore = create<CommonStoreState>(
                     }
                   }
                 }
-                const e = ElementModelCloner.clone(newParent, elem, m.x, m.y, m.z);
+                const e = ElementModelCloner.clone(newParent, elem, m.x, m.y, m.z, false, state.pasteNormal);
                 if (e) {
                   if (state.pasteNormal) {
                     e.normal = state.pasteNormal.toArray();

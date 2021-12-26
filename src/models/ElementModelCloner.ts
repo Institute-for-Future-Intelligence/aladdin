@@ -16,15 +16,31 @@ import { WindowModel } from './WindowModel';
 import { RoofModel } from './RoofModel';
 import { PolygonModel } from './PolygonModel';
 import { Util } from '../Util';
+import { Vector3 } from 'three';
+import {
+  UNIT_VECTOR_NEG_X,
+  UNIT_VECTOR_NEG_Y,
+  UNIT_VECTOR_POS_X,
+  UNIT_VECTOR_POS_Y,
+  ZERO_TOLERANCE,
+} from '../constants';
 
 export class ElementModelCloner {
-  static clone(parent: ElementModel | null, e: ElementModel, x: number, y: number, z?: number, noMove?: boolean) {
+  static clone(
+    parent: ElementModel | null,
+    e: ElementModel,
+    x: number,
+    y: number,
+    z?: number,
+    noMove?: boolean,
+    normal?: Vector3,
+  ) {
     let clone = null;
     switch (e.type) {
       case ObjectType.Polygon:
         if (parent) {
           // must have a parent
-          clone = ElementModelCloner.clonePolygon(parent, e as PolygonModel, x, y, z, noMove);
+          clone = ElementModelCloner.clonePolygon(parent, e as PolygonModel, x, y, z, noMove, normal);
         }
         break;
       case ObjectType.Sensor:
@@ -109,6 +125,7 @@ export class ElementModelCloner {
     y: number,
     z?: number,
     noMove?: boolean,
+    normal?: Vector3,
   ) {
     let foundationId;
     switch (parent.type) {
@@ -126,9 +143,9 @@ export class ElementModelCloner {
       type: ObjectType.Polygon,
       cx: x,
       cy: y,
-      cz: z, // not used
-      lx: polygon.lx, // not used
-      ly: polygon.ly, // not used
+      cz: z,
+      lx: polygon.lx,
+      ly: polygon.ly,
       lz: polygon.lz,
       filled: polygon.filled,
       color: polygon.color,
@@ -140,7 +157,28 @@ export class ElementModelCloner {
       id: short.generate() as string,
     } as PolygonModel;
     if (!noMove) {
-      Util.translatePolygonCenterTo(pm, x, y);
+      let x1 = x;
+      let y1 = y;
+      if (parent.type === ObjectType.Cuboid && normal) {
+        if (Util.isSame(normal, UNIT_VECTOR_NEG_X)) {
+          x1 = z ?? 0;
+        } else if (Util.isSame(normal, UNIT_VECTOR_POS_X)) {
+          x1 = -(z ?? 0);
+        } else if (Util.isSame(normal, UNIT_VECTOR_NEG_Y)) {
+          y1 = z ?? 0;
+        } else if (Util.isSame(normal, UNIT_VECTOR_POS_Y)) {
+          y1 = -(z ?? 0);
+        }
+        const dot = normal.dot(new Vector3().fromArray(polygon.normal));
+        if (Math.abs(dot) < ZERO_TOLERANCE) {
+          for (const v of pm.vertices) {
+            const a = v.x;
+            v.x = v.y;
+            v.y = a;
+          }
+        }
+      }
+      Util.translatePolygonCenterTo(pm, x1, y1);
     }
     return pm;
   }
