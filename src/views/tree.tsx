@@ -52,7 +52,6 @@ const Tree = ({
   locked = false,
   showModel = false,
   evergreen = false,
-  ...props
 }: TreeModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);

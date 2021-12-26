@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { PolygonModel } from '../../../models/PolygonModel';
+import { Util } from '../../../Util';
 
 const PolygonLineColorSelection = ({
   colorDialogVisible,
@@ -23,7 +24,9 @@ const PolygonLineColorSelection = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateElementLineColorById = useStore(Selector.updateElementLineColorById);
+  const updateElementLineColorOnSurface = useStore(Selector.updateElementLineColorOnSurface);
   const updateElementLineColorAboveFoundation = useStore(Selector.updateElementLineColorAboveFoundation);
   const updateElementLineColorForAll = useStore(Selector.updateElementLineColorForAll);
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -57,6 +60,20 @@ const PolygonLineColorSelection = ({
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && !e.locked) {
             if (color !== e.lineColor) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Polygon &&
+            e.parentId === polygon.parentId &&
+            Util.isIdentical(e.normal, polygon.normal) &&
+            !e.locked
+          ) {
+            if (e.lineColor !== color) {
               return true;
             }
           }
@@ -106,6 +123,48 @@ const PolygonLineColorSelection = ({
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateElementLineColorForAll(ObjectType.Polygon, value);
+        break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        if (polygon.parentId) {
+          const parent = getElementById(polygon.parentId);
+          if (parent) {
+            const oldLineColorsOnSurface = new Map<string, string>();
+            for (const elem of elements) {
+              if (
+                elem.type === ObjectType.Polygon &&
+                elem.parentId === polygon.parentId &&
+                Util.isIdentical(elem.normal, polygon.normal)
+              ) {
+                oldLineColorsOnSurface.set(elem.id, elem.lineColor ?? 'gray');
+              }
+            }
+            const undoableChangeOnSurface = {
+              name: 'Set Line Color for All Polygons on Same Surface',
+              timestamp: Date.now(),
+              oldValues: oldLineColorsOnSurface,
+              newValue: value,
+              groupId: polygon.parentId,
+              normal: polygon.normal,
+              undo: () => {
+                for (const [id, lc] of undoableChangeOnSurface.oldValues.entries()) {
+                  updateElementLineColorById(id, lc as string);
+                }
+              },
+              redo: () => {
+                if (undoableChangeOnSurface.groupId) {
+                  updateElementLineColorOnSurface(
+                    ObjectType.Polygon,
+                    undoableChangeOnSurface.groupId,
+                    undoableChangeOnSurface.normal,
+                    undoableChangeOnSurface.newValue as string,
+                  );
+                }
+              },
+            } as UndoableChangeGroup;
+            addUndoable(undoableChangeOnSurface);
+            updateElementLineColorOnSurface(ObjectType.Polygon, polygon.parentId, polygon.normal, value);
+          }
+        }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (polygon.foundationId) {
@@ -253,6 +312,9 @@ const PolygonLineColorSelection = ({
             <Radio.Group onChange={onScopeChange} value={polygonActionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('polygonMenu.OnlyThisPolygon', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+                  {i18n.t('polygonMenu.AllPolygonsOnSurface', lang)}
+                </Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                   {i18n.t('polygonMenu.AllPolygonsAboveFoundation', lang)}
                 </Radio>

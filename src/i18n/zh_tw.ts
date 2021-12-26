@@ -280,6 +280,7 @@ export const i18n_zh_tw = {
       InsertVertexAfterIndex: '後面插入頂點',
       DeleteVertex: '移除頂點',
       OnlyThisPolygon: '只這個多邊形',
+      AllPolygonsOnSurface: '同一表面上所有的多邊形',
       AllPolygonsAboveFoundation: '同一地基上所有的多邊形',
       AllPolygons: '所有的多邊形',
     },

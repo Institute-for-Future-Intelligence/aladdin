@@ -36,19 +36,8 @@ import { GROUND_ID, HALF_PI, MOVE_HANDLE_RADIUS } from '../constants';
 import { ActionType, HumanName, MoveHandleType, ObjectType } from '../types';
 import i18n from '../i18n/i18n';
 import { useStoreRef } from 'src/stores/commonRef';
-import { ElementModel } from 'src/models/ElementModel';
 
-const Human = ({
-  id,
-  cx,
-  cy,
-  cz,
-  name = HumanName.Jack,
-  selected = false,
-  locked = false,
-  parentId,
-  ...props
-}: HumanModel) => {
+const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked = false, parentId }: HumanModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
@@ -293,7 +282,7 @@ const Human = ({
   };
 
   const getObjectParameters = (obj: Mesh) => {
-    // for foundation and cuoid
+    // for foundation and cuboid
     const geometry = obj.geometry as BoxGeometry;
     const { width, height, depth } = geometry.parameters;
     return { plx: width, ply: height, plz: depth };

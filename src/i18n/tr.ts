@@ -288,6 +288,7 @@ export const i18n_tr = {
       InsertVertexAfterIndex: 'Ýndeksten Sonra Tepe Noktasý Ekle',
       DeleteVertex: 'Tepe Noktasýný Sil',
       OnlyThisPolygon: 'Sadece Bu Poligon',
+      AllPolygonsOnSurface: 'All Polygons on the Same Surface',
       AllPolygonsAboveFoundation: 'Temelin Üzerindeki Tüm Poligonlar',
       AllPolygons: 'Tüm Poligonlar',
     },

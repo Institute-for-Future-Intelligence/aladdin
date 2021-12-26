@@ -120,9 +120,21 @@ export interface CommonStoreState {
   updateElementShowLabelById: (id: string, showLabel: boolean) => void;
 
   updateElementColorById: (id: string, color: string) => void;
+  updateElementColorOnSurface: (
+    type: ObjectType,
+    parentId: string,
+    normal: number[] | undefined,
+    color: string,
+  ) => void;
   updateElementColorAboveFoundation: (type: ObjectType, foundationId: string, color: string) => void;
   updateElementColorForAll: (type: ObjectType, color: string) => void;
   updateElementLineColorById: (id: string, color: string) => void;
+  updateElementLineColorOnSurface: (
+    type: ObjectType,
+    parentId: string,
+    normal: number[] | undefined,
+    color: string,
+  ) => void;
   updateElementLineColorAboveFoundation: (type: ObjectType, foundationId: string, color: string) => void;
   updateElementLineColorForAll: (type: ObjectType, color: string) => void;
 
@@ -709,6 +721,15 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+          updateElementColorOnSurface(type, parentId, normal, color) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && e.parentId === parentId && Util.isIdentical(e.normal, normal) && !e.locked) {
+                  e.color = color;
+                }
+              }
+            });
+          },
           updateElementColorAboveFoundation(type, foundationId, color) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -733,6 +754,15 @@ export const useStore = create<CommonStoreState>(
                 if (e.id === id && !e.locked) {
                   e.lineColor = color;
                   break;
+                }
+              }
+            });
+          },
+          updateElementLineColorOnSurface(type, parentId, normal, color) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && e.parentId === parentId && Util.isIdentical(e.normal, normal) && !e.locked) {
+                  e.lineColor = color;
                 }
               }
             });

@@ -135,11 +135,15 @@ export const updateElementLzForAll = (state: CommonStoreState) => state.updateEl
 
 export const updateElementColorById = (state: CommonStoreState) => state.updateElementColorById;
 
+export const updateElementColorOnSurface = (state: CommonStoreState) => state.updateElementColorOnSurface;
+
 export const updateElementColorAboveFoundation = (state: CommonStoreState) => state.updateElementColorAboveFoundation;
 
 export const updateElementColorForAll = (state: CommonStoreState) => state.updateElementColorForAll;
 
 export const updateElementLineColorById = (state: CommonStoreState) => state.updateElementLineColorById;
+
+export const updateElementLineColorOnSurface = (state: CommonStoreState) => state.updateElementLineColorOnSurface;
 
 export const updateElementLineColorAboveFoundation = (state: CommonStoreState) =>
   state.updateElementLineColorAboveFoundation;

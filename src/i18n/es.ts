@@ -285,6 +285,7 @@ export const i18n_es = {
       InsertVertexAfterIndex: 'Añadir vértice después del índice',
       DeleteVertex: 'Eliminar vértice',
       OnlyThisPolygon: 'Solamente este polígono',
+      AllPolygonsOnSurface: 'All Polygons on the Same Surface',
       AllPolygonsAboveFoundation: 'Todos los polígonos sobre la base',
       AllPolygons: 'Todos los polígonos',
     },

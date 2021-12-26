@@ -282,6 +282,7 @@ export const i18n_en = {
       InsertVertexAfterIndex: 'Insert Vertex After Index',
       DeleteVertex: 'Delete Vertex',
       OnlyThisPolygon: 'Only This Polygon',
+      AllPolygonsOnSurface: 'All Polygons on the Same Surface',
       AllPolygonsAboveFoundation: 'All Polygons Above Foundation',
       AllPolygons: 'All Polygons',
     },
