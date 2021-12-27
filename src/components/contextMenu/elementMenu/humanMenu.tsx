@@ -15,22 +15,24 @@ export const HumanMenu = () => {
   const language = useStore(Selector.language);
   const getSelectedElement = useStore(Selector.getSelectedElement);
 
-  const tree = getSelectedElement() as HumanModel;
-  const editable = !tree?.locked;
+  const human = getSelectedElement() as HumanModel;
+  const editable = !human?.locked;
 
   return (
-    <>
-      <Copy keyName={'human-copy'} />
-      {editable && <Cut keyName={'human-cut'} />}
-      <Lock keyName={'human-lock'} />
-      {editable && (
-        <Menu>
-          <Menu.Item key={'human-change-person'} style={{ paddingLeft: '36px' }}>
-            <Space style={{ width: '120px' }}>{i18n.t('peopleMenu.ChangePerson', { lng: language })}: </Space>
-            <HumanSelection key={'humans'} />
-          </Menu.Item>
-        </Menu>
-      )}
-    </>
+    human && (
+      <>
+        <Copy keyName={'human-copy'} />
+        {editable && <Cut keyName={'human-cut'} />}
+        <Lock keyName={'human-lock'} />
+        {editable && (
+          <Menu>
+            <Menu.Item key={'human-change-person'} style={{ paddingLeft: '36px' }}>
+              <Space style={{ width: '120px' }}>{i18n.t('peopleMenu.ChangePerson', { lng: language })}: </Space>
+              <HumanSelection key={'humans'} />
+            </Menu.Item>
+          </Menu>
+        )}
+      </>
+    )
   );
 };

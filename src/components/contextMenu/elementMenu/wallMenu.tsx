@@ -30,62 +30,64 @@ export const WallMenu = () => {
   const wall = getSelectedElement() as WallModel;
 
   return (
-    <>
-      <Copy keyName={'wall-copy'} />
-      <Cut keyName={'wall-cut'} />
-      <Lock keyName={'wall-lock'} />
+    wall && (
+      <>
+        <Copy keyName={'wall-copy'} />
+        <Cut keyName={'wall-cut'} />
+        <Lock keyName={'wall-lock'} />
 
-      <WallTextureSelection
-        textureDialogVisible={textureDialogVisible}
-        setTextureDialogVisible={setTextureDialogVisible}
-      />
-      <Menu.Item
-        key={'wall-texture'}
-        style={{ paddingLeft: paddingLeft }}
-        onClick={() => {
-          setTextureDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Texture', lang)} ...
-      </Menu.Item>
-
-      <WallColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
-      {wall && (wall.textureType === WallTexture.NoTexture || wall.textureType === WallTexture.Default) && (
+        <WallTextureSelection
+          textureDialogVisible={textureDialogVisible}
+          setTextureDialogVisible={setTextureDialogVisible}
+        />
         <Menu.Item
-          key={'wall-color'}
+          key={'wall-texture'}
           style={{ paddingLeft: paddingLeft }}
           onClick={() => {
-            setColorDialogVisible(true);
+            setTextureDialogVisible(true);
           }}
         >
-          {i18n.t('word.Color', lang)} ...
+          {i18n.t('word.Texture', lang)} ...
         </Menu.Item>
-      )}
 
-      <WallHeightInput heightDialogVisible={heightDialogVisible} setHeightDialogVisible={setHeightDialogVisible} />
-      <Menu.Item
-        key={'wall-height'}
-        style={{ paddingLeft: paddingLeft }}
-        onClick={() => {
-          setHeightDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Height', lang)} ...
-      </Menu.Item>
+        <WallColorSelection colorDialogVisible={colorDialogVisible} setColorDialogVisible={setColorDialogVisible} />
+        {(wall.textureType === WallTexture.NoTexture || wall.textureType === WallTexture.Default) && (
+          <Menu.Item
+            key={'wall-color'}
+            style={{ paddingLeft: paddingLeft }}
+            onClick={() => {
+              setColorDialogVisible(true);
+            }}
+          >
+            {i18n.t('word.Color', lang)} ...
+          </Menu.Item>
+        )}
 
-      <WallThicknessInput
-        thicknessDialogVisible={thicknessDialogVisible}
-        setThicknessDialogVisible={setThicknessDialogVisible}
-      />
-      <Menu.Item
-        key={'wall-thickness'}
-        style={{ paddingLeft: paddingLeft }}
-        onClick={() => {
-          setThicknessDialogVisible(true);
-        }}
-      >
-        {i18n.t('word.Thickness', lang)} ...
-      </Menu.Item>
-    </>
+        <WallHeightInput heightDialogVisible={heightDialogVisible} setHeightDialogVisible={setHeightDialogVisible} />
+        <Menu.Item
+          key={'wall-height'}
+          style={{ paddingLeft: paddingLeft }}
+          onClick={() => {
+            setHeightDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Height', lang)} ...
+        </Menu.Item>
+
+        <WallThicknessInput
+          thicknessDialogVisible={thicknessDialogVisible}
+          setThicknessDialogVisible={setThicknessDialogVisible}
+        />
+        <Menu.Item
+          key={'wall-thickness'}
+          style={{ paddingLeft: paddingLeft }}
+          onClick={() => {
+            setThicknessDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Thickness', lang)} ...
+        </Menu.Item>
+      </>
+    )
   );
 };

@@ -66,63 +66,71 @@ export const PolygonMenu = () => {
   const editable = !polygon?.locked;
 
   return (
-    <>
-      {legalToPaste() && <Paste keyName={'polygon-paste'} />}
-      <Copy keyName={'polygon-copy'} />
-      {editable && <Cut keyName={'polygon-cut'} />}
-      <Lock keyName={'polygon-lock'} />
-      {editable && (
-        <Menu.Item key={'polygon-filled'}>
-          <Checkbox checked={!!polygon?.filled} onChange={togglePolygonFilled}>
-            {i18n.t('polygonMenu.Filled', lang)}
-          </Checkbox>
-        </Menu.Item>
-      )}
-      <PolygonLineColorSelection
-        colorDialogVisible={lineColorDialogVisible}
-        setColorDialogVisible={setLineColorDialogVisible}
-      />
-      {editable && (
-        <Menu.Item
-          key={'polygon-line-color'}
-          style={{ paddingLeft: '36px' }}
-          onClick={() => {
-            setLineColorDialogVisible(true);
-          }}
-        >
-          {i18n.t('polygonMenu.LineColor', lang)} ...
-        </Menu.Item>
-      )}
-      <PolygonFillColorSelection
-        colorDialogVisible={fillColorDialogVisible}
-        setColorDialogVisible={setFillColorDialogVisible}
-      />
-      {editable && (!polygon.textureType || polygon.textureType === PolygonTexture.NoTexture) && (
-        <Menu.Item
-          key={'polygon-fill-color'}
-          style={{ paddingLeft: '36px' }}
-          onClick={() => {
-            setFillColorDialogVisible(true);
-          }}
-        >
-          {i18n.t('polygonMenu.FillColor', lang)} ...
-        </Menu.Item>
-      )}
-      <PolygonTextureSelection
-        textureDialogVisible={textureDialogVisible}
-        setTextureDialogVisible={setTextureDialogVisible}
-      />
-      {editable && (
-        <Menu.Item
-          key={'polygon-texture'}
-          style={{ paddingLeft: '36px' }}
-          onClick={() => {
-            setTextureDialogVisible(true);
-          }}
-        >
-          {i18n.t('polygonMenu.FillTexture', lang)} ...
-        </Menu.Item>
-      )}
-    </>
+    polygon && (
+      <>
+        {legalToPaste() && <Paste keyName={'polygon-paste'} />}
+        <Copy keyName={'polygon-copy'} />
+        {editable && <Cut keyName={'polygon-cut'} />}
+        <Lock keyName={'polygon-lock'} />
+        {editable && (
+          <Menu.Item key={'polygon-filled'}>
+            <Checkbox checked={!!polygon?.filled} onChange={togglePolygonFilled}>
+              {i18n.t('polygonMenu.Filled', lang)}
+            </Checkbox>
+          </Menu.Item>
+        )}
+        {editable && (
+          <>
+            <PolygonLineColorSelection
+              colorDialogVisible={lineColorDialogVisible}
+              setColorDialogVisible={setLineColorDialogVisible}
+            />
+            <Menu.Item
+              key={'polygon-line-color'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setLineColorDialogVisible(true);
+              }}
+            >
+              {i18n.t('polygonMenu.LineColor', lang)} ...
+            </Menu.Item>
+          </>
+        )}
+        {editable && (!polygon.textureType || polygon.textureType === PolygonTexture.NoTexture) && (
+          <>
+            <PolygonFillColorSelection
+              colorDialogVisible={fillColorDialogVisible}
+              setColorDialogVisible={setFillColorDialogVisible}
+            />
+            <Menu.Item
+              key={'polygon-fill-color'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setFillColorDialogVisible(true);
+              }}
+            >
+              {i18n.t('polygonMenu.FillColor', lang)} ...
+            </Menu.Item>
+          </>
+        )}
+        {editable && (
+          <>
+            <PolygonTextureSelection
+              textureDialogVisible={textureDialogVisible}
+              setTextureDialogVisible={setTextureDialogVisible}
+            />
+            <Menu.Item
+              key={'polygon-texture'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setTextureDialogVisible(true);
+              }}
+            >
+              {i18n.t('polygonMenu.FillTexture', lang)} ...
+            </Menu.Item>
+          </>
+        )}
+      </>
+    )
   );
 };

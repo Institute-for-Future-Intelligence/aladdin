@@ -64,25 +64,27 @@ export const SensorMenu = () => {
   };
 
   return (
-    <>
-      <Copy keyName={'sensor-copy'} />
-      <Cut keyName={'sensor-cut'} />
-      <Menu.Item key={'sensor-show-label'}>
-        <Checkbox checked={!!sensor?.showLabel} onChange={showElementLabel}>
-          {i18n.t('sensorMenu.KeepShowingLabel', lang)}
-        </Checkbox>
-      </Menu.Item>
-      <Menu>
-        <Menu.Item key={'sensor-label-text'} style={{ paddingLeft: '36px' }}>
-          <Input
-            addonBefore={i18n.t('sensorMenu.Label', lang) + ':'}
-            value={labelText}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
-            onPressEnter={updateElementLabelText}
-            onBlur={updateElementLabelText}
-          />
+    sensor && (
+      <>
+        <Copy keyName={'sensor-copy'} />
+        <Cut keyName={'sensor-cut'} />
+        <Menu.Item key={'sensor-show-label'}>
+          <Checkbox checked={!!sensor?.showLabel} onChange={showElementLabel}>
+            {i18n.t('sensorMenu.KeepShowingLabel', lang)}
+          </Checkbox>
         </Menu.Item>
-      </Menu>
-    </>
+        <Menu>
+          <Menu.Item key={'sensor-label-text'} style={{ paddingLeft: '36px' }}>
+            <Input
+              addonBefore={i18n.t('sensorMenu.Label', lang) + ':'}
+              value={labelText}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
+              onPressEnter={updateElementLabelText}
+              onBlur={updateElementLabelText}
+            />
+          </Menu.Item>
+        </Menu>
+      </>
+    )
   );
 };

@@ -396,7 +396,7 @@ const Polygon = ({
                 userData={{ vertexIndex: i }}
                 position={[p.x, p.y, 0]}
                 name={ResizeHandleType.Default}
-                args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
+                args={[resizeHandleSize, resizeHandleSize, lz * 0.2]}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Resize);
                   updatePolygonSelectedIndexById(polygonModel.id, i);
