@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.b8305f81.chunk.css",
-    "main.js": "/aladdin/static/js/main.eeb5b948.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.eeb5b948.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.5a75b362.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.5a75b362.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.fa22f665.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.fa22f665.js.map",
     "static/css/2.cc069be8.chunk.css": "/aladdin/static/css/2.cc069be8.chunk.css",
@@ -67,6 +67,9 @@
     "static/media/oak.9fe6576e.png": "/aladdin/static/media/oak.9fe6576e.png",
     "static/media/oak_shed.8d388b0f.png": "/aladdin/static/media/oak_shed.8d388b0f.png",
     "static/media/pine.9f632c67.png": "/aladdin/static/media/pine.9f632c67.png",
+    "static/media/polygon_08.acf0bf8f.png": "/aladdin/static/media/polygon_08.acf0bf8f.png",
+    "static/media/polygon_08_menu.e9d3ae98.png": "/aladdin/static/media/polygon_08_menu.e9d3ae98.png",
+    "static/media/polygon_09.26eed538.png": "/aladdin/static/media/polygon_09.26eed538.png",
     "static/media/pvmodules.cede15c7.csv": "/aladdin/static/media/pvmodules.cede15c7.csv",
     "static/media/solar-panel-black-landscape.1d7c5c67.png": "/aladdin/static/media/solar-panel-black-landscape.1d7c5c67.png",
     "static/media/solar-panel-black-portrait.cc0dd3a8.png": "/aladdin/static/media/solar-panel-black-portrait.cc0dd3a8.png",
@@ -95,6 +98,6 @@
     "static/css/2.cc069be8.chunk.css",
     "static/js/2.7af69158.chunk.js",
     "static/css/main.b8305f81.chunk.css",
-    "static/js/main.eeb5b948.chunk.js"
+    "static/js/main.5a75b362.chunk.js"
   ]
 }
