@@ -57,6 +57,7 @@ const Polygon = ({
   const selectMe = useStore(Selector.selectMe);
   const updatePolygonSelectedIndexById = useStore(Selector.updatePolygonSelectedIndexById);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
   const {
     gl: { domElement },
@@ -203,6 +204,7 @@ const Polygon = ({
     for (let i = 1; i < absoluteVertices.length; i++) {
       s.lineTo(absoluteVertices[i].x, absoluteVertices[i].y);
     }
+    s.closePath();
     return s;
   }, [absoluteVertices]);
 
@@ -276,43 +278,14 @@ const Polygon = ({
         textureImg = PolygonTexture00;
     }
     return new TextureLoader().load(textureImg, (t) => {
-      if (parent) {
-        let plx, ply;
-        if (parent.type === ObjectType.Cuboid) {
-          const n = new Vector3().fromArray(polygonModel.normal);
-          if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
-            t.rotation = Math.PI;
-            plx = parent.lx;
-            ply = parent.lz;
-          } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
-            plx = parent.lx;
-            ply = parent.lz;
-          } else if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
-            t.rotation = HALF_PI;
-            plx = parent.lz;
-            ply = parent.ly;
-          } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
-            t.rotation = -HALF_PI;
-            plx = parent.lz;
-            ply = parent.ly;
-          } else {
-            plx = parent.lx;
-            ply = parent.ly;
-          }
-        } else {
-          plx = parent.lx;
-          ply = parent.ly;
-        }
-        const bounds = Util.calculatePolygonBounds(polygonModel.vertices);
-        const bx = (bounds.maxX - bounds.minX) * plx;
-        const by = (bounds.maxY - bounds.minY) * ply;
-        const params = fetchRepeatDividers(textureType);
-        t.wrapT = t.wrapS = RepeatWrapping;
-        t.repeat.set(bx / params.x, by / params.y);
-      }
+      const bounds = Util.calculatePolygonBounds(absoluteVertices);
+      const params = fetchRepeatDividers(textureType);
+      t.wrapT = t.wrapS = RepeatWrapping;
+      t.offset.set(0, 0);
+      t.repeat.set((bounds.maxX - bounds.minX) / params.x, (bounds.maxY - bounds.minY) / params.y);
       setTexture(t);
     });
-  }, [textureType, polygonModel.vertices]);
+  }, [textureType, absoluteVertices]);
   const [texture, setTexture] = useState(textureLoader);
 
   return (
@@ -321,7 +294,7 @@ const Polygon = ({
         <mesh
           uuid={id}
           ref={baseRef}
-          receiveShadow={true}
+          receiveShadow={shadowEnabled}
           castShadow={false}
           name={ObjectType.Polygon}
           onPointerDown={(e) => {
