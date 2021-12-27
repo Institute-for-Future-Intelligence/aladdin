@@ -271,6 +271,7 @@ const Wall = ({
       resizeHandleTypeRef.current = state.resizeHandleType;
       addedWallIdRef.current = state.addedWallId;
       enableFineGridRef.current = state.enableFineGrid;
+      resizeAnchorRef.current = state.resizeAnchor;
     });
     return () => {
       unsubscribe();
