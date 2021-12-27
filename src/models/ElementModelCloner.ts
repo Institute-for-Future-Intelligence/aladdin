@@ -149,6 +149,7 @@ export class ElementModelCloner {
       lz: polygon.lz,
       filled: polygon.filled,
       color: polygon.color,
+      lineColor: polygon.lineColor,
       opacity: polygon.opacity,
       textureType: polygon.textureType,
       normal: [...polygon.normal],

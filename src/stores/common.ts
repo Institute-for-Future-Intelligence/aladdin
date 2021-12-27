@@ -189,7 +189,7 @@ export interface CommonStoreState {
   updatePolygonVertexPositionById: (id: string, index: number, x: number, y: number) => void;
   updatePolygonVerticesById: (id: string, vertices: Point2[]) => void;
   updatePolygonTextureById: (id: string, texture: PolygonTexture) => void;
-  updatePolygonTextureOnSurface: (parentId: string, normal: number[], texture: PolygonTexture) => void;
+  updatePolygonTextureOnSurface: (parentId: string, normal: number[] | undefined, texture: PolygonTexture) => void;
   updatePolygonTextureAboveFoundation: (foundationId: string, texture: PolygonTexture) => void;
   updatePolygonTextureForAll: (texture: PolygonTexture) => void;
 

@@ -31,6 +31,7 @@ const PolygonTextureSelection = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updatePolygonTextureById = useStore(Selector.updatePolygonTextureById);
   const updatePolygonTextureOnSurface = useStore(Selector.updatePolygonTextureOnSurface);
   const updatePolygonTextureAboveFoundation = useStore(Selector.updatePolygonTextureAboveFoundation);
@@ -133,6 +134,79 @@ const PolygonTextureSelection = ({
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updatePolygonTextureForAll(value);
+        break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        if (polygon.parentId) {
+          const parent = getElementById(polygon.parentId);
+          if (parent) {
+            const oldTexturesOnSurface = new Map<string, PolygonTexture>();
+            for (const elem of elements) {
+              if (
+                elem.type === ObjectType.Polygon &&
+                elem.parentId === polygon.parentId &&
+                Util.isIdentical(elem.normal, polygon.normal)
+              ) {
+                oldTexturesOnSurface.set(elem.id, (elem as PolygonModel).textureType ?? PolygonTexture.NoTexture);
+              }
+            }
+            const undoableChangeOnSurface = {
+              name: 'Set Texture for All Polygons on Same Surface',
+              timestamp: Date.now(),
+              oldValues: oldTexturesOnSurface,
+              newValue: value,
+              groupId: polygon.parentId,
+              normal: polygon.normal,
+              undo: () => {
+                for (const [id, tx] of undoableChangeOnSurface.oldValues.entries()) {
+                  updatePolygonTextureById(id, tx as PolygonTexture);
+                }
+              },
+              redo: () => {
+                if (undoableChangeOnSurface.groupId) {
+                  updatePolygonTextureOnSurface(
+                    undoableChangeOnSurface.groupId,
+                    undoableChangeOnSurface.normal,
+                    undoableChangeOnSurface.newValue as PolygonTexture,
+                  );
+                }
+              },
+            } as UndoableChangeGroup;
+            addUndoable(undoableChangeOnSurface);
+            updatePolygonTextureOnSurface(polygon.parentId, polygon.normal, value);
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        if (polygon.foundationId) {
+          const oldTexturesAboveFoundation = new Map<string, PolygonTexture>();
+          for (const elem of elements) {
+            if (elem.type === ObjectType.Polygon && elem.foundationId === polygon.foundationId) {
+              oldTexturesAboveFoundation.set(elem.id, (elem as PolygonModel).textureType ?? PolygonTexture.NoTexture);
+            }
+          }
+          const undoableChangeAboveFoundation = {
+            name: 'Set Texture for All Polygons Above Foundation',
+            timestamp: Date.now(),
+            oldValues: oldTexturesAboveFoundation,
+            newValue: value,
+            groupId: polygon.foundationId,
+            undo: () => {
+              for (const [id, tx] of undoableChangeAboveFoundation.oldValues.entries()) {
+                updatePolygonTextureById(id, tx as PolygonTexture);
+              }
+            },
+            redo: () => {
+              if (undoableChangeAboveFoundation.groupId) {
+                updatePolygonTextureAboveFoundation(
+                  undoableChangeAboveFoundation.groupId,
+                  undoableChangeAboveFoundation.newValue as PolygonTexture,
+                );
+              }
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeAboveFoundation);
+          updatePolygonTextureAboveFoundation(polygon.foundationId, value);
+        }
         break;
       default:
         if (polygon) {
