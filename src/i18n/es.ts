@@ -278,6 +278,16 @@ export const i18n_es = {
     },
 
     polygonMenu: {
+      Texture01: 'Textura 1',
+      Texture02: 'Textura 2',
+      Texture03: 'Textura 3',
+      Texture04: 'Textura 4',
+      Texture05: 'Textura 5',
+      Texture06: 'Textura 6',
+      Texture07: 'Textura 7',
+      Texture08: 'Textura 8',
+      Texture09: 'Textura 9',
+      Texture10: 'Textura 10',
       Filled: 'Rellenar',
       FillColor: 'Rellenar color',
       LineColor: 'Color de la línea',

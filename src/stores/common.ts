@@ -21,6 +21,7 @@ import {
   MoveHandleType,
   ObjectType,
   Orientation,
+  PolygonTexture,
   ResizeHandleType,
   RotateHandleType,
   Scope,
@@ -187,6 +188,10 @@ export interface CommonStoreState {
   updatePolygonFilledById: (id: string, filled: boolean) => void;
   updatePolygonVertexPositionById: (id: string, index: number, x: number, y: number) => void;
   updatePolygonVerticesById: (id: string, vertices: Point2[]) => void;
+  updatePolygonTextureById: (id: string, texture: PolygonTexture) => void;
+  updatePolygonTextureOnSurface: (parentId: string, normal: number[], texture: PolygonTexture) => void;
+  updatePolygonTextureAboveFoundation: (foundationId: string, texture: PolygonTexture) => void;
+  updatePolygonTextureForAll: (texture: PolygonTexture) => void;
 
   // for solar panels
   solarPanelActionScope: Scope;
@@ -1237,6 +1242,48 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+          updatePolygonTextureById(id, texture) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && e.type === ObjectType.Polygon && !e.locked) {
+                  (e as PolygonModel).textureType = texture;
+                  break;
+                }
+              }
+            });
+          },
+          updatePolygonTextureOnSurface(parentId, normal, texture) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (
+                  e.type === ObjectType.Polygon &&
+                  e.parentId === parentId &&
+                  Util.isIdentical(e.normal, normal) &&
+                  !e.locked
+                ) {
+                  (e as PolygonModel).textureType = texture;
+                }
+              }
+            });
+          },
+          updatePolygonTextureAboveFoundation(foundationId, texture) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Polygon && e.foundationId === foundationId && !e.locked) {
+                  (e as PolygonModel).textureType = texture;
+                }
+              }
+            });
+          },
+          updatePolygonTextureForAll(texture) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Polygon && !e.locked) {
+                  (e as PolygonModel).textureType = texture;
+                }
+              }
+            });
+          },
 
           // for solar panels
           solarPanelActionScope: Scope.OnlyThisObject,
@@ -1974,7 +2021,7 @@ export const useStore = create<CommonStoreState>(
 
           setElementPosition(id, x, y, z?) {
             immerSet((state: CommonStoreState) => {
-              for (let [i, e] of state.elements.entries()) {
+              for (const [i, e] of state.elements.entries()) {
                 if (e.id === id) {
                   state.elements[i].cx = x;
                   state.elements[i].cy = y;
@@ -1988,7 +2035,7 @@ export const useStore = create<CommonStoreState>(
           },
           setElementNormal(id, x, y, z) {
             immerSet((state: CommonStoreState) => {
-              for (let [i, e] of state.elements.entries()) {
+              for (const [i, e] of state.elements.entries()) {
                 if (e.id === id || e.parentId === id) {
                   const elem = state.elements[i];
                   elem.normal[0] = x;
@@ -2000,7 +2047,7 @@ export const useStore = create<CommonStoreState>(
           },
           setElementSize(id, lx, ly, lz?) {
             immerSet((state: CommonStoreState) => {
-              for (let [i, e] of state.elements.entries()) {
+              for (const [i, e] of state.elements.entries()) {
                 if (e.id === id) {
                   state.elements[i].lx = lx;
                   state.elements[i].ly = ly;

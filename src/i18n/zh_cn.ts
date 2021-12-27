@@ -273,6 +273,16 @@ export const i18n_zh_cn = {
     },
 
     polygonMenu: {
+      Texture01: '一号材质',
+      Texture02: '二号材质',
+      Texture03: '三号材质',
+      Texture04: '四号材质',
+      Texture05: '五号材质',
+      Texture06: '六号材质',
+      Texture07: '七号材质',
+      Texture08: '八号材质',
+      Texture09: '九号材质',
+      Texture10: '十号材质',
       Filled: '填充',
       FillColor: '填充颜色',
       LineColor: '线条颜色',

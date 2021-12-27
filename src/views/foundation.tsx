@@ -1373,23 +1373,13 @@ const Foundation = ({
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
-        {textureType === FoundationTexture.NoTexture ? (
-          <meshStandardMaterial
-            attachArray="material"
-            color={color}
-            map={texture}
-            transparent={groundImage}
-            opacity={opacity}
-          />
-        ) : (
-          <meshStandardMaterial
-            attachArray="material"
-            color={'white'}
-            map={texture}
-            transparent={groundImage}
-            opacity={opacity}
-          />
-        )}
+        <meshStandardMaterial
+          attachArray="material"
+          color={textureType === FoundationTexture.NoTexture ? color : 'white'}
+          map={texture}
+          transparent={groundImage}
+          opacity={opacity}
+        />
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
       </Box>
 

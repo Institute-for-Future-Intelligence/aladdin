@@ -149,6 +149,8 @@ export class ElementModelCloner {
       lz: polygon.lz,
       filled: polygon.filled,
       color: polygon.color,
+      opacity: polygon.opacity,
+      textureType: polygon.textureType,
       normal: [...polygon.normal],
       rotation: polygon.parentId ? [...parent.rotation] : [0, 0, 0],
       vertices: vertices,

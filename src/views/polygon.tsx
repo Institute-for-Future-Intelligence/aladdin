@@ -2,9 +2,18 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
+import PolygonTexture01 from '../resources/foundation_01.png';
+import PolygonTexture02 from '../resources/foundation_02.png';
+import PolygonTexture03 from '../resources/foundation_03.png';
+import PolygonTexture04 from '../resources/foundation_04.png';
+import PolygonTexture05 from '../resources/foundation_05.png';
+import PolygonTexture06 from '../resources/foundation_06.png';
+import PolygonTexture07 from '../resources/foundation_07.png';
+import PolygonTexture00 from '../resources/foundation_00.png';
+
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Line, Sphere } from '@react-three/drei';
-import { Euler, Mesh, Shape, Vector3 } from 'three';
+import { Euler, Mesh, RepeatWrapping, Shape, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -19,7 +28,7 @@ import {
   UNIT_VECTOR_POS_X,
   UNIT_VECTOR_POS_Y,
 } from '../constants';
-import { ActionType, MoveHandleType, ObjectType, ResizeHandleType } from '../types';
+import { ActionType, MoveHandleType, ObjectType, PolygonTexture, ResizeHandleType } from '../types';
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { PolygonModel } from '../models/PolygonModel';
@@ -27,8 +36,6 @@ import { Point2 } from '../models/Point2';
 
 const Polygon = ({
   id,
-  lx = 0.1,
-  ly = 0.1,
   lz = 0.1,
   filled = false,
   rotation = [0, 0, 0],
@@ -41,6 +48,8 @@ const Polygon = ({
   showLabel = false,
   parentId,
   vertices,
+  opacity = 1,
+  textureType = PolygonTexture.NoTexture,
 }: PolygonModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
@@ -218,6 +227,94 @@ const Polygon = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const fetchRepeatDividers = (textureType: PolygonTexture) => {
+    switch (textureType) {
+      case PolygonTexture.Texture01:
+        return { x: 1, y: 1 };
+      case PolygonTexture.Texture02:
+        return { x: 2, y: 2 };
+      case PolygonTexture.Texture03:
+        return { x: 0.4, y: 0.4 };
+      case PolygonTexture.Texture04:
+        return { x: 0.25, y: 0.25 };
+      case PolygonTexture.Texture05:
+        return { x: 5, y: 5 };
+      case PolygonTexture.Texture06:
+        return { x: 1, y: 1 };
+      case PolygonTexture.Texture07:
+        return { x: 1, y: 1 };
+      default:
+        return { x: 1, y: 1 };
+    }
+  };
+
+  const textureLoader = useMemo(() => {
+    let textureImg;
+    switch (textureType) {
+      case PolygonTexture.Texture01:
+        textureImg = PolygonTexture01;
+        break;
+      case PolygonTexture.Texture02:
+        textureImg = PolygonTexture02;
+        break;
+      case PolygonTexture.Texture03:
+        textureImg = PolygonTexture03;
+        break;
+      case PolygonTexture.Texture04:
+        textureImg = PolygonTexture04;
+        break;
+      case PolygonTexture.Texture05:
+        textureImg = PolygonTexture05;
+        break;
+      case PolygonTexture.Texture06:
+        textureImg = PolygonTexture06;
+        break;
+      case PolygonTexture.Texture07:
+        textureImg = PolygonTexture07;
+        break;
+      default:
+        textureImg = PolygonTexture00;
+    }
+    return new TextureLoader().load(textureImg, (t) => {
+      if (parent) {
+        let plx, ply;
+        if (parent.type === ObjectType.Cuboid) {
+          const n = new Vector3().fromArray(polygonModel.normal);
+          if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
+            t.rotation = Math.PI;
+            plx = parent.lx;
+            ply = parent.lz;
+          } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
+            plx = parent.lx;
+            ply = parent.lz;
+          } else if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
+            t.rotation = HALF_PI;
+            plx = parent.lz;
+            ply = parent.ly;
+          } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
+            t.rotation = -HALF_PI;
+            plx = parent.lz;
+            ply = parent.ly;
+          } else {
+            plx = parent.lx;
+            ply = parent.ly;
+          }
+        } else {
+          plx = parent.lx;
+          ply = parent.ly;
+        }
+        const bounds = Util.calculatePolygonBounds(polygonModel.vertices);
+        const bx = (bounds.maxX - bounds.minX) * plx;
+        const by = (bounds.maxY - bounds.minY) * ply;
+        const params = fetchRepeatDividers(textureType);
+        t.wrapT = t.wrapS = RepeatWrapping;
+        t.repeat.set(bx / params.x, by / params.y);
+      }
+      setTexture(t);
+    });
+  }, [textureType, polygonModel.vertices]);
+  const [texture, setTexture] = useState(textureLoader);
+
   return (
     <group name={'Polygon Group ' + id} rotation={euler} position={position}>
       {filled && (
@@ -262,7 +359,13 @@ const Polygon = ({
           }}
         >
           <shapeBufferGeometry attach="geometry" args={[shape]} />
-          <meshBasicMaterial color={color} transparent={true} opacity={0.5} />
+          <meshStandardMaterial
+            attach="material"
+            color={textureType === PolygonTexture.NoTexture ? color : 'white'}
+            map={texture}
+            transparent={opacity < 1}
+            opacity={opacity}
+          />
         </mesh>
       )}
 

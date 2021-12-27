@@ -202,6 +202,20 @@ export enum HumanName {
   Xiaoming = 'Xiaoming',
 }
 
+export enum PolygonTexture {
+  Texture01 = 'Polygon Texture #1',
+  Texture02 = 'Polygon Texture #2',
+  Texture03 = 'Polygon Texture #3',
+  Texture04 = 'Polygon Texture #4',
+  Texture05 = 'Polygon Texture #5',
+  Texture06 = 'Polygon Texture #6',
+  Texture07 = 'Polygon Texture #7',
+  Texture08 = 'Polygon Texture #8',
+  Texture09 = 'Polygon Texture #9',
+  Texture10 = 'Polygon Texture #10',
+  NoTexture = 'No Polygon Texture',
+}
+
 export enum FoundationTexture {
   Texture01 = 'Foundation Texture #1',
   Texture02 = 'Foundation Texture #2',

@@ -281,6 +281,16 @@ export const i18n_tr = {
     },
 
     polygonMenu: {
+      Texture01: 'Tekstür 1',
+      Texture02: 'Tekstür 2',
+      Texture03: 'Tekstür 3',
+      Texture04: 'Tekstür 4',
+      Texture05: 'Tekstür 5',
+      Texture06: 'Tekstür 6',
+      Texture07: 'Tekstür 7',
+      Texture08: 'Tekstür 8',
+      Texture09: 'Tekstür 9',
+      Texture10: 'Tekstür 10',
       Filled: 'Dolu',
       FillColor: 'Dolgu Rengi',
       LineColor: 'Çizgi Rengi',

@@ -40,6 +40,22 @@ export class Util {
     return ly;
   }
 
+  static calculatePolygonBounds(vertices: Point2[]) {
+    let minX = vertices[0].x;
+    let maxX = vertices[0].x;
+    let minY = vertices[0].y;
+    let maxY = vertices[0].y;
+    for (const [i, v] of vertices.entries()) {
+      if (i > 0) {
+        if (minX > v.x) minX = v.x;
+        if (minY > v.y) minY = v.y;
+        if (maxX < v.x) maxX = v.x;
+        if (maxY < v.y) maxY = v.y;
+      }
+    }
+    return { minX: minX, maxX: maxX, minY: minY, maxY: maxY };
+  }
+
   static calculatePolygonCentroid(vertices: Point2[]) {
     // it is OK to use a shallow copy here since we are not modifying the objects in the array
     const pts = [...vertices];

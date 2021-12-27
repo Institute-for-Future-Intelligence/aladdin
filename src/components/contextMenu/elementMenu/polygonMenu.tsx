@@ -14,6 +14,7 @@ import { Copy, Cut, Lock, Paste } from '../menuItems';
 import { ObjectType } from '../../../types';
 import PolygonLineColorSelection from './polygonLineColorSelection';
 import PolygonFillColorSelection from './polygonFillColorSelection';
+import PolygonTextureSelection from './polygonTextureSelection';
 
 export const PolygonMenu = () => {
   const language = useStore(Selector.language);
@@ -24,6 +25,7 @@ export const PolygonMenu = () => {
 
   const [lineColorDialogVisible, setLineColorDialogVisible] = useState(false);
   const [fillColorDialogVisible, setFillColorDialogVisible] = useState(false);
+  const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const polygon = getSelectedElement() as PolygonModel;
   const lang = { lng: language };
 
@@ -104,6 +106,21 @@ export const PolygonMenu = () => {
           }}
         >
           {i18n.t('polygonMenu.FillColor', lang)} ...
+        </Menu.Item>
+      )}
+      <PolygonTextureSelection
+        textureDialogVisible={textureDialogVisible}
+        setTextureDialogVisible={setTextureDialogVisible}
+      />
+      {editable && (
+        <Menu.Item
+          key={'polygon-texture'}
+          style={{ paddingLeft: '36px' }}
+          onClick={() => {
+            setTextureDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Texture', lang)} ...
         </Menu.Item>
       )}
     </>

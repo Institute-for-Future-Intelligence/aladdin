@@ -275,6 +275,16 @@ export const i18n_en = {
     },
 
     polygonMenu: {
+      Texture01: 'Texture 1',
+      Texture02: 'Texture 2',
+      Texture03: 'Texture 3',
+      Texture04: 'Texture 4',
+      Texture05: 'Texture 5',
+      Texture06: 'Texture 6',
+      Texture07: 'Texture 7',
+      Texture08: 'Texture 8',
+      Texture09: 'Texture 9',
+      Texture10: 'Texture 10',
       Filled: 'Filled',
       FillColor: 'Fill Color',
       LineColor: 'Line Color',

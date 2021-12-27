@@ -180,6 +180,15 @@ export const updatePolygonVertexPositionById = (state: CommonStoreState) => stat
 
 export const updatePolygonVerticesById = (state: CommonStoreState) => state.updatePolygonVerticesById;
 
+export const updatePolygonTextureById = (state: CommonStoreState) => state.updatePolygonTextureById;
+
+export const updatePolygonTextureOnSurface = (state: CommonStoreState) => state.updatePolygonTextureOnSurface;
+
+export const updatePolygonTextureAboveFoundation = (state: CommonStoreState) =>
+  state.updatePolygonTextureAboveFoundation;
+
+export const updatePolygonTextureForAll = (state: CommonStoreState) => state.updatePolygonTextureForAll;
+
 export const cuboidActionScope = (state: CommonStoreState) => state.cuboidActionScope;
 
 export const setCuboidActionScope = (state: CommonStoreState) => state.setCuboidActionScope;

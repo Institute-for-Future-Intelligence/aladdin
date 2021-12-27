@@ -273,6 +273,16 @@ export const i18n_zh_tw = {
     },
 
     polygonMenu: {
+      Texture01: '一號材質',
+      Texture02: '二號材質',
+      Texture03: '三號材質',
+      Texture04: '四號材質',
+      Texture05: '五號材質',
+      Texture06: '六號材質',
+      Texture07: '七號材質',
+      Texture08: '八號材質',
+      Texture09: '九號材質',
+      Texture10: '十號材質',
       Filled: '填充',
       FillColor: '填充顏色',
       LineColor: '線條顏色',
