@@ -278,11 +278,10 @@ const Polygon = ({
         textureImg = PolygonTexture00;
     }
     return new TextureLoader().load(textureImg, (t) => {
-      const bounds = Util.calculatePolygonBounds(absoluteVertices);
       const params = fetchRepeatDividers(textureType);
       t.wrapT = t.wrapS = RepeatWrapping;
-      t.offset.set(0, 0);
-      t.repeat.set((bounds.maxX - bounds.minX) / params.x, (bounds.maxY - bounds.minY) / params.y);
+      // Don't know why, but we have to use 1, instead of the actual dimension, to divide as follows
+      t.repeat.set(1 / params.x, 1 / params.y);
       setTexture(t);
     });
   }, [textureType, absoluteVertices]);

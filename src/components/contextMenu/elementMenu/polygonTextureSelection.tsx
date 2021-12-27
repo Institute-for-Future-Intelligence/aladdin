@@ -181,7 +181,7 @@ const PolygonTextureSelection = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('word.Texture', lang)}
+            {i18n.t('polygonMenu.FillTexture', lang)}
           </div>
         }
         footer={[

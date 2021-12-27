@@ -11,7 +11,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { PolygonModel } from '../../../models/PolygonModel';
 import { Copy, Cut, Lock, Paste } from '../menuItems';
-import { ObjectType } from '../../../types';
+import { ObjectType, PolygonTexture } from '../../../types';
 import PolygonLineColorSelection from './polygonLineColorSelection';
 import PolygonFillColorSelection from './polygonFillColorSelection';
 import PolygonTextureSelection from './polygonTextureSelection';
@@ -97,7 +97,7 @@ export const PolygonMenu = () => {
         colorDialogVisible={fillColorDialogVisible}
         setColorDialogVisible={setFillColorDialogVisible}
       />
-      {editable && (
+      {editable && (!polygon.textureType || polygon.textureType === PolygonTexture.NoTexture) && (
         <Menu.Item
           key={'polygon-fill-color'}
           style={{ paddingLeft: '36px' }}
@@ -120,7 +120,7 @@ export const PolygonMenu = () => {
             setTextureDialogVisible(true);
           }}
         >
-          {i18n.t('word.Texture', lang)} ...
+          {i18n.t('polygonMenu.FillTexture', lang)} ...
         </Menu.Item>
       )}
     </>

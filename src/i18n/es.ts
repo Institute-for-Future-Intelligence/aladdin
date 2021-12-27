@@ -289,6 +289,7 @@ export const i18n_es = {
       Texture09: 'Textura 9',
       Texture10: 'Textura 10',
       Filled: 'Rellenar',
+      FillTexture: 'Rellenar textura',
       FillColor: 'Rellenar color',
       LineColor: 'Color de la línea',
       InsertVertexBeforeIndex: 'Añadir vértice antes del índice',

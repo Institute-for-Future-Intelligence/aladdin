@@ -284,6 +284,7 @@ export const i18n_zh_tw = {
       Texture09: '九號材質',
       Texture10: '十號材質',
       Filled: '填充',
+      FillTexture: '填充材質',
       FillColor: '填充顏色',
       LineColor: '線條顏色',
       InsertVertexBeforeIndex: '前面插入頂點',

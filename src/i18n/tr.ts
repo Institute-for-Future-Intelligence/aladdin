@@ -292,6 +292,7 @@ export const i18n_tr = {
       Texture09: 'Tekstür 9',
       Texture10: 'Tekstür 10',
       Filled: 'Dolu',
+      FillTexture: 'Dolu Tekstür',
       FillColor: 'Dolgu Rengi',
       LineColor: 'Çizgi Rengi',
       InsertVertexBeforeIndex: 'Ýndeksten Önce Tepe Noktasý Ekle',
