@@ -191,8 +191,8 @@ const Tree = ({
     // parent resizing
     if (parentRef.current && groupRef.current) {
       const { plx, ply, plz } = getObjectParameters(parentRef.current.children[0] as Mesh);
-      if (parent && (parent.lz !== plz || parent.lx !== plx || parent.ly !== ply)) {
-        groupRef.current.position.set((plx / parent.lx) * cx, (ply / parent.ly) * cy, (plz / parent.lz) * cz);
+      if (parent && parent.lz !== plz) {
+        groupRef.current.position.setZ((plz / parent.lz) * cz);
       }
     }
 

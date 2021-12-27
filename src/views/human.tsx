@@ -295,8 +295,8 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
     // parent resizing
     if (parentRef.current && groupRef.current) {
       const { plx, ply, plz } = getObjectParameters(parentRef.current.children[0] as Mesh);
-      if (parent && (parent.lx !== plx || parent.ly !== ply || parent.lz !== plz)) {
-        groupRef.current.position.set((plx / parent.lx) * cx, (ply / parent.ly) * cy, (plz / parent.lz) * cz);
+      if (parent && parent.lz !== plz) {
+        groupRef.current.position.setZ((plz / parent.lz) * cz);
       }
     }
 

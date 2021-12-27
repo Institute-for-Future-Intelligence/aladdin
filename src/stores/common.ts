@@ -637,6 +637,7 @@ export const useStore = create<CommonStoreState>(
               }
               state.selectedElement = null;
             });
+            useStoreRef.getState().selectNone();
           },
           selectMe(id, e, action) {
             const setEnableOrbitController = useStoreRef.getState().setEnableOrbitController;

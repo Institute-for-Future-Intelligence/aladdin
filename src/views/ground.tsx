@@ -194,6 +194,27 @@ const Ground = () => {
     });
   };
 
+  const getObjectId = (obj: Object3D | null): string => {
+    if (!obj) return '';
+
+    const nameArray = obj.name.split(' ');
+    if (nameArray[2]) {
+      return nameArray[2];
+    }
+
+    return getObjectId(obj.parent);
+  };
+
+  const getObjectChildById = (object: Object3D | null | undefined, id: string) => {
+    if (object === null || object === undefined) return null;
+    for (const obj of object.children) {
+      if (obj.name.includes(`${id}`)) {
+        return obj;
+      }
+    }
+    return null;
+  };
+
   const handleTreeOrHumanRefMove = (elementRef: RefObject<Group> | null, e: ThreeEvent<PointerEvent>) => {
     if (elementRef && elementRef.current) {
       const intersection = getIntersectionToStand(e.intersections);
@@ -235,6 +256,21 @@ const Ground = () => {
     }
   };
 
+  // for tree and human for now
+  const handleSetElementState = (elemId: string, standObjId: string, position: Vector3) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === elemId) {
+          e.parentId = standObjId;
+          e.cx = position.x;
+          e.cy = position.y;
+          e.cz = position.z;
+          break;
+        }
+      }
+    });
+  };
+
   const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
     if (e.intersections.length > 0) {
       const groundClicked = e.intersections[0].object === groundPlaneRef.current;
@@ -250,27 +286,28 @@ const Ground = () => {
     }
   };
 
-  const getObjectId = (obj: Object3D | null): string => {
-    if (!obj) return '';
-
-    const nameArray = obj.name.split(' ');
-    if (nameArray[2]) {
-      return nameArray[2];
-    }
-
-    return getObjectId(obj.parent);
-  };
-
-  // for tree and human for now
-  const handleSetElementState = (elemId: string, standObjId: string, position: Vector3) => {
+  const handleHumanOrTreeIncludedByParent = (elem: ElementModel) => {
+    if (elem.type !== ObjectType.Foundation && elem.type !== ObjectType.Cuboid) return;
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === elemId) {
-          e.parentId = standObjId;
-          e.cx = position.x;
-          e.cy = position.y;
-          e.cz = position.z;
-          break;
+        if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
+          if (e.parentId === GROUND_ID) {
+            const relPos = new Vector3(e.cx, e.cy, e.cz)
+              .sub(new Vector3(elem.cx, elem.cy, elem.cz))
+              .applyEuler(new Euler(0, 0, -elem.rotation[2]));
+            if (Math.abs(relPos.x) < Math.abs(elem.lx / 2) && Math.abs(relPos.y) < Math.abs(elem.ly / 2)) {
+              const contentRef = useStoreRef.getState().contentRef;
+              const parentObj = getObjectChildById(contentRef?.current, elem.id);
+              const currObj = getObjectChildById(contentRef?.current, e.id);
+              if (parentObj && currObj) {
+                parentObj.add(currObj);
+              }
+              e.parentId = elem.id;
+              e.cx = relPos.x;
+              e.cy = relPos.y;
+              e.cz = elem.lz / 2;
+            }
+          }
         }
       }
     });
@@ -348,12 +385,8 @@ const Ground = () => {
         //
         else {
           if (resizeHandleType) {
-            newPositionRef.current.x = elem.cx;
-            newPositionRef.current.y = elem.cy;
-            newPositionRef.current.z = elem.cz;
-            newDimensionRef.current.x = elem.lx;
-            newDimensionRef.current.y = elem.ly;
-            newDimensionRef.current.z = elem.lz;
+            newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
+            newDimensionRef.current.set(elem.lx, elem.ly, elem.lz);
             if (
               newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE &&
               newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > ZERO_TOLERANCE
@@ -460,11 +493,40 @@ const Ground = () => {
               state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
               // set ref children state
               for (const e of state.elements) {
-                if (e.parentId === elem.id && (e.type === ObjectType.Human || e.type === ObjectType.Tree)) {
-                  // todo: should fix the position on horizontal plane
-                  e.cx = (e.cx / oldDimensionRef.current.x) * newDimensionRef.current.x;
-                  e.cy = (e.cy / oldDimensionRef.current.y) * newDimensionRef.current.y;
-                  e.cz = (e.cz / oldDimensionRef.current.z) * newDimensionRef.current.z;
+                if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
+                  if (e.parentId === elem.id) {
+                    const relPos = new Vector3(e.cx, e.cy, e.cz)
+                      .applyEuler(new Euler(0, 0, elem.rotation[2]))
+                      .add(oldPositionRef.current)
+                      .sub(newPositionRef.current)
+                      .applyEuler(new Euler(0, 0, -elem.rotation[2]));
+                    // detach parent dom if stand on ground
+                    if (
+                      Math.abs(relPos.x) > Math.abs(newDimensionRef.current.x / 2) ||
+                      Math.abs(relPos.y) > Math.abs(newDimensionRef.current.y / 2)
+                    ) {
+                      const contentRef = useStoreRef.getState().contentRef;
+                      const parentObject = getObjectChildById(contentRef?.current, elem.id);
+                      if (parentObject) {
+                        for (const obj of parentObject.children) {
+                          if (obj.name.includes(`${e.id}`)) {
+                            useStoreRef.getState().contentRef?.current?.add(obj);
+                            break;
+                          }
+                        }
+                      }
+                      e.parentId = GROUND_ID;
+                      const absPos = new Vector3(e.cx, e.cy, e.cz)
+                        .applyEuler(new Euler(0, 0, elem.rotation[2]))
+                        .add(oldPositionRef.current);
+                      e.cx = absPos.x;
+                      e.cy = absPos.y;
+                      e.cz = 0;
+                    } else {
+                      e.cx = relPos.x;
+                      e.cy = relPos.y;
+                    }
+                  }
                 }
               }
             });
@@ -574,6 +636,7 @@ const Ground = () => {
             }
           }
         }
+        handleHumanOrTreeIncludedByParent(elem);
       }
       grabRef.current = null;
     }
@@ -713,6 +776,13 @@ const Ground = () => {
                 const a = selectedElement.rotation[2];
                 for (const e of cuboidChildren) {
                   switch (e.type) {
+                    case ObjectType.Tree:
+                    case ObjectType.Human: {
+                      const centerAbsPos = new Vector2(e.cx, e.cy).rotateAround(ORIGIN_VECTOR2, a);
+                      centerAbsPos.add(cuboidCenter);
+                      absPosMapRef.current.set(e.id, centerAbsPos);
+                      break;
+                    }
                     case ObjectType.SolarPanel:
                     case ObjectType.Sensor:
                       if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
@@ -774,6 +844,13 @@ const Ground = () => {
                         rightPointAbsPos,
                       });
                       break;
+                    case ObjectType.Tree:
+                    case ObjectType.Human: {
+                      const centerAbsPos = new Vector2(e.cx, e.cy).rotateAround(ORIGIN_VECTOR2, a);
+                      centerAbsPos.add(foundationCenter);
+                      absPosMapRef.current.set(e.id, centerAbsPos);
+                      break;
+                    }
                     case ObjectType.SolarPanel:
                     case ObjectType.Sensor:
                       const centerAbsPos = new Vector2(
@@ -1179,6 +1256,45 @@ const Ground = () => {
         }
       }
     });
+
+    // todo: counld merge to one function
+    // resizing foudation
+    if (useStoreRef.getState().foundationRef) {
+      const foundationRef = useStoreRef.getState().foundationRef;
+      if (foundationRef?.current) {
+        for (const obj of foundationRef.current.children) {
+          if (obj.name.includes('Human') || obj.name.includes('Tree')) {
+            const worldPos = absPosMapRef.current.get(getObjectId(obj));
+            console.log(worldPos);
+            if (worldPos) {
+              const relativePos = new Vector2()
+                .subVectors(worldPos, new Vector2(foundationRef.current.position.x, foundationRef.current.position.y))
+                .rotateAround(ORIGIN_VECTOR2, -foundationRef.current.rotation.z);
+              obj.position.setX(relativePos.x);
+              obj.position.setY(relativePos.y);
+            }
+          }
+        }
+      }
+    }
+    // resizing cuboid
+    else if (useStoreRef.getState().cuboidRef) {
+      const cuboidRef = useStoreRef.getState().cuboidRef;
+      if (cuboidRef?.current) {
+        for (const obj of cuboidRef.current.children) {
+          if (obj.name.includes('Human') || obj.name.includes('Tree')) {
+            const worldPos = absPosMapRef.current.get(getObjectId(obj));
+            if (worldPos) {
+              const relativePos = new Vector2()
+                .subVectors(worldPos, new Vector2(cuboidRef.current.position.x, cuboidRef.current.position.y))
+                .rotateAround(ORIGIN_VECTOR2, -cuboidRef.current.rotation.z);
+              obj.position.setX(relativePos.x);
+              obj.position.setY(relativePos.y);
+            }
+          }
+        }
+      }
+    }
   };
 
   const handleRotate = (p: Vector3) => {

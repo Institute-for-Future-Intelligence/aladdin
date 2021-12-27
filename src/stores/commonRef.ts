@@ -8,19 +8,19 @@ import { Group } from 'three';
 import create from 'zustand';
 
 export interface CommonStoreRef {
+  setEnableOrbitController: (b: boolean) => void;
+  selectNone: () => void;
   contentRef: RefObject<Group> | null;
   compassRef: RefObject<Group> | null;
   orbitControlsRef: RefObject<MyOrbitControls> | null;
-  setEnableOrbitController: (b: boolean) => void;
   humanRef: RefObject<Group> | null;
   treeRef: RefObject<Group> | null;
+  foundationRef: RefObject<Group> | null;
+  cuboidRef: RefObject<Group> | null;
 }
 
 export const useStoreRef = create<CommonStoreRef>((set, get) => {
   return {
-    contentRef: null,
-    compassRef: null,
-    orbitControlsRef: null,
     setEnableOrbitController: (b: boolean) => {
       set((state) => {
         if (state.orbitControlsRef?.current) {
@@ -28,7 +28,19 @@ export const useStoreRef = create<CommonStoreRef>((set, get) => {
         }
       });
     },
+    selectNone: () => {
+      set((state) => {
+        state.humanRef = null;
+        state.treeRef = null;
+        state.foundationRef = null;
+      });
+    },
+    contentRef: null,
+    compassRef: null,
+    orbitControlsRef: null,
     humanRef: null,
     treeRef: null,
+    foundationRef: null,
+    cuboidRef: null,
   };
 });

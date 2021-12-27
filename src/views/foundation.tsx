@@ -13,7 +13,7 @@ import FoundationTexture07 from '../resources/foundation_07.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Plane, Sphere } from '@react-three/drei';
-import { Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
+import { Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
 import { FoundationModel } from '../models/FoundationModel';
@@ -129,6 +129,7 @@ const Foundation = ({
   const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
   const rotateHandleTypeRef = useRef(useStore.getState().rotateHandleType);
   const enableFineGridRef = useRef(useStore.getState().enableFineGrid);
+  const groupRef = useRef<Group>(null);
   const baseRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
   const intersectPlaneRef = useRef<Mesh>();
@@ -675,15 +676,22 @@ const Foundation = ({
     }
     // no child of this foundation is clicked
     if (selectedElement?.id === id || bypass) {
-      if (legalOnFoundation(objectTypeToAddRef.current) && foundationModel) {
-        setShowGrid(true);
-        const position = e.intersections[0].point;
-        const addedElement = addElement(foundationModel, position);
-        if (addedElement) {
-          handleUndoableAdd(addedElement);
+      if (legalOnFoundation(objectTypeToAddRef.current)) {
+        if (foundationModel) {
+          setShowGrid(true);
+          const position = e.intersections[0].point;
+          const addedElement = addElement(foundationModel, position);
+          if (addedElement) {
+            handleUndoableAdd(addedElement);
+          }
+          setCommonStore((state) => {
+            state.objectTypeToAdd = ObjectType.None;
+          });
         }
-        setCommonStore((state) => {
-          state.objectTypeToAdd = ObjectType.None;
+      } else {
+        useStoreRef.getState().selectNone();
+        useStoreRef.setState((state) => {
+          state.foundationRef = groupRef;
         });
       }
     }
@@ -1347,6 +1355,7 @@ const Foundation = ({
 
   return (
     <group
+      ref={groupRef}
       name={'Foundation Group ' + id}
       userData={{ aabb: true }}
       position={[cx, cy, hz]}

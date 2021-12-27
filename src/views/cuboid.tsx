@@ -16,7 +16,7 @@ import Facade_Texture_10 from '../resources/building_facade_10.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Plane, Sphere } from '@react-three/drei';
-import { Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
+import { Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -127,6 +127,7 @@ const Cuboid = ({
   const ray = useMemo(() => new Raycaster(), []);
 
   const cuboidModel = getElementById(id) as CuboidModel;
+  const groupRef = useRef<Group>(null);
   const baseRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
   const faceNormalRef = useRef<Vector3>(UNIT_VECTOR_POS_Z);
@@ -429,6 +430,11 @@ const Cuboid = ({
         addUndoable(undoableAdd);
         setCommonStore((state) => {
           state.objectTypeToAdd = ObjectType.None;
+        });
+      } else {
+        useStoreRef.getState().selectNone();
+        useStoreRef.setState((state) => {
+          state.cuboidRef = groupRef;
         });
       }
     } else {
@@ -955,7 +961,13 @@ const Cuboid = ({
   const textures = [textureEast, textureWest, textureNorth, textureSouth, textureTop, null];
 
   return (
-    <group name={'Cuboid Group ' + id} userData={{ aabb: true }} position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
+    <group
+      ref={groupRef}
+      name={'Cuboid Group ' + id}
+      userData={{ aabb: true }}
+      position={[cx, cy, hz]}
+      rotation={[0, 0, rotation[2]]}
+    >
       {/* draw rectangular cuboid */}
       <Box
         castShadow={shadowEnabled}
