@@ -9,6 +9,8 @@ import PolygonTexture04 from '../resources/foundation_04.png';
 import PolygonTexture05 from '../resources/foundation_05.png';
 import PolygonTexture06 from '../resources/foundation_06.png';
 import PolygonTexture07 from '../resources/foundation_07.png';
+import PolygonTexture08 from '../resources/polygon_08.png';
+import PolygonTexture09 from '../resources/polygon_09.png';
 import PolygonTexture00 from '../resources/foundation_00.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -125,10 +127,13 @@ const Polygon = ({
   }, [vertices, parent]);
 
   const cz = useMemo(() => {
-    if (parent) {
-      return parent.cz + (parent.lz + lz) / 2 + 0.1;
+    if (parent?.type === ObjectType.Cuboid) {
+      return parent.cz + (parent.lz + lz) / 2 + 0.01;
     }
-    return lz / 2 + 0.1;
+    if (parent?.type === ObjectType.Foundation) {
+      return parent.lz + 0.01;
+    }
+    return lz / 2 + 0.01;
   }, [parent]);
 
   const polygonModel = getElementById(id) as PolygonModel;
@@ -245,6 +250,10 @@ const Polygon = ({
         return { x: 1, y: 1 };
       case PolygonTexture.Texture07:
         return { x: 1, y: 1 };
+      case PolygonTexture.Texture08:
+        return { x: 2, y: 2 };
+      case PolygonTexture.Texture09:
+        return { x: 2, y: 2 };
       default:
         return { x: 1, y: 1 };
     }
@@ -274,6 +283,12 @@ const Polygon = ({
       case PolygonTexture.Texture07:
         textureImg = PolygonTexture07;
         break;
+      case PolygonTexture.Texture08:
+        textureImg = PolygonTexture08;
+        break;
+      case PolygonTexture.Texture09:
+        textureImg = PolygonTexture09;
+        break;
       default:
         textureImg = PolygonTexture00;
     }
@@ -282,6 +297,14 @@ const Polygon = ({
       t.wrapT = t.wrapS = RepeatWrapping;
       // Don't know why, but we have to use 1, instead of the actual dimension, to divide as follows
       t.repeat.set(1 / params.x, 1 / params.y);
+      const n = new Vector3().fromArray(polygonModel.normal);
+      if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
+        t.rotation = HALF_PI;
+      } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
+        t.rotation = -HALF_PI;
+      } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
+        t.rotation = Math.PI;
+      }
       setTexture(t);
     });
   }, [textureType, absoluteVertices]);

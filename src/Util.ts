@@ -4,6 +4,7 @@
 
 import {
   FINE_GRID_SCALE,
+  NORMAL_GRID_SCALE,
   ORIGIN_VECTOR2,
   UNIT_VECTOR_NEG_X,
   UNIT_VECTOR_NEG_Y,
@@ -240,12 +241,15 @@ export class Util {
   }
 
   static snapToNormalGrid(v: Vector3) {
-    return new Vector3(Math.round(v.x), Math.round(v.y), v.z);
+    const x = Math.round(v.x / NORMAL_GRID_SCALE) * NORMAL_GRID_SCALE;
+    const y = Math.round(v.y / NORMAL_GRID_SCALE) * NORMAL_GRID_SCALE;
+    return new Vector3(x, y, v.z);
+    //return new Vector3(Math.round(v.x), Math.round(v.y), v.z);
   }
 
   static snapToFineGrid(v: Vector3) {
-    const x = parseFloat((Math.round(v.x / FINE_GRID_SCALE) * FINE_GRID_SCALE).toFixed(1));
-    const y = parseFloat((Math.round(v.y / FINE_GRID_SCALE) * FINE_GRID_SCALE).toFixed(1));
+    const x = Math.round(v.x / FINE_GRID_SCALE) * FINE_GRID_SCALE;
+    const y = Math.round(v.y / FINE_GRID_SCALE) * FINE_GRID_SCALE;
     return new Vector3(x, y, v.z);
   }
 

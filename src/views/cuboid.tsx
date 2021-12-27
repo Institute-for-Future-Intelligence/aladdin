@@ -502,7 +502,7 @@ const Cuboid = ({
                   const n = new Vector3().fromArray(polygon.normal);
                   let dx: number, dy: number;
                   if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
-                    // east face
+                    // FIXME: east face
                     dx = centroid.x - p.z;
                     dy = p.y - centroid.y;
                   } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
@@ -510,7 +510,7 @@ const Cuboid = ({
                     dx = p.z - centroid.x;
                     dy = p.y - centroid.y;
                   } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
-                    // north face
+                    // FIXME: north face
                     dx = p.x - centroid.x;
                     dy = centroid.y - p.z;
                   } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {

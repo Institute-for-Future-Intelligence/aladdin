@@ -31,6 +31,7 @@ export const RESIZE_HANDLE_COLOR = 'white';
 export const HIGHLIGHT_HANDLE_COLOR = 'red';
 
 export const FINE_GRID_SCALE = 0.1;
+export const NORMAL_GRID_SCALE = 5 * FINE_GRID_SCALE;
 
 export const GROUND_ID = 'Ground';
 
