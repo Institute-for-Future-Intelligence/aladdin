@@ -105,6 +105,8 @@ export interface CommonStoreState {
   showAccountSettingsPanel: boolean;
   selectedElement: ElementModel | null;
   getSelectedElement: () => ElementModel | null;
+  findNearestSibling: (id: string) => string | null;
+  overlapWithSibling: (me: ElementModel, threshold: number) => boolean;
   selectedSideIndex: number;
   getResizeHandlePosition: (e: ElementModel, type: ResizeHandleType) => Vector3;
   getElementById: (id: string) => ElementModel | null;
@@ -544,6 +546,49 @@ export const useStore = create<CommonStoreState>(
               }
             }
             return null;
+          },
+
+          // a sibling is defined as an element of the same type of the same parent
+          findNearestSibling(id) {
+            let foundId: string | null = null;
+            immerSet((state: CommonStoreState) => {
+              const me = state.getElementById(id);
+              if (me) {
+                let distanceSquare = Number.MAX_VALUE;
+                for (const e of state.elements) {
+                  if (e.type === me.type && e.parentId === me.parentId && e.id !== id) {
+                    const dx = me.cx - e.cx;
+                    const dy = me.cy - e.cy;
+                    const dz = me.cz - e.cz;
+                    const sq = dx * dx + dy * dy + dz * dz;
+                    if (distanceSquare > sq) {
+                      distanceSquare = sq;
+                      foundId = e.id;
+                    }
+                  }
+                }
+              }
+            });
+            return foundId;
+          },
+          overlapWithSibling(me, threshold) {
+            let overlap = false;
+            immerSet((state: CommonStoreState) => {
+              const thresholdSquared = threshold * threshold;
+              for (const e of state.elements) {
+                if (e.type === me.type && e.parentId === me.parentId && e.id !== me.id) {
+                  const dx = me.cx - e.cx;
+                  const dy = me.cy - e.cy;
+                  const dz = me.cz - e.cz;
+                  const sq = dx * dx + dy * dy + dz * dz;
+                  if (sq < thresholdSquared) {
+                    overlap = true;
+                    break;
+                  }
+                }
+              }
+            });
+            return overlap;
           },
 
           selectedSideIndex: -1,
@@ -2506,26 +2551,46 @@ export const useStore = create<CommonStoreState>(
                 const parent = state.getElementById(elem.parentId);
                 const e = ElementModelCloner.clone(parent, elem, elem.cx, elem.cy, elem.cz);
                 if (e) {
+                  let approved = false;
                   switch (e.type) {
                     case ObjectType.Human:
                       e.cx += 1;
                       state.elements.push(e);
                       state.elementsToPaste = [e];
+                      approved = true;
                       break;
                     case ObjectType.Tree:
                       e.cx += e.lx;
                       state.elements.push(e);
                       state.elementsToPaste = [e];
+                      approved = true;
                       break;
                     case ObjectType.SolarPanel:
                       if (e.parentId) {
                         const parent = state.getElementById(e.parentId);
                         if (parent) {
-                          e.cx += e.lx / parent.lx;
+                          const nearestNeighborId = state.findNearestSibling(elem.id);
+                          if (nearestNeighborId) {
+                            const nearestNeighbor = state.getElementById(nearestNeighborId);
+                            if (nearestNeighbor) {
+                              const dx = nearestNeighbor.cx - elem.cx;
+                              const dy = nearestNeighbor.cy - elem.cy;
+                              const dz = nearestNeighbor.cz - elem.cz;
+                              e.cx = nearestNeighbor.cx + dx;
+                              e.cy = nearestNeighbor.cy + dy;
+                              e.cz = nearestNeighbor.cz + dz;
+                            } else {
+                              e.cx += e.lx / parent.lx;
+                            }
+                          } else {
+                            // a loner
+                            e.cx += e.lx / parent.lx;
+                          }
                         }
-                        if (e.cx < 0.5) {
+                        if (Math.abs(e.cx) < 0.5 && Math.abs(e.cy) < 0.5 && !state.overlapWithSibling(e, 0.01)) {
                           state.elements.push(e);
                           state.elementsToPaste = [e];
+                          approved = true;
                         }
                       }
                       break;
@@ -2538,6 +2603,7 @@ export const useStore = create<CommonStoreState>(
                         if (e.cx < 0.5) {
                           state.elements.push(e);
                           state.elementsToPaste = [e];
+                          approved = true;
                         }
                       }
                       break;
@@ -2549,6 +2615,7 @@ export const useStore = create<CommonStoreState>(
                       polygon.cx += 0.1;
                       state.elements.push(polygon);
                       state.elementsToPaste = [polygon];
+                      approved = true;
                       break;
                     case ObjectType.Foundation:
                     case ObjectType.Cuboid:
@@ -2609,9 +2676,10 @@ export const useStore = create<CommonStoreState>(
                           state.elementsToPaste = cutElements;
                         }
                       }
+                      approved = true;
                       break;
                   }
-                  if (state.elementsToPaste.length === 1) pastedElements.push(e);
+                  if (state.elementsToPaste.length === 1 && approved) pastedElements.push(e);
                 }
               }
             });

@@ -87,6 +87,8 @@ export const getChildren = (state: CommonStoreState) => state.getChildren;
 
 export const getSelectedElement = (state: CommonStoreState) => state.getSelectedElement;
 
+export const findNearestSibling = (state: CommonStoreState) => state.findNearestSibling;
+
 export const selectedSideIndex = (state: CommonStoreState) => state.selectedSideIndex;
 
 export const setElementPosition = (state: CommonStoreState) => state.setElementPosition;
