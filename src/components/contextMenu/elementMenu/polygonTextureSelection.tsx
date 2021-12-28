@@ -11,6 +11,7 @@ import Polygon_Texture_06_Menu from '../../../resources/foundation_06_menu.png';
 import Polygon_Texture_07_Menu from '../../../resources/foundation_07_menu.png';
 import Polygon_Texture_08_Menu from '../../../resources/polygon_08_menu.png';
 import Polygon_Texture_09_Menu from '../../../resources/polygon_09_menu.png';
+import Polygon_Texture_10_Menu from '../../../resources/polygon_10_menu.png';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
@@ -421,6 +422,17 @@ const PolygonTextureSelection = ({
                   style={{ paddingRight: '8px' }}
                 />{' '}
                 {i18n.t('polygonMenu.Texture09', lang)}
+              </Option>
+
+              <Option key={PolygonTexture.Texture10} value={PolygonTexture.Texture10}>
+                <img
+                  alt={PolygonTexture.Texture10}
+                  src={Polygon_Texture_10_Menu}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('polygonMenu.Texture10', lang)}
               </Option>
             </Select>
           </Col>

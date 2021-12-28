@@ -346,13 +346,8 @@ const Cuboid = ({
     domElement.style.cursor = useStore.getState().addedCuboidId ? 'crosshair' : 'default';
   }, []);
 
-  // only these elements are allowed to be on the cuboid
   const legalOnCuboid = (type: ObjectType) => {
-    return (
-      // type === ObjectType.Human ||
-      // type === ObjectType.Tree ||
-      type === ObjectType.Polygon || type === ObjectType.Sensor || type === ObjectType.SolarPanel
-    );
+    return type === ObjectType.Polygon || type === ObjectType.Sensor || type === ObjectType.SolarPanel;
   };
 
   const setupGridParams = (face: Vector3) => {
@@ -504,21 +499,21 @@ const Cuboid = ({
               if (grabRef.current.type === ObjectType.Polygon) {
                 const polygon = grabRef.current as PolygonModel;
                 if (moveHandleType === MoveHandleType.Default) {
-                  const centroid = Util.calculatePolygonCentroid(polygon.vertices);
+                  const centroid = Util.calculatePolygonCentroid(oldVerticesRef.current);
                   const n = new Vector3().fromArray(polygon.normal);
                   let dx: number, dy: number;
                   if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
-                    // FIXME: east face
-                    dx = centroid.x - p.z;
+                    // east face
+                    dx = -(centroid.x + p.z);
                     dy = p.y - centroid.y;
                   } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
                     // west face
                     dx = p.z - centroid.x;
                     dy = p.y - centroid.y;
                   } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
-                    // FIXME: north face
+                    // north face
                     dx = p.x - centroid.x;
-                    dy = centroid.y - p.z;
+                    dy = -(centroid.y + p.z);
                   } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
                     // south face
                     dx = p.x - centroid.x;
@@ -528,7 +523,7 @@ const Cuboid = ({
                     dx = p.x - centroid.x;
                     dy = p.y - centroid.y;
                   }
-                  const copy = polygon.vertices.map((v) => ({ ...v }));
+                  const copy = oldVerticesRef.current.map((v) => ({ ...v }));
                   copy.forEach((v: Point2) => {
                     v.x += dx;
                     v.y += dy;

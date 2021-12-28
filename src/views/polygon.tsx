@@ -11,6 +11,7 @@ import PolygonTexture06 from '../resources/foundation_06.png';
 import PolygonTexture07 from '../resources/foundation_07.png';
 import PolygonTexture08 from '../resources/polygon_08.png';
 import PolygonTexture09 from '../resources/polygon_09.png';
+import PolygonTexture10 from '../resources/polygon_10.png';
 import PolygonTexture00 from '../resources/foundation_00.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -254,6 +255,8 @@ const Polygon = ({
         return { x: 2, y: 2 };
       case PolygonTexture.Texture09:
         return { x: 2, y: 2 };
+      case PolygonTexture.Texture10:
+        return { x: 4, y: 4 };
       default:
         return { x: 1, y: 1 };
     }
@@ -288,6 +291,9 @@ const Polygon = ({
         break;
       case PolygonTexture.Texture09:
         textureImg = PolygonTexture09;
+        break;
+      case PolygonTexture.Texture10:
+        textureImg = PolygonTexture10;
         break;
       default:
         textureImg = PolygonTexture00;
