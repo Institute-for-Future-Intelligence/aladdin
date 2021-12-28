@@ -293,12 +293,12 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
 
   useFrame(({ camera }) => {
     // parent resizing
-    if (parentRef.current && groupRef.current) {
-      const { plx, ply, plz } = getObjectParameters(parentRef.current.children[0] as Mesh);
-      if (parent && parent.lz !== plz) {
-        groupRef.current.position.setZ((plz / parent.lz) * cz);
-      }
-    }
+    // if (parentRef.current && groupRef.current) {
+    //   const { plx, ply, plz } = getObjectParameters(parentRef.current.children[0] as Mesh);
+    //   if (parent && parent.lz !== plz) {
+    //     groupRef.current.position.setZ((plz / parent.lz) * cz);
+    //   }
+    // }
 
     // rotation
     if (billboardRef.current && groupRef.current) {
