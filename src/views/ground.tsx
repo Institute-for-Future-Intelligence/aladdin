@@ -729,13 +729,10 @@ const Ground = () => {
         if (legalOnGround(selectedElement.type)) {
           grabRef.current = selectedElement;
           // save info for undo
-          oldPositionRef.current.x = selectedElement.cx;
-          oldPositionRef.current.y = selectedElement.cy;
-          oldPositionRef.current.z = selectedElement.cz;
-          oldDimensionRef.current.x = selectedElement.lx;
-          oldDimensionRef.current.y = selectedElement.ly;
-          oldDimensionRef.current.z = selectedElement.lz;
+          oldPositionRef.current.set(selectedElement.cx, selectedElement.cy, selectedElement.cz);
+          oldDimensionRef.current.set(selectedElement.lx, selectedElement.ly, selectedElement.lz);
           oldRotationRef.current = [...selectedElement.rotation];
+
           // store the positions of the children if the selected element may be a parent
           if (selectedElement.type === ObjectType.Foundation || selectedElement.type === ObjectType.Cuboid) {
             const children = getChildren(selectedElement.id);
@@ -753,7 +750,6 @@ const Ground = () => {
               }
             }
           }
-          // allow humans and trees to stand on top of a "stand" surface (defined in userData)
           switch (selectedElement.type) {
             case ObjectType.Cuboid:
               // getting ready for resizing even though it may not happen
