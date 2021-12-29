@@ -107,6 +107,8 @@ export const i18n_en = {
       SolarPanelElement: 'Solar Panel',
       ElementLocked: 'Locked',
       ThisCannotBeUndone: 'This cannot be undone.',
+      CannotPasteOutsideBoundary: 'Cannot paste outside the boundary.',
+      CannotPasteBecauseOfOverlap: 'Cannot paste because of overlap.',
     },
 
     menu: {

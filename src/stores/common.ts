@@ -51,10 +51,12 @@ import { TreeModel } from '../models/TreeModel';
 import { HumanModel } from '../models/HumanModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
-import { ORIGIN_VECTOR2 } from '../constants';
+import { ORIGIN_VECTOR2, UNIT_VECTOR_POS_Z_ARRAY } from '../constants';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
 import { useStoreRef } from './commonRef';
+import { showError } from '../helpers';
+import i18n from '../i18n/i18n';
 
 enableMapSet();
 
@@ -415,24 +417,8 @@ export const useStore = create<CommonStoreState>(
 
           importContent(content: any, title) {
             immerSet((state: CommonStoreState) => {
-              // remove old properties
-              // if (content.world.hasOwnProperty('cameraPosition')) delete content.world.cameraPosition;
-              // if (content.world.hasOwnProperty('panCenter')) delete content.world.panCenter;
-              // if (!content.view.hasOwnProperty('cameraPosition')) content.view.cameraPosition = new Vector3(0, -5, 0);
-              // if (!content.view.hasOwnProperty('panCenter')) content.view.panCenter = new Vector3(0, 0, 0);
               state.world = content.world;
               state.viewState = content.view;
-              // remove old properties
-              // for (const elem of content.elements) {
-              //   if (elem.hasOwnProperty('parent')) {
-              //     if (!elem.hasOwnProperty('parentId')) elem.parentId = elem.parent.id ?? GROUND_ID;
-              //     delete elem.parent;
-              //   }
-              //   if (elem.hasOwnProperty('pvModel')) {
-              //     if (!elem.hasOwnProperty('pvModelName')) elem.pvModelName = elem.pvModel.name ?? 'SPR-X21-335-BLK';
-              //     delete elem.pvModel;
-              //   }
-              // }
               state.elements = content.elements;
               state.notes = content.notes ?? [];
               state.cloudFile = title;
@@ -2594,11 +2580,28 @@ export const useStore = create<CommonStoreState>(
                             // a loner
                             e.cx += e.lx / parent.lx;
                           }
-                        }
-                        if (Math.abs(e.cx) < 0.5 && Math.abs(e.cy) < 0.5 && !state.overlapWithSibling(e, 0.01)) {
-                          state.elements.push(e);
-                          state.elementsToPaste = [e];
-                          approved = true;
+                          const lang = { lng: state.language };
+                          if (!state.overlapWithSibling(e, 0.01)) {
+                            if (
+                              parent.type === ObjectType.Foundation ||
+                              (parent.type === ObjectType.Cuboid && Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY))
+                            ) {
+                              if (Util.isSolarPanelWithinHorizontalSurface(e as SolarPanelModel, parent)) {
+                                state.elements.push(e);
+                                state.elementsToPaste = [e];
+                                approved = true;
+                              } else {
+                                showError(i18n.t('shared.CannotPasteOutsideBoundary', lang));
+                              }
+                            } else {
+                              // TODO: For other surfaces, handle out-of-bounds errors here
+                              state.elements.push(e);
+                              state.elementsToPaste = [e];
+                              approved = true;
+                            }
+                          } else {
+                            showError(i18n.t('shared.CannotPasteBecauseOfOverlap', lang));
+                          }
                         }
                       }
                       break;

@@ -108,6 +108,8 @@ export const i18n_tr = {
       SolarPanelElement: 'Güneþ Paneli',
       ElementLocked: 'Kilitli',
       ThisCannotBeUndone: 'Bu geri alýnamaz.',
+      CannotPasteOutsideBoundary: 'Cannot paste outside this surface.',
+      CannotPasteBecauseOfOverlap: 'Cannot paste because of overlap.',
     },
 
     menu: {

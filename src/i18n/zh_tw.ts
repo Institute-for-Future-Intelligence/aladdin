@@ -107,6 +107,8 @@ export const i18n_zh_tw = {
       SolarPanelElement: '光伏板',
       ElementLocked: '固定',
       ThisCannotBeUndone: '這個操作一旦執行就不能撤銷。',
+      CannotPasteOutsideBoundary: '位置出界，不能複制。',
+      CannotPasteBecauseOfOverlap: '位置重疊，不能複制。',
     },
 
     menu: {
