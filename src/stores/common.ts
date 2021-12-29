@@ -108,7 +108,7 @@ export interface CommonStoreState {
   selectedElement: ElementModel | null;
   getSelectedElement: () => ElementModel | null;
   findNearestSibling: (id: string) => string | null;
-  overlapWithSibling: (me: ElementModel, threshold: number) => boolean;
+  overlapWithSibling: (me: ElementModel, threshold?: number) => boolean;
   selectedSideIndex: number;
   getResizeHandlePosition: (e: ElementModel, type: ResizeHandleType) => Vector3;
   getElementById: (id: string) => ElementModel | null;
@@ -560,16 +560,49 @@ export const useStore = create<CommonStoreState>(
           overlapWithSibling(me, threshold) {
             let overlap = false;
             immerSet((state: CommonStoreState) => {
-              const thresholdSquared = threshold * threshold;
-              for (const e of state.elements) {
-                if (e.type === me.type && e.parentId === me.parentId && e.id !== me.id) {
-                  const dx = me.cx - e.cx;
-                  const dy = me.cy - e.cy;
-                  const dz = me.cz - e.cz;
-                  const sq = dx * dx + dy * dy + dz * dz;
-                  if (sq < thresholdSquared) {
-                    overlap = true;
-                    break;
+              if (threshold === undefined) {
+                // when threshold is not set, check overlap of bounding boxes
+                const parent = state.getElementById(me.parentId);
+                if (parent) {
+                  for (const e of state.elements) {
+                    if (e.type === me.type && e.parentId === me.parentId && e.id !== me.id) {
+                      if (me.type === ObjectType.SolarPanel) {
+                        if (
+                          Math.abs(me.cx - e.cx) * parent.lx < 0.5 * (me.lx + e.lx) &&
+                          Math.abs(me.cy - e.cy) * parent.ly <
+                            0.5 *
+                              (me.ly * Math.cos((me as SolarPanelModel).tiltAngle) +
+                                e.ly * Math.cos((e as SolarPanelModel).tiltAngle))
+                        ) {
+                          overlap = true;
+                          break;
+                        }
+                      } else {
+                        if (
+                          Math.abs(me.cx - e.cx) * parent.lx < 0.5 * (me.lx + e.lx) &&
+                          Math.abs(me.cy - e.cy) * parent.ly < 0.5 * (me.ly + e.ly) &&
+                          Math.abs(me.cz - e.cz) * parent.lz < 0.5 * (me.lz + e.lz)
+                        ) {
+                          overlap = true;
+                          break;
+                        }
+                      }
+                    }
+                  }
+                }
+              } else {
+                // when threshold is set, use the distance between centers to detect overlap using it
+                const thresholdSquared = threshold * threshold;
+                for (const e of state.elements) {
+                  if (e.type === me.type && e.parentId === me.parentId && e.id !== me.id) {
+                    const dx = me.cx - e.cx;
+                    const dy = me.cy - e.cy;
+                    const dz = me.cz - e.cz;
+                    const sq = dx * dx + dy * dy + dz * dz;
+                    if (sq < thresholdSquared) {
+                      overlap = true;
+                      break;
+                    }
                   }
                 }
               }
@@ -2466,6 +2499,7 @@ export const useStore = create<CommonStoreState>(
                   if (state.pasteNormal) {
                     e.normal = state.pasteNormal.toArray();
                   }
+                  let approved = false;
                   if (e.type === ObjectType.Foundation || e.type === ObjectType.Cuboid) {
                     for (const child of state.elements) {
                       if (child.parentId === elem.id) {
@@ -2505,9 +2539,27 @@ export const useStore = create<CommonStoreState>(
                       }
                     }
                     state.elements.push(...pastedElements);
+                    approved = true;
+                  } else if (e.type === ObjectType.SolarPanel) {
+                    const lang = { lng: state.language };
+                    if (state.overlapWithSibling(e)) {
+                      // overlap, do not approve
+                      showError(i18n.t('shared.CannotPasteBecauseOfOverlap', lang));
+                    } else {
+                      if (newParent) {
+                        approved = Util.isSolarPanelWithinHorizontalSurface(e as SolarPanelModel, newParent);
+                        if (!approved) {
+                          showError(i18n.t('shared.CannotPasteOutsideBoundary', lang));
+                        }
+                      } else {
+                        approved = true;
+                      }
+                    }
                   }
-                  state.elements.push(e);
-                  pastedElements.push(e);
+                  if (approved) {
+                    state.elements.push(e);
+                    pastedElements.push(e);
+                  }
                 }
               } else if (state.elementsToPaste.length > 1) {
                 // when a parent with children is cut, the removed children are no longer in elements array,
