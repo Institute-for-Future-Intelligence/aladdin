@@ -343,10 +343,12 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
             }}
             onPointerDown={(e) => {
               if (e.button === 2) return; // ignore right-click
-              selectMe(id, e, ActionType.Move);
-              useStoreRef.setState((state) => {
-                state.humanRef = groupRef;
-              });
+              if (e.eventObject === e.intersections[0].eventObject) {
+                selectMe(id, e, ActionType.Move);
+                useStoreRef.setState((state) => {
+                  state.humanRef = groupRef;
+                });
+              }
             }}
             onPointerOver={(e) => {
               if (e.intersections.length > 0) {
@@ -371,10 +373,12 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
             args={[MOVE_HANDLE_RADIUS * 4, 6, 6]}
             name={MoveHandleType.Default}
             onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Move);
-              useStoreRef.setState((state) => {
-                state.humanRef = groupRef;
-              });
+              if (e.eventObject === e.intersections[0].eventObject) {
+                selectMe(id, e, ActionType.Move);
+                useStoreRef.setState((state) => {
+                  state.humanRef = groupRef;
+                });
+              }
             }}
             onPointerOver={(e) => {
               gl.domElement.style.cursor = 'move';

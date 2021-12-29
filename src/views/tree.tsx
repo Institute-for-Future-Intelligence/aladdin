@@ -283,10 +283,12 @@ const Tree = ({
             }}
             onPointerDown={(e) => {
               if (e.button === 2) return; // ignore right-click
-              selectMe(id, e, ActionType.Move);
-              useStoreRef.setState((state) => {
-                state.treeRef = groupRef;
-              });
+              if (e.eventObject === e.intersections[0].eventObject) {
+                selectMe(id, e, ActionType.Move);
+                useStoreRef.setState((state) => {
+                  state.treeRef = groupRef;
+                });
+              }
             }}
             onPointerOver={(e) => {
               if (e.intersections.length > 0) {
@@ -310,10 +312,12 @@ const Tree = ({
             name={MoveHandleType.Default}
             renderOrder={2}
             onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Move);
-              useStoreRef.setState((state) => {
-                state.treeRef = groupRef;
-              });
+              if (e.eventObject === e.intersections[0].eventObject) {
+                selectMe(id, e, ActionType.Move);
+                useStoreRef.setState((state) => {
+                  state.treeRef = groupRef;
+                });
+              }
             }}
             onPointerOver={(e) => {
               gl.domElement.style.cursor = 'move';
