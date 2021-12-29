@@ -73,10 +73,10 @@ export class ElementModelCloner {
         }
         break;
       case ObjectType.Human:
-        clone = ElementModelCloner.cloneHuman(e as HumanModel, x, y, z);
+        clone = ElementModelCloner.cloneHuman(e as HumanModel, x, y, z, parent);
         break;
       case ObjectType.Tree:
-        clone = ElementModelCloner.cloneTree(e as TreeModel, x, y, z);
+        clone = ElementModelCloner.cloneTree(e as TreeModel, x, y, z, parent);
         break;
       case ObjectType.Foundation:
         clone = ElementModelCloner.cloneFoundation(e as FoundationModel, x, y);
@@ -88,7 +88,7 @@ export class ElementModelCloner {
     return clone;
   }
 
-  private static cloneHuman(human: HumanModel, x: number, y: number, z?: number) {
+  private static cloneHuman(human: HumanModel, x: number, y: number, z?: number, parent?: ElementModel | null) {
     return {
       type: ObjectType.Human,
       name: human.name,
@@ -97,12 +97,12 @@ export class ElementModelCloner {
       cz: z,
       normal: [...human.normal],
       rotation: [...human.rotation],
-      parentId: human.parentId,
+      parentId: parent?.id ?? human.parentId,
       id: short.generate() as string,
     } as HumanModel;
   }
 
-  private static cloneTree(tree: TreeModel, x: number, y: number, z?: number) {
+  private static cloneTree(tree: TreeModel, x: number, y: number, z?: number, parent?: ElementModel | null) {
     return {
       type: ObjectType.Tree,
       name: tree.name,
@@ -113,7 +113,7 @@ export class ElementModelCloner {
       lz: tree.lz,
       normal: [...tree.normal],
       rotation: [...tree.rotation],
-      parentId: tree.parentId,
+      parentId: parent?.id ?? tree.parentId,
       id: short.generate() as string,
     } as TreeModel;
   }
