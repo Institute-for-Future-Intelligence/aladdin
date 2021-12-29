@@ -269,7 +269,7 @@ const Tree = ({
             ref={trunkMeshRef}
             renderOrder={3}
             name={name + ' plane'}
-            args={[lx / 2, 1]}
+            args={[lx / 2, lz / 3]}
             onContextMenu={(e) => {
               selectMe(id, e);
               setCommonStore((state) => {

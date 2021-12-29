@@ -50,10 +50,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
   const contentRef = useStoreRef((state) => state.contentRef);
   const parentRef = useRef<Object3D | null>(null);
   const groupRef = useRef<Group>(null);
-  const billboardRef = useRef<Mesh>(null);
   const planeRef = useRef<Mesh>(null);
-
-  const parent = useStore.getState().getElementById(parentId);
 
   const lang = { lng: language };
 
@@ -292,39 +289,35 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
   const parentRotation = useMemo(() => new Euler(), []);
 
   useFrame(({ camera }) => {
-    // parent resizing
-    // if (parentRef.current && groupRef.current) {
-    //   const { plx, ply, plz } = getObjectParameters(parentRef.current.children[0] as Mesh);
-    //   if (parent && parent.lz !== plz) {
-    //     groupRef.current.position.setZ((plz / parent.lz) * cz);
-    //   }
-    // }
-
     // rotation
-    if (billboardRef.current && groupRef.current) {
-      const { x: cameraX, y: cameraY } = camera.position;
-      const { x: currX, y: currY } = groupRef.current.position;
-      if (parentRef.current) {
-        parentRotation.set(0, 0, parentRef.current.rotation.z);
-        worldPosition.addVectors(
-          groupRef.current.position.clone().applyEuler(parentRotation),
-          parentRef.current.position,
-        );
-        billboardRef.current.rotation.set(
-          HALF_PI,
-          -Math.atan2(cameraX - worldPosition.x, cameraY - worldPosition.y) - parentRotation.z,
-          0,
-        );
+    if (groupRef.current) {
+      if (!orthographic) {
+        const { x: cameraX, y: cameraY } = camera.position;
+        const { x: currX, y: currY } = groupRef.current.position;
+        if (parentRef.current) {
+          parentRotation.set(0, 0, parentRef.current.rotation.z);
+          worldPosition.addVectors(
+            groupRef.current.position.clone().applyEuler(parentRotation),
+            parentRef.current.position,
+          );
+          groupRef.current.rotation.set(
+            0,
+            0,
+            -Math.atan2(cameraX - worldPosition.x, cameraY - worldPosition.y) - parentRotation.z,
+          );
+        } else {
+          groupRef.current.rotation.set(0, 0, -Math.atan2(cameraX - currX, cameraY - currY));
+        }
       } else {
-        billboardRef.current.rotation.set(HALF_PI, -Math.atan2(cameraX - currX, cameraY - currY), 0);
+        groupRef.current.rotation.set(HALF_PI, Math.PI, 0);
       }
     }
   });
 
   return (
     <group ref={groupRef} name={'Human Group ' + id} userData={{ aabb: true }} position={[cx, cy, cz ?? 0]}>
-      <group position={[0, 0, height / 2]}>
-        <Billboard ref={billboardRef} uuid={id} name={name} follow={orthographic}>
+      <group position={[0, 0.1, height / 2]}>
+        <Billboard rotation={[HALF_PI, 0, 0]} uuid={id} name={name} follow={false}>
           <Plane
             ref={planeRef}
             renderOrder={3}
