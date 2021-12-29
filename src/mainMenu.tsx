@@ -77,7 +77,7 @@ export interface MainMenuProps {
   set2DView: (selected: boolean) => void;
   resetView: () => void;
   zoomView: (scale: number) => void;
-  canvas?: HTMLCanvasElement;
+  canvas?: HTMLCanvasElement | null;
 }
 
 const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenuProps) => {

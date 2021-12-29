@@ -19,7 +19,7 @@ import { WallModel } from './models/WallModel';
 import { useStoreRef } from './stores/commonRef';
 
 export interface KeyboardListenerProps {
-  canvas?: HTMLCanvasElement;
+  canvas?: HTMLCanvasElement | null;
   set2DView: (selected: boolean) => void;
   resetView: () => void;
   zoomView: (scale: number) => void;

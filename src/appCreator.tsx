@@ -86,7 +86,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const [loading, setLoading] = useState(true);
   const [city, setCity] = useState<string | null>('Boston MA, USA');
 
-  const canvasRef = useRef<HTMLCanvasElement>();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const lang = { lng: language };
 
   useEffect(() => {
@@ -292,6 +292,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       <DropdownContextMenu>
         <div>
           <Canvas
+            ref={canvasRef}
             shadows={true}
             gl={{ preserveDrawingBuffer: true }}
             frameloop={'demand'}
