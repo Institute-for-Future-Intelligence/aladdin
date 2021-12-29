@@ -2573,12 +2573,20 @@ export const useStore = create<CommonStoreState>(
                           if (nearestNeighborId) {
                             const nearestNeighbor = state.getElementById(nearestNeighborId);
                             if (nearestNeighbor) {
+                              const oldX = e.cx;
+                              const oldY = e.cy;
+                              const oldZ = e.cz;
                               const dx = nearestNeighbor.cx - elem.cx;
                               const dy = nearestNeighbor.cy - elem.cy;
                               const dz = nearestNeighbor.cz - elem.cz;
                               e.cx = nearestNeighbor.cx + dx;
                               e.cy = nearestNeighbor.cy + dy;
                               e.cz = nearestNeighbor.cz + dz;
+                              if (state.overlapWithSibling(e, 0.001)) {
+                                e.cx = oldX - dx;
+                                e.cy = oldY - dy;
+                                e.cz = oldZ - dz;
+                              }
                             } else {
                               e.cx += e.lx / parent.lx;
                             }
