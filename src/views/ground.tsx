@@ -2,7 +2,7 @@
  * @Copyright 2021. Institute for Future Intelligence, Inc.
  */
 
-import React, { RefObject, useEffect, useMemo, useRef } from 'react';
+import React, { RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -64,7 +64,6 @@ const Ground = () => {
     scene,
     invalidate,
   } = useThree();
-  const standObjectsRef = useRef<Object3D[]>([]);
   const groundPlaneRef = useRef<Mesh>();
   const intersectionPlaneRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
@@ -85,6 +84,8 @@ const Ground = () => {
   const isSettingFoundationEndPointRef = useRef(false);
   const isSettingCuboidStartPointRef = useRef(false);
   const isSettingCuboidEndPointRef = useRef(false);
+
+  const [isHumanOrTreeMoved, setIsHumanOrTreeMoved] = useState(false);
 
   useEffect(() => {
     window.addEventListener('pointerup', handlePointerUp);
@@ -161,17 +162,6 @@ const Ground = () => {
     mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
     ray.setFromCamera(mouse, camera);
-  };
-
-  const fetchStandElements = (currentId: string, obj: Object3D, arr: Object3D[]) => {
-    if (obj.userData['stand'] && obj.uuid !== currentId) {
-      arr.push(obj);
-    }
-    if (obj.children.length > 0) {
-      for (const c of obj.children) {
-        fetchStandElements(currentId, c, arr);
-      }
-    }
   };
 
   const getIntersectionToStand = (intersections: Intersection[]) => {
@@ -251,6 +241,10 @@ const Ground = () => {
             elementRef.current.position.copy(relPos); // relative abs position
             invalidate();
           }
+        }
+
+        if (!isHumanOrTreeMoved) {
+          setIsHumanOrTreeMoved(true);
         }
       }
     }
@@ -578,10 +572,10 @@ const Ground = () => {
                 elementRef = useStoreRef.getState().humanRef?.current;
                 break;
             }
-            if (elementRef) {
+            if (elementRef && isHumanOrTreeMoved) {
+              setRayCast(e);
               const intersections = ray.intersectObjects(scene.children, true);
               const intersection = getIntersectionToStand(intersections); // could simplify???
-
               if (intersection) {
                 const p = intersection.point;
                 // on ground
@@ -604,6 +598,7 @@ const Ground = () => {
                   }
                 }
               }
+              setIsHumanOrTreeMoved(false);
             }
 
             if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
@@ -760,17 +755,6 @@ const Ground = () => {
           }
           // allow humans and trees to stand on top of a "stand" surface (defined in userData)
           switch (selectedElement.type) {
-            case ObjectType.Human:
-            case ObjectType.Tree:
-              const content = scene.children.filter((c) => c.name === 'Content');
-              standObjectsRef.current = [];
-              if (content.length > 0) {
-                const components = content[0].children;
-                for (const c of components) {
-                  fetchStandElements(grabRef.current.id, c, standObjectsRef.current);
-                }
-              }
-              break;
             case ObjectType.Cuboid:
               // getting ready for resizing even though it may not happen
               absPosMapRef.current.clear();
