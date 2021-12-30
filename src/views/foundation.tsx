@@ -59,6 +59,7 @@ import i18n from '../i18n/i18n';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
 import { HorizontalRuler } from './horizontalRuler';
+import { showError } from '../helpers';
 
 const Foundation = ({
   id,
@@ -100,6 +101,7 @@ const Foundation = ({
   const addedFoundationID = useStore(Selector.addedFoundationId);
   const addUndoable = useStore(Selector.addUndoable);
   const isAddingElement = useStore(Selector.isAddingElement);
+  const overlapWithSibling = useStore(Selector.overlapWithSibling);
 
   const {
     camera,
@@ -935,34 +937,42 @@ const Foundation = ({
         newPositionRef.current.y = elem.cy;
         newPositionRef.current.z = elem.cz;
         if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
-          const undoableMove = {
-            name: 'Move',
-            timestamp: Date.now(),
-            movedElementId: elem.id,
-            oldCx: oldPositionRef.current.x,
-            oldCy: oldPositionRef.current.y,
-            oldCz: oldPositionRef.current.z,
-            newCx: newPositionRef.current.x,
-            newCy: newPositionRef.current.y,
-            newCz: newPositionRef.current.z,
-            undo: () => {
-              setElementPosition(
-                undoableMove.movedElementId,
-                undoableMove.oldCx,
-                undoableMove.oldCy,
-                undoableMove.oldCz,
-              );
-            },
-            redo: () => {
-              setElementPosition(
-                undoableMove.movedElementId,
-                undoableMove.newCx,
-                undoableMove.newCy,
-                undoableMove.newCz,
-              );
-            },
-          } as UndoableMove;
-          addUndoable(undoableMove);
+          let accept = true;
+          if (elem.type === ObjectType.SolarPanel) {
+            accept = isSolarPanelNewPositionOk(elem as SolarPanelModel, elem.cx, elem.cy);
+          }
+          if (accept) {
+            const undoableMove = {
+              name: 'Move',
+              timestamp: Date.now(),
+              movedElementId: elem.id,
+              oldCx: oldPositionRef.current.x,
+              oldCy: oldPositionRef.current.y,
+              oldCz: oldPositionRef.current.z,
+              newCx: newPositionRef.current.x,
+              newCy: newPositionRef.current.y,
+              newCz: newPositionRef.current.z,
+              undo: () => {
+                setElementPosition(
+                  undoableMove.movedElementId,
+                  undoableMove.oldCx,
+                  undoableMove.oldCy,
+                  undoableMove.oldCz,
+                );
+              },
+              redo: () => {
+                setElementPosition(
+                  undoableMove.movedElementId,
+                  undoableMove.newCx,
+                  undoableMove.newCy,
+                  undoableMove.newCz,
+                );
+              },
+            } as UndoableMove;
+            addUndoable(undoableMove);
+          } else {
+            setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
+          }
         }
       }
     }
@@ -1203,17 +1213,29 @@ const Foundation = ({
 
   const handlePointerOut = () => {
     setHovered(false);
-    if (isSettingWallStartPointRef.current && grabRef.current) {
-      removeElementById(grabRef.current.id, false);
-      isSettingWallStartPointRef.current = false;
-      setShowGrid(false);
-      setCommonStore((state) => {
-        state.addedWallId = null;
-        state.objectTypeToAdd = ObjectType.Wall;
-      });
-    }
-    if (grabRef.current?.type === ObjectType.Human || grabRef.current?.type === ObjectType.Tree) {
-      setShowGrid(false);
+    if (grabRef.current) {
+      if (isSettingWallStartPointRef.current) {
+        removeElementById(grabRef.current.id, false);
+        isSettingWallStartPointRef.current = false;
+        setShowGrid(false);
+        setCommonStore((state) => {
+          state.addedWallId = null;
+          state.objectTypeToAdd = ObjectType.Wall;
+        });
+      }
+      switch (grabRef.current.type) {
+        case ObjectType.Human:
+        case ObjectType.Tree:
+          setShowGrid(false);
+          break;
+        case ObjectType.SolarPanel:
+          // Have to get the latest from the store (we may change this to ref in the future)
+          const sp = useStore.getState().getElementById(grabRef.current.id) as SolarPanelModel;
+          if (!isSolarPanelNewPositionOk(sp, sp.cx, sp.cy)) {
+            setElementPosition(sp.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
+          }
+          break;
+      }
     }
   };
 
@@ -1227,7 +1249,15 @@ const Foundation = ({
     const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
     clone.cx = cx;
     clone.cy = cy;
-    return Util.isSolarPanelWithinHorizontalSurface(clone, foundationModel);
+    if (overlapWithSibling(clone)) {
+      showError(i18n.t('shared.MoveCancelledBecauseOfOverlap', lang));
+      return false;
+    }
+    if (!Util.isSolarPanelWithinHorizontalSurface(clone, foundationModel)) {
+      showError(i18n.t('shared.MoveOutsideBoundaryCancelled', lang));
+      return false;
+    }
+    return true;
   };
 
   const isSolarPanelNewAzimuthOk = (sp: SolarPanelModel, az: number) => {
@@ -1264,9 +1294,7 @@ const Foundation = ({
         const resizeHandleType = resizeHandleTypeRef.current;
         if (moveHandleType && foundationModel) {
           p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
-          if (isSolarPanelNewPositionOk(solarPanel, p.x, p.y)) {
-            setElementPosition(solarPanel.id, p.x, p.y); // relative coordinate
-          }
+          setElementPosition(solarPanel.id, p.x, p.y);
         } else if (rotateHandleType) {
           const pr = foundationModel.rotation[2]; // parent rotation
           const pc = new Vector2(foundationModel.cx, foundationModel.cy); // world parent center

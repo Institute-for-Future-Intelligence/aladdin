@@ -10,13 +10,16 @@ import { UndoableDelete } from './undo/UndoableDelete';
 import { UndoablePaste } from './undo/UndoablePaste';
 import { UndoableCheck } from './undo/UndoableCheck';
 import { UndoableResetView } from './undo/UndoableResetView';
-import { showInfo } from './helpers';
+import { showError, showInfo } from './helpers';
 import i18n from './i18n/i18n';
 import { UndoableHorizontalMove } from './undo/UndoableHorizontalMove';
 import { UndoableVerticalMove } from './undo/UndoableVerticalMove';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
 import { WallModel } from './models/WallModel';
 import { useStoreRef } from './stores/commonRef';
+import { SolarPanelModel } from './models/SolarPanelModel';
+import { Util } from './Util';
+import { ElementModel } from './models/ElementModel';
 
 export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement | null;
@@ -51,6 +54,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
   const addedCuboidId = useStore(Selector.addedCuboidId);
   const addedWallId = useStore(Selector.addedWallId);
   const addedWindowId = useStore(Selector.addedWindowId);
+  const overlapWithSibling = useStore(Selector.overlapWithSibling);
 
   const [keyPressed, setKeyPressed] = useState(false);
   const [keyName, setKeyName] = useState<string | null>(null);
@@ -162,6 +166,24 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     }
   };
 
+  const isNewPositionOk = (elem: ElementModel, cx: number, cy: number) => {
+    const clone = JSON.parse(JSON.stringify(elem)) as ElementModel;
+    clone.cx = cx;
+    clone.cy = cy;
+    if (overlapWithSibling(clone)) {
+      showError(i18n.t('shared.MoveCancelledBecauseOfOverlap', lang));
+      return false;
+    }
+    if (clone.type === ObjectType.SolarPanel) {
+      const parent = getElementById(elem.parentId);
+      if (parent && !Util.isSolarPanelWithinHorizontalSurface(clone as SolarPanelModel, parent)) {
+        showError(i18n.t('shared.MoveOutsideBoundaryCancelled', lang));
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleKeyEvent = (key: string, down: boolean) => {
     if (down) {
       setKeyName(key);
@@ -200,26 +222,33 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
                 break;
             }
             if (displacement !== 0) {
-              const undoableMoveLeft = {
-                name: 'Move Left',
-                timestamp: Date.now(),
-                displacement: displacement,
-                movedElementId: selectedElement.id,
-                undo: () => {
-                  updateElementCxById(
-                    undoableMoveLeft.movedElementId,
-                    selectedElement.cx - undoableMoveLeft.displacement,
-                  );
-                },
-                redo: () => {
-                  updateElementCxById(
-                    undoableMoveLeft.movedElementId,
-                    selectedElement.cx + undoableMoveLeft.displacement,
-                  );
-                },
-              } as UndoableHorizontalMove;
-              addUndoable(undoableMoveLeft);
-              updateElementCxById(selectedElement.id, selectedElement.cx + displacement);
+              let accept = true;
+              // for the time being, we deal with solar panels only
+              if (selectedElement.type === ObjectType.SolarPanel) {
+                accept = isNewPositionOk(selectedElement, selectedElement.cx + displacement, selectedElement.cy);
+              }
+              if (accept) {
+                const undoableMoveLeft = {
+                  name: 'Move Left',
+                  timestamp: Date.now(),
+                  displacement: displacement,
+                  movedElementId: selectedElement.id,
+                  undo: () => {
+                    updateElementCxById(
+                      undoableMoveLeft.movedElementId,
+                      selectedElement.cx - undoableMoveLeft.displacement,
+                    );
+                  },
+                  redo: () => {
+                    updateElementCxById(
+                      undoableMoveLeft.movedElementId,
+                      selectedElement.cx + undoableMoveLeft.displacement,
+                    );
+                  },
+                } as UndoableHorizontalMove;
+                addUndoable(undoableMoveLeft);
+                updateElementCxById(selectedElement.id, selectedElement.cx + displacement);
+              }
             }
           }
         }
@@ -248,26 +277,33 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
                 break;
             }
             if (displacement !== 0) {
-              const undoableMoveRight = {
-                name: 'Move Right',
-                timestamp: Date.now(),
-                displacement: displacement,
-                movedElementId: selectedElement.id,
-                undo: () => {
-                  updateElementCxById(
-                    undoableMoveRight.movedElementId,
-                    selectedElement.cx - undoableMoveRight.displacement,
-                  );
-                },
-                redo: () => {
-                  updateElementCxById(
-                    undoableMoveRight.movedElementId,
-                    selectedElement.cx + undoableMoveRight.displacement,
-                  );
-                },
-              } as UndoableHorizontalMove;
-              addUndoable(undoableMoveRight);
-              updateElementCxById(selectedElement.id, selectedElement.cx + displacement);
+              let accept = true;
+              // for the time being, we deal with solar panels only
+              if (selectedElement.type === ObjectType.SolarPanel) {
+                accept = isNewPositionOk(selectedElement, selectedElement.cx + displacement, selectedElement.cy);
+              }
+              if (accept) {
+                const undoableMoveRight = {
+                  name: 'Move Right',
+                  timestamp: Date.now(),
+                  displacement: displacement,
+                  movedElementId: selectedElement.id,
+                  undo: () => {
+                    updateElementCxById(
+                      undoableMoveRight.movedElementId,
+                      selectedElement.cx - undoableMoveRight.displacement,
+                    );
+                  },
+                  redo: () => {
+                    updateElementCxById(
+                      undoableMoveRight.movedElementId,
+                      selectedElement.cx + undoableMoveRight.displacement,
+                    );
+                  },
+                } as UndoableHorizontalMove;
+                addUndoable(undoableMoveRight);
+                updateElementCxById(selectedElement.id, selectedElement.cx + displacement);
+              }
             }
           }
         }
@@ -296,26 +332,33 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
                 break;
             }
             if (displacement !== 0) {
-              const undoableMoveDown = {
-                name: 'Move Down',
-                timestamp: Date.now(),
-                displacement: displacement,
-                movedElementId: selectedElement.id,
-                undo: () => {
-                  updateElementCyById(
-                    undoableMoveDown.movedElementId,
-                    selectedElement.cy - undoableMoveDown.displacement,
-                  );
-                },
-                redo: () => {
-                  updateElementCyById(
-                    undoableMoveDown.movedElementId,
-                    selectedElement.cy + undoableMoveDown.displacement,
-                  );
-                },
-              } as UndoableVerticalMove;
-              addUndoable(undoableMoveDown);
-              updateElementCyById(selectedElement.id, selectedElement.cy + displacement);
+              let accept = true;
+              // for the time being, we deal with solar panels only
+              if (selectedElement.type === ObjectType.SolarPanel) {
+                accept = isNewPositionOk(selectedElement, selectedElement.cx, selectedElement.cy + displacement);
+              }
+              if (accept) {
+                const undoableMoveDown = {
+                  name: 'Move Down',
+                  timestamp: Date.now(),
+                  displacement: displacement,
+                  movedElementId: selectedElement.id,
+                  undo: () => {
+                    updateElementCyById(
+                      undoableMoveDown.movedElementId,
+                      selectedElement.cy - undoableMoveDown.displacement,
+                    );
+                  },
+                  redo: () => {
+                    updateElementCyById(
+                      undoableMoveDown.movedElementId,
+                      selectedElement.cy + undoableMoveDown.displacement,
+                    );
+                  },
+                } as UndoableVerticalMove;
+                addUndoable(undoableMoveDown);
+                updateElementCyById(selectedElement.id, selectedElement.cy + displacement);
+              }
             }
           }
         }
@@ -344,20 +387,33 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
                 break;
             }
             if (displacement !== 0) {
-              const undoableMoveUp = {
-                name: 'Move Up',
-                timestamp: Date.now(),
-                displacement: displacement,
-                movedElementId: selectedElement.id,
-                undo: () => {
-                  updateElementCyById(undoableMoveUp.movedElementId, selectedElement.cy - undoableMoveUp.displacement);
-                },
-                redo: () => {
-                  updateElementCyById(undoableMoveUp.movedElementId, selectedElement.cy + undoableMoveUp.displacement);
-                },
-              } as UndoableVerticalMove;
-              addUndoable(undoableMoveUp);
-              updateElementCyById(selectedElement.id, selectedElement.cy + displacement);
+              let accept = true;
+              // for the time being, we deal with solar panels only
+              if (selectedElement.type === ObjectType.SolarPanel) {
+                accept = isNewPositionOk(selectedElement, selectedElement.cx, selectedElement.cy + displacement);
+              }
+              if (accept) {
+                const undoableMoveUp = {
+                  name: 'Move Up',
+                  timestamp: Date.now(),
+                  displacement: displacement,
+                  movedElementId: selectedElement.id,
+                  undo: () => {
+                    updateElementCyById(
+                      undoableMoveUp.movedElementId,
+                      selectedElement.cy - undoableMoveUp.displacement,
+                    );
+                  },
+                  redo: () => {
+                    updateElementCyById(
+                      undoableMoveUp.movedElementId,
+                      selectedElement.cy + undoableMoveUp.displacement,
+                    );
+                  },
+                } as UndoableVerticalMove;
+                addUndoable(undoableMoveUp);
+                updateElementCyById(selectedElement.id, selectedElement.cy + displacement);
+              }
             }
           }
         }

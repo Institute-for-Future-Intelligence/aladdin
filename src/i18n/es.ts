@@ -107,6 +107,8 @@ export const i18n_es = {
       SolarPanelElement: 'Panel solar',
       ElementLocked: 'Bloqueado',
       ThisCannotBeUndone: 'Esto no se puede deshacer',
+      MoveCancelledBecauseOfOverlap: 'Move cancelled because of overlap.',
+      MoveOutsideBoundaryCancelled: 'Move outside the boundary cancelled.',
       CannotPasteOutsideBoundary: 'Cannot paste outside this surface.',
       CannotPasteBecauseOfOverlap: 'Cannot paste because of overlap.',
     },

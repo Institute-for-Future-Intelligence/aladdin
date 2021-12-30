@@ -89,6 +89,8 @@ export const getSelectedElement = (state: CommonStoreState) => state.getSelected
 
 export const findNearestSibling = (state: CommonStoreState) => state.findNearestSibling;
 
+export const overlapWithSibling = (state: CommonStoreState) => state.overlapWithSibling;
+
 export const selectedSideIndex = (state: CommonStoreState) => state.selectedSideIndex;
 
 export const setElementPosition = (state: CommonStoreState) => state.setElementPosition;

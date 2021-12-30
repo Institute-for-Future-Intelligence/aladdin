@@ -325,11 +325,11 @@ const SolarPanel = ({
     }
   }
 
-  const ratio = Math.max(1, Math.max(lx, ly) / 8);
-  const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
-  const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
-  const rotateHandleSize = (ratio * 2) / 3;
-  const tiltHandleSize = (ratio * 2) / 3;
+  const baseSize = Math.max(1, Math.max(lx, ly) / 8);
+  const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize;
+  const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize;
+  const rotateHandleSize = (baseSize * 2) / 3;
+  const tiltHandleSize = rotateHandleSize;
 
   const degree = new Array(13).fill(0);
   const [showTiltAngle, setShowTiltAngle] = useState(false);
