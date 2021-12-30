@@ -27,4 +27,7 @@ export interface UndoableResize extends Undoable {
   newChildrenPositionsMap: Map<string, Vector3>;
   oldPolygonVerticesMap: Map<string, Point2[]>;
   newPolygonVerticesMap: Map<string, Point2[]>;
+
+  oldChildrenParentIdMap?: Map<string, string>;
+  newChildrenParentIdMap?: Map<string, string>;
 }

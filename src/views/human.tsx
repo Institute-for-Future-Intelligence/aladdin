@@ -29,7 +29,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { BoxGeometry, DoubleSide, Euler, Group, Mesh, Object3D, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { useFrame, useThree } from '@react-three/fiber';
+import { invalidate, useFrame, useThree } from '@react-three/fiber';
 import { HumanModel } from '../models/HumanModel';
 import { Billboard, Plane, Sphere } from '@react-three/drei';
 import { GROUND_ID, HALF_PI, MOVE_HANDLE_RADIUS } from '../constants';
@@ -260,6 +260,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
 
   useEffect(() => {
     parentRef.current = getParentObject();
+    invalidate();
   }, [parentId]);
 
   const getObjectId = (obj: Object3D) => {

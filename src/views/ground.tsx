@@ -73,6 +73,8 @@ const Ground = () => {
   const newChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
   const oldPolygonVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>());
   const newPolygonVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>());
+  const oldChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
+  const newChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const oldDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const newDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const oldRotationRef = useRef<number[]>([0, 0, 1]);
@@ -85,7 +87,7 @@ const Ground = () => {
   const isSettingCuboidStartPointRef = useRef(false);
   const isSettingCuboidEndPointRef = useRef(false);
 
-  const [isHumanOrTreeMoved, setIsHumanOrTreeMoved] = useState(false);
+  const isHumanOrTreeMovedRef = useRef(false);
 
   useEffect(() => {
     window.addEventListener('pointerup', handlePointerUp);
@@ -173,7 +175,8 @@ const Ground = () => {
     return null;
   };
 
-  const setParentIdById = (parentId: string, elementId: string) => {
+  const setParentIdById = (parentId: string | null | undefined, elementId: string) => {
+    if (!parentId) return;
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === elementId) {
@@ -205,6 +208,26 @@ const Ground = () => {
     return null;
   };
 
+  const attachToObjectDom = (
+    attachParentId: string | null | undefined,
+    currParentId: string | null | undefined,
+    currId: string,
+  ) => {
+    if (!attachParentId || !currParentId) return;
+    const contentRef = useStoreRef.getState().contentRef;
+    const currParentObj = getObjectChildById(contentRef?.current, currParentId);
+    const currObj = getObjectChildById(currParentId === GROUND_ID ? contentRef?.current : currParentObj, currId);
+    if (currObj && contentRef?.current) {
+      if (attachParentId === GROUND_ID) {
+        contentRef.current.add(currObj);
+      } else {
+        const attachParentObj = getObjectChildById(contentRef.current, attachParentId);
+        attachParentObj?.add(currObj);
+      }
+      invalidate();
+    }
+  };
+
   const handleTreeOrHumanRefMove = (elementRef: RefObject<Group> | null, e: ThreeEvent<PointerEvent>) => {
     if (elementRef && elementRef.current) {
       const intersection = getIntersectionToStand(e.intersections);
@@ -214,12 +237,12 @@ const Ground = () => {
 
         // stand on ground
         if (intersectionObj.name === 'Ground') {
-          // change parent: attach dom, set parentId
+          // change parent: attach dom, set parentId?
           if (elementParentRef && elementParentRef.name !== 'Content') {
             const contentRef = useStoreRef.getState().contentRef;
             if (contentRef && contentRef.current) {
               contentRef.current.add(elementRef.current);
-              setParentIdById(GROUND_ID, getObjectId(elementRef.current));
+              // setParentIdById(GROUND_ID, getObjectId(elementRef.current));
             }
           }
           elementRef.current.position.copy(intersection.point); // world position
@@ -229,10 +252,10 @@ const Ground = () => {
         else if (intersectionObj.userData.stand) {
           const intersectionObjGroup = intersectionObj.parent; // Group
           if (intersectionObjGroup) {
-            // change parent: attach dom, set parentId;
+            // change parent: attach dom, set parentId?
             if (elementParentRef && elementParentRef.uuid !== intersectionObjGroup.uuid) {
               intersectionObjGroup.add(elementRef.current); // attach to Group
-              setParentIdById(getObjectId(intersectionObjGroup), getObjectId(elementRef.current));
+              // setParentIdById(getObjectId(intersectionObjGroup), getObjectId(elementRef.current));
             }
             elementParentRotation.set(0, 0, -intersectionObjGroup.rotation.z);
             const relPos = new Vector3()
@@ -243,8 +266,8 @@ const Ground = () => {
           }
         }
 
-        if (!isHumanOrTreeMoved) {
-          setIsHumanOrTreeMoved(true);
+        if (!isHumanOrTreeMovedRef.current) {
+          isHumanOrTreeMovedRef.current = true;
         }
       }
     }
@@ -265,6 +288,103 @@ const Ground = () => {
     });
   };
 
+  const handleUndoableResize = () => {
+    if (!grabRef.current) return;
+    const undoableResize = {
+      name: 'Resize',
+      timestamp: Date.now(),
+      resizedElementId: grabRef.current.id,
+      oldCx: oldPositionRef.current.x,
+      oldCy: oldPositionRef.current.y,
+      oldCz: oldPositionRef.current.z,
+      newCx: newPositionRef.current.x,
+      newCy: newPositionRef.current.y,
+      newCz: newPositionRef.current.z,
+      oldLx: oldDimensionRef.current.x,
+      oldLy: oldDimensionRef.current.y,
+      oldLz: oldDimensionRef.current.z,
+      newLx: newDimensionRef.current.x,
+      newLy: newDimensionRef.current.y,
+      newLz: newDimensionRef.current.z,
+      oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+      newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+      oldPolygonVerticesMap: new Map(oldPolygonVerticesMapRef.current),
+      newPolygonVerticesMap: new Map(newPolygonVerticesMapRef.current),
+      oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
+      newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
+      undo: () => {
+        setElementPosition(
+          undoableResize.resizedElementId,
+          undoableResize.oldCx,
+          undoableResize.oldCy,
+          undoableResize.oldCz,
+        );
+        setElementSize(
+          undoableResize.resizedElementId,
+          undoableResize.oldLx,
+          undoableResize.oldLy,
+          undoableResize.oldLz,
+        );
+        if (undoableResize.oldChildrenPositionsMap.size > 0) {
+          for (const [id, p] of undoableResize.oldChildrenPositionsMap.entries()) {
+            const elem = getElementById(id);
+            if (elem?.type !== ObjectType.Polygon) {
+              setElementPosition(id, p.x, p.y, p.z);
+              const oldParentId = undoableResize.oldChildrenParentIdMap?.get(id);
+              const newParentId = undoableResize.newChildrenParentIdMap?.get(id);
+              if (oldParentId && newParentId && oldParentId !== newParentId) {
+                attachToObjectDom(oldParentId, newParentId, id);
+                setParentIdById(oldParentId, id);
+              }
+            }
+          }
+        }
+        if (undoableResize.oldPolygonVerticesMap.size > 0) {
+          for (const [id, vertices] of undoableResize.oldPolygonVerticesMap.entries()) {
+            const elem = getElementById(id);
+            if (elem?.type === ObjectType.Polygon) {
+              updatePolygonVerticesById(id, vertices);
+            }
+          }
+        }
+      },
+      redo: () => {
+        setElementPosition(
+          undoableResize.resizedElementId,
+          undoableResize.newCx,
+          undoableResize.newCy,
+          undoableResize.newCz,
+        );
+        setElementSize(
+          undoableResize.resizedElementId,
+          undoableResize.newLx,
+          undoableResize.newLy,
+          undoableResize.newLz,
+        );
+        if (undoableResize.newChildrenPositionsMap.size > 0) {
+          for (const [id, p] of undoableResize.newChildrenPositionsMap.entries()) {
+            setElementPosition(id, p.x, p.y, p.z);
+            const oldParentId = undoableResize.oldChildrenParentIdMap?.get(id);
+            const newParentId = undoableResize.newChildrenParentIdMap?.get(id);
+            if (oldParentId && newParentId && oldParentId !== newParentId) {
+              attachToObjectDom(newParentId, oldParentId, id);
+              setParentIdById(newParentId, id);
+            }
+          }
+        }
+        if (undoableResize.newPolygonVerticesMap.size > 0) {
+          for (const [id, vertices] of undoableResize.newPolygonVerticesMap.entries()) {
+            const elem = getElementById(id);
+            if (elem?.type === ObjectType.Polygon) {
+              updatePolygonVerticesById(id, vertices);
+            }
+          }
+        }
+      },
+    } as UndoableResize;
+    return undoableResize;
+  };
+
   const handleDetachParent = (elem: ElementModel, e: ElementModel) => {
     const contentRef = useStoreRef.getState().contentRef;
     const parentObject = getObjectChildById(contentRef?.current, elem.id);
@@ -283,6 +403,8 @@ const Ground = () => {
     e.cx = absPos.x;
     e.cy = absPos.y;
     e.cz = 0;
+    newChildrenPositionsMapRef.current.set(e.id, new Vector3(absPos.x, absPos.y, 0));
+    newChildrenParentIdMapRef.current.set(e.id, GROUND_ID);
   };
 
   const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
@@ -297,6 +419,18 @@ const Ground = () => {
           state.pasteNormal = UNIT_VECTOR_POS_Z;
         });
       }
+    }
+  };
+
+  const isResizingVertical = () => {
+    switch (useStore.getState().resizeHandleType) {
+      case ResizeHandleType.LowerLeftTop:
+      case ResizeHandleType.UpperLeftTop:
+      case ResizeHandleType.LowerRightTop:
+      case ResizeHandleType.UpperRightTop:
+        return true;
+      default:
+        return false;
     }
   };
 
@@ -371,9 +505,84 @@ const Ground = () => {
         }
         //
         else {
-          if (resizeHandleType) {
+          if (useStore.getState().resizeHandleType) {
             newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
             newDimensionRef.current.set(elem.lx, elem.ly, elem.lz);
+            oldChildrenParentIdMapRef.current.clear();
+            newChildrenParentIdMapRef.current.clear();
+            newChildrenPositionsMapRef.current.clear();
+            setCommonStore((state) => {
+              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+              state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+              // set ref children state
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
+                  if (e.parentId === elem.id) {
+                    oldChildrenParentIdMapRef.current.set(e.id, elem.id);
+                    if (isResizingVertical()) {
+                      // stand on top face
+                      if (Math.abs(oldDimensionRef.current.z / 2 - e.cz) < 0.01) {
+                        e.cz = elem.lz / 2;
+                      }
+                      // stand on side faces
+                      else {
+                        const newRelZ = e.cz + oldPositionRef.current.z - elem.cz;
+                        if (Math.abs(newRelZ) > elem.lz / 2) {
+                          handleDetachParent(elem, e);
+                        } else {
+                          e.cz = newRelZ;
+                        }
+                      }
+                    } else {
+                      // top face
+                      if (Math.abs(oldDimensionRef.current.z / 2 - e.cz) < 0.01) {
+                        // fixed position
+                        const newRelativePos = new Vector3(e.cx, e.cy, e.cz)
+                          .applyEuler(new Euler(0, 0, elem.rotation[2]))
+                          .add(oldPositionRef.current)
+                          .sub(newPositionRef.current)
+                          .applyEuler(new Euler(0, 0, -elem.rotation[2]));
+                        // detach parent dom if falls on ground
+                        if (
+                          Math.abs(newRelativePos.x) > Math.abs(newDimensionRef.current.x / 2) + 0.01 ||
+                          Math.abs(newRelativePos.y) > Math.abs(newDimensionRef.current.y / 2) + 0.01
+                        ) {
+                          handleDetachParent(elem, e);
+                        } else {
+                          e.cx = newRelativePos.x;
+                          e.cy = newRelativePos.y;
+                        }
+                      }
+                      // side faces
+                      else {
+                        const oldRelativePos = new Vector3(e.cx, e.cy, e.cz);
+                        const d = new Vector3().subVectors(newPositionRef.current, oldPositionRef.current);
+                        const v = new Vector3().subVectors(oldRelativePos, d);
+                        // west and east face
+                        if (Math.abs(oldRelativePos.x / oldDimensionRef.current.x) > 0.49) {
+                          if (Math.abs(v.y) > elem.ly / 2 + 0.5) {
+                            handleDetachParent(elem, e);
+                          } else {
+                            e.cx = (oldRelativePos.x > 0 ? elem.lx : -elem.lx) / 2;
+                            e.cy = v.y;
+                          }
+                        }
+                        // north and south face
+                        else if (Math.abs(oldRelativePos.y / oldDimensionRef.current.y) > 0.49) {
+                          if (Math.abs(v.x) > elem.lx / 2 + 0.5) {
+                            handleDetachParent(elem, e);
+                          } else {
+                            e.cx = v.x;
+                            e.cy = (oldRelativePos.y > 0 ? elem.ly : -elem.ly) / 2;
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            });
+
             if (
               newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE &&
               newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > ZERO_TOLERANCE
@@ -381,7 +590,6 @@ const Ground = () => {
               // store the new positions of the children if the selected element may be a parent
               if (elem.type === ObjectType.Foundation || elem.type === ObjectType.Cuboid) {
                 const children = getChildren(elem.id);
-                newChildrenPositionsMapRef.current.clear();
                 if (children.length > 0) {
                   for (const c of children) {
                     if (c.type === ObjectType.Polygon) {
@@ -395,141 +603,10 @@ const Ground = () => {
                   }
                 }
               }
-              const undoableResize = {
-                name: 'Resize',
-                timestamp: Date.now(),
-                resizedElementId: grabRef.current.id,
-                oldCx: oldPositionRef.current.x,
-                oldCy: oldPositionRef.current.y,
-                oldCz: oldPositionRef.current.z,
-                newCx: newPositionRef.current.x,
-                newCy: newPositionRef.current.y,
-                newCz: newPositionRef.current.z,
-                oldLx: oldDimensionRef.current.x,
-                oldLy: oldDimensionRef.current.y,
-                oldLz: oldDimensionRef.current.z,
-                newLx: newDimensionRef.current.x,
-                newLy: newDimensionRef.current.y,
-                newLz: newDimensionRef.current.z,
-                oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
-                newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
-                oldPolygonVerticesMap: new Map(oldPolygonVerticesMapRef.current),
-                newPolygonVerticesMap: new Map(newPolygonVerticesMapRef.current),
-                undo: () => {
-                  setElementPosition(
-                    undoableResize.resizedElementId,
-                    undoableResize.oldCx,
-                    undoableResize.oldCy,
-                    undoableResize.oldCz,
-                  );
-                  setElementSize(
-                    undoableResize.resizedElementId,
-                    undoableResize.oldLx,
-                    undoableResize.oldLy,
-                    undoableResize.oldLz,
-                  );
-                  if (undoableResize.oldChildrenPositionsMap.size > 0) {
-                    for (const [id, p] of undoableResize.oldChildrenPositionsMap.entries()) {
-                      const elem = getElementById(id);
-                      if (elem?.type !== ObjectType.Polygon) {
-                        setElementPosition(id, p.x, p.y, p.z);
-                      }
-                    }
-                  }
-                  if (undoableResize.oldPolygonVerticesMap.size > 0) {
-                    for (const [id, vertices] of undoableResize.oldPolygonVerticesMap.entries()) {
-                      const elem = getElementById(id);
-                      if (elem?.type === ObjectType.Polygon) {
-                        updatePolygonVerticesById(id, vertices);
-                      }
-                    }
-                  }
-                },
-                redo: () => {
-                  setElementPosition(
-                    undoableResize.resizedElementId,
-                    undoableResize.newCx,
-                    undoableResize.newCy,
-                    undoableResize.newCz,
-                  );
-                  setElementSize(
-                    undoableResize.resizedElementId,
-                    undoableResize.newLx,
-                    undoableResize.newLy,
-                    undoableResize.newLz,
-                  );
-                  if (undoableResize.newChildrenPositionsMap.size > 0) {
-                    for (const [id, p] of undoableResize.newChildrenPositionsMap.entries()) {
-                      setElementPosition(id, p.x, p.y, p.z);
-                    }
-                  }
-                  if (undoableResize.newPolygonVerticesMap.size > 0) {
-                    for (const [id, vertices] of undoableResize.newPolygonVerticesMap.entries()) {
-                      const elem = getElementById(id);
-                      if (elem?.type === ObjectType.Polygon) {
-                        updatePolygonVerticesById(id, vertices);
-                      }
-                    }
-                  }
-                },
-              } as UndoableResize;
-              addUndoable(undoableResize);
+              const undoableResize = handleUndoableResize();
+              undoableResize && addUndoable(undoableResize);
             }
-            setCommonStore((state) => {
-              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-              state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
-              // set ref children state
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
-                  if (e.parentId === elem.id) {
-                    // top face
-                    if (Math.abs(oldDimensionRef.current.z / 2 - e.cz) < 0.01) {
-                      // fixed position
-                      const newRelativePos = new Vector3(e.cx, e.cy, e.cz)
-                        .applyEuler(new Euler(0, 0, elem.rotation[2]))
-                        .add(oldPositionRef.current)
-                        .sub(newPositionRef.current)
-                        .applyEuler(new Euler(0, 0, -elem.rotation[2]));
-                      // detach parent dom if falls on ground
-                      if (
-                        Math.abs(newRelativePos.x) > Math.abs(newDimensionRef.current.x / 2) + 0.01 ||
-                        Math.abs(newRelativePos.y) > Math.abs(newDimensionRef.current.y / 2) + 0.01
-                      ) {
-                        handleDetachParent(elem, e);
-                      } else {
-                        e.cx = newRelativePos.x;
-                        e.cy = newRelativePos.y;
-                      }
-                    }
-                    // side faces
-                    else {
-                      const oldRelativePos = new Vector3(e.cx, e.cy, e.cz);
-                      const d = new Vector3().subVectors(newPositionRef.current, oldPositionRef.current);
-                      const v = new Vector3().subVectors(oldRelativePos, d);
-                      // west and east face
-                      if (Math.abs(oldRelativePos.x / oldDimensionRef.current.x) > 0.49) {
-                        if (Math.abs(v.y) > elem.ly / 2 + 0.5) {
-                          handleDetachParent(elem, e);
-                        } else {
-                          e.cx = (oldRelativePos.x > 0 ? elem.lx : -elem.lx) / 2;
-                          e.cy = v.y;
-                        }
-                      }
-                      // north and south face
-                      else if (Math.abs(oldRelativePos.y / oldDimensionRef.current.y) > 0.49) {
-                        if (Math.abs(v.x) > elem.lx / 2 + 0.5) {
-                          handleDetachParent(elem, e);
-                        } else {
-                          e.cx = v.x;
-                          e.cy = (oldRelativePos.y > 0 ? elem.ly : -elem.ly) / 2;
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            });
-          } else if (rotateHandleType) {
+          } else if (useStore.getState().rotateHandleType) {
             newRotationRef.current = [...elem.rotation];
             const oldRotation = new Vector3().fromArray(oldRotationRef.current);
             const newRotation = new Vector3().fromArray(newRotationRef.current);
@@ -561,6 +638,8 @@ const Ground = () => {
             }
           } else {
             newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
+            let oldHumanOrTreeParentId: string | null = null;
+            let newHumanOrTreeParentId: string | null = null;
 
             // elements modified by reference
             let elementRef: Group | null | undefined = null;
@@ -572,7 +651,8 @@ const Ground = () => {
                 elementRef = useStoreRef.getState().humanRef?.current;
                 break;
             }
-            if (elementRef && isHumanOrTreeMoved) {
+            if (elementRef && isHumanOrTreeMovedRef.current) {
+              oldHumanOrTreeParentId = elem.parentId;
               setRayCast(e);
               const intersections = ray.intersectObjects(scene.children, true);
               const intersection = getIntersectionToStand(intersections); // could simplify???
@@ -581,24 +661,24 @@ const Ground = () => {
                 // on ground
                 if (intersection.object.name === 'Ground') {
                   handleSetElementState(elem.id, GROUND_ID, p);
+                  newPositionRef.current.set(p.x, p.y, p.z);
+                  newHumanOrTreeParentId = GROUND_ID;
                 }
                 // on other standable elements
                 else if (intersection.object.userData.stand) {
                   const intersectionObjId = getObjectId(intersection.object);
                   const intersectionObjGroup = intersection.object.parent;
-
                   if (intersectionObjGroup) {
                     const relPos = new Vector3()
                       .subVectors(p, intersectionObjGroup.position)
                       .applyEuler(elementParentRotation);
                     handleSetElementState(elem.id, intersectionObjId, relPos);
-
-                    // todo: should also handle parent change
                     newPositionRef.current.set(relPos.x, relPos.y, relPos.z);
+                    newHumanOrTreeParentId = intersectionObjId;
                   }
                 }
               }
-              setIsHumanOrTreeMoved(false);
+              isHumanOrTreeMovedRef.current = false;
             }
 
             if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
@@ -612,6 +692,8 @@ const Ground = () => {
                 newCx: newPositionRef.current.x,
                 newCy: newPositionRef.current.y,
                 newCz: newPositionRef.current.z,
+                oldParentId: oldHumanOrTreeParentId,
+                newParentId: newHumanOrTreeParentId,
                 undo: () => {
                   setElementPosition(
                     undoableMove.movedElementId,
@@ -619,6 +701,8 @@ const Ground = () => {
                     undoableMove.oldCy,
                     undoableMove.oldCz,
                   );
+                  setParentIdById(undoableMove.oldParentId, undoableMove.movedElementId);
+                  attachToObjectDom(undoableMove.oldParentId, undoableMove.newParentId, elem.id);
                 },
                 redo: () => {
                   setElementPosition(
@@ -627,6 +711,8 @@ const Ground = () => {
                     undoableMove.newCy,
                     undoableMove.newCz,
                   );
+                  setParentIdById(undoableMove.newParentId, undoableMove.movedElementId);
+                  attachToObjectDom(undoableMove.newParentId, undoableMove.oldParentId, elem.id);
                 },
               } as UndoableMove;
               addUndoable(undoableMove);
@@ -883,6 +969,7 @@ const Ground = () => {
         case ObjectType.Human:
           const humanRef = useStoreRef.getState().humanRef;
           handleTreeOrHumanRefMove(humanRef, e);
+
           break;
         case ObjectType.Tree:
           const treeRef = useStoreRef.getState().treeRef;
@@ -1059,34 +1146,6 @@ const Ground = () => {
           }
         }
       }
-    }
-  };
-
-  const handleIntersectionPointerUp = () => {
-    if (!grabRef.current) return;
-    const elem = getElementById(grabRef.current.id);
-    if (elem) {
-      setCommonStore((state) => {
-        for (const e of state.elements) {
-          if (e.parentId === elem.id) {
-            if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
-              // stand on top face
-              if (Math.abs(oldDimensionRef.current.z / 2 - e.cz) < 0.01) {
-                e.cz = elem.lz / 2;
-              }
-              // stand on side faces
-              else {
-                const newRelZ = e.cz + oldPositionRef.current.z - elem.cz;
-                if (Math.abs(newRelZ) > elem.lz / 2) {
-                  handleDetachParent(elem, e);
-                } else {
-                  e.cz = newRelZ;
-                }
-              }
-            }
-          }
-        }
-      });
     }
   };
 
@@ -1366,7 +1425,7 @@ const Ground = () => {
           position={intersectionPlanePosition}
           args={[100000, 100000]}
           onPointerMove={handleIntersectionPointerMove}
-          onPointerUp={handleIntersectionPointerUp}
+          // onPointerUp={handleIntersectionPointerUp}
         >
           <meshStandardMaterial side={DoubleSide} />
         </Plane>

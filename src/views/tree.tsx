@@ -31,7 +31,7 @@ import {
 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { useFrame, useThree } from '@react-three/fiber';
+import { invalidate, useFrame, useThree } from '@react-three/fiber';
 import { Billboard, Cone, Plane, Sphere } from '@react-three/drei';
 import { GROUND_ID, HALF_PI, MOVE_HANDLE_RADIUS, TWO_PI } from '../constants';
 import { TreeModel } from '../models/TreeModel';
@@ -159,6 +159,7 @@ const Tree = ({
 
   useEffect(() => {
     parentRef.current = getParentObject();
+    invalidate();
   }, [parentId]);
 
   const getObjectId = (obj: Object3D) => {

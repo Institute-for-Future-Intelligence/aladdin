@@ -15,4 +15,6 @@ export interface UndoableMove extends Undoable {
   oldNormal?: Vector3;
   newNormal?: Vector3;
   movedElementId: string;
+  oldParentId?: string;
+  newParentId?: string;
 }
