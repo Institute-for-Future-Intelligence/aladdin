@@ -20,6 +20,7 @@ import { useStoreRef } from './stores/commonRef';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import { Util } from './Util';
 import { ElementModel } from './models/ElementModel';
+import { FINE_GRID_RATIO } from './constants';
 
 export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement | null;
@@ -70,6 +71,10 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     'up',
     'right',
     'down',
+    'shift+left',
+    'shift+up',
+    'shift+right',
+    'shift+down',
     'ctrl+f',
     'meta+f',
     'ctrl+o',
@@ -195,228 +200,258 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     }
   };
 
+  const moveLeft = (scale: number) => {
+    if (orthographic) {
+      const selectedElement = getSelectedElement();
+      if (selectedElement) {
+        let displacement = 0;
+        switch (selectedElement.type) {
+          case ObjectType.Foundation:
+          case ObjectType.Cuboid:
+          case ObjectType.Tree:
+          case ObjectType.Human:
+            displacement = -moveStepAbsolute;
+            break;
+          case ObjectType.Sensor:
+            const parent = getElementById(selectedElement.parentId);
+            if (parent) {
+              const halfLx = selectedElement.lx / (2 * parent.lx);
+              const x = Math.max(-0.5 + halfLx, selectedElement.cx - moveStepRelative);
+              displacement = x - selectedElement.cx;
+            }
+            break;
+          case ObjectType.SolarPanel:
+            displacement = -moveStepRelative;
+            break;
+        }
+        if (displacement !== 0) {
+          let accept = true;
+          // for the time being, we deal with solar panels only
+          if (selectedElement.type === ObjectType.SolarPanel) {
+            accept = isNewPositionOk(selectedElement, selectedElement.cx + displacement, selectedElement.cy);
+          }
+          if (accept) {
+            displacement *= scale;
+            const undoableMoveLeft = {
+              name: 'Move Left',
+              timestamp: Date.now(),
+              displacement: displacement,
+              movedElementId: selectedElement.id,
+              undo: () => {
+                updateElementCxById(
+                  undoableMoveLeft.movedElementId,
+                  selectedElement.cx - undoableMoveLeft.displacement,
+                );
+              },
+              redo: () => {
+                updateElementCxById(
+                  undoableMoveLeft.movedElementId,
+                  selectedElement.cx + undoableMoveLeft.displacement,
+                );
+              },
+            } as UndoableHorizontalMove;
+            addUndoable(undoableMoveLeft);
+            updateElementCxById(selectedElement.id, selectedElement.cx + displacement);
+          }
+        }
+      }
+    }
+  };
+
+  const moveRight = (scale: number) => {
+    if (orthographic) {
+      const selectedElement = getSelectedElement();
+      if (selectedElement) {
+        let displacement = 0;
+        switch (selectedElement.type) {
+          case ObjectType.Foundation:
+          case ObjectType.Cuboid:
+          case ObjectType.Tree:
+          case ObjectType.Human:
+            displacement = moveStepAbsolute;
+            break;
+          case ObjectType.Sensor:
+            const parent = getElementById(selectedElement.parentId);
+            if (parent) {
+              const halfLx = parent ? selectedElement.lx / (2 * parent.lx) : 0;
+              const x = Math.min(0.5 - halfLx, selectedElement.cx + moveStepRelative);
+              displacement = x - selectedElement.cx;
+            }
+            break;
+          case ObjectType.SolarPanel:
+            displacement = moveStepRelative;
+            break;
+        }
+        if (displacement !== 0) {
+          let accept = true;
+          // for the time being, we deal with solar panels only
+          if (selectedElement.type === ObjectType.SolarPanel) {
+            accept = isNewPositionOk(selectedElement, selectedElement.cx + displacement, selectedElement.cy);
+          }
+          if (accept) {
+            displacement *= scale;
+            const undoableMoveRight = {
+              name: 'Move Right',
+              timestamp: Date.now(),
+              displacement: displacement,
+              movedElementId: selectedElement.id,
+              undo: () => {
+                updateElementCxById(
+                  undoableMoveRight.movedElementId,
+                  selectedElement.cx - undoableMoveRight.displacement,
+                );
+              },
+              redo: () => {
+                updateElementCxById(
+                  undoableMoveRight.movedElementId,
+                  selectedElement.cx + undoableMoveRight.displacement,
+                );
+              },
+            } as UndoableHorizontalMove;
+            addUndoable(undoableMoveRight);
+            updateElementCxById(selectedElement.id, selectedElement.cx + displacement);
+          }
+        }
+      }
+    }
+  };
+
+  const moveUp = (scale: number) => {
+    if (orthographic) {
+      const selectedElement = getSelectedElement();
+      if (selectedElement) {
+        let displacement = 0;
+        switch (selectedElement.type) {
+          case ObjectType.Foundation:
+          case ObjectType.Cuboid:
+          case ObjectType.Tree:
+          case ObjectType.Human:
+            displacement = moveStepAbsolute;
+            break;
+          case ObjectType.Sensor:
+            const parent = getElementById(selectedElement.parentId);
+            if (parent) {
+              const halfLy = parent ? selectedElement.ly / (2 * parent.ly) : 0;
+              const y = Math.min(0.5 - halfLy, selectedElement.cy + moveStepRelative);
+              displacement = y - selectedElement.cy;
+            }
+            break;
+          case ObjectType.SolarPanel:
+            displacement = moveStepRelative;
+            break;
+        }
+        if (displacement !== 0) {
+          let accept = true;
+          // for the time being, we deal with solar panels only
+          if (selectedElement.type === ObjectType.SolarPanel) {
+            accept = isNewPositionOk(selectedElement, selectedElement.cx, selectedElement.cy + displacement);
+          }
+          if (accept) {
+            displacement *= scale;
+            const undoableMoveUp = {
+              name: 'Move Up',
+              timestamp: Date.now(),
+              displacement: displacement,
+              movedElementId: selectedElement.id,
+              undo: () => {
+                updateElementCyById(undoableMoveUp.movedElementId, selectedElement.cy - undoableMoveUp.displacement);
+              },
+              redo: () => {
+                updateElementCyById(undoableMoveUp.movedElementId, selectedElement.cy + undoableMoveUp.displacement);
+              },
+            } as UndoableVerticalMove;
+            addUndoable(undoableMoveUp);
+            updateElementCyById(selectedElement.id, selectedElement.cy + displacement);
+          }
+        }
+      }
+    }
+  };
+
+  const moveDown = (scale: number) => {
+    if (orthographic) {
+      const selectedElement = getSelectedElement();
+      if (selectedElement) {
+        let displacement = 0;
+        switch (selectedElement.type) {
+          case ObjectType.Foundation:
+          case ObjectType.Cuboid:
+          case ObjectType.Tree:
+          case ObjectType.Human:
+            displacement = -moveStepAbsolute;
+            break;
+          case ObjectType.Sensor:
+            const parent = getElementById(selectedElement.parentId);
+            if (parent) {
+              const halfLy = parent ? selectedElement.ly / (2 * parent.ly) : 0;
+              const y = Math.max(-0.5 + halfLy, selectedElement.cy - moveStepRelative);
+              displacement = y - selectedElement.cy;
+            }
+            break;
+          case ObjectType.SolarPanel:
+            displacement = -moveStepRelative;
+            break;
+        }
+        if (displacement !== 0) {
+          let accept = true;
+          // for the time being, we deal with solar panels only
+          if (selectedElement.type === ObjectType.SolarPanel) {
+            accept = isNewPositionOk(selectedElement, selectedElement.cx, selectedElement.cy + displacement);
+          }
+          if (accept) {
+            displacement *= scale;
+            const undoableMoveDown = {
+              name: 'Move Down',
+              timestamp: Date.now(),
+              displacement: displacement,
+              movedElementId: selectedElement.id,
+              undo: () => {
+                updateElementCyById(
+                  undoableMoveDown.movedElementId,
+                  selectedElement.cy - undoableMoveDown.displacement,
+                );
+              },
+              redo: () => {
+                updateElementCyById(
+                  undoableMoveDown.movedElementId,
+                  selectedElement.cy + undoableMoveDown.displacement,
+                );
+              },
+            } as UndoableVerticalMove;
+            addUndoable(undoableMoveDown);
+            updateElementCyById(selectedElement.id, selectedElement.cy + displacement);
+          }
+        }
+      }
+    }
+  };
+
   const handleKeyDown = () => {
     const selectedElement = getSelectedElement();
     switch (keyName) {
+      case 'shift+left':
+        moveLeft(1 / FINE_GRID_RATIO);
+        break;
       case 'left':
-        if (orthographic) {
-          if (selectedElement) {
-            let displacement = 0;
-            switch (selectedElement.type) {
-              case ObjectType.Foundation:
-              case ObjectType.Cuboid:
-              case ObjectType.Tree:
-              case ObjectType.Human:
-                displacement = -moveStepAbsolute;
-                break;
-              case ObjectType.Sensor:
-                const parent = getElementById(selectedElement.parentId);
-                if (parent) {
-                  const halfLx = selectedElement.lx / (2 * parent.lx);
-                  const x = Math.max(-0.5 + halfLx, selectedElement.cx - moveStepRelative);
-                  displacement = x - selectedElement.cx;
-                }
-                break;
-              case ObjectType.SolarPanel:
-                displacement = -moveStepRelative;
-                break;
-            }
-            if (displacement !== 0) {
-              let accept = true;
-              // for the time being, we deal with solar panels only
-              if (selectedElement.type === ObjectType.SolarPanel) {
-                accept = isNewPositionOk(selectedElement, selectedElement.cx + displacement, selectedElement.cy);
-              }
-              if (accept) {
-                const undoableMoveLeft = {
-                  name: 'Move Left',
-                  timestamp: Date.now(),
-                  displacement: displacement,
-                  movedElementId: selectedElement.id,
-                  undo: () => {
-                    updateElementCxById(
-                      undoableMoveLeft.movedElementId,
-                      selectedElement.cx - undoableMoveLeft.displacement,
-                    );
-                  },
-                  redo: () => {
-                    updateElementCxById(
-                      undoableMoveLeft.movedElementId,
-                      selectedElement.cx + undoableMoveLeft.displacement,
-                    );
-                  },
-                } as UndoableHorizontalMove;
-                addUndoable(undoableMoveLeft);
-                updateElementCxById(selectedElement.id, selectedElement.cx + displacement);
-              }
-            }
-          }
-        }
+        moveLeft(1);
+        break;
+      case 'shift+right':
+        moveRight(1 / FINE_GRID_RATIO);
         break;
       case 'right':
-        if (orthographic) {
-          if (selectedElement) {
-            let displacement = 0;
-            switch (selectedElement.type) {
-              case ObjectType.Foundation:
-              case ObjectType.Cuboid:
-              case ObjectType.Tree:
-              case ObjectType.Human:
-                displacement = moveStepAbsolute;
-                break;
-              case ObjectType.Sensor:
-                const parent = getElementById(selectedElement.parentId);
-                if (parent) {
-                  const halfLx = parent ? selectedElement.lx / (2 * parent.lx) : 0;
-                  const x = Math.min(0.5 - halfLx, selectedElement.cx + moveStepRelative);
-                  displacement = x - selectedElement.cx;
-                }
-                break;
-              case ObjectType.SolarPanel:
-                displacement = moveStepRelative;
-                break;
-            }
-            if (displacement !== 0) {
-              let accept = true;
-              // for the time being, we deal with solar panels only
-              if (selectedElement.type === ObjectType.SolarPanel) {
-                accept = isNewPositionOk(selectedElement, selectedElement.cx + displacement, selectedElement.cy);
-              }
-              if (accept) {
-                const undoableMoveRight = {
-                  name: 'Move Right',
-                  timestamp: Date.now(),
-                  displacement: displacement,
-                  movedElementId: selectedElement.id,
-                  undo: () => {
-                    updateElementCxById(
-                      undoableMoveRight.movedElementId,
-                      selectedElement.cx - undoableMoveRight.displacement,
-                    );
-                  },
-                  redo: () => {
-                    updateElementCxById(
-                      undoableMoveRight.movedElementId,
-                      selectedElement.cx + undoableMoveRight.displacement,
-                    );
-                  },
-                } as UndoableHorizontalMove;
-                addUndoable(undoableMoveRight);
-                updateElementCxById(selectedElement.id, selectedElement.cx + displacement);
-              }
-            }
-          }
-        }
+        moveRight(1);
+        break;
+      case 'shift+down':
+        moveDown(1 / FINE_GRID_RATIO);
         break;
       case 'down':
-        if (orthographic) {
-          if (selectedElement) {
-            let displacement = 0;
-            switch (selectedElement.type) {
-              case ObjectType.Foundation:
-              case ObjectType.Cuboid:
-              case ObjectType.Tree:
-              case ObjectType.Human:
-                displacement = -moveStepAbsolute;
-                break;
-              case ObjectType.Sensor:
-                const parent = getElementById(selectedElement.parentId);
-                if (parent) {
-                  const halfLy = parent ? selectedElement.ly / (2 * parent.ly) : 0;
-                  const y = Math.max(-0.5 + halfLy, selectedElement.cy - moveStepRelative);
-                  displacement = y - selectedElement.cy;
-                }
-                break;
-              case ObjectType.SolarPanel:
-                displacement = -moveStepRelative;
-                break;
-            }
-            if (displacement !== 0) {
-              let accept = true;
-              // for the time being, we deal with solar panels only
-              if (selectedElement.type === ObjectType.SolarPanel) {
-                accept = isNewPositionOk(selectedElement, selectedElement.cx, selectedElement.cy + displacement);
-              }
-              if (accept) {
-                const undoableMoveDown = {
-                  name: 'Move Down',
-                  timestamp: Date.now(),
-                  displacement: displacement,
-                  movedElementId: selectedElement.id,
-                  undo: () => {
-                    updateElementCyById(
-                      undoableMoveDown.movedElementId,
-                      selectedElement.cy - undoableMoveDown.displacement,
-                    );
-                  },
-                  redo: () => {
-                    updateElementCyById(
-                      undoableMoveDown.movedElementId,
-                      selectedElement.cy + undoableMoveDown.displacement,
-                    );
-                  },
-                } as UndoableVerticalMove;
-                addUndoable(undoableMoveDown);
-                updateElementCyById(selectedElement.id, selectedElement.cy + displacement);
-              }
-            }
-          }
-        }
+        moveDown(1);
+        break;
+      case 'shift+up':
+        moveUp(1 / FINE_GRID_RATIO);
         break;
       case 'up':
-        if (orthographic) {
-          if (selectedElement) {
-            let displacement = 0;
-            switch (selectedElement.type) {
-              case ObjectType.Foundation:
-              case ObjectType.Cuboid:
-              case ObjectType.Tree:
-              case ObjectType.Human:
-                displacement = moveStepAbsolute;
-                break;
-              case ObjectType.Sensor:
-                const parent = getElementById(selectedElement.parentId);
-                if (parent) {
-                  const halfLy = parent ? selectedElement.ly / (2 * parent.ly) : 0;
-                  const y = Math.min(0.5 - halfLy, selectedElement.cy + moveStepRelative);
-                  displacement = y - selectedElement.cy;
-                }
-                break;
-              case ObjectType.SolarPanel:
-                displacement = moveStepRelative;
-                break;
-            }
-            if (displacement !== 0) {
-              let accept = true;
-              // for the time being, we deal with solar panels only
-              if (selectedElement.type === ObjectType.SolarPanel) {
-                accept = isNewPositionOk(selectedElement, selectedElement.cx, selectedElement.cy + displacement);
-              }
-              if (accept) {
-                const undoableMoveUp = {
-                  name: 'Move Up',
-                  timestamp: Date.now(),
-                  displacement: displacement,
-                  movedElementId: selectedElement.id,
-                  undo: () => {
-                    updateElementCyById(
-                      undoableMoveUp.movedElementId,
-                      selectedElement.cy - undoableMoveUp.displacement,
-                    );
-                  },
-                  redo: () => {
-                    updateElementCyById(
-                      undoableMoveUp.movedElementId,
-                      selectedElement.cy + undoableMoveUp.displacement,
-                    );
-                  },
-                } as UndoableVerticalMove;
-                addUndoable(undoableMoveUp);
-                updateElementCyById(selectedElement.id, selectedElement.cy + displacement);
-              }
-            }
-          }
-        }
+        moveUp(1);
         break;
       case 'ctrl+[':
       case 'meta+[': // for Mac

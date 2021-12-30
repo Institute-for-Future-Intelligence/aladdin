@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Line } from '@react-three/drei';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { FINE_GRID_SCALE, NORMAL_GRID_SCALE } from '../constants';
+import { FINE_GRID_RATIO, FINE_GRID_SCALE, NORMAL_GRID_SCALE } from '../constants';
 import { Euler, Vector3 } from 'three';
 
 interface ElementGridProps {
@@ -31,7 +31,7 @@ export const ElementGrid = React.memo(({ hx, hy, hz, position, rotation }: Eleme
       setLineWidth(0.1);
     } else {
       setStep((Math.floor(maxSize / 25) + 1) * NORMAL_GRID_SCALE);
-      setLineWidth(0.5);
+      setLineWidth(0.1 * FINE_GRID_RATIO);
     }
   }, [enableFineGrid, maxSize]);
 

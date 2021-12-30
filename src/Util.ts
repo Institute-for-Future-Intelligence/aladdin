@@ -244,7 +244,6 @@ export class Util {
     const x = Math.round(v.x / NORMAL_GRID_SCALE) * NORMAL_GRID_SCALE;
     const y = Math.round(v.y / NORMAL_GRID_SCALE) * NORMAL_GRID_SCALE;
     return new Vector3(x, y, v.z);
-    //return new Vector3(Math.round(v.x), Math.round(v.y), v.z);
   }
 
   static snapToFineGrid(v: Vector3) {

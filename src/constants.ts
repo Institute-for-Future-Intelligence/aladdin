@@ -30,8 +30,9 @@ export const MOVE_HANDLE_COLOR_3 = 'pink';
 export const RESIZE_HANDLE_COLOR = 'white';
 export const HIGHLIGHT_HANDLE_COLOR = 'red';
 
+export const FINE_GRID_RATIO = 5;
 export const FINE_GRID_SCALE = 0.1;
-export const NORMAL_GRID_SCALE = 5 * FINE_GRID_SCALE;
+export const NORMAL_GRID_SCALE = FINE_GRID_RATIO * FINE_GRID_SCALE;
 
 export const GROUND_ID = 'Ground';
 
