@@ -5,18 +5,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { ObjectType, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { FoundationModel } from '../../../models/FoundationModel';
-import { Util } from '../../../Util';
-import { Vector2 } from 'three';
-import { UndoableSizeChange } from '../../../undo/UndoableSizeChange';
-import { UndoableSizeGroupChange } from '../../../undo/UndoableSizeGroupChange';
-import { ORIGIN_VECTOR2, ZERO_TOLERANCE } from '../../../constants';
-import { Point2 } from '../../../models/Point2';
-import { PolygonModel } from '../../../models/PolygonModel';
+import { useStore } from 'src/stores/common';
+import * as Selector from 'src/stores/selector';
+import { ObjectType, Scope } from 'src/types';
+import i18n from 'src/i18n/i18n';
+import { FoundationModel } from 'src/models/FoundationModel';
+import { Util } from 'src/Util';
+import { Object3D, Vector2 } from 'three';
+import { UndoableSizeChange } from 'src/undo/UndoableSizeChange';
+import { UndoableSizeGroupChange } from 'src/undo/UndoableSizeGroupChange';
+import { GROUND_ID, ORIGIN_VECTOR2, ZERO_TOLERANCE } from 'src/constants';
+import { Point2 } from 'src/models/Point2';
+import { PolygonModel } from 'src/models/PolygonModel';
+import { ElementModel } from 'src/models/ElementModel';
+import { useStoreRef } from 'src/stores/commonRef';
 
 const FoundationLengthInput = ({
   lengthDialogVisible,
@@ -37,6 +39,7 @@ const FoundationLengthInput = ({
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
+  const setCommonStore = useStore(Selector.set);
 
   const foundation = getSelectedElement() as FoundationModel;
   const [inputLy, setInputLy] = useState<number>(foundation?.ly ?? 0);
@@ -120,6 +123,41 @@ const FoundationLengthInput = ({
     return false;
   };
 
+  const getObjectChildById = (object: Object3D | null | undefined, id: string) => {
+    if (object === null || object === undefined) return null;
+    for (const obj of object.children) {
+      if (obj.name.includes(`${id}`)) {
+        return obj;
+      }
+    }
+    return null;
+  };
+
+  const handleDetachParent = (parentObject: Object3D | null, parent: ElementModel, curr: ElementModel) => {
+    if (parentObject) {
+      for (const obj of parentObject.children) {
+        if (obj.name.includes(`${curr.id}`)) {
+          useStoreRef.getState().contentRef?.current?.add(obj);
+          break;
+        }
+      }
+      setCommonStore((state) => {
+        for (const e of state.elements) {
+          if (e.id === curr.id) {
+            e.parentId = GROUND_ID;
+            const absPos = new Vector2(e.cx, e.cy)
+              .rotateAround(ORIGIN_VECTOR2, parent.rotation[2])
+              .add(new Vector2(parent.cx, parent.cy));
+            e.cx = absPos.x;
+            e.cy = absPos.y;
+            e.cz = 0;
+            break;
+          }
+        }
+      });
+    }
+  };
+
   const updateLyWithChildren = (parent: FoundationModel, value: number) => {
     // store children's relative positions
     const children = getChildren(parent.id);
@@ -188,6 +226,23 @@ const FoundationLengthInput = ({
                 newVertices.map((v) => ({ ...v })),
               );
             }
+            break;
+          case ObjectType.Human:
+          case ObjectType.Tree:
+            // top face
+            if (Math.abs(c.cz - parent.lz / 2) < ZERO_TOLERANCE) {
+              // check fall off
+              if (Math.abs(c.cy) - value / 2 > 0) {
+                const contentRef = useStoreRef.getState().contentRef;
+                const parentObject = getObjectChildById(contentRef?.current, parent.id);
+                handleDetachParent(parentObject, parent, c);
+              }
+            }
+            // north and south face
+            else if (Math.abs(Math.abs(c.cy) - parent.ly / 2) < ZERO_TOLERANCE) {
+              updateElementCyById(c.id, (c.cy > 0 ? value : -value) / 2);
+            }
+            // no need to worry about west and east face
             break;
         }
       }

@@ -5,14 +5,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { ObjectType, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { FoundationModel } from '../../../models/FoundationModel';
-import { ZERO_TOLERANCE } from '../../../constants';
+import { useStore } from 'src/stores/common';
+import * as Selector from 'src/stores/selector';
+import { ObjectType, Scope } from 'src/types';
+import i18n from 'src/i18n/i18n';
+import { UndoableChange } from 'src/undo/UndoableChange';
+import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
+import { FoundationModel } from 'src/models/FoundationModel';
+import { GROUND_ID, ORIGIN_VECTOR2, ZERO_TOLERANCE } from 'src/constants';
+import { Object3D, Vector2 } from 'three';
+import { ElementModel } from 'src/models/ElementModel';
+import { useStoreRef } from 'src/stores/commonRef';
 
 const FoundationHeightInput = ({
   heightDialogVisible,
@@ -31,6 +34,7 @@ const FoundationHeightInput = ({
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
+  const setCommonStore = useStore(Selector.set);
 
   const foundation = getSelectedElement() as FoundationModel;
   const [inputLz, setInputLz] = useState<number>(foundation?.lz ?? 0);
@@ -77,6 +81,61 @@ const FoundationHeightInput = ({
     return false;
   };
 
+  const getObjectChildById = (object: Object3D | null | undefined, id: string) => {
+    if (object === null || object === undefined) return null;
+    for (const obj of object.children) {
+      if (obj.name.includes(`${id}`)) {
+        return obj;
+      }
+    }
+    return null;
+  };
+
+  const handleDetachParent = (parentObject: Object3D | null, parent: ElementModel, curr: ElementModel) => {
+    if (parentObject) {
+      for (const obj of parentObject.children) {
+        if (obj.name.includes(`${curr.id}`)) {
+          useStoreRef.getState().contentRef?.current?.add(obj);
+          break;
+        }
+      }
+      curr.parentId = GROUND_ID;
+      const absPos = new Vector2(curr.cx, curr.cy)
+        .rotateAround(ORIGIN_VECTOR2, -parent.rotation[2])
+        .add(new Vector2(parent.cx, parent.cy));
+      curr.cx = absPos.x;
+      curr.cy = absPos.y;
+      curr.cz = 0;
+    }
+  };
+
+  const updateCzOfChildren = (parent: ElementModel, value: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.parentId === parent.id) {
+          if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
+            // top face
+            if (Math.abs(e.cz - parent.lz / 2) < ZERO_TOLERANCE) {
+              e.cz = value / 2;
+            }
+            // side faces
+            else {
+              // check fall off
+              const newRelZ = e.cz + parent.cz - value / 2;
+              if (Math.abs(newRelZ) > value / 2) {
+                const contentRef = useStoreRef.getState().contentRef;
+                const parentObject = getObjectChildById(contentRef?.current, parent.id);
+                handleDetachParent(parentObject, parent, e);
+              } else {
+                e.cz = newRelZ;
+              }
+            }
+          }
+        }
+      }
+    });
+  };
+
   const setLz = (value: number) => {
     if (!foundation) return;
     if (!needChange(value)) return;
@@ -86,6 +145,11 @@ const FoundationHeightInput = ({
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             oldLzsAll.set(elem.id, elem.lz);
+          }
+        }
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Foundation) {
+            updateCzOfChildren(elem, value);
           }
         }
         const undoableChangeAll = {
@@ -125,6 +189,7 @@ const FoundationHeightInput = ({
             },
           } as UndoableChange;
           addUndoable(undoableChange);
+          updateCzOfChildren(foundation, value);
           updateLzAndCz(foundation.id, value);
         }
     }

@@ -1077,7 +1077,7 @@ const Ground = () => {
               // stand on side faces
               else {
                 const newRelZ = e.cz + oldPositionRef.current.z - elem.cz;
-                if (Math.abs(newRelZ) > elem.lz / 2 + 0.5) {
+                if (Math.abs(newRelZ) > elem.lz / 2) {
                   handleDetachParent(elem, e);
                 } else {
                   e.cz = newRelZ;
