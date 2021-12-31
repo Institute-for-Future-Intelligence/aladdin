@@ -110,6 +110,8 @@ export const i18n_tr = {
       ThisCannotBeUndone: 'Bu geri alýnamaz.',
       MoveCancelledBecauseOfOverlap: 'Move cancelled because of overlap.',
       MoveOutsideBoundaryCancelled: 'Move outside the boundary cancelled.',
+      RotationCancelledBecauseOfOverlap: 'Rotation cancelled because of overlap.',
+      RotationOutsideBoundaryCancelled: 'Rotation outside the boundary cancelled.',
       CannotPasteOutsideBoundary: 'Cannot paste outside this surface.',
       CannotPasteBecauseOfOverlap: 'Cannot paste because of overlap.',
     },

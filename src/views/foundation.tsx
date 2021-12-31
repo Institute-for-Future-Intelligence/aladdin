@@ -915,20 +915,33 @@ const Foundation = ({
         if (grabRef.current.type === ObjectType.SolarPanel) {
           const solarPanel = grabRef.current as SolarPanelModel;
           if (Math.abs(newAzimuthRef.current - oldAzimuthRef.current) > ZERO_TOLERANCE) {
-            const undoableRotate = {
-              name: 'Rotate',
-              timestamp: Date.now(),
-              oldValue: oldAzimuthRef.current,
-              newValue: newAzimuthRef.current,
-              changedElementId: solarPanel.id,
-              undo: () => {
-                updateSolarPanelRelativeAzimuthById(undoableRotate.changedElementId, undoableRotate.oldValue as number);
-              },
-              redo: () => {
-                updateSolarPanelRelativeAzimuthById(undoableRotate.changedElementId, undoableRotate.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableRotate);
+            if (isSolarPanelNewAzimuthOk(solarPanel, newAzimuthRef.current)) {
+              setCommonStore((state) => {
+                state.selectedElementAngle = newAzimuthRef.current;
+              });
+              const undoableRotate = {
+                name: 'Rotate',
+                timestamp: Date.now(),
+                oldValue: oldAzimuthRef.current,
+                newValue: newAzimuthRef.current,
+                changedElementId: solarPanel.id,
+                undo: () => {
+                  updateSolarPanelRelativeAzimuthById(
+                    undoableRotate.changedElementId,
+                    undoableRotate.oldValue as number,
+                  );
+                },
+                redo: () => {
+                  updateSolarPanelRelativeAzimuthById(
+                    undoableRotate.changedElementId,
+                    undoableRotate.newValue as number,
+                  );
+                },
+              } as UndoableChange;
+              addUndoable(undoableRotate);
+            } else {
+              updateSolarPanelRelativeAzimuthById(solarPanel.id, oldAzimuthRef.current);
+            }
           }
         }
       } else {
@@ -1231,7 +1244,7 @@ const Foundation = ({
         case ObjectType.SolarPanel:
           // Have to get the latest from the store (we may change this to ref in the future)
           const sp = useStore.getState().getElementById(grabRef.current.id) as SolarPanelModel;
-          if (!isSolarPanelNewPositionOk(sp, sp.cx, sp.cy)) {
+          if (moveHandleTypeRef.current && !isSolarPanelNewPositionOk(sp, sp.cx, sp.cy)) {
             setElementPosition(sp.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
           }
           break;
@@ -1239,9 +1252,12 @@ const Foundation = ({
     }
   };
 
-  const handlePointerEnter = () => {
+  const handlePointerEnter = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current?.type === ObjectType.Human || grabRef.current?.type === ObjectType.Tree) {
-      setShowGrid(true);
+      const intersected = e.intersections[0].object === baseRef.current;
+      if (intersected) {
+        setShowGrid(true);
+      }
     }
   };
 
@@ -1263,7 +1279,11 @@ const Foundation = ({
   const isSolarPanelNewAzimuthOk = (sp: SolarPanelModel, az: number) => {
     const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
     clone.relativeAzimuth = az;
-    return Util.isSolarPanelWithinHorizontalSurface(clone, foundationModel);
+    if (!Util.isSolarPanelWithinHorizontalSurface(clone, foundationModel)) {
+      showError(i18n.t('shared.RotationOutsideBoundaryCancelled', lang));
+      return false;
+    }
+    return true;
   };
 
   const isSolarPanelNewSizeOk = (sp: SolarPanelModel, cx: number, cy: number, lx: number, ly: number) => {
@@ -1305,13 +1325,8 @@ const Foundation = ({
             Math.atan2(-p.x + wc.x, p.y - wc.y) - pr + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
           const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * TWO_PI : 0; // make sure angle is between -PI to PI
           const newAzimuth = rotation + offset;
-          if (isSolarPanelNewAzimuthOk(solarPanel, newAzimuth)) {
-            updateSolarPanelRelativeAzimuthById(solarPanel.id, newAzimuth);
-            newAzimuthRef.current = newAzimuth;
-            setCommonStore((state) => {
-              state.selectedElementAngle = newAzimuth;
-            });
-          }
+          updateSolarPanelRelativeAzimuthById(solarPanel.id, newAzimuth);
+          newAzimuthRef.current = newAzimuth;
         } else if (resizeHandleType) {
           const resizeAnchor = resizeAnchorRef.current;
           const pvModel = getPvModule(solarPanel.pvModelName);

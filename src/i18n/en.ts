@@ -109,6 +109,8 @@ export const i18n_en = {
       ThisCannotBeUndone: 'This cannot be undone.',
       MoveCancelledBecauseOfOverlap: 'Move cancelled because of overlap.',
       MoveOutsideBoundaryCancelled: 'Move outside the boundary cancelled.',
+      RotationCancelledBecauseOfOverlap: 'Rotation cancelled because of overlap.',
+      RotationOutsideBoundaryCancelled: 'Rotation outside the boundary cancelled.',
       CannotPasteOutsideBoundary: 'Cannot paste outside the boundary.',
       CannotPasteBecauseOfOverlap: 'Cannot paste because of overlap.',
     },

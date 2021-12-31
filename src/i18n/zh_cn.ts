@@ -109,6 +109,8 @@ export const i18n_zh_cn = {
       ThisCannotBeUndone: '这个操作一旦执行就不能撤销。',
       MoveCancelledBecauseOfOverlap: '位置重叠，移动取消。',
       MoveOutsideBoundaryCancelled: '位置出界，移动取消。',
+      RotationCancelledBecauseOfOverlap: '位置重叠，旋转取消。',
+      RotationOutsideBoundaryCancelled: '位置出界，旋转取消。',
       CannotPasteOutsideBoundary: '位置出界，不能复制。',
       CannotPasteBecauseOfOverlap: '位置重叠，不能复制。',
     },

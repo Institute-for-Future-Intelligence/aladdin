@@ -21,8 +21,8 @@ export const DEFAULT_FOV = 45;
 export const DEFAULT_FAR = 10_000;
 
 export const MOVE_HANDLE_OFFSET = 0.12;
-export const MOVE_HANDLE_RADIUS = 0.16;
-export const RESIZE_HANDLE_SIZE = 0.2;
+export const MOVE_HANDLE_RADIUS = 0.1;
+export const RESIZE_HANDLE_SIZE = 0.16;
 
 export const MOVE_HANDLE_COLOR_1 = 'orange';
 export const MOVE_HANDLE_COLOR_2 = 'orchid';

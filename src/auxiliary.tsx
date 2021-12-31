@@ -52,12 +52,13 @@ export const Auxiliary = () => {
 
   // only these elements are allowed to be on the ground
   const legalOnGround = () => {
-    const type = getSelectedElement()?.type;
+    if (!element) return false;
+    const type = element.type;
     return (
       type === ObjectType.Foundation ||
       type === ObjectType.Cuboid ||
-      type === ObjectType.Tree ||
-      type === ObjectType.Human
+      (type === ObjectType.Tree && element.parentId === ObjectType.Ground) ||
+      (type === ObjectType.Human && element.parentId === ObjectType.Ground)
     );
   };
 

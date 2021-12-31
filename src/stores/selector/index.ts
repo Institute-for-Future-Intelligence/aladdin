@@ -65,8 +65,6 @@ export const clearContent = (state: CommonStoreState) => state.clearContent;
 
 export const createEmptyFile = (state: CommonStoreState) => state.createEmptyFile;
 
-export const grid = (state: CommonStoreState) => state.grid;
-
 export const aabb = (state: CommonStoreState) => state.aabb;
 
 export const animateSun = (state: CommonStoreState) => state.animateSun;
