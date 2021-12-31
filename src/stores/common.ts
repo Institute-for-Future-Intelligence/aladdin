@@ -565,13 +565,7 @@ export const useStore = create<CommonStoreState>(
                   for (const e of state.elements) {
                     if (e.type === me.type && e.parentId === me.parentId && e.id !== me.id) {
                       if (me.type === ObjectType.SolarPanel) {
-                        if (
-                          Math.abs(me.cx - e.cx) * parent.lx < 0.5 * (me.lx + e.lx) &&
-                          Math.abs(me.cy - e.cy) * parent.ly <
-                            0.5 *
-                              (me.ly * Math.cos((me as SolarPanelModel).tiltAngle) +
-                                e.ly * Math.cos((e as SolarPanelModel).tiltAngle))
-                        ) {
+                        if (Util.doSolarPanelsOverlap(me as SolarPanelModel, e as SolarPanelModel, parent)) {
                           overlap = true;
                           break;
                         }

@@ -111,6 +111,8 @@ export const i18n_es = {
       MoveOutsideBoundaryCancelled: 'Move outside the boundary cancelled.',
       RotationCancelledBecauseOfOverlap: 'Rotation cancelled because of overlap.',
       RotationOutsideBoundaryCancelled: 'Rotation outside the boundary cancelled.',
+      ResizingCancelledBecauseOfOverlap: 'Resizing cancelled because of overlap.',
+      ResizingOutsideBoundaryCancelled: 'Resizing outside the boundary cancelled.',
       CannotPasteOutsideBoundary: 'Cannot paste outside this surface.',
       CannotPasteBecauseOfOverlap: 'Cannot paste because of overlap.',
     },

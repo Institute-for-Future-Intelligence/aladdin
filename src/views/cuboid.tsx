@@ -749,7 +749,11 @@ const Cuboid = ({
   const isSolarPanelNewAzimuthOk = (sp: SolarPanelModel, az: number) => {
     const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
     clone.relativeAzimuth = az;
-    return Util.isSolarPanelWithinHorizontalSurface(clone, cuboidModel);
+    if (!Util.isSolarPanelWithinHorizontalSurface(clone, cuboidModel)) {
+      showError(i18n.t('shared.RotationOutsideBoundaryCancelled', lang));
+      return false;
+    }
+    return true;
   };
 
   const isSolarPanelNewSizeOk = (sp: SolarPanelModel, cx: number, cy: number, lx: number, ly: number) => {
@@ -763,7 +767,11 @@ const Cuboid = ({
     clone.cy = cy;
     clone.lx = lx;
     clone.ly = ly;
-    return Util.isSolarPanelWithinHorizontalSurface(clone, cuboidModel);
+    if (!Util.isSolarPanelWithinHorizontalSurface(clone, cuboidModel)) {
+      // showError(i18n.t('shared.ResizingOutsideBoundaryCancelled', lang));
+      return false;
+    }
+    return true;
   };
 
   const handlePointerUp = () => {

@@ -325,7 +325,7 @@ const SolarPanel = ({
     }
   }
 
-  const baseSize = Math.max(1, Math.max(lx, ly) / 8);
+  const baseSize = Math.max(1, (lx + ly) / 16);
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
   const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 2;
   const rotateHandleSize = (baseSize * 2) / 3;

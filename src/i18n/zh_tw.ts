@@ -111,6 +111,8 @@ export const i18n_zh_tw = {
       MoveOutsideBoundaryCancelled: '位置出界，移動取消。',
       RotationCancelledBecauseOfOverlap: '位置重疊，旋轉取消。',
       RotationOutsideBoundaryCancelled: '位置出界，旋轉取消。',
+      ResizingCancelledBecauseOfOverlap: '位置重疊，尺寸調整取消。',
+      ResizingOutsideBoundaryCancelled: '位置出界，尺寸調整取消。',
       CannotPasteOutsideBoundary: '位置出界，不能複制。',
       CannotPasteBecauseOfOverlap: '位置重疊，不能複制。',
     },

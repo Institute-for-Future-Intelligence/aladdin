@@ -25,7 +25,77 @@ import { PolygonModel } from './models/PolygonModel';
 import { Point2 } from './models/Point2';
 
 export class Util {
-  static panelizeLx(solarPanel: SolarPanelModel, pvModel: PvModel, value: number) {
+  static lineIntersection(from1: Point2, to1: Point2, from2: Point2, to2: Point2): Point2 | undefined {
+    const dx: number = to1.x - from1.x;
+    const dy: number = to1.y - from1.y;
+
+    const determinant: number = dx * (to2.y - from2.y) - (to2.x - from2.x) * dy;
+    if (determinant === 0) return undefined; // parallel lines
+
+    const lambda: number =
+      ((to2.y - from2.y) * (to2.x - from1.x) + (from2.x - to2.x) * (to2.y - from1.y)) / determinant;
+    const gamma: number = ((from1.y - to1.y) * (to2.x - from1.x) + dx * (to2.y - from1.y)) / determinant;
+
+    // check if there is an intersection
+    if (!(0 <= lambda && lambda <= 1) || !(0 <= gamma && gamma <= 1)) return undefined;
+
+    return {
+      x: from1.x + lambda * dx,
+      y: from1.y + lambda * dy,
+    } as Point2;
+  }
+
+  static doSolarPanelsOverlap(sp1: SolarPanelModel, sp2: SolarPanelModel, parent: ElementModel): boolean {
+    if (sp1.parentId !== parent.id || sp2.parentId !== parent.id) return false;
+    const v1 = Util.fetchSolarPanelVertexCoordinates(sp1, parent);
+    const v2 = Util.fetchSolarPanelVertexCoordinates(sp2, parent);
+    v1.push(v1[0]);
+    v2.push(v2[0]);
+    for (let i1 = 0; i1 < v1.length - 1; i1++) {
+      const from1 = v1[i1];
+      const to1 = v1[i1 + 1];
+      for (let i2 = 0; i2 < v2.length - 1; i2++) {
+        const from2 = v2[i2];
+        const to2 = v2[i2 + 1];
+        if (Util.lineIntersection(from1, to1, from2, to2)) return true;
+      }
+    }
+    return false;
+  }
+
+  static fetchSolarPanelVertexCoordinates(sp: SolarPanelModel, parent: ElementModel): Point2[] {
+    const xc = sp.cx * parent.lx;
+    const yc = sp.cy * parent.ly;
+    const cosaz = Math.cos(sp.relativeAzimuth);
+    const sinaz = Math.sin(sp.relativeAzimuth);
+    const rx = sp.lx * 0.5;
+    const ry = sp.ly * 0.5 * Math.cos(sp.tiltAngle);
+    // corners are stored in the clockwise direction
+    const vertices: Point2[] = [];
+    // upper-right corner of solar panel
+    vertices.push({
+      x: xc + rx * cosaz - ry * sinaz,
+      y: yc + rx * sinaz + ry * cosaz,
+    } as Point2);
+    // lower-right corner of solar panel
+    vertices.push({
+      x: xc + rx * cosaz + ry * sinaz,
+      y: yc + rx * sinaz - ry * cosaz,
+    } as Point2);
+    // lower-left corner of solar panel
+    vertices.push({
+      x: xc - rx * cosaz + ry * sinaz,
+      y: yc - rx * sinaz - ry * cosaz,
+    } as Point2);
+    // upper-left corner of solar panel
+    vertices.push({
+      x: xc - rx * cosaz - ry * sinaz,
+      y: yc - rx * sinaz + ry * cosaz,
+    } as Point2);
+    return vertices;
+  }
+
+  static panelizeLx(solarPanel: SolarPanelModel, pvModel: PvModel, value: number): number {
     const dx = solarPanel.orientation === Orientation.portrait ? pvModel.width : pvModel.length;
     let lx = value ?? 1;
     const n = Math.max(1, Math.ceil((lx - dx / 2) / dx));
@@ -33,7 +103,7 @@ export class Util {
     return lx;
   }
 
-  static panelizeLy(solarPanel: SolarPanelModel, pvModel: PvModel, value: number) {
+  static panelizeLy(solarPanel: SolarPanelModel, pvModel: PvModel, value: number): number {
     const dy = solarPanel.orientation === Orientation.portrait ? pvModel.length : pvModel.width;
     let ly = value ?? 1;
     const n = Math.max(1, Math.ceil((ly - dy / 2) / dy));
@@ -57,7 +127,7 @@ export class Util {
     return { minX: minX, maxX: maxX, minY: minY, maxY: maxY };
   }
 
-  static calculatePolygonCentroid(vertices: Point2[]) {
+  static calculatePolygonCentroid(vertices: Point2[]): Point2 {
     // it is OK to use a shallow copy here since we are not modifying the objects in the array
     const pts = [...vertices];
     const first = pts[0];
@@ -80,7 +150,7 @@ export class Util {
     return { x: x / f + first.x, y: y / f + first.y } as Point2;
   }
 
-  static translatePolygonCenterTo(polygonModel: PolygonModel, x: number, y: number) {
+  static translatePolygonCenterTo(polygonModel: PolygonModel, x: number, y: number): void {
     const n = polygonModel.vertices.length;
     if (n === 0) return;
     const centroid = Util.calculatePolygonCentroid(polygonModel.vertices);
@@ -93,7 +163,12 @@ export class Util {
   }
 
   // note: this assumes that the center of the parent does NOT change
-  static doesNewSizeContainAllChildren(parent: ElementModel, children: ElementModel[], lx: number, ly: number) {
+  static doesNewSizeContainAllChildren(
+    parent: ElementModel,
+    children: ElementModel[],
+    lx: number,
+    ly: number,
+  ): boolean {
     const childAbsPosMap = new Map<string, Vector2>();
     for (const c of children) {
       switch (c.type) {
@@ -128,7 +203,7 @@ export class Util {
   }
 
   // TODO: Vertical surfaces
-  static doesParentContainAllChildren(parent: ElementModel, children: ElementModel[]) {
+  static doesParentContainAllChildren(parent: ElementModel, children: ElementModel[]): boolean {
     for (const e of children) {
       switch (e.type) {
         case ObjectType.SolarPanel:
@@ -155,7 +230,7 @@ export class Util {
     return true;
   }
 
-  static isWallWithin(wall: WallModel, parent: ElementModel) {
+  static isWallWithin(wall: WallModel, parent: ElementModel): boolean {
     const dx = parent.lx * 0.5;
     const dy = parent.ly * 0.5;
     const lx = wall.leftPoint[0]; // left point x
@@ -171,11 +246,11 @@ export class Util {
     return true;
   }
 
-  static isSensorWithin(sensor: SensorModel, parent: ElementModel) {
+  static isSensorWithin(sensor: SensorModel, parent: ElementModel): boolean {
     return Math.abs(sensor.cx) < 0.5 - sensor.lx / parent.lx && Math.abs(sensor.cy) < 0.5 - sensor.ly / parent.ly;
   }
 
-  static isSolarPanelWithinHorizontalSurface(solarPanel: SolarPanelModel, parent: ElementModel) {
+  static isSolarPanelWithinHorizontalSurface(solarPanel: SolarPanelModel, parent: ElementModel): boolean {
     const x0 = solarPanel.cx * parent.lx;
     const y0 = solarPanel.cy * parent.ly;
     const cosaz = Math.cos(solarPanel.relativeAzimuth);
@@ -183,7 +258,7 @@ export class Util {
     const dx = parent.lx * 0.5;
     const dy = parent.ly * 0.5;
     const rx = solarPanel.lx * 0.5;
-    const ry = solarPanel.ly * 0.5;
+    const ry = solarPanel.ly * 0.5 * Math.cos(solarPanel.tiltAngle);
     // vertex 1
     let x = x0 + rx * cosaz - ry * sinaz;
     let y = y0 + rx * sinaz + ry * cosaz;
@@ -204,15 +279,15 @@ export class Util {
     return true;
   }
 
-  static isUnitVectorX(v: Vector3) {
+  static isUnitVectorX(v: Vector3): boolean {
     return Util.isSame(v, UNIT_VECTOR_POS_X) || Util.isSame(v, UNIT_VECTOR_NEG_X);
   }
 
-  static isUnitVectorY(v: Vector3) {
+  static isUnitVectorY(v: Vector3): boolean {
     return Util.isSame(v, UNIT_VECTOR_POS_Y) || Util.isSame(v, UNIT_VECTOR_NEG_Y);
   }
 
-  static isSame(u: Vector3, v: Vector3) {
+  static isSame(u: Vector3, v: Vector3): boolean {
     return (
       Math.abs(u.x - v.x) < ZERO_TOLERANCE &&
       Math.abs(u.y - v.y) < ZERO_TOLERANCE &&
@@ -220,7 +295,7 @@ export class Util {
     );
   }
 
-  static isIdentical(u?: number[], v?: number[]) {
+  static isIdentical(u?: number[], v?: number[]): boolean {
     if (!u || !v || u.length !== v.length) return false;
     if (u === v) return true;
     for (let i = 0; i < u.length; i++) {
@@ -229,7 +304,7 @@ export class Util {
     return true;
   }
 
-  static isZero(x: number) {
+  static isZero(x: number): boolean {
     return Math.abs(x) < ZERO_TOLERANCE;
   }
 
@@ -240,19 +315,19 @@ export class Util {
     }
   }
 
-  static snapToNormalGrid(v: Vector3) {
+  static snapToNormalGrid(v: Vector3): Vector3 {
     const x = Math.round(v.x / NORMAL_GRID_SCALE) * NORMAL_GRID_SCALE;
     const y = Math.round(v.y / NORMAL_GRID_SCALE) * NORMAL_GRID_SCALE;
     return new Vector3(x, y, v.z);
   }
 
-  static snapToFineGrid(v: Vector3) {
+  static snapToFineGrid(v: Vector3): Vector3 {
     const x = Math.round(v.x / FINE_GRID_SCALE) * FINE_GRID_SCALE;
     const y = Math.round(v.y / FINE_GRID_SCALE) * FINE_GRID_SCALE;
     return new Vector3(x, y, v.z);
   }
 
-  static isPositionRelative(objectType: ObjectType) {
+  static isPositionRelative(objectType: ObjectType): boolean {
     return (
       objectType === ObjectType.SolarPanel ||
       objectType === ObjectType.Sensor ||
@@ -263,7 +338,7 @@ export class Util {
     );
   }
 
-  static relativeCoordinates(x: number, y: number, z: number, parent: ElementModel) {
+  static relativeCoordinates(x: number, y: number, z: number, parent: ElementModel): Vector3 {
     const v = new Vector3(x - parent.cx, y - parent.cy, z - parent.cz);
     v.applyEuler(new Euler().fromArray(parent.rotation.map((a) => -a)));
     v.x /= parent.lx;
@@ -272,7 +347,7 @@ export class Util {
     return v;
   }
 
-  static absoluteCoordinates(x: number, y: number, z: number, parent: ElementModel) {
+  static absoluteCoordinates(x: number, y: number, z: number, parent: ElementModel): Vector3 {
     const v = new Vector3(x * parent.lx, y * parent.ly, z * parent.lz);
     v.applyEuler(new Euler().fromArray(parent.rotation));
     v.x += parent.cx;
@@ -281,7 +356,7 @@ export class Util {
     return v;
   }
 
-  static wallAbsolutePosition(v: Vector3, parent: ElementModel) {
+  static wallAbsolutePosition(v: Vector3, parent: ElementModel): Vector3 {
     const parentPos = new Vector3(parent.cx, parent.cy);
     return new Vector3().addVectors(
       parentPos,
@@ -289,22 +364,22 @@ export class Util {
     );
   }
 
-  static wallRelativePosition(v: Vector3, parent: ElementModel) {
+  static wallRelativePosition(v: Vector3, parent: ElementModel): Vector3 {
     const parentPos = new Vector3(parent.cx, parent.cy);
     return new Vector3()
       .subVectors(new Vector3(v.x, v.y), parentPos)
       .applyAxisAngle(UNIT_VECTOR_POS_Z, -parent.rotation[2]);
   }
 
-  static toRadians(degrees: number) {
+  static toRadians(degrees: number): number {
     return degrees * (Math.PI / 180);
   }
 
-  static toDegrees(radians: number) {
+  static toDegrees(radians: number): number {
     return radians * (180 / Math.PI);
   }
 
-  static sphericalToCartesianZ(sphereCoords: Vector3) {
+  static sphericalToCartesianZ(sphereCoords: Vector3): Vector3 {
     let a = sphereCoords.x * Math.cos(sphereCoords.z);
     let x = a * Math.cos(sphereCoords.y);
     let y = a * Math.sin(sphereCoords.y);
@@ -314,7 +389,7 @@ export class Util {
   }
 
   // the spherical law of cosines: https://en.wikipedia.org/wiki/Spherical_law_of_cosines
-  static getDistance(lng1: number, lat1: number, lng2: number, lat2: number) {
+  static getDistance(lng1: number, lat1: number, lng2: number, lat2: number): number {
     lng1 = Util.toRadians(lng1);
     lat1 = Util.toRadians(lat1);
     lng2 = Util.toRadians(lng2);
@@ -324,34 +399,34 @@ export class Util {
     );
   }
 
-  static minutesIntoDay(date: Date) {
+  static minutesIntoDay(date: Date): number {
     return date.getHours() * 60 + date.getMinutes();
   }
 
-  static daysIntoYear(date: string) {
+  static daysIntoYear(date: string): number {
     return Util.dayOfYear(new Date(date));
   }
 
-  static dayOfYear(date: Date) {
+  static dayOfYear(date: Date): number {
     const start = new Date(date.getFullYear(), 0, 0);
     const diff = date.getTime() - start.getTime();
     const oneDay = 1000 * 60 * 60 * 24;
     return Math.floor(diff / oneDay);
   }
 
-  static daysOfMonth(month: number, year: number) {
+  static daysOfMonth(month: number, year: number): number {
     return new Date(year, month + 1, 0).getDate();
   }
 
-  static fahrenheitToCelsius(temp: number) {
+  static fahrenheitToCelsius(temp: number): number {
     return ((temp - 32) * 5) / 9;
   }
 
-  static celsiusToFahrenheit(temp: number) {
+  static celsiusToFahrenheit(temp: number): number {
     return temp * (9 / 5) + 32;
   }
 
-  static getOS() {
+  static getOS(): string | null {
     const userAgent = window.navigator.userAgent;
     const platform = window.navigator.platform;
     const macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'];
