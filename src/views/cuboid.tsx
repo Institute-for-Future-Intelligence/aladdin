@@ -657,13 +657,8 @@ const Cuboid = ({
             -pr + Math.atan2(-p.x + wc.x, p.y - wc.y) + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
           const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * TWO_PI : 0; // make sure angle is between -PI to PI
           const newAzimuth = rotation + offset;
-          if (isSolarPanelNewAzimuthOk(solarPanel, newAzimuth)) {
-            updateSolarPanelRelativeAzimuthById(solarPanel.id, newAzimuth);
-            newAzimuthRef.current = newAzimuth;
-            setCommonStore((state) => {
-              state.selectedElementAngle = newAzimuth;
-            });
-          }
+          updateSolarPanelRelativeAzimuthById(solarPanel.id, newAzimuth);
+          newAzimuthRef.current = newAzimuth;
         } else if (resizeHandleType) {
           const resizeAnchor = resizeAnchorRef.current;
           const pvModel = getPvModule(solarPanel.pvModelName);
@@ -749,6 +744,10 @@ const Cuboid = ({
   const isSolarPanelNewAzimuthOk = (sp: SolarPanelModel, az: number) => {
     const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
     clone.relativeAzimuth = az;
+    if (overlapWithSibling(clone)) {
+      showError(i18n.t('shared.RotationCancelledBecauseOfOverlap', lang));
+      return false;
+    }
     if (!Util.isSolarPanelWithinHorizontalSurface(clone, cuboidModel)) {
       showError(i18n.t('shared.RotationOutsideBoundaryCancelled', lang));
       return false;
@@ -856,23 +855,37 @@ const Cuboid = ({
           addUndoable(undoableResize);
         }
       } else if (rotateHandleType) {
-        if (grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
+        // currently, solar panels are the only type of child that can be rotated
+        if (grabRef.current.type === ObjectType.SolarPanel) {
           const solarPanel = grabRef.current as SolarPanelModel;
           if (Math.abs(newAzimuthRef.current - oldAzimuthRef.current) > ZERO_TOLERANCE) {
-            const undoableRotate = {
-              name: 'Rotate',
-              timestamp: Date.now(),
-              oldValue: oldAzimuthRef.current,
-              newValue: newAzimuthRef.current,
-              changedElementId: solarPanel.id,
-              undo: () => {
-                updateSolarPanelRelativeAzimuthById(undoableRotate.changedElementId, undoableRotate.oldValue as number);
-              },
-              redo: () => {
-                updateSolarPanelRelativeAzimuthById(undoableRotate.changedElementId, undoableRotate.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableRotate);
+            if (isSolarPanelNewAzimuthOk(solarPanel, newAzimuthRef.current)) {
+              setCommonStore((state) => {
+                state.selectedElementAngle = newAzimuthRef.current;
+              });
+              const undoableRotate = {
+                name: 'Rotate',
+                timestamp: Date.now(),
+                oldValue: oldAzimuthRef.current,
+                newValue: newAzimuthRef.current,
+                changedElementId: solarPanel.id,
+                undo: () => {
+                  updateSolarPanelRelativeAzimuthById(
+                    undoableRotate.changedElementId,
+                    undoableRotate.oldValue as number,
+                  );
+                },
+                redo: () => {
+                  updateSolarPanelRelativeAzimuthById(
+                    undoableRotate.changedElementId,
+                    undoableRotate.newValue as number,
+                  );
+                },
+              } as UndoableChange;
+              addUndoable(undoableRotate);
+            } else {
+              updateSolarPanelRelativeAzimuthById(solarPanel.id, oldAzimuthRef.current);
+            }
           }
         }
       } else {

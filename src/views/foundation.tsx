@@ -911,7 +911,7 @@ const Foundation = ({
           addUndoable(undoableResize);
         }
       } else if (rotateHandleTypeRef.current) {
-        // currently, only solar panels can be rotated
+        // currently, solar panels are the only type of child that can be rotated
         if (grabRef.current.type === ObjectType.SolarPanel) {
           const solarPanel = grabRef.current as SolarPanelModel;
           if (Math.abs(newAzimuthRef.current - oldAzimuthRef.current) > ZERO_TOLERANCE) {
@@ -1279,6 +1279,10 @@ const Foundation = ({
   const isSolarPanelNewAzimuthOk = (sp: SolarPanelModel, az: number) => {
     const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
     clone.relativeAzimuth = az;
+    if (overlapWithSibling(clone)) {
+      showError(i18n.t('shared.RotationCancelledBecauseOfOverlap', lang));
+      return false;
+    }
     if (!Util.isSolarPanelWithinHorizontalSurface(clone, foundationModel)) {
       showError(i18n.t('shared.RotationOutsideBoundaryCancelled', lang));
       return false;
