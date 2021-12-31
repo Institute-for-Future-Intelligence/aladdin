@@ -3,7 +3,7 @@
  */
 
 import { Undoable } from './Undoable';
-import { Vector2 } from 'three';
+import { Vector2, Vector3 } from 'three';
 import { Point2 } from '../models/Point2';
 
 export interface UndoableSizeGroupChange extends Undoable {
@@ -12,8 +12,10 @@ export interface UndoableSizeGroupChange extends Undoable {
   // but there is only one new value, so no need to use a map.
   newSize: number;
 
-  oldChildrenPositionsMap?: Map<string, Vector2>;
-  newChildrenPositionsMap?: Map<string, Vector2>;
+  oldChildrenPositionsMap?: Map<string, Vector3>;
+  newChildrenPositionsMap?: Map<string, Vector3>;
   oldChildrenVerticesMap?: Map<string, Point2[]>;
   newChildrenVerticesMap?: Map<string, Point2[]>;
+  oldChildrenParentIdMap?: Map<string, string>;
+  newChildrenParentIdMap?: Map<string, string>;
 }

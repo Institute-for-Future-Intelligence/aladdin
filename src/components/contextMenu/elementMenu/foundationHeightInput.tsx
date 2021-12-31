@@ -13,9 +13,10 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { GROUND_ID, ORIGIN_VECTOR2, ZERO_TOLERANCE } from 'src/constants';
-import { Object3D, Vector2 } from 'three';
+import { Object3D, Vector2, Vector3 } from 'three';
 import { ElementModel } from 'src/models/ElementModel';
 import { useStoreRef } from 'src/stores/commonRef';
+import { invalidate } from '@react-three/fiber';
 
 const FoundationHeightInput = ({
   heightDialogVisible,
@@ -35,6 +36,7 @@ const FoundationHeightInput = ({
   const foundationActionScope = useStore(Selector.foundationActionScope);
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
   const setCommonStore = useStore(Selector.set);
+  const setElementPosition = useStore(Selector.setElementPosition);
 
   const foundation = getSelectedElement() as FoundationModel;
   const [inputLz, setInputLz] = useState<number>(foundation?.lz ?? 0);
@@ -42,6 +44,11 @@ const FoundationHeightInput = ({
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+
+  const oldChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
+  const newChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
+  const oldChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
+  const newChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
 
   const lang = { lng: language };
 
@@ -106,6 +113,8 @@ const FoundationHeightInput = ({
       curr.cx = absPos.x;
       curr.cy = absPos.y;
       curr.cz = 0;
+      newChildrenPositionsMapRef.current.set(curr.id, new Vector3(absPos.x, absPos.y, 0));
+      newChildrenParentIdMapRef.current.set(curr.id, GROUND_ID);
     }
   };
 
@@ -113,10 +122,13 @@ const FoundationHeightInput = ({
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.parentId === parent.id) {
+          oldChildrenParentIdMapRef.current.set(e.id, parent.id);
+          oldChildrenPositionsMapRef.current.set(e.id, new Vector3(e.cx, e.cy, e.cz));
           if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
             // top face
             if (Math.abs(e.cz - parent.lz / 2) < ZERO_TOLERANCE) {
               e.cz = value / 2;
+              newChildrenPositionsMapRef.current.set(e.id, new Vector3(e.cx, e.cy, value / 2));
             }
             // side faces
             else {
@@ -128,9 +140,42 @@ const FoundationHeightInput = ({
                 handleDetachParent(parentObject, parent, e);
               } else {
                 e.cz = newRelZ;
+                newChildrenPositionsMapRef.current.set(e.id, new Vector3(e.cx, e.cy, newRelZ));
               }
             }
           }
+        }
+      }
+    });
+  };
+
+  const attachToObjectDom = (
+    attachParentId: string | null | undefined,
+    currParentId: string | null | undefined,
+    currId: string,
+  ) => {
+    if (!attachParentId || !currParentId) return;
+    const contentRef = useStoreRef.getState().contentRef;
+    const currParentObj = getObjectChildById(contentRef?.current, currParentId);
+    const currObj = getObjectChildById(currParentId === GROUND_ID ? contentRef?.current : currParentObj, currId);
+    if (currObj && contentRef?.current) {
+      if (attachParentId === GROUND_ID) {
+        contentRef.current.add(currObj);
+      } else {
+        const attachParentObj = getObjectChildById(contentRef.current, attachParentId);
+        attachParentObj?.add(currObj);
+      }
+      invalidate();
+    }
+  };
+
+  const setParentIdById = (parentId: string | null | undefined, elementId: string) => {
+    if (!parentId) return;
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === elementId) {
+          e.parentId = parentId;
+          break;
         }
       }
     });
@@ -157,15 +202,41 @@ const FoundationHeightInput = ({
           timestamp: Date.now(),
           oldValues: oldLzsAll,
           newValue: value,
+          oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+          newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+          oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
+          newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
           undo: () => {
             for (const [id, lz] of undoableChangeAll.oldValues.entries()) {
               updateLzAndCz(id, lz as number);
+            }
+            if (undoableChangeAll.oldChildrenPositionsMap && undoableChangeAll.oldChildrenPositionsMap.size > 0) {
+              for (const [id, ps] of undoableChangeAll.oldChildrenPositionsMap.entries()) {
+                setElementPosition(id, ps.x, ps.y, ps.z);
+                const oldParentId = undoableChangeAll.oldChildrenParentIdMap?.get(id);
+                const newParentId = undoableChangeAll.newChildrenParentIdMap?.get(id);
+                if (oldParentId && newParentId && oldParentId !== newParentId) {
+                  attachToObjectDom(oldParentId, newParentId, id);
+                  setParentIdById(oldParentId, id);
+                }
+              }
             }
           },
           redo: () => {
             const newCz = undoableChangeAll.newValue as number;
             updateElementLzForAll(ObjectType.Foundation, newCz);
             updateElementCzForAll(ObjectType.Foundation, newCz / 2);
+            if (undoableChangeAll.newChildrenPositionsMap && undoableChangeAll.newChildrenPositionsMap.size > 0) {
+              for (const [id, ps] of undoableChangeAll.newChildrenPositionsMap.entries()) {
+                setElementPosition(id, ps.x, ps.y, ps.z);
+                const oldParentId = undoableChangeAll.oldChildrenParentIdMap?.get(id);
+                const newParentId = undoableChangeAll.newChildrenParentIdMap?.get(id);
+                if (oldParentId && newParentId && oldParentId !== newParentId) {
+                  attachToObjectDom(newParentId, oldParentId, id);
+                  setParentIdById(newParentId, id);
+                }
+              }
+            }
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
@@ -175,22 +246,48 @@ const FoundationHeightInput = ({
       default:
         if (foundation) {
           const oldLz = foundation.lz;
+          updateCzOfChildren(foundation, value);
+          updateLzAndCz(foundation.id, value);
           const undoableChange = {
             name: 'Set Foundation Width',
             timestamp: Date.now(),
             oldValue: oldLz,
             newValue: value,
+            oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+            newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+            oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
+            newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
             changedElementId: foundation.id,
             undo: () => {
               updateLzAndCz(undoableChange.changedElementId, undoableChange.oldValue as number);
+              if (undoableChange.oldChildrenPositionsMap && undoableChange.oldChildrenPositionsMap.size > 0) {
+                for (const [id, ps] of undoableChange.oldChildrenPositionsMap.entries()) {
+                  setElementPosition(id, ps.x, ps.y, ps.z);
+                  const oldParentId = undoableChange.oldChildrenParentIdMap?.get(id);
+                  const newParentId = undoableChange.newChildrenParentIdMap?.get(id);
+                  if (oldParentId && newParentId && oldParentId !== newParentId) {
+                    attachToObjectDom(oldParentId, newParentId, id);
+                    setParentIdById(oldParentId, id);
+                  }
+                }
+              }
             },
             redo: () => {
               updateLzAndCz(undoableChange.changedElementId, undoableChange.newValue as number);
+              if (undoableChange.newChildrenPositionsMap && undoableChange.newChildrenPositionsMap.size > 0) {
+                for (const [id, ps] of undoableChange.newChildrenPositionsMap.entries()) {
+                  setElementPosition(id, ps.x, ps.y, ps.z);
+                  const oldParentId = undoableChange.oldChildrenParentIdMap?.get(id);
+                  const newParentId = undoableChange.newChildrenParentIdMap?.get(id);
+                  if (oldParentId && newParentId && oldParentId !== newParentId) {
+                    attachToObjectDom(newParentId, oldParentId, id);
+                    setParentIdById(newParentId, id);
+                  }
+                }
+              }
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateCzOfChildren(foundation, value);
-          updateLzAndCz(foundation.id, value);
         }
     }
     setUpdateFlag(!updateFlag);

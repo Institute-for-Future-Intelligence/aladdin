@@ -14,11 +14,12 @@ import { GROUND_ID, ORIGIN_VECTOR2, UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } fr
 import { Util } from 'src/Util';
 import { UndoableSizeGroupChange } from 'src/undo/UndoableSizeGroupChange';
 import { UndoableSizeChange } from 'src/undo/UndoableSizeChange';
-import { Object3D, Vector2 } from 'three';
+import { Object3D, Vector2, Vector3 } from 'three';
 import { PolygonModel } from 'src/models/PolygonModel';
 import { Point2 } from 'src/models/Point2';
 import { useStoreRef } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
+import { invalidate } from '@react-three/fiber';
 
 const CuboidLengthInput = ({
   lengthDialogVisible,
@@ -47,8 +48,10 @@ const CuboidLengthInput = ({
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
 
-  const oldChildrenPositionsMapRef = useRef<Map<string, Vector2>>(new Map<string, Vector2>());
-  const newChildrenPositionsMapRef = useRef<Map<string, Vector2>>(new Map<string, Vector2>());
+  const oldChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
+  const newChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
+  const oldChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
+  const newChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
   const denormalizedPositionMapRef = useRef<Map<string, Vector2>>(new Map()); // not absolute position, just denormalized
   const oldChildrenVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>()); // Point2 is used to store vertices
   const newChildrenVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>());
@@ -151,6 +154,8 @@ const CuboidLengthInput = ({
             e.cx = absPos.x;
             e.cy = absPos.y;
             e.cz = 0;
+            newChildrenPositionsMapRef.current.set(e.id, new Vector3(absPos.x, absPos.y, 0));
+            newChildrenParentIdMapRef.current.set(e.id, GROUND_ID);
             break;
           }
         }
@@ -173,7 +178,7 @@ const CuboidLengthInput = ({
             case ObjectType.Sensor:
               const p = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(ORIGIN_VECTOR2, azimuth);
               denormalizedPositionMapRef.current.set(c.id, p);
-              oldChildrenPositionsMapRef.current.set(c.id, new Vector2(c.cx, c.cy));
+              oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy));
               break;
             case ObjectType.Polygon:
               const polygon = c as PolygonModel;
@@ -188,6 +193,9 @@ const CuboidLengthInput = ({
               );
               break;
           }
+        }
+        if (c.type === ObjectType.Human || c.type === ObjectType.Tree) {
+          oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
         }
       }
     }
@@ -206,7 +214,7 @@ const CuboidLengthInput = ({
                 const relativePos = new Vector2(p.x, p.y).rotateAround(ORIGIN_VECTOR2, -azimuth);
                 const newCy = relativePos.y / value;
                 updateElementCyById(c.id, newCy);
-                newChildrenPositionsMapRef.current.set(c.id, new Vector2(c.cx, newCy));
+                newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, newCy));
               }
               break;
             case ObjectType.Polygon:
@@ -229,8 +237,13 @@ const CuboidLengthInput = ({
           }
         }
         if (c.type === ObjectType.Human || c.type === ObjectType.Tree) {
-          // top face
-          if (Math.abs(c.cz - parent.lz / 2) < ZERO_TOLERANCE) {
+          newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+          oldChildrenParentIdMapRef.current.set(c.id, parent.id);
+          // top, north, south face
+          if (
+            Math.abs(c.cz - parent.lz / 2) < ZERO_TOLERANCE ||
+            Math.abs(Math.abs(c.cx) - parent.lx / 2) < ZERO_TOLERANCE
+          ) {
             // check fall off
             if (Math.abs(c.cy) - value / 2 > 0) {
               const contentRef = useStoreRef.getState().contentRef;
@@ -240,12 +253,45 @@ const CuboidLengthInput = ({
           }
           // north and south face
           else if (Math.abs(Math.abs(c.cy) - parent.ly / 2) < ZERO_TOLERANCE) {
-            updateElementCyById(c.id, (c.cy > 0 ? value : -value) / 2);
+            const newCy = (c.cy > 0 ? value : -value) / 2;
+            updateElementCyById(c.id, newCy);
+            newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cz, newCy, c.cz));
           }
-          // no need to worry about west and east face
         }
       }
     }
+  };
+
+  const attachToObjectDom = (
+    attachParentId: string | null | undefined,
+    currParentId: string | null | undefined,
+    currId: string,
+  ) => {
+    if (!attachParentId || !currParentId) return;
+    const contentRef = useStoreRef.getState().contentRef;
+    const currParentObj = getObjectChildById(contentRef?.current, currParentId);
+    const currObj = getObjectChildById(currParentId === GROUND_ID ? contentRef?.current : currParentObj, currId);
+    if (currObj && contentRef?.current) {
+      if (attachParentId === GROUND_ID) {
+        contentRef.current.add(currObj);
+      } else {
+        const attachParentObj = getObjectChildById(contentRef.current, attachParentId);
+        attachParentObj?.add(currObj);
+      }
+      invalidate();
+    }
+  };
+
+  const setParentIdById = (parentId: string | null | undefined, elementId: string) => {
+    if (!parentId) return;
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === elementId) {
+          e.parentId = parentId;
+          break;
+        }
+      }
+    });
   };
 
   const setLy = (value: number) => {
@@ -285,13 +331,21 @@ const CuboidLengthInput = ({
             newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
             oldChildrenVerticesMap: new Map(oldChildrenVerticesMapRef.current),
             newChildrenVerticesMap: new Map(newChildrenVerticesMapRef.current),
+            oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
+            newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
             undo: () => {
               for (const [id, ly] of undoableChangeAll.oldSizes.entries()) {
                 updateElementLyById(id, ly as number);
               }
               if (undoableChangeAll.oldChildrenPositionsMap && undoableChangeAll.oldChildrenPositionsMap.size > 0) {
                 for (const [id, ps] of undoableChangeAll.oldChildrenPositionsMap.entries()) {
-                  setElementPosition(id, ps.x, ps.y);
+                  setElementPosition(id, ps.x, ps.y, ps.z);
+                  const oldParentId = undoableChangeAll.oldChildrenParentIdMap?.get(id);
+                  const newParentId = undoableChangeAll.newChildrenParentIdMap?.get(id);
+                  if (oldParentId && newParentId && oldParentId !== newParentId) {
+                    attachToObjectDom(oldParentId, newParentId, id);
+                    setParentIdById(oldParentId, id);
+                  }
                 }
               }
               if (undoableChangeAll.oldChildrenVerticesMap && undoableChangeAll.oldChildrenVerticesMap.size > 0) {
@@ -303,8 +357,14 @@ const CuboidLengthInput = ({
             redo: () => {
               updateElementLyForAll(ObjectType.Cuboid, undoableChangeAll.newSize as number);
               if (undoableChangeAll.newChildrenPositionsMap && undoableChangeAll.newChildrenPositionsMap.size > 0) {
-                for (const [id, p] of undoableChangeAll.newChildrenPositionsMap.entries()) {
-                  setElementPosition(id, p.x, p.y);
+                for (const [id, ps] of undoableChangeAll.newChildrenPositionsMap.entries()) {
+                  setElementPosition(id, ps.x, ps.y, ps.z);
+                  const oldParentId = undoableChangeAll.oldChildrenParentIdMap?.get(id);
+                  const newParentId = undoableChangeAll.newChildrenParentIdMap?.get(id);
+                  if (oldParentId && newParentId && oldParentId !== newParentId) {
+                    attachToObjectDom(newParentId, oldParentId, id);
+                    setParentIdById(newParentId, id);
+                  }
                 }
               }
               if (undoableChangeAll.newChildrenVerticesMap && undoableChangeAll.newChildrenVerticesMap.size > 0) {
@@ -328,11 +388,19 @@ const CuboidLengthInput = ({
             newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
             oldChildrenVerticesMap: new Map(oldChildrenVerticesMapRef.current),
             newChildrenVerticesMap: new Map(newChildrenVerticesMapRef.current),
+            oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
+            newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
             undo: () => {
               updateElementLyById(cuboid.id, undoableChange.oldSize as number);
               if (undoableChange.oldChildrenPositionsMap && undoableChange.oldChildrenPositionsMap.size > 0) {
                 for (const [id, ps] of undoableChange.oldChildrenPositionsMap.entries()) {
-                  setElementPosition(id, ps.x, ps.y);
+                  setElementPosition(id, ps.x, ps.y, ps.z);
+                  const oldParentId = undoableChange.oldChildrenParentIdMap?.get(id);
+                  const newParentId = undoableChange.newChildrenParentIdMap?.get(id);
+                  if (oldParentId && newParentId && oldParentId !== newParentId) {
+                    attachToObjectDom(oldParentId, newParentId, id);
+                    setParentIdById(oldParentId, id);
+                  }
                 }
               }
               if (undoableChange.oldChildrenVerticesMap && undoableChange.oldChildrenVerticesMap.size > 0) {
@@ -345,7 +413,13 @@ const CuboidLengthInput = ({
               updateElementLyById(cuboid.id, undoableChange.newSize as number);
               if (undoableChange.newChildrenPositionsMap && undoableChange.newChildrenPositionsMap.size > 0) {
                 for (const [id, ps] of undoableChange.newChildrenPositionsMap.entries()) {
-                  setElementPosition(id, ps.x, ps.y);
+                  setElementPosition(id, ps.x, ps.y, ps.z);
+                  const oldParentId = undoableChange.oldChildrenParentIdMap?.get(id);
+                  const newParentId = undoableChange.newChildrenParentIdMap?.get(id);
+                  if (oldParentId && newParentId && oldParentId !== newParentId) {
+                    attachToObjectDom(newParentId, oldParentId, id);
+                    setParentIdById(newParentId, id);
+                  }
                 }
               }
               if (undoableChange.newChildrenVerticesMap && undoableChange.newChildrenVerticesMap.size > 0) {

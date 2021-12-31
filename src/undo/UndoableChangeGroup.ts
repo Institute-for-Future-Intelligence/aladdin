@@ -4,6 +4,7 @@
 
 import { Undoable } from './Undoable';
 import { CuboidTexture } from '../types';
+import { Vector3 } from 'three';
 
 export interface UndoableChangeGroup extends Undoable {
   // old values might be different, so we store their IDs and values in a map
@@ -12,4 +13,8 @@ export interface UndoableChangeGroup extends Undoable {
   newValue: string | number | string[] | CuboidTexture[];
   groupId: string;
   normal?: number[]; // if normal is not needed, set it to undefined
+  oldChildrenParentIdMap?: Map<string, string>;
+  newChildrenParentIdMap?: Map<string, string>;
+  oldChildrenPositionsMap?: Map<string, Vector3>;
+  newChildrenPositionsMap?: Map<string, Vector3>;
 }
