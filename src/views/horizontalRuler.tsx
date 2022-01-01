@@ -5,7 +5,7 @@
 import React, { useMemo } from 'react';
 import { Line } from '@react-three/drei';
 import { ElementModel } from '../models/ElementModel';
-import { ObjectType, ResizeHandleType } from '../types';
+import { MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import i18n from '../i18n/i18n';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -13,10 +13,10 @@ import * as Selector from '../stores/selector';
 export interface HorizontalRulerProps {
   element: ElementModel;
   resizeHandleType: ResizeHandleType | null;
-  hoveredResizeHandleType?: ResizeHandleType | null;
+  hoveredHandleType: MoveHandleType | ResizeHandleType | RotateHandleType | null;
 }
 
-export const HorizontalRuler = ({ element, resizeHandleType, hoveredResizeHandleType }: HorizontalRulerProps) => {
+export const HorizontalRuler = ({ element, resizeHandleType, hoveredHandleType }: HorizontalRulerProps) => {
   const language = useStore(Selector.language);
 
   const hx = element.lx / 2;
@@ -305,8 +305,8 @@ export const HorizontalRuler = ({ element, resizeHandleType, hoveredResizeHandle
     }
   }
 
-  if (hoveredResizeHandleType) {
-    switch (hoveredResizeHandleType) {
+  if (hoveredHandleType) {
+    switch (hoveredHandleType) {
       case ResizeHandleType.LowerLeft:
         return (
           <>

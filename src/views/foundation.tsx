@@ -1455,7 +1455,7 @@ const Foundation = ({
         <HorizontalRuler
           element={foundationModel}
           resizeHandleType={resizeHandleTypeRef.current}
-          hoveredResizeHandleType={hoveredResizeHandle}
+          hoveredHandleType={hoveredResizeHandle}
         />
       )}
 

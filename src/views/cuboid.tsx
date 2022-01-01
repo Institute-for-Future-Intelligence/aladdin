@@ -1100,7 +1100,9 @@ const Cuboid = ({
       )}
 
       {/* ruler */}
-      {selected && <HorizontalRuler element={cuboidModel} resizeHandleType={resizeHandleType} />}
+      {selected && (
+        <HorizontalRuler element={cuboidModel} resizeHandleType={resizeHandleType} hoveredHandleType={hoveredHandle} />
+      )}
 
       {/* wireFrame */}
       {!selected && <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />}
