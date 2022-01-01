@@ -102,14 +102,13 @@ const Foundation = ({
   const addUndoable = useStore(Selector.addUndoable);
   const isAddingElement = useStore(Selector.isAddingElement);
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
+  const hoveredHandle = useStore(Selector.hoveredHandle);
 
   const {
     camera,
     gl: { domElement },
   } = useThree();
   const [hovered, setHovered] = useState(false);
-  const [hoveredResizeHandle, setHoveredResizeHandle] = useState<ResizeHandleType | null>(null);
-  const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const [addedWallID, setAddedWallID] = useState<string | null>(null);
 
@@ -123,6 +122,7 @@ const Foundation = ({
   const wallMapOnFoundation = useRef<Map<string, WallModel>>(new Map());
 
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
+  const hoveredHandleRef = useRef(useStore.getState().hoveredHandle);
   const moveHandleTypeRef = useRef(useStore.getState().moveHandleType);
   const resizeHandleTypeRef = useRef(useStore.getState().resizeHandleType);
   const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
@@ -184,6 +184,7 @@ const Foundation = ({
   useEffect(() => {
     const unsubscribe = useStore.subscribe((state) => {
       objectTypeToAddRef.current = state.objectTypeToAdd;
+      hoveredHandleRef.current = state.hoveredHandle;
       moveHandleTypeRef.current = state.moveHandleType;
       resizeHandleTypeRef.current = state.resizeHandleType;
       resizeAnchorRef.current = state.resizeAnchor;
@@ -287,7 +288,9 @@ const Foundation = ({
       if (e.intersections.length > 0) {
         const intersected = e.intersections[0].object === e.eventObject;
         if (intersected) {
-          setHoveredHandle(handle);
+          setCommonStore((state) => {
+            state.hoveredHandle = handle;
+          });
           if (
             // unfortunately, I cannot find a way to tell the type of enum variable
             handle === MoveHandleType.Upper ||
@@ -301,14 +304,6 @@ const Foundation = ({
           } else {
             domElement.style.cursor = useStore.getState().addedFoundationId ? 'crosshair' : 'pointer';
           }
-          switch (handle) {
-            case ResizeHandleType.LowerLeft:
-            case ResizeHandleType.UpperLeft:
-            case ResizeHandleType.LowerRight:
-            case ResizeHandleType.UpperRight:
-              setHoveredResizeHandle(handle);
-              break;
-          }
         }
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -317,8 +312,9 @@ const Foundation = ({
   );
 
   const noHoverHandle = useCallback(() => {
-    setHoveredHandle(null);
-    setHoveredResizeHandle(null);
+    setCommonStore((state) => {
+      state.hoveredHandle = null;
+    });
     domElement.style.cursor = useStore.getState().addedFoundationId ? 'crosshair' : 'default';
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -1451,13 +1447,7 @@ const Foundation = ({
       )}
 
       {/* ruler */}
-      {selected && (
-        <HorizontalRuler
-          element={foundationModel}
-          resizeHandleType={resizeHandleTypeRef.current}
-          hoveredHandleType={hoveredResizeHandle}
-        />
-      )}
+      {selected && <HorizontalRuler element={foundationModel} />}
 
       {/* wireFrame */}
       {!selected && <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />}
@@ -1723,7 +1713,7 @@ const Foundation = ({
               position={[0, 0, hz + 0.2]}
             />
           )}
-          {!locked && hoveredResizeHandle === ResizeHandleType.LowerLeft && (
+          {!locked && hoveredHandle === ResizeHandleType.LowerLeft && (
             <textSprite
               name={'Label-LL'}
               text={'LL'}
@@ -1733,7 +1723,7 @@ const Foundation = ({
               position={[-hx, -hy, hz + 0.2]}
             />
           )}
-          {!locked && hoveredResizeHandle === ResizeHandleType.UpperLeft && (
+          {!locked && hoveredHandle === ResizeHandleType.UpperLeft && (
             <textSprite
               name={'Label-UL'}
               text={'UL'}
@@ -1743,7 +1733,7 @@ const Foundation = ({
               position={[-hx, hy, hz + 0.2]}
             />
           )}
-          {!locked && hoveredResizeHandle === ResizeHandleType.LowerRight && (
+          {!locked && hoveredHandle === ResizeHandleType.LowerRight && (
             <textSprite
               name={'Label-LR'}
               text={'LR'}
@@ -1753,7 +1743,7 @@ const Foundation = ({
               position={[hx, -hy, hz + 0.2]}
             />
           )}
-          {!locked && hoveredResizeHandle === ResizeHandleType.UpperRight && (
+          {!locked && hoveredHandle === ResizeHandleType.UpperRight && (
             <textSprite
               name={'Label-UR'}
               text={'UR'}

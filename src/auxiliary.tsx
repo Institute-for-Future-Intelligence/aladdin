@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { HALF_PI } from './constants';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
-import { ObjectType, ResizeHandleType } from './types';
+import { MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from './types';
 import { PolarGrid } from './views/polarGrid';
 import { VerticalRuler } from './views/verticalRuler';
 
@@ -15,6 +15,7 @@ export const Auxiliary = () => {
   const moveHandleType = useStore(Selector.moveHandleType);
   const rotateHandleType = useStore(Selector.rotateHandleType);
   const resizeHandleType = useStore(Selector.resizeHandleType);
+  const hoveredHandle = useStore(Selector.hoveredHandle);
   const groundImage = useStore(Selector.viewState.groundImage);
   const sceneRadius = useStore(Selector.sceneRadius);
   const addedCuboidId = useStore(Selector.addedCuboidId);
@@ -62,12 +63,24 @@ export const Auxiliary = () => {
     );
   };
 
+  const hoverRotationHandle = hoveredHandle === RotateHandleType.Lower || hoveredHandle === RotateHandleType.Upper;
+
+  const hoverMoveHandle =
+    hoveredHandle === MoveHandleType.Lower ||
+    hoveredHandle === MoveHandleType.Upper ||
+    hoveredHandle === MoveHandleType.Right ||
+    hoveredHandle === MoveHandleType.Left;
+
   return (
     <>
-      {(((showGrid || moveHandleType) && !groundImage && legalOnGround()) || addedCuboidId || addedFoundationId) && (
+      {(((showGrid || moveHandleType || hoverMoveHandle) && !groundImage && legalOnGround()) ||
+        addedCuboidId ||
+        addedFoundationId) && (
         <gridHelper rotation={[HALF_PI, 0, 0]} name={'Grid'} args={[gridSize, gridDivisions, 'gray', '#444444']} />
       )}
-      {rotateHandleType && element && !groundImage && legalOnGround() && <PolarGrid element={element} />}
+      {(rotateHandleType || hoverRotationHandle) && element && !groundImage && legalOnGround() && (
+        <PolarGrid element={element} />
+      )}
       {showVerticalRuler && element && <VerticalRuler element={element} />}
     </>
   );

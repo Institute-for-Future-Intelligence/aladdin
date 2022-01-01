@@ -16,6 +16,7 @@ import { HALF_PI } from '../constants';
 
 export const PolarGrid = ({ element, height }: { element: ElementModel; height?: number }) => {
   const rotateHandle = useStore(Selector.rotateHandleType);
+  const hoveredHandle = useStore(Selector.hoveredHandle);
   const angle = useStore(Selector.selectedElementAngle);
   const getElementById = useStore(Selector.getElementById);
 
@@ -23,7 +24,7 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
   const [radius, setRadius] = useState<number>(10);
 
   useEffect(() => {
-    if (rotateHandle) {
+    if (rotateHandle || hoveredHandle) {
       const { cx, cy, lx, ly, type, parentId } = element;
       switch (type) {
         case ObjectType.SolarPanel:
@@ -42,7 +43,7 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
       }
       setRadius(Math.max(5, Math.hypot(lx, ly) * 0.75));
     }
-  }, [rotateHandle]);
+  }, [rotateHandle, hoveredHandle]);
 
   const font = useLoader(FontLoader, helvetikerFont);
   const fontSize = radius * 0.05;

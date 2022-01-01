@@ -98,6 +98,7 @@ export interface CommonStoreState {
   animateSun: boolean;
   clickObjectType: ObjectType | null;
   contextMenuObjectType: ObjectType | null;
+  hoveredHandle: MoveHandleType | ResizeHandleType | RotateHandleType | null;
   moveHandleType: MoveHandleType | null;
   resizeHandleType: ResizeHandleType | null;
   rotateHandleType: RotateHandleType | null;
@@ -514,6 +515,7 @@ export const useStore = create<CommonStoreState>(
           animateSun: false,
           clickObjectType: null,
           contextMenuObjectType: null,
+          hoveredHandle: null,
           moveHandleType: null,
           resizeHandleType: null,
           rotateHandleType: null,

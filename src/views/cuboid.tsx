@@ -117,13 +117,13 @@ const Cuboid = ({
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const updatePolygonVertexPositionById = useStore(Selector.updatePolygonVertexPositionById);
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
+  const hoveredHandle = useStore(Selector.hoveredHandle);
 
   const {
     camera,
     gl: { domElement },
   } = useThree();
   const [hovered, setHovered] = useState(false);
-  const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const [normal, setNormal] = useState<Vector3>();
   const ray = useMemo(() => new Raycaster(), []);
@@ -162,6 +162,7 @@ const Cuboid = ({
   const intersectPlaneRef = useRef<Mesh>();
   const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
   const enableFineGridRef = useRef(useStore.getState().enableFineGrid);
+  const hoveredHandleRef = useRef(useStore.getState().hoveredHandle);
 
   const lang = { lng: language };
   const hx = lx / 2;
@@ -186,6 +187,7 @@ const Cuboid = ({
 
   useEffect(() => {
     const unsubscribe = useStore.subscribe((state) => {
+      hoveredHandleRef.current = state.hoveredHandle;
       resizeAnchorRef.current = state.resizeAnchor;
       enableFineGridRef.current = state.enableFineGrid;
     });
@@ -322,7 +324,9 @@ const Cuboid = ({
       if (e.intersections.length > 0) {
         const intersected = e.intersections[0].object === e.eventObject;
         if (intersected) {
-          setHoveredHandle(handle);
+          setCommonStore((state) => {
+            state.hoveredHandle = handle;
+          });
           if (
             // unfortunately, I cannot find a way to tell the type of an enum variable
             handle === MoveHandleType.Top ||
@@ -344,16 +348,14 @@ const Cuboid = ({
   );
 
   const noHoverHandle = useCallback(() => {
-    setHoveredHandle(null);
+    setCommonStore((state) => {
+      state.hoveredHandle = null;
+    });
     domElement.style.cursor = useStore.getState().addedCuboidId ? 'crosshair' : 'default';
   }, []);
 
   const legalOnCuboid = (type: ObjectType) => {
-    return (
-      // type === ObjectType.Human ||
-      // type === ObjectType.Tree ||
-      type === ObjectType.Polygon || type === ObjectType.Sensor || type === ObjectType.SolarPanel
-    );
+    return type === ObjectType.Polygon || type === ObjectType.Sensor || type === ObjectType.SolarPanel;
   };
 
   const setupGridParams = (face: Vector3) => {
@@ -1100,9 +1102,7 @@ const Cuboid = ({
       )}
 
       {/* ruler */}
-      {selected && (
-        <HorizontalRuler element={cuboidModel} resizeHandleType={resizeHandleType} hoveredHandleType={hoveredHandle} />
-      )}
+      {selected && <HorizontalRuler element={cuboidModel} />}
 
       {/* wireFrame */}
       {!selected && <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />}

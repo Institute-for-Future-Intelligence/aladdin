@@ -405,6 +405,8 @@ export const yearlyLightSensorFlag = (state: CommonStoreState) => state.yearlyLi
 export const setYearlyLightSensorData = (state: CommonStoreState) => state.setYearlyLightSensorData;
 
 // handles
+export const hoveredHandle = (state: CommonStoreState) => state.hoveredHandle;
+
 export const moveHandleType = (state: CommonStoreState) => state.moveHandleType;
 
 export const resizeHandleType = (state: CommonStoreState) => state.resizeHandleType;
