@@ -484,6 +484,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         visible={titleDialogVisible}
         onOk={() => {
           saveToCloud(title, false);
+          setCommonStore((state) => {
+            state.showCloudFileTitleDialog = false;
+          });
         }}
         confirmLoading={loading}
         onCancel={() => {

@@ -1,6 +1,6 @@
 {
-  "docid": "iBXC77knFDcsxuog5Jmr6z",
-  "timestamp": 1639932402144,
+  "docid": "fVU5SqGa8dyCUUi9whuRJh",
+  "timestamp": 1641051217489,
   "owner": "Charles Xie",
   "email": "charles@intofuture.org",
   "world": {
@@ -589,9 +589,9 @@
     "orthographic": false,
     "showWeatherPanel": false,
     "cameraPosition": [
-      -21.871452733323405,
-      3.8384487900999154,
-      19.87389310844033
+      23.58799117010189,
+      -27.12518619070502,
+      4.20652848893433
     ],
     "mapTilt": 0,
     "showMapPanel": false,
