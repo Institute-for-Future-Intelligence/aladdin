@@ -108,10 +108,7 @@ const Foundation = ({
     gl: { domElement },
   } = useThree();
   const [hovered, setHovered] = useState(false);
-  const [hoveredResizeHandleLL, setHoveredResizeHandleLL] = useState(false);
-  const [hoveredResizeHandleUL, setHoveredResizeHandleUL] = useState(false);
-  const [hoveredResizeHandleLR, setHoveredResizeHandleLR] = useState(false);
-  const [hoveredResizeHandleUR, setHoveredResizeHandleUR] = useState(false);
+  const [hoveredResizeHandle, setHoveredResizeHandle] = useState<ResizeHandleType | null>(null);
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const [addedWallID, setAddedWallID] = useState<string | null>(null);
@@ -306,16 +303,10 @@ const Foundation = ({
           }
           switch (handle) {
             case ResizeHandleType.LowerLeft:
-              setHoveredResizeHandleLL(true);
-              break;
             case ResizeHandleType.UpperLeft:
-              setHoveredResizeHandleUL(true);
-              break;
             case ResizeHandleType.LowerRight:
-              setHoveredResizeHandleLR(true);
-              break;
             case ResizeHandleType.UpperRight:
-              setHoveredResizeHandleUR(true);
+              setHoveredResizeHandle(handle);
               break;
           }
         }
@@ -327,10 +318,7 @@ const Foundation = ({
 
   const noHoverHandle = useCallback(() => {
     setHoveredHandle(null);
-    setHoveredResizeHandleLL(false);
-    setHoveredResizeHandleUL(false);
-    setHoveredResizeHandleLR(false);
-    setHoveredResizeHandleUR(false);
+    setHoveredResizeHandle(null);
     domElement.style.cursor = useStore.getState().addedFoundationId ? 'crosshair' : 'default';
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -1463,7 +1451,13 @@ const Foundation = ({
       )}
 
       {/* ruler */}
-      {selected && <HorizontalRuler element={foundationModel} resizeHandleType={resizeHandleTypeRef.current} />}
+      {selected && (
+        <HorizontalRuler
+          element={foundationModel}
+          resizeHandleType={resizeHandleTypeRef.current}
+          hoveredResizeHandleType={hoveredResizeHandle}
+        />
+      )}
 
       {/* wireFrame */}
       {!selected && <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />}
@@ -1729,7 +1723,7 @@ const Foundation = ({
               position={[0, 0, hz + 0.2]}
             />
           )}
-          {!locked && hoveredResizeHandleLL && (
+          {!locked && hoveredResizeHandle === ResizeHandleType.LowerLeft && (
             <textSprite
               name={'Label-LL'}
               text={'LL'}
@@ -1739,7 +1733,7 @@ const Foundation = ({
               position={[-hx, -hy, hz + 0.2]}
             />
           )}
-          {!locked && hoveredResizeHandleUL && (
+          {!locked && hoveredResizeHandle === ResizeHandleType.UpperLeft && (
             <textSprite
               name={'Label-UL'}
               text={'UL'}
@@ -1749,7 +1743,7 @@ const Foundation = ({
               position={[-hx, hy, hz + 0.2]}
             />
           )}
-          {!locked && hoveredResizeHandleLR && (
+          {!locked && hoveredResizeHandle === ResizeHandleType.LowerRight && (
             <textSprite
               name={'Label-LR'}
               text={'LR'}
@@ -1759,7 +1753,7 @@ const Foundation = ({
               position={[hx, -hy, hz + 0.2]}
             />
           )}
-          {!locked && hoveredResizeHandleUR && (
+          {!locked && hoveredResizeHandle === ResizeHandleType.UpperRight && (
             <textSprite
               name={'Label-UR'}
               text={'UR'}

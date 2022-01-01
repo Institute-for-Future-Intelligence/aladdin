@@ -13,9 +13,10 @@ import * as Selector from '../stores/selector';
 export interface HorizontalRulerProps {
   element: ElementModel;
   resizeHandleType: ResizeHandleType | null;
+  hoveredResizeHandleType?: ResizeHandleType | null;
 }
 
-export const HorizontalRuler = ({ element, resizeHandleType }: HorizontalRulerProps) => {
+export const HorizontalRuler = ({ element, resizeHandleType, hoveredResizeHandleType }: HorizontalRulerProps) => {
   const language = useStore(Selector.language);
 
   const hx = element.lx / 2;
@@ -271,38 +272,73 @@ export const HorizontalRuler = ({ element, resizeHandleType }: HorizontalRulerPr
     );
   }, [hx, hy, hz]);
 
-  switch (resizeHandleType) {
-    case ResizeHandleType.LowerLeft:
-      return (
-        <>
-          {ll2ul}
-          {ll2lr}
-        </>
-      );
-    case ResizeHandleType.LowerRight:
-      return (
-        <>
-          {lr2ur}
-          {ll2lr}
-        </>
-      );
-    case ResizeHandleType.UpperLeft:
-      return (
-        <>
-          {ll2ul}
-          {ul2ur}
-        </>
-      );
-    case ResizeHandleType.UpperRight:
-      return (
-        <>
-          {lr2ur}
-          {ul2ur}
-        </>
-      );
-    default:
-      return <></>;
+  if (resizeHandleType) {
+    switch (resizeHandleType) {
+      case ResizeHandleType.LowerLeft:
+        return (
+          <>
+            {ll2ul}
+            {ll2lr}
+          </>
+        );
+      case ResizeHandleType.LowerRight:
+        return (
+          <>
+            {lr2ur}
+            {ll2lr}
+          </>
+        );
+      case ResizeHandleType.UpperLeft:
+        return (
+          <>
+            {ll2ul}
+            {ul2ur}
+          </>
+        );
+      case ResizeHandleType.UpperRight:
+        return (
+          <>
+            {lr2ur}
+            {ul2ur}
+          </>
+        );
+    }
   }
+
+  if (hoveredResizeHandleType) {
+    switch (hoveredResizeHandleType) {
+      case ResizeHandleType.LowerLeft:
+        return (
+          <>
+            {ll2ul}
+            {ll2lr}
+          </>
+        );
+      case ResizeHandleType.LowerRight:
+        return (
+          <>
+            {lr2ur}
+            {ll2lr}
+          </>
+        );
+      case ResizeHandleType.UpperLeft:
+        return (
+          <>
+            {ll2ul}
+            {ul2ur}
+          </>
+        );
+      case ResizeHandleType.UpperRight:
+        return (
+          <>
+            {lr2ur}
+            {ul2ur}
+          </>
+        );
+    }
+  }
+
+  return <></>;
 };
 
 export default React.memo(HorizontalRuler);
