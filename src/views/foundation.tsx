@@ -153,7 +153,6 @@ const Foundation = ({
   const mouse = useMemo(() => new Vector2(), []);
   const ray = useMemo(() => new Raycaster(), []);
   const foundationModel = getElementById(id) as FoundationModel;
-  const handleLift = MOVE_HANDLE_RADIUS / 2;
   const hx = lx / 2;
   const hy = ly / 2;
   const hz = lz / 2;
@@ -1458,7 +1457,7 @@ const Foundation = ({
           {/* resize handles */}
           <Box
             ref={resizeHandleLLRef}
-            position={[positionLL.x, positionLL.y, 0]}
+            position={[positionLL.x, positionLL.y, lz * 0.1]}
             args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
             name={ResizeHandleType.LowerLeft}
             onPointerDown={(e) => {
@@ -1487,7 +1486,7 @@ const Foundation = ({
           </Box>
           <Box
             ref={resizeHandleULRef}
-            position={[positionUL.x, positionUL.y, 0]}
+            position={[positionUL.x, positionUL.y, lz * 0.1]}
             args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
             name={ResizeHandleType.UpperLeft}
             onPointerDown={(e) => {
@@ -1516,7 +1515,7 @@ const Foundation = ({
           </Box>
           <Box
             ref={resizeHandleLRRef}
-            position={[positionLR.x, positionLR.y, 0]}
+            position={[positionLR.x, positionLR.y, lz * 0.1]}
             args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
             name={ResizeHandleType.LowerRight}
             onPointerDown={(e) => {
@@ -1545,7 +1544,7 @@ const Foundation = ({
           </Box>
           <Box
             ref={resizeHandleURRef}
-            position={[positionUR.x, positionUR.y, 0]}
+            position={[positionUR.x, positionUR.y, lz * 0.1]}
             args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
             name={ResizeHandleType.UpperRight}
             onPointerDown={(e) => {
@@ -1579,7 +1578,7 @@ const Foundation = ({
               <Sphere
                 ref={moveHandleLowerRef}
                 args={[moveHandleSize, 6, 6]}
-                position={[0, -hy - MOVE_HANDLE_OFFSET, handleLift]}
+                position={[0, -hy - MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS]}
                 name={MoveHandleType.Lower}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Move);
@@ -1601,7 +1600,7 @@ const Foundation = ({
               <Sphere
                 ref={moveHandleUpperRef}
                 args={[moveHandleSize, 6, 6]}
-                position={[0, hy + MOVE_HANDLE_OFFSET, handleLift]}
+                position={[0, hy + MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS]}
                 name={MoveHandleType.Upper}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Move);
@@ -1623,7 +1622,7 @@ const Foundation = ({
               <Sphere
                 ref={moveHandleLeftRef}
                 args={[moveHandleSize, 6, 6]}
-                position={[-hx - MOVE_HANDLE_OFFSET, handleLift, 0]}
+                position={[-hx - MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS, 0]}
                 name={MoveHandleType.Left}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Move);
@@ -1645,7 +1644,7 @@ const Foundation = ({
               <Sphere
                 ref={moveHandleRightRef}
                 args={[moveHandleSize, 6, 6]}
-                position={[hx + MOVE_HANDLE_OFFSET, 0, handleLift]}
+                position={[hx + MOVE_HANDLE_OFFSET, 0, MOVE_HANDLE_RADIUS]}
                 name={MoveHandleType.Right}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Move);
