@@ -9,6 +9,7 @@ import * as Selector from './stores/selector';
 import { MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from './types';
 import { PolarGrid } from './views/polarGrid';
 import { VerticalRuler } from './views/verticalRuler';
+import { Util } from './Util';
 
 export const Auxiliary = () => {
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -37,10 +38,7 @@ export const Auxiliary = () => {
   useEffect(() => {
     if (resizeHandleType) {
       const changeHeight =
-        resizeHandleType === ResizeHandleType.LowerLeftTop ||
-        resizeHandleType === ResizeHandleType.LowerRightTop ||
-        resizeHandleType === ResizeHandleType.UpperLeftTop ||
-        resizeHandleType === ResizeHandleType.UpperRightTop ||
+        Util.isTopResizeHandle(resizeHandleType) ||
         (resizeHandleType === ResizeHandleType.UpperLeft && element?.type === ObjectType.Wall) ||
         (resizeHandleType === ResizeHandleType.UpperRight && element?.type === ObjectType.Wall);
       setShowGrid(!changeHeight);
@@ -81,7 +79,7 @@ export const Auxiliary = () => {
       {(rotateHandleType || hoverRotationHandle) && element && !groundImage && legalOnGround() && (
         <PolarGrid element={element} />
       )}
-      {showVerticalRuler && element && <VerticalRuler element={element} />}
+      {(showVerticalRuler || Util.isTopResizeHandle(hoveredHandle)) && element && <VerticalRuler element={element} />}
     </>
   );
 };

@@ -1096,12 +1096,7 @@ const Ground = () => {
           const p = intersects[0].point;
           switch (grabRef.current.type) {
             case ObjectType.Cuboid:
-              if (
-                resizeHandleType === ResizeHandleType.LowerLeftTop ||
-                resizeHandleType === ResizeHandleType.UpperLeftTop ||
-                resizeHandleType === ResizeHandleType.LowerRightTop ||
-                resizeHandleType === ResizeHandleType.UpperRightTop
-              ) {
+              if (Util.isTopResizeHandle(resizeHandleType)) {
                 setCommonStore((state) => {
                   for (const e of state.elements) {
                     if (e.id === grabRef.current?.id) {

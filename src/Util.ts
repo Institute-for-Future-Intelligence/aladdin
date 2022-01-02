@@ -17,7 +17,7 @@ import {
 import { Euler, Vector2, Vector3 } from 'three';
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
-import { ObjectType, Orientation } from './types';
+import { MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType } from './types';
 import { PvModel } from './models/PvModel';
 import { SensorModel } from './models/SensorModel';
 import { WallModel } from './models/WallModel';
@@ -313,6 +313,15 @@ export class Util {
     if (i > -1) {
       a.splice(i, 1);
     }
+  }
+
+  static isTopResizeHandle(handle: MoveHandleType | ResizeHandleType | RotateHandleType | null): boolean {
+    return (
+      handle === ResizeHandleType.LowerLeftTop ||
+      handle === ResizeHandleType.LowerRightTop ||
+      handle === ResizeHandleType.UpperLeftTop ||
+      handle === ResizeHandleType.UpperRightTop
+    );
   }
 
   static snapToNormalGrid(v: Vector3): Vector3 {

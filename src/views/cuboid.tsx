@@ -327,6 +327,7 @@ const Cuboid = ({
         if (intersected) {
           setCommonStore((state) => {
             state.hoveredHandle = handle;
+            state.selectedElementHeight = cuboidModel.lz;
           });
           if (
             // unfortunately, I cannot find a way to tell the type of an enum variable

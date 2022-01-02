@@ -11,16 +11,19 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ElementModel } from '../models/ElementModel';
 import { HALF_PI } from '../constants';
+import { ResizeHandleType } from '../types';
+import { Util } from '../Util';
 
 export const VerticalRuler = ({ element }: { element: ElementModel }) => {
   const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
   const getCameraDirection = useStore(Selector.getCameraDirection);
   const resizeHandleType = useStore(Selector.resizeHandleType);
+  const hoveredHandle = useStore(Selector.hoveredHandle);
   const selectedElementHeight = useStore(Selector.selectedElementHeight);
 
   const [height, setHeight] = useState<number>(Math.ceil(selectedElementHeight) + 1);
   const [shownHeight, setShownHeight] = useState<string>(selectedElementHeight.toFixed(1));
-  const [position, setPostion] = useState<Vector3>();
+  const [position, setPosition] = useState<Vector3>();
   const [rotation, setRotation] = useState<Euler>();
 
   const color = 'lightGray';
@@ -41,10 +44,20 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
       const handlePos = getResizeHandlePosition(element, resizeHandleType);
       const cameraDir = getCameraDirection();
       const rotation = -Math.atan2(cameraDir.x, cameraDir.y) + Math.PI;
-      setPostion(new Vector3(handlePos.x, handlePos.y, 0));
+      setPosition(new Vector3(handlePos.x, handlePos.y, 0));
       setRotation(new Euler(HALF_PI, 0, rotation, 'ZXY'));
     }
   }, [resizeHandleType]);
+
+  useEffect(() => {
+    if (Util.isTopResizeHandle(hoveredHandle)) {
+      const handlePos = getResizeHandlePosition(element, hoveredHandle as ResizeHandleType);
+      const cameraDir = getCameraDirection();
+      const rotation = -Math.atan2(cameraDir.x, cameraDir.y) + Math.PI;
+      setPosition(new Vector3(handlePos.x, handlePos.y, 0));
+      setRotation(new Euler(HALF_PI, 0, rotation, 'ZXY'));
+    }
+  }, [hoveredHandle]);
 
   useEffect(() => {
     setHeight(Math.ceil(selectedElementHeight) + 1);
