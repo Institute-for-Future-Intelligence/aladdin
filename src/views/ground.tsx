@@ -46,6 +46,7 @@ const Ground = () => {
   const setElementRotation = useStore(Selector.updateElementRotationById);
   const addElement = useStore(Selector.addElement);
   const getElementById = useStore(Selector.getElementById);
+  const updateElementLzById = useStore(Selector.updateElementLzById);
   const removeElementById = useStore(Selector.removeElementById);
   const getCameraDirection = useStore(Selector.getCameraDirection);
   const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
@@ -1090,6 +1091,14 @@ const Ground = () => {
         if (intersects && intersects.length > 0) {
           const p = intersects[0].point;
           switch (grabRef.current.type) {
+            case ObjectType.Tree:
+              if (resizeHandleType === ResizeHandleType.Top) {
+                updateElementLzById(grabRef.current.id, p.z);
+                setCommonStore((state) => {
+                  state.selectedElementHeight = Math.max(1, p.z);
+                });
+              }
+              break;
             case ObjectType.Cuboid:
               if (Util.isTopResizeHandle(resizeHandleType)) {
                 setCommonStore((state) => {

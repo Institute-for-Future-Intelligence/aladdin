@@ -38,6 +38,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
   const getChildren = useStore(Selector.getChildren);
   const getElementById = useStore(Selector.getElementById);
+  const updateElementLzById = useStore(Selector.updateElementLzById);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const sunlightDirection = useStore(Selector.sunlightDirection);
 
@@ -196,6 +197,14 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         if (intersects && intersects.length > 0) {
           const p = intersects[0].point;
           switch (grabRef.current.type) {
+            case ObjectType.Tree:
+              if (resizeHandleType === ResizeHandleType.Top) {
+                updateElementLzById(grabRef.current.id, p.z);
+                setCommonStore((state) => {
+                  state.selectedElementHeight = Math.max(1, p.z);
+                });
+              }
+              break;
             case ObjectType.Cuboid:
               if (Util.isTopResizeHandle(resizeHandleType)) {
                 setCommonStore((state) => {
@@ -208,7 +217,6 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                   }
                   state.selectedElementHeight = Math.max(1, p.z);
                 });
-
                 const cuboidRef = useStoreRef.getState().cuboidRef;
                 if (cuboidRef?.current) {
                   for (const obj of cuboidRef.current.children) {
