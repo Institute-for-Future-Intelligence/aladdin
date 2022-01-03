@@ -1102,6 +1102,7 @@ const Ground = () => {
                     state.selectedElementHeight = Math.max(1, p.z);
                   });
                   break;
+                // TODO: Need to move on a plane parallel to the direction from the handle to the tree center
                 case ResizeHandleType.Left:
                 case ResizeHandleType.Right:
                 case ResizeHandleType.Upper:

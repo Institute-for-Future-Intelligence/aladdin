@@ -325,7 +325,10 @@ const Cuboid = ({
         if (intersected) {
           setCommonStore((state) => {
             state.hoveredHandle = handle;
-            state.selectedElementHeight = cuboidModel.lz;
+            const cm = getElementById(id);
+            if (cm) {
+              state.selectedElementHeight = cm.lz;
+            }
           });
           if (Util.isMoveHandle(handle)) {
             domElement.style.cursor = 'move';

@@ -39,7 +39,6 @@ export const Auxiliary = () => {
     if (resizeHandleType) {
       const changeHeight =
         Util.isTopResizeHandle(resizeHandleType) ||
-        (resizeHandleType === ResizeHandleType.Top && element?.type === ObjectType.Tree) ||
         (resizeHandleType === ResizeHandleType.UpperLeft && element?.type === ObjectType.Wall) ||
         (resizeHandleType === ResizeHandleType.UpperRight && element?.type === ObjectType.Wall);
       setShowGrid(!changeHeight);

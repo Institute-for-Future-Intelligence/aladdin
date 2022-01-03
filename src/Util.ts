@@ -321,7 +321,8 @@ export class Util {
       handle === ResizeHandleType.LowerLeftTop ||
       handle === ResizeHandleType.LowerRightTop ||
       handle === ResizeHandleType.UpperLeftTop ||
-      handle === ResizeHandleType.UpperRightTop
+      handle === ResizeHandleType.UpperRightTop ||
+      handle === ResizeHandleType.Top
     );
   }
 
