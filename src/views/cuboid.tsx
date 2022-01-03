@@ -329,14 +329,7 @@ const Cuboid = ({
             state.hoveredHandle = handle;
             state.selectedElementHeight = cuboidModel.lz;
           });
-          if (
-            // unfortunately, I cannot find a way to tell the type of an enum variable
-            handle === MoveHandleType.Top ||
-            handle === MoveHandleType.Upper ||
-            handle === MoveHandleType.Lower ||
-            handle === MoveHandleType.Left ||
-            handle === MoveHandleType.Right
-          ) {
+          if (Util.isMoveHandle(handle)) {
             domElement.style.cursor = 'move';
           } else if (handle === RotateHandleType.Upper || handle === RotateHandleType.Lower) {
             domElement.style.cursor = 'grab';

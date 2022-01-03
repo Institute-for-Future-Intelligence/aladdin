@@ -63,15 +63,9 @@ export const Auxiliary = () => {
 
   const hoverRotationHandle = hoveredHandle === RotateHandleType.Lower || hoveredHandle === RotateHandleType.Upper;
 
-  const hoverMoveHandle =
-    hoveredHandle === MoveHandleType.Lower ||
-    hoveredHandle === MoveHandleType.Upper ||
-    hoveredHandle === MoveHandleType.Right ||
-    hoveredHandle === MoveHandleType.Left;
-
   return (
     <>
-      {(((showGrid || moveHandleType || hoverMoveHandle) && !groundImage && legalOnGround()) ||
+      {(((showGrid || moveHandleType || Util.isMoveHandle(hoveredHandle)) && !groundImage && legalOnGround()) ||
         addedCuboidId ||
         addedFoundationId) && (
         <gridHelper rotation={[HALF_PI, 0, 0]} name={'Grid'} args={[gridSize, gridDivisions, 'gray', '#444444']} />

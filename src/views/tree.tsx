@@ -18,7 +18,6 @@ import PineImage from '../resources/pine.png';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  BoxGeometry,
   DoubleSide,
   Euler,
   Group,
@@ -71,8 +70,6 @@ const Tree = ({
   const solidTreeRef = useRef<Mesh>(null);
   const shadowTreeRef = useRef<Mesh>(null);
   const trunkMeshRef = useRef<Mesh>(null);
-
-  const parent = useStore.getState().getElementById(parentId);
 
   const month = now.getMonth() + 1;
   const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
@@ -176,13 +173,6 @@ const Tree = ({
       }
     }
     return null;
-  };
-
-  const getObjectParameters = (obj: Mesh) => {
-    // for foundation and cuoid
-    const geometry = obj.geometry as BoxGeometry;
-    const { width, height, depth } = geometry.parameters;
-    return { plx: width, ply: height, plz: depth };
   };
 
   const worldPosition = useMemo(() => new Vector3(), []);

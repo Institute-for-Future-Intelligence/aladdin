@@ -290,13 +290,7 @@ const Foundation = ({
           setCommonStore((state) => {
             state.hoveredHandle = handle;
           });
-          if (
-            // unfortunately, I cannot find a way to tell the type of enum variable
-            handle === MoveHandleType.Upper ||
-            handle === MoveHandleType.Lower ||
-            handle === MoveHandleType.Left ||
-            handle === MoveHandleType.Right
-          ) {
+          if (Util.isMoveHandle(handle)) {
             domElement.style.cursor = 'move';
           } else if (handle === RotateHandleType.Lower || handle === RotateHandleType.Upper) {
             domElement.style.cursor = 'grab';

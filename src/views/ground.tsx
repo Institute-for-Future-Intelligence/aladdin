@@ -136,10 +136,7 @@ const Ground = () => {
       intersectionPlanePosition.set(grabRef.current.cx, grabRef.current.cy, grabRef.current.lz + MOVE_HANDLE_OFFSET);
       intersectionPlaneAngle.set(0, 0, 0);
     } else if (
-      moveHandleType === MoveHandleType.Left ||
-      moveHandleType === MoveHandleType.Right ||
-      moveHandleType === MoveHandleType.Lower ||
-      moveHandleType === MoveHandleType.Upper ||
+      Util.isMoveHandle(moveHandleType) ||
       resizeHandleType === ResizeHandleType.LowerLeft ||
       (resizeHandleType === ResizeHandleType.UpperLeft && grabRef.current.type !== ObjectType.Wall) ||
       resizeHandleType === ResizeHandleType.LowerRight ||

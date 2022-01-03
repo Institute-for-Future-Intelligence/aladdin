@@ -26,7 +26,7 @@ import XiaoliImage from '../resources/xiaoli.png';
 import XiaomingImage from '../resources/xiaoming.png';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { BoxGeometry, DoubleSide, Euler, Group, Mesh, Object3D, TextureLoader, Vector3 } from 'three';
+import { DoubleSide, Euler, Group, Mesh, Object3D, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { invalidate, useFrame, useThree } from '@react-three/fiber';
@@ -277,13 +277,6 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
       }
     }
     return null;
-  };
-
-  const getObjectParameters = (obj: Mesh) => {
-    // for foundation and cuboid
-    const geometry = obj.geometry as BoxGeometry;
-    const { width, height, depth } = geometry.parameters;
-    return { plx: width, ply: height, plz: depth };
   };
 
   const worldPosition = useMemo(() => new Vector3(), []);
