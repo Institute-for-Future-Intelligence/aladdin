@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/aladdin/static/css/main.b8305f81.chunk.css",
-    "main.js": "/aladdin/static/js/main.5e75ea2a.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.5e75ea2a.chunk.js.map",
+    "main.css": "/aladdin/static/css/main.c1ee157d.chunk.css",
+    "main.js": "/aladdin/static/js/main.ba6eb64b.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.ba6eb64b.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.fa22f665.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.fa22f665.js.map",
     "static/css/2.cc069be8.chunk.css": "/aladdin/static/css/2.cc069be8.chunk.css",
@@ -12,7 +12,7 @@
     "static/js/3.3368f4b9.chunk.js.map": "/aladdin/static/js/3.3368f4b9.chunk.js.map",
     "index.html": "/aladdin/index.html",
     "static/css/2.cc069be8.chunk.css.map": "/aladdin/static/css/2.cc069be8.chunk.css.map",
-    "static/css/main.b8305f81.chunk.css.map": "/aladdin/static/css/main.b8305f81.chunk.css.map",
+    "static/css/main.c1ee157d.chunk.css.map": "/aladdin/static/css/main.c1ee157d.chunk.css.map",
     "static/js/2.ffc043bf.chunk.js.LICENSE.txt": "/aladdin/static/js/2.ffc043bf.chunk.js.LICENSE.txt",
     "static/media/building_facade_01.15119408.png": "/aladdin/static/media/building_facade_01.15119408.png",
     "static/media/building_facade_02.a8bad934.png": "/aladdin/static/media/building_facade_02.a8bad934.png",
@@ -99,7 +99,7 @@
     "static/js/runtime-main.fa22f665.js",
     "static/css/2.cc069be8.chunk.css",
     "static/js/2.ffc043bf.chunk.js",
-    "static/css/main.b8305f81.chunk.css",
-    "static/js/main.5e75ea2a.chunk.js"
+    "static/css/main.c1ee157d.chunk.css",
+    "static/js/main.ba6eb64b.chunk.js"
   ]
 }
