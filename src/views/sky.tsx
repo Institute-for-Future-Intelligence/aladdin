@@ -25,6 +25,7 @@ import { DEFAULT_SKY_RADIUS, GROUND_ID, HALF_PI, ORIGIN_VECTOR2, TWO_PI, UNIT_VE
 import { Util } from 'src/Util';
 import { PolygonModel } from 'src/models/PolygonModel';
 import { Point2 } from 'src/models/Point2';
+import { TreeModel } from '../models/TreeModel';
 
 export interface SkyProps {
   theme?: string;
@@ -38,6 +39,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
   const getChildren = useStore(Selector.getChildren);
   const getElementById = useStore(Selector.getElementById);
+  const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLzById = useStore(Selector.updateElementLzById);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const sunlightDirection = useStore(Selector.sunlightDirection);
@@ -198,11 +200,20 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
           const p = intersects[0].point;
           switch (grabRef.current.type) {
             case ObjectType.Tree:
-              if (resizeHandleType === ResizeHandleType.Top) {
-                updateElementLzById(grabRef.current.id, p.z);
-                setCommonStore((state) => {
-                  state.selectedElementHeight = Math.max(1, p.z);
-                });
+              const tree = grabRef.current as TreeModel;
+              switch (resizeHandleType) {
+                case ResizeHandleType.Top:
+                  updateElementLzById(tree.id, p.z);
+                  setCommonStore((state) => {
+                    state.selectedElementHeight = Math.max(1, p.z);
+                  });
+                  break;
+                case ResizeHandleType.Left:
+                case ResizeHandleType.Right:
+                case ResizeHandleType.Upper:
+                case ResizeHandleType.Lower:
+                  updateElementLxById(tree.id, 2 * Math.hypot(p.x - tree.cx, p.y - tree.cy));
+                  break;
               }
               break;
             case ObjectType.Cuboid:

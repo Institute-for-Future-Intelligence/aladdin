@@ -30,6 +30,7 @@ import { WallModel } from 'src/models/WallModel';
 import { PolygonModel } from '../models/PolygonModel';
 import { WallAbsPos } from './wall/WallAbsPos';
 import { Point2 } from '../models/Point2';
+import { TreeModel } from '../models/TreeModel';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
@@ -46,6 +47,7 @@ const Ground = () => {
   const setElementRotation = useStore(Selector.updateElementRotationById);
   const addElement = useStore(Selector.addElement);
   const getElementById = useStore(Selector.getElementById);
+  const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLzById = useStore(Selector.updateElementLzById);
   const removeElementById = useStore(Selector.removeElementById);
   const getCameraDirection = useStore(Selector.getCameraDirection);
@@ -1092,11 +1094,20 @@ const Ground = () => {
           const p = intersects[0].point;
           switch (grabRef.current.type) {
             case ObjectType.Tree:
-              if (resizeHandleType === ResizeHandleType.Top) {
-                updateElementLzById(grabRef.current.id, p.z);
-                setCommonStore((state) => {
-                  state.selectedElementHeight = Math.max(1, p.z);
-                });
+              const tree = grabRef.current as TreeModel;
+              switch (resizeHandleType) {
+                case ResizeHandleType.Top:
+                  updateElementLzById(tree.id, p.z);
+                  setCommonStore((state) => {
+                    state.selectedElementHeight = Math.max(1, p.z);
+                  });
+                  break;
+                case ResizeHandleType.Left:
+                case ResizeHandleType.Right:
+                case ResizeHandleType.Upper:
+                case ResizeHandleType.Lower:
+                  updateElementLxById(tree.id, 2 * Math.hypot(p.x - tree.cx, p.y - tree.cy));
+                  break;
               }
               break;
             case ObjectType.Cuboid:

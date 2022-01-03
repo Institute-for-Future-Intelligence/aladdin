@@ -84,6 +84,10 @@ const Tree = ({
   const shadowTreeRef = useRef<Mesh>(null);
   const trunkMeshRef = useRef<Mesh>(null);
   const resizeHandleTopRef = useRef<Mesh>();
+  const resizeHandleLeftRef = useRef<Mesh>();
+  const resizeHandleRightRef = useRef<Mesh>();
+  const resizeHandleLowerRef = useRef<Mesh>();
+  const resizeHandleUpperRef = useRef<Mesh>();
 
   const treeModel = getElementById(id) as TreeModel;
   const month = now.getMonth() + 1;
@@ -165,6 +169,10 @@ const Tree = ({
   const hx = lx / 2;
   const hz = lz / 2;
   const positionTop = useMemo(() => new Vector3(0, 0, hz), [hz]);
+  const positionLeft = useMemo(() => new Vector3(-hx, 0, 0), [hx]);
+  const positionRight = useMemo(() => new Vector3(hx, 0, 0), [hx]);
+  const positionLower = useMemo(() => new Vector3(0, -hx, 0), [hx]);
+  const positionUpper = useMemo(() => new Vector3(0, hx, 0), [hx]);
 
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
@@ -258,7 +266,7 @@ const Tree = ({
     }
   });
 
-  const handleSize = MOVE_HANDLE_RADIUS * 4;
+  const handleSize = MOVE_HANDLE_RADIUS * 3;
 
   // IMPORTANT: model mesh must use double side in order to intercept sunlight
   return (
@@ -375,30 +383,124 @@ const Tree = ({
                 }
               />
             </Sphere>
-            {/* resize height handle */}
             {!orthographic && (
-              <Box
-                ref={resizeHandleTopRef}
-                name={ResizeHandleType.Top}
-                args={[handleSize, handleSize, handleSize]}
-                position={positionTop}
-                onPointerDown={(e) => {
-                  selectMe(id, e, ActionType.Resize);
-                }}
-                onPointerOver={(e) => {
-                  hoverHandle(e, ResizeHandleType.Top);
-                }}
-                onPointerOut={noHoverHandle}
-              >
-                <meshStandardMaterial
-                  attach="material"
-                  color={
-                    hoveredHandle === ResizeHandleType.Top || resizeHandleType === ResizeHandleType.Top
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : RESIZE_HANDLE_COLOR
-                  }
-                />
-              </Box>
+              <>
+                {/* handle for resizing height */}
+                <Box
+                  ref={resizeHandleTopRef}
+                  name={ResizeHandleType.Top}
+                  args={[handleSize, handleSize, handleSize]}
+                  position={positionTop}
+                  onPointerDown={(e) => {
+                    selectMe(id, e, ActionType.Resize);
+                  }}
+                  onPointerOver={(e) => {
+                    hoverHandle(e, ResizeHandleType.Top);
+                  }}
+                  onPointerOut={noHoverHandle}
+                >
+                  <meshStandardMaterial
+                    attach="material"
+                    color={
+                      hoveredHandle === ResizeHandleType.Top || resizeHandleType === ResizeHandleType.Top
+                        ? HIGHLIGHT_HANDLE_COLOR
+                        : RESIZE_HANDLE_COLOR
+                    }
+                  />
+                </Box>
+                {/* left handle for resizing crown spread */}
+                <Box
+                  ref={resizeHandleLeftRef}
+                  name={ResizeHandleType.Left}
+                  args={[handleSize, handleSize, handleSize]}
+                  position={positionLeft}
+                  onPointerDown={(e) => {
+                    selectMe(id, e, ActionType.Resize);
+                  }}
+                  onPointerOver={(e) => {
+                    hoverHandle(e, ResizeHandleType.Left);
+                  }}
+                  onPointerOut={noHoverHandle}
+                >
+                  <meshStandardMaterial
+                    attach="material"
+                    color={
+                      hoveredHandle === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Left
+                        ? HIGHLIGHT_HANDLE_COLOR
+                        : RESIZE_HANDLE_COLOR
+                    }
+                  />
+                </Box>
+                {/* right handle for resizing crown spread */}
+                <Box
+                  ref={resizeHandleRightRef}
+                  name={ResizeHandleType.Right}
+                  args={[handleSize, handleSize, handleSize]}
+                  position={positionRight}
+                  onPointerDown={(e) => {
+                    selectMe(id, e, ActionType.Resize);
+                  }}
+                  onPointerOver={(e) => {
+                    hoverHandle(e, ResizeHandleType.Right);
+                  }}
+                  onPointerOut={noHoverHandle}
+                >
+                  <meshStandardMaterial
+                    attach="material"
+                    color={
+                      hoveredHandle === ResizeHandleType.Right || resizeHandleType === ResizeHandleType.Right
+                        ? HIGHLIGHT_HANDLE_COLOR
+                        : RESIZE_HANDLE_COLOR
+                    }
+                  />
+                </Box>
+                {/* lower handle for resizing crown spread */}
+                <Box
+                  ref={resizeHandleLowerRef}
+                  name={ResizeHandleType.Lower}
+                  args={[handleSize, handleSize, handleSize]}
+                  position={positionLower}
+                  onPointerDown={(e) => {
+                    selectMe(id, e, ActionType.Resize);
+                  }}
+                  onPointerOver={(e) => {
+                    hoverHandle(e, ResizeHandleType.Lower);
+                  }}
+                  onPointerOut={noHoverHandle}
+                >
+                  <meshStandardMaterial
+                    attach="material"
+                    color={
+                      hoveredHandle === ResizeHandleType.Lower || resizeHandleType === ResizeHandleType.Lower
+                        ? HIGHLIGHT_HANDLE_COLOR
+                        : RESIZE_HANDLE_COLOR
+                    }
+                  />
+                </Box>
+                {/* upper handle for resizing crown spread */}
+                <Box
+                  ref={resizeHandleUpperRef}
+                  name={ResizeHandleType.Upper}
+                  args={[handleSize, handleSize, handleSize]}
+                  position={positionUpper}
+                  onPointerDown={(e) => {
+                    selectMe(id, e, ActionType.Resize);
+                  }}
+                  onPointerOver={(e) => {
+                    hoverHandle(e, ResizeHandleType.Upper);
+                  }}
+                  onPointerOut={noHoverHandle}
+                >
+                  <meshStandardMaterial
+                    attach="material"
+                    color={
+                      hoveredHandle === ResizeHandleType.Upper || resizeHandleType === ResizeHandleType.Upper
+                        ? HIGHLIGHT_HANDLE_COLOR
+                        : RESIZE_HANDLE_COLOR
+                    }
+                  />
+                </Box>
+              </>
             )}
           </>
         )}
