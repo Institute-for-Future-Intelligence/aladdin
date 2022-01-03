@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -30,13 +30,7 @@ export const CircleSymbol = (props: any) => {
   const interval = Math.round(points.length / numberOfSymbols);
   if (cx && cy && index > 0 && index % interval === 0) {
     return (
-      <svg
-        x={cx - 10 * scale}
-        y={cy - 10 * scale}
-        width={20 * scale}
-        height={20 * scale}
-        viewBox="-10 -10 20 20"
-      >
+      <svg x={cx - 10 * scale} y={cy - 10 * scale} width={20 * scale} height={20 * scale} viewBox="-10 -10 20 20">
         <circle
           cx="0"
           cy="0"
@@ -54,13 +48,7 @@ export const SquareSymbol = (props: any) => {
   const interval = Math.round(points.length / numberOfSymbols);
   if (cx && cy && index > 0 && index % interval === 0) {
     return (
-      <svg
-        x={cx - 10 * scale}
-        y={cy - 10 * scale}
-        width={20 * scale}
-        height={20 * scale}
-        viewBox="-10 -10 20 20"
-      >
+      <svg x={cx - 10 * scale} y={cy - 10 * scale} width={20 * scale} height={20 * scale} viewBox="-10 -10 20 20">
         <rect
           x="-3"
           y="-3"
@@ -94,13 +82,7 @@ export const TriangleSymbol = (props: any) => {
     }
     // strokeWidth needs to be halved as the view box is too small
     return (
-      <svg
-        x={cx - 10 * scale}
-        y={cy - 10 * scale}
-        width={20 * scale}
-        height={20 * scale}
-        viewBox="-10 -10 20 20"
-      >
+      <svg x={cx - 10 * scale} y={cy - 10 * scale} width={20 * scale} height={20 * scale} viewBox="-10 -10 20 20">
         <polygon
           points={pointsString}
           style={{ opacity: opacity, stroke: stroke, fill: 'white', strokeWidth: strokeWidth }}
@@ -117,13 +99,7 @@ export const DiamondSymbol = (props: any) => {
   if (cx && cy && index > 0 && index % interval === 0) {
     // strokeWidth needs to be halved as the view box is too small
     return (
-      <svg
-        x={cx - 10 * scale}
-        y={cy - 10 * scale}
-        width={20 * scale}
-        height={20 * scale}
-        viewBox="-10 -10 20 20"
-      >
+      <svg x={cx - 10 * scale} y={cy - 10 * scale} width={20 * scale} height={20 * scale} viewBox="-10 -10 20 20">
         <polygon
           points="-3,0,0,5,3,0,0,-5"
           style={{ opacity: opacity, stroke: stroke, fill: 'white', strokeWidth: strokeWidth }}
@@ -178,41 +154,15 @@ export const createSymbol = (type: string, size: number, count: number, opacity:
     case 'square':
       return <SquareSymbol scale={size} numberOfSymbols={count} opacity={opacity} />;
     case 'triangle up':
-      return (
-        <TriangleSymbol
-          scale={1.1 * size}
-          numberOfSymbols={count}
-          direction={Direction.UP}
-          opacity={opacity}
-        />
-      );
+      return <TriangleSymbol scale={1.1 * size} numberOfSymbols={count} direction={Direction.UP} opacity={opacity} />;
     case 'triangle down':
-      return (
-        <TriangleSymbol
-          scale={1.1 * size}
-          numberOfSymbols={count}
-          direction={Direction.DOWN}
-          opacity={opacity}
-        />
-      );
+      return <TriangleSymbol scale={1.1 * size} numberOfSymbols={count} direction={Direction.DOWN} opacity={opacity} />;
     case 'triangle right':
       return (
-        <TriangleSymbol
-          scale={1.1 * size}
-          numberOfSymbols={count}
-          direction={Direction.RIGHT}
-          opacity={opacity}
-        />
+        <TriangleSymbol scale={1.1 * size} numberOfSymbols={count} direction={Direction.RIGHT} opacity={opacity} />
       );
     case 'triangle left':
-      return (
-        <TriangleSymbol
-          scale={1.1 * size}
-          numberOfSymbols={count}
-          direction={Direction.LEFT}
-          opacity={opacity}
-        />
-      );
+      return <TriangleSymbol scale={1.1 * size} numberOfSymbols={count} direction={Direction.LEFT} opacity={opacity} />;
     case 'star':
       return <StarSymbol scale={1.25 * size} numberOfSymbols={count} opacity={opacity} />;
     case 'diamond':

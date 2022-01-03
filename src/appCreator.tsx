@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  *
  * @author Charles Xie, Xiaotong Ding
  */
@@ -139,10 +139,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         orbitControlsRef.current.object.position.set(x, y, z);
         orbitControlsRef.current.update();
         setCommonStore((state) => {
-          const v = state.viewState;
-          // FIXME: why can't set function be used with a proxy?
-          // Using set or copy will result in crash in run time.
-          v.cameraPosition = [x, y, z];
+          state.viewState.cameraPosition = [x, y, z];
         });
       }
     }
@@ -158,8 +155,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       orbitControlsRef.current.target.set(0, 0, 0);
       orbitControlsRef.current.update();
       setCommonStore((state) => {
-        // FIXME: why can't set function be used with a proxy?
-        // Using set or copy will result in crash in run time.
         const v = state.viewState;
         v.cameraPosition = [z, z, z];
         v.panCenter = [0, 0, 0];

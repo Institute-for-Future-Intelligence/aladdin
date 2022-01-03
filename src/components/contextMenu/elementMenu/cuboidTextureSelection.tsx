@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
 import CuboidTexture01Icon from '../../../resources/building_facade_01_menu.png';

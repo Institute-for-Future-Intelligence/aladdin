@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
 import { CuboidTexture, HumanName, ObjectType, Orientation, TrackerType, TreeType, WallTexture } from '../types';

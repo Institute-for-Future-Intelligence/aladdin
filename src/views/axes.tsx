@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -14,21 +14,9 @@ export interface AxesProps {
 const Axes = ({ lineWidth = 1, endPoint = 1000 }: AxesProps) => {
   return (
     <mesh name={'Axes'}>
-      <Line
-        points={[new Vector3(-endPoint, 0, 0), new Vector3(endPoint, 0, 0)]}
-        color={'red'}
-        lineWidth={lineWidth}
-      />
-      <Line
-        points={[new Vector3(0, -endPoint, 0), new Vector3(0, endPoint, 0)]}
-        color={'blue'}
-        lineWidth={lineWidth}
-      />
-      <Line
-        points={[new Vector3(0, 0, 0), new Vector3(0, 0, endPoint)]}
-        color={'green'}
-        lineWidth={lineWidth}
-      />
+      <Line points={[new Vector3(-endPoint, 0, 0), new Vector3(endPoint, 0, 0)]} color={'red'} lineWidth={lineWidth} />
+      <Line points={[new Vector3(0, -endPoint, 0), new Vector3(0, endPoint, 0)]} color={'blue'} lineWidth={lineWidth} />
+      <Line points={[new Vector3(0, 0, 0), new Vector3(0, 0, endPoint)]} color={'green'} lineWidth={lineWidth} />
     </mesh>
   );
 };

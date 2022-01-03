@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
 import FoundationTexture00 from '../resources/foundation_00.png';
@@ -284,6 +284,7 @@ const Foundation = ({
 
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
+      if (useStore.getState().duringCameraInteraction) return;
       if (e.intersections.length > 0) {
         const intersected = e.intersections[0].object === e.eventObject;
         if (intersected) {

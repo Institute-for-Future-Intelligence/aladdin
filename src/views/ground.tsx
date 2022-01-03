@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
 import React, { RefObject, useEffect, useMemo, useRef, useState } from 'react';
@@ -966,7 +966,6 @@ const Ground = () => {
         case ObjectType.Human:
           const humanRef = useStoreRef.getState().humanRef;
           handleTreeOrHumanRefMove(humanRef, e);
-
           break;
         case ObjectType.Tree:
           const treeRef = useStoreRef.getState().treeRef;

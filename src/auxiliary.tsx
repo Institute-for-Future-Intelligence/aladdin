@@ -1,12 +1,12 @@
 /*
- * @Copyright 2021. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useState } from 'react';
 import { HALF_PI } from './constants';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
-import { MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from './types';
+import { ObjectType, ResizeHandleType, RotateHandleType } from './types';
 import { PolarGrid } from './views/polarGrid';
 import { VerticalRuler } from './views/verticalRuler';
 import { Util } from './Util';

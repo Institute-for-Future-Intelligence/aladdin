@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
 import create from 'zustand';
@@ -98,6 +98,7 @@ export interface CommonStoreState {
   animateSun: boolean;
   clickObjectType: ObjectType | null;
   contextMenuObjectType: ObjectType | null;
+  duringCameraInteraction: boolean;
   hoveredHandle: MoveHandleType | ResizeHandleType | RotateHandleType | null;
   moveHandleType: MoveHandleType | null;
   resizeHandleType: ResizeHandleType | null;
@@ -515,6 +516,7 @@ export const useStore = create<CommonStoreState>(
           animateSun: false,
           clickObjectType: null,
           contextMenuObjectType: null,
+          duringCameraInteraction: false,
           hoveredHandle: null,
           moveHandleType: null,
           resizeHandleType: null,

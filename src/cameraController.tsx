@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ */
+
 import { OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
 import { Camera, useFrame, useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -51,11 +55,13 @@ const CameraController = () => {
   useEffect(() => {
     if (orbitControlRef.current) {
       orbitControlRef.current.addEventListener('change', render);
+      orbitControlRef.current.addEventListener('start', onInteractionStart);
       orbitControlRef.current.addEventListener('end', onInteractionEnd);
     }
     return () => {
       if (orbitControlRef.current) {
         orbitControlRef.current.removeEventListener('change', render);
+        orbitControlRef.current.removeEventListener('start', onInteractionStart);
         orbitControlRef.current.removeEventListener('end', onInteractionEnd);
       }
     };
@@ -131,11 +137,15 @@ const CameraController = () => {
       }
     }
   };
+  const onInteractionStart = () => {
+    setCommonStore((state) => {
+      state.duringCameraInteraction = true;
+    });
+  };
 
   const onInteractionEnd = () => {
     setCommonStore((state) => {
-      // FIXME: why can't set function be used with a proxy?
-      // Using set or copy will result in crash in run time.
+      state.duringCameraInteraction = false;
       if (orbitControlRef.current) {
         const v = state.viewState;
         const cam = get().camera;
@@ -184,7 +194,6 @@ const CameraController = () => {
     }
   });
 
-  // *****
   // other components ref
   const compassMounted = useStoreRef((state) => state.compassRef);
 
