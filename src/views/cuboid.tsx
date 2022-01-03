@@ -354,7 +354,15 @@ const Cuboid = ({
   }, []);
 
   const legalOnCuboid = (type: ObjectType) => {
-    return type === ObjectType.Polygon || type === ObjectType.Sensor || type === ObjectType.SolarPanel;
+    switch (type) {
+      case ObjectType.Polygon:
+      case ObjectType.Sensor:
+      case ObjectType.SolarPanel:
+      case ObjectType.Human:
+      case ObjectType.Tree:
+        return true;
+    }
+    return false;
   };
 
   const setupGridParams = (face: Vector3) => {

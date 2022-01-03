@@ -51,7 +51,7 @@ import { TreeModel } from '../models/TreeModel';
 import { HumanModel } from '../models/HumanModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
-import { ORIGIN_VECTOR2, UNIT_VECTOR_POS_Z_ARRAY } from '../constants';
+import { GROUND_ID, ORIGIN_VECTOR2, UNIT_VECTOR_POS_Z_ARRAY } from '../constants';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
 import { useStoreRef } from './commonRef';
@@ -2146,18 +2146,31 @@ export const useStore = create<CommonStoreState>(
           objectTypeToAdd: ObjectType.None,
           addElement(parent: ElementModel | GroundModel, p, normal) {
             let model: ElementModel | null = null;
+            const parentId = 'id' in parent ? parent.id : GROUND_ID;
             immerSet((state: CommonStoreState) => {
               switch (state.objectTypeToAdd) {
-                case ObjectType.Human:
-                  const human = ElementModelFactory.makeHuman(p.x, p.y, p.z);
+                case ObjectType.Human: {
+                  const position = new Vector3().copy(p);
+                  if (parentId !== GROUND_ID) {
+                    const parentModel = parent as ElementModel;
+                    position.sub(new Vector3(parentModel.cx, parentModel.cy, parentModel.cz));
+                  }
+                  const human = ElementModelFactory.makeHuman(parentId, position.x, position.y, position.z);
                   model = human;
                   state.elements.push(human);
                   break;
-                case ObjectType.Tree:
-                  const tree = ElementModelFactory.makeTree(p.x, p.y, p.z);
+                }
+                case ObjectType.Tree: {
+                  const position = new Vector3().copy(p);
+                  if (parentId !== GROUND_ID) {
+                    const parentModel = parent as ElementModel;
+                    position.sub(new Vector3(parentModel.cx, parentModel.cy, parentModel.cz));
+                  }
+                  const tree = ElementModelFactory.makeTree(parentId, position.x, position.y, position.z);
                   model = tree;
                   state.elements.push(tree);
                   break;
+                }
                 case ObjectType.Polygon:
                   const polygonParentModel = parent as ElementModel;
                   const polygonRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, polygonParentModel);
