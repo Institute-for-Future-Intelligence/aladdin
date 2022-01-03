@@ -33,7 +33,6 @@ import {
   HIGHLIGHT_HANDLE_COLOR,
   MOVE_HANDLE_COLOR_1,
   MOVE_HANDLE_COLOR_2,
-  MOVE_HANDLE_OFFSET,
   MOVE_HANDLE_RADIUS,
   ORIGIN_VECTOR2,
   RESIZE_HANDLE_COLOR,
@@ -1572,8 +1571,8 @@ const Foundation = ({
               {/* move handles */}
               <Sphere
                 ref={moveHandleLowerRef}
-                args={[moveHandleSize, 6, 6]}
-                position={[0, -hy - MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS]}
+                args={[moveHandleSize, 6, 6, 0, Math.PI]}
+                position={[0, -hy, 0]}
                 name={MoveHandleType.Lower}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Move);
@@ -1594,8 +1593,8 @@ const Foundation = ({
               </Sphere>
               <Sphere
                 ref={moveHandleUpperRef}
-                args={[moveHandleSize, 6, 6]}
-                position={[0, hy + MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS]}
+                args={[moveHandleSize, 6, 6, 0, Math.PI]}
+                position={[0, hy, 0]}
                 name={MoveHandleType.Upper}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Move);
@@ -1616,8 +1615,8 @@ const Foundation = ({
               </Sphere>
               <Sphere
                 ref={moveHandleLeftRef}
-                args={[moveHandleSize, 6, 6]}
-                position={[-hx - MOVE_HANDLE_OFFSET, MOVE_HANDLE_RADIUS, 0]}
+                args={[moveHandleSize, 6, 6, 0, Math.PI]}
+                position={[-hx, MOVE_HANDLE_RADIUS, 0]}
                 name={MoveHandleType.Left}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Move);
@@ -1638,8 +1637,8 @@ const Foundation = ({
               </Sphere>
               <Sphere
                 ref={moveHandleRightRef}
-                args={[moveHandleSize, 6, 6]}
-                position={[hx + MOVE_HANDLE_OFFSET, 0, MOVE_HANDLE_RADIUS]}
+                args={[moveHandleSize, 6, 6, 0, Math.PI]}
+                position={[hx, 0, 0]}
                 name={MoveHandleType.Right}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Move);

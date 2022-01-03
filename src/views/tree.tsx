@@ -16,7 +16,7 @@ import OakImage from '../resources/oak.png';
 import OakShedImage from '../resources/oak_shed.png';
 import PineImage from '../resources/pine.png';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   DoubleSide,
   Euler,
@@ -30,13 +30,22 @@ import {
 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { invalidate, useFrame, useThree } from '@react-three/fiber';
-import { Billboard, Cone, Plane, Sphere } from '@react-three/drei';
-import { GROUND_ID, HALF_PI, MOVE_HANDLE_RADIUS, TWO_PI } from '../constants';
+import { invalidate, ThreeEvent, useFrame, useThree } from '@react-three/fiber';
+import { Billboard, Box, Cone, Plane, Sphere } from '@react-three/drei';
+import {
+  GROUND_ID,
+  HALF_PI,
+  HIGHLIGHT_HANDLE_COLOR,
+  MOVE_HANDLE_COLOR_1,
+  MOVE_HANDLE_RADIUS,
+  RESIZE_HANDLE_COLOR,
+  TWO_PI,
+} from '../constants';
 import { TreeModel } from '../models/TreeModel';
-import { ActionType, MoveHandleType, ObjectType, TreeType } from '../types';
+import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType, TreeType } from '../types';
 import i18n from '../i18n/i18n';
 import { useStoreRef } from 'src/stores/commonRef';
+import { Util } from '../Util';
 
 const Tree = ({
   parentId,
@@ -58,6 +67,10 @@ const Tree = ({
   const date = useStore(Selector.world.date);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const selectMe = useStore(Selector.selectMe);
+  const getElementById = useStore(Selector.getElementById);
+  const moveHandleType = useStore(Selector.moveHandleType);
+  const resizeHandleType = useStore(Selector.resizeHandleType);
+  const hoveredHandle = useStore(Selector.hoveredHandle);
 
   const now = new Date(date);
   const [hovered, setHovered] = useState(false);
@@ -70,7 +83,9 @@ const Tree = ({
   const solidTreeRef = useRef<Mesh>(null);
   const shadowTreeRef = useRef<Mesh>(null);
   const trunkMeshRef = useRef<Mesh>(null);
+  const resizeHandleTopRef = useRef<Mesh>();
 
+  const treeModel = getElementById(id) as TreeModel;
   const month = now.getMonth() + 1;
   const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
   const lang = { lng: language };
@@ -147,6 +162,38 @@ const Tree = ({
     }
   }, [name]);
 
+  const hx = lx / 2;
+  const hz = lz / 2;
+  const positionTop = useMemo(() => new Vector3(0, 0, hz), [hz]);
+
+  const hoverHandle = useCallback(
+    (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
+      if (useStore.getState().duringCameraInteraction) return;
+      if (e.intersections.length > 0) {
+        const intersected = e.intersections[0].object === e.eventObject;
+        if (intersected) {
+          setCommonStore((state) => {
+            state.hoveredHandle = handle;
+            state.selectedElementHeight = treeModel.lz;
+          });
+          if (Util.isMoveHandle(handle)) {
+            gl.domElement.style.cursor = 'move';
+          } else {
+            gl.domElement.style.cursor = 'pointer';
+          }
+        }
+      }
+    },
+    [],
+  );
+
+  const noHoverHandle = useCallback(() => {
+    setCommonStore((state) => {
+      state.hoveredHandle = null;
+    });
+    gl.domElement.style.cursor = useStore.getState().addedCuboidId ? 'crosshair' : 'default';
+  }, []);
+
   useEffect(() => {
     parentRef.current = getParentObject();
     if (parentRef.current && groupRef.current) {
@@ -210,6 +257,8 @@ const Tree = ({
       }
     }
   });
+
+  const handleSize = MOVE_HANDLE_RADIUS * 4;
 
   // IMPORTANT: model mesh must use double side in order to intercept sunlight
   return (
@@ -295,30 +344,63 @@ const Tree = ({
           />
         </Billboard>
 
-        {/* draw handle */}
+        {/* draw handles */}
         {selected && !locked && (
-          <Sphere
-            position={new Vector3(0, 0, -lz / 2)}
-            args={[MOVE_HANDLE_RADIUS * 4, 6, 6]}
-            name={MoveHandleType.Default}
-            renderOrder={2}
-            onPointerDown={(e) => {
-              if (e.eventObject === e.intersections[0].eventObject) {
-                selectMe(id, e, ActionType.Move);
-                useStoreRef.setState((state) => {
-                  state.treeRef = groupRef;
-                });
-              }
-            }}
-            onPointerOver={(e) => {
-              gl.domElement.style.cursor = 'move';
-            }}
-            onPointerOut={(e) => {
-              gl.domElement.style.cursor = 'default';
-            }}
-          >
-            <meshStandardMaterial attach="material" color={'orange'} />
-          </Sphere>
+          <>
+            {/* move handle */}
+            <Sphere
+              position={new Vector3(0, 0, -lz / 2)}
+              args={[handleSize, 6, 6, 0, Math.PI]}
+              name={MoveHandleType.Default}
+              renderOrder={2}
+              onPointerDown={(e) => {
+                if (e.eventObject === e.intersections[0].eventObject) {
+                  selectMe(id, e, ActionType.Move);
+                  useStoreRef.setState((state) => {
+                    state.treeRef = groupRef;
+                  });
+                }
+              }}
+              onPointerOver={(e) => {
+                hoverHandle(e, MoveHandleType.Default);
+              }}
+              onPointerOut={noHoverHandle}
+            >
+              <meshStandardMaterial
+                attach="material"
+                color={
+                  hoveredHandle === MoveHandleType.Default || moveHandleType === MoveHandleType.Default
+                    ? HIGHLIGHT_HANDLE_COLOR
+                    : MOVE_HANDLE_COLOR_1
+                }
+              />
+            </Sphere>
+            {/* resize height handle */}
+            {!orthographic && (
+              <Box
+                ref={resizeHandleTopRef}
+                name={ResizeHandleType.Top}
+                args={[handleSize, handleSize, handleSize]}
+                position={positionTop}
+                onPointerDown={(e) => {
+                  selectMe(id, e, ActionType.Resize);
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, ResizeHandleType.Top);
+                }}
+                onPointerOut={noHoverHandle}
+              >
+                <meshStandardMaterial
+                  attach="material"
+                  color={
+                    hoveredHandle === ResizeHandleType.Top || resizeHandleType === ResizeHandleType.Top
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : RESIZE_HANDLE_COLOR
+                  }
+                />
+              </Box>
+            )}
+          </>
         )}
         {hovered && !selected && (
           <textSprite

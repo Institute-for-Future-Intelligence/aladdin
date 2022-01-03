@@ -357,7 +357,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
         {selected && !locked && (
           <Sphere
             position={[0, 0, -height / 2]}
-            args={[MOVE_HANDLE_RADIUS * 4, 6, 6]}
+            args={[MOVE_HANDLE_RADIUS * 4, 6, 6, 0, Math.PI]}
             name={MoveHandleType.Default}
             onPointerDown={(e) => {
               if (e.eventObject === e.intersections[0].eventObject) {

@@ -112,6 +112,7 @@ export enum ResizeHandleType {
   Upper = 'Resize Handle Upper',
   Left = 'Resize Handle Left',
   Right = 'Resize Handle Right',
+  Top = 'Resize Handle Top',
   Default = 'Resize Handle', // used for resizing a polygon
 }
 

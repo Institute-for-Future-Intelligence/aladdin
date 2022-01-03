@@ -37,7 +37,6 @@ import {
   MOVE_HANDLE_COLOR_1,
   MOVE_HANDLE_COLOR_2,
   MOVE_HANDLE_COLOR_3,
-  MOVE_HANDLE_OFFSET,
   MOVE_HANDLE_RADIUS,
   ORIGIN_VECTOR2,
   RESIZE_HANDLE_COLOR,
@@ -173,13 +172,11 @@ const Cuboid = ({
   const positionLRTop = useMemo(() => new Vector3(hx, -hy, hz), [hx, hy, hz]);
   const positionURTop = useMemo(() => new Vector3(hx, hy, hz), [hx, hy, hz]);
 
-  // we have to lift it a bit higher to ensure intersection (otherwise the ground may be picked)
-  const handleLift = MOVE_HANDLE_RADIUS * 1.5;
-  const positionLowerFace = useMemo(() => new Vector3(0, -hy - MOVE_HANDLE_OFFSET, handleLift - hz), [hy, hz]);
-  const positionUpperFace = useMemo(() => new Vector3(0, hy + MOVE_HANDLE_OFFSET, handleLift - hz), [hy, hz]);
-  const positionLeftFace = useMemo(() => new Vector3(-hx - MOVE_HANDLE_OFFSET, 0, handleLift - hz), [hx, hz]);
-  const positionRightFace = useMemo(() => new Vector3(hx + MOVE_HANDLE_OFFSET, 0, handleLift - hz), [hx, hz]);
-  const positionTopFace = useMemo(() => new Vector3(0, 0, hz + MOVE_HANDLE_OFFSET), [hz]);
+  const positionLowerFace = useMemo(() => new Vector3(0, -hy, -hz), [hy, hz]);
+  const positionUpperFace = useMemo(() => new Vector3(0, hy, -hz), [hy, hz]);
+  const positionLeftFace = useMemo(() => new Vector3(-hx, 0, -hz), [hx, hz]);
+  const positionRightFace = useMemo(() => new Vector3(hx, 0, -hz), [hx, hz]);
+  const positionTopFace = useMemo(() => new Vector3(0, 0, hz), [hz]);
 
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
   if (grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
@@ -1323,7 +1320,7 @@ const Cuboid = ({
               {/* move handles */}
               <Sphere
                 ref={moveHandleLowerFaceRef}
-                args={[moveHandleSize, 6, 6]}
+                args={[moveHandleSize, 6, 6, 0, Math.PI]}
                 name={MoveHandleType.Lower}
                 position={positionLowerFace}
                 onPointerDown={(e) => {
@@ -1345,7 +1342,7 @@ const Cuboid = ({
               </Sphere>
               <Sphere
                 ref={moveHandleUpperFaceRef}
-                args={[moveHandleSize, 6, 6]}
+                args={[moveHandleSize, 6, 6, 0, Math.PI]}
                 name={MoveHandleType.Upper}
                 position={positionUpperFace}
                 onPointerDown={(e) => {
@@ -1367,7 +1364,7 @@ const Cuboid = ({
               </Sphere>
               <Sphere
                 ref={moveHandleLeftFaceRef}
-                args={[moveHandleSize, 6, 6]}
+                args={[moveHandleSize, 6, 6, 0, Math.PI]}
                 name={MoveHandleType.Left}
                 position={positionLeftFace}
                 onPointerDown={(e) => {
@@ -1389,7 +1386,7 @@ const Cuboid = ({
               </Sphere>
               <Sphere
                 ref={moveHandleRightFaceRef}
-                args={[moveHandleSize, 6, 6]}
+                args={[moveHandleSize, 6, 6, 0, Math.PI]}
                 name={MoveHandleType.Right}
                 position={positionRightFace}
                 onPointerDown={(e) => {
@@ -1411,7 +1408,7 @@ const Cuboid = ({
               </Sphere>
               <Sphere
                 ref={moveHandleTopFaceRef}
-                args={[moveHandleSize, 6, 6]}
+                args={[moveHandleSize, 6, 6, 0, Math.PI]}
                 name={MoveHandleType.Top}
                 position={positionTopFace}
                 onPointerDown={(e) => {

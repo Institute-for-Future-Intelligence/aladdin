@@ -166,7 +166,7 @@ const Sensor = ({
         <Sphere
           ref={handleRef}
           position={new Vector3(0, 0, 0)}
-          args={[MOVE_HANDLE_RADIUS, 6, 6]}
+          args={[MOVE_HANDLE_RADIUS, 6, 6, 0, Math.PI]}
           name={MoveHandleType.Default}
           onPointerDown={(e) => {
             selectMe(id, e, ActionType.Move);

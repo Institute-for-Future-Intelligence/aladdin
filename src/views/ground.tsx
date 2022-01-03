@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { RefObject, useEffect, useMemo, useRef, useState } from 'react';
+import React, { RefObject, useEffect, useMemo, useRef } from 'react';
 import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -14,7 +14,6 @@ import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
   GROUND_ID,
   HALF_PI,
-  MOVE_HANDLE_OFFSET,
   MOVE_HANDLE_RADIUS,
   ORIGIN_VECTOR2,
   TWO_PI,
@@ -133,7 +132,7 @@ const Ground = () => {
   if (grabRef.current) {
     if (moveHandleType === MoveHandleType.Top) {
       intersectionPlaneType = IntersectionPlaneType.Horizontal;
-      intersectionPlanePosition.set(grabRef.current.cx, grabRef.current.cy, grabRef.current.lz + MOVE_HANDLE_OFFSET);
+      intersectionPlanePosition.set(grabRef.current.cx, grabRef.current.cy, grabRef.current.lz);
       intersectionPlaneAngle.set(0, 0, 0);
     } else if (
       Util.isMoveHandle(moveHandleType) ||
