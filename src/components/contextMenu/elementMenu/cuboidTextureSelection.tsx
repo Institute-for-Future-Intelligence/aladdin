@@ -180,18 +180,22 @@ const CuboidTextureSelection = ({
             changedElementId: cuboid.id,
             changedSideIndex: selectedSideIndex,
             undo: () => {
-              updateCuboidTextureBySide(
-                undoableChange.changedSideIndex,
-                undoableChange.changedElementId,
-                undoableChange.oldValue as CuboidTexture,
-              );
+              if (undoableChange.changedSideIndex !== undefined) {
+                updateCuboidTextureBySide(
+                  undoableChange.changedSideIndex,
+                  undoableChange.changedElementId,
+                  undoableChange.oldValue as CuboidTexture,
+                );
+              }
             },
             redo: () => {
-              updateCuboidTextureBySide(
-                undoableChange.changedSideIndex,
-                undoableChange.changedElementId,
-                undoableChange.newValue as CuboidTexture,
-              );
+              if (undoableChange.changedSideIndex !== undefined) {
+                updateCuboidTextureBySide(
+                  undoableChange.changedSideIndex,
+                  undoableChange.changedElementId,
+                  undoableChange.newValue as CuboidTexture,
+                );
+              }
             },
           } as UndoableChange;
           addUndoable(undoableChange);

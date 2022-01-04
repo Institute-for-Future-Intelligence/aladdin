@@ -189,18 +189,22 @@ const CuboidColorSelection = ({
             changedElementId: cuboid.id,
             changedSideIndex: selectedSideIndex,
             undo: () => {
-              updateCuboidColorBySide(
-                undoableChange.changedSideIndex,
-                undoableChange.changedElementId,
-                undoableChange.oldValue as string,
-              );
+              if (undoableChange.changedSideIndex !== undefined) {
+                updateCuboidColorBySide(
+                  undoableChange.changedSideIndex,
+                  undoableChange.changedElementId,
+                  undoableChange.oldValue as string,
+                );
+              }
             },
             redo: () => {
-              updateCuboidColorBySide(
-                undoableChange.changedSideIndex,
-                undoableChange.changedElementId,
-                undoableChange.newValue as string,
-              );
+              if (undoableChange.changedSideIndex !== undefined) {
+                updateCuboidColorBySide(
+                  undoableChange.changedSideIndex,
+                  undoableChange.changedElementId,
+                  undoableChange.newValue as string,
+                );
+              }
             },
           } as UndoableChange;
           addUndoable(undoableChange);

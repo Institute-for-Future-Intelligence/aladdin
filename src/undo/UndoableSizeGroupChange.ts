@@ -3,7 +3,7 @@
  */
 
 import { Undoable } from './Undoable';
-import { Vector2, Vector3 } from 'three';
+import { Vector3 } from 'three';
 import { Point2 } from '../models/Point2';
 
 export interface UndoableSizeGroupChange extends Undoable {

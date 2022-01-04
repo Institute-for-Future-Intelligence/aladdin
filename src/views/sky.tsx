@@ -24,8 +24,8 @@ import { ElementModel } from '../models/ElementModel';
 import { DEFAULT_SKY_RADIUS, GROUND_ID, HALF_PI, ORIGIN_VECTOR2, TWO_PI, UNIT_VECTOR_POS_Z_ARRAY } from '../constants';
 import { Util } from 'src/Util';
 import { PolygonModel } from 'src/models/PolygonModel';
-import { Point2 } from 'src/models/Point2';
 import { TreeModel } from '../models/TreeModel';
+import { UndoableChange } from '../undo/UndoableChange';
 
 export interface SkyProps {
   theme?: string;
@@ -43,6 +43,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const updateElementLzById = useStore(Selector.updateElementLzById);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const sunlightDirection = useStore(Selector.sunlightDirection);
+  const addUndoable = useStore(Selector.addUndoable);
 
   const {
     camera,
@@ -54,15 +55,8 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const absPosMapRef = useRef<Map<string, Vector3>>(new Map());
   const polygonsAbsPosMapRef = useRef<Map<string, Vector2[]>>(new Map());
   const oldPositionRef = useRef<Vector3>(new Vector3());
-  const newPositionRef = useRef<Vector3>(new Vector3());
-  const oldChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
-  const newChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
-  const oldPolygonVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>());
-  const newPolygonVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>());
-  const oldDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
-  const newDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
-  const oldRotationRef = useRef<number[]>([0, 0, 1]);
-  const newRotationRef = useRef<number[]>([0, 0, 1]);
+  const oldWidthRef = useRef<number>(0);
+  const oldHeightRef = useRef<number>(0);
   const ray = useMemo(() => new Raycaster(), []);
 
   const night = sunlightDirection.z <= 0;
@@ -235,7 +229,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                       const absPos = absPosMapRef.current.get(getObjectId(obj));
                       if (absPos) {
                         // stand on top face
-                        if (Math.abs(oldDimensionRef.current.z - absPos.z) < 0.01) {
+                        if (Math.abs(oldHeightRef.current - absPos.z) < 0.01) {
                           obj.position.setZ(Math.max(p.z / 2, 0.5));
                         }
                         // stand on side faces
@@ -278,12 +272,13 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
     const selectedElement = grabRef.current;
     if (selectedElement) {
       // save info for undo
-      oldPositionRef.current.set(selectedElement.cx, selectedElement.cy, selectedElement.cz);
-      oldDimensionRef.current.set(selectedElement.lx, selectedElement.ly, selectedElement.lz);
-      oldRotationRef.current = [...selectedElement.rotation];
+      oldHeightRef.current = selectedElement.lz;
 
       // store the positions of children
       switch (selectedElement.type) {
+        case ObjectType.Tree:
+          oldWidthRef.current = selectedElement.lx; // crown spread of tree
+          break;
         case ObjectType.Cuboid: {
           absPosMapRef.current.clear();
           const cuboidCenter = new Vector3(selectedElement.cx, selectedElement.cy, selectedElement.cz);
@@ -338,12 +333,53 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
     if (grabRef.current) {
       const elem = getElementById(grabRef.current.id);
       if (elem) {
+        switch (elem.type) {
+          case ObjectType.Tree:
+            switch (resizeHandleType) {
+              case ResizeHandleType.Top:
+                const undoableChangeHeight = {
+                  name: 'Change Tree Height',
+                  timestamp: Date.now(),
+                  changedElementId: elem.id,
+                  oldValue: oldHeightRef.current,
+                  newValue: elem.lz,
+                  undo: () => {
+                    updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.oldValue as number);
+                  },
+                  redo: () => {
+                    updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.newValue as number);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChangeHeight);
+                break;
+              case ResizeHandleType.Left:
+              case ResizeHandleType.Right:
+              case ResizeHandleType.Lower:
+              case ResizeHandleType.Upper:
+                const undoableChangeSpread = {
+                  name: 'Change Tree Spread',
+                  timestamp: Date.now(),
+                  changedElementId: elem.id,
+                  oldValue: oldWidthRef.current,
+                  newValue: elem.lx,
+                  undo: () => {
+                    updateElementLxById(undoableChangeSpread.changedElementId, undoableChangeSpread.oldValue as number);
+                  },
+                  redo: () => {
+                    updateElementLxById(undoableChangeSpread.changedElementId, undoableChangeSpread.newValue as number);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChangeSpread);
+                break;
+            }
+            break;
+        }
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.parentId === elem.id) {
               if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
                 // stand on top face
-                if (Math.abs(oldDimensionRef.current.z / 2 - e.cz) < 0.01) {
+                if (Math.abs(oldHeightRef.current / 2 - e.cz) < 0.01) {
                   e.cz = elem.lz / 2;
                 }
                 // stand on side faces

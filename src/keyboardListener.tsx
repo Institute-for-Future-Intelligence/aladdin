@@ -12,8 +12,8 @@ import { UndoableCheck } from './undo/UndoableCheck';
 import { UndoableResetView } from './undo/UndoableResetView';
 import { showError, showInfo } from './helpers';
 import i18n from './i18n/i18n';
-import { UndoableHorizontalMove } from './undo/UndoableHorizontalMove';
-import { UndoableVerticalMove } from './undo/UndoableVerticalMove';
+import { UndoableMoveInX } from './undo/UndoableMoveInX';
+import { UndoableMoveInY } from './undo/UndoableMoveInY';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
 import { WallModel } from './models/WallModel';
 import { useStoreRef } from './stores/commonRef';
@@ -249,7 +249,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
                   selectedElement.cx + undoableMoveLeft.displacement,
                 );
               },
-            } as UndoableHorizontalMove;
+            } as UndoableMoveInX;
             addUndoable(undoableMoveLeft);
             updateElementCxById(selectedElement.id, selectedElement.cx + displacement);
           }
@@ -307,7 +307,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
                   selectedElement.cx + undoableMoveRight.displacement,
                 );
               },
-            } as UndoableHorizontalMove;
+            } as UndoableMoveInX;
             addUndoable(undoableMoveRight);
             updateElementCxById(selectedElement.id, selectedElement.cx + displacement);
           }
@@ -359,7 +359,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
               redo: () => {
                 updateElementCyById(undoableMoveUp.movedElementId, selectedElement.cy + undoableMoveUp.displacement);
               },
-            } as UndoableVerticalMove;
+            } as UndoableMoveInY;
             addUndoable(undoableMoveUp);
             updateElementCyById(selectedElement.id, selectedElement.cy + displacement);
           }
@@ -417,7 +417,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
                   selectedElement.cy + undoableMoveDown.displacement,
                 );
               },
-            } as UndoableVerticalMove;
+            } as UndoableMoveInY;
             addUndoable(undoableMoveDown);
             updateElementCyById(selectedElement.id, selectedElement.cy + displacement);
           }

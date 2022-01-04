@@ -4,7 +4,7 @@
 
 import { Undoable } from './Undoable';
 
-export interface UndoableVerticalMove extends Undoable {
+export interface UndoableMoveInY extends Undoable {
   displacement: number;
   movedElementId: string;
 }
