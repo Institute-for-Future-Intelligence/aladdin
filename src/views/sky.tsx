@@ -334,6 +334,29 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
       const elem = getElementById(grabRef.current.id);
       if (elem) {
         switch (elem.type) {
+          case ObjectType.Cuboid:
+            switch (resizeHandleType) {
+              case ResizeHandleType.UpperLeftTop:
+              case ResizeHandleType.UpperRightTop:
+              case ResizeHandleType.LowerLeftTop:
+              case ResizeHandleType.LowerRightTop:
+                const undoableChangeHeight = {
+                  name: 'Change Cuboid Height',
+                  timestamp: Date.now(),
+                  changedElementId: elem.id,
+                  oldValue: oldHeightRef.current,
+                  newValue: elem.lz,
+                  undo: () => {
+                    updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.oldValue as number);
+                  },
+                  redo: () => {
+                    updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.newValue as number);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChangeHeight);
+                break;
+            }
+            break;
           case ObjectType.Tree:
             switch (resizeHandleType) {
               case ResizeHandleType.Top:
