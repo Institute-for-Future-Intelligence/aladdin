@@ -285,7 +285,10 @@ const Foundation = ({
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
       if (useStore.getState().duringCameraInteraction) return;
       if (e.intersections.length > 0) {
-        const intersected = e.intersections[0].object === e.eventObject;
+        // QUICK FIX: For some reason, the top one can sometimes be the ground, so we also go to the second one
+        const intersected =
+          e.intersections[0].object === e.eventObject ||
+          (e.intersections.length > 1 && e.intersections[1].object === e.eventObject);
         if (intersected) {
           setCommonStore((state) => {
             state.hoveredHandle = handle;
@@ -1451,7 +1454,7 @@ const Foundation = ({
           {/* resize handles */}
           <Box
             ref={resizeHandleLLRef}
-            position={[positionLL.x, positionLL.y, lz * 0.1]}
+            position={[positionLL.x, positionLL.y, 0]}
             args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
             name={ResizeHandleType.LowerLeft}
             onPointerDown={(e) => {
@@ -1480,7 +1483,7 @@ const Foundation = ({
           </Box>
           <Box
             ref={resizeHandleULRef}
-            position={[positionUL.x, positionUL.y, lz * 0.1]}
+            position={[positionUL.x, positionUL.y, 0]}
             args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
             name={ResizeHandleType.UpperLeft}
             onPointerDown={(e) => {
@@ -1509,7 +1512,7 @@ const Foundation = ({
           </Box>
           <Box
             ref={resizeHandleLRRef}
-            position={[positionLR.x, positionLR.y, lz * 0.1]}
+            position={[positionLR.x, positionLR.y, 0]}
             args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
             name={ResizeHandleType.LowerRight}
             onPointerDown={(e) => {
@@ -1538,7 +1541,7 @@ const Foundation = ({
           </Box>
           <Box
             ref={resizeHandleURRef}
-            position={[positionUR.x, positionUR.y, lz * 0.1]}
+            position={[positionUR.x, positionUR.y, 0]}
             args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
             name={ResizeHandleType.UpperRight}
             onPointerDown={(e) => {

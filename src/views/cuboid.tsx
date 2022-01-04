@@ -321,7 +321,10 @@ const Cuboid = ({
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
       if (useStore.getState().duringCameraInteraction) return;
       if (e.intersections.length > 0) {
-        const intersected = e.intersections[0].object === e.eventObject;
+        // QUICK FIX: For some reason, the top one can sometimes be the ground, so we also go to the second one
+        const intersected =
+          e.intersections[0].object === e.eventObject ||
+          (e.intersections.length > 1 && e.intersections[1].object === e.eventObject);
         if (intersected) {
           setCommonStore((state) => {
             state.hoveredHandle = handle;
@@ -1209,7 +1212,7 @@ const Cuboid = ({
             ref={resizeHandleLLBotRef}
             name={ResizeHandleType.LowerLeft}
             args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={new Vector3(-hx, -hy, RESIZE_HANDLE_SIZE - hz)}
+            position={new Vector3(-hx, -hy, -hz)}
             onPointerDown={(e) => {
               selectMe(id, e, ActionType.Resize);
               if (resizeHandleLLBotRef.current) {
@@ -1237,7 +1240,7 @@ const Cuboid = ({
             ref={resizeHandleULBotRef}
             name={ResizeHandleType.UpperLeft}
             args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={new Vector3(-hx, hy, RESIZE_HANDLE_SIZE - hz)}
+            position={new Vector3(-hx, hy, -hz)}
             onPointerDown={(e) => {
               selectMe(id, e, ActionType.Resize);
               if (resizeHandleULBotRef.current) {
@@ -1265,7 +1268,7 @@ const Cuboid = ({
             ref={resizeHandleLRBotRef}
             name={ResizeHandleType.LowerRight}
             args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={new Vector3(hx, -hy, RESIZE_HANDLE_SIZE - hz)}
+            position={new Vector3(hx, -hy, -hz)}
             onPointerDown={(e) => {
               selectMe(id, e, ActionType.Resize);
               if (resizeHandleLRBotRef.current) {
@@ -1293,7 +1296,7 @@ const Cuboid = ({
             ref={resizeHandleURBotRef}
             name={ResizeHandleType.UpperRight}
             args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={new Vector3(hx, hy, RESIZE_HANDLE_SIZE - hz)}
+            position={new Vector3(hx, hy, -hz)}
             onPointerDown={(e) => {
               selectMe(id, e, ActionType.Resize);
               if (resizeHandleURBotRef.current) {
