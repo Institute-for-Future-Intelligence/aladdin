@@ -31,6 +31,7 @@ import { PolygonModel } from '../models/PolygonModel';
 import { WallAbsPos } from './wall/WallAbsPos';
 import { Point2 } from '../models/Point2';
 import { TreeModel } from '../models/TreeModel';
+import { UndoableChange } from '../undo/UndoableChange';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
@@ -836,6 +837,9 @@ const Ground = () => {
             }
           }
           switch (selectedElement.type) {
+            case ObjectType.Tree:
+              oldDimensionRef.current.set(selectedElement.lx, selectedElement.ly, selectedElement.lz);
+              break;
             case ObjectType.Cuboid:
               // getting ready for resizing even though it may not happen
               absPosMapRef.current.clear();
@@ -1081,6 +1085,55 @@ const Ground = () => {
       grabRef.current = null;
       isSettingCuboidStartPointRef.current = false;
       isSettingCuboidEndPointRef.current = false;
+    }
+  };
+
+  const handleIntersectionPointerUp = () => {
+    if (grabRef.current) {
+      const elem = getElementById(grabRef.current.id);
+      if (elem) {
+        switch (elem.type) {
+          case ObjectType.Tree:
+            switch (resizeHandleType) {
+              case ResizeHandleType.Top:
+                const undoableChangeHeight = {
+                  name: 'Change Tree Height',
+                  timestamp: Date.now(),
+                  changedElementId: elem.id,
+                  oldValue: oldDimensionRef.current.z,
+                  newValue: elem.lz,
+                  undo: () => {
+                    updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.oldValue as number);
+                  },
+                  redo: () => {
+                    updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.newValue as number);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChangeHeight);
+                break;
+              case ResizeHandleType.Left:
+              case ResizeHandleType.Right:
+              case ResizeHandleType.Lower:
+              case ResizeHandleType.Upper:
+                const undoableChangeSpread = {
+                  name: 'Change Tree Spread',
+                  timestamp: Date.now(),
+                  changedElementId: elem.id,
+                  oldValue: oldDimensionRef.current.x,
+                  newValue: elem.lx,
+                  undo: () => {
+                    updateElementLxById(undoableChangeSpread.changedElementId, undoableChangeSpread.oldValue as number);
+                  },
+                  redo: () => {
+                    updateElementLxById(undoableChangeSpread.changedElementId, undoableChangeSpread.newValue as number);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChangeSpread);
+                break;
+            }
+            break;
+        }
+      }
     }
   };
 
@@ -1436,7 +1489,7 @@ const Ground = () => {
           position={intersectionPlanePosition}
           args={[100000, 100000]}
           onPointerMove={handleIntersectionPointerMove}
-          // onPointerUp={handleIntersectionPointerUp}
+          onPointerUp={handleIntersectionPointerUp}
         >
           <meshStandardMaterial side={DoubleSide} />
         </Plane>
