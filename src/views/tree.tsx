@@ -178,7 +178,10 @@ const Tree = ({
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
       if (useStore.getState().duringCameraInteraction) return;
       if (e.intersections.length > 0) {
-        const intersected = e.intersections[0].object === e.eventObject;
+        // QUICK FIX: For some reason, the top one can sometimes be the ground, so we also go to the second one
+        const intersected =
+          e.intersections[0].object === e.eventObject ||
+          (e.intersections.length > 1 && e.intersections[1].object === e.eventObject);
         if (intersected) {
           setCommonStore((state) => {
             state.hoveredHandle = handle;

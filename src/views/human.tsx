@@ -25,23 +25,27 @@ import JuroImage from '../resources/juro.png';
 import XiaoliImage from '../resources/xiaoli.png';
 import XiaomingImage from '../resources/xiaoming.png';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DoubleSide, Euler, Group, Mesh, Object3D, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { invalidate, useFrame, useThree } from '@react-three/fiber';
+import { invalidate, ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import { HumanModel } from '../models/HumanModel';
 import { Billboard, Plane, Sphere } from '@react-three/drei';
-import { GROUND_ID, HALF_PI, MOVE_HANDLE_RADIUS } from '../constants';
-import { ActionType, HumanName, MoveHandleType, ObjectType } from '../types';
+import { GROUND_ID, HALF_PI, HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_COLOR_1, MOVE_HANDLE_RADIUS } from '../constants';
+import { ActionType, HumanName, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import i18n from '../i18n/i18n';
 import { useStoreRef } from 'src/stores/commonRef';
+import { Util } from '../Util';
 
 const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked = false, parentId }: HumanModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const selectMe = useStore(Selector.selectMe);
+  const getElementById = useStore(Selector.getElementById);
+  const moveHandleType = useStore(Selector.moveHandleType);
+  const hoveredHandle = useStore(Selector.hoveredHandle);
 
   const { gl } = useThree();
   const [hovered, setHovered] = useState(false);
@@ -53,6 +57,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
   const planeRef = useRef<Mesh>(null);
 
   const lang = { lng: language };
+  const humanModel = getElementById(id) as HumanModel;
 
   const textureLoader = useMemo(() => {
     let textureImg;
@@ -308,6 +313,37 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
     }
   });
 
+  const hoverHandle = useCallback(
+    (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
+      if (useStore.getState().duringCameraInteraction) return;
+      if (e.intersections.length > 0) {
+        // QUICK FIX: For some reason, the top one can sometimes be the ground, so we also go to the second one
+        const intersected =
+          e.intersections[0].object === e.eventObject ||
+          (e.intersections.length > 1 && e.intersections[1].object === e.eventObject);
+        if (intersected) {
+          setCommonStore((state) => {
+            state.hoveredHandle = handle;
+            state.selectedElementHeight = humanModel.lz;
+          });
+          if (Util.isMoveHandle(handle)) {
+            gl.domElement.style.cursor = 'move';
+          } else {
+            gl.domElement.style.cursor = 'pointer';
+          }
+        }
+      }
+    },
+    [],
+  );
+
+  const noHoverHandle = useCallback(() => {
+    setCommonStore((state) => {
+      state.hoveredHandle = null;
+    });
+    gl.domElement.style.cursor = useStore.getState().addedCuboidId ? 'crosshair' : 'default';
+  }, []);
+
   return (
     <group ref={groupRef} name={'Human Group ' + id} userData={{ aabb: true }} position={[cx, cy, cz ?? 0]}>
       <group position={[0, 0.1, height / 2]}>
@@ -368,13 +404,18 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
               }
             }}
             onPointerOver={(e) => {
-              gl.domElement.style.cursor = 'move';
+              hoverHandle(e, MoveHandleType.Default);
             }}
-            onPointerOut={(e) => {
-              gl.domElement.style.cursor = 'default';
-            }}
+            onPointerOut={noHoverHandle}
           >
-            <meshStandardMaterial attach="material" color={'orange'} />
+            <meshStandardMaterial
+              attach="material"
+              color={
+                hoveredHandle === MoveHandleType.Default || moveHandleType === MoveHandleType.Default
+                  ? HIGHLIGHT_HANDLE_COLOR
+                  : MOVE_HANDLE_COLOR_1
+              }
+            />
           </Sphere>
         )}
         {hovered && !selected && (

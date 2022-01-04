@@ -1212,7 +1212,7 @@ const Cuboid = ({
             ref={resizeHandleLLBotRef}
             name={ResizeHandleType.LowerLeft}
             args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={new Vector3(-hx, -hy, -hz)}
+            position={new Vector3(-hx, -hy, resizeHandleSize / 2 - hz)}
             onPointerDown={(e) => {
               selectMe(id, e, ActionType.Resize);
               if (resizeHandleLLBotRef.current) {
@@ -1240,7 +1240,7 @@ const Cuboid = ({
             ref={resizeHandleULBotRef}
             name={ResizeHandleType.UpperLeft}
             args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={new Vector3(-hx, hy, -hz)}
+            position={new Vector3(-hx, hy, resizeHandleSize / 2 - hz)}
             onPointerDown={(e) => {
               selectMe(id, e, ActionType.Resize);
               if (resizeHandleULBotRef.current) {
@@ -1268,7 +1268,7 @@ const Cuboid = ({
             ref={resizeHandleLRBotRef}
             name={ResizeHandleType.LowerRight}
             args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={new Vector3(hx, -hy, -hz)}
+            position={new Vector3(hx, -hy, resizeHandleSize / 2 - hz)}
             onPointerDown={(e) => {
               selectMe(id, e, ActionType.Resize);
               if (resizeHandleLRBotRef.current) {
@@ -1296,7 +1296,7 @@ const Cuboid = ({
             ref={resizeHandleURBotRef}
             name={ResizeHandleType.UpperRight}
             args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={new Vector3(hx, hy, -hz)}
+            position={new Vector3(hx, hy, resizeHandleSize / 2 - hz)}
             onPointerDown={(e) => {
               selectMe(id, e, ActionType.Resize);
               if (resizeHandleURBotRef.current) {
