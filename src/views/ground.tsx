@@ -690,8 +690,7 @@ const Ground = () => {
                 .add(new Vector3(0, 0, elem.lz))
                 .project(camera)
                 .distanceTo(screenPosition);
-              const max = Math.max(screenLx, screenLy, screenLz);
-              if (max < 0.01) {
+              if (Math.max(screenLx, screenLy, screenLz) < 0.01) {
                 setElementPosition(
                   elem.id,
                   oldPositionRef.current.x,
@@ -701,7 +700,6 @@ const Ground = () => {
                 setParentIdById(oldHumanOrTreeParentId, elem.id);
                 attachToObjectDom(oldHumanOrTreeParentId, newHumanOrTreeParentId, elem.id);
                 showError(i18n.t('message.CannotMoveObjectTooFar', lang));
-                //console.log(oldPositionRef.current, getElementById(elem.id))
               } else {
                 const undoableMove = {
                   name: 'Move',

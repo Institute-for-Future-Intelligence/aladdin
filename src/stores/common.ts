@@ -57,6 +57,7 @@ import { Point2 } from '../models/Point2';
 import { useStoreRef } from './commonRef';
 import { showError } from '../helpers';
 import i18n from '../i18n/i18n';
+import { HumanData } from '../HumanData';
 
 enableMapSet();
 
@@ -2081,7 +2082,10 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Human && e.id === id) {
-                  (e as HumanModel).name = name;
+                  const human = e as HumanModel;
+                  human.name = name;
+                  human.lx = HumanData.fetchWidth(name);
+                  human.lz = HumanData.fetchHeight(name);
                   break;
                 }
               }

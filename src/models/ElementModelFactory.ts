@@ -15,11 +15,12 @@ import { SolarPanelModel } from './SolarPanelModel';
 import { PvModel } from './PvModel';
 import { WallModel } from './WallModel';
 import { RoofModel } from './RoofModel';
-import { GROUND_ID, UNIT_VECTOR_NEG_X, UNIT_VECTOR_NEG_Y, UNIT_VECTOR_POS_X, UNIT_VECTOR_POS_Y } from '../constants';
+import { GROUND_ID } from '../constants';
 import { WindowModel } from './WindowModel';
 import { Point2 } from './Point2';
 import { PolygonModel } from './PolygonModel';
 import { Util } from '../Util';
+import { HumanData } from '../HumanData';
 
 export class ElementModelFactory {
   static makeHuman(x: number, y: number, z?: number) {
@@ -29,6 +30,8 @@ export class ElementModelFactory {
       cx: x,
       cy: y,
       cz: z,
+      lx: HumanData.fetchWidth(HumanName.Jack),
+      lz: HumanData.fetchHeight(HumanName.Jack),
       normal: [0, 1, 0],
       rotation: [0, 0, 0],
       parentId: GROUND_ID,

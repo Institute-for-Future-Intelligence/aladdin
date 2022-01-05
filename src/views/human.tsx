@@ -24,8 +24,6 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
   const getElementById = useStore(Selector.getElementById);
   const moveHandleType = useStore(Selector.moveHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
-  const updateElementLxById = useStore(Selector.updateElementLxById);
-  const updateElementLzById = useStore(Selector.updateElementLzById);
 
   const { gl } = useThree();
   const [hovered, setHovered] = useState(false);
@@ -48,15 +46,11 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
   const [texture, setTexture] = useState(textureLoader);
 
   const width = useMemo(() => {
-    const w = HumanData.fetchWidth(name);
-    updateElementLxById(id, w);
-    return w;
+    return HumanData.fetchWidth(name);
   }, [name]);
 
   const height = useMemo(() => {
-    const h = HumanData.fetchHeight(name);
-    updateElementLzById(id, h);
-    return h;
+    return HumanData.fetchHeight(name);
   }, [name]);
 
   const labelText = useMemo(() => {
