@@ -719,7 +719,15 @@ export const useStore = create<CommonStoreState>(
                     state.rotateHandleType = null;
                     switch (action) {
                       case ActionType.Move:
-                        state.moveHandleType = e.eventObject.name as MoveHandleType;
+                        if (
+                          state.selectedElement?.type === ObjectType.Tree ||
+                          state.selectedElement?.type === ObjectType.Human
+                        ) {
+                          // selecting the above two types of object automatically sets them to the moving state
+                          state.moveHandleType = MoveHandleType.Default;
+                        } else {
+                          state.moveHandleType = e.eventObject.name as MoveHandleType;
+                        }
                         setEnableOrbitController(false);
                         break;
                       case ActionType.Resize:

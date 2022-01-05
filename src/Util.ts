@@ -329,6 +329,7 @@ export class Util {
   static isMoveHandle(handle: MoveHandleType | ResizeHandleType | RotateHandleType | null): boolean {
     // unfortunately, I cannot find a better way to tell the type of enum variable
     return (
+      handle === MoveHandleType.Default ||
       handle === MoveHandleType.Top ||
       handle === MoveHandleType.Upper ||
       handle === MoveHandleType.Lower ||
