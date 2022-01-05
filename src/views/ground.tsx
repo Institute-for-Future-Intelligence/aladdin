@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { RefObject, useEffect, useMemo, useRef, useState } from 'react';
+import React, { RefObject, useEffect, useMemo, useRef } from 'react';
 import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -34,6 +34,7 @@ import { TreeModel } from '../models/TreeModel';
 import { UndoableChange } from '../undo/UndoableChange';
 import { showError } from '../helpers';
 import i18n from '../i18n/i18n';
+import Human from './human';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
@@ -690,13 +691,22 @@ const Ground = () => {
                 .add(new Vector3(0, 0, elem.lz))
                 .project(camera)
                 .distanceTo(screenPosition);
-              if (Math.max(screenLx, screenLy, screenLz) < 0.01) {
+              if (Math.max(screenLx, screenLy, screenLz) < 0.02) {
+                // smaller than 2% of screen dimension
                 setElementPosition(
                   elem.id,
                   oldPositionRef.current.x,
                   oldPositionRef.current.y,
                   oldPositionRef.current.z,
                 );
+                if (elementRef) {
+                  switch (elem.type) {
+                    case ObjectType.Tree:
+                    case ObjectType.Human:
+                      elementRef.position.copy(oldPositionRef.current);
+                      break;
+                  }
+                }
                 setParentIdById(oldHumanOrTreeParentId, elem.id);
                 attachToObjectDom(oldHumanOrTreeParentId, newHumanOrTreeParentId, elem.id);
                 showError(i18n.t('message.CannotMoveObjectTooFar', lang));

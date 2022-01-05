@@ -735,9 +735,12 @@ const Cuboid = ({
       showError(i18n.t('message.MoveCancelledBecauseOfOverlap', lang));
       return false;
     }
-    if (!Util.isSolarPanelWithinHorizontalSurface(clone, cuboidModel)) {
-      showError(i18n.t('message.MoveOutsideBoundaryCancelled', lang));
-      return false;
+    if (Util.isIdentical(sp.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
+      // only check solar panels on top face
+      if (!Util.isSolarPanelWithinHorizontalSurface(clone, cuboidModel)) {
+        showError(i18n.t('message.MoveOutsideBoundaryCancelled', lang));
+        return false;
+      }
     }
     return true;
   };
