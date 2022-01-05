@@ -372,7 +372,7 @@ const SolarPanelRelativeAzimuthInput = ({
             <label style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +
-                  i18n.t('shared.NotApplicableToSelectedAction', lang) +
+                  i18n.t('message.NotApplicableToSelectedAction', lang) +
                   (rejectedValue.current !== undefined
                     ? ' (' + Util.toDegrees(rejectedValue.current).toFixed(1) + '°)'
                     : '')
@@ -446,9 +446,9 @@ const SolarPanelRelativeAzimuthInput = ({
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [-180°, 180°]
               <br />
-              {i18n.t('shared.AzimuthOfNorthIsZero', lang)}
+              {i18n.t('message.AzimuthOfNorthIsZero', lang)}
               <br />
-              {i18n.t('shared.CounterclockwiseAzimuthIsPositive', lang)}
+              {i18n.t('message.CounterclockwiseAzimuthIsPositive', lang)}
             </div>
           </Col>
           <Col

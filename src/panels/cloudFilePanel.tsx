@@ -133,7 +133,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
         '"? ' +
         i18n.t('word.Warning', lang) +
         ': ' +
-        i18n.t('shared.ThisCannotBeUndone', lang),
+        i18n.t('message.ThisCannotBeUndone', lang),
       icon: <ExclamationCircleOutlined />,
       onOk: () => {
         deleteCloudFile(email, title);

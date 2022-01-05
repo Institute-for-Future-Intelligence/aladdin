@@ -293,7 +293,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const openCloudFileWithSaveReminder = (userid: string, title: string) => {
     if (changed) {
       Modal.confirm({
-        title: i18n.t('shared.DoYouWantToSaveChanges', lang),
+        title: i18n.t('message.DoYouWantToSaveChanges', lang),
         icon: <ExclamationCircleOutlined />,
         onOk: () => {
           if (cloudFile) {

@@ -163,7 +163,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     if (input) {
       if (!viewOnly && changed) {
         Modal.confirm({
-          title: i18n.t('shared.DoYouWantToSaveChanges', lang),
+          title: i18n.t('message.DoYouWantToSaveChanges', lang),
           icon: <ExclamationCircleOutlined />,
           onOk: () => saveAndImport(input),
           onCancel: () => importContent(input),

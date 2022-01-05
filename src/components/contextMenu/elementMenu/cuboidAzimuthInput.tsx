@@ -209,9 +209,9 @@ const CuboidAzimuthInput = ({
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [-180°, 180°]
               <br />
-              {i18n.t('shared.AzimuthOfNorthIsZero', lang)}
+              {i18n.t('message.AzimuthOfNorthIsZero', lang)}
               <br />
-              {i18n.t('shared.CounterclockwiseAzimuthIsPositive', lang)}
+              {i18n.t('message.CounterclockwiseAzimuthIsPositive', lang)}
             </div>
           </Col>
           <Col

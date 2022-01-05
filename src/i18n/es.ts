@@ -94,19 +94,22 @@ export const i18n_es = {
     },
 
     shared: {
-      AzimuthOfNorthIsZero: 'Azimut del norte es 0°',
-      CounterclockwiseAzimuthIsPositive: 'Hacia la izquierda es positivo',
       NoTexture: 'Sin textura',
-      DoYouWantToSaveChanges: '¿Quieres guardar los cambios?',
-      NotApplicableToSelectedAction: 'No se aplica a la acción seleccionada',
-      ThisElementIsLocked: 'Este elemento está bloqueado',
       FoundationElement: 'Bases',
       CuboidElement: 'Cuboide',
       PolygonElement: 'Polígon',
       SensorElement: 'Sensor',
       SolarPanelElement: 'Panel solar',
       ElementLocked: 'Bloqueado',
+    },
+
+    message: {
+      DoYouWantToSaveChanges: '¿Quieres guardar los cambios?',
+      NotApplicableToSelectedAction: 'No se aplica a la acción seleccionada',
+      ThisElementIsLocked: 'Este elemento está bloqueado',
       ThisCannotBeUndone: 'Esto no se puede deshacer',
+      AzimuthOfNorthIsZero: 'Azimut del norte es 0°',
+      CounterclockwiseAzimuthIsPositive: 'Hacia la izquierda es positivo',
       MoveCancelledBecauseOfOverlap: 'Move cancelled because of overlap.',
       MoveOutsideBoundaryCancelled: 'Move outside the boundary cancelled.',
       RotationCancelledBecauseOfOverlap: 'Rotation cancelled because of overlap.',
@@ -115,6 +118,7 @@ export const i18n_es = {
       ResizingOutsideBoundaryCancelled: 'Resizing outside the boundary cancelled.',
       CannotPasteOutsideBoundary: 'Cannot paste outside this surface.',
       CannotPasteBecauseOfOverlap: 'Cannot paste because of overlap.',
+      CannotMoveObjectTooFar: 'Cannot move object too far.',
     },
 
     menu: {

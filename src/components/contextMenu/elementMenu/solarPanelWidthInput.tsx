@@ -382,7 +382,7 @@ const SolarPanelWidthInput = ({
             <label style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +
-                  i18n.t('shared.NotApplicableToSelectedAction', lang) +
+                  i18n.t('message.NotApplicableToSelectedAction', lang) +
                   (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
                 : ''}
             </label>

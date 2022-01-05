@@ -409,7 +409,7 @@ const SolarPanelOrientationSelection = ({
             <label style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +
-                  i18n.t('shared.NotApplicableToSelectedAction', lang) +
+                  i18n.t('message.NotApplicableToSelectedAction', lang) +
                   (rejectedValue.current
                     ? ' (' +
                       (rejectedValue.current === Orientation.portrait

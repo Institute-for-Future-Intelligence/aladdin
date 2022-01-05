@@ -23,6 +23,7 @@ import { SensorModel } from './models/SensorModel';
 import { WallModel } from './models/WallModel';
 import { PolygonModel } from './models/PolygonModel';
 import { Point2 } from './models/Point2';
+import { useStore } from './stores/common';
 
 export class Util {
   static lineIntersection(from1: Point2, to1: Point2, from2: Point2, to2: Point2): Point2 | undefined {
@@ -312,6 +313,18 @@ export class Util {
     const i = a.indexOf(e, 0);
     if (i > -1) {
       a.splice(i, 1);
+    }
+  }
+
+  static isResizingVertical(handle: ResizeHandleType | null): boolean {
+    switch (handle) {
+      case ResizeHandleType.LowerLeftTop:
+      case ResizeHandleType.UpperLeftTop:
+      case ResizeHandleType.LowerRightTop:
+      case ResizeHandleType.UpperRightTop:
+        return true;
+      default:
+        return false;
     }
   }
 

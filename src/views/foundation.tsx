@@ -1246,11 +1246,11 @@ const Foundation = ({
     clone.cx = cx;
     clone.cy = cy;
     if (overlapWithSibling(clone)) {
-      showError(i18n.t('shared.MoveCancelledBecauseOfOverlap', lang));
+      showError(i18n.t('message.MoveCancelledBecauseOfOverlap', lang));
       return false;
     }
     if (!Util.isSolarPanelWithinHorizontalSurface(clone, foundationModel)) {
-      showError(i18n.t('shared.MoveOutsideBoundaryCancelled', lang));
+      showError(i18n.t('message.MoveOutsideBoundaryCancelled', lang));
       return false;
     }
     return true;
@@ -1260,11 +1260,11 @@ const Foundation = ({
     const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
     clone.relativeAzimuth = az;
     if (overlapWithSibling(clone)) {
-      showError(i18n.t('shared.RotationCancelledBecauseOfOverlap', lang));
+      showError(i18n.t('message.RotationCancelledBecauseOfOverlap', lang));
       return false;
     }
     if (!Util.isSolarPanelWithinHorizontalSurface(clone, foundationModel)) {
-      showError(i18n.t('shared.RotationOutsideBoundaryCancelled', lang));
+      showError(i18n.t('message.RotationOutsideBoundaryCancelled', lang));
       return false;
     }
     return true;

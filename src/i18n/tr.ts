@@ -95,19 +95,22 @@ export const i18n_tr = {
     },
 
     shared: {
-      AzimuthOfNorthIsZero: 'Kuzey Azimutu 0Â° dir',
-      CounterclockwiseAzimuthIsPositive: 'Saat yönünün tersi pozitiftir.',
       NoTexture: 'Tekstür Yok',
-      DoYouWantToSaveChanges: 'Deðiþiklikleri kaydetmek istiyor musunuz?',
-      NotApplicableToSelectedAction: 'Seçili Ýþleme Uygulanamaz',
-      ThisElementIsLocked: 'Bu öðe kilitli.',
       FoundationElement: 'Temel',
       CuboidElement: 'Küboid',
       PolygonElement: 'Poligon',
       SensorElement: 'Sensör',
       SolarPanelElement: 'Güneþ Paneli',
       ElementLocked: 'Kilitli',
+    },
+
+    message: {
+      DoYouWantToSaveChanges: 'Deðiþiklikleri kaydetmek istiyor musunuz?',
+      NotApplicableToSelectedAction: 'Seçili Ýþleme Uygulanamaz',
+      ThisElementIsLocked: 'Bu öðe kilitli.',
       ThisCannotBeUndone: 'Bu geri alýnamaz.',
+      AzimuthOfNorthIsZero: 'Kuzey Azimutu 0Â° dir',
+      CounterclockwiseAzimuthIsPositive: 'Saat yönünün tersi pozitiftir.',
       MoveCancelledBecauseOfOverlap: 'Move cancelled because of overlap.',
       MoveOutsideBoundaryCancelled: 'Move outside the boundary cancelled.',
       RotationCancelledBecauseOfOverlap: 'Rotation cancelled because of overlap.',
@@ -116,6 +119,7 @@ export const i18n_tr = {
       ResizingOutsideBoundaryCancelled: 'Resizing outside the boundary cancelled.',
       CannotPasteOutsideBoundary: 'Cannot paste outside this surface.',
       CannotPasteBecauseOfOverlap: 'Cannot paste because of overlap.',
+      CannotMoveObjectTooFar: 'Cannot move object too far.',
     },
 
     menu: {

@@ -176,13 +176,13 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     clone.cx = cx;
     clone.cy = cy;
     if (overlapWithSibling(clone)) {
-      showError(i18n.t('shared.MoveCancelledBecauseOfOverlap', lang));
+      showError(i18n.t('message.MoveCancelledBecauseOfOverlap', lang));
       return false;
     }
     if (clone.type === ObjectType.SolarPanel) {
       const parent = getElementById(elem.parentId);
       if (parent && !Util.isSolarPanelWithinHorizontalSurface(clone as SolarPanelModel, parent)) {
-        showError(i18n.t('shared.MoveOutsideBoundaryCancelled', lang));
+        showError(i18n.t('message.MoveOutsideBoundaryCancelled', lang));
         return false;
       }
     }
@@ -597,7 +597,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       case 'delete':
         if (selectedElement) {
           if (selectedElement.locked) {
-            showInfo(i18n.t('shared.ThisElementIsLocked', lang));
+            showInfo(i18n.t('message.ThisElementIsLocked', lang));
           } else {
             removeElement(selectedElement.id, false);
             const deletedElements = useStore.getState().deletedElements;

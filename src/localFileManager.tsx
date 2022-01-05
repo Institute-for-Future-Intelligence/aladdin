@@ -69,7 +69,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
 
   const createNewFile = () => {
     Modal.confirm({
-      title: i18n.t('shared.DoYouWantToSaveChanges', lang),
+      title: i18n.t('message.DoYouWantToSaveChanges', lang),
       icon: <ExclamationCircleOutlined />,
       okText: i18n.t('word.Yes', lang),
       cancelText: i18n.t('word.No', lang),
@@ -99,7 +99,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   const readLocalFile = () => {
     if (!viewOnly && changed) {
       Modal.confirm({
-        title: i18n.t('shared.DoYouWantToSaveChanges', lang),
+        title: i18n.t('message.DoYouWantToSaveChanges', lang),
         icon: <ExclamationCircleOutlined />,
         onOk: () => {
           if (user.uid) {

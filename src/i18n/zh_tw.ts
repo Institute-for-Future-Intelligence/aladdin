@@ -94,19 +94,22 @@ export const i18n_zh_tw = {
     },
 
     shared: {
-      AzimuthOfNorthIsZero: '正北的方位角為零度',
-      CounterclockwiseAzimuthIsPositive: '逆時針為正',
       NoTexture: '無材質',
-      DoYouWantToSaveChanges: '您要保存當前文檔嗎？',
-      NotApplicableToSelectedAction: '此值不適用於當前選擇範圍',
-      ThisElementIsLocked: '這個部件被鎖定。',
       FoundationElement: '地基',
       CuboidElement: '長方體',
       PolygonElement: '多邊形',
       SensorElement: '傳感器',
       SolarPanelElement: '光伏板',
       ElementLocked: '固定',
+    },
+
+    message: {
+      DoYouWantToSaveChanges: '您要保存當前文檔嗎？',
+      NotApplicableToSelectedAction: '此值不適用於當前選擇範圍',
+      ThisElementIsLocked: '這個部件被鎖定。',
       ThisCannotBeUndone: '這個操作一旦執行就不能撤銷。',
+      AzimuthOfNorthIsZero: '正北的方位角為零度',
+      CounterclockwiseAzimuthIsPositive: '逆時針為正',
       MoveCancelledBecauseOfOverlap: '位置重疊，移動取消。',
       MoveOutsideBoundaryCancelled: '位置出界，移動取消。',
       RotationCancelledBecauseOfOverlap: '位置重疊，旋轉取消。',
@@ -115,6 +118,7 @@ export const i18n_zh_tw = {
       ResizingOutsideBoundaryCancelled: '位置出界，尺寸調整取消。',
       CannotPasteOutsideBoundary: '位置出界，不能複制。',
       CannotPasteBecauseOfOverlap: '位置重疊，不能複制。',
+      CannotMoveObjectTooFar: '位置太遠，移動取消。',
     },
 
     menu: {

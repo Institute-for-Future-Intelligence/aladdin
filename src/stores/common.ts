@@ -2548,12 +2548,12 @@ export const useStore = create<CommonStoreState>(
                     const lang = { lng: state.language };
                     if (state.overlapWithSibling(e)) {
                       // overlap, do not approve
-                      showError(i18n.t('shared.CannotPasteBecauseOfOverlap', lang));
+                      showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
                     } else {
                       if (newParent) {
                         approved = Util.isSolarPanelWithinHorizontalSurface(e as SolarPanelModel, newParent);
                         if (!approved) {
-                          showError(i18n.t('shared.CannotPasteOutsideBoundary', lang));
+                          showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                         }
                       } else {
                         approved = true;
@@ -2647,7 +2647,7 @@ export const useStore = create<CommonStoreState>(
                                 state.elementsToPaste = [e];
                                 approved = true;
                               } else {
-                                showError(i18n.t('shared.CannotPasteOutsideBoundary', lang));
+                                showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                               }
                             } else {
                               // TODO: For other surfaces, handle out-of-bounds errors here
@@ -2656,7 +2656,7 @@ export const useStore = create<CommonStoreState>(
                               approved = true;
                             }
                           } else {
-                            showError(i18n.t('shared.CannotPasteBecauseOfOverlap', lang));
+                            showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
                           }
                         }
                       }
