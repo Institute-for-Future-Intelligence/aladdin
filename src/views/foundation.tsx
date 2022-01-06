@@ -1206,28 +1206,15 @@ const Foundation = ({
 
   const handlePointerOut = () => {
     setHovered(false);
+    setShowGrid(false);
     if (grabRef.current) {
       if (isSettingWallStartPointRef.current) {
         removeElementById(grabRef.current.id, false);
         isSettingWallStartPointRef.current = false;
-        setShowGrid(false);
         setCommonStore((state) => {
           state.addedWallId = null;
           state.objectTypeToAdd = ObjectType.Wall;
         });
-      }
-      switch (grabRef.current.type) {
-        case ObjectType.Human:
-        case ObjectType.Tree:
-          setShowGrid(false);
-          break;
-        case ObjectType.SolarPanel:
-          // Have to get the latest from the store (we may change this to ref in the future)
-          const sp = useStore.getState().getElementById(grabRef.current.id) as SolarPanelModel;
-          if (moveHandleTypeRef.current && !isSolarPanelNewPositionOk(sp, sp.cx, sp.cy)) {
-            setElementPosition(sp.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
-          }
-          break;
       }
     }
   };
@@ -1282,6 +1269,16 @@ const Foundation = ({
     clone.lx = lx;
     clone.ly = ly;
     return Util.isSolarPanelWithinHorizontalSurface(clone, foundationModel);
+  };
+
+  const handleSolarPanelPointerOut = (e: ThreeEvent<PointerEvent>) => {
+    if (grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
+      // Have to get the latest from the store (we may change this to ref in the future)
+      const sp = useStore.getState().getElementById(grabRef.current.id) as SolarPanelModel;
+      if (moveHandleTypeRef.current && !isSolarPanelNewPositionOk(sp, sp.cx, sp.cy)) {
+        setElementPosition(sp.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
+      }
+    }
   };
 
   const handleSolarPanelPointerMove = (e: ThreeEvent<PointerEvent>) => {
@@ -1428,6 +1425,7 @@ const Foundation = ({
           args={[lx, ly]}
           visible={false}
           onPointerMove={handleSolarPanelPointerMove}
+          onPointerOut={handleSolarPanelPointerOut}
         />
       )}
 
