@@ -35,7 +35,7 @@ export interface UndoableResize extends Undoable {
 }
 
 export interface UndoableResizeWall extends Undoable {
-  resizeElement: WallModel;
+  resizedElementId: string;
   oldPosition: Vector3;
   newPosition: Vector3;
   oldDimension: Vector3;

@@ -374,7 +374,6 @@ const Foundation = ({
 
   const flipWallLoop = (currentWallId: string) => {
     let wall = wallMapOnFoundation.current.get(currentWallId);
-
     while (wall && wall.leftJoints.length > 0) {
       const wallCopy = wallMapOnFoundation.current.get(wall.id) as WallModel;
       if (!wallCopy) {
@@ -660,7 +659,7 @@ const Foundation = ({
     const undoableResize = {
       name: 'Resize',
       timestamp: Date.now(),
-      resizeElement: element,
+      resizedElementId: element.id,
       oldPosition: oldPositionRef.current.clone(),
       newPosition: newPositionRef.current.clone(),
       oldDimension: oldDimensionRef.current.clone(),
@@ -692,7 +691,7 @@ const Foundation = ({
             break;
           case FlippedWallSide.loop:
             if (undoableResize.newJoints[0] && undoableResize.newJoints[1]) {
-              flipWallLoop(undoableResize.resizeElement.id);
+              flipWallLoop(undoableResize.resizedElementId);
             } else if (undoableResize.newJoints[1]) {
               const rightWall = getElementById(undoableResize.newJoints[1]);
               if (rightWall) {
@@ -708,7 +707,7 @@ const Foundation = ({
         }
         setCommonStore((state) => {
           for (const e of state.elements) {
-            if (e.id === undoableResize.resizeElement.id) {
+            if (e.id === undoableResize.resizedElementId) {
               const w = e as WallModel;
               w.cx = undoableResize.oldPosition.x;
               w.cy = undoableResize.oldPosition.y;
@@ -731,7 +730,7 @@ const Foundation = ({
                         (n as WallModel).rightJoints = [];
                       }
                       if (n.id === undoableResize.oldJoints[0]) {
-                        (n as WallModel).rightJoints = [undoableResize.resizeElement.id];
+                        (n as WallModel).rightJoints = [undoableResize.resizedElementId];
                       }
                     }
                   }
@@ -742,7 +741,7 @@ const Foundation = ({
                         (n as WallModel).leftJoints = [];
                       }
                       if (n.id === undoableResize.oldJoints[1]) {
-                        (n as WallModel).leftJoints = [undoableResize.resizeElement.id];
+                        (n as WallModel).leftJoints = [undoableResize.resizedElementId];
                       }
                     }
                   }
@@ -815,6 +814,7 @@ const Foundation = ({
                       }
                     }
                   }
+                  state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
                   break;
                 }
               }
@@ -824,7 +824,113 @@ const Foundation = ({
         });
         flippedWallSide.current = FlippedWallSide.null;
       },
-      redo: () => {},
+      redo: () => {
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            if (e.id === undoableResize.resizedElementId) {
+              const w = e as WallModel;
+              w.cx = undoableResize.newPosition.x;
+              w.cy = undoableResize.newPosition.y;
+              w.cz = undoableResize.newPosition.z;
+              w.lx = undoableResize.newDimension.x;
+              w.ly = undoableResize.newDimension.y;
+              w.lz = undoableResize.newDimension.z;
+
+              switch (undoableResize.flippedWallSide) {
+                case FlippedWallSide.left:
+                  w.relativeAngle = (undoableResize.newAngle + Math.PI) % TWO_PI;
+                  for (const n of state.elements) {
+                    if (n.id === undoableResize.oldJoints[0]) {
+                      (n as WallModel).rightJoints = [];
+                      break;
+                    }
+                  }
+                  break;
+                case FlippedWallSide.right:
+                  w.relativeAngle = (undoableResize.newAngle + Math.PI) % TWO_PI;
+                  for (const n of state.elements) {
+                    if (n.id === undoableResize.oldJoints[1]) {
+                      (n as WallModel).leftJoints = [];
+                      break;
+                    }
+                  }
+                  break;
+                case FlippedWallSide.loop:
+                  w.relativeAngle = (undoableResize.newAngle + Math.PI) % TWO_PI;
+                  w.leftJoints = undoableResize.newJoints[1] ? [undoableResize.newJoints[1]] : [];
+                  w.rightJoints = undoableResize.newJoints[0] ? [undoableResize.newJoints[0]] : [];
+                  w.leftPoint = undoableResize.newPoint[1];
+                  w.rightPoint = undoableResize.newPoint[0];
+                  for (const n of state.elements) {
+                    if (n.id === undoableResize.newJoints[0]) {
+                      (n as WallModel).leftJoints = [w.id];
+                    }
+                    if (n.id === undoableResize.newJoints[1]) {
+                      (n as WallModel).rightJoints = [w.id];
+                    }
+                  }
+                  break;
+                case FlippedWallSide.null:
+                  w.relativeAngle = undoableResize.newAngle;
+                  w.leftJoints = undoableResize.newJoints[0] ? [undoableResize.newJoints[0]] : [];
+                  w.rightJoints = undoableResize.newJoints[1] ? [undoableResize.newJoints[1]] : [];
+                  w.leftPoint = undoableResize.newPoint[0];
+                  w.rightPoint = undoableResize.newPoint[1];
+                  // left handle
+                  if (undoableResize.oldJoints[0] !== undoableResize.newJoints[0]) {
+                    // left handle
+                    for (const n of state.elements) {
+                      if (n.id === undoableResize.newJoints[0]) {
+                        (n as WallModel).rightJoints = [w.id];
+                      }
+                      if (n.id === undoableResize.oldJoints[0]) {
+                        (n as WallModel).rightJoints = [];
+                      }
+                    }
+                  }
+                  // right handle
+                  if (undoableResize.oldJoints[1] !== undoableResize.newJoints[1]) {
+                    for (const n of state.elements) {
+                      if (n.id === undoableResize.newJoints[1]) {
+                        (n as WallModel).leftJoints = [w.id];
+                      }
+                      if (n.id === undoableResize.oldJoints[1]) {
+                        (n as WallModel).leftJoints = [];
+                      }
+                    }
+                  }
+                  state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+                  break;
+              }
+              break;
+            }
+          }
+        });
+        switch (undoableResize.flippedWallSide) {
+          case FlippedWallSide.left: {
+            const currWall = getElementById(undoableResize.resizedElementId) as WallModel;
+            const targetWall = getElementById(undoableResize.newJoints[1]) as WallModel;
+            flipWallsCounterClockwise(currWall, targetWall);
+            break;
+          }
+          case FlippedWallSide.right: {
+            const currWall = getElementById(undoableResize.resizedElementId) as WallModel;
+            const targetWall = getElementById(undoableResize.newJoints[0]) as WallModel;
+            flipWallsClockwise(currWall, targetWall);
+            break;
+          }
+          case FlippedWallSide.loop:
+            wallMapOnFoundation.current.clear();
+            for (const e of useStore.getState().elements) {
+              if (e.type === ObjectType.Wall && e.parentId === id) {
+                wallMapOnFoundation.current.set(e.id, e as WallModel);
+              }
+            }
+            flipWallLoop(undoableResize.resizedElementId);
+            break;
+        }
+        flippedWallSide.current = FlippedWallSide.null;
+      },
     } as UndoableResizeWall;
     addUndoable(undoableResize);
   };
