@@ -628,7 +628,10 @@ const Foundation = ({
       },
       redo: () => {
         const wall = undoableAdd.addedElement as WallModel;
-        if (undoableAdd.flippedWallSide === FlippedWallSide.right && wall.rightJoints.length > 0) {
+        if (
+          undoableAdd.flippedWallSide === FlippedWallSide.right ||
+          (undoableAdd.flippedWallSide === FlippedWallSide.loop && wall.rightJoints.length > 0)
+        ) {
           const rightWall = getElementById(wall.rightJoints[0]);
           if (rightWall) {
             flipWallsClockwise(rightWall as WallModel);
