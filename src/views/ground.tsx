@@ -34,7 +34,6 @@ import { TreeModel } from '../models/TreeModel';
 import { UndoableChange } from '../undo/UndoableChange';
 import { showError } from '../helpers';
 import i18n from '../i18n/i18n';
-import Human from './human';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
@@ -98,9 +97,9 @@ const Ground = () => {
   const lang = { lng: language };
 
   useEffect(() => {
-    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointerup', windowHandlePointerUp);
     return () => {
-      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointerup', windowHandlePointerUp);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -427,7 +426,54 @@ const Ground = () => {
     }
   };
 
-  const handlePointerUp = (e: PointerEvent) => {
+  const windowHandlePointerUp = (e: PointerEvent) => {
+    if (e.button === 2) return;
+    if (grabRef.current) {
+      let oldHumanOrTreeParentId: string | null = null;
+      let newHumanOrTreeParentId: string | null = null;
+      // elements modified by reference
+      let elementRef: Group | null | undefined = null;
+      switch (grabRef.current.type) {
+        case ObjectType.Tree:
+          elementRef = useStoreRef.getState().treeRef?.current;
+          break;
+        case ObjectType.Human:
+          elementRef = useStoreRef.getState().humanRef?.current;
+          break;
+      }
+      oldHumanOrTreeParentId = grabRef.current.parentId;
+      setElementPosition(
+        grabRef.current.id,
+        oldPositionRef.current.x,
+        oldPositionRef.current.y,
+        oldPositionRef.current.z,
+      );
+      if (elementRef) {
+        switch (grabRef.current.type) {
+          case ObjectType.Tree:
+          case ObjectType.Human:
+            elementRef.position.copy(oldPositionRef.current);
+            break;
+        }
+      }
+      setParentIdById(oldHumanOrTreeParentId, grabRef.current.id);
+      attachToObjectDom(oldHumanOrTreeParentId, newHumanOrTreeParentId, grabRef.current.id);
+      showError(i18n.t('message.CannotMoveObjectTooFar', lang));
+      grabRef.current = null;
+    }
+    setCommonStore((state) => {
+      state.moveHandleType = null;
+      state.resizeHandleType = null;
+      state.rotateHandleType = null;
+    });
+    useStoreRef.setState((state) => {
+      state.humanRef = null;
+      state.treeRef = null;
+      state.setEnableOrbitController(true);
+    });
+  };
+
+  const handlePointerUp = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2) return;
     if (grabRef.current) {
       const elem = getElementById(grabRef.current.id);
@@ -496,8 +542,9 @@ const Ground = () => {
             addUndoable(undoableAdd);
           }
         }
-        //
+        // handling editing events
         else {
+          // resizing
           if (useStore.getState().resizeHandleType) {
             newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
             newDimensionRef.current.set(elem.lx, elem.ly, elem.lz);
@@ -575,7 +622,6 @@ const Ground = () => {
                 }
               }
             });
-
             if (
               newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE &&
               newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > ZERO_TOLERANCE
@@ -599,7 +645,9 @@ const Ground = () => {
               const undoableResize = handleUndoableResize();
               undoableResize && addUndoable(undoableResize);
             }
-          } else if (useStore.getState().rotateHandleType) {
+          }
+          // rotation
+          else if (useStore.getState().rotateHandleType) {
             newRotationRef.current = [...elem.rotation];
             const oldRotation = new Vector3().fromArray(oldRotationRef.current);
             const newRotation = new Vector3().fromArray(newRotationRef.current);
@@ -629,11 +677,12 @@ const Ground = () => {
               } as UndoableRotate;
               addUndoable(undoableRotate);
             }
-          } else {
+          }
+          // translation
+          else if (useStore.getState().moveHandleType) {
             newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
             let oldHumanOrTreeParentId: string | null = null;
             let newHumanOrTreeParentId: string | null = null;
-
             // elements modified by reference
             let elementRef: Group | null | undefined = null;
             switch (grabRef.current.type) {
@@ -691,8 +740,8 @@ const Ground = () => {
                 .add(new Vector3(0, 0, elem.lz))
                 .project(camera)
                 .distanceTo(screenPosition);
+              // smaller than 2% of screen dimension
               if (Math.max(screenLx, screenLy, screenLz) < 0.02) {
-                // smaller than 2% of screen dimension
                 setElementPosition(
                   elem.id,
                   oldPositionRef.current.x,
@@ -755,18 +804,7 @@ const Ground = () => {
       }
       grabRef.current = null;
     }
-
-    setCommonStore((state) => {
-      state.moveHandleType = null;
-      state.resizeHandleType = null;
-      state.rotateHandleType = null;
-    });
-
-    useStoreRef.setState((state) => {
-      state.humanRef = null;
-      state.treeRef = null;
-      state.setEnableOrbitController(true);
-    });
+    windowHandlePointerUp(e);
   };
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
