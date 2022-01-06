@@ -14,7 +14,7 @@ import {
   UNIT_VECTOR_POS_Z_ARRAY,
   ZERO_TOLERANCE,
 } from './constants';
-import { Euler, Vector2, Vector3 } from 'three';
+import { Euler, Object3D, Vector2, Vector3 } from 'three';
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import { MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType } from './types';
@@ -23,7 +23,6 @@ import { SensorModel } from './models/SensorModel';
 import { WallModel } from './models/WallModel';
 import { PolygonModel } from './models/PolygonModel';
 import { Point2 } from './models/Point2';
-import { useStore } from './stores/common';
 
 export class Util {
   static lineIntersection(from1: Point2, to1: Point2, from2: Point2, to2: Point2): Point2 | undefined {
@@ -405,6 +404,17 @@ export class Util {
     return new Vector3()
       .subVectors(new Vector3(v.x, v.y), parentPos)
       .applyAxisAngle(UNIT_VECTOR_POS_Z, -parent.rotation[2]);
+  }
+
+  static getObjectChildById(object: Object3D | null | undefined, id: string): Object3D | null {
+    if (object) {
+      for (const obj of object.children) {
+        if (obj.name.includes(`${id}`)) {
+          return obj;
+        }
+      }
+    }
+    return null;
   }
 
   static toRadians(degrees: number): number {

@@ -202,33 +202,25 @@ const Ground = () => {
     return getObjectId(obj.parent);
   };
 
-  const getObjectChildById = (object: Object3D | null | undefined, id: string) => {
-    if (object === null || object === undefined) return null;
-    for (const obj of object.children) {
-      if (obj.name.includes(`${id}`)) {
-        return obj;
-      }
-    }
-    return null;
-  };
-
-  const attachToObjectDom = (
+  const attachToGroup = (
     attachParentId: string | null | undefined,
     currParentId: string | null | undefined,
     currId: string,
   ) => {
     if (!attachParentId || !currParentId) return;
     const contentRef = useStoreRef.getState().contentRef;
-    const currParentObj = getObjectChildById(contentRef?.current, currParentId);
-    const currObj = getObjectChildById(currParentId === GROUND_ID ? contentRef?.current : currParentObj, currId);
-    if (currObj && contentRef?.current) {
-      if (attachParentId === GROUND_ID) {
-        contentRef.current.add(currObj);
-      } else {
-        const attachParentObj = getObjectChildById(contentRef.current, attachParentId);
-        attachParentObj?.add(currObj);
+    if (contentRef?.current) {
+      const currParentObj = Util.getObjectChildById(contentRef.current, currParentId);
+      const currObj = Util.getObjectChildById(currParentId === GROUND_ID ? contentRef.current : currParentObj, currId);
+      if (currObj) {
+        if (attachParentId === GROUND_ID) {
+          contentRef.current.add(currObj);
+        } else {
+          const attachParentObj = Util.getObjectChildById(contentRef.current, attachParentId);
+          attachParentObj?.add(currObj);
+        }
+        invalidate();
       }
-      invalidate();
     }
   };
 
@@ -337,7 +329,7 @@ const Ground = () => {
               const oldParentId = undoableResize.oldChildrenParentIdMap?.get(id);
               const newParentId = undoableResize.newChildrenParentIdMap?.get(id);
               if (oldParentId && newParentId && oldParentId !== newParentId) {
-                attachToObjectDom(oldParentId, newParentId, id);
+                attachToGroup(oldParentId, newParentId, id);
                 setParentIdById(oldParentId, id);
               }
             }
@@ -371,7 +363,7 @@ const Ground = () => {
             const oldParentId = undoableResize.oldChildrenParentIdMap?.get(id);
             const newParentId = undoableResize.newChildrenParentIdMap?.get(id);
             if (oldParentId && newParentId && oldParentId !== newParentId) {
-              attachToObjectDom(newParentId, oldParentId, id);
+              attachToGroup(newParentId, oldParentId, id);
               setParentIdById(newParentId, id);
             }
           }
@@ -391,7 +383,7 @@ const Ground = () => {
 
   const handleDetachParent = (elem: ElementModel, e: ElementModel) => {
     const contentRef = useStoreRef.getState().contentRef;
-    const parentObject = getObjectChildById(contentRef?.current, elem.id);
+    const parentObject = Util.getObjectChildById(contentRef?.current, elem.id);
     if (parentObject) {
       for (const obj of parentObject.children) {
         if (obj.name.includes(`${e.id}`)) {
@@ -426,11 +418,29 @@ const Ground = () => {
     }
   };
 
+  const reattachToParentObject = (attachParentId: string | null | undefined, currId: string) => {
+    if (!attachParentId) return;
+    const contentRef = useStoreRef.getState().contentRef;
+    if (contentRef?.current) {
+      const currObj = Util.getObjectChildById(contentRef.current, currId);
+      if (currObj) {
+        if (attachParentId === GROUND_ID) {
+          contentRef.current.add(currObj);
+        } else {
+          const attachParentObj = Util.getObjectChildById(contentRef.current, attachParentId);
+          attachParentObj?.add(currObj);
+        }
+        invalidate();
+      }
+    }
+  };
+
   const windowHandlePointerUp = (e: PointerEvent) => {
     if (e.button === 2) return;
+    // TODO: If the pointer is up on the sky, then grabRef has no chance to set to null.
+    // We take advantage of this to determine whether it is on the sky or ground, but it is not ideal.
     if (grabRef.current) {
       let oldHumanOrTreeParentId: string | null = null;
-      let newHumanOrTreeParentId: string | null = null;
       // elements modified by reference
       let elementRef: Group | null | undefined = null;
       switch (grabRef.current.type) {
@@ -457,7 +467,7 @@ const Ground = () => {
         }
       }
       setParentIdById(oldHumanOrTreeParentId, grabRef.current.id);
-      attachToObjectDom(oldHumanOrTreeParentId, newHumanOrTreeParentId, grabRef.current.id);
+      reattachToParentObject(oldHumanOrTreeParentId, grabRef.current.id);
       showError(i18n.t('message.CannotMoveObjectTooFar', lang));
       grabRef.current = null;
     }
@@ -757,7 +767,7 @@ const Ground = () => {
                   }
                 }
                 setParentIdById(oldHumanOrTreeParentId, elem.id);
-                attachToObjectDom(oldHumanOrTreeParentId, newHumanOrTreeParentId, elem.id);
+                attachToGroup(oldHumanOrTreeParentId, newHumanOrTreeParentId, elem.id);
                 showError(i18n.t('message.CannotMoveObjectTooFar', lang));
               } else {
                 const undoableMove = {
@@ -780,7 +790,7 @@ const Ground = () => {
                       undoableMove.oldCz,
                     );
                     setParentIdById(undoableMove.oldParentId, undoableMove.movedElementId);
-                    attachToObjectDom(undoableMove.oldParentId, undoableMove.newParentId, undoableMove.movedElementId);
+                    attachToGroup(undoableMove.oldParentId, undoableMove.newParentId, undoableMove.movedElementId);
                   },
                   redo: () => {
                     setElementPosition(
@@ -790,7 +800,7 @@ const Ground = () => {
                       undoableMove.newCz,
                     );
                     setParentIdById(undoableMove.newParentId, undoableMove.movedElementId);
-                    attachToObjectDom(undoableMove.newParentId, undoableMove.oldParentId, undoableMove.movedElementId);
+                    attachToGroup(undoableMove.newParentId, undoableMove.oldParentId, undoableMove.movedElementId);
                   },
                 } as UndoableMove;
                 addUndoable(undoableMove);
