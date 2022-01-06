@@ -429,6 +429,15 @@ export const useStore = create<CommonStoreState>(
               state.skipChange = true;
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.fileChanged = !state.fileChanged;
+              // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
+              // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Human) {
+                  const human = e as HumanModel;
+                  e.lx = HumanData.fetchWidth(human.name);
+                  e.lz = HumanData.fetchHeight(human.name);
+                }
+              }
             });
           },
           exportContent() {

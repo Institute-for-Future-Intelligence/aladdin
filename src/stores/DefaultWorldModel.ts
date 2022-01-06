@@ -11,6 +11,7 @@ import { GroundModel } from '../models/GroundModel';
 import { HumanModel } from '../models/HumanModel';
 import short from 'short-uuid';
 import { GROUND_ID } from '../constants';
+import { HumanData } from '../HumanData';
 
 // default scene
 
@@ -87,6 +88,8 @@ export class DefaultWorldModel implements WorldModel {
       cx: 1,
       cy: -1,
       cz: 0,
+      lx: HumanData.fetchWidth(HumanName.Jill),
+      lz: HumanData.fetchHeight(HumanName.Jill),
       normal: [1, 0, 0],
       rotation: [0, 0, 0],
       parentId: GROUND_ID,
