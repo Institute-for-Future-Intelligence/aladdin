@@ -262,7 +262,7 @@ const CuboidLengthInput = ({
     }
   };
 
-  const attachToObjectDom = (
+  const attachToObjectGroup = (
     attachParentId: string | null | undefined,
     currParentId: string | null | undefined,
     currId: string,
@@ -343,7 +343,7 @@ const CuboidLengthInput = ({
                   const oldParentId = undoableChangeAll.oldChildrenParentIdMap?.get(id);
                   const newParentId = undoableChangeAll.newChildrenParentIdMap?.get(id);
                   if (oldParentId && newParentId && oldParentId !== newParentId) {
-                    attachToObjectDom(oldParentId, newParentId, id);
+                    attachToObjectGroup(oldParentId, newParentId, id);
                     setParentIdById(oldParentId, id);
                   }
                 }
@@ -362,7 +362,7 @@ const CuboidLengthInput = ({
                   const oldParentId = undoableChangeAll.oldChildrenParentIdMap?.get(id);
                   const newParentId = undoableChangeAll.newChildrenParentIdMap?.get(id);
                   if (oldParentId && newParentId && oldParentId !== newParentId) {
-                    attachToObjectDom(newParentId, oldParentId, id);
+                    attachToObjectGroup(newParentId, oldParentId, id);
                     setParentIdById(newParentId, id);
                   }
                 }
@@ -398,7 +398,7 @@ const CuboidLengthInput = ({
                   const oldParentId = undoableChange.oldChildrenParentIdMap?.get(id);
                   const newParentId = undoableChange.newChildrenParentIdMap?.get(id);
                   if (oldParentId && newParentId && oldParentId !== newParentId) {
-                    attachToObjectDom(oldParentId, newParentId, id);
+                    attachToObjectGroup(oldParentId, newParentId, id);
                     setParentIdById(oldParentId, id);
                   }
                 }
@@ -417,7 +417,7 @@ const CuboidLengthInput = ({
                   const oldParentId = undoableChange.oldChildrenParentIdMap?.get(id);
                   const newParentId = undoableChange.newChildrenParentIdMap?.get(id);
                   if (oldParentId && newParentId && oldParentId !== newParentId) {
-                    attachToObjectDom(newParentId, oldParentId, id);
+                    attachToObjectGroup(newParentId, oldParentId, id);
                     setParentIdById(newParentId, id);
                   }
                 }
