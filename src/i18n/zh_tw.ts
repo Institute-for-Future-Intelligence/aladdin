@@ -306,6 +306,12 @@ export const i18n_zh_tw = {
       AllPolygonsOnSurface: '同一表面上所有的多邊形',
       AllPolygonsAboveFoundation: '同一地基上所有的多邊形',
       AllPolygons: '所有的多邊形',
+      Layout: '佈局',
+      SolarPanelArrayLayout: '光伏板佈局',
+      SolarPanelArrayModel: '光伏板型號',
+      SolarPanelArrayOrientation: '排列方向',
+      SolarPanelArrayTiltAngle: '傾斜角度',
+      SolarPanelArrayInterRowSpacing: '行間距',
     },
 
     treeMenu: {

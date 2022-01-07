@@ -476,11 +476,9 @@ const SolarPanelOrientationSelection = ({
               <Option key={Orientation.portrait} value={Orientation.portrait}>
                 {i18n.t('solarPanelMenu.Portrait', lang)}
               </Option>
-              )
               <Option key={Orientation.landscape} value={Orientation.landscape}>
                 {i18n.t('solarPanelMenu.Landscape', lang)}
               </Option>
-              )
             </Select>
           </Col>
           <Col

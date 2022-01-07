@@ -311,6 +311,12 @@ export const i18n_es = {
       AllPolygonsOnSurface: 'All Polygons on the Same Surface',
       AllPolygonsAboveFoundation: 'Todos los polígonos sobre la base',
       AllPolygons: 'Todos los polígonos',
+      Layout: 'Layout',
+      SolarPanelArrayLayout: 'Solar Panel Array Layout',
+      SolarPanelArrayModel: 'Solar Panel Model',
+      SolarPanelArrayOrientation: 'Orientation',
+      SolarPanelArrayTiltAngle: 'Tilt Angle',
+      SolarPanelArrayInterRowSpacing: 'Inter-Row Spacing',
     },
 
     treeMenu: {

@@ -330,7 +330,6 @@ const SolarPanelTrackerSelection = ({
               <Option key={'NONE'} value={TrackerType.NO_TRACKER} title={i18n.t('solarPanelMenu.NoTracker', lang)}>
                 {i18n.t('word.None', lang)}
               </Option>
-              )
               <Option
                 key={'HSAT'}
                 value={TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER}
@@ -338,7 +337,6 @@ const SolarPanelTrackerSelection = ({
               >
                 HSAT
               </Option>
-              )
               <Option
                 key={'VSAT'}
                 value={TrackerType.VERTICAL_SINGLE_AXIS_TRACKER}
@@ -346,7 +344,6 @@ const SolarPanelTrackerSelection = ({
               >
                 VSAT
               </Option>
-              )
               <Option
                 key={'AADAT'}
                 value={TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER}
@@ -354,7 +351,6 @@ const SolarPanelTrackerSelection = ({
               >
                 AADAT
               </Option>
-              )
             </Select>
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('solarPanelMenu.SolarTrackerFollowsSun', lang)}

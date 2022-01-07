@@ -4,6 +4,7 @@
 
 import React, { useState } from 'react';
 import { Checkbox, Menu } from 'antd';
+import SubMenu from 'antd/lib/menu/SubMenu';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -15,6 +16,7 @@ import { ObjectType, PolygonTexture } from '../../../types';
 import PolygonLineColorSelection from './polygonLineColorSelection';
 import PolygonFillColorSelection from './polygonFillColorSelection';
 import PolygonTextureSelection from './polygonTextureSelection';
+import SolarPanelLayoutManager from './solarPanelLayoutManager';
 
 export const PolygonMenu = () => {
   const language = useStore(Selector.language);
@@ -26,6 +28,7 @@ export const PolygonMenu = () => {
   const [lineColorDialogVisible, setLineColorDialogVisible] = useState(false);
   const [fillColorDialogVisible, setFillColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
+  const [solarPanelLayoutManagerVisible, setSolarPanelLayoutManagerVisible] = useState(false);
   const polygon = getSelectedElement() as PolygonModel;
   const lang = { lng: language };
 
@@ -71,6 +74,21 @@ export const PolygonMenu = () => {
         {legalToPaste() && <Paste keyName={'polygon-paste'} />}
         <Copy keyName={'polygon-copy'} />
         {editable && <Cut keyName={'polygon-cut'} />}
+        <SubMenu key={'layout'} title={i18n.t('polygonMenu.Layout', lang)} style={{ paddingLeft: '24px' }}>
+          <SolarPanelLayoutManager
+            dialogVisible={solarPanelLayoutManagerVisible}
+            setDialogVisible={setSolarPanelLayoutManagerVisible}
+          />
+          <Menu.Item
+            key={'solar-panel-layout'}
+            onClick={() => {
+              setSolarPanelLayoutManagerVisible(true);
+            }}
+            style={{ paddingLeft: '36px' }}
+          >
+            {i18n.t('polygonMenu.SolarPanelArrayLayout', lang)} ...
+          </Menu.Item>
+        </SubMenu>
         <Lock keyName={'polygon-lock'} />
         {editable && (
           <Menu.Item key={'polygon-filled'}>

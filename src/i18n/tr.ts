@@ -314,6 +314,12 @@ export const i18n_tr = {
       AllPolygonsOnSurface: 'All Polygons on the Same Surface',
       AllPolygonsAboveFoundation: 'Temelin Üzerindeki Tüm Poligonlar',
       AllPolygons: 'Tüm Poligonlar',
+      Layout: 'Layout',
+      SolarPanelArrayLayout: 'Solar Panel Array Layout',
+      SolarPanelArrayModel: 'Solar Panel Model',
+      SolarPanelArrayOrientation: 'Orientation',
+      SolarPanelArrayTiltAngle: 'Tilt Angle',
+      SolarPanelArrayInterRowSpacing: 'Inter-Row Spacing',
     },
 
     treeMenu: {

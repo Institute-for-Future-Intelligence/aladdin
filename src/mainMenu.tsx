@@ -807,11 +807,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   <Option key={Discretization.EXACT} value={Discretization.EXACT}>
                     {i18n.t('menu.solarPanels.Exact', lang)}
                   </Option>
-                  )
                   <Option key={Discretization.APPROXIMATE} value={Discretization.APPROXIMATE}>
                     {i18n.t('menu.solarPanels.Approximate', lang)}
                   </Option>
-                  )
                 </Select>
               </Menu.Item>
               {discretization === Discretization.APPROXIMATE && (
