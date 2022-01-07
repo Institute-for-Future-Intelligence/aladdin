@@ -8,7 +8,7 @@ import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
-import { Orientation } from '../../../types';
+import { Orientation, RowAxis } from '../../../types';
 import { Util } from '../../../Util';
 
 const { Option } = Select;
@@ -27,6 +27,7 @@ const SolarPanelLayoutManager = ({
   const addUndoable = useStore(Selector.addUndoable);
 
   const [selectedPvModel, setSelectedPvModel] = useState<string>('SPR-X21-335-BLK');
+  const [selectedRowAxis, setSelectedRowAxis] = useState<RowAxis>(RowAxis.zonal);
   const [selectedOrientation, setSelectedOrientation] = useState<Orientation>(Orientation.portrait);
   const [tiltAngle, setTiltAngle] = useState<number>(0);
   const [interRowSpacing, setInterRowSpacing] = useState<number>(5);
@@ -122,6 +123,29 @@ const SolarPanelLayoutManager = ({
                   {key}
                 </Option>
               ))}
+            </Select>
+          </Col>
+        </Row>
+
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={12}>
+            {i18n.t('polygonMenu.SolarPanelArrayRowAxis', lang) + ':'}
+          </Col>
+          <Col className="gutter-row" span={10}>
+            <Select
+              style={{ width: '100%' }}
+              value={selectedRowAxis}
+              onChange={(value) => {
+                setSelectedRowAxis(value);
+                setUpdateFlag(!updateFlag);
+              }}
+            >
+              <Option key={RowAxis.zonal} value={RowAxis.zonal}>
+                {i18n.t('polygonMenu.SolarPanelArrayZonalRowAxis', lang)}
+              </Option>
+              <Option key={RowAxis.meridional} value={RowAxis.meridional}>
+                {i18n.t('polygonMenu.SolarPanelArrayMeridionalRowAxis', lang)}
+              </Option>
             </Select>
           </Col>
         </Row>

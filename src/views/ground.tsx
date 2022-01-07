@@ -435,52 +435,244 @@ const Ground = () => {
     }
   };
 
-  const windowHandlePointerUp = (e: PointerEvent) => {
-    if (e.button === 2) return;
-    // TODO: If the pointer is up on the sky, then grabRef has no chance to set to null.
-    // We take advantage of this to determine whether it is on the sky or ground, but it is not ideal.
-    if (grabRef.current) {
-      let oldHumanOrTreeParentId: string | null = null;
-      // elements modified by reference
-      let elementRef: Group | null | undefined = null;
-      switch (grabRef.current.type) {
-        case ObjectType.Tree:
-          elementRef = useStoreRef.getState().treeRef?.current;
-          break;
-        case ObjectType.Human:
-          elementRef = useStoreRef.getState().humanRef?.current;
-          break;
-      }
-      oldHumanOrTreeParentId = grabRef.current.parentId;
-      setElementPosition(
-        grabRef.current.id,
-        oldPositionRef.current.x,
-        oldPositionRef.current.y,
-        oldPositionRef.current.z,
-      );
-      if (elementRef) {
-        switch (grabRef.current.type) {
-          case ObjectType.Tree:
-          case ObjectType.Human:
-            elementRef.position.copy(oldPositionRef.current);
-            break;
+  const resizeElement = (elem: ElementModel) => {
+    newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
+    newDimensionRef.current.set(elem.lx, elem.ly, elem.lz);
+    oldChildrenParentIdMapRef.current.clear();
+    newChildrenParentIdMapRef.current.clear();
+    newChildrenPositionsMapRef.current.clear();
+    newPolygonVerticesMapRef.current.clear();
+    setCommonStore((state) => {
+      state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+      state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+      // set ref children state
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
+          if (e.parentId === elem.id) {
+            oldChildrenParentIdMapRef.current.set(e.id, elem.id);
+            if (Util.isResizingVertical(useStore.getState().resizeHandleType)) {
+              // stand on top face
+              if (Math.abs(oldDimensionRef.current.z / 2 - e.cz) < 0.01) {
+                e.cz = elem.lz / 2;
+              }
+              // stand on side faces
+              else {
+                const newRelZ = e.cz + oldPositionRef.current.z - elem.cz;
+                if (Math.abs(newRelZ) > elem.lz / 2) {
+                  handleDetachParent(elem, e);
+                } else {
+                  e.cz = newRelZ;
+                }
+              }
+            } else {
+              // top face
+              if (Math.abs(oldDimensionRef.current.z / 2 - e.cz) < 0.01) {
+                // fixed position
+                const newRelativePos = new Vector3(e.cx, e.cy, e.cz)
+                  .applyEuler(new Euler(0, 0, elem.rotation[2]))
+                  .add(oldPositionRef.current)
+                  .sub(newPositionRef.current)
+                  .applyEuler(new Euler(0, 0, -elem.rotation[2]));
+                // detach parent dom if falls on ground
+                if (
+                  Math.abs(newRelativePos.x) > Math.abs(newDimensionRef.current.x / 2) + 0.01 ||
+                  Math.abs(newRelativePos.y) > Math.abs(newDimensionRef.current.y / 2) + 0.01
+                ) {
+                  handleDetachParent(elem, e);
+                } else {
+                  e.cx = newRelativePos.x;
+                  e.cy = newRelativePos.y;
+                }
+              }
+              // side faces
+              else {
+                const oldRelativePos = new Vector3(e.cx, e.cy, e.cz);
+                const d = new Vector3().subVectors(newPositionRef.current, oldPositionRef.current);
+                const v = new Vector3().subVectors(oldRelativePos, d);
+                // west and east face
+                if (Math.abs(oldRelativePos.x / oldDimensionRef.current.x) > 0.49) {
+                  if (Math.abs(v.y) > elem.ly / 2 + 0.5) {
+                    handleDetachParent(elem, e);
+                  } else {
+                    e.cx = (oldRelativePos.x > 0 ? elem.lx : -elem.lx) / 2;
+                    e.cy = v.y;
+                  }
+                }
+                // north and south face
+                else if (Math.abs(oldRelativePos.y / oldDimensionRef.current.y) > 0.49) {
+                  if (Math.abs(v.x) > elem.lx / 2 + 0.5) {
+                    handleDetachParent(elem, e);
+                  } else {
+                    e.cx = v.x;
+                    e.cy = (oldRelativePos.y > 0 ? elem.ly : -elem.ly) / 2;
+                  }
+                }
+              }
+            }
+          }
         }
       }
-      setParentIdById(oldHumanOrTreeParentId, grabRef.current.id);
-      reattachToParentObject(oldHumanOrTreeParentId, grabRef.current.id);
-      showError(i18n.t('message.CannotMoveObjectTooFar', lang));
-      grabRef.current = null;
+    });
+    if (
+      newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE &&
+      newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > ZERO_TOLERANCE
+    ) {
+      // store the new positions of the children if the selected element may be a parent
+      if (elem.type === ObjectType.Foundation || elem.type === ObjectType.Cuboid) {
+        const children = getChildren(elem.id);
+        if (children.length > 0) {
+          for (const c of children) {
+            if (c.type === ObjectType.Polygon) {
+              newPolygonVerticesMapRef.current.set(
+                c.id,
+                (c as PolygonModel).vertices.map((v) => ({ ...v })),
+              );
+            } else {
+              newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+            }
+          }
+        }
+      }
+      const undoableResize = handleUndoableResize();
+      undoableResize && addUndoable(undoableResize);
     }
-    setCommonStore((state) => {
-      state.moveHandleType = null;
-      state.resizeHandleType = null;
-      state.rotateHandleType = null;
-    });
-    useStoreRef.setState((state) => {
-      state.humanRef = null;
-      state.treeRef = null;
-      state.setEnableOrbitController(true);
-    });
+  };
+
+  const moveElement = (elem: ElementModel, e: ThreeEvent<PointerEvent>) => {
+    newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
+    let oldHumanOrTreeParentId: string | null = null;
+    let newHumanOrTreeParentId: string | null = null;
+    // elements modified by reference
+    let elementRef: Group | null | undefined = null;
+    switch (elem.type) {
+      case ObjectType.Tree:
+        elementRef = useStoreRef.getState().treeRef?.current;
+        break;
+      case ObjectType.Human:
+        elementRef = useStoreRef.getState().humanRef?.current;
+        break;
+    }
+    if (elementRef && isHumanOrTreeMovedRef.current) {
+      oldHumanOrTreeParentId = elem.parentId;
+      setRayCast(e);
+      const intersections = ray.intersectObjects(scene.children, true);
+      const intersection = getIntersectionToStand(intersections); // could simplify???
+      if (intersection) {
+        const p = intersection.point;
+        // on ground
+        if (intersection.object.name === 'Ground') {
+          handleSetElementState(elem.id, GROUND_ID, p);
+          newPositionRef.current.set(p.x, p.y, p.z);
+          newHumanOrTreeParentId = GROUND_ID;
+        }
+        // on other standable elements
+        else if (intersection.object.userData.stand) {
+          const intersectionObjId = getObjectId(intersection.object);
+          const intersectionObjGroup = intersection.object.parent;
+          if (intersectionObjGroup) {
+            const relPos = new Vector3().subVectors(p, intersectionObjGroup.position).applyEuler(elementParentRotation);
+            handleSetElementState(elem.id, intersectionObjId, relPos);
+            newPositionRef.current.set(relPos.x, relPos.y, relPos.z);
+            newHumanOrTreeParentId = intersectionObjId;
+          }
+        }
+      }
+      isHumanOrTreeMovedRef.current = false;
+    }
+
+    if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
+      const screenPosition = newPositionRef.current.clone().project(camera);
+      const screenLx = newPositionRef.current
+        .clone()
+        .add(new Vector3(elem.lx, 0, 0))
+        .project(camera)
+        .distanceTo(screenPosition);
+      const screenLy = newPositionRef.current
+        .clone()
+        .add(new Vector3(0, elem.ly, 0))
+        .project(camera)
+        .distanceTo(screenPosition);
+      const screenLz = newPositionRef.current
+        .clone()
+        .add(new Vector3(0, 0, elem.lz))
+        .project(camera)
+        .distanceTo(screenPosition);
+      // smaller than 2% of screen dimension
+      if (Math.max(screenLx, screenLy, screenLz) < 0.02) {
+        setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
+        if (elementRef) {
+          switch (elem.type) {
+            case ObjectType.Tree:
+            case ObjectType.Human:
+              elementRef.position.copy(oldPositionRef.current);
+              break;
+          }
+        }
+        setParentIdById(oldHumanOrTreeParentId, elem.id);
+        attachToGroup(oldHumanOrTreeParentId, newHumanOrTreeParentId, elem.id);
+        showError(i18n.t('message.CannotMoveObjectTooFar', lang));
+      } else {
+        const undoableMove = {
+          name: 'Move',
+          timestamp: Date.now(),
+          movedElementId: elem.id,
+          oldCx: oldPositionRef.current.x,
+          oldCy: oldPositionRef.current.y,
+          oldCz: oldPositionRef.current.z,
+          newCx: newPositionRef.current.x,
+          newCy: newPositionRef.current.y,
+          newCz: newPositionRef.current.z,
+          oldParentId: oldHumanOrTreeParentId,
+          newParentId: newHumanOrTreeParentId,
+          undo: () => {
+            setElementPosition(undoableMove.movedElementId, undoableMove.oldCx, undoableMove.oldCy, undoableMove.oldCz);
+            setParentIdById(undoableMove.oldParentId, undoableMove.movedElementId);
+            attachToGroup(undoableMove.oldParentId, undoableMove.newParentId, undoableMove.movedElementId);
+          },
+          redo: () => {
+            setElementPosition(undoableMove.movedElementId, undoableMove.newCx, undoableMove.newCy, undoableMove.newCz);
+            setParentIdById(undoableMove.newParentId, undoableMove.movedElementId);
+            attachToGroup(undoableMove.newParentId, undoableMove.oldParentId, undoableMove.movedElementId);
+          },
+        } as UndoableMove;
+        addUndoable(undoableMove);
+        setCommonStore((state) => {
+          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+        });
+      }
+    }
+  };
+
+  const rotateElement = (elem: ElementModel) => {
+    newRotationRef.current = [...elem.rotation];
+    const oldRotation = new Vector3().fromArray(oldRotationRef.current);
+    const newRotation = new Vector3().fromArray(newRotationRef.current);
+    if (newRotation.distanceToSquared(oldRotation) > ZERO_TOLERANCE) {
+      const undoableRotate = {
+        name: 'Rotate',
+        timestamp: Date.now(),
+        rotatedElementId: elem.id,
+        oldRotation: oldRotationRef.current,
+        newRotation: newRotationRef.current,
+        undo: () => {
+          setElementRotation(
+            undoableRotate.rotatedElementId,
+            undoableRotate.oldRotation[0],
+            undoableRotate.oldRotation[1],
+            undoableRotate.oldRotation[2],
+          );
+        },
+        redo: () => {
+          setElementRotation(
+            undoableRotate.rotatedElementId,
+            undoableRotate.newRotation[0],
+            undoableRotate.newRotation[1],
+            undoableRotate.newRotation[2],
+          );
+        },
+      } as UndoableRotate;
+      addUndoable(undoableRotate);
+    }
   };
 
   const handlePointerUp = (e: ThreeEvent<PointerEvent>) => {
@@ -554,267 +746,73 @@ const Ground = () => {
         }
         // handling editing events
         else {
-          // resizing
           if (useStore.getState().resizeHandleType) {
-            newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
-            newDimensionRef.current.set(elem.lx, elem.ly, elem.lz);
-            oldChildrenParentIdMapRef.current.clear();
-            newChildrenParentIdMapRef.current.clear();
-            newChildrenPositionsMapRef.current.clear();
-            setCommonStore((state) => {
-              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-              state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
-              // set ref children state
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
-                  if (e.parentId === elem.id) {
-                    oldChildrenParentIdMapRef.current.set(e.id, elem.id);
-                    if (Util.isResizingVertical(useStore.getState().resizeHandleType)) {
-                      // stand on top face
-                      if (Math.abs(oldDimensionRef.current.z / 2 - e.cz) < 0.01) {
-                        e.cz = elem.lz / 2;
-                      }
-                      // stand on side faces
-                      else {
-                        const newRelZ = e.cz + oldPositionRef.current.z - elem.cz;
-                        if (Math.abs(newRelZ) > elem.lz / 2) {
-                          handleDetachParent(elem, e);
-                        } else {
-                          e.cz = newRelZ;
-                        }
-                      }
-                    } else {
-                      // top face
-                      if (Math.abs(oldDimensionRef.current.z / 2 - e.cz) < 0.01) {
-                        // fixed position
-                        const newRelativePos = new Vector3(e.cx, e.cy, e.cz)
-                          .applyEuler(new Euler(0, 0, elem.rotation[2]))
-                          .add(oldPositionRef.current)
-                          .sub(newPositionRef.current)
-                          .applyEuler(new Euler(0, 0, -elem.rotation[2]));
-                        // detach parent dom if falls on ground
-                        if (
-                          Math.abs(newRelativePos.x) > Math.abs(newDimensionRef.current.x / 2) + 0.01 ||
-                          Math.abs(newRelativePos.y) > Math.abs(newDimensionRef.current.y / 2) + 0.01
-                        ) {
-                          handleDetachParent(elem, e);
-                        } else {
-                          e.cx = newRelativePos.x;
-                          e.cy = newRelativePos.y;
-                        }
-                      }
-                      // side faces
-                      else {
-                        const oldRelativePos = new Vector3(e.cx, e.cy, e.cz);
-                        const d = new Vector3().subVectors(newPositionRef.current, oldPositionRef.current);
-                        const v = new Vector3().subVectors(oldRelativePos, d);
-                        // west and east face
-                        if (Math.abs(oldRelativePos.x / oldDimensionRef.current.x) > 0.49) {
-                          if (Math.abs(v.y) > elem.ly / 2 + 0.5) {
-                            handleDetachParent(elem, e);
-                          } else {
-                            e.cx = (oldRelativePos.x > 0 ? elem.lx : -elem.lx) / 2;
-                            e.cy = v.y;
-                          }
-                        }
-                        // north and south face
-                        else if (Math.abs(oldRelativePos.y / oldDimensionRef.current.y) > 0.49) {
-                          if (Math.abs(v.x) > elem.lx / 2 + 0.5) {
-                            handleDetachParent(elem, e);
-                          } else {
-                            e.cx = v.x;
-                            e.cy = (oldRelativePos.y > 0 ? elem.ly : -elem.ly) / 2;
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            });
-            if (
-              newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE &&
-              newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > ZERO_TOLERANCE
-            ) {
-              // store the new positions of the children if the selected element may be a parent
-              if (elem.type === ObjectType.Foundation || elem.type === ObjectType.Cuboid) {
-                const children = getChildren(elem.id);
-                if (children.length > 0) {
-                  for (const c of children) {
-                    if (c.type === ObjectType.Polygon) {
-                      newPolygonVerticesMapRef.current.set(
-                        c.id,
-                        (c as PolygonModel).vertices.map((v) => ({ ...v })),
-                      );
-                    } else {
-                      newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
-                    }
-                  }
-                }
-              }
-              const undoableResize = handleUndoableResize();
-              undoableResize && addUndoable(undoableResize);
-            }
-          }
-          // rotation
-          else if (useStore.getState().rotateHandleType) {
-            newRotationRef.current = [...elem.rotation];
-            const oldRotation = new Vector3().fromArray(oldRotationRef.current);
-            const newRotation = new Vector3().fromArray(newRotationRef.current);
-            if (newRotation.distanceToSquared(oldRotation) > ZERO_TOLERANCE) {
-              const undoableRotate = {
-                name: 'Rotate',
-                timestamp: Date.now(),
-                rotatedElementId: grabRef.current.id,
-                oldRotation: oldRotationRef.current,
-                newRotation: newRotationRef.current,
-                undo: () => {
-                  setElementRotation(
-                    undoableRotate.rotatedElementId,
-                    undoableRotate.oldRotation[0],
-                    undoableRotate.oldRotation[1],
-                    undoableRotate.oldRotation[2],
-                  );
-                },
-                redo: () => {
-                  setElementRotation(
-                    undoableRotate.rotatedElementId,
-                    undoableRotate.newRotation[0],
-                    undoableRotate.newRotation[1],
-                    undoableRotate.newRotation[2],
-                  );
-                },
-              } as UndoableRotate;
-              addUndoable(undoableRotate);
-            }
-          }
-          // translation
-          else if (useStore.getState().moveHandleType) {
-            newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
-            let oldHumanOrTreeParentId: string | null = null;
-            let newHumanOrTreeParentId: string | null = null;
-            // elements modified by reference
-            let elementRef: Group | null | undefined = null;
-            switch (grabRef.current.type) {
-              case ObjectType.Tree:
-                elementRef = useStoreRef.getState().treeRef?.current;
-                break;
-              case ObjectType.Human:
-                elementRef = useStoreRef.getState().humanRef?.current;
-                break;
-            }
-            if (elementRef && isHumanOrTreeMovedRef.current) {
-              oldHumanOrTreeParentId = elem.parentId;
-              setRayCast(e);
-              const intersections = ray.intersectObjects(scene.children, true);
-              const intersection = getIntersectionToStand(intersections); // could simplify???
-              if (intersection) {
-                const p = intersection.point;
-                // on ground
-                if (intersection.object.name === 'Ground') {
-                  handleSetElementState(elem.id, GROUND_ID, p);
-                  newPositionRef.current.set(p.x, p.y, p.z);
-                  newHumanOrTreeParentId = GROUND_ID;
-                }
-                // on other standable elements
-                else if (intersection.object.userData.stand) {
-                  const intersectionObjId = getObjectId(intersection.object);
-                  const intersectionObjGroup = intersection.object.parent;
-                  if (intersectionObjGroup) {
-                    const relPos = new Vector3()
-                      .subVectors(p, intersectionObjGroup.position)
-                      .applyEuler(elementParentRotation);
-                    handleSetElementState(elem.id, intersectionObjId, relPos);
-                    newPositionRef.current.set(relPos.x, relPos.y, relPos.z);
-                    newHumanOrTreeParentId = intersectionObjId;
-                  }
-                }
-              }
-              isHumanOrTreeMovedRef.current = false;
-            }
-
-            if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
-              const screenPosition = newPositionRef.current.clone().project(camera);
-              const screenLx = newPositionRef.current
-                .clone()
-                .add(new Vector3(elem.lx, 0, 0))
-                .project(camera)
-                .distanceTo(screenPosition);
-              const screenLy = newPositionRef.current
-                .clone()
-                .add(new Vector3(0, elem.ly, 0))
-                .project(camera)
-                .distanceTo(screenPosition);
-              const screenLz = newPositionRef.current
-                .clone()
-                .add(new Vector3(0, 0, elem.lz))
-                .project(camera)
-                .distanceTo(screenPosition);
-              // smaller than 2% of screen dimension
-              if (Math.max(screenLx, screenLy, screenLz) < 0.02) {
-                setElementPosition(
-                  elem.id,
-                  oldPositionRef.current.x,
-                  oldPositionRef.current.y,
-                  oldPositionRef.current.z,
-                );
-                if (elementRef) {
-                  switch (elem.type) {
-                    case ObjectType.Tree:
-                    case ObjectType.Human:
-                      elementRef.position.copy(oldPositionRef.current);
-                      break;
-                  }
-                }
-                setParentIdById(oldHumanOrTreeParentId, elem.id);
-                attachToGroup(oldHumanOrTreeParentId, newHumanOrTreeParentId, elem.id);
-                showError(i18n.t('message.CannotMoveObjectTooFar', lang));
-              } else {
-                const undoableMove = {
-                  name: 'Move',
-                  timestamp: Date.now(),
-                  movedElementId: elem.id,
-                  oldCx: oldPositionRef.current.x,
-                  oldCy: oldPositionRef.current.y,
-                  oldCz: oldPositionRef.current.z,
-                  newCx: newPositionRef.current.x,
-                  newCy: newPositionRef.current.y,
-                  newCz: newPositionRef.current.z,
-                  oldParentId: oldHumanOrTreeParentId,
-                  newParentId: newHumanOrTreeParentId,
-                  undo: () => {
-                    setElementPosition(
-                      undoableMove.movedElementId,
-                      undoableMove.oldCx,
-                      undoableMove.oldCy,
-                      undoableMove.oldCz,
-                    );
-                    setParentIdById(undoableMove.oldParentId, undoableMove.movedElementId);
-                    attachToGroup(undoableMove.oldParentId, undoableMove.newParentId, undoableMove.movedElementId);
-                  },
-                  redo: () => {
-                    setElementPosition(
-                      undoableMove.movedElementId,
-                      undoableMove.newCx,
-                      undoableMove.newCy,
-                      undoableMove.newCz,
-                    );
-                    setParentIdById(undoableMove.newParentId, undoableMove.movedElementId);
-                    attachToGroup(undoableMove.newParentId, undoableMove.oldParentId, undoableMove.movedElementId);
-                  },
-                } as UndoableMove;
-                addUndoable(undoableMove);
-                setCommonStore((state) => {
-                  state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-                });
-              }
-            }
+            resizeElement(elem);
+          } else if (useStore.getState().rotateHandleType) {
+            rotateElement(elem);
+          } else if (useStore.getState().moveHandleType) {
+            moveElement(elem, e);
           }
         }
       }
       grabRef.current = null;
     }
     windowHandlePointerUp(e);
+  };
+
+  const windowHandlePointerUp = (e: PointerEvent) => {
+    if (e.button === 2) return;
+    // TODO: If the pointer is up on the sky, then grabRef has no chance to set to null.
+    // We take advantage of this to determine whether it is on the sky or ground, but it is not ideal.
+    if (grabRef.current) {
+      // move
+      if (useStore.getState().moveHandleType) {
+        setElementPosition(
+          grabRef.current.id,
+          oldPositionRef.current.x,
+          oldPositionRef.current.y,
+          oldPositionRef.current.z,
+        );
+        let oldHumanOrTreeParentId: string | null = null;
+        // elements modified by reference
+        let elementRef: Group | null | undefined = null;
+        switch (grabRef.current.type) {
+          case ObjectType.Tree:
+            elementRef = useStoreRef.getState().treeRef?.current;
+            break;
+          case ObjectType.Human:
+            elementRef = useStoreRef.getState().humanRef?.current;
+            break;
+        }
+        oldHumanOrTreeParentId = grabRef.current.parentId;
+        if (elementRef) {
+          switch (grabRef.current.type) {
+            case ObjectType.Tree:
+            case ObjectType.Human:
+              elementRef.position.copy(oldPositionRef.current);
+              break;
+          }
+        }
+        setParentIdById(oldHumanOrTreeParentId, grabRef.current.id);
+        reattachToParentObject(oldHumanOrTreeParentId, grabRef.current.id);
+        showError(i18n.t('message.CannotMoveObjectTooFar', lang));
+      }
+      // resize
+      else if (useStore.getState().resizeHandleType) {
+        //resizeElement(grabRef.current);
+      }
+      grabRef.current = null;
+    }
+    setCommonStore((state) => {
+      state.moveHandleType = null;
+      state.resizeHandleType = null;
+      state.rotateHandleType = null;
+    });
+    useStoreRef.setState((state) => {
+      state.humanRef = null;
+      state.treeRef = null;
+      state.setEnableOrbitController(true);
+    });
   };
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
@@ -901,6 +899,7 @@ const Ground = () => {
           if (selectedElement.type === ObjectType.Foundation || selectedElement.type === ObjectType.Cuboid) {
             const children = getChildren(selectedElement.id);
             oldChildrenPositionsMapRef.current.clear();
+            oldPolygonVerticesMapRef.current.clear();
             if (children.length > 0) {
               for (const c of children) {
                 if (c.type === ObjectType.Polygon) {
@@ -1208,6 +1207,24 @@ const Ground = () => {
                 } as UndoableChange;
                 addUndoable(undoableChangeSpread);
                 break;
+            }
+            break;
+          case ObjectType.Cuboid:
+            if (Util.isTopResizeHandle(resizeHandleType)) {
+              const undoableChangeHeight = {
+                name: 'Change Cuboid Height',
+                timestamp: Date.now(),
+                changedElementId: elem.id,
+                oldValue: oldDimensionRef.current.z,
+                newValue: elem.lz,
+                undo: () => {
+                  updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.oldValue as number);
+                },
+                redo: () => {
+                  updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.newValue as number);
+                },
+              } as UndoableChange;
+              addUndoable(undoableChangeHeight);
             }
             break;
         }

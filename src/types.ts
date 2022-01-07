@@ -149,6 +149,11 @@ export enum Orientation {
   landscape = 'Landscape',
 }
 
+export enum RowAxis {
+  zonal = 'Zonal', // east-west
+  meridional = 'Meridional', // north-south
+}
+
 export enum TrackerType {
   NO_TRACKER = 'None',
   HORIZONTAL_SINGLE_AXIS_TRACKER = 'HSAT',

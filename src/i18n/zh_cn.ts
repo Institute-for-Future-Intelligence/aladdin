@@ -307,11 +307,14 @@ export const i18n_zh_cn = {
       AllPolygonsAboveFoundation: '同一地基上所有的多边形',
       AllPolygons: '所有的多边形',
       Layout: '布局',
-      SolarPanelArrayLayout: '光伏板布局',
+      SolarPanelArrayLayout: '光伏板阵列布局',
       SolarPanelArrayModel: '光伏板型号',
       SolarPanelArrayOrientation: '排列方向',
       SolarPanelArrayTiltAngle: '倾斜角度',
       SolarPanelArrayInterRowSpacing: '行间距',
+      SolarPanelArrayRowAxis: '行轴方向',
+      SolarPanelArrayZonalRowAxis: '纬线方向(东西向)',
+      SolarPanelArrayMeridionalRowAxis: '经线方向(南北向)',
     },
 
     treeMenu: {

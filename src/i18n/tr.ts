@@ -320,6 +320,9 @@ export const i18n_tr = {
       SolarPanelArrayOrientation: 'Orientation',
       SolarPanelArrayTiltAngle: 'Tilt Angle',
       SolarPanelArrayInterRowSpacing: 'Inter-Row Spacing',
+      SolarPanelArrayRowAxis: 'Row Axis',
+      SolarPanelArrayZonalRowAxis: 'Zonal (West-East)',
+      SolarPanelArrayMeridionalRowAxis: 'Meridional (North-South)',
     },
 
     treeMenu: {
