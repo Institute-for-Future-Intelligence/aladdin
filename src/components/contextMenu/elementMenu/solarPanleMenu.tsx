@@ -16,8 +16,8 @@ import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import SolarPanelModelSelection from './solarPanelModelSelection';
 import SolarPanelOrientationSelection from './solarPanelOrientationSelection';
-import SolarPanelWidthInput from './solarPanelWidthInput';
 import SolarPanelLengthInput from './solarPanelLengthInput';
+import SolarPanelWidthInput from './solarPanelWidthInput';
 import SolarPanelTiltAngleInput from './solarPanelTiltAngleInput';
 import SolarPanelRelativeAzimuthInput from './solarPanelRelativeAzimuthInput';
 import SolarPanelTrackerSelection from './solarPanelTrackerSelection';
@@ -158,23 +158,8 @@ export const SolarPanelMenu = () => {
             {i18n.t('solarPanelMenu.Orientation', lang)} ...
           </Menu.Item>
 
-          {/* array width */}
-          <SolarPanelWidthInput widthDialogVisible={widthDialogVisible} setWidthDialogVisible={setWidthDialogVisible} />
-          <Menu.Item
-            key={'solar-panel-width'}
-            style={{ paddingLeft: '36px' }}
-            onClick={() => {
-              setWidthDialogVisible(true);
-            }}
-          >
-            {i18n.t('word.Width', lang)} ...
-          </Menu.Item>
-
           {/* array length */}
-          <SolarPanelLengthInput
-            lengthDialogVisible={lengthDialogVisible}
-            setLengthDialogVisible={setLengthDialogVisible}
-          />
+          <SolarPanelLengthInput dialogVisible={lengthDialogVisible} setDialogVisible={setLengthDialogVisible} />
           <Menu.Item
             key={'solar-panel-length'}
             style={{ paddingLeft: '36px' }}
@@ -183,6 +168,18 @@ export const SolarPanelMenu = () => {
             }}
           >
             {i18n.t('word.Length', lang)} ...
+          </Menu.Item>
+
+          {/* array width */}
+          <SolarPanelWidthInput dialogVisible={widthDialogVisible} setDialogVisible={setWidthDialogVisible} />
+          <Menu.Item
+            key={'solar-panel-width'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setWidthDialogVisible(true);
+            }}
+          >
+            {i18n.t('word.Width', lang)} ...
           </Menu.Item>
 
           {panelNormal && Util.isSame(panelNormal, UNIT_VECTOR_POS_Z) && (

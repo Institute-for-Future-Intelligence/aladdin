@@ -13,8 +13,8 @@ import { FoundationTexture, ObjectType } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 import FoundationColorSelection from './foundationColorSelection';
-import FoundationWidthInput from './foundationWidthInput';
 import FoundationLengthInput from './foundationLengthInput';
+import FoundationWidthInput from './foundationWidthInput';
 import FoundationHeightInput from './foundationHeightInput';
 import FoundationAzimuthInput from './foundationAzimuthInput';
 import FoundationTextureSelection from './foundationTextureSelection';
@@ -308,24 +308,7 @@ export const FoundationMenu = () => {
               {i18n.t('word.Texture', lang)} ...
             </Menu.Item>
 
-            <FoundationWidthInput
-              widthDialogVisible={widthDialogVisible}
-              setWidthDialogVisible={setWidthDialogVisible}
-            />
-            <Menu.Item
-              key={'foundation-width'}
-              style={{ paddingLeft: '36px' }}
-              onClick={() => {
-                setWidthDialogVisible(true);
-              }}
-            >
-              {i18n.t('word.Width', lang)} ...
-            </Menu.Item>
-
-            <FoundationLengthInput
-              lengthDialogVisible={lengthDialogVisible}
-              setLengthDialogVisible={setLengthDialogVisible}
-            />
+            <FoundationLengthInput dialogVisible={lengthDialogVisible} setDialogVisible={setLengthDialogVisible} />
             <Menu.Item
               key={'foundation-length'}
               style={{ paddingLeft: '36px' }}
@@ -334,6 +317,17 @@ export const FoundationMenu = () => {
               }}
             >
               {i18n.t('word.Length', lang)} ...
+            </Menu.Item>
+
+            <FoundationWidthInput dialogVisible={widthDialogVisible} setDialogVisible={setWidthDialogVisible} />
+            <Menu.Item
+              key={'foundation-width'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setWidthDialogVisible(true);
+              }}
+            >
+              {i18n.t('word.Width', lang)} ...
             </Menu.Item>
 
             <FoundationHeightInput

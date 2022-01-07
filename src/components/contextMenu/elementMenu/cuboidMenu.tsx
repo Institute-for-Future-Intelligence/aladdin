@@ -13,8 +13,8 @@ import { CuboidTexture, ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 import CuboidColorSelection from './cuboidColorSelection';
-import CuboidWidthInput from './cuboidWidthInput';
 import CuboidLengthInput from './cuboidLengthInput';
+import CuboidWidthInput from './cuboidWidthInput';
 import CuboidHeightInput from './cuboidHeightInput';
 import CuboidAzimuthInput from './cuboidAzimuthInput';
 import CuboidTextureSelection from './cuboidTextureSelection';
@@ -267,25 +267,7 @@ export const CuboidMenu = () => {
               {i18n.t('word.Texture', lang)} ...
             </Menu.Item>
 
-            <CuboidWidthInput widthDialogVisible={widthDialogVisible} setWidthDialogVisible={setWidthDialogVisible} />
-            <Menu.Item
-              key={'cuboid-width'}
-              style={{ paddingLeft: '36px' }}
-              onClick={() => {
-                // no side selection for width
-                if (cuboidActionScope === Scope.OnlyThisSide) {
-                  setCuboidActionScope(Scope.OnlyThisObject);
-                }
-                setWidthDialogVisible(true);
-              }}
-            >
-              {i18n.t('word.Width', lang)} ...
-            </Menu.Item>
-
-            <CuboidLengthInput
-              lengthDialogVisible={lengthDialogVisible}
-              setLengthDialogVisible={setLengthDialogVisible}
-            />
+            <CuboidLengthInput dialogVisible={lengthDialogVisible} setDialogVisible={setLengthDialogVisible} />
             <Menu.Item
               key={'cuboid-length'}
               style={{ paddingLeft: '36px' }}
@@ -298,6 +280,21 @@ export const CuboidMenu = () => {
               }}
             >
               {i18n.t('word.Length', lang)} ...
+            </Menu.Item>
+
+            <CuboidWidthInput dialogVisible={widthDialogVisible} setDialogVisible={setWidthDialogVisible} />
+            <Menu.Item
+              key={'cuboid-width'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                // no side selection for width
+                if (cuboidActionScope === Scope.OnlyThisSide) {
+                  setCuboidActionScope(Scope.OnlyThisObject);
+                }
+                setWidthDialogVisible(true);
+              }}
+            >
+              {i18n.t('word.Width', lang)} ...
             </Menu.Item>
 
             <CuboidHeightInput
