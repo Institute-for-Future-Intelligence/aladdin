@@ -117,6 +117,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           action: '',
           email: f.email,
           owner: f.owner,
+          userid: f.userid,
         });
       });
       arr.sort((a, b) => b.timestamp - a.timestamp);
@@ -198,16 +199,16 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       .get()
       .then((querySnapshot) => {
         for (let doc of querySnapshot.docs) {
-          if (doc.id === user.email) {
+          if (doc.id === user.uid) {
             return true;
           }
         }
         return false;
       });
-    if (!found && user.email) {
+    if (!found && user.uid) {
       firestore
         .collection('users')
-        .doc(user.email)
+        .doc(user.uid)
         .set({
           email: user.email,
           uid: user.uid,
@@ -247,9 +248,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     const t = tlt.trim();
     if (t.length > 0) {
       setLoading(true);
-      if (user.email) {
+      if (user.uid) {
         try {
-          const doc = firebase.firestore().collection('users').doc(user.email);
+          const doc = firebase.firestore().collection('users').doc(user.uid);
           if (doc) {
             doc
               .collection('files')
@@ -337,13 +338,13 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   };
 
   const fetchMyCloudFiles = async () => {
-    if (!user.email) return;
+    if (!user.uid) return;
     setLoading(true);
     // fetch owner's file information from the cloud
     cloudFiles.current = await firebase
       .firestore()
       .collection('users')
-      .doc(user.email)
+      .doc(user.uid)
       .collection('files')
       .get()
       .then((querySnapshot) => {
@@ -355,6 +356,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             fileName: doc.id,
             email: data.email,
             owner: data.owner,
+            userid: user.uid,
             uuid: data.docid,
           } as CloudFileInfo);
         });
@@ -367,7 +369,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   };
 
   const listMyCloudFiles = () => {
-    if (user.email) {
+    if (user.uid) {
       fetchMyCloudFiles().then(() => {
         setCommonStore((state) => {
           state.showCloudFilePanel = true;
@@ -387,7 +389,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       .then(() => {
         setCloudFileArray(
           cloudFileArray.filter((e) => {
-            return e.email !== userid || e.title !== title;
+            return e.userid !== userid || e.title !== title;
           }),
         );
         setCommonStore((state) => {
@@ -421,8 +423,13 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         console.log('Error renaming file:', error);
       });
     for (const f of cloudFileArray) {
-      if (f.email === userid && f.title === oldTitle) {
+      if (f.userid === userid && f.title === oldTitle) {
         f.title = newTitle;
+        setCommonStore((state) => {
+          if (state.cloudFile === oldTitle) {
+            state.cloudFile = newTitle;
+          }
+        });
         break;
       }
     }

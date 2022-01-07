@@ -189,6 +189,8 @@ export class ElementModelFactory {
     z?: number,
     normal?: Vector3,
     rotation?: number[],
+    lx?: number,
+    ly?: number,
   ) {
     let foundationId;
     switch (parent.type) {
@@ -215,8 +217,8 @@ export class ElementModelFactory {
       cx: x,
       cy: y,
       cz: z,
-      lx: pvModel.width,
-      ly: pvModel.length,
+      lx: lx ?? pvModel.length,
+      ly: ly ?? pvModel.width,
       lz: pvModel.thickness,
       showLabel: false,
       normal: normal ? normal.toArray() : [0, 0, 1],

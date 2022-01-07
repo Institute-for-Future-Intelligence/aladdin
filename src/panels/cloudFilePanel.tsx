@@ -88,7 +88,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const [oldTitle, setOldTitle] = useState<string>();
   const [newTitle, setNewTitle] = useState<string>();
-  const [email, setEmail] = useState<string>();
+  const [userid, setUserid] = useState<string>();
   const dragRef = useRef<HTMLDivElement | null>(null);
   const lang = { lng: language };
 
@@ -124,7 +124,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
     });
   };
 
-  const deleteFile = (email: string, title: string) => {
+  const deleteFile = (userid: string, title: string) => {
     Modal.confirm({
       title:
         i18n.t('cloudFilePanel.DoYouReallyWantToDelete', lang) +
@@ -136,14 +136,15 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
         i18n.t('message.ThisCannotBeUndone', lang),
       icon: <ExclamationCircleOutlined />,
       onOk: () => {
-        deleteCloudFile(email, title);
+        deleteCloudFile(userid, title);
       },
     });
   };
 
   const renameFile = () => {
-    if (email && oldTitle && newTitle) {
-      renameCloudFile(email, oldTitle, newTitle);
+    if (userid && oldTitle && newTitle) {
+      renameCloudFile(userid, oldTitle, newTitle);
+      setNewTitle(undefined);
     }
     setRenameDialogVisible(false);
   };
@@ -243,7 +244,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                       color={'#666666'}
                       style={{ cursor: 'pointer' }}
                       onClick={() => {
-                        openCloudFile(record.email, record.title);
+                        openCloudFile(record.userid, record.title);
                       }}
                     />
                     <FontAwesomeIcon
@@ -253,7 +254,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                       color={'#666666'}
                       style={{ cursor: 'pointer' }}
                       onClick={() => {
-                        deleteFile(record.email, record.title);
+                        deleteFile(record.userid, record.title);
                       }}
                     />
                     <FontAwesomeIcon
@@ -264,7 +265,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                       style={{ cursor: 'pointer' }}
                       onClick={() => {
                         setOldTitle(record.title);
-                        setEmail(record.email);
+                        setUserid(record.userid);
                         setRenameDialogVisible(true);
                       }}
                     />
@@ -278,7 +279,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                         let url =
                           HOME_URL +
                           '?client=web&userid=' +
-                          encodeURIComponent(record.email) +
+                          record.userid +
                           '&title=' +
                           encodeURIComponent(record.title);
                         copyTextToClipboard(url);

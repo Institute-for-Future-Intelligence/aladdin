@@ -32,6 +32,7 @@ export interface CloudFileInfo {
   readonly owner: string;
   readonly email: string;
   readonly uuid: string;
+  readonly userid: string;
 }
 
 export interface DatumEntry {

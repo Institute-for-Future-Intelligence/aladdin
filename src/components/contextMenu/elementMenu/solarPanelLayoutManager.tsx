@@ -8,8 +8,13 @@ import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
-import { Orientation, RowAxis } from '../../../types';
+import { ObjectType, Orientation, RowAxis } from '../../../types';
 import { Util } from '../../../Util';
+import { PolygonModel } from '../../../models/PolygonModel';
+import { FoundationModel } from '../../../models/FoundationModel';
+import { ElementModel } from '../../../models/ElementModel';
+import { ElementModelFactory } from '../../../models/ElementModelFactory';
+import { UNIT_VECTOR_POS_Z } from '../../../constants';
 
 const { Option } = Select;
 
@@ -20,8 +25,10 @@ const SolarPanelLayoutManager = ({
   dialogVisible: boolean;
   setDialogVisible: (b: boolean) => void;
 }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const getSelectedElement = useStore(Selector.getSelectedElement);
+  const getElementById = useStore(Selector.getElementById);
   const pvModules = useStore(Selector.pvModules);
   const getPvModule = useStore(Selector.getPvModule);
   const addUndoable = useStore(Selector.addUndoable);
@@ -69,7 +76,34 @@ const SolarPanelLayoutManager = ({
     return l;
   };
 
-  const layout = () => {};
+  const layout = () => {
+    if (parent?.type === ObjectType.Polygon) {
+      const area = parent as PolygonModel;
+      const bounds = Util.calculatePolygonBounds(area.vertices);
+      const base = getElementById(area.parentId);
+      if (base?.type === ObjectType.Foundation) {
+        const foundation = base as FoundationModel;
+        const lx = 5 * pvModel.length;
+        const ly = 2 * pvModel.width;
+        const cx = bounds.minX + (0.5 * lx) / foundation.lx;
+        const cy = bounds.minY + (0.5 * ly) / foundation.ly;
+        const solarPanel = ElementModelFactory.makeSolarPanel(
+          foundation,
+          pvModel,
+          cx,
+          cy,
+          foundation.lz,
+          UNIT_VECTOR_POS_Z,
+          'rotation' in parent ? parent.rotation : undefined,
+          lx,
+          ly,
+        );
+        setCommonStore((state) => {
+          state.elements.push(solarPanel);
+        });
+      }
+    }
+  };
 
   return (
     <>
