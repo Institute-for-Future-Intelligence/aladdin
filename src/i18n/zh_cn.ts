@@ -311,10 +311,13 @@ export const i18n_zh_cn = {
       SolarPanelArrayModel: '光伏板型号',
       SolarPanelArrayOrientation: '排列方向',
       SolarPanelArrayTiltAngle: '倾斜角度',
+      SolarPanelArrayRowWidth: '行宽度',
       SolarPanelArrayInterRowSpacing: '行间距',
       SolarPanelArrayRowAxis: '行轴方向',
       SolarPanelArrayZonalRowAxis: '纬线方向(东西向)',
       SolarPanelArrayMeridionalRowAxis: '经线方向(南北向)',
+      SolarPanelArrayPoleHeight: '支架高度',
+      SolarPanelArrayPoleSpacing: '支柱间隔',
     },
 
     treeMenu: {

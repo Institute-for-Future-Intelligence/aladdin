@@ -30,7 +30,11 @@ const SolarPanelLayoutManager = ({
   const [selectedRowAxis, setSelectedRowAxis] = useState<RowAxis>(RowAxis.zonal);
   const [selectedOrientation, setSelectedOrientation] = useState<Orientation>(Orientation.portrait);
   const [tiltAngle, setTiltAngle] = useState<number>(0);
+  const [panelWidth, setPanelWidth] = useState<number>(1.05); // the width of the default model
+  const [rowWidth, setRowWidth] = useState<number>(panelWidth);
   const [interRowSpacing, setInterRowSpacing] = useState<number>(5);
+  const [poleHeight, setPoleHeight] = useState<number>(1);
+  const [poleSpacing, setPoleSpacing] = useState<number>(3);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -41,8 +45,9 @@ const SolarPanelLayoutManager = ({
   const parent = getSelectedElement();
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pvModel]);
+    const pvModel = getPvModule(selectedPvModel) ?? getPvModule('SPR-X21-335-BLK');
+    setPanelWidth(selectedOrientation === Orientation.portrait ? pvModel.width : pvModel.length);
+  }, [selectedPvModel]);
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
     if (dragRef.current) {
@@ -57,10 +62,19 @@ const SolarPanelLayoutManager = ({
     }
   };
 
+  const panelize = (value: number) => {
+    let l = value ?? 1;
+    const n = Math.max(1, Math.ceil((l - panelWidth / 2) / panelWidth));
+    l = n * panelWidth;
+    return l;
+  };
+
+  const layout = () => {};
+
   return (
     <>
       <Modal
-        width={500}
+        width={560}
         visible={dialogVisible}
         title={
           <div
@@ -72,7 +86,12 @@ const SolarPanelLayoutManager = ({
           </div>
         }
         footer={[
-          <Button key="Apply" onClick={() => {}}>
+          <Button
+            key="Apply"
+            onClick={() => {
+              layout();
+            }}
+          >
             {i18n.t('word.Apply', lang)}
           </Button>,
           <Button
@@ -87,6 +106,7 @@ const SolarPanelLayoutManager = ({
             key="OK"
             type="primary"
             onClick={() => {
+              layout();
               setDialogVisible(false);
             }}
           >
@@ -105,7 +125,7 @@ const SolarPanelLayoutManager = ({
         )}
       >
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
+          <Col className="gutter-row" span={14}>
             {i18n.t('polygonMenu.SolarPanelArrayModel', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={10}>
@@ -128,7 +148,7 @@ const SolarPanelLayoutManager = ({
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
+          <Col className="gutter-row" span={14}>
             {i18n.t('polygonMenu.SolarPanelArrayRowAxis', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={10}>
@@ -151,7 +171,7 @@ const SolarPanelLayoutManager = ({
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
+          <Col className="gutter-row" span={14}>
             {i18n.t('polygonMenu.SolarPanelArrayOrientation', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={10}>
@@ -174,7 +194,7 @@ const SolarPanelLayoutManager = ({
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
+          <Col className="gutter-row" span={14}>
             {i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang) + ' ([-90°, 90°]): '}
           </Col>
           <Col className="gutter-row" span={10}>
@@ -192,7 +212,32 @@ const SolarPanelLayoutManager = ({
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
+          <Col className="gutter-row" span={14}>
+            {i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang) +
+              ' ([' +
+              panelWidth.toFixed(2) +
+              ', ' +
+              (100 * panelWidth).toFixed(1) +
+              '] ' +
+              i18n.t('word.MeterAbbreviation', lang) +
+              '): '}
+          </Col>
+          <Col className="gutter-row" span={10}>
+            <InputNumber
+              min={panelWidth}
+              max={100 * panelWidth}
+              step={panelWidth}
+              style={{ width: '100%' }}
+              precision={2}
+              value={rowWidth}
+              formatter={(a) => Number(a).toFixed(2)}
+              onChange={(value) => setRowWidth(panelize(value))}
+            />
+          </Col>
+        </Row>
+
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={14}>
             {i18n.t('polygonMenu.SolarPanelArrayInterRowSpacing', lang) +
               ' ([1, 20] ' +
               i18n.t('word.MeterAbbreviation', lang) +
@@ -208,6 +253,48 @@ const SolarPanelLayoutManager = ({
               step={0.5}
               formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => setInterRowSpacing(value)}
+            />
+          </Col>
+        </Row>
+
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={14}>
+            {i18n.t('polygonMenu.SolarPanelArrayPoleHeight', lang) +
+              ' ([0, 10] ' +
+              i18n.t('word.MeterAbbreviation', lang) +
+              '): '}
+          </Col>
+          <Col className="gutter-row" span={10}>
+            <InputNumber
+              min={0}
+              max={10}
+              style={{ width: '100%' }}
+              precision={1}
+              value={poleHeight}
+              step={0.1}
+              formatter={(a) => Number(a).toFixed(1)}
+              onChange={(value) => setPoleHeight(value)}
+            />
+          </Col>
+        </Row>
+
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={14}>
+            {i18n.t('polygonMenu.SolarPanelArrayPoleSpacing', lang) +
+              ' ([1, 10] ' +
+              i18n.t('word.MeterAbbreviation', lang) +
+              '): '}
+          </Col>
+          <Col className="gutter-row" span={10}>
+            <InputNumber
+              min={1}
+              max={10}
+              style={{ width: '100%' }}
+              precision={1}
+              value={poleSpacing}
+              step={0.5}
+              formatter={(a) => Number(a).toFixed(1)}
+              onChange={(value) => setPoleSpacing(value)}
             />
           </Col>
         </Row>

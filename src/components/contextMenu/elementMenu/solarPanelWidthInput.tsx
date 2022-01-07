@@ -37,7 +37,7 @@ const SolarPanelWidthInput = ({
 
   const solarPanel = getSelectedElement() as SolarPanelModel;
   const [dy, setDy] = useState<number>(0);
-  const [inputWidth, setinputWidth] = useState<number>(
+  const [inputWidth, setInputWidth] = useState<number>(
     solarPanel?.orientation === Orientation.portrait ? solarPanel?.ly ?? 2 : solarPanel?.lx ?? 1,
   );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -53,7 +53,7 @@ const SolarPanelWidthInput = ({
     if (solarPanel) {
       const pvModel = getPvModule(solarPanel.pvModelName) ?? getPvModule('SPR-X21-335-BLK');
       setDy(solarPanel.orientation === Orientation.portrait ? pvModel.length : pvModel.width);
-      setinputWidth(solarPanel.ly);
+      setInputWidth(solarPanel.ly);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solarPanel]);
@@ -169,7 +169,7 @@ const SolarPanelWidthInput = ({
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setinputWidth(solarPanel.ly);
+          setInputWidth(solarPanel.ly);
         } else {
           const oldWidthsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -208,7 +208,7 @@ const SolarPanelWidthInput = ({
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setinputWidth(solarPanel.ly);
+            setInputWidth(solarPanel.ly);
           } else {
             const oldWidthsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -272,7 +272,7 @@ const SolarPanelWidthInput = ({
             }
             if (rejectRef.current) {
               rejectedValue.current = value;
-              setinputWidth(solarPanel.ly);
+              setInputWidth(solarPanel.ly);
             } else {
               const oldWidthsOnSurface = new Map<string, number>();
               const isParentCuboid = parent.type === ObjectType.Cuboid;
@@ -328,7 +328,7 @@ const SolarPanelWidthInput = ({
           rejectRef.current = rejectChange(solarPanel, value);
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setinputWidth(oldWidth);
+            setInputWidth(oldWidth);
           } else {
             const undoableChange = {
               name: 'Set Solar Panel Array Width',
@@ -404,7 +404,7 @@ const SolarPanelWidthInput = ({
           <Button
             key="Cancel"
             onClick={() => {
-              setinputWidth(solarPanel.ly);
+              setInputWidth(solarPanel.ly);
               rejectRef.current = false;
               setDialogVisible(false);
             }}
@@ -426,7 +426,7 @@ const SolarPanelWidthInput = ({
         ]}
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
-          setinputWidth(solarPanel.ly);
+          setInputWidth(solarPanel.ly);
           rejectRef.current = false;
           setDialogVisible(false);
         }}
@@ -447,7 +447,7 @@ const SolarPanelWidthInput = ({
               precision={2}
               value={inputWidth}
               formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setinputWidth(panelize(value))}
+              onChange={(value) => setInputWidth(panelize(value))}
               onPressEnter={() => {
                 setWidth(inputWidth);
                 if (!rejectRef.current) {
