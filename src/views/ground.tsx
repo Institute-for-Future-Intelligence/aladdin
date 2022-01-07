@@ -86,6 +86,7 @@ const Ground = () => {
   const newDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const oldRotationRef = useRef<number[]>([0, 0, 1]);
   const newRotationRef = useRef<number[]>([0, 0, 1]);
+  const oldHumanOrTreeParentIdRef = useRef<string | null>(null);
   const absPosMapRef = useRef<Map<string, Vector3>>(new Map());
   const polygonsAbsPosMapRef = useRef<Map<string, Vector2[]>>(new Map());
   const wallsAbsPosMapRef = useRef<Map<string, WallAbsPos>>(new Map());
@@ -240,7 +241,7 @@ const Ground = () => {
             const contentRef = useStoreRef.getState().contentRef;
             if (contentRef && contentRef.current) {
               contentRef.current.add(elementRef.current);
-              // setParentIdById(GROUND_ID, getObjectId(elementRef.current));
+              setParentIdById(GROUND_ID, getObjectId(elementRef.current));
             }
           }
           elementRef.current.position.copy(intersection.point); // world position
@@ -253,7 +254,7 @@ const Ground = () => {
             // change parent: attach dom, set parentId?
             if (elementParentRef && elementParentRef.uuid !== intersectionObjGroup.uuid) {
               intersectionObjGroup.add(elementRef.current); // attach to Group
-              // setParentIdById(getObjectId(intersectionObjGroup), getObjectId(elementRef.current));
+              setParentIdById(getObjectId(intersectionObjGroup), getObjectId(elementRef.current));
             }
             elementParentRotation.set(0, 0, -intersectionObjGroup.rotation.z);
             const relPos = new Vector3()
@@ -587,7 +588,6 @@ const Ground = () => {
 
   const moveElementOnPointerUp = (elem: ElementModel, e: PointerEvent) => {
     newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
-    let oldHumanOrTreeParentId: string | null = null;
     let newHumanOrTreeParentId: string | null = null;
     // elements modified by reference
     let elementRef: Group | null | undefined = null;
@@ -601,8 +601,6 @@ const Ground = () => {
         break;
     }
     if (elementRef && isHumanOrTreeMovedRef.current) {
-      oldHumanOrTreeParentId = elem.parentId;
-
       const intersections = ray.intersectObjects(scene.children, true);
       const intersection = getIntersectionToStand(intersections); // could simplify???
       if (intersection) {
@@ -662,8 +660,8 @@ const Ground = () => {
               break;
           }
         }
-        setParentIdById(oldHumanOrTreeParentId, elem.id);
-        attachToGroup(oldHumanOrTreeParentId, newHumanOrTreeParentId ?? GROUND_ID, elem.id);
+        setParentIdById(oldHumanOrTreeParentIdRef.current, elem.id);
+        attachToGroup(oldHumanOrTreeParentIdRef.current, newHumanOrTreeParentId ?? GROUND_ID, elem.id);
         showError(i18n.t('message.CannotMoveObjectTooFar', lang));
       } else {
         const undoableMove = {
@@ -676,7 +674,7 @@ const Ground = () => {
           newCx: newPositionRef.current.x,
           newCy: newPositionRef.current.y,
           newCz: newPositionRef.current.z,
-          oldParentId: oldHumanOrTreeParentId,
+          oldParentId: oldHumanOrTreeParentIdRef.current,
           newParentId: newHumanOrTreeParentId,
           undo: () => {
             setElementPosition(undoableMove.movedElementId, undoableMove.oldCx, undoableMove.oldCy, undoableMove.oldCz);
@@ -926,7 +924,11 @@ const Ground = () => {
           }
           switch (selectedElement.type) {
             case ObjectType.Tree:
+              oldHumanOrTreeParentIdRef.current = selectedElement.parentId;
               oldDimensionRef.current.set(selectedElement.lx, selectedElement.ly, selectedElement.lz);
+              break;
+            case ObjectType.Human:
+              oldHumanOrTreeParentIdRef.current = selectedElement.parentId;
               break;
             case ObjectType.Cuboid:
               // getting ready for resizing even though it may not happen

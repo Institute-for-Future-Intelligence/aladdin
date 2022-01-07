@@ -483,7 +483,6 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                   },
                 } as UndoableChange;
                 addUndoable(undoableChangeHeight);
-                console.log(undoableChangeHeight);
                 break;
             }
             break;
