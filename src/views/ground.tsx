@@ -463,9 +463,23 @@ const Ground = () => {
             return;
         }
         break;
-      case ObjectType.Wall:
-        console.log('todo: add wall undo');
-        break;
+      case ObjectType.Wall: {
+        const undoableChangeHeight = {
+          name: 'Change Wall Height',
+          timestamp: Date.now(),
+          changedElementId: elem.id,
+          oldValue: oldDimensionRef.current.z,
+          newValue: elem.lz,
+          undo: () => {
+            updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.oldValue as number);
+          },
+          redo: () => {
+            updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChangeHeight);
+        return;
+      }
     }
 
     // if the above condition is valid , it will return. So the following part will not run.
@@ -1033,6 +1047,7 @@ const Ground = () => {
           (wallResizeHandle === ResizeHandleType.UpperLeft || wallResizeHandle === ResizeHandleType.UpperRight)
         ) {
           grabRef.current = selectedElement;
+          oldDimensionRef.current.set(selectedElement.lx, selectedElement.ly, selectedElement.lz);
         }
       }
     }
