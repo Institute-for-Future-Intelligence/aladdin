@@ -396,6 +396,22 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                 break;
             }
             break;
+          case ObjectType.Wall:
+            const undoableChangeHeight = {
+              name: 'Change Wall Height',
+              timestamp: Date.now(),
+              changedElementId: elem.id,
+              oldValue: oldHeightRef.current,
+              newValue: elem.lz,
+              undo: () => {
+                updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.oldValue as number);
+              },
+              redo: () => {
+                updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.newValue as number);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChangeHeight);
+            break;
         }
         setCommonStore((state) => {
           for (const e of state.elements) {
@@ -420,6 +436,16 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         });
       }
       grabRef.current = null;
+      setCommonStore((state) => {
+        state.moveHandleType = null;
+        state.resizeHandleType = null;
+        state.rotateHandleType = null;
+      });
+      useStoreRef.setState((state) => {
+        state.humanRef = null;
+        state.treeRef = null;
+        state.setEnableOrbitController(true);
+      });
     }
   };
 
