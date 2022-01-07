@@ -23,7 +23,7 @@ import { Util } from '../Util';
 import { HumanData } from '../HumanData';
 
 export class ElementModelFactory {
-  static makeHuman(x: number, y: number, z?: number) {
+  static makeHuman(parentId: string, x: number, y: number, z?: number) {
     return {
       type: ObjectType.Human,
       name: HumanName.Jack,
@@ -34,12 +34,12 @@ export class ElementModelFactory {
       lz: HumanData.fetchHeight(HumanName.Jack),
       normal: [0, 1, 0],
       rotation: [0, 0, 0],
-      parentId: GROUND_ID,
+      parentId: parentId,
       id: short.generate() as string,
     } as HumanModel;
   }
 
-  static makeTree(x: number, y: number, z?: number) {
+  static makeTree(parentId: string, x: number, y: number, z?: number) {
     return {
       type: ObjectType.Tree,
       name: TreeType.Dogwood,
@@ -50,7 +50,7 @@ export class ElementModelFactory {
       lz: 4,
       normal: [0, 1, 0],
       rotation: [0, 0, 0],
-      parentId: GROUND_ID,
+      parentId: parentId,
       id: short.generate() as string,
     } as TreeModel;
   }

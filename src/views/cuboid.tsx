@@ -354,7 +354,25 @@ const Cuboid = ({
   }, []);
 
   const legalOnCuboid = (type: ObjectType) => {
-    return type === ObjectType.Polygon || type === ObjectType.Sensor || type === ObjectType.SolarPanel;
+    switch (type) {
+      case ObjectType.Polygon:
+      case ObjectType.Sensor:
+      case ObjectType.SolarPanel:
+        return true;
+    }
+    return false;
+  };
+
+  const legalAddToCuboid = (type: ObjectType) => {
+    switch (type) {
+      case ObjectType.Polygon:
+      case ObjectType.Sensor:
+      case ObjectType.SolarPanel:
+      case ObjectType.Human:
+      case ObjectType.Tree:
+        return true;
+    }
+    return false;
   };
 
   const setupGridParams = (face: Vector3) => {
@@ -411,7 +429,7 @@ const Cuboid = ({
     }
     if (selectedElement?.id === id || bypass) {
       // no child of this cuboid is clicked
-      if (legalOnCuboid(objectTypeToAdd) && cuboidModel) {
+      if (legalAddToCuboid(objectTypeToAdd) && cuboidModel) {
         setShowGrid(true);
         const intersection = e.intersections[0];
         const addedElement = addElement(cuboidModel, intersection.point, intersection.face?.normal);

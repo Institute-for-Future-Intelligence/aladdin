@@ -16,5 +16,6 @@ export interface UndoableAddWall extends UndoableAdd {
 export enum FlippedWallSide {
   left = 'Left',
   right = 'Right',
+  loop = 'Loop',
   null = 'Null',
 }

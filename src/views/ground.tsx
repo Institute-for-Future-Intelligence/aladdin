@@ -238,7 +238,7 @@ const Ground = () => {
             const contentRef = useStoreRef.getState().contentRef;
             if (contentRef && contentRef.current) {
               contentRef.current.add(elementRef.current);
-              // setParentIdById(GROUND_ID, getObjectId(elementRef.current));
+              setParentIdById(GROUND_ID, getObjectId(elementRef.current));
             }
           }
           elementRef.current.position.copy(intersection.point); // world position
@@ -251,7 +251,7 @@ const Ground = () => {
             // change parent: attach dom, set parentId?
             if (elementParentRef && elementParentRef.uuid !== intersectionObjGroup.uuid) {
               intersectionObjGroup.add(elementRef.current); // attach to Group
-              // setParentIdById(getObjectId(intersectionObjGroup), getObjectId(elementRef.current));
+              setParentIdById(getObjectId(intersectionObjGroup), getObjectId(elementRef.current));
             }
             elementParentRotation.set(0, 0, -intersectionObjGroup.rotation.z);
             const relPos = new Vector3()
