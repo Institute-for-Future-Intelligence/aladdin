@@ -65,6 +65,7 @@ const Ground = () => {
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
 
   const {
+    get: getThree,
     camera,
     gl: { domElement },
     scene,
@@ -96,10 +97,11 @@ const Ground = () => {
 
   const lang = { lng: language };
 
+  // add pointer up event to window
   useEffect(() => {
-    window.addEventListener('pointerup', windowHandlePointerUp);
+    window.addEventListener('pointerup', handlePointerUp);
     return () => {
-      window.removeEventListener('pointerup', windowHandlePointerUp);
+      window.removeEventListener('pointerup', handlePointerUp);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -165,9 +167,9 @@ const Ground = () => {
   }
 
   const setRayCast = (e: PointerEvent) => {
-    mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
-    mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
-    ray.setFromCamera(mouse, camera);
+    mouse.x = (e.offsetX / getThree().gl.domElement.clientWidth) * 2 - 1;
+    mouse.y = -(e.offsetY / getThree().gl.domElement.clientHeight) * 2 + 1;
+    ray.setFromCamera(mouse, getThree().camera);
   };
 
   const getIntersectionToStand = (intersections: Intersection[]) => {
@@ -238,7 +240,7 @@ const Ground = () => {
             const contentRef = useStoreRef.getState().contentRef;
             if (contentRef && contentRef.current) {
               contentRef.current.add(elementRef.current);
-              setParentIdById(GROUND_ID, getObjectId(elementRef.current));
+              // setParentIdById(GROUND_ID, getObjectId(elementRef.current));
             }
           }
           elementRef.current.position.copy(intersection.point); // world position
@@ -251,7 +253,7 @@ const Ground = () => {
             // change parent: attach dom, set parentId?
             if (elementParentRef && elementParentRef.uuid !== intersectionObjGroup.uuid) {
               intersectionObjGroup.add(elementRef.current); // attach to Group
-              setParentIdById(getObjectId(intersectionObjGroup), getObjectId(elementRef.current));
+              // setParentIdById(getObjectId(intersectionObjGroup), getObjectId(elementRef.current));
             }
             elementParentRotation.set(0, 0, -intersectionObjGroup.rotation.z);
             const relPos = new Vector3()
@@ -418,24 +420,55 @@ const Ground = () => {
     }
   };
 
-  const reattachToParentObject = (attachParentId: string | null | undefined, currId: string) => {
-    if (!attachParentId) return;
-    const contentRef = useStoreRef.getState().contentRef;
-    if (contentRef?.current) {
-      const currObj = Util.getObjectChildById(contentRef.current, currId);
-      if (currObj) {
-        if (attachParentId === GROUND_ID) {
-          contentRef.current.add(currObj);
-        } else {
-          const attachParentObj = Util.getObjectChildById(contentRef.current, attachParentId);
-          attachParentObj?.add(currObj);
-        }
-        invalidate();
-      }
-    }
-  };
-
   const resizeElement = (elem: ElementModel) => {
+    const resizeHandleType = useStore.getState().resizeHandleType;
+    // special cases
+    switch (elem.type) {
+      case ObjectType.Tree:
+        switch (resizeHandleType) {
+          case ResizeHandleType.Top:
+            const undoableChangeHeight = {
+              name: 'Change Tree Height',
+              timestamp: Date.now(),
+              changedElementId: elem.id,
+              oldValue: oldDimensionRef.current.z,
+              newValue: elem.lz,
+              undo: () => {
+                updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.oldValue as number);
+              },
+              redo: () => {
+                updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.newValue as number);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChangeHeight);
+            return;
+          case ResizeHandleType.Left:
+          case ResizeHandleType.Right:
+          case ResizeHandleType.Lower:
+          case ResizeHandleType.Upper:
+            const undoableChangeSpread = {
+              name: 'Change Tree Spread',
+              timestamp: Date.now(),
+              changedElementId: elem.id,
+              oldValue: oldDimensionRef.current.x,
+              newValue: elem.lx,
+              undo: () => {
+                updateElementLxById(undoableChangeSpread.changedElementId, undoableChangeSpread.oldValue as number);
+              },
+              redo: () => {
+                updateElementLxById(undoableChangeSpread.changedElementId, undoableChangeSpread.newValue as number);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChangeSpread);
+            return;
+        }
+        break;
+      case ObjectType.Wall:
+        console.log('todo: add wall undo');
+        break;
+    }
+
+    // if the above condition is valid , it will return. So the following part will not run.
     newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
     newDimensionRef.current.set(elem.lx, elem.ly, elem.lz);
     oldChildrenParentIdMapRef.current.clear();
@@ -538,12 +571,13 @@ const Ground = () => {
     }
   };
 
-  const moveElement = (elem: ElementModel, e: ThreeEvent<PointerEvent>) => {
+  const moveElement = (elem: ElementModel, e: PointerEvent) => {
     newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
     let oldHumanOrTreeParentId: string | null = null;
     let newHumanOrTreeParentId: string | null = null;
     // elements modified by reference
     let elementRef: Group | null | undefined = null;
+    setRayCast(e);
     switch (elem.type) {
       case ObjectType.Tree:
         elementRef = useStoreRef.getState().treeRef?.current;
@@ -554,7 +588,7 @@ const Ground = () => {
     }
     if (elementRef && isHumanOrTreeMovedRef.current) {
       oldHumanOrTreeParentId = elem.parentId;
-      setRayCast(e);
+
       const intersections = ray.intersectObjects(scene.children, true);
       const intersection = getIntersectionToStand(intersections); // could simplify???
       if (intersection) {
@@ -579,8 +613,11 @@ const Ground = () => {
       }
       isHumanOrTreeMovedRef.current = false;
     }
-
-    if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
+    if (
+      newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE ||
+      ray.intersectObjects([groundPlaneRef.current!]).length === 0
+    ) {
+      const camera = getThree().camera;
       const screenPosition = newPositionRef.current.clone().project(camera);
       const screenLx = newPositionRef.current
         .clone()
@@ -597,8 +634,11 @@ const Ground = () => {
         .add(new Vector3(0, 0, elem.lz))
         .project(camera)
         .distanceTo(screenPosition);
-      // smaller than 2% of screen dimension
-      if (Math.max(screenLx, screenLy, screenLz) < 0.02) {
+      // smaller than 2% of screen dimension or on sky
+      if (
+        Math.max(screenLx, screenLy, screenLz) < 0.02 ||
+        ray.intersectObjects([groundPlaneRef.current!]).length === 0
+      ) {
         setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
         if (elementRef) {
           switch (elem.type) {
@@ -609,7 +649,7 @@ const Ground = () => {
           }
         }
         setParentIdById(oldHumanOrTreeParentId, elem.id);
-        attachToGroup(oldHumanOrTreeParentId, newHumanOrTreeParentId, elem.id);
+        attachToGroup(oldHumanOrTreeParentId, newHumanOrTreeParentId ?? GROUND_ID, elem.id);
         showError(i18n.t('message.CannotMoveObjectTooFar', lang));
       } else {
         const undoableMove = {
@@ -675,134 +715,91 @@ const Ground = () => {
     }
   };
 
-  const handlePointerUp = (e: ThreeEvent<PointerEvent>) => {
-    if (e.button === 2) return;
-    if (grabRef.current) {
-      const elem = getElementById(grabRef.current.id);
-      if (elem) {
-        // adding foundation end point
-        if (isSettingFoundationEndPointRef.current) {
-          isSettingFoundationStartPointRef.current = false;
-          isSettingFoundationEndPointRef.current = false;
-          setCommonStore((state) => {
-            state.addedFoundationId = null;
-            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-          });
-          if (elem.lx <= 0.1 || elem.ly <= 0.1) {
-            removeElementById(elem.id, false);
-          } else {
-            const undoableAdd = {
-              name: 'Add',
-              timestamp: Date.now(),
-              addedElement: elem,
-              undo: () => {
-                removeElementById(undoableAdd.addedElement.id, false);
-                setCommonStore((state) => {
-                  state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-                });
-              },
-              redo: () => {
-                setCommonStore((state) => {
-                  state.elements.push(undoableAdd.addedElement);
-                  state.selectedElement = undoableAdd.addedElement;
-                  state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-                });
-              },
-            } as UndoableAdd;
-            addUndoable(undoableAdd);
-          }
-        }
-        // adding cuboid end point
-        else if (isSettingCuboidEndPointRef.current) {
-          isSettingCuboidStartPointRef.current = false;
-          isSettingCuboidEndPointRef.current = false;
-          setCommonStore((state) => {
-            state.addedCuboidId = null;
-            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-          });
-          if (elem.lx <= 0.1 || elem.ly <= 0.1) {
-            removeElementById(elem.id, false);
-          } else {
-            const undoableAdd = {
-              name: 'Add',
-              timestamp: Date.now(),
-              addedElement: elem,
-              undo: () => {
-                removeElementById(undoableAdd.addedElement.id, false);
-                setCommonStore((state) => {
-                  state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-                });
-              },
-              redo: () => {
-                setCommonStore((state) => {
-                  state.elements.push(undoableAdd.addedElement);
-                  state.selectedElement = undoableAdd.addedElement;
-                  state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-                });
-              },
-            } as UndoableAdd;
-            addUndoable(undoableAdd);
-          }
-        }
-        // handling editing events
-        else {
-          if (useStore.getState().resizeHandleType) {
-            resizeElement(elem);
-          } else if (useStore.getState().rotateHandleType) {
-            rotateElement(elem);
-          } else if (useStore.getState().moveHandleType) {
-            moveElement(elem, e);
-          }
-        }
-      }
-      grabRef.current = null;
+  const handlePointerUp = (e: PointerEvent) => {
+    if (e.button === 2 || !grabRef.current) {
+      return;
     }
-    windowHandlePointerUp(e);
-  };
 
-  const windowHandlePointerUp = (e: PointerEvent) => {
-    if (e.button === 2) return;
-    // TODO: If the pointer is up on the sky, then grabRef has no chance to set to null.
-    // We take advantage of this to determine whether it is on the sky or ground, but it is not ideal.
-    if (grabRef.current) {
-      // move
-      if (useStore.getState().moveHandleType) {
-        setElementPosition(
-          grabRef.current.id,
-          oldPositionRef.current.x,
-          oldPositionRef.current.y,
-          oldPositionRef.current.z,
-        );
-        let oldHumanOrTreeParentId: string | null = null;
-        // elements modified by reference
-        let elementRef: Group | null | undefined = null;
-        switch (grabRef.current.type) {
-          case ObjectType.Tree:
-            elementRef = useStoreRef.getState().treeRef?.current;
-            break;
-          case ObjectType.Human:
-            elementRef = useStoreRef.getState().humanRef?.current;
-            break;
+    const elem = getElementById(grabRef.current.id);
+
+    if (elem) {
+      // adding foundation end point
+      if (isSettingFoundationEndPointRef.current) {
+        isSettingFoundationStartPointRef.current = false;
+        isSettingFoundationEndPointRef.current = false;
+        setCommonStore((state) => {
+          state.addedFoundationId = null;
+          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+        });
+        if (elem.lx <= 0.1 || elem.ly <= 0.1) {
+          removeElementById(elem.id, false);
+        } else {
+          const undoableAdd = {
+            name: 'Add',
+            timestamp: Date.now(),
+            addedElement: elem,
+            undo: () => {
+              removeElementById(undoableAdd.addedElement.id, false);
+              setCommonStore((state) => {
+                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+              });
+            },
+            redo: () => {
+              setCommonStore((state) => {
+                state.elements.push(undoableAdd.addedElement);
+                state.selectedElement = undoableAdd.addedElement;
+                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+              });
+            },
+          } as UndoableAdd;
+          addUndoable(undoableAdd);
         }
-        oldHumanOrTreeParentId = grabRef.current.parentId;
-        if (elementRef) {
-          switch (grabRef.current.type) {
-            case ObjectType.Tree:
-            case ObjectType.Human:
-              elementRef.position.copy(oldPositionRef.current);
-              break;
-          }
+      }
+      // adding cuboid end point
+      else if (isSettingCuboidEndPointRef.current) {
+        isSettingCuboidStartPointRef.current = false;
+        isSettingCuboidEndPointRef.current = false;
+        setCommonStore((state) => {
+          state.addedCuboidId = null;
+          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+        });
+        if (elem.lx <= 0.1 || elem.ly <= 0.1) {
+          removeElementById(elem.id, false);
+        } else {
+          const undoableAdd = {
+            name: 'Add',
+            timestamp: Date.now(),
+            addedElement: elem,
+            undo: () => {
+              removeElementById(undoableAdd.addedElement.id, false);
+              setCommonStore((state) => {
+                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+              });
+            },
+            redo: () => {
+              setCommonStore((state) => {
+                state.elements.push(undoableAdd.addedElement);
+                state.selectedElement = undoableAdd.addedElement;
+                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+              });
+            },
+          } as UndoableAdd;
+          addUndoable(undoableAdd);
         }
-        setParentIdById(oldHumanOrTreeParentId, grabRef.current.id);
-        reattachToParentObject(oldHumanOrTreeParentId, grabRef.current.id);
-        showError(i18n.t('message.CannotMoveObjectTooFar', lang));
       }
-      // resize
-      else if (useStore.getState().resizeHandleType) {
-        //resizeElement(grabRef.current);
+      // handling editing events
+      else {
+        if (useStore.getState().resizeHandleType) {
+          resizeElement(elem);
+        } else if (useStore.getState().rotateHandleType) {
+          rotateElement(elem);
+        } else if (useStore.getState().moveHandleType) {
+          moveElement(elem, e);
+        }
       }
-      grabRef.current = null;
     }
+
+    grabRef.current = null;
     setCommonStore((state) => {
       state.moveHandleType = null;
       state.resizeHandleType = null;
@@ -1165,73 +1162,6 @@ const Ground = () => {
     }
   };
 
-  const handleIntersectionPointerUp = () => {
-    if (grabRef.current) {
-      const elem = getElementById(grabRef.current.id);
-      if (elem) {
-        switch (elem.type) {
-          case ObjectType.Tree:
-            switch (resizeHandleType) {
-              case ResizeHandleType.Top:
-                const undoableChangeHeight = {
-                  name: 'Change Tree Height',
-                  timestamp: Date.now(),
-                  changedElementId: elem.id,
-                  oldValue: oldDimensionRef.current.z,
-                  newValue: elem.lz,
-                  undo: () => {
-                    updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.oldValue as number);
-                  },
-                  redo: () => {
-                    updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.newValue as number);
-                  },
-                } as UndoableChange;
-                addUndoable(undoableChangeHeight);
-                break;
-              case ResizeHandleType.Left:
-              case ResizeHandleType.Right:
-              case ResizeHandleType.Lower:
-              case ResizeHandleType.Upper:
-                const undoableChangeSpread = {
-                  name: 'Change Tree Spread',
-                  timestamp: Date.now(),
-                  changedElementId: elem.id,
-                  oldValue: oldDimensionRef.current.x,
-                  newValue: elem.lx,
-                  undo: () => {
-                    updateElementLxById(undoableChangeSpread.changedElementId, undoableChangeSpread.oldValue as number);
-                  },
-                  redo: () => {
-                    updateElementLxById(undoableChangeSpread.changedElementId, undoableChangeSpread.newValue as number);
-                  },
-                } as UndoableChange;
-                addUndoable(undoableChangeSpread);
-                break;
-            }
-            break;
-          case ObjectType.Cuboid:
-            if (Util.isTopResizeHandle(resizeHandleType)) {
-              const undoableChangeHeight = {
-                name: 'Change Cuboid Height',
-                timestamp: Date.now(),
-                changedElementId: elem.id,
-                oldValue: oldDimensionRef.current.z,
-                newValue: elem.lz,
-                undo: () => {
-                  updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.oldValue as number);
-                },
-                redo: () => {
-                  updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.newValue as number);
-                },
-              } as UndoableChange;
-              addUndoable(undoableChangeHeight);
-            }
-            break;
-        }
-      }
-    }
-  };
-
   const handleIntersectionPointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
       setRayCast(e);
@@ -1584,7 +1514,6 @@ const Ground = () => {
           position={intersectionPlanePosition}
           args={[100000, 100000]}
           onPointerMove={handleIntersectionPointerMove}
-          onPointerUp={handleIntersectionPointerUp}
         >
           <meshStandardMaterial side={DoubleSide} />
         </Plane>
@@ -1600,7 +1529,6 @@ const Ground = () => {
         renderOrder={-2}
         onContextMenu={handleContextMenu}
         onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
         onPointerMove={handleGroundPointerMove}
         onPointerOut={handleGroundPointerOut}
       >
