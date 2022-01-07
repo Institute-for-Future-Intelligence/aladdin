@@ -420,7 +420,7 @@ const Ground = () => {
     }
   };
 
-  const resizeElement = (elem: ElementModel) => {
+  const resizeElementOnPointerUp = (elem: ElementModel) => {
     const resizeHandleType = useStore.getState().resizeHandleType;
     // special cases
     switch (elem.type) {
@@ -585,7 +585,7 @@ const Ground = () => {
     }
   };
 
-  const moveElement = (elem: ElementModel, e: PointerEvent) => {
+  const moveElementOnPointerUp = (elem: ElementModel, e: PointerEvent) => {
     newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
     let oldHumanOrTreeParentId: string | null = null;
     let newHumanOrTreeParentId: string | null = null;
@@ -697,7 +697,7 @@ const Ground = () => {
     }
   };
 
-  const rotateElement = (elem: ElementModel) => {
+  const rotateElementOnPointerUp = (elem: ElementModel) => {
     newRotationRef.current = [...elem.rotation];
     const oldRotation = new Vector3().fromArray(oldRotationRef.current);
     const newRotation = new Vector3().fromArray(newRotationRef.current);
@@ -804,11 +804,11 @@ const Ground = () => {
       // handling editing events
       else {
         if (useStore.getState().resizeHandleType) {
-          resizeElement(elem);
+          resizeElementOnPointerUp(elem);
         } else if (useStore.getState().rotateHandleType) {
-          rotateElement(elem);
+          rotateElementOnPointerUp(elem);
         } else if (useStore.getState().moveHandleType) {
-          moveElement(elem, e);
+          moveElementOnPointerUp(elem, e);
         }
       }
     }

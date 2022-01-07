@@ -4,7 +4,7 @@
 
 import React, { useMemo, useRef } from 'react';
 import { BackSide, DoubleSide, Euler, Mesh, Object3D, Raycaster, Vector2, Vector3 } from 'three';
-import { ThreeEvent, useThree } from '@react-three/fiber';
+import { invalidate, ThreeEvent, useThree } from '@react-three/fiber';
 import { Plane, useTexture } from '@react-three/drei';
 
 import DefaultDaySkyImage from '../resources/daysky.jpg';
@@ -44,6 +44,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const addUndoable = useStore(Selector.addUndoable);
+  const setElementPosition = useStore(Selector.setElementPosition);
 
   const {
     camera,
@@ -55,8 +56,14 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const absPosMapRef = useRef<Map<string, Vector3>>(new Map());
   const polygonsAbsPosMapRef = useRef<Map<string, Vector2[]>>(new Map());
   const oldPositionRef = useRef<Vector3>(new Vector3());
+  const oldDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const oldWidthRef = useRef<number>(0);
   const oldHeightRef = useRef<number>(0);
+  const oldChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
+  const oldChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
+  const newChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
+  const newChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
+
   const ray = useMemo(() => new Raycaster(), []);
 
   const night = sunlightDirection.z <= 0;
@@ -179,6 +186,42 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
     e.cx = absPos.x;
     e.cy = absPos.y;
     e.cz = 0;
+    newChildrenPositionsMapRef.current.set(e.id, new Vector3(absPos.x, absPos.y, 0));
+    newChildrenParentIdMapRef.current.set(e.id, GROUND_ID);
+  };
+
+  const attachToGroup = (
+    attachParentId: string | null | undefined,
+    currParentId: string | null | undefined,
+    currId: string,
+  ) => {
+    if (!attachParentId || !currParentId) return;
+    const contentRef = useStoreRef.getState().contentRef;
+    if (contentRef?.current) {
+      const currParentObj = Util.getObjectChildById(contentRef.current, currParentId);
+      const currObj = Util.getObjectChildById(currParentId === GROUND_ID ? contentRef.current : currParentObj, currId);
+      if (currObj) {
+        if (attachParentId === GROUND_ID) {
+          contentRef.current.add(currObj);
+        } else {
+          const attachParentObj = Util.getObjectChildById(contentRef.current, attachParentId);
+          attachParentObj?.add(currObj);
+        }
+        invalidate();
+      }
+    }
+  };
+
+  const setParentIdById = (parentId: string | null | undefined, elementId: string) => {
+    if (!parentId) return;
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === elementId) {
+          e.parentId = parentId;
+          break;
+        }
+      }
+    });
   };
 
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
@@ -280,10 +323,14 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
           oldWidthRef.current = selectedElement.lx; // crown spread of tree
           break;
         case ObjectType.Cuboid: {
+          oldPositionRef.current.set(selectedElement.cx, selectedElement.cy, selectedElement.cz);
+          oldDimensionRef.current.set(selectedElement.lx, selectedElement.ly, selectedElement.lz);
+
           absPosMapRef.current.clear();
           const cuboidCenter = new Vector3(selectedElement.cx, selectedElement.cy, selectedElement.cz);
           const cuboidChildren = getChildren(selectedElement.id);
           if (cuboidChildren.length > 0) {
+            oldChildrenPositionsMapRef.current.clear();
             const a = selectedElement.rotation[2];
             for (const e of cuboidChildren) {
               switch (e.type) {
@@ -292,6 +339,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                   const centerAbsPos = new Vector3(e.cx, e.cy, e.cz).applyEuler(new Euler(0, 0, a));
                   centerAbsPos.add(cuboidCenter);
                   absPosMapRef.current.set(e.id, centerAbsPos);
+                  oldChildrenPositionsMapRef.current.set(e.id, new Vector3(e.cx, e.cy, e.cz));
                   break;
                 case ObjectType.SolarPanel:
                 case ObjectType.Sensor:
@@ -340,20 +388,102 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
               case ResizeHandleType.UpperRightTop:
               case ResizeHandleType.LowerLeftTop:
               case ResizeHandleType.LowerRightTop:
+                oldChildrenParentIdMapRef.current.clear();
+                setCommonStore((state) => {
+                  // set ref children state
+                  for (const e of state.elements) {
+                    if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
+                      if (e.parentId === elem.id) {
+                        oldChildrenParentIdMapRef.current.set(e.id, elem.id);
+                        // stand on top face
+                        if (Math.abs(oldDimensionRef.current.z / 2 - e.cz) < 0.01) {
+                          e.cz = elem.lz / 2;
+                        }
+                        // stand on side faces
+                        else {
+                          const newRelZ = e.cz + oldPositionRef.current.z - elem.cz;
+                          if (Math.abs(newRelZ) > elem.lz / 2) {
+                            handleDetachParent(elem, e);
+                          } else {
+                            e.cz = newRelZ;
+                          }
+                        }
+                      }
+                    }
+                  }
+                });
+                const children = getChildren(elem.id);
+                if (children.length > 0) {
+                  for (const c of children) {
+                    newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+                  }
+                }
                 const undoableChangeHeight = {
                   name: 'Change Cuboid Height',
                   timestamp: Date.now(),
                   changedElementId: elem.id,
                   oldValue: oldHeightRef.current,
                   newValue: elem.lz,
+                  oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+                  newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+                  oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
+                  newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
                   undo: () => {
-                    updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.oldValue as number);
+                    setCommonStore((state) => {
+                      for (const e of state.elements) {
+                        if (e.id === undoableChangeHeight.changedElementId) {
+                          e.lz = undoableChangeHeight.oldValue as number;
+                          e.cz = (undoableChangeHeight.oldValue as number) / 2;
+                          break;
+                        }
+                      }
+                    });
+                    if (
+                      undoableChangeHeight.oldChildrenPositionsMap &&
+                      undoableChangeHeight.oldChildrenPositionsMap.size > 0
+                    ) {
+                      for (const [id, p] of undoableChangeHeight.oldChildrenPositionsMap.entries()) {
+                        const elem = getElementById(id);
+                        if (elem?.type !== ObjectType.Polygon) {
+                          setElementPosition(id, p.x, p.y, p.z);
+                          const oldParentId = undoableChangeHeight.oldChildrenParentIdMap?.get(id);
+                          const newParentId = undoableChangeHeight.newChildrenParentIdMap?.get(id);
+                          if (oldParentId && newParentId && oldParentId !== newParentId) {
+                            attachToGroup(oldParentId, newParentId, id);
+                            setParentIdById(oldParentId, id);
+                          }
+                        }
+                      }
+                    }
                   },
                   redo: () => {
-                    updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.newValue as number);
+                    setCommonStore((state) => {
+                      for (const e of state.elements) {
+                        if (e.id === undoableChangeHeight.changedElementId) {
+                          e.lz = undoableChangeHeight.newValue as number;
+                          e.cz = (undoableChangeHeight.newValue as number) / 2;
+                          break;
+                        }
+                      }
+                    });
+                    if (
+                      undoableChangeHeight.newChildrenPositionsMap &&
+                      undoableChangeHeight.newChildrenPositionsMap.size > 0
+                    ) {
+                      for (const [id, p] of undoableChangeHeight.newChildrenPositionsMap.entries()) {
+                        setElementPosition(id, p.x, p.y, p.z);
+                        const oldParentId = undoableChangeHeight.oldChildrenParentIdMap?.get(id);
+                        const newParentId = undoableChangeHeight.newChildrenParentIdMap?.get(id);
+                        if (oldParentId && newParentId && oldParentId !== newParentId) {
+                          attachToGroup(newParentId, oldParentId, id);
+                          setParentIdById(newParentId, id);
+                        }
+                      }
+                    }
                   },
                 } as UndoableChange;
                 addUndoable(undoableChangeHeight);
+                console.log(undoableChangeHeight);
                 break;
             }
             break;
@@ -413,27 +543,6 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
             addUndoable(undoableChangeHeight);
             break;
         }
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.parentId === elem.id) {
-              if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
-                // stand on top face
-                if (Math.abs(oldHeightRef.current / 2 - e.cz) < 0.01) {
-                  e.cz = elem.lz / 2;
-                }
-                // stand on side faces
-                else {
-                  const newRelZ = e.cz + oldPositionRef.current.z - elem.cz;
-                  if (Math.abs(newRelZ) > elem.lz / 2 + 0.5) {
-                    handleDetachParent(elem, e);
-                  } else {
-                    e.cz = newRelZ;
-                  }
-                }
-              }
-            }
-          }
-        });
       }
       grabRef.current = null;
       setCommonStore((state) => {
