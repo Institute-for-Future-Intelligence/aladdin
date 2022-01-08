@@ -24,6 +24,7 @@ export interface User {
   email: string | null;
   photoURL: string | null;
   uid: string | null;
+  signFile: boolean;
 }
 
 export interface CloudFileInfo {

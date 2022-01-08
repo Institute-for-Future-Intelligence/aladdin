@@ -4,7 +4,7 @@
 
 import { Vector2, Vector3 } from 'three';
 
-export const VERSION = '0.0.2';
+export const VERSION = '0.0.3';
 
 export const isProd = process.env.NODE_ENV === 'production';
 

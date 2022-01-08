@@ -8,7 +8,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
-import { Input, Space } from 'antd';
+import { Space, Switch } from 'antd';
 
 const Container = styled.div`
   position: fixed;
@@ -56,8 +56,9 @@ const Header = styled.div`
 `;
 
 const AccountSettingsPanel = () => {
-  const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
+  const language = useStore(Selector.language);
+  const user = useStore(Selector.user);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -128,16 +129,23 @@ const AccountSettingsPanel = () => {
                 {i18n.t('word.Close', lang)}
               </span>
             </Header>
-            <Space style={{ paddingTop: '10px', paddingLeft: '10px' }}>
-              <Space style={{ width: '260px' }}>{i18n.t('avatarMenu.IfYouAreAStudent', lang)}</Space>
+            <Space style={{ paddingTop: '20px', paddingLeft: '20px' }}>
+              <Space style={{ width: '50px' }}>{i18n.t('accountSettingsPanel.MyID', lang)}</Space>
+              <Space style={{ paddingLeft: '6px' }}>{user.uid}</Space>
             </Space>
-            <Space style={{ paddingTop: '10px', paddingLeft: '10px' }}>
-              <Space style={{ width: '100px' }}>{i18n.t('word.Teacher', lang) + ':'}</Space>
-              <Input style={{ width: '160px' }} />
-            </Space>
-            <Space style={{ paddingTop: '10px', paddingLeft: '10px' }}>
-              <Space style={{ width: '100px' }}>{i18n.t('word.Class', lang) + ':'}</Space>
-              <Input style={{ width: '160px' }} />
+            <Space style={{ paddingTop: '10px', paddingLeft: '20px' }}>
+              <Switch
+                style={{ width: '50px' }}
+                checked={user.signFile}
+                onChange={(checked) => {
+                  setCommonStore((state) => {
+                    state.user.signFile = checked;
+                  });
+                }}
+              />
+              <Space style={{ paddingLeft: '6px' }}>
+                {i18n.t('accountSettingsPanel.StoreMyNameInMyFilesWhenSaving', lang)}
+              </Space>
             </Space>
           </ColumnWrapper>
         </Container>

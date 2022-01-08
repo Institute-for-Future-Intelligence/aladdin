@@ -104,6 +104,18 @@ export const i18n_zh_tw = {
     },
 
     message: {
+      CannotSignIn: '登錄失敗',
+      CannotSignOut: '退出失敗',
+      YourAccountWasCreated: '成功建立您的賬號。',
+      CannotCreateAccount: '無法創建賬號',
+      YourAccountSettingsWereSaved: '您的賬號設定已保存。',
+      CannotSaveYourAccountSettings: '您的賬號設定無法保存',
+      CannotSaveYourFileToCloud: '無法保存您的文檔到雲端',
+      CloudFileNotFound: '找不到此云端文檔',
+      CannotOpenCloudFile: '此云端文檔無法打開',
+      CannotOpenCloudFolder: '您的雲端文檔夾無法打開',
+      CannotDeleteCloudFile: '無法刪除此云端文檔',
+      CannotRenameCloudFile: '此云端文檔的名字無法更改',
       DoYouWantToSaveChanges: '您要保存當前文檔嗎？',
       NotApplicableToSelectedAction: '此值不適用於當前選擇範圍',
       ThisElementIsLocked: '這個部件被鎖定。',
@@ -460,6 +472,8 @@ export const i18n_zh_tw = {
 
     accountSettingsPanel: {
       MyAccountSettings: '我的賬戶設定',
+      MyID: '我的ID',
+      StoreMyNameInMyFilesWhenSaving: '保存文檔時籤上我的大名',
     },
 
     weatherPanel: {

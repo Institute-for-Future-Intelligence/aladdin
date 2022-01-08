@@ -105,6 +105,18 @@ export const i18n_tr = {
     },
 
     message: {
+      CannotSignIn: 'Cannot sign in',
+      CannotSignOut: 'Cannot sign out',
+      YourAccountWasCreated: 'Your account was created.',
+      CannotCreateAccount: 'Cannot create an account',
+      YourAccountSettingsWereSaved: 'Your account settings were saved.',
+      CannotSaveYourAccountSettings: 'Cannot save your account settings',
+      CannotSaveYourFileToCloud: 'Cannot save your file to the cloud',
+      CloudFileNotFound: 'The cloud file was not found',
+      CannotOpenCloudFile: 'Cannot open the cloud file',
+      CannotOpenCloudFolder: 'Cannot open your cloud folder',
+      CannotDeleteCloudFile: 'Cannot delete the cloud file',
+      CannotRenameCloudFile: 'Cannot rename the cloud file',
       DoYouWantToSaveChanges: 'Deðiþiklikleri kaydetmek istiyor musunuz?',
       NotApplicableToSelectedAction: 'Seçili Ýþleme Uygulanamaz',
       ThisElementIsLocked: 'Bu öðe kilitli.',
@@ -468,6 +480,8 @@ export const i18n_tr = {
 
     accountSettingsPanel: {
       MyAccountSettings: 'Hesap Ayarlarým',
+      MyID: 'My ID',
+      StoreMyNameInMyFilesWhenSaving: 'Store my name in my files when saving',
     },
 
     weatherPanel: {

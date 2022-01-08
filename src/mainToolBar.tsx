@@ -68,6 +68,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const cloudFiles = useRef<CloudFileInfo[] | void>();
   const firstCallUpdateCloudFile = useRef<boolean>(true);
   const firstCallListCloudFiles = useRef<boolean>(true);
+  const firstAccountSettings = useRef<boolean>(true);
 
   const params = new URLSearchParams(window.location.search);
   const lang = { lng: language };
@@ -154,6 +155,15 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     setTitle(cloudFile ?? 'My Aladdin File');
   }, [cloudFile]);
 
+  useEffect(() => {
+    if (firstAccountSettings.current) {
+      firstAccountSettings.current = false;
+    } else {
+      saveAccountSettings(user);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user.signFile]);
+
   const init = () => {
     const userid = params.get('userid');
     const title = params.get('title');
@@ -187,40 +197,50 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         });
       })
       .catch((error) => {
-        console.log('Error: ', error);
+        showError(i18n.t('message.CannotSignIn', lang) + ': ' + error);
       });
     resetToSelectMode();
   };
 
   const registerUser = async (user: User): Promise<any> => {
     const firestore = firebase.firestore();
+    let signFile = false;
     const found = await firestore
       .collection('users')
       .get()
       .then((querySnapshot) => {
-        for (let doc of querySnapshot.docs) {
+        for (const doc of querySnapshot.docs) {
           if (doc.id === user.uid) {
+            signFile = doc.data().signFile;
             return true;
           }
         }
         return false;
       });
-    if (!found && user.uid) {
-      firestore
-        .collection('users')
-        .doc(user.uid)
-        .set({
-          email: user.email,
-          uid: user.uid,
-          photoURL: user.photoURL,
-          displayName: user.displayName,
-        })
-        .then((docRef) => {
-          console.log('Document written with ID: ', docRef);
-        })
-        .catch((error) => {
-          console.error('Error adding document: ', error);
-        });
+    if (found) {
+      setCommonStore((state) => {
+        state.user.signFile = signFile;
+      });
+      user.signFile = signFile;
+    } else {
+      if (user.uid) {
+        firestore
+          .collection('users')
+          .doc(user.uid)
+          .set({
+            email: user.email,
+            uid: user.uid,
+            photoURL: user.photoURL,
+            displayName: user.displayName,
+            signFile: user.signFile,
+          })
+          .then(() => {
+            showInfo(i18n.t('message.YourAccountWasCreated', lang));
+          })
+          .catch((error) => {
+            showError(i18n.t('message.CannotCreateAccount', lang) + ': ' + error);
+          });
+      }
     }
   };
 
@@ -234,14 +254,33 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           state.user.email = null;
           state.user.displayName = null;
           state.user.photoURL = null;
+          state.user.signFile = false;
           state.cloudFile = undefined; // if there is a current cloud file
           state.showAccountSettingsPanel = false;
           state.showCloudFilePanel = false;
         });
       })
       .catch((error) => {
-        console.log('Error: ', error);
+        showError(i18n.t('message.CannotSignOut', lang) + ': ' + error);
       });
+  };
+
+  const saveAccountSettings = (user: User) => {
+    if (user.uid) {
+      const firestore = firebase.firestore();
+      firestore
+        .collection('users')
+        .doc(user.uid)
+        .update({
+          signFile: user.signFile,
+        })
+        .then(() => {
+          showInfo(i18n.t('message.YourAccountSettingsWereSaved', lang));
+        })
+        .catch((error) => {
+          showError(i18n.t('message.CannotSaveYourAccountSettings', lang) + ': ' + error);
+        });
+    }
   };
 
   const saveToCloud = (tlt: string, silent: boolean) => {
@@ -278,7 +317,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
                 }
               })
               .catch((error) => {
-                console.log('Error saving file:', error);
+                showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
               });
           }
         } catch (e) {
@@ -328,11 +367,11 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             importContent(data, title);
             setLoading(false);
           } else {
-            showInfo('Sorry, ' + title + ' was not found. It may have been deleted by its owner.');
+            showInfo(i18n.t('message.CloudFileNotFound', lang) + ': ' + title);
           }
         })
         .catch((error) => {
-          console.log('Error opening file:', error);
+          showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
         });
     }
   };
@@ -354,8 +393,8 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           a.push({
             timestamp: data.timestamp,
             fileName: doc.id,
-            email: data.email,
-            owner: data.owner,
+            email: user.email,
+            owner: user.displayName,
             userid: user.uid,
             uuid: data.docid,
           } as CloudFileInfo);
@@ -364,7 +403,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         return a;
       })
       .catch((error) => {
-        console.log('Error getting files:', error);
+        showError(i18n.t('message.CannotOpenYourCloudFolder', lang) + ': ' + error);
       });
   };
 
@@ -399,7 +438,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         });
       })
       .catch((error) => {
-        console.log('Error deleting file:', error);
+        showError(i18n.t('message.CannotDeleteCloudFile', lang) + ': ' + error);
       });
   };
 
@@ -420,7 +459,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         }
       })
       .catch((error) => {
-        console.log('Error renaming file:', error);
+        showError(i18n.t('message.CannotRenameCloudFile', lang) + ': ' + error);
       });
     for (const f of cloudFileArray) {
       if (f.userid === userid && f.title === oldTitle) {

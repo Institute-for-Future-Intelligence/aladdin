@@ -445,8 +445,9 @@ export const useStore = create<CommonStoreState>(
             return {
               docid: short.generate(),
               timestamp: new Date().getTime(),
-              owner: state.user.displayName,
-              email: state.user.email,
+              userid: state.user.uid,
+              owner: state.user.signFile ? state.user.displayName : null,
+              email: state.user.signFile ? state.user.email : null,
               world: state.world,
               elements: state.elements,
               view: state.viewState,
