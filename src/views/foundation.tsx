@@ -1275,6 +1275,9 @@ const Foundation = ({
     }
     setShowGrid(false);
     grabRef.current = null;
+    setCommonStore((state) => {
+      state.resizeHandleType = null;
+    });
   };
 
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
