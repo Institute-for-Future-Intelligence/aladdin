@@ -473,6 +473,7 @@ export const i18n_zh_tw = {
     accountSettingsPanel: {
       MyAccountSettings: '我的賬戶設定',
       MyID: '我的ID',
+      IDInClipBoard: '您現在可以粘貼ID了。',
       StoreMyNameInMyFilesWhenSaving: '保存文檔時籤上我的大名',
     },
 

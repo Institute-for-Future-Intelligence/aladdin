@@ -478,6 +478,7 @@ export const i18n_es = {
     accountSettingsPanel: {
       MyAccountSettings: 'Configuración de mi cuenta',
       MyID: 'My ID',
+      IDInClipBoard: 'Your ID was copied and is ready to paste.',
       StoreMyNameInMyFilesWhenSaving: 'Store my name in my files when saving',
     },
 

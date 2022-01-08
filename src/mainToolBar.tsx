@@ -228,10 +228,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           .collection('users')
           .doc(user.uid)
           .set({
-            email: user.email,
             uid: user.uid,
-            photoURL: user.photoURL,
-            displayName: user.displayName,
             signFile: user.signFile,
           })
           .then(() => {

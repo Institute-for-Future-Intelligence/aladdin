@@ -9,6 +9,7 @@ import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
 import { Space, Switch } from 'antd';
+import { copyTextToClipboard, showSuccess } from '../helpers';
 
 const Container = styled.div`
   position: fixed;
@@ -130,19 +131,37 @@ const AccountSettingsPanel = () => {
               </span>
             </Header>
             <Space style={{ paddingTop: '20px', paddingLeft: '20px' }}>
-              <Space style={{ width: '50px' }}>{i18n.t('accountSettingsPanel.MyID', lang)}</Space>
+              <Space
+                style={{
+                  width: '50px',
+                  cursor: 'copy',
+                  background: 'antiquewhite',
+                  justifyContent: 'center',
+                  border: 'black solid 1px',
+                  borderRadius: '8px',
+                }}
+                onClick={() => {
+                  if (user.uid) {
+                    copyTextToClipboard(user.uid);
+                    showSuccess(i18n.t('accountSettingsPanel.IDInClipBoard', lang));
+                  }
+                }}
+              >
+                {i18n.t('accountSettingsPanel.MyID', lang)}
+              </Space>
               <Space style={{ paddingLeft: '6px' }}>{user.uid}</Space>
             </Space>
             <Space style={{ paddingTop: '10px', paddingLeft: '20px' }}>
-              <Switch
-                style={{ width: '50px' }}
-                checked={user.signFile}
-                onChange={(checked) => {
-                  setCommonStore((state) => {
-                    state.user.signFile = checked;
-                  });
-                }}
-              />
+              <Space style={{ width: '50px' }}>
+                <Switch
+                  checked={user.signFile}
+                  onChange={(checked) => {
+                    setCommonStore((state) => {
+                      state.user.signFile = checked;
+                    });
+                  }}
+                />
+              </Space>
               <Space style={{ paddingLeft: '6px' }}>
                 {i18n.t('accountSettingsPanel.StoreMyNameInMyFilesWhenSaving', lang)}
               </Space>
