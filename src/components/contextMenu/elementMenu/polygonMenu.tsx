@@ -16,7 +16,7 @@ import { ObjectType, PolygonTexture } from '../../../types';
 import PolygonLineColorSelection from './polygonLineColorSelection';
 import PolygonFillColorSelection from './polygonFillColorSelection';
 import PolygonTextureSelection from './polygonTextureSelection';
-import SolarPanelLayoutManager from './solarPanelLayoutManager';
+import SolarPanelLayoutWizard from './solarPanelLayoutWizard';
 
 export const PolygonMenu = () => {
   const language = useStore(Selector.language);
@@ -28,7 +28,7 @@ export const PolygonMenu = () => {
   const [lineColorDialogVisible, setLineColorDialogVisible] = useState(false);
   const [fillColorDialogVisible, setFillColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
-  const [solarPanelLayoutManagerVisible, setSolarPanelLayoutManagerVisible] = useState(false);
+  const [solarPanelLayoutWizardVisible, setSolarPanelLayoutWizardVisible] = useState(false);
   const polygon = getSelectedElement() as PolygonModel;
   const lang = { lng: language };
 
@@ -75,14 +75,14 @@ export const PolygonMenu = () => {
         <Copy keyName={'polygon-copy'} />
         {editable && <Cut keyName={'polygon-cut'} />}
         <SubMenu key={'layout'} title={i18n.t('polygonMenu.Layout', lang)} style={{ paddingLeft: '24px' }}>
-          <SolarPanelLayoutManager
-            dialogVisible={solarPanelLayoutManagerVisible}
-            setDialogVisible={setSolarPanelLayoutManagerVisible}
+          <SolarPanelLayoutWizard
+            dialogVisible={solarPanelLayoutWizardVisible}
+            setDialogVisible={setSolarPanelLayoutWizardVisible}
           />
           <Menu.Item
             key={'solar-panel-layout'}
             onClick={() => {
-              setSolarPanelLayoutManagerVisible(true);
+              setSolarPanelLayoutWizardVisible(true);
             }}
             style={{ paddingLeft: '36px' }}
           >

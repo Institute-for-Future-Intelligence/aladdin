@@ -131,6 +131,8 @@ export const i18n_zh_cn = {
       CannotPasteOutsideBoundary: '位置出界，不能复制。',
       CannotPasteBecauseOfOverlap: '位置重叠，不能复制。',
       CannotMoveObjectTooFar: '位置太远，移动取消。',
+      ExistingSolarPanelsWillBeRemovedBeforeApplyingNewLayout: '采用新布局之前必须移除现有的光伏板。',
+      DoYouWantToContinue: '您想继续吗？',
     },
 
     menu: {

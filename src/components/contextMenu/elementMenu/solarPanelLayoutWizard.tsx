@@ -12,13 +12,13 @@ import { ObjectType, Orientation, RowAxis } from '../../../types';
 import { Util } from '../../../Util';
 import { PolygonModel } from '../../../models/PolygonModel';
 import { FoundationModel } from '../../../models/FoundationModel';
-import { ElementModel } from '../../../models/ElementModel';
 import { ElementModelFactory } from '../../../models/ElementModelFactory';
 import { UNIT_VECTOR_POS_Z } from '../../../constants';
+import { Point2 } from '../../../models/Point2';
 
 const { Option } = Select;
 
-const SolarPanelLayoutManager = ({
+const SolarPanelLayoutWizard = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -31,11 +31,14 @@ const SolarPanelLayoutManager = ({
   const getElementById = useStore(Selector.getElementById);
   const pvModules = useStore(Selector.pvModules);
   const getPvModule = useStore(Selector.getPvModule);
+  const countElementsByReferenceId = useStore(Selector.countElementsByReferenceId);
+  const removeElementsByReferenceId = useStore(Selector.removeElementsByReferenceId);
   const addUndoable = useStore(Selector.addUndoable);
 
-  const [selectedPvModel, setSelectedPvModel] = useState<string>('SPR-X21-335-BLK');
-  const [selectedRowAxis, setSelectedRowAxis] = useState<RowAxis>(RowAxis.zonal);
-  const [selectedOrientation, setSelectedOrientation] = useState<Orientation>(Orientation.portrait);
+  const [warningDialogVisible, setWarningDialogVisible] = useState(false);
+  const [pvModelName, setPvModelName] = useState<string>('SPR-X21-335-BLK');
+  const [rowAxis, setRowAxis] = useState<RowAxis>(RowAxis.zonal);
+  const [orientation, setOrientation] = useState<Orientation>(Orientation.portrait);
   const [tiltAngle, setTiltAngle] = useState<number>(0);
   const [panelWidth, setPanelWidth] = useState<number>(1.05); // the width of the default model
   const [rowWidth, setRowWidth] = useState<number>(panelWidth);
@@ -48,13 +51,13 @@ const SolarPanelLayoutManager = ({
   const dragRef = useRef<HTMLDivElement | null>(null);
 
   const lang = { lng: language };
-  const pvModel = getPvModule(selectedPvModel);
-  const parent = getSelectedElement();
+  const pvModel = getPvModule(pvModelName);
+  const reference = getSelectedElement();
 
   useEffect(() => {
-    const pvModel = getPvModule(selectedPvModel) ?? getPvModule('SPR-X21-335-BLK');
-    setPanelWidth(selectedOrientation === Orientation.portrait ? pvModel.width : pvModel.length);
-  }, [selectedPvModel]);
+    const pvModel = getPvModule(pvModelName) ?? getPvModule('SPR-X21-335-BLK');
+    setPanelWidth(orientation === Orientation.portrait ? pvModel.width : pvModel.length);
+  }, [pvModelName]);
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
     if (dragRef.current) {
@@ -77,36 +80,95 @@ const SolarPanelLayoutManager = ({
   };
 
   const layout = () => {
-    if (parent?.type === ObjectType.Polygon) {
-      const area = parent as PolygonModel;
+    if (reference?.type === ObjectType.Polygon) {
+      const area = reference as PolygonModel;
       const bounds = Util.calculatePolygonBounds(area.vertices);
       const base = getElementById(area.parentId);
       if (base?.type === ObjectType.Foundation) {
         const foundation = base as FoundationModel;
-        const lx = 5 * pvModel.length;
-        const ly = 2 * pvModel.width;
-        const cx = bounds.minX + (0.5 * lx) / foundation.lx;
-        const cy = bounds.minY + (0.5 * ly) / foundation.ly;
-        const solarPanel = ElementModelFactory.makeSolarPanel(
-          foundation,
-          pvModel,
-          cx,
-          cy,
-          foundation.lz,
-          UNIT_VECTOR_POS_Z,
-          'rotation' in parent ? parent.rotation : undefined,
-          lx,
-          ly,
-        );
-        setCommonStore((state) => {
-          state.elements.push(solarPanel);
-        });
+        let n: number;
+        let start: number;
+        let delta: number;
+        if (rowAxis === RowAxis.meridional) {
+          // north-south axis, so the array is laid in x direction
+          n = Math.floor(((bounds.maxX - bounds.minX) * foundation.lx - rowWidth) / interRowSpacing);
+          start = bounds.minX + rowWidth / 2;
+        } else {
+          // east-west axis, so the array is laid in y direction
+          n = Math.floor(((bounds.maxY - bounds.minY) * foundation.ly - rowWidth) / interRowSpacing);
+          start = bounds.minY + rowWidth / (2 * foundation.ly);
+          delta = interRowSpacing / foundation.ly;
+          let a: Point2 = {} as Point2;
+          let b: Point2 = {} as Point2;
+          for (let i = 0; i <= n; i++) {
+            a.x = -0.5;
+            b.x = 0.5;
+            a.y = b.y = start + i * delta;
+            const p = Util.polygonIntersections(a, b, area.vertices);
+            if (p.length > 1) {
+              const x1 = p[0].x;
+              const x2 = p[1].x;
+              const cx = (x1 + x2) / 2;
+              const lx = Math.abs(x1 - x2) * foundation.lx;
+              const solarPanel = ElementModelFactory.makeSolarPanel(
+                foundation,
+                pvModel,
+                cx,
+                a.y,
+                foundation.lz,
+                orientation,
+                UNIT_VECTOR_POS_Z,
+                'rotation' in foundation ? foundation.rotation : undefined,
+                lx,
+                rowWidth,
+              );
+              solarPanel.tiltAngle = tiltAngle;
+              solarPanel.referenceId = area.id;
+              setCommonStore((state) => {
+                state.elements.push(solarPanel);
+              });
+            }
+          }
+        }
       }
     }
   };
 
   return (
     <>
+      {warningDialogVisible && (
+        <Modal
+          width={400}
+          visible={warningDialogVisible}
+          title={
+            <div
+              style={{ width: '100%', cursor: 'move' }}
+              onMouseOver={() => setDragEnabled(true)}
+              onMouseOut={() => setDragEnabled(false)}
+            >
+              {i18n.t('word.Warning', lang)}
+            </div>
+          }
+          onOk={() => {
+            if (reference) {
+              removeElementsByReferenceId(reference.id);
+              layout();
+            }
+            setWarningDialogVisible(false);
+          }}
+          onCancel={() => {
+            setWarningDialogVisible(false);
+          }}
+          modalRender={(modal) => (
+            <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
+              <div ref={dragRef}>{modal}</div>
+            </Draggable>
+          )}
+        >
+          {i18n.t('message.ExistingSolarPanelsWillBeRemovedBeforeApplyingNewLayout', lang)}
+          {i18n.t('message.DoYouWantToContinue', lang)}
+        </Modal>
+      )}
       <Modal
         width={560}
         visible={dialogVisible}
@@ -123,7 +185,13 @@ const SolarPanelLayoutManager = ({
           <Button
             key="Apply"
             onClick={() => {
-              layout();
+              if (reference) {
+                if (countElementsByReferenceId(reference.id) > 0) {
+                  setWarningDialogVisible(true);
+                } else {
+                  layout();
+                }
+              }
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -140,7 +208,13 @@ const SolarPanelLayoutManager = ({
             key="OK"
             type="primary"
             onClick={() => {
-              layout();
+              if (reference) {
+                if (countElementsByReferenceId(reference.id) > 0) {
+                  setWarningDialogVisible(true);
+                } else {
+                  layout();
+                }
+              }
               setDialogVisible(false);
             }}
           >
@@ -166,9 +240,9 @@ const SolarPanelLayoutManager = ({
             <Select
               defaultValue="Custom"
               style={{ width: '100%' }}
-              value={selectedPvModel}
+              value={pvModelName}
               onChange={(value) => {
-                setSelectedPvModel(value);
+                setPvModelName(value);
                 setUpdateFlag(!updateFlag);
               }}
             >
@@ -188,9 +262,9 @@ const SolarPanelLayoutManager = ({
           <Col className="gutter-row" span={10}>
             <Select
               style={{ width: '100%' }}
-              value={selectedRowAxis}
+              value={rowAxis}
               onChange={(value) => {
-                setSelectedRowAxis(value);
+                setRowAxis(value);
                 setUpdateFlag(!updateFlag);
               }}
             >
@@ -211,9 +285,9 @@ const SolarPanelLayoutManager = ({
           <Col className="gutter-row" span={10}>
             <Select
               style={{ width: '100%' }}
-              value={selectedOrientation}
+              value={orientation}
               onChange={(value) => {
-                setSelectedOrientation(value);
+                setOrientation(value);
                 setUpdateFlag(!updateFlag);
               }}
             >
@@ -337,4 +411,4 @@ const SolarPanelLayoutManager = ({
   );
 };
 
-export default SolarPanelLayoutManager;
+export default React.memo(SolarPanelLayoutWizard);

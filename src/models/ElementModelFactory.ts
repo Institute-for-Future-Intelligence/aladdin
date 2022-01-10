@@ -99,6 +99,55 @@ export class ElementModelFactory {
     } as FoundationModel;
   }
 
+  static makeSolarPanel(
+    parent: ElementModel,
+    pvModel: PvModel,
+    x: number,
+    y: number,
+    z?: number,
+    orientation?: Orientation,
+    normal?: Vector3,
+    rotation?: number[],
+    lx?: number,
+    ly?: number,
+  ) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+      case ObjectType.Wall:
+      case ObjectType.Roof:
+        foundationId = parent.parentId;
+        break;
+    }
+    return {
+      type: ObjectType.SolarPanel,
+      pvModelName: pvModel.name,
+      trackerType: TrackerType.NO_TRACKER,
+      relativeAzimuth: 0,
+      tiltAngle: 0,
+      orientation: orientation ?? Orientation.portrait,
+      drawSunBeam: false,
+      poleHeight: 1,
+      poleRadius: 0.05,
+      poleSpacing: 3,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: lx ?? pvModel.length,
+      ly: ly ?? pvModel.width,
+      lz: pvModel.thickness,
+      showLabel: false,
+      normal: normal ? normal.toArray() : [0, 0, 1],
+      rotation: rotation ? rotation : [0, 0, 0],
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as SolarPanelModel;
+  }
+
   static makePolygon(parent: ElementModel, x: number, y: number, z: number, normal?: Vector3, rotation?: number[]) {
     let foundationId;
     switch (parent.type) {
@@ -179,54 +228,6 @@ export class ElementModelFactory {
       foundationId: foundationId,
       id: short.generate() as string,
     } as SensorModel;
-  }
-
-  static makeSolarPanel(
-    parent: ElementModel,
-    pvModel: PvModel,
-    x: number,
-    y: number,
-    z?: number,
-    normal?: Vector3,
-    rotation?: number[],
-    lx?: number,
-    ly?: number,
-  ) {
-    let foundationId;
-    switch (parent.type) {
-      case ObjectType.Foundation:
-      case ObjectType.Cuboid:
-        foundationId = parent.id;
-        break;
-      case ObjectType.Wall:
-      case ObjectType.Roof:
-        foundationId = parent.parentId;
-        break;
-    }
-    return {
-      type: ObjectType.SolarPanel,
-      pvModelName: pvModel.name,
-      trackerType: TrackerType.NO_TRACKER,
-      relativeAzimuth: 0,
-      tiltAngle: 0,
-      orientation: Orientation.portrait,
-      drawSunBeam: false,
-      poleHeight: 1,
-      poleRadius: 0.05,
-      poleSpacing: 3,
-      cx: x,
-      cy: y,
-      cz: z,
-      lx: lx ?? pvModel.length,
-      ly: ly ?? pvModel.width,
-      lz: pvModel.thickness,
-      showLabel: false,
-      normal: normal ? normal.toArray() : [0, 0, 1],
-      rotation: rotation ? rotation : [0, 0, 0],
-      parentId: parent.id,
-      foundationId: foundationId,
-      id: short.generate() as string,
-    } as SolarPanelModel;
   }
 
   static makeWall(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: number[]) {

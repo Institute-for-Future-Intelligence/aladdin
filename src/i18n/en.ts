@@ -131,6 +131,9 @@ export const i18n_en = {
       CannotPasteOutsideBoundary: 'Cannot paste outside the boundary.',
       CannotPasteBecauseOfOverlap: 'Cannot paste because of overlap.',
       CannotMoveObjectTooFar: 'Cannot move object too far.',
+      ExistingSolarPanelsWillBeRemovedBeforeApplyingNewLayout:
+        'Existing solar panels will be removed before applying the new layout.',
+      DoYouWantToContinue: 'Do you want to continue?',
     },
 
     menu: {

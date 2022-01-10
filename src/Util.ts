@@ -111,6 +111,26 @@ export class Util {
     return ly;
   }
 
+  static polygonIntersections(a: Point2, b: Point2, vertices: Point2[]): Point2[] {
+    const intersections = new Array<Point2>();
+    let v1: Point2, v2: Point2, p: Point2 | undefined;
+    for (let i = 0; i < vertices.length - 1; i++) {
+      v1 = vertices[i];
+      v2 = vertices[i + 1];
+      p = Util.lineIntersection(a, b, v1, v2);
+      if (p) {
+        intersections.push(p);
+      }
+    }
+    v1 = vertices[vertices.length - 1];
+    v2 = vertices[0];
+    p = Util.lineIntersection(a, b, v1, v2);
+    if (p) {
+      intersections.push(p);
+    }
+    return intersections;
+  }
+
   static calculatePolygonBounds(vertices: Point2[]) {
     let minX = vertices[0].x;
     let maxX = vertices[0].x;
