@@ -13,8 +13,9 @@ import { Util } from '../../../Util';
 import { PolygonModel } from '../../../models/PolygonModel';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { ElementModelFactory } from '../../../models/ElementModelFactory';
-import { UNIT_VECTOR_POS_Z } from '../../../constants';
+import { HALF_PI, UNIT_VECTOR_POS_Z } from '../../../constants';
 import { Point2 } from '../../../models/Point2';
+import { SolarPanelModel } from '../../../models/SolarPanelModel';
 
 const { Option } = Select;
 
@@ -79,6 +80,26 @@ const SolarPanelLayoutWizard = ({
     return l;
   };
 
+  const changeOrientation = (solarPanel: SolarPanelModel, value: Orientation) => {
+    if (solarPanel) {
+      const pvModel = getPvModule(solarPanel.pvModelName);
+      if (value === Orientation.portrait) {
+        // calculate the current x-y layout
+        const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.width));
+        const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.length));
+        solarPanel.lx = nx * pvModel.width;
+        solarPanel.ly = ny * pvModel.length;
+      } else {
+        // calculate the current x-y layout
+        const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.length));
+        const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.width));
+        solarPanel.lx = nx * pvModel.length;
+        solarPanel.ly = ny * pvModel.width;
+      }
+      solarPanel.orientation = value;
+    }
+  };
+
   const layout = () => {
     if (reference?.type === ObjectType.Polygon) {
       const area = reference as PolygonModel;
@@ -92,38 +113,67 @@ const SolarPanelLayoutWizard = ({
         if (rowAxis === RowAxis.meridional) {
           // north-south axis, so the array is laid in x direction
           n = Math.floor(((bounds.maxX - bounds.minX) * foundation.lx - rowWidth) / interRowSpacing);
-          start = bounds.minX + rowWidth / 2;
+          start = bounds.minX + rowWidth / (2 * foundation.lx);
+          delta = interRowSpacing / foundation.lx;
+          let a: Point2 = { x: 0, y: -0.5 } as Point2;
+          let b: Point2 = { x: 0, y: 0.5 } as Point2;
+          const rotation = 'rotation' in foundation ? foundation.rotation : undefined;
+          for (let i = 0; i <= n; i++) {
+            a.x = b.x = start + i * delta;
+            const p = Util.polygonIntersections(a, b, area.vertices);
+            if (p.length > 1) {
+              const y1 = p[0].y;
+              const y2 = p[1].y;
+              const solarPanel = ElementModelFactory.makeSolarPanel(
+                foundation,
+                pvModel,
+                a.x,
+                (y1 + y2) / 2,
+                foundation.lz,
+                Orientation.portrait,
+                UNIT_VECTOR_POS_Z,
+                rotation,
+                Math.abs(y1 - y2) * foundation.ly,
+                rowWidth,
+              );
+              solarPanel.tiltAngle = tiltAngle;
+              solarPanel.relativeAzimuth = HALF_PI;
+              solarPanel.referenceId = area.id;
+              changeOrientation(solarPanel, orientation);
+              setCommonStore((state) => {
+                state.elements.push(solarPanel);
+              });
+            }
+          }
         } else {
           // east-west axis, so the array is laid in y direction
           n = Math.floor(((bounds.maxY - bounds.minY) * foundation.ly - rowWidth) / interRowSpacing);
           start = bounds.minY + rowWidth / (2 * foundation.ly);
           delta = interRowSpacing / foundation.ly;
-          let a: Point2 = {} as Point2;
-          let b: Point2 = {} as Point2;
+          let a: Point2 = { x: -0.5, y: 0 } as Point2;
+          let b: Point2 = { x: 0.5, y: 0 } as Point2;
+          const rotation = 'rotation' in foundation ? foundation.rotation : undefined;
           for (let i = 0; i <= n; i++) {
-            a.x = -0.5;
-            b.x = 0.5;
             a.y = b.y = start + i * delta;
             const p = Util.polygonIntersections(a, b, area.vertices);
             if (p.length > 1) {
               const x1 = p[0].x;
               const x2 = p[1].x;
-              const cx = (x1 + x2) / 2;
-              const lx = Math.abs(x1 - x2) * foundation.lx;
               const solarPanel = ElementModelFactory.makeSolarPanel(
                 foundation,
                 pvModel,
-                cx,
+                (x1 + x2) / 2,
                 a.y,
                 foundation.lz,
-                orientation,
+                Orientation.portrait,
                 UNIT_VECTOR_POS_Z,
-                'rotation' in foundation ? foundation.rotation : undefined,
-                lx,
+                rotation,
+                Math.abs(x1 - x2) * foundation.lx,
                 rowWidth,
               );
               solarPanel.tiltAngle = tiltAngle;
               solarPanel.referenceId = area.id;
+              changeOrientation(solarPanel, orientation);
               setCommonStore((state) => {
                 state.elements.push(solarPanel);
               });
@@ -159,11 +209,6 @@ const SolarPanelLayoutWizard = ({
           onCancel={() => {
             setWarningDialogVisible(false);
           }}
-          modalRender={(modal) => (
-            <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-              <div ref={dragRef}>{modal}</div>
-            </Draggable>
-          )}
         >
           {i18n.t('message.ExistingSolarPanelsWillBeRemovedBeforeApplyingNewLayout', lang)}
           {i18n.t('message.DoYouWantToContinue', lang)}
