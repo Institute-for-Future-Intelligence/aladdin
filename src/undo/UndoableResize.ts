@@ -3,10 +3,11 @@
  */
 
 import { Undoable } from './Undoable';
-import { Vector3 } from 'three';
+import { Vector2, Vector3 } from 'three';
 import { Point2 } from '../models/Point2';
 import { FlippedWallSide } from './UndoableAdd';
 import { WallModel } from 'src/models/WallModel';
+import { WallAbsPos } from 'src/views/wall/WallAbsPos';
 
 export interface UndoableResize extends Undoable {
   oldCx: number;
@@ -29,6 +30,8 @@ export interface UndoableResize extends Undoable {
   newChildrenPositionsMap: Map<string, Vector3>;
   oldPolygonVerticesMap: Map<string, Point2[]>;
   newPolygonVerticesMap: Map<string, Point2[]>;
+  oldWallPointsMap: Map<string, Vector2[]>;
+  newWallPointsMap: Map<string, Vector2[]>;
 
   oldChildrenParentIdMap?: Map<string, string>;
   newChildrenParentIdMap?: Map<string, string>;

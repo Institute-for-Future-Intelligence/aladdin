@@ -64,13 +64,7 @@ const Ground = () => {
   const deletedCuboidId = useStore(Selector.deletedCuboidId);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
 
-  const {
-    get: getThree,
-    camera,
-    gl: { domElement },
-    scene,
-    invalidate,
-  } = useThree();
+  const { get: getThree, gl, scene, invalidate } = useThree();
   const groundPlaneRef = useRef<Mesh>();
   const intersectionPlaneRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
@@ -80,6 +74,8 @@ const Ground = () => {
   const newChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
   const oldPolygonVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>());
   const newPolygonVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>());
+  const oldWallPointsMapRef = useRef<Map<string, Vector2[]>>(new Map<string, Vector2[]>());
+  const newWallPointsMapRef = useRef<Map<string, Vector2[]>>(new Map<string, Vector2[]>());
   const oldChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const newChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const oldDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
@@ -311,24 +307,47 @@ const Ground = () => {
       newPolygonVerticesMap: new Map(newPolygonVerticesMapRef.current),
       oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
       newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
+      oldWallPointsMap: new Map(oldWallPointsMapRef.current),
+      newWallPointsMap: new Map(newWallPointsMapRef.current),
       undo: () => {
-        setElementPosition(
-          undoableResize.resizedElementId,
-          undoableResize.oldCx,
-          undoableResize.oldCy,
-          undoableResize.oldCz,
-        );
-        setElementSize(
-          undoableResize.resizedElementId,
-          undoableResize.oldLx,
-          undoableResize.oldLy,
-          undoableResize.oldLz,
-        );
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            if (e.id === undoableResize.resizedElementId) {
+              e.cx = undoableResize.oldCx;
+              e.cy = undoableResize.oldCy;
+              e.cz = undoableResize.oldCz;
+              e.lx = undoableResize.oldLx;
+              e.ly = undoableResize.oldLy;
+              e.lz = undoableResize.oldLz;
+              break;
+            }
+          }
+        });
         if (undoableResize.oldChildrenPositionsMap.size > 0) {
           for (const [id, p] of undoableResize.oldChildrenPositionsMap.entries()) {
             const elem = getElementById(id);
             if (elem?.type !== ObjectType.Polygon) {
-              setElementPosition(id, p.x, p.y, p.z);
+              setCommonStore((state) => {
+                for (const e of state.elements) {
+                  if (e.id === id) {
+                    e.cx = p.x;
+                    e.cy = p.y;
+                    e.cz = p.z;
+                    if (e.type === ObjectType.Wall) {
+                      const w = e as WallModel;
+                      const oldPoints = undoableResize.oldWallPointsMap.get(w.id);
+                      if (oldPoints) {
+                        w.leftPoint = [oldPoints[0].x, oldPoints[0].y];
+                        w.rightPoint = [oldPoints[1].x, oldPoints[1].y];
+                      }
+                    }
+                    break;
+                  }
+                }
+                if (undoableResize.oldWallPointsMap.size > 0) {
+                  state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+                }
+              });
               const oldParentId = undoableResize.oldChildrenParentIdMap?.get(id);
               const newParentId = undoableResize.newChildrenParentIdMap?.get(id);
               if (oldParentId && newParentId && oldParentId !== newParentId) {
@@ -348,21 +367,42 @@ const Ground = () => {
         }
       },
       redo: () => {
-        setElementPosition(
-          undoableResize.resizedElementId,
-          undoableResize.newCx,
-          undoableResize.newCy,
-          undoableResize.newCz,
-        );
-        setElementSize(
-          undoableResize.resizedElementId,
-          undoableResize.newLx,
-          undoableResize.newLy,
-          undoableResize.newLz,
-        );
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            if (e.id === undoableResize.resizedElementId) {
+              e.cx = undoableResize.newCx;
+              e.cy = undoableResize.newCy;
+              e.cz = undoableResize.newCz;
+              e.lx = undoableResize.newLx;
+              e.ly = undoableResize.newLy;
+              e.lz = undoableResize.newLz;
+              break;
+            }
+          }
+        });
         if (undoableResize.newChildrenPositionsMap.size > 0) {
           for (const [id, p] of undoableResize.newChildrenPositionsMap.entries()) {
-            setElementPosition(id, p.x, p.y, p.z);
+            setCommonStore((state) => {
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  e.cx = p.x;
+                  e.cy = p.y;
+                  e.cz = p.z;
+                  if (e.type === ObjectType.Wall) {
+                    const w = e as WallModel;
+                    const oldPoints = undoableResize.newWallPointsMap.get(w.id);
+                    if (oldPoints) {
+                      w.leftPoint = [oldPoints[0].x, oldPoints[0].y];
+                      w.rightPoint = [oldPoints[1].x, oldPoints[1].y];
+                    }
+                  }
+                  break;
+                }
+              }
+              if (undoableResize.newWallPointsMap.size > 0) {
+                state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+              }
+            });
             const oldParentId = undoableResize.oldChildrenParentIdMap?.get(id);
             const newParentId = undoableResize.newChildrenParentIdMap?.get(id);
             if (oldParentId && newParentId && oldParentId !== newParentId) {
@@ -490,6 +530,7 @@ const Ground = () => {
     newChildrenParentIdMapRef.current.clear();
     newChildrenPositionsMapRef.current.clear();
     newPolygonVerticesMapRef.current.clear();
+    newWallPointsMapRef.current.clear();
     setCommonStore((state) => {
       state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
       state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
@@ -576,6 +617,12 @@ const Ground = () => {
                 (c as PolygonModel).vertices.map((v) => ({ ...v })),
               );
             } else {
+              if (c.type === ObjectType.Wall) {
+                const w = c as WallModel;
+                const leftPoint = new Vector2(w.leftPoint[0], w.leftPoint[1]);
+                const rightPoint = new Vector2(w.rightPoint[0], w.rightPoint[1]);
+                newWallPointsMapRef.current.set(c.id, [leftPoint, rightPoint]);
+              }
               newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
             }
           }
@@ -909,6 +956,7 @@ const Ground = () => {
             const children = getChildren(selectedElement.id);
             oldChildrenPositionsMapRef.current.clear();
             oldPolygonVerticesMapRef.current.clear();
+            oldWallPointsMapRef.current.clear();
             if (children.length > 0) {
               for (const c of children) {
                 if (c.type === ObjectType.Polygon) {
@@ -917,6 +965,12 @@ const Ground = () => {
                     (c as PolygonModel).vertices.map((v) => ({ ...v })),
                   );
                 } else {
+                  if (c.type === ObjectType.Wall) {
+                    const w = c as WallModel;
+                    const leftPoint = new Vector2(w.leftPoint[0], w.leftPoint[1]);
+                    const rightPoint = new Vector2(w.rightPoint[0], w.rightPoint[1]);
+                    oldWallPointsMapRef.current.set(c.id, [leftPoint, rightPoint]);
+                  }
                   oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
                 }
               }
