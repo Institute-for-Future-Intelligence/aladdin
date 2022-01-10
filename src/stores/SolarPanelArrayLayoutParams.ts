@@ -9,7 +9,7 @@ export interface SolarPanelArrayLayoutParams {
   rowAxis: RowAxis;
   orientation: Orientation;
   tiltAngle: number;
-  rowWidth: number;
+  rowWidthInPanels: number;
   interRowSpacing: number;
   poleHeight: number;
   poleSpacing: number;

@@ -10,7 +10,7 @@ export class DefaultSolarPanelArrayLayoutParams implements SolarPanelArrayLayout
   rowAxis: RowAxis;
   orientation: Orientation;
   tiltAngle: number;
-  rowWidth: number;
+  rowWidthInPanels: number;
   interRowSpacing: number;
   poleHeight: number;
   poleSpacing: number;
@@ -20,8 +20,8 @@ export class DefaultSolarPanelArrayLayoutParams implements SolarPanelArrayLayout
     this.rowAxis = RowAxis.zonal;
     this.orientation = Orientation.portrait;
     this.tiltAngle = 0;
-    this.rowWidth = 1.05;
-    this.interRowSpacing = 2 * this.rowWidth;
+    this.rowWidthInPanels = 1;
+    this.interRowSpacing = 2 * this.rowWidthInPanels;
     this.poleHeight = 1;
     this.poleSpacing = 3;
   }

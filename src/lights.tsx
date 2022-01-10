@@ -9,6 +9,7 @@ import { DirectionalLight } from 'three';
 import { DEFAULT_FAR } from './constants';
 
 const Lights = () => {
+  const ambientLightIntensity = useStore(Selector.viewState.ambientLightIntensity);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const sceneRadius = useStore(Selector.sceneRadius);
   const positionExtent = 2 * sceneRadius;
@@ -26,7 +27,7 @@ const Lights = () => {
 
   return (
     <>
-      <ambientLight intensity={0.25} name={'Ambient Light'} />
+      <ambientLight intensity={ambientLightIntensity ?? 0.1} name={'Ambient Light'} />
       <directionalLight
         ref={ref}
         name={'Directional Light'}

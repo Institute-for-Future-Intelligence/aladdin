@@ -161,11 +161,15 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   };
 
   const writeLocalFile = () => {
-    const fn = localFileName.trim();
+    let fn = localFileName.trim();
     if (fn.length > 0) {
+      if (!fn.endsWith('.ala')) {
+        fn += '.ala';
+      }
       const blob = new Blob([JSON.stringify(exportContent())], { type: 'application/json' });
       saveAs(blob, fn);
       setCommonStore((state) => {
+        state.localFileName = fn;
         state.cloudFile = undefined;
       });
       return true;

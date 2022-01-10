@@ -5,6 +5,7 @@
 export interface ViewState {
   orthographic: boolean;
   enableRotate: boolean;
+  ambientLightIntensity: number;
   cameraPosition: number[]; // 3D mode
   panCenter: number[]; // 3D mode
   cameraPosition2D: number[];

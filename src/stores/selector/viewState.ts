@@ -8,6 +8,8 @@ export const shadowEnabled = (state: CommonStoreState) => state.viewState.shadow
 
 export const axes = (state: CommonStoreState) => state.viewState.axes;
 
+export const ambientLightIntensity = (state: CommonStoreState) => state.viewState.ambientLightIntensity;
+
 export const theme = (state: CommonStoreState) => state.viewState.theme;
 
 export const autoRotate = (state: CommonStoreState) => state.viewState.autoRotate;

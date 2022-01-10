@@ -7,6 +7,7 @@ import { ViewState } from './ViewState';
 export class DefaultViewState implements ViewState {
   orthographic: boolean;
   enableRotate: boolean;
+  ambientLightIntensity: number;
   cameraPosition: number[];
   cameraPosition2D: number[];
   panCenter: number[];
@@ -59,6 +60,7 @@ export class DefaultViewState implements ViewState {
   constructor() {
     this.orthographic = false;
     this.enableRotate = true;
+    this.ambientLightIntensity = 0.1;
     this.cameraPosition = [0, -20, 0];
     this.cameraPosition2D = [0, 0, 20];
     this.panCenter = [0, 0, 0];

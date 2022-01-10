@@ -6,7 +6,7 @@ import { CommonStoreState } from '../common';
 
 export const pvModelName = (state: CommonStoreState) => state.solarPanelArrayLayoutParams.pvModelName;
 export const rowAxis = (state: CommonStoreState) => state.solarPanelArrayLayoutParams.rowAxis;
-export const rowWidth = (state: CommonStoreState) => state.solarPanelArrayLayoutParams.rowWidth;
+export const rowWidth = (state: CommonStoreState) => state.solarPanelArrayLayoutParams.rowWidthInPanels;
 export const interRowSpacing = (state: CommonStoreState) => state.solarPanelArrayLayoutParams.interRowSpacing;
 export const poleHeight = (state: CommonStoreState) => state.solarPanelArrayLayoutParams.poleHeight;
 export const poleSpacing = (state: CommonStoreState) => state.solarPanelArrayLayoutParams.poleSpacing;

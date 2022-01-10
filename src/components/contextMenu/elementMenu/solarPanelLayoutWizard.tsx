@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Row, Select } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
@@ -16,6 +16,8 @@ import { ElementModelFactory } from '../../../models/ElementModelFactory';
 import { HALF_PI, UNIT_VECTOR_POS_Z } from '../../../constants';
 import { Point2 } from '../../../models/Point2';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
+import { UndoableLayout } from '../../../undo/UndoableLayout';
+import { ElementModel } from '../../../models/ElementModel';
 
 const { Option } = Select;
 
@@ -39,13 +41,12 @@ const SolarPanelLayoutWizard = ({
   const rowAxis = useStore.getState().solarPanelArrayLayoutParams.rowAxis;
   const orientation = useStore.getState().solarPanelArrayLayoutParams.orientation;
   const tiltAngle = useStore.getState().solarPanelArrayLayoutParams.tiltAngle;
-  const rowWidth = useStore.getState().solarPanelArrayLayoutParams.rowWidth;
+  const rowWidthInPanels = useStore.getState().solarPanelArrayLayoutParams.rowWidthInPanels;
   const interRowSpacing = useStore.getState().solarPanelArrayLayoutParams.interRowSpacing;
   const poleHeight = useStore.getState().solarPanelArrayLayoutParams.poleHeight;
   const poleSpacing = useStore.getState().solarPanelArrayLayoutParams.poleSpacing;
 
   const [warningDialogVisible, setWarningDialogVisible] = useState(false);
-  const [panelWidth, setPanelWidth] = useState<number>(1.05); // the width of the default model
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -54,11 +55,6 @@ const SolarPanelLayoutWizard = ({
   const lang = { lng: language };
   const pvModel = getPvModule(pvModelName);
   const reference = getSelectedElement();
-
-  useEffect(() => {
-    const pvModel = getPvModule(pvModelName) ?? getPvModule('SPR-X21-335-BLK');
-    setPanelWidth(orientation === Orientation.portrait ? pvModel.width : pvModel.length);
-  }, [pvModelName]);
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
     if (dragRef.current) {
@@ -71,13 +67,6 @@ const SolarPanelLayoutWizard = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
-  };
-
-  const panelize = (value: number) => {
-    let l = value ?? 1;
-    const n = Math.max(1, Math.ceil((l - panelWidth / 2) / panelWidth));
-    l = n * panelWidth;
-    return l;
   };
 
   const changeOrientation = (solarPanel: SolarPanelModel, value: Orientation) => {
@@ -106,14 +95,21 @@ const SolarPanelLayoutWizard = ({
       const bounds = Util.calculatePolygonBounds(area.vertices);
       const base = getElementById(area.parentId);
       if (base?.type === ObjectType.Foundation) {
+        const newElements: ElementModel[] = [];
         const foundation = base as FoundationModel;
         let n: number;
         let start: number;
         let delta: number;
+        let ly: number;
+        if (orientation === Orientation.portrait) {
+          ly = rowWidthInPanels * pvModel.length;
+        } else {
+          ly = rowWidthInPanels * pvModel.width;
+        }
         if (rowAxis === RowAxis.meridional) {
           // north-south axis, so the array is laid in x direction
-          n = Math.floor(((bounds.maxX - bounds.minX) * foundation.lx - rowWidth) / interRowSpacing);
-          start = bounds.minX + rowWidth / (2 * foundation.lx);
+          n = Math.floor(((bounds.maxX - bounds.minX) * foundation.lx - ly) / interRowSpacing);
+          start = bounds.minX + ly / (2 * foundation.lx);
           delta = interRowSpacing / foundation.lx;
           let a: Point2 = { x: 0, y: -0.5 } as Point2;
           let b: Point2 = { x: 0, y: 0.5 } as Point2;
@@ -134,12 +130,13 @@ const SolarPanelLayoutWizard = ({
                 UNIT_VECTOR_POS_Z,
                 rotation,
                 Math.abs(y1 - y2) * foundation.ly,
-                rowWidth,
+                ly,
               );
               solarPanel.tiltAngle = tiltAngle;
               solarPanel.relativeAzimuth = HALF_PI;
               solarPanel.referenceId = area.id;
               changeOrientation(solarPanel, orientation);
+              newElements.push(JSON.parse(JSON.stringify(solarPanel)));
               setCommonStore((state) => {
                 state.elements.push(solarPanel);
               });
@@ -147,8 +144,8 @@ const SolarPanelLayoutWizard = ({
           }
         } else {
           // east-west axis, so the array is laid in y direction
-          n = Math.floor(((bounds.maxY - bounds.minY) * foundation.ly - rowWidth) / interRowSpacing);
-          start = bounds.minY + rowWidth / (2 * foundation.ly);
+          n = Math.floor(((bounds.maxY - bounds.minY) * foundation.ly - ly) / interRowSpacing);
+          start = bounds.minY + ly / (2 * foundation.ly);
           delta = interRowSpacing / foundation.ly;
           let a: Point2 = { x: -0.5, y: 0 } as Point2;
           let b: Point2 = { x: 0.5, y: 0 } as Point2;
@@ -169,17 +166,46 @@ const SolarPanelLayoutWizard = ({
                 UNIT_VECTOR_POS_Z,
                 rotation,
                 Math.abs(x1 - x2) * foundation.lx,
-                rowWidth,
+                ly,
               );
               solarPanel.tiltAngle = tiltAngle;
               solarPanel.referenceId = area.id;
               changeOrientation(solarPanel, orientation);
+              newElements.push(JSON.parse(JSON.stringify(solarPanel)));
               setCommonStore((state) => {
                 state.elements.push(solarPanel);
               });
             }
           }
         }
+        const undoableLayout = {
+          name: 'Solar Panel Array Layout',
+          timestamp: Date.now(),
+          oldElements: useStore.getState().deletedElements,
+          newElements: newElements,
+          referenceId: area.id,
+          undo: () => {
+            removeElementsByReferenceId(undoableLayout.referenceId, false);
+            if (undoableLayout.oldElements.length > 0) {
+              setCommonStore((state) => {
+                for (const e of undoableLayout.oldElements) {
+                  state.elements.push(e);
+                }
+              });
+            }
+          },
+          redo: () => {
+            removeElementsByReferenceId(undoableLayout.referenceId, false);
+            if (undoableLayout.newElements.length > 0) {
+              setCommonStore((state) => {
+                for (const e of undoableLayout.newElements) {
+                  state.elements.push(e);
+                }
+              });
+            }
+          },
+        } as UndoableLayout;
+        addUndoable(undoableLayout);
       }
     }
   };
@@ -201,7 +227,7 @@ const SolarPanelLayoutWizard = ({
           }
           onOk={() => {
             if (reference) {
-              removeElementsByReferenceId(reference.id);
+              removeElementsByReferenceId(reference.id, true);
               layout();
             }
             setWarningDialogVisible(false);
@@ -378,26 +404,22 @@ const SolarPanelLayoutWizard = ({
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={14}>
             {i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang) +
-              ' ([' +
-              panelWidth.toFixed(2) +
-              ', ' +
-              (100 * panelWidth).toFixed(1) +
-              '] ' +
-              i18n.t('word.MeterAbbreviation', lang) +
+              ' ([1-100] ' +
+              i18n.t('solarPanelMenu.Panels', lang) +
               '): '}
           </Col>
           <Col className="gutter-row" span={10}>
             <InputNumber
-              min={panelWidth}
-              max={100 * panelWidth}
-              step={panelWidth}
+              min={1}
+              max={100}
+              step={1}
               style={{ width: '100%' }}
-              precision={2}
-              value={rowWidth}
-              formatter={(a) => Number(a).toFixed(2)}
+              precision={3}
+              value={rowWidthInPanels}
+              formatter={(a) => Number(a).toFixed(0)}
               onChange={(value) => {
                 setCommonStore((state) => {
-                  state.solarPanelArrayLayoutParams.rowWidth = panelize(value);
+                  state.solarPanelArrayLayoutParams.rowWidthInPanels = value;
                 });
                 setUpdateFlag(!updateFlag);
               }}

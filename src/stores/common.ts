@@ -310,7 +310,7 @@ export interface CommonStoreState {
   countElementsByType: (type: ObjectType) => number;
   removeElementsByType: (type: ObjectType) => void;
   countElementsByReferenceId: (id: string) => number;
-  removeElementsByReferenceId: (id: string) => void;
+  removeElementsByReferenceId: (id: string, cache: boolean) => void;
   getChildren: (id: string) => ElementModel[];
   countAllChildElementsByType: (parentId: string, type: ObjectType) => number;
   countAllChildSolarPanels: (parentId: string) => number; // special case as a rack may have many solar panels
@@ -2378,10 +2378,17 @@ export const useStore = create<CommonStoreState>(
             });
             return count;
           },
-          removeElementsByReferenceId(id: string) {
+          removeElementsByReferenceId(id: string, cache: boolean) {
             immerSet((state: CommonStoreState) => {
-              state.elements = state.elements.filter((x) => {
-                return !(x.type === ObjectType.SolarPanel && (x as SolarPanelModel).referenceId === id);
+              if (cache) {
+                for (const e of state.elements) {
+                  if (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).referenceId === id) {
+                    state.deletedElements.push(e);
+                  }
+                }
+              }
+              state.elements = state.elements.filter((e) => {
+                return !(e.type === ObjectType.SolarPanel && (e as SolarPanelModel).referenceId === id);
               });
             });
           },
