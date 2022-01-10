@@ -137,7 +137,10 @@ const Ground = () => {
   const elementParentRotation = useMemo(() => new Euler(), []);
 
   if (grabRef.current) {
-    if (moveHandleType === MoveHandleType.Top) {
+    if (grabRef.current.type === ObjectType.Human || grabRef.current.type === ObjectType.Tree) {
+      intersectionPlaneType = IntersectionPlaneType.Vertical;
+      intersectionPlaneAngle.set(-HALF_PI, 0, 0, 'ZXY');
+    } else if (moveHandleType === MoveHandleType.Top) {
       intersectionPlaneType = IntersectionPlaneType.Horizontal;
       intersectionPlanePosition.set(grabRef.current.cx, grabRef.current.cy, grabRef.current.lz);
       intersectionPlaneAngle.set(0, 0, 0);
@@ -633,9 +636,23 @@ const Ground = () => {
     }
   };
 
+  const isMoveToSky = () => {
+    if (groundPlaneRef.current) {
+      const intersections = ray.intersectObjects(getThree().scene.children, true);
+      if (intersections.length > 0) {
+        for (const intersection of intersections) {
+          if (intersection.object.userData.stand) {
+            return false;
+          }
+        }
+      }
+    }
+    return ray.intersectObjects([groundPlaneRef.current!]).length === 0;
+  };
+
   const moveElementOnPointerUp = (elem: ElementModel, e: PointerEvent) => {
     newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
-    let newHumanOrTreeParentId: string | null = null;
+    let newHumanOrTreeParentId: string | null = oldHumanOrTreeParentIdRef.current;
     // elements modified by reference
     let elementRef: Group | null | undefined = null;
     setRayCast(e);
@@ -694,10 +711,7 @@ const Ground = () => {
         .project(camera)
         .distanceTo(screenPosition);
       // smaller than 2% of screen dimension or on sky
-      if (
-        Math.max(screenLx, screenLy, screenLz) < 0.02 ||
-        ray.intersectObjects([groundPlaneRef.current!]).length === 0
-      ) {
+      if (Math.max(screenLx, screenLy, screenLz) < 0.02 || isMoveToSky()) {
         setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
         if (elementRef) {
           switch (elem.type) {
@@ -708,7 +722,16 @@ const Ground = () => {
           }
         }
         setParentIdById(oldHumanOrTreeParentIdRef.current, elem.id);
-        attachToGroup(oldHumanOrTreeParentIdRef.current, newHumanOrTreeParentId ?? GROUND_ID, elem.id);
+        const contentRef = useStoreRef.getState().contentRef;
+        if (contentRef?.current && oldHumanOrTreeParentIdRef.current && elementRef) {
+          if (oldHumanOrTreeParentIdRef.current === GROUND_ID) {
+            contentRef.current.add(elementRef);
+          } else {
+            const attachParentObj = Util.getObjectChildById(contentRef.current, oldHumanOrTreeParentIdRef.current);
+            attachParentObj?.add(elementRef);
+          }
+          invalidate();
+        }
         showError(i18n.t('message.CannotMoveObjectTooFar', lang));
       } else {
         const undoableMove = {
@@ -1114,14 +1137,6 @@ const Ground = () => {
       setRayCast(e);
       let intersects;
       switch (grabRef.current.type) {
-        case ObjectType.Human:
-          const humanRef = useStoreRef.getState().humanRef;
-          handleTreeOrHumanRefMove(humanRef, e);
-          break;
-        case ObjectType.Tree:
-          const treeRef = useStoreRef.getState().treeRef;
-          handleTreeOrHumanRefMove(treeRef, e);
-          break;
         case ObjectType.Foundation:
           if (intersectionPlaneRef.current) {
             intersects = ray.intersectObjects([intersectionPlaneRef.current]);
@@ -1259,7 +1274,12 @@ const Ground = () => {
                   updateElementLxById(tree.id, 2 * Math.hypot(p.x - tree.cx, p.y - tree.cy));
                   break;
               }
+              handleTreeOrHumanRefMove(useStoreRef.getState().treeRef, e);
               break;
+            case ObjectType.Human: {
+              handleTreeOrHumanRefMove(useStoreRef.getState().humanRef, e);
+              break;
+            }
             case ObjectType.Cuboid:
               if (Util.isTopResizeHandle(resizeHandleType)) {
                 setCommonStore((state) => {
