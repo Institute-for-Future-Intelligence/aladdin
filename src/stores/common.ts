@@ -34,7 +34,7 @@ import { DefaultWorldModel } from './DefaultWorldModel';
 import { Box3, Vector2, Vector3 } from 'three';
 import { ElementModelCloner } from '../models/ElementModelCloner';
 import { DefaultViewState } from './DefaultViewState';
-import { ViewState } from '../views/ViewState';
+import { ViewState } from './ViewState';
 import short from 'short-uuid';
 import { ElementModelFactory } from '../models/ElementModelFactory';
 import { GroundModel } from '../models/GroundModel';
@@ -58,6 +58,8 @@ import { useStoreRef } from './commonRef';
 import { showError } from '../helpers';
 import i18n from '../i18n/i18n';
 import { HumanData } from '../HumanData';
+import { SolarPanelArrayLayoutParams } from './SolarPanelArrayLayoutParams';
+import { DefaultSolarPanelArrayLayoutParams } from './DefaultSolarPanelArrayLayoutParams';
 
 enableMapSet();
 
@@ -377,6 +379,8 @@ export interface CommonStoreState {
   listCloudFilesFlag: boolean;
   localContentToImportAfterCloudFileUpdate: any;
 
+  solarPanelArrayLayoutParams: SolarPanelArrayLayoutParams;
+
   // the following is to fix the bug that when ctrl+o is pressed, the file dialog gets fired up multiple times
   localFileDialogRequested: boolean;
 }
@@ -401,6 +405,7 @@ export const useStore = create<CommonStoreState>(
           world: defaultWorldModel,
           elements: defaultElements,
           viewState: defaultViewState,
+          solarPanelArrayLayoutParams: new DefaultSolarPanelArrayLayoutParams(),
           notes: [],
           user: {} as User,
           language: 'en',
@@ -2996,6 +3001,7 @@ export const useStore = create<CommonStoreState>(
           'solarPanelLabels',
           'dailyLightSensorData',
           'yearlyLightSensorData',
+          'solarPanelArrayLayoutParams',
         ],
       },
     ),

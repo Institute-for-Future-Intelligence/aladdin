@@ -64,6 +64,7 @@ export const i18n_en = {
       ApplyTo: 'Apply to',
       Clear: 'Clear',
       Warning: 'Warning',
+      Reminder: 'Reminder',
       Length: 'Length',
       Width: 'Width',
       Height: 'Height',

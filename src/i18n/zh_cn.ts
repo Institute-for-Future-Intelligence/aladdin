@@ -64,6 +64,7 @@ export const i18n_zh_cn = {
       ApplyTo: '适用于',
       Clear: '清空',
       Warning: '警告',
+      Reminder: '提醒',
       Length: '长度',
       Width: '宽度',
       Height: '高度',

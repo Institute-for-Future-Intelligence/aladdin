@@ -34,17 +34,17 @@ const SolarPanelLayoutWizard = ({
   const countElementsByReferenceId = useStore(Selector.countElementsByReferenceId);
   const removeElementsByReferenceId = useStore(Selector.removeElementsByReferenceId);
   const addUndoable = useStore(Selector.addUndoable);
+  const pvModelName = useStore.getState().solarPanelArrayLayoutParams.pvModelName;
+  const rowAxis = useStore.getState().solarPanelArrayLayoutParams.rowAxis;
+  const orientation = useStore.getState().solarPanelArrayLayoutParams.orientation;
+  const tiltAngle = useStore.getState().solarPanelArrayLayoutParams.tiltAngle;
+  const rowWidth = useStore.getState().solarPanelArrayLayoutParams.rowWidth;
+  const interRowSpacing = useStore.getState().solarPanelArrayLayoutParams.interRowSpacing;
+  const poleHeight = useStore.getState().solarPanelArrayLayoutParams.poleHeight;
+  const poleSpacing = useStore.getState().solarPanelArrayLayoutParams.poleSpacing;
 
   const [warningDialogVisible, setWarningDialogVisible] = useState(false);
-  const [pvModelName, setPvModelName] = useState<string>('SPR-X21-335-BLK');
-  const [rowAxis, setRowAxis] = useState<RowAxis>(RowAxis.zonal);
-  const [orientation, setOrientation] = useState<Orientation>(Orientation.portrait);
-  const [tiltAngle, setTiltAngle] = useState<number>(0);
   const [panelWidth, setPanelWidth] = useState<number>(1.05); // the width of the default model
-  const [rowWidth, setRowWidth] = useState<number>(panelWidth);
-  const [interRowSpacing, setInterRowSpacing] = useState<number>(5);
-  const [poleHeight, setPoleHeight] = useState<number>(1);
-  const [poleSpacing, setPoleSpacing] = useState<number>(3);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -146,7 +146,7 @@ const SolarPanelLayoutWizard = ({
               onMouseOver={() => setDragEnabled(true)}
               onMouseOut={() => setDragEnabled(false)}
             >
-              {i18n.t('word.Warning', lang)}
+              {i18n.t('word.Reminder', lang)}
             </div>
           }
           onOk={() => {
@@ -242,7 +242,9 @@ const SolarPanelLayoutWizard = ({
               style={{ width: '100%' }}
               value={pvModelName}
               onChange={(value) => {
-                setPvModelName(value);
+                setCommonStore((state) => {
+                  state.solarPanelArrayLayoutParams.pvModelName = value;
+                });
                 setUpdateFlag(!updateFlag);
               }}
             >
@@ -264,7 +266,9 @@ const SolarPanelLayoutWizard = ({
               style={{ width: '100%' }}
               value={rowAxis}
               onChange={(value) => {
-                setRowAxis(value);
+                setCommonStore((state) => {
+                  state.solarPanelArrayLayoutParams.rowAxis = value;
+                });
                 setUpdateFlag(!updateFlag);
               }}
             >
@@ -287,7 +291,9 @@ const SolarPanelLayoutWizard = ({
               style={{ width: '100%' }}
               value={orientation}
               onChange={(value) => {
-                setOrientation(value);
+                setCommonStore((state) => {
+                  state.solarPanelArrayLayoutParams.orientation = value;
+                });
                 setUpdateFlag(!updateFlag);
               }}
             >
@@ -314,7 +320,12 @@ const SolarPanelLayoutWizard = ({
               value={Util.toDegrees(tiltAngle)}
               step={1}
               formatter={(a) => Number(a).toFixed(1) + '°'}
-              onChange={(value) => setTiltAngle(Util.toRadians(value))}
+              onChange={(value) => {
+                setCommonStore((state) => {
+                  state.solarPanelArrayLayoutParams.tiltAngle = Util.toRadians(value);
+                });
+                setUpdateFlag(!updateFlag);
+              }}
             />
           </Col>
         </Row>
@@ -339,7 +350,12 @@ const SolarPanelLayoutWizard = ({
               precision={2}
               value={rowWidth}
               formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setRowWidth(panelize(value))}
+              onChange={(value) => {
+                setCommonStore((state) => {
+                  state.solarPanelArrayLayoutParams.rowWidth = panelize(value);
+                });
+                setUpdateFlag(!updateFlag);
+              }}
             />
           </Col>
         </Row>
@@ -360,7 +376,12 @@ const SolarPanelLayoutWizard = ({
               value={interRowSpacing}
               step={0.5}
               formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setInterRowSpacing(value)}
+              onChange={(value) => {
+                setCommonStore((state) => {
+                  state.solarPanelArrayLayoutParams.interRowSpacing = value;
+                });
+                setUpdateFlag(!updateFlag);
+              }}
             />
           </Col>
         </Row>
@@ -381,7 +402,12 @@ const SolarPanelLayoutWizard = ({
               value={poleHeight}
               step={0.1}
               formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setPoleHeight(value)}
+              onChange={(value) => {
+                setCommonStore((state) => {
+                  state.solarPanelArrayLayoutParams.poleHeight = value;
+                });
+                setUpdateFlag(!updateFlag);
+              }}
             />
           </Col>
         </Row>
@@ -402,7 +428,12 @@ const SolarPanelLayoutWizard = ({
               value={poleSpacing}
               step={0.5}
               formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setPoleSpacing(value)}
+              onChange={(value) => {
+                setCommonStore((state) => {
+                  state.solarPanelArrayLayoutParams.poleSpacing = value;
+                });
+                setUpdateFlag(!updateFlag);
+              }}
             />
           </Col>
         </Row>

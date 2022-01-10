@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import { ViewState } from '../views/ViewState';
+import { ViewState } from './ViewState';
 
 export class DefaultViewState implements ViewState {
   orthographic: boolean;

@@ -480,6 +480,8 @@ export const updateWallThicknessAboveFoundation = (state: CommonStoreState) => s
 
 export const updateWallThicknessForAll = (state: CommonStoreState) => state.updateWallThicknessForAll;
 
+export * as solarPanelArrayLayoutParams from './solarPanelArrayLayoutParams';
+
 export * as viewState from './viewState';
 
 export * as world from './world';

@@ -65,6 +65,7 @@ export const i18n_tr = {
       ApplyTo: 'Uygulanacak',
       Clear: 'Temizle',
       Warning: 'Uyarý',
+      Reminder: 'Reminder',
       Length: 'Uzunluk',
       Width: 'Geniþlik',
       Height: 'Yükseklik',
