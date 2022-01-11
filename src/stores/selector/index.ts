@@ -349,6 +349,8 @@ export const selectedElementHeight = (state: CommonStoreState) => state.selected
 
 export const simulationInProgress = (state: CommonStoreState) => state.simulationInProgress;
 
+export const updateDesignInfoFlag = (state: CommonStoreState) => state.updateDesignInfoFlag;
+
 export const contextMenuObjectType = (state: CommonStoreState) => state.contextMenuObjectType;
 
 export const localFileDialogRequested = (state: CommonStoreState) => state.localFileDialogRequested;

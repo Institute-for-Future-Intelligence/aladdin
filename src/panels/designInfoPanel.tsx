@@ -52,6 +52,7 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const countAllSolarPanels = useStore(Selector.countAllSolarPanels);
   const sceneRadius = useStore(Selector.sceneRadius);
+  const updateDesignInfoFlag = useStore(Selector.updateDesignInfoFlag);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const daytime = sunlightDirection.y > 0;
@@ -59,7 +60,7 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
 
   useEffect(() => {
     setUpdateFlag(!updateFlag);
-  }, [sceneRadius]);
+  }, [sceneRadius, updateDesignInfoFlag]);
 
   const color = daytime ? 'navajowhite' : 'antiquewhite';
   const solarPanelCount = countAllSolarPanels();

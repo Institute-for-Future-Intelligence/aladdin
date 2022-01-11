@@ -367,6 +367,7 @@ export interface CommonStoreState {
   deletedWindowAndParentId: string[] | null;
 
   simulationInProgress: boolean;
+  updateDesignInfoFlag: boolean;
   locale: Locale;
   localFileName: string;
   createNewFileFlag: boolean;
@@ -2366,6 +2367,7 @@ export const useStore = create<CommonStoreState>(
                 return !(e.id === id || e.parentId === id || e.foundationId === id);
               });
               state.selectedElement = null;
+              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
           },
           removeElementsByType(type: ObjectType) {
@@ -2377,6 +2379,7 @@ export const useStore = create<CommonStoreState>(
               } else {
                 state.elements = state.elements.filter((x) => x.type !== type);
               }
+              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
           },
           countElementsByType(type: ObjectType) {
@@ -2393,6 +2396,7 @@ export const useStore = create<CommonStoreState>(
           removeElementsByReferenceId(id: string, cache: boolean) {
             immerSet((state: CommonStoreState) => {
               if (cache) {
+                state.deletedElements = [];
                 for (const e of state.elements) {
                   if (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).referenceId === id) {
                     state.deletedElements.push(e);
@@ -2402,6 +2406,7 @@ export const useStore = create<CommonStoreState>(
               state.elements = state.elements.filter((e) => {
                 return !(e.type === ObjectType.SolarPanel && (e as SolarPanelModel).referenceId === id);
               });
+              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
           },
           countElementsByReferenceId(id: string) {
@@ -2431,6 +2436,7 @@ export const useStore = create<CommonStoreState>(
               if (type === ObjectType.Wall) {
                 state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
               }
+              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
           },
           countAllChildElementsByType(parentId: string, type: ObjectType) {
@@ -2653,6 +2659,7 @@ export const useStore = create<CommonStoreState>(
                   pastedElements.push(...cutElements);
                 }
               }
+              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
             return pastedElements;
           },
@@ -2821,6 +2828,7 @@ export const useStore = create<CommonStoreState>(
                   if (state.elementsToPaste.length === 1 && approved) pastedElements.push(e);
                 }
               }
+              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
             return pastedElements;
           },
@@ -2978,6 +2986,7 @@ export const useStore = create<CommonStoreState>(
           deletedWindowAndParentId: null,
 
           simulationInProgress: false,
+          updateDesignInfoFlag: false,
           locale: enUS,
           localFileName: 'aladdin.ala',
           createNewFileFlag: false,

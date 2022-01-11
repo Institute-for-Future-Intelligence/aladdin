@@ -134,6 +134,8 @@ export const i18n_zh_cn = {
       CannotMoveObjectTooFar: '位置太远，移动取消。',
       ExistingSolarPanelsWillBeRemovedBeforeApplyingNewLayout: '采用新布局之前必须移除现有的光伏板。',
       DoYouWantToContinue: '您想继续吗？',
+      SolarPanelsCannotIntersectWithGround: '光伏板不能和地面接触。',
+      SolarPanelsCannotOverlapWithOneAnother: '光伏板不能重叠。',
     },
 
     menu: {
@@ -338,6 +340,7 @@ export const i18n_zh_cn = {
       SolarPanelArrayMeridionalRowAxis: '经线方向(南北向)',
       SolarPanelArrayPoleHeight: '支架高度',
       SolarPanelArrayPoleSpacing: '支柱间隔',
+      LayoutNotAcceptedCheckYourParameters: '恕不能采用此布局。请检查您的参数设置。',
     },
 
     treeMenu: {

@@ -135,6 +135,8 @@ export const i18n_es = {
       ExistingSolarPanelsWillBeRemovedBeforeApplyingNewLayout:
         'Existing solar panels will be removed before applying the new layout.',
       DoYouWantToContinue: 'Do you want to continue?',
+      SolarPanelsCannotIntersectWithGround: 'Solar panels cannot intersect with the ground.',
+      SolarPanelsCannotOverlapWithOneAnother: 'Solar panels cannot overlap with one another.',
     },
 
     menu: {
@@ -344,6 +346,7 @@ export const i18n_es = {
       SolarPanelArrayMeridionalRowAxis: 'Meridional (North-South)',
       SolarPanelArrayPoleHeight: 'Pole Height',
       SolarPanelArrayPoleSpacing: 'Pole Spacing',
+      LayoutNotAcceptedCheckYourParameters: 'This layout is not accepted. Please check your parameters.',
     },
 
     treeMenu: {

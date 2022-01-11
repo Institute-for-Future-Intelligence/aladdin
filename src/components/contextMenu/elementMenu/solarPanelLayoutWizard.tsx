@@ -18,6 +18,7 @@ import { Point2 } from '../../../models/Point2';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { UndoableLayout } from '../../../undo/UndoableLayout';
 import { ElementModel } from '../../../models/ElementModel';
+import { showError } from '../../../helpers';
 
 const { Option } = Select;
 
@@ -56,6 +57,7 @@ const SolarPanelLayoutWizard = ({
   const lang = { lng: language };
   const pvModel = getPvModule(pvModelName);
   const reference = getSelectedElement();
+  const relativeMargin = 0.01;
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
     if (dragRef.current) {
@@ -72,22 +74,42 @@ const SolarPanelLayoutWizard = ({
 
   const changeOrientation = (solarPanel: SolarPanelModel, value: Orientation) => {
     if (solarPanel) {
+      solarPanel.orientation = value;
       const pvModel = getPvModule(solarPanel.pvModelName);
+      // add a small number because the round-off error may cause the floor to drop one
+      solarPanel.lx += 0.00001;
+      solarPanel.ly += 0.00001;
       if (value === Orientation.portrait) {
         // calculate the current x-y layout
-        const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.width));
-        const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.length));
+        const nx = Math.max(1, Math.floor(solarPanel.lx / pvModel.width));
+        const ny = Math.max(1, Math.floor(solarPanel.ly / pvModel.length));
         solarPanel.lx = nx * pvModel.width;
         solarPanel.ly = ny * pvModel.length;
       } else {
         // calculate the current x-y layout
-        const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.length));
-        const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.width));
+        const nx = Math.max(1, Math.floor(solarPanel.lx / pvModel.length));
+        const ny = Math.max(1, Math.floor(solarPanel.ly / pvModel.width));
         solarPanel.lx = nx * pvModel.length;
         solarPanel.ly = ny * pvModel.width;
       }
-      solarPanel.orientation = value;
     }
+  };
+
+  const isLayoutOk = () => {
+    const ly = (orientation === Orientation.portrait ? pvModel.length : pvModel.width) * rowWidthInPanels;
+    const projectedWidth = ly * Math.abs(Math.sin(tiltAngle));
+    // The solar panel intersects with the ground?
+    if (0.5 * projectedWidth > poleHeight) {
+      showError(i18n.t('message.SolarPanelsCannotIntersectWithGround', lang));
+      return false;
+    }
+    // The inter-row spacing is too small?
+    if (ly > interRowSpacing) {
+      showError(i18n.t('message.SolarPanelsCannotOverlapWithOneAnother', lang));
+      return false;
+    }
+    // others?
+    return true;
   };
 
   const layout = () => {
@@ -101,81 +123,98 @@ const SolarPanelLayoutWizard = ({
         let n: number;
         let start: number;
         let delta: number;
-        let ly: number;
-        if (orientation === Orientation.portrait) {
-          ly = rowWidthInPanels * pvModel.length;
-        } else {
-          ly = rowWidthInPanels * pvModel.width;
-        }
+        const ly = (orientation === Orientation.portrait ? pvModel.length : pvModel.width) * rowWidthInPanels;
+        let h = 0.5 * Math.abs(Math.sin(tiltAngle)) * ly;
         if (rowAxis === RowAxis.meridional) {
           // north-south axis, so the array is laid in x direction
           n = Math.floor(((bounds.maxX - bounds.minX) * foundation.lx - ly) / interRowSpacing);
           start = bounds.minX + ly / (2 * foundation.lx);
           delta = interRowSpacing / foundation.lx;
+          h /= foundation.lx;
           let a: Point2 = { x: 0, y: -0.5 } as Point2;
           let b: Point2 = { x: 0, y: 0.5 } as Point2;
           const rotation = 'rotation' in foundation ? foundation.rotation : undefined;
           for (let i = 0; i <= n; i++) {
-            a.x = b.x = start + i * delta;
-            const p = Util.polygonIntersections(a, b, area.vertices);
-            if (p.length > 1) {
-              const y1 = p[0].y;
-              const y2 = p[1].y;
-              const solarPanel = ElementModelFactory.makeSolarPanel(
-                foundation,
-                pvModel,
-                a.x,
-                (y1 + y2) / 2,
-                foundation.lz,
-                Orientation.portrait,
-                UNIT_VECTOR_POS_Z,
-                rotation,
-                Math.abs(y1 - y2) * foundation.ly,
-                ly,
-              );
-              solarPanel.tiltAngle = tiltAngle;
-              solarPanel.relativeAzimuth = HALF_PI;
-              solarPanel.referenceId = area.id;
-              changeOrientation(solarPanel, orientation);
-              newElements.push(JSON.parse(JSON.stringify(solarPanel)));
-              setCommonStore((state) => {
-                state.elements.push(solarPanel);
-              });
+            const cx = start + i * delta;
+            a.x = b.x = cx - h;
+            const p1 = Util.polygonIntersections(a, b, area.vertices);
+            a.x = b.x = cx + h;
+            const p2 = Util.polygonIntersections(a, b, area.vertices);
+            if (p1.length > 1 && p2.length > 1) {
+              const b = Math.abs(p1[0].y - p1[1].y) < Math.abs(p2[0].y - p2[1].y);
+              let y1 = b ? p1[0].y : p2[0].y;
+              let y2 = b ? p1[1].y : p2[1].y;
+              const lx = Math.abs(y1 - y2) - 2 * relativeMargin;
+              if (lx > 0) {
+                const solarPanel = ElementModelFactory.makeSolarPanel(
+                  foundation,
+                  pvModel,
+                  cx,
+                  (y1 + y2) / 2,
+                  foundation.lz,
+                  Orientation.portrait,
+                  UNIT_VECTOR_POS_Z,
+                  rotation,
+                  lx * foundation.ly,
+                  ly,
+                );
+                solarPanel.tiltAngle = tiltAngle;
+                solarPanel.relativeAzimuth = HALF_PI;
+                solarPanel.poleHeight = poleHeight;
+                solarPanel.poleSpacing = poleSpacing;
+                solarPanel.referenceId = area.id;
+                changeOrientation(solarPanel, orientation);
+                newElements.push(JSON.parse(JSON.stringify(solarPanel)));
+                setCommonStore((state) => {
+                  state.elements.push(solarPanel);
+                });
+              }
             }
           }
         } else {
           // east-west axis, so the array is laid in y direction
           n = Math.floor(((bounds.maxY - bounds.minY) * foundation.ly - ly) / interRowSpacing);
-          start = bounds.minY + ly / (2 * foundation.ly);
+          start = bounds.minY + ly / (2 * foundation.ly) + relativeMargin;
           delta = interRowSpacing / foundation.ly;
+          h /= foundation.ly;
           let a: Point2 = { x: -0.5, y: 0 } as Point2;
           let b: Point2 = { x: 0.5, y: 0 } as Point2;
           const rotation = 'rotation' in foundation ? foundation.rotation : undefined;
           for (let i = 0; i <= n; i++) {
-            a.y = b.y = start + i * delta;
-            const p = Util.polygonIntersections(a, b, area.vertices);
-            if (p.length > 1) {
-              const x1 = p[0].x;
-              const x2 = p[1].x;
-              const solarPanel = ElementModelFactory.makeSolarPanel(
-                foundation,
-                pvModel,
-                (x1 + x2) / 2,
-                a.y,
-                foundation.lz,
-                Orientation.portrait,
-                UNIT_VECTOR_POS_Z,
-                rotation,
-                Math.abs(x1 - x2) * foundation.lx,
-                ly,
-              );
-              solarPanel.tiltAngle = tiltAngle;
-              solarPanel.referenceId = area.id;
-              changeOrientation(solarPanel, orientation);
-              newElements.push(JSON.parse(JSON.stringify(solarPanel)));
-              setCommonStore((state) => {
-                state.elements.push(solarPanel);
-              });
+            const cy = start + i * delta;
+            a.y = b.y = cy - h;
+            const p1 = Util.polygonIntersections(a, b, area.vertices);
+            a.y = b.y = cy + h;
+            const p2 = Util.polygonIntersections(a, b, area.vertices);
+            if (p1.length > 1 && p2.length > 1) {
+              const b = Math.abs(p1[0].x - p1[1].x) < Math.abs(p2[0].x - p2[1].x);
+              let x1 = b ? p1[0].x : p2[0].x;
+              let x2 = b ? p1[1].x : p2[1].x;
+              const lx = Math.abs(x1 - x2) - 2 * relativeMargin;
+              if (lx > 0) {
+                const solarPanel = ElementModelFactory.makeSolarPanel(
+                  foundation,
+                  pvModel,
+                  (x1 + x2) / 2,
+                  cy,
+                  foundation.lz,
+                  Orientation.portrait,
+                  UNIT_VECTOR_POS_Z,
+                  rotation,
+                  lx * foundation.lx,
+                  ly,
+                );
+                solarPanel.tiltAngle = tiltAngle;
+                solarPanel.relativeAzimuth = 0;
+                solarPanel.poleHeight = poleHeight;
+                solarPanel.poleSpacing = poleSpacing;
+                solarPanel.referenceId = area.id;
+                changeOrientation(solarPanel, orientation);
+                newElements.push(JSON.parse(JSON.stringify(solarPanel)));
+                setCommonStore((state) => {
+                  state.elements.push(solarPanel);
+                });
+              }
             }
           }
         }
@@ -210,6 +249,9 @@ const SolarPanelLayoutWizard = ({
       }
     }
     changedRef.current = false;
+    setCommonStore((state) => {
+      state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+    });
   };
 
   return (
@@ -259,12 +301,16 @@ const SolarPanelLayoutWizard = ({
             key="Apply"
             onClick={() => {
               if (!changedRef.current) return;
-              if (reference) {
-                if (countElementsByReferenceId(reference.id) > 0) {
-                  setWarningDialogVisible(true);
-                } else {
-                  layout();
+              if (isLayoutOk()) {
+                if (reference) {
+                  if (countElementsByReferenceId(reference.id) > 0) {
+                    setWarningDialogVisible(true);
+                  } else {
+                    layout();
+                  }
                 }
+              } else {
+                showError(i18n.t('polygonMenu.LayoutNotAcceptedCheckYourParameters', lang));
               }
             }}
           >
@@ -283,12 +329,16 @@ const SolarPanelLayoutWizard = ({
             type="primary"
             onClick={() => {
               if (changedRef.current) {
-                if (reference) {
-                  if (countElementsByReferenceId(reference.id) > 0) {
-                    setWarningDialogVisible(true);
-                  } else {
-                    layout();
+                if (isLayoutOk()) {
+                  if (reference) {
+                    if (countElementsByReferenceId(reference.id) > 0) {
+                      setWarningDialogVisible(true);
+                    } else {
+                      layout();
+                    }
                   }
+                } else {
+                  showError(i18n.t('polygonMenu.LayoutNotAcceptedCheckYourParameters', lang));
                 }
               }
               setDialogVisible(false);
