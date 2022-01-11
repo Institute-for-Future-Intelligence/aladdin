@@ -2,8 +2,8 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useRef } from 'react';
-import { BackSide, DoubleSide, Euler, Mesh, Object3D, Raycaster, Vector2, Vector3 } from 'three';
+import React, { RefObject, useMemo, useRef, useState } from 'react';
+import { BackSide, DoubleSide, Euler, Group, Intersection, Mesh, Object3D, Raycaster, Vector2, Vector3 } from 'three';
 import { invalidate, ThreeEvent, useThree } from '@react-three/fiber';
 import { Plane, useTexture } from '@react-three/drei';
 
@@ -21,11 +21,22 @@ import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
 import { IntersectionPlaneType, ObjectType, ResizeHandleType } from '../types';
 import { ElementModel } from '../models/ElementModel';
-import { DEFAULT_SKY_RADIUS, GROUND_ID, HALF_PI, ORIGIN_VECTOR2, TWO_PI, UNIT_VECTOR_POS_Z_ARRAY } from '../constants';
+import {
+  DEFAULT_SKY_RADIUS,
+  GROUND_ID,
+  HALF_PI,
+  ORIGIN_VECTOR2,
+  TWO_PI,
+  UNIT_VECTOR_POS_Z_ARRAY,
+  ZERO_TOLERANCE,
+} from '../constants';
 import { Util } from 'src/Util';
 import { PolygonModel } from 'src/models/PolygonModel';
 import { TreeModel } from '../models/TreeModel';
 import { UndoableChange } from '../undo/UndoableChange';
+import { UndoableMove } from 'src/undo/UndoableMove';
+import { showError } from 'src/helpers';
+import i18n from 'src/i18n/i18n';
 
 export interface SkyProps {
   theme?: string;
@@ -45,8 +56,10 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const addUndoable = useStore(Selector.addUndoable);
   const setElementPosition = useStore(Selector.setElementPosition);
+  const language = useStore(Selector.language);
 
   const {
+    scene,
     camera,
     gl: { domElement },
   } = useThree();
@@ -56,6 +69,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const absPosMapRef = useRef<Map<string, Vector3>>(new Map());
   const polygonsAbsPosMapRef = useRef<Map<string, Vector2[]>>(new Map());
   const oldPositionRef = useRef<Vector3>(new Vector3());
+  const newPositionRef = useRef<Vector3>(new Vector3());
   const oldDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const oldWidthRef = useRef<number>(0);
   const oldHeightRef = useRef<number>(0);
@@ -63,16 +77,19 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const oldChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const newChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
   const newChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
+  const oldHumanOrTreeParentIdRef = useRef<string | null>(null);
 
+  const lang = { lng: language };
   const ray = useMemo(() => new Raycaster(), []);
+  const elementParentRotation = useMemo(() => new Euler(), []);
 
   const night = sunlightDirection.z <= 0;
 
-  let intersectionPlaneType = IntersectionPlaneType.Sky;
+  const [intersectionPlaneType, setIntersectionPlaneType] = useState(IntersectionPlaneType.Sky);
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
   const intersectionPlaneAngle = useMemo(() => new Euler(), []);
-  if (grabRef.current && resizeHandleType) {
-    intersectionPlaneType = IntersectionPlaneType.Vertical;
+  if (grabRef.current && resizeHandleType && intersectionPlaneType !== IntersectionPlaneType.Vertical) {
+    setIntersectionPlaneType(IntersectionPlaneType.Vertical);
     const handlePosition = getResizeHandlePosition(grabRef.current, resizeHandleType);
     const cameraDir = getCameraDirection();
     const rotation = -Math.atan2(cameraDir.x, cameraDir.y);
@@ -133,6 +150,10 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         if (selectedElement) {
           if (legalOnGround(selectedElement.type)) {
             grabRef.current = selectedElement;
+            if (grabRef.current.type === ObjectType.Human || grabRef.current.type === ObjectType.Tree) {
+              setIntersectionPlaneType(IntersectionPlaneType.Vertical);
+              intersectionPlaneAngle.set(-HALF_PI, 0, 0, 'ZXY');
+            }
             if (selectedElement.type !== ObjectType.Foundation && selectedElement.type !== ObjectType.Cuboid) {
               useStoreRef.getState().setEnableOrbitController(false);
             }
@@ -224,6 +245,85 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
     });
   };
 
+  const getIntersectionToStand = (intersections: Intersection[]) => {
+    for (const intersection of intersections) {
+      if (intersection.object.userData.stand) {
+        return intersection;
+      }
+    }
+    return null;
+  };
+
+  const handleTreeOrHumanRefMove = (elementRef: RefObject<Group> | null, e: ThreeEvent<PointerEvent>) => {
+    if (elementRef && elementRef.current) {
+      const intersection = getIntersectionToStand(e.intersections);
+      if (intersection) {
+        const intersectionObj = intersection.object; // Mesh
+        const elementParentRef = elementRef.current.parent;
+
+        // stand on ground
+        if (intersectionObj.name === 'Ground') {
+          // change parent: attach dom, set parentId?
+          if (elementParentRef && elementParentRef.name !== 'Content') {
+            const contentRef = useStoreRef.getState().contentRef;
+            if (contentRef && contentRef.current) {
+              contentRef.current.add(elementRef.current);
+              setParentIdById(GROUND_ID, getObjectId(elementRef.current));
+            }
+          }
+          elementRef.current.position.copy(intersection.point); // world position
+          invalidate();
+        }
+        // stand on standable elements
+        else if (intersectionObj.userData.stand) {
+          const intersectionObjGroup = intersectionObj.parent; // Group
+          if (intersectionObjGroup) {
+            // change parent: attach dom, set parentId?
+            if (elementParentRef && elementParentRef.uuid !== intersectionObjGroup.uuid) {
+              intersectionObjGroup.add(elementRef.current); // attach to Group
+              setParentIdById(getObjectId(intersectionObjGroup), getObjectId(elementRef.current));
+            }
+            elementParentRotation.set(0, 0, -intersectionObjGroup.rotation.z);
+            const relPos = new Vector3()
+              .subVectors(intersection.point, intersectionObjGroup.position)
+              .applyEuler(elementParentRotation);
+            elementRef.current.position.copy(relPos); // relative abs position
+            invalidate();
+          }
+        }
+      }
+    }
+  };
+
+  // for tree and human for now
+  const handleSetElementState = (elemId: string, standObjId: string, position: Vector3) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === elemId) {
+          e.parentId = standObjId;
+          e.cx = position.x;
+          e.cy = position.y;
+          e.cz = position.z;
+          break;
+        }
+      }
+    });
+  };
+
+  const isMoveToSky = () => {
+    if (meshRef.current) {
+      const intersections = ray.intersectObjects(scene.children, true);
+      if (intersections.length > 0) {
+        for (const intersection of intersections) {
+          if (intersection.object.userData.stand) {
+            return false;
+          }
+        }
+      }
+    }
+    return ray.intersectObjects([meshRef.current!]).length > 0;
+  };
+
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
       const mouse = new Vector2();
@@ -252,6 +352,10 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                   updateElementLxById(tree.id, 2 * Math.hypot(p.x - tree.cx, p.y - tree.cy));
                   break;
               }
+              handleTreeOrHumanRefMove(useStoreRef.getState().treeRef, e);
+              break;
+            case ObjectType.Human:
+              handleTreeOrHumanRefMove(useStoreRef.getState().humanRef, e);
               break;
             case ObjectType.Cuboid:
               if (Util.isTopResizeHandle(resizeHandleType)) {
@@ -316,10 +420,15 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
     if (selectedElement) {
       // save info for undo
       oldHeightRef.current = selectedElement.lz;
+      oldPositionRef.current.set(selectedElement.cx, selectedElement.cy, selectedElement.cz);
 
       // store the positions of children
       switch (selectedElement.type) {
+        case ObjectType.Human:
+          oldHumanOrTreeParentIdRef.current = selectedElement.parentId;
+          break;
         case ObjectType.Tree:
+          oldHumanOrTreeParentIdRef.current = selectedElement.parentId;
           oldWidthRef.current = selectedElement.lx; // crown spread of tree
           break;
         case ObjectType.Cuboid: {
@@ -381,6 +490,8 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
     if (grabRef.current) {
       const elem = getElementById(grabRef.current.id);
       if (elem) {
+        let elementRef: Group | null | undefined = null;
+        let newHumanOrTreeParentId: string | null = oldHumanOrTreeParentIdRef.current;
         switch (elem.type) {
           case ObjectType.Cuboid:
             switch (resizeHandleType) {
@@ -524,6 +635,10 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                 addUndoable(undoableChangeSpread);
                 break;
             }
+            elementRef = useStoreRef.getState().treeRef?.current;
+            break;
+          case ObjectType.Human:
+            elementRef = useStoreRef.getState().humanRef?.current;
             break;
           case ObjectType.Wall:
             const undoableChangeHeight = {
@@ -542,8 +657,121 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
             addUndoable(undoableChangeHeight);
             break;
         }
+        if (elementRef) {
+          const intersections = ray.intersectObjects(scene.children, true);
+          const intersection = getIntersectionToStand(intersections); // could simplify???
+          if (intersection) {
+            const p = intersection.point;
+            // on ground
+            if (intersection.object.name === 'Ground') {
+              handleSetElementState(elem.id, GROUND_ID, p);
+              newPositionRef.current.set(p.x, p.y, p.z);
+              newHumanOrTreeParentId = GROUND_ID;
+            }
+            // on other standable elements
+            else if (intersection.object.userData.stand) {
+              const intersectionObjId = getObjectId(intersection.object);
+              const intersectionObjGroup = intersection.object.parent;
+              if (intersectionObjGroup) {
+                const relPos = new Vector3()
+                  .subVectors(p, intersectionObjGroup.position)
+                  .applyEuler(elementParentRotation);
+                handleSetElementState(elem.id, intersectionObjId, relPos);
+                newPositionRef.current.set(relPos.x, relPos.y, relPos.z);
+                newHumanOrTreeParentId = intersectionObjId;
+              }
+            }
+          }
+        }
+        if (
+          (elem.type === ObjectType.Human || elem.type === ObjectType.Tree) &&
+          (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE ||
+            ray.intersectObjects([meshRef.current!]).length > 0)
+        ) {
+          console.log(elem.type);
+
+          const screenPosition = newPositionRef.current.clone().project(camera);
+          const screenLx = newPositionRef.current
+            .clone()
+            .add(new Vector3(elem.lx, 0, 0))
+            .project(camera)
+            .distanceTo(screenPosition);
+          const screenLy = newPositionRef.current
+            .clone()
+            .add(new Vector3(0, elem.ly, 0))
+            .project(camera)
+            .distanceTo(screenPosition);
+          const screenLz = newPositionRef.current
+            .clone()
+            .add(new Vector3(0, 0, elem.lz))
+            .project(camera)
+            .distanceTo(screenPosition);
+          // smaller than 2% of screen dimension or on sky
+          if (Math.max(screenLx, screenLy, screenLz) < 0.02 || isMoveToSky()) {
+            setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
+            if (elementRef) {
+              switch (elem.type) {
+                case ObjectType.Tree:
+                case ObjectType.Human:
+                  elementRef.position.copy(oldPositionRef.current);
+                  break;
+              }
+            }
+            setParentIdById(oldHumanOrTreeParentIdRef.current, elem.id);
+            const contentRef = useStoreRef.getState().contentRef;
+            if (contentRef?.current && oldHumanOrTreeParentIdRef.current && elementRef) {
+              if (oldHumanOrTreeParentIdRef.current === GROUND_ID) {
+                contentRef.current.add(elementRef);
+              } else {
+                const attachParentObj = Util.getObjectChildById(contentRef.current, oldHumanOrTreeParentIdRef.current);
+                attachParentObj?.add(elementRef);
+              }
+              invalidate();
+            }
+            showError(i18n.t('message.CannotMoveObjectTooFar', lang));
+          } else {
+            const undoableMove = {
+              name: 'Move',
+              timestamp: Date.now(),
+              movedElementId: elem.id,
+              oldCx: oldPositionRef.current.x,
+              oldCy: oldPositionRef.current.y,
+              oldCz: oldPositionRef.current.z,
+              newCx: newPositionRef.current.x,
+              newCy: newPositionRef.current.y,
+              newCz: newPositionRef.current.z,
+              oldParentId: oldHumanOrTreeParentIdRef.current,
+              newParentId: newHumanOrTreeParentId,
+              undo: () => {
+                setElementPosition(
+                  undoableMove.movedElementId,
+                  undoableMove.oldCx,
+                  undoableMove.oldCy,
+                  undoableMove.oldCz,
+                );
+                setParentIdById(undoableMove.oldParentId, undoableMove.movedElementId);
+                attachToGroup(undoableMove.oldParentId, undoableMove.newParentId, undoableMove.movedElementId);
+              },
+              redo: () => {
+                setElementPosition(
+                  undoableMove.movedElementId,
+                  undoableMove.newCx,
+                  undoableMove.newCy,
+                  undoableMove.newCz,
+                );
+                setParentIdById(undoableMove.newParentId, undoableMove.movedElementId);
+                attachToGroup(undoableMove.newParentId, undoableMove.oldParentId, undoableMove.movedElementId);
+              },
+            } as UndoableMove;
+            addUndoable(undoableMove);
+            setCommonStore((state) => {
+              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+            });
+          }
+        }
       }
       grabRef.current = null;
+      setIntersectionPlaneType(IntersectionPlaneType.Sky);
       setCommonStore((state) => {
         state.moveHandleType = null;
         state.resizeHandleType = null;
