@@ -46,6 +46,9 @@ import WallWireFrame from './wallWireFrame';
 import WallResizeHandleWarpper from './wallResizeHandleWarpper';
 import * as Selector from 'src/stores/selector';
 import { FINE_GRID_SCALE, HALF_PI, TWO_PI } from 'src/constants';
+import { UndoableMove } from 'src/undo/UndoableMove';
+import { UndoableAdd } from 'src/undo/UndoableAdd';
+import { UndoableResizeWindow } from 'src/undo/UndoableResize';
 
 const Wall = ({
   id,
@@ -143,6 +146,8 @@ const Wall = ({
   const selectMe = useStore(Selector.selectMe);
   const removeElementById = useStore(Selector.removeElementById);
   const isAddingElement = useStore(Selector.isAddingElement);
+  const addUndoable = useStore(Selector.addUndoable);
+  const setElementPosition = useStore(Selector.setElementPosition);
 
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
   const moveHandleTypeRef = useRef(useStore.getState().moveHandleType);
@@ -161,6 +166,8 @@ const Wall = ({
   const isSettingWindowStartPointRef = useRef(false);
   const isSettingWindowEndPointRef = useRef(false);
   const invalidWindowIdRef = useRef<string | null>(null);
+  const oldPositionRef = useRef<number[]>([]);
+  const oldDimensionRef = useRef<number[]>([]);
 
   const [originElements, setOriginElements] = useState<ElementModel[] | null>([]);
   const [showGrid, setShowGrid] = useState(false);
@@ -448,6 +455,84 @@ const Wall = ({
     invalidWindowIdRef.current = null;
   };
 
+  const addUndoableAdd = (elem: ElementModel) => {
+    const undoableAdd = {
+      name: 'Add',
+      timestamp: Date.now(),
+      addedElement: elem,
+      undo: () => {
+        removeElementById(elem.id, false);
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.elements.push(undoableAdd.addedElement);
+          state.selectedElement = undoableAdd.addedElement;
+        });
+      },
+    } as UndoableAdd;
+    addUndoable(undoableAdd);
+  };
+
+  const addUndoableMove = (elem: ElementModel) => {
+    const undoableMove = {
+      name: 'Move',
+      timestamp: Date.now(),
+      movedElementId: elem.id,
+      oldCx: oldPositionRef.current[0],
+      oldCy: oldPositionRef.current[1],
+      oldCz: oldPositionRef.current[2],
+      newCx: elem.cx,
+      newCy: elem.cy,
+      newCz: elem.cz,
+      undo: () => {
+        setElementPosition(undoableMove.movedElementId, undoableMove.oldCx, undoableMove.oldCy, undoableMove.oldCz);
+      },
+      redo: () => {
+        setElementPosition(undoableMove.movedElementId, undoableMove.newCx, undoableMove.newCy, undoableMove.newCz);
+      },
+    } as UndoableMove;
+    addUndoable(undoableMove);
+  };
+
+  const addUndoableResize = (elem: ElementModel) => {
+    switch (elem.type) {
+      case ObjectType.Window:
+        const undoableResize = {
+          name: 'Resize',
+          timestamp: Date.now(),
+          resizedElementId: elem.id,
+          oldPosition: [...oldPositionRef.current],
+          oldDimension: [...oldDimensionRef.current],
+          newPosition: [elem.cx, elem.cy, elem.cz],
+          newDimension: [elem.lx, elem.ly, elem.lz],
+          undo: () => {
+            setCommonStore((state) => {
+              for (const e of state.elements) {
+                if (e.id === undoableResize.resizedElementId) {
+                  [e.cx, e.cy, e.cz] = undoableResize.oldPosition;
+                  [e.lx, e.ly, e.lz] = undoableResize.oldDimension;
+                  break;
+                }
+              }
+            });
+          },
+          redo: () => {
+            setCommonStore((state) => {
+              for (const e of state.elements) {
+                if (e.id === undoableResize.resizedElementId) {
+                  [e.cx, e.cy, e.cz] = undoableResize.newPosition;
+                  [e.lx, e.ly, e.lz] = undoableResize.newDimension;
+                  break;
+                }
+              }
+            });
+          },
+        } as UndoableResizeWindow;
+        addUndoable(undoableResize);
+        break;
+    }
+  };
+
   const handleIntersectionPointerDown = (e: ThreeEvent<PointerEvent>) => {
     // return on right-click or not first wall
     if (e.button === 2 || addedWallIdRef.current || !checkIsFirstWall(e)) {
@@ -500,6 +585,8 @@ const Wall = ({
           if (moveHandleTypeRef.current || resizeHandleTypeRef.current) {
             setShowGrid(true);
             setOriginElements([...elements]);
+            oldPositionRef.current = [selectedElement.cx, selectedElement.cy, selectedElement.cz];
+            oldDimensionRef.current = [selectedElement.lx, selectedElement.ly, selectedElement.lz];
           }
         }
       }
@@ -525,6 +612,22 @@ const Wall = ({
       invalidWindowIdRef.current = null;
       setOriginElements(null);
     }
+    // add undo for valid window operation
+    else {
+      const elem = getElementById(grabRef.current.id);
+      if (elem) {
+        if (moveHandleTypeRef.current) {
+          addUndoableMove(elem);
+        } else if (resizeHandleTypeRef.current) {
+          if (isSettingWindowEndPointRef.current) {
+            addUndoableAdd(elem);
+          } else {
+            addUndoableResize(elem);
+          }
+        }
+      }
+    }
+
     setCommonStore((state) => {
       state.moveHandleType = null;
       state.resizeHandleType = null;

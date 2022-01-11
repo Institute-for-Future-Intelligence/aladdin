@@ -6,8 +6,6 @@ import { Undoable } from './Undoable';
 import { Vector2, Vector3 } from 'three';
 import { Point2 } from '../models/Point2';
 import { FlippedWallSide } from './UndoableAdd';
-import { WallModel } from 'src/models/WallModel';
-import { WallAbsPos } from 'src/views/wall/WallAbsPos';
 
 export interface UndoableResize extends Undoable {
   oldCx: number;
@@ -35,6 +33,14 @@ export interface UndoableResize extends Undoable {
 
   oldChildrenParentIdMap?: Map<string, string>;
   newChildrenParentIdMap?: Map<string, string>;
+}
+
+export interface UndoableResizeWindow extends Undoable {
+  resizedElementId: string;
+  oldPosition: number[];
+  newPosition: number[];
+  oldDimension: number[];
+  newDimension: number[];
 }
 
 export interface UndoableResizeWall extends Undoable {
