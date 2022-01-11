@@ -212,24 +212,22 @@ const PolygonTextureSelection = ({
         }
         break;
       default:
-        if (polygon) {
-          const oldTexture = polygon.textureType;
-          const undoableChange = {
-            name: 'Set Texture of Selected Polygon',
-            timestamp: Date.now(),
-            oldValue: oldTexture,
-            newValue: value,
-            changedElementId: polygon.id,
-            undo: () => {
-              updatePolygonTextureById(undoableChange.changedElementId, undoableChange.oldValue as PolygonTexture);
-            },
-            redo: () => {
-              updatePolygonTextureById(undoableChange.changedElementId, undoableChange.newValue as PolygonTexture);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updatePolygonTextureById(polygon.id, value);
-        }
+        const oldTexture = polygon.textureType;
+        const undoableChange = {
+          name: 'Set Texture of Selected Polygon',
+          timestamp: Date.now(),
+          oldValue: oldTexture,
+          newValue: value,
+          changedElementId: polygon.id,
+          undo: () => {
+            updatePolygonTextureById(undoableChange.changedElementId, undoableChange.oldValue as PolygonTexture);
+          },
+          redo: () => {
+            updatePolygonTextureById(undoableChange.changedElementId, undoableChange.newValue as PolygonTexture);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updatePolygonTextureById(polygon.id, value);
     }
     setUpdateFlag(!updateFlag);
   };

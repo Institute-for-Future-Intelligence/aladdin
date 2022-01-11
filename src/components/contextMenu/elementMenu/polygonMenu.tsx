@@ -17,6 +17,7 @@ import PolygonLineColorSelection from './polygonLineColorSelection';
 import PolygonFillColorSelection from './polygonFillColorSelection';
 import PolygonTextureSelection from './polygonTextureSelection';
 import SolarPanelLayoutWizard from './solarPanelLayoutWizard';
+import PolygonLineStyleSelection from './polygonLineStyleSelection';
 
 export const PolygonMenu = () => {
   const language = useStore(Selector.language);
@@ -26,6 +27,7 @@ export const PolygonMenu = () => {
   const elementsToPaste = useStore(Selector.elementsToPaste);
 
   const [lineColorDialogVisible, setLineColorDialogVisible] = useState(false);
+  const [lineStyleDialogVisible, setLineStyleDialogVisible] = useState(false);
   const [fillColorDialogVisible, setFillColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [solarPanelLayoutWizardVisible, setSolarPanelLayoutWizardVisible] = useState(false);
@@ -111,6 +113,19 @@ export const PolygonMenu = () => {
               }}
             >
               {i18n.t('polygonMenu.LineColor', lang)} ...
+            </Menu.Item>
+            <PolygonLineStyleSelection
+              dialogVisible={lineStyleDialogVisible}
+              setDialogVisible={setLineStyleDialogVisible}
+            />
+            <Menu.Item
+              key={'polygon-line-style'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setLineStyleDialogVisible(true);
+              }}
+            >
+              {i18n.t('polygonMenu.LineStyle', lang)} ...
             </Menu.Item>
           </>
         )}

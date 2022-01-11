@@ -178,6 +178,8 @@ export const updatePolygonSelectedIndexById = (state: CommonStoreState) => state
 
 export const updatePolygonFilledById = (state: CommonStoreState) => state.updatePolygonFilledById;
 
+export const updatePolygonLineStyleById = (state: CommonStoreState) => state.updatePolygonLineStyleById;
+
 export const updatePolygonVertexPositionById = (state: CommonStoreState) => state.updatePolygonVertexPositionById;
 
 export const updatePolygonVerticesById = (state: CommonStoreState) => state.updatePolygonVerticesById;

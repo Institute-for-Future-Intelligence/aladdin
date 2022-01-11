@@ -200,24 +200,22 @@ const PolygonFillColorSelection = ({
         }
         break;
       default:
-        if (polygon) {
-          const oldColor = polygon.color;
-          const undoableChange = {
-            name: 'Set Fill Color of Selected Polygon',
-            timestamp: Date.now(),
-            oldValue: oldColor,
-            newValue: value,
-            changedElementId: polygon.id,
-            undo: () => {
-              updateElementFillColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
-            },
-            redo: () => {
-              updateElementFillColorById(undoableChange.changedElementId, undoableChange.newValue as string);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateElementFillColorById(polygon.id, value);
-        }
+        const oldColor = polygon.color;
+        const undoableChange = {
+          name: 'Set Fill Color of Selected Polygon',
+          timestamp: Date.now(),
+          oldValue: oldColor,
+          newValue: value,
+          changedElementId: polygon.id,
+          undo: () => {
+            updateElementFillColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
+          },
+          redo: () => {
+            updateElementFillColorById(undoableChange.changedElementId, undoableChange.newValue as string);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateElementFillColorById(polygon.id, value);
     }
     setUpdateFlag(!updateFlag);
   };

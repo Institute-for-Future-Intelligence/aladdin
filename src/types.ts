@@ -36,6 +36,12 @@ export interface CloudFileInfo {
   readonly userid: string;
 }
 
+export enum LineStyle {
+  Solid = 1,
+  Dashed = 2,
+  Dotted = 3,
+}
+
 export interface DatumEntry {
   [key: string]: number | undefined | string;
 }

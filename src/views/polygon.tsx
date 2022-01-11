@@ -31,7 +31,7 @@ import {
   UNIT_VECTOR_POS_X,
   UNIT_VECTOR_POS_Y,
 } from '../constants';
-import { ActionType, MoveHandleType, ObjectType, PolygonTexture, ResizeHandleType } from '../types';
+import { ActionType, LineStyle, MoveHandleType, ObjectType, PolygonTexture, ResizeHandleType } from '../types';
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { PolygonModel } from '../models/PolygonModel';
@@ -375,6 +375,9 @@ const Polygon = ({
         points={points}
         color={lineColor}
         lineWidth={lineWidth}
+        dashed={polygonModel.lineStyle && polygonModel.lineStyle !== LineStyle.Solid}
+        dashSize={polygonModel.lineStyle === LineStyle.Dashed ? 0.3 : 0.1}
+        gapSize={0.1}
         uuid={id}
         receiveShadow={false}
         castShadow={false}

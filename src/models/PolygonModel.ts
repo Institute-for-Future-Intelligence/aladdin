@@ -4,7 +4,7 @@
 
 import { ElementModel } from './ElementModel';
 import { Point2 } from './Point2';
-import { PolygonTexture } from '../types';
+import { LineStyle, PolygonTexture } from '../types';
 
 export interface PolygonModel extends ElementModel {
   vertices: Point2[]; // positions relative to the parent
@@ -12,4 +12,5 @@ export interface PolygonModel extends ElementModel {
   opacity: number;
   textureType: PolygonTexture;
   selectedIndex: number;
+  lineStyle: LineStyle;
 }

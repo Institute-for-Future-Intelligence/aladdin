@@ -200,24 +200,22 @@ const PolygonLineColorSelection = ({
         }
         break;
       default:
-        if (polygon) {
-          const oldColor = polygon.lineColor;
-          const undoableChange = {
-            name: 'Set Line Color of Selected Polygon',
-            timestamp: Date.now(),
-            oldValue: oldColor,
-            newValue: value,
-            changedElementId: polygon.id,
-            undo: () => {
-              updateElementLineColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
-            },
-            redo: () => {
-              updateElementLineColorById(undoableChange.changedElementId, undoableChange.newValue as string);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateElementLineColorById(polygon.id, value);
-        }
+        const oldColor = polygon.lineColor;
+        const undoableChange = {
+          name: 'Set Line Color of Selected Polygon',
+          timestamp: Date.now(),
+          oldValue: oldColor,
+          newValue: value,
+          changedElementId: polygon.id,
+          undo: () => {
+            updateElementLineColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
+          },
+          redo: () => {
+            updateElementLineColorById(undoableChange.changedElementId, undoableChange.newValue as string);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateElementLineColorById(polygon.id, value);
     }
     setUpdateFlag(!updateFlag);
   };

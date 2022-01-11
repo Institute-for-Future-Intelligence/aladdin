@@ -18,6 +18,7 @@ import {
   DatumEntry,
   FoundationTexture,
   HumanName,
+  LineStyle,
   MoveHandleType,
   ObjectType,
   Orientation,
@@ -194,6 +195,7 @@ export interface CommonStoreState {
   insertPolygonVertexAfterIndex: (id: string, index: number) => void;
   updatePolygonSelectedIndexById: (id: string, index: number) => void;
   updatePolygonFilledById: (id: string, filled: boolean) => void;
+  updatePolygonLineStyleById: (id: string, style: LineStyle) => void;
   updatePolygonVertexPositionById: (id: string, index: number, x: number, y: number) => void;
   updatePolygonVerticesById: (id: string, vertices: Point2[]) => void;
   updatePolygonTextureById: (id: string, texture: PolygonTexture) => void;
@@ -1298,6 +1300,16 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Polygon && e.id === id) {
                   (e as PolygonModel).filled = filled;
+                  break;
+                }
+              }
+            });
+          },
+          updatePolygonLineStyleById(id: string, style: LineStyle) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Polygon && e.id === id) {
+                  (e as PolygonModel).lineStyle = style;
                   break;
                 }
               }
