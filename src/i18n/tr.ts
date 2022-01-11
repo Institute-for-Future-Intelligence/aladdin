@@ -332,6 +332,7 @@ export const i18n_tr = {
       AllPolygons: 'Tüm Poligonlar',
       Layout: 'Layout',
       SolarPanelArrayLayout: 'Solar Panel Array Layout',
+      SolarPanelArrayLayoutParametricDesign: 'Solar Panel Array Layout: Parametric Design',
       SolarPanelArrayModel: 'Solar Panel Model',
       SolarPanelArrayOrientation: 'Orientation',
       SolarPanelArrayTiltAngle: 'Tilt Angle',

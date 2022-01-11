@@ -51,6 +51,7 @@ const SolarPanelLayoutWizard = ({
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const changedRef = useRef(true);
 
   const lang = { lng: language };
   const pvModel = getPvModule(pvModelName);
@@ -208,6 +209,7 @@ const SolarPanelLayoutWizard = ({
         addUndoable(undoableLayout);
       }
     }
+    changedRef.current = false;
   };
 
   return (
@@ -249,13 +251,14 @@ const SolarPanelLayoutWizard = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('polygonMenu.SolarPanelArrayLayout', lang)}
+            {i18n.t('polygonMenu.SolarPanelArrayLayoutParametricDesign', lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
+              if (!changedRef.current) return;
               if (reference) {
                 if (countElementsByReferenceId(reference.id) > 0) {
                   setWarningDialogVisible(true);
@@ -279,11 +282,13 @@ const SolarPanelLayoutWizard = ({
             key="OK"
             type="primary"
             onClick={() => {
-              if (reference) {
-                if (countElementsByReferenceId(reference.id) > 0) {
-                  setWarningDialogVisible(true);
-                } else {
-                  layout();
+              if (changedRef.current) {
+                if (reference) {
+                  if (countElementsByReferenceId(reference.id) > 0) {
+                    setWarningDialogVisible(true);
+                  } else {
+                    layout();
+                  }
                 }
               }
               setDialogVisible(false);
@@ -317,6 +322,7 @@ const SolarPanelLayoutWizard = ({
                   state.solarPanelArrayLayoutParams.pvModelName = value;
                 });
                 setUpdateFlag(!updateFlag);
+                changedRef.current = false;
               }}
             >
               {Object.keys(pvModules).map((key) => (
@@ -341,6 +347,7 @@ const SolarPanelLayoutWizard = ({
                   state.solarPanelArrayLayoutParams.rowAxis = value;
                 });
                 setUpdateFlag(!updateFlag);
+                changedRef.current = false;
               }}
             >
               <Option key={RowAxis.zonal} value={RowAxis.zonal}>
@@ -366,6 +373,7 @@ const SolarPanelLayoutWizard = ({
                   state.solarPanelArrayLayoutParams.orientation = value;
                 });
                 setUpdateFlag(!updateFlag);
+                changedRef.current = false;
               }}
             >
               <Option key={Orientation.portrait} value={Orientation.portrait}>
@@ -396,6 +404,7 @@ const SolarPanelLayoutWizard = ({
                   state.solarPanelArrayLayoutParams.tiltAngle = Util.toRadians(value);
                 });
                 setUpdateFlag(!updateFlag);
+                changedRef.current = false;
               }}
             />
           </Col>
@@ -422,6 +431,7 @@ const SolarPanelLayoutWizard = ({
                   state.solarPanelArrayLayoutParams.rowWidthInPanels = value;
                 });
                 setUpdateFlag(!updateFlag);
+                changedRef.current = false;
               }}
             />
           </Col>
@@ -448,6 +458,7 @@ const SolarPanelLayoutWizard = ({
                   state.solarPanelArrayLayoutParams.interRowSpacing = value;
                 });
                 setUpdateFlag(!updateFlag);
+                changedRef.current = false;
               }}
             />
           </Col>
@@ -474,6 +485,7 @@ const SolarPanelLayoutWizard = ({
                   state.solarPanelArrayLayoutParams.poleHeight = value;
                 });
                 setUpdateFlag(!updateFlag);
+                changedRef.current = false;
               }}
             />
           </Col>
@@ -500,6 +512,7 @@ const SolarPanelLayoutWizard = ({
                   state.solarPanelArrayLayoutParams.poleSpacing = value;
                 });
                 setUpdateFlag(!updateFlag);
+                changedRef.current = false;
               }}
             />
           </Col>

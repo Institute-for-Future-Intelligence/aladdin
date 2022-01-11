@@ -323,6 +323,7 @@ export const i18n_zh_tw = {
       AllPolygons: '所有的多邊形',
       Layout: '佈局',
       SolarPanelArrayLayout: '光伏板陣列佈局',
+      SolarPanelArrayLayoutParametricDesign: '光伏板陣列佈局參數化設計',
       SolarPanelArrayModel: '光伏板型號',
       SolarPanelArrayOrientation: '排列方向',
       SolarPanelArrayTiltAngle: '傾斜角度',

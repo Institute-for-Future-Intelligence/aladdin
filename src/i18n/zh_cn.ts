@@ -323,6 +323,7 @@ export const i18n_zh_cn = {
       AllPolygons: '所有的多边形',
       Layout: '布局',
       SolarPanelArrayLayout: '光伏板阵列布局',
+      SolarPanelArrayLayoutParametricDesign: '光伏板阵列布局参数化设计',
       SolarPanelArrayModel: '光伏板型号',
       SolarPanelArrayOrientation: '排列方向',
       SolarPanelArrayTiltAngle: '倾斜角度',
