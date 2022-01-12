@@ -797,12 +797,13 @@ const Ground = () => {
   };
 
   const handlePointerUp = (e: PointerEvent) => {
-    if (e.button === 2 || !grabRef.current) {
-      return;
-    }
+    if (e.button === 2) return;
+    useStoreRef.setState((state) => {
+      state.setEnableOrbitController(true);
+    });
+    if (!grabRef.current) return;
 
     const elem = getElementById(grabRef.current.id);
-
     if (elem) {
       // adding foundation end point
       if (isSettingFoundationEndPointRef.current) {
@@ -889,7 +890,6 @@ const Ground = () => {
     useStoreRef.setState((state) => {
       state.humanRef = null;
       state.treeRef = null;
-      state.setEnableOrbitController(true);
     });
   };
 
