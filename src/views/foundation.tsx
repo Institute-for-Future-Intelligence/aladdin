@@ -1605,17 +1605,20 @@ const Foundation = ({
           p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
           setElementPosition(solarPanel.id, p.x, p.y);
         } else if (rotateHandleType) {
-          const pr = foundationModel.rotation[2]; // parent rotation
-          const pc = new Vector2(foundationModel.cx, foundationModel.cy); // world parent center
-          const cc = new Vector2(foundationModel.lx * solarPanel.cx, foundationModel.ly * solarPanel.cy) //local current center
-            .rotateAround(ORIGIN_VECTOR2, pr); // add parent rotation
-          const wc = new Vector2().addVectors(cc, pc); // world current center
-          const rotation =
-            Math.atan2(-p.x + wc.x, p.y - wc.y) - pr + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
-          const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * TWO_PI : 0; // make sure angle is between -PI to PI
-          const newAzimuth = rotation + offset;
-          updateSolarPanelRelativeAzimuthById(solarPanel.id, newAzimuth);
-          newAzimuthRef.current = newAzimuth;
+          // tilt of solar panels not handled here
+          if (rotateHandleType === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Lower) {
+            const pr = foundationModel.rotation[2]; // parent rotation
+            const pc = new Vector2(foundationModel.cx, foundationModel.cy); // world parent center
+            const cc = new Vector2(foundationModel.lx * solarPanel.cx, foundationModel.ly * solarPanel.cy) //local current center
+              .rotateAround(ORIGIN_VECTOR2, pr); // add parent rotation
+            const wc = new Vector2().addVectors(cc, pc); // world current center
+            const rotation =
+              Math.atan2(-p.x + wc.x, p.y - wc.y) - pr + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
+            const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * TWO_PI : 0; // make sure angle is between -PI to PI
+            const newAzimuth = rotation + offset;
+            updateSolarPanelRelativeAzimuthById(solarPanel.id, newAzimuth);
+            newAzimuthRef.current = newAzimuth;
+          }
         } else if (resizeHandleType) {
           const resizeAnchor = resizeAnchorRef.current;
           const pvModel = getPvModule(solarPanel.pvModelName);

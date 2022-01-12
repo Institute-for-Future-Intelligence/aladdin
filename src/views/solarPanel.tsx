@@ -597,6 +597,9 @@ const SolarPanel = ({
                 const sp = getElementById(id) as SolarPanelModel;
                 oldTiltAngleRef.current = sp.tiltAngle;
               }
+              setCommonStore((state) => {
+                state.rotateHandleType = RotateHandleType.Tilt;
+              });
             }}
           >
             <meshStandardMaterial
