@@ -32,7 +32,7 @@ import {
   WallTexture,
 } from '../types';
 import { DefaultWorldModel } from './DefaultWorldModel';
-import { Box3, Vector2, Vector3 } from 'three';
+import { Box3, Euler, Vector2, Vector3 } from 'three';
 import { ElementModelCloner } from '../models/ElementModelCloner';
 import { DefaultViewState } from './DefaultViewState';
 import { ViewState } from './ViewState';
@@ -2174,7 +2174,9 @@ export const useStore = create<CommonStoreState>(
                   const position = new Vector3().copy(p);
                   if (parentId !== GROUND_ID) {
                     const parentModel = parent as ElementModel;
-                    position.sub(new Vector3(parentModel.cx, parentModel.cy, parentModel.cz));
+                    position
+                      .sub(new Vector3(parentModel.cx, parentModel.cy, parentModel.cz))
+                      .applyEuler(new Euler(0, 0, -parentModel.rotation[2]));
                   }
                   const human = ElementModelFactory.makeHuman(parentId, position.x, position.y, position.z);
                   model = human;
@@ -2185,7 +2187,9 @@ export const useStore = create<CommonStoreState>(
                   const position = new Vector3().copy(p);
                   if (parentId !== GROUND_ID) {
                     const parentModel = parent as ElementModel;
-                    position.sub(new Vector3(parentModel.cx, parentModel.cy, parentModel.cz));
+                    position
+                      .sub(new Vector3(parentModel.cx, parentModel.cy, parentModel.cz))
+                      .applyEuler(new Euler(0, 0, -parentModel.rotation[2]));
                   }
                   const tree = ElementModelFactory.makeTree(parentId, position.x, position.y, position.z);
                   model = tree;
