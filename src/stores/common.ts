@@ -2266,6 +2266,7 @@ export const useStore = create<CommonStoreState>(
                   model = wall;
                   break;
               }
+              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
             return model;
           },
@@ -2640,6 +2641,23 @@ export const useStore = create<CommonStoreState>(
                         }
                       } else {
                         approved = true;
+                      }
+                    }
+                  } else {
+                    approved = true;
+                    if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
+                      if (newParent) {
+                        // paste on a parent
+                        const parent = state.getElementById(e.parentId);
+                        if (parent) {
+                          const p = Util.relativePoint(state.pastePoint, parent);
+                          e.cx = p.x;
+                          e.cy = p.y;
+                          e.cz = p.z;
+                        }
+                      } else {
+                        // paste on the ground
+                        e.parentId = GROUND_ID;
                       }
                     }
                   }

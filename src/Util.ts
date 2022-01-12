@@ -411,6 +411,13 @@ export class Util {
     return v;
   }
 
+  // no normalization
+  static relativePoint(point: Vector3, parent: ElementModel): Vector3 {
+    const v = new Vector3(point.x - parent.cx, point.y - parent.cy, point.z - parent.cz);
+    v.applyEuler(new Euler().fromArray(parent.rotation.map((a) => -a)));
+    return v;
+  }
+
   static wallAbsolutePosition(v: Vector3, parent: ElementModel): Vector3 {
     const parentPos = new Vector3(parent.cx, parent.cy);
     return new Vector3().addVectors(

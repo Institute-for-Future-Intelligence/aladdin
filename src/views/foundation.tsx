@@ -1651,6 +1651,9 @@ const Foundation = ({
                 if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, solarPanel.lx, dyl)) {
                   updateElementLyById(solarPanel.id, dyl);
                   setElementPosition(solarPanel.id, newCx, newCy);
+                  setCommonStore((state) => {
+                    state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+                  });
                 }
               }
               break;
@@ -1677,6 +1680,9 @@ const Foundation = ({
                 if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, dxl, solarPanel.ly)) {
                   updateElementLxById(solarPanel.id, dxl);
                   setElementPosition(solarPanel.id, newCx, newCy);
+                  setCommonStore((state) => {
+                    state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+                  });
                 }
               }
               break;
