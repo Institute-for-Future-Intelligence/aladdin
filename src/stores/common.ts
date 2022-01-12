@@ -2794,6 +2794,8 @@ export const useStore = create<CommonStoreState>(
                         // So we have to copy its children and grandchildren as well. This differs from the
                         // situation of cutting, in which case all the children and grandchildren must be
                         // stored in elementsToPaste.
+                        const wallMapNewToOld = new Map<string, string>();
+                        const wallMapOldToNew = new Map<string, string>();
                         for (const child of state.elements) {
                           if (child.parentId === elem.id) {
                             const newChild = ElementModelCloner.clone(
@@ -2810,6 +2812,8 @@ export const useStore = create<CommonStoreState>(
                               }
                               pastedElements.push(newChild);
                               if (newChild?.type === ObjectType.Wall || newChild?.type === ObjectType.Roof) {
+                                wallMapNewToOld.set(newChild.id, child.id);
+                                wallMapOldToNew.set(child.id, newChild.id);
                                 for (const grandchild of state.elements) {
                                   if (grandchild.parentId === child.id) {
                                     const newGrandChild = ElementModelCloner.clone(
@@ -2834,6 +2838,25 @@ export const useStore = create<CommonStoreState>(
                         state.elements.push(...pastedElements);
                         state.elements.push(e);
                         state.elementsToPaste = [e];
+                        for (const e of state.elements) {
+                          // search new wall
+                          if (e.type === ObjectType.Wall) {
+                            const oldWallId = wallMapNewToOld.get(e.id);
+                            if (oldWallId) {
+                              for (const o of state.elements) {
+                                if (o.id === oldWallId) {
+                                  (e as WallModel).leftJoints = [
+                                    wallMapOldToNew.get((o as WallModel).leftJoints[0]) as string,
+                                  ];
+                                  (e as WallModel).rightJoints = [
+                                    wallMapOldToNew.get((o as WallModel).rightJoints[0]) as string,
+                                  ];
+                                  break;
+                                }
+                              }
+                            }
+                          }
+                        }
                       } else if (state.elementsToPaste.length > 1) {
                         // when a parent with children is cut, the removed children are no longer in elements array,
                         // so we have to restore them from elementsToPaste.
