@@ -138,7 +138,8 @@ const Ground = () => {
   if (grabRef.current) {
     if (grabRef.current.type === ObjectType.Human || grabRef.current.type === ObjectType.Tree) {
       intersectionPlaneType = IntersectionPlaneType.Vertical;
-      intersectionPlaneAngle.set(-HALF_PI, 0, 0, 'ZXY');
+      const a = useStore.getState().viewState.orthographic ? 0 : -HALF_PI;
+      intersectionPlaneAngle.set(a, 0, 0, 'ZXY');
     } else if (moveHandleType === MoveHandleType.Top) {
       intersectionPlaneType = IntersectionPlaneType.Horizontal;
       intersectionPlanePosition.set(grabRef.current.cx, grabRef.current.cy, grabRef.current.lz);
