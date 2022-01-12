@@ -596,6 +596,7 @@ const Foundation = ({
         setCommonStore((state) => {
           state.elements.push(undoableAdd.addedElement);
           state.selectedElement = undoableAdd.addedElement;
+          state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
         });
       },
     } as UndoableAdd;
