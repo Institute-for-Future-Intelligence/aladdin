@@ -7,7 +7,7 @@ import { useTexture } from '@react-three/drei';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { DoubleSide } from 'three';
-import { getMapImage } from '../helpers';
+import { getRoadMap, getSatelliteImage } from '../helpers';
 import { Util } from '../Util';
 
 // The image that Google Maps API returns is 640x640. That image needs to be rescaled in such a way
@@ -23,9 +23,14 @@ const GroundImage = () => {
   const latitude = useStore(Selector.world.latitude);
   const longitude = useStore(Selector.world.longitude);
   const mapZoom = useStore(Selector.viewState.mapZoom);
+  const mapType = useStore(Selector.viewState.mapType);
 
-  const texture = useTexture(getMapImage(640, latitude, longitude, mapZoom));
-  let zoomScale = 1;
+  const texture = useTexture(
+    mapType === 'satellite' || mapType === 'hybrid'
+      ? getSatelliteImage(640, latitude, longitude, mapZoom)
+      : getRoadMap(640, latitude, longitude, mapZoom),
+  );
+  let zoomScale;
   if (mapZoom === 21) {
     zoomScale = 0.5;
   } else if (mapZoom === 20) {
