@@ -702,7 +702,7 @@ const Ground = () => {
         .distanceTo(screenPosition);
       const screenLy = newPositionRef.current
         .clone()
-        .add(new Vector3(0, elem.ly, 0))
+        .add(new Vector3(0, elem.ly ?? 1, 0))
         .project(camera)
         .distanceTo(screenPosition);
       const screenLz = newPositionRef.current
