@@ -2508,6 +2508,8 @@ export const useStore = create<CommonStoreState>(
             const copiedElements: ElementModel[] = [];
             immerSet((state: CommonStoreState) => {
               const map = new Map<ElementModel, ElementModel>();
+              const wallMapOldToNew = new Map<string, string>();
+              const wallMapNewToOld = new Map<string, string>();
               for (let i = 0; i < state.elementsToPaste.length; i++) {
                 const oldElem = state.elementsToPaste[i];
                 let e: ElementModel | null = null;
@@ -2544,7 +2546,30 @@ export const useStore = create<CommonStoreState>(
                 }
                 if (e) {
                   map.set(oldElem, e);
+                  wallMapOldToNew.set(oldElem.id, e.id);
+                  wallMapNewToOld.set(e.id, oldElem.id);
                   copiedElements.push(e);
+                }
+              }
+              for (const e of copiedElements) {
+                // search new wall
+                if (e.type === ObjectType.Wall) {
+                  const oldWallId = wallMapNewToOld.get(e.id);
+                  if (oldWallId) {
+                    for (const o of state.elementsToPaste) {
+                      if (o.id === oldWallId) {
+                        const left = wallMapOldToNew.get((o as WallModel).leftJoints[0]);
+                        if (left) {
+                          (e as WallModel).leftJoints = [left];
+                        }
+                        const right = wallMapOldToNew.get((o as WallModel).rightJoints[0]);
+                        if (right) {
+                          (e as WallModel).rightJoints = [right];
+                        }
+                        break;
+                      }
+                    }
+                  }
                 }
               }
             });
@@ -2589,6 +2614,8 @@ export const useStore = create<CommonStoreState>(
                   }
                   let approved = false;
                   if (e.type === ObjectType.Foundation || e.type === ObjectType.Cuboid) {
+                    const wallMapNewToOld = new Map<string, string>();
+                    const wallMapOldToNew = new Map<string, string>();
                     for (const child of state.elements) {
                       if (child.parentId === elem.id) {
                         const newChild = ElementModelCloner.clone(
@@ -2605,6 +2632,8 @@ export const useStore = create<CommonStoreState>(
                           }
                           pastedElements.push(newChild);
                           if (newChild?.type === ObjectType.Wall || newChild?.type === ObjectType.Roof) {
+                            wallMapNewToOld.set(newChild.id, child.id);
+                            wallMapOldToNew.set(child.id, newChild.id);
                             for (const grandchild of state.elements) {
                               if (grandchild.parentId === child.id) {
                                 const newGrandChild = ElementModelCloner.clone(
@@ -2628,6 +2657,27 @@ export const useStore = create<CommonStoreState>(
                     }
                     state.elements.push(...pastedElements);
                     approved = true;
+                    for (const e of state.elements) {
+                      // search new wall
+                      if (e.type === ObjectType.Wall) {
+                        const oldWallId = wallMapNewToOld.get(e.id);
+                        if (oldWallId) {
+                          for (const o of state.elements) {
+                            if (o.id === oldWallId) {
+                              const left = wallMapOldToNew.get((o as WallModel).leftJoints[0]);
+                              if (left) {
+                                (e as WallModel).leftJoints = [left];
+                              }
+                              const right = wallMapOldToNew.get((o as WallModel).rightJoints[0]);
+                              if (right) {
+                                (e as WallModel).rightJoints = [right];
+                              }
+                              break;
+                            }
+                          }
+                        }
+                      }
+                    }
                   } else if (e.type === ObjectType.SolarPanel) {
                     const lang = { lng: state.language };
                     if (state.overlapWithSibling(e)) {
@@ -2845,12 +2895,14 @@ export const useStore = create<CommonStoreState>(
                             if (oldWallId) {
                               for (const o of state.elements) {
                                 if (o.id === oldWallId) {
-                                  (e as WallModel).leftJoints = [
-                                    wallMapOldToNew.get((o as WallModel).leftJoints[0]) as string,
-                                  ];
-                                  (e as WallModel).rightJoints = [
-                                    wallMapOldToNew.get((o as WallModel).rightJoints[0]) as string,
-                                  ];
+                                  const left = wallMapOldToNew.get((o as WallModel).leftJoints[0]);
+                                  if (left) {
+                                    (e as WallModel).leftJoints = [left];
+                                  }
+                                  const right = wallMapOldToNew.get((o as WallModel).rightJoints[0]);
+                                  if (right) {
+                                    (e as WallModel).rightJoints = [right];
+                                  }
                                   break;
                                 }
                               }
