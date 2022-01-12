@@ -954,6 +954,7 @@ const Ground = () => {
               state.elements.push(undoableAdd.addedElement);
               state.selectedElement = undoableAdd.addedElement;
               state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
           },
         } as UndoableAdd;
@@ -961,6 +962,7 @@ const Ground = () => {
         setCommonStore((state) => {
           state.objectTypeToAdd = ObjectType.None;
           state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+          state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
         });
       }
     } else {
