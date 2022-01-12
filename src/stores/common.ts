@@ -1663,6 +1663,7 @@ export const useStore = create<CommonStoreState>(
                 if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.relativeAzimuth = relativeAzimuth;
+                  state.selectedElementAngle = relativeAzimuth;
                   break;
                 }
               }
