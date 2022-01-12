@@ -76,6 +76,7 @@ const Foundation = ({
   textureType = FoundationTexture.NoTexture,
 }: FoundationModel) => {
   const language = useStore(Selector.language);
+  const orthographic = useStore(Selector.viewState.orthographic);
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const setCommonStore = useStore(Selector.set);
@@ -1682,7 +1683,7 @@ const Foundation = ({
     }
   };
 
-  const opacity = groundImage ? 0.5 : 1;
+  const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
 
   return (
     <group
