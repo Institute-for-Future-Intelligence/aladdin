@@ -47,7 +47,6 @@ const Ground = () => {
   const rotateHandleType = useStore(Selector.rotateHandleType);
   const resizeAnchor = useStore(Selector.resizeAnchor);
   const setElementPosition = useStore(Selector.setElementPosition);
-  const setElementSize = useStore(Selector.setElementSize);
   const setElementRotation = useStore(Selector.updateElementRotationById);
   const addElement = useStore(Selector.addElement);
   const getElementById = useStore(Selector.getElementById);
@@ -64,7 +63,7 @@ const Ground = () => {
   const deletedCuboidId = useStore(Selector.deletedCuboidId);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
 
-  const { get: getThree, gl, scene, invalidate } = useThree();
+  const { get: getThree, scene, invalidate } = useThree();
   const groundPlaneRef = useRef<Mesh>();
   const intersectionPlaneRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
