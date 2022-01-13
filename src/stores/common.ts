@@ -82,6 +82,8 @@ export interface CommonStoreState {
   skipChange: boolean;
   setSkipChange: (b: boolean) => void;
   fileChanged: boolean;
+  applyCount: number;
+  setApplyCount: (count: number) => void;
 
   importContent: (input: any, title?: string) => void;
   exportContent: () => {};
@@ -427,6 +429,12 @@ export const useStore = create<CommonStoreState>(
             });
           },
           fileChanged: false,
+          applyCount: 0,
+          setApplyCount(count: number) {
+            immerSet((state: CommonStoreState) => {
+              state.applyCount = count;
+            });
+          },
 
           importContent(content: any, title) {
             immerSet((state: CommonStoreState) => {

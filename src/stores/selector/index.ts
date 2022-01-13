@@ -16,6 +16,10 @@ export const skipChange = (state: CommonStoreState) => state.skipChange;
 
 export const setSkipChange = (state: CommonStoreState) => state.setSkipChange;
 
+export const applyCount = (state: CommonStoreState) => state.applyCount;
+
+export const setApplyCount = (state: CommonStoreState) => state.setApplyCount;
+
 export const elements = (state: CommonStoreState) => state.elements;
 
 export const notes = (state: CommonStoreState) => state.notes;

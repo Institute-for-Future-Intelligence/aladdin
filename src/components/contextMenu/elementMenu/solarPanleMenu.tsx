@@ -32,6 +32,7 @@ export const SolarPanelMenu = () => {
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const updateSolarPanelDrawSunBeamById = useStore(Selector.updateSolarPanelDrawSunBeamById);
   const addUndoable = useStore(Selector.addUndoable);
+  const setApplyCount = useStore(Selector.setApplyCount);
 
   const [solarPanel, setSolarPanel] = useState<SolarPanelModel>();
   const [panelNormal, setPanelNormal] = useState<Vector3>();
@@ -187,6 +188,7 @@ export const SolarPanelMenu = () => {
                 key={'solar-panel-tilt-angle'}
                 style={{ paddingLeft: '36px' }}
                 onClick={() => {
+                  setApplyCount(0);
                   setTiltDialogVisible(true);
                 }}
               >

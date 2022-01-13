@@ -33,6 +33,9 @@ const SolarPanelTiltAngleInput = ({
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const undoManager = useStore(Selector.undoManager);
 
   const solarPanel = getSelectedElement() as SolarPanelModel;
   const [inputTiltAngle, setInputTiltAngle] = useState<number>(solarPanel?.tiltAngle ?? 0);
@@ -161,6 +164,7 @@ const SolarPanelTiltAngleInput = ({
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
           updateSolarPanelTiltAngleForAll(value);
+          setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
@@ -206,6 +210,7 @@ const SolarPanelTiltAngleInput = ({
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
             updateSolarPanelTiltAngleAboveFoundation(solarPanel.foundationId, value);
+            setApplyCount(applyCount + 1);
           }
         }
         break;
@@ -287,6 +292,7 @@ const SolarPanelTiltAngleInput = ({
               } as UndoableChangeGroup;
               addUndoable(undoableChangeOnSurface);
               updateSolarPanelTiltAngleOnSurface(solarPanel.parentId, normal, value);
+              setApplyCount(applyCount + 1);
             }
           }
         }
@@ -314,6 +320,7 @@ const SolarPanelTiltAngleInput = ({
             } as UndoableChange;
             addUndoable(undoableChange);
             updateSolarPanelTiltAngleById(solarPanel.id, value);
+            setApplyCount(applyCount + 1);
           }
         }
     }
@@ -371,6 +378,12 @@ const SolarPanelTiltAngleInput = ({
               setInputTiltAngle(solarPanel.tiltAngle);
               rejectRef.current = false;
               setDialogVisible(false);
+              if (applyCount) {
+                for (let i = 0; i < applyCount; i++) {
+                  undoManager.undo();
+                }
+                setApplyCount(0);
+              }
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -382,6 +395,7 @@ const SolarPanelTiltAngleInput = ({
               setTiltAngle(inputTiltAngle);
               if (!rejectRef.current) {
                 setDialogVisible(false);
+                setApplyCount(0);
               }
             }}
           >
