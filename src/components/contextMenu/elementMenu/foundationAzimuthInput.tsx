@@ -16,11 +16,11 @@ import { Util } from '../../../Util';
 import { ZERO_TOLERANCE } from '../../../constants';
 
 const FoundationAzimuthInput = ({
-  azimuthDialogVisible,
-  setAzimuthDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  azimuthDialogVisible: boolean;
-  setAzimuthDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -139,7 +139,7 @@ const FoundationAzimuthInput = ({
     <>
       <Modal
         width={550}
-        visible={azimuthDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -162,7 +162,7 @@ const FoundationAzimuthInput = ({
             key="Cancel"
             onClick={() => {
               setInputAzimuth(foundation?.rotation[2]);
-              setAzimuthDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -172,7 +172,7 @@ const FoundationAzimuthInput = ({
             type="primary"
             onClick={() => {
               setAzimuth(inputAzimuth);
-              setAzimuthDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -181,8 +181,9 @@ const FoundationAzimuthInput = ({
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputAzimuth(foundation?.rotation[2]);
-          setAzimuthDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
@@ -203,7 +204,7 @@ const FoundationAzimuthInput = ({
               onChange={(value) => setInputAzimuth(Util.toRadians(value))}
               onPressEnter={() => {
                 setAzimuth(inputAzimuth);
-                setAzimuthDialogVisible(false);
+                setDialogVisible(false);
               }}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

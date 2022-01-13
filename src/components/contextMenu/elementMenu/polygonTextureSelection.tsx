@@ -26,11 +26,11 @@ import { PolygonModel } from '../../../models/PolygonModel';
 import { Util } from '../../../Util';
 
 const PolygonTextureSelection = ({
-  textureDialogVisible,
-  setTextureDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  textureDialogVisible: boolean;
-  setTextureDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -249,7 +249,7 @@ const PolygonTextureSelection = ({
     <>
       <Modal
         width={500}
-        visible={textureDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -274,7 +274,7 @@ const PolygonTextureSelection = ({
               if (polygon?.textureType) {
                 setSelectedTexture(polygon.textureType);
               }
-              setTextureDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -284,7 +284,7 @@ const PolygonTextureSelection = ({
             type="primary"
             onClick={() => {
               setTexture(selectedTexture);
-              setTextureDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -295,8 +295,9 @@ const PolygonTextureSelection = ({
           if (polygon?.textureType) {
             setSelectedTexture(polygon.textureType);
           }
-          setTextureDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>

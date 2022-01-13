@@ -14,11 +14,11 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { WallModel } from '../../../models/WallModel';
 
 const WallThicknessInput = ({
-  thicknessDialogVisible,
-  setThicknessDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  thicknessDialogVisible: boolean;
-  setThicknessDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -149,7 +149,7 @@ const WallThicknessInput = ({
     <>
       <Modal
         width={550}
-        visible={thicknessDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -172,7 +172,7 @@ const WallThicknessInput = ({
             key="Cancel"
             onClick={() => {
               setInputThickness(wall.ly ?? 0.3);
-              setThicknessDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -182,7 +182,7 @@ const WallThicknessInput = ({
             type="primary"
             onClick={() => {
               setThickness(inputThickness);
-              setThicknessDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -191,8 +191,9 @@ const WallThicknessInput = ({
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputThickness(wall.ly ?? 0.3);
-          setThicknessDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
@@ -213,7 +214,7 @@ const WallThicknessInput = ({
               onChange={(value) => setInputThickness(value)}
               onPressEnter={() => {
                 setThickness(inputThickness);
-                setThicknessDialogVisible(false);
+                setDialogVisible(false);
               }}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

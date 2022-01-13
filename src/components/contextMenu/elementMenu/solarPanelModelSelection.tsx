@@ -18,11 +18,11 @@ import { Util } from '../../../Util';
 const { Option } = Select;
 
 const SolarPanelModelSelection = ({
-  pvModelDialogVisible,
-  setPvModelDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  pvModelDialogVisible: boolean;
-  setPvModelDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -285,7 +285,7 @@ const SolarPanelModelSelection = ({
     <>
       <Modal
         width={600}
-        visible={pvModelDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -308,7 +308,7 @@ const SolarPanelModelSelection = ({
             key="Cancel"
             onClick={() => {
               setSelectedPvModel(solarPanel.pvModelName);
-              setPvModelDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -318,7 +318,7 @@ const SolarPanelModelSelection = ({
             type="primary"
             onClick={() => {
               setPvModel(selectedPvModel);
-              setPvModelDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -327,8 +327,9 @@ const SolarPanelModelSelection = ({
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setSelectedPvModel(solarPanel.pvModelName);
-          setPvModelDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>

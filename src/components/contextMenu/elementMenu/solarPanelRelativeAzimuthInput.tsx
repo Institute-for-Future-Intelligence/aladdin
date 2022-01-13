@@ -16,11 +16,11 @@ import { Util } from '../../../Util';
 import { UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../../../constants';
 
 const SolarPanelRelativeAzimuthInput = ({
-  azimuthDialogVisible,
-  setAzimuthDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  azimuthDialogVisible: boolean;
-  setAzimuthDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -361,7 +361,7 @@ const SolarPanelRelativeAzimuthInput = ({
     <>
       <Modal
         width={550}
-        visible={azimuthDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -394,7 +394,7 @@ const SolarPanelRelativeAzimuthInput = ({
             onClick={() => {
               setInputRelativeAzimuth(solarPanel.relativeAzimuth);
               rejectRef.current = false;
-              setAzimuthDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -405,7 +405,7 @@ const SolarPanelRelativeAzimuthInput = ({
             onClick={() => {
               setRelativeAzimuth(inputRelativeAzimuth);
               if (!rejectRef.current) {
-                setAzimuthDialogVisible(false);
+                setDialogVisible(false);
               }
             }}
           >
@@ -416,8 +416,9 @@ const SolarPanelRelativeAzimuthInput = ({
         onCancel={() => {
           setInputRelativeAzimuth(solarPanel.relativeAzimuth);
           rejectRef.current = false;
-          setAzimuthDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
@@ -439,7 +440,7 @@ const SolarPanelRelativeAzimuthInput = ({
               onPressEnter={() => {
                 setRelativeAzimuth(inputRelativeAzimuth);
                 if (!rejectRef.current) {
-                  setAzimuthDialogVisible(false);
+                  setDialogVisible(false);
                 }
               }}
             />

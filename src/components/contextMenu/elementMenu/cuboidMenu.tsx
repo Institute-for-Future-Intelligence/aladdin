@@ -235,10 +235,7 @@ export const CuboidMenu = () => {
           (!cuboid.textureTypes ||
             (selectedSideIndex >= 0 && cuboid.textureTypes[selectedSideIndex] === CuboidTexture.NoTexture)) && (
             <>
-              <CuboidColorSelection
-                colorDialogVisible={colorDialogVisible}
-                setColorDialogVisible={setColorDialogVisible}
-              />
+              <CuboidColorSelection dialogVisible={colorDialogVisible} setDialogVisible={setColorDialogVisible} />
               <Menu.Item
                 key={'cuboid-color'}
                 style={{ paddingLeft: '36px' }}
@@ -253,10 +250,7 @@ export const CuboidMenu = () => {
 
         {editable && (
           <>
-            <CuboidTextureSelection
-              textureDialogVisible={textureDialogVisible}
-              setTextureDialogVisible={setTextureDialogVisible}
-            />
+            <CuboidTextureSelection dialogVisible={textureDialogVisible} setDialogVisible={setTextureDialogVisible} />
             <Menu.Item
               key={'cuboid-texture'}
               style={{ paddingLeft: '36px' }}
@@ -297,10 +291,7 @@ export const CuboidMenu = () => {
               {i18n.t('word.Width', lang)} ...
             </Menu.Item>
 
-            <CuboidHeightInput
-              heightDialogVisible={heightDialogVisible}
-              setHeightDialogVisible={setHeightDialogVisible}
-            />
+            <CuboidHeightInput dialogVisible={heightDialogVisible} setDialogVisible={setHeightDialogVisible} />
             <Menu.Item
               key={'cuboid-height'}
               style={{ paddingLeft: '36px' }}
@@ -315,10 +306,7 @@ export const CuboidMenu = () => {
               {i18n.t('word.Height', lang)} ...
             </Menu.Item>
 
-            <CuboidAzimuthInput
-              azimuthDialogVisible={azimuthDialogVisible}
-              setAzimuthDialogVisible={setAzimuthDialogVisible}
-            />
+            <CuboidAzimuthInput dialogVisible={azimuthDialogVisible} setDialogVisible={setAzimuthDialogVisible} />
             <Menu.Item
               key={'cuboid-azimuth'}
               style={{ paddingLeft: '36px' }}

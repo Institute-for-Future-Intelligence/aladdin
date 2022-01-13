@@ -16,11 +16,11 @@ import { Util } from '../../../Util';
 import { ZERO_TOLERANCE } from '../../../constants';
 
 const SolarPanelPoleSpacingInput = ({
-  poleSpacingDialogVisible,
-  setPoleSpacingDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  poleSpacingDialogVisible: boolean;
-  setPoleSpacingDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -267,7 +267,7 @@ const SolarPanelPoleSpacingInput = ({
     <>
       <Modal
         width={550}
-        visible={poleSpacingDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -290,7 +290,7 @@ const SolarPanelPoleSpacingInput = ({
             key="Cancel"
             onClick={() => {
               setInputPoleSpacing(solarPanel.poleSpacing);
-              setPoleSpacingDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -300,7 +300,7 @@ const SolarPanelPoleSpacingInput = ({
             type="primary"
             onClick={() => {
               setPoleSpacing(inputPoleSpacing);
-              setPoleSpacingDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -309,8 +309,9 @@ const SolarPanelPoleSpacingInput = ({
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputPoleSpacing(solarPanel.poleSpacing);
-          setPoleSpacingDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
@@ -331,7 +332,7 @@ const SolarPanelPoleSpacingInput = ({
               onChange={(value) => setInputPoleSpacing(value)}
               onPressEnter={() => {
                 setPoleSpacing(inputPoleSpacing);
-                setPoleSpacingDialogVisible(false);
+                setDialogVisible(false);
               }}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

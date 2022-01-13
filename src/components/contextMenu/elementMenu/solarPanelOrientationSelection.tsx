@@ -18,11 +18,11 @@ import { UNIT_VECTOR_POS_Z_ARRAY } from '../../../constants';
 const { Option } = Select;
 
 const SolarPanelOrientationSelection = ({
-  orientationDialogVisible,
-  setOrientationDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  orientationDialogVisible: boolean;
-  setOrientationDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -398,7 +398,7 @@ const SolarPanelOrientationSelection = ({
     <>
       <Modal
         width={550}
-        visible={orientationDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -435,7 +435,7 @@ const SolarPanelOrientationSelection = ({
             onClick={() => {
               setSelectedOrientation(solarPanel.orientation);
               rejectRef.current = false;
-              setOrientationDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -446,7 +446,7 @@ const SolarPanelOrientationSelection = ({
             onClick={() => {
               setOrientation(selectedOrientation);
               if (!rejectRef.current) {
-                setOrientationDialogVisible(false);
+                setDialogVisible(false);
               }
             }}
           >
@@ -457,8 +457,9 @@ const SolarPanelOrientationSelection = ({
         onCancel={() => {
           setSelectedOrientation(solarPanel.orientation);
           rejectRef.current = false;
-          setOrientationDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>

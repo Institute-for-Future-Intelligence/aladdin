@@ -129,10 +129,7 @@ export const SolarPanelMenu = () => {
       {solarPanel && editable && (
         <>
           {/* pv model */}
-          <SolarPanelModelSelection
-            pvModelDialogVisible={pvModelDialogVisible}
-            setPvModelDialogVisible={setPvModelDialogVisible}
-          />
+          <SolarPanelModelSelection dialogVisible={pvModelDialogVisible} setDialogVisible={setPvModelDialogVisible} />
           <Menu.Item
             key={'solar-panel-change'}
             onClick={() => {
@@ -145,8 +142,8 @@ export const SolarPanelMenu = () => {
 
           {/* orientation: landscape or portrait */}
           <SolarPanelOrientationSelection
-            orientationDialogVisible={orientationDialogVisible}
-            setOrientationDialogVisible={setOrientationDialogVisible}
+            dialogVisible={orientationDialogVisible}
+            setDialogVisible={setOrientationDialogVisible}
           />
           <Menu.Item
             key={'solar-panel-orientation'}
@@ -185,10 +182,7 @@ export const SolarPanelMenu = () => {
           {panelNormal && Util.isSame(panelNormal, UNIT_VECTOR_POS_Z) && (
             <>
               {/* tilt angle */}
-              <SolarPanelTiltAngleInput
-                tiltDialogVisible={tiltDialogVisible}
-                setTiltDialogVisible={setTiltDialogVisible}
-              />
+              <SolarPanelTiltAngleInput dialogVisible={tiltDialogVisible} setDialogVisible={setTiltDialogVisible} />
               <Menu.Item
                 key={'solar-panel-tilt-angle'}
                 style={{ paddingLeft: '36px' }}
@@ -201,8 +195,8 @@ export const SolarPanelMenu = () => {
 
               {/* relative azimuth to the parent element */}
               <SolarPanelRelativeAzimuthInput
-                azimuthDialogVisible={azimuthDialogVisible}
-                setAzimuthDialogVisible={setAzimuthDialogVisible}
+                dialogVisible={azimuthDialogVisible}
+                setDialogVisible={setAzimuthDialogVisible}
               />
               <Menu.Item
                 key={'solar-panel-relative-azimuth'}
@@ -216,8 +210,8 @@ export const SolarPanelMenu = () => {
 
               {/* solar tracker type */}
               <SolarPanelTrackerSelection
-                trackerDialogVisible={trackerDialogVisible}
-                setTrackerDialogVisible={setTrackerDialogVisible}
+                dialogVisible={trackerDialogVisible}
+                setDialogVisible={setTrackerDialogVisible}
               />
               <Menu.Item
                 key={'solar-panel-tracker'}
@@ -231,8 +225,8 @@ export const SolarPanelMenu = () => {
 
               {/* pole height */}
               <SolarPanelPoleHeightInput
-                poleHeightDialogVisible={poleHeightDialogVisible}
-                setPoleHeightDialogVisible={setPoleHeightDialogVisible}
+                dialogVisible={poleHeightDialogVisible}
+                setDialogVisible={setPoleHeightDialogVisible}
               />
               <Menu.Item
                 key={'solar-panel-pole-height'}
@@ -246,8 +240,8 @@ export const SolarPanelMenu = () => {
 
               {/* pole spacing */}
               <SolarPanelPoleSpacingInput
-                poleSpacingDialogVisible={poleSpacingDialogVisible}
-                setPoleSpacingDialogVisible={setPoleSpacingDialogVisible}
+                dialogVisible={poleSpacingDialogVisible}
+                setDialogVisible={setPoleSpacingDialogVisible}
               />
               <Menu.Item
                 key={'solar-panel-pole-spacing'}

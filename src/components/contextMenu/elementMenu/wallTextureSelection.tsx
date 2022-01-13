@@ -26,11 +26,11 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WallModel } from 'src/models/WallModel';
 
 const WallTextureSelection = ({
-  textureDialogVisible,
-  setTextureDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  textureDialogVisible: boolean;
-  setTextureDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -162,7 +162,7 @@ const WallTextureSelection = ({
     <>
       <Modal
         width={550}
-        visible={textureDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -187,7 +187,7 @@ const WallTextureSelection = ({
               if (wall?.textureType) {
                 setSelectedTexture(wall.textureType);
               }
-              setTextureDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -197,7 +197,7 @@ const WallTextureSelection = ({
             type="primary"
             onClick={() => {
               setTexture(selectedTexture);
-              setTextureDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -208,8 +208,9 @@ const WallTextureSelection = ({
           if (wall?.textureType) {
             setSelectedTexture(wall.textureType);
           }
-          setTextureDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>

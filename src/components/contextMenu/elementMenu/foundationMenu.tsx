@@ -277,10 +277,7 @@ export const FoundationMenu = () => {
 
         {editable && (!foundation.textureType || foundation.textureType === FoundationTexture.NoTexture) && (
           <>
-            <FoundationColorSelection
-              colorDialogVisible={colorDialogVisible}
-              setColorDialogVisible={setColorDialogVisible}
-            />
+            <FoundationColorSelection dialogVisible={colorDialogVisible} setDialogVisible={setColorDialogVisible} />
             <Menu.Item
               key={'foundation-color'}
               style={{ paddingLeft: '36px' }}
@@ -296,8 +293,8 @@ export const FoundationMenu = () => {
         {editable && (
           <>
             <FoundationTextureSelection
-              textureDialogVisible={textureDialogVisible}
-              setTextureDialogVisible={setTextureDialogVisible}
+              dialogVisible={textureDialogVisible}
+              setDialogVisible={setTextureDialogVisible}
             />
             <Menu.Item
               key={'foundation-texture'}
@@ -331,10 +328,7 @@ export const FoundationMenu = () => {
               {i18n.t('word.Width', lang)} ...
             </Menu.Item>
 
-            <FoundationHeightInput
-              heightDialogVisible={heightDialogVisible}
-              setHeightDialogVisible={setHeightDialogVisible}
-            />
+            <FoundationHeightInput dialogVisible={heightDialogVisible} setDialogVisible={setHeightDialogVisible} />
             <Menu.Item
               key={'foundation-height'}
               style={{ paddingLeft: '36px' }}
@@ -345,10 +339,7 @@ export const FoundationMenu = () => {
               {i18n.t('word.Height', lang)} ...
             </Menu.Item>
 
-            <FoundationAzimuthInput
-              azimuthDialogVisible={azimuthDialogVisible}
-              setAzimuthDialogVisible={setAzimuthDialogVisible}
-            />
+            <FoundationAzimuthInput dialogVisible={azimuthDialogVisible} setDialogVisible={setAzimuthDialogVisible} />
             <Menu.Item
               key={'foundation-azimuth'}
               style={{ paddingLeft: '36px' }}

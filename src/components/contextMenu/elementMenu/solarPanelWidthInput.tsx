@@ -430,6 +430,7 @@ const SolarPanelWidthInput = ({
           rejectRef.current = false;
           setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>

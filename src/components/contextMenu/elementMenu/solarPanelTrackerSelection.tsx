@@ -15,11 +15,11 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 
 const SolarPanelTrackerSelection = ({
-  trackerDialogVisible,
-  setTrackerDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  trackerDialogVisible: boolean;
-  setTrackerDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -269,7 +269,7 @@ const SolarPanelTrackerSelection = ({
     <>
       <Modal
         width={550}
-        visible={trackerDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -292,7 +292,7 @@ const SolarPanelTrackerSelection = ({
             key="Cancel"
             onClick={() => {
               setSelectedTrackerType(solarPanel.trackerType);
-              setTrackerDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -302,7 +302,7 @@ const SolarPanelTrackerSelection = ({
             type="primary"
             onClick={() => {
               setTrackerType(selectedTrackerType);
-              setTrackerDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -311,8 +311,9 @@ const SolarPanelTrackerSelection = ({
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setSelectedTrackerType(solarPanel.trackerType);
-          setTrackerDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>

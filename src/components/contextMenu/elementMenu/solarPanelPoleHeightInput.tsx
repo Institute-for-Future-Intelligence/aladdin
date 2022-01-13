@@ -16,11 +16,11 @@ import { Util } from '../../../Util';
 import { ZERO_TOLERANCE } from '../../../constants';
 
 const SolarPanelPoleHeightInput = ({
-  poleHeightDialogVisible,
-  setPoleHeightDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  poleHeightDialogVisible: boolean;
-  setPoleHeightDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -336,7 +336,7 @@ const SolarPanelPoleHeightInput = ({
     <>
       <Modal
         width={550}
-        visible={poleHeightDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -367,7 +367,7 @@ const SolarPanelPoleHeightInput = ({
             onClick={() => {
               setInputPoleHeight(solarPanel.poleHeight);
               rejectRef.current = false;
-              setPoleHeightDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -378,7 +378,7 @@ const SolarPanelPoleHeightInput = ({
             onClick={() => {
               setPoleHeight(inputPoleHeight);
               if (!rejectRef.current) {
-                setPoleHeightDialogVisible(false);
+                setDialogVisible(false);
               }
             }}
           >
@@ -389,8 +389,9 @@ const SolarPanelPoleHeightInput = ({
         onCancel={() => {
           setInputPoleHeight(solarPanel.poleHeight);
           rejectRef.current = false;
-          setPoleHeightDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
@@ -412,7 +413,7 @@ const SolarPanelPoleHeightInput = ({
               onPressEnter={() => {
                 setPoleHeight(inputPoleHeight);
                 if (!rejectRef.current) {
-                  setPoleHeightDialogVisible(false);
+                  setDialogVisible(false);
                 }
               }}
             />

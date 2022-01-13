@@ -16,11 +16,11 @@ import { PolygonModel } from '../../../models/PolygonModel';
 import { Util } from '../../../Util';
 
 const PolygonLineColorSelection = ({
-  colorDialogVisible,
-  setColorDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  colorDialogVisible: boolean;
-  setColorDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -237,7 +237,7 @@ const PolygonLineColorSelection = ({
     <>
       <Modal
         width={600}
-        visible={colorDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -262,7 +262,7 @@ const PolygonLineColorSelection = ({
               if (polygon?.lineColor) {
                 setSelectedColor(polygon.lineColor);
               }
-              setColorDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -272,7 +272,7 @@ const PolygonLineColorSelection = ({
             type="primary"
             onClick={() => {
               setColor(selectedColor);
-              setColorDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -283,8 +283,9 @@ const PolygonLineColorSelection = ({
           if (polygon?.lineColor) {
             setSelectedColor(polygon.lineColor);
           }
-          setColorDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>

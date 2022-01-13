@@ -15,11 +15,11 @@ import { WallModel } from '../../../models/WallModel';
 import { CompactPicker } from 'react-color';
 
 const WallColorSelection = ({
-  colorDialogVisible,
-  setColorDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  colorDialogVisible: boolean;
-  setColorDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -150,7 +150,7 @@ const WallColorSelection = ({
     <>
       <Modal
         width={640}
-        visible={colorDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -175,7 +175,7 @@ const WallColorSelection = ({
               if (wall?.color) {
                 setSelectedColor(wall.color);
               }
-              setColorDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -185,7 +185,7 @@ const WallColorSelection = ({
             type="primary"
             onClick={() => {
               setColor(selectedColor);
-              setColorDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -196,8 +196,9 @@ const WallColorSelection = ({
           if (wall?.color) {
             setSelectedColor(wall.color);
           }
-          setColorDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>

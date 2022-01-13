@@ -16,11 +16,11 @@ import { Util } from '../../../Util';
 import { ZERO_TOLERANCE } from '../../../constants';
 
 const SolarPanelTiltAngleInput = ({
-  tiltDialogVisible,
-  setTiltDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  tiltDialogVisible: boolean;
-  setTiltDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -337,7 +337,7 @@ const SolarPanelTiltAngleInput = ({
     <>
       <Modal
         width={550}
-        visible={tiltDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -370,7 +370,7 @@ const SolarPanelTiltAngleInput = ({
             onClick={() => {
               setInputTiltAngle(solarPanel.tiltAngle);
               rejectRef.current = false;
-              setTiltDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -381,7 +381,7 @@ const SolarPanelTiltAngleInput = ({
             onClick={() => {
               setTiltAngle(inputTiltAngle);
               if (!rejectRef.current) {
-                setTiltDialogVisible(false);
+                setDialogVisible(false);
               }
             }}
           >
@@ -392,8 +392,9 @@ const SolarPanelTiltAngleInput = ({
         onCancel={() => {
           setInputTiltAngle(solarPanel.tiltAngle);
           rejectRef.current = false;
-          setTiltDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
@@ -415,7 +416,7 @@ const SolarPanelTiltAngleInput = ({
               onPressEnter={() => {
                 setTiltAngle(inputTiltAngle);
                 if (!rejectRef.current) {
-                  setTiltDialogVisible(false);
+                  setDialogVisible(false);
                 }
               }}
             />

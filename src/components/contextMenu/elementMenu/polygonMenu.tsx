@@ -102,8 +102,8 @@ export const PolygonMenu = () => {
         {editable && (
           <>
             <PolygonLineColorSelection
-              colorDialogVisible={lineColorDialogVisible}
-              setColorDialogVisible={setLineColorDialogVisible}
+              dialogVisible={lineColorDialogVisible}
+              setDialogVisible={setLineColorDialogVisible}
             />
             <Menu.Item
               key={'polygon-line-color'}
@@ -132,8 +132,8 @@ export const PolygonMenu = () => {
         {editable && (!polygon.textureType || polygon.textureType === PolygonTexture.NoTexture) && (
           <>
             <PolygonFillColorSelection
-              colorDialogVisible={fillColorDialogVisible}
-              setColorDialogVisible={setFillColorDialogVisible}
+              dialogVisible={fillColorDialogVisible}
+              setDialogVisible={setFillColorDialogVisible}
             />
             <Menu.Item
               key={'polygon-fill-color'}
@@ -148,10 +148,7 @@ export const PolygonMenu = () => {
         )}
         {editable && (
           <>
-            <PolygonTextureSelection
-              textureDialogVisible={textureDialogVisible}
-              setTextureDialogVisible={setTextureDialogVisible}
-            />
+            <PolygonTextureSelection dialogVisible={textureDialogVisible} setDialogVisible={setTextureDialogVisible} />
             <Menu.Item
               key={'polygon-texture'}
               style={{ paddingLeft: '36px' }}

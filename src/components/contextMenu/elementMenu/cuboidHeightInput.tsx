@@ -19,11 +19,11 @@ import { ElementModel } from 'src/models/ElementModel';
 import { invalidate } from '@react-three/fiber';
 
 const CuboidHeightInput = ({
-  heightDialogVisible,
-  setHeightDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  heightDialogVisible: boolean;
-  setHeightDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -311,7 +311,7 @@ const CuboidHeightInput = ({
     <>
       <Modal
         width={550}
-        visible={heightDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -334,7 +334,7 @@ const CuboidHeightInput = ({
             key="Cancel"
             onClick={() => {
               setInputLz(cuboid?.lz);
-              setHeightDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -344,7 +344,7 @@ const CuboidHeightInput = ({
             type="primary"
             onClick={() => {
               setLz(inputLz);
-              setHeightDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -353,8 +353,9 @@ const CuboidHeightInput = ({
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setInputLz(cuboid?.lz);
-          setHeightDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
@@ -375,7 +376,7 @@ const CuboidHeightInput = ({
               onChange={(value) => setInputLz(value)}
               onPressEnter={() => {
                 setLz(inputLz);
-                setHeightDialogVisible(false);
+                setDialogVisible(false);
               }}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

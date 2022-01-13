@@ -15,11 +15,11 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { CuboidModel } from '../../../models/CuboidModel';
 
 const CuboidColorSelection = ({
-  colorDialogVisible,
-  setColorDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  colorDialogVisible: boolean;
-  setColorDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -234,7 +234,7 @@ const CuboidColorSelection = ({
     <>
       <Modal
         width={600}
-        visible={colorDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -257,7 +257,7 @@ const CuboidColorSelection = ({
             key="Cancel"
             onClick={() => {
               updateSelectedColor();
-              setColorDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -267,7 +267,7 @@ const CuboidColorSelection = ({
             type="primary"
             onClick={() => {
               setColor(selectedColor);
-              setColorDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -276,8 +276,9 @@ const CuboidColorSelection = ({
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           updateSelectedColor();
-          setColorDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>

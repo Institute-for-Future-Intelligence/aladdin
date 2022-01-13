@@ -15,11 +15,11 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
 
 const FoundationColorSelection = ({
-  colorDialogVisible,
-  setColorDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  colorDialogVisible: boolean;
-  setColorDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -138,7 +138,7 @@ const FoundationColorSelection = ({
     <>
       <Modal
         width={600}
-        visible={colorDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -163,7 +163,7 @@ const FoundationColorSelection = ({
               if (foundation?.color) {
                 setSelectedColor(foundation.color);
               }
-              setColorDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -173,7 +173,7 @@ const FoundationColorSelection = ({
             type="primary"
             onClick={() => {
               setColor(selectedColor);
-              setColorDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -184,8 +184,9 @@ const FoundationColorSelection = ({
           if (foundation?.color) {
             setSelectedColor(foundation.color);
           }
-          setColorDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>

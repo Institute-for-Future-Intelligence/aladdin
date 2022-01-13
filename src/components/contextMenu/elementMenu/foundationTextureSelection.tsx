@@ -22,11 +22,11 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
 
 const FoundationTextureSelection = ({
-  textureDialogVisible,
-  setTextureDialogVisible,
+  dialogVisible,
+  setDialogVisible,
 }: {
-  textureDialogVisible: boolean;
-  setTextureDialogVisible: (b: boolean) => void;
+  dialogVisible: boolean;
+  setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -154,7 +154,7 @@ const FoundationTextureSelection = ({
     <>
       <Modal
         width={500}
-        visible={textureDialogVisible}
+        visible={dialogVisible}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -179,7 +179,7 @@ const FoundationTextureSelection = ({
               if (foundation?.textureType) {
                 setSelectedTexture(foundation.textureType);
               }
-              setTextureDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -189,7 +189,7 @@ const FoundationTextureSelection = ({
             type="primary"
             onClick={() => {
               setTexture(selectedTexture);
-              setTextureDialogVisible(false);
+              setDialogVisible(false);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -200,8 +200,9 @@ const FoundationTextureSelection = ({
           if (foundation?.textureType) {
             setSelectedTexture(foundation.textureType);
           }
-          setTextureDialogVisible(false);
+          setDialogVisible(false);
         }}
+        maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
