@@ -126,6 +126,7 @@ const Ground = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deletedCuboidId]);
 
+  const { camera } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
   const cosAngle = grabRef.current ? Math.cos(grabRef.current.rotation[2]) : 1;
@@ -139,7 +140,9 @@ const Ground = () => {
     if (grabRef.current.type === ObjectType.Human || grabRef.current.type === ObjectType.Tree) {
       intersectionPlaneType = IntersectionPlaneType.Vertical;
       const a = useStore.getState().viewState.orthographic ? 0 : -HALF_PI;
-      intersectionPlaneAngle.set(a, 0, 0, 'ZXY');
+      const { x: cameraX, y: cameraY } = camera.position;
+      const rotation = -Math.atan2(cameraX, cameraY);
+      intersectionPlaneAngle.set(a, 0, rotation, 'ZXY');
     } else if (moveHandleType === MoveHandleType.Top) {
       intersectionPlaneType = IntersectionPlaneType.Horizontal;
       intersectionPlanePosition.set(grabRef.current.cx, grabRef.current.cy, grabRef.current.lz);
