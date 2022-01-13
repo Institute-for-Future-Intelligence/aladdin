@@ -30,6 +30,7 @@ import {
   TreeType,
   User,
   WallTexture,
+  WindowState,
 } from '../types';
 import { DefaultWorldModel } from './DefaultWorldModel';
 import { Box3, Euler, Vector2, Vector3 } from 'three';
@@ -2612,102 +2613,123 @@ export const useStore = create<CommonStoreState>(
                   if (state.pasteNormal) {
                     e.normal = state.pasteNormal.toArray();
                   }
+                  const lang = { lng: state.language };
                   let approved = false;
-                  if (e.type === ObjectType.Foundation || e.type === ObjectType.Cuboid) {
-                    const wallMapNewToOld = new Map<string, string>();
-                    const wallMapOldToNew = new Map<string, string>();
-                    for (const child of state.elements) {
-                      if (child.parentId === elem.id) {
-                        const newChild = ElementModelCloner.clone(
-                          e,
-                          child,
-                          child.cx,
-                          child.cy,
-                          child.cz,
-                          child.type === ObjectType.Polygon,
-                        );
-                        if (newChild) {
-                          if (e.normal) {
-                            newChild.normal = [...child.normal];
-                          }
-                          pastedElements.push(newChild);
-                          if (newChild?.type === ObjectType.Wall || newChild?.type === ObjectType.Roof) {
-                            wallMapNewToOld.set(newChild.id, child.id);
-                            wallMapOldToNew.set(child.id, newChild.id);
-                            for (const grandchild of state.elements) {
-                              if (grandchild.parentId === child.id) {
-                                const newGrandChild = ElementModelCloner.clone(
-                                  newChild,
-                                  grandchild,
-                                  grandchild.cx,
-                                  grandchild.cy,
-                                  grandchild.cz,
-                                );
-                                if (newGrandChild) {
-                                  if (child.normal) {
-                                    grandchild.normal = [...child.normal];
+                  switch (e.type) {
+                    case ObjectType.Foundation:
+                    case ObjectType.Cuboid: {
+                      const wallMapNewToOld = new Map<string, string>();
+                      const wallMapOldToNew = new Map<string, string>();
+                      for (const child of state.elements) {
+                        if (child.parentId === elem.id) {
+                          const newChild = ElementModelCloner.clone(
+                            e,
+                            child,
+                            child.cx,
+                            child.cy,
+                            child.cz,
+                            child.type === ObjectType.Polygon,
+                          );
+                          if (newChild) {
+                            if (e.normal) {
+                              newChild.normal = [...child.normal];
+                            }
+                            pastedElements.push(newChild);
+                            if (newChild?.type === ObjectType.Wall || newChild?.type === ObjectType.Roof) {
+                              wallMapNewToOld.set(newChild.id, child.id);
+                              wallMapOldToNew.set(child.id, newChild.id);
+                              for (const grandchild of state.elements) {
+                                if (grandchild.parentId === child.id) {
+                                  const newGrandChild = ElementModelCloner.clone(
+                                    newChild,
+                                    grandchild,
+                                    grandchild.cx,
+                                    grandchild.cy,
+                                    grandchild.cz,
+                                  );
+                                  if (newGrandChild) {
+                                    if (child.normal) {
+                                      grandchild.normal = [...child.normal];
+                                    }
+                                    pastedElements.push(newGrandChild);
                                   }
-                                  pastedElements.push(newGrandChild);
                                 }
                               }
                             }
                           }
                         }
                       }
-                    }
-                    state.elements.push(...pastedElements);
-                    approved = true;
-                    for (const e of state.elements) {
-                      // search new wall
-                      if (e.type === ObjectType.Wall) {
-                        const oldWallId = wallMapNewToOld.get(e.id);
-                        if (oldWallId) {
-                          for (const o of state.elements) {
-                            if (o.id === oldWallId) {
-                              const left = wallMapOldToNew.get((o as WallModel).leftJoints[0]);
-                              if (left) {
-                                (e as WallModel).leftJoints = [left];
+                      state.elements.push(...pastedElements);
+                      approved = true;
+                      for (const e of state.elements) {
+                        // search new wall
+                        if (e.type === ObjectType.Wall) {
+                          const oldWallId = wallMapNewToOld.get(e.id);
+                          if (oldWallId) {
+                            for (const o of state.elements) {
+                              if (o.id === oldWallId) {
+                                const left = wallMapOldToNew.get((o as WallModel).leftJoints[0]);
+                                if (left) {
+                                  (e as WallModel).leftJoints = [left];
+                                }
+                                const right = wallMapOldToNew.get((o as WallModel).rightJoints[0]);
+                                if (right) {
+                                  (e as WallModel).rightJoints = [right];
+                                }
+                                break;
                               }
-                              const right = wallMapOldToNew.get((o as WallModel).rightJoints[0]);
-                              if (right) {
-                                (e as WallModel).rightJoints = [right];
-                              }
-                              break;
                             }
                           }
                         }
                       }
+                      break;
                     }
-                  } else if (e.type === ObjectType.SolarPanel) {
-                    const lang = { lng: state.language };
-                    if (state.overlapWithSibling(e)) {
-                      // overlap, do not approve
-                      showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
-                    } else {
-                      if (newParent) {
-                        approved = Util.isSolarPanelWithinHorizontalSurface(e as SolarPanelModel, newParent);
-                        if (!approved) {
-                          showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
-                        }
+                    case ObjectType.SolarPanel: {
+                      if (state.overlapWithSibling(e)) {
+                        // overlap, do not approve
+                        showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
                       } else {
-                        approved = true;
+                        if (newParent) {
+                          approved = Util.isSolarPanelWithinHorizontalSurface(e as SolarPanelModel, newParent);
+                          if (!approved) {
+                            showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                          }
+                        } else {
+                          approved = true;
+                        }
                       }
+                      break;
                     }
-                  } else {
-                    approved = true;
-                    if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
-                      if (newParent) {
-                        // paste on a parent
-                        const parent = state.getElementById(e.parentId);
-                        if (parent) {
-                          const p = Util.relativePoint(state.pastePoint, parent);
-                          e.cx = p.x;
-                          e.cy = p.y;
-                          e.cz = p.z;
+                    case ObjectType.Window: {
+                      switch (Util.checkWindowState(e)) {
+                        case WindowState.Valid:
+                          approved = true;
+                          break;
+                        case WindowState.OverLap:
+                          showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
+                          break;
+                        case WindowState.OutsideBoundary:
+                          showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                          break;
+                      }
+                      break;
+                    }
+                    default: {
+                      approved = true;
+                      if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
+                        if (newParent) {
+                          // paste on a parent
+                          const parent = state.getElementById(e.parentId);
+                          if (parent) {
+                            const p = Util.relativePoint(state.pastePoint, parent);
+                            e.cx = p.x;
+                            e.cy = p.y;
+                            e.cz = p.z;
+                          }
+                        } else {
+                          // paste on the ground
+                          e.parentId = GROUND_ID;
                         }
-                      } else {
-                        // paste on the ground
-                        e.parentId = GROUND_ID;
                       }
                     }
                   }
@@ -2747,6 +2769,40 @@ export const useStore = create<CommonStoreState>(
                 if (e) {
                   let approved = false;
                   switch (e.type) {
+                    case ObjectType.Window:
+                      const hx = e.lx / 2;
+                      let windowState: WindowState | null = null;
+                      e.cx += hx * 3;
+                      // searching +x direction
+                      while (e.cx + hx < 0.5) {
+                        if (Util.checkWindowState(e) === WindowState.Valid) {
+                          state.elements.push(e);
+                          // state.elementsToPaste = [e];
+                          approved = true;
+                          break;
+                        } else {
+                          e.cx += hx;
+                        }
+                      }
+                      // searching -x direction
+                      if (!approved) {
+                        e.cx = elem.cx - hx * 3;
+                        while (e.cx - hx > -0.5) {
+                          if (Util.checkWindowState(e) === WindowState.Valid) {
+                            state.elements.push(e);
+                            state.elementsToPaste = [e];
+                            approved = true;
+                            break;
+                          } else {
+                            e.cx -= hx;
+                          }
+                        }
+                      }
+                      if (!approved) {
+                        const lang = { lng: state.language };
+                        showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                      }
+                      break;
                     case ObjectType.Human:
                       e.cx += 1;
                       state.elements.push(e);

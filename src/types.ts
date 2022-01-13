@@ -277,3 +277,9 @@ export enum WallSide {
   Left = 'Left',
   Right = 'Right',
 }
+
+export enum WindowState {
+  Valid = 'Valid',
+  OverLap = 'OverLap',
+  OutsideBoundary = 'OutsideBoundary',
+}

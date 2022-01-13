@@ -793,6 +793,7 @@ const Wall = ({
               setCommonStore((state) => {
                 if (e.intersections.length > 0 && e.intersections[0].object === outSideWallRef.current) {
                   state.contextMenuObjectType = ObjectType.Wall;
+                  state.pastePoint.copy(e.intersections[0].point);
                 }
               });
             }}

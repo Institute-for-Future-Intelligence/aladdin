@@ -6,17 +6,18 @@ import React, { useState } from 'react';
 import { Menu } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { Copy, Cut, Lock } from '../menuItems';
+import { Copy, Cut, Lock, Paste } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import WallTextureSelection from './wallTextureSelection';
 import WallHeightInput from './wallHeightInput';
 import WallThicknessInput from './wallThicknessInput';
 import WallColorSelection from './wallColorSelection';
 import { WallModel } from 'src/models/WallModel';
-import { WallTexture } from 'src/types';
+import { ObjectType, WallTexture } from 'src/types';
 
 export const WallMenu = () => {
   const getSelectedElement = useStore(Selector.getSelectedElement);
+  const elementsToPaste = useStore(Selector.elementsToPaste);
   const language = useStore(Selector.language);
 
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
@@ -29,11 +30,22 @@ export const WallMenu = () => {
 
   const wall = getSelectedElement() as WallModel;
 
+  const legalToPaste = () => {
+    if (elementsToPaste && elementsToPaste.length > 0) {
+      const e = elementsToPaste[0];
+      if (e.type === ObjectType.Window) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   return (
     wall && (
       <>
-        <Copy keyName={'wall-copy'} />
-        <Cut keyName={'wall-cut'} />
+        {legalToPaste() && <Paste keyName={'wall-paste'} />}
+        {/* <Copy keyName={'wall-copy'} /> */}
+        {/* <Cut keyName={'wall-cut'} /> */}
         <Lock keyName={'wall-lock'} />
 
         <WallTextureSelection

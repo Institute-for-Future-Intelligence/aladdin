@@ -17,12 +17,13 @@ import {
 import { Euler, Object3D, Vector2, Vector3 } from 'three';
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
-import { MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType } from './types';
+import { MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType, WindowState } from './types';
 import { PvModel } from './models/PvModel';
 import { SensorModel } from './models/SensorModel';
 import { WallModel } from './models/WallModel';
 import { PolygonModel } from './models/PolygonModel';
 import { Point2 } from './models/Point2';
+import { useStore } from './stores/common';
 
 export class Util {
   static lineIntersection(from1: Point2, to1: Point2, from2: Point2, to2: Point2): Point2 | undefined {
@@ -393,9 +394,56 @@ export class Util {
     );
   }
 
+  static checkWindowState(elem: ElementModel): WindowState {
+    const eMinX = elem.cx - elem.lx / 2;
+    const eMaxX = elem.cx + elem.lx / 2;
+    const eMinZ = elem.cz - elem.lz / 2;
+    const eMaxZ = elem.cz + elem.lz / 2;
+    if (eMinX < -0.5 || eMaxX > 0.5 || eMinZ < -0.5 || eMaxZ > 0.5) {
+      return WindowState.OutsideBoundary;
+    }
+    for (const e of useStore.getState().elements) {
+      // check collision with other windows
+      if (e.type === ObjectType.Window && e.parentId === elem.parentId && e.id !== elem.id) {
+        // target window
+        const tMinX = e.cx - e.lx / 2;
+        const tMaxX = e.cx + e.lx / 2;
+        const tMinZ = e.cz - e.lz / 2;
+        const tMaxZ = e.cz + e.lz / 2;
+        if (
+          ((eMinX >= tMinX && eMinX <= tMaxX) ||
+            (eMaxX >= tMinX && eMaxX <= tMaxX) ||
+            (tMinX >= eMinX && tMinX <= eMaxX) ||
+            (tMaxX >= eMinX && tMaxX <= eMaxX)) &&
+          ((eMinZ >= tMinZ && eMinZ <= tMaxZ) ||
+            (eMaxZ >= tMinZ && eMaxZ <= tMaxZ) ||
+            (tMinZ >= eMinZ && tMinZ <= eMaxZ) ||
+            (tMaxZ >= eMinZ && tMaxZ <= eMaxZ))
+        ) {
+          return WindowState.OverLap;
+        }
+      }
+    }
+    return WindowState.Valid;
+  }
+
   static relativeCoordinates(x: number, y: number, z: number, parent: ElementModel): Vector3 {
-    const v = new Vector3(x - parent.cx, y - parent.cy, z - parent.cz);
-    v.applyEuler(new Euler().fromArray(parent.rotation.map((a) => -a)));
+    const v = new Vector3(x, y, z);
+    if (parent.type === ObjectType.Wall) {
+      const parentPos = new Vector3(parent.cx, parent.cy); // relative
+      const grandParent = useStore.getState().getElementById(parent.parentId);
+      if (grandParent) {
+        const grandParentPos = new Vector3(grandParent.cx, grandParent.cy); // world
+        parentPos
+          .applyEuler(new Euler(0, 0, grandParent.rotation[2]))
+          .add(grandParentPos)
+          .setZ(grandParent.lz + parent.lz / 2); // world
+        v.sub(parentPos).applyEuler(new Euler(0, 0, -(parent as WallModel).relativeAngle));
+      }
+    } else {
+      v.set(x - parent.cx, y - parent.cy, z - parent.cz);
+      v.applyEuler(new Euler().fromArray(parent.rotation.map((a) => -a)));
+    }
     v.x /= parent.lx;
     v.y /= parent.ly;
     v.z /= parent.lz;
