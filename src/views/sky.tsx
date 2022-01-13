@@ -88,8 +88,10 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const [intersectionPlaneType, setIntersectionPlaneType] = useState(IntersectionPlaneType.Sky);
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
   const intersectionPlaneAngle = useMemo(() => new Euler(), []);
-  if (grabRef.current && resizeHandleType && intersectionPlaneType !== IntersectionPlaneType.Vertical) {
-    setIntersectionPlaneType(IntersectionPlaneType.Vertical);
+  if (grabRef.current && resizeHandleType) {
+    if (intersectionPlaneType !== IntersectionPlaneType.Vertical) {
+      setIntersectionPlaneType(IntersectionPlaneType.Vertical);
+    }
     const handlePosition = getResizeHandlePosition(grabRef.current, resizeHandleType);
     const cameraDir = getCameraDirection();
     const rotation = -Math.atan2(cameraDir.x, cameraDir.y);
@@ -684,12 +686,11 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
           }
         }
         if (
+          useStore.getState().moveHandleType &&
           (elem.type === ObjectType.Human || elem.type === ObjectType.Tree) &&
           (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE ||
             ray.intersectObjects([meshRef.current!]).length > 0)
         ) {
-          console.log(elem.type);
-
           const screenPosition = newPositionRef.current.clone().project(camera);
           const screenLx = newPositionRef.current
             .clone()

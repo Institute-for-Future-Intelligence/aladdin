@@ -143,6 +143,7 @@ const Ground = () => {
       const { x: cameraX, y: cameraY } = camera.position;
       const rotation = -Math.atan2(cameraX, cameraY);
       intersectionPlaneAngle.set(a, 0, rotation, 'ZXY');
+      intersectionPlanePosition.set(grabRef.current.cx, grabRef.current.cy, 0);
     } else if (moveHandleType === MoveHandleType.Top) {
       intersectionPlaneType = IntersectionPlaneType.Horizontal;
       intersectionPlanePosition.set(grabRef.current.cx, grabRef.current.cy, grabRef.current.lz);
