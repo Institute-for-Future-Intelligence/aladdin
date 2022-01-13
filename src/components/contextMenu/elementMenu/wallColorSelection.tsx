@@ -30,6 +30,9 @@ const WallColorSelection = ({
   const addUndoable = useStore(Selector.addUndoable);
   const wallActionScope = useStore(Selector.wallActionScope);
   const setWallActionScope = useStore(Selector.setWallActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const wall = getSelectedElement() as WallModel;
   const [selectedColor, setSelectedColor] = useState<string>(wall?.color ?? 'white');
@@ -77,6 +80,7 @@ const WallColorSelection = ({
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateWallColorForAll(value);
+        setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (wall.foundationId) {
@@ -108,6 +112,7 @@ const WallColorSelection = ({
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
           updateWallColorAboveFoundation(wall.foundationId, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       default:
@@ -128,6 +133,7 @@ const WallColorSelection = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateWallColorById(wall.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);
@@ -144,6 +150,20 @@ const WallColorSelection = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const cancel = () => {
+    if (wall?.color) {
+      setSelectedColor(wall.color);
+    }
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setColor(selectedColor);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   return (
@@ -169,35 +189,15 @@ const WallColorSelection = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              if (wall?.color) {
-                setSelectedColor(wall.color);
-              }
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setColor(selectedColor);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          if (wall?.color) {
-            setSelectedColor(wall.color);
-          }
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

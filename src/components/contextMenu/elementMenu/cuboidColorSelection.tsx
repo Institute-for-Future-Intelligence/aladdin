@@ -31,6 +31,9 @@ const CuboidColorSelection = ({
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
   const selectedSideIndex = useStore(Selector.selectedSideIndex);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const cuboid = getSelectedElement() as CuboidModel;
   const [selectedColor, setSelectedColor] = useState<string>(cuboid?.color ?? 'gray');
@@ -147,6 +150,7 @@ const CuboidColorSelection = ({
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateCuboidColorForAll(value);
+        setApplyCount(applyCount + 1);
         break;
       case Scope.OnlyThisObject:
         if (cuboid) {
@@ -176,6 +180,7 @@ const CuboidColorSelection = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateCuboidColorById(cuboid.id, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       default:
@@ -209,6 +214,7 @@ const CuboidColorSelection = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateCuboidColorBySide(selectedSideIndex, cuboid.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);
@@ -225,6 +231,18 @@ const CuboidColorSelection = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const cancel = () => {
+    updateSelectedColor();
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setColor(selectedColor);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   const currentColor =
@@ -253,31 +271,15 @@ const CuboidColorSelection = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              updateSelectedColor();
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setColor(selectedColor);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          updateSelectedColor();
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

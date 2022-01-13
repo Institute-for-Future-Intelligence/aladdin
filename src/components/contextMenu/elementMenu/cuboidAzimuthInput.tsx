@@ -30,6 +30,9 @@ const CuboidAzimuthInput = ({
   const addUndoable = useStore(Selector.addUndoable);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const cuboid = getSelectedElement() as CuboidModel;
   const [inputAzimuth, setInputAzimuth] = useState<number>(cuboid?.rotation[2] ?? 0);
@@ -98,6 +101,7 @@ const CuboidAzimuthInput = ({
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateElementRotationForAll(ObjectType.Cuboid, 0, 0, value);
+        setApplyCount(applyCount + 1);
         break;
       default:
         if (cuboid) {
@@ -117,6 +121,7 @@ const CuboidAzimuthInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateElementRotationById(cuboid.id, 0, 0, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);
@@ -133,6 +138,18 @@ const CuboidAzimuthInput = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const cancel = () => {
+    setInputAzimuth(cuboid?.rotation[2]);
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setAzimuth(inputAzimuth);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   return (
@@ -158,31 +175,15 @@ const CuboidAzimuthInput = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              setInputAzimuth(cuboid?.rotation[2]);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setAzimuth(inputAzimuth);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          setInputAzimuth(cuboid?.rotation[2]);
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
@@ -202,10 +203,7 @@ const CuboidAzimuthInput = ({
               value={Util.toDegrees(inputAzimuth)}
               formatter={(a) => Number(a).toFixed(1) + '°'}
               onChange={(value) => setInputAzimuth(Util.toRadians(value))}
-              onPressEnter={() => {
-                setAzimuth(inputAzimuth);
-                setDialogVisible(false);
-              }}
+              onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [-180°, 180°]

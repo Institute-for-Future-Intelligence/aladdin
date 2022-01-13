@@ -43,6 +43,9 @@ const PolygonTextureSelection = ({
   const addUndoable = useStore(Selector.addUndoable);
   const polygonActionScope = useStore(Selector.polygonActionScope);
   const setPolygonActionScope = useStore(Selector.setPolygonActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const polygon = getSelectedElement() as PolygonModel;
   const [selectedTexture, setSelectedTexture] = useState<PolygonTexture>(
@@ -137,6 +140,7 @@ const PolygonTextureSelection = ({
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updatePolygonTextureForAll(value);
+        setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
         if (polygon.parentId) {
@@ -176,6 +180,7 @@ const PolygonTextureSelection = ({
             } as UndoableChangeGroup;
             addUndoable(undoableChangeOnSurface);
             updatePolygonTextureOnSurface(polygon.parentId, polygon.normal, value);
+            setApplyCount(applyCount + 1);
           }
         }
         break;
@@ -209,6 +214,7 @@ const PolygonTextureSelection = ({
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
           updatePolygonTextureAboveFoundation(polygon.foundationId, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       default:
@@ -228,6 +234,7 @@ const PolygonTextureSelection = ({
         } as UndoableChange;
         addUndoable(undoableChange);
         updatePolygonTextureById(polygon.id, value);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };
@@ -243,6 +250,20 @@ const PolygonTextureSelection = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const cancel = () => {
+    if (polygon?.textureType) {
+      setSelectedTexture(polygon.textureType);
+    }
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setTexture(selectedTexture);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   return (
@@ -268,35 +289,15 @@ const PolygonTextureSelection = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              if (polygon?.textureType) {
-                setSelectedTexture(polygon.textureType);
-              }
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setTexture(selectedTexture);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          if (polygon?.textureType) {
-            setSelectedTexture(polygon.textureType);
-          }
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

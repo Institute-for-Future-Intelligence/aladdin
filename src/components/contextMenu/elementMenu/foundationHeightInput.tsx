@@ -37,6 +37,9 @@ const FoundationHeightInput = ({
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
   const setCommonStore = useStore(Selector.set);
   const setElementPosition = useStore(Selector.setElementPosition);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const foundation = getSelectedElement() as FoundationModel;
   const [inputLz, setInputLz] = useState<number>(foundation?.lz ?? 0);
@@ -242,6 +245,7 @@ const FoundationHeightInput = ({
         addUndoable(undoableChangeAll);
         updateElementLzForAll(ObjectType.Foundation, value);
         updateElementCzForAll(ObjectType.Foundation, value / 2);
+        setApplyCount(applyCount + 1);
         break;
       default:
         if (foundation) {
@@ -288,6 +292,7 @@ const FoundationHeightInput = ({
             },
           } as UndoableChange;
           addUndoable(undoableChange);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);
@@ -304,6 +309,18 @@ const FoundationHeightInput = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const cancel = () => {
+    setInputLz(foundation?.lz);
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setLz(inputLz);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   return (
@@ -329,31 +346,15 @@ const FoundationHeightInput = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              setInputLz(foundation?.lz);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setLz(inputLz);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          setInputLz(foundation?.lz);
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
@@ -373,10 +374,7 @@ const FoundationHeightInput = ({
               value={inputLz}
               formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => setInputLz(value)}
-              onPressEnter={() => {
-                setLz(inputLz);
-                setDialogVisible(false);
-              }}
+              onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [0.1, 10] {i18n.t('word.MeterAbbreviation', lang)}

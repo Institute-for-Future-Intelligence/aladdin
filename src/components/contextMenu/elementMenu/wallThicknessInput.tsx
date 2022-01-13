@@ -29,6 +29,9 @@ const WallThicknessInput = ({
   const addUndoable = useStore(Selector.addUndoable);
   const wallActionScope = useStore(Selector.wallActionScope);
   const setWallActionScope = useStore(Selector.setWallActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const wall = getSelectedElement() as WallModel;
   const [inputThickness, setInputThickness] = useState<number>(wall?.ly ?? 0.3);
@@ -76,6 +79,7 @@ const WallThicknessInput = ({
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateWallThicknessForAll(value);
+        setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (wall.foundationId) {
@@ -107,6 +111,7 @@ const WallThicknessInput = ({
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
           updateWallThicknessAboveFoundation(wall.foundationId, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       default:
@@ -127,6 +132,7 @@ const WallThicknessInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateWallThicknessById(wall.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);
@@ -143,6 +149,18 @@ const WallThicknessInput = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const cancel = () => {
+    setInputThickness(wall.ly ?? 0.3);
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setThickness(inputThickness);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   return (
@@ -168,31 +186,15 @@ const WallThicknessInput = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              setInputThickness(wall.ly ?? 0.3);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setThickness(inputThickness);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          setInputThickness(wall.ly ?? 0.3);
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
@@ -212,10 +214,7 @@ const WallThicknessInput = ({
               value={inputThickness}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => setInputThickness(value)}
-              onPressEnter={() => {
-                setThickness(inputThickness);
-                setDialogVisible(false);
-              }}
+              onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [0.1, 1] {i18n.t('word.MeterAbbreviation', lang)}

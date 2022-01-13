@@ -29,6 +29,9 @@ const WallHeightInput = ({
   const addUndoable = useStore(Selector.addUndoable);
   const wallActionScope = useStore(Selector.wallActionScope);
   const setWallActionScope = useStore(Selector.setWallActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const wall = getSelectedElement() as WallModel;
   const [inputHeight, setInputHeight] = useState<number>(wall?.lz ?? 0);
@@ -76,6 +79,7 @@ const WallHeightInput = ({
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateWallHeightForAll(value);
+        setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (wall.foundationId) {
@@ -107,6 +111,7 @@ const WallHeightInput = ({
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
           updateWallHeightAboveFoundation(wall.foundationId, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       default:
@@ -127,6 +132,7 @@ const WallHeightInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateWallHeightById(wall.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);
@@ -143,6 +149,18 @@ const WallHeightInput = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const cancel = () => {
+    setInputHeight(wall.lz);
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setHeight(inputHeight);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   return (
@@ -168,31 +186,15 @@ const WallHeightInput = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              setInputHeight(wall.lz);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setHeight(inputHeight);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          setInputHeight(wall.lz);
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
@@ -212,10 +214,7 @@ const WallHeightInput = ({
               value={inputHeight}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => setInputHeight(value)}
-              onPressEnter={() => {
-                setHeight(inputHeight);
-                setDialogVisible(false);
-              }}
+              onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [1, 100] {i18n.t('word.MeterAbbreviation', lang)}

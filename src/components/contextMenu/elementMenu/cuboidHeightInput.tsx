@@ -37,6 +37,9 @@ const CuboidHeightInput = ({
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
   const setCommonStore = useStore(Selector.set);
   const setElementPosition = useStore(Selector.setElementPosition);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const cuboid = getSelectedElement() as CuboidModel;
   const [inputLz, setInputLz] = useState<number>(cuboid?.lz ?? 0);
@@ -242,6 +245,7 @@ const CuboidHeightInput = ({
         addUndoable(undoableChangeAll);
         updateElementLzForAll(ObjectType.Cuboid, value);
         updateElementCzForAll(ObjectType.Cuboid, value / 2);
+        setApplyCount(applyCount + 1);
         break;
       default:
         if (cuboid) {
@@ -289,6 +293,7 @@ const CuboidHeightInput = ({
             },
           } as UndoableChange;
           addUndoable(undoableChange);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);
@@ -305,6 +310,18 @@ const CuboidHeightInput = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const cancel = () => {
+    setInputLz(cuboid?.lz);
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setLz(inputLz);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   return (
@@ -330,31 +347,15 @@ const CuboidHeightInput = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              setInputLz(cuboid?.lz);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setLz(inputLz);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          setInputLz(cuboid?.lz);
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
@@ -374,10 +375,7 @@ const CuboidHeightInput = ({
               value={inputLz}
               formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => setInputLz(value)}
-              onPressEnter={() => {
-                setLz(inputLz);
-                setDialogVisible(false);
-              }}
+              onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [1, 1000] {i18n.t('word.MeterAbbreviation', lang)}

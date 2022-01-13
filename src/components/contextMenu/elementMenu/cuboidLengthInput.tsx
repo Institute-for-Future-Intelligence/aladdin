@@ -41,6 +41,9 @@ const CuboidLengthInput = ({
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
   const setCommonStore = useStore(Selector.set);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const cuboid = getSelectedElement() as CuboidModel;
   const [inputLx, setInputLx] = useState<number>(cuboid?.lx ?? 0);
@@ -370,6 +373,7 @@ const CuboidLengthInput = ({
             },
           } as UndoableSizeGroupChange;
           addUndoable(undoableChangeAll);
+          setApplyCount(applyCount + 1);
           break;
         default:
           updateLxWithChildren(cuboid, value);
@@ -425,6 +429,7 @@ const CuboidLengthInput = ({
             },
           } as UndoableSizeChange;
           addUndoable(undoableChange);
+          setApplyCount(applyCount + 1);
       }
     }
     setUpdateFlag(!updateFlag);
@@ -440,6 +445,21 @@ const CuboidLengthInput = ({
         top: -targetRect.top + uiData.y,
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
+    }
+  };
+
+  const cancel = () => {
+    setInputLx(cuboid?.lx);
+    rejectRef.current = false;
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setLx(inputLx);
+    if (!rejectRef.current) {
+      setDialogVisible(false);
+      setApplyCount(0);
     }
   };
 
@@ -473,35 +493,15 @@ const CuboidLengthInput = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              setInputLx(cuboid?.lx);
-              rejectRef.current = false;
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setLx(inputLx);
-              if (!rejectRef.current) {
-                setDialogVisible(false);
-              }
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          setInputLx(cuboid?.lx);
-          rejectRef.current = false;
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
@@ -521,12 +521,7 @@ const CuboidLengthInput = ({
               value={inputLx}
               formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => setInputLx(value)}
-              onPressEnter={() => {
-                setLx(inputLx);
-                if (!rejectRef.current) {
-                  setDialogVisible(false);
-                }
-              }}
+              onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [1, 500] {i18n.t('word.MeterAbbreviation', lang)}

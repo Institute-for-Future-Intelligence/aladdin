@@ -25,6 +25,9 @@ const PolygonLineStyleSelection = ({
   const addUndoable = useStore(Selector.addUndoable);
   const polygonActionScope = useStore(Selector.polygonActionScope);
   const setPolygonActionScope = useStore(Selector.setPolygonActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const polygon = getSelectedElement() as PolygonModel;
   const [selectedLineStyle, setSelectedLineStyle] = useState<LineStyle>(polygon?.lineStyle ?? LineStyle.Solid);
@@ -70,6 +73,7 @@ const PolygonLineStyleSelection = ({
     } as UndoableChange;
     addUndoable(undoableChange);
     updatePolygonLineStyleById(polygon.id, value);
+    setApplyCount(applyCount + 1);
     setUpdateFlag(!updateFlag);
   };
 
@@ -84,6 +88,20 @@ const PolygonLineStyleSelection = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const cancel = () => {
+    if (polygon?.lineStyle) {
+      setSelectedLineStyle(polygon.lineStyle);
+    }
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setLineStyle(selectedLineStyle);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   return (
@@ -109,35 +127,15 @@ const PolygonLineStyleSelection = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              if (polygon?.lineStyle) {
-                setSelectedLineStyle(polygon.lineStyle);
-              }
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setLineStyle(selectedLineStyle);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          if (polygon?.lineStyle) {
-            setSelectedLineStyle(polygon.lineStyle);
-          }
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

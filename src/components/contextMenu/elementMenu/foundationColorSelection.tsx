@@ -29,6 +29,9 @@ const FoundationColorSelection = ({
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const foundation = getSelectedElement() as FoundationModel;
   const [selectedColor, setSelectedColor] = useState<string>(foundation?.color ?? 'gray');
@@ -97,6 +100,7 @@ const FoundationColorSelection = ({
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateElementColorForAll(ObjectType.Foundation, value);
+        setApplyCount(applyCount + 1);
         break;
       default:
         if (foundation) {
@@ -116,6 +120,7 @@ const FoundationColorSelection = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateElementColorById(foundation.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);
@@ -132,6 +137,20 @@ const FoundationColorSelection = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const cancel = () => {
+    if (foundation?.color) {
+      setSelectedColor(foundation.color);
+    }
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setColor(selectedColor);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   return (
@@ -157,35 +176,15 @@ const FoundationColorSelection = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              if (foundation?.color) {
-                setSelectedColor(foundation.color);
-              }
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setColor(selectedColor);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          if (foundation?.color) {
-            setSelectedColor(foundation.color);
-          }
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

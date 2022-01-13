@@ -41,6 +41,9 @@ const CuboidTextureSelection = ({
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
   const selectedSideIndex = useStore(Selector.selectedSideIndex);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const cuboid = getSelectedElement() as CuboidModel;
   const [selectedTexture, setSelectedTexture] = useState<CuboidTexture>(
@@ -140,6 +143,7 @@ const CuboidTextureSelection = ({
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateCuboidTextureForAll(value);
+        setApplyCount(applyCount + 1);
         break;
       case Scope.OnlyThisObject:
         if (cuboid) {
@@ -167,6 +171,7 @@ const CuboidTextureSelection = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateCuboidTextureById(cuboid.id, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       default:
@@ -200,6 +205,7 @@ const CuboidTextureSelection = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateCuboidTextureBySide(selectedSideIndex, cuboid.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);
@@ -216,6 +222,20 @@ const CuboidTextureSelection = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const cancel = () => {
+    if (cuboid?.textureTypes && selectedSideIndex >= 0) {
+      setSelectedTexture(cuboid.textureTypes[selectedSideIndex]);
+    }
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setTexture(selectedTexture);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   return (
@@ -241,35 +261,15 @@ const CuboidTextureSelection = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              if (cuboid?.textureTypes && selectedSideIndex >= 0) {
-                setSelectedTexture(cuboid.textureTypes[selectedSideIndex]);
-              }
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setTexture(selectedTexture);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          if (cuboid?.textureTypes && selectedSideIndex >= 0) {
-            setSelectedTexture(cuboid.textureTypes[selectedSideIndex]);
-          }
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

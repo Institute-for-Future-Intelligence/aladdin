@@ -36,6 +36,9 @@ const FoundationTextureSelection = ({
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const foundation = getSelectedElement() as FoundationModel;
   const [selectedTexture, setSelectedTexture] = useState<FoundationTexture>(
@@ -107,6 +110,7 @@ const FoundationTextureSelection = ({
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateFoundationTextureForAll(value);
+        setApplyCount(applyCount + 1);
         break;
       default:
         if (foundation) {
@@ -132,6 +136,7 @@ const FoundationTextureSelection = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateFoundationTextureById(foundation.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);
@@ -148,6 +153,20 @@ const FoundationTextureSelection = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const cancel = () => {
+    if (foundation?.textureType) {
+      setSelectedTexture(foundation.textureType);
+    }
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setTexture(selectedTexture);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   return (
@@ -173,35 +192,15 @@ const FoundationTextureSelection = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              if (foundation?.textureType) {
-                setSelectedTexture(foundation.textureType);
-              }
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setTexture(selectedTexture);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          if (foundation?.textureType) {
-            setSelectedTexture(foundation.textureType);
-          }
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

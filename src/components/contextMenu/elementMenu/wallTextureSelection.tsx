@@ -41,6 +41,9 @@ const WallTextureSelection = ({
   const addUndoable = useStore(Selector.addUndoable);
   const wallActionScope = useStore(Selector.wallActionScope);
   const setWallActionScope = useStore(Selector.setWallActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const wall = getSelectedElement() as WallModel;
   const [selectedTexture, setSelectedTexture] = useState<WallTexture>(wall?.textureType ?? WallTexture.Default);
@@ -89,6 +92,7 @@ const WallTextureSelection = ({
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateWallTextureForAll(value);
+        setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (wall.foundationId) {
@@ -120,6 +124,7 @@ const WallTextureSelection = ({
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
           updateWallTextureAboveFoundation(wall.foundationId, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       default:
@@ -140,6 +145,7 @@ const WallTextureSelection = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateWallTextureById(wall.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);
@@ -156,6 +162,20 @@ const WallTextureSelection = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const cancel = () => {
+    if (wall?.textureType) {
+      setSelectedTexture(wall.textureType);
+    }
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setTexture(selectedTexture);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   return (
@@ -181,35 +201,15 @@ const WallTextureSelection = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              if (wall?.textureType) {
-                setSelectedTexture(wall.textureType);
-              }
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setTexture(selectedTexture);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          if (wall?.textureType) {
-            setSelectedTexture(wall.textureType);
-          }
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
