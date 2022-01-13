@@ -46,6 +46,9 @@ const SolarPanelLayoutWizard = ({
   const interRowSpacing = useStore.getState().solarPanelArrayLayoutParams.interRowSpacing;
   const poleHeight = useStore.getState().solarPanelArrayLayoutParams.poleHeight;
   const poleSpacing = useStore.getState().solarPanelArrayLayoutParams.poleSpacing;
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const [warningDialogVisible, setWarningDialogVisible] = useState(false);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -246,6 +249,7 @@ const SolarPanelLayoutWizard = ({
           },
         } as UndoableLayout;
         addUndoable(undoableLayout);
+        setApplyCount(applyCount + 1);
       }
     }
     changedRef.current = false;
@@ -320,6 +324,8 @@ const SolarPanelLayoutWizard = ({
             key="Cancel"
             onClick={() => {
               setDialogVisible(false);
+              revertApply();
+              changedRef.current = true;
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -342,6 +348,7 @@ const SolarPanelLayoutWizard = ({
                 }
               }
               setDialogVisible(false);
+              setApplyCount(0);
             }}
           >
             {i18n.t('word.OK', lang)}
@@ -350,6 +357,8 @@ const SolarPanelLayoutWizard = ({
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setDialogVisible(false);
+          revertApply();
+          changedRef.current = true;
         }}
         maskClosable={false}
         destroyOnClose={false}

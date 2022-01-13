@@ -35,7 +35,7 @@ const SolarPanelTiltAngleInput = ({
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const undoManager = useStore(Selector.undoManager);
+  const revertApply = useStore(Selector.revertApply);
 
   const solarPanel = getSelectedElement() as SolarPanelModel;
   const [inputTiltAngle, setInputTiltAngle] = useState<number>(solarPanel?.tiltAngle ?? 0);
@@ -378,12 +378,7 @@ const SolarPanelTiltAngleInput = ({
               setInputTiltAngle(solarPanel.tiltAngle);
               rejectRef.current = false;
               setDialogVisible(false);
-              if (applyCount) {
-                for (let i = 0; i < applyCount; i++) {
-                  undoManager.undo();
-                }
-                setApplyCount(0);
-              }
+              revertApply();
             }}
           >
             {i18n.t('word.Cancel', lang)}
@@ -407,6 +402,7 @@ const SolarPanelTiltAngleInput = ({
           setInputTiltAngle(solarPanel.tiltAngle);
           rejectRef.current = false;
           setDialogVisible(false);
+          revertApply();
         }}
         maskClosable={false}
         destroyOnClose={false}

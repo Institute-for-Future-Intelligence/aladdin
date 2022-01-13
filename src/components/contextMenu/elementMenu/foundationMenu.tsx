@@ -36,6 +36,7 @@ export const FoundationMenu = () => {
   const elementsToPaste = useStore(Selector.elementsToPaste);
   const addElement = useStore(Selector.addElement);
   const removeElementById = useStore(Selector.removeElementById);
+  const setApplyCount = useStore(Selector.setApplyCount);
 
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
@@ -282,6 +283,7 @@ export const FoundationMenu = () => {
               key={'foundation-color'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
+                setApplyCount(0);
                 setColorDialogVisible(true);
               }}
             >
@@ -300,6 +302,7 @@ export const FoundationMenu = () => {
               key={'foundation-texture'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
+                setApplyCount(0);
                 setTextureDialogVisible(true);
               }}
             >
@@ -311,6 +314,7 @@ export const FoundationMenu = () => {
               key={'foundation-length'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
+                setApplyCount(0);
                 setLengthDialogVisible(true);
               }}
             >
@@ -322,6 +326,7 @@ export const FoundationMenu = () => {
               key={'foundation-width'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
+                setApplyCount(0);
                 setWidthDialogVisible(true);
               }}
             >
@@ -333,6 +338,7 @@ export const FoundationMenu = () => {
               key={'foundation-height'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
+                setApplyCount(0);
                 setHeightDialogVisible(true);
               }}
             >
@@ -344,6 +350,7 @@ export const FoundationMenu = () => {
               key={'foundation-azimuth'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
+                setApplyCount(0);
                 setAzimuthDialogVisible(true);
               }}
             >

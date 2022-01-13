@@ -25,6 +25,7 @@ export const PolygonMenu = () => {
   const updatePolygonFilledById = useStore(Selector.updatePolygonFilledById);
   const addUndoable = useStore(Selector.addUndoable);
   const elementsToPaste = useStore(Selector.elementsToPaste);
+  const setApplyCount = useStore(Selector.setApplyCount);
 
   const [lineColorDialogVisible, setLineColorDialogVisible] = useState(false);
   const [lineStyleDialogVisible, setLineStyleDialogVisible] = useState(false);
@@ -84,6 +85,7 @@ export const PolygonMenu = () => {
           <Menu.Item
             key={'solar-panel-layout'}
             onClick={() => {
+              setApplyCount(0);
               setSolarPanelLayoutWizardVisible(true);
             }}
             style={{ paddingLeft: '36px' }}
@@ -109,6 +111,7 @@ export const PolygonMenu = () => {
               key={'polygon-line-color'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
+                setApplyCount(0);
                 setLineColorDialogVisible(true);
               }}
             >
@@ -122,6 +125,7 @@ export const PolygonMenu = () => {
               key={'polygon-line-style'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
+                setApplyCount(0);
                 setLineStyleDialogVisible(true);
               }}
             >
@@ -139,6 +143,7 @@ export const PolygonMenu = () => {
               key={'polygon-fill-color'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
+                setApplyCount(0);
                 setFillColorDialogVisible(true);
               }}
             >
@@ -153,6 +158,7 @@ export const PolygonMenu = () => {
               key={'polygon-texture'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
+                setApplyCount(0);
                 setTextureDialogVisible(true);
               }}
             >

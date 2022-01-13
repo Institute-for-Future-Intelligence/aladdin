@@ -84,6 +84,7 @@ export interface CommonStoreState {
   fileChanged: boolean;
   applyCount: number;
   setApplyCount: (count: number) => void;
+  revertApply: () => void;
 
   importContent: (input: any, title?: string) => void;
   exportContent: () => {};
@@ -429,11 +430,20 @@ export const useStore = create<CommonStoreState>(
             });
           },
           fileChanged: false,
+
           applyCount: 0,
           setApplyCount(count: number) {
             immerSet((state: CommonStoreState) => {
               state.applyCount = count;
             });
+          },
+          revertApply() {
+            if (get().applyCount) {
+              for (let i = 0; i < get().applyCount; i++) {
+                get().undoManager.undo();
+              }
+              get().setApplyCount(0);
+            }
           },
 
           importContent(content: any, title) {
@@ -2779,7 +2789,6 @@ export const useStore = create<CommonStoreState>(
                   switch (e.type) {
                     case ObjectType.Window:
                       const hx = e.lx / 2;
-                      let windowState: WindowState | null = null;
                       e.cx += hx * 3;
                       // searching +x direction
                       while (e.cx + hx < 0.5) {

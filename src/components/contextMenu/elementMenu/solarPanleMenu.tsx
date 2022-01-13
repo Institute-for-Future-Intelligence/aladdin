@@ -134,6 +134,7 @@ export const SolarPanelMenu = () => {
           <Menu.Item
             key={'solar-panel-change'}
             onClick={() => {
+              setApplyCount(0);
               setPvModelDialogVisible(true);
             }}
             style={{ paddingLeft: '36px' }}
@@ -150,6 +151,7 @@ export const SolarPanelMenu = () => {
             key={'solar-panel-orientation'}
             style={{ paddingLeft: '36px', width: '150px' }}
             onClick={() => {
+              setApplyCount(0);
               setOrientationDialogVisible(true);
             }}
           >
@@ -162,6 +164,7 @@ export const SolarPanelMenu = () => {
             key={'solar-panel-length'}
             style={{ paddingLeft: '36px' }}
             onClick={() => {
+              setApplyCount(0);
               setLengthDialogVisible(true);
             }}
           >
@@ -174,6 +177,7 @@ export const SolarPanelMenu = () => {
             key={'solar-panel-width'}
             style={{ paddingLeft: '36px' }}
             onClick={() => {
+              setApplyCount(0);
               setWidthDialogVisible(true);
             }}
           >
@@ -204,6 +208,7 @@ export const SolarPanelMenu = () => {
                 key={'solar-panel-relative-azimuth'}
                 style={{ paddingLeft: '36px' }}
                 onClick={() => {
+                  setApplyCount(0);
                   setAzimuthDialogVisible(true);
                 }}
               >
@@ -219,6 +224,7 @@ export const SolarPanelMenu = () => {
                 key={'solar-panel-tracker'}
                 style={{ paddingLeft: '36px' }}
                 onClick={() => {
+                  setApplyCount(0);
                   setTrackerDialogVisible(true);
                 }}
               >
@@ -234,6 +240,7 @@ export const SolarPanelMenu = () => {
                 key={'solar-panel-pole-height'}
                 style={{ paddingLeft: '36px' }}
                 onClick={() => {
+                  setApplyCount(0);
                   setPoleHeightDialogVisible(true);
                 }}
               >
@@ -249,6 +256,7 @@ export const SolarPanelMenu = () => {
                 key={'solar-panel-pole-spacing'}
                 style={{ paddingLeft: '36px' }}
                 onClick={() => {
+                  setApplyCount(0);
                   setPoleSpacingDialogVisible(true);
                 }}
               >

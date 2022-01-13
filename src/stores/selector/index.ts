@@ -20,6 +20,8 @@ export const applyCount = (state: CommonStoreState) => state.applyCount;
 
 export const setApplyCount = (state: CommonStoreState) => state.setApplyCount;
 
+export const revertApply = (state: CommonStoreState) => state.revertApply;
+
 export const elements = (state: CommonStoreState) => state.elements;
 
 export const notes = (state: CommonStoreState) => state.notes;

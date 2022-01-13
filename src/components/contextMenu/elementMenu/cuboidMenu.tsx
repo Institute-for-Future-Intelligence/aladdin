@@ -45,6 +45,7 @@ export const CuboidMenu = () => {
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
   const addElement = useStore(Selector.addElement);
   const removeElementById = useStore(Selector.removeElementById);
+  const setApplyCount = useStore(Selector.setApplyCount);
 
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
@@ -240,6 +241,7 @@ export const CuboidMenu = () => {
                 key={'cuboid-color'}
                 style={{ paddingLeft: '36px' }}
                 onClick={() => {
+                  setApplyCount(0);
                   setColorDialogVisible(true);
                 }}
               >
@@ -255,6 +257,7 @@ export const CuboidMenu = () => {
               key={'cuboid-texture'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
+                setApplyCount(0);
                 setTextureDialogVisible(true);
               }}
             >
@@ -270,6 +273,7 @@ export const CuboidMenu = () => {
                 if (cuboidActionScope === Scope.OnlyThisSide) {
                   setCuboidActionScope(Scope.OnlyThisObject);
                 }
+                setApplyCount(0);
                 setLengthDialogVisible(true);
               }}
             >
@@ -285,6 +289,7 @@ export const CuboidMenu = () => {
                 if (cuboidActionScope === Scope.OnlyThisSide) {
                   setCuboidActionScope(Scope.OnlyThisObject);
                 }
+                setApplyCount(0);
                 setWidthDialogVisible(true);
               }}
             >
@@ -300,6 +305,7 @@ export const CuboidMenu = () => {
                 if (cuboidActionScope === Scope.OnlyThisSide) {
                   setCuboidActionScope(Scope.OnlyThisObject);
                 }
+                setApplyCount(0);
                 setHeightDialogVisible(true);
               }}
             >
@@ -315,6 +321,7 @@ export const CuboidMenu = () => {
                 if (cuboidActionScope === Scope.OnlyThisSide) {
                   setCuboidActionScope(Scope.OnlyThisObject);
                 }
+                setApplyCount(0);
                 setAzimuthDialogVisible(true);
               }}
             >

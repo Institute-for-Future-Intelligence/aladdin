@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { Menu } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { Copy, Cut, Lock, Paste } from '../menuItems';
+import { Lock, Paste } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import WallTextureSelection from './wallTextureSelection';
 import WallHeightInput from './wallHeightInput';
@@ -19,6 +19,7 @@ export const WallMenu = () => {
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const elementsToPaste = useStore(Selector.elementsToPaste);
   const language = useStore(Selector.language);
+  const setApplyCount = useStore(Selector.setApplyCount);
 
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
@@ -53,6 +54,7 @@ export const WallMenu = () => {
           key={'wall-texture'}
           style={{ paddingLeft: paddingLeft }}
           onClick={() => {
+            setApplyCount(0);
             setTextureDialogVisible(true);
           }}
         >
@@ -65,6 +67,7 @@ export const WallMenu = () => {
             key={'wall-color'}
             style={{ paddingLeft: paddingLeft }}
             onClick={() => {
+              setApplyCount(0);
               setColorDialogVisible(true);
             }}
           >
@@ -77,6 +80,7 @@ export const WallMenu = () => {
           key={'wall-height'}
           style={{ paddingLeft: paddingLeft }}
           onClick={() => {
+            setApplyCount(0);
             setHeightDialogVisible(true);
           }}
         >
@@ -88,6 +92,7 @@ export const WallMenu = () => {
           key={'wall-thickness'}
           style={{ paddingLeft: paddingLeft }}
           onClick={() => {
+            setApplyCount(0);
             setThicknessDialogVisible(true);
           }}
         >
