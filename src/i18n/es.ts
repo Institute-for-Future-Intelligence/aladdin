@@ -178,6 +178,7 @@ export const i18n_es = {
         Map: 'Mapa',
         WeatherData: 'Datos del tiempo',
         Heliodon: 'Heliodon',
+        SunAndTime: 'Sun & Time',
       },
       analysisSubMenu: 'Análisis',
       sensorsSubMenu: 'Sensores',
@@ -476,7 +477,7 @@ export const i18n_es = {
     },
 
     heliodonPanel: {
-      HeliodonSettings: 'Configuración de heliodon',
+      SunAndTimeSettings: 'Sun & Time Settings',
       SunAngles: 'Ángulos',
     },
 
@@ -523,7 +524,7 @@ export const i18n_es = {
       AddTree: 'Añadir árbol',
       AddPeople: 'Añadir gente',
       ClearScene: 'Clear escena',
-      ShowHeliodonPanel: 'Show heliodon panel',
+      ShowSunAndTimeSettings: 'Show sun and time settings',
       ShowShadow: 'Show shadow',
       DoYouReallyWantToClearContent: 'Estás seguro que quieres borrar el contenido',
     },

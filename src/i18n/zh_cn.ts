@@ -177,6 +177,7 @@ export const i18n_zh_cn = {
         Map: '地图',
         WeatherData: '气象数据',
         Heliodon: '日影仪',
+        SunAndTime: '太阳和时间',
       },
       analysisSubMenu: '分析',
       sensorsSubMenu: '传感器',
@@ -470,7 +471,7 @@ export const i18n_zh_cn = {
     },
 
     heliodonPanel: {
-      HeliodonSettings: '日影仪设置',
+      SunAndTimeSettings: '太阳和时间设置',
       SunAngles: '角度',
     },
 
@@ -517,7 +518,7 @@ export const i18n_zh_cn = {
       AddTree: '添加树木',
       AddPeople: '添加人物',
       ClearScene: '清空场景',
-      ShowHeliodonPanel: '显示日影仪面板',
+      ShowSunAndTimeSettings: '显示太阳和时间设置',
       ShowShadow: '显示阴影',
       DoYouReallyWantToClearContent: '您确定清空场景吗',
     },

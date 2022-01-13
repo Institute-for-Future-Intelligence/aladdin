@@ -35,6 +35,7 @@ import { UndoableCheck } from './undo/UndoableCheck';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { UndoableResetView } from './undo/UndoableResetView';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Undoable } from './undo/Undoable';
 
 const { SubMenu } = Menu;
 const { Option } = Select;
@@ -314,69 +315,66 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     });
   };
 
-  const toggleHelidonPanel = () => {
-    const undoableCheck = {
-      name: 'Show Heliodon Control Panel',
+  const openHeliodonPanel = () => {
+    const undoable = {
+      name: 'Open Heliodon Control Panel',
       timestamp: Date.now(),
-      checked: !showHeliodonPanel,
       undo: () => {
         setCommonStore((state) => {
-          state.viewState.showHeliodonPanel = !undoableCheck.checked;
+          state.viewState.showHeliodonPanel = false;
         });
       },
       redo: () => {
         setCommonStore((state) => {
-          state.viewState.showHeliodonPanel = undoableCheck.checked;
+          state.viewState.showHeliodonPanel = true;
         });
       },
-    } as UndoableCheck;
-    addUndoable(undoableCheck);
+    } as Undoable;
+    addUndoable(undoable);
     setCommonStore((state) => {
-      state.viewState.showHeliodonPanel = !state.viewState.showHeliodonPanel;
+      state.viewState.showHeliodonPanel = true;
     });
   };
 
-  const toggleMapPanel = () => {
-    const undoableCheck = {
-      name: 'Show Maps',
+  const openMapPanel = () => {
+    const undoable = {
+      name: 'Open Maps',
       timestamp: Date.now(),
-      checked: !showMapPanel,
       undo: () => {
         setCommonStore((state) => {
-          state.viewState.showMapPanel = !undoableCheck.checked;
+          state.viewState.showMapPanel = false;
         });
       },
       redo: () => {
         setCommonStore((state) => {
-          state.viewState.showMapPanel = undoableCheck.checked;
+          state.viewState.showMapPanel = true;
         });
       },
-    } as UndoableCheck;
-    addUndoable(undoableCheck);
+    } as Undoable;
+    addUndoable(undoable);
     setCommonStore((state) => {
-      state.viewState.showMapPanel = !state.viewState.showMapPanel;
+      state.viewState.showMapPanel = true;
     });
   };
 
-  const toggleWeatherPanel = () => {
-    const undoableCheck = {
-      name: 'Show Weather Panel',
+  const openWeatherPanel = () => {
+    const undoable = {
+      name: 'Open Weather Panel',
       timestamp: Date.now(),
-      checked: !showWeatherPanel,
       undo: () => {
         setCommonStore((state) => {
-          state.viewState.showWeatherPanel = !undoableCheck.checked;
+          state.viewState.showWeatherPanel = false;
         });
       },
       redo: () => {
         setCommonStore((state) => {
-          state.viewState.showWeatherPanel = undoableCheck.checked;
+          state.viewState.showWeatherPanel = true;
         });
       },
-    } as UndoableCheck;
-    addUndoable(undoableCheck);
+    } as Undoable;
+    addUndoable(undoable);
     setCommonStore((state) => {
-      state.viewState.showWeatherPanel = !state.viewState.showWeatherPanel;
+      state.viewState.showWeatherPanel = true;
     });
   };
 
@@ -681,21 +679,21 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
 
       {/* tool menu */}
       <SubMenu key={'tool'} title={i18n.t('menu.toolSubMenu', lang)}>
-        <Menu.Item key={'heliodon-panel-check-box'}>
-          <Checkbox checked={showHeliodonPanel} onChange={toggleHelidonPanel}>
-            {i18n.t('menu.tool.Heliodon', lang)}
-          </Checkbox>
-        </Menu.Item>
-        <Menu.Item key={'map-panel-check-box'}>
-          <Checkbox checked={showMapPanel} onChange={toggleMapPanel}>
+        {!showHeliodonPanel && (
+          <Menu.Item key={'heliodon-panel-check-box'} onClick={openHeliodonPanel}>
+            {i18n.t('menu.tool.SunAndTime', lang)}
+          </Menu.Item>
+        )}
+        {!showMapPanel && (
+          <Menu.Item key={'map-panel-check-box'} onClick={openMapPanel}>
             {i18n.t('menu.tool.Map', lang)}
-          </Checkbox>
-        </Menu.Item>
-        <Menu.Item key={'weather-panel-check-box'}>
-          <Checkbox checked={showWeatherPanel} onChange={toggleWeatherPanel}>
+          </Menu.Item>
+        )}
+        {!showWeatherPanel && (
+          <Menu.Item key={'weather-panel-check-box'} onClick={openWeatherPanel}>
             {i18n.t('menu.tool.WeatherData', lang)}
-          </Checkbox>
-        </Menu.Item>
+          </Menu.Item>
+        )}
       </SubMenu>
 
       {/* analysis menu */}

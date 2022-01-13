@@ -165,7 +165,7 @@ const HeliodonPanel = () => {
       <Container ref={nodeRef}>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
-            <span>{i18n.t('heliodonPanel.HeliodonSettings', lang)}</span>
+            <span>{i18n.t('heliodonPanel.SunAndTimeSettings', lang)}</span>
             <span
               style={{ cursor: 'pointer' }}
               onTouchStart={() => {
@@ -180,7 +180,7 @@ const HeliodonPanel = () => {
           </Header>
           <Space style={{ padding: '20px' }} align={'baseline'} size={20}>
             <div>
-              {i18n.t('word.Show', lang)}
+              {i18n.t('menu.tool.Heliodon', lang)}
               <br />
               <Switch
                 checked={heliodon}

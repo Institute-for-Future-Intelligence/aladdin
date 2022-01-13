@@ -73,9 +73,9 @@ const MainToolBarButtons = () => {
     resetToSelectMode();
   };
 
-  const toggleHelidonPanel = () => {
+  const toggleSunAndTimeSettingsPanel = () => {
     const undoableCheck = {
-      name: 'Show Heliodon Control Panel',
+      name: 'Show Sun and Time Settings Panel',
       timestamp: Date.now(),
       checked: !showHeliodonPanel,
       undo: () => {
@@ -292,12 +292,12 @@ const MainToolBarButtons = () => {
         onClick={removeAllContent}
       />
       <FontAwesomeIcon
-        title={i18n.t('toolbar.ShowHeliodonPanel', lang)}
+        title={i18n.t('toolbar.ShowSunAndTimeSettings', lang)}
         icon={faSun}
         size={'3x'}
         color={showHeliodonPanel ? 'antiquewhite' : '#666666'}
         style={{ paddingRight: '12px', cursor: 'pointer' }}
-        onClick={toggleHelidonPanel}
+        onClick={toggleSunAndTimeSettingsPanel}
       />
     </div>
   );

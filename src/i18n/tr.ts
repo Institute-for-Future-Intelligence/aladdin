@@ -179,6 +179,7 @@ export const i18n_tr = {
         Map: 'Harita',
         WeatherData: 'Hava Durumu Verisi',
         Heliodon: 'Heliodon',
+        SunAndTime: 'Sun & Time',
       },
       analysisSubMenu: 'Analiz',
       sensorsSubMenu: 'Sensörler',
@@ -479,7 +480,7 @@ export const i18n_tr = {
     },
 
     heliodonPanel: {
-      HeliodonSettings: 'Heliodon Ayarlarý',
+      SunAndTimeSettings: 'Sun & Time Settings',
       SunAngles: 'Açý',
     },
 
@@ -526,7 +527,7 @@ export const i18n_tr = {
       AddTree: 'Aðaç ekle',
       AddPeople: 'Ýnsan ekle',
       ClearScene: 'alaný temizle',
-      ShowHeliodonPanel: 'Heliodon panelini göster',
+      ShowSunAndTimeSettings: 'Show sun and time settings',
       ShowShadow: 'Gölge göster',
       DoYouReallyWantToClearContent: 'Ýçeriði gerçekten temizlemek istiyor musunuz?',
     },
