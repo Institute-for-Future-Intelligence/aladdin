@@ -61,7 +61,7 @@ export class DefaultViewState implements ViewState {
     this.orthographic = false;
     this.enableRotate = true;
     this.ambientLightIntensity = 0.1;
-    this.cameraPosition = [0, -20, 0];
+    this.cameraPosition = [5, -30, 1];
     this.cameraPosition2D = [0, 0, 20];
     this.panCenter = [0, 0, 0];
     this.panCenter2D = [0, 0, 0];
@@ -114,7 +114,7 @@ export class DefaultViewState implements ViewState {
   static resetViewState(viewState: ViewState) {
     viewState.orthographic = false;
     viewState.enableRotate = true;
-    viewState.cameraPosition = [0, -20, 0];
+    viewState.cameraPosition = [5, -30, 1];
     viewState.panCenter = [0, 0, 0];
     viewState.cameraZoom = 20;
     viewState.cameraPosition2D = [0, 0, 20];

@@ -55,6 +55,8 @@ export const CuboidMenu = () => {
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
   const cuboid = getSelectedElement() as CuboidModel;
+  const humanCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Human) : 0;
+  const treeCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Tree) : 0;
   const polygonCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Polygon) : 0;
   const sensorCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Sensor) : 0;
   const solarRackCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.SolarPanel) : 0;
@@ -87,150 +89,247 @@ export const CuboidMenu = () => {
         {editable && <Cut keyName={'cuboid-cut'} />}
         <Lock keyName={'cuboid-lock'} />
 
-        {(sensorCountCuboid > 0 || solarPanelCountCuboid > 0 || polygonCountCuboid > 0) && contextMenuObjectType && (
-          <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
-            {sensorCountCuboid > 0 && (
-              <Menu.Item
-                key={'remove-all-sensors-on-cuboid'}
-                onClick={() => {
-                  Modal.confirm({
-                    title:
-                      i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllSensorsOnCuboid', lang) +
-                      ' (' +
-                      sensorCountCuboid +
-                      ' ' +
-                      i18n.t('cuboidMenu.Sensors', lang) +
-                      ')?',
-                    icon: <ExclamationCircleOutlined />,
-                    onOk: () => {
-                      if (cuboid) {
-                        const removed = elements.filter(
-                          (e) => e.type === ObjectType.Sensor && e.parentId === cuboid.id,
-                        );
-                        removeAllChildElementsByType(cuboid.id, ObjectType.Sensor);
-                        const removedElements = JSON.parse(JSON.stringify(removed));
-                        const undoableRemoveAllSensorChildren = {
-                          name: 'Remove All Sensors on Cuboid',
-                          timestamp: Date.now(),
-                          parentId: cuboid.id,
-                          removedElements: removedElements,
-                          undo: () => {
-                            setCommonStore((state) => {
-                              state.elements.push(...undoableRemoveAllSensorChildren.removedElements);
-                            });
-                          },
-                          redo: () => {
-                            removeAllChildElementsByType(undoableRemoveAllSensorChildren.parentId, ObjectType.Sensor);
-                          },
-                        } as UndoableRemoveAllChildren;
-                        addUndoable(undoableRemoveAllSensorChildren);
-                      }
-                    },
-                  });
-                }}
-              >
-                {i18n.t('cuboidMenu.RemoveAllSensors', lang)} ({sensorCountCuboid} {i18n.t('cuboidMenu.Sensors', lang)})
-              </Menu.Item>
-            )}
+        {(humanCountCuboid > 0 ||
+          treeCountCuboid > 0 ||
+          sensorCountCuboid > 0 ||
+          solarPanelCountCuboid > 0 ||
+          polygonCountCuboid > 0) &&
+          contextMenuObjectType && (
+            <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
+              {sensorCountCuboid > 0 && (
+                <Menu.Item
+                  key={'remove-all-sensors-on-cuboid'}
+                  onClick={() => {
+                    Modal.confirm({
+                      title:
+                        i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllSensorsOnCuboid', lang) +
+                        ' (' +
+                        sensorCountCuboid +
+                        ' ' +
+                        i18n.t('cuboidMenu.Sensors', lang) +
+                        ')?',
+                      icon: <ExclamationCircleOutlined />,
+                      onOk: () => {
+                        if (cuboid) {
+                          const removed = elements.filter(
+                            (e) => e.type === ObjectType.Sensor && e.parentId === cuboid.id,
+                          );
+                          removeAllChildElementsByType(cuboid.id, ObjectType.Sensor);
+                          const removedElements = JSON.parse(JSON.stringify(removed));
+                          const undoableRemoveAllSensorChildren = {
+                            name: 'Remove All Sensors on Cuboid',
+                            timestamp: Date.now(),
+                            parentId: cuboid.id,
+                            removedElements: removedElements,
+                            undo: () => {
+                              setCommonStore((state) => {
+                                state.elements.push(...undoableRemoveAllSensorChildren.removedElements);
+                              });
+                            },
+                            redo: () => {
+                              removeAllChildElementsByType(undoableRemoveAllSensorChildren.parentId, ObjectType.Sensor);
+                            },
+                          } as UndoableRemoveAllChildren;
+                          addUndoable(undoableRemoveAllSensorChildren);
+                        }
+                      },
+                    });
+                  }}
+                >
+                  {i18n.t('cuboidMenu.RemoveAllSensors', lang)} ({sensorCountCuboid}{' '}
+                  {i18n.t('cuboidMenu.Sensors', lang)})
+                </Menu.Item>
+              )}
 
-            {solarPanelCountCuboid > 0 && (
-              <Menu.Item
-                key={'remove-all-solar-panels-on-cuboid'}
-                onClick={() => {
-                  Modal.confirm({
-                    title:
-                      i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllSolarPanelsOnCuboid', lang) +
-                      ' (' +
-                      solarPanelCountCuboid +
-                      ' ' +
-                      i18n.t('cuboidMenu.SolarPanels', lang) +
-                      ', ' +
-                      solarRackCountCuboid +
-                      ' ' +
-                      i18n.t('cuboidMenu.Racks', lang) +
-                      ')?',
-                    icon: <ExclamationCircleOutlined />,
-                    onOk: () => {
-                      if (cuboid) {
-                        const removed = elements.filter(
-                          (e) => e.type === ObjectType.SolarPanel && e.parentId === cuboid.id,
-                        );
-                        removeAllChildElementsByType(cuboid.id, ObjectType.SolarPanel);
-                        const removedElements = JSON.parse(JSON.stringify(removed));
-                        const undoableRemoveAllSolarPanelChildren = {
-                          name: 'Remove All Solar Panels on Cuboid',
-                          timestamp: Date.now(),
-                          parentId: cuboid.id,
-                          removedElements: removedElements,
-                          undo: () => {
-                            setCommonStore((state) => {
-                              state.elements.push(...undoableRemoveAllSolarPanelChildren.removedElements);
-                            });
-                          },
-                          redo: () => {
-                            removeAllChildElementsByType(
-                              undoableRemoveAllSolarPanelChildren.parentId,
-                              ObjectType.SolarPanel,
-                            );
-                          },
-                        } as UndoableRemoveAllChildren;
-                        addUndoable(undoableRemoveAllSolarPanelChildren);
-                      }
-                    },
-                  });
-                }}
-              >
-                {i18n.t('cuboidMenu.RemoveAllSolarPanels', lang)}&nbsp; ({solarPanelCountCuboid}{' '}
-                {i18n.t('cuboidMenu.SolarPanels', lang)},{solarRackCountCuboid} {i18n.t('cuboidMenu.Racks', lang)})
-              </Menu.Item>
-            )}
+              {solarPanelCountCuboid > 0 && (
+                <Menu.Item
+                  key={'remove-all-solar-panels-on-cuboid'}
+                  onClick={() => {
+                    Modal.confirm({
+                      title:
+                        i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllSolarPanelsOnCuboid', lang) +
+                        ' (' +
+                        solarPanelCountCuboid +
+                        ' ' +
+                        i18n.t('cuboidMenu.SolarPanels', lang) +
+                        ', ' +
+                        solarRackCountCuboid +
+                        ' ' +
+                        i18n.t('cuboidMenu.Racks', lang) +
+                        ')?',
+                      icon: <ExclamationCircleOutlined />,
+                      onOk: () => {
+                        if (cuboid) {
+                          const removed = elements.filter(
+                            (e) => e.type === ObjectType.SolarPanel && e.parentId === cuboid.id,
+                          );
+                          removeAllChildElementsByType(cuboid.id, ObjectType.SolarPanel);
+                          const removedElements = JSON.parse(JSON.stringify(removed));
+                          const undoableRemoveAllSolarPanelChildren = {
+                            name: 'Remove All Solar Panels on Cuboid',
+                            timestamp: Date.now(),
+                            parentId: cuboid.id,
+                            removedElements: removedElements,
+                            undo: () => {
+                              setCommonStore((state) => {
+                                state.elements.push(...undoableRemoveAllSolarPanelChildren.removedElements);
+                              });
+                            },
+                            redo: () => {
+                              removeAllChildElementsByType(
+                                undoableRemoveAllSolarPanelChildren.parentId,
+                                ObjectType.SolarPanel,
+                              );
+                            },
+                          } as UndoableRemoveAllChildren;
+                          addUndoable(undoableRemoveAllSolarPanelChildren);
+                        }
+                      },
+                    });
+                  }}
+                >
+                  {i18n.t('cuboidMenu.RemoveAllSolarPanels', lang)}&nbsp; ({solarPanelCountCuboid}{' '}
+                  {i18n.t('cuboidMenu.SolarPanels', lang)},{solarRackCountCuboid} {i18n.t('cuboidMenu.Racks', lang)})
+                </Menu.Item>
+              )}
 
-            {polygonCountCuboid > 0 && (
-              <Menu.Item
-                key={'remove-all-polygons-on-cuboid'}
-                onClick={() => {
-                  Modal.confirm({
-                    title:
-                      i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllPolygonsOnCuboid', lang) +
-                      ' (' +
-                      polygonCountCuboid +
-                      ' ' +
-                      i18n.t('cuboidMenu.Polygons', lang) +
-                      ')?',
-                    icon: <ExclamationCircleOutlined />,
-                    onOk: () => {
-                      if (cuboid) {
-                        const removed = elements.filter(
-                          (e) => e.type === ObjectType.Polygon && e.parentId === cuboid.id,
-                        );
-                        removeAllChildElementsByType(cuboid.id, ObjectType.Polygon);
-                        const removedElements = JSON.parse(JSON.stringify(removed));
-                        const undoableRemoveAllPolygonChildren = {
-                          name: 'Remove All Polygons on Cuboid',
-                          timestamp: Date.now(),
-                          parentId: cuboid.id,
-                          removedElements: removedElements,
-                          undo: () => {
-                            setCommonStore((state) => {
-                              state.elements.push(...undoableRemoveAllPolygonChildren.removedElements);
-                            });
-                          },
-                          redo: () => {
-                            removeAllChildElementsByType(undoableRemoveAllPolygonChildren.parentId, ObjectType.Polygon);
-                          },
-                        } as UndoableRemoveAllChildren;
-                        addUndoable(undoableRemoveAllPolygonChildren);
-                      }
-                    },
-                  });
-                }}
-              >
-                {i18n.t('cuboidMenu.RemoveAllPolygons', lang)} ({polygonCountCuboid}{' '}
-                {i18n.t('cuboidMenu.Polygons', lang)})
-              </Menu.Item>
-            )}
-          </SubMenu>
-        )}
+              {polygonCountCuboid > 0 && (
+                <Menu.Item
+                  key={'remove-all-polygons-on-cuboid'}
+                  onClick={() => {
+                    Modal.confirm({
+                      title:
+                        i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllPolygonsOnCuboid', lang) +
+                        ' (' +
+                        polygonCountCuboid +
+                        ' ' +
+                        i18n.t('cuboidMenu.Polygons', lang) +
+                        ')?',
+                      icon: <ExclamationCircleOutlined />,
+                      onOk: () => {
+                        if (cuboid) {
+                          const removed = elements.filter(
+                            (e) => e.type === ObjectType.Polygon && e.parentId === cuboid.id,
+                          );
+                          removeAllChildElementsByType(cuboid.id, ObjectType.Polygon);
+                          const removedElements = JSON.parse(JSON.stringify(removed));
+                          const undoableRemoveAllPolygonChildren = {
+                            name: 'Remove All Polygons on Cuboid',
+                            timestamp: Date.now(),
+                            parentId: cuboid.id,
+                            removedElements: removedElements,
+                            undo: () => {
+                              setCommonStore((state) => {
+                                state.elements.push(...undoableRemoveAllPolygonChildren.removedElements);
+                              });
+                            },
+                            redo: () => {
+                              removeAllChildElementsByType(
+                                undoableRemoveAllPolygonChildren.parentId,
+                                ObjectType.Polygon,
+                              );
+                            },
+                          } as UndoableRemoveAllChildren;
+                          addUndoable(undoableRemoveAllPolygonChildren);
+                        }
+                      },
+                    });
+                  }}
+                >
+                  {i18n.t('cuboidMenu.RemoveAllPolygons', lang)} ({polygonCountCuboid}{' '}
+                  {i18n.t('cuboidMenu.Polygons', lang)})
+                </Menu.Item>
+              )}
+
+              {humanCountCuboid > 0 && (
+                <Menu.Item
+                  key={'remove-all-humans-on-cuboid'}
+                  onClick={() => {
+                    Modal.confirm({
+                      title:
+                        i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllHumansOnCuboid', lang) +
+                        ' (' +
+                        humanCountCuboid +
+                        ' ' +
+                        i18n.t('cuboidMenu.Humans', lang) +
+                        ')?',
+                      icon: <ExclamationCircleOutlined />,
+                      onOk: () => {
+                        if (cuboid) {
+                          const removed = elements.filter(
+                            (e) => e.type === ObjectType.Human && e.parentId === cuboid.id,
+                          );
+                          removeAllChildElementsByType(cuboid.id, ObjectType.Human);
+                          const removedElements = JSON.parse(JSON.stringify(removed));
+                          const undoableRemoveAllHumanChildren = {
+                            name: 'Remove All Humans on Cuboid',
+                            timestamp: Date.now(),
+                            parentId: cuboid.id,
+                            removedElements: removedElements,
+                            undo: () => {
+                              setCommonStore((state) => {
+                                state.elements.push(...undoableRemoveAllHumanChildren.removedElements);
+                              });
+                            },
+                            redo: () => {
+                              removeAllChildElementsByType(undoableRemoveAllHumanChildren.parentId, ObjectType.Human);
+                            },
+                          } as UndoableRemoveAllChildren;
+                          addUndoable(undoableRemoveAllHumanChildren);
+                        }
+                      },
+                    });
+                  }}
+                >
+                  {i18n.t('cuboidMenu.RemoveAllHumans', lang)} ({humanCountCuboid} {i18n.t('cuboidMenu.Humans', lang)})
+                </Menu.Item>
+              )}
+
+              {treeCountCuboid > 0 && (
+                <Menu.Item
+                  key={'remove-all-trees-on-cuboid'}
+                  onClick={() => {
+                    Modal.confirm({
+                      title:
+                        i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllTreesOnCuboid', lang) +
+                        ' (' +
+                        treeCountCuboid +
+                        ' ' +
+                        i18n.t('cuboidMenu.Trees', lang) +
+                        ')?',
+                      icon: <ExclamationCircleOutlined />,
+                      onOk: () => {
+                        if (cuboid) {
+                          const removed = elements.filter(
+                            (e) => e.type === ObjectType.Tree && e.parentId === cuboid.id,
+                          );
+                          removeAllChildElementsByType(cuboid.id, ObjectType.Tree);
+                          const removedElements = JSON.parse(JSON.stringify(removed));
+                          const undoableRemoveAllTreeChildren = {
+                            name: 'Remove All Trees on Cuboid',
+                            timestamp: Date.now(),
+                            parentId: cuboid.id,
+                            removedElements: removedElements,
+                            undo: () => {
+                              setCommonStore((state) => {
+                                state.elements.push(...undoableRemoveAllTreeChildren.removedElements);
+                              });
+                            },
+                            redo: () => {
+                              removeAllChildElementsByType(undoableRemoveAllTreeChildren.parentId, ObjectType.Tree);
+                            },
+                          } as UndoableRemoveAllChildren;
+                          addUndoable(undoableRemoveAllTreeChildren);
+                        }
+                      },
+                    });
+                  }}
+                >
+                  {i18n.t('cuboidMenu.RemoveAllTrees', lang)} ({treeCountCuboid} {i18n.t('cuboidMenu.Trees', lang)})
+                </Menu.Item>
+              )}
+            </SubMenu>
+          )}
 
         {editable &&
           (!cuboid.textureTypes ||

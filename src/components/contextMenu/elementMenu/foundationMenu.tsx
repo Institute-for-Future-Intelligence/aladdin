@@ -46,6 +46,8 @@ export const FoundationMenu = () => {
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
   const foundation = getSelectedElement() as FoundationModel;
+  const humanCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Human) : 0;
+  const treeCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Tree) : 0;
   const wallCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Wall) : 0;
   const polygonCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Polygon) : 0;
   const sensorCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Sensor) : 0;
@@ -80,6 +82,8 @@ export const FoundationMenu = () => {
         <Lock keyName={'foundation-lock'} />
         {(sensorCountFoundation > 0 ||
           solarPanelCountFoundation > 0 ||
+          treeCountFoundation > 0 ||
+          humanCountFoundation > 0 ||
           wallCountFoundation > 0 ||
           polygonCountFoundation > 0) &&
           contextMenuObjectType && (
@@ -271,6 +275,94 @@ export const FoundationMenu = () => {
                   }}
                 >
                   {i18n.t('foundationMenu.RemoveAllPolygons', lang)} ({polygonCountFoundation})
+                </Menu.Item>
+              )}
+
+              {humanCountFoundation > 0 && (
+                <Menu.Item
+                  key={'remove-all-humans-on-foundation'}
+                  onClick={() => {
+                    Modal.confirm({
+                      title:
+                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllHumansOnFoundation', lang) +
+                        ' (' +
+                        humanCountFoundation +
+                        ' ' +
+                        i18n.t('foundationMenu.Humans', lang) +
+                        ')?',
+                      icon: <ExclamationCircleOutlined />,
+                      onOk: () => {
+                        if (foundation) {
+                          const removed = elements.filter(
+                            (e) => e.type === ObjectType.Human && e.parentId === foundation.id,
+                          );
+                          removeAllChildElementsByType(foundation.id, ObjectType.Human);
+                          const removedElements = JSON.parse(JSON.stringify(removed));
+                          const undoableRemoveAllHumanChildren = {
+                            name: 'Remove All Humans on Foundation',
+                            timestamp: Date.now(),
+                            parentId: foundation.id,
+                            removedElements: removedElements,
+                            undo: () => {
+                              setCommonStore((state) => {
+                                state.elements.push(...undoableRemoveAllHumanChildren.removedElements);
+                              });
+                            },
+                            redo: () => {
+                              removeAllChildElementsByType(undoableRemoveAllHumanChildren.parentId, ObjectType.Human);
+                            },
+                          } as UndoableRemoveAllChildren;
+                          addUndoable(undoableRemoveAllHumanChildren);
+                        }
+                      },
+                    });
+                  }}
+                >
+                  {i18n.t('foundationMenu.RemoveAllHumans', lang)} ({humanCountFoundation})
+                </Menu.Item>
+              )}
+
+              {treeCountFoundation > 0 && (
+                <Menu.Item
+                  key={'remove-all-trees-on-foundation'}
+                  onClick={() => {
+                    Modal.confirm({
+                      title:
+                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllTreesOnFoundation', lang) +
+                        ' (' +
+                        treeCountFoundation +
+                        ' ' +
+                        i18n.t('foundationMenu.Trees', lang) +
+                        ')?',
+                      icon: <ExclamationCircleOutlined />,
+                      onOk: () => {
+                        if (foundation) {
+                          const removed = elements.filter(
+                            (e) => e.type === ObjectType.Tree && e.parentId === foundation.id,
+                          );
+                          removeAllChildElementsByType(foundation.id, ObjectType.Tree);
+                          const removedElements = JSON.parse(JSON.stringify(removed));
+                          const undoableRemoveAllTreeChildren = {
+                            name: 'Remove All Trees on Foundation',
+                            timestamp: Date.now(),
+                            parentId: foundation.id,
+                            removedElements: removedElements,
+                            undo: () => {
+                              setCommonStore((state) => {
+                                state.elements.push(...undoableRemoveAllTreeChildren.removedElements);
+                              });
+                            },
+                            redo: () => {
+                              removeAllChildElementsByType(undoableRemoveAllTreeChildren.parentId, ObjectType.Tree);
+                            },
+                          } as UndoableRemoveAllChildren;
+                          addUndoable(undoableRemoveAllTreeChildren);
+                        }
+                      },
+                    });
+                  }}
+                >
+                  {i18n.t('foundationMenu.RemoveAllTrees', lang)} ({treeCountFoundation})
                 </Menu.Item>
               )}
             </SubMenu>
