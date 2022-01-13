@@ -37,6 +37,9 @@ const SolarPanelOrientationSelection = ({
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const solarPanel = getSelectedElement() as SolarPanelModel;
   const [selectedOrientation, setSelectedOrientation] = useState<Orientation>(
@@ -223,6 +226,7 @@ const SolarPanelOrientationSelection = ({
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
           updateSolarPanelOrientationForAll(value);
+          setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
@@ -268,6 +272,7 @@ const SolarPanelOrientationSelection = ({
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
             updateSolarPanelOrientationAboveFoundation(solarPanel.foundationId, value);
+            setApplyCount(applyCount + 1);
           }
         }
         break;
@@ -348,6 +353,7 @@ const SolarPanelOrientationSelection = ({
               } as UndoableChangeGroup;
               addUndoable(undoableChangeOnSurface);
               updateSolarPanelOrientationOnSurface(solarPanel.parentId, normal, value);
+              setApplyCount(applyCount + 1);
             }
           }
         }
@@ -375,6 +381,7 @@ const SolarPanelOrientationSelection = ({
             } as UndoableChange;
             addUndoable(undoableChange);
             changeOrientation(value);
+            setApplyCount(applyCount + 1);
           }
         }
     }
@@ -391,6 +398,21 @@ const SolarPanelOrientationSelection = ({
         top: -targetRect.top + uiData.y,
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
+    }
+  };
+
+  const cancel = () => {
+    setSelectedOrientation(solarPanel.orientation);
+    rejectRef.current = false;
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setOrientation(selectedOrientation);
+    if (!rejectRef.current) {
+      setDialogVisible(false);
+      setApplyCount(0);
     }
   };
 
@@ -430,35 +452,15 @@ const SolarPanelOrientationSelection = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              setSelectedOrientation(solarPanel.orientation);
-              rejectRef.current = false;
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setOrientation(selectedOrientation);
-              if (!rejectRef.current) {
-                setDialogVisible(false);
-              }
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          setSelectedOrientation(solarPanel.orientation);
-          rejectRef.current = false;
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

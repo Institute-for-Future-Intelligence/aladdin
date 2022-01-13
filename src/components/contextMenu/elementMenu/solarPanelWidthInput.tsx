@@ -34,6 +34,9 @@ const SolarPanelWidthInput = ({
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const solarPanel = getSelectedElement() as SolarPanelModel;
   const [dy, setDy] = useState<number>(0);
@@ -193,6 +196,7 @@ const SolarPanelWidthInput = ({
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
           updateSolarPanelLyForAll(value);
+          setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
@@ -238,6 +242,7 @@ const SolarPanelWidthInput = ({
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
             updateSolarPanelLyAboveFoundation(solarPanel.foundationId, value);
+            setApplyCount(applyCount + 1);
           }
         }
         break;
@@ -318,6 +323,7 @@ const SolarPanelWidthInput = ({
               } as UndoableChangeGroup;
               addUndoable(undoableChangeOnSurface);
               updateSolarPanelLyOnSurface(solarPanel.parentId, normal, value);
+              setApplyCount(applyCount + 1);
             }
           }
         }
@@ -345,6 +351,7 @@ const SolarPanelWidthInput = ({
             } as UndoableChange;
             addUndoable(undoableChange);
             updateSolarPanelLyById(solarPanel.id, value);
+            setApplyCount(applyCount + 1);
           }
         }
     }
@@ -361,6 +368,21 @@ const SolarPanelWidthInput = ({
         top: -targetRect.top + uiData.y,
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
+    }
+  };
+
+  const cancel = () => {
+    setInputWidth(solarPanel.ly);
+    rejectRef.current = false;
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setWidth(inputWidth);
+    if (!rejectRef.current) {
+      setDialogVisible(false);
+      setApplyCount(0);
     }
   };
 
@@ -401,35 +423,15 @@ const SolarPanelWidthInput = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              setInputWidth(solarPanel.ly);
-              rejectRef.current = false;
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setWidth(inputWidth);
-              if (!rejectRef.current) {
-                setDialogVisible(false);
-              }
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          setInputWidth(solarPanel.ly);
-          rejectRef.current = false;
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
@@ -449,12 +451,7 @@ const SolarPanelWidthInput = ({
               value={inputWidth}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => setInputWidth(panelize(value))}
-              onPressEnter={() => {
-                setWidth(inputWidth);
-                if (!rejectRef.current) {
-                  setDialogVisible(false);
-                }
-              }}
+              onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {Math.round(inputWidth / dy) + ' ' + i18n.t('solarPanelMenu.PanelsLong', lang)}

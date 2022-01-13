@@ -437,6 +437,7 @@ export const useStore = create<CommonStoreState>(
               state.applyCount = count;
             });
           },
+          // Not sure why we cannot do this within immerSet
           revertApply() {
             if (get().applyCount) {
               for (let i = 0; i < get().applyCount; i++) {
@@ -753,10 +754,10 @@ export const useStore = create<CommonStoreState>(
                       elem.selected = false;
                     }
                   }
+                  state.moveHandleType = null;
+                  state.resizeHandleType = null;
+                  state.rotateHandleType = null;
                   if (action) {
-                    state.moveHandleType = null;
-                    state.resizeHandleType = null;
-                    state.rotateHandleType = null;
                     switch (action) {
                       case ActionType.Move:
                         if (

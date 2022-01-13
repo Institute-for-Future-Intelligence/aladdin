@@ -34,6 +34,9 @@ const SolarPanelLengthInput = ({
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const solarPanel = getSelectedElement() as SolarPanelModel;
   const [dx, setDx] = useState<number>(0);
@@ -189,6 +192,7 @@ const SolarPanelLengthInput = ({
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
           updateSolarPanelLxForAll(value);
+          setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
@@ -234,6 +238,7 @@ const SolarPanelLengthInput = ({
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
             updateSolarPanelLxAboveFoundation(solarPanel.foundationId, value);
+            setApplyCount(applyCount + 1);
           }
         }
         break;
@@ -314,6 +319,7 @@ const SolarPanelLengthInput = ({
               } as UndoableChangeGroup;
               addUndoable(undoableChangeOnSurface);
               updateSolarPanelLxOnSurface(solarPanel.parentId, normal, value);
+              setApplyCount(applyCount + 1);
             }
           }
         }
@@ -341,6 +347,7 @@ const SolarPanelLengthInput = ({
             } as UndoableChange;
             addUndoable(undoableChange);
             updateSolarPanelLxById(solarPanel.id, value);
+            setApplyCount(applyCount + 1);
           }
         }
     }
@@ -365,6 +372,21 @@ const SolarPanelLengthInput = ({
     const n = Math.max(1, Math.ceil((w - dx / 2) / dx));
     w = n * dx;
     return w;
+  };
+
+  const cancel = () => {
+    setInputLength(solarPanel.lx);
+    rejectRef.current = false;
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setLength(inputLength);
+    if (!rejectRef.current) {
+      setDialogVisible(false);
+      setApplyCount(0);
+    }
   };
 
   return (
@@ -397,35 +419,15 @@ const SolarPanelLengthInput = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              setInputLength(solarPanel.lx);
-              rejectRef.current = false;
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setLength(inputLength);
-              if (!rejectRef.current) {
-                setDialogVisible(false);
-              }
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          setInputLength(solarPanel.lx);
-          rejectRef.current = false;
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
@@ -445,12 +447,7 @@ const SolarPanelLengthInput = ({
               value={inputLength}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => setInputLength(panelize(value))}
-              onPressEnter={() => {
-                setLength(inputLength);
-                if (!rejectRef.current) {
-                  setDialogVisible(false);
-                }
-              }}
+              onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {Math.round(inputLength / dx) + ' ' + i18n.t('solarPanelMenu.PanelsWide', lang)}

@@ -32,6 +32,9 @@ const SolarPanelTrackerSelection = ({
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const solarPanel = getSelectedElement() as SolarPanelModel;
   const [selectedTrackerType, setSelectedTrackerType] = useState<TrackerType>(
@@ -145,6 +148,7 @@ const SolarPanelTrackerSelection = ({
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateSolarPanelTrackerTypeForAll(value);
+        setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (solarPanel.foundationId) {
@@ -176,6 +180,7 @@ const SolarPanelTrackerSelection = ({
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
           updateSolarPanelTrackerTypeAboveFoundation(solarPanel.foundationId, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
@@ -226,6 +231,7 @@ const SolarPanelTrackerSelection = ({
             } as UndoableChangeGroup;
             addUndoable(undoableChangeOnSurface);
             updateSolarPanelTrackerTypeOnSurface(solarPanel.parentId, normal, value);
+            setApplyCount(applyCount + 1);
           }
         }
         break;
@@ -247,6 +253,7 @@ const SolarPanelTrackerSelection = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateSolarPanelTrackerTypeById(solarPanel.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);
@@ -263,6 +270,18 @@ const SolarPanelTrackerSelection = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const cancel = () => {
+    setSelectedTrackerType(solarPanel.trackerType);
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setTrackerType(selectedTrackerType);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   return (
@@ -288,31 +307,15 @@ const SolarPanelTrackerSelection = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              setSelectedTrackerType(solarPanel.trackerType);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setTrackerType(selectedTrackerType);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          setSelectedTrackerType(solarPanel.trackerType);
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

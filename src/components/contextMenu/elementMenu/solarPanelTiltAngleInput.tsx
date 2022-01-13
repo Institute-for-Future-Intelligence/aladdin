@@ -340,6 +340,21 @@ const SolarPanelTiltAngleInput = ({
     }
   };
 
+  const cancel = () => {
+    setInputTiltAngle(solarPanel.tiltAngle);
+    rejectRef.current = false;
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setTiltAngle(inputTiltAngle);
+    if (!rejectRef.current) {
+      setDialogVisible(false);
+      setApplyCount(0);
+    }
+  };
+
   return (
     <>
       <Modal
@@ -372,38 +387,15 @@ const SolarPanelTiltAngleInput = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              setInputTiltAngle(solarPanel.tiltAngle);
-              rejectRef.current = false;
-              setDialogVisible(false);
-              revertApply();
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setTiltAngle(inputTiltAngle);
-              if (!rejectRef.current) {
-                setDialogVisible(false);
-                setApplyCount(0);
-              }
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          setInputTiltAngle(solarPanel.tiltAngle);
-          rejectRef.current = false;
-          setDialogVisible(false);
-          revertApply();
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
@@ -423,12 +415,7 @@ const SolarPanelTiltAngleInput = ({
               step={1}
               formatter={(a) => Number(a).toFixed(1) + '°'}
               onChange={(value) => setInputTiltAngle(Util.toRadians(value))}
-              onPressEnter={() => {
-                setTiltAngle(inputTiltAngle);
-                if (!rejectRef.current) {
-                  setDialogVisible(false);
-                }
-              }}
+              onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [-90°, 90°]

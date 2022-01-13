@@ -35,6 +35,9 @@ const SolarPanelRelativeAzimuthInput = ({
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const solarPanel = getSelectedElement() as SolarPanelModel;
   const [inputRelativeAzimuth, setInputRelativeAzimuth] = useState<number>(solarPanel?.relativeAzimuth ?? 0);
@@ -186,6 +189,7 @@ const SolarPanelRelativeAzimuthInput = ({
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
           updateSolarPanelRelativeAzimuthForAll(value);
+          setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
@@ -231,6 +235,7 @@ const SolarPanelRelativeAzimuthInput = ({
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
             updateSolarPanelRelativeAzimuthAboveFoundation(solarPanel.foundationId, value);
+            setApplyCount(applyCount + 1);
           }
         }
         break;
@@ -311,6 +316,7 @@ const SolarPanelRelativeAzimuthInput = ({
               } as UndoableChangeGroup;
               addUndoable(undoableChangeOnSurface);
               updateSolarPanelRelativeAzimuthOnSurface(solarPanel.parentId, normal, value);
+              setApplyCount(applyCount + 1);
             }
           }
         }
@@ -338,6 +344,7 @@ const SolarPanelRelativeAzimuthInput = ({
             } as UndoableChange;
             addUndoable(undoableChange);
             updateSolarPanelRelativeAzimuthById(solarPanel.id, value);
+            setApplyCount(applyCount + 1);
           }
         }
     }
@@ -354,6 +361,21 @@ const SolarPanelRelativeAzimuthInput = ({
         top: -targetRect.top + uiData.y,
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
+    }
+  };
+
+  const cancel = () => {
+    setInputRelativeAzimuth(solarPanel.relativeAzimuth);
+    rejectRef.current = false;
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setRelativeAzimuth(inputRelativeAzimuth);
+    if (!rejectRef.current) {
+      setDialogVisible(false);
+      setApplyCount(0);
     }
   };
 
@@ -389,35 +411,15 @@ const SolarPanelRelativeAzimuthInput = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              setInputRelativeAzimuth(solarPanel.relativeAzimuth);
-              rejectRef.current = false;
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setRelativeAzimuth(inputRelativeAzimuth);
-              if (!rejectRef.current) {
-                setDialogVisible(false);
-              }
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          setInputRelativeAzimuth(solarPanel.relativeAzimuth);
-          rejectRef.current = false;
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
@@ -437,12 +439,7 @@ const SolarPanelRelativeAzimuthInput = ({
               step={1}
               formatter={(a) => Number(a).toFixed(1) + '°'}
               onChange={(value) => setInputRelativeAzimuth(Util.toRadians(value))}
-              onPressEnter={() => {
-                setRelativeAzimuth(inputRelativeAzimuth);
-                if (!rejectRef.current) {
-                  setDialogVisible(false);
-                }
-              }}
+              onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [-180°, 180°]

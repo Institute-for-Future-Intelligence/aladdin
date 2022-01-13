@@ -33,6 +33,9 @@ const SolarPanelPoleSpacingInput = ({
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const solarPanel = getSelectedElement() as SolarPanelModel;
   const [inputPoleSpacing, setInputPoleSpacing] = useState<number>(solarPanel?.poleSpacing ?? 0);
@@ -143,6 +146,7 @@ const SolarPanelPoleSpacingInput = ({
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateSolarPanelPoleSpacingForAll(value);
+        setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (solarPanel.foundationId) {
@@ -174,6 +178,7 @@ const SolarPanelPoleSpacingInput = ({
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
           updateSolarPanelPoleSpacingAboveFoundation(solarPanel.foundationId, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
@@ -224,6 +229,7 @@ const SolarPanelPoleSpacingInput = ({
             } as UndoableChangeGroup;
             addUndoable(undoableChangeOnSurface);
             updateSolarPanelPoleSpacingOnSurface(solarPanel.parentId, normal, value);
+            setApplyCount(applyCount + 1);
           }
         }
         break;
@@ -245,6 +251,7 @@ const SolarPanelPoleSpacingInput = ({
           } as UndoableChange;
           addUndoable(undoableChange);
           updateSolarPanelPoleSpacingById(solarPanel.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);
@@ -261,6 +268,18 @@ const SolarPanelPoleSpacingInput = ({
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
     }
+  };
+
+  const cancel = () => {
+    setInputPoleSpacing(solarPanel.poleSpacing);
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setPoleSpacing(inputPoleSpacing);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   return (
@@ -286,31 +305,15 @@ const SolarPanelPoleSpacingInput = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              setInputPoleSpacing(solarPanel.poleSpacing);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setPoleSpacing(inputPoleSpacing);
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          setInputPoleSpacing(solarPanel.poleSpacing);
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
@@ -330,10 +333,7 @@ const SolarPanelPoleSpacingInput = ({
               value={inputPoleSpacing}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => setInputPoleSpacing(value)}
-              onPressEnter={() => {
-                setPoleSpacing(inputPoleSpacing);
-                setDialogVisible(false);
-              }}
+              onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [1, 10] {i18n.t('word.MeterAbbreviation', lang)}

@@ -33,6 +33,9 @@ const SolarPanelPoleHeightInput = ({
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
 
   const solarPanel = getSelectedElement() as SolarPanelModel;
   const [inputPoleHeight, setInputPoleHeight] = useState<number>(solarPanel?.poleHeight ?? 0);
@@ -159,6 +162,7 @@ const SolarPanelPoleHeightInput = ({
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
           updateSolarPanelPoleHeightForAll(value);
+          setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
@@ -204,6 +208,7 @@ const SolarPanelPoleHeightInput = ({
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
             updateSolarPanelPoleHeightAboveFoundation(solarPanel.foundationId, value);
+            setApplyCount(applyCount + 1);
           }
         }
         break;
@@ -286,6 +291,7 @@ const SolarPanelPoleHeightInput = ({
               } as UndoableChangeGroup;
               addUndoable(undoableChangeOnSurface);
               updateSolarPanelPoleHeightOnSurface(solarPanel.parentId, normal, value);
+              setApplyCount(applyCount + 1);
             }
           }
         }
@@ -313,6 +319,7 @@ const SolarPanelPoleHeightInput = ({
             } as UndoableChange;
             addUndoable(undoableChange);
             updateSolarPanelPoleHeightById(solarPanel.id, value);
+            setApplyCount(applyCount + 1);
           }
         }
     }
@@ -329,6 +336,21 @@ const SolarPanelPoleHeightInput = ({
         top: -targetRect.top + uiData.y,
         bottom: clientHeight - (targetRect?.bottom - uiData.y),
       });
+    }
+  };
+
+  const cancel = () => {
+    setInputPoleHeight(solarPanel.poleHeight);
+    rejectRef.current = false;
+    setDialogVisible(false);
+    revertApply();
+  };
+
+  const ok = () => {
+    setPoleHeight(inputPoleHeight);
+    if (!rejectRef.current) {
+      setDialogVisible(false);
+      setApplyCount(0);
     }
   };
 
@@ -362,35 +384,15 @@ const SolarPanelPoleHeightInput = ({
           >
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              setInputPoleHeight(solarPanel.poleHeight);
-              rejectRef.current = false;
-              setDialogVisible(false);
-            }}
-          >
+          <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            onClick={() => {
-              setPoleHeight(inputPoleHeight);
-              if (!rejectRef.current) {
-                setDialogVisible(false);
-              }
-            }}
-          >
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={() => {
-          setInputPoleHeight(solarPanel.poleHeight);
-          rejectRef.current = false;
-          setDialogVisible(false);
-        }}
+        onCancel={cancel}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
@@ -410,12 +412,7 @@ const SolarPanelPoleHeightInput = ({
               value={inputPoleHeight}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => setInputPoleHeight(value)}
-              onPressEnter={() => {
-                setPoleHeight(inputPoleHeight);
-                if (!rejectRef.current) {
-                  setDialogVisible(false);
-                }
-              }}
+              onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [0, 5] {i18n.t('word.MeterAbbreviation', lang)}
