@@ -12,9 +12,10 @@ import * as Selector from '../stores/selector';
 
 export interface HorizontalRulerProps {
   element: ElementModel;
+  verticalLift: number;
 }
 
-export const HorizontalRuler = ({ element }: HorizontalRulerProps) => {
+export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps) => {
   const language = useStore(Selector.language);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
@@ -42,7 +43,7 @@ export const HorizontalRuler = ({ element }: HorizontalRulerProps) => {
         return -element.lz / 2 + 0.1;
     }
     return 0.1;
-  }, [element.type]);
+  }, [element.type, element.lz]);
 
   const ll2ul = useMemo(() => {
     return (
@@ -53,7 +54,7 @@ export const HorizontalRuler = ({ element }: HorizontalRulerProps) => {
           fontSize={80}
           fontFace={'Times Roman'}
           textHeight={1}
-          position={[-hx - rulerOffset, 0, hz + rulerOffset]}
+          position={[-hx - rulerOffset, 0, hz + verticalLift]}
         />
         <Line
           points={[
@@ -110,7 +111,7 @@ export const HorizontalRuler = ({ element }: HorizontalRulerProps) => {
           fontSize={80}
           fontFace={'Times Roman'}
           textHeight={1}
-          position={[hx + rulerOffset, 0, hz + rulerOffset]}
+          position={[hx + rulerOffset, 0, hz + verticalLift]}
         />
         <Line
           points={[
@@ -167,7 +168,7 @@ export const HorizontalRuler = ({ element }: HorizontalRulerProps) => {
           fontSize={80}
           fontFace={'Times Roman'}
           textHeight={1}
-          position={[0, -hy - rulerOffset, hz + rulerOffset]}
+          position={[0, -hy - rulerOffset, hz + verticalLift]}
         />
         <Line
           points={[
@@ -224,7 +225,7 @@ export const HorizontalRuler = ({ element }: HorizontalRulerProps) => {
           fontSize={80}
           fontFace={'Times Roman'}
           textHeight={1}
-          position={[0, hy + rulerOffset, hz + rulerOffset]}
+          position={[0, hy + rulerOffset, hz + verticalLift]}
         />
         <Line
           points={[

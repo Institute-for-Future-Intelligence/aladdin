@@ -1123,7 +1123,7 @@ const Cuboid = ({
       )}
 
       {/* ruler */}
-      {selected && <HorizontalRuler element={cuboidModel} />}
+      {selected && <HorizontalRuler element={cuboidModel} verticalLift={moveHandleSize} />}
 
       {/* wireFrame */}
       {!selected && <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />}

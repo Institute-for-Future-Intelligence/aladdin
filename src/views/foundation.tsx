@@ -1759,7 +1759,7 @@ const Foundation = ({
       )}
 
       {/* ruler */}
-      {selected && <HorizontalRuler element={foundationModel} />}
+      {selected && <HorizontalRuler element={foundationModel} verticalLift={moveHandleSize} />}
 
       {/* wireFrame */}
       {!selected && <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />}
