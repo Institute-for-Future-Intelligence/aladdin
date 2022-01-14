@@ -490,9 +490,9 @@ export const useStore = create<CommonStoreState>(
               userid: state.user.uid,
               owner: state.user.signFile ? state.user.displayName : null,
               email: state.user.signFile ? state.user.email : null,
-              world: state.world,
-              elements: state.elements,
-              view: state.viewState,
+              world: JSON.parse(JSON.stringify(state.world)),
+              elements: JSON.parse(JSON.stringify(state.elements)),
+              view: JSON.parse(JSON.stringify(state.viewState)),
               notes: state.notes,
             };
           },
@@ -2683,7 +2683,7 @@ export const useStore = create<CommonStoreState>(
                       }
                     }
                   } else {
-                    // if parent is ground, it has no type definition, but we use it to check its type
+                    // if the old parent is ground, it has no type definition, but we use it to check its type
                     if (oldParent && oldParent.type) {
                       elem.parentId = newParent.id;
                       if (Util.isPositionRelative(elem.type)) {

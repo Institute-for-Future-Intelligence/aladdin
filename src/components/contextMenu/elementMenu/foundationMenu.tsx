@@ -57,6 +57,8 @@ export const FoundationMenu = () => {
 
   const legalToPaste = () => {
     if (elementsToPaste && elementsToPaste.length > 0) {
+      // when there are multiple elements to paste, the first element is the parent
+      // we check the legality of the parent here
       const e = elementsToPaste[0];
       if (
         e.type === ObjectType.Human ||

@@ -269,7 +269,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         .collection('users')
         .doc(user.uid)
         .update({
-          signFile: user.signFile,
+          signFile: !!user.signFile,
         })
         .then(() => {
           showInfo(i18n.t('message.YourAccountSettingsWereSaved', lang));
@@ -318,6 +318,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
               });
           }
         } catch (e) {
+          showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + e);
           console.log(e);
         }
       }
