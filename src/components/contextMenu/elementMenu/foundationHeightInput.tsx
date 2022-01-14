@@ -311,9 +311,13 @@ const FoundationHeightInput = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     setInputLz(foundation?.lz);
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -354,7 +358,7 @@ const FoundationHeightInput = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

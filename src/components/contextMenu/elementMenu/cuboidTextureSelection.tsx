@@ -224,11 +224,15 @@ const CuboidTextureSelection = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     if (cuboid?.textureTypes && selectedSideIndex >= 0) {
       setSelectedTexture(cuboid.textureTypes[selectedSideIndex]);
     }
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -269,7 +273,7 @@ const CuboidTextureSelection = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

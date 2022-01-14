@@ -312,9 +312,13 @@ const CuboidHeightInput = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     setInputLz(cuboid?.lz);
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -355,7 +359,7 @@ const CuboidHeightInput = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

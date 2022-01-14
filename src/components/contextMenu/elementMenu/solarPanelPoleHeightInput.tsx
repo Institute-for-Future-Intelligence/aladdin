@@ -339,10 +339,14 @@ const SolarPanelPoleHeightInput = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     setInputPoleHeight(solarPanel.poleHeight);
     rejectRef.current = false;
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -392,7 +396,7 @@ const SolarPanelPoleHeightInput = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

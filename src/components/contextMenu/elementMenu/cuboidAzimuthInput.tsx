@@ -140,9 +140,13 @@ const CuboidAzimuthInput = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     setInputAzimuth(cuboid?.rotation[2]);
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -183,7 +187,7 @@ const CuboidAzimuthInput = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

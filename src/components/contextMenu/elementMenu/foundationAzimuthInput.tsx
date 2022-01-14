@@ -140,9 +140,13 @@ const FoundationAzimuthInput = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     setInputAzimuth(foundation?.rotation[2]);
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -183,7 +187,7 @@ const FoundationAzimuthInput = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

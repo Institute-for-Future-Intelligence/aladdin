@@ -240,11 +240,15 @@ const PolygonLineColorSelection = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     if (polygon?.lineColor) {
       setSelectedColor(polygon.lineColor);
     }
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -285,7 +289,7 @@ const PolygonLineColorSelection = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

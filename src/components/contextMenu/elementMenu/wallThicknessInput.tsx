@@ -151,9 +151,13 @@ const WallThicknessInput = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     setInputThickness(wall.ly ?? 0.3);
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -194,7 +198,7 @@ const WallThicknessInput = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

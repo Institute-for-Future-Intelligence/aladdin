@@ -270,9 +270,13 @@ const SolarPanelPoleSpacingInput = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     setInputPoleSpacing(solarPanel.poleSpacing);
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -313,7 +317,7 @@ const SolarPanelPoleSpacingInput = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

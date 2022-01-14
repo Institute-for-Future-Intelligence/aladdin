@@ -364,10 +364,14 @@ const SolarPanelRelativeAzimuthInput = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     setInputRelativeAzimuth(solarPanel.relativeAzimuth);
     rejectRef.current = false;
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -419,7 +423,7 @@ const SolarPanelRelativeAzimuthInput = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

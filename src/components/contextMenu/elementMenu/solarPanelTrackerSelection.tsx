@@ -272,9 +272,13 @@ const SolarPanelTrackerSelection = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     setSelectedTrackerType(solarPanel.trackerType);
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -315,7 +319,7 @@ const SolarPanelTrackerSelection = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

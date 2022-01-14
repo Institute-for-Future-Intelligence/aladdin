@@ -252,11 +252,15 @@ const PolygonTextureSelection = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     if (polygon?.textureType) {
       setSelectedTexture(polygon.textureType);
     }
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -297,7 +301,7 @@ const PolygonTextureSelection = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

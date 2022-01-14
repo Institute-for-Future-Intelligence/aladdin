@@ -139,11 +139,15 @@ const FoundationColorSelection = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     if (foundation?.color) {
       setSelectedColor(foundation.color);
     }
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -184,7 +188,7 @@ const FoundationColorSelection = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

@@ -371,10 +371,14 @@ const SolarPanelWidthInput = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     setInputWidth(solarPanel.ly);
     rejectRef.current = false;
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -431,7 +435,7 @@ const SolarPanelWidthInput = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

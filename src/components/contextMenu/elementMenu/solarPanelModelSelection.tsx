@@ -288,9 +288,13 @@ const SolarPanelModelSelection = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     setSelectedPvModel(solarPanel.pvModelName);
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -331,7 +335,7 @@ const SolarPanelModelSelection = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

@@ -453,10 +453,14 @@ const CuboidWidthInput = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     setInputLy(cuboid?.ly);
     rejectRef.current = false;
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -506,7 +510,7 @@ const CuboidWidthInput = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

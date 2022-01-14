@@ -240,11 +240,15 @@ const PolygonFillColorSelection = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     if (polygon?.color) {
       setSelectedColor(polygon.color);
     }
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -285,7 +289,7 @@ const PolygonFillColorSelection = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (

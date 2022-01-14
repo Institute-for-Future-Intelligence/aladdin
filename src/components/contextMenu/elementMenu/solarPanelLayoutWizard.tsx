@@ -357,7 +357,6 @@ const SolarPanelLayoutWizard = ({
         // this must be specified for the x button in the upper-right corner to work
         onCancel={() => {
           setDialogVisible(false);
-          revertApply();
           changedRef.current = true;
         }}
         maskClosable={false}

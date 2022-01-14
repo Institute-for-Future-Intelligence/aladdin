@@ -90,11 +90,15 @@ const PolygonLineStyleSelection = ({
     }
   };
 
-  const cancel = () => {
+  const close = () => {
     if (polygon?.lineStyle) {
       setSelectedLineStyle(polygon.lineStyle);
     }
     setDialogVisible(false);
+  };
+
+  const cancel = () => {
+    close();
     revertApply();
   };
 
@@ -135,7 +139,7 @@ const PolygonLineStyleSelection = ({
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
-        onCancel={cancel}
+        onCancel={close}
         maskClosable={false}
         destroyOnClose={false}
         modalRender={(modal) => (
