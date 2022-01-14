@@ -18,6 +18,7 @@ export interface ElementModel {
 
   parentId: string;
   foundationId?: string;
+  referenceId?: string;
   selected?: boolean;
   locked?: boolean;
   color?: string;

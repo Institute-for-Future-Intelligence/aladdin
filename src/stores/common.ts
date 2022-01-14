@@ -129,7 +129,7 @@ export interface CommonStoreState {
 
   // for all types of elements
   updateElementLockById: (id: string, locked: boolean) => void;
-
+  updateElementReferenceById: (id: string, referenceId: string) => void;
   updateElementLabelById: (id: string, label: string) => void;
   updateElementShowLabelById: (id: string, showLabel: boolean) => void;
 
@@ -799,6 +799,16 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.id === id) {
                   e.locked = locked;
+                  break;
+                }
+              }
+            });
+          },
+          updateElementReferenceById(id, referenceId) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  e.referenceId = referenceId;
                   break;
                 }
               }
@@ -2430,13 +2440,13 @@ export const useStore = create<CommonStoreState>(
               if (cache) {
                 state.deletedElements = [];
                 for (const e of state.elements) {
-                  if (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).referenceId === id) {
+                  if (e.referenceId === id) {
                     state.deletedElements.push(e);
                   }
                 }
               }
               state.elements = state.elements.filter((e) => {
-                return !(e.type === ObjectType.SolarPanel && (e as SolarPanelModel).referenceId === id);
+                return e.referenceId !== id;
               });
               state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
@@ -2445,7 +2455,7 @@ export const useStore = create<CommonStoreState>(
             let count = 0;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).referenceId === id) {
+                if (e.referenceId === id) {
                   count++;
                 }
               }

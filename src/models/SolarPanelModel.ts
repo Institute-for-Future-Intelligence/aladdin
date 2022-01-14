@@ -14,7 +14,6 @@ export interface SolarPanelModel extends ElementModel {
   drawSunBeam: boolean;
 
   trackerType: TrackerType;
-  referenceId: string;
 
   poleHeight: number;
   poleRadius: number;

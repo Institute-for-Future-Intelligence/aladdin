@@ -31,10 +31,12 @@ const SolarPanelLayoutWizard = ({
 }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
+  const elements = useStore(Selector.elements);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getElementById = useStore(Selector.getElementById);
   const pvModules = useStore(Selector.pvModules);
   const getPvModule = useStore(Selector.getPvModule);
+  const updateElementReferenceById = useStore(Selector.updateElementReferenceById);
   const countElementsByReferenceId = useStore(Selector.countElementsByReferenceId);
   const removeElementsByReferenceId = useStore(Selector.removeElementsByReferenceId);
   const clearDeletedElements = useStore(Selector.clearDeletedElements);
@@ -114,6 +116,21 @@ const SolarPanelLayoutWizard = ({
     }
     // others?
     return true;
+  };
+
+  const referenceExistingSolarPanels = (area: PolygonModel) => {
+    const existingSolarPanels = elements.filter(
+      (e) => e.type === ObjectType.SolarPanel && e.parentId === area.parentId,
+    );
+    if (existingSolarPanels.length > 0) {
+      for (const sp of existingSolarPanels) {
+        if (sp.referenceId !== area.id) {
+          if (Util.pointInsidePolygon({ x: sp.cx, y: sp.cy } as Point2, area.vertices)) {
+            updateElementReferenceById(sp.id, area.id);
+          }
+        }
+      }
+    }
   };
 
   const layout = () => {
@@ -263,6 +280,7 @@ const SolarPanelLayoutWizard = ({
     if (!changedRef.current) return;
     if (isLayoutOk()) {
       if (reference) {
+        referenceExistingSolarPanels(reference as PolygonModel);
         if (countElementsByReferenceId(reference.id) > 0) {
           setWarningDialogVisible(true);
         } else {

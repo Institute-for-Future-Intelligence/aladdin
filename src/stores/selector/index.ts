@@ -105,6 +105,8 @@ export const setElementNormal = (state: CommonStoreState) => state.setElementNor
 
 export const updateElementLockById = (state: CommonStoreState) => state.updateElementLockById;
 
+export const updateElementReferenceById = (state: CommonStoreState) => state.updateElementReferenceById;
+
 export const updateElementLabelById = (state: CommonStoreState) => state.updateElementLabelById;
 
 export const updateElementShowLabelById = (state: CommonStoreState) => state.updateElementShowLabelById;

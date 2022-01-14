@@ -112,6 +112,24 @@ export class Util {
     return ly;
   }
 
+  // ray-casting algorithm based on
+  // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html/pnpoly.html
+  static pointInsidePolygon(point: Point2, vertices: Point2[]) {
+    const x = point.x;
+    const y = point.y;
+    let inside = false;
+    for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+      const xi = vertices[i].x,
+        yi = vertices[i].y;
+      const xj = vertices[j].x,
+        yj = vertices[j].y;
+      if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  }
+
   static polygonIntersections(a: Point2, b: Point2, vertices: Point2[]): Point2[] {
     const intersections = new Array<Point2>();
     let v1: Point2, v2: Point2, p: Point2 | undefined;
