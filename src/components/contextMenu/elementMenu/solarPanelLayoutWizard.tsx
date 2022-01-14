@@ -37,6 +37,7 @@ const SolarPanelLayoutWizard = ({
   const getPvModule = useStore(Selector.getPvModule);
   const countElementsByReferenceId = useStore(Selector.countElementsByReferenceId);
   const removeElementsByReferenceId = useStore(Selector.removeElementsByReferenceId);
+  const clearDeletedElements = useStore(Selector.clearDeletedElements);
   const addUndoable = useStore(Selector.addUndoable);
   const pvModelName = useStore.getState().solarPanelArrayLayoutParams.pvModelName;
   const rowAxis = useStore.getState().solarPanelArrayLayoutParams.rowAxis;
@@ -258,6 +259,22 @@ const SolarPanelLayoutWizard = ({
     });
   };
 
+  const apply = () => {
+    if (!changedRef.current) return;
+    if (isLayoutOk()) {
+      if (reference) {
+        if (countElementsByReferenceId(reference.id) > 0) {
+          setWarningDialogVisible(true);
+        } else {
+          clearDeletedElements();
+          layout();
+        }
+      }
+    } else {
+      showError(i18n.t('polygonMenu.LayoutNotAcceptedCheckYourParameters', lang));
+    }
+  };
+
   return (
     <>
       {warningDialogVisible && (
@@ -301,23 +318,7 @@ const SolarPanelLayoutWizard = ({
           </div>
         }
         footer={[
-          <Button
-            key="Apply"
-            onClick={() => {
-              if (!changedRef.current) return;
-              if (isLayoutOk()) {
-                if (reference) {
-                  if (countElementsByReferenceId(reference.id) > 0) {
-                    setWarningDialogVisible(true);
-                  } else {
-                    layout();
-                  }
-                }
-              } else {
-                showError(i18n.t('polygonMenu.LayoutNotAcceptedCheckYourParameters', lang));
-              }
-            }}
-          >
+          <Button key="Apply" onClick={apply}>
             {i18n.t('word.Apply', lang)}
           </Button>,
           <Button
@@ -334,19 +335,7 @@ const SolarPanelLayoutWizard = ({
             key="OK"
             type="primary"
             onClick={() => {
-              if (changedRef.current) {
-                if (isLayoutOk()) {
-                  if (reference) {
-                    if (countElementsByReferenceId(reference.id) > 0) {
-                      setWarningDialogVisible(true);
-                    } else {
-                      layout();
-                    }
-                  }
-                } else {
-                  showError(i18n.t('polygonMenu.LayoutNotAcceptedCheckYourParameters', lang));
-                }
-              }
+              apply();
               setDialogVisible(false);
               setApplyCount(0);
             }}

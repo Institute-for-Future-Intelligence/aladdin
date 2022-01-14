@@ -128,7 +128,7 @@ export class ElementModelFactory {
       trackerType: TrackerType.NO_TRACKER,
       relativeAzimuth: 0,
       tiltAngle: 0,
-      orientation: orientation ?? Orientation.portrait,
+      orientation: orientation ?? Orientation.landscape,
       drawSunBeam: false,
       poleHeight: 1,
       poleRadius: 0.05,

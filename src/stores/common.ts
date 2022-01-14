@@ -308,6 +308,7 @@ export interface CommonStoreState {
   pasteNormal: Vector3 | undefined;
   elementsToPaste: ElementModel[]; // this is for undoing cut and pasting
   deletedElements: ElementModel[]; // this is for undoing deletion
+  clearDeletedElements: () => void;
   copyElementById: (id: string) => void;
   removeElementById: (id: string, cut: boolean) => void; // set cut to false for deletion
   copyCutElements: () => ElementModel[];
@@ -2254,7 +2255,7 @@ export const useStore = create<CommonStoreState>(
                     solarPanelRelativeCoordinates.x,
                     solarPanelRelativeCoordinates.y,
                     solarPanelRelativeCoordinates.z,
-                    Orientation.portrait,
+                    Orientation.landscape,
                     normal,
                     'rotation' in parent ? parent.rotation : undefined,
                   );
@@ -2293,6 +2294,11 @@ export const useStore = create<CommonStoreState>(
 
           elementsToPaste: [],
           deletedElements: [],
+          clearDeletedElements() {
+            immerSet((state: CommonStoreState) => {
+              state.deletedElements = [];
+            });
+          },
           pastePoint: new Vector3(),
           pasteNormal: undefined,
           copyElementById(id) {

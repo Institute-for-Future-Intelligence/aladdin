@@ -319,6 +319,8 @@ export const removeElementById = (state: CommonStoreState) => state.removeElemen
 
 export const removeElementsByType = (state: CommonStoreState) => state.removeElementsByType;
 
+export const clearDeletedElements = (state: CommonStoreState) => state.clearDeletedElements;
+
 export const countElementsByReferenceId = (state: CommonStoreState) => state.countElementsByReferenceId;
 
 export const removeElementsByReferenceId = (state: CommonStoreState) => state.removeElementsByReferenceId;
