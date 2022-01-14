@@ -588,4 +588,5 @@ const SolarPanelLayoutWizard = ({
   );
 };
 
-export default React.memo(SolarPanelLayoutWizard);
+// don't wrap this with React.memo as changedRef would be saved
+export default SolarPanelLayoutWizard;

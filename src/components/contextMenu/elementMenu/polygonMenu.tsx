@@ -18,6 +18,7 @@ import PolygonFillColorSelection from './polygonFillColorSelection';
 import PolygonTextureSelection from './polygonTextureSelection';
 import SolarPanelLayoutWizard from './solarPanelLayoutWizard';
 import PolygonLineStyleSelection from './polygonLineStyleSelection';
+import PolygonLineWidthSelection from './polygonLineWidthSelection';
 
 export const PolygonMenu = () => {
   const language = useStore(Selector.language);
@@ -29,6 +30,7 @@ export const PolygonMenu = () => {
 
   const [lineColorDialogVisible, setLineColorDialogVisible] = useState(false);
   const [lineStyleDialogVisible, setLineStyleDialogVisible] = useState(false);
+  const [lineWidthDialogVisible, setLineWidthDialogVisible] = useState(false);
   const [fillColorDialogVisible, setFillColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [solarPanelLayoutWizardVisible, setSolarPanelLayoutWizardVisible] = useState(false);
@@ -130,6 +132,20 @@ export const PolygonMenu = () => {
               }}
             >
               {i18n.t('polygonMenu.LineStyle', lang)} ...
+            </Menu.Item>
+            <PolygonLineWidthSelection
+              dialogVisible={lineWidthDialogVisible}
+              setDialogVisible={setLineWidthDialogVisible}
+            />
+            <Menu.Item
+              key={'polygon-line-width'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setLineWidthDialogVisible(true);
+              }}
+            >
+              {i18n.t('polygonMenu.LineWidth', lang)} ...
             </Menu.Item>
           </>
         )}

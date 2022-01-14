@@ -154,6 +154,7 @@ export class ElementModelCloner {
       filled: polygon.filled,
       color: polygon.color,
       lineColor: polygon.lineColor,
+      lineWidth: polygon.lineWidth,
       opacity: polygon.opacity,
       textureType: polygon.textureType,
       normal: [...polygon.normal],

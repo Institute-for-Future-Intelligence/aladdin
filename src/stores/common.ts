@@ -142,6 +142,7 @@ export interface CommonStoreState {
   ) => void;
   updateElementColorAboveFoundation: (type: ObjectType, foundationId: string, color: string) => void;
   updateElementColorForAll: (type: ObjectType, color: string) => void;
+
   updateElementLineColorById: (id: string, color: string) => void;
   updateElementLineColorOnSurface: (
     type: ObjectType,
@@ -151,6 +152,16 @@ export interface CommonStoreState {
   ) => void;
   updateElementLineColorAboveFoundation: (type: ObjectType, foundationId: string, color: string) => void;
   updateElementLineColorForAll: (type: ObjectType, color: string) => void;
+
+  updateElementLineWidthById: (id: string, width: number) => void;
+  updateElementLineWidthOnSurface: (
+    type: ObjectType,
+    parentId: string,
+    normal: number[] | undefined,
+    width: number,
+  ) => void;
+  updateElementLineWidthAboveFoundation: (type: ObjectType, foundationId: string, width: number) => void;
+  updateElementLineWidthForAll: (type: ObjectType, width: number) => void;
 
   updateElementRotationById: (id: string, x: number, y: number, z: number) => void;
   updateElementRotationForAll: (type: ObjectType, x: number, y: number, z: number) => void;
@@ -419,13 +430,13 @@ export const useStore = create<CommonStoreState>(
           language: 'en',
           cloudFile: undefined,
           changed: false,
-          setChanged(b: boolean) {
+          setChanged(b) {
             immerSet((state: CommonStoreState) => {
               state.changed = b;
             });
           },
           skipChange: true,
-          setSkipChange(b: boolean) {
+          setSkipChange(b) {
             immerSet((state: CommonStoreState) => {
               state.skipChange = b;
             });
@@ -433,7 +444,7 @@ export const useStore = create<CommonStoreState>(
           fileChanged: false,
 
           applyCount: 0,
-          setApplyCount(count: number) {
+          setApplyCount(count) {
             immerSet((state: CommonStoreState) => {
               state.applyCount = count;
             });
@@ -448,7 +459,7 @@ export const useStore = create<CommonStoreState>(
             }
           },
 
-          importContent(content: any, title) {
+          importContent(content, title) {
             immerSet((state: CommonStoreState) => {
               state.world = content.world;
               state.viewState = content.view;
@@ -650,7 +661,7 @@ export const useStore = create<CommonStoreState>(
 
           selectedSideIndex: -1,
 
-          getResizeHandlePosition(e: ElementModel, handleType: ResizeHandleType) {
+          getResizeHandlePosition(e, handleType) {
             const { cx, cy, lx, ly, lz, rotation, type, parentId } = e;
             let p = new Vector3(cx, cy, 0);
             // FIXME: It seems the x, y components above are absolute, but the z component is relative.
@@ -723,7 +734,7 @@ export const useStore = create<CommonStoreState>(
             }
             return p;
           },
-          getElementById(id: string) {
+          getElementById(id) {
             const elements = get().elements;
             for (const e of elements) {
               if (e.id === id) {
@@ -874,7 +885,7 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          updateElementLineColorById(id: string, color: string) {
+          updateElementLineColorById(id, color) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.id === id && !e.locked) {
@@ -893,7 +904,7 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          updateElementLineColorAboveFoundation(type: ObjectType, foundationId, color: string) {
+          updateElementLineColorAboveFoundation(type, foundationId, color) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === type && e.foundationId === foundationId && !e.locked) {
@@ -902,11 +913,49 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          updateElementLineColorForAll(type: ObjectType, color: string) {
+          updateElementLineColorForAll(type, color) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === type && !e.locked) {
                   e.lineColor = color;
+                }
+              }
+            });
+          },
+
+          updateElementLineWidthById(id, width) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  e.lineWidth = width;
+                  break;
+                }
+              }
+            });
+          },
+          updateElementLineWidthOnSurface(type, parentId, normal, width) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && e.parentId === parentId && Util.isIdentical(e.normal, normal) && !e.locked) {
+                  e.lineWidth = width;
+                }
+              }
+            });
+          },
+          updateElementLineWidthAboveFoundation(type, foundationId, width) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && e.foundationId === foundationId && !e.locked) {
+                  e.lineWidth = width;
+                }
+              }
+            });
+          },
+          updateElementLineWidthForAll(type, width) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && !e.locked) {
+                  e.lineWidth = width;
                 }
               }
             });
@@ -1132,7 +1181,7 @@ export const useStore = create<CommonStoreState>(
 
           // for foundations
           foundationActionScope: Scope.OnlyThisObject,
-          setFoundationActionScope(scope: Scope) {
+          setFoundationActionScope(scope) {
             immerSet((state: CommonStoreState) => {
               state.foundationActionScope = scope;
             });
@@ -1160,12 +1209,12 @@ export const useStore = create<CommonStoreState>(
 
           // for cuboids
           cuboidActionScope: Scope.OnlyThisSide,
-          setCuboidActionScope(scope: Scope) {
+          setCuboidActionScope(scope) {
             immerSet((state: CommonStoreState) => {
               state.cuboidActionScope = scope;
             });
           },
-          updateCuboidColorBySide(side: number, id, color) {
+          updateCuboidColorBySide(side, id, color) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Cuboid && e.id === id && !e.locked) {
@@ -1210,7 +1259,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          updateCuboidTextureBySide(side: number, id, texture) {
+          updateCuboidTextureBySide(side, id, texture) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Cuboid && e.id === id && !e.locked) {
@@ -1261,12 +1310,12 @@ export const useStore = create<CommonStoreState>(
 
           // for polygons
           polygonActionScope: Scope.OnlyThisObject,
-          setPolygonActionScope(scope: Scope) {
+          setPolygonActionScope(scope) {
             immerSet((state: CommonStoreState) => {
               state.polygonActionScope = scope;
             });
           },
-          deletePolygonVertexByIndex(id: string, index: number) {
+          deletePolygonVertexByIndex(id, index) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Polygon && e.id === id) {
@@ -1277,7 +1326,7 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          insertPolygonVertexBeforeIndex(id: string, index: number) {
+          insertPolygonVertexBeforeIndex(id, index) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Polygon && e.id === id) {
@@ -1297,7 +1346,7 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          insertPolygonVertexAfterIndex(id: string, index: number) {
+          insertPolygonVertexAfterIndex(id, index) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Polygon && e.id === id) {
@@ -1317,7 +1366,7 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          updatePolygonSelectedIndexById(id: string, index: number) {
+          updatePolygonSelectedIndexById(id, index) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Polygon && e.id === id) {
@@ -1327,7 +1376,7 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          updatePolygonFilledById(id: string, filled: boolean) {
+          updatePolygonFilledById(id, filled) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Polygon && e.id === id) {
@@ -1337,7 +1386,7 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          updatePolygonLineStyleById(id: string, style: LineStyle) {
+          updatePolygonLineStyleById(id, style) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Polygon && e.id === id) {
@@ -1347,7 +1396,7 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          updatePolygonVertexPositionById(id: string, index: number, x: number, y: number) {
+          updatePolygonVertexPositionById(id, index, x, y) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Polygon && e.id === id) {
@@ -1362,7 +1411,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
           // must feed a deep copy of the vertices
-          updatePolygonVerticesById(id: string, vertices) {
+          updatePolygonVerticesById(id, vertices) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Polygon && e.id === id) {
@@ -1418,7 +1467,7 @@ export const useStore = create<CommonStoreState>(
 
           // for solar panels
           solarPanelActionScope: Scope.OnlyThisObject,
-          setSolarPanelActionScope(scope: Scope) {
+          setSolarPanelActionScope(scope) {
             immerSet((state: CommonStoreState) => {
               state.solarPanelActionScope = scope;
             });
@@ -1944,7 +1993,7 @@ export const useStore = create<CommonStoreState>(
 
           // for walls
           wallActionScope: Scope.OnlyThisObject,
-          setWallActionScope(scope: Scope) {
+          setWallActionScope(scope) {
             immerSet((state: CommonStoreState) => {
               state.wallActionScope = scope;
             });
@@ -2197,7 +2246,7 @@ export const useStore = create<CommonStoreState>(
           },
 
           objectTypeToAdd: ObjectType.None,
-          addElement(parent: ElementModel | GroundModel, p, normal) {
+          addElement(parent, p, normal) {
             let model: ElementModel | null = null;
             const parentId = 'id' in parent ? parent.id : GROUND_ID;
             immerSet((state: CommonStoreState) => {
@@ -2327,7 +2376,7 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          removeElementById(id: string, cut: boolean) {
+          removeElementById(id, cut) {
             immerSet((state: CommonStoreState) => {
               for (const elem of state.elements) {
                 if (elem.id === id) {
@@ -2412,7 +2461,7 @@ export const useStore = create<CommonStoreState>(
               state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
           },
-          removeElementsByType(type: ObjectType) {
+          removeElementsByType(type) {
             immerSet((state: CommonStoreState) => {
               if (type === ObjectType.Foundation) {
                 state.elements = state.elements.filter((x) => {
@@ -2424,7 +2473,7 @@ export const useStore = create<CommonStoreState>(
               state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
           },
-          countElementsByType(type: ObjectType) {
+          countElementsByType(type) {
             let count = 0;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -2435,7 +2484,7 @@ export const useStore = create<CommonStoreState>(
             });
             return count;
           },
-          removeElementsByReferenceId(id: string, cache: boolean) {
+          removeElementsByReferenceId(id, cache) {
             immerSet((state: CommonStoreState) => {
               if (cache) {
                 state.deletedElements = [];
@@ -2451,7 +2500,7 @@ export const useStore = create<CommonStoreState>(
               state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
           },
-          countElementsByReferenceId(id: string) {
+          countElementsByReferenceId(id) {
             let count = 0;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -2463,7 +2512,7 @@ export const useStore = create<CommonStoreState>(
             return count;
           },
 
-          getChildren(id: string) {
+          getChildren(id) {
             const children: ElementModel[] = [];
             for (const e of get().elements) {
               if (e.parentId === id) {
@@ -2472,7 +2521,7 @@ export const useStore = create<CommonStoreState>(
             }
             return children;
           },
-          removeAllChildElementsByType(parentId: string, type: ObjectType) {
+          removeAllChildElementsByType(parentId, type) {
             immerSet((state: CommonStoreState) => {
               state.elements = state.elements.filter((x) => x.type !== type || x.parentId !== parentId);
               if (type === ObjectType.Wall) {
@@ -2481,7 +2530,7 @@ export const useStore = create<CommonStoreState>(
               state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
           },
-          countAllChildElementsByType(parentId: string, type: ObjectType) {
+          countAllChildElementsByType(parentId, type) {
             let count = 0;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -2492,7 +2541,7 @@ export const useStore = create<CommonStoreState>(
             });
             return count;
           },
-          countAllChildSolarPanels(parentId: string) {
+          countAllChildSolarPanels(parentId) {
             let count = 0;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -3110,10 +3159,10 @@ export const useStore = create<CommonStoreState>(
               },
             });
           },
-          getWeather(location: string) {
+          getWeather(location) {
             return get().weatherData[location];
           },
-          getClosestCity(lat: number, lng: number) {
+          getClosestCity(lat, lng) {
             let min: number = Number.MAX_VALUE;
             let city = null;
             let distance: number;
@@ -3131,7 +3180,7 @@ export const useStore = create<CommonStoreState>(
           },
 
           sunlightDirection: new Vector3(0, 2, 2),
-          setSunlightDirection(vector: Vector3) {
+          setSunlightDirection(vector) {
             immerSet((state: CommonStoreState) => {
               state.sunlightDirection = vector.clone();
             });
@@ -3144,7 +3193,7 @@ export const useStore = create<CommonStoreState>(
 
           updateSceneRadiusFlag: false,
           sceneRadius: 10,
-          setSceneRadius(radius: number) {
+          setSceneRadius(radius) {
             immerSet((state: CommonStoreState) => {
               state.sceneRadius = radius;
             });
@@ -3189,7 +3238,7 @@ export const useStore = create<CommonStoreState>(
           localContentToImportAfterCloudFileUpdate: undefined,
 
           enableFineGrid: false,
-          setEnableFineGrid(b: boolean) {
+          setEnableFineGrid(b) {
             immerSet((state: CommonStoreState) => {
               state.enableFineGrid = b;
             });

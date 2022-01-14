@@ -338,6 +338,7 @@ export const i18n_tr = {
       FillTexture: 'Dolu Tekstür',
       FillColor: 'Dolgu Rengi',
       LineColor: 'Çizgi Rengi',
+      LineWidth: 'Line Width',
       LineStyle: 'Line Style',
       SolidLine: 'Solid Line',
       DashedLine: 'Dashed Line',

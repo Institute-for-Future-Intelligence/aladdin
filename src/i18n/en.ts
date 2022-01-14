@@ -332,6 +332,7 @@ export const i18n_en = {
       FillTexture: 'Fill Texture',
       FillColor: 'Fill Color',
       LineColor: 'Line Color',
+      LineWidth: 'Line Width',
       LineStyle: 'Line Style',
       SolidLine: 'Solid Line',
       DashedLine: 'Dashed Line',

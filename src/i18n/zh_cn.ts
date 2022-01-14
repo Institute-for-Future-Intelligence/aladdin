@@ -329,6 +329,7 @@ export const i18n_zh_cn = {
       FillTexture: '填充材质',
       FillColor: '填充颜色',
       LineColor: '线条颜色',
+      LineWidth: '线条宽度',
       LineStyle: '线条样式',
       SolidLine: '实线',
       DashedLine: '虚线',

@@ -160,6 +160,15 @@ export const updateElementLineColorAboveFoundation = (state: CommonStoreState) =
 
 export const updateElementLineColorForAll = (state: CommonStoreState) => state.updateElementLineColorForAll;
 
+export const updateElementLineWidthById = (state: CommonStoreState) => state.updateElementLineWidthById;
+
+export const updateElementLineWidthOnSurface = (state: CommonStoreState) => state.updateElementLineWidthOnSurface;
+
+export const updateElementLineWidthAboveFoundation = (state: CommonStoreState) =>
+  state.updateElementLineWidthAboveFoundation;
+
+export const updateElementLineWidthForAll = (state: CommonStoreState) => state.updateElementLineWidthForAll;
+
 export const updateElementRotationById = (state: CommonStoreState) => state.updateElementRotationById;
 
 export const updateElementRotationForAll = (state: CommonStoreState) => state.updateElementRotationForAll;
