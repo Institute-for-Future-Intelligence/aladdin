@@ -325,13 +325,13 @@ export interface CommonStoreState {
   copyCutElements: () => ElementModel[];
   pasteElementsToPoint: () => ElementModel[];
   pasteElementsByKey: () => ElementModel[];
-  countElementsByType: (type: ObjectType) => number;
+  countElementsByType: (type: ObjectType, excludeLocked?: boolean) => number;
   removeElementsByType: (type: ObjectType) => void;
   countElementsByReferenceId: (id: string) => number;
   removeElementsByReferenceId: (id: string, cache: boolean) => void;
   getChildren: (id: string) => ElementModel[];
-  countAllChildElementsByType: (parentId: string, type: ObjectType) => number;
-  countAllChildSolarPanels: (parentId: string) => number; // special case as a rack may have many solar panels
+  countAllChildElementsByType: (parentId: string, type: ObjectType, excludeLocked?: boolean) => number;
+  countAllChildSolarPanels: (parentId: string, excludeLocked?: boolean) => number; // special case as a rack may have many solar panels
   countAllSolarPanels: () => number;
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
 
@@ -2466,20 +2466,28 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               if (type === ObjectType.Foundation) {
                 state.elements = state.elements.filter((x) => {
-                  return x.type !== ObjectType.Foundation && !x.foundationId;
+                  return x.locked || (x.type !== ObjectType.Foundation && !x.foundationId);
                 });
               } else {
-                state.elements = state.elements.filter((x) => x.type !== type);
+                state.elements = state.elements.filter((x) => x.locked || x.type !== type);
               }
               state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
           },
-          countElementsByType(type) {
+          countElementsByType(type, excludeLocked) {
             let count = 0;
             immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === type) {
-                  count++;
+              if (excludeLocked) {
+                for (const e of state.elements) {
+                  if (e.type === type && !e.locked) {
+                    count++;
+                  }
+                }
+              } else {
+                for (const e of state.elements) {
+                  if (e.type === type) {
+                    count++;
+                  }
                 }
               }
             });
@@ -2524,40 +2532,66 @@ export const useStore = create<CommonStoreState>(
           },
           removeAllChildElementsByType(parentId, type) {
             immerSet((state: CommonStoreState) => {
-              state.elements = state.elements.filter((x) => x.type !== type || x.parentId !== parentId);
+              state.elements = state.elements.filter((x) => x.locked || x.type !== type || x.parentId !== parentId);
               if (type === ObjectType.Wall) {
                 state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
               }
               state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
           },
-          countAllChildElementsByType(parentId, type) {
+          countAllChildElementsByType(parentId, type, excludeLocked) {
             let count = 0;
             immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === type && e.parentId === parentId) {
-                  count++;
+              if (excludeLocked) {
+                for (const e of state.elements) {
+                  if (!e.locked && e.type === type && e.parentId === parentId) {
+                    count++;
+                  }
+                }
+              } else {
+                for (const e of state.elements) {
+                  if (e.type === type && e.parentId === parentId) {
+                    count++;
+                  }
                 }
               }
             });
             return count;
           },
-          countAllChildSolarPanels(parentId) {
+          countAllChildSolarPanels(parentId, excludeLocked) {
             let count = 0;
             immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.parentId === parentId) {
-                  const sp = e as SolarPanelModel;
-                  const pvModel = state.getPvModule(sp.pvModelName);
-                  let nx, ny;
-                  if (sp.orientation === Orientation.portrait) {
-                    nx = Math.max(1, Math.round(sp.lx / pvModel.width));
-                    ny = Math.max(1, Math.round(sp.ly / pvModel.length));
-                  } else {
-                    nx = Math.max(1, Math.round(sp.lx / pvModel.length));
-                    ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+              if (excludeLocked) {
+                for (const e of state.elements) {
+                  if (!e.locked && e.type === ObjectType.SolarPanel && e.parentId === parentId) {
+                    const sp = e as SolarPanelModel;
+                    const pvModel = state.getPvModule(sp.pvModelName);
+                    let nx, ny;
+                    if (sp.orientation === Orientation.portrait) {
+                      nx = Math.max(1, Math.round(sp.lx / pvModel.width));
+                      ny = Math.max(1, Math.round(sp.ly / pvModel.length));
+                    } else {
+                      nx = Math.max(1, Math.round(sp.lx / pvModel.length));
+                      ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+                    }
+                    count += nx * ny;
                   }
-                  count += nx * ny;
+                }
+              } else {
+                for (const e of state.elements) {
+                  if (e.type === ObjectType.SolarPanel && e.parentId === parentId) {
+                    const sp = e as SolarPanelModel;
+                    const pvModel = state.getPvModule(sp.pvModelName);
+                    let nx, ny;
+                    if (sp.orientation === Orientation.portrait) {
+                      nx = Math.max(1, Math.round(sp.lx / pvModel.width));
+                      ny = Math.max(1, Math.round(sp.ly / pvModel.length));
+                    } else {
+                      nx = Math.max(1, Math.round(sp.lx / pvModel.length));
+                      ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+                    }
+                    count += nx * ny;
+                  }
                 }
               }
             });

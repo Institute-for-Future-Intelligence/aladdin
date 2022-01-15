@@ -30,10 +30,10 @@ export const GroundMenu = () => {
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
-  const treeCount = countElementsByType(ObjectType.Tree);
-  const humanCount = countElementsByType(ObjectType.Human);
-  const foundationCount = countElementsByType(ObjectType.Foundation);
-  const cuboidCount = countElementsByType(ObjectType.Cuboid);
+  const treeCount = countElementsByType(ObjectType.Tree, true);
+  const humanCount = countElementsByType(ObjectType.Human, true);
+  const foundationCount = countElementsByType(ObjectType.Foundation, true);
+  const cuboidCount = countElementsByType(ObjectType.Cuboid, true);
 
   const lang = { lng: language };
 
@@ -82,7 +82,7 @@ export const GroundMenu = () => {
               title: i18n.t('groundMenu.DoYouReallyWantToRemoveAllPeople', lang) + ' (' + humanCount + ')?',
               icon: <ExclamationCircleOutlined />,
               onOk: () => {
-                const removed = elements.filter((e) => e.type === ObjectType.Human);
+                const removed = elements.filter((e) => !e.locked && e.type === ObjectType.Human);
                 removeElementsByType(ObjectType.Human);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
@@ -103,7 +103,7 @@ export const GroundMenu = () => {
             });
           }}
         >
-          {i18n.t('groundMenu.RemoveAllPeople', lang)} ({humanCount})
+          {i18n.t('groundMenu.RemoveAllUnlockedPeople', lang)} ({humanCount})
         </Menu.Item>
       )}
 
@@ -116,7 +116,7 @@ export const GroundMenu = () => {
               title: i18n.t('groundMenu.DoYouReallyWantToRemoveAllTrees', lang) + ' (' + treeCount + ')?',
               icon: <ExclamationCircleOutlined />,
               onOk: () => {
-                const removed = elements.filter((e) => e.type === ObjectType.Tree);
+                const removed = elements.filter((e) => !e.locked && e.type === ObjectType.Tree);
                 removeElementsByType(ObjectType.Tree);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
@@ -137,7 +137,7 @@ export const GroundMenu = () => {
             });
           }}
         >
-          {i18n.t('groundMenu.RemoveAllTrees', lang)} ({treeCount})
+          {i18n.t('groundMenu.RemoveAllUnlockedTrees', lang)} ({treeCount})
         </Menu.Item>
       )}
 
@@ -150,7 +150,7 @@ export const GroundMenu = () => {
               title: i18n.t('groundMenu.DoYouReallyWantToRemoveAllFoundations', lang) + ' (' + foundationCount + ')?',
               icon: <ExclamationCircleOutlined />,
               onOk: () => {
-                const removed = elements.filter((e) => e.type === ObjectType.Foundation);
+                const removed = elements.filter((e) => !e.locked && e.type === ObjectType.Foundation);
                 removeElementsByType(ObjectType.Foundation);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
@@ -171,7 +171,7 @@ export const GroundMenu = () => {
             });
           }}
         >
-          {i18n.t('groundMenu.RemoveAllFoundations', lang)} ({foundationCount})
+          {i18n.t('groundMenu.RemoveAllUnlockedFoundations', lang)} ({foundationCount})
         </Menu.Item>
       )}
 
@@ -184,7 +184,7 @@ export const GroundMenu = () => {
               title: i18n.t('groundMenu.DoYouReallyWantToRemoveAllCuboids', lang) + ' (' + cuboidCount + ')?',
               icon: <ExclamationCircleOutlined />,
               onOk: () => {
-                const removed = elements.filter((e) => e.type === ObjectType.Cuboid);
+                const removed = elements.filter((e) => !e.locked && e.type === ObjectType.Cuboid);
                 removeElementsByType(ObjectType.Cuboid);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
@@ -205,7 +205,7 @@ export const GroundMenu = () => {
             });
           }}
         >
-          {i18n.t('groundMenu.RemoveAllCuboids', lang)} ({cuboidCount})
+          {i18n.t('groundMenu.RemoveAllUnlockedCuboids', lang)} ({cuboidCount})
         </Menu.Item>
       )}
 

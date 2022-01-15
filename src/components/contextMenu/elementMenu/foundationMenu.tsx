@@ -46,13 +46,15 @@ export const FoundationMenu = () => {
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
   const foundation = getSelectedElement() as FoundationModel;
-  const humanCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Human) : 0;
-  const treeCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Tree) : 0;
-  const wallCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Wall) : 0;
-  const polygonCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Polygon) : 0;
-  const sensorCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Sensor) : 0;
-  const solarRackCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.SolarPanel) : 0;
-  const solarPanelCountFoundation = foundation ? countAllChildSolarPanels(foundation.id) : 0;
+  const humanCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Human, true) : 0;
+  const treeCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Tree, true) : 0;
+  const wallCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Wall, true) : 0;
+  const polygonCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Polygon, true) : 0;
+  const sensorCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Sensor, true) : 0;
+  const solarRackCountFoundation = foundation
+    ? countAllChildElementsByType(foundation.id, ObjectType.SolarPanel, true)
+    : 0;
+  const solarPanelCountFoundation = foundation ? countAllChildSolarPanels(foundation.id, true) : 0;
   const lang = { lng: language };
 
   const legalToPaste = () => {
@@ -106,7 +108,7 @@ export const FoundationMenu = () => {
                       onOk: () => {
                         if (foundation) {
                           const removed = elements.filter(
-                            (e) => e.type === ObjectType.Wall && e.parentId === foundation.id,
+                            (e) => !e.locked && e.type === ObjectType.Wall && e.parentId === foundation.id,
                           );
                           removeAllChildElementsByType(foundation.id, ObjectType.Wall);
                           const removedElements = JSON.parse(JSON.stringify(removed));
@@ -131,7 +133,7 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllWalls', lang)} ({wallCountFoundation})
+                  {i18n.t('foundationMenu.RemoveAllUnlockedWalls', lang)} ({wallCountFoundation})
                 </Menu.Item>
               )}
 
@@ -151,7 +153,7 @@ export const FoundationMenu = () => {
                       onOk: () => {
                         if (foundation) {
                           const removed = elements.filter(
-                            (e) => e.type === ObjectType.Sensor && e.parentId === foundation.id,
+                            (e) => !e.locked && e.type === ObjectType.Sensor && e.parentId === foundation.id,
                           );
                           removeAllChildElementsByType(foundation.id, ObjectType.Sensor);
                           const removedElements = JSON.parse(JSON.stringify(removed));
@@ -175,7 +177,7 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllSensors', lang)} ({sensorCountFoundation})
+                  {i18n.t('foundationMenu.RemoveAllUnlockedSensors', lang)} ({sensorCountFoundation})
                 </Menu.Item>
               )}
 
@@ -199,7 +201,7 @@ export const FoundationMenu = () => {
                       onOk: () => {
                         if (foundation) {
                           const removed = elements.filter(
-                            (e) => e.type === ObjectType.SolarPanel && e.parentId === foundation.id,
+                            (e) => !e.locked && e.type === ObjectType.SolarPanel && e.parentId === foundation.id,
                           );
                           removeAllChildElementsByType(foundation.id, ObjectType.SolarPanel);
                           const removedElements = JSON.parse(JSON.stringify(removed));
@@ -227,7 +229,7 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllSolarPanels', lang)}&nbsp; ({solarPanelCountFoundation}{' '}
+                  {i18n.t('foundationMenu.RemoveAllUnlockedSolarPanels', lang)}&nbsp; ({solarPanelCountFoundation}{' '}
                   {i18n.t('foundationMenu.SolarPanels', lang)}, {solarRackCountFoundation}{' '}
                   {i18n.t('foundationMenu.Racks', lang)})
                 </Menu.Item>
@@ -249,7 +251,7 @@ export const FoundationMenu = () => {
                       onOk: () => {
                         if (foundation) {
                           const removed = elements.filter(
-                            (e) => e.type === ObjectType.Polygon && e.parentId === foundation.id,
+                            (e) => !e.locked && e.type === ObjectType.Polygon && e.parentId === foundation.id,
                           );
                           removeAllChildElementsByType(foundation.id, ObjectType.Polygon);
                           const removedElements = JSON.parse(JSON.stringify(removed));
@@ -276,7 +278,7 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllPolygons', lang)} ({polygonCountFoundation})
+                  {i18n.t('foundationMenu.RemoveAllUnlockedPolygons', lang)} ({polygonCountFoundation})
                 </Menu.Item>
               )}
 
@@ -296,7 +298,7 @@ export const FoundationMenu = () => {
                       onOk: () => {
                         if (foundation) {
                           const removed = elements.filter(
-                            (e) => e.type === ObjectType.Human && e.parentId === foundation.id,
+                            (e) => !e.locked && e.type === ObjectType.Human && e.parentId === foundation.id,
                           );
                           removeAllChildElementsByType(foundation.id, ObjectType.Human);
                           const removedElements = JSON.parse(JSON.stringify(removed));
@@ -320,7 +322,7 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllHumans', lang)} ({humanCountFoundation})
+                  {i18n.t('foundationMenu.RemoveAllUnlockedHumans', lang)} ({humanCountFoundation})
                 </Menu.Item>
               )}
 
@@ -340,7 +342,7 @@ export const FoundationMenu = () => {
                       onOk: () => {
                         if (foundation) {
                           const removed = elements.filter(
-                            (e) => e.type === ObjectType.Tree && e.parentId === foundation.id,
+                            (e) => !e.locked && e.type === ObjectType.Tree && e.parentId === foundation.id,
                           );
                           removeAllChildElementsByType(foundation.id, ObjectType.Tree);
                           const removedElements = JSON.parse(JSON.stringify(removed));
@@ -364,7 +366,7 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllTrees', lang)} ({treeCountFoundation})
+                  {i18n.t('foundationMenu.RemoveAllUnlockedTrees', lang)} ({treeCountFoundation})
                 </Menu.Item>
               )}
             </SubMenu>

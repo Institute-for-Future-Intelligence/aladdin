@@ -55,12 +55,12 @@ export const CuboidMenu = () => {
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
   const cuboid = getSelectedElement() as CuboidModel;
-  const humanCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Human) : 0;
-  const treeCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Tree) : 0;
-  const polygonCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Polygon) : 0;
-  const sensorCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Sensor) : 0;
-  const solarRackCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.SolarPanel) : 0;
-  const solarPanelCountCuboid = cuboid ? countAllChildSolarPanels(cuboid.id) : 0;
+  const humanCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Human, true) : 0;
+  const treeCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Tree, true) : 0;
+  const polygonCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Polygon, true) : 0;
+  const sensorCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Sensor, true) : 0;
+  const solarRackCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.SolarPanel, true) : 0;
+  const solarPanelCountCuboid = cuboid ? countAllChildSolarPanels(cuboid.id, true) : 0;
   const lang = { lng: language };
 
   const legalToPaste = () => {
@@ -112,7 +112,7 @@ export const CuboidMenu = () => {
                       onOk: () => {
                         if (cuboid) {
                           const removed = elements.filter(
-                            (e) => e.type === ObjectType.Sensor && e.parentId === cuboid.id,
+                            (e) => !e.locked && e.type === ObjectType.Sensor && e.parentId === cuboid.id,
                           );
                           removeAllChildElementsByType(cuboid.id, ObjectType.Sensor);
                           const removedElements = JSON.parse(JSON.stringify(removed));
@@ -136,7 +136,7 @@ export const CuboidMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('cuboidMenu.RemoveAllSensors', lang)} ({sensorCountCuboid}{' '}
+                  {i18n.t('cuboidMenu.RemoveAllUnlockedSensors', lang)} ({sensorCountCuboid}{' '}
                   {i18n.t('cuboidMenu.Sensors', lang)})
                 </Menu.Item>
               )}
@@ -161,7 +161,7 @@ export const CuboidMenu = () => {
                       onOk: () => {
                         if (cuboid) {
                           const removed = elements.filter(
-                            (e) => e.type === ObjectType.SolarPanel && e.parentId === cuboid.id,
+                            (e) => !e.locked && e.type === ObjectType.SolarPanel && e.parentId === cuboid.id,
                           );
                           removeAllChildElementsByType(cuboid.id, ObjectType.SolarPanel);
                           const removedElements = JSON.parse(JSON.stringify(removed));
@@ -188,7 +188,7 @@ export const CuboidMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('cuboidMenu.RemoveAllSolarPanels', lang)}&nbsp; ({solarPanelCountCuboid}{' '}
+                  {i18n.t('cuboidMenu.RemoveAllUnlockedSolarPanels', lang)}&nbsp; ({solarPanelCountCuboid}{' '}
                   {i18n.t('cuboidMenu.SolarPanels', lang)},{solarRackCountCuboid} {i18n.t('cuboidMenu.Racks', lang)})
                 </Menu.Item>
               )}
@@ -209,7 +209,7 @@ export const CuboidMenu = () => {
                       onOk: () => {
                         if (cuboid) {
                           const removed = elements.filter(
-                            (e) => e.type === ObjectType.Polygon && e.parentId === cuboid.id,
+                            (e) => !e.locked && e.type === ObjectType.Polygon && e.parentId === cuboid.id,
                           );
                           removeAllChildElementsByType(cuboid.id, ObjectType.Polygon);
                           const removedElements = JSON.parse(JSON.stringify(removed));
@@ -236,7 +236,7 @@ export const CuboidMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('cuboidMenu.RemoveAllPolygons', lang)} ({polygonCountCuboid}{' '}
+                  {i18n.t('cuboidMenu.RemoveAllUnlockedPolygons', lang)} ({polygonCountCuboid}{' '}
                   {i18n.t('cuboidMenu.Polygons', lang)})
                 </Menu.Item>
               )}
@@ -257,7 +257,7 @@ export const CuboidMenu = () => {
                       onOk: () => {
                         if (cuboid) {
                           const removed = elements.filter(
-                            (e) => e.type === ObjectType.Human && e.parentId === cuboid.id,
+                            (e) => !e.locked && e.type === ObjectType.Human && e.parentId === cuboid.id,
                           );
                           removeAllChildElementsByType(cuboid.id, ObjectType.Human);
                           const removedElements = JSON.parse(JSON.stringify(removed));
@@ -281,7 +281,8 @@ export const CuboidMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('cuboidMenu.RemoveAllHumans', lang)} ({humanCountCuboid} {i18n.t('cuboidMenu.Humans', lang)})
+                  {i18n.t('cuboidMenu.RemoveAllUnlockedHumans', lang)} ({humanCountCuboid}{' '}
+                  {i18n.t('cuboidMenu.Humans', lang)})
                 </Menu.Item>
               )}
 
@@ -301,7 +302,7 @@ export const CuboidMenu = () => {
                       onOk: () => {
                         if (cuboid) {
                           const removed = elements.filter(
-                            (e) => e.type === ObjectType.Tree && e.parentId === cuboid.id,
+                            (e) => !e.locked && e.type === ObjectType.Tree && e.parentId === cuboid.id,
                           );
                           removeAllChildElementsByType(cuboid.id, ObjectType.Tree);
                           const removedElements = JSON.parse(JSON.stringify(removed));
@@ -325,7 +326,8 @@ export const CuboidMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('cuboidMenu.RemoveAllTrees', lang)} ({treeCountCuboid} {i18n.t('cuboidMenu.Trees', lang)})
+                  {i18n.t('cuboidMenu.RemoveAllUnlockedTrees', lang)} ({treeCountCuboid}{' '}
+                  {i18n.t('cuboidMenu.Trees', lang)})
                 </Menu.Item>
               )}
             </SubMenu>
