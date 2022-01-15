@@ -28,6 +28,7 @@ export const MOVE_HANDLE_COLOR_2 = 'orchid';
 export const MOVE_HANDLE_COLOR_3 = 'pink';
 export const RESIZE_HANDLE_COLOR = 'white';
 export const HIGHLIGHT_HANDLE_COLOR = 'red';
+export const LOCKED_ELEMENT_SELECTION_COLOR = 'yellow';
 
 export const FINE_GRID_RATIO = 5;
 export const FINE_GRID_SCALE = 0.1;

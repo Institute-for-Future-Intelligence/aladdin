@@ -23,6 +23,7 @@ import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
   HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
+  LOCKED_ELEMENT_SELECTION_COLOR,
   MOVE_HANDLE_RADIUS,
   RESIZE_HANDLE_COLOR,
   RESIZE_HANDLE_SIZE,
@@ -373,7 +374,7 @@ const Polygon = ({
       {/* wireframe */}
       <Line
         points={points}
-        color={lineColor}
+        color={locked && selected ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
         lineWidth={lineWidth}
         dashed={polygonModel.lineStyle && polygonModel.lineStyle !== LineStyle.Solid}
         dashSize={polygonModel.lineStyle === LineStyle.Dashed ? 0.3 : 0.1}

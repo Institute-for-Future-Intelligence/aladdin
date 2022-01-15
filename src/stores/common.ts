@@ -477,6 +477,7 @@ export const useStore = create<CommonStoreState>(
                 if (e.type === ObjectType.Human) {
                   const human = e as HumanModel;
                   e.lx = HumanData.fetchWidth(human.name);
+                  e.ly = e.lx;
                   e.lz = HumanData.fetchHeight(human.name);
                 }
               }

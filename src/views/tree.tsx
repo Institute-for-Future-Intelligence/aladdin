@@ -17,11 +17,12 @@ import {
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { invalidate, ThreeEvent, useFrame, useThree } from '@react-three/fiber';
-import { Billboard, Box, Cone, Plane, Sphere } from '@react-three/drei';
+import { Billboard, Box, Cone, Line, Plane, Sphere } from '@react-three/drei';
 import {
   GROUND_ID,
   HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
+  LOCKED_ELEMENT_SELECTION_COLOR,
   MOVE_HANDLE_COLOR_1,
   MOVE_HANDLE_RADIUS,
   RESIZE_HANDLE_COLOR,
@@ -291,6 +292,26 @@ const Tree = ({
             }}
           />
         </Billboard>
+
+        {selected && locked && (
+          <Line
+            points={[
+              [-lx / 2, -lz / 2, 0],
+              [-lx / 2, lz / 2, 0],
+              [-lx / 2, lz / 2, 0],
+              [lx / 2, lz / 2, 0],
+              [lx / 2, -lz / 2, 0],
+              [lx / 2, lz / 2, 0],
+              [lx / 2, -lz / 2, 0],
+              [-lx / 2, -lz / 2, 0],
+            ]}
+            castShadow={false}
+            receiveShadow={false}
+            lineWidth={0.5}
+            rotation={solidTreeRef.current?.rotation}
+            color={LOCKED_ELEMENT_SELECTION_COLOR}
+          />
+        )}
 
         {/* draw handles */}
         {selected && !locked && (

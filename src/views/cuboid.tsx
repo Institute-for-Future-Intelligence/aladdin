@@ -34,6 +34,7 @@ import {
 import {
   HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
+  LOCKED_ELEMENT_SELECTION_COLOR,
   MOVE_HANDLE_COLOR_1,
   MOVE_HANDLE_COLOR_2,
   MOVE_HANDLE_COLOR_3,
@@ -1127,6 +1128,9 @@ const Cuboid = ({
 
       {/* wireFrame */}
       {!selected && <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />}
+      {selected && locked && (
+        <Wireframe hx={hx} hy={hy} hz={hz} lineColor={LOCKED_ELEMENT_SELECTION_COLOR} lineWidth={lineWidth * 5} />
+      )}
 
       {/* draw handles */}
       {selected && !locked && (
