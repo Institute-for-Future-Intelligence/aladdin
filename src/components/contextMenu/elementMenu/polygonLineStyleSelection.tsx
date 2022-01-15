@@ -7,10 +7,12 @@ import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { LineStyle, Scope } from '../../../types';
+import { LineStyle, ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { PolygonModel } from '../../../models/PolygonModel';
+import { Util } from '../../../Util';
+import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 
 const PolygonLineStyleSelection = ({
   dialogVisible,
@@ -20,7 +22,12 @@ const PolygonLineStyleSelection = ({
   setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
+  const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updatePolygonLineStyleById = useStore(Selector.updatePolygonLineStyleById);
+  const updatePolygonLineStyleOnSurface = useStore(Selector.updatePolygonLineStyleOnSurface);
+  const updatePolygonLineStyleAboveFoundation = useStore(Selector.updatePolygonLineStyleAboveFoundation);
+  const updatePolygonLineStyleForAll = useStore(Selector.updatePolygonLineStyleForAll);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
   const polygonActionScope = useStore(Selector.polygonActionScope);
@@ -51,29 +58,170 @@ const PolygonLineStyleSelection = ({
   };
 
   const needChange = (style: LineStyle) => {
-    return style !== polygon?.lineStyle;
+    switch (polygonActionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Polygon && !e.locked) {
+            if (style !== (e as PolygonModel).lineStyle) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Polygon &&
+            e.parentId === polygon.parentId &&
+            Util.isIdentical(e.normal, polygon.normal) &&
+            !e.locked
+          ) {
+            if (style !== (e as PolygonModel).lineStyle) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (e.type === ObjectType.Polygon && e.foundationId === polygon?.foundationId && !e.locked) {
+            if (style !== (e as PolygonModel).lineStyle) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (style !== polygon?.lineStyle) {
+          return true;
+        }
+    }
+    return false;
   };
 
   const setLineStyle = (value: LineStyle) => {
     if (!polygon) return;
     if (!needChange(value)) return;
-    const oldStyle = polygon.lineStyle;
-    const undoableChange = {
-      name: 'Set Line Style of Selected Polygon',
-      timestamp: Date.now(),
-      oldValue: oldStyle,
-      newValue: value,
-      changedElementId: polygon.id,
-      undo: () => {
-        updatePolygonLineStyleById(undoableChange.changedElementId, undoableChange.oldValue as LineStyle);
-      },
-      redo: () => {
-        updatePolygonLineStyleById(undoableChange.changedElementId, undoableChange.newValue as LineStyle);
-      },
-    } as UndoableChange;
-    addUndoable(undoableChange);
-    updatePolygonLineStyleById(polygon.id, value);
-    setApplyCount(applyCount + 1);
+    switch (polygonActionScope) {
+      case Scope.AllObjectsOfThisType:
+        const oldLineStylesAll = new Map<string, LineStyle>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Polygon) {
+            oldLineStylesAll.set(elem.id, (elem as PolygonModel).lineStyle ?? LineStyle.Solid);
+          }
+        }
+        const undoableChangeAll = {
+          name: 'Set Line Style for All Polygons',
+          timestamp: Date.now(),
+          oldValues: oldLineStylesAll,
+          newValue: value,
+          undo: () => {
+            for (const [id, style] of undoableChangeAll.oldValues.entries()) {
+              updatePolygonLineStyleById(id, style as LineStyle);
+            }
+          },
+          redo: () => {
+            updatePolygonLineStyleForAll(undoableChangeAll.newValue as LineStyle);
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeAll);
+        updatePolygonLineStyleForAll(value);
+        setApplyCount(applyCount + 1);
+        break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        if (polygon.parentId) {
+          const parent = getElementById(polygon.parentId);
+          if (parent) {
+            const oldLineStylesOnSurface = new Map<string, LineStyle>();
+            for (const elem of elements) {
+              if (
+                elem.type === ObjectType.Polygon &&
+                elem.parentId === polygon.parentId &&
+                Util.isIdentical(elem.normal, polygon.normal)
+              ) {
+                oldLineStylesOnSurface.set(elem.id, (elem as PolygonModel).lineStyle ?? LineStyle.Solid);
+              }
+            }
+            const undoableChangeOnSurface = {
+              name: 'Set Line Style for All Polygons on Same Surface',
+              timestamp: Date.now(),
+              oldValues: oldLineStylesOnSurface,
+              newValue: value,
+              groupId: polygon.parentId,
+              normal: polygon.normal,
+              undo: () => {
+                for (const [id, style] of undoableChangeOnSurface.oldValues.entries()) {
+                  updatePolygonLineStyleById(id, style as LineStyle);
+                }
+              },
+              redo: () => {
+                if (undoableChangeOnSurface.groupId) {
+                  updatePolygonLineStyleOnSurface(
+                    undoableChangeOnSurface.groupId,
+                    undoableChangeOnSurface.normal,
+                    undoableChangeOnSurface.newValue as LineStyle,
+                  );
+                }
+              },
+            } as UndoableChangeGroup;
+            addUndoable(undoableChangeOnSurface);
+            updatePolygonLineStyleOnSurface(polygon.parentId, polygon.normal, value);
+            setApplyCount(applyCount + 1);
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        if (polygon.foundationId) {
+          const oldLineStylesAboveFoundation = new Map<string, LineStyle>();
+          for (const elem of elements) {
+            if (elem.type === ObjectType.Polygon && elem.foundationId === polygon.foundationId) {
+              oldLineStylesAboveFoundation.set(elem.id, (elem as PolygonModel).lineStyle ?? LineStyle.Solid);
+            }
+          }
+          const undoableChangeAboveFoundation = {
+            name: 'Set Line Style for All Polygons Above Foundation',
+            timestamp: Date.now(),
+            oldValues: oldLineStylesAboveFoundation,
+            newValue: value,
+            groupId: polygon.foundationId,
+            undo: () => {
+              for (const [id, style] of undoableChangeAboveFoundation.oldValues.entries()) {
+                updatePolygonLineStyleById(id, style as LineStyle);
+              }
+            },
+            redo: () => {
+              if (undoableChangeAboveFoundation.groupId) {
+                updatePolygonLineStyleAboveFoundation(
+                  undoableChangeAboveFoundation.groupId,
+                  undoableChangeAboveFoundation.newValue as LineStyle,
+                );
+              }
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeAboveFoundation);
+          updatePolygonLineStyleAboveFoundation(polygon.foundationId, value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      default:
+        const oldStyle = polygon.lineStyle;
+        const undoableChange = {
+          name: 'Set Line Style of Selected Polygon',
+          timestamp: Date.now(),
+          oldValue: oldStyle,
+          newValue: value,
+          changedElementId: polygon.id,
+          undo: () => {
+            updatePolygonLineStyleById(undoableChange.changedElementId, undoableChange.oldValue as LineStyle);
+          },
+          redo: () => {
+            updatePolygonLineStyleById(undoableChange.changedElementId, undoableChange.newValue as LineStyle);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updatePolygonLineStyleById(polygon.id, value);
+        setApplyCount(applyCount + 1);
+    }
     setUpdateFlag(!updateFlag);
   };
 
@@ -212,6 +360,13 @@ const PolygonLineStyleSelection = ({
             <Radio.Group onChange={onScopeChange} value={polygonActionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('polygonMenu.OnlyThisPolygon', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+                  {i18n.t('polygonMenu.AllPolygonsOnSurface', lang)}
+                </Radio>
+                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                  {i18n.t('polygonMenu.AllPolygonsAboveFoundation', lang)}
+                </Radio>
+                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('polygonMenu.AllPolygons', lang)}</Radio>
               </Space>
             </Radio.Group>
           </Col>

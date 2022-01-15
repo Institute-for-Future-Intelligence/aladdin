@@ -211,6 +211,9 @@ export interface CommonStoreState {
   updatePolygonSelectedIndexById: (id: string, index: number) => void;
   updatePolygonFilledById: (id: string, filled: boolean) => void;
   updatePolygonLineStyleById: (id: string, style: LineStyle) => void;
+  updatePolygonLineStyleOnSurface: (parentId: string, normal: number[] | undefined, style: LineStyle) => void;
+  updatePolygonLineStyleAboveFoundation: (foundationId: string, style: LineStyle) => void;
+  updatePolygonLineStyleForAll: (style: LineStyle) => void;
   updatePolygonVertexPositionById: (id: string, index: number, x: number, y: number) => void;
   updatePolygonVerticesById: (id: string, vertices: Point2[]) => void;
   updatePolygonTextureById: (id: string, texture: PolygonTexture) => void;
@@ -1397,6 +1400,39 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+          updatePolygonLineStyleOnSurface(parentId, normal, style) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (
+                  e.type === ObjectType.Polygon &&
+                  e.parentId === parentId &&
+                  Util.isIdentical(e.normal, normal) &&
+                  !e.locked
+                ) {
+                  (e as PolygonModel).lineStyle = style;
+                }
+              }
+            });
+          },
+          updatePolygonLineStyleAboveFoundation(foundationId, style) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Polygon && e.foundationId === foundationId && !e.locked) {
+                  (e as PolygonModel).lineStyle = style;
+                }
+              }
+            });
+          },
+          updatePolygonLineStyleForAll(style) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Polygon && !e.locked) {
+                  (e as PolygonModel).lineStyle = style;
+                }
+              }
+            });
+          },
+
           updatePolygonVertexPositionById(id, index, x, y) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
