@@ -397,6 +397,8 @@ export interface CommonStoreState {
   setEnableFineGrid: (b: boolean) => void;
 
   showCloudFileTitleDialog: boolean;
+  // we have to use the sure flip of an additional flag to ensure it triggers useEffect hook
+  showCloudFileTitleDialogFlag: boolean;
   saveCloudFileFlag: boolean;
   listCloudFilesFlag: boolean;
   localContentToImportAfterCloudFileUpdate: any;
@@ -511,7 +513,7 @@ export const useStore = create<CommonStoreState>(
               state.world = new DefaultWorldModel();
               state.elements = [];
               state.cloudFile = undefined;
-              state.changed = false;
+              state.changed = true;
               state.skipChange = true;
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.notes = [];
@@ -3304,6 +3306,7 @@ export const useStore = create<CommonStoreState>(
           localFileDialogRequested: false,
           pvModelDialogVisible: false,
           showCloudFileTitleDialog: false,
+          showCloudFileTitleDialogFlag: false,
           saveCloudFileFlag: false,
           listCloudFilesFlag: false,
           localContentToImportAfterCloudFileUpdate: undefined,

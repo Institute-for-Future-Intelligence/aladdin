@@ -83,6 +83,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
           } else {
             // no cloud file has been created
             setCommonStore((state) => {
+              state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
               state.showCloudFileTitleDialog = true;
             });
           }
@@ -108,6 +109,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
             } else {
               // no cloud file has been created
               setCommonStore((state) => {
+                state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
                 state.showCloudFileTitleDialog = true;
               });
             }

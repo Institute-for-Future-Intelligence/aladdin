@@ -38,6 +38,8 @@ export const locale = (state: CommonStoreState) => state.locale;
 
 export const showCloudFileTitleDialog = (state: CommonStoreState) => state.showCloudFileTitleDialog;
 
+export const showCloudFileTitleDialogFlag = (state: CommonStoreState) => state.showCloudFileTitleDialogFlag;
+
 export const cloudFile = (state: CommonStoreState) => state.cloudFile;
 
 export const saveCloudFileFlag = (state: CommonStoreState) => state.saveCloudFileFlag;

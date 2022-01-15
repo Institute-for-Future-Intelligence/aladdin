@@ -122,7 +122,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
 
   const takeScreenshot = () => {
     if (canvas) {
-      // TODO
       saveImage('screenshot.png', canvas.toDataURL('image/png'));
     }
   };
@@ -188,6 +187,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         // no cloud file has been created
         setCommonStore((state) => {
           state.localContentToImportAfterCloudFileUpdate = input;
+          state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
           state.showCloudFileTitleDialog = true;
         });
       } else {
@@ -531,6 +531,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             key="save-as-cloud-file"
             onClick={() => {
               setCommonStore((state) => {
+                state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
                 state.showCloudFileTitleDialog = true;
               });
             }}
@@ -812,7 +813,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               </Menu.Item>
               {discretization === Discretization.APPROXIMATE && (
                 <Menu.Item key={'solar-panel-simulation-grid-cell-size'}>
-                  <Space style={{ width: '150px' }}>Grid Cell Size: </Space>
+                  <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanels.GridCellSize', lang)}: </Space>
                   <InputNumber
                     min={0.1}
                     max={5}
@@ -827,7 +828,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                       });
                     }}
                   />
-                  <Space style={{ paddingLeft: '10px' }}>m</Space>
+                  <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
                 </Menu.Item>
               )}
             </Menu>

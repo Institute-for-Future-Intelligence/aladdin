@@ -51,6 +51,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const saveCloudFileFlag = useStore(Selector.saveCloudFileFlag);
   const listCloudFilesFlag = useStore(Selector.listCloudFilesFlag);
   const showCloudFileTitleDialog = useStore(Selector.showCloudFileTitleDialog);
+  const showCloudFileTitleDialogFlag = useStore(Selector.showCloudFileTitleDialogFlag);
   const importContent = useStore(Selector.importContent);
   const createEmptyFile = useStore(Selector.createEmptyFile);
   const changed = useStore(Selector.changed);
@@ -149,7 +150,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
 
   useEffect(() => {
     setTitleDialogVisible(showCloudFileTitleDialog);
-  }, [showCloudFileTitleDialog]);
+  }, [showCloudFileTitleDialogFlag]);
 
   useEffect(() => {
     setTitle(cloudFile ?? 'My Aladdin File');
@@ -336,8 +337,13 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         onOk: () => {
           if (cloudFile) {
             saveToCloud(cloudFile, true);
+            openCloudFile(userid, title);
+          } else {
+            setCommonStore((state) => {
+              state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
+              state.showCloudFileTitleDialog = true;
+            });
           }
-          openCloudFile(userid, title);
         },
         onCancel: () => openCloudFile(userid, title),
         okText: i18n.t('word.Yes', lang),
@@ -529,6 +535,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         onOk={() => {
           saveToCloud(title, false);
           setCommonStore((state) => {
+            state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
             state.showCloudFileTitleDialog = false;
           });
         }}
@@ -536,6 +543,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         onCancel={() => {
           setTitleDialogVisible(false);
           setCommonStore((state) => {
+            state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
             state.showCloudFileTitleDialog = false;
           });
         }}

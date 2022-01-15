@@ -194,6 +194,7 @@ export const i18n_zh_tw = {
         PanelDiscretization: '光伏板離散化方法',
         Exact: '準確',
         Approximate: '近似',
+        GridCellSize: '模擬計算網格尺寸',
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太陽能',

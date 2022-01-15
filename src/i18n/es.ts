@@ -195,6 +195,7 @@ export const i18n_es = {
         PanelDiscretization: 'Discretización del panel',
         Exact: 'Exacto',
         Approximate: 'Aproximado',
+        GridCellSize: 'Grid Cell Size',
       },
       examplesSubMenu: 'Ejemplos',
       solarEnergySubMenu: 'Energía Solar',

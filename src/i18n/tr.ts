@@ -196,6 +196,7 @@ export const i18n_tr = {
         PanelDiscretization: 'Panel Ayrýklaþtýrma',
         Exact: 'Kesin',
         Approximate: '	Yaklaþýk',
+        GridCellSize: 'Grid Cell Size',
       },
       examplesSubMenu: 'Örnekler',
       solarEnergySubMenu: 'Güneþ Enerjisi',
