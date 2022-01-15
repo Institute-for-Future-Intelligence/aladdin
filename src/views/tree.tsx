@@ -295,6 +295,8 @@ const Tree = ({
 
         {selected && locked && (
           <Line
+            name={'Selection highlight lines'}
+            userData={{ unintersectable: true }}
             points={[
               [-lx / 2, -lz / 2, 0],
               [-lx / 2, lz / 2, 0],
@@ -467,6 +469,7 @@ const Tree = ({
         )}
         {hovered && !selected && (
           <textSprite
+            userData={{ unintersectable: true }}
             name={'Label'}
             text={labelText + (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')}
             fontSize={20}

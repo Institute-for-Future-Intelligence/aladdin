@@ -8,8 +8,15 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { invalidate, ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import { HumanModel } from '../models/HumanModel';
-import { Billboard, Plane, Sphere } from '@react-three/drei';
-import { GROUND_ID, HALF_PI, HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_COLOR_1, MOVE_HANDLE_RADIUS } from '../constants';
+import { Billboard, Line, Plane, Sphere } from '@react-three/drei';
+import {
+  GROUND_ID,
+  HALF_PI,
+  HIGHLIGHT_HANDLE_COLOR,
+  LOCKED_ELEMENT_SELECTION_COLOR,
+  MOVE_HANDLE_COLOR_1,
+  MOVE_HANDLE_RADIUS,
+} from '../constants';
 import { ActionType, HumanName, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import i18n from '../i18n/i18n';
 import { useStoreRef } from 'src/stores/commonRef';
@@ -191,6 +198,28 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
           </Plane>
         </Billboard>
 
+        {selected && locked && (
+          <Line
+            name={'Selection highlight lines'}
+            userData={{ unintersectable: true }}
+            points={[
+              [-width / 2, 0, -height / 2],
+              [-width / 2, 0, height / 2],
+              [-width / 2, 0, height / 2],
+              [width / 2, 0, height / 2],
+              [width / 2, 0, -height / 2],
+              [width / 2, 0, height / 2],
+              [width / 2, 0, -height / 2],
+              [-width / 2, 0, -height / 2],
+            ]}
+            castShadow={false}
+            receiveShadow={false}
+            lineWidth={0.5}
+            rotation={planeRef.current?.rotation}
+            color={LOCKED_ELEMENT_SELECTION_COLOR}
+          />
+        )}
+
         {/* draw handle */}
         {selected && !locked && (
           <Sphere
@@ -222,6 +251,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
         )}
         {hovered && !selected && (
           <textSprite
+            userData={{ unintersectable: true }}
             name={'Label'}
             text={labelText + (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')}
             fontSize={20}

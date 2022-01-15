@@ -699,6 +699,7 @@ const SolarPanel = ({
                       opacity={0.5}
                     />
                     <textSprite
+                      userData={{ unintersectable: true }}
                       text={`${i * 15 - 90}°`}
                       fontSize={20 * tiltHandleSize}
                       fontFace={'Times Roman'}
@@ -711,6 +712,7 @@ const SolarPanel = ({
               {/* show current degree */}
               <group rotation={new Euler(tiltAngle, 0, relativeEuler.z, 'ZXY')}>
                 <textSprite
+                  userData={{ unintersectable: true }}
                   text={`${Math.floor((tiltAngle / Math.PI) * 180)}°`}
                   fontSize={20 * tiltHandleSize}
                   fontFace={'Times Roman'}
@@ -729,6 +731,7 @@ const SolarPanel = ({
         poles.map((p, i) => {
           return (
             <Cylinder
+              userData={{ unintersectable: true }}
               key={i}
               name={'Pole ' + i}
               castShadow={shadowEnabled}
@@ -746,24 +749,28 @@ const SolarPanel = ({
       {drawSunBeam && sunDirection.z > 0 && (
         <group rotation={[-euler.x, 0, -euler.z]}>
           <Line
+            userData={{ unintersectable: true }}
             points={[[0, 0, 0], sunDirection.clone().multiplyScalar(sunBeamLength)]}
             name={'Sun Beam'}
             lineWidth={0.5}
             color={'white'}
           />
           <Line
+            userData={{ unintersectable: true }}
             points={[[0, 0, 0], normalVector.clone().multiplyScalar(0.75)]}
             name={'Normal Vector'}
             lineWidth={0.5}
             color={'white'}
           />
           <Line
+            userData={{ unintersectable: true }}
             points={[sunDirection.clone().multiplyScalar(0.5), normalVector.clone().multiplyScalar(0.5)]}
             name={'Angle'}
             lineWidth={0.5}
             color={'white'}
           />
           <textSprite
+            userData={{ unintersectable: true }}
             name={'Angle Value'}
             text={Util.toDegrees(sunDirection.angleTo(normalVector)).toFixed(1) + '°'}
             fontSize={20}
@@ -779,7 +786,12 @@ const SolarPanel = ({
             position={normalVector.clone().multiplyScalar(0.75)}
             rotation={[HALF_PI + euler.x + relativeEuler.x, 0, euler.z + relativeEuler.z, 'ZXY']}
           >
-            <Cone args={[0.04, 0.2, 4, 2]} name={'Normal Vector Arrow Head'} rotation={[0, 0, -relativeEuler.y]}>
+            <Cone
+              userData={{ unintersectable: true }}
+              args={[0.04, 0.2, 4, 2]}
+              name={'Normal Vector Arrow Head'}
+              rotation={[0, 0, -relativeEuler.y]}
+            >
               <meshStandardMaterial attach="material" color={'white'} />
             </Cone>
           </group>
@@ -789,6 +801,7 @@ const SolarPanel = ({
       {/*draw label */}
       {(hovered || showLabel) && !selected && (
         <textSprite
+          userData={{ unintersectable: true }}
           name={'Label'}
           text={
             (solarPanel?.label ? solarPanel.label : i18n.t('shared.SolarPanelElement', lang)) +

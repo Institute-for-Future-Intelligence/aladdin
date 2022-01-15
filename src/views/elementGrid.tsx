@@ -65,6 +65,7 @@ export const ElementGrid = React.memo(({ hx, hy, hz, position, rotation }: Eleme
             ]}
             color={lineColor}
             lineWidth={lineWidth}
+            userData={{ unintersectable: true }}
           />
         );
       })}
@@ -78,6 +79,7 @@ export const ElementGrid = React.memo(({ hx, hy, hz, position, rotation }: Eleme
             ]}
             color={lineColor}
             lineWidth={lineWidth}
+            userData={{ unintersectable: true }}
           />
         );
       })}

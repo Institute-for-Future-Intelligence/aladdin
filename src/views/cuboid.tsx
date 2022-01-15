@@ -1495,6 +1495,7 @@ const Cuboid = ({
 
       {hovered && !selected && (
         <textSprite
+          userData={{ unintersectable: true }}
           name={'Label'}
           text={
             i18n.t('shared.CuboidElement', lang) + (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')

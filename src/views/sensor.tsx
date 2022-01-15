@@ -178,6 +178,7 @@ const Sensor = ({
 
       {(hovered || showLabel) && !selected && (
         <textSprite
+          userData={{ unintersectable: true }}
           name={'Label'}
           text={
             (sensorModel?.label ? sensorModel.label : i18n.t('shared.SensorElement', lang)) +

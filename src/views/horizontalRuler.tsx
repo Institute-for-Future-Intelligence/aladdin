@@ -49,6 +49,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
     return (
       <>
         <textSprite
+          userData={{ unintersectable: true }}
           backgroundColor={labelBackgroundColor}
           text={element.ly.toFixed(1) + i18n.t('word.MeterAbbreviation', lang)}
           fontSize={80}
@@ -57,6 +58,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           position={[-hx - rulerOffset, 0, hz + verticalLift]}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [-hx - rulerOffset, -hy, hz],
             [-hx - rulerOffset, hy, hz],
@@ -65,6 +67,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerLineWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [-hx - rulerOffset + rulerArrowOffset, -hy + 3 * rulerArrowOffset, hz],
             [-hx - rulerOffset, -hy, hz],
@@ -74,6 +77,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerLineWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [-hx - rulerOffset + rulerArrowOffset, hy - 3 * rulerArrowOffset, hz],
             [-hx - rulerOffset, hy, hz],
@@ -83,6 +87,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerLineWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [-hx, -hy, hz],
             [-hx - rulerOffset * 2, -hy, hz],
@@ -91,6 +96,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerTickMarkWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [-hx, hy, hz],
             [-hx - rulerOffset * 2, hy, hz],
@@ -106,6 +112,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
     return (
       <>
         <textSprite
+          userData={{ unintersectable: true }}
           backgroundColor={labelBackgroundColor}
           text={element.ly.toFixed(1) + i18n.t('word.MeterAbbreviation', lang)}
           fontSize={80}
@@ -114,6 +121,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           position={[hx + rulerOffset, 0, hz + verticalLift]}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [hx + rulerOffset, -hy, hz],
             [hx + rulerOffset, hy, hz],
@@ -122,6 +130,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerLineWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [hx + rulerOffset + rulerArrowOffset, -hy + 3 * rulerArrowOffset, hz],
             [hx + rulerOffset, -hy, hz],
@@ -131,6 +140,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerLineWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [hx + rulerOffset + rulerArrowOffset, hy - 3 * rulerArrowOffset, hz],
             [hx + rulerOffset, hy, hz],
@@ -140,6 +150,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerLineWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [hx, -hy, hz],
             [hx + rulerOffset * 2, -hy, hz],
@@ -148,6 +159,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerTickMarkWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [hx, hy, hz],
             [hx + rulerOffset * 2, hy, hz],
@@ -163,6 +175,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
     return (
       <>
         <textSprite
+          userData={{ unintersectable: true }}
           backgroundColor={labelBackgroundColor}
           text={element.lx.toFixed(1) + i18n.t('word.MeterAbbreviation', lang)}
           fontSize={80}
@@ -171,6 +184,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           position={[0, -hy - rulerOffset, hz + verticalLift]}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [-hx, -hy - rulerOffset, hz],
             [hx, -hy - rulerOffset, hz],
@@ -179,6 +193,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerLineWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [-hx + 3 * rulerArrowOffset, -hy - rulerOffset - rulerArrowOffset, hz],
             [-hx, -hy - rulerOffset, hz],
@@ -188,6 +203,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerLineWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [hx - 3 * rulerArrowOffset, -hy - rulerOffset - rulerArrowOffset, hz],
             [hx, -hy - rulerOffset, hz],
@@ -197,6 +213,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerLineWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [-hx, -hy, hz],
             [-hx, -hy - rulerOffset * 2, hz],
@@ -205,6 +222,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerTickMarkWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [hx, -hy, hz],
             [hx, -hy - rulerOffset * 2, hz],
@@ -220,6 +238,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
     return (
       <>
         <textSprite
+          userData={{ unintersectable: true }}
           backgroundColor={labelBackgroundColor}
           text={element.lx.toFixed(1) + i18n.t('word.MeterAbbreviation', lang)}
           fontSize={80}
@@ -228,6 +247,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           position={[0, hy + rulerOffset, hz + verticalLift]}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [-hx, hy + rulerOffset, hz],
             [hx, hy + rulerOffset, hz],
@@ -236,6 +256,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerLineWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [-hx + 3 * rulerArrowOffset, hy + rulerOffset - rulerArrowOffset, hz],
             [-hx, hy + rulerOffset, hz],
@@ -245,6 +266,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerLineWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [hx - 3 * rulerArrowOffset, hy + rulerOffset - rulerArrowOffset, hz],
             [hx, hy + rulerOffset, hz],
@@ -254,6 +276,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerLineWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [-hx, hy, hz],
             [-hx, hy + rulerOffset * 2, hz],
@@ -262,6 +285,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           linewidth={rulerTickMarkWidth}
         />
         <Line
+          userData={{ unintersectable: true }}
           points={[
             [hx, hy, hz],
             [hx, hy + rulerOffset * 2, hz],

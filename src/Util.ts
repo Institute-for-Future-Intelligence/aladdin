@@ -14,7 +14,7 @@ import {
   UNIT_VECTOR_POS_Z_ARRAY,
   ZERO_TOLERANCE,
 } from './constants';
-import { Euler, Object3D, Vector2, Vector3 } from 'three';
+import { Euler, Object3D, Scene, Vector2, Vector3 } from 'three';
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import { MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType, WindowState } from './types';
@@ -26,6 +26,16 @@ import { Point2 } from './models/Point2';
 import { useStore } from './stores/common';
 
 export class Util {
+  static fetchIntersectables(scene: Scene): Object3D[] {
+    const objects: Object3D[] = [];
+    scene.traverse((o) => {
+      if (!o.userData.unintersectable) {
+        objects.push(o);
+      }
+    });
+    return objects;
+  }
+
   static lineIntersection(from1: Point2, to1: Point2, from2: Point2, to2: Point2): Point2 | undefined {
     const dx: number = to1.x - from1.x;
     const dy: number = to1.y - from1.y;

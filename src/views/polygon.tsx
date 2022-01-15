@@ -476,6 +476,7 @@ const Polygon = ({
 
       {(hovered || showLabel) && !selected && (
         <textSprite
+          userData={{ unintersectable: true }}
           name={'Label'}
           text={
             (polygonModel?.label ? polygonModel.label : i18n.t('shared.PolygonElement', lang)) +

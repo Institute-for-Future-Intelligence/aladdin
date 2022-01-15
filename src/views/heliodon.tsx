@@ -326,12 +326,13 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
         </mesh>
       </mesh>
       {/* use this plane to hide the uneven edge */}
-      <Drei_Plane args={[10000, 10000]} renderOrder={-1}>
+      <Drei_Plane args={[10000, 10000]} renderOrder={-1} userData={{ unintersectable: true }}>
         <meshBasicMaterial transparent={true} opacity={0} />
       </Drei_Plane>
       {showSunAngles && sunPosition.z > 0 && (
         <>
           <Line
+            userData={{ unintersectable: true }}
             points={[
               [0, 0, 0],
               [sunPosition.x, sunPosition.y, sunPosition.z],
@@ -341,6 +342,7 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
             color={'white'}
           />
           <Line
+            userData={{ unintersectable: true }}
             points={[
               [0, 0, 0],
               [sunPosition.x, sunPosition.y, 0],
@@ -350,6 +352,7 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
             color={'white'}
           />
           <Line
+            userData={{ unintersectable: true }}
             points={[
               [sunPosition.x, sunPosition.y, 0],
               [sunPosition.x, sunPosition.y, sunPosition.z],
@@ -359,6 +362,7 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
             color={'white'}
           />
           <Line
+            userData={{ unintersectable: true }}
             linewidth={0.5}
             points={elevationAngleArcPoints}
             position={[0, 0, 0]}
@@ -367,6 +371,7 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
             name={'Elevation Angle Arc'}
           />
           <textSprite
+            userData={{ unintersectable: true }}
             name={'Elevation Angle'}
             backgroundColor={'indigo'}
             text={Util.toDegrees(elevationAngle).toFixed(0) + '°'}
@@ -380,6 +385,7 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
               .multiplyScalar(0.65)}
           />
           <Line
+            userData={{ unintersectable: true }}
             linewidth={0.5}
             points={zenithAngleArcPoints}
             position={[0, 0, 0]}
@@ -388,6 +394,7 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
             name={'Zenith Angle Arc'}
           />
           <textSprite
+            userData={{ unintersectable: true }}
             name={'Zenith Angle'}
             backgroundColor={'navy'}
             text={Util.toDegrees(zenithAngle).toFixed(0) + '°'}
@@ -401,6 +408,7 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
               .multiplyScalar(0.57)}
           />
           <Line
+            userData={{ unintersectable: true }}
             linewidth={0.5}
             points={azimuthAngleArcPoints}
             position={[0, 0, 0]}
@@ -408,6 +416,7 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
             name={'Azimuth Angle Arc'}
           />
           <textSprite
+            userData={{ unintersectable: true }}
             name={'Azimuth Angle'}
             backgroundColor={'firebrick'}
             text={Util.toDegrees(azimuthAngle).toFixed(0) + '°'}

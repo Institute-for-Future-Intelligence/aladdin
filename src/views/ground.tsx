@@ -655,6 +655,7 @@ const Ground = () => {
   };
 
   const moveElementOnPointerUp = (elem: ElementModel, e: PointerEvent) => {
+    if (elem.locked) return;
     newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
     let newHumanOrTreeParentId: string | null = oldHumanOrTreeParentIdRef.current;
     // elements modified by reference
@@ -669,7 +670,7 @@ const Ground = () => {
         break;
     }
     if (elementRef && isHumanOrTreeMovedRef.current) {
-      const intersections = ray.intersectObjects(scene.children, true);
+      const intersections = ray.intersectObjects(Util.fetchIntersectables(scene), false);
       const intersection = getIntersectionToStand(intersections); // could simplify???
       if (intersection) {
         const p = intersection.point;

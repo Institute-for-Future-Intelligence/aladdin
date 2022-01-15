@@ -41,6 +41,7 @@ const Wireframe = ({ hx, hy, hz, lineColor = 'black', lineWidth = 0.2 }: Wirefra
           [positionLR.x, positionLR.y, -hz],
         ]}
         name={'Line LL-LR Lower Face'}
+        userData={{ unintersectable: true }}
         lineWidth={wireframeWidth}
         color={wireframeColor}
       />
@@ -50,6 +51,7 @@ const Wireframe = ({ hx, hy, hz, lineColor = 'black', lineWidth = 0.2 }: Wirefra
           [positionUR.x, positionUR.y, -hz],
         ]}
         name={'Line LR-UR Lower Face'}
+        userData={{ unintersectable: true }}
         lineWidth={wireframeWidth}
         color={wireframeColor}
       />
@@ -59,6 +61,7 @@ const Wireframe = ({ hx, hy, hz, lineColor = 'black', lineWidth = 0.2 }: Wirefra
           [positionUL.x, positionUL.y, -hz],
         ]}
         name={'Line UR-UL Lower Face'}
+        userData={{ unintersectable: true }}
         lineWidth={wireframeWidth}
         color={wireframeColor}
       />
@@ -68,6 +71,7 @@ const Wireframe = ({ hx, hy, hz, lineColor = 'black', lineWidth = 0.2 }: Wirefra
           [positionLL.x, positionLL.y, -hz],
         ]}
         name={'Line UL-LL Lower Face'}
+        userData={{ unintersectable: true }}
         lineWidth={wireframeWidth}
         color={wireframeColor}
       />
@@ -76,24 +80,28 @@ const Wireframe = ({ hx, hy, hz, lineColor = 'black', lineWidth = 0.2 }: Wirefra
       <Line
         points={[positionLL, positionLR]}
         name={'Line LL-LR Upper Face'}
+        userData={{ unintersectable: true }}
         lineWidth={wireframeWidth}
         color={wireframeColor}
       />
       <Line
         points={[positionLR, positionUR]}
         name={'Line LR-UR Upper Face'}
+        userData={{ unintersectable: true }}
         lineWidth={wireframeWidth}
         color={wireframeColor}
       />
       <Line
         points={[positionUR, positionUL]}
         name={'Line UR-UL Upper Face'}
+        userData={{ unintersectable: true }}
         lineWidth={wireframeWidth}
         color={wireframeColor}
       />
       <Line
         points={[positionUL, positionLL]}
         name={'Line UL-LL Upper Face'}
+        userData={{ unintersectable: true }}
         lineWidth={wireframeWidth}
         color={wireframeColor}
       />
@@ -102,24 +110,28 @@ const Wireframe = ({ hx, hy, hz, lineColor = 'black', lineWidth = 0.2 }: Wirefra
       <Line
         points={[[positionLL.x, positionLL.y, -hz], positionLL]}
         name={'Line LL-LL Vertical'}
+        userData={{ unintersectable: true }}
         lineWidth={wireframeWidth}
         color={wireframeColor}
       />
       <Line
         points={[[positionLR.x, positionLR.y, -hz], positionLR]}
         name={'Line LR-LR Vertical'}
+        userData={{ unintersectable: true }}
         lineWidth={wireframeWidth}
         color={wireframeColor}
       />
       <Line
         points={[[positionUL.x, positionUL.y, -hz], positionUL]}
         name={'Line UL-UL Vertical'}
+        userData={{ unintersectable: true }}
         lineWidth={wireframeWidth}
         color={wireframeColor}
       />
       <Line
         points={[[positionUR.x, positionUR.y, -hz], positionUR]}
         name={'Line UR-UR Vertical'}
+        userData={{ unintersectable: true }}
         lineWidth={wireframeWidth}
         color={wireframeColor}
       />

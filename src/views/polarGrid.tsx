@@ -69,14 +69,18 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
     <>
       {position && (
         <group position={position} rotation={[HALF_PI, 0, 0]} name={'Polar Auxiliary'}>
-          <polarGridHelper args={[radius, 24, 6, 120, 'gray', 'gray']} />
-          <Ring args={[radius * 0.98, radius, 24, 1, HALF_PI, angle]} rotation={[-HALF_PI, 0, 0]}>
+          <polarGridHelper args={[radius, 24, 6, 120, 'gray', 'gray']} userData={{ unintersectable: true }} />
+          <Ring
+            args={[radius * 0.98, radius, 24, 1, HALF_PI, angle]}
+            userData={{ unintersectable: true }}
+            rotation={[-HALF_PI, 0, 0]}
+          >
             <meshBasicMaterial side={DoubleSide} color={'yellow'} />
           </Ring>
 
           {/* shown angle */}
           <group rotation={[0, angle, 0]}>
-            <mesh position={[-0.5, 0, -radius * 0.9]} rotation={[-HALF_PI, 0, 0]}>
+            <mesh position={[-0.5, 0, -radius * 0.9]} rotation={[-HALF_PI, 0, 0]} userData={{ unintersectable: true }}>
               <textGeometry args={[`${Math.floor(Util.toDegrees(angle))}°`, textGeometryParams]} />
             </mesh>
           </group>
@@ -88,7 +92,11 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
             const offset = getOffset(Math.abs(times));
             return (
               <group key={i} rotation={[0, (times * Math.PI) / 12, 0]}>
-                <mesh position={[offset, 0, -radius * 1.05]} rotation={[-HALF_PI, 0, 0]}>
+                <mesh
+                  position={[offset, 0, -radius * 1.05]}
+                  rotation={[-HALF_PI, 0, 0]}
+                  userData={{ unintersectable: true }}
+                >
                   <textGeometry args={[`${15 * times}°`, textGeometryParams]} />
                   <meshStandardMaterial attach="material" color={'lightGray'} />
                 </mesh>

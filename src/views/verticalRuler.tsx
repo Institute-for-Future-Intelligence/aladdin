@@ -71,13 +71,14 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
       {position && rotation && (
         <group position={position} rotation={rotation} name={'Vertical Ruler'}>
           <Line
+            userData={{ unintersectable: true }}
             points={[
               [0, 0, 0],
               [0, height, 0],
             ]}
             color={color}
           />
-          <mesh position={[-1.5, selectedElementHeight - 0.175, 0]}>
+          <mesh position={[-1.5, selectedElementHeight - 0.175, 0]} userData={{ unintersectable: true }}>
             <textGeometry args={[shownHeight, textGeometryParams]} />
             <meshStandardMaterial attach="material" color={'white'} />
           </mesh>
@@ -87,6 +88,7 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
             return (
               <group key={i}>
                 <Line
+                  userData={{ unintersectable: true }}
                   points={[
                     [-len, i, 0],
                     [len, i, 0],
@@ -94,7 +96,7 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
                   lineWidth={0.5}
                   color={color}
                 />
-                <mesh position={[0.4, i - 0.125, 0]}>
+                <mesh position={[0.4, i - 0.125, 0]} userData={{ unintersectable: true }}>
                   {textGeometry}
                   <meshStandardMaterial attach="material" color={color} />
                 </mesh>

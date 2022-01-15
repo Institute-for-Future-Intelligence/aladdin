@@ -314,7 +314,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
 
   const isMoveToSky = () => {
     if (meshRef.current) {
-      const intersections = ray.intersectObjects(scene.children, true);
+      const intersections = ray.intersectObjects(Util.fetchIntersectables(scene), false);
       if (intersections.length > 0) {
         for (const intersection of intersections) {
           if (intersection.object.userData.stand) {
@@ -491,7 +491,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const handlePointerUp = () => {
     if (grabRef.current) {
       const elem = getElementById(grabRef.current.id);
-      if (elem) {
+      if (elem && !elem.locked) {
         let elementRef: Group | null | undefined = null;
         let newHumanOrTreeParentId: string | null = oldHumanOrTreeParentIdRef.current;
         switch (elem.type) {
@@ -660,7 +660,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
             break;
         }
         if (elementRef) {
-          const intersections = ray.intersectObjects(scene.children, true);
+          const intersections = ray.intersectObjects(Util.fetchIntersectables(scene), false);
           const intersection = getIntersectionToStand(intersections); // could simplify???
           if (intersection) {
             const p = intersection.point;

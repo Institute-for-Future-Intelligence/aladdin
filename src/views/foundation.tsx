@@ -2018,6 +2018,7 @@ const Foundation = ({
         <>
           {hovered && !selected && (
             <textSprite
+              userData={{ unintersectable: true }}
               name={'Label'}
               text={
                 i18n.t('shared.FoundationElement', lang) +
@@ -2031,6 +2032,7 @@ const Foundation = ({
           )}
           {!locked && hoveredHandle === ResizeHandleType.LowerLeft && (
             <textSprite
+              userData={{ unintersectable: true }}
               name={'Label-LL'}
               text={'LL'}
               fontSize={20}
@@ -2041,6 +2043,7 @@ const Foundation = ({
           )}
           {!locked && hoveredHandle === ResizeHandleType.UpperLeft && (
             <textSprite
+              userData={{ unintersectable: true }}
               name={'Label-UL'}
               text={'UL'}
               fontSize={20}
@@ -2051,6 +2054,7 @@ const Foundation = ({
           )}
           {!locked && hoveredHandle === ResizeHandleType.LowerRight && (
             <textSprite
+              userData={{ unintersectable: true }}
               name={'Label-LR'}
               text={'LR'}
               fontSize={20}
@@ -2061,6 +2065,7 @@ const Foundation = ({
           )}
           {!locked && hoveredHandle === ResizeHandleType.UpperRight && (
             <textSprite
+              userData={{ unintersectable: true }}
               name={'Label-UR'}
               text={'UR'}
               fontSize={20}
