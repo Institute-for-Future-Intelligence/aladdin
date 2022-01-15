@@ -293,6 +293,7 @@ const Tree = ({
           />
         </Billboard>
 
+        {/* highlight it when it is selected but locked */}
         {selected && locked && (
           <Line
             name={'Selection highlight lines'}

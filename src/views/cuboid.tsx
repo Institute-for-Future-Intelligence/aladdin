@@ -1128,6 +1128,8 @@ const Cuboid = ({
 
       {/* wireFrame */}
       {!selected && <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />}
+
+      {/* highlight with a thick wireframe when it is selected but locked */}
       {selected && locked && (
         <Wireframe hx={hx} hy={hy} hz={hz} lineColor={LOCKED_ELEMENT_SELECTION_COLOR} lineWidth={lineWidth * 5} />
       )}

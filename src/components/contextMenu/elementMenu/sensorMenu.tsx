@@ -7,7 +7,7 @@ import { Checkbox, Input, Menu } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { Copy, Cut } from '../menuItems';
+import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
@@ -68,6 +68,7 @@ export const SensorMenu = () => {
       <>
         <Copy keyName={'sensor-copy'} />
         <Cut keyName={'sensor-cut'} />
+        <Lock keyName={'sensor-lock'} />
         <Menu.Item key={'sensor-show-label'}>
           <Checkbox checked={!!sensor?.showLabel} onChange={showElementLabel}>
             {i18n.t('sensorMenu.KeepShowingLabel', lang)}

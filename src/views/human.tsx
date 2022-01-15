@@ -198,6 +198,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
           </Plane>
         </Billboard>
 
+        {/* highlight it when it is selected but locked */}
         {selected && locked && (
           <Line
             name={'Selection highlight lines'}

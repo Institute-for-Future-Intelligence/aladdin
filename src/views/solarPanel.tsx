@@ -12,6 +12,7 @@ import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
   HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
+  LOCKED_ELEMENT_SELECTION_COLOR,
   MOVE_HANDLE_RADIUS,
   RESIZE_HANDLE_COLOR,
   RESIZE_HANDLE_SIZE,
@@ -389,6 +390,28 @@ const SolarPanel = ({
         >
           <meshBasicMaterial side={DoubleSide} />
         </Plane>
+
+        {/* highlight it when it is selected but locked */}
+        {selected && locked && (
+          <Line
+            name={'Selection highlight lines'}
+            userData={{ unintersectable: true }}
+            points={[
+              [-lx / 2, -ly / 2, 0],
+              [-lx / 2, ly / 2, 0],
+              [-lx / 2, ly / 2, 0],
+              [lx / 2, ly / 2, 0],
+              [lx / 2, -ly / 2, 0],
+              [lx / 2, ly / 2, 0],
+              [lx / 2, -ly / 2, 0],
+              [-lx / 2, -ly / 2, 0],
+            ]}
+            castShadow={false}
+            receiveShadow={false}
+            lineWidth={2}
+            color={LOCKED_ELEMENT_SELECTION_COLOR}
+          />
+        )}
 
         {/* move & resize handles */}
         {selected && !locked && (

@@ -12,6 +12,7 @@ import { useThree } from '@react-three/fiber';
 import {
   HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
+  LOCKED_ELEMENT_SELECTION_COLOR,
   MOVE_HANDLE_RADIUS,
   UNIT_VECTOR_NEG_X,
   UNIT_VECTOR_NEG_Y,
@@ -38,6 +39,7 @@ const Sensor = ({
   lineColor = 'black',
   lineWidth = 0.1,
   selected = false,
+  locked = false,
   showLabel = false,
   parentId,
   light = true,
@@ -161,8 +163,19 @@ const Sensor = ({
       {/* wireFrame */}
       {!selected && <Wireframe hx={lx / 2} hy={ly / 2} hz={lz / 2} lineColor={lineColor} lineWidth={lineWidth} />}
 
+      {/* highlight with a thick wireframe when it is selected but locked */}
+      {selected && locked && (
+        <Wireframe
+          hx={lx / 2}
+          hy={ly / 2}
+          hz={lz / 2}
+          lineColor={LOCKED_ELEMENT_SELECTION_COLOR}
+          lineWidth={lineWidth * 10}
+        />
+      )}
+
       {/* draw handle */}
-      {selected && (
+      {selected && !locked && (
         <Sphere
           ref={handleRef}
           position={new Vector3(0, 0, 0)}
