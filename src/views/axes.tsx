@@ -18,8 +18,8 @@ export interface AxesProps {
 }
 
 const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLabels = true }: AxesProps) => {
+  const aabb = useStore(Selector.aabb);
   const sceneRadius = useStore(Selector.sceneRadius);
-  const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const orthographic = useStore(Selector.viewState.orthographic);
   const minorTickLength = 0.1;
   const majorTickLength = 0.3;
@@ -37,7 +37,7 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
     return i % 5 === 0 ? majorTickLength : minorTickLength;
   };
 
-  const cameraZ: number = orthographic ? cameraPosition[2] : 0;
+  const cameraZ: number = orthographic ? aabb.max.z + 0.01 : 0;
 
   return (
     <>

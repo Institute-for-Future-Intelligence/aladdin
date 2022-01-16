@@ -476,17 +476,17 @@ export const useStore = create<CommonStoreState>(
               state.skipChange = true;
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.fileChanged = !state.fileChanged;
-              // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
-              // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Human) {
-                  const human = e as HumanModel;
-                  e.lx = HumanData.fetchWidth(human.name);
-                  e.ly = e.lx;
-                  e.lz = HumanData.fetchHeight(human.name);
-                }
-              }
             });
+            // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
+            // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
+            const state = get();
+            for (const e of state.elements) {
+              if (e.type === ObjectType.Human) {
+                const human = e as HumanModel;
+                const width = HumanData.fetchWidth(human.name);
+                state.setElementSize(human.id, width, width, HumanData.fetchHeight(human.name));
+              }
+            }
           },
           exportContent() {
             const state = get();
