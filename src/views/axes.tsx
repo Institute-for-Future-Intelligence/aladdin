@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Line } from '@react-three/drei';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -21,23 +21,43 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
   const aabb = useStore(Selector.aabb);
   const sceneRadius = useStore(Selector.sceneRadius);
   const orthographic = useStore(Selector.viewState.orthographic);
+
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+
+  const nTicks = 50;
+  const tickIntervalRef = useRef<number>(1);
+  const labelIntervalRef = useRef<number>(tickIntervalRef.current * 10);
+  const arrayRef = useRef<number[]>(new Array(nTicks).fill(1));
+
   const minorTickLength = 0.1;
   const majorTickLength = 0.3;
   const tickMarkColor = 'FloralWhite';
   const tickMarkLineWidth = lineWidth / 2;
   const font = useLoader(FontLoader, helvetikerFont);
-  const fontSize = Math.max(0.25, sceneRadius * 0.005);
+  const fontSize = Math.min(1, Math.max(0.5, sceneRadius * 0.01));
   const textGeometryParams = {
     font: font,
     height: 0,
     size: fontSize,
   } as TextGeometryParameters;
+  const cameraZ: number = orthographic ? aabb.max.z + 0.01 : 0;
+
+  useEffect(() => {
+    if (sceneRadius < 50) {
+      tickIntervalRef.current = 1;
+    } else if (sceneRadius < 100) {
+      tickIntervalRef.current = 2;
+    } else {
+      tickIntervalRef.current = 5;
+    }
+    labelIntervalRef.current = 10 * tickIntervalRef.current;
+    arrayRef.current = new Array(nTicks).fill(1);
+    setUpdateFlag(!updateFlag);
+  }, [sceneRadius]);
 
   const fetchTickLength = (i: number) => {
-    return i % 5 === 0 ? majorTickLength : minorTickLength;
+    return i % (5 * tickIntervalRef.current) === 0 ? majorTickLength : minorTickLength;
   };
-
-  const cameraZ: number = orthographic ? aabb.max.z + 0.01 : 0;
 
   return (
     <>
@@ -53,8 +73,8 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
       />
       {orthographic &&
         showTickMarks &&
-        [...Array(sceneRadius)].map((x, i) => {
-          const j = i + 1;
+        arrayRef.current.map((value, i) => {
+          const j = (i + 1) * tickIntervalRef.current;
           const a = fetchTickLength(j);
           return (
             <React.Fragment key={j}>
@@ -81,9 +101,9 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
         })}
       {orthographic &&
         showTickLabels &&
-        [...Array(sceneRadius)].map((x, i) => {
-          const j = i + 1;
-          return j % 5 === 0 ? (
+        arrayRef.current.map((value, i) => {
+          const j = (i + 1) * tickIntervalRef.current;
+          return j % labelIntervalRef.current === 0 ? (
             <mesh
               userData={{ unintersectable: true }}
               key={j}
@@ -98,9 +118,9 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
         })}
       {orthographic &&
         showTickLabels &&
-        [...Array(sceneRadius)].map((x, i) => {
-          const j = -(i + 1);
-          return j % 5 === 0 ? (
+        arrayRef.current.map((value, i) => {
+          const j = -(i + 1) * tickIntervalRef.current;
+          return j % labelIntervalRef.current === 0 ? (
             <mesh
               userData={{ unintersectable: true }}
               key={j}
@@ -127,8 +147,8 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
       {/* tick mark line width is enlarged because they appear to be thinner in the y direction */}
       {orthographic &&
         showTickMarks &&
-        [...Array(sceneRadius)].map((y, i) => {
-          const j = i + 1;
+        arrayRef.current.map((value, i) => {
+          const j = (i + 1) * tickIntervalRef.current;
           const a = fetchTickLength(j);
           return (
             <React.Fragment key={j}>
@@ -155,9 +175,9 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
         })}
       {orthographic &&
         showTickLabels &&
-        [...Array(sceneRadius)].map((y, i) => {
-          const j = i + 1;
-          return j % 5 === 0 ? (
+        arrayRef.current.map((value, i) => {
+          const j = (i + 1) * tickIntervalRef.current;
+          return j % labelIntervalRef.current === 0 ? (
             <mesh
               userData={{ unintersectable: true }}
               key={j}
@@ -172,9 +192,9 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
         })}
       {orthographic &&
         showTickLabels &&
-        [...Array(sceneRadius)].map((y, i) => {
-          const j = -(i + 1);
-          return j % 5 === 0 ? (
+        arrayRef.current.map((value, i) => {
+          const j = -(i + 1) * tickIntervalRef.current;
+          return j % labelIntervalRef.current === 0 ? (
             <mesh
               userData={{ unintersectable: true }}
               key={j}

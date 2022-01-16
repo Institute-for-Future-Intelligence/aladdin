@@ -38,6 +38,7 @@ import i18n from '../i18n/i18n';
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
+  const orthographic = useStore(Selector.viewState.orthographic);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getChildren = useStore(Selector.getChildren);
   const selectNone = useStore(Selector.selectNone);
@@ -698,25 +699,29 @@ const Ground = () => {
       newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE ||
       ray.intersectObjects([groundPlaneRef.current!]).length === 0
     ) {
-      const camera = getThree().camera;
-      const screenPosition = newPositionRef.current.clone().project(camera);
-      const screenLx = newPositionRef.current
-        .clone()
-        .add(new Vector3(elem.lx, 0, 0))
-        .project(camera)
-        .distanceTo(screenPosition);
-      const screenLy = newPositionRef.current
-        .clone()
-        .add(new Vector3(0, elem.ly ?? 1, 0))
-        .project(camera)
-        .distanceTo(screenPosition);
-      const screenLz = newPositionRef.current
-        .clone()
-        .add(new Vector3(0, 0, elem.lz))
-        .project(camera)
-        .distanceTo(screenPosition);
-      // smaller than 2% of screen dimension or on sky
-      if (Math.max(screenLx, screenLy, screenLz) < 0.02 || isMoveToSky()) {
+      let tooSmall = false;
+      if (!orthographic) {
+        const camera = getThree().camera;
+        const screenPosition = newPositionRef.current.clone().project(camera);
+        const screenLx = newPositionRef.current
+          .clone()
+          .add(new Vector3(elem.lx, 0, 0))
+          .project(camera)
+          .distanceTo(screenPosition);
+        const screenLy = newPositionRef.current
+          .clone()
+          .add(new Vector3(0, elem.ly ?? 1, 0))
+          .project(camera)
+          .distanceTo(screenPosition);
+        const screenLz = newPositionRef.current
+          .clone()
+          .add(new Vector3(0, 0, elem.lz))
+          .project(camera)
+          .distanceTo(screenPosition);
+        // smaller than 2% of screen dimension
+        tooSmall = Math.max(screenLx, screenLy, screenLz) < 0.02;
+      }
+      if (tooSmall || isMoveToSky()) {
         setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
         if (elementRef) {
           switch (elem.type) {

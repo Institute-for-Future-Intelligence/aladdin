@@ -568,15 +568,6 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           state.createNewFileFlag = !state.createNewFileFlag;
         });
         break;
-      case 'ctrl+o':
-      case 'meta+o': // for Mac
-        if (!localFileDialogRequested) {
-          setCommonStore((state) => {
-            state.localFileDialogRequested = true;
-            state.openLocalFileFlag = !state.openLocalFileFlag;
-          });
-        }
-        break;
       case 'ctrl+s':
       case 'meta+s': // for Mac
         setCommonStore((state) => {
@@ -679,10 +670,20 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
 
   const handleKeyUp = () => {
     switch (keyName) {
-      case 'shift': {
+      case 'shift':
         setEnableFineGrid(false);
         break;
-      }
+      case 'ctrl+o':
+      case 'meta+o': // for Mac
+        // this must be handled as a key-up event because it brings up a native file dialog
+        // when the key is down and the corresponding key-up event would never be processed as the focus is lost
+        if (!localFileDialogRequested) {
+          setCommonStore((state) => {
+            state.localFileDialogRequested = true;
+            state.openLocalFileFlag = !state.openLocalFileFlag;
+          });
+        }
+        break;
     }
   };
 
