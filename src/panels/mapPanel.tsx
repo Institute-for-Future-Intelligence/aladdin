@@ -14,6 +14,8 @@ import Spinner from '../components/spinner';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import 'antd/dist/antd.css';
 import i18n from '../i18n/i18n';
+import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
+import { UndoableCheck } from '../undo/UndoableCheck';
 
 const libraries = ['places'] as Libraries;
 
@@ -64,13 +66,14 @@ const Header = styled.div`
 const MapPanel = () => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
+  const addUndoable = useStore(Selector.addUndoable);
   const address = useStore(Selector.world.address);
   const latitude = useStore(Selector.world.latitude);
   const longitude = useStore(Selector.world.longitude);
   const mapPanelX = useStore(Selector.viewState.mapPanelX);
   const mapPanelY = useStore(Selector.viewState.mapPanelY);
   const groundImage = useStore(Selector.viewState.groundImage);
-  const mapWeatherStations = useStore(Selector.viewState.mapWeatherStations);
+  // const mapWeatherStations = useStore(Selector.viewState.mapWeatherStations);
   const mapZoom = useStore(Selector.viewState.mapZoom);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
@@ -85,6 +88,7 @@ const MapPanel = () => {
     x: isNaN(mapPanelX) ? 0 : Math.min(mapPanelX, window.innerWidth - wOffset),
     y: isNaN(mapPanelY) ? 0 : Math.min(mapPanelY, window.innerHeight - hOffset),
   });
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const lang = { lng: language };
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
@@ -111,25 +115,46 @@ const MapPanel = () => {
   const onPlacesChanged = () => {
     const places = searchBox.current?.getPlaces();
     if (places && places.length > 0) {
-      setCommonStore((state) => {
-        const geometry = places[0].geometry;
-        if (geometry) {
+      const geometry = places[0].geometry;
+      if (geometry) {
+        const undoableChangeLocation = {
+          name: 'Set Location',
+          timestamp: Date.now(),
+          oldLatitude: latitude,
+          newLatitude: geometry.location.lat(),
+          oldLongitude: longitude,
+          newLongitude: geometry.location.lng(),
+          oldAddress: address,
+          newAddress: places[0].formatted_address as string,
+          undo: () => {
+            setCommonStore((state) => {
+              state.world.latitude = undoableChangeLocation.oldLatitude;
+              state.world.longitude = undoableChangeLocation.oldLongitude;
+              state.world.address = undoableChangeLocation.oldAddress;
+            });
+            setUpdateFlag(!updateFlag);
+          },
+          redo: () => {
+            setCommonStore((state) => {
+              state.world.latitude = undoableChangeLocation.newLatitude;
+              state.world.longitude = undoableChangeLocation.newLongitude;
+              state.world.address = undoableChangeLocation.newAddress;
+            });
+            setUpdateFlag(!updateFlag);
+          },
+        } as UndoableChangeLocation;
+        addUndoable(undoableChangeLocation);
+        setCommonStore((state) => {
           state.world.latitude = geometry.location.lat();
           state.world.longitude = geometry.location.lng();
-        }
-        state.world.address = places[0].formatted_address as string;
-      });
+          state.world.address = places[0].formatted_address as string;
+        });
+      }
     }
   };
 
   const onLoad = (s: google.maps.places.SearchBox) => {
     searchBox.current = s;
-  };
-
-  const setMapWeatherStations = (on: boolean) => {
-    setCommonStore((state) => {
-      state.viewState.mapWeatherStations = on;
-    });
   };
 
   const onDrag: DraggableEventHandler = (e, ui) => {
@@ -186,19 +211,37 @@ const MapPanel = () => {
                   title={'Show ground image'}
                   checked={groundImage}
                   onChange={(checked) => {
+                    const undoableCheck = {
+                      name: 'Show Ground Image',
+                      timestamp: Date.now(),
+                      checked: checked,
+                      undo: () => {
+                        setCommonStore((state) => {
+                          state.viewState.groundImage = !undoableCheck.checked;
+                        });
+                      },
+                      redo: () => {
+                        setCommonStore((state) => {
+                          state.viewState.groundImage = undoableCheck.checked;
+                        });
+                      },
+                    } as UndoableCheck;
+                    addUndoable(undoableCheck);
                     setCommonStore((state) => {
                       state.viewState.groundImage = checked;
                     });
                   }}
                 />
-                <Space>{i18n.t('mapPanel.StationsOnMap', lang) + ':'}</Space>
-                <Switch
-                  title={'Show weather stations'}
-                  checked={mapWeatherStations}
-                  onChange={(checked) => {
-                    setMapWeatherStations(checked);
-                  }}
-                />
+                {/*<Space>{i18n.t('mapPanel.StationsOnMap', lang) + ':'}</Space>*/}
+                {/*<Switch*/}
+                {/*  title={'Show weather stations'}*/}
+                {/*  checked={mapWeatherStations}*/}
+                {/*  onChange={(checked) => {*/}
+                {/*    setCommonStore((state) => {*/}
+                {/*      state.viewState.mapWeatherStations = checked;*/}
+                {/*    });*/}
+                {/*  }}*/}
+                {/*/>*/}
               </Space>
             </Space>
             {isLoaded && (

@@ -12,6 +12,8 @@ import 'antd/dist/antd.css';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
 import { UndoableCheck } from '../undo/UndoableCheck';
+import { UndoableChange } from '../undo/UndoableChange';
+import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 
 const Container = styled.div`
   position: absolute;
@@ -63,6 +65,7 @@ const HeliodonPanel = () => {
   const addUndoable = useStore(Selector.addUndoable);
   const dateString = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
+  const address = useStore(Selector.world.address);
   const animateSun = useStore(Selector.animateSun);
   const showSunAngles = useStore(Selector.viewState.showSunAngles);
   const heliodon = useStore(Selector.viewState.heliodon);
@@ -82,6 +85,7 @@ const HeliodonPanel = () => {
     x: isNaN(heliodonPanelX) ? 0 : Math.max(heliodonPanelX, wOffset - window.innerWidth),
     y: isNaN(heliodonPanelY) ? 0 : Math.min(heliodonPanelY, window.innerHeight - hOffset),
   });
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const date = useMemo(() => new Date(dateString), [dateString]);
   const lang = { lng: language };
 
@@ -127,6 +131,23 @@ const HeliodonPanel = () => {
   const changeTime = (time: Date) => {
     const d = new Date(date);
     d.setHours(time.getHours(), time.getMinutes());
+    const undoableChange = {
+      name: 'Set Time',
+      timestamp: Date.now(),
+      oldValue: dateString,
+      newValue: d.toString(),
+      undo: () => {
+        setCommonStore((state) => {
+          state.world.date = undoableChange.oldValue as string;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.world.date = undoableChange.newValue as string;
+        });
+      },
+    } as UndoableChange;
+    addUndoable(undoableChange);
     setCommonStore((state) => {
       state.world.date = d.toString();
     });
@@ -286,6 +307,23 @@ const HeliodonPanel = () => {
                     day.setFullYear(m.getFullYear());
                     day.setMonth(m.getMonth());
                     day.setDate(m.getDate());
+                    const undoableChange = {
+                      name: 'Set Date',
+                      timestamp: Date.now(),
+                      oldValue: dateString,
+                      newValue: day.toString(),
+                      undo: () => {
+                        setCommonStore((state) => {
+                          state.world.date = undoableChange.oldValue as string;
+                        });
+                      },
+                      redo: () => {
+                        setCommonStore((state) => {
+                          state.world.date = undoableChange.newValue as string;
+                        });
+                      },
+                    } as UndoableChange;
+                    addUndoable(undoableChange);
                     setCommonStore((state) => {
                       state.world.date = day.toString();
                     });
@@ -311,9 +349,32 @@ const HeliodonPanel = () => {
                 marks={{ '-90': '-90°', 0: '0°', 90: '90°' }}
                 min={-90}
                 max={90}
+                value={latitude}
                 tooltipVisible={false}
-                defaultValue={latitude}
                 onChange={(value: number) => {
+                  const undoableChangeLocation = {
+                    name: 'Set Latitude',
+                    timestamp: Date.now(),
+                    oldLatitude: latitude,
+                    newLatitude: value,
+                    oldAddress: address,
+                    newAddress: '',
+                    undo: () => {
+                      setCommonStore((state) => {
+                        state.world.latitude = undoableChangeLocation.oldLatitude;
+                        state.world.address = undoableChangeLocation.oldAddress;
+                      });
+                      setUpdateFlag(!updateFlag);
+                    },
+                    redo: () => {
+                      setCommonStore((state) => {
+                        state.world.latitude = undoableChangeLocation.newLatitude;
+                        state.world.address = undoableChangeLocation.newAddress;
+                      });
+                      setUpdateFlag(!updateFlag);
+                    },
+                  } as UndoableChangeLocation;
+                  addUndoable(undoableChangeLocation);
                   setCommonStore((state) => {
                     state.world.latitude = value;
                     state.world.address = '';

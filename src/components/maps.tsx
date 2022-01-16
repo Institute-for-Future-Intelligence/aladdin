@@ -2,10 +2,12 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
+import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
+import { UndoableChange } from '../undo/UndoableChange';
 
 const containerStyle = {
   border: '1px solid',
@@ -15,6 +17,7 @@ const containerStyle = {
 
 const Maps = () => {
   const setCommonStore = useStore(Selector.set);
+  const addUndoable = useStore(Selector.addUndoable);
   const latitude = useStore(Selector.world.latitude);
   const longitude = useStore(Selector.world.longitude);
   const weatherData = useStore(Selector.weatherData);
@@ -28,13 +31,11 @@ const Maps = () => {
   const cities = useRef<google.maps.LatLng[]>([]);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
-  useEffect(() => {}, [updateFlag]);
-
   const onLoad = useCallback((map: google.maps.Map) => {
     setMap(map);
   }, []);
 
-  const onUnmount = useCallback(function callback(map) {
+  const onUnmount = useCallback(function callback() {
     setMap(null);
   }, []);
 
@@ -67,14 +68,33 @@ const Maps = () => {
     if (map) {
       const center = map.getCenter();
       const lat = center.lat();
-      if (lat !== latitude) {
+      const lng = center.lng();
+      if (lat !== latitude || lng !== longitude) {
+        const undoableChangeLocation = {
+          name: 'Set Location',
+          timestamp: Date.now(),
+          oldLatitude: latitude,
+          newLatitude: lat,
+          oldLongitude: longitude,
+          newLongitude: lng,
+          undo: () => {
+            setCommonStore((state) => {
+              state.world.latitude = undoableChangeLocation.oldLatitude;
+              state.world.longitude = undoableChangeLocation.oldLongitude;
+            });
+            setUpdateFlag(!updateFlag);
+          },
+          redo: () => {
+            setCommonStore((state) => {
+              state.world.latitude = undoableChangeLocation.newLatitude;
+              state.world.longitude = undoableChangeLocation.newLongitude;
+            });
+            setUpdateFlag(!updateFlag);
+          },
+        } as UndoableChangeLocation;
+        addUndoable(undoableChangeLocation);
         setCommonStore((state) => {
           state.world.latitude = lat;
-        });
-      }
-      const lng = center.lng();
-      if (lng !== longitude) {
-        setCommonStore((state) => {
           state.world.longitude = lng;
         });
       }
@@ -85,6 +105,23 @@ const Maps = () => {
     if (map) {
       const z = map.getZoom();
       if (z !== mapZoom) {
+        const undoableChange = {
+          name: 'Zoom Map',
+          timestamp: Date.now(),
+          oldValue: mapZoom,
+          newValue: z,
+          undo: () => {
+            setCommonStore((state) => {
+              state.viewState.mapZoom = undoableChange.oldValue as number;
+            });
+          },
+          redo: () => {
+            setCommonStore((state) => {
+              state.viewState.mapZoom = undoableChange.newValue as number;
+            });
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
         setCommonStore((state) => {
           state.viewState.mapZoom = z;
         });
@@ -96,6 +133,23 @@ const Maps = () => {
     if (map) {
       const t = map.getTilt();
       if (t !== mapTilt) {
+        const undoableChange = {
+          name: 'Tilt Map',
+          timestamp: Date.now(),
+          oldValue: mapTilt,
+          newValue: t,
+          undo: () => {
+            setCommonStore((state) => {
+              state.viewState.mapTilt = undoableChange.oldValue as number;
+            });
+          },
+          redo: () => {
+            setCommonStore((state) => {
+              state.viewState.mapTilt = undoableChange.newValue as number;
+            });
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
         setCommonStore((state) => {
           state.viewState.mapTilt = t;
         });
@@ -107,6 +161,23 @@ const Maps = () => {
     if (map) {
       const typeId = map.getMapTypeId();
       if (typeId !== mapType) {
+        const undoableChange = {
+          name: 'Change Map Type',
+          timestamp: Date.now(),
+          oldValue: mapType,
+          newValue: typeId,
+          undo: () => {
+            setCommonStore((state) => {
+              state.viewState.mapType = undoableChange.oldValue as string;
+            });
+          },
+          redo: () => {
+            setCommonStore((state) => {
+              state.viewState.mapType = undoableChange.newValue as string;
+            });
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
         setCommonStore((state) => {
           state.viewState.mapType = typeId;
         });
