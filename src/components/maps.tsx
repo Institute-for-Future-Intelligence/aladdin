@@ -70,29 +70,29 @@ const Maps = () => {
       const lat = center.lat();
       const lng = center.lng();
       if (lat !== latitude || lng !== longitude) {
-        const undoableChangeLocation = {
-          name: 'Set Location',
-          timestamp: Date.now(),
-          oldLatitude: latitude,
-          newLatitude: lat,
-          oldLongitude: longitude,
-          newLongitude: lng,
-          undo: () => {
-            setCommonStore((state) => {
-              state.world.latitude = undoableChangeLocation.oldLatitude;
-              state.world.longitude = undoableChangeLocation.oldLongitude;
-            });
-            setUpdateFlag(!updateFlag);
-          },
-          redo: () => {
-            setCommonStore((state) => {
-              state.world.latitude = undoableChangeLocation.newLatitude;
-              state.world.longitude = undoableChangeLocation.newLongitude;
-            });
-            setUpdateFlag(!updateFlag);
-          },
-        } as UndoableChangeLocation;
-        addUndoable(undoableChangeLocation);
+        // We do not want to make this undoable as it will result in
+        // too many undoable events as the user drags the map
+        // const undoableChangeLocation = {
+        //   name: 'Set Location',
+        //   timestamp: Date.now(),
+        //   oldLatitude: latitude,
+        //   newLatitude: lat,
+        //   oldLongitude: longitude,
+        //   newLongitude: lng,
+        //   undo: () => {
+        //     setCommonStore((state) => {
+        //       state.world.latitude = undoableChangeLocation.oldLatitude;
+        //       state.world.longitude = undoableChangeLocation.oldLongitude;
+        //     });
+        //   },
+        //   redo: () => {
+        //     setCommonStore((state) => {
+        //       state.world.latitude = undoableChangeLocation.newLatitude;
+        //       state.world.longitude = undoableChangeLocation.newLongitude;
+        //     });
+        //   },
+        // } as UndoableChangeLocation;
+        // addUndoable(undoableChangeLocation);
         setCommonStore((state) => {
           state.world.latitude = lat;
           state.world.longitude = lng;
