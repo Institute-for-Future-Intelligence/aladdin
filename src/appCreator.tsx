@@ -298,12 +298,12 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
 
             <ElementsRenderer />
             <Ground />
-            {axes && <Axes />}
             <SceneRadiusCalculator />
             <SensorSimulation city={city} />
             <SolarPanelSimulation city={city} />
             <Auxiliary />
             <Suspense fallback={null}>
+              {axes && <Axes />}
               <Sky theme={theme} />
               <Heliodon />
               {groundImage && <GroundImage />}

@@ -17,6 +17,7 @@ export interface HorizontalRulerProps {
 
 export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps) => {
   const language = useStore(Selector.language);
+  const orthographic = useStore(Selector.viewState.orthographic);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
 
@@ -40,7 +41,9 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
   const hz = useMemo(() => {
     switch (element.type) {
       case ObjectType.Cuboid:
-        return -element.lz / 2 + 0.1;
+        return orthographic ? element.lz / 2 + 0.1 : -element.lz / 2 + 0.1;
+      case ObjectType.Foundation:
+        return element.lz + 0.1;
     }
     return 0.1;
   }, [element.type, element.lz]);

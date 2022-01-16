@@ -3,36 +3,185 @@
  */
 
 import React from 'react';
-import { Vector3 } from 'three';
 import { Line } from '@react-three/drei';
+import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
+import { useLoader } from '@react-three/fiber';
+import { FontLoader, TextGeometryParameters } from 'three';
+import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
 
 export interface AxesProps {
   lineWidth?: number;
   endPoint?: number;
+  showTickMarks?: boolean;
+  showTickLabels?: boolean;
 }
 
-const Axes = ({ lineWidth = 1, endPoint = 1000 }: AxesProps) => {
+const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLabels = true }: AxesProps) => {
+  const sceneRadius = useStore(Selector.sceneRadius);
+  const orthographic = useStore(Selector.viewState.orthographic);
+  const minorTickLength = 0.1;
+  const majorTickLength = 0.3;
+  const tickMarkColor = 'FloralWhite';
+  const tickMarkLineWidth = lineWidth / 2;
+  const font = useLoader(FontLoader, helvetikerFont);
+  const fontSize = Math.max(0.25, sceneRadius * 0.005);
+  const textGeometryParams = {
+    font: font,
+    height: 0,
+    size: fontSize,
+  } as TextGeometryParameters;
+
+  const fetchTickLength = (i: number) => {
+    return i % 5 === 0 ? majorTickLength : minorTickLength;
+  };
+
   return (
-    <mesh name={'Axes'}>
+    <>
+      {/* x axis */}
       <Line
         userData={{ unintersectable: true }}
-        points={[new Vector3(-endPoint, 0, 0), new Vector3(endPoint, 0, 0)]}
+        points={[
+          [-endPoint, 0, 0],
+          [endPoint, 0, 0],
+        ]}
         color={'red'}
         lineWidth={lineWidth}
       />
+      {orthographic &&
+        showTickMarks &&
+        [...Array(sceneRadius)].map((x, i) => {
+          const j = i + 1;
+          const a = fetchTickLength(j);
+          return (
+            <React.Fragment key={j}>
+              <Line
+                userData={{ unintersectable: true }}
+                points={[
+                  [j, -a, 0],
+                  [j, a, 0],
+                ]}
+                color={tickMarkColor}
+                lineWidth={tickMarkLineWidth}
+              />
+              <Line
+                userData={{ unintersectable: true }}
+                points={[
+                  [-j, -a, 0],
+                  [-j, a, 0],
+                ]}
+                color={tickMarkColor}
+                lineWidth={tickMarkLineWidth}
+              />
+            </React.Fragment>
+          );
+        })}
+      {orthographic &&
+        showTickLabels &&
+        [...Array(sceneRadius)].map((x, i) => {
+          const j = i + 1;
+          return j % 5 === 0 ? (
+            <mesh key={j} position={[j - fontSize, -majorTickLength * 2 - fontSize, 0]}>
+              <textGeometry args={[(j < 10 ? ' ' : '') + j, textGeometryParams]} />
+              <meshStandardMaterial attach="material" color={'lightGray'} />
+            </mesh>
+          ) : (
+            <React.Fragment key={j} />
+          );
+        })}
+      {orthographic &&
+        showTickLabels &&
+        [...Array(sceneRadius)].map((x, i) => {
+          const j = -(i + 1);
+          return j % 5 === 0 ? (
+            <mesh key={j} position={[j - fontSize, -majorTickLength * 2 - fontSize, 0]}>
+              <textGeometry args={[(j > -10 ? ' ' : '') + j, textGeometryParams]} />
+              <meshStandardMaterial attach="material" color={'lightGray'} />
+            </mesh>
+          ) : (
+            <React.Fragment key={j} />
+          );
+        })}
+
+      {/* y axis */}
       <Line
         userData={{ unintersectable: true }}
-        points={[new Vector3(0, -endPoint, 0), new Vector3(0, endPoint, 0)]}
+        points={[
+          [0, -endPoint, 0],
+          [0, endPoint, 0],
+        ]}
         color={'blue'}
         lineWidth={lineWidth}
       />
-      <Line
-        userData={{ unintersectable: true }}
-        points={[new Vector3(0, 0, 0), new Vector3(0, 0, endPoint)]}
-        color={'green'}
-        lineWidth={lineWidth}
-      />
-    </mesh>
+      {/* tick mark line width is enlarged because they appear to be thinner in the y direction */}
+      {orthographic &&
+        showTickMarks &&
+        [...Array(sceneRadius)].map((y, i) => {
+          const j = i + 1;
+          const a = fetchTickLength(j);
+          return (
+            <React.Fragment key={j}>
+              <Line
+                userData={{ unintersectable: true }}
+                points={[
+                  [-a, j, 0],
+                  [a, j, 0],
+                ]}
+                color={tickMarkColor}
+                lineWidth={tickMarkLineWidth * 1.5}
+              />
+              <Line
+                userData={{ unintersectable: true }}
+                points={[
+                  [-a, -j, 0],
+                  [a, -j, 0],
+                ]}
+                color={tickMarkColor}
+                lineWidth={tickMarkLineWidth * 1.5}
+              />
+            </React.Fragment>
+          );
+        })}
+      {orthographic &&
+        showTickLabels &&
+        [...Array(sceneRadius)].map((y, i) => {
+          const j = i + 1;
+          return j % 5 === 0 ? (
+            <mesh key={j} position={[-majorTickLength * 2 - fontSize * 2, j - fontSize / 2, 0]}>
+              <textGeometry args={[j + '', textGeometryParams]} />
+              <meshStandardMaterial attach="material" color={'lightGray'} />
+            </mesh>
+          ) : (
+            <React.Fragment key={j} />
+          );
+        })}
+      {orthographic &&
+        showTickLabels &&
+        [...Array(sceneRadius)].map((y, i) => {
+          const j = -(i + 1);
+          return j % 5 === 0 ? (
+            <mesh key={j} position={[-majorTickLength * 2 - fontSize * 2, j - fontSize / 2, 0]}>
+              <textGeometry args={[j + '', textGeometryParams]} />
+              <meshStandardMaterial attach="material" color={'lightGray'} />
+            </mesh>
+          ) : (
+            <React.Fragment key={j} />
+          );
+        })}
+
+      {/* z axis */}
+      {!orthographic && (
+        <Line
+          userData={{ unintersectable: true }}
+          points={[
+            [0, 0, 0],
+            [0, 0, endPoint],
+          ]}
+          color={'green'}
+          lineWidth={lineWidth}
+        />
+      )}
+    </>
   );
 };
 
