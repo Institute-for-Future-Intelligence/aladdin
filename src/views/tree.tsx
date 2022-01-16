@@ -91,8 +91,19 @@ const Tree = ({
   const [texture, setTexture] = useState(textureLoader);
 
   const labelText = useMemo(() => {
-    return TreeData.fetchLabel(name, lang);
-  }, [name]);
+    return (
+      TreeData.fetchLabel(name, lang) +
+      (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      '\n' +
+      i18n.t('word.Coordinates', lang) +
+      ': (' +
+      cx.toFixed(1) +
+      ', ' +
+      cy.toFixed(1) +
+      ') ' +
+      i18n.t('word.MeterAbbreviation', lang)
+    );
+  }, [name, cx, cy, locked, language]);
 
   const theta = useMemo(() => {
     return TreeData.fetchTheta(name);
@@ -472,7 +483,7 @@ const Tree = ({
           <textSprite
             userData={{ unintersectable: true }}
             name={'Label'}
-            text={labelText + (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')}
+            text={labelText}
             fontSize={20}
             fontFace={'Times Roman'}
             textHeight={0.2}

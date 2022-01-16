@@ -70,6 +70,7 @@ export const i18n_es = {
       Height: 'Altura',
       Angle: 'Ángulo',
       Azimuth: 'Azimut',
+      Coordinates: 'Coordinates',
       Weather: 'Tiempo',
       Show: 'Mostrar',
       Animate: 'Animar',

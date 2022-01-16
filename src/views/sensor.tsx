@@ -97,6 +97,23 @@ const Sensor = ({
   const hz = lz / 2;
   const sensorModel = getElementById(id) as SensorModel;
 
+  const labelText = useMemo(() => {
+    return (
+      (sensorModel?.label ? sensorModel.label : i18n.t('shared.SensorElement', lang)) +
+      (sensorModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      '\n' +
+      i18n.t('word.Coordinates', lang) +
+      ': (' +
+      cx.toFixed(1) +
+      ', ' +
+      cy.toFixed(1) +
+      ', ' +
+      cz.toFixed(1) +
+      ') ' +
+      i18n.t('word.MeterAbbreviation', lang)
+    );
+  }, [sensorModel?.label, locked, language, cx, cy, cz]);
+
   const euler = useMemo(() => {
     const n = new Vector3().fromArray(normal);
     // east face in model coordinate system
@@ -193,10 +210,7 @@ const Sensor = ({
         <textSprite
           userData={{ unintersectable: true }}
           name={'Label'}
-          text={
-            (sensorModel?.label ? sensorModel.label : i18n.t('shared.SensorElement', lang)) +
-            (sensorModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
-          }
+          text={labelText}
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}

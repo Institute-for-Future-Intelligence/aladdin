@@ -61,8 +61,19 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
   }, [name]);
 
   const labelText = useMemo(() => {
-    return HumanData.fetchLabel(name, lang);
-  }, [name]);
+    return (
+      HumanData.fetchLabel(name, lang) +
+      (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      '\n' +
+      i18n.t('word.Coordinates', lang) +
+      ': (' +
+      cx.toFixed(1) +
+      ', ' +
+      cy.toFixed(1) +
+      ') ' +
+      i18n.t('word.MeterAbbreviation', lang)
+    );
+  }, [name, locked, language, cx, cy]);
 
   // attach parent dom element if parent is not Ground
   useEffect(() => {
@@ -254,7 +265,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
           <textSprite
             userData={{ unintersectable: true }}
             name={'Label'}
-            text={labelText + (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')}
+            text={labelText}
             fontSize={20}
             fontFace={'Times Roman'}
             textHeight={0.2}

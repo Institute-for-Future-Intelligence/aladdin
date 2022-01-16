@@ -43,6 +43,7 @@ import RotateHandle from '../components/rotateHandle';
 import Wireframe from '../components/wireframe';
 import { UndoableChange } from '../undo/UndoableChange';
 import i18n from '../i18n/i18n';
+import { HumanData } from '../HumanData';
 
 const SolarPanel = ({
   id,
@@ -191,6 +192,23 @@ const SolarPanel = ({
   useEffect(() => {
     setFaceUp(Util.isSame(panelNormal, UNIT_VECTOR_POS_Z));
   }, [normal]);
+
+  const labelText = useMemo(() => {
+    return (
+      (solarPanel?.label ? solarPanel.label : i18n.t('shared.SolarPanelElement', lang)) +
+      (solarPanel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      '\n' +
+      i18n.t('word.Coordinates', lang) +
+      ': (' +
+      cx.toFixed(1) +
+      ', ' +
+      cy.toFixed(1) +
+      ', ' +
+      cz.toFixed(1) +
+      ') ' +
+      i18n.t('word.MeterAbbreviation', lang)
+    );
+  }, [solarPanel?.label, locked, language, cx, cy, cz]);
 
   const texture = useMemo(() => {
     const loader = new TextureLoader();
@@ -826,14 +844,11 @@ const SolarPanel = ({
         <textSprite
           userData={{ unintersectable: true }}
           name={'Label'}
-          text={
-            (solarPanel?.label ? solarPanel.label : i18n.t('shared.SolarPanelElement', lang)) +
-            (solarPanel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
-          }
+          text={labelText}
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}
-          position={[0, 0, lz + 0.2]}
+          position={[0, 0, Math.max(ly * Math.abs(Math.sin(solarPanel.tiltAngle)), 0.2)]}
         />
       )}
     </group>

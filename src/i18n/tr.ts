@@ -71,6 +71,7 @@ export const i18n_tr = {
       Height: 'Yükseklik',
       Angle: 'Açý',
       Azimuth: 'Azimut',
+      Coordinates: 'Coordinates',
       Weather: 'Hava Durumu',
       Show: 'Göster',
       Animate: 'Oynat',

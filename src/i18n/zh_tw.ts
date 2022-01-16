@@ -70,6 +70,7 @@ export const i18n_zh_tw = {
       Height: '高度',
       Angle: '角度',
       Azimuth: '方位角',
+      Coordinates: '坐標',
       Weather: '天氣',
       Show: '顯示',
       Animate: '動畫',
