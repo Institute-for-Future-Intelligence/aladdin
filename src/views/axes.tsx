@@ -19,6 +19,7 @@ export interface AxesProps {
 
 const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLabels = true }: AxesProps) => {
   const sceneRadius = useStore(Selector.sceneRadius);
+  const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const orthographic = useStore(Selector.viewState.orthographic);
   const minorTickLength = 0.1;
   const majorTickLength = 0.3;
@@ -36,14 +37,16 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
     return i % 5 === 0 ? majorTickLength : minorTickLength;
   };
 
+  const cameraZ: number = orthographic ? cameraPosition[2] : 0;
+
   return (
     <>
       {/* x axis */}
       <Line
         userData={{ unintersectable: true }}
         points={[
-          [-endPoint, 0, 0],
-          [endPoint, 0, 0],
+          [-endPoint, 0, cameraZ],
+          [endPoint, 0, cameraZ],
         ]}
         color={'red'}
         lineWidth={lineWidth}
@@ -58,8 +61,8 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
               <Line
                 userData={{ unintersectable: true }}
                 points={[
-                  [j, -a, 0],
-                  [j, a, 0],
+                  [j, -a, cameraZ],
+                  [j, a, cameraZ],
                 ]}
                 color={tickMarkColor}
                 lineWidth={tickMarkLineWidth}
@@ -67,8 +70,8 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
               <Line
                 userData={{ unintersectable: true }}
                 points={[
-                  [-j, -a, 0],
-                  [-j, a, 0],
+                  [-j, -a, cameraZ],
+                  [-j, a, cameraZ],
                 ]}
                 color={tickMarkColor}
                 lineWidth={tickMarkLineWidth}
@@ -81,7 +84,11 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
         [...Array(sceneRadius)].map((x, i) => {
           const j = i + 1;
           return j % 5 === 0 ? (
-            <mesh key={j} position={[j - fontSize, -majorTickLength * 2 - fontSize, 0]}>
+            <mesh
+              userData={{ unintersectable: true }}
+              key={j}
+              position={[j - fontSize, -majorTickLength * 2 - fontSize, cameraZ]}
+            >
               <textGeometry args={[(j < 10 ? ' ' : '') + j, textGeometryParams]} />
               <meshStandardMaterial attach="material" color={'lightGray'} />
             </mesh>
@@ -94,7 +101,11 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
         [...Array(sceneRadius)].map((x, i) => {
           const j = -(i + 1);
           return j % 5 === 0 ? (
-            <mesh key={j} position={[j - fontSize, -majorTickLength * 2 - fontSize, 0]}>
+            <mesh
+              userData={{ unintersectable: true }}
+              key={j}
+              position={[j - fontSize, -majorTickLength * 2 - fontSize, cameraZ]}
+            >
               <textGeometry args={[(j > -10 ? ' ' : '') + j, textGeometryParams]} />
               <meshStandardMaterial attach="material" color={'lightGray'} />
             </mesh>
@@ -107,8 +118,8 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
       <Line
         userData={{ unintersectable: true }}
         points={[
-          [0, -endPoint, 0],
-          [0, endPoint, 0],
+          [0, -endPoint, cameraZ],
+          [0, endPoint, cameraZ],
         ]}
         color={'blue'}
         lineWidth={lineWidth}
@@ -124,8 +135,8 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
               <Line
                 userData={{ unintersectable: true }}
                 points={[
-                  [-a, j, 0],
-                  [a, j, 0],
+                  [-a, j, cameraZ],
+                  [a, j, cameraZ],
                 ]}
                 color={tickMarkColor}
                 lineWidth={tickMarkLineWidth * 1.5}
@@ -133,8 +144,8 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
               <Line
                 userData={{ unintersectable: true }}
                 points={[
-                  [-a, -j, 0],
-                  [a, -j, 0],
+                  [-a, -j, cameraZ],
+                  [a, -j, cameraZ],
                 ]}
                 color={tickMarkColor}
                 lineWidth={tickMarkLineWidth * 1.5}
@@ -147,7 +158,11 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
         [...Array(sceneRadius)].map((y, i) => {
           const j = i + 1;
           return j % 5 === 0 ? (
-            <mesh key={j} position={[-majorTickLength * 2 - fontSize * 2, j - fontSize / 2, 0]}>
+            <mesh
+              userData={{ unintersectable: true }}
+              key={j}
+              position={[-majorTickLength * 2 - fontSize * 2, j - fontSize / 2, cameraZ]}
+            >
               <textGeometry args={[j + '', textGeometryParams]} />
               <meshStandardMaterial attach="material" color={'lightGray'} />
             </mesh>
@@ -160,7 +175,11 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
         [...Array(sceneRadius)].map((y, i) => {
           const j = -(i + 1);
           return j % 5 === 0 ? (
-            <mesh key={j} position={[-majorTickLength * 2 - fontSize * 2, j - fontSize / 2, 0]}>
+            <mesh
+              userData={{ unintersectable: true }}
+              key={j}
+              position={[-majorTickLength * 2 - fontSize * 2, j - fontSize / 2, cameraZ]}
+            >
               <textGeometry args={[j + '', textGeometryParams]} />
               <meshStandardMaterial attach="material" color={'lightGray'} />
             </mesh>
