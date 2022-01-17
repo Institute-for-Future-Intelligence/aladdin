@@ -47,6 +47,7 @@ import DesignInfoPanel from './panels/designInfoPanel';
 import SiteInfoPanel from './panels/siteInfoPanel';
 import CameraController from './cameraController';
 import { useStoreRef } from './stores/commonRef';
+import { UndoableCameraChange } from './undo/UndoableCameraChange';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -108,7 +109,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const zoomView = (scale: number) => {
     if (orthographic) {
       const oldZoom = cameraZoom;
-      const newZoom = cameraZoom * scale;
+      const newZoom = cameraZoom / scale;
       const undoableChange = {
         name: 'Zoom',
         timestamp: Date.now(),
@@ -136,6 +137,33 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         const x = p.x * scale;
         const y = p.y * scale;
         const z = p.z * scale;
+        const undoableCameraChange = {
+          name: 'Zoom',
+          timestamp: Date.now(),
+          oldCameraPosition: [p.x, p.y, p.z],
+          newCameraPosition: [x, y, z],
+          undo: () => {
+            const oldX = undoableCameraChange.oldCameraPosition[0];
+            const oldY = undoableCameraChange.oldCameraPosition[1];
+            const oldZ = undoableCameraChange.oldCameraPosition[2];
+            orbitControlsRef.current?.object.position.set(oldX, oldY, oldZ);
+            orbitControlsRef.current?.update();
+            setCommonStore((state) => {
+              state.viewState.cameraPosition = [oldX, oldY, oldZ];
+            });
+          },
+          redo: () => {
+            const newX = undoableCameraChange.newCameraPosition[0];
+            const newY = undoableCameraChange.newCameraPosition[1];
+            const newZ = undoableCameraChange.newCameraPosition[2];
+            orbitControlsRef.current?.object.position.set(newX, newY, newZ);
+            orbitControlsRef.current?.update();
+            setCommonStore((state) => {
+              state.viewState.cameraPosition = [newX, newY, newZ];
+            });
+          },
+        } as UndoableCameraChange;
+        addUndoable(undoableCameraChange);
         orbitControlsRef.current.object.position.set(x, y, z);
         orbitControlsRef.current.update();
         setCommonStore((state) => {

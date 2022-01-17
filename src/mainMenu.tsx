@@ -630,7 +630,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         <Menu.Item
           key={'zoom-out-view'}
           onClick={() => {
-            zoomView(0.9);
+            zoomView(1.1);
           }}
           style={{ paddingLeft: '36px' }}
         >
@@ -640,7 +640,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         <Menu.Item
           key={'zoom-in-view'}
           onClick={() => {
-            zoomView(1.1);
+            zoomView(0.9);
           }}
           style={{ paddingLeft: '36px' }}
         >

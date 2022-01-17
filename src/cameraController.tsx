@@ -124,19 +124,17 @@ const CameraController = () => {
     handleElementRotation();
   }, [orthographic]);
 
-  // camera zoom
+  // camera zoom in 2D view (no need to do this in 3D view)
   useEffect(() => {
-    if (orbitControlRef.current) {
-      if (persCameraRef.current) {
-      }
-      if (orthCameraRef.current) {
-        orthCameraRef.current.zoom = cameraZoom;
-        if (orthographic) {
+    if (orthographic) {
+      if (orbitControlRef.current) {
+        if (orthCameraRef.current) {
+          orthCameraRef.current.zoom = cameraZoom;
           orbitControlRef.current.object = orthCameraRef.current;
         }
+        render();
+        orbitControlRef.current.update();
       }
-      render();
-      orbitControlRef.current.update();
     }
   }, [cameraZoom]);
 
