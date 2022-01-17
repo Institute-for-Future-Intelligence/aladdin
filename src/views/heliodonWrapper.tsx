@@ -33,9 +33,9 @@ const HeliodonWrapper = () => {
   }, [worldLatitude, hourAngle, declinationAngle, heliodonRadius]);
 
   return (
-    <React.Fragment>
+    <>
       {heliodon && <Heliodon hourAngle={hourAngle} declinationAngle={declinationAngle} worldLatitude={worldLatitude} />}
-    </React.Fragment>
+    </>
   );
 };
 

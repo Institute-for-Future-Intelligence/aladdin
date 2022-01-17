@@ -7,6 +7,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   BufferAttribute,
   BufferGeometry,
+  Color,
   DoubleSide,
   EllipseCurve,
   Euler,
@@ -316,12 +317,20 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
               color={[1, 1, 0]}
               transparent
               opacity={0.5}
+              depthWrite={false} // sprites will not be visible without this setting
               clippingPlanes={[new Plane(UNIT_VECTOR_POS_Y, 0)]}
             />
           </mesh>
           <mesh position={sunPosition}>
             <sphereGeometry args={[0.05 * radius, 10, 10]} />
-            <meshBasicMaterial color={0xffffff00} />
+            <meshPhysicalMaterial
+              color={'yellow'}
+              roughness={0.5}
+              metalness={1}
+              emissive={new Color('white')}
+              emissiveIntensity={1}
+            />
+            {/*<meshBasicMaterial color={0xffffff00} />*/}
           </mesh>
         </mesh>
       </mesh>
