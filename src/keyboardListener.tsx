@@ -537,11 +537,25 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
               oldCameraPosition: [...cameraPosition],
               oldPanCenter: [...panCenter],
               undo: () => {
-                setCommonStore((state) => {
-                  const v = state.viewState;
-                  v.cameraPosition = [...undoableResetView.oldCameraPosition];
-                  v.panCenter = [...undoableResetView.oldPanCenter];
-                });
+                const orbitControlsRef = useStoreRef.getState().orbitControlsRef;
+                if (orbitControlsRef?.current) {
+                  orbitControlsRef.current.object.position.set(
+                    undoableResetView.oldCameraPosition[0],
+                    undoableResetView.oldCameraPosition[1],
+                    undoableResetView.oldCameraPosition[2],
+                  );
+                  orbitControlsRef.current.target.set(
+                    undoableResetView.oldPanCenter[0],
+                    undoableResetView.oldPanCenter[1],
+                    undoableResetView.oldPanCenter[2],
+                  );
+                  orbitControlsRef.current.update();
+                  setCommonStore((state) => {
+                    const v = state.viewState;
+                    v.cameraPosition = [...undoableResetView.oldCameraPosition];
+                    v.panCenter = [...undoableResetView.oldPanCenter];
+                  });
+                }
               },
               redo: () => {
                 resetView();

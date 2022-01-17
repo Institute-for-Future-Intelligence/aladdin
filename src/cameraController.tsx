@@ -18,10 +18,10 @@ const CameraController = () => {
   const enableRotate = useStore(Selector.viewState.enableRotate);
   const autoRotate = useStore(Selector.viewState.autoRotate);
   const fileChanged = useStore(Selector.fileChanged);
-
   const sceneRadius = useStore(Selector.sceneRadius);
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const cameraZoom = useStore(Selector.viewState.cameraZoom);
+
   const cameraPositionLength = Math.hypot(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
   const panRadius = (orthographic ? cameraZoom * 50 : cameraPositionLength * 10) * sceneRadius;
   const minPan = useMemo(() => new Vector3(-panRadius, -panRadius, 0), [panRadius]);
@@ -58,11 +58,13 @@ const CameraController = () => {
       orbitControlRef.current.addEventListener('start', onInteractionStart);
       orbitControlRef.current.addEventListener('end', onInteractionEnd);
     }
+    // copy a reference before the cleanup call
+    const oc = orbitControlRef.current;
     return () => {
-      if (orbitControlRef.current) {
-        orbitControlRef.current.removeEventListener('change', render);
-        orbitControlRef.current.removeEventListener('start', onInteractionStart);
-        orbitControlRef.current.removeEventListener('end', onInteractionEnd);
+      if (oc) {
+        oc.removeEventListener('change', render);
+        oc.removeEventListener('start', onInteractionStart);
+        oc.removeEventListener('end', onInteractionEnd);
       }
     };
   }, []);
@@ -82,7 +84,6 @@ const CameraController = () => {
           orbitControlRef.current.target.copy(panCenter);
         }
       }
-
       if (orthCameraRef.current) {
         // old files have no cameraPosition2D and panCenter2D: 12/19/2021
         const cameraPosition2D = getVector(viewState.cameraPosition2D ?? [0, 0, 20]);
@@ -96,10 +97,8 @@ const CameraController = () => {
           orbitControlRef.current.target.copy(panCenter2D);
         }
       }
-
       orbitControlRef.current.update();
     }
-
     handleElementRotation();
   }, [fileChanged]);
 
@@ -108,12 +107,10 @@ const CameraController = () => {
     if (!orthCameraRef.current || !persCameraRef.current || !orbitControlRef.current) {
       return;
     }
-
     const viewState = useStore.getState().viewState;
     const orbitControl = orbitControlRef.current;
     const orthCam = orthCameraRef.current;
     const persCam = persCameraRef.current;
-
     if (orthographic) {
       orthCam.rotation.set(0, 0, 0);
       orbitControl.object = orthCam;
@@ -124,9 +121,24 @@ const CameraController = () => {
       orbitControl.target.copy(getVector(viewState.panCenter ?? [0, 0, 0]));
       set({ camera: persCam });
     }
-
     handleElementRotation();
   }, [orthographic]);
+
+  // camera zoom
+  useEffect(() => {
+    if (orbitControlRef.current) {
+      if (persCameraRef.current) {
+      }
+      if (orthCameraRef.current) {
+        orthCameraRef.current.zoom = cameraZoom;
+        if (orthographic) {
+          orbitControlRef.current.object = orthCameraRef.current;
+        }
+      }
+      render();
+      orbitControlRef.current.update();
+    }
+  }, [cameraZoom]);
 
   const render = () => {
     invalidate();

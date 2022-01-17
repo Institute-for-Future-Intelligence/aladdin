@@ -36,6 +36,7 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { UndoableResetView } from './undo/UndoableResetView';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Undoable } from './undo/Undoable';
+import { useStoreRef } from './stores/commonRef';
 
 const { SubMenu } = Menu;
 const { Option } = Select;
@@ -589,11 +590,25 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 oldCameraPosition: [...cameraPosition],
                 oldPanCenter: [...panCenter],
                 undo: () => {
-                  setCommonStore((state) => {
-                    const v = state.viewState;
-                    v.cameraPosition = [...undoableResetView.oldCameraPosition];
-                    v.panCenter = [...undoableResetView.oldPanCenter];
-                  });
+                  const orbitControlsRef = useStoreRef.getState().orbitControlsRef;
+                  if (orbitControlsRef?.current) {
+                    orbitControlsRef.current.object.position.set(
+                      undoableResetView.oldCameraPosition[0],
+                      undoableResetView.oldCameraPosition[1],
+                      undoableResetView.oldCameraPosition[2],
+                    );
+                    orbitControlsRef.current.target.set(
+                      undoableResetView.oldPanCenter[0],
+                      undoableResetView.oldPanCenter[1],
+                      undoableResetView.oldPanCenter[2],
+                    );
+                    orbitControlsRef.current.update();
+                    setCommonStore((state) => {
+                      const v = state.viewState;
+                      v.cameraPosition = [...undoableResetView.oldCameraPosition];
+                      v.panCenter = [...undoableResetView.oldPanCenter];
+                    });
+                  }
                 },
                 redo: () => {
                   resetView();
@@ -615,7 +630,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         <Menu.Item
           key={'zoom-out-view'}
           onClick={() => {
-            zoomView(1.1);
+            zoomView(0.9);
           }}
           style={{ paddingLeft: '36px' }}
         >
@@ -625,7 +640,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         <Menu.Item
           key={'zoom-in-view'}
           onClick={() => {
-            zoomView(0.9);
+            zoomView(1.1);
           }}
           style={{ paddingLeft: '36px' }}
         >
