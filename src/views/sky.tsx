@@ -44,7 +44,6 @@ export interface SkyProps {
 
 const Sky = ({ theme = 'Default' }: SkyProps) => {
   const setCommonStore = useStore(Selector.set);
-  const orthographic = useStore(Selector.viewState.orthographic);
   const selectNone = useStore(Selector.selectNone);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getCameraDirection = useStore(Selector.getCameraDirection);
@@ -314,6 +313,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   };
 
   const isMoveToSky = () => {
+    if (useStore.getState().viewState.orthographic) return false; // impossible to move to sky in 2D mode
     if (meshRef.current) {
       const intersections = ray.intersectObjects(Util.fetchIntersectables(scene), false);
       if (intersections.length > 0) {
@@ -692,28 +692,34 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
           (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE ||
             ray.intersectObjects([meshRef.current!]).length > 0)
         ) {
-          let tooSmall = false;
-          if (!orthographic) {
-            const screenPosition = newPositionRef.current.clone().project(camera);
-            const screenLx = newPositionRef.current
-              .clone()
-              .add(new Vector3(elem.lx, 0, 0))
-              .project(camera)
-              .distanceTo(screenPosition);
-            const screenLy = newPositionRef.current
-              .clone()
-              .add(new Vector3(0, elem.ly ?? 1, 0))
-              .project(camera)
-              .distanceTo(screenPosition);
-            const screenLz = newPositionRef.current
-              .clone()
-              .add(new Vector3(0, 0, elem.lz))
-              .project(camera)
-              .distanceTo(screenPosition);
-            // smaller than 2% of screen dimension
-            tooSmall = Math.max(screenLx, screenLy, screenLz) < 0.02;
+          let moveOk = true;
+          // not sure why we need to check this as I cannot imagine which object will be dragged in the sky
+          if (!useStore.getState().viewState.orthographic) {
+            // OK to move closer to the origin
+            moveOk = newPositionRef.current.length() < oldPositionRef.current.length();
+            if (!moveOk) {
+              // in the case that it is moving away from the origin, check it will be too far
+              const screenPosition = newPositionRef.current.clone().project(camera);
+              const screenLx = newPositionRef.current
+                .clone()
+                .add(new Vector3(elem.lx, 0, 0))
+                .project(camera)
+                .distanceTo(screenPosition);
+              const screenLy = newPositionRef.current
+                .clone()
+                .add(new Vector3(0, elem.ly ?? 1, 0))
+                .project(camera)
+                .distanceTo(screenPosition);
+              const screenLz = newPositionRef.current
+                .clone()
+                .add(new Vector3(0, 0, elem.lz))
+                .project(camera)
+                .distanceTo(screenPosition);
+              // OK if larger than 2% of screen dimension
+              moveOk = Math.max(screenLx, screenLy, screenLz) > 0.02;
+            }
           }
-          if (tooSmall || isMoveToSky()) {
+          if (!moveOk || isMoveToSky()) {
             setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
             if (elementRef) {
               switch (elem.type) {

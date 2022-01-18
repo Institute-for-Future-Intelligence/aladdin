@@ -2,12 +2,14 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
+import GlowImage from '../resources/glow.png';
+
 import { Util } from '../Util';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
+  AdditiveBlending,
   BufferAttribute,
   BufferGeometry,
-  Color,
   DoubleSide,
   EllipseCurve,
   Euler,
@@ -17,7 +19,7 @@ import {
   Vector3,
 } from 'three';
 import { computeDeclinationAngle, computeSunLocation, TILT_ANGLE } from '../analysis/sunTools';
-import { Line, Plane as Drei_Plane } from '@react-three/drei';
+import { Line, Plane as Drei_Plane, useTexture } from '@react-three/drei';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useLoader } from '@react-three/fiber';
@@ -37,7 +39,9 @@ interface HeliodonProps {
 const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps) => {
   const radius = useStore(Selector.sceneRadius);
   const showSunAngles = useStore(Selector.viewState.showSunAngles);
+
   const [latitude, setLatitude] = useState<number>(Util.toRadians(42));
+  const glowTexture = useTexture(GlowImage);
 
   const angleArcRadius = Math.max(2, radius * 0.2);
   const angleLabelHeight = Math.max(0.4, radius * 0.025);
@@ -264,6 +268,9 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
     return geometry;
   }, [latitude, radius]);
 
+  const sunRadius = 0.05 * radius;
+  const haloRadius = 2 + 5 * sunRadius;
+
   return (
     <group>
       {tickLabels.map((v, i) => {
@@ -321,16 +328,21 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
               clippingPlanes={[new Plane(UNIT_VECTOR_POS_Y, 0)]}
             />
           </mesh>
+          {/* simple glow effect to create a halo */}
           <mesh position={sunPosition}>
-            <sphereGeometry args={[0.05 * radius, 10, 10]} />
-            <meshPhysicalMaterial
-              color={'yellow'}
-              roughness={0.5}
-              metalness={1}
-              emissive={new Color('white')}
-              emissiveIntensity={1}
-            />
-            {/*<meshBasicMaterial color={0xffffff00} />*/}
+            <sprite scale={[haloRadius, haloRadius, haloRadius]}>
+              <spriteMaterial
+                map={glowTexture}
+                transparent={false}
+                color={0xffffff}
+                blending={AdditiveBlending}
+                depthWrite={false} // this must be set to hide the rectangle of the texture image
+              />
+            </sprite>
+          </mesh>
+          <mesh position={sunPosition}>
+            <sphereGeometry args={[sunRadius, 10, 10]} />
+            <meshBasicMaterial color={'white'} />
           </mesh>
         </mesh>
       </mesh>

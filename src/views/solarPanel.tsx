@@ -43,7 +43,6 @@ import RotateHandle from '../components/rotateHandle';
 import Wireframe from '../components/wireframe';
 import { UndoableChange } from '../undo/UndoableChange';
 import i18n from '../i18n/i18n';
-import { HumanData } from '../HumanData';
 
 const SolarPanel = ({
   id,
