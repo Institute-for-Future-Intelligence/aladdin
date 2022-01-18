@@ -384,10 +384,12 @@ const Polygon = ({
         castShadow={false}
         name={'Polygon Wireframe'}
         onPointerDown={(e) => {
+          if (!filled) return; // use the enlarged invisible line for intersection
           if (e.button === 2) return; // ignore right-click
           selectMe(id, e);
         }}
         onContextMenu={(e) => {
+          if (!filled) return; // use the enlarged invisible line for intersection
           if (objectTypeToAdd !== ObjectType.None) return;
           selectMe(id, e);
           setCommonStore((state) => {
@@ -401,6 +403,35 @@ const Polygon = ({
           });
         }}
       />
+      {/* if not filled, add an enlarged invisible line for easier selection */}
+      {!filled && (
+        <Line
+          points={points}
+          visible={false}
+          lineWidth={Math.min(lineWidth * 10, 10)}
+          receiveShadow={false}
+          castShadow={false}
+          uuid={id}
+          name={'Polygon Enlarged Line'}
+          onPointerDown={(e) => {
+            if (e.button === 2) return; // ignore right-click
+            selectMe(id, e);
+          }}
+          onContextMenu={(e) => {
+            if (objectTypeToAdd !== ObjectType.None) return;
+            selectMe(id, e);
+            setCommonStore((state) => {
+              if (e.intersections.length > 0) {
+                const obj = e.intersections[0].object;
+                const intersected = obj.name === 'Polygon Enlarged Line' && obj.uuid === id;
+                if (intersected) {
+                  state.contextMenuObjectType = ObjectType.Polygon;
+                }
+              }
+            });
+          }}
+        />
+      )}
 
       {/* draw handle */}
       {selected && !locked && (
@@ -429,7 +460,7 @@ const Polygon = ({
                 userData={{ vertexIndex: i }}
                 position={[p.x, p.y, 0]}
                 name={ResizeHandleType.Default}
-                args={[resizeHandleSize, resizeHandleSize, lz * 0.2]}
+                args={[resizeHandleSize, resizeHandleSize, lz / 2]}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Resize);
                   updatePolygonSelectedIndexById(polygonModel.id, i);
