@@ -384,12 +384,10 @@ const Polygon = ({
         castShadow={false}
         name={'Polygon Wireframe'}
         onPointerDown={(e) => {
-          if (!filled) return; // use the enlarged invisible line for intersection
           if (e.button === 2) return; // ignore right-click
           selectMe(id, e);
         }}
         onContextMenu={(e) => {
-          if (!filled) return; // use the enlarged invisible line for intersection
           if (objectTypeToAdd !== ObjectType.None) return;
           selectMe(id, e);
           setCommonStore((state) => {
@@ -403,9 +401,10 @@ const Polygon = ({
           });
         }}
       />
-      {/* if not filled, add an enlarged invisible line for easier selection */}
+      {/* if not filled, add an enlarged, lifted invisible line for easier selection */}
       {!filled && (
         <Line
+          position={[0, 0, 0.1]}
           points={points}
           visible={false}
           lineWidth={Math.min(lineWidth * 10, 10)}
@@ -460,7 +459,7 @@ const Polygon = ({
                 userData={{ vertexIndex: i }}
                 position={[p.x, p.y, 0]}
                 name={ResizeHandleType.Default}
-                args={[resizeHandleSize, resizeHandleSize, lz / 2]}
+                args={[resizeHandleSize, resizeHandleSize, lz / 2 + (filled ? 0 : 0.1)]}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Resize);
                   updatePolygonSelectedIndexById(polygonModel.id, i);
