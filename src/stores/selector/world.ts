@@ -16,4 +16,7 @@ export const discretization = (state: CommonStoreState) => state.world.discretiz
 
 export const solarPanelGridCellSize = (state: CommonStoreState) => state.world.solarPanelGridCellSize;
 
+export const solarPanelVisibilityGridCellSize = (state: CommonStoreState) =>
+  state.world.solarPanelVisibilityGridCellSize;
+
 export const timesPerHour = (state: CommonStoreState) => state.world.timesPerHour;

@@ -25,6 +25,7 @@ export class DefaultWorldModel implements WorldModel {
   timesPerHour: number;
   solarPanelGridCellSize: number;
   discretization: Discretization;
+  solarPanelVisibilityGridCellSize: number;
 
   constructor() {
     this.latitude = 42.2844063;
@@ -42,6 +43,7 @@ export class DefaultWorldModel implements WorldModel {
     this.timesPerHour = 4; // how many times per hour to collect data
     this.solarPanelGridCellSize = 0.5;
     this.discretization = Discretization.APPROXIMATE;
+    this.solarPanelVisibilityGridCellSize = 0.2;
   }
 
   getElements() {

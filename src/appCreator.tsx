@@ -48,6 +48,8 @@ import SiteInfoPanel from './panels/siteInfoPanel';
 import CameraController from './cameraController';
 import { useStoreRef } from './stores/commonRef';
 import { UndoableCameraChange } from './undo/UndoableCameraChange';
+import SolarPanelVisibility from './analysis/solarPanelVisibility';
+import { Vector3 } from 'three';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -329,6 +331,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             <SceneRadiusCalculator />
             <SensorSimulation city={city} />
             <SolarPanelSimulation city={city} />
+            <SolarPanelVisibility vantage={new Vector3(0, 0, 10)} />
             <Auxiliary />
             <Suspense fallback={null}>
               {axes && <Axes />}

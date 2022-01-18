@@ -90,6 +90,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const timesPerHour = useStore(Selector.world.timesPerHour);
   const discretization = useStore(Selector.world.discretization);
   const solarPanelGridCellSize = useStore(Selector.world.solarPanelGridCellSize);
+  const solarPanelVisibilityGridCellSize = useStore(Selector.world.solarPanelVisibilityGridCellSize);
   const orthographic = useStore(Selector.viewState.orthographic);
   const autoRotate = useStore(Selector.viewState.autoRotate);
   const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
@@ -787,7 +788,10 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           >
             {i18n.t('menu.solarPanels.AnalyzeYearlyYield', lang)}
           </Menu.Item>
-          <SubMenu key={'solar-panel-simulation-options'} title={i18n.t('word.Options', lang)}>
+          <SubMenu
+            key={'solar-panel-energy-analysis-options'}
+            title={i18n.t('menu.solarPanels.EnergyAnalysisOptions', lang)}
+          >
             <Menu>
               <Menu.Item key={'solar-panel-simulation-sampling-frequency'}>
                 <Space style={{ width: '150px' }}>{i18n.t('menu.sensors.SamplingFrequency', lang) + ':'}</Space>
@@ -828,7 +832,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               </Menu.Item>
               {discretization === Discretization.APPROXIMATE && (
                 <Menu.Item key={'solar-panel-simulation-grid-cell-size'}>
-                  <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanels.GridCellSize', lang)}: </Space>
+                  <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanels.EnergyGridCellSize', lang) + ':'}</Space>
                   <InputNumber
                     min={0.1}
                     max={5}
@@ -846,6 +850,44 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
                 </Menu.Item>
               )}
+            </Menu>
+          </SubMenu>
+          <Menu.Item
+            key={'solar-panel-visibility'}
+            onClick={() => {
+              setCommonStore((state) => {
+                state.simulationInProgress = true;
+                state.solarPanelVisibilityFlag = !state.solarPanelVisibilityFlag;
+              });
+            }}
+          >
+            {i18n.t('menu.solarPanels.AnalyzeVisibility', lang)}
+          </Menu.Item>
+          <SubMenu
+            key={'solar-panel-visibility-analysis-options'}
+            title={i18n.t('menu.solarPanels.VisibilityAnalysisOptions', lang)}
+          >
+            <Menu>
+              <Menu.Item key={'solar-panel-visibility-grid-cell-size'}>
+                <Space style={{ width: '150px' }}>
+                  {i18n.t('menu.solarPanels.VisibilityGridCellSize', lang) + ':'}
+                </Space>
+                <InputNumber
+                  min={0.1}
+                  max={5}
+                  step={0.1}
+                  style={{ width: 60 }}
+                  precision={1}
+                  value={solarPanelVisibilityGridCellSize ?? 0.2}
+                  formatter={(a) => Number(a).toFixed(1)}
+                  onChange={(value) => {
+                    setCommonStore((state) => {
+                      state.world.solarPanelVisibilityGridCellSize = value;
+                    });
+                  }}
+                />
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
+              </Menu.Item>
             </Menu>
           </SubMenu>
         </SubMenu>

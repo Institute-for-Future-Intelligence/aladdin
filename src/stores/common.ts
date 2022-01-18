@@ -347,6 +347,7 @@ export interface CommonStoreState {
   sensorLabels: string[];
   setSensorLabels: (labels: string[]) => void;
 
+  solarPanelVisibilityFlag: boolean;
   dailyPvYield: DatumEntry[];
   dailyPvFlag: boolean;
   dailyPvIndividualOutputs: boolean;
@@ -548,6 +549,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          solarPanelVisibilityFlag: false,
           yearlyPvYield: [],
           yearlyPvFlag: false,
           yearlyPvIndividualOutputs: false,

@@ -404,6 +404,8 @@ export const sunlightDirection = (state: CommonStoreState) => state.sunlightDire
 
 export const setSunlightDirection = (state: CommonStoreState) => state.setSunlightDirection;
 
+export const solarPanelVisibilityFlag = (state: CommonStoreState) => state.solarPanelVisibilityFlag;
+
 export const dailyPvYield = (state: CommonStoreState) => state.dailyPvYield;
 
 export const dailyPvFlag = (state: CommonStoreState) => state.dailyPvFlag;

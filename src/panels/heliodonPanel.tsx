@@ -345,7 +345,7 @@ const HeliodonPanel = () => {
             <div>
               {i18n.t('word.Latitude', lang)}: {latitude.toFixed(2)}°
               <Slider
-                style={{ width: '120px' }}
+                style={{ width: '110px' }}
                 marks={{ '-90': '-90°', 0: '0°', 90: '90°' }}
                 min={-90}
                 max={90}
