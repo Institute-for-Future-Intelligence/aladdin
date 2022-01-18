@@ -71,6 +71,7 @@ const Tree = ({
   const solidTreeRef = useRef<Mesh>(null);
   const shadowTreeRef = useRef<Mesh>(null);
   const trunkMeshRef = useRef<Mesh>(null);
+  const interactionPlaneRef = useRef<Mesh>(null);
   const resizeHandleTopRef = useRef<Mesh>();
   const resizeHandleLeftRef = useRef<Mesh>();
   const resizeHandleRightRef = useRef<Mesh>();
@@ -195,7 +196,7 @@ const Tree = ({
     // }
 
     // rotation
-    if (solidTreeRef.current && groupRef.current && shadowTreeRef.current) {
+    if (solidTreeRef.current && groupRef.current && shadowTreeRef.current && interactionPlaneRef.current) {
       const { x: cameraX, y: cameraY } = camera.position;
       const { x: currX, y: currY } = groupRef.current.position;
       const { x: sunlightX, y: sunlightY } = useStore.getState().sunlightDirection;
@@ -205,14 +206,14 @@ const Tree = ({
           groupRef.current.position.clone().applyEuler(parentRotation),
           parentRef.current.position,
         );
-        solidTreeRef.current.rotation.set(
-          HALF_PI,
-          -Math.atan2(cameraX - worldPosition.x, cameraY - worldPosition.y) - parentRotation.z,
-          0,
-        );
+        const e = Math.atan2(cameraX - worldPosition.x, cameraY - worldPosition.y) + parentRotation.z;
+        solidTreeRef.current.rotation.set(HALF_PI, -e, 0);
+        interactionPlaneRef.current.rotation.set(-HALF_PI, e, 0);
         shadowTreeRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY) - parentRotation.z, 0);
       } else {
-        solidTreeRef.current.rotation.set(HALF_PI, -Math.atan2(cameraX - currX, cameraY - currY), 0);
+        const e = Math.atan2(cameraX - currX, cameraY - currY);
+        solidTreeRef.current.rotation.set(HALF_PI, -e, 0);
+        interactionPlaneRef.current.rotation.set(-HALF_PI, e, 0);
         shadowTreeRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY), 0);
       }
     }
@@ -264,7 +265,12 @@ const Tree = ({
         )}
 
         {/* billboard for interactions (don't use a plane as it may become unselected at some angle) */}
-        <Billboard name={'Interaction Billboard'} visible={false} position={[0, 0, -lz / 2 + 0.5]}>
+        <Billboard
+          ref={interactionPlaneRef}
+          name={'Interaction Billboard'}
+          visible={false}
+          position={[0, 0, -lz / 2 + 0.5]}
+        >
           <Plane
             ref={trunkMeshRef}
             renderOrder={3}
