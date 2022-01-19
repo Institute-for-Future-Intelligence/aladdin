@@ -19,7 +19,7 @@ import { TreeType } from './types';
 import i18n from './i18n/i18n';
 
 export class TreeData {
-  static fetchLabel(name: string, lang: {}) {
+  static fetchLabel(name: string, lang: {}): string {
     switch (name) {
       case TreeType.Cottonwood:
         return i18n.t('tree.Cottonwood', lang);
@@ -38,7 +38,7 @@ export class TreeData {
     }
   }
 
-  static fetchTheta(name: string) {
+  static fetchTheta(name: string): number {
     switch (name) {
       case TreeType.Elm:
         return 0.78 * Math.PI;

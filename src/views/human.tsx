@@ -8,7 +8,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { invalidate, ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import { HumanModel } from '../models/HumanModel';
-import { Billboard, Cone, Line, Plane, Sphere } from '@react-three/drei';
+import { Billboard, Cylinder, Line, Plane, Sphere } from '@react-three/drei';
 import {
   GROUND_ID,
   HALF_PI,
@@ -17,7 +17,15 @@ import {
   MOVE_HANDLE_COLOR_1,
   MOVE_HANDLE_RADIUS,
 } from '../constants';
-import { ActionType, HumanName, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
+import {
+  ActionType,
+  Gender,
+  HumanName,
+  MoveHandleType,
+  ObjectType,
+  ResizeHandleType,
+  RotateHandleType,
+} from '../types';
 import i18n from '../i18n/i18n';
 import { useStoreRef } from 'src/stores/commonRef';
 import { HumanData } from '../HumanData';
@@ -174,6 +182,9 @@ const Human = ({
     gl.domElement.style.cursor = useStore.getState().addedCuboidId ? 'crosshair' : 'default';
   }, []);
 
+  const gender = observer ? HumanData.fetchGender(humanModel.name) : Gender.Male;
+  const hatOffset = observer ? HumanData.fetchHatOffset(humanModel.name) : 0;
+
   return (
     <group ref={groupRef} name={'Human Group ' + id} userData={{ aabb: true }} position={[cx, cy, cz ?? 0]}>
       <group position={[0, 0.1, height / 2]}>
@@ -242,19 +253,32 @@ const Human = ({
           />
         )}
 
-        {/* mark this person when he or she is an observer */}
+        {/* mark this person with a hat when he or she is an observer */}
         {observer && (
-          <Cone
-            name={'Observer laureate'}
-            userData={{ unintersectable: true }}
-            castShadow={false}
-            receiveShadow={false}
-            args={[0.2, 0.1, 20]}
-            position={[0, 0, humanModel.lz / 2 - 0.035]}
-            rotation={[HALF_PI, 0, 0]}
-          >
-            <meshStandardMaterial attach="material" color={'lightyellow'} />
-          </Cone>
+          <>
+            <Cylinder
+              name={'Observer hat 1'}
+              userData={{ unintersectable: true }}
+              castShadow={false}
+              receiveShadow={false}
+              args={[0.1, 0.1, 0.1, 16, 2]}
+              position={[hatOffset, 0, humanModel.lz / 2 - 0.05]}
+              rotation={[HALF_PI, 0, 0]}
+            >
+              <meshStandardMaterial attach="material" color={gender === Gender.Male ? 'gray' : 'hotpink'} />
+            </Cylinder>
+            <Cylinder
+              name={'Observer hat 2'}
+              userData={{ unintersectable: true }}
+              castShadow={false}
+              receiveShadow={false}
+              args={[0.2, 0.2, 0.01, 16, 2]}
+              position={[hatOffset, 0, humanModel.lz / 2 - 0.1]}
+              rotation={[HALF_PI, 0, 0]}
+            >
+              <meshStandardMaterial attach="material" color={gender === Gender.Male ? 'gray' : 'hotpink'} />
+            </Cylinder>
+          </>
         )}
 
         {/* draw handle */}

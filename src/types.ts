@@ -199,6 +199,12 @@ export enum TreeType {
   Pine = 'Pine',
 }
 
+export enum Gender {
+  Male = 'Male',
+  Female = 'Female',
+  Other = 'Other',
+}
+
 export enum HumanName {
   Jack = 'Jack',
   Jade = 'Jade',
