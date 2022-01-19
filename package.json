@@ -37,6 +37,7 @@
     "react-infinite-scroller": "^1.2.4",
     "react-keyboard-event-handler": "^1.5.4",
     "react-scripts": "4.0.3",
+    "react-share": "^4.4.0",
     "recharts": "^2.1.6",
     "short-uuid": "^4.2.0",
     "styled-components": "^5.3.3",

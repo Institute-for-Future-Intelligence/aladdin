@@ -197,7 +197,7 @@ export const i18n_zh_cn = {
         Exact: '准确',
         Approximate: '近似',
         EnergyGridCellSize: '计算网格的尺寸',
-        VisibilityGridCellSize: '计算网格的尺寸',
+        VisibilityGridCellSize: '视界因子计算网格的尺寸',
         EnergyAnalysisOptions: '能量分析选项',
         VisibilityAnalysisOptions: '可见度分析选项',
       },

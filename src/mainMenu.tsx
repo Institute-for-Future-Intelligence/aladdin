@@ -869,7 +869,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           >
             <Menu>
               <Menu.Item key={'solar-panel-visibility-grid-cell-size'}>
-                <Space style={{ width: '150px' }}>
+                <Space style={{ paddingRight: '10px' }}>
                   {i18n.t('menu.solarPanels.VisibilityGridCellSize', lang) + ':'}
                 </Space>
                 <InputNumber

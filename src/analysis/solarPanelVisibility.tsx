@@ -33,11 +33,12 @@ const SolarPanelVisibility = ({ vantage }: SolarPanelVisibilityProps) => {
     if (loaded.current) {
       // avoid calling on first render
       if (elements && elements.length > 0) {
-        analyze();
+        // analyze();
       }
     } else {
       loaded.current = true;
     }
+    analyze();
     setCommonStore((state) => {
       state.simulationInProgress = false;
     });
@@ -71,14 +72,15 @@ const SolarPanelVisibility = ({ vantage }: SolarPanelVisibilityProps) => {
     let total = 0;
     for (const e of elements) {
       if (e.type === ObjectType.SolarPanel) {
-        total += getVisiblePercentage(e as SolarPanelModel);
+        total += getViewFactor(e as SolarPanelModel);
       }
     }
     console.log('visibility = ' + total);
     return total;
   };
 
-  const getVisiblePercentage = (panel: SolarPanelModel) => {
+  // view factor: https://en.wikipedia.org/wiki/View_factor
+  const getViewFactor = (panel: SolarPanelModel) => {
     const parent = getElementById(panel.parentId);
     if (!parent) throw new Error('parent of solar panel does not exist');
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
@@ -101,23 +103,29 @@ const SolarPanelVisibility = ({ vantage }: SolarPanelVisibilityProps) => {
     const x0 = center.x - lx / 2;
     const y0 = center.y - ly / 2;
     const z0 = panel.poleHeight + center.z - lz / 2;
-    let count = 0;
+    let integral = 0;
     const point = new Vector3();
+    const direction = new Vector3();
+    let r;
     for (let kx = 0; kx < nx; kx++) {
       for (let ky = 0; ky < ny; ky++) {
         point.set(x0 + kx * dx, y0 + ky * dy, z0 + ky * dz);
-        if (isVisible(panel.id, point)) {
-          count++;
+        direction.set(vantage.x - point.x, vantage.y - point.y, vantage.z - point.z);
+        r = direction.length();
+        if (r > 0) {
+          direction.normalize();
+          if (isVisible(panel.id, point, direction)) {
+            integral += Math.abs(direction.dot(normal)) / (r * r);
+          }
         }
       }
     }
-    return count / (nx * ny);
+    return (integral * dx * dy) / (4 * Math.PI);
   };
 
-  const isVisible = (panelId: string, point: Vector3) => {
+  const isVisible = (panelId: string, point: Vector3, direction: Vector3) => {
     if (objectsRef.current.length > 1) {
       intersectionsRef.current.length = 0;
-      const direction = new Vector3(vantage.x - point.x, vantage.y - point.y, vantage.z - point.z).normalize();
       ray.set(point, direction);
       const objects = objectsRef.current.filter((obj) => obj.uuid !== panelId); // exclude this panel itself
       ray.intersectObjects(objects, false, intersectionsRef.current);

@@ -198,7 +198,7 @@ export const i18n_en = {
         Exact: 'Exact',
         Approximate: 'Approximate',
         EnergyGridCellSize: 'Energy Grid Cell Size',
-        VisibilityGridCellSize: 'Visibility Grid Cell Size',
+        VisibilityGridCellSize: 'View Factor Grid Cell Size',
         EnergyAnalysisOptions: 'Energy Analysis Options',
         VisibilityAnalysisOptions: 'Visibility Analysis Options',
       },

@@ -17,7 +17,7 @@ import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from './mainMenu';
 import MapPanel from './panels/mapPanel';
 import HeliodonPanel from './panels/heliodonPanel';
-import { VERSION } from './constants';
+import { HOME_URL, VERSION } from './constants';
 import { visitHomepage, visitIFI } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
@@ -50,6 +50,7 @@ import { useStoreRef } from './stores/commonRef';
 import { UndoableCameraChange } from './undo/UndoableCameraChange';
 import SolarPanelVisibility from './analysis/solarPanelVisibility';
 import { Vector3 } from 'three';
+import ShareLink from './shareLinks';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -292,6 +293,16 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
           &nbsp;
           {i18n.t('word.Version', lang) + ' ' + VERSION + '. ' + i18n.t('word.AllRightsReserved', lang) + '. '}
         </div>
+      )}
+      {!viewOnly && (
+        <ShareLink
+          url={HOME_URL}
+          title={'Aladdin: Reimagining Design with Explainable AI'}
+          size={16}
+          round={true}
+          margin={'5px'}
+          style={{ position: 'absolute', top: '80px', right: '6px' }}
+        />
       )}
       <MainMenu
         viewOnly={viewOnly}

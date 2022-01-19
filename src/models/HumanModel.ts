@@ -7,4 +7,5 @@ import { HumanName } from '../types';
 
 export interface HumanModel extends ElementModel {
   name: HumanName;
+  observer: boolean; // used to view solar fields for visibility assessment
 }
