@@ -7,6 +7,7 @@ export const i18n_es = {
     name: {
       IFI: 'Instituto de inteligencia futura',
       Aladdin: 'Aladdin',
+      Tagline: 'Aladdin: Reimagining Design with Explainable AI — Institute for Future Intelligence',
     },
 
     cookie: {

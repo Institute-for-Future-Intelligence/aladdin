@@ -14,7 +14,7 @@ import { copyTextToClipboard, showSuccess } from '../helpers';
 const Container = styled.div`
   position: fixed;
   top: 80px;
-  right: 10px;
+  right: 24px;
   display: flex;
   justify-content: center;
   align-items: center;

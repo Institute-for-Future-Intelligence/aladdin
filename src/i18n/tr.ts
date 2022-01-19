@@ -7,6 +7,7 @@ export const i18n_tr = {
     name: {
       IFI: 'Geleceğin Zekası Enstitüsü',
       Aladdin: 'Aladdin',
+      Tagline: 'Aladdin: Reimagining Design with Explainable AI — Institute for Future Intelligence',
     },
 
     cookie: {

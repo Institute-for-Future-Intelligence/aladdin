@@ -7,6 +7,7 @@ export const i18n_zh_tw = {
     name: {
       IFI: '未來智能研究所',
       Aladdin: '阿拉丁',
+      Tagline: '阿拉丁: 探索人工智慧時代的設計軟體 — 未來智能研究所研發',
     },
 
     cookie: {

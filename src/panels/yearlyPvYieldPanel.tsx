@@ -18,8 +18,8 @@ import i18n from '../i18n/i18n';
 
 const Container = styled.div`
   position: fixed;
-  top: 70px;
-  right: 30px;
+  top: 85px;
+  right: 36px;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -18,7 +18,7 @@ import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 const Container = styled.div`
   position: absolute;
   top: 80px;
-  right: 10px;
+  right: 24px;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -20,6 +20,8 @@ import {
 } from 'react-share';
 
 const ShareLinkContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   z-index: 999;
 `;
 

@@ -297,11 +297,11 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {!viewOnly && (
         <ShareLink
           url={HOME_URL}
-          title={'Aladdin: Reimagining Design with Explainable AI'}
+          title={i18n.t('name.Tagline', lang)}
           size={16}
           round={true}
-          margin={'5px'}
-          style={{ position: 'absolute', top: '80px', right: '6px' }}
+          margin={'2px'}
+          style={{ position: 'absolute', right: '0', top: '80px' }}
         />
       )}
       <MainMenu

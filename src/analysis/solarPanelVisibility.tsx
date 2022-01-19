@@ -33,12 +33,12 @@ const SolarPanelVisibility = ({ vantage }: SolarPanelVisibilityProps) => {
     if (loaded.current) {
       // avoid calling on first render
       if (elements && elements.length > 0) {
-        // analyze();
+        analyze();
       }
     } else {
       loaded.current = true;
     }
-    analyze();
+    //analyze();
     setCommonStore((state) => {
       state.simulationInProgress = false;
     });
