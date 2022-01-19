@@ -310,10 +310,13 @@ export interface CommonStoreState {
   updateWallThicknessAboveFoundation: (foundationId: string, thickness: number) => void;
   updateWallThicknessForAll: (thickness: number) => void;
 
+  // for trees
   updateTreeTypeById: (id: string, type: TreeType) => void;
   updateTreeShowModelById: (id: string, showModel: boolean) => void;
 
+  // for humans
   updateHumanNameById: (id: string, name: HumanName) => void;
+  updateHumanObserverById: (id: string, yes: boolean) => void;
 
   objectTypeToAdd: ObjectType;
   addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => ElementModel | null;
@@ -2238,6 +2241,17 @@ export const useStore = create<CommonStoreState>(
                   human.name = name;
                   human.lx = HumanData.fetchWidth(name);
                   human.lz = HumanData.fetchHeight(name);
+                  break;
+                }
+              }
+            });
+          },
+          updateHumanObserverById(id, yes) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Human && e.id === id) {
+                  const human = e as HumanModel;
+                  human.observer = yes;
                   break;
                 }
               }

@@ -329,13 +329,12 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
           >
             <CameraController />
             <Lights />
-
             <ElementsRenderer />
             <Ground />
             <SceneRadiusCalculator />
             <SensorSimulation city={city} />
             <SolarPanelSimulation city={city} />
-            <SolarPanelVisibility vantage={new Vector3(0, 0, 10)} />
+            <SolarPanelVisibility vantage={new Vector3(0, 0, 2)} />
             <Auxiliary />
             <Suspense fallback={null}>
               {axes && <Axes />}

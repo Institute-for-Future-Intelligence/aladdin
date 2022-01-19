@@ -384,6 +384,7 @@ export const i18n_en = {
 
     peopleMenu: {
       ChangePerson: 'Change Person',
+      Observer: 'Observer',
     },
 
     sensorMenu: {

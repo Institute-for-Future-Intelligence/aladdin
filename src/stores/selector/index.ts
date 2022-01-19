@@ -333,6 +333,8 @@ export const updateTreeShowModelById = (state: CommonStoreState) => state.update
 
 export const updateHumanNameById = (state: CommonStoreState) => state.updateHumanNameById;
 
+export const updateHumanObserverById = (state: CommonStoreState) => state.updateHumanObserverById;
+
 export const copyElementById = (state: CommonStoreState) => state.copyElementById;
 
 export const removeElementById = (state: CommonStoreState) => state.removeElementById;

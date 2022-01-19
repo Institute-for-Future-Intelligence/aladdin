@@ -53,7 +53,7 @@ const ShareLinks = ({ style, size, margin, round, handleShareWindowClose }: Shar
     if (userid) {
       // since this may be other people's document, keep its original user id
       url += '?client=web&userid=' + userid + '&title=' + encodeURIComponent(cloudFile);
-    } else if (cloudFile && title && user.uid) {
+    } else if (user.uid) {
       // otherwise, this is the current user's document
       url += '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(cloudFile);
     }

@@ -8,7 +8,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { invalidate, ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import { HumanModel } from '../models/HumanModel';
-import { Billboard, Line, Plane, Sphere } from '@react-three/drei';
+import { Billboard, Cone, Line, Plane, Sphere } from '@react-three/drei';
 import {
   GROUND_ID,
   HALF_PI,
@@ -23,7 +23,17 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { HumanData } from '../HumanData';
 import { Util } from '../Util';
 
-const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked = false, parentId }: HumanModel) => {
+const Human = ({
+  id,
+  cx,
+  cy,
+  cz,
+  name = HumanName.Jack,
+  selected = false,
+  locked = false,
+  observer = false,
+  parentId,
+}: HumanModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
@@ -209,7 +219,7 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
           </Plane>
         </Billboard>
 
-        {/* highlight it when it is selected but locked */}
+        {/* highlight this person when he or she is selected but locked */}
         {selected && locked && (
           <Line
             name={'Selection highlight lines'}
@@ -230,6 +240,21 @@ const Human = ({ id, cx, cy, cz, name = HumanName.Jack, selected = false, locked
             rotation={planeRef.current?.rotation}
             color={LOCKED_ELEMENT_SELECTION_COLOR}
           />
+        )}
+
+        {/* mark this person when he or she is an observer */}
+        {observer && (
+          <Cone
+            name={'Observer laureate'}
+            userData={{ unintersectable: true }}
+            castShadow={false}
+            receiveShadow={false}
+            args={[0.2, 0.1, 20]}
+            position={[0, 0, humanModel.lz / 2 - 0.035]}
+            rotation={[HALF_PI, 0, 0]}
+          >
+            <meshStandardMaterial attach="material" color={'lightyellow'} />
+          </Cone>
         )}
 
         {/* draw handle */}
