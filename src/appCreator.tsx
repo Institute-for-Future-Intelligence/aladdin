@@ -17,7 +17,7 @@ import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from './mainMenu';
 import MapPanel from './panels/mapPanel';
 import HeliodonPanel from './panels/heliodonPanel';
-import { HOME_URL, VERSION } from './constants';
+import { VERSION } from './constants';
 import { visitHomepage, visitIFI } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
@@ -295,14 +295,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         </div>
       )}
       {!viewOnly && (
-        <ShareLink
-          url={HOME_URL}
-          title={i18n.t('name.Tagline', lang)}
-          size={16}
-          round={true}
-          margin={'2px'}
-          style={{ position: 'absolute', right: '0', top: '80px' }}
-        />
+        <ShareLink size={16} round={true} margin={'2px'} style={{ position: 'absolute', right: '0', top: '80px' }} />
       )}
       <MainMenu
         viewOnly={viewOnly}

@@ -369,10 +369,13 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           const data = doc.data();
           if (data) {
             importContent(data, title);
-            setLoading(false);
           } else {
             showInfo(i18n.t('message.CloudFileNotFound', lang) + ': ' + title);
+            setCommonStore((state) => {
+              state.cloudFile = undefined;
+            });
           }
+          setLoading(false);
         })
         .catch((error) => {
           showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
