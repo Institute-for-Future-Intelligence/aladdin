@@ -33,6 +33,7 @@ export class DefaultViewState implements ViewState {
   showYearlyLightSensorPanel: boolean;
   showDailyPvYieldPanel: boolean;
   showYearlyPvYieldPanel: boolean;
+  showSolarPanelVisibilityResultsPanel: boolean;
   autoRotate: boolean;
 
   heliodonPanelX: number;
@@ -51,6 +52,8 @@ export class DefaultViewState implements ViewState {
   dailyPvYieldPanelY: number;
   yearlyPvYieldPanelX: number;
   yearlyPvYieldPanelY: number;
+  visibilityResultsPanelX: number;
+  visibilityResultsPanelY: number;
 
   mapZoom: number;
   mapType: string;
@@ -86,6 +89,7 @@ export class DefaultViewState implements ViewState {
     this.showYearlyLightSensorPanel = false;
     this.showDailyPvYieldPanel = false;
     this.showYearlyPvYieldPanel = false;
+    this.showSolarPanelVisibilityResultsPanel = false;
     this.autoRotate = false;
 
     this.heliodonPanelX = 0;
@@ -104,6 +108,8 @@ export class DefaultViewState implements ViewState {
     this.dailyPvYieldPanelY = 0;
     this.yearlyPvYieldPanelX = 0;
     this.yearlyPvYieldPanelY = 0;
+    this.visibilityResultsPanelX = 0;
+    this.visibilityResultsPanelY = 0;
 
     this.mapZoom = 18;
     this.mapType = 'roadmap';
@@ -139,6 +145,7 @@ export class DefaultViewState implements ViewState {
     viewState.showYearlyLightSensorPanel = false;
     viewState.showDailyPvYieldPanel = false;
     viewState.showYearlyPvYieldPanel = false;
+    viewState.showSolarPanelVisibilityResultsPanel = false;
     viewState.autoRotate = false;
 
     viewState.heliodonPanelX = 0;
@@ -157,6 +164,8 @@ export class DefaultViewState implements ViewState {
     viewState.dailyPvYieldPanelY = 0;
     viewState.yearlyPvYieldPanelX = 0;
     viewState.yearlyPvYieldPanelY = 0;
+    viewState.visibilityResultsPanelX = 0;
+    viewState.visibilityResultsPanelY = 0;
 
     viewState.mapZoom = 18;
     viewState.mapType = 'roadmap';

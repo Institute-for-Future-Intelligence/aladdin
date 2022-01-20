@@ -11,7 +11,7 @@ import { GraphDataType, ObjectType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
-import { screenshot } from '../helpers';
+import { screenshot, showInfo } from '../helpers';
 import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 
@@ -246,7 +246,9 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
               icon={<SaveOutlined />}
               title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
-                screenshot('line-graph-' + labelX + '-' + labelY, 'daily-pv-yield', {});
+                screenshot('line-graph-' + labelX + '-' + labelY, 'daily-pv-yield', {}).then(() => {
+                  showInfo(i18n.t('message.ScreenshotSaved', lang));
+                });
               }}
             />
           </Space>

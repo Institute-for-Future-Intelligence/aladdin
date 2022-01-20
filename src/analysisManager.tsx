@@ -13,16 +13,35 @@ const AnalysisManager = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const countElementsByType = useStore(Selector.countElementsByType);
+  const countObservers = useStore(Selector.countObservers);
   const dailyLightSensorFlag = useStore(Selector.dailyLightSensorFlag);
   const yearlyLightSensorFlag = useStore(Selector.yearlyLightSensorFlag);
   const dailyPvFlag = useStore(Selector.dailyPvFlag);
   const yearlyPvFlag = useStore(Selector.yearlyPvFlag);
+  const solarPanelVisibilityFlag = useStore(Selector.solarPanelVisibilityFlag);
 
+  const firstCallSolarPanelVisibilityFlag = useRef<boolean>(true);
   const firstCallDailyLightSensorFlag = useRef<boolean>(true);
   const firstCallYearlyLightSensorFlag = useRef<boolean>(true);
   const firstCallDailyPvFlag = useRef<boolean>(true);
   const firstCallYearlyPvFlag = useRef<boolean>(true);
   const lang = { lng: language };
+
+  useEffect(() => {
+    if (firstCallSolarPanelVisibilityFlag.current) {
+      firstCallSolarPanelVisibilityFlag.current = false;
+    } else {
+      const observerCount = countObservers();
+      if (observerCount === 0) {
+        showInfo(i18n.t('analysisManager.NoObserverForVisibilityAnalysis', lang));
+        return;
+      }
+      setCommonStore((state) => {
+        state.viewState.showSolarPanelVisibilityResultsPanel = true;
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [solarPanelVisibilityFlag]);
 
   useEffect(() => {
     if (firstCallDailyLightSensorFlag.current) {

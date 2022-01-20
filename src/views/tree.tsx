@@ -248,7 +248,7 @@ const Tree = ({
             scale={[1, lz / lx, 1]}
             rotation={[HALF_PI, 0, 0]}
           >
-            <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75} />
+            <meshStandardMaterial attach="material" transparent={true} opacity={0.75} />
           </Sphere>
         ) : (
           <Cone
@@ -260,7 +260,7 @@ const Tree = ({
             scale={[1, 1, 1]}
             rotation={[HALF_PI, 0, 0]}
           >
-            <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75} />
+            <meshStandardMaterial attach="material" transparent={true} opacity={0.75} />
           </Cone>
         )}
 

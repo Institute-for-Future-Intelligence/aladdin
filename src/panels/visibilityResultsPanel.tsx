@@ -1,13 +1,11 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { GraphDataType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
@@ -61,18 +59,12 @@ const Header = styled.div`
   }
 `;
 
-export interface DailyLightSensorPanelProps {
-  city: string | null;
-}
-
-const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
+const VisibilityResultsPanel = () => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
-  const sensorLabels = useStore(Selector.sensorLabels);
-  const sensorData = useStore(Selector.dailyLightSensorData);
-  const dailyLightSensorPanelX = useStore(Selector.viewState.dailyLightSensorPanelX);
-  const dailyLightSensorPanelY = useStore(Selector.viewState.dailyLightSensorPanelY);
+  const visibilityResultsPanelX = useStore(Selector.viewState.visibilityResultsPanelX);
+  const visibilityResultsPanelY = useStore(Selector.viewState.visibilityResultsPanelY);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -82,19 +74,18 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 460;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(dailyLightSensorPanelX) ? 0 : Math.max(dailyLightSensorPanelX, wOffset - window.innerWidth),
-    y: isNaN(dailyLightSensorPanelY) ? 0 : Math.min(dailyLightSensorPanelY, window.innerHeight - hOffset),
+    x: isNaN(visibilityResultsPanelX) ? 0 : Math.max(visibilityResultsPanelX, wOffset - window.innerWidth),
+    y: isNaN(visibilityResultsPanelY) ? 0 : Math.min(visibilityResultsPanelY, window.innerHeight - hOffset),
   });
 
   const lang = { lng: language };
-  const responsiveHeight = 100;
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
     const handleResize = () => {
       setCurPosition({
-        x: Math.max(dailyLightSensorPanelX, wOffset - window.innerWidth),
-        y: Math.min(dailyLightSensorPanelY, window.innerHeight - hOffset),
+        x: Math.max(visibilityResultsPanelX, wOffset - window.innerWidth),
+        y: Math.min(visibilityResultsPanelY, window.innerHeight - hOffset),
       });
     };
     window.addEventListener('resize', handleResize);
@@ -113,19 +104,16 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
-      state.viewState.dailyLightSensorPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-      state.viewState.dailyLightSensorPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+      state.viewState.visibilityResultsPanelX = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.visibilityResultsPanelY = Math.min(ui.y, window.innerHeight - hOffset);
     });
   };
 
   const closePanel = () => {
     setCommonStore((state) => {
-      state.viewState.showDailyLightSensorPanel = false;
+      state.viewState.showSolarPanelVisibilityResultsPanel = false;
     });
   };
-
-  const labelX = 'Hour';
-  const labelY = i18n.t('word.Radiation', lang);
 
   return (
     <ReactDraggable
@@ -140,10 +128,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
       <Container ref={nodeRef}>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
-            <span>
-              {i18n.t('sensorPanel.LightSensor', lang)}: {i18n.t('sensorPanel.WeatherDataFrom', lang)}
-              {' ' + city} | {moment(now).format('MM/DD')}
-            </span>
+            <span>{i18n.t('visibilityPanel.SolarPanelVisibility', lang) + ':' + moment(now).format('MM/DD')}</span>
             <span
               style={{ cursor: 'pointer' }}
               onTouchStart={() => {
@@ -156,20 +141,6 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
               {i18n.t('word.Close', lang)}
             </span>
           </Header>
-          <LineGraph
-            type={GraphDataType.DailyRadiationSensorData}
-            dataSource={sensorData}
-            labels={sensorLabels}
-            height={responsiveHeight}
-            labelX={labelX}
-            labelY={labelY}
-            unitY={'kWh/m²/' + i18n.t('word.Day', lang)}
-            yMin={0}
-            curveType={'linear'}
-            fractionDigits={2}
-            symbolCount={24}
-            referenceX={now.getHours()}
-          />
           <Space style={{ alignSelf: 'center' }}>
             <Button
               type="default"
@@ -177,7 +148,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
               title={i18n.t('word.Update', lang)}
               onClick={() => {
                 setCommonStore((state) => {
-                  state.dailyLightSensorFlag = !state.dailyLightSensorFlag;
+                  state.solarPanelVisibilityFlag = !state.solarPanelVisibilityFlag;
                 });
               }}
             />
@@ -186,8 +157,8 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
               icon={<SaveOutlined />}
               title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
-                screenshot('line-graph-' + labelX + '-' + labelY, 'daily-light-sensor', {}).then(() => {
-                  showInfo(i18n.t('message.ScreenshotSaved', lang));
+                screenshot('visibility-results-element', 'visibility-results', {}).then(() => {
+                  showInfo(i18n.t('message:ScreenshotSaved', lang));
                 });
               }}
             />
@@ -198,4 +169,4 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
   );
 };
 
-export default React.memo(DailyLightSensorPanel);
+export default React.memo(VisibilityResultsPanel);

@@ -49,8 +49,8 @@ import CameraController from './cameraController';
 import { useStoreRef } from './stores/commonRef';
 import { UndoableCameraChange } from './undo/UndoableCameraChange';
 import SolarPanelVisibility from './analysis/solarPanelVisibility';
-import { Vector3 } from 'three';
 import ShareLink from './shareLinks';
+import VisibilityResultsPanel from './panels/visibilityResultsPanel';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -84,6 +84,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showYearlyLightSensorPanel = useStore(Selector.viewState.showYearlyLightSensorPanel);
   const showDailyPvYieldPanel = useStore(Selector.viewState.showDailyPvYieldPanel);
   const showYearlyPvYieldPanel = useStore(Selector.viewState.showYearlyPvYieldPanel);
+  const showVisibilityResultsPanel = useStore(Selector.viewState.showVisibilityResultsPanel);
   const addedFoundationId = useStore(Selector.addedFoundationId);
   const addedCuboidId = useStore(Selector.addedCuboidId);
 
@@ -318,6 +319,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {showDailyLightSensorPanel && <DailyLightSensorPanel city={city} />}
       {showYearlyPvYieldPanel && <YearlyPvYieldPanel city={city} />}
       {showDailyPvYieldPanel && <DailyPvYieldPanel city={city} />}
+      {showVisibilityResultsPanel && <VisibilityResultsPanel />}
       <DropdownContextMenu>
         <div>
           <Canvas

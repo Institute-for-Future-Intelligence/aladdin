@@ -512,15 +512,15 @@ const SolarPanelModelSelection = ({
               }}
             >
               <Option key={ShadeTolerance.HIGH} value={ShadeTolerance.HIGH}>
-                {ShadeTolerance.HIGH}
+                {i18n.t('word.High', lang)}
               </Option>
               )
               <Option key={ShadeTolerance.NONE} value={ShadeTolerance.NONE}>
-                {ShadeTolerance.NONE}
+                {i18n.t('word.None', lang)}
               </Option>
               )
               <Option key={ShadeTolerance.PARTIAL} value={ShadeTolerance.PARTIAL}>
-                {ShadeTolerance.PARTIAL}
+                {i18n.t('word.Partial', lang)}
               </Option>
               )
             </Select>

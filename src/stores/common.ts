@@ -332,6 +332,7 @@ export interface CommonStoreState {
   pasteElementsToPoint: () => ElementModel[];
   pasteElementsByKey: () => ElementModel[];
   countElementsByType: (type: ObjectType, excludeLocked?: boolean) => number;
+  countObservers: () => number;
   removeElementsByType: (type: ObjectType) => void;
   countElementsByReferenceId: (id: string) => number;
   removeElementsByReferenceId: (id: string, cache: boolean) => void;
@@ -2542,6 +2543,17 @@ export const useStore = create<CommonStoreState>(
                   if (e.type === type) {
                     count++;
                   }
+                }
+              }
+            });
+            return count;
+          },
+          countObservers() {
+            let count = 0;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Human && (e as HumanModel).observer) {
+                  count++;
                 }
               }
             });

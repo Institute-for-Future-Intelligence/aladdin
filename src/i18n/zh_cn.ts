@@ -38,6 +38,8 @@ export const i18n_zh_cn = {
       MaximumNumber: '最多',
       Or: '或',
       None: '无',
+      High: '高',
+      Partial: '部分',
       Teacher: '老师',
       Class: '班级',
       Total: '总数',
@@ -138,6 +140,7 @@ export const i18n_zh_cn = {
       DoYouWantToContinue: '您想继续吗？',
       SolarPanelsCannotIntersectWithGround: '光伏板不能和地面接触。',
       SolarPanelsCannotOverlapWithOneAnother: '光伏板不能重叠。',
+      ScreenshotSaved: '截屏图片保存在下载文件夹里。',
     },
 
     menu: {
@@ -475,6 +478,10 @@ export const i18n_zh_cn = {
       Zoom: '放大程度',
     },
 
+    visibilityPanel: {
+      SolarPanelVisibility: '光伏板对观察者的可见度',
+    },
+
     sensorPanel: {
       LightSensor: '光传感器',
       WeatherDataFrom: '气象数据来自',
@@ -524,6 +531,7 @@ export const i18n_zh_cn = {
     analysisManager: {
       NoSensorForCollectingData: '没有传感器收集数据。',
       NoSolarPanelForAnalysis: '没有光伏板可以分析。',
+      NoObserverForVisibilityAnalysis: '没有找到可见度分析的观察者。',
     },
 
     toolbar: {

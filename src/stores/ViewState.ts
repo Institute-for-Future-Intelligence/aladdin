@@ -32,6 +32,7 @@ export interface ViewState {
   showYearlyLightSensorPanel: boolean;
   showDailyPvYieldPanel: boolean;
   showYearlyPvYieldPanel: boolean;
+  showSolarPanelVisibilityResultsPanel: boolean;
 
   heliodonPanelX: number;
   heliodonPanelY: number;
@@ -49,6 +50,8 @@ export interface ViewState {
   dailyPvYieldPanelY: number;
   yearlyPvYieldPanelX: number;
   yearlyPvYieldPanelY: number;
+  visibilityResultsPanelX: number;
+  visibilityResultsPanelY: number;
 
   mapZoom: number;
   mapType: string;

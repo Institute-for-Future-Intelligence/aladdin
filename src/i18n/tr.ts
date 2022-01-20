@@ -39,6 +39,8 @@ export const i18n_tr = {
       MaximumNumber: 'Maksimum Sayý',
       Or: 'Veya',
       None: 'Hiçbiri',
+      High: 'High',
+      Partial: 'Partial',
       Teacher: 'Öðretmen',
       Class: 'Sýnýf',
       Total: 'Toplam',
@@ -140,6 +142,7 @@ export const i18n_tr = {
       DoYouWantToContinue: 'Do you want to continue?',
       SolarPanelsCannotIntersectWithGround: 'Solar panels cannot intersect with the ground.',
       SolarPanelsCannotOverlapWithOneAnother: 'Solar panels cannot overlap with one another.',
+      ScreenshotSaved: 'Screenshot was saved.',
     },
 
     menu: {
@@ -488,6 +491,10 @@ export const i18n_tr = {
       Zoom: 'Büyüt',
     },
 
+    visibilityPanel: {
+      SolarPanelVisibility: 'Solar Panel Visibility',
+    },
+
     sensorPanel: {
       LightSensor: 'Iþýk sensörü',
       WeatherDataFrom: 'Hava Durumu Verisi',
@@ -537,6 +544,7 @@ export const i18n_tr = {
     analysisManager: {
       NoSensorForCollectingData: 'Veri toplamak için sensör yok.',
       NoSolarPanelForAnalysis: 'Analiz için güneþ paneli yok.',
+      NoObserverForVisibilityAnalysis: 'There is no observer for visibility analysis.',
     },
 
     toolbar: {

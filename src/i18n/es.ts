@@ -38,6 +38,8 @@ export const i18n_es = {
       MaximumNumber: 'Número máximo',
       Or: 'O',
       None: 'Ninguno',
+      High: 'High',
+      Partial: 'Partial',
       Teacher: 'Profesor',
       Class: 'Clase',
       Total: 'Total',
@@ -139,6 +141,7 @@ export const i18n_es = {
       DoYouWantToContinue: 'Do you want to continue?',
       SolarPanelsCannotIntersectWithGround: 'Solar panels cannot intersect with the ground.',
       SolarPanelsCannotOverlapWithOneAnother: 'Solar panels cannot overlap with one another.',
+      ScreenshotSaved: 'Screenshot was saved.',
     },
 
     menu: {
@@ -487,6 +490,10 @@ export const i18n_es = {
       Zoom: 'Zoom',
     },
 
+    visibilityPanel: {
+      SolarPanelVisibility: 'Solar Panel Visibility',
+    },
+
     sensorPanel: {
       LightSensor: 'Sensor de luz',
       WeatherDataFrom: 'Datos metereológicos de',
@@ -536,6 +543,7 @@ export const i18n_es = {
     analysisManager: {
       NoSensorForCollectingData: 'Sin sensor para recopilar datos',
       NoSolarPanelForAnalysis: 'Sin panel solar para el análisis',
+      NoObserverForVisibilityAnalysis: 'There is no observer for visibility analysis.',
     },
 
     toolbar: {

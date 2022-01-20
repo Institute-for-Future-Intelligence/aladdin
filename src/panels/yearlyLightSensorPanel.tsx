@@ -14,7 +14,7 @@ import BarGraph from '../components/barGraph';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
 import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
-import { screenshot } from '../helpers';
+import { screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 
 const Container = styled.div`
@@ -208,7 +208,9 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                 icon={<SaveOutlined />}
                 title={i18n.t('word.SaveAsImage', lang)}
                 onClick={() => {
-                  screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-light-sensor', {});
+                  screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-light-sensor', {}).then(() => {
+                    showInfo(i18n.t('message:ScreenshotSaved', lang));
+                  });
                 }}
               />
             </Space>
