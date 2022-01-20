@@ -138,7 +138,7 @@ const SolarPanelVisibility = () => {
         }
       }
     }
-    return (integral * dx * dy) / (4 * Math.PI);
+    return (integral * cellSize * cellSize) / (4 * Math.PI);
   };
 
   const isVisible = (panelId: string, point: Vector3, direction: Vector3) => {
