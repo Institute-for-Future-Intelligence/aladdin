@@ -10,15 +10,12 @@ import * as Selector from 'src/stores/selector';
 import { ObjectType, Orientation } from '../types';
 import { Util } from '../Util';
 import { SolarPanelModel } from '../models/SolarPanelModel';
+import { HumanModel } from '../models/HumanModel';
 
-export interface SolarPanelVisibilityProps {
-  vantage: Vector3;
-}
-
-const SolarPanelVisibility = ({ vantage }: SolarPanelVisibilityProps) => {
-  const setCommonStore = useStore(Selector.set);
+const SolarPanelVisibility = () => {
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
+  const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
   const solarPanelVisibilityFlag = useStore(Selector.solarPanelVisibilityFlag);
 
@@ -26,6 +23,7 @@ const SolarPanelVisibility = ({ vantage }: SolarPanelVisibilityProps) => {
   const ray = useMemo(() => new Raycaster(), []);
   const cellSize = world.solarPanelVisibilityGridCellSize ?? 0.2;
   const loaded = useRef(false);
+  const vantagesRef = useRef<Vector3[]>([]);
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
 
@@ -67,20 +65,40 @@ const SolarPanelVisibility = ({ vantage }: SolarPanelVisibilityProps) => {
     }
   };
 
-  const analyze = () => {
-    fetchObjects();
-    let total = 0;
+  const fetchVantages = () => {
+    vantagesRef.current = [];
     for (const e of elements) {
-      if (e.type === ObjectType.SolarPanel) {
-        total += getViewFactor(e as SolarPanelModel);
+      if (e.type === ObjectType.Human) {
+        const human = e as HumanModel;
+        if (human.observer) {
+          const parent = getElementById(human.parentId);
+          const position = parent
+            ? Util.absoluteHumanOrTreeCoordinates(human.cx, human.cy, human.cz, parent)
+            : new Vector3(human.cx, human.cy, human.cz);
+          position.z += human.lz;
+          vantagesRef.current.push(position);
+        }
       }
     }
-    console.log('visibility = ' + total);
-    return total;
+  };
+
+  const analyze = () => {
+    fetchVantages();
+    if (vantagesRef.current.length === 0) return;
+    fetchObjects();
+    for (const vantage of vantagesRef.current) {
+      let total = 0;
+      for (const e of elements) {
+        if (e.type === ObjectType.SolarPanel) {
+          total += getViewFactor(e as SolarPanelModel, vantage);
+        }
+      }
+      console.log('visibility: ', vantage, (total * 100).toFixed(2));
+    }
   };
 
   // view factor: https://en.wikipedia.org/wiki/View_factor
-  const getViewFactor = (panel: SolarPanelModel) => {
+  const getViewFactor = (panel: SolarPanelModel, vantage: Vector3) => {
     const parent = getElementById(panel.parentId);
     if (!parent) throw new Error('parent of solar panel does not exist');
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);

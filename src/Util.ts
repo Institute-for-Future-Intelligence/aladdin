@@ -479,8 +479,19 @@ export class Util {
     return v;
   }
 
+  // don't use this for humans or trees
   static absoluteCoordinates(x: number, y: number, z: number, parent: ElementModel): Vector3 {
     const v = new Vector3(x * parent.lx, y * parent.ly, z * parent.lz);
+    v.applyEuler(new Euler().fromArray(parent.rotation));
+    v.x += parent.cx;
+    v.y += parent.cy;
+    v.z += parent.cz;
+    return v;
+  }
+
+  // use this only for humans or trees
+  static absoluteHumanOrTreeCoordinates(x: number, y: number, z: number, parent: ElementModel): Vector3 {
+    const v = new Vector3(x, y, z);
     v.applyEuler(new Euler().fromArray(parent.rotation));
     v.x += parent.cx;
     v.y += parent.cy;

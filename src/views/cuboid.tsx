@@ -1079,7 +1079,15 @@ const Cuboid = ({
         {cuboidModel && cuboidModel.faceColors ? (
           faces.map((i) => {
             if (textureTypes && textureTypes[i] !== CuboidTexture.NoTexture) {
-              return <meshStandardMaterial key={i} attachArray="material" color={'white'} map={textures[i]} />;
+              return (
+                <meshStandardMaterial
+                  key={i}
+                  side={DoubleSide}
+                  attachArray="material"
+                  color={'white'}
+                  map={textures[i]}
+                />
+              );
             } else {
               return (
                 <meshStandardMaterial
@@ -1093,7 +1101,7 @@ const Cuboid = ({
             }
           })
         ) : (
-          <meshStandardMaterial attach="material" color={color} />
+          <meshStandardMaterial side={DoubleSide} attach="material" color={color} />
         )}
       </Box>
 
