@@ -31,12 +31,11 @@ const SolarPanelVisibility = () => {
     if (loaded.current) {
       // avoid calling on first render
       if (elements && elements.length > 0) {
-        //analyze();
+        analyze();
       }
     } else {
       loaded.current = true;
     }
-    analyze();
     setCommonStore((state) => {
       state.simulationInProgress = false;
     });
@@ -147,7 +146,13 @@ const SolarPanelVisibility = () => {
       ray.set(point, direction);
       const objects = objectsRef.current.filter((obj) => obj.uuid !== panelId); // exclude this panel itself
       ray.intersectObjects(objects, false, intersectionsRef.current);
-      return intersectionsRef.current.length === 0;
+      if (intersectionsRef.current.length === 0) return true;
+      for (const [index, intersect] of intersectionsRef.current.entries()) {
+        if (intersect.object.name.endsWith('eyeball')) {
+          if (index === 0) return true;
+        }
+      }
+      return false;
     }
     return true;
   };

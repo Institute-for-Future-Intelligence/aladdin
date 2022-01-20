@@ -16,6 +16,7 @@ import {
   LOCKED_ELEMENT_SELECTION_COLOR,
   MOVE_HANDLE_COLOR_1,
   MOVE_HANDLE_RADIUS,
+  TWO_PI,
 } from '../constants';
 import {
   ActionType,
@@ -256,6 +257,16 @@ const Human = ({
         {/* mark this person with a hat when he or she is an observer */}
         {observer && (
           <>
+            <Sphere
+              uuid={id}
+              visible={false}
+              userData={{ simulation: true }}
+              name={name + ' eyeball'}
+              args={[width / 5, 4, 4, 0, TWO_PI, 0, TWO_PI]}
+              position={[0, 0, humanModel.lz / 2]}
+            >
+              <meshStandardMaterial attach="material" side={DoubleSide} />
+            </Sphere>
             <Cylinder
               name={'Observer hat 1'}
               userData={{ unintersectable: true }}
