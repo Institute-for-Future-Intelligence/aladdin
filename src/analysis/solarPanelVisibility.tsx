@@ -54,7 +54,7 @@ const SolarPanelVisibility = () => {
   };
 
   const fetchSimulationElements = (obj: Object3D, arr: Object3D[]) => {
-    if (obj.userData['simulation']) {
+    if (obj.userData['simulation'] || obj.userData['eyeball']) {
       arr.push(obj);
     }
     if (obj.children.length > 0) {

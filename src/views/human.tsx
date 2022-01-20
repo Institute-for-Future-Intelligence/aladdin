@@ -260,7 +260,7 @@ const Human = ({
             <Sphere
               uuid={id}
               visible={false}
-              userData={{ simulation: true }}
+              userData={{ eyeball: true }}
               name={name + ' eyeball'}
               args={[width / 5, 4, 4, 0, TWO_PI, 0, TWO_PI]}
               position={[0, 0, humanModel.lz / 2]}

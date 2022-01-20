@@ -16,7 +16,7 @@ import Facade_Texture_10 from '../resources/building_facade_10.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Plane, Sphere } from '@react-three/drei';
-import { DoubleSide, Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
+import { Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -1049,8 +1049,6 @@ const Cuboid = ({
   const faces: number[] = [0, 1, 2, 3, 4, 5];
   const textures = [textureEast, textureWest, textureNorth, textureSouth, textureTop, null];
 
-  // IMPORTANT: model mesh must use double side in order to be intersected from the inside
-  // for instance, an object may be partly or completely inside a cuboid and cannot be seen in a visibility analysis
   return (
     <group
       ref={groupRef}
@@ -1079,20 +1077,11 @@ const Cuboid = ({
         {cuboidModel && cuboidModel.faceColors ? (
           faces.map((i) => {
             if (textureTypes && textureTypes[i] !== CuboidTexture.NoTexture) {
-              return (
-                <meshStandardMaterial
-                  key={i}
-                  side={DoubleSide}
-                  attachArray="material"
-                  color={'white'}
-                  map={textures[i]}
-                />
-              );
+              return <meshStandardMaterial key={i} attachArray="material" color={'white'} map={textures[i]} />;
             } else {
               return (
                 <meshStandardMaterial
                   key={i}
-                  side={DoubleSide}
                   attachArray="material"
                   color={cuboidModel.faceColors ? cuboidModel.faceColors[i] : color}
                   map={textures[i]}
@@ -1101,7 +1090,7 @@ const Cuboid = ({
             }
           })
         ) : (
-          <meshStandardMaterial side={DoubleSide} attach="material" color={color} />
+          <meshStandardMaterial attach="material" color={color} />
         )}
       </Box>
 
