@@ -8,10 +8,13 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
-import { Button, Space } from 'antd';
+import { Button, Space, Table } from 'antd';
 import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
+import { HumanData } from '../HumanData';
+
+const { Column } = Table;
 
 const Container = styled.div`
   position: fixed;
@@ -65,6 +68,7 @@ const VisibilityResultsPanel = () => {
   const now = new Date(useStore(Selector.world.date));
   const visibilityResultsPanelX = useStore(Selector.viewState.visibilityResultsPanelX);
   const visibilityResultsPanelY = useStore(Selector.viewState.visibilityResultsPanelY);
+  const solarPanelVisibilityResults = useStore(Selector.solarPanelVisibilityResults);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -77,6 +81,7 @@ const VisibilityResultsPanel = () => {
     x: isNaN(visibilityResultsPanelX) ? 0 : Math.max(visibilityResultsPanelX, wOffset - window.innerWidth),
     y: isNaN(visibilityResultsPanelY) ? 0 : Math.min(visibilityResultsPanelY, window.innerHeight - hOffset),
   });
+  const [resultArray, setResultArray] = useState<any[]>([]);
 
   const lang = { lng: language };
 
@@ -94,6 +99,37 @@ const VisibilityResultsPanel = () => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (solarPanelVisibilityResults) {
+      const arr: any[] = [];
+      solarPanelVisibilityResults.forEach((result, vantage) => {
+        let total = 0;
+        let fieldString = '';
+        result.forEach((visibility, field) => {
+          total += visibility;
+          fieldString += visibility.toFixed(2) + ', ';
+        });
+        arr.push({
+          key: vantage.observer.id,
+          observer: HumanData.fetchLabel(vantage.observer.name, lang),
+          vantage:
+            '(' +
+            vantage.position.x.toFixed(1) +
+            ', ' +
+            vantage.position.y.toFixed(1) +
+            ', ' +
+            vantage.position.z.toFixed(1) +
+            ') ' +
+            i18n.t('word.MeterAbbreviation', lang),
+          itemized: fieldString.substring(0, fieldString.length - 2),
+          total: total.toFixed(2),
+        });
+      });
+      arr.sort((a, b) => b.timestamp - a.timestamp);
+      setResultArray(arr);
+    }
+  }, [solarPanelVisibilityResults, language]);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({
@@ -128,7 +164,9 @@ const VisibilityResultsPanel = () => {
       <Container ref={nodeRef}>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
-            <span>{i18n.t('visibilityPanel.SolarPanelVisibility', lang) + ':' + moment(now).format('MM/DD')}</span>
+            <span>
+              {i18n.t('visibilityPanel.SolarPanelVisibility', lang) + ' — ' + moment(now).format('h:mm a MM/DD')}
+            </span>
             <span
               style={{ cursor: 'pointer' }}
               onTouchStart={() => {
@@ -141,6 +179,26 @@ const VisibilityResultsPanel = () => {
               {i18n.t('word.Close', lang)}
             </span>
           </Header>
+          <Table
+            id={'visibility-results-table'}
+            style={{ width: '100%' }}
+            dataSource={resultArray}
+            pagination={{
+              defaultPageSize: 5,
+              showSizeChanger: true,
+              pageSizeOptions: ['5', '10', '50'],
+            }}
+          >
+            <Column title={i18n.t('visibilityPanel.Observer', lang)} dataIndex="observer" key="observer" />
+            <Column title={i18n.t('visibilityPanel.VantagePoint', lang)} dataIndex="vantage" key="vantage" />
+            <Column
+              title={i18n.t('visibilityPanel.ItemizedVisibilityByFields', lang)}
+              dataIndex="itemized"
+              key="itemized"
+            />
+            <Column title={i18n.t('visibilityPanel.TotalVisibility', lang)} dataIndex="total" key="total" />
+          </Table>
+
           <Space style={{ alignSelf: 'center' }}>
             <Button
               type="default"
@@ -157,8 +215,8 @@ const VisibilityResultsPanel = () => {
               icon={<SaveOutlined />}
               title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
-                screenshot('visibility-results-element', 'visibility-results', {}).then(() => {
-                  showInfo(i18n.t('message:ScreenshotSaved', lang));
+                screenshot('visibility-results-table', 'visibility-results', {}).then(() => {
+                  showInfo(i18n.t('message.ScreenshotSaved', lang));
                 });
               }}
             />

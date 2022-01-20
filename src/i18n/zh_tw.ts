@@ -479,7 +479,11 @@ export const i18n_zh_tw = {
     },
 
     visibilityPanel: {
-      SolarPanelVisibility: '光伏闆對觀察者的可見度',
+      SolarPanelVisibility: '光伏板對觀察者的可見度',
+      Observer: '觀察者',
+      VantagePoint: '觀察位置',
+      ItemizedVisibilityByFields: '每個場的可見度',
+      TotalVisibility: '總可見度',
     },
 
     sensorPanel: {

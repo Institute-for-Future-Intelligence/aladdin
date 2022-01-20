@@ -11,6 +11,7 @@ import { ObjectType, Orientation } from '../types';
 import { Util } from '../Util';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { HumanModel } from '../models/HumanModel';
+import { Vantage } from './Vantage';
 
 const SolarPanelVisibility = () => {
   const world = useStore.getState().world;
@@ -23,7 +24,7 @@ const SolarPanelVisibility = () => {
   const ray = useMemo(() => new Raycaster(), []);
   const cellSize = world.solarPanelVisibilityGridCellSize ?? 0.2;
   const loaded = useRef(false);
-  const vantagesRef = useRef<Vector3[]>([]);
+  const vantagesRef = useRef<Vantage[]>([]);
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
 
@@ -75,24 +76,38 @@ const SolarPanelVisibility = () => {
             ? Util.absoluteHumanOrTreeCoordinates(human.cx, human.cy, human.cz, parent)
             : new Vector3(human.cx, human.cy, human.cz);
           position.z += human.lz;
-          vantagesRef.current.push(position);
+          vantagesRef.current.push(new Vantage(position, human));
         }
       }
     }
   };
 
   const analyze = () => {
+    setCommonStore((state) => {
+      state.solarPanelVisibilityResults.clear();
+    });
     fetchVantages();
     if (vantagesRef.current.length === 0) return;
     fetchObjects();
     for (const vantage of vantagesRef.current) {
-      let total = 0;
+      const resultMap = new Map<string, number>();
       for (const e of elements) {
         if (e.type === ObjectType.SolarPanel) {
-          total += getViewFactor(e as SolarPanelModel, vantage);
+          const sp = e as SolarPanelModel;
+          resultMap.set(sp.parentId, 0);
         }
       }
-      console.log('visibility: ', vantage, (total * 100).toFixed(2));
+      for (const e of elements) {
+        if (e.type === ObjectType.SolarPanel) {
+          const sp = e as SolarPanelModel;
+          let vf = resultMap.get(sp.parentId) ?? 0;
+          vf += getViewFactor(sp, vantage.position) * 100; // 100 is for percentage
+          resultMap.set(sp.parentId, vf);
+        }
+      }
+      setCommonStore((state) => {
+        state.solarPanelVisibilityResults.set(vantage, resultMap);
+      });
     }
   };
 

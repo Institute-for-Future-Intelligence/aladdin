@@ -62,6 +62,7 @@ import i18n from '../i18n/i18n';
 import { HumanData } from '../HumanData';
 import { SolarPanelArrayLayoutParams } from './SolarPanelArrayLayoutParams';
 import { DefaultSolarPanelArrayLayoutParams } from './DefaultSolarPanelArrayLayoutParams';
+import { Vantage } from '../analysis/Vantage';
 
 enableMapSet();
 
@@ -352,6 +353,7 @@ export interface CommonStoreState {
   setSensorLabels: (labels: string[]) => void;
 
   solarPanelVisibilityFlag: boolean;
+  solarPanelVisibilityResults: Map<Vantage, Map<string, number>>;
   dailyPvYield: DatumEntry[];
   dailyPvFlag: boolean;
   dailyPvIndividualOutputs: boolean;
@@ -554,6 +556,7 @@ export const useStore = create<CommonStoreState>(
           },
 
           solarPanelVisibilityFlag: false,
+          solarPanelVisibilityResults: new Map<Vantage, Map<string, number>>(),
           yearlyPvYield: [],
           yearlyPvFlag: false,
           yearlyPvIndividualOutputs: false,

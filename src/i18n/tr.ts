@@ -493,6 +493,10 @@ export const i18n_tr = {
 
     visibilityPanel: {
       SolarPanelVisibility: 'Solar Panel Visibility',
+      Observer: 'Observer',
+      VantagePoint: 'Vantage Point',
+      ItemizedVisibilityByFields: 'Itemized by Fields',
+      TotalVisibility: 'Total',
     },
 
     sensorPanel: {

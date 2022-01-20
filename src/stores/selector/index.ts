@@ -410,6 +410,8 @@ export const setSunlightDirection = (state: CommonStoreState) => state.setSunlig
 
 export const solarPanelVisibilityFlag = (state: CommonStoreState) => state.solarPanelVisibilityFlag;
 
+export const solarPanelVisibilityResults = (state: CommonStoreState) => state.solarPanelVisibilityResults;
+
 export const dailyPvYield = (state: CommonStoreState) => state.dailyPvYield;
 
 export const dailyPvFlag = (state: CommonStoreState) => state.dailyPvFlag;

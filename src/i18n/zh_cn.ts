@@ -480,6 +480,10 @@ export const i18n_zh_cn = {
 
     visibilityPanel: {
       SolarPanelVisibility: '光伏板对观察者的可见度',
+      Observer: '观察者',
+      VantagePoint: '观察位置',
+      ItemizedVisibilityByFields: '每个场的可见度',
+      TotalVisibility: '总可见度',
     },
 
     sensorPanel: {
