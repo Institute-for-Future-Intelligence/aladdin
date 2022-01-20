@@ -583,6 +583,7 @@ export const i18n_en = {
       Maple: 'Maple',
       Oak: 'Oak',
       Pine: 'Pine',
+      Spruce: 'Spruce',
     },
 
     people: {

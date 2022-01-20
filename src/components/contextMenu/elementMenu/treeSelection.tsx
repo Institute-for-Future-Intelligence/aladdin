@@ -14,6 +14,7 @@ import LindenImage from '../../../resources/linden.png';
 import MapleImage from '../../../resources/maple.png';
 import OakImage from '../../../resources/oak.png';
 import PineImage from '../../../resources/pine.png';
+import SpruceImage from '../../../resources/spruce.png';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import i18n from '../../../i18n/i18n';
 import { TreeModel } from '../../../models/TreeModel';
@@ -81,6 +82,10 @@ const TreeSelection = () => {
       <Option key={TreeType.Oak} value={TreeType.Oak}>
         <img alt={TreeType.Oak} src={OakImage} height={20} style={{ paddingRight: '16px' }} />
         {i18n.t('tree.Oak', lang)}
+      </Option>
+      <Option key={TreeType.Spruce} value={TreeType.Spruce}>
+        <img alt={TreeType.Spruce} src={SpruceImage} height={20} style={{ paddingRight: '18px' }} />{' '}
+        {i18n.t('tree.Spruce', lang)}
       </Option>
       <Option key={TreeType.Pine} value={TreeType.Pine}>
         <img alt={TreeType.Pine} src={PineImage} height={20} style={{ paddingRight: '22px' }} />{' '}

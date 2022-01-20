@@ -584,6 +584,7 @@ export const i18n_tr = {
       Maple: 'akçaaðaç',
       Oak: 'meþe aðacý',
       Pine: 'Çam',
+      Spruce: 'Spruce',
     },
 
     people: {

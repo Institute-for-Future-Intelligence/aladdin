@@ -15,10 +15,15 @@ import MapleShedImage from './resources/maple_shed.png';
 import OakImage from './resources/oak.png';
 import OakShedImage from './resources/oak_shed.png';
 import PineImage from './resources/pine.png';
+import SpruceImage from './resources/spruce.png';
 import { TreeType } from './types';
 import i18n from './i18n/i18n';
 
 export class TreeData {
+  static isDeciduous(type: TreeType): boolean {
+    return type !== TreeType.Pine && type !== TreeType.Spruce;
+  }
+
   static fetchLabel(name: string, lang: {}): string {
     switch (name) {
       case TreeType.Cottonwood:
@@ -33,6 +38,8 @@ export class TreeData {
         return i18n.t('tree.Maple', lang);
       case TreeType.Oak:
         return i18n.t('tree.Oak', lang);
+      case TreeType.Spruce:
+        return i18n.t('tree.Spruce', lang);
       default:
         return i18n.t('tree.Pine', lang);
     }
@@ -48,6 +55,8 @@ export class TreeData {
         return 0.65 * Math.PI;
       case TreeType.Oak:
         return 0.75 * Math.PI;
+      case TreeType.Spruce:
+        return Math.PI;
       default:
         return Math.PI * 0.7;
     }
@@ -73,6 +82,9 @@ export class TreeData {
         break;
       case TreeType.Oak:
         textureImg = noLeaves ? OakShedImage : OakImage;
+        break;
+      case TreeType.Spruce:
+        textureImg = SpruceImage;
         break;
       default:
         textureImg = PineImage;

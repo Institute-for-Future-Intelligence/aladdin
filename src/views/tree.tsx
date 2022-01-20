@@ -239,7 +239,7 @@ const Tree = ({
         </Billboard>
 
         {/* simulation model */}
-        {name !== TreeType.Pine ? (
+        {TreeData.isDeciduous(name) ? (
           <Sphere
             visible={(showModel && !noLeaves) || orthographic}
             userData={{ simulation: !noLeaves }}
@@ -255,7 +255,7 @@ const Tree = ({
             visible={showModel || orthographic}
             name={name + ' Model'}
             userData={{ simulation: true }}
-            position={[0, 0, lz * 0.1]}
+            position={[0, 0, name === TreeType.Spruce ? 0 : lz * 0.06]}
             args={[lx / 2, lz, 8, 8, true]}
             scale={[1, 1, 1]}
             rotation={[HALF_PI, 0, 0]}

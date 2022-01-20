@@ -571,6 +571,7 @@ export const i18n_zh_tw = {
       Maple: '楓樹',
       Oak: '橡樹',
       Pine: '松樹',
+      Spruce: '雲杉',
     },
 
     people: {

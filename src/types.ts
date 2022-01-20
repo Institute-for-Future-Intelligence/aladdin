@@ -196,6 +196,7 @@ export enum TreeType {
   Linden = 'Linden',
   Maple = 'Maple',
   Oak = 'Oak',
+  Spruce = 'Spruce',
   Pine = 'Pine',
 }
 
