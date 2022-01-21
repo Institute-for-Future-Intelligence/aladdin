@@ -221,7 +221,6 @@ const Tree = ({
 
   const handleSize = MOVE_HANDLE_RADIUS * 3;
 
-  // IMPORTANT: model mesh must use double side in order to intercept sunlight
   return (
     <group ref={groupRef} name={'Tree Group ' + id} userData={{ aabb: true }} position={[cx, cy, cz ?? 0]}>
       <group position={[0, 0, lz / 2]}>
@@ -276,6 +275,7 @@ const Tree = ({
             renderOrder={3}
             name={name + ' plane'}
             args={[lx / 2, lz / 3]}
+            rotation={[orthographic ? HALF_PI : 0, 0, 0]}
             onContextMenu={(e) => {
               selectMe(id, e);
               setCommonStore((state) => {
