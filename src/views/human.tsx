@@ -43,6 +43,24 @@ const Human = ({
   observer = false,
   parentId,
 }: HumanModel) => {
+  let isRender = false;
+  useStore((state) => {
+    if (parentId === GROUND_ID) {
+      isRender = true;
+    } else {
+      for (const e of state.elements) {
+        if (e.id === parentId) {
+          isRender = true;
+          break;
+        }
+      }
+    }
+  });
+  const removeElementById = useStore(Selector.removeElementById);
+  if (!isRender) {
+    removeElementById(id, false);
+  }
+
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
@@ -187,153 +205,157 @@ const Human = ({
   const hatOffset = observer ? HumanData.fetchHatOffset(humanModel.name) : 0;
 
   return (
-    <group ref={groupRef} name={'Human Group ' + id} userData={{ aabb: true }} position={[cx, cy, cz ?? 0]}>
-      <group position={[0, 0.1, height / 2]}>
-        <Billboard rotation={[HALF_PI, 0, 0]} uuid={id} name={name} follow={false}>
-          <Plane
-            ref={planeRef}
-            renderOrder={3}
-            name={`Human ${name} plane`}
-            args={[width, height]}
-            onContextMenu={(e) => {
-              selectMe(id, e);
-              setCommonStore((state) => {
-                if (e.intersections.length > 0) {
-                  const intersected = e.intersections[0].object === planeRef.current;
-                  if (intersected) {
-                    state.contextMenuObjectType = ObjectType.Human;
+    <>
+      {isRender ? (
+        <group ref={groupRef} name={'Human Group ' + id} userData={{ aabb: true }} position={[cx, cy, cz ?? 0]}>
+          <group position={[0, 0.1, height / 2]}>
+            <Billboard rotation={[HALF_PI, 0, 0]} uuid={id} name={name} follow={false}>
+              <Plane
+                ref={planeRef}
+                renderOrder={3}
+                name={`Human ${name} plane`}
+                args={[width, height]}
+                onContextMenu={(e) => {
+                  selectMe(id, e);
+                  setCommonStore((state) => {
+                    if (e.intersections.length > 0) {
+                      const intersected = e.intersections[0].object === planeRef.current;
+                      if (intersected) {
+                        state.contextMenuObjectType = ObjectType.Human;
+                      }
+                    }
+                  });
+                }}
+                onPointerDown={(e) => {
+                  if (e.button === 2) return; // ignore right-click
+                  if (e.eventObject === e.intersections[0].eventObject) {
+                    selectMe(id, e, ActionType.Move);
+                    useStoreRef.setState((state) => {
+                      state.humanRef = groupRef;
+                    });
                   }
-                }
-              });
-            }}
-            onPointerDown={(e) => {
-              if (e.button === 2) return; // ignore right-click
-              if (e.eventObject === e.intersections[0].eventObject) {
-                selectMe(id, e, ActionType.Move);
-                useStoreRef.setState((state) => {
-                  state.humanRef = groupRef;
-                });
-              }
-            }}
-            onPointerOver={(e) => {
-              if (e.intersections.length > 0) {
-                const intersected = e.intersections[0].object === planeRef.current;
-                if (intersected) {
-                  setHovered(true);
-                }
-              }
-            }}
-            onPointerOut={(e) => {
-              setHovered(false);
-            }}
-          >
-            <meshBasicMaterial map={texture} alphaTest={0.5} side={DoubleSide} />
-          </Plane>
-        </Billboard>
+                }}
+                onPointerOver={(e) => {
+                  if (e.intersections.length > 0) {
+                    const intersected = e.intersections[0].object === planeRef.current;
+                    if (intersected) {
+                      setHovered(true);
+                    }
+                  }
+                }}
+                onPointerOut={(e) => {
+                  setHovered(false);
+                }}
+              >
+                <meshBasicMaterial map={texture} alphaTest={0.5} side={DoubleSide} />
+              </Plane>
+            </Billboard>
 
-        {/* highlight this person when he or she is selected but locked */}
-        {selected && locked && (
-          <Line
-            name={'Selection highlight lines'}
-            userData={{ unintersectable: true }}
-            points={[
-              [-width / 2, 0, -height / 2],
-              [-width / 2, 0, height / 2],
-              [-width / 2, 0, height / 2],
-              [width / 2, 0, height / 2],
-              [width / 2, 0, -height / 2],
-              [width / 2, 0, height / 2],
-              [width / 2, 0, -height / 2],
-              [-width / 2, 0, -height / 2],
-            ]}
-            castShadow={false}
-            receiveShadow={false}
-            lineWidth={0.5}
-            rotation={planeRef.current?.rotation}
-            color={LOCKED_ELEMENT_SELECTION_COLOR}
-          />
-        )}
+            {/* highlight this person when he or she is selected but locked */}
+            {selected && locked && (
+              <Line
+                name={'Selection highlight lines'}
+                userData={{ unintersectable: true }}
+                points={[
+                  [-width / 2, 0, -height / 2],
+                  [-width / 2, 0, height / 2],
+                  [-width / 2, 0, height / 2],
+                  [width / 2, 0, height / 2],
+                  [width / 2, 0, -height / 2],
+                  [width / 2, 0, height / 2],
+                  [width / 2, 0, -height / 2],
+                  [-width / 2, 0, -height / 2],
+                ]}
+                castShadow={false}
+                receiveShadow={false}
+                lineWidth={0.5}
+                rotation={planeRef.current?.rotation}
+                color={LOCKED_ELEMENT_SELECTION_COLOR}
+              />
+            )}
 
-        {/* mark this person with a hat when he or she is an observer */}
-        {observer && (
-          <>
-            <Sphere
-              uuid={id}
-              visible={false}
-              userData={{ eyeball: true }}
-              name={name + ' eyeball'}
-              args={[width / 5, 4, 4, 0, TWO_PI, 0, TWO_PI]}
-              position={[0, 0, humanModel.lz / 2]}
-            >
-              <meshStandardMaterial attach="material" side={DoubleSide} />
-            </Sphere>
-            <Cylinder
-              name={'Observer hat 1'}
-              userData={{ unintersectable: true }}
-              castShadow={false}
-              receiveShadow={false}
-              args={[0.1, 0.1, 0.1, 16, 2]}
-              position={[hatOffset, 0, humanModel.lz / 2 - 0.05]}
-              rotation={[HALF_PI, 0, 0]}
-            >
-              <meshStandardMaterial attach="material" color={gender === Gender.Male ? 'gray' : 'hotpink'} />
-            </Cylinder>
-            <Cylinder
-              name={'Observer hat 2'}
-              userData={{ unintersectable: true }}
-              castShadow={false}
-              receiveShadow={false}
-              args={[0.2, 0.2, 0.01, 16, 2]}
-              position={[hatOffset, 0, humanModel.lz / 2 - 0.1]}
-              rotation={[HALF_PI, 0, 0]}
-            >
-              <meshStandardMaterial attach="material" color={gender === Gender.Male ? 'gray' : 'hotpink'} />
-            </Cylinder>
-          </>
-        )}
+            {/* mark this person with a hat when he or she is an observer */}
+            {observer && (
+              <>
+                <Sphere
+                  uuid={id}
+                  visible={false}
+                  userData={{ eyeball: true }}
+                  name={name + ' eyeball'}
+                  args={[width / 5, 4, 4, 0, TWO_PI, 0, TWO_PI]}
+                  position={[0, 0, humanModel.lz / 2]}
+                >
+                  <meshStandardMaterial attach="material" side={DoubleSide} />
+                </Sphere>
+                <Cylinder
+                  name={'Observer hat 1'}
+                  userData={{ unintersectable: true }}
+                  castShadow={false}
+                  receiveShadow={false}
+                  args={[0.1, 0.1, 0.1, 16, 2]}
+                  position={[hatOffset, 0, humanModel.lz / 2 - 0.05]}
+                  rotation={[HALF_PI, 0, 0]}
+                >
+                  <meshStandardMaterial attach="material" color={gender === Gender.Male ? 'gray' : 'hotpink'} />
+                </Cylinder>
+                <Cylinder
+                  name={'Observer hat 2'}
+                  userData={{ unintersectable: true }}
+                  castShadow={false}
+                  receiveShadow={false}
+                  args={[0.2, 0.2, 0.01, 16, 2]}
+                  position={[hatOffset, 0, humanModel.lz / 2 - 0.1]}
+                  rotation={[HALF_PI, 0, 0]}
+                >
+                  <meshStandardMaterial attach="material" color={gender === Gender.Male ? 'gray' : 'hotpink'} />
+                </Cylinder>
+              </>
+            )}
 
-        {/* draw handle */}
-        {selected && !locked && (
-          <Sphere
-            position={[0, 0, -height / 2]}
-            args={[MOVE_HANDLE_RADIUS * 4, 6, 6, 0, Math.PI]}
-            name={MoveHandleType.Default}
-            onPointerDown={(e) => {
-              if (e.eventObject === e.intersections[0].eventObject) {
-                selectMe(id, e, ActionType.Move);
-                useStoreRef.setState((state) => {
-                  state.humanRef = groupRef;
-                });
-              }
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, MoveHandleType.Default);
-            }}
-            onPointerOut={noHoverHandle}
-          >
-            <meshStandardMaterial
-              attach="material"
-              color={
-                hoveredHandle === MoveHandleType.Default || moveHandleType === MoveHandleType.Default
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : MOVE_HANDLE_COLOR_1
-              }
-            />
-          </Sphere>
-        )}
-        {hovered && !selected && (
-          <textSprite
-            userData={{ unintersectable: true }}
-            name={'Label'}
-            text={labelText}
-            fontSize={20}
-            fontFace={'Times Roman'}
-            textHeight={0.2}
-            position={[0, 0, height / 2 + 0.4]}
-          />
-        )}
-      </group>
-    </group>
+            {/* draw handle */}
+            {selected && !locked && (
+              <Sphere
+                position={[0, 0, -height / 2]}
+                args={[MOVE_HANDLE_RADIUS * 4, 6, 6, 0, Math.PI]}
+                name={MoveHandleType.Default}
+                onPointerDown={(e) => {
+                  if (e.eventObject === e.intersections[0].eventObject) {
+                    selectMe(id, e, ActionType.Move);
+                    useStoreRef.setState((state) => {
+                      state.humanRef = groupRef;
+                    });
+                  }
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, MoveHandleType.Default);
+                }}
+                onPointerOut={noHoverHandle}
+              >
+                <meshStandardMaterial
+                  attach="material"
+                  color={
+                    hoveredHandle === MoveHandleType.Default || moveHandleType === MoveHandleType.Default
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : MOVE_HANDLE_COLOR_1
+                  }
+                />
+              </Sphere>
+            )}
+            {hovered && !selected && (
+              <textSprite
+                userData={{ unintersectable: true }}
+                name={'Label'}
+                text={labelText}
+                fontSize={20}
+                fontFace={'Times Roman'}
+                textHeight={0.2}
+                position={[0, 0, height / 2 + 0.4]}
+              />
+            )}
+          </group>
+        </group>
+      ) : null}
+    </>
   );
 };
 
