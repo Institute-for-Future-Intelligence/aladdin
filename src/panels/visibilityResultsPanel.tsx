@@ -106,7 +106,9 @@ const VisibilityResultsPanel = () => {
       solarPanelVisibilityResults.forEach((result, vantage) => {
         let total = 0;
         let fieldString = '';
+        let count = 0;
         result.forEach((visibility, field) => {
+          count++;
           total += visibility;
           fieldString += visibility.toFixed(2) + ', ';
         });
@@ -122,11 +124,10 @@ const VisibilityResultsPanel = () => {
             vantage.position.z.toFixed(1) +
             ') ' +
             i18n.t('word.MeterAbbreviation', lang),
-          itemized: fieldString.substring(0, fieldString.length - 2),
           total: total.toFixed(2),
+          itemized: count > 1 ? fieldString.substring(0, fieldString.length - 2) : '---',
         });
       });
-      arr.sort((a, b) => b.timestamp - a.timestamp);
       setResultArray(arr);
     }
   }, [solarPanelVisibilityResults, language]);
@@ -191,12 +192,12 @@ const VisibilityResultsPanel = () => {
           >
             <Column title={i18n.t('visibilityPanel.Observer', lang)} dataIndex="observer" key="observer" />
             <Column title={i18n.t('visibilityPanel.VantagePoint', lang)} dataIndex="vantage" key="vantage" />
+            <Column title={i18n.t('visibilityPanel.TotalVisibility', lang)} dataIndex="total" key="total" />
             <Column
               title={i18n.t('visibilityPanel.ItemizedVisibilityByFields', lang)}
               dataIndex="itemized"
               key="itemized"
             />
-            <Column title={i18n.t('visibilityPanel.TotalVisibility', lang)} dataIndex="total" key="total" />
           </Table>
 
           <Space style={{ alignSelf: 'center' }}>

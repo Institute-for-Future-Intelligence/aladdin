@@ -1,0 +1,735 @@
+{
+  "docid": "89ihEah7BbTm98iRha3QCu",
+  "timestamp": 1642723610831,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "latitude": 42.2844063,
+    "solarPanelGridCellSize": 0.5,
+    "timesPerHour": 4,
+    "longitude": -71.3488548,
+    "ground": {
+      "albedo": 0.3,
+      "thermalDiffusivity": 0.05,
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "address": "Natick, MA",
+    "date": "Wed Sep 01 2021 12:00:00 GMT-0400 (Eastern Daylight Time)",
+    "name": "default",
+    "orthographic": false,
+    "cameraZoom": 35.16173831821251,
+    "solarPanelVisibilityGridCellSize": 0.5
+  },
+  "elements": [
+    {
+      "cy": 4.954996112572093,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 0.1,
+      "ly": 26.476162705933802,
+      "id": "of4fAMi2p9MKmo6JDUYnfX",
+      "type": "Foundation",
+      "cx": 0.04921492269085426,
+      "cz": 0.05,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 26.826067939932923,
+      "selected": false,
+      "parentId": "Ground"
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "showLabel": false,
+      "label": "Row1",
+      "cy": -0.39698307303838193,
+      "poleRadius": 0.05,
+      "tiltAngle": 0.6981317007977318,
+      "cz": 0.5000000074505806,
+      "type": "Solar Panel",
+      "id": "c2J7QZr1z68dpk33yTT2Sd",
+      "orientation": "Landscape",
+      "cx": 0.004272010745138782,
+      "relativeAzimuth": 0,
+      "trackerType": "None",
+      "poleSpacing": 3,
+      "selected": false,
+      "lz": 0.046,
+      "lx": 21.648,
+      "poleHeight": 1,
+      "drawSunBeam": false,
+      "ly": 1.984,
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "pvModelName": "CS6X-355P-FG"
+    },
+    {
+      "type": "Human",
+      "name": "Jena",
+      "cx": -2.5910464396631454,
+      "cy": 4.258800983428959,
+      "cz": 0.6637429062349192,
+      "lx": 0.4,
+      "lz": 1.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "oDC9KsyRsLGUi8Ta6XHQjo",
+      "id": "23wp85ceUyBY59pzXAqfZg",
+      "selected": false,
+      "observer": true,
+      "ly": 0.4
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.004118692793609696,
+      "cy": -0.3022620921066146,
+      "cz": 0.5000000074505806,
+      "lx": 21.648,
+      "ly": 1.984,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.6981317007977318,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "6g9iBRNNW6XDAK9EeP8dnv",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.003965374842080611,
+      "cy": -0.20754111117484722,
+      "cz": 0.5000000074505806,
+      "lx": 21.648,
+      "ly": 1.984,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.6981317007977318,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "ec9UdLR1fMcWkEUdiFjUx2",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.0038120568905515256,
+      "cy": -0.1128201302430799,
+      "cz": 0.5000000074505806,
+      "lx": 21.648,
+      "ly": 1.984,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.6981317007977318,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "fQLn5udBainjxVp4XrJMRj",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.0036587389390224405,
+      "cy": -0.018099149311312526,
+      "cz": 0.5000000074505806,
+      "lx": 21.648,
+      "ly": 1.984,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.6981317007977318,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "p8zx94dUJdEAskSt1PKSVa",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.003505420987493355,
+      "cy": 0.0766218316204548,
+      "cz": 0.5000000074505806,
+      "lx": 21.648,
+      "ly": 1.984,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.6981317007977318,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "fc9ACQJk2egBLobC44KRz9",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.0033521030359642697,
+      "cy": 0.17134281255222217,
+      "cz": 0.5000000074505806,
+      "lx": 21.648,
+      "ly": 1.984,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.6981317007977318,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "k1F8Jw2a6YkaS53ggunuWE",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.003198785084435184,
+      "cy": 0.2660637934839895,
+      "cz": 0.5000000074505806,
+      "lx": 21.648,
+      "ly": 1.984,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.6981317007977318,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "nfKxjTCwPLzpCqrrT4qwQd",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.003045467132906099,
+      "cy": 0.36078477441575696,
+      "cz": 0.5000000074505806,
+      "lx": 21.648,
+      "ly": 1.984,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.6981317007977318,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "oY8VxSJVvnuAD8XoQBDkh2",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Maple",
+      "cx": -7.670090982816076,
+      "cy": -15.121632907721835,
+      "cz": 0,
+      "lx": 7.78358405324231,
+      "lz": 7.934121070172359,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "8yQco182EV6cxySCwrWGFY",
+      "selected": false,
+      "evergreen": false
+    },
+    {
+      "type": "Tree",
+      "name": "Elm",
+      "cx": -1.9531231300224654,
+      "cy": -17.006119977469798,
+      "cz": 0,
+      "lx": 8.12678595638905,
+      "lz": 10.082932892589717,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "15bCazLHJRNHBjLbckRT4p",
+      "selected": false,
+      "evergreen": false,
+      "showModel": false
+    },
+    {
+      "type": "Tree",
+      "name": "Spruce",
+      "cx": -5.161748355855082,
+      "cy": -12.64363250046043,
+      "cz": 0,
+      "lx": 4.3193414394375225,
+      "lz": 9.842530786133311,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "vfBrsVoh8zPsZKEuooN1Mp",
+      "selected": false,
+      "evergreen": false,
+      "showModel": false
+    },
+    {
+      "type": "Tree",
+      "name": "Pine",
+      "cx": -0.7445458899185944,
+      "cy": -12.852676590276348,
+      "cz": 0,
+      "lx": 4.3193414394375225,
+      "lz": 10.279562696083193,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "99sYceKNBfrqJSsDa72tLX",
+      "selected": false,
+      "evergreen": true,
+      "showModel": false
+    },
+    {
+      "type": "Tree",
+      "name": "Oak",
+      "cx": 3.243435062549235,
+      "cy": -18.68268714883843,
+      "cz": 0,
+      "lx": 12.303017337089683,
+      "lz": 13.454101171018491,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "7haviCJzvFbjdWiXYEcp8o",
+      "selected": false,
+      "evergreen": false,
+      "showModel": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": -7.077725679504229,
+      "cy": -18.350491857988565,
+      "cz": 3.552713678800501e-15,
+      "lx": 5.121368923273126,
+      "lz": 4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "1bpmmncgUCDYwi43GR6ysJ",
+      "selected": false
+    },
+    {
+      "type": "Cuboid",
+      "cx": 1.1903409910993563,
+      "cy": -32.97965271632313,
+      "cz": 3.588302086644817,
+      "lx": 13.594202516157802,
+      "ly": 8.517602014398795,
+      "lz": 7.176604173289634,
+      "color": "gray",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "Facade #6",
+        "Facade #6",
+        "Facade #6",
+        "Facade #6",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "id": "oDC9KsyRsLGUi8Ta6XHQjo"
+    },
+    {
+      "type": "Human",
+      "name": "Jack",
+      "cx": -0.1881498159622481,
+      "cy": -8.814154706597911,
+      "cz": 0,
+      "lx": 0.6,
+      "lz": 1.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "obVZfacvimifAis6oD33mX",
+      "selected": false,
+      "observer": true,
+      "ly": 0.6
+    },
+    {
+      "type": "Tree",
+      "name": "Spruce",
+      "cx": 5.09267306823429,
+      "cy": -13.310126405036677,
+      "cz": 0,
+      "lx": 4.3193414394375225,
+      "lz": 9.842530786133311,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "sCYPQFyb4Ezu7V4j1ddt8r",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Pine",
+      "cx": 10.305923746774221,
+      "cy": -13.424767694214879,
+      "cz": -3.552713678800501e-15,
+      "lx": 4.3193414394375225,
+      "lz": 8.761424913666062,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "jgqeg8YLSBfHZnbBhuouTU",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "June",
+      "cx": -8.405906082096362,
+      "cy": -23.9057182525622,
+      "cz": 8.881784197001252e-16,
+      "lx": 0.4,
+      "lz": 1.85,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "m6FHMxEEVfFM123WLmXjyv",
+      "selected": false,
+      "observer": true,
+      "ly": 0.4
+    },
+    {
+      "type": "Tree",
+      "name": "Linden",
+      "cx": 12.764001949466827,
+      "cy": -17.825999014785296,
+      "cz": 3.552713678800501e-15,
+      "lx": 13.381704484780668,
+      "lz": 11.010248267547892,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "sdQBo4vKjobDoLbR5chAS6",
+      "selected": false,
+      "evergreen": false
+    }
+  ],
+  "view": {
+    "yearlyPvYieldPanelX": -25,
+    "autoRotate": false,
+    "mapZoom": 16,
+    "axes": false,
+    "theme": "Default",
+    "showSiteInfoPanel": true,
+    "showDesignInfoPanel": false,
+    "showWeatherPanel": false,
+    "groundPanelX": 0,
+    "dailyPvYieldPanelX": -3,
+    "dailyLightSensorPanelY": 232,
+    "showDailyLightSensorPanel": false,
+    "mapTilt": 0,
+    "yearlyPvYieldPanelY": 16,
+    "yearlyLightSensorPanelX": 0,
+    "showGroundPanel": false,
+    "showHeliodonPanel": false,
+    "heliodon": false,
+    "weatherPanelY": 0,
+    "heliodonPanelX": -1175,
+    "dailyPvYieldPanelY": 8,
+    "mapWeatherStations": false,
+    "yearlyLightSensorPanelY": 0,
+    "showPvDailyYieldPanel": true,
+    "showYearlyPvYieldPanel": false,
+    "dailyLightSensorPanelX": -240,
+    "weatherPanelX": 0,
+    "heliodonPanelY": -33,
+    "groundColor": "forestgreen",
+    "groundPanelY": 0,
+    "groundImage": false,
+    "showDailyPvYieldPanel": false,
+    "shadowEnabled": true,
+    "showYearlyLightSensorPanel": false,
+    "mapType": "roadmap",
+    "cameraPosition": [
+      -43.87396294578204,
+      -24.16845128040117,
+      6.2891008573775835
+    ],
+    "panCenter": [
+      11.003286522012303,
+      -27.81577917086189,
+      6.28910085737758
+    ],
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 9.753499582310596,
+    "showInstructionPanel": true,
+    "cameraPosition2D": [
+      2.659105574611795,
+      -0.19810500302601344,
+      47.99999980190954
+    ],
+    "panCenter2D": [
+      2.659105574611795,
+      -0.19805700089319547,
+      5.501827899659354e-7
+    ],
+    "showSolarPanelVisibilityResultsPanel": true,
+    "visibilityResultsPanelX": -41,
+    "visibilityResultsPanelY": -4
+  },
+  "notes": []
+}

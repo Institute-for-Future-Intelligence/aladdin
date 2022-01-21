@@ -213,6 +213,7 @@ export const i18n_zh_tw = {
         SolarRadiationToBox: '一個長方體受到的太陽能輻射分析',
         SunBeamAndHeliodon: '太陽光束和日影儀',
         SolarFarm: '太陽能農場',
+        VegetativeBuffer: '太陽能農場绿化带',
         SolarFarmInRealWorld: '模擬一個真實世界裡的太陽能農場',
         SolarTrackers: '自動追日器',
         SolarTrackersInRealWorld: '模擬一個真實世界裡的追日光伏板陣列',

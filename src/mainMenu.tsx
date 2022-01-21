@@ -12,6 +12,7 @@ import solar_farm_03 from './examples/solar_farm_03.json';
 import solar_trackers from './examples/solar_trackers.json';
 import simple_house_01 from './examples/simple_house_01.json';
 import hotel_01 from './examples/hotel_01.json';
+import vegetative_buffer_01 from './examples/vegetative_buffer_01.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -145,6 +146,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'hotel_01':
         input = hotel_01;
+        break;
+      case 'vegetative_buffer_01':
+        input = vegetative_buffer_01;
         break;
       case 'solar_farm_01':
         input = solar_farm_01;
@@ -908,6 +912,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="solar_farm_01" onClick={loadFile}>
             {i18n.t('menu.examples.SolarFarm', lang)}
+          </Menu.Item>
+          <Menu.Item key="vegetative_buffer_01" onClick={loadFile}>
+            {i18n.t('menu.examples.VegetativeBuffer', lang)}
           </Menu.Item>
           <Menu.Item key="solar_farm_02" onClick={loadFile}>
             {i18n.t('menu.examples.SolarFarmInRealWorld', lang)}

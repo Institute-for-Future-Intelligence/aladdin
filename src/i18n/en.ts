@@ -214,6 +214,7 @@ export const i18n_en = {
         SolarRadiationToBox: 'Solar Radiation to a Box',
         SunBeamAndHeliodon: 'Sun Beam and Heliodon',
         SolarFarm: 'Solar Farm',
+        VegetativeBuffer: 'Vegetative Buffer',
         SolarFarmInRealWorld: 'Solar Farm in the Real World',
         SolarTrackers: 'Solar Trackers',
         SolarTrackersInRealWorld: 'Solar Trackers in the Real World',

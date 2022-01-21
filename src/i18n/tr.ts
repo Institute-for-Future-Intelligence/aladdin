@@ -215,6 +215,7 @@ export const i18n_tr = {
         SolarRadiationToBox: 'Bir Kutuya Güneþ Radyasyonu',
         SunBeamAndHeliodon: 'Güneþ Iþýný ve Heliodon',
         SolarFarm: 'Güneþ Tarlasý',
+        VegetativeBuffer: 'Vegetative Buffer',
         SolarFarmInRealWorld: 'Gerçek Dünyada Güneþ Tarlasý',
         SolarTrackers: 'Güneþ Takipçileri',
         SolarTrackersInRealWorld: 'Gerçek Dünyada Güneþ Takpçileri',
