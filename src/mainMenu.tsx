@@ -819,7 +819,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanels.PanelDiscretization', lang) + ':'}</Space>
                 <Select
                   style={{ width: '165px' }}
-                  value={discretization ?? Discretization.EXACT}
+                  value={discretization ?? Discretization.APPROXIMATE}
                   onChange={(value) => {
                     setCommonStore((state) => {
                       state.world.discretization = value;
@@ -834,7 +834,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   </Option>
                 </Select>
               </Menu.Item>
-              {discretization === Discretization.APPROXIMATE && (
+              {(!discretization || discretization === Discretization.APPROXIMATE) && (
                 <Menu.Item key={'solar-panel-simulation-grid-cell-size'}>
                   <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanels.EnergyGridCellSize', lang) + ':'}</Space>
                   <InputNumber

@@ -8,6 +8,12 @@ export const set = (state: CommonStoreState) => state.set;
 
 export const user = (state: CommonStoreState) => state.user;
 
+export const getHeatmap = (state: CommonStoreState) => state.getHeatmap;
+
+export const setHeatmap = (state: CommonStoreState) => state.setHeatmap;
+
+export const clearHeatmaps = (state: CommonStoreState) => state.clearHeatmaps;
+
 export const changed = (state: CommonStoreState) => state.changed;
 
 export const setChanged = (state: CommonStoreState) => state.setChanged;

@@ -15,6 +15,7 @@ export class DefaultViewState implements ViewState {
   cameraZoom: number;
 
   axes: boolean;
+  showHeatmap: boolean;
   shadowEnabled: boolean;
   theme: string;
   heliodon: boolean;
@@ -71,6 +72,7 @@ export class DefaultViewState implements ViewState {
     this.cameraZoom = 20;
 
     this.axes = true;
+    this.showHeatmap = false;
     this.shadowEnabled = true;
     this.theme = 'Default';
     this.heliodon = false;
@@ -127,6 +129,7 @@ export class DefaultViewState implements ViewState {
     viewState.panCenter2D = [0, 0, 0];
 
     viewState.axes = true;
+    viewState.showHeatmap = false;
     viewState.shadowEnabled = true;
     viewState.theme = 'Default';
     viewState.heliodon = false;

@@ -86,6 +86,7 @@ const AnalysisManager = () => {
       }
       setCommonStore((state) => {
         state.viewState.showDailyPvYieldPanel = true;
+        state.viewState.showHeatmap = true;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

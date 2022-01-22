@@ -14,7 +14,7 @@ import {
   UNIT_VECTOR_POS_Z_ARRAY,
   ZERO_TOLERANCE,
 } from './constants';
-import { Euler, Object3D, Scene, Vector2, Vector3 } from 'three';
+import { CanvasTexture, Euler, Object3D, Scene, Vector2, Vector3 } from 'three';
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import { MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType, WindowState } from './types';
@@ -54,6 +54,33 @@ export class Util {
       x: from1.x + lambda * dx,
       y: from1.y + lambda * dy,
     } as Point2;
+  }
+
+  static fetchSolarPanelHeatmapTexture(sp: SolarPanelModel, data: number[][] | undefined): CanvasTexture | null {
+    if (!data || !sp) return null;
+    const canvas = document.createElement('canvas') as HTMLCanvasElement;
+    const w = data.length;
+    const h = data[0].length;
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.clearRect(0, 0, w, h);
+      const imageData = ctx.getImageData(0, 0, w, h);
+      const pixels = imageData.data;
+      for (let i = 0; i < w; i++) {
+        for (let j = 0; j < h; j++) {
+          const r = Math.min(255, Math.floor(data[i][j] * 10));
+          const off = ((h - 1 - j) * w + i) * 4;
+          pixels[off] = r;
+          pixels[off + 1] = r;
+          pixels[off + 2] = 255 - r;
+          pixels[off + 3] = 255;
+        }
+      }
+      ctx.putImageData(imageData, 0, 0);
+    }
+    return new CanvasTexture(canvas);
   }
 
   static doSolarPanelsOverlap(sp1: SolarPanelModel, sp2: SolarPanelModel, parent: ElementModel): boolean {
@@ -538,6 +565,26 @@ export class Util {
 
   static toDegrees(radians: number): number {
     return radians * (180 / Math.PI);
+  }
+
+  // returns the maximum of a 1D array
+  static getArrayMax(array: number[]): number {
+    return array.reduce((a, b) => Math.max(a, b));
+  }
+
+  // returns the minimum of a 1D array
+  static getArrayMin(array: number[]): number {
+    return array.reduce((a, b) => Math.min(a, b));
+  }
+
+  // returns the maximum of a 2D array
+  static getArrayMax2D(array2d: number[][]) {
+    return Util.getArrayMax(array2d.map(Util.getArrayMax));
+  }
+
+  // returns the minimum of a 2D array
+  static getArrayMin2D(array2d: number[][]) {
+    return Util.getArrayMin(array2d.map(Util.getArrayMin));
   }
 
   static sphericalToCartesianZ(sphereCoords: Vector3): Vector3 {

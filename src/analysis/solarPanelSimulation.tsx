@@ -42,6 +42,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const dailyIndividualOutputs = useStore(Selector.dailyPvIndividualOutputs);
   const yearlyIndividualOutputs = useStore(Selector.yearlyPvIndividualOutputs);
   const setSolarPanelLabels = useStore(Selector.setSolarPanelLabels);
+  const setHeatmap = useStore(Selector.setHeatmap);
 
   const [currentTemperature, setCurrentTemperature] = useState<number>(20);
   const { scene } = useThree();
@@ -226,13 +227,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       lx = panel.lx;
       ly = panel.ly * Math.cos(panel.tiltAngle);
       lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
-      if (panel.orientation === Orientation.portrait) {
-        nx = Math.max(2, Math.round(panel.lx / cellSize));
-        ny = Math.max(2, Math.round(panel.ly / cellSize));
-      } else {
-        nx = Math.max(2, Math.round(panel.ly / cellSize));
-        ny = Math.max(2, Math.round(panel.lx / cellSize));
-      }
+      nx = Math.max(2, Math.round(panel.lx / cellSize));
+      ny = Math.max(2, Math.round(panel.ly / cellSize));
       // nx and ny must be even (for circuit simulation)
       if (nx % 2 !== 0) nx += 1;
       if (ny % 2 !== 0) ny += 1;
@@ -244,7 +240,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const y0 = center.y - ly / 2;
     const z0 = panel.poleHeight + center.z - lz / 2;
     const v = new Vector3();
-    const cellOutputs = Array.from(Array(nx), () => new Array(ny));
+    const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
+    const cellOutputTotals = Array(nx)
+      .fill(0)
+      .map(() => Array(ny).fill(0));
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         const currentTime = new Date(year, month, date, i, j * interval);
@@ -291,11 +290,13 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           for (let kx = 0; kx < nx; kx++) {
             for (let ky = 0; ky < ny; ky++) {
               cellOutputs[kx][ky] = indirectRadiation;
+              cellOutputTotals[kx][ky] += indirectRadiation;
               if (dot > 0) {
                 v.set(x0 + kx * dx, y0 + ky * dy, z0 + ky * dz);
                 if (!inShadow(panel.id, v, sunDirection)) {
                   // direct radiation
                   cellOutputs[kx][ky] += dot * peakRadiation;
+                  cellOutputTotals[kx][ky] += dot * peakRadiation;
                 }
               }
             }
@@ -370,6 +371,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         }
       }
     }
+    // send heat map data to common store for visualization
+    setHeatmap(panel.id, cellOutputTotals);
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = (count * interval) / 60;
     const clearness = weather.sunshineHours[month] / (30 * daylight);
@@ -486,7 +489,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const y0 = center.y - ly / 2;
     const z0 = panel.poleHeight + center.z - lz / 2;
     const v = new Vector3();
-    const cellOutputs = Array.from(Array(nx), () => new Array(ny));
+    const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
     for (let month = 0; month < 12; month++) {
       const midMonth = new Date(year, month, date);
       const dayOfYear = Util.dayOfYear(midMonth);

@@ -4,7 +4,17 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Cone, Cylinder, Line, Plane, Ring, Sphere } from '@react-three/drei';
-import { DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
+import {
+  CanvasTexture,
+  DoubleSide,
+  Euler,
+  Mesh,
+  Raycaster,
+  RepeatWrapping,
+  TextureLoader,
+  Vector2,
+  Vector3,
+} from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -75,6 +85,8 @@ const SolarPanel = ({
   const language = useStore(Selector.language);
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
+  const showHeatmap = useStore(Selector.viewState.showHeatmap);
+  const getHeatmap = useStore(Selector.getHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
@@ -94,6 +106,7 @@ const SolarPanel = ({
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [nx, setNx] = useState(1);
   const [ny, setNy] = useState(1);
+  const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
   const [faceUp, setFaceUp] = useState<boolean>();
   const [updateFlag, setUpdateFlag] = useState(false);
   const baseRef = useRef<Mesh>();
@@ -163,6 +176,16 @@ const SolarPanel = ({
   const positionLR = new Vector3(hx, -hy, hz);
   const positionUR = new Vector3(hx, hy, hz);
   const solarPanel = getElementById(id) as SolarPanelModel;
+
+  useEffect(() => {
+    if (solarPanel && showHeatmap) {
+      const heatmap = getHeatmap(solarPanel.id);
+      if (heatmap) {
+        setHeatmapTexture(Util.fetchSolarPanelHeatmapTexture(solarPanel, heatmap));
+      }
+    }
+    setUpdateFlag(!updateFlag);
+  }, [showHeatmap]);
 
   useEffect(() => {
     if (pvModel) {
@@ -389,7 +412,7 @@ const SolarPanel = ({
         >
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial attachArray="material" map={texture} />
+          <meshStandardMaterial attachArray="material" map={showHeatmap && heatmapTexture ? heatmapTexture : texture} />
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />

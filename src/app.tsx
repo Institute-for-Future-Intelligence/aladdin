@@ -16,6 +16,7 @@ import LocalFileManager from './localFileManager';
 import AnalysisManager from './analysisManager';
 
 const App = () => {
+  const setCommonStore = useStore(Selector.set);
   const locale = useStore(Selector.locale);
   const world = useStore((state: CommonStoreState) => state.world);
   const elements = useStore((state: CommonStoreState) => state.elements);
@@ -40,6 +41,12 @@ const App = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [world, viewState, elements, notes]);
+
+  useEffect(() => {
+    setCommonStore((state) => {
+      state.viewState.showHeatmap = false;
+    });
+  }, [world, elements]);
 
   const params = new URLSearchParams(window.location.search);
   const viewOnly = params.get('viewonly') === 'true';

@@ -77,6 +77,10 @@ export interface CommonStoreState {
   user: User;
   language: string;
   cloudFile: string | undefined;
+  heatmaps: Map<string, number[][]>;
+  setHeatmap: (id: string, data: number[][]) => void;
+  getHeatmap: (id: string) => number[][] | undefined;
+  clearHeatmaps: () => void;
 
   changed: boolean;
   setChanged: (b: boolean) => void;
@@ -441,6 +445,22 @@ export const useStore = create<CommonStoreState>(
           user: {} as User,
           language: 'en',
           cloudFile: undefined,
+          heatmaps: new Map<string, number[][]>(),
+          setHeatmap(id, data) {
+            immerSet((state: CommonStoreState) => {
+              state.heatmaps.set(id, data);
+            });
+          },
+          getHeatmap(id) {
+            // not sure why this cannot be handled with immer
+            return get().heatmaps.get(id);
+          },
+          clearHeatmaps() {
+            immerSet((state: CommonStoreState) => {
+              state.heatmaps.clear();
+            });
+          },
+
           changed: false,
           setChanged(b) {
             immerSet((state: CommonStoreState) => {
