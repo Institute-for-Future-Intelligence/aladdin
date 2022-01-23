@@ -185,6 +185,12 @@ export const i18n_zh_cn = {
         SunAndTime: '太阳和时间',
       },
       analysisSubMenu: '分析',
+      physicsSubMenu: '物理',
+      physics: {
+        DailySolarRadiationHeatmap: '当日太阳辐射总量分布热图',
+        SolarRadiationHeatmapOptions: '太阳辐射热图选项',
+        SolarRadiationHeatmapGridCellSize: '太阳辐射热图网格的尺寸',
+      },
       sensorsSubMenu: '传感器',
       sensors: {
         CollectDailyData: '收集当天数据',

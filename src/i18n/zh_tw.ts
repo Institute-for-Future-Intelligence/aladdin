@@ -185,6 +185,12 @@ export const i18n_zh_tw = {
         SunAndTime: '太陽和時間',
       },
       analysisSubMenu: '分析',
+      physicsSubMenu: '物理',
+      physics: {
+        DailySolarRadiationHeatmap: '當日太陽輻射總量分佈熱圖',
+        SolarRadiationHeatmapOptions: '太陽輻射熱圖選項',
+        SolarRadiationHeatmapGridCellSize: '太陽輻射熱圖網格的尺寸',
+      },
       sensorsSubMenu: '傳感器',
       sensors: {
         CollectDailyData: '收集當天數據',

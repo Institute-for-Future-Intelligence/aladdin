@@ -6,6 +6,7 @@ import {
   FINE_GRID_SCALE,
   NORMAL_GRID_SCALE,
   ORIGIN_VECTOR2,
+  SOLAR_HEATMAP_COLORS,
   UNIT_VECTOR_NEG_X,
   UNIT_VECTOR_NEG_Y,
   UNIT_VECTOR_POS_X,
@@ -14,7 +15,7 @@ import {
   UNIT_VECTOR_POS_Z_ARRAY,
   ZERO_TOLERANCE,
 } from './constants';
-import { CanvasTexture, Euler, Object3D, Scene, Vector2, Vector3 } from 'three';
+import { CanvasTexture, Color, Euler, Object3D, Scene, Vector2, Vector3 } from 'three';
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import { MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType, WindowState } from './types';
@@ -56,6 +57,14 @@ export class Util {
     } as Point2;
   }
 
+  static calculateSolarRadiationColor(value: number, maxValue: number): Color {
+    const valuePerColorRange = maxValue / (SOLAR_HEATMAP_COLORS.length - 1);
+    let colorIndex = Math.max(0, Math.floor(value / valuePerColorRange));
+    if (colorIndex > SOLAR_HEATMAP_COLORS.length - 2) colorIndex = SOLAR_HEATMAP_COLORS.length - 2;
+    const scalar = Math.min(1, (value - valuePerColorRange * colorIndex) / valuePerColorRange);
+    return new Color(SOLAR_HEATMAP_COLORS[colorIndex]).lerp(SOLAR_HEATMAP_COLORS[colorIndex + 1], scalar);
+  }
+
   static fetchSolarPanelHeatmapTexture(sp: SolarPanelModel, data: number[][] | undefined): CanvasTexture | null {
     if (!data || !sp) return null;
     const canvas = document.createElement('canvas') as HTMLCanvasElement;
@@ -70,11 +79,11 @@ export class Util {
       const pixels = imageData.data;
       for (let i = 0; i < w; i++) {
         for (let j = 0; j < h; j++) {
-          const r = Math.min(255, Math.floor(data[i][j] * 10));
+          const c = Util.calculateSolarRadiationColor(data[i][j], 15);
           const off = ((h - 1 - j) * w + i) * 4;
-          pixels[off] = r;
-          pixels[off + 1] = r;
-          pixels[off + 2] = 255 - r;
+          pixels[off] = Math.floor(c.r * 255);
+          pixels[off + 1] = Math.floor(c.g * 255);
+          pixels[off + 2] = Math.floor(c.b * 255);
           pixels[off + 3] = 255;
         }
       }

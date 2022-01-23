@@ -186,6 +186,12 @@ export const i18n_en = {
         SunAndTime: 'Sun & Time',
       },
       analysisSubMenu: 'Analysis',
+      physicsSubMenu: 'Physics',
+      physics: {
+        DailySolarRadiationHeatmap: 'Daily Solar Radiation Heatmap',
+        SolarRadiationHeatmapOptions: 'Solar Radiation Heatmap Options',
+        SolarRadiationHeatmapGridCellSize: 'Solar Radiation Heatmap Grid Cell Size',
+      },
       sensorsSubMenu: 'Sensors',
       sensors: {
         CollectDailyData: 'Collect Daily Data',

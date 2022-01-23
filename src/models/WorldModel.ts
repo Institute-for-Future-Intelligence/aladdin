@@ -14,6 +14,7 @@ export interface WorldModel {
   ground: GroundModel;
 
   timesPerHour: number;
+  solarRadiationHeatmapGridCellSize: number;
   solarPanelGridCellSize: number;
   discretization: Discretization;
   solarPanelVisibilityGridCellSize: number;

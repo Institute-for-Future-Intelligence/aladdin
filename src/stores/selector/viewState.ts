@@ -6,7 +6,7 @@ import { CommonStoreState } from '../common';
 
 export const shadowEnabled = (state: CommonStoreState) => state.viewState.shadowEnabled;
 
-export const showHeatmap = (state: CommonStoreState) => state.viewState.showHeatmap;
+export const showSolarRadiationHeatmap = (state: CommonStoreState) => state.viewState.showSolarRadiationHeatmap;
 
 export const axes = (state: CommonStoreState) => state.viewState.axes;
 

@@ -187,6 +187,12 @@ export const i18n_tr = {
         SunAndTime: 'Sun & Time',
       },
       analysisSubMenu: 'Analiz',
+      physicsSubMenu: 'Physics',
+      physics: {
+        DailySolarRadiationHeatmap: 'Daily Solar Radiation Heatmap',
+        SolarRadiationHeatmapOptions: 'Solar Radiation Heatmap Options',
+        SolarRadiationHeatmapGridCellSize: 'Solar Radiation Heatmap Grid Cell Size',
+      },
       sensorsSubMenu: 'Sensörler',
       sensors: {
         CollectDailyData: 'Günlük Veri Topla',

@@ -13,7 +13,7 @@ export interface ViewState {
   cameraZoom: number; // for orthographic camera in 2D mode
 
   axes: boolean;
-  showHeatmap: boolean;
+  showSolarRadiationHeatmap: boolean;
   autoRotate: boolean;
   shadowEnabled: boolean;
   theme: string;

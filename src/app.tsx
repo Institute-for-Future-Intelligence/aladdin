@@ -44,7 +44,7 @@ const App = () => {
 
   useEffect(() => {
     setCommonStore((state) => {
-      state.viewState.showHeatmap = false;
+      state.viewState.showSolarRadiationHeatmap = false;
     });
   }, [world, elements]);
 

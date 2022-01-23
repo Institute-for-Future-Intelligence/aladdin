@@ -26,6 +26,7 @@ export class DefaultWorldModel implements WorldModel {
   solarPanelGridCellSize: number;
   discretization: Discretization;
   solarPanelVisibilityGridCellSize: number;
+  solarRadiationHeatmapGridCellSize: number;
 
   constructor() {
     this.latitude = 42.2844063;
@@ -44,6 +45,7 @@ export class DefaultWorldModel implements WorldModel {
     this.solarPanelGridCellSize = 0.5;
     this.discretization = Discretization.APPROXIMATE;
     this.solarPanelVisibilityGridCellSize = 0.2;
+    this.solarRadiationHeatmapGridCellSize = 0.5;
   }
 
   getElements() {

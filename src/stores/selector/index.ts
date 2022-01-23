@@ -414,6 +414,8 @@ export const sunlightDirection = (state: CommonStoreState) => state.sunlightDire
 
 export const setSunlightDirection = (state: CommonStoreState) => state.setSunlightDirection;
 
+export const dailySolarRadiationSimulationFlag = (state: CommonStoreState) => state.dailySolarRadiationSimulationFlag;
+
 export const solarPanelVisibilityFlag = (state: CommonStoreState) => state.solarPanelVisibilityFlag;
 
 export const solarPanelVisibilityResults = (state: CommonStoreState) => state.solarPanelVisibilityResults;

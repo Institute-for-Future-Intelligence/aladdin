@@ -14,6 +14,9 @@ export const address = (state: CommonStoreState) => state.world.address;
 
 export const discretization = (state: CommonStoreState) => state.world.discretization;
 
+export const solarRadiationHeatmapGridCellSize = (state: CommonStoreState) =>
+  state.world.solarRadiationHeatmapGridCellSize;
+
 export const solarPanelGridCellSize = (state: CommonStoreState) => state.world.solarPanelGridCellSize;
 
 export const solarPanelVisibilityGridCellSize = (state: CommonStoreState) =>

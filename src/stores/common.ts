@@ -356,6 +356,7 @@ export interface CommonStoreState {
   sensorLabels: string[];
   setSensorLabels: (labels: string[]) => void;
 
+  dailySolarRadiationSimulationFlag: boolean;
   solarPanelVisibilityFlag: boolean;
   solarPanelVisibilityResults: Map<Vantage, Map<string, number>>;
   dailyPvYield: DatumEntry[];
@@ -575,6 +576,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          dailySolarRadiationSimulationFlag: false,
           solarPanelVisibilityFlag: false,
           solarPanelVisibilityResults: new Map<Vantage, Map<string, number>>(),
           yearlyPvYield: [],

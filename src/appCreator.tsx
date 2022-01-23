@@ -51,6 +51,7 @@ import { UndoableCameraChange } from './undo/UndoableCameraChange';
 import SolarPanelVisibility from './analysis/solarPanelVisibility';
 import ShareLink from './shareLinks';
 import VisibilityResultsPanel from './panels/visibilityResultsPanel';
+import SolarRadiationSimulation from './analysis/solarRadiationSimulation';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -334,6 +335,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             <ElementsRenderer />
             <Ground />
             <SceneRadiusCalculator />
+            <SolarRadiationSimulation city={city} />
             <SensorSimulation city={city} />
             <SolarPanelSimulation city={city} />
             <SolarPanelVisibility />

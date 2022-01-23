@@ -92,6 +92,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const discretization = useStore(Selector.world.discretization);
   const solarPanelGridCellSize = useStore(Selector.world.solarPanelGridCellSize);
   const solarPanelVisibilityGridCellSize = useStore(Selector.world.solarPanelVisibilityGridCellSize);
+  const solarRadiationHeatmapGridCellSize = useStore(Selector.world.solarRadiationHeatmapGridCellSize);
   const orthographic = useStore(Selector.viewState.orthographic);
   const autoRotate = useStore(Selector.viewState.autoRotate);
   const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
@@ -719,6 +720,51 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
 
       {/* analysis menu */}
       <SubMenu key={'analysis'} title={i18n.t('menu.analysisSubMenu', lang)}>
+        {/*physics*/}
+        <SubMenu key={'physics'} title={i18n.t('menu.physicsSubMenu', lang)}>
+          <Menu.Item
+            key={'daily-solar-radiation-heatmap'}
+            onClick={() => {
+              setCommonStore((state) => {
+                state.simulationInProgress = true;
+                // set below to false first to ensure update (it will be set to true after the simulation)
+                state.viewState.showSolarRadiationHeatmap = false;
+                state.dailySolarRadiationSimulationFlag = !state.dailySolarRadiationSimulationFlag;
+                console.log('simulation started', state.simulationInProgress);
+              });
+            }}
+          >
+            {i18n.t('menu.physics.DailySolarRadiationHeatmap', lang)}
+          </Menu.Item>
+          <SubMenu
+            key={'solar-radiation-heatmap-options'}
+            title={i18n.t('menu.physics.SolarRadiationHeatmapOptions', lang)}
+          >
+            <Menu>
+              <Menu.Item key={'solar-radiation-heatmap-grid-cell-size'}>
+                <Space style={{ paddingRight: '10px' }}>
+                  {i18n.t('menu.physics.SolarRadiationHeatmapGridCellSize', lang) + ':'}
+                </Space>
+                <InputNumber
+                  min={0.1}
+                  max={5}
+                  step={0.1}
+                  style={{ width: 60 }}
+                  precision={1}
+                  value={solarRadiationHeatmapGridCellSize ?? 0.5}
+                  formatter={(a) => Number(a).toFixed(1)}
+                  onChange={(value) => {
+                    setCommonStore((state) => {
+                      state.world.solarRadiationHeatmapGridCellSize = value;
+                    });
+                  }}
+                />
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
+              </Menu.Item>
+            </Menu>
+          </SubMenu>
+        </SubMenu>
+
         {/*sensors*/}
         <SubMenu key={'sensors'} title={i18n.t('menu.sensorsSubMenu', lang)}>
           <Menu.Item

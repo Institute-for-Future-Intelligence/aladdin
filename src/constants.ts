@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import { Vector2, Vector3 } from 'three';
+import { Color, Vector2, Vector3 } from 'three';
 
 export const VERSION = '0.0.3';
 
@@ -13,6 +13,12 @@ export const HOME_URL: string = isProd
   : 'http://localhost:3000/aladdin';
 
 export const PRESET_COLORS = ['#8884d8', '#f97356', '#1bc32c', '#c6502d', '#82ca9d', '#3eaec0', '#627682', '#445111'];
+
+export const BLUE = new Color(0, 0, 1);
+export const GREEN = new Color(0, 1, 0);
+export const YELLOW = new Color(1, 1, 0);
+export const RED = new Color(1, 0, 0);
+export const SOLAR_HEATMAP_COLORS = [BLUE, GREEN, YELLOW, RED];
 
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 

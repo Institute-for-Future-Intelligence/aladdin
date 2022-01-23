@@ -85,7 +85,7 @@ const SolarPanel = ({
   const language = useStore(Selector.language);
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
-  const showHeatmap = useStore(Selector.viewState.showHeatmap);
+  const showSolarRadiationHeatmap = useStore(Selector.viewState.showSolarRadiationHeatmap);
   const getHeatmap = useStore(Selector.getHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const getElementById = useStore(Selector.getElementById);
@@ -178,14 +178,14 @@ const SolarPanel = ({
   const solarPanel = getElementById(id) as SolarPanelModel;
 
   useEffect(() => {
-    if (solarPanel && showHeatmap) {
+    if (solarPanel && showSolarRadiationHeatmap) {
       const heatmap = getHeatmap(solarPanel.id);
       if (heatmap) {
         setHeatmapTexture(Util.fetchSolarPanelHeatmapTexture(solarPanel, heatmap));
       }
     }
     setUpdateFlag(!updateFlag);
-  }, [showHeatmap]);
+  }, [showSolarRadiationHeatmap]);
 
   useEffect(() => {
     if (pvModel) {
@@ -412,7 +412,10 @@ const SolarPanel = ({
         >
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial attachArray="material" map={showHeatmap && heatmapTexture ? heatmapTexture : texture} />
+          <meshStandardMaterial
+            attachArray="material"
+            map={showSolarRadiationHeatmap && heatmapTexture ? heatmapTexture : texture}
+          />
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
