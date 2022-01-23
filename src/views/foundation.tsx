@@ -13,7 +13,7 @@ import FoundationTexture07 from '../resources/foundation_07.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Plane, Sphere } from '@react-three/drei';
-import { Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
+import { CanvasTexture, Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
 import { FoundationModel } from '../models/FoundationModel';
@@ -104,12 +104,15 @@ const Foundation = ({
   const isAddingElement = useStore(Selector.isAddingElement);
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
   const hoveredHandle = useStore(Selector.hoveredHandle);
+  const showSolarRadiationHeatmap = useStore(Selector.viewState.showSolarRadiationHeatmap);
+  const getHeatmap = useStore(Selector.getHeatmap);
 
   const {
     camera,
     gl: { domElement },
   } = useThree();
   const [hovered, setHovered] = useState(false);
+  const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const [addedWallID, setAddedWallID] = useState<string | null>(null);
 
@@ -223,6 +226,16 @@ const Foundation = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deletedWallID]);
+
+  useEffect(() => {
+    if (foundationModel && showSolarRadiationHeatmap) {
+      const heatmap = getHeatmap(foundationModel.id);
+      if (heatmap) {
+        setHeatmapTexture(Util.fetchHeatmapTexture(heatmap));
+      }
+    }
+    //setUpdateFlag(!updateFlag);
+  }, [showSolarRadiationHeatmap]);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
@@ -1727,8 +1740,14 @@ const Foundation = ({
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
         <meshStandardMaterial
           attachArray="material"
-          color={textureType === FoundationTexture.NoTexture ? color : 'white'}
-          map={texture}
+          color={
+            showSolarRadiationHeatmap && heatmapTexture
+              ? 'white'
+              : textureType === FoundationTexture.NoTexture
+              ? color
+              : 'white'
+          }
+          map={showSolarRadiationHeatmap && heatmapTexture ? heatmapTexture : texture}
           transparent={groundImage}
           opacity={opacity}
         />

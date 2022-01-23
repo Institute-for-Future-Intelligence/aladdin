@@ -65,8 +65,8 @@ export class Util {
     return new Color(SOLAR_HEATMAP_COLORS[colorIndex]).lerp(SOLAR_HEATMAP_COLORS[colorIndex + 1], scalar);
   }
 
-  static fetchSolarPanelHeatmapTexture(sp: SolarPanelModel, data: number[][] | undefined): CanvasTexture | null {
-    if (!data || !sp) return null;
+  static fetchHeatmapTexture(data: number[][] | undefined): CanvasTexture | null {
+    if (!data) return null;
     const canvas = document.createElement('canvas') as HTMLCanvasElement;
     const w = data.length;
     const h = data[0].length;

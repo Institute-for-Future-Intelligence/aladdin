@@ -13,6 +13,7 @@ import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
 import { UNIT_VECTOR_POS_X, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z } from '../constants';
 import { SolarPanelModel } from '../models/SolarPanelModel';
+import { FoundationModel } from '../models/FoundationModel';
 
 export interface SolarRadiationSimulationProps {
   city: string | null;
@@ -34,7 +35,7 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
   const ray = useMemo(() => new Raycaster(), []);
   const now = new Date(world.date);
   const loaded = useRef(false);
-  const cellSize = world.solarPanelGridCellSize ?? 0.25;
+  const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
 
@@ -55,11 +56,11 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dailySolarRadiationSimulationFlag]);
 
-  const inShadow = (panelId: string, position: Vector3, sunDirection: Vector3) => {
+  const inShadow = (elementId: string, position: Vector3, sunDirection: Vector3) => {
     if (objectsRef.current.length > 1) {
       intersectionsRef.current.length = 0;
       ray.set(position, sunDirection);
-      const objects = objectsRef.current.filter((obj) => obj.uuid !== panelId);
+      const objects = objectsRef.current.filter((obj) => obj.uuid !== elementId);
       ray.intersectObjects(objects, false, intersectionsRef.current);
       return intersectionsRef.current.length > 0;
     }
@@ -91,13 +92,79 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
   const generateHeatmaps = () => {
     fetchObjects();
     for (const e of elements) {
-      if (e.type === ObjectType.SolarPanel) {
-        generateHeatmap(e as SolarPanelModel);
+      switch (e.type) {
+        case ObjectType.Foundation:
+          generateHeatmapForFoundation(e as FoundationModel);
+          break;
+        case ObjectType.SolarPanel:
+          generateHeatmapForSolarPanel(e as SolarPanelModel);
+          break;
       }
     }
   };
 
-  const generateHeatmap = (panel: SolarPanelModel) => {
+  const generateHeatmapForFoundation = (foundation: FoundationModel) => {
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const date = now.getDate();
+    const dayOfYear = Util.dayOfYear(now);
+    const lx = foundation.lx;
+    const ly = foundation.ly;
+    const lz = foundation.lz;
+    const nx = Math.max(2, Math.round(lx / cellSize));
+    const ny = Math.max(2, Math.round(ly / cellSize));
+    const dx = lx / nx;
+    const dy = ly / ny;
+    const x0 = foundation.cx - lx / 2;
+    const y0 = foundation.cy - ly / 2;
+    const v = new Vector3();
+    const cellOutputTotals = Array(nx)
+      .fill(0)
+      .map(() => Array(ny).fill(0));
+    let count = 0;
+    for (let i = 0; i < 24; i++) {
+      for (let j = 0; j < world.timesPerHour; j++) {
+        const currentTime = new Date(year, month, date, i, j * interval);
+        const sunDirection = getSunDirection(currentTime, world.latitude);
+        if (sunDirection.z > 0) {
+          // when the sun is out
+          count++;
+          const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+          const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+            world.ground,
+            month,
+            UNIT_VECTOR_POS_Z,
+            peakRadiation,
+          );
+          const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
+          for (let kx = 0; kx < nx; kx++) {
+            for (let ky = 0; ky < ny; ky++) {
+              cellOutputTotals[kx][ky] += indirectRadiation;
+              if (dot > 0) {
+                v.set(x0 + kx * dx, y0 + ky * dy, lz);
+                if (!inShadow(foundation.id, v, sunDirection)) {
+                  // direct radiation
+                  cellOutputTotals[kx][ky] += dot * peakRadiation;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+    const daylight = (count * interval) / 60;
+    const clearness = weather.sunshineHours[month] / (30 * daylight);
+    for (let i = 0; i < cellOutputTotals.length; i++) {
+      for (let j = 0; j < cellOutputTotals[i].length; j++) {
+        cellOutputTotals[i][j] *= clearness;
+      }
+    }
+    // send heat map data to common store for visualization
+    setHeatmap(foundation.id, cellOutputTotals);
+  };
+
+  const generateHeatmapForSolarPanel = (panel: SolarPanelModel) => {
     const parent = getElementById(panel.parentId);
     if (!parent) throw new Error('parent of solar panel does not exist');
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
@@ -123,7 +190,6 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     const y0 = center.y - ly / 2;
     const z0 = panel.poleHeight + center.z - lz / 2;
     const v = new Vector3();
-    const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
     const cellOutputTotals = Array(nx)
       .fill(0)
       .map(() => Array(ny).fill(0));
@@ -173,13 +239,11 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           const dot = normal.dot(sunDirection);
           for (let kx = 0; kx < nx; kx++) {
             for (let ky = 0; ky < ny; ky++) {
-              cellOutputs[kx][ky] = indirectRadiation;
               cellOutputTotals[kx][ky] += indirectRadiation;
               if (dot > 0) {
                 v.set(x0 + kx * dx, y0 + ky * dy, z0 + ky * dz);
                 if (!inShadow(panel.id, v, sunDirection)) {
                   // direct radiation
-                  cellOutputs[kx][ky] += dot * peakRadiation;
                   cellOutputTotals[kx][ky] += dot * peakRadiation;
                 }
               }

@@ -181,7 +181,7 @@ const SolarPanel = ({
     if (solarPanel && showSolarRadiationHeatmap) {
       const heatmap = getHeatmap(solarPanel.id);
       if (heatmap) {
-        setHeatmapTexture(Util.fetchSolarPanelHeatmapTexture(solarPanel, heatmap));
+        setHeatmapTexture(Util.fetchHeatmapTexture(heatmap));
       }
     }
     setUpdateFlag(!updateFlag);
