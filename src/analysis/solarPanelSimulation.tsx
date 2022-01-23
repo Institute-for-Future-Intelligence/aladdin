@@ -4,7 +4,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { calculateDiffuseAndReflectedRadiation, calculatePeakRadiation, getSunDirection } from './sunTools';
-import { Euler, Intersection, Object3D, Quaternion, Raycaster, Vector3 } from 'three';
+import { Euler, Intersection, Object3D, Quaternion, Raycaster, Vector2, Vector3 } from 'three';
 import { useThree } from '@react-three/fiber';
 import { useStore } from '../stores/common';
 import * as Selector from 'src/stores/selector';
@@ -42,7 +42,6 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const dailyIndividualOutputs = useStore(Selector.dailyPvIndividualOutputs);
   const yearlyIndividualOutputs = useStore(Selector.yearlyPvIndividualOutputs);
   const setSolarPanelLabels = useStore(Selector.setSolarPanelLabels);
-  const setHeatmap = useStore(Selector.setHeatmap);
 
   const [currentTemperature, setCurrentTemperature] = useState<number>(20);
   const { scene } = useThree();
@@ -190,9 +189,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);
     const originalNormal = normal.clone();
+    const zRot = parent.rotation[2] + panel.relativeAzimuth;
     if (Math.abs(panel.tiltAngle) > 0.001 && panel.trackerType === TrackerType.NO_TRACKER) {
       // TODO: right now we assume a parent rotation is always around the z-axis
-      normal.applyEuler(new Euler(panel.tiltAngle, panel.relativeAzimuth + parent.rotation[2], 0, 'XYZ'));
+      normal.applyEuler(new Euler(panel.tiltAngle, 0, zRot, 'ZYX'));
     }
     const result = new Array(24).fill(0);
     const year = now.getFullYear();
@@ -239,11 +239,9 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const x0 = center.x - lx / 2;
     const y0 = center.y - ly / 2;
     const z0 = panel.poleHeight + center.z - lz / 2;
+    const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
-    const cellOutputTotals = Array(nx)
-      .fill(0)
-      .map(() => Array(ny).fill(0));
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         const currentTime = new Date(year, month, date, i, j * interval);
@@ -287,16 +285,17 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
           const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
           const dot = normal.dot(sunDirection);
+          const v2 = new Vector2();
           for (let kx = 0; kx < nx; kx++) {
             for (let ky = 0; ky < ny; ky++) {
               cellOutputs[kx][ky] = indirectRadiation;
-              cellOutputTotals[kx][ky] += indirectRadiation;
               if (dot > 0) {
-                v.set(x0 + kx * dx, y0 + ky * dy, z0 + ky * dz);
+                v2.set(x0 + kx * dx, y0 + ky * dy);
+                v2.rotateAround(center2d, zRot);
+                v.set(v2.x, v2.y, z0 + ky * dz);
                 if (!inShadow(panel.id, v, sunDirection)) {
                   // direct radiation
                   cellOutputs[kx][ky] += dot * peakRadiation;
-                  cellOutputTotals[kx][ky] += dot * peakRadiation;
                 }
               }
             }
@@ -371,8 +370,6 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         }
       }
     }
-    // send heat map data to common store for visualization
-    setHeatmap(panel.id, cellOutputTotals);
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = (count * interval) / 60;
     const clearness = weather.sunshineHours[month] / (30 * daylight);
@@ -440,7 +437,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const originalNormal = normal.clone();
     if (Math.abs(panel.tiltAngle) > 0.001 && panel.trackerType === TrackerType.NO_TRACKER) {
       // TODO: right now we assume a parent rotation is always around the z-axis
-      normal.applyEuler(new Euler(panel.tiltAngle, panel.relativeAzimuth + parent.rotation[2], 0, 'XYZ'));
+      normal.applyEuler(new Euler(panel.tiltAngle, 0, panel.relativeAzimuth + parent.rotation[2], 'ZYX'));
     }
     const year = now.getFullYear();
     const date = 15;

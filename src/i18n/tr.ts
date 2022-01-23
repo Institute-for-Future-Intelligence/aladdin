@@ -220,6 +220,8 @@ export const i18n_tr = {
         SunAngles: 'Yerdeki Bir Gözlemciye Göre Güneþ Açýlarý',
         SolarRadiationToBox: 'Bir Kutuya Güneþ Radyasyonu',
         SunBeamAndHeliodon: 'Güneþ Iþýný ve Heliodon',
+        EffectOfTiltAngle: 'Effect of Tilt Angle',
+        EffectOfAzimuth: 'Effect of Azimuth',
         SolarFarm: 'Güneþ Tarlasý',
         VegetativeBuffer: 'Vegetative Buffer',
         SolarFarmInRealWorld: 'Gerçek Dünyada Güneþ Tarlasý',

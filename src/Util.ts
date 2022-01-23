@@ -79,7 +79,7 @@ export class Util {
       const pixels = imageData.data;
       for (let i = 0; i < w; i++) {
         for (let j = 0; j < h; j++) {
-          const c = Util.calculateSolarRadiationColor(data[i][j], 15);
+          const c = Util.calculateSolarRadiationColor(data[i][j], 20);
           const off = ((h - 1 - j) * w + i) * 4;
           pixels[off] = Math.floor(c.r * 255);
           pixels[off + 1] = Math.floor(c.g * 255);

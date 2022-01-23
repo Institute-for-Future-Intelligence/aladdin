@@ -13,6 +13,8 @@ import solar_trackers from './examples/solar_trackers.json';
 import simple_house_01 from './examples/simple_house_01.json';
 import hotel_01 from './examples/hotel_01.json';
 import vegetative_buffer_01 from './examples/vegetative_buffer_01.json';
+import effect_tilt_angle from './examples/effect_tilt_angle.json';
+import effect_azimuth from './examples/effect_azimuth.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -150,6 +152,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'vegetative_buffer_01':
         input = vegetative_buffer_01;
+        break;
+      case 'effect_tilt_angle':
+        input = effect_tilt_angle;
+        break;
+      case 'effect_azimuth':
+        input = effect_azimuth;
         break;
       case 'solar_farm_01':
         input = solar_farm_01;
@@ -955,6 +963,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="sun_beam_at_center" onClick={loadFile}>
             {i18n.t('menu.examples.SunBeamAndHeliodon', lang)}
+          </Menu.Item>
+          <Menu.Item key="effect_tilt_angle" onClick={loadFile}>
+            {i18n.t('menu.examples.EffectOfTiltAngle', lang)}
+          </Menu.Item>
+          <Menu.Item key="effect_azimuth" onClick={loadFile}>
+            {i18n.t('menu.examples.EffectOfAzimuth', lang)}
           </Menu.Item>
           <Menu.Item key="solar_farm_01" onClick={loadFile}>
             {i18n.t('menu.examples.SolarFarm', lang)}

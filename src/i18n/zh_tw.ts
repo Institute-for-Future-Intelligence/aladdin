@@ -218,6 +218,8 @@ export const i18n_zh_tw = {
         SunAngles: '太陽相對於地面觀察者的角度',
         SolarRadiationToBox: '一個長方體受到的太陽能輻射分析',
         SunBeamAndHeliodon: '太陽光束和日影儀',
+        EffectOfTiltAngle: '光伏板傾斜角對發電量的影響',
+        EffectOfAzimuth: '光伏板方位角對發電量的影響',
         SolarFarm: '太陽能農場',
         VegetativeBuffer: '太陽能農場绿化带',
         SolarFarmInRealWorld: '模擬一個真實世界裡的太陽能農場',

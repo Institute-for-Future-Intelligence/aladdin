@@ -219,6 +219,8 @@ export const i18n_es = {
         SunAngles: 'Ángulos solares relativos a un observador en el suelo',
         SolarRadiationToBox: 'Radiación solar a una caja',
         SunBeamAndHeliodon: 'Rayo de sol y heliodon',
+        EffectOfTiltAngle: 'Effect of Tilt Angle',
+        EffectOfAzimuth: 'Effect of Azimuth',
         SolarFarm: 'Granja solar',
         VegetativeBuffer: 'Vegetative Buffer',
         SolarFarmInRealWorld: 'Granja solar en el mundo real',

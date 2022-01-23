@@ -4,7 +4,7 @@
 
 import React, { useEffect, useMemo, useRef } from 'react';
 import { calculateDiffuseAndReflectedRadiation, calculatePeakRadiation, getSunDirection } from './sunTools';
-import { Euler, Intersection, Object3D, Quaternion, Raycaster, Vector3 } from 'three';
+import { Euler, Intersection, Object3D, Quaternion, Raycaster, Vector2, Vector3 } from 'three';
 import { useThree } from '@react-three/fiber';
 import { useStore } from '../stores/common';
 import * as Selector from 'src/stores/selector';
@@ -117,6 +117,7 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     const dy = ly / ny;
     const x0 = foundation.cx - lx / 2;
     const y0 = foundation.cy - ly / 2;
+    const center2d = new Vector2(foundation.cx, foundation.cy);
     const v = new Vector3();
     const cellOutputTotals = Array(nx)
       .fill(0)
@@ -137,11 +138,14 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
             peakRadiation,
           );
           const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
+          const v2 = new Vector2();
           for (let kx = 0; kx < nx; kx++) {
             for (let ky = 0; ky < ny; ky++) {
               cellOutputTotals[kx][ky] += indirectRadiation;
               if (dot > 0) {
-                v.set(x0 + kx * dx, y0 + ky * dy, lz);
+                v2.set(x0 + kx * dx, y0 + ky * dy);
+                v2.rotateAround(center2d, foundation.rotation[2]);
+                v.set(v2.x, v2.y, lz);
                 if (!inShadow(foundation.id, v, sunDirection)) {
                   // direct radiation
                   cellOutputTotals[kx][ky] += dot * peakRadiation;
@@ -170,9 +174,11 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);
     const originalNormal = normal.clone();
+    const zRot = parent.rotation[2] + panel.relativeAzimuth;
     if (Math.abs(panel.tiltAngle) > 0.001 && panel.trackerType === TrackerType.NO_TRACKER) {
       // TODO: right now we assume a parent rotation is always around the z-axis
-      normal.applyEuler(new Euler(panel.tiltAngle, panel.relativeAzimuth + parent.rotation[2], 0, 'XYZ'));
+      //normal.applyAxisAngle(UNIT_VECTOR_POS_X, panel.tiltAngle).applyAxisAngle(UNIT_VECTOR_POS_Z, zRot);
+      normal.applyEuler(new Euler(panel.tiltAngle, 0, zRot, 'ZYX'));
     }
     const year = now.getFullYear();
     const month = now.getMonth();
@@ -189,6 +195,7 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     const x0 = center.x - lx / 2;
     const y0 = center.y - ly / 2;
     const z0 = panel.poleHeight + center.z - lz / 2;
+    const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputTotals = Array(nx)
       .fill(0)
@@ -237,11 +244,14 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
           const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
           const dot = normal.dot(sunDirection);
+          const v2 = new Vector2();
           for (let kx = 0; kx < nx; kx++) {
             for (let ky = 0; ky < ny; ky++) {
               cellOutputTotals[kx][ky] += indirectRadiation;
               if (dot > 0) {
-                v.set(x0 + kx * dx, y0 + ky * dy, z0 + ky * dz);
+                v2.set(x0 + kx * dx, y0 + ky * dy);
+                v2.rotateAround(center2d, zRot);
+                v.set(v2.x, v2.y, z0 + ky * dz);
                 if (!inShadow(panel.id, v, sunDirection)) {
                   // direct radiation
                   cellOutputTotals[kx][ky] += dot * peakRadiation;

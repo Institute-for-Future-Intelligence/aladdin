@@ -219,16 +219,18 @@ const SolarPanel = ({
     return (
       (solarPanel?.label ? solarPanel.label : i18n.t('shared.SolarPanelElement', lang)) +
       (solarPanel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
-      '\n' +
-      i18n.t('word.Coordinates', lang) +
-      ': (' +
-      cx.toFixed(1) +
-      ', ' +
-      cy.toFixed(1) +
-      ', ' +
-      cz.toFixed(1) +
-      ') ' +
-      i18n.t('word.MeterAbbreviation', lang)
+      (solarPanel?.label
+        ? ''
+        : '\n' +
+          i18n.t('word.Coordinates', lang) +
+          ': (' +
+          cx.toFixed(1) +
+          ', ' +
+          cy.toFixed(1) +
+          ', ' +
+          cz.toFixed(1) +
+          ') ' +
+          i18n.t('word.MeterAbbreviation', lang))
     );
   }, [solarPanel?.label, locked, language, cx, cy, cz]);
 
@@ -873,7 +875,7 @@ const SolarPanel = ({
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}
-          position={[0, 0, Math.max(ly * Math.abs(Math.sin(solarPanel.tiltAngle)), 0.2)]}
+          position={[0, 0, Math.max((ly / 2) * Math.abs(Math.sin(solarPanel.tiltAngle)) + 0.1, 0.2)]}
         />
       )}
     </group>
