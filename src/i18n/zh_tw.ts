@@ -566,7 +566,7 @@ export const i18n_zh_tw = {
       AddPeople: '添加人物',
       ClearScene: '清空場景',
       ShowSunAndTimeSettings: '顯示太陽和時間設置',
-      ShowShadow: '顯示陰影',
+      ShowHeatmap: '顯示熱圖',
       DoYouReallyWantToClearContent: '您確定清空場景嗎',
     },
 

@@ -579,7 +579,7 @@ export const i18n_tr = {
       AddPeople: 'Ýnsan ekle',
       ClearScene: 'alaný temizle',
       ShowSunAndTimeSettings: 'Show sun and time settings',
-      ShowShadow: 'Gölge göster',
+      ShowHeatmap: 'Show heatmap',
       DoYouReallyWantToClearContent: 'Ýçeriði gerçekten temizlemek istiyor musunuz?',
     },
 

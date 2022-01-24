@@ -43,9 +43,11 @@ const App = () => {
   }, [world, viewState, elements, notes]);
 
   useEffect(() => {
-    setCommonStore((state) => {
-      state.viewState.showSolarRadiationHeatmap = false;
-    });
+    if (viewState.showSolarRadiationHeatmap) {
+      setCommonStore((state) => {
+        state.viewState.showSolarRadiationHeatmap = false;
+      });
+    }
   }, [world, elements]);
 
   const params = new URLSearchParams(window.location.search);

@@ -578,7 +578,7 @@ export const i18n_es = {
       AddPeople: 'Añadir gente',
       ClearScene: 'Clear escena',
       ShowSunAndTimeSettings: 'Show sun and time settings',
-      ShowShadow: 'Show shadow',
+      ShowHeatmap: 'Show heatmap',
       DoYouReallyWantToClearContent: 'Estás seguro que quieres borrar el contenido',
     },
 

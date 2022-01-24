@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCube,
   faEraser,
+  faEye,
   faMousePointer,
   faSun,
   faTachometerAlt,
@@ -35,6 +36,7 @@ const MainToolBarButtons = () => {
   const language = useStore(Selector.language);
   const selectNone = useStore(Selector.selectNone);
   const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
+  const showSolarRadiationHeatmap = useStore(Selector.viewState.showSolarRadiationHeatmap);
   const clearContent = useStore(Selector.clearContent);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const addUndoable = useStore(Selector.addUndoable);
@@ -92,6 +94,17 @@ const MainToolBarButtons = () => {
     addUndoable(undoableCheck);
     setCommonStore((state) => {
       state.viewState.showHeliodonPanel = !state.viewState.showHeliodonPanel;
+    });
+  };
+
+  const toggleSolarRadiationHeatmap = () => {
+    selectNone();
+    setCommonStore((state) => {
+      state.simulationInProgress = true;
+      // set below to false first to ensure update (it will be set to true after the simulation)
+      state.viewState.showSolarRadiationHeatmap = false;
+      state.dailySolarRadiationSimulationFlag = !state.dailySolarRadiationSimulationFlag;
+      console.log('simulation started', state.simulationInProgress);
     });
   };
 
@@ -290,6 +303,14 @@ const MainToolBarButtons = () => {
         color={'#666666'}
         style={{ paddingRight: '12px', cursor: 'pointer' }}
         onClick={removeAllContent}
+      />
+      <FontAwesomeIcon
+        title={i18n.t('toolbar.ShowHeatmap', lang)}
+        icon={faEye}
+        size={'3x'}
+        color={showSolarRadiationHeatmap ? 'antiquewhite' : '#666666'}
+        style={{ paddingRight: '12px', cursor: 'pointer' }}
+        onClick={toggleSolarRadiationHeatmap}
       />
       <FontAwesomeIcon
         title={i18n.t('toolbar.ShowSunAndTimeSettings', lang)}
