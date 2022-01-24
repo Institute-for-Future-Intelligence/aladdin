@@ -16,6 +16,7 @@ export class DefaultViewState implements ViewState {
 
   axes: boolean;
   showSolarRadiationHeatmap: boolean;
+  solarRadiationHeatMapMaxValue: number;
   shadowEnabled: boolean;
   theme: string;
   heliodon: boolean;
@@ -73,6 +74,7 @@ export class DefaultViewState implements ViewState {
 
     this.axes = true;
     this.showSolarRadiationHeatmap = false;
+    this.solarRadiationHeatMapMaxValue = 100;
     this.shadowEnabled = true;
     this.theme = 'Default';
     this.heliodon = false;
@@ -130,6 +132,7 @@ export class DefaultViewState implements ViewState {
 
     viewState.axes = true;
     viewState.showSolarRadiationHeatmap = false;
+    viewState.solarRadiationHeatMapMaxValue = 100;
     viewState.shadowEnabled = true;
     viewState.theme = 'Default';
     viewState.heliodon = false;

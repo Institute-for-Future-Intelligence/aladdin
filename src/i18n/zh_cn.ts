@@ -190,6 +190,7 @@ export const i18n_zh_cn = {
         DailySolarRadiationHeatmap: '当日太阳辐射总量分布热图',
         SolarRadiationHeatmapOptions: '太阳辐射热图选项',
         SolarRadiationHeatmapGridCellSize: '太阳辐射热图网格的尺寸',
+        SolarRadiationHeatmapMaxValue: '太阳辐射热图最大值',
       },
       sensorsSubMenu: '传感器',
       sensors: {

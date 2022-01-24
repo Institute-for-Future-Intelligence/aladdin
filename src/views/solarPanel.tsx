@@ -86,6 +86,7 @@ const SolarPanel = ({
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
   const showSolarRadiationHeatmap = useStore(Selector.viewState.showSolarRadiationHeatmap);
+  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const getElementById = useStore(Selector.getElementById);
@@ -181,11 +182,11 @@ const SolarPanel = ({
     if (solarPanel && showSolarRadiationHeatmap) {
       const heatmap = getHeatmap(solarPanel.id);
       if (heatmap) {
-        setHeatmapTexture(Util.fetchHeatmapTexture(heatmap));
+        setHeatmapTexture(Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 100));
       }
     }
     setUpdateFlag(!updateFlag);
-  }, [showSolarRadiationHeatmap]);
+  }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
   useEffect(() => {
     if (pvModel) {

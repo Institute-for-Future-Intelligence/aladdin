@@ -95,6 +95,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const solarPanelGridCellSize = useStore(Selector.world.solarPanelGridCellSize);
   const solarPanelVisibilityGridCellSize = useStore(Selector.world.solarPanelVisibilityGridCellSize);
   const solarRadiationHeatmapGridCellSize = useStore(Selector.world.solarRadiationHeatmapGridCellSize);
+  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const orthographic = useStore(Selector.viewState.orthographic);
   const autoRotate = useStore(Selector.viewState.autoRotate);
   const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
@@ -750,7 +751,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           >
             <Menu>
               <Menu.Item key={'solar-radiation-heatmap-grid-cell-size'}>
-                <Space style={{ paddingRight: '10px' }}>
+                <Space style={{ width: '280px' }}>
                   {i18n.t('menu.physics.SolarRadiationHeatmapGridCellSize', lang) + ':'}
                 </Space>
                 <InputNumber
@@ -768,6 +769,25 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   }}
                 />
                 <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
+              </Menu.Item>
+              <Menu.Item key={'solar-radiation-heatmap-max-value'}>
+                <Space style={{ width: '280px' }}>
+                  {i18n.t('menu.physics.SolarRadiationHeatmapMaxValue', lang) + ':'}
+                </Space>
+                <InputNumber
+                  min={10}
+                  max={1000}
+                  step={10}
+                  style={{ width: 60 }}
+                  precision={1}
+                  value={solarRadiationHeatmapMaxValue ?? 100}
+                  formatter={(a) => Number(a).toFixed(0)}
+                  onChange={(value) => {
+                    setCommonStore((state) => {
+                      state.viewState.solarRadiationHeatMapMaxValue = value;
+                    });
+                  }}
+                />
               </Menu.Item>
             </Menu>
           </SubMenu>

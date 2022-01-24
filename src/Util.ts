@@ -65,7 +65,7 @@ export class Util {
     return new Color(SOLAR_HEATMAP_COLORS[colorIndex]).lerp(SOLAR_HEATMAP_COLORS[colorIndex + 1], scalar);
   }
 
-  static fetchHeatmapTexture(data: number[][] | undefined): CanvasTexture | null {
+  static fetchHeatmapTexture(data: number[][] | undefined, maxValue: number): CanvasTexture | null {
     if (!data) return null;
     const canvas = document.createElement('canvas') as HTMLCanvasElement;
     const w = data.length;
@@ -79,7 +79,7 @@ export class Util {
       const pixels = imageData.data;
       for (let i = 0; i < w; i++) {
         for (let j = 0; j < h; j++) {
-          const c = Util.calculateSolarRadiationColor(data[i][j], 20);
+          const c = Util.calculateSolarRadiationColor(data[i][j], maxValue);
           const off = ((h - 1 - j) * w + i) * 4;
           pixels[off] = Math.floor(c.r * 255);
           pixels[off + 1] = Math.floor(c.g * 255);

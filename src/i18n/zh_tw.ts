@@ -190,6 +190,7 @@ export const i18n_zh_tw = {
         DailySolarRadiationHeatmap: '當日太陽輻射總量分佈熱圖',
         SolarRadiationHeatmapOptions: '太陽輻射熱圖選項',
         SolarRadiationHeatmapGridCellSize: '太陽輻射熱圖網格的尺寸',
+        SolarRadiationHeatmapMaxValue: '太陽輻射熱圖最大值',
       },
       sensorsSubMenu: '傳感器',
       sensors: {

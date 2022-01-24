@@ -105,6 +105,7 @@ const Foundation = ({
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
   const hoveredHandle = useStore(Selector.hoveredHandle);
   const showSolarRadiationHeatmap = useStore(Selector.viewState.showSolarRadiationHeatmap);
+  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
 
   const {
@@ -231,11 +232,11 @@ const Foundation = ({
     if (foundationModel && showSolarRadiationHeatmap) {
       const heatmap = getHeatmap(foundationModel.id);
       if (heatmap) {
-        setHeatmapTexture(Util.fetchHeatmapTexture(heatmap));
+        setHeatmapTexture(Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 100));
       }
     }
     //setUpdateFlag(!updateFlag);
-  }, [showSolarRadiationHeatmap]);
+  }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;

@@ -14,6 +14,7 @@ export interface ViewState {
 
   axes: boolean;
   showSolarRadiationHeatmap: boolean;
+  solarRadiationHeatMapMaxValue: number;
   autoRotate: boolean;
   shadowEnabled: boolean;
   theme: string;
