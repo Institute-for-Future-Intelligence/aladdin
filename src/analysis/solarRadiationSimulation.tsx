@@ -14,6 +14,7 @@ import { AirMass } from './analysisConstants';
 import { UNIT_VECTOR_POS_X, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z } from '../constants';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { FoundationModel } from '../models/FoundationModel';
+import { CuboidModel } from '../models/CuboidModel';
 
 export interface SolarRadiationSimulationProps {
   city: string | null;
@@ -96,11 +97,81 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
         case ObjectType.Foundation:
           generateHeatmapForFoundation(e as FoundationModel);
           break;
+        case ObjectType.Cuboid:
+          generateHeatmapForCuboid(e as CuboidModel);
+          break;
         case ObjectType.SolarPanel:
           generateHeatmapForSolarPanel(e as SolarPanelModel);
           break;
       }
     }
+  };
+
+  const generateHeatmapForCuboid = (cuboid: CuboidModel) => {
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const date = now.getDate();
+    const dayOfYear = Util.dayOfYear(now);
+    const lx = cuboid.lx;
+    const ly = cuboid.ly;
+    const lz = cuboid.lz;
+    const nx = Math.max(2, Math.round(lx / cellSize));
+    const ny = Math.max(2, Math.round(ly / cellSize));
+    const nz = Math.max(2, Math.round(lz / cellSize));
+    const dx = lx / nx;
+    const dy = ly / ny;
+    const dz = ly / nz;
+    const x0 = cuboid.cx - lx / 2;
+    const y0 = cuboid.cy - ly / 2;
+    const center2d = new Vector2(cuboid.cx, cuboid.cy);
+    const v = new Vector3();
+    const cellOutputTotals = Array(nx)
+      .fill(0)
+      .map(() => Array(ny).fill(0));
+    let count = 0;
+    for (let i = 0; i < 24; i++) {
+      for (let j = 0; j < world.timesPerHour; j++) {
+        const currentTime = new Date(year, month, date, i, j * interval);
+        const sunDirection = getSunDirection(currentTime, world.latitude);
+        if (sunDirection.z > 0) {
+          // when the sun is out
+          count++;
+          const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+          const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+            world.ground,
+            month,
+            UNIT_VECTOR_POS_Z,
+            peakRadiation,
+          );
+          const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
+          const v2 = new Vector2();
+          for (let kx = 0; kx < nx; kx++) {
+            for (let ky = 0; ky < ny; ky++) {
+              cellOutputTotals[kx][ky] += indirectRadiation;
+              if (dot > 0) {
+                v2.set(x0 + kx * dx, y0 + ky * dy);
+                v2.rotateAround(center2d, cuboid.rotation[2]);
+                v.set(v2.x, v2.y, lz);
+                if (!inShadow(cuboid.id, v, sunDirection)) {
+                  // direct radiation
+                  cellOutputTotals[kx][ky] += dot * peakRadiation;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+    const daylight = (count * interval) / 60;
+    const clearness = weather.sunshineHours[month] / (30 * daylight);
+    for (let i = 0; i < cellOutputTotals.length; i++) {
+      for (let j = 0; j < cellOutputTotals[i].length; j++) {
+        cellOutputTotals[i][j] *= clearness;
+      }
+    }
+    // send heat map data to common store for visualization
+    setHeatmap(cuboid.id, cellOutputTotals);
   };
 
   const generateHeatmapForFoundation = (foundation: FoundationModel) => {

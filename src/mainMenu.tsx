@@ -13,8 +13,8 @@ import solar_trackers from './examples/solar_trackers.json';
 import simple_house_01 from './examples/simple_house_01.json';
 import hotel_01 from './examples/hotel_01.json';
 import vegetative_buffer_01 from './examples/vegetative_buffer_01.json';
-import effect_tilt_angle from './examples/effect_tilt_angle.json';
-import effect_azimuth from './examples/effect_azimuth.json';
+import effect_tilt_angle_solar_panel from './examples/effect_tilt_angle_solar_panel.json';
+import effect_azimuth_solar_panel from './examples/effect_azimuth_solar_panel.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -154,11 +154,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'vegetative_buffer_01':
         input = vegetative_buffer_01;
         break;
-      case 'effect_tilt_angle':
-        input = effect_tilt_angle;
+      case 'effect_tilt_angle_solar_panel':
+        input = effect_tilt_angle_solar_panel;
         break;
-      case 'effect_azimuth':
-        input = effect_azimuth;
+      case 'effect_azimuth_solar_panel':
+        input = effect_azimuth_solar_panel;
         break;
       case 'solar_farm_01':
         input = solar_farm_01;
@@ -971,24 +971,31 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </SubMenu>
       </SubMenu>
 
+      {/* tutorials menu */}
+      <SubMenu key={'tutorials'} title={i18n.t('menu.tutorialsSubMenu', lang)}>
+        {/* solar science */}
+        <SubMenu key={'solar-energy-science'} title={i18n.t('menu.solarEnergyScienceSubMenu', lang)}>
+          <Menu.Item key="sun_angles" onClick={loadFile}>
+            {i18n.t('menu.tutorials.SunAngles', lang)}
+          </Menu.Item>
+          <Menu.Item key="solar_radiation_to_box" onClick={loadFile}>
+            {i18n.t('menu.tutorials.SolarRadiationToBox', lang)}
+          </Menu.Item>
+          <Menu.Item key="effect_tilt_angle_solar_panel" onClick={loadFile}>
+            {i18n.t('menu.tutorials.EffectOfTiltAngleOfSolarPanel', lang)}
+          </Menu.Item>
+          <Menu.Item key="effect_azimuth_solar_panel" onClick={loadFile}>
+            {i18n.t('menu.tutorials.EffectOfAzimuthOfSolarPanel', lang)}
+          </Menu.Item>
+        </SubMenu>
+      </SubMenu>
+
       {/* example menu */}
       <SubMenu key={'examples'} title={i18n.t('menu.examplesSubMenu', lang)}>
         {/* solar energy */}
         <SubMenu key={'solar-energy'} title={i18n.t('menu.solarEnergySubMenu', lang)}>
-          <Menu.Item key="sun_angles" onClick={loadFile}>
-            {i18n.t('menu.examples.SunAngles', lang)}
-          </Menu.Item>
-          <Menu.Item key="solar_radiation_to_box" onClick={loadFile}>
-            {i18n.t('menu.examples.SolarRadiationToBox', lang)}
-          </Menu.Item>
           <Menu.Item key="sun_beam_at_center" onClick={loadFile}>
             {i18n.t('menu.examples.SunBeamAndHeliodon', lang)}
-          </Menu.Item>
-          <Menu.Item key="effect_tilt_angle" onClick={loadFile}>
-            {i18n.t('menu.examples.EffectOfTiltAngle', lang)}
-          </Menu.Item>
-          <Menu.Item key="effect_azimuth" onClick={loadFile}>
-            {i18n.t('menu.examples.EffectOfAzimuth', lang)}
           </Menu.Item>
           <Menu.Item key="solar_farm_01" onClick={loadFile}>
             {i18n.t('menu.examples.SolarFarm', lang)}
