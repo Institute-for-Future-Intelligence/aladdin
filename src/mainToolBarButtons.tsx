@@ -36,7 +36,7 @@ const MainToolBarButtons = () => {
   const language = useStore(Selector.language);
   const selectNone = useStore(Selector.selectNone);
   const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
-  const showSolarRadiationHeatmap = useStore(Selector.viewState.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const clearContent = useStore(Selector.clearContent);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const addUndoable = useStore(Selector.addUndoable);
@@ -102,7 +102,7 @@ const MainToolBarButtons = () => {
     setCommonStore((state) => {
       state.simulationInProgress = true;
       // set below to false first to ensure update (it will be set to true after the simulation)
-      state.viewState.showSolarRadiationHeatmap = false;
+      state.showSolarRadiationHeatmap = false;
       state.dailySolarRadiationSimulationFlag = !state.dailySolarRadiationSimulationFlag;
       console.log('simulation started', state.simulationInProgress);
     });

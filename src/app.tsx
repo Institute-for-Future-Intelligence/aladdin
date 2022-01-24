@@ -22,6 +22,7 @@ const App = () => {
   const elements = useStore((state: CommonStoreState) => state.elements);
   const viewState = useStore((state: CommonStoreState) => state.viewState);
   const notes = useStore((state: CommonStoreState) => state.notes);
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const setChanged = useStore(Selector.setChanged);
   const setSkipChange = useStore(Selector.setSkipChange);
   const loadWeatherData = useStore(Selector.loadWeatherData);
@@ -43,9 +44,9 @@ const App = () => {
   }, [world, viewState, elements, notes]);
 
   useEffect(() => {
-    if (viewState.showSolarRadiationHeatmap) {
+    if (showSolarRadiationHeatmap) {
       setCommonStore((state) => {
-        state.viewState.showSolarRadiationHeatmap = false;
+        state.showSolarRadiationHeatmap = false;
       });
     }
   }, [world, elements]);

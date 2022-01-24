@@ -45,12 +45,14 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
       // avoid calling on first render
       if (elements && elements.length > 0) {
         generateHeatmaps();
+        setCommonStore((state) => {
+          state.showSolarRadiationHeatmap = true;
+        });
       }
     } else {
       loaded.current = true;
     }
     setCommonStore((state) => {
-      state.viewState.showSolarRadiationHeatmap = true;
       state.simulationInProgress = false;
       console.log('simulation ended', state.simulationInProgress);
     });

@@ -104,7 +104,7 @@ const Foundation = ({
   const isAddingElement = useStore(Selector.isAddingElement);
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
   const hoveredHandle = useStore(Selector.hoveredHandle);
-  const showSolarRadiationHeatmap = useStore(Selector.viewState.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
 

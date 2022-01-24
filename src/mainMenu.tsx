@@ -737,7 +737,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               setCommonStore((state) => {
                 state.simulationInProgress = true;
                 // set below to false first to ensure update (it will be set to true after the simulation)
-                state.viewState.showSolarRadiationHeatmap = false;
+                state.showSolarRadiationHeatmap = false;
                 state.dailySolarRadiationSimulationFlag = !state.dailySolarRadiationSimulationFlag;
                 console.log('simulation started', state.simulationInProgress);
               });

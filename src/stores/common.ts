@@ -398,6 +398,7 @@ export interface CommonStoreState {
   deletedWindowAndParentId: string[] | null;
 
   simulationInProgress: boolean;
+  showSolarRadiationHeatmap: boolean;
   updateDesignInfoFlag: boolean;
   locale: Locale;
   localFileName: string;
@@ -504,6 +505,7 @@ export const useStore = create<CommonStoreState>(
               state.skipChange = true;
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.fileChanged = !state.fileChanged;
+              state.showSolarRadiationHeatmap = false;
             });
             // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
             // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
@@ -3349,6 +3351,7 @@ export const useStore = create<CommonStoreState>(
           deletedWindowAndParentId: null,
 
           simulationInProgress: false,
+          showSolarRadiationHeatmap: false,
           updateDesignInfoFlag: false,
           locale: enUS,
           localFileName: 'aladdin.ala',

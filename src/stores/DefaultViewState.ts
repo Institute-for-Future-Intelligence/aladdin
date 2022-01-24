@@ -15,7 +15,6 @@ export class DefaultViewState implements ViewState {
   cameraZoom: number;
 
   axes: boolean;
-  showSolarRadiationHeatmap: boolean;
   solarRadiationHeatMapMaxValue: number;
   shadowEnabled: boolean;
   theme: string;
@@ -73,7 +72,6 @@ export class DefaultViewState implements ViewState {
     this.cameraZoom = 20;
 
     this.axes = true;
-    this.showSolarRadiationHeatmap = false;
     this.solarRadiationHeatMapMaxValue = 100;
     this.shadowEnabled = true;
     this.theme = 'Default';
@@ -131,7 +129,6 @@ export class DefaultViewState implements ViewState {
     viewState.panCenter2D = [0, 0, 0];
 
     viewState.axes = true;
-    viewState.showSolarRadiationHeatmap = false;
     viewState.solarRadiationHeatMapMaxValue = 100;
     viewState.shadowEnabled = true;
     viewState.theme = 'Default';
