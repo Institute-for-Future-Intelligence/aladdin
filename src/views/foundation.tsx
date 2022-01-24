@@ -235,7 +235,6 @@ const Foundation = ({
         setHeatmapTexture(Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 100));
       }
     }
-    //setUpdateFlag(!updateFlag);
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
   const setRayCast = (e: PointerEvent) => {

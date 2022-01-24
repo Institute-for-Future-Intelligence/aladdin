@@ -16,7 +16,7 @@ import Facade_Texture_10 from '../resources/building_facade_10.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Plane, Sphere } from '@react-three/drei';
-import { Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
+import { CanvasTexture, Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -118,11 +118,19 @@ const Cuboid = ({
   const updatePolygonVertexPositionById = useStore(Selector.updatePolygonVertexPositionById);
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
   const hoveredHandle = useStore(Selector.hoveredHandle);
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+  const getHeatmap = useStore(Selector.getHeatmap);
 
   const {
     camera,
     gl: { domElement },
   } = useThree();
+  const [heatmapTextureTop, setHeatmapTextureTop] = useState<CanvasTexture | null>(null);
+  const [heatmapTextureSouth, setHeatmapTextureSouth] = useState<CanvasTexture | null>(null);
+  const [heatmapTextureNorth, setHeatmapTextureNorth] = useState<CanvasTexture | null>(null);
+  const [heatmapTextureWest, setHeatmapTextureWest] = useState<CanvasTexture | null>(null);
+  const [heatmapTextureEast, setHeatmapTextureEast] = useState<CanvasTexture | null>(null);
   const [hovered, setHovered] = useState(false);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const [normal, setNormal] = useState<Vector3>();
@@ -206,6 +214,32 @@ const Cuboid = ({
       window.removeEventListener('pointerup', handlePointerUp);
     };
   }, []);
+
+  useEffect(() => {
+    if (cuboidModel && showSolarRadiationHeatmap) {
+      const maxValue = solarRadiationHeatmapMaxValue ?? 100;
+      const heatmapTop = getHeatmap(cuboidModel.id + '-top');
+      if (heatmapTop) {
+        setHeatmapTextureTop(Util.fetchHeatmapTexture(heatmapTop, maxValue));
+      }
+      const heatmapSouth = getHeatmap(cuboidModel.id + '-south');
+      if (heatmapSouth) {
+        setHeatmapTextureSouth(Util.fetchHeatmapTexture(heatmapSouth, maxValue));
+      }
+      const heatmapNorth = getHeatmap(cuboidModel.id + '-north');
+      if (heatmapNorth) {
+        setHeatmapTextureNorth(Util.fetchHeatmapTexture(heatmapNorth, maxValue));
+      }
+      const heatmapWest = getHeatmap(cuboidModel.id + '-west');
+      if (heatmapWest) {
+        setHeatmapTextureWest(Util.fetchHeatmapTexture(heatmapWest, maxValue));
+      }
+      const heatmapEast = getHeatmap(cuboidModel.id + '-east');
+      if (heatmapEast) {
+        setHeatmapTextureEast(Util.fetchHeatmapTexture(heatmapEast, maxValue));
+      }
+    }
+  }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
   const fetchTextureImage = (textureType: CuboidTexture) => {
     switch (textureType) {
@@ -1047,7 +1081,14 @@ const Cuboid = ({
   };
 
   const faces: number[] = [0, 1, 2, 3, 4, 5];
-  const textures = [textureEast, textureWest, textureNorth, textureSouth, textureTop, null];
+  const textures = [
+    showSolarRadiationHeatmap && heatmapTextureEast ? heatmapTextureEast : textureEast,
+    showSolarRadiationHeatmap && heatmapTextureWest ? heatmapTextureWest : textureWest,
+    showSolarRadiationHeatmap && heatmapTextureNorth ? heatmapTextureNorth : textureNorth,
+    showSolarRadiationHeatmap && heatmapTextureSouth ? heatmapTextureSouth : textureSouth,
+    showSolarRadiationHeatmap && heatmapTextureTop ? heatmapTextureTop : textureTop,
+    null,
+  ];
 
   return (
     <group
@@ -1083,7 +1124,9 @@ const Cuboid = ({
                 <meshStandardMaterial
                   key={i}
                   attachArray="material"
-                  color={cuboidModel.faceColors ? cuboidModel.faceColors[i] : color}
+                  color={
+                    showSolarRadiationHeatmap ? 'white' : cuboidModel.faceColors ? cuboidModel.faceColors[i] : color
+                  }
                   map={textures[i]}
                 />
               );
