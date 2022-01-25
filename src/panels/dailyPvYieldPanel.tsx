@@ -224,10 +224,19 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                 unCheckedChildren={<UnorderedListOutlined />}
                 checked={dailyPvIndividualOutputs}
                 onChange={(checked) => {
-                  setCommonStore((state) => {
-                    state.dailyPvIndividualOutputs = checked;
-                    state.dailyPvFlag = !state.dailyPvFlag;
-                  });
+                  if (solarPanelCount === 0) {
+                    showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                    return;
+                  }
+                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  // give it 0.1 second for the info to show up
+                  setTimeout(() => {
+                    setCommonStore((state) => {
+                      state.simulationInProgress = true;
+                      state.dailyPvIndividualOutputs = checked;
+                      state.dailyPvFlag = !state.dailyPvFlag;
+                    });
+                  }, 100);
                 }}
               />
             )}
@@ -236,9 +245,18 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
               icon={<ReloadOutlined />}
               title={i18n.t('word.Update', lang)}
               onClick={() => {
-                setCommonStore((state) => {
-                  state.dailyPvFlag = !state.dailyPvFlag;
-                });
+                if (solarPanelCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    state.simulationInProgress = true;
+                    state.dailyPvFlag = !state.dailyPvFlag;
+                  });
+                }, 100);
               }}
             />
             <Button

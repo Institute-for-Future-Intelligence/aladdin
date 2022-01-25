@@ -13,12 +13,16 @@ import { AirMass } from './analysisConstants';
 import { MONTHS, UNIT_VECTOR_POS_Z } from '../constants';
 import { SensorModel } from '../models/SensorModel';
 import * as Selector from '../stores/selector';
+import { showInfo } from '../helpers';
+import i18n from '../i18n/i18n';
 
 export interface SensorSimulationProps {
   city: string | null;
 }
 
 const SensorSimulation = ({ city }: SensorSimulationProps) => {
+  const setCommonStore = useStore(Selector.set);
+  const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const getElementById = useStore(Selector.getElementById);
@@ -30,6 +34,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
   const yearlyLightSensorFlag = useStore(Selector.yearlyLightSensorFlag);
 
   const { scene } = useThree();
+  const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
   const elevation = city ? getWeather(city).elevation : 0;
   const interval = 60 / world.timesPerHour;
@@ -43,10 +48,14 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       // avoid calling on first render
       if (elements && elements.length > 0) {
         collectAllDailyLightSensorData();
+        showInfo(i18n.t('message.SimulationCompleted', lang));
       }
     } else {
       loadedDaily.current = true;
     }
+    setCommonStore((state) => {
+      state.simulationInProgress = false;
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dailyLightSensorFlag]);
 
@@ -55,10 +64,14 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       // avoid calling on first render
       if (elements && elements.length > 0) {
         collectAllYearlyLightSensorData();
+        showInfo(i18n.t('message.SimulationCompleted', lang));
       }
     } else {
       loadedYearly.current = true;
     }
+    setCommonStore((state) => {
+      state.simulationInProgress = false;
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearlyLightSensorFlag]);
 

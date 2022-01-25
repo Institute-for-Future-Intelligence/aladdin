@@ -21,6 +21,8 @@ import {
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
+import { showInfo } from '../helpers';
+import i18n from '../i18n/i18n';
 
 export interface SolarRadiationSimulationProps {
   city: string | null;
@@ -28,6 +30,7 @@ export interface SolarRadiationSimulationProps {
 
 const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
@@ -36,12 +39,13 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
   const setHeatmap = useStore(Selector.setHeatmap);
 
   const { scene } = useThree();
+  const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
   const elevation = city ? weather.elevation : 0;
   const interval = 60 / world.timesPerHour;
   const ray = useMemo(() => new Raycaster(), []);
   const now = new Date(world.date);
-  const loaded = useRef(false);
+  const loaded = useRef<boolean>(false);
   const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
@@ -54,13 +58,13 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
         setCommonStore((state) => {
           state.showSolarRadiationHeatmap = true;
         });
+        showInfo(i18n.t('message.SimulationCompleted', lang));
       }
     } else {
       loaded.current = true;
     }
     setCommonStore((state) => {
       state.simulationInProgress = false;
-      console.log('simulation ended', state.simulationInProgress);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dailySolarRadiationSimulationFlag]);

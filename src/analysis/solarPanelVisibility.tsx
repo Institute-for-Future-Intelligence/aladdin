@@ -12,8 +12,11 @@ import { Util } from '../Util';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { HumanModel } from '../models/HumanModel';
 import { Vantage } from './Vantage';
+import { showInfo } from '../helpers';
+import i18n from '../i18n/i18n';
 
 const SolarPanelVisibility = () => {
+  const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const setCommonStore = useStore(Selector.set);
@@ -21,6 +24,7 @@ const SolarPanelVisibility = () => {
   const solarPanelVisibilityFlag = useStore(Selector.solarPanelVisibilityFlag);
 
   const { scene } = useThree();
+  const lang = { lng: language };
   const ray = useMemo(() => new Raycaster(), []);
   const cellSize = world.solarPanelVisibilityGridCellSize ?? 0.2;
   const loaded = useRef(false);
@@ -33,6 +37,7 @@ const SolarPanelVisibility = () => {
       // avoid calling on first render
       if (elements && elements.length > 0) {
         analyze();
+        showInfo(i18n.t('message.SimulationCompleted', lang));
       }
     } else {
       loaded.current = true;

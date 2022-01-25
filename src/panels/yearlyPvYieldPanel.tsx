@@ -225,10 +225,19 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                 unCheckedChildren={<UnorderedListOutlined />}
                 checked={yearlyPvIndividualOutputs}
                 onChange={(checked) => {
-                  setCommonStore((state) => {
-                    state.yearlyPvIndividualOutputs = checked;
-                    state.yearlyPvFlag = !state.yearlyPvFlag;
-                  });
+                  if (solarPanelCount === 0) {
+                    showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                    return;
+                  }
+                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  // give it 0.1 second for the info to show up
+                  setTimeout(() => {
+                    setCommonStore((state) => {
+                      state.simulationInProgress = true;
+                      state.yearlyPvIndividualOutputs = checked;
+                      state.yearlyPvFlag = !state.yearlyPvFlag;
+                    });
+                  }, 100);
                 }}
               />
             )}
@@ -237,9 +246,18 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
               icon={<ReloadOutlined />}
               title={i18n.t('word.Update', lang)}
               onClick={() => {
-                setCommonStore((state) => {
-                  state.yearlyPvFlag = !state.yearlyPvFlag;
-                });
+                if (solarPanelCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    state.simulationInProgress = true;
+                    state.yearlyPvFlag = !state.yearlyPvFlag;
+                  });
+                }, 100);
               }}
             />
             <Button

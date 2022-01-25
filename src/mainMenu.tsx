@@ -113,6 +113,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const cloudFile = useStore(Selector.cloudFile);
   const user = useStore(Selector.user);
   const axes = useStore(Selector.viewState.axes);
+  const countObservers = useStore(Selector.countObservers);
+  const countElementsByType = useStore(Selector.countElementsByType);
 
   const [aboutUs, setAboutUs] = useState(false);
 
@@ -734,13 +736,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item
             key={'daily-solar-radiation-heatmap'}
             onClick={() => {
-              setCommonStore((state) => {
-                state.simulationInProgress = true;
-                // set below to false first to ensure update (it will be set to true after the simulation)
-                state.showSolarRadiationHeatmap = false;
-                state.dailySolarRadiationSimulationFlag = !state.dailySolarRadiationSimulationFlag;
-                console.log('simulation started', state.simulationInProgress);
-              });
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  // set below to false first to ensure update (it will be set to true after the simulation)
+                  state.showSolarRadiationHeatmap = false;
+                  state.dailySolarRadiationSimulationFlag = !state.dailySolarRadiationSimulationFlag;
+                });
+              }, 100);
             }}
           >
             {i18n.t('menu.physics.DailySolarRadiationHeatmap', lang)}
@@ -798,9 +803,19 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item
             key={'sensor-collect-daily-data'}
             onClick={() => {
-              setCommonStore((state) => {
-                state.dailyLightSensorFlag = !state.dailyLightSensorFlag;
-              });
+              const sensorCount = countElementsByType(ObjectType.Sensor);
+              if (sensorCount === 0) {
+                showInfo(i18n.t('analysisManager.NoSensorForCollectingData', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.dailyLightSensorFlag = !state.dailyLightSensorFlag;
+                });
+              }, 100);
             }}
           >
             {i18n.t('menu.sensors.CollectDailyData', lang)}
@@ -808,9 +823,19 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item
             key={'sensor-collect-yearly-data'}
             onClick={() => {
-              setCommonStore((state) => {
-                state.yearlyLightSensorFlag = !state.yearlyLightSensorFlag;
-              });
+              const sensorCount = countElementsByType(ObjectType.Sensor);
+              if (sensorCount === 0) {
+                showInfo(i18n.t('analysisManager.NoSensorForCollectingData', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.yearlyLightSensorFlag = !state.yearlyLightSensorFlag;
+                });
+              }, 100);
             }}
           >
             {i18n.t('menu.sensors.CollectYearlyData', lang)}
@@ -844,12 +869,20 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item
             key={'solar-panel-daily-yield'}
             onClick={() => {
-              setCommonStore((state) => {
-                state.simulationInProgress = true;
-                state.dailyPvIndividualOutputs = false;
-                state.dailyPvFlag = !state.dailyPvFlag;
-                console.log('simulation started', state.simulationInProgress);
-              });
+              const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
+              if (solarPanelCount === 0) {
+                showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.dailyPvIndividualOutputs = false;
+                  state.dailyPvFlag = !state.dailyPvFlag;
+                });
+              }, 100);
             }}
           >
             {i18n.t('menu.solarPanels.AnalyzeDailyYield', lang)}
@@ -857,11 +890,20 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item
             key={'solar-panel-yearly-yield'}
             onClick={() => {
-              setCommonStore((state) => {
-                state.simulationInProgress = true;
-                state.yearlyPvIndividualOutputs = false;
-                state.yearlyPvFlag = !state.yearlyPvFlag;
-              });
+              const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
+              if (solarPanelCount === 0) {
+                showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.yearlyPvIndividualOutputs = false;
+                  state.yearlyPvFlag = !state.yearlyPvFlag;
+                });
+              }, 100);
             }}
           >
             {i18n.t('menu.solarPanels.AnalyzeYearlyYield', lang)}
@@ -933,10 +975,19 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item
             key={'solar-panel-visibility'}
             onClick={() => {
-              setCommonStore((state) => {
-                state.simulationInProgress = true;
-                state.solarPanelVisibilityFlag = !state.solarPanelVisibilityFlag;
-              });
+              const observerCount = countObservers();
+              if (observerCount === 0) {
+                showInfo(i18n.t('analysisManager.NoObserverForVisibilityAnalysis', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.solarPanelVisibilityFlag = !state.solarPanelVisibilityFlag;
+                });
+              }, 100);
             }}
           >
             {i18n.t('menu.solarPanels.AnalyzeVisibility', lang)}

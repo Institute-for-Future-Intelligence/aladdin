@@ -15,6 +15,8 @@ import { MONTHS, UNIT_VECTOR_POS_X, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z } from 
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
 import { PvModel } from '../models/PvModel';
+import { showInfo } from '../helpers';
+import i18n from '../i18n/i18n';
 
 export interface SolarPanelSimulationProps {
   city: string | null;
@@ -30,6 +32,7 @@ const getPanelEfficiency = (temperature: number, panel: SolarPanelModel, pvModel
 
 const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const getPvModule = useStore(Selector.getPvModule);
@@ -45,6 +48,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
 
   const [currentTemperature, setCurrentTemperature] = useState<number>(20);
   const { scene } = useThree();
+  const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
   const elevation = city ? weather.elevation : 0;
   const interval = 60 / world.timesPerHour;
@@ -63,13 +67,13 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       // avoid calling on first render
       if (elements && elements.length > 0) {
         getDailyYieldForAllSolarPanels();
+        showInfo(i18n.t('message.SimulationCompleted', lang));
       }
     } else {
       loadedDaily.current = true;
     }
     setCommonStore((state) => {
       state.simulationInProgress = false;
-      console.log('simulation ended', state.simulationInProgress);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dailyPvFlag]);
@@ -79,6 +83,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       // avoid calling on first render
       if (elements && elements.length > 0) {
         getYearlyYieldForAllSolarPanels();
+        showInfo(i18n.t('message.SimulationCompleted', lang));
       }
     } else {
       loadedYearly.current = true;

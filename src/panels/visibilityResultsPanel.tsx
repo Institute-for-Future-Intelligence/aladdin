@@ -69,6 +69,7 @@ const VisibilityResultsPanel = () => {
   const visibilityResultsPanelX = useStore(Selector.viewState.visibilityResultsPanelX);
   const visibilityResultsPanelY = useStore(Selector.viewState.visibilityResultsPanelY);
   const solarPanelVisibilityResults = useStore(Selector.solarPanelVisibilityResults);
+  const countObservers = useStore(Selector.countObservers);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -206,9 +207,19 @@ const VisibilityResultsPanel = () => {
               icon={<ReloadOutlined />}
               title={i18n.t('word.Update', lang)}
               onClick={() => {
-                setCommonStore((state) => {
-                  state.solarPanelVisibilityFlag = !state.solarPanelVisibilityFlag;
-                });
+                const observerCount = countObservers();
+                if (observerCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoObserverForVisibilityAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    state.simulationInProgress = true;
+                    state.solarPanelVisibilityFlag = !state.solarPanelVisibilityFlag;
+                  });
+                }, 100);
               }}
             />
             <Button

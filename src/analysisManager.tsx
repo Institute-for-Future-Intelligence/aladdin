@@ -5,15 +5,9 @@
 import React, { useEffect, useRef } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
-import { ObjectType } from './types';
-import { showInfo } from './helpers';
-import i18n from './i18n/i18n';
 
 const AnalysisManager = () => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
-  const countElementsByType = useStore(Selector.countElementsByType);
-  const countObservers = useStore(Selector.countObservers);
   const dailyLightSensorFlag = useStore(Selector.dailyLightSensorFlag);
   const yearlyLightSensorFlag = useStore(Selector.yearlyLightSensorFlag);
   const dailyPvFlag = useStore(Selector.dailyPvFlag);
@@ -25,17 +19,11 @@ const AnalysisManager = () => {
   const firstCallYearlyLightSensorFlag = useRef<boolean>(true);
   const firstCallDailyPvFlag = useRef<boolean>(true);
   const firstCallYearlyPvFlag = useRef<boolean>(true);
-  const lang = { lng: language };
 
   useEffect(() => {
     if (firstCallSolarPanelVisibilityFlag.current) {
       firstCallSolarPanelVisibilityFlag.current = false;
     } else {
-      const observerCount = countObservers();
-      if (observerCount === 0) {
-        showInfo(i18n.t('analysisManager.NoObserverForVisibilityAnalysis', lang));
-        return;
-      }
       setCommonStore((state) => {
         state.viewState.showSolarPanelVisibilityResultsPanel = true;
       });
@@ -47,11 +35,6 @@ const AnalysisManager = () => {
     if (firstCallDailyLightSensorFlag.current) {
       firstCallDailyLightSensorFlag.current = false;
     } else {
-      const sensorCount = countElementsByType(ObjectType.Sensor);
-      if (sensorCount === 0) {
-        showInfo(i18n.t('analysisManager.NoSensorForCollectingData', lang));
-        return;
-      }
       setCommonStore((state) => {
         state.viewState.showDailyLightSensorPanel = true;
       });
@@ -63,11 +46,6 @@ const AnalysisManager = () => {
     if (firstCallYearlyLightSensorFlag.current) {
       firstCallYearlyLightSensorFlag.current = false;
     } else {
-      const sensorCount = countElementsByType(ObjectType.Sensor);
-      if (sensorCount === 0) {
-        showInfo(i18n.t('analysisManager.NoSensorForCollectingData', lang));
-        return;
-      }
       setCommonStore((state) => {
         state.viewState.showYearlyLightSensorPanel = true;
       });
@@ -79,11 +57,6 @@ const AnalysisManager = () => {
     if (firstCallDailyPvFlag.current) {
       firstCallDailyPvFlag.current = false;
     } else {
-      const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
-      if (solarPanelCount === 0) {
-        showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
-        return;
-      }
       setCommonStore((state) => {
         state.viewState.showDailyPvYieldPanel = true;
       });
@@ -95,11 +68,6 @@ const AnalysisManager = () => {
     if (firstCallYearlyPvFlag.current) {
       firstCallYearlyPvFlag.current = false;
     } else {
-      const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
-      if (solarPanelCount === 0) {
-        showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
-        return;
-      }
       setCommonStore((state) => {
         state.viewState.showYearlyPvYieldPanel = true;
       });

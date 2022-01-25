@@ -7,7 +7,7 @@ import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { GraphDataType } from '../types';
+import { GraphDataType, ObjectType } from '../types';
 import { MONTHS } from '../constants';
 import { Util } from '../Util';
 import BarGraph from '../components/barGraph';
@@ -75,6 +75,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   const sensorLabels = useStore(Selector.sensorLabels);
   const yearlyLightSensorPanelX = useStore(Selector.viewState.yearlyLightSensorPanelX);
   const yearlyLightSensorPanelY = useStore(Selector.viewState.yearlyLightSensorPanelY);
+  const countElementsByType = useStore(Selector.countElementsByType);
 
   const [daylightGraph, setDaylightGraph] = useState(true);
   const [clearnessGraph, setClearnessGraph] = useState(true);
@@ -198,9 +199,19 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                 icon={<ReloadOutlined />}
                 title={i18n.t('word.Update', lang)}
                 onClick={() => {
-                  setCommonStore((state) => {
-                    state.yearlyLightSensorFlag = !state.yearlyLightSensorFlag;
-                  });
+                  const sensorCount = countElementsByType(ObjectType.Sensor);
+                  if (sensorCount === 0) {
+                    showInfo(i18n.t('analysisManager.NoSensorForCollectingData', lang));
+                    return;
+                  }
+                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  // give it 0.1 second for the info to show up
+                  setTimeout(() => {
+                    setCommonStore((state) => {
+                      state.simulationInProgress = true;
+                      state.yearlyLightSensorFlag = !state.yearlyLightSensorFlag;
+                    });
+                  }, 100);
                 }}
               />
               <Button

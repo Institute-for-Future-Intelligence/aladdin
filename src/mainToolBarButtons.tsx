@@ -30,6 +30,7 @@ import i18n from './i18n/i18n';
 import { UndoableRemoveAll } from './undo/UndoableRemoveAll';
 import { UndoableCheck } from './undo/UndoableCheck';
 import { useStoreRef } from './stores/commonRef';
+import { showInfo } from './helpers';
 
 const MainToolBarButtons = () => {
   const setCommonStore = useStore(Selector.set);
@@ -98,14 +99,17 @@ const MainToolBarButtons = () => {
   };
 
   const toggleSolarRadiationHeatmap = () => {
-    selectNone();
-    setCommonStore((state) => {
-      state.simulationInProgress = true;
-      // set below to false first to ensure update (it will be set to true after the simulation)
-      state.showSolarRadiationHeatmap = false;
-      state.dailySolarRadiationSimulationFlag = !state.dailySolarRadiationSimulationFlag;
-      console.log('simulation started', state.simulationInProgress);
-    });
+    showInfo(i18n.t('message.SimulationStarted', lang));
+    // give it 0.1 second for the info to show up
+    setTimeout(() => {
+      selectNone();
+      setCommonStore((state) => {
+        state.simulationInProgress = true;
+        // set below to false first to ensure update (it will be set to true after the simulation)
+        state.showSolarRadiationHeatmap = false;
+        state.dailySolarRadiationSimulationFlag = !state.dailySolarRadiationSimulationFlag;
+      });
+    }, 100);
   };
 
   return (

@@ -143,6 +143,8 @@ export const i18n_tr = {
       SolarPanelsCannotIntersectWithGround: 'Solar panels cannot intersect with the ground.',
       SolarPanelsCannotOverlapWithOneAnother: 'Solar panels cannot overlap with one another.',
       ScreenshotSaved: 'Screenshot was saved.',
+      SimulationStarted: 'Simulation started.',
+      SimulationCompleted: 'Simulation completed.',
     },
 
     menu: {

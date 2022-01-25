@@ -7,7 +7,7 @@ import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { GraphDataType } from '../types';
+import { GraphDataType, ObjectType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
@@ -73,6 +73,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
   const sensorData = useStore(Selector.dailyLightSensorData);
   const dailyLightSensorPanelX = useStore(Selector.viewState.dailyLightSensorPanelX);
   const dailyLightSensorPanelY = useStore(Selector.viewState.dailyLightSensorPanelY);
+  const countElementsByType = useStore(Selector.countElementsByType);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -176,9 +177,19 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
               icon={<ReloadOutlined />}
               title={i18n.t('word.Update', lang)}
               onClick={() => {
-                setCommonStore((state) => {
-                  state.dailyLightSensorFlag = !state.dailyLightSensorFlag;
-                });
+                const sensorCount = countElementsByType(ObjectType.Sensor);
+                if (sensorCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoSensorForCollectingData', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    state.simulationInProgress = true;
+                    state.dailyLightSensorFlag = !state.dailyLightSensorFlag;
+                  });
+                }, 100);
               }}
             />
             <Button

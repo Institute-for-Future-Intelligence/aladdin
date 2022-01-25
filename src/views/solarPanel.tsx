@@ -446,10 +446,11 @@ const SolarPanel = ({
         {showSolarRadiationHeatmap &&
           heatmapTexture &&
           solarPanelLinesRef.current &&
-          solarPanelLinesRef.current.map((lineData) => {
+          solarPanelLinesRef.current.map((lineData, index) => {
             return (
               <Line
                 name={'Solar Panel Lines'}
+                key={index}
                 userData={{ unintersectable: true }}
                 points={[lineData.point1, lineData.point2]}
                 castShadow={false}

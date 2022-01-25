@@ -141,6 +141,8 @@ export const i18n_zh_cn = {
       SolarPanelsCannotIntersectWithGround: '光伏板不能和地面接触。',
       SolarPanelsCannotOverlapWithOneAnother: '光伏板不能重叠。',
       ScreenshotSaved: '截屏图片保存在下载文件夹里。',
+      SimulationStarted: '模拟开始。',
+      SimulationCompleted: '模拟结束。',
     },
 
     menu: {
