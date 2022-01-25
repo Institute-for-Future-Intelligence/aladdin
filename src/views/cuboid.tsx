@@ -236,8 +236,10 @@ const Cuboid = ({
       }
       const heatmapEast = getHeatmap(cuboidModel.id + '-east');
       if (heatmapEast) {
-        setHeatmapTextureEast(Util.fetchHeatmapTexture(heatmapEast, maxValue));
+        setHeatmapTextureEast(Util.fetchHeatmapTexture(heatmapEast, maxValue, true));
       }
+      // note: unfortunately, setting the rotation of the canvas textures seems to
+      // have no effect. so we must do it in a different way.
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 

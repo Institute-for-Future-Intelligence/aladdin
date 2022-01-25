@@ -53,6 +53,7 @@ import RotateHandle from '../components/rotateHandle';
 import Wireframe from '../components/wireframe';
 import { UndoableChange } from '../undo/UndoableChange';
 import i18n from '../i18n/i18n';
+import { LineData } from './LineData';
 
 const SolarPanel = ({
   id,
@@ -120,6 +121,7 @@ const SolarPanel = ({
   const pointerDown = useRef<boolean>(false);
   const oldTiltAngleRef = useRef<number>(0);
   const newTiltAngleRef = useRef<number>(0);
+  const solarPanelLinesRef = useRef<LineData[]>();
   const ray = useMemo(() => new Raycaster(), []);
 
   const sunBeamLength = Math.max(100, 5 * sceneRadius);
@@ -185,17 +187,34 @@ const SolarPanel = ({
         setHeatmapTexture(Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 100));
       }
     }
-    setUpdateFlag(!updateFlag);
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
   useEffect(() => {
     if (pvModel) {
+      let mx, my;
       if (orientation === Orientation.portrait) {
-        setNx(Math.max(1, Math.round(lx / pvModel.width)));
-        setNy(Math.max(1, Math.round(ly / pvModel.length)));
+        mx = Math.max(1, Math.round(lx / pvModel.width));
+        my = Math.max(1, Math.round(ly / pvModel.length));
       } else {
-        setNx(Math.max(1, Math.round(lx / pvModel.length)));
-        setNy(Math.max(1, Math.round(ly / pvModel.width)));
+        mx = Math.max(1, Math.round(lx / pvModel.length));
+        my = Math.max(1, Math.round(ly / pvModel.width));
+      }
+      setNx(mx);
+      setNy(my);
+      solarPanelLinesRef.current = [];
+      const dx = lx / mx;
+      const dy = ly / my;
+      for (let i = 1; i < mx; i++) {
+        solarPanelLinesRef.current.push({
+          point1: new Vector3(-lx / 2 + i * dx, -ly / 2, lz),
+          point2: new Vector3(-lx / 2 + i * dx, ly / 2, lz),
+        } as LineData);
+      }
+      for (let i = 1; i < my; i++) {
+        solarPanelLinesRef.current.push({
+          point1: new Vector3(-lx / 2, -ly / 2 + i * dy, lz),
+          point2: new Vector3(lx / 2, -ly / 2 + i * dy, lz),
+        } as LineData);
       }
     }
   }, [orientation, pvModelName, lx, ly]);
@@ -424,6 +443,23 @@ const SolarPanel = ({
           <meshStandardMaterial attachArray="material" color={color} />
         </Box>
 
+        {showSolarRadiationHeatmap &&
+          heatmapTexture &&
+          solarPanelLinesRef.current &&
+          solarPanelLinesRef.current.map((lineData) => {
+            return (
+              <Line
+                name={'Solar Panel Lines'}
+                userData={{ unintersectable: true }}
+                points={[lineData.point1, lineData.point2]}
+                castShadow={false}
+                receiveShadow={false}
+                lineWidth={0.2}
+                color={'black'}
+              />
+            );
+          })}
+
         {/* simulation panel */}
         <Plane
           name={'Solar Panel Simulation Plane'}
@@ -445,9 +481,6 @@ const SolarPanel = ({
             points={[
               [-lx / 2, -ly / 2, 0],
               [-lx / 2, ly / 2, 0],
-              [-lx / 2, ly / 2, 0],
-              [lx / 2, ly / 2, 0],
-              [lx / 2, -ly / 2, 0],
               [lx / 2, ly / 2, 0],
               [lx / 2, -ly / 2, 0],
               [-lx / 2, -ly / 2, 0],

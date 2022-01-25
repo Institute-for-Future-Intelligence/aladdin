@@ -128,7 +128,7 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     const nz = Math.max(2, Math.round(lz / cellSize));
     const dx = lx / nx;
     const dy = ly / ny;
-    const dz = ly / nz;
+    const dz = lz / nz;
     const topCellOutputTotals = Array(nx)
       .fill(0)
       .map(() => Array(ny).fill(0));
@@ -138,25 +138,28 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     const northCellOutputTotals = Array(nx)
       .fill(0)
       .map(() => Array(nz).fill(0));
-    const westCellOutputTotals = Array(ny)
+    let westCellOutputTotals = Array(ny)
       .fill(0)
       .map(() => Array(nz).fill(0));
-    const eastCellOutputTotals = Array(ny)
+    let eastCellOutputTotals = Array(ny)
       .fill(0)
       .map(() => Array(nz).fill(0));
 
-    const center2d = new Vector2(cuboid.cx, cuboid.cy);
-    const vec = new Vector3();
-    let count = 0;
     const normalTop = UNIT_VECTOR_POS_Z;
     const normalSouth = UNIT_VECTOR_NEG_Y.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, cuboid.rotation[2]);
     const normalNorth = UNIT_VECTOR_POS_Y.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, cuboid.rotation[2]);
     const normalWest = UNIT_VECTOR_NEG_X.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, cuboid.rotation[2]);
     const normalEast = UNIT_VECTOR_POS_X.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, cuboid.rotation[2]);
+
+    const vec = new Vector3();
+    let count = 0;
+    const center2d = new Vector2(cuboid.cx, cuboid.cy);
+    const v2 = new Vector2();
     const southY = cuboid.cy - cuboid.ly / 2;
     const northY = cuboid.cy + cuboid.ly / 2;
     const westX = cuboid.cx - cuboid.lx / 2;
     const eastX = cuboid.cx + cuboid.lx / 2;
+
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         const currentTime = new Date(year, month, date, i, j * interval);
@@ -171,7 +174,6 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           let dot = normalTop.dot(sunDirection);
           let uc = cuboid.cx - lx / 2;
           let vc = cuboid.cy - ly / 2;
-          const v2 = new Vector2();
           for (let u = 0; u < nx; u++) {
             for (let v = 0; v < ny; v++) {
               topCellOutputTotals[u][v] += indirectRadiation;
@@ -196,7 +198,9 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
             for (let v = 0; v < nz; v++) {
               southCellOutputTotals[u][v] += indirectRadiation;
               if (dot > 0) {
-                vec.set(uc + u * dx, southY, vc + v * dz);
+                v2.set(uc + u * dx, southY);
+                v2.rotateAround(center2d, cuboid.rotation[2]);
+                vec.set(v2.x, v2.y, vc + v * dz);
                 if (!inShadow(cuboid.id, vec, sunDirection)) {
                   // direct radiation
                   southCellOutputTotals[u][v] += dot * peakRadiation;
@@ -212,7 +216,9 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
             for (let v = 0; v < nz; v++) {
               northCellOutputTotals[u][v] += indirectRadiation;
               if (dot > 0) {
-                vec.set(uc + u * dx, northY, vc + v * dz);
+                v2.set(uc + u * dx, northY);
+                v2.rotateAround(center2d, cuboid.rotation[2]);
+                vec.set(v2.x, v2.y, vc + (nz - v) * dz);
                 if (!inShadow(cuboid.id, vec, sunDirection)) {
                   // direct radiation
                   northCellOutputTotals[u][v] += dot * peakRadiation;
@@ -230,7 +236,9 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
             for (let v = 0; v < nz; v++) {
               westCellOutputTotals[u][v] += indirectRadiation;
               if (dot > 0) {
-                vec.set(westX, uc + u * dy, vc + v * dz);
+                v2.set(westX, uc + u * dy);
+                v2.rotateAround(center2d, cuboid.rotation[2]);
+                vec.set(v2.x, v2.y, vc + v * dz);
                 if (!inShadow(cuboid.id, vec, sunDirection)) {
                   // direct radiation
                   westCellOutputTotals[u][v] += dot * peakRadiation;
@@ -240,15 +248,15 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           }
 
           // east face
-          uc = cuboid.cy - ly / 2;
-          vc = cuboid.cz - lz / 2;
           indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normalEast, peakRadiation);
           dot = normalEast.dot(sunDirection);
           for (let u = 0; u < ny; u++) {
             for (let v = 0; v < nz; v++) {
               eastCellOutputTotals[u][v] += indirectRadiation;
               if (dot > 0) {
-                vec.set(eastX, uc + u * dy, vc + v * dz);
+                v2.set(eastX, uc + u * dy);
+                v2.rotateAround(center2d, cuboid.rotation[2]);
+                vec.set(v2.x, v2.y, vc + v * dz);
                 if (!inShadow(cuboid.id, vec, sunDirection)) {
                   // direct radiation
                   eastCellOutputTotals[u][v] += dot * peakRadiation;
@@ -259,6 +267,9 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
         }
       }
     }
+
+    westCellOutputTotals = Util.transpose(westCellOutputTotals);
+    eastCellOutputTotals = Util.transpose(eastCellOutputTotals);
 
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = (count * interval) / 60;
