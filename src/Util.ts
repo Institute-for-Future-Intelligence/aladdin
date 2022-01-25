@@ -572,6 +572,12 @@ export class Util {
     return null;
   }
 
+  // TODO: At this point, a cuboid can only be a child of the ground. Note that we may make
+  // cuboids children of others in the future.
+  static isParentGround(elem: ElementModel): boolean {
+    return elem.type === ObjectType.Foundation || elem.type === ObjectType.Cuboid;
+  }
+
   static toRadians(degrees: number): number {
     return degrees * (Math.PI / 180);
   }

@@ -2813,7 +2813,9 @@ export const useStore = create<CommonStoreState>(
                   } else {
                     // if the old parent is ground, it has no type definition, but we use it to check its type
                     if (oldParent && oldParent.type) {
-                      elem.parentId = newParent.id;
+                      if (!Util.isParentGround(elem)) {
+                        elem.parentId = newParent.id;
+                      }
                       if (Util.isPositionRelative(elem.type)) {
                         m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
                       }
