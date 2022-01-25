@@ -137,7 +137,7 @@ const Ground = () => {
   const elementParentRotation = useMemo(() => new Euler(), []);
 
   if (grabRef.current) {
-    if (grabRef.current.type === ObjectType.Human || grabRef.current.type === ObjectType.Tree) {
+    if (Util.isTreeOrHuman(grabRef.current)) {
       intersectionPlaneType = IntersectionPlaneType.Vertical;
       const a = useStore.getState().viewState.orthographic ? 0 : -HALF_PI;
       const { x: cameraX, y: cameraY } = camera.position;
@@ -543,7 +543,7 @@ const Ground = () => {
       state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
       // set ref children state
       for (const e of state.elements) {
-        if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
+        if (Util.isTreeOrHuman(e)) {
           if (e.parentId === elem.id) {
             oldChildrenParentIdMapRef.current.set(e.id, elem.id);
             if (Util.isResizingVertical(useStore.getState().resizeHandleType)) {
@@ -728,14 +728,13 @@ const Ground = () => {
       if (!moveOk || isMoveToSky()) {
         setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
         if (elementRef) {
-          switch (elem.type) {
-            case ObjectType.Tree:
-            case ObjectType.Human:
-              elementRef.position.copy(oldPositionRef.current);
-              break;
+          if (Util.isTreeOrHuman(elem)) {
+            elementRef.position.copy(oldPositionRef.current);
           }
         }
-        setParentIdById(oldHumanOrTreeParentIdRef.current, elem.id);
+        if (Util.isTreeOrHuman(elem)) {
+          setParentIdById(oldHumanOrTreeParentIdRef.current, elem.id);
+        }
         const contentRef = useStoreRef.getState().contentRef;
         if (contentRef?.current && oldHumanOrTreeParentIdRef.current && elementRef) {
           if (oldHumanOrTreeParentIdRef.current === GROUND_ID) {
@@ -1437,9 +1436,7 @@ const Ground = () => {
                 // the common store only when they are OK.
                 const childrenClone: ElementModel[] = [];
                 for (const c of children) {
-                  if (c.type === ObjectType.Human || c.type === ObjectType.Tree) {
-                    continue;
-                  }
+                  if (Util.isTreeOrHuman(c)) continue;
                   const childClone = JSON.parse(JSON.stringify(c));
                   childrenClone.push(childClone);
                   if (Util.isIdentical(childClone.normal, UNIT_VECTOR_POS_Z_ARRAY)) {

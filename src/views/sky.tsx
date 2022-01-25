@@ -152,7 +152,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         if (selectedElement) {
           if (legalOnGround(selectedElement.type)) {
             grabRef.current = selectedElement;
-            if (grabRef.current.type === ObjectType.Human || grabRef.current.type === ObjectType.Tree) {
+            if (Util.isTreeOrHuman(grabRef.current)) {
               setIntersectionPlaneType(IntersectionPlaneType.Vertical);
               intersectionPlaneAngle.set(-HALF_PI, 0, 0, 'ZXY');
             }
@@ -506,7 +506,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                 setCommonStore((state) => {
                   // set ref children state
                   for (const e of state.elements) {
-                    if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
+                    if (Util.isTreeOrHuman(e)) {
                       if (e.parentId === elem.id) {
                         oldChildrenParentIdMapRef.current.set(e.id, elem.id);
                         // stand on top face
@@ -688,7 +688,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         }
         if (
           useStore.getState().moveHandleType &&
-          (elem.type === ObjectType.Human || elem.type === ObjectType.Tree) &&
+          Util.isTreeOrHuman(elem) &&
           (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE ||
             ray.intersectObjects([meshRef.current!]).length > 0)
         ) {
@@ -722,14 +722,13 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
           if (!moveOk || isMoveToSky()) {
             setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
             if (elementRef) {
-              switch (elem.type) {
-                case ObjectType.Tree:
-                case ObjectType.Human:
-                  elementRef.position.copy(oldPositionRef.current);
-                  break;
+              if (Util.isTreeOrHuman(elem)) {
+                elementRef.position.copy(oldPositionRef.current);
               }
             }
-            setParentIdById(oldHumanOrTreeParentIdRef.current, elem.id);
+            if (Util.isTreeOrHuman(elem)) {
+              setParentIdById(oldHumanOrTreeParentIdRef.current, elem.id);
+            }
             const contentRef = useStoreRef.getState().contentRef;
             if (contentRef?.current && oldHumanOrTreeParentIdRef.current && elementRef) {
               if (oldHumanOrTreeParentIdRef.current === GROUND_ID) {

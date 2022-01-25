@@ -2813,7 +2813,9 @@ export const useStore = create<CommonStoreState>(
                   } else {
                     // if the old parent is ground, it has no type definition, but we use it to check its type
                     if (oldParent && oldParent.type) {
-                      if (!Util.isParentGround(elem)) {
+                      // TODO: At this point, a cuboid can only be a child of the ground. Note that we may make
+                      // cuboids children of others in the future.
+                      if (!Util.isFoundationOrCuboid(elem)) {
                         elem.parentId = newParent.id;
                       }
                       if (Util.isPositionRelative(elem.type)) {
@@ -2930,7 +2932,7 @@ export const useStore = create<CommonStoreState>(
                     }
                     default: {
                       approved = true;
-                      if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
+                      if (Util.isTreeOrHuman(e)) {
                         if (newParent) {
                           // paste on a parent
                           const parent = state.getElementById(e.parentId);

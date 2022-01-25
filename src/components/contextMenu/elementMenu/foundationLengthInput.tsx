@@ -197,9 +197,7 @@ const FoundationLengthInput = ({
             break;
           case ObjectType.Human:
           case ObjectType.Tree:
-            if (c.type === ObjectType.Human || c.type === ObjectType.Tree) {
-              oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
-            }
+            oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
             break;
         }
       }

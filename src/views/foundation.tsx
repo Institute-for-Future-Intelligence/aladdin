@@ -1543,7 +1543,7 @@ const Foundation = ({
   };
 
   const handlePointerEnter = (e: ThreeEvent<PointerEvent>) => {
-    if (grabRef.current?.type === ObjectType.Human || grabRef.current?.type === ObjectType.Tree) {
+    if (grabRef.current && Util.isTreeOrHuman(grabRef.current)) {
       const intersected = e.intersections[0].object === baseRef.current;
       if (intersected) {
         setShowGrid(true);

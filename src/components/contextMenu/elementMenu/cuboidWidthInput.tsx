@@ -197,7 +197,7 @@ const CuboidWidthInput = ({
               break;
           }
         }
-        if (c.type === ObjectType.Human || c.type === ObjectType.Tree) {
+        if (Util.isTreeOrHuman(c)) {
           oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
         }
       }
@@ -239,7 +239,7 @@ const CuboidWidthInput = ({
               break;
           }
         }
-        if (c.type === ObjectType.Human || c.type === ObjectType.Tree) {
+        if (Util.isTreeOrHuman(c)) {
           newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
           oldChildrenParentIdMapRef.current.set(c.id, parent.id);
           // top, north, south face

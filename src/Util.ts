@@ -463,6 +463,14 @@ export class Util {
     );
   }
 
+  static isTreeOrHuman(elem: ElementModel): boolean {
+    return elem.type === ObjectType.Tree || elem.type === ObjectType.Human;
+  }
+
+  static isFoundationOrCuboid(elem: ElementModel): boolean {
+    return elem.type === ObjectType.Foundation || elem.type === ObjectType.Cuboid;
+  }
+
   static checkWindowState(elem: ElementModel): WindowState {
     const eMinX = elem.cx - elem.lx / 2;
     const eMaxX = elem.cx + elem.lx / 2;
@@ -570,12 +578,6 @@ export class Util {
       }
     }
     return null;
-  }
-
-  // TODO: At this point, a cuboid can only be a child of the ground. Note that we may make
-  // cuboids children of others in the future.
-  static isParentGround(elem: ElementModel): boolean {
-    return elem.type === ObjectType.Foundation || elem.type === ObjectType.Cuboid;
   }
 
   static toRadians(degrees: number): number {

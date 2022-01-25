@@ -17,6 +17,7 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { Object3D, Vector2, Vector3 } from 'three';
 import { ElementModel } from 'src/models/ElementModel';
 import { invalidate } from '@react-three/fiber';
+import { Util } from '../../../Util';
 
 const CuboidHeightInput = ({
   dialogVisible,
@@ -127,7 +128,7 @@ const CuboidHeightInput = ({
         if (e.parentId === parent.id) {
           oldChildrenParentIdMapRef.current.set(e.id, parent.id);
           oldChildrenPositionsMapRef.current.set(e.id, new Vector3(e.cx, e.cy, e.cz));
-          if (e.type === ObjectType.Human || e.type === ObjectType.Tree) {
+          if (Util.isTreeOrHuman(e)) {
             // top face
             if (Math.abs(e.cz - parent.lz / 2) < ZERO_TOLERANCE) {
               e.cz = value / 2;
