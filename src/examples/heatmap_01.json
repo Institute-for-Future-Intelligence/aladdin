@@ -1,0 +1,517 @@
+{
+  "docid": "oRJVoBEAs85sQVTxz3G3Aa",
+  "timestamp": 1643138671495,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "latitude": 42.2844063,
+    "solarPanelGridCellSize": 0.5,
+    "timesPerHour": 4,
+    "longitude": -71.3488548,
+    "ground": {
+      "albedo": 0.3,
+      "thermalDiffusivity": 0.05,
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "address": "Natick, MA",
+    "date": "Wed Sep 22 2021 12:00:00 GMT-0400 (Eastern Daylight Time)",
+    "name": "default",
+    "orthographic": false,
+    "cameraZoom": 35.16173831821251,
+    "solarRadiationHeatmapGridCellSize": 0.5
+  },
+  "elements": [
+    {
+      "type": "Foundation",
+      "cx": -9.55171908313751,
+      "cy": -18.19491515601114,
+      "cz": 0.05,
+      "lx": 69.0515968638667,
+      "ly": 71.26044576002357,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        -1.017744597267026
+      ],
+      "parentId": "9zunWg9vgE2EXQf2GAGvHJ",
+      "id": "9zunWg9vgE2EXQf2GAGvHJ",
+      "selected": false,
+      "textureType": "Foundation Texture #2"
+    },
+    {
+      "type": "Tree",
+      "name": "Maple",
+      "cx": 3.2728380906673773,
+      "cy": 2.018552619631127,
+      "cz": 0.05000000074505806,
+      "lx": 9.63205225658289,
+      "lz": 12.42213702192784,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.4041452104082131
+      ],
+      "parentId": "9zunWg9vgE2EXQf2GAGvHJ",
+      "id": "e4UGoSP6vMmKtTpaK7Xx7e",
+      "selected": false,
+      "showModel": false,
+      "evergreen": false
+    },
+    {
+      "type": "Human",
+      "name": "Jack",
+      "cx": 9.261208020051818,
+      "cy": 17.4519165226371,
+      "cz": 0.05000000074505806,
+      "lx": 0.6,
+      "lz": 1.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0.4041452104082131
+      ],
+      "parentId": "9zunWg9vgE2EXQf2GAGvHJ",
+      "id": "aqHPhgdskHU47w7A1JoYUH",
+      "selected": false,
+      "ly": 0.6
+    },
+    {
+      "type": "Tree",
+      "name": "Maple",
+      "cx": -2.759236366671214,
+      "cy": -6.100345712463374,
+      "cz": 0.05000000074505806,
+      "lx": 15.662386774550322,
+      "lz": 17.814185690323082,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.5235987755982988
+      ],
+      "parentId": "9zunWg9vgE2EXQf2GAGvHJ",
+      "id": "quQsvQqGqFo233Raf5MV2q",
+      "selected": false
+    },
+    {
+      "type": "Cuboid",
+      "cx": -9.798880015116119,
+      "cy": -4.358075047463568,
+      "cz": 9.736603648251254,
+      "lx": 19.17702564125724,
+      "ly": 13.830784586479455,
+      "lz": 19.47320729650251,
+      "color": "gray",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        3.141592653589793
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "id": "u8URHSH38BdLFefR2kpArP"
+    },
+    {
+      "type": "Tree",
+      "name": "Spruce",
+      "cx": 8.846757081366217,
+      "cy": 8.465966186158635,
+      "cz": 0.05000000074505806,
+      "lx": 4.201867761608678,
+      "lz": 9.066423414956883,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9zunWg9vgE2EXQf2GAGvHJ",
+      "id": "8nmhqhdJRjPhvXmqRWtXWS",
+      "selected": false,
+      "evergreen": false,
+      "showModel": false
+    },
+    {
+      "type": "Cuboid",
+      "cx": 3.3849893009151506,
+      "cy": 3.1596268234618305,
+      "cz": 4.774411049933112,
+      "lx": 17.91634633119275,
+      "ly": 6.319724352083252,
+      "lz": 9.548822099866223,
+      "color": "gray",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.8378964730477152
+      ],
+      "parentId": "Ground",
+      "id": "w6fsWnZq8bBGBS5PxduXBK",
+      "selected": false
+    },
+    {
+      "type": "Cuboid",
+      "cx": 0.8301123283897702,
+      "cy": -13.282792837220546,
+      "cz": 5.471867705312628,
+      "lx": 5.668418559135588,
+      "ly": 9.979432490224614,
+      "lz": 10.943735410625257,
+      "color": "gray",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.7040209346650892
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "id": "e4j7PfDmVs1dovQBZBQ3BT"
+    },
+    {
+      "type": "Cuboid",
+      "cx": 3.6644340063361565,
+      "cy": -4.8364998865196736,
+      "cz": 2,
+      "lx": 4.840425768432099,
+      "ly": 20.8513404243441,
+      "lz": 4,
+      "color": "gray",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "id": "qfz89eHJ88Lg9JCyH53fc9"
+    },
+    {
+      "type": "Cuboid",
+      "cx": -4.166247795353307,
+      "cy": -32.1603428429262,
+      "cz": 2.63479238812298,
+      "lx": 11.313153894671187,
+      "ly": 12.684919468119116,
+      "lz": 5.26958477624596,
+      "color": "gray",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.2580366898458273
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "id": "nNjg1Ffg3pm4CdyzNQdiW9"
+    },
+    {
+      "type": "Cuboid",
+      "cx": -4.400070852285921,
+      "cy": -32.71929138984055,
+      "cz": 13.65810647211173,
+      "lx": 3.1252453327696883,
+      "ly": 3.149430446459918,
+      "lz": 27.31621294422346,
+      "color": "gray",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.7128704595183226
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "id": "ofBXHyPsTmNpJVcNoCo9j5"
+    },
+    {
+      "type": "Cuboid",
+      "cx": -20.05284620919852,
+      "cy": -31.1598203541727,
+      "cz": 4.6920942485939525,
+      "lx": 14.24559815125088,
+      "ly": 10.643905820516908,
+      "lz": 9.384188497187905,
+      "color": "gray",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.2728352410356374
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "id": "aZcQCi1W1twRBtwgJgUoeW"
+    },
+    {
+      "type": "Tree",
+      "name": "Oak",
+      "cx": 19.63141428747889,
+      "cy": -14.555088162280029,
+      "cz": 0.05000000074505806,
+      "lx": 16.244539454462206,
+      "lz": 17.937149329522143,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9zunWg9vgE2EXQf2GAGvHJ",
+      "id": "hP32y2WeaoShZAgJcL2phB",
+      "selected": false,
+      "evergreen": false
+    }
+  ],
+  "view": {
+    "yearlyPvYieldPanelX": -25,
+    "autoRotate": false,
+    "mapZoom": 16,
+    "axes": true,
+    "theme": "Default",
+    "showSiteInfoPanel": true,
+    "showDesignInfoPanel": true,
+    "showWeatherPanel": false,
+    "groundPanelX": 0,
+    "dailyPvYieldPanelX": -3,
+    "dailyLightSensorPanelY": 232,
+    "showDailyLightSensorPanel": false,
+    "mapTilt": 0,
+    "yearlyPvYieldPanelY": 16,
+    "yearlyLightSensorPanelX": 0,
+    "showGroundPanel": false,
+    "showHeliodonPanel": false,
+    "heliodon": false,
+    "weatherPanelY": 0,
+    "heliodonPanelX": -1175,
+    "dailyPvYieldPanelY": 8,
+    "mapWeatherStations": false,
+    "yearlyLightSensorPanelY": 0,
+    "showPvDailyYieldPanel": true,
+    "showYearlyPvYieldPanel": false,
+    "dailyLightSensorPanelX": -240,
+    "weatherPanelX": 0,
+    "heliodonPanelY": -33,
+    "groundColor": "forestgreen",
+    "groundPanelY": 0,
+    "groundImage": false,
+    "showDailyPvYieldPanel": false,
+    "shadowEnabled": true,
+    "showYearlyLightSensorPanel": false,
+    "mapType": "roadmap",
+    "cameraPosition": [
+      53.96406310906323,
+      -63.55404886182046,
+      17.26191308801079
+    ],
+    "panCenter": [
+      -14.409899112760232,
+      -10.942953787224548,
+      3.8259899066863428
+    ],
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 15.47561875,
+    "showInstructionPanel": true,
+    "cameraPosition2D": [
+      4.361874143686572,
+      3.699796590309034,
+      48.00000369998439
+    ],
+    "panCenter2D": [
+      4.361874143686572,
+      3.699844592441852,
+      0.000004448257642288249
+    ],
+    "showHeatmap": false,
+    "showSolarRadiationHeatmap": false,
+    "showSunAngles": false,
+    "solarRadiationHeatMapMaxValue": 20
+  },
+  "notes": []
+}

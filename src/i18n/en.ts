@@ -236,6 +236,7 @@ export const i18n_en = {
         SimpleHouse: 'Simple House',
         OfficeBuilding: 'Office Building',
         Hotel: 'Hotel',
+        Heatmap1: 'Heatmap',
       },
       languageSubMenu: 'Language',
       AboutUs: 'About Us',

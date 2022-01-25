@@ -236,6 +236,7 @@ export const i18n_es = {
         SimpleHouse: 'Casa sencilla',
         OfficeBuilding: 'Edificio de oficinas',
         Hotel: 'Hotel',
+        Heatmap1: 'Heatmap',
       },
       languageSubMenu: 'Idioma',
       AboutUs: 'Sobre nosotros',

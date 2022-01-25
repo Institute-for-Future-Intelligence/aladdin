@@ -235,6 +235,7 @@ export const i18n_zh_cn = {
         SimpleHouse: '一栋简单的房屋',
         OfficeBuilding: '一栋简单的办公楼',
         Hotel: '一个旅馆场景',
+        Heatmap1: '热图例一',
       },
       languageSubMenu: '语言',
       AboutUs: '关于我们',

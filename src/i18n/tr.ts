@@ -237,6 +237,7 @@ export const i18n_tr = {
         SimpleHouse: 'Basit Ev',
         OfficeBuilding: 'Ofis Binasý',
         Hotel: 'Hotel',
+        Heatmap1: 'Heatmap',
       },
       languageSubMenu: 'Dil',
       AboutUs: 'Hakkýmýzda',

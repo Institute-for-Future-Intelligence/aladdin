@@ -12,6 +12,7 @@ import solar_farm_03 from './examples/solar_farm_03.json';
 import solar_trackers from './examples/solar_trackers.json';
 import simple_house_01 from './examples/simple_house_01.json';
 import hotel_01 from './examples/hotel_01.json';
+import heatmap_01 from './examples/heatmap_01.json';
 import vegetative_buffer_01 from './examples/vegetative_buffer_01.json';
 import effect_tilt_angle_solar_panel from './examples/effect_tilt_angle_solar_panel.json';
 import effect_azimuth_solar_panel from './examples/effect_azimuth_solar_panel.json';
@@ -152,6 +153,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'hotel_01':
         input = hotel_01;
+        break;
+      case 'heatmap_01':
+        input = heatmap_01;
         break;
       case 'vegetative_buffer_01':
         input = vegetative_buffer_01;
@@ -1075,6 +1079,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="hotel_01" onClick={loadFile}>
             {i18n.t('menu.examples.Hotel', lang)}
+          </Menu.Item>
+          <Menu.Item key="heatmap_01" onClick={loadFile}>
+            {i18n.t('menu.examples.Heatmap1', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>
