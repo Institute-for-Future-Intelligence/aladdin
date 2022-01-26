@@ -393,6 +393,7 @@ export const i18n_zh_cn = {
     peopleMenu: {
       ChangePerson: '改变人物',
       Observer: '观察者',
+      ViewFromThisPerson: '视角移到此人位置',
     },
 
     sensorMenu: {

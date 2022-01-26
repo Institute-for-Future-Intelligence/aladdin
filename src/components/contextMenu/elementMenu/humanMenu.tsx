@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Checkbox, Menu, Space } from 'antd';
 import HumanSelection from './humanSelection';
 import { Copy, Cut, Lock } from '../menuItems';
@@ -12,32 +12,45 @@ import * as Selector from '../../../stores/selector';
 import { HumanModel } from '../../../models/HumanModel';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { useStoreRef } from '../../../stores/commonRef';
+import { Easing, Tween, update } from '@tweenjs/tween.js';
 
 export const HumanMenu = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const cameraDirection = useStore(Selector.cameraDirection);
+  const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getParent = useStore(Selector.getParent);
   const updateHumanObserverById = useStore(Selector.updateHumanObserverById);
+  const selectNone = useStore(Selector.selectNone);
 
   const human = getSelectedElement() as HumanModel;
   const editable = !human?.locked;
+  const requestRef = useRef<number>(0);
+  const previousFrameTime = useRef<number>(-1);
+  const firstCall = useRef<boolean>(true);
+  const animateMove = useRef<boolean>(false);
+  const [animationFlag, setAnimationFlag] = useState(false);
 
-  const setView = () => {
+  useEffect(() => {
+    if (animateMove.current) {
+      if (firstCall.current) {
+        requestRef.current = requestAnimationFrame(animate);
+        tween();
+        return () => {
+          cancelAnimationFrame(requestRef.current);
+        };
+      } else {
+        firstCall.current = true;
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [animationFlag]);
+
+  const moveCamera = (x: number, y: number, z: number) => {
     const orbitControlsRef = useStoreRef.getState().orbitControlsRef;
     if (orbitControlsRef?.current) {
-      const cam = cameraDirection.clone().normalize().multiplyScalar(0.5);
-      let x = human.cx + cam.x;
-      let y = human.cy + cam.y;
-      let z = human.cz + human.lz + cam.z;
-      const parent = getParent(human);
-      if (parent) {
-        x += parent.cx;
-        y += parent.cy;
-        z += parent.cz;
-      }
       orbitControlsRef.current.object.position.set(x, y, z);
       orbitControlsRef.current.update();
       setCommonStore((state) => {
@@ -45,6 +58,39 @@ export const HumanMenu = () => {
         v.cameraPosition = [x, y, z];
       });
     }
+  };
+
+  const animate = () => {
+    requestAnimationFrame(animate);
+    const currentFrameTime = Date.now();
+    if (currentFrameTime - previousFrameTime.current > 100) {
+      update();
+      previousFrameTime.current = currentFrameTime;
+    }
+  };
+
+  const tween = () => {
+    const cam = cameraDirection.clone().normalize().multiplyScalar(0.5);
+    let x = human.cx + cam.x;
+    let y = human.cy + cam.y;
+    let z = human.cz + human.lz + cam.z;
+    const parent = getParent(human);
+    if (parent) {
+      x += parent.cx;
+      y += parent.cy;
+      z += parent.cz;
+    }
+    const originalPosition = [...cameraPosition];
+    new Tween(originalPosition)
+      .to([x, y, z], 1000)
+      .easing(Easing.Quadratic.In)
+      .onUpdate((d) => {
+        moveCamera(d[0], d[1], d[2]);
+      })
+      .onComplete(() => {
+        selectNone();
+      })
+      .start();
   };
 
   return (
@@ -72,13 +118,22 @@ export const HumanMenu = () => {
                 } as UndoableCheck;
                 addUndoable(undoableCheck);
                 updateHumanObserverById(human.id, checked);
-                //if(checked) setView();
               }}
             >
               {i18n.t('peopleMenu.Observer', { lng: language })}
             </Checkbox>
           </Menu.Item>
         )}
+        <Menu.Item
+          key={'human-move-view'}
+          onClick={() => {
+            setAnimationFlag(!animationFlag);
+            animateMove.current = true;
+          }}
+          style={{ paddingLeft: '36px' }}
+        >
+          {i18n.t('peopleMenu.ViewFromThisPerson', { lng: language })}
+        </Menu.Item>
         {editable && (
           <Menu>
             <Menu.Item key={'human-change-person'} style={{ paddingLeft: '36px' }}>

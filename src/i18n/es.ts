@@ -405,6 +405,7 @@ export const i18n_es = {
     peopleMenu: {
       ChangePerson: 'Cambiar persona',
       Observer: 'Observer',
+      ViewFromThisPerson: 'View from This Person',
     },
 
     sensorMenu: {

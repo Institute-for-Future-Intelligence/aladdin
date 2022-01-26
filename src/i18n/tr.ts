@@ -406,6 +406,7 @@ export const i18n_tr = {
     peopleMenu: {
       ChangePerson: 'Kiþi Deðiþtir',
       Observer: 'Observer',
+      ViewFromThisPerson: 'View from This Person',
     },
 
     sensorMenu: {

@@ -60,6 +60,7 @@ const StyledImage = styled.img`
   transition: 0.5s;
   opacity: 1;
   cursor: pointer;
+  user-select: none;
 
   &:hover {
     opacity: 0.5;
