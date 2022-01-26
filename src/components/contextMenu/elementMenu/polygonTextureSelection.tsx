@@ -34,7 +34,7 @@ const PolygonTextureSelection = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const updatePolygonTextureById = useStore(Selector.updatePolygonTextureById);
   const updatePolygonTextureOnSurface = useStore(Selector.updatePolygonTextureOnSurface);
   const updatePolygonTextureAboveFoundation = useStore(Selector.updatePolygonTextureAboveFoundation);
@@ -143,45 +143,43 @@ const PolygonTextureSelection = ({
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
-        if (polygon.parentId) {
-          const parent = getElementById(polygon.parentId);
-          if (parent) {
-            const oldTexturesOnSurface = new Map<string, PolygonTexture>();
-            for (const elem of elements) {
-              if (
-                elem.type === ObjectType.Polygon &&
-                elem.parentId === polygon.parentId &&
-                Util.isIdentical(elem.normal, polygon.normal)
-              ) {
-                oldTexturesOnSurface.set(elem.id, (elem as PolygonModel).textureType ?? PolygonTexture.NoTexture);
-              }
+        const parent = getParent(polygon);
+        if (parent) {
+          const oldTexturesOnSurface = new Map<string, PolygonTexture>();
+          for (const elem of elements) {
+            if (
+              elem.type === ObjectType.Polygon &&
+              elem.parentId === polygon.parentId &&
+              Util.isIdentical(elem.normal, polygon.normal)
+            ) {
+              oldTexturesOnSurface.set(elem.id, (elem as PolygonModel).textureType ?? PolygonTexture.NoTexture);
             }
-            const undoableChangeOnSurface = {
-              name: 'Set Texture for All Polygons on Same Surface',
-              timestamp: Date.now(),
-              oldValues: oldTexturesOnSurface,
-              newValue: value,
-              groupId: polygon.parentId,
-              normal: polygon.normal,
-              undo: () => {
-                for (const [id, tx] of undoableChangeOnSurface.oldValues.entries()) {
-                  updatePolygonTextureById(id, tx as PolygonTexture);
-                }
-              },
-              redo: () => {
-                if (undoableChangeOnSurface.groupId) {
-                  updatePolygonTextureOnSurface(
-                    undoableChangeOnSurface.groupId,
-                    undoableChangeOnSurface.normal,
-                    undoableChangeOnSurface.newValue as PolygonTexture,
-                  );
-                }
-              },
-            } as UndoableChangeGroup;
-            addUndoable(undoableChangeOnSurface);
-            updatePolygonTextureOnSurface(polygon.parentId, polygon.normal, value);
-            setApplyCount(applyCount + 1);
           }
+          const undoableChangeOnSurface = {
+            name: 'Set Texture for All Polygons on Same Surface',
+            timestamp: Date.now(),
+            oldValues: oldTexturesOnSurface,
+            newValue: value,
+            groupId: polygon.parentId,
+            normal: polygon.normal,
+            undo: () => {
+              for (const [id, tx] of undoableChangeOnSurface.oldValues.entries()) {
+                updatePolygonTextureById(id, tx as PolygonTexture);
+              }
+            },
+            redo: () => {
+              if (undoableChangeOnSurface.groupId) {
+                updatePolygonTextureOnSurface(
+                  undoableChangeOnSurface.groupId,
+                  undoableChangeOnSurface.normal,
+                  undoableChangeOnSurface.newValue as PolygonTexture,
+                );
+              }
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeOnSurface);
+          updatePolygonTextureOnSurface(polygon.parentId, polygon.normal, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:

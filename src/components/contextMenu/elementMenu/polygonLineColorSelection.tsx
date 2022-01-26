@@ -24,7 +24,7 @@ const PolygonLineColorSelection = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const updateElementLineColorById = useStore(Selector.updateElementLineColorById);
   const updateElementLineColorOnSurface = useStore(Selector.updateElementLineColorOnSurface);
   const updateElementLineColorAboveFoundation = useStore(Selector.updateElementLineColorAboveFoundation);
@@ -129,46 +129,44 @@ const PolygonLineColorSelection = ({
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
-        if (polygon.parentId) {
-          const parent = getElementById(polygon.parentId);
-          if (parent) {
-            const oldLineColorsOnSurface = new Map<string, string>();
-            for (const elem of elements) {
-              if (
-                elem.type === ObjectType.Polygon &&
-                elem.parentId === polygon.parentId &&
-                Util.isIdentical(elem.normal, polygon.normal)
-              ) {
-                oldLineColorsOnSurface.set(elem.id, elem.lineColor ?? 'gray');
-              }
+        const parent = getParent(polygon);
+        if (parent) {
+          const oldLineColorsOnSurface = new Map<string, string>();
+          for (const elem of elements) {
+            if (
+              elem.type === ObjectType.Polygon &&
+              elem.parentId === polygon.parentId &&
+              Util.isIdentical(elem.normal, polygon.normal)
+            ) {
+              oldLineColorsOnSurface.set(elem.id, elem.lineColor ?? 'gray');
             }
-            const undoableChangeOnSurface = {
-              name: 'Set Line Color for All Polygons on Same Surface',
-              timestamp: Date.now(),
-              oldValues: oldLineColorsOnSurface,
-              newValue: value,
-              groupId: polygon.parentId,
-              normal: polygon.normal,
-              undo: () => {
-                for (const [id, lc] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateElementLineColorById(id, lc as string);
-                }
-              },
-              redo: () => {
-                if (undoableChangeOnSurface.groupId) {
-                  updateElementLineColorOnSurface(
-                    ObjectType.Polygon,
-                    undoableChangeOnSurface.groupId,
-                    undoableChangeOnSurface.normal,
-                    undoableChangeOnSurface.newValue as string,
-                  );
-                }
-              },
-            } as UndoableChangeGroup;
-            addUndoable(undoableChangeOnSurface);
-            updateElementLineColorOnSurface(ObjectType.Polygon, polygon.parentId, polygon.normal, value);
-            setApplyCount(applyCount + 1);
           }
+          const undoableChangeOnSurface = {
+            name: 'Set Line Color for All Polygons on Same Surface',
+            timestamp: Date.now(),
+            oldValues: oldLineColorsOnSurface,
+            newValue: value,
+            groupId: polygon.parentId,
+            normal: polygon.normal,
+            undo: () => {
+              for (const [id, lc] of undoableChangeOnSurface.oldValues.entries()) {
+                updateElementLineColorById(id, lc as string);
+              }
+            },
+            redo: () => {
+              if (undoableChangeOnSurface.groupId) {
+                updateElementLineColorOnSurface(
+                  ObjectType.Polygon,
+                  undoableChangeOnSurface.groupId,
+                  undoableChangeOnSurface.normal,
+                  undoableChangeOnSurface.newValue as string,
+                );
+              }
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeOnSurface);
+          updateElementLineColorOnSurface(ObjectType.Polygon, polygon.parentId, polygon.normal, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:

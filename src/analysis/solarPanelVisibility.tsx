@@ -20,7 +20,7 @@ const SolarPanelVisibility = () => {
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const setCommonStore = useStore(Selector.set);
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const solarPanelVisibilityFlag = useStore(Selector.solarPanelVisibilityFlag);
 
   const { scene } = useThree();
@@ -76,7 +76,7 @@ const SolarPanelVisibility = () => {
       if (e.type === ObjectType.Human) {
         const human = e as HumanModel;
         if (human.observer) {
-          const parent = getElementById(human.parentId);
+          const parent = getParent(human);
           const position = parent
             ? Util.absoluteHumanOrTreeCoordinates(human.cx, human.cy, human.cz, parent)
             : new Vector3(human.cx, human.cy, human.cz);
@@ -118,7 +118,7 @@ const SolarPanelVisibility = () => {
 
   // view factor: https://en.wikipedia.org/wiki/View_factor
   const getViewFactor = (panel: SolarPanelModel, vantage: Vector3) => {
-    const parent = getElementById(panel.parentId);
+    const parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);

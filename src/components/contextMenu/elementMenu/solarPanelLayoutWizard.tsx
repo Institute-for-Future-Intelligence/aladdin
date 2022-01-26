@@ -33,7 +33,7 @@ const SolarPanelLayoutWizard = ({
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getSelectedElement = useStore(Selector.getSelectedElement);
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const pvModules = useStore(Selector.pvModules);
   const getPvModule = useStore(Selector.getPvModule);
   const updateElementReferenceById = useStore(Selector.updateElementReferenceById);
@@ -137,7 +137,7 @@ const SolarPanelLayoutWizard = ({
     if (reference?.type === ObjectType.Polygon) {
       const area = reference as PolygonModel;
       const bounds = Util.calculatePolygonBounds(area.vertices);
-      const base = getElementById(area.parentId);
+      const base = getParent(area);
       if (base?.type === ObjectType.Foundation) {
         const newElements: ElementModel[] = [];
         const foundation = base as FoundationModel;

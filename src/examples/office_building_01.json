@@ -29,7 +29,8 @@
     "address": "Tucson, AZ, USA",
     "timesPerHour": 20,
     "orthographic": false,
-    "cameraZoom": 15.475618749999999
+    "cameraZoom": 15.475618749999999,
+    "solarRadiationHeatmapGridCellSize": 2
   },
   "elements": [
     {

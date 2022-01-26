@@ -24,7 +24,7 @@ const PolygonFillColorSelection = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const updateElementFillColorById = useStore(Selector.updateElementColorById);
   const updateElementFillColorOnSurface = useStore(Selector.updateElementColorOnSurface);
   const updateElementFillColorAboveFoundation = useStore(Selector.updateElementColorAboveFoundation);
@@ -129,46 +129,44 @@ const PolygonFillColorSelection = ({
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
-        if (polygon.parentId) {
-          const parent = getElementById(polygon.parentId);
-          if (parent) {
-            const oldFillColorsOnSurface = new Map<string, string>();
-            for (const elem of elements) {
-              if (
-                elem.type === ObjectType.Polygon &&
-                elem.parentId === polygon.parentId &&
-                Util.isIdentical(elem.normal, polygon.normal)
-              ) {
-                oldFillColorsOnSurface.set(elem.id, elem.color ?? 'gray');
-              }
+        const parent = getParent(polygon);
+        if (parent) {
+          const oldFillColorsOnSurface = new Map<string, string>();
+          for (const elem of elements) {
+            if (
+              elem.type === ObjectType.Polygon &&
+              elem.parentId === polygon.parentId &&
+              Util.isIdentical(elem.normal, polygon.normal)
+            ) {
+              oldFillColorsOnSurface.set(elem.id, elem.color ?? 'gray');
             }
-            const undoableChangeOnSurface = {
-              name: 'Set Fill Color for All Polygons on Same Surface',
-              timestamp: Date.now(),
-              oldValues: oldFillColorsOnSurface,
-              newValue: value,
-              groupId: polygon.parentId,
-              normal: polygon.normal,
-              undo: () => {
-                for (const [id, lc] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateElementFillColorById(id, lc as string);
-                }
-              },
-              redo: () => {
-                if (undoableChangeOnSurface.groupId) {
-                  updateElementFillColorOnSurface(
-                    ObjectType.Polygon,
-                    undoableChangeOnSurface.groupId,
-                    undoableChangeOnSurface.normal,
-                    undoableChangeOnSurface.newValue as string,
-                  );
-                }
-              },
-            } as UndoableChangeGroup;
-            addUndoable(undoableChangeOnSurface);
-            updateElementFillColorOnSurface(ObjectType.Polygon, polygon.parentId, polygon.normal, value);
-            setApplyCount(applyCount + 1);
           }
+          const undoableChangeOnSurface = {
+            name: 'Set Fill Color for All Polygons on Same Surface',
+            timestamp: Date.now(),
+            oldValues: oldFillColorsOnSurface,
+            newValue: value,
+            groupId: polygon.parentId,
+            normal: polygon.normal,
+            undo: () => {
+              for (const [id, lc] of undoableChangeOnSurface.oldValues.entries()) {
+                updateElementFillColorById(id, lc as string);
+              }
+            },
+            redo: () => {
+              if (undoableChangeOnSurface.groupId) {
+                updateElementFillColorOnSurface(
+                  ObjectType.Polygon,
+                  undoableChangeOnSurface.groupId,
+                  undoableChangeOnSurface.normal,
+                  undoableChangeOnSurface.newValue as string,
+                );
+              }
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeOnSurface);
+          updateElementFillColorOnSurface(ObjectType.Polygon, polygon.parentId, polygon.normal, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:

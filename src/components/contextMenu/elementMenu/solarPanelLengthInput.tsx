@@ -29,7 +29,7 @@ const SolarPanelLengthInput = ({
   const updateSolarPanelLxOnSurface = useStore(Selector.updateSolarPanelLxOnSurface);
   const updateSolarPanelLxAboveFoundation = useStore(Selector.updateSolarPanelLxAboveFoundation);
   const updateSolarPanelLxForAll = useStore(Selector.updateSolarPanelLxForAll);
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
@@ -67,7 +67,7 @@ const SolarPanelLengthInput = ({
   };
 
   const withinParent = (sp: SolarPanelModel, lx: number) => {
-    const parent = getElementById(sp.parentId);
+    const parent = getParent(sp);
     if (parent) {
       if (parent.type === ObjectType.Cuboid && !Util.isIdentical(sp.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
         // TODO: cuboid vertical sides
@@ -112,31 +112,29 @@ const SolarPanelLengthInput = ({
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
-        if (solarPanel?.parentId) {
-          const parent = getElementById(solarPanel.parentId);
-          if (parent) {
-            const isParentCuboid = parent.type === ObjectType.Cuboid;
-            if (isParentCuboid) {
-              for (const e of elements) {
-                if (
-                  e.type === ObjectType.SolarPanel &&
-                  e.parentId === solarPanel.parentId &&
-                  Util.isIdentical(e.normal, solarPanel.normal) &&
-                  !e.locked
-                ) {
-                  const sp = e as SolarPanelModel;
-                  if (Math.abs(sp.lx - lx) > ZERO_TOLERANCE) {
-                    return true;
-                  }
+        const parent = getParent(solarPanel);
+        if (parent) {
+          const isParentCuboid = parent.type === ObjectType.Cuboid;
+          if (isParentCuboid) {
+            for (const e of elements) {
+              if (
+                e.type === ObjectType.SolarPanel &&
+                e.parentId === solarPanel.parentId &&
+                Util.isIdentical(e.normal, solarPanel.normal) &&
+                !e.locked
+              ) {
+                const sp = e as SolarPanelModel;
+                if (Math.abs(sp.lx - lx) > ZERO_TOLERANCE) {
+                  return true;
                 }
               }
-            } else {
-              for (const e of elements) {
-                if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  if (Math.abs(sp.lx - lx) > ZERO_TOLERANCE) {
-                    return true;
-                  }
+            }
+          } else {
+            for (const e of elements) {
+              if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
+                const sp = e as SolarPanelModel;
+                if (Math.abs(sp.lx - lx) > ZERO_TOLERANCE) {
+                  return true;
                 }
               }
             }
@@ -243,10 +241,38 @@ const SolarPanelLengthInput = ({
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
-        if (solarPanel.parentId) {
-          const parent = getElementById(solarPanel.parentId);
-          if (parent) {
-            rejectRef.current = false;
+        const parent = getParent(solarPanel);
+        if (parent) {
+          rejectRef.current = false;
+          const isParentCuboid = parent.type === ObjectType.Cuboid;
+          if (isParentCuboid) {
+            for (const elem of elements) {
+              if (
+                elem.type === ObjectType.SolarPanel &&
+                elem.parentId === solarPanel.parentId &&
+                Util.isIdentical(elem.normal, solarPanel.normal)
+              ) {
+                if (rejectChange(elem as SolarPanelModel, value)) {
+                  rejectRef.current = true;
+                  break;
+                }
+              }
+            }
+          } else {
+            for (const elem of elements) {
+              if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
+                if (rejectChange(elem as SolarPanelModel, value)) {
+                  rejectRef.current = true;
+                  break;
+                }
+              }
+            }
+          }
+          if (rejectRef.current) {
+            rejectedValue.current = value;
+            setInputLength(solarPanel.lx);
+          } else {
+            const oldLengthsOnSurface = new Map<string, number>();
             const isParentCuboid = parent.type === ObjectType.Cuboid;
             if (isParentCuboid) {
               for (const elem of elements) {
@@ -255,72 +281,42 @@ const SolarPanelLengthInput = ({
                   elem.parentId === solarPanel.parentId &&
                   Util.isIdentical(elem.normal, solarPanel.normal)
                 ) {
-                  if (rejectChange(elem as SolarPanelModel, value)) {
-                    rejectRef.current = true;
-                    break;
-                  }
+                  oldLengthsOnSurface.set(elem.id, elem.lx);
                 }
               }
             } else {
               for (const elem of elements) {
                 if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                  if (rejectChange(elem as SolarPanelModel, value)) {
-                    rejectRef.current = true;
-                    break;
-                  }
+                  oldLengthsOnSurface.set(elem.id, elem.lx);
                 }
               }
             }
-            if (rejectRef.current) {
-              rejectedValue.current = value;
-              setInputLength(solarPanel.lx);
-            } else {
-              const oldLengthsOnSurface = new Map<string, number>();
-              const isParentCuboid = parent.type === ObjectType.Cuboid;
-              if (isParentCuboid) {
-                for (const elem of elements) {
-                  if (
-                    elem.type === ObjectType.SolarPanel &&
-                    elem.parentId === solarPanel.parentId &&
-                    Util.isIdentical(elem.normal, solarPanel.normal)
-                  ) {
-                    oldLengthsOnSurface.set(elem.id, elem.lx);
-                  }
+            const normal = isParentCuboid ? solarPanel.normal : undefined;
+            const undoableChangeOnSurface = {
+              name: 'Set Length for All Solar Panel Arrays on Surface',
+              timestamp: Date.now(),
+              oldValues: oldLengthsOnSurface,
+              newValue: value,
+              groupId: solarPanel.parentId,
+              normal: normal,
+              undo: () => {
+                for (const [id, lx] of undoableChangeOnSurface.oldValues.entries()) {
+                  updateSolarPanelLxById(id, lx as number);
                 }
-              } else {
-                for (const elem of elements) {
-                  if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                    oldLengthsOnSurface.set(elem.id, elem.lx);
-                  }
+              },
+              redo: () => {
+                if (undoableChangeOnSurface.groupId) {
+                  updateSolarPanelLxOnSurface(
+                    undoableChangeOnSurface.groupId,
+                    undoableChangeOnSurface.normal,
+                    undoableChangeOnSurface.newValue as number,
+                  );
                 }
-              }
-              const normal = isParentCuboid ? solarPanel.normal : undefined;
-              const undoableChangeOnSurface = {
-                name: 'Set Length for All Solar Panel Arrays on Surface',
-                timestamp: Date.now(),
-                oldValues: oldLengthsOnSurface,
-                newValue: value,
-                groupId: solarPanel.parentId,
-                normal: normal,
-                undo: () => {
-                  for (const [id, lx] of undoableChangeOnSurface.oldValues.entries()) {
-                    updateSolarPanelLxById(id, lx as number);
-                  }
-                },
-                redo: () => {
-                  if (undoableChangeOnSurface.groupId) {
-                    updateSolarPanelLxOnSurface(
-                      undoableChangeOnSurface.groupId,
-                      undoableChangeOnSurface.normal,
-                      undoableChangeOnSurface.newValue as number,
-                    );
-                  }
-                },
-              } as UndoableChangeGroup;
-              addUndoable(undoableChangeOnSurface);
-              updateSolarPanelLxOnSurface(solarPanel.parentId, normal, value);
-              setApplyCount(applyCount + 1);
-            }
+              },
+            } as UndoableChangeGroup;
+            addUndoable(undoableChangeOnSurface);
+            updateSolarPanelLxOnSurface(solarPanel.parentId, normal, value);
+            setApplyCount(applyCount + 1);
           }
         }
         break;

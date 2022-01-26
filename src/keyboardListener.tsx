@@ -41,7 +41,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
   const copyElementById = useStore(Selector.copyElementById);
   const removeElementById = useStore(Selector.removeElementById);
   const pasteElements = useStore(Selector.pasteElementsByKey);
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const updateElementCxById = useStore(Selector.updateElementCxById);
   const updateElementCyById = useStore(Selector.updateElementCyById);
   const updateWallLeftJointsById = useStore(Selector.updateWallLeftJointsById);
@@ -180,7 +180,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       return false;
     }
     if (clone.type === ObjectType.SolarPanel) {
-      const parent = getElementById(elem.parentId);
+      const parent = getParent(elem);
       if (parent && !Util.isSolarPanelWithinHorizontalSurface(clone as SolarPanelModel, parent)) {
         showError(i18n.t('message.MoveOutsideBoundaryCancelled', lang));
         return false;
@@ -213,7 +213,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             displacement = -moveStepAbsolute;
             break;
           case ObjectType.Sensor:
-            const parent = getElementById(selectedElement.parentId);
+            const parent = getParent(selectedElement);
             if (parent) {
               const halfLx = selectedElement.lx / (2 * parent.lx);
               const x = Math.max(-0.5 + halfLx, selectedElement.cx - moveStepRelative);
@@ -271,7 +271,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             displacement = moveStepAbsolute;
             break;
           case ObjectType.Sensor:
-            const parent = getElementById(selectedElement.parentId);
+            const parent = getParent(selectedElement);
             if (parent) {
               const halfLx = parent ? selectedElement.lx / (2 * parent.lx) : 0;
               const x = Math.min(0.5 - halfLx, selectedElement.cx + moveStepRelative);
@@ -329,7 +329,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             displacement = moveStepAbsolute;
             break;
           case ObjectType.Sensor:
-            const parent = getElementById(selectedElement.parentId);
+            const parent = getParent(selectedElement);
             if (parent) {
               const halfLy = parent ? selectedElement.ly / (2 * parent.ly) : 0;
               const y = Math.min(0.5 - halfLy, selectedElement.cy + moveStepRelative);
@@ -381,7 +381,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             displacement = -moveStepAbsolute;
             break;
           case ObjectType.Sensor:
-            const parent = getElementById(selectedElement.parentId);
+            const parent = getParent(selectedElement);
             if (parent) {
               const halfLy = parent ? selectedElement.ly / (2 * parent.ly) : 0;
               const y = Math.max(-0.5 + halfLy, selectedElement.cy - moveStepRelative);

@@ -126,6 +126,7 @@ export interface CommonStoreState {
   selectedSideIndex: number;
   getResizeHandlePosition: (e: ElementModel, type: ResizeHandleType) => Vector3;
   getElementById: (id: string) => ElementModel | null;
+  getParent: (child: ElementModel) => ElementModel | null;
   selectMe: (id: string, e: ThreeEvent<MouseEvent>, action?: ActionType) => void;
   selectNone: () => void;
   setElementPosition: (id: string, x: number, y: number, z?: number) => void;
@@ -656,7 +657,7 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               if (threshold === undefined) {
                 // when threshold is not set, check overlap of bounding boxes
-                const parent = state.getElementById(me.parentId);
+                const parent = state.getParent(me);
                 if (parent) {
                   for (const e of state.elements) {
                     if (e.type === me.type && e.parentId === me.parentId && e.id !== me.id) {
@@ -777,6 +778,15 @@ export const useStore = create<CommonStoreState>(
             const elements = get().elements;
             for (const e of elements) {
               if (e.id === id) {
+                return e;
+              }
+            }
+            return null;
+          },
+          getParent(child) {
+            const elements = get().elements;
+            for (const e of elements) {
+              if (e.id === child.parentId) {
                 return e;
               }
             }
@@ -1207,7 +1217,7 @@ export const useStore = create<CommonStoreState>(
                     e.rotation[2] = z;
                   }
                 } else {
-                  const parent = state.getElementById(e.parentId);
+                  const parent = state.getParent(e);
                   if (parent && !parent.locked && parent.type === type) {
                     e.rotation[0] = x;
                     e.rotation[1] = y;
@@ -2728,13 +2738,7 @@ export const useStore = create<CommonStoreState>(
                 let e: ElementModel | null = null;
                 if (i === 0) {
                   // the first element is the parent
-                  e = ElementModelCloner.clone(
-                    state.getElementById(oldElem.parentId),
-                    oldElem,
-                    oldElem.cx,
-                    oldElem.cy,
-                    oldElem.cz,
-                  );
+                  e = ElementModelCloner.clone(state.getParent(oldElem), oldElem, oldElem.cx, oldElem.cy, oldElem.cz);
                 } else {
                   let oldParent = null;
                   for (const c of state.elementsToPaste) {
@@ -2798,11 +2802,11 @@ export const useStore = create<CommonStoreState>(
                 let m = state.pastePoint;
                 const elem = state.elementsToPaste[0];
                 let newParent = state.getSelectedElement();
-                const oldParent = state.getElementById(elem.parentId);
+                const oldParent = state.getParent(elem);
                 if (newParent) {
                   if (newParent.type === ObjectType.Polygon) {
                     // paste action of polygon is passed to its parent
-                    const q = state.getElementById(newParent.parentId);
+                    const q = state.getParent(newParent);
                     if (q) {
                       newParent = q;
                       elem.parentId = newParent.id;
@@ -2935,7 +2939,7 @@ export const useStore = create<CommonStoreState>(
                       if (Util.isTreeOrHuman(e)) {
                         if (newParent) {
                           // paste on a parent
-                          const parent = state.getElementById(e.parentId);
+                          const parent = state.getParent(e);
                           if (parent) {
                             const p = Util.relativePoint(state.pastePoint, parent);
                             e.cx = p.x;
@@ -2980,7 +2984,7 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               if (state.elementsToPaste.length > 0) {
                 const elem = state.elementsToPaste[0];
-                const parent = state.getElementById(elem.parentId);
+                const parent = state.getParent(elem);
                 const e = ElementModelCloner.clone(parent, elem, elem.cx, elem.cy, elem.cz);
                 if (e) {
                   let approved = false;
@@ -3032,7 +3036,7 @@ export const useStore = create<CommonStoreState>(
                       break;
                     case ObjectType.SolarPanel:
                       if (e.parentId) {
-                        const parent = state.getElementById(e.parentId);
+                        const parent = state.getParent(e);
                         if (parent) {
                           const nearestNeighborId = state.findNearestSibling(elem.id);
                           if (nearestNeighborId) {
@@ -3086,7 +3090,7 @@ export const useStore = create<CommonStoreState>(
                       break;
                     case ObjectType.Sensor:
                       if (e.parentId) {
-                        const parent = state.getElementById(e.parentId);
+                        const parent = state.getParent(e);
                         if (parent) {
                           e.cx += e.lx / parent.lx;
                         }

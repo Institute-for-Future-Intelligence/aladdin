@@ -28,7 +28,7 @@ const SolarPanelTiltAngleInput = ({
   const updateSolarPanelTiltAngleOnSurface = useStore(Selector.updateSolarPanelTiltAngleOnSurface);
   const updateSolarPanelTiltAngleAboveFoundation = useStore(Selector.updateSolarPanelTiltAngleAboveFoundation);
   const updateSolarPanelTiltAngleForAll = useStore(Selector.updateSolarPanelTiltAngleForAll);
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
@@ -82,33 +82,31 @@ const SolarPanelTiltAngleInput = ({
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
-        if (solarPanel?.parentId) {
-          const parent = getElementById(solarPanel.parentId);
-          if (parent) {
-            const isParentCuboid = parent.type === ObjectType.Cuboid;
-            if (isParentCuboid) {
-              for (const e of elements) {
-                if (
-                  e.type === ObjectType.SolarPanel &&
-                  e.parentId === solarPanel.parentId &&
-                  Util.isIdentical(e.normal, solarPanel.normal) &&
-                  !e.locked
-                ) {
-                  // tilt is only allowed for the top surface of a cuboid
-                  const sp = e as SolarPanelModel;
-                  if (Math.abs(sp.tiltAngle - tiltAngle) > ZERO_TOLERANCE) {
-                    return true;
-                  }
+        const parent = getParent(solarPanel);
+        if (parent) {
+          const isParentCuboid = parent.type === ObjectType.Cuboid;
+          if (isParentCuboid) {
+            for (const e of elements) {
+              if (
+                e.type === ObjectType.SolarPanel &&
+                e.parentId === solarPanel.parentId &&
+                Util.isIdentical(e.normal, solarPanel.normal) &&
+                !e.locked
+              ) {
+                // tilt is only allowed for the top surface of a cuboid
+                const sp = e as SolarPanelModel;
+                if (Math.abs(sp.tiltAngle - tiltAngle) > ZERO_TOLERANCE) {
+                  return true;
                 }
               }
-            } else {
-              // tilt is only allowed on top of a foundation or a roof
-              for (const e of elements) {
-                if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  if (Math.abs(sp.tiltAngle - tiltAngle) > ZERO_TOLERANCE) {
-                    return true;
-                  }
+            }
+          } else {
+            // tilt is only allowed on top of a foundation or a roof
+            for (const e of elements) {
+              if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
+                const sp = e as SolarPanelModel;
+                if (Math.abs(sp.tiltAngle - tiltAngle) > ZERO_TOLERANCE) {
+                  return true;
                 }
               }
             }
@@ -215,11 +213,40 @@ const SolarPanelTiltAngleInput = ({
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
-        if (solarPanel.parentId) {
-          const parent = getElementById(solarPanel.parentId);
-          if (parent) {
-            rejectRef.current = false;
-            const isParentCuboid = parent.type === ObjectType.Cuboid;
+        const parent = getParent(solarPanel);
+        if (parent) {
+          rejectRef.current = false;
+          const isParentCuboid = parent.type === ObjectType.Cuboid;
+          if (isParentCuboid) {
+            for (const elem of elements) {
+              if (
+                elem.type === ObjectType.SolarPanel &&
+                elem.parentId === solarPanel.parentId &&
+                Util.isIdentical(elem.normal, solarPanel.normal)
+              ) {
+                // tilt is only allowed for the top surface of a cuboid
+                if (0.5 * elem.ly * Math.abs(Math.sin(value)) > (elem as SolarPanelModel).poleHeight) {
+                  rejectRef.current = true;
+                  break;
+                }
+              }
+            }
+          } else {
+            // tilt is only allowed on top of a foundation or a roof
+            for (const elem of elements) {
+              if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
+                if (0.5 * elem.ly * Math.abs(Math.sin(value)) > (elem as SolarPanelModel).poleHeight) {
+                  rejectRef.current = true;
+                  break;
+                }
+              }
+            }
+          }
+          if (rejectRef.current) {
+            rejectedValue.current = value;
+            setInputTiltAngle(solarPanel.tiltAngle);
+          } else {
+            const oldTiltAnglesOnSurface = new Map<string, number>();
             if (isParentCuboid) {
               for (const elem of elements) {
                 if (
@@ -227,73 +254,42 @@ const SolarPanelTiltAngleInput = ({
                   elem.parentId === solarPanel.parentId &&
                   Util.isIdentical(elem.normal, solarPanel.normal)
                 ) {
-                  // tilt is only allowed for the top surface of a cuboid
-                  if (0.5 * elem.ly * Math.abs(Math.sin(value)) > (elem as SolarPanelModel).poleHeight) {
-                    rejectRef.current = true;
-                    break;
-                  }
+                  oldTiltAnglesOnSurface.set(elem.id, (elem as SolarPanelModel).tiltAngle);
                 }
               }
             } else {
-              // tilt is only allowed on top of a foundation or a roof
               for (const elem of elements) {
                 if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                  if (0.5 * elem.ly * Math.abs(Math.sin(value)) > (elem as SolarPanelModel).poleHeight) {
-                    rejectRef.current = true;
-                    break;
-                  }
+                  oldTiltAnglesOnSurface.set(elem.id, (elem as SolarPanelModel).tiltAngle);
                 }
               }
             }
-            if (rejectRef.current) {
-              rejectedValue.current = value;
-              setInputTiltAngle(solarPanel.tiltAngle);
-            } else {
-              const oldTiltAnglesOnSurface = new Map<string, number>();
-              if (isParentCuboid) {
-                for (const elem of elements) {
-                  if (
-                    elem.type === ObjectType.SolarPanel &&
-                    elem.parentId === solarPanel.parentId &&
-                    Util.isIdentical(elem.normal, solarPanel.normal)
-                  ) {
-                    oldTiltAnglesOnSurface.set(elem.id, (elem as SolarPanelModel).tiltAngle);
-                  }
+            const normal = isParentCuboid ? solarPanel.normal : undefined;
+            const undoableChangeOnSurface = {
+              name: 'Set Tilt Angle for All Solar Panel Arrays on Surface',
+              timestamp: Date.now(),
+              oldValues: oldTiltAnglesOnSurface,
+              newValue: value,
+              groupId: solarPanel.parentId,
+              normal: normal,
+              undo: () => {
+                for (const [id, ta] of undoableChangeOnSurface.oldValues.entries()) {
+                  updateSolarPanelTiltAngleById(id, ta as number);
                 }
-              } else {
-                for (const elem of elements) {
-                  if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                    oldTiltAnglesOnSurface.set(elem.id, (elem as SolarPanelModel).tiltAngle);
-                  }
+              },
+              redo: () => {
+                if (undoableChangeOnSurface.groupId) {
+                  updateSolarPanelTiltAngleOnSurface(
+                    undoableChangeOnSurface.groupId,
+                    undoableChangeOnSurface.normal,
+                    undoableChangeOnSurface.newValue as number,
+                  );
                 }
-              }
-              const normal = isParentCuboid ? solarPanel.normal : undefined;
-              const undoableChangeOnSurface = {
-                name: 'Set Tilt Angle for All Solar Panel Arrays on Surface',
-                timestamp: Date.now(),
-                oldValues: oldTiltAnglesOnSurface,
-                newValue: value,
-                groupId: solarPanel.parentId,
-                normal: normal,
-                undo: () => {
-                  for (const [id, ta] of undoableChangeOnSurface.oldValues.entries()) {
-                    updateSolarPanelTiltAngleById(id, ta as number);
-                  }
-                },
-                redo: () => {
-                  if (undoableChangeOnSurface.groupId) {
-                    updateSolarPanelTiltAngleOnSurface(
-                      undoableChangeOnSurface.groupId,
-                      undoableChangeOnSurface.normal,
-                      undoableChangeOnSurface.newValue as number,
-                    );
-                  }
-                },
-              } as UndoableChangeGroup;
-              addUndoable(undoableChangeOnSurface);
-              updateSolarPanelTiltAngleOnSurface(solarPanel.parentId, normal, value);
-              setApplyCount(applyCount + 1);
-            }
+              },
+            } as UndoableChangeGroup;
+            addUndoable(undoableChangeOnSurface);
+            updateSolarPanelTiltAngleOnSurface(solarPanel.parentId, normal, value);
+            setApplyCount(applyCount + 1);
           }
         }
         break;

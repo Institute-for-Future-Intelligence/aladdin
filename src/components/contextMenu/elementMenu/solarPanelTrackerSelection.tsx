@@ -27,7 +27,7 @@ const SolarPanelTrackerSelection = ({
   const updateSolarPanelTrackerTypeOnSurface = useStore(Selector.updateSolarPanelTrackerTypeOnSurface);
   const updateSolarPanelTrackerTypeAboveFoundation = useStore(Selector.updateSolarPanelTrackerTypeAboveFoundation);
   const updateSolarPanelTrackerTypeForAll = useStore(Selector.updateSolarPanelTrackerTypeForAll);
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
@@ -82,31 +82,29 @@ const SolarPanelTrackerSelection = ({
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
-        if (solarPanel?.parentId) {
-          const parent = getElementById(solarPanel.parentId);
-          if (parent) {
-            const isParentCuboid = parent.type === ObjectType.Cuboid;
-            if (isParentCuboid) {
-              for (const e of elements) {
-                if (
-                  e.type === ObjectType.SolarPanel &&
-                  e.parentId === solarPanel.parentId &&
-                  Util.isIdentical(e.normal, solarPanel.normal) &&
-                  !e.locked
-                ) {
-                  const sp = e as SolarPanelModel;
-                  if (sp.trackerType !== tracker) {
-                    return true;
-                  }
+        const parent = getParent(solarPanel);
+        if (parent) {
+          const isParentCuboid = parent.type === ObjectType.Cuboid;
+          if (isParentCuboid) {
+            for (const e of elements) {
+              if (
+                e.type === ObjectType.SolarPanel &&
+                e.parentId === solarPanel.parentId &&
+                Util.isIdentical(e.normal, solarPanel.normal) &&
+                !e.locked
+              ) {
+                const sp = e as SolarPanelModel;
+                if (sp.trackerType !== tracker) {
+                  return true;
                 }
               }
-            } else {
-              for (const e of elements) {
-                if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  if (sp.trackerType !== tracker) {
-                    return true;
-                  }
+            }
+          } else {
+            for (const e of elements) {
+              if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
+                const sp = e as SolarPanelModel;
+                if (sp.trackerType !== tracker) {
+                  return true;
                 }
               }
             }
@@ -184,55 +182,53 @@ const SolarPanelTrackerSelection = ({
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
-        if (solarPanel.parentId) {
-          const parent = getElementById(solarPanel.parentId);
-          if (parent) {
-            const oldTrackerTypesOnSurface = new Map<string, TrackerType>();
-            const isParentCuboid = parent.type === ObjectType.Cuboid;
-            if (isParentCuboid) {
-              for (const elem of elements) {
-                if (
-                  elem.type === ObjectType.SolarPanel &&
-                  elem.parentId === solarPanel.parentId &&
-                  Util.isIdentical(elem.normal, solarPanel.normal)
-                ) {
-                  oldTrackerTypesOnSurface.set(elem.id, (elem as SolarPanelModel).trackerType);
-                }
-              }
-            } else {
-              for (const elem of elements) {
-                if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                  oldTrackerTypesOnSurface.set(elem.id, (elem as SolarPanelModel).trackerType);
-                }
+        const parent = getParent(solarPanel);
+        if (parent) {
+          const oldTrackerTypesOnSurface = new Map<string, TrackerType>();
+          const isParentCuboid = parent.type === ObjectType.Cuboid;
+          if (isParentCuboid) {
+            for (const elem of elements) {
+              if (
+                elem.type === ObjectType.SolarPanel &&
+                elem.parentId === solarPanel.parentId &&
+                Util.isIdentical(elem.normal, solarPanel.normal)
+              ) {
+                oldTrackerTypesOnSurface.set(elem.id, (elem as SolarPanelModel).trackerType);
               }
             }
-            const normal = isParentCuboid ? solarPanel.normal : undefined;
-            const undoableChangeOnSurface = {
-              name: 'Set Tracker Type for All Solar Panel Arrays on Surface',
-              timestamp: Date.now(),
-              oldValues: oldTrackerTypesOnSurface,
-              newValue: value,
-              groupId: solarPanel.parentId,
-              normal: normal,
-              undo: () => {
-                for (const [id, tt] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateSolarPanelTrackerTypeById(id, tt as TrackerType);
-                }
-              },
-              redo: () => {
-                if (undoableChangeOnSurface.groupId) {
-                  updateSolarPanelTrackerTypeOnSurface(
-                    undoableChangeOnSurface.groupId,
-                    undoableChangeOnSurface.normal,
-                    undoableChangeOnSurface.newValue as TrackerType,
-                  );
-                }
-              },
-            } as UndoableChangeGroup;
-            addUndoable(undoableChangeOnSurface);
-            updateSolarPanelTrackerTypeOnSurface(solarPanel.parentId, normal, value);
-            setApplyCount(applyCount + 1);
+          } else {
+            for (const elem of elements) {
+              if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
+                oldTrackerTypesOnSurface.set(elem.id, (elem as SolarPanelModel).trackerType);
+              }
+            }
           }
+          const normal = isParentCuboid ? solarPanel.normal : undefined;
+          const undoableChangeOnSurface = {
+            name: 'Set Tracker Type for All Solar Panel Arrays on Surface',
+            timestamp: Date.now(),
+            oldValues: oldTrackerTypesOnSurface,
+            newValue: value,
+            groupId: solarPanel.parentId,
+            normal: normal,
+            undo: () => {
+              for (const [id, tt] of undoableChangeOnSurface.oldValues.entries()) {
+                updateSolarPanelTrackerTypeById(id, tt as TrackerType);
+              }
+            },
+            redo: () => {
+              if (undoableChangeOnSurface.groupId) {
+                updateSolarPanelTrackerTypeOnSurface(
+                  undoableChangeOnSurface.groupId,
+                  undoableChangeOnSurface.normal,
+                  undoableChangeOnSurface.newValue as TrackerType,
+                );
+              }
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeOnSurface);
+          updateSolarPanelTrackerTypeOnSurface(solarPanel.parentId, normal, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       default:

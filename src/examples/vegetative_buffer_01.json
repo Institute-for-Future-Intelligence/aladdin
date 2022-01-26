@@ -32,7 +32,8 @@
     "name": "default",
     "orthographic": false,
     "cameraZoom": 35.16173831821251,
-    "solarPanelVisibilityGridCellSize": 0.2
+    "solarPanelVisibilityGridCellSize": 0.2,
+    "solarRadiationHeatmapGridCellSize": 1
   },
   "elements": [
     {

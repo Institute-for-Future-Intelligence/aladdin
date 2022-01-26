@@ -18,17 +18,17 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
   const rotateHandle = useStore(Selector.rotateHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
   const angle = useStore(Selector.selectedElementAngle);
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
 
   const [position, setPosition] = useState<Vector3>();
   const [radius, setRadius] = useState<number>(10);
 
   useEffect(() => {
     if (rotateHandle || hoveredHandle) {
-      const { cx, cy, lx, ly, type, parentId } = element;
+      const { cx, cy, lx, ly, type } = element;
       switch (type) {
         case ObjectType.SolarPanel:
-          const currParent = getElementById(parentId);
+          const currParent = getParent(element);
           if (currParent) {
             const rcx = cx * currParent.lx;
             const rcy = cy * currParent.ly;

@@ -95,6 +95,8 @@ export const getCameraDirection = (state: CommonStoreState) => state.getCameraDi
 
 export const getElementById = (state: CommonStoreState) => state.getElementById;
 
+export const getParent = (state: CommonStoreState) => state.getParent;
+
 export const getChildren = (state: CommonStoreState) => state.getChildren;
 
 export const getSelectedElement = (state: CommonStoreState) => state.getSelectedElement;

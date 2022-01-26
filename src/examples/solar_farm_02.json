@@ -28,7 +28,8 @@
       ]
     },
     "name": "default",
-    "discretization": "Approximate"
+    "discretization": "Approximate",
+    "solarRadiationHeatmapGridCellSize": 2
   },
   "elements": [
     {

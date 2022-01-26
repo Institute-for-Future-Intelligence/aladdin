@@ -30,7 +30,7 @@ const SolarPanelRelativeAzimuthInput = ({
     Selector.updateSolarPanelRelativeAzimuthAboveFoundation,
   );
   const updateSolarPanelRelativeAzimuthForAll = useStore(Selector.updateSolarPanelRelativeAzimuthForAll);
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
@@ -62,7 +62,7 @@ const SolarPanelRelativeAzimuthInput = ({
   };
 
   const withinParent = (sp: SolarPanelModel, azimuth: number) => {
-    const parent = getElementById(sp.parentId);
+    const parent = getParent(sp);
     if (parent) {
       if (parent.type === ObjectType.Cuboid && !Util.isIdentical(sp.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
         // azimuth should not be changed for solar panels on a vertical side of a cuboid
@@ -108,7 +108,7 @@ const SolarPanelRelativeAzimuthInput = ({
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
         if (solarPanel?.parentId) {
-          const parent = getElementById(solarPanel.parentId);
+          const parent = getParent(solarPanel);
           if (parent) {
             const isParentCuboid = parent.type === ObjectType.Cuboid;
             if (isParentCuboid) {
@@ -241,7 +241,7 @@ const SolarPanelRelativeAzimuthInput = ({
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
         if (solarPanel.parentId) {
-          const parent = getElementById(solarPanel.parentId);
+          const parent = getParent(solarPanel);
           if (parent) {
             rejectRef.current = false;
             const isParentCuboid = parent.type === ObjectType.Cuboid;

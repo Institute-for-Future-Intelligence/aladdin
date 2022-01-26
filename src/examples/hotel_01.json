@@ -29,7 +29,8 @@
     "date": "Tue Jun 22 2021 14:00:00 GMT-0400 (Eastern Daylight Time)",
     "latitude": 42.3600825,
     "address": "Boston, MA, USA",
-    "cameraZoom": 15.475618749999999
+    "cameraZoom": 15.475618749999999,
+    "solarRadiationHeatmapGridCellSize": 2
   },
   "elements": [
     {

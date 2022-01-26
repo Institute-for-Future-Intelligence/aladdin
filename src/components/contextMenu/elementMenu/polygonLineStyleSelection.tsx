@@ -23,7 +23,7 @@ const PolygonLineStyleSelection = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const updatePolygonLineStyleById = useStore(Selector.updatePolygonLineStyleById);
   const updatePolygonLineStyleOnSurface = useStore(Selector.updatePolygonLineStyleOnSurface);
   const updatePolygonLineStyleAboveFoundation = useStore(Selector.updatePolygonLineStyleAboveFoundation);
@@ -129,45 +129,43 @@ const PolygonLineStyleSelection = ({
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
-        if (polygon.parentId) {
-          const parent = getElementById(polygon.parentId);
-          if (parent) {
-            const oldLineStylesOnSurface = new Map<string, LineStyle>();
-            for (const elem of elements) {
-              if (
-                elem.type === ObjectType.Polygon &&
-                elem.parentId === polygon.parentId &&
-                Util.isIdentical(elem.normal, polygon.normal)
-              ) {
-                oldLineStylesOnSurface.set(elem.id, (elem as PolygonModel).lineStyle ?? LineStyle.Solid);
-              }
+        const parent = getParent(polygon);
+        if (parent) {
+          const oldLineStylesOnSurface = new Map<string, LineStyle>();
+          for (const elem of elements) {
+            if (
+              elem.type === ObjectType.Polygon &&
+              elem.parentId === polygon.parentId &&
+              Util.isIdentical(elem.normal, polygon.normal)
+            ) {
+              oldLineStylesOnSurface.set(elem.id, (elem as PolygonModel).lineStyle ?? LineStyle.Solid);
             }
-            const undoableChangeOnSurface = {
-              name: 'Set Line Style for All Polygons on Same Surface',
-              timestamp: Date.now(),
-              oldValues: oldLineStylesOnSurface,
-              newValue: value,
-              groupId: polygon.parentId,
-              normal: polygon.normal,
-              undo: () => {
-                for (const [id, style] of undoableChangeOnSurface.oldValues.entries()) {
-                  updatePolygonLineStyleById(id, style as LineStyle);
-                }
-              },
-              redo: () => {
-                if (undoableChangeOnSurface.groupId) {
-                  updatePolygonLineStyleOnSurface(
-                    undoableChangeOnSurface.groupId,
-                    undoableChangeOnSurface.normal,
-                    undoableChangeOnSurface.newValue as LineStyle,
-                  );
-                }
-              },
-            } as UndoableChangeGroup;
-            addUndoable(undoableChangeOnSurface);
-            updatePolygonLineStyleOnSurface(polygon.parentId, polygon.normal, value);
-            setApplyCount(applyCount + 1);
           }
+          const undoableChangeOnSurface = {
+            name: 'Set Line Style for All Polygons on Same Surface',
+            timestamp: Date.now(),
+            oldValues: oldLineStylesOnSurface,
+            newValue: value,
+            groupId: polygon.parentId,
+            normal: polygon.normal,
+            undo: () => {
+              for (const [id, style] of undoableChangeOnSurface.oldValues.entries()) {
+                updatePolygonLineStyleById(id, style as LineStyle);
+              }
+            },
+            redo: () => {
+              if (undoableChangeOnSurface.groupId) {
+                updatePolygonLineStyleOnSurface(
+                  undoableChangeOnSurface.groupId,
+                  undoableChangeOnSurface.normal,
+                  undoableChangeOnSurface.newValue as LineStyle,
+                );
+              }
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeOnSurface);
+          updatePolygonLineStyleOnSurface(polygon.parentId, polygon.normal, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:

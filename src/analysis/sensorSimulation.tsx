@@ -25,7 +25,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const getWeather = useStore(Selector.getWeather);
   const setSensorLabels = useStore(Selector.setSensorLabels);
   const setDailyLightSensorData = useStore(Selector.setDailyLightSensorData);
@@ -122,7 +122,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
   };
 
   const collectDailyLightSensorData = (sensor: SensorModel) => {
-    const parent = getElementById(sensor.parentId);
+    const parent = getParent(sensor);
     if (!parent) throw new Error('parent of sensor does not exist');
     const position = Util.absoluteCoordinates(sensor.cx, sensor.cy, sensor.cz, parent);
     const normal = new Vector3().fromArray(sensor.normal);
@@ -196,7 +196,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
 
   const collectYearlyLightSensorData = (sensor: SensorModel) => {
     const data = [];
-    const parent = getElementById(sensor.parentId);
+    const parent = getParent(sensor);
     if (!parent) throw new Error('parent of sensor does not exist');
     const position = Util.absoluteCoordinates(sensor.cx, sensor.cy, sensor.cz, parent);
     const normal = new Vector3().fromArray(sensor.normal);

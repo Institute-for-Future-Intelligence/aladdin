@@ -135,7 +135,7 @@ const Wall = ({
   const [texture, setTexture] = useState(textureLoader);
 
   const getElementById = useStore(Selector.getElementById);
-  const parent = getElementById(parentId) as ElementModel;
+  const parent = getElementById(parentId);
   const wallModel = getElementById(id) as WallModel;
 
   const elements = useStore(Selector.elements);

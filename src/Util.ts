@@ -508,7 +508,7 @@ export class Util {
     const v = new Vector3(x, y, z);
     if (parent.type === ObjectType.Wall) {
       const parentPos = new Vector3(parent.cx, parent.cy); // relative
-      const grandParent = useStore.getState().getElementById(parent.parentId);
+      const grandParent = useStore.getState().getParent(parent);
       if (grandParent) {
         const grandParentPos = new Vector3(grandParent.cx, grandParent.cy); // world
         parentPos

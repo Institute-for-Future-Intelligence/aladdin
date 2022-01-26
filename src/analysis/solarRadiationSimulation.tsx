@@ -34,7 +34,7 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const dailySolarRadiationSimulationFlag = useStore(Selector.dailySolarRadiationSimulationFlag);
   const setHeatmap = useStore(Selector.setHeatmap);
 
@@ -354,7 +354,7 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
   };
 
   const generateHeatmapForSolarPanel = (panel: SolarPanelModel) => {
-    const parent = getElementById(panel.parentId);
+    const parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);

@@ -23,7 +23,7 @@ const PolygonLineWidthSelection = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const updateElementLineWidthById = useStore(Selector.updateElementLineWidthById);
   const updateElementLineWidthOnSurface = useStore(Selector.updateElementLineWidthOnSurface);
   const updateElementLineWidthAboveFoundation = useStore(Selector.updateElementLineWidthAboveFoundation);
@@ -129,46 +129,44 @@ const PolygonLineWidthSelection = ({
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
-        if (polygon.parentId) {
-          const parent = getElementById(polygon.parentId);
-          if (parent) {
-            const oldLineWidthsOnSurface = new Map<string, number>();
-            for (const elem of elements) {
-              if (
-                elem.type === ObjectType.Polygon &&
-                elem.parentId === polygon.parentId &&
-                Util.isIdentical(elem.normal, polygon.normal)
-              ) {
-                oldLineWidthsOnSurface.set(elem.id, elem.lineWidth ?? 1);
-              }
+        const parent = getParent(polygon);
+        if (parent) {
+          const oldLineWidthsOnSurface = new Map<string, number>();
+          for (const elem of elements) {
+            if (
+              elem.type === ObjectType.Polygon &&
+              elem.parentId === polygon.parentId &&
+              Util.isIdentical(elem.normal, polygon.normal)
+            ) {
+              oldLineWidthsOnSurface.set(elem.id, elem.lineWidth ?? 1);
             }
-            const undoableChangeOnSurface = {
-              name: 'Set Line Width for All Polygons on Same Surface',
-              timestamp: Date.now(),
-              oldValues: oldLineWidthsOnSurface,
-              newValue: value,
-              groupId: polygon.parentId,
-              normal: polygon.normal,
-              undo: () => {
-                for (const [id, width] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateElementLineWidthById(id, width as number);
-                }
-              },
-              redo: () => {
-                if (undoableChangeOnSurface.groupId) {
-                  updateElementLineWidthOnSurface(
-                    ObjectType.Polygon,
-                    undoableChangeOnSurface.groupId,
-                    undoableChangeOnSurface.normal,
-                    undoableChangeOnSurface.newValue as number,
-                  );
-                }
-              },
-            } as UndoableChangeGroup;
-            addUndoable(undoableChangeOnSurface);
-            updateElementLineWidthOnSurface(ObjectType.Polygon, polygon.parentId, polygon.normal, value);
-            setApplyCount(applyCount + 1);
           }
+          const undoableChangeOnSurface = {
+            name: 'Set Line Width for All Polygons on Same Surface',
+            timestamp: Date.now(),
+            oldValues: oldLineWidthsOnSurface,
+            newValue: value,
+            groupId: polygon.parentId,
+            normal: polygon.normal,
+            undo: () => {
+              for (const [id, width] of undoableChangeOnSurface.oldValues.entries()) {
+                updateElementLineWidthById(id, width as number);
+              }
+            },
+            redo: () => {
+              if (undoableChangeOnSurface.groupId) {
+                updateElementLineWidthOnSurface(
+                  ObjectType.Polygon,
+                  undoableChangeOnSurface.groupId,
+                  undoableChangeOnSurface.normal,
+                  undoableChangeOnSurface.newValue as number,
+                );
+              }
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeOnSurface);
+          updateElementLineWidthOnSurface(ObjectType.Polygon, polygon.parentId, polygon.normal, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:

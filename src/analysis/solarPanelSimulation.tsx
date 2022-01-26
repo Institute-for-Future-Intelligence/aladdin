@@ -37,7 +37,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const elements = useStore.getState().elements;
   const getPvModule = useStore(Selector.getPvModule);
   const getWeather = useStore(Selector.getWeather);
-  const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const setPvDailyYield = useStore(Selector.setDailyPvYield);
   const setPvYearlyYield = useStore(Selector.setYearlyPvYield);
   const dailyPvFlag = useStore(Selector.dailyPvFlag);
@@ -189,7 +189,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   };
 
   const getDailyYield = (panel: SolarPanelModel) => {
-    const parent = getElementById(panel.parentId);
+    const parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);
@@ -435,7 +435,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
 
   const getYearlyPvYield = (panel: SolarPanelModel) => {
     const data = [];
-    const parent = getElementById(panel.parentId);
+    const parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);
