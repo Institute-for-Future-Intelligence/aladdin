@@ -129,14 +129,8 @@ const SolarPanelVisibility = () => {
     const lx = panel.lx;
     const ly = panel.ly * Math.cos(panel.tiltAngle);
     const lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
-    let nx: number, ny: number;
-    if (panel.orientation === Orientation.portrait) {
-      nx = Math.max(2, Math.round(panel.lx / cellSize));
-      ny = Math.max(2, Math.round(panel.ly / cellSize));
-    } else {
-      nx = Math.max(2, Math.round(panel.ly / cellSize));
-      ny = Math.max(2, Math.round(panel.lx / cellSize));
-    }
+    const nx = Math.max(2, Math.round(panel.lx / cellSize));
+    const ny = Math.max(2, Math.round(panel.ly / cellSize));
     const dx = lx / nx;
     const dy = ly / ny;
     const dz = lz / ny;
@@ -149,10 +143,11 @@ const SolarPanelVisibility = () => {
     const direction = new Vector3();
     let r;
     const v2 = new Vector2();
+    const zRotZero = Util.isZero(zRot);
     for (let kx = 0; kx < nx; kx++) {
       for (let ky = 0; ky < ny; ky++) {
         v2.set(x0 + kx * dx, y0 + ky * dy);
-        v2.rotateAround(center2d, zRot);
+        if (!zRotZero) v2.rotateAround(center2d, zRot);
         point.set(v2.x, v2.y, z0 + ky * dz);
         direction.set(vantage.x - point.x, vantage.y - point.y, vantage.z - point.z);
         r = direction.length();

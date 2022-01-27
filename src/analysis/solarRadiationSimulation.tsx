@@ -430,12 +430,13 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
           const dot = normal.dot(sunDirection);
           const v2 = new Vector2();
+          const zRotZero = Util.isZero(zRot);
           for (let kx = 0; kx < nx; kx++) {
             for (let ky = 0; ky < ny; ky++) {
               cellOutputTotals[kx][ky] += indirectRadiation;
               if (dot > 0) {
                 v2.set(x0 + kx * dx, y0 + ky * dy);
-                v2.rotateAround(center2d, zRot);
+                if (!zRotZero) v2.rotateAround(center2d, zRot);
                 v.set(v2.x, v2.y, z0 + ky * dz);
                 if (!inShadow(panel.id, v, sunDirection)) {
                   // direct radiation

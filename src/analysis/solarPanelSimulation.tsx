@@ -292,12 +292,13 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
           const dot = normal.dot(sunDirection);
           const v2 = new Vector2();
+          const zRotZero = Util.isZero(zRot);
           for (let kx = 0; kx < nx; kx++) {
             for (let ky = 0; ky < ny; ky++) {
               cellOutputs[kx][ky] = indirectRadiation;
               if (dot > 0) {
                 v2.set(x0 + kx * dx, y0 + ky * dy);
-                v2.rotateAround(center2d, zRot);
+                if (!zRotZero) v2.rotateAround(center2d, zRot);
                 v.set(v2.x, v2.y, z0 + ky * dz);
                 if (!inShadow(panel.id, v, sunDirection)) {
                   // direct radiation
@@ -441,9 +442,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);
     const originalNormal = normal.clone();
+    const zRot = parent.rotation[2] + panel.relativeAzimuth;
     if (Math.abs(panel.tiltAngle) > 0.001 && panel.trackerType === TrackerType.NO_TRACKER) {
       // TODO: right now we assume a parent rotation is always around the z-axis
-      normal.applyEuler(new Euler(panel.tiltAngle, 0, panel.relativeAzimuth + parent.rotation[2], 'ZYX'));
+      normal.applyEuler(new Euler(panel.tiltAngle, 0, zRot, 'ZYX'));
     }
     const year = now.getFullYear();
     const date = 15;
@@ -474,13 +476,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       lx = panel.lx;
       ly = panel.ly * Math.cos(panel.tiltAngle);
       lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
-      if (panel.orientation === Orientation.portrait) {
-        nx = Math.max(2, Math.round(panel.lx / cellSize));
-        ny = Math.max(2, Math.round(panel.ly / cellSize));
-      } else {
-        nx = Math.max(2, Math.round(panel.ly / cellSize));
-        ny = Math.max(2, Math.round(panel.lx / cellSize));
-      }
+      nx = Math.max(2, Math.round(panel.lx / cellSize));
+      ny = Math.max(2, Math.round(panel.ly / cellSize));
       // nx and ny must be even (for circuit simulation)
       if (nx % 2 !== 0) nx += 1;
       if (ny % 2 !== 0) ny += 1;
@@ -492,6 +489,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const y0 = center.y - ly / 2;
     const z0 = panel.poleHeight + center.z - lz / 2;
     const v = new Vector3();
+    const center2d = new Vector2(center.x, center.y);
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
     for (let month = 0; month < 12; month++) {
       const midMonth = new Date(year, month, date);
@@ -540,12 +538,16 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
             count++;
             const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
             const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
+            const v2 = new Vector2();
+            const zRotZero = Util.isZero(zRot);
             for (let kx = 0; kx < nx; kx++) {
               for (let ky = 0; ky < ny; ky++) {
                 cellOutputs[kx][ky] = indirectRadiation;
                 const dot = normal.dot(sunDirection);
                 if (dot > 0) {
-                  v.set(x0 + kx * dx, y0 + ky * dy, z0 + ky * dz);
+                  v2.set(x0 + kx * dx, y0 + ky * dy);
+                  if (!zRotZero) v2.rotateAround(center2d, zRot);
+                  v.set(v2.x, v2.y, z0 + ky * dz);
                   if (!inShadow(panel.id, v, sunDirection)) {
                     // direct radiation
                     cellOutputs[kx][ky] += dot * peakRadiation;
