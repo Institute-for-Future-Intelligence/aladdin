@@ -144,7 +144,8 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     }
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
-        const cur = new Date(year, month, date, i, j * interval);
+        // a shift of 30 minutes minute half of the interval ensures the symmetry of the result around noon
+        const cur = new Date(year, month, date, i, (j + 0.5) * interval - 30);
         const sunDirection = getSunDirection(cur, world.latitude);
         if (sunDirection.z > 0) {
           // when the sun is out

@@ -249,7 +249,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
-        const currentTime = new Date(year, month, date, i, j * interval);
+        // a shift of 30 minutes minute half of the interval ensures the symmetry of the result around noon
+        const currentTime = new Date(year, month, date, i, (j + 0.5) * interval - 30);
         const sunDirection = getSunDirection(currentTime, world.latitude);
         if (sunDirection.z > 0) {
           // when the sun is out
