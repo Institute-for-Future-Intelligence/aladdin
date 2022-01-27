@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Euler, Intersection, Object3D, Raycaster, Vector3 } from 'three';
+import { Euler, Intersection, Object3D, Raycaster, Vector2, Vector3 } from 'three';
 import { useThree } from '@react-three/fiber';
 import { useStore } from '../stores/common';
 import * as Selector from 'src/stores/selector';
@@ -122,7 +122,10 @@ const SolarPanelVisibility = () => {
     if (!parent) throw new Error('parent of solar panel does not exist');
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);
-    normal.applyEuler(new Euler(panel.tiltAngle, panel.relativeAzimuth + parent.rotation[2], 0, 'XYZ'));
+    const zRot = parent.rotation[2] + panel.relativeAzimuth;
+    if (Math.abs(panel.tiltAngle) > 0.001) {
+      normal.applyEuler(new Euler(panel.tiltAngle, 0, zRot, 'ZYX'));
+    }
     const lx = panel.lx;
     const ly = panel.ly * Math.cos(panel.tiltAngle);
     const lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
@@ -140,13 +143,17 @@ const SolarPanelVisibility = () => {
     const x0 = center.x - lx / 2;
     const y0 = center.y - ly / 2;
     const z0 = panel.poleHeight + center.z - lz / 2;
+    const center2d = new Vector2(center.x, center.y);
     let integral = 0;
     const point = new Vector3();
     const direction = new Vector3();
     let r;
+    const v2 = new Vector2();
     for (let kx = 0; kx < nx; kx++) {
       for (let ky = 0; ky < ny; ky++) {
-        point.set(x0 + kx * dx, y0 + ky * dy, z0 + ky * dz);
+        v2.set(x0 + kx * dx, y0 + ky * dy);
+        v2.rotateAround(center2d, zRot);
+        point.set(v2.x, v2.y, z0 + ky * dz);
         direction.set(vantage.x - point.x, vantage.y - point.y, vantage.z - point.z);
         r = direction.length();
         if (r > 0) {
