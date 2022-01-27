@@ -13,10 +13,12 @@ import { HumanModel } from '../../../models/HumanModel';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { useStoreRef } from '../../../stores/commonRef';
 import { Easing, Tween, update } from '@tweenjs/tween.js';
+import { Util } from '../../../Util';
 
 export const HumanMenu = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
+  const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const addUndoable = useStore(Selector.addUndoable);
   const cameraDirection = useStore(Selector.cameraDirection);
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
@@ -70,16 +72,20 @@ export const HumanMenu = () => {
   };
 
   const tween = () => {
-    const cam = cameraDirection.clone().normalize().multiplyScalar(0.5);
-    let x = human.cx + cam.x;
-    let y = human.cy + cam.y;
-    let z = human.cz + human.lz + cam.z;
+    if (!human) return;
+    let x = human.cx;
+    let y = human.cy;
+    let z = human.cz + human.lz;
     const parent = getParent(human);
     if (parent) {
-      x += parent.cx;
-      y += parent.cy;
-      z += parent.cz;
+      const v = Util.absoluteHumanOrTreeCoordinates(x, y, z, parent);
+      x = v.x;
+      y = v.y;
+      z = v.z;
     }
+    const cam = cameraDirection.clone().normalize().multiplyScalar(0.5);
+    x += cam.x;
+    y += cam.y;
     const originalPosition = [...cameraPosition];
     new Tween(originalPosition)
       .to([x, y, z], 1000)
@@ -124,16 +130,18 @@ export const HumanMenu = () => {
             </Checkbox>
           </Menu.Item>
         )}
-        <Menu.Item
-          key={'human-move-view'}
-          onClick={() => {
-            setAnimationFlag(!animationFlag);
-            animateMove.current = true;
-          }}
-          style={{ paddingLeft: '36px' }}
-        >
-          {i18n.t('peopleMenu.ViewFromThisPerson', { lng: language })}
-        </Menu.Item>
+        {!orthographic && (
+          <Menu.Item
+            key={'human-move-view'}
+            onClick={() => {
+              setAnimationFlag(!animationFlag);
+              animateMove.current = true;
+            }}
+            style={{ paddingLeft: '36px' }}
+          >
+            {i18n.t('peopleMenu.ViewFromThisPerson', { lng: language })}
+          </Menu.Item>
+        )}
         {editable && (
           <Menu>
             <Menu.Item key={'human-change-person'} style={{ paddingLeft: '36px' }}>
