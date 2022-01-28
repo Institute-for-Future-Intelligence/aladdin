@@ -332,14 +332,12 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
           >
             <CameraController />
             <Lights />
-            <ElementsRenderer />
             <Ground />
-            <SceneRadiusCalculator />
-            <SolarRadiationSimulation city={city} />
-            <SensorSimulation city={city} />
-            <SolarPanelSimulation city={city} />
-            <SolarPanelVisibility />
             <Auxiliary />
+            {/* somehow we have to use two suspense wrappers as follows */}
+            <Suspense fallback={null}>
+              <ElementsRenderer />
+            </Suspense>
             <Suspense fallback={null}>
               {axes && <Axes />}
               <Sky theme={theme} />
@@ -347,6 +345,11 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               {groundImage && <GroundImage />}
               {/* <Obj/> */}
             </Suspense>
+            <SceneRadiusCalculator />
+            <SolarRadiationSimulation city={city} />
+            <SensorSimulation city={city} />
+            <SolarPanelSimulation city={city} />
+            <SolarPanelVisibility />
           </Canvas>
           <KeyboardListener
             canvas={canvasRef.current}
