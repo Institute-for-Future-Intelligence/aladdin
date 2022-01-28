@@ -23,7 +23,7 @@ import { FoundationModel } from './FoundationModel';
 import { SolarPanelModel } from './SolarPanelModel';
 import { PvModel } from './PvModel';
 import { WallModel } from './WallModel';
-import { RoofModel } from './RoofModel';
+import { Point3, RoofModel, RoofTexture, RoofType } from './RoofModel';
 import { GROUND_ID } from '../constants';
 import { WindowModel } from './WindowModel';
 import { Point2 } from './Point2';
@@ -473,20 +473,22 @@ export class ElementModelFactory {
     } as WindowModel;
   }
 
-  static makeRoof(cz: number, parent: ElementModel, points: Point2[], normal?: Vector3, rotation?: number[]) {
+  static makeRoof(lz: number, parent: ElementModel, wallsId: string[]) {
     return {
       type: ObjectType.Roof,
       cx: 0,
       cy: 0,
-      cz: cz,
+      cz: 0,
       lx: 0,
       ly: 0,
-      lz: 0.25,
-      points: points,
+      lz: lz,
+      roofType: RoofType.Pyramid,
+      wallsId: [...wallsId],
+      texture: RoofTexture.Default,
       selected: false,
       showLabel: false,
-      normal: normal ? normal.toArray() : [0, 0, 1],
-      rotation: rotation ? rotation : [0, 0, 0],
+      normal: [0, 0, 1],
+      rotation: [0, 0, 0],
       parentId: parent.id,
       foundationId: parent.id,
       id: short.generate() as string,

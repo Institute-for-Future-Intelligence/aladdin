@@ -65,6 +65,9 @@ const Wall = ({
   parentId,
   selected = false,
   locked = false,
+  roofId,
+  leftRoofHeight,
+  rightRoofHeight,
 }: WallModel) => {
   const textureLoader = useMemo(() => {
     let textureImg;
@@ -140,6 +143,7 @@ const Wall = ({
 
   const elements = useStore(Selector.elements);
   const deletedWindowAndParentId = useStore(Selector.deletedWindowAndParentId);
+  const deletedRoofId = useStore(Selector.deletedRoofId);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const setCommonStore = useStore(Selector.set);
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -187,6 +191,9 @@ const Wall = ({
     : new Vector3(cx, cy, hz);
   const wallAbsAngle = parent ? parent.rotation[2] + relativeAngle : relativeAngle;
 
+  leftRoofHeight = leftJoints.length > 0 ? leftRoofHeight : lz;
+  rightRoofHeight = rightJoints.length > 0 ? rightRoofHeight : lz;
+
   let leftOffset = 0;
   let rightOffset = 0;
 
@@ -220,20 +227,35 @@ const Wall = ({
     shape.lineTo(-x, -y);
   };
 
-  const drawRectangle = (shape: Shape, lx: number, ly: number, cx = 0, cy = 0, leftOffset = 0, rightOffset = 0) => {
+  const drawRectangle = (
+    shape: Shape,
+    lx: number,
+    ly: number,
+    cx = 0,
+    cy = 0,
+    leftOffset = 0,
+    rightOffset = 0,
+    leftRoofHeight?: number,
+    rightRoofHeight?: number,
+  ) => {
     const x = lx / 2;
     const y = ly / 2;
-    shape.moveTo(cx - x + leftOffset, cy - y);
-    shape.lineTo(cx + x - rightOffset, cy - y);
-    shape.lineTo(cx + x - rightOffset, cy + y);
-    shape.lineTo(cx - x + leftOffset, cy + y);
-    shape.lineTo(cx - x + leftOffset, cy - y);
+    shape.moveTo(cx - x + leftOffset, cy - y); // lower left
+    shape.lineTo(cx + x - rightOffset, cy - y); // lower right
+    if (roofId && leftRoofHeight && rightRoofHeight) {
+      shape.lineTo(cx + x - rightOffset, rightRoofHeight - y);
+      shape.lineTo(cx - x + leftOffset, leftRoofHeight - y);
+    } else {
+      shape.lineTo(cx + x - rightOffset, cy + y); // upper right
+      shape.lineTo(cx - x + leftOffset, cy + y); // upper left
+    }
+    shape.lineTo(cx - x + leftOffset, cy - y); // lower left
   };
 
   // outside wall
   if (outSideWallRef.current) {
     const wallShape = new Shape();
-    drawRectangle(wallShape, lx, lz);
+    drawRectangle(wallShape, lx, lz, 0, 0, 0, 0, leftRoofHeight, rightRoofHeight);
 
     windows.forEach((w) => {
       if (w.id !== invalidWindowIdRef.current) {
@@ -248,7 +270,7 @@ const Wall = ({
   // inside wall
   if (insideWallRef.current) {
     const wallShape = new Shape();
-    drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
+    drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset, leftRoofHeight, rightRoofHeight);
 
     windows.forEach((w) => {
       if (w.id !== invalidWindowIdRef.current) {
@@ -260,6 +282,13 @@ const Wall = ({
 
     insideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
     insideWallRef.current.material = whiteWallMaterial;
+  }
+
+  // intersection plane
+  if (intersectionPlaneRef.current) {
+    const wallShape = new Shape();
+    drawRectangle(wallShape, lx, lz, 0, 0, 0, 0, leftRoofHeight, rightRoofHeight);
+    intersectionPlaneRef.current.geometry = new ShapeBufferGeometry(wallShape);
   }
 
   // top surface
@@ -299,6 +328,22 @@ const Wall = ({
   useEffect(() => {
     setWindows(elements.filter((e) => e.type === ObjectType.Window && e.parentId === id));
   }, [elements]);
+
+  // roof
+  useEffect(() => {
+    if (deletedRoofId === roofId) {
+      setCommonStore((state) => {
+        for (const e of state.elements) {
+          if (e.id === id) {
+            (e as WallModel).roofId = null;
+            (e as WallModel).leftRoofHeight = undefined;
+            (e as WallModel).rightRoofHeight = undefined;
+            break;
+          }
+        }
+      });
+    }
+  }, [deletedRoofId]);
 
   const getWindowRelativePos = (p: Vector3, wall: WallModel) => {
     const { cx, cy, cz } = wall;
@@ -387,24 +432,6 @@ const Wall = ({
     }
     invalidWindowIdRef.current = null;
     return true; // no collision
-  };
-
-  const checkWallLoop = (id: string) => {
-    const startID = id;
-    const points: Point2[] = [];
-
-    let wall = getElementById(id) as WallModel;
-    while (wall && wall.leftJoints.length > 0) {
-      const point = [...wall.leftPoint];
-      points.push({ x: point[0], y: point[1] });
-      const id = wall.leftJoints[0];
-      if (id === startID) {
-        return points;
-      } else {
-        wall = getElementById(id) as WallModel;
-      }
-    }
-    return null;
   };
 
   const setRayCast = (e: PointerEvent) => {
@@ -563,9 +590,8 @@ const Wall = ({
         // add new elements
         switch (objectTypeToAddRef.current) {
           case ObjectType.Roof: {
-            const points = checkWallLoop(wallModel.id);
-            if (points && parent) {
-              const roof = ElementModelFactory.makeRoof(lz, parent, points);
+            if (parent && !roofId) {
+              const roof = ElementModelFactory.makeRoof(lz, parent, [wallModel.id]);
               setCommonStore((state) => {
                 state.elements.push(roof);
               });
@@ -818,21 +844,25 @@ const Wall = ({
           />
 
           {/* top surface */}
-          <mesh
-            name={'Top Wall'}
-            ref={topSurfaceRef}
-            position={[0, hy, hz]}
-            castShadow={shadowEnabled}
-            receiveShadow={shadowEnabled}
-            onPointerDown={handleWallBodyPointerDown}
-          />
+          {!roofId && (
+            <mesh
+              name={'Top Wall'}
+              ref={topSurfaceRef}
+              position={[0, hy, hz]}
+              castShadow={shadowEnabled}
+              receiveShadow={shadowEnabled}
+              onPointerDown={handleWallBodyPointerDown}
+            />
+          )}
 
           {/* side surfaces */}
           {leftOffset === 0 && (
             <Plane
-              args={[lz, ly]}
-              position={[-hx + 0.01, hy, 0]}
+              args={[leftRoofHeight ?? lz, ly]}
+              position={[-hx + 0.01, hy, -(lz - (leftRoofHeight ?? lz)) / 2]}
               rotation={[0, HALF_PI, 0]}
+              castShadow={shadowEnabled}
+              receiveShadow={shadowEnabled}
               onPointerDown={handleWallBodyPointerDown}
             >
               <meshStandardMaterial color={'white'} side={DoubleSide} />
@@ -840,9 +870,11 @@ const Wall = ({
           )}
           {rightOffset === 0 && (
             <Plane
-              args={[lz, ly]}
-              position={[hx - 0.01, hy, 0]}
+              args={[rightRoofHeight ?? lz, ly]}
+              position={[hx - 0.01, hy, -(lz - (rightRoofHeight ?? lz)) / 2]}
               rotation={[0, HALF_PI, 0]}
+              castShadow={shadowEnabled}
+              receiveShadow={shadowEnabled}
               onPointerDown={handleWallBodyPointerDown}
             >
               <meshStandardMaterial color={'white'} side={DoubleSide} />
@@ -850,10 +882,9 @@ const Wall = ({
           )}
 
           {/* intersection plane */}
-          <Plane
+          <mesh
             name={`Wall Intersection Plane ${id}`}
             ref={intersectionPlaneRef}
-            args={[lx, lz]}
             position={[0, ly / 2 + 0.01, 0]}
             rotation={[HALF_PI, 0, 0]}
             visible={false}
@@ -861,14 +892,20 @@ const Wall = ({
             onPointerUp={handleIntersectionPointerUp}
             onPointerMove={handleIntersectionPointerMove}
             onPointerOut={handleIntersectionPointerOut}
-          />
+          >
+            <meshBasicMaterial />
+          </mesh>
 
           {windows.map((e) => {
             return <Window key={e.id} {...(e as WindowModel)} />;
           })}
 
           {/* wireFrame */}
-          <WallWireFrame x={hx} z={hz} />
+          {selected ? (
+            <WallWireFrame x={hx} z={hz} />
+          ) : (
+            <WallWireFrame x={hx} z={hz} leftHeight={leftRoofHeight} rightHeight={rightRoofHeight} />
+          )}
 
           {/* handles */}
           {selected && !locked && <WallResizeHandleWarpper x={hx} z={hz} id={id} highLight={highLight} />}

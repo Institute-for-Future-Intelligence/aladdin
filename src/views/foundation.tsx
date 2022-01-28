@@ -1033,7 +1033,7 @@ const Foundation = ({
       if (selectedElement && selectedElement.parentId === id) {
         if (legalOnFoundation(selectedElement.type)) {
           grabRef.current = selectedElement;
-          if (selectedElement.type === ObjectType.Wall) {
+          if (selectedElement.type === ObjectType.Wall && !isSettingWallStartPointRef.current) {
             elementsStateBeforeResizingRef.current = [...useStore.getState().elements];
           }
           setShowGrid(true);
@@ -1144,8 +1144,8 @@ const Foundation = ({
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
             state.addedWallId = null;
-            if (wall.lx === 0) {
-              state.elements.pop();
+            if (wall.lx === 0 && elementsStateBeforeResizingRef.current) {
+              state.elements = [...elementsStateBeforeResizingRef.current];
               wallMapOnFoundation.current.delete(addedWallID);
             } else {
               handleUndoableAddWall(wall as WallModel);
@@ -1523,6 +1523,7 @@ const Foundation = ({
         }
       }
       if (objectTypeToAdd === ObjectType.Wall && !isSettingWallStartPointRef.current) {
+        elementsStateBeforeResizingRef.current = [...useStore.getState().elements];
         const addedWall = addElement(foundationModel, p) as WallModel;
         grabRef.current = addedWall;
         setAddedWallID(addedWall.id);

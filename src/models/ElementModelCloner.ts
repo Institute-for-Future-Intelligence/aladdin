@@ -529,21 +529,22 @@ export class ElementModelCloner {
   }
 
   private static cloneRoof(parent: ElementModel, roof: RoofModel, x: number, y: number, z?: number) {
-    return {
-      type: ObjectType.Roof,
-      cx: x,
-      cy: y,
-      cz: z,
-      lx: roof.lx,
-      ly: roof.ly,
-      lz: roof.lz,
-      points: [...roof.points],
-      color: roof.color,
-      normal: [...roof.normal],
-      rotation: [...roof.rotation],
-      id: short.generate() as string,
-      parentId: parent.id,
-      foundationId: parent.id,
-    } as RoofModel;
+    // return {
+    //   type: ObjectType.Roof,
+    //   cx: x,
+    //   cy: y,
+    //   cz: z,
+    //   lx: roof.lx,
+    //   ly: roof.ly,
+    //   lz: roof.lz,
+    //   points: [...roof.points],
+    //   color: roof.color,
+    //   normal: [...roof.normal],
+    //   rotation: [...roof.rotation],
+    //   id: short.generate() as string,
+    //   parentId: parent.id,
+    //   foundationId: parent.id,
+    // } as RoofModel;
+    return {} as ElementModel;
   }
 }

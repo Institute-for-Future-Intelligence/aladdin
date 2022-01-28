@@ -7,12 +7,14 @@ import TextSprite from 'three-spritetext';
 import { MyOrbitControls } from './js/MyOrbitControls';
 import { ParabolicCylinderGeometry } from './js/ParabolicCylinderGeometry';
 import { ParaboloidGeometry } from './js/ParaboloidGeometry';
+import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry.js';
 
 // Extend makes these JSX elements (with the first character lower-cased)
 extend({ TextSprite });
 extend({ MyOrbitControls });
 extend({ ParabolicCylinderGeometry });
 extend({ ParaboloidGeometry });
+extend({ ConvexGeometry });
 
 declare global {
   namespace JSX {
@@ -21,6 +23,7 @@ declare global {
       myOrbitControls: Object3DNode<MyOrbitControls, typeof MyOrbitControls>;
       parabolicCylinderGeometry: Object3DNode<ParabolicCylinderGeometry, typeof ParabolicCylinderGeometry>;
       paraboloidGeometry: Object3DNode<ParaboloidGeometry, typeof ParaboloidGeometry>;
+      convexGeometry: Object3DNode<ConvexGeometry, typeof ConvexGeometry>;
     }
   }
 }

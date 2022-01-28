@@ -897,6 +897,8 @@ export const addedWallId = (state: CommonStoreState) => state.addedWallId;
 
 export const deletedWallId = (state: CommonStoreState) => state.deletedWallId;
 
+export const deletedRoofId = (state: CommonStoreState) => state.deletedRoofId;
+
 export const addedWindowId = (state: CommonStoreState) => state.addedWindowId;
 
 export const deletedWindowAndParentId = (state: CommonStoreState) => state.deletedWindowAndParentId;

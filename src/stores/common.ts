@@ -82,6 +82,7 @@ import { SolarAbsorberPipeModel } from '../models/SolarAbsorberPipeModel';
 import { SolarPowerTowerModel } from '../models/SolarPowerTowerModel';
 import { GeneticAlgorithmState } from './GeneticAlgorithmState';
 import { DefaultGeneticAlgorithmState } from './DefaultGeneticAlgorithmState';
+import { RoofModel } from 'src/models/RoofModel';
 
 enableMapSet();
 
@@ -626,6 +627,8 @@ export interface CommonStoreState {
 
   addedWindowId: string | null;
   deletedWindowAndParentId: string[] | null;
+
+  deletedRoofId: string | null;
 
   simulationInProgress: boolean;
   simulationPaused: boolean;
@@ -3819,6 +3822,10 @@ export const useStore = create<CommonStoreState>(
                   }
                   elem.selected = false;
                   switch (elem.type) {
+                    case ObjectType.Roof: {
+                      state.deletedRoofId = elem.id;
+                      break;
+                    }
                     case ObjectType.Wall: {
                       const currentWall = elem as WallModel;
                       let leftWallId = '';
@@ -3829,12 +3836,18 @@ export const useStore = create<CommonStoreState>(
                       if (currentWall.rightJoints.length > 0) {
                         rightWallId = state.getElementById(currentWall.rightJoints[0])?.id ?? '';
                       }
-                      for (const w of state.elements) {
-                        const wall = w as WallModel;
-                        if (w.id === leftWallId) {
-                          wall.rightJoints = [];
-                        } else if (w.id === rightWallId) {
-                          wall.leftJoints = [];
+                      for (const e of state.elements) {
+                        if (e.id === leftWallId) {
+                          (e as WallModel).rightJoints = [];
+                        } else if (e.id === rightWallId) {
+                          (e as WallModel).leftJoints = [];
+                        } else if (e.id === currentWall.roofId) {
+                          (e as RoofModel).wallsId = (e as RoofModel).wallsId.filter((v) => v !== currentWall.id);
+                        }
+                      }
+                      for (const e of state.elements) {
+                        if (e.type === ObjectType.Roof && (e as RoofModel).wallsId.length === 0) {
+                          state.elements = state.elements.filter((x) => x.id !== e.id);
                         }
                       }
                       state.deletedWallId = elem.id;
@@ -4935,6 +4948,7 @@ export const useStore = create<CommonStoreState>(
               state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
           },
+          deletedRoofId: null,
 
           simulationInProgress: false,
           simulationPaused: false,
