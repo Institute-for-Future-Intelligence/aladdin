@@ -101,6 +101,25 @@ const Tree = ({
   const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
   const lang = { lng: language };
 
+  const fileChangedRef = useRef(false);
+  const fileChangedState = useStore(Selector.fileChanged);
+
+  if (fileChangedState !== fileChangedRef.current) {
+    fileChangedRef.current = fileChangedState;
+    if (contentRef?.current && groupRef.current) {
+      contentRef.current.add(groupRef.current);
+    }
+  }
+
+  useEffect(() => {
+    if (parentId !== GROUND_ID) {
+      const obj = getParentObject();
+      if (obj && groupRef.current) {
+        obj.add(groupRef.current);
+      }
+    }
+  }, [fileChangedState]);
+
   const textureLoader = useMemo(() => {
     return new TextureLoader().load(TreeData.fetchTextureImage(name, noLeaves), (texture) => {
       setTexture(texture);

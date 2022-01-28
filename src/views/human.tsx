@@ -81,6 +81,28 @@ const Human = ({
   const lang = { lng: language };
   const humanModel = getElementById(id) as HumanModel;
 
+  const fileChangedRef = useRef(false);
+  const fileChangedState = useStore(Selector.fileChanged);
+
+  // after we delete their parent(change file), we have to add the ref to content immediately,
+  // because their new parent may not be mounted yet.
+  if (fileChangedState !== fileChangedRef.current) {
+    fileChangedRef.current = fileChangedState;
+    if (contentRef?.current && groupRef.current) {
+      contentRef.current.add(groupRef.current);
+    }
+  }
+
+  // once useEffect detect state change, that means their parent is now mounted, then we add ref to their new parent.
+  useEffect(() => {
+    if (parentId !== GROUND_ID) {
+      const obj = getParentObject();
+      if (obj && groupRef.current) {
+        obj.add(groupRef.current);
+      }
+    }
+  }, [fileChangedState]);
+
   const textureLoader = useMemo(() => {
     return new TextureLoader().load(HumanData.fetchTextureImage(name), (texture) => {
       setTexture(texture);
