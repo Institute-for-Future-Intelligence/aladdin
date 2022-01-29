@@ -221,6 +221,7 @@ export const i18n_zh_tw = {
         SolarRadiationToBox: '一個長方體受到的太陽能輻射分析',
         EffectOfTiltAngleOfSolarPanel: '光伏板傾斜角對發電量的影響',
         EffectOfAzimuthOfSolarPanel: '光伏板方位角對發電量的影響',
+        CoveringGroundWithSolarPanels: '為什麼我們不簡單地用光伏板覆蓋地面',
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太陽能',
@@ -472,7 +473,8 @@ export const i18n_zh_tw = {
     },
 
     designInfoPanel: {
-      ClickToRecountSolarPanels: '點擊此處重新計算光伏板總數',
+      NumberOfSelectedSolarPanels: '選中的光伏板總數',
+      ElectricityGeneratedDailyBySolarPanels: '這些光伏板的日發電量',
       SceneRadius: '場景半徑',
     },
 

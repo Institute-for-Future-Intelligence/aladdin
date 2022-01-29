@@ -57,6 +57,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const addUndoable = useStore(Selector.addUndoable);
   const setElementPosition = useStore(Selector.setElementPosition);
   const language = useStore(Selector.language);
+  const updateSceneRadius = useStore(Selector.updateSceneRadius);
 
   const {
     scene,
@@ -775,9 +776,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
               },
             } as UndoableMove;
             addUndoable(undoableMove);
-            setCommonStore((state) => {
-              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-            });
+            updateSceneRadius();
           }
         }
       }

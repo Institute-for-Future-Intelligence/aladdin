@@ -8,7 +8,6 @@ import { Vector3 } from 'three';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { ObjectType } from '../../../types';
 import { Util } from '../../../Util';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
@@ -27,14 +26,13 @@ import { UNIT_VECTOR_POS_Z } from '../../../constants';
 
 export const SolarPanelMenu = () => {
   const language = useStore(Selector.language);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const updateSolarPanelDrawSunBeamById = useStore(Selector.updateSolarPanelDrawSunBeamById);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const [solarPanel, setSolarPanel] = useState<SolarPanelModel>();
   const [panelNormal, setPanelNormal] = useState<Vector3>();
   const [labelText, setLabelText] = useState<string>('');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -48,17 +46,14 @@ export const SolarPanelMenu = () => {
   const [poleHeightDialogVisible, setPoleHeightDialogVisible] = useState(false);
   const [poleSpacingDialogVisible, setPoleSpacingDialogVisible] = useState(false);
 
-  const element = getSelectedElement();
   const lang = { lng: language };
 
   useEffect(() => {
-    if (element && element.type === ObjectType.SolarPanel) {
-      const panel = element as SolarPanelModel;
-      setSolarPanel(panel);
-      setPanelNormal(new Vector3().fromArray(element.normal));
-      setLabelText(element.label ?? '');
+    if (solarPanel) {
+      setPanelNormal(new Vector3().fromArray(solarPanel.normal));
+      setLabelText(solarPanel.label ?? '');
     }
-  }, [element]);
+  }, [solarPanel]);
 
   const showLabel = (checked: boolean) => {
     if (solarPanel) {

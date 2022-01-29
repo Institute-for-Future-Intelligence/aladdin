@@ -16,6 +16,7 @@ import heatmap_01 from './examples/heatmap_01.json';
 import vegetative_buffer_01 from './examples/vegetative_buffer_01.json';
 import effect_tilt_angle_solar_panel from './examples/effect_tilt_angle_solar_panel.json';
 import effect_azimuth_solar_panel from './examples/effect_azimuth_solar_panel.json';
+import why_solar_array from './examples/why_solar_array.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -167,6 +168,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'effect_azimuth_solar_panel':
         input = effect_azimuth_solar_panel;
         break;
+      case 'why_solar_array':
+        input = why_solar_array;
+        break;
       case 'solar_farm_01':
         input = solar_farm_01;
         break;
@@ -228,7 +232,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         setCommonStore((state) => {
           state.viewState.shadowEnabled = !undoableCheck.checked;
           if (state.viewState.shadowEnabled) {
-            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+            state.updateSceneRadius();
           }
         });
       },
@@ -236,7 +240,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         setCommonStore((state) => {
           state.viewState.shadowEnabled = undoableCheck.checked;
           if (state.viewState.shadowEnabled) {
-            state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+            state.updateSceneRadius();
           }
         });
       },
@@ -245,7 +249,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     setCommonStore((state) => {
       state.viewState.shadowEnabled = !state.viewState.shadowEnabled;
       if (state.viewState.shadowEnabled) {
-        state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+        state.updateSceneRadius();
       }
     });
   };
@@ -1042,6 +1046,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="effect_azimuth_solar_panel" onClick={loadFile}>
             {i18n.t('menu.tutorials.EffectOfAzimuthOfSolarPanel', lang)}
+          </Menu.Item>
+          <Menu.Item key="why_solar_array" onClick={loadFile}>
+            {i18n.t('menu.tutorials.CoveringGroundWithSolarPanels', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>

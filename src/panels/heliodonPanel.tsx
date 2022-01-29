@@ -214,7 +214,7 @@ const HeliodonPanel = () => {
                       setCommonStore((state) => {
                         state.viewState.heliodon = !undoableCheck.checked;
                         if (state.viewState.heliodon) {
-                          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+                          state.updateSceneRadius();
                         }
                       });
                     },
@@ -222,7 +222,7 @@ const HeliodonPanel = () => {
                       setCommonStore((state) => {
                         state.viewState.heliodon = undoableCheck.checked;
                         if (state.viewState.heliodon) {
-                          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+                          state.updateSceneRadius();
                         }
                       });
                     },
@@ -231,7 +231,7 @@ const HeliodonPanel = () => {
                   setCommonStore((state) => {
                     state.viewState.heliodon = checked;
                     if (state.viewState.heliodon) {
-                      state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+                      state.updateSceneRadius();
                     }
                   });
                 }}

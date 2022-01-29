@@ -6,10 +6,10 @@ import React from 'react';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
+import { WindowModel } from '../../../models/WindowModel';
 
 export const WindowMenu = () => {
-  const getSelectedElement = useStore(Selector.getSelectedElement);
-  const selectedElement = getSelectedElement();
+  const window = useStore(Selector.selectedElement) as WindowModel;
 
   return (
     <>

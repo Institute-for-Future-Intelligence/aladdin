@@ -39,7 +39,7 @@ const PolygonTextureSelection = ({
   const updatePolygonTextureOnSurface = useStore(Selector.updatePolygonTextureOnSurface);
   const updatePolygonTextureAboveFoundation = useStore(Selector.updatePolygonTextureAboveFoundation);
   const updatePolygonTextureForAll = useStore(Selector.updatePolygonTextureForAll);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const polygon = useStore(Selector.selectedElement) as PolygonModel;
   const addUndoable = useStore(Selector.addUndoable);
   const polygonActionScope = useStore(Selector.polygonActionScope);
   const setPolygonActionScope = useStore(Selector.setPolygonActionScope);
@@ -47,7 +47,6 @@ const PolygonTextureSelection = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const polygon = getSelectedElement() as PolygonModel;
   const [selectedTexture, setSelectedTexture] = useState<PolygonTexture>(
     polygon?.textureType ?? PolygonTexture.NoTexture,
   );

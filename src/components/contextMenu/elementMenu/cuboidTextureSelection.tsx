@@ -36,7 +36,7 @@ const CuboidTextureSelection = ({
   const updateCuboidTextureBySide = useStore(Selector.updateCuboidTextureBySide);
   const updateCuboidTextureById = useStore(Selector.updateCuboidFacadeTextureById);
   const updateCuboidTextureForAll = useStore(Selector.updateCuboidFacadeTextureForAll);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const cuboid = useStore(Selector.selectedElement) as CuboidModel;
   const addUndoable = useStore(Selector.addUndoable);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
@@ -45,7 +45,6 @@ const CuboidTextureSelection = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const cuboid = getSelectedElement() as CuboidModel;
   const [selectedTexture, setSelectedTexture] = useState<CuboidTexture>(
     cuboid && cuboid.textureTypes && selectedSideIndex >= 0
       ? cuboid.textureTypes[selectedSideIndex]

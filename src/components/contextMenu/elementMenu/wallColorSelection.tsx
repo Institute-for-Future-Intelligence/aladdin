@@ -26,7 +26,7 @@ const WallColorSelection = ({
   const updateWallColorById = useStore(Selector.updateWallColorById);
   const updateWallColorAboveFoundation = useStore(Selector.updateWallColorAboveFoundation);
   const updateWallColorForAll = useStore(Selector.updateWallColorForAll);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const wall = useStore(Selector.selectedElement) as WallModel;
   const addUndoable = useStore(Selector.addUndoable);
   const wallActionScope = useStore(Selector.wallActionScope);
   const setWallActionScope = useStore(Selector.setWallActionScope);
@@ -34,7 +34,6 @@ const WallColorSelection = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const wall = getSelectedElement() as WallModel;
   const [selectedColor, setSelectedColor] = useState<string>(wall?.color ?? 'white');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

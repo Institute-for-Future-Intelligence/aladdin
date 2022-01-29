@@ -29,7 +29,7 @@ const PolygonFillColorSelection = ({
   const updateElementFillColorOnSurface = useStore(Selector.updateElementColorOnSurface);
   const updateElementFillColorAboveFoundation = useStore(Selector.updateElementColorAboveFoundation);
   const updateElementFillColorForAll = useStore(Selector.updateElementColorForAll);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const polygon = useStore(Selector.selectedElement) as PolygonModel;
   const addUndoable = useStore(Selector.addUndoable);
   const polygonActionScope = useStore(Selector.polygonActionScope);
   const setPolygonActionScope = useStore(Selector.setPolygonActionScope);
@@ -37,7 +37,6 @@ const PolygonFillColorSelection = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const polygon = getSelectedElement() as PolygonModel;
   const [selectedColor, setSelectedColor] = useState<string>(polygon?.color ?? 'gray');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

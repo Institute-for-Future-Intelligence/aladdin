@@ -26,7 +26,7 @@ const FoundationAzimuthInput = ({
   const elements = useStore(Selector.elements);
   const updateElementRotationById = useStore(Selector.updateElementRotationById);
   const updateElementRotationForAll = useStore(Selector.updateElementRotationForAll);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
@@ -34,7 +34,6 @@ const FoundationAzimuthInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const foundation = getSelectedElement() as FoundationModel;
   const [inputAzimuth, setInputAzimuth] = useState<number>(foundation?.rotation[2] ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

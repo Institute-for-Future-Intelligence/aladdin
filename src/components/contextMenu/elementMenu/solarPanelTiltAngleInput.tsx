@@ -29,7 +29,7 @@ const SolarPanelTiltAngleInput = ({
   const updateSolarPanelTiltAngleAboveFoundation = useStore(Selector.updateSolarPanelTiltAngleAboveFoundation);
   const updateSolarPanelTiltAngleForAll = useStore(Selector.updateSolarPanelTiltAngleForAll);
   const getParent = useStore(Selector.getParent);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
@@ -37,7 +37,6 @@ const SolarPanelTiltAngleInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const solarPanel = getSelectedElement() as SolarPanelModel;
   const [inputTiltAngle, setInputTiltAngle] = useState<number>(solarPanel?.tiltAngle ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

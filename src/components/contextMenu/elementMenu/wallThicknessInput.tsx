@@ -25,7 +25,7 @@ const WallThicknessInput = ({
   const updateWallThicknessById = useStore(Selector.updateWallThicknessById);
   const updateWallThicknessAboveFoundation = useStore(Selector.updateWallThicknessAboveFoundation);
   const updateWallThicknessForAll = useStore(Selector.updateWallThicknessForAll);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const wall = useStore(Selector.selectedElement) as WallModel;
   const addUndoable = useStore(Selector.addUndoable);
   const wallActionScope = useStore(Selector.wallActionScope);
   const setWallActionScope = useStore(Selector.setWallActionScope);
@@ -33,7 +33,6 @@ const WallThicknessInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const wall = getSelectedElement() as WallModel;
   const [inputThickness, setInputThickness] = useState<number>(wall?.ly ?? 0.3);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

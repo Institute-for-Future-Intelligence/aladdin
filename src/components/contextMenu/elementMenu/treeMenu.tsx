@@ -19,13 +19,12 @@ export const TreeMenu = () => {
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLzById = useStore(Selector.updateElementLzById);
   const updateTreeShowModelById = useStore(Selector.updateTreeShowModelById);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const tree = useStore(Selector.selectedElement) as TreeModel;
   const addUndoable = useStore(Selector.addUndoable);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
   const lang = { lng: language };
-  const tree = getSelectedElement() as TreeModel;
 
   const showTreeModel = (on: boolean) => {
     if (!tree) return;

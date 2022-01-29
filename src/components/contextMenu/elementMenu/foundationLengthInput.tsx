@@ -34,7 +34,7 @@ const FoundationLengthInput = ({
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLxForAll = useStore(Selector.updateElementLxForAll);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const getChildren = useStore(Selector.getChildren);
   const setElementPosition = useStore(Selector.setElementPosition);
   const addUndoable = useStore(Selector.addUndoable);
@@ -45,7 +45,6 @@ const FoundationLengthInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const foundation = getSelectedElement() as FoundationModel;
   const [inputLx, setInputLx] = useState<number>(foundation?.lx ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

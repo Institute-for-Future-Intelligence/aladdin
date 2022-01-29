@@ -12,7 +12,7 @@ import { VerticalRuler } from './views/verticalRuler';
 import { Util } from './Util';
 
 export const Auxiliary = () => {
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const element = useStore(Selector.selectedElement);
   const moveHandleType = useStore(Selector.moveHandleType);
   const rotateHandleType = useStore(Selector.rotateHandleType);
   const resizeHandleType = useStore(Selector.resizeHandleType);
@@ -26,7 +26,6 @@ export const Auxiliary = () => {
   const [showVerticalRuler, setShowVerticalRuler] = useState(false);
   const [gridSize, setGridSize] = useState(2 * sceneRadius);
   const [gridDivisions, setDivisions] = useState(2 * sceneRadius);
-  const element = getSelectedElement();
 
   useEffect(() => {
     const unit = Math.floor(sceneRadius / 50) + 1;

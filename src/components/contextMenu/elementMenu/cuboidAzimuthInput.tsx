@@ -26,7 +26,7 @@ const CuboidAzimuthInput = ({
   const elements = useStore(Selector.elements);
   const updateElementRotationById = useStore(Selector.updateElementRotationById);
   const updateElementRotationForAll = useStore(Selector.updateElementRotationForAll);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const cuboid = useStore(Selector.selectedElement) as CuboidModel;
   const addUndoable = useStore(Selector.addUndoable);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
@@ -34,7 +34,6 @@ const CuboidAzimuthInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const cuboid = getSelectedElement() as CuboidModel;
   const [inputAzimuth, setInputAzimuth] = useState<number>(cuboid?.rotation[2] ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

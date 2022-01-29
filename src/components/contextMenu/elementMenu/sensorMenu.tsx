@@ -17,10 +17,9 @@ export const SensorMenu = () => {
   const language = useStore(Selector.language);
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
   const addUndoable = useStore(Selector.addUndoable);
+  const sensor = useStore(Selector.selectedElement) as SensorModel;
 
-  const sensor = getSelectedElement() as SensorModel;
   const [labelText, setLabelText] = useState<string>(sensor?.label ?? '');
   const lang = { lng: language };
 

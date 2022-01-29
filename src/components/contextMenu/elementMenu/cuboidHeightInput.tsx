@@ -32,7 +32,7 @@ const CuboidHeightInput = ({
   const updateElementCzById = useStore(Selector.updateElementCzById);
   const updateElementLzForAll = useStore(Selector.updateElementLzForAll);
   const updateElementCzForAll = useStore(Selector.updateElementCzForAll);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const cuboid = useStore(Selector.selectedElement) as CuboidModel;
   const addUndoable = useStore(Selector.addUndoable);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
@@ -42,7 +42,6 @@ const CuboidHeightInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const cuboid = getSelectedElement() as CuboidModel;
   const [inputLz, setInputLz] = useState<number>(cuboid?.lz ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

@@ -27,7 +27,7 @@ export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const countAllChildElementsByType = useStore(Selector.countAllChildElementsByType);
   const countAllChildSolarPanels = useStore(Selector.countAllChildSolarPanels);
@@ -45,7 +45,6 @@ export const FoundationMenu = () => {
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
-  const foundation = getSelectedElement() as FoundationModel;
   const humanCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Human, true) : 0;
   const treeCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Tree, true) : 0;
   const wallCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Wall, true) : 0;
@@ -213,7 +212,7 @@ export const FoundationMenu = () => {
                             undo: () => {
                               setCommonStore((state) => {
                                 state.elements.push(...undoableRemoveAllSolarPanelChildren.removedElements);
-                                state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+                                state.updateDesignInfo();
                               });
                             },
                             redo: () => {

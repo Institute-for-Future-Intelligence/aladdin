@@ -222,6 +222,7 @@ export const i18n_es = {
         SolarRadiationToBox: 'Radiación solar a una caja',
         EffectOfTiltAngleOfSolarPanel: 'Effect of Tilt Angle',
         EffectOfAzimuthOfSolarPanel: 'Effect of Azimuth',
+        CoveringGroundWithSolarPanels: 'Why Just Covering the Ground with Solar Panels is not a Good Idea',
       },
       examplesSubMenu: 'Ejemplos',
       solarEnergySubMenu: 'Energía Solar',
@@ -484,7 +485,8 @@ export const i18n_es = {
     },
 
     designInfoPanel: {
-      ClickToRecountSolarPanels: 'Haga clic para contar los paneles solares',
+      NumberOfSelectedSolarPanels: 'Number of selected solar panels',
+      ElectricityGeneratedDailyBySolarPanels: 'Electricity generated daily by these solar panels',
       EstimatedSceneScope: 'Alcance de la escena estimado',
     },
 

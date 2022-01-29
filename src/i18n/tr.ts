@@ -223,6 +223,7 @@ export const i18n_tr = {
         SolarRadiationToBox: 'Bir Kutuya Güneþ Radyasyonu',
         EffectOfTiltAngleOfSolarPanel: 'Effect of Tilt Angle of a Solar Panel',
         EffectOfAzimuthOfSolarPanel: 'Effect of Azimuth of a Solar Panel',
+        CoveringGroundWithSolarPanels: 'Why Just Covering the Ground with Solar Panels is not a Good Idea',
       },
       examplesSubMenu: 'Örnekler',
       solarEnergySubMenu: 'Güneþ Enerjisi',
@@ -485,7 +486,8 @@ export const i18n_tr = {
     },
 
     designInfoPanel: {
-      ClickToRecountSolarPanels: 'Güneþ panellerini saymak için týklayýn',
+      NumberOfSelectedSolarPanels: 'Number of selected solar panels',
+      ElectricityGeneratedDailyBySolarPanels: 'Electricity generated daily by these solar panels',
       SceneRadius: 'Faliyet Alaný Yarýçapý',
     },
 

@@ -22,12 +22,11 @@ export const HumanMenu = () => {
   const addUndoable = useStore(Selector.addUndoable);
   const cameraDirection = useStore(Selector.cameraDirection);
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const human = useStore(Selector.selectedElement) as HumanModel;
   const getParent = useStore(Selector.getParent);
   const updateHumanObserverById = useStore(Selector.updateHumanObserverById);
   const selectNone = useStore(Selector.selectNone);
 
-  const human = getSelectedElement() as HumanModel;
   const editable = !human?.locked;
   const requestRef = useRef<number>(0);
   const previousFrameTime = useRef<number>(-1);

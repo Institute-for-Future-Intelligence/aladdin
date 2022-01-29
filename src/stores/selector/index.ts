@@ -85,6 +85,8 @@ export const animateSun = (state: CommonStoreState) => state.animateSun;
 
 export const updateSceneRadiusFlag = (state: CommonStoreState) => state.updateSceneRadiusFlag;
 
+export const updateSceneRadius = (state: CommonStoreState) => state.updateSceneRadius;
+
 export const sceneRadius = (state: CommonStoreState) => state.sceneRadius;
 
 export const setSceneRadius = (state: CommonStoreState) => state.setSceneRadius;
@@ -98,6 +100,8 @@ export const getElementById = (state: CommonStoreState) => state.getElementById;
 export const getParent = (state: CommonStoreState) => state.getParent;
 
 export const getChildren = (state: CommonStoreState) => state.getChildren;
+
+export const selectedElement = (state: CommonStoreState) => state.selectedElement;
 
 export const getSelectedElement = (state: CommonStoreState) => state.getSelectedElement;
 
@@ -247,6 +251,10 @@ export const solarPanelActionScope = (state: CommonStoreState) => state.solarPan
 
 export const setSolarPanelActionScope = (state: CommonStoreState) => state.setSolarPanelActionScope;
 
+export const updateSolarPanelDailyYieldById = (state: CommonStoreState) => state.updateSolarPanelDailyYieldById;
+
+export const updateSolarPanelYearlyYieldById = (state: CommonStoreState) => state.updateSolarPanelYearlyYieldById;
+
 export const updateSolarPanelModelById = (state: CommonStoreState) => state.updateSolarPanelModelById;
 
 export const updateSolarPanelModelOnSurface = (state: CommonStoreState) => state.updateSolarPanelModelOnSurface;
@@ -381,13 +389,23 @@ export const countAllChildElementsByType = (state: CommonStoreState) => state.co
 
 export const countAllChildSolarPanels = (state: CommonStoreState) => state.countAllChildSolarPanels;
 
+export const countAllChildSolarPanelDailyYields = (state: CommonStoreState) => state.countAllChildSolarPanelDailyYields;
+
+export const countSolarPanelsOnRack = (state: CommonStoreState) => state.countSolarPanelsOnRack;
+
 export const countAllSolarPanels = (state: CommonStoreState) => state.countAllSolarPanels;
+
+export const clearAllSolarPanelYields = (state: CommonStoreState) => state.clearAllSolarPanelYields;
+
+export const countAllSolarPanelDailyYields = (state: CommonStoreState) => state.countAllSolarPanelDailyYields;
 
 export const selectedElementAngle = (state: CommonStoreState) => state.selectedElementAngle;
 
 export const selectedElementHeight = (state: CommonStoreState) => state.selectedElementHeight;
 
 export const simulationInProgress = (state: CommonStoreState) => state.simulationInProgress;
+
+export const updateDesignInfo = (state: CommonStoreState) => state.updateDesignInfo;
 
 export const updateDesignInfoFlag = (state: CommonStoreState) => state.updateDesignInfoFlag;
 

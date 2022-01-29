@@ -32,7 +32,7 @@ const FoundationHeightInput = ({
   const updateElementCzById = useStore(Selector.updateElementCzById);
   const updateElementLzForAll = useStore(Selector.updateElementLzForAll);
   const updateElementCzForAll = useStore(Selector.updateElementCzForAll);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
@@ -42,7 +42,6 @@ const FoundationHeightInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const foundation = getSelectedElement() as FoundationModel;
   const [inputLz, setInputLz] = useState<number>(foundation?.lz ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

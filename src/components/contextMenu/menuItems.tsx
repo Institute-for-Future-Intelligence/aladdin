@@ -58,11 +58,10 @@ export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string;
 export const Copy = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; keyName: string }) => {
   const language = useStore(Selector.language);
   const copyElementById = useStore(Selector.copyElementById);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const selectedElement = useStore(Selector.selectedElement);
   const isMac = Util.getOS()?.startsWith('Mac');
 
   const copyElement = () => {
-    const selectedElement = getSelectedElement();
     if (selectedElement) {
       copyElementById(selectedElement.id);
     }
@@ -80,14 +79,13 @@ export const Cut = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; k
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const removeElementById = useStore(Selector.removeElementById);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const selectedElement = useStore(Selector.selectedElement);
   const getElementById = useStore(Selector.getElementById);
   const addUndoable = useStore(Selector.addUndoable);
   const copyCutElements = useStore(Selector.copyCutElements);
   const isMac = Util.getOS()?.startsWith('Mac');
 
   const cut = () => {
-    const selectedElement = getSelectedElement();
     if (selectedElement) {
       removeElementById(selectedElement.id, true);
       const cutElements = copyCutElements();
@@ -129,8 +127,7 @@ export const Cut = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; k
 export const Lock = ({ keyName }: { keyName: string }) => {
   const language = useStore(Selector.language);
   const updateElementLockById = useStore(Selector.updateElementLockById);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
-  const selectedElement = getSelectedElement();
+  const selectedElement = useStore(Selector.selectedElement);
   const addUndoable = useStore(Selector.addUndoable);
 
   const lockElement = (on: boolean) => {

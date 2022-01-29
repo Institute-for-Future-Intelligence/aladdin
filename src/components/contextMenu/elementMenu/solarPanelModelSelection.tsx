@@ -31,7 +31,7 @@ const SolarPanelModelSelection = ({
   const updateSolarPanelModelAboveFoundation = useStore(Selector.updateSolarPanelModelAboveFoundation);
   const updateSolarPanelModelForAll = useStore(Selector.updateSolarPanelModelForAll);
   const getParent = useStore(Selector.getParent);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
   const pvModules = useStore(Selector.pvModules);
   const getPvModule = useStore(Selector.getPvModule);
   const addUndoable = useStore(Selector.addUndoable);
@@ -41,7 +41,6 @@ const SolarPanelModelSelection = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const solarPanel = getSelectedElement() as SolarPanelModel;
   const [selectedPvModel, setSelectedPvModel] = useState<string>(solarPanel?.pvModelName ?? 'SPR-X21-335-BLK');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [panelSizeString, setPanelSizeString] = useState<string>();

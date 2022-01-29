@@ -30,7 +30,7 @@ const SolarPanelWidthInput = ({
   const updateSolarPanelLyAboveFoundation = useStore(Selector.updateSolarPanelLyAboveFoundation);
   const updateSolarPanelLyForAll = useStore(Selector.updateSolarPanelLyForAll);
   const getParent = useStore(Selector.getParent);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
@@ -38,7 +38,6 @@ const SolarPanelWidthInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const solarPanel = getSelectedElement() as SolarPanelModel;
   const [dy, setDy] = useState<number>(0);
   const [inputWidth, setInputWidth] = useState<number>(
     solarPanel?.orientation === Orientation.portrait ? solarPanel?.ly ?? 2 : solarPanel?.lx ?? 1,

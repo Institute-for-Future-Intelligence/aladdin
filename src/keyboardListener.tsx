@@ -512,7 +512,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
               setCommonStore((state) => {
                 state.elements.push(...undoablePaste.pastedElements);
                 state.selectedElement = undoablePaste.pastedElements[0];
-                state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+                state.updateDesignInfo();
               });
             },
           } as UndoablePaste;
@@ -629,7 +629,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
                         state.elements.push(e);
                       }
                       state.selectedElement = deletedElements[0];
-                      state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+                      state.updateDesignInfo();
                       state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
                     });
                   }

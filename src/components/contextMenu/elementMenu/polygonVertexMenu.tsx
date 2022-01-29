@@ -14,14 +14,13 @@ import { PolygonVertexAction } from '../../../types';
 
 export const PolygonVertexMenu = () => {
   const language = useStore(Selector.language);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const polygon = useStore(Selector.selectedElement) as PolygonModel;
   const deletePolygonVertexByIndex = useStore(Selector.deletePolygonVertexByIndex);
   const insertPolygonVertexBeforeIndex = useStore(Selector.insertPolygonVertexBeforeIndex);
   const insertPolygonVertexAfterIndex = useStore(Selector.insertPolygonVertexAfterIndex);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const addUndoable = useStore(Selector.addUndoable);
 
-  const polygon = getSelectedElement() as PolygonModel;
   const lang = { lng: language };
 
   const insertVertexBeforeIndex = () => {
@@ -50,7 +49,7 @@ export const PolygonVertexMenu = () => {
           insertPolygonVertexAfterIndex(polygon.id, polygon.selectedIndex);
           break;
       }
-      const newVertices = (useStore.getState().getSelectedElement() as PolygonModel).vertices.map((v) => ({ ...v }));
+      const newVertices = polygon.vertices.map((v) => ({ ...v }));
       const undoableChange = {
         name: action,
         timestamp: Date.now(),

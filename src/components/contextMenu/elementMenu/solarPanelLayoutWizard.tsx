@@ -272,7 +272,7 @@ const SolarPanelLayoutWizard = ({
     }
     changedRef.current = false;
     setCommonStore((state) => {
-      state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+      state.updateDesignInfo();
     });
   };
 

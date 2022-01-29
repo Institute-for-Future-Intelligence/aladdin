@@ -230,6 +230,8 @@ export interface CommonStoreState {
   // for solar panels
   solarPanelActionScope: Scope;
   setSolarPanelActionScope: (scope: Scope) => void;
+  updateSolarPanelDailyYieldById: (id: string, dailyYield: number) => void;
+  updateSolarPanelYearlyYieldById: (id: string, yearlyYield: number) => void;
 
   updateSolarPanelModelById: (id: string, pvModelName: string) => void;
   updateSolarPanelModelOnSurface: (parentId: string, normal: number[] | undefined, pvModelName: string) => void;
@@ -346,6 +348,10 @@ export interface CommonStoreState {
   countAllChildElementsByType: (parentId: string, type: ObjectType, excludeLocked?: boolean) => number;
   countAllChildSolarPanels: (parentId: string, excludeLocked?: boolean) => number; // special case as a rack may have many solar panels
   countAllSolarPanels: () => number;
+  countSolarPanelsOnRack: (id: string) => number;
+  countAllSolarPanelDailyYields: () => number;
+  countAllChildSolarPanelDailyYields: (parentId: string) => number;
+  clearAllSolarPanelYields: () => void;
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
 
   dailyLightSensorData: DatumEntry[];
@@ -378,6 +384,7 @@ export interface CommonStoreState {
   getCameraDirection: () => Vector3;
 
   updateSceneRadiusFlag: boolean;
+  updateSceneRadius: () => void;
   sceneRadius: number;
   setSceneRadius: (radius: number) => void;
 
@@ -400,6 +407,7 @@ export interface CommonStoreState {
 
   simulationInProgress: boolean;
   showSolarRadiationHeatmap: boolean;
+  updateDesignInfo: () => void;
   updateDesignInfoFlag: boolean;
   locale: Locale;
   localFileName: string;
@@ -512,10 +520,12 @@ export const useStore = create<CommonStoreState>(
             // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
             const state = get();
             for (const e of state.elements) {
-              if (e.type === ObjectType.Human) {
-                const human = e as HumanModel;
-                const width = HumanData.fetchWidth(human.name);
-                state.setElementSize(human.id, width, width, HumanData.fetchHeight(human.name));
+              switch (e.type) {
+                case ObjectType.Human:
+                  const human = e as HumanModel;
+                  const width = HumanData.fetchWidth(human.name);
+                  state.setElementSize(human.id, width, width, HumanData.fetchHeight(human.name));
+                  break;
               }
             }
           },
@@ -798,6 +808,7 @@ export const useStore = create<CommonStoreState>(
                 e.selected = false;
               }
               state.selectedElement = null;
+              state.updateDesignInfo();
             });
             useStoreRef.getState().selectNone();
           },
@@ -814,6 +825,7 @@ export const useStore = create<CommonStoreState>(
                     } else {
                       elem.selected = false;
                     }
+                    state.updateDesignInfo();
                   }
                   state.moveHandleType = null;
                   state.resizeHandleType = null;
@@ -1552,6 +1564,29 @@ export const useStore = create<CommonStoreState>(
           setSolarPanelActionScope(scope) {
             immerSet((state: CommonStoreState) => {
               state.solarPanelActionScope = scope;
+            });
+          },
+
+          updateSolarPanelDailyYieldById(id, dailyYield) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                  const sp = e as SolarPanelModel;
+                  sp.dailyYield = dailyYield;
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarPanelYearlyYieldById(id, yearlyYield) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id) {
+                  const sp = e as SolarPanelModel;
+                  sp.yearlyYield = yearlyYield;
+                  break;
+                }
+              }
             });
           },
 
@@ -2439,7 +2474,7 @@ export const useStore = create<CommonStoreState>(
                   model = wall;
                   break;
               }
-              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+              state.updateDesignInfo();
             });
             return model;
           },
@@ -2551,7 +2586,7 @@ export const useStore = create<CommonStoreState>(
                 return !(e.id === id || e.parentId === id || e.foundationId === id);
               });
               state.selectedElement = null;
-              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+              state.updateDesignInfo();
             });
           },
           removeElementsByType(type) {
@@ -2563,7 +2598,7 @@ export const useStore = create<CommonStoreState>(
               } else {
                 state.elements = state.elements.filter((x) => x.locked || x.type !== type);
               }
-              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+              state.updateDesignInfo();
             });
           },
           countElementsByType(type, excludeLocked) {
@@ -2609,7 +2644,7 @@ export const useStore = create<CommonStoreState>(
               state.elements = state.elements.filter((e) => {
                 return e.referenceId !== id;
               });
-              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+              state.updateDesignInfo();
             });
           },
           countElementsByReferenceId(id) {
@@ -2639,7 +2674,7 @@ export const useStore = create<CommonStoreState>(
               if (type === ObjectType.Wall) {
                 state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
               }
-              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+              state.updateDesignInfo();
             });
           },
           countAllChildElementsByType(parentId, type, excludeLocked) {
@@ -2669,15 +2704,17 @@ export const useStore = create<CommonStoreState>(
                   if (!e.locked && e.type === ObjectType.SolarPanel && e.parentId === parentId) {
                     const sp = e as SolarPanelModel;
                     const pvModel = state.getPvModule(sp.pvModelName);
-                    let nx, ny;
-                    if (sp.orientation === Orientation.portrait) {
-                      nx = Math.max(1, Math.round(sp.lx / pvModel.width));
-                      ny = Math.max(1, Math.round(sp.ly / pvModel.length));
-                    } else {
-                      nx = Math.max(1, Math.round(sp.lx / pvModel.length));
-                      ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+                    if (pvModel) {
+                      let nx, ny;
+                      if (sp.orientation === Orientation.portrait) {
+                        nx = Math.max(1, Math.round(sp.lx / pvModel.width));
+                        ny = Math.max(1, Math.round(sp.ly / pvModel.length));
+                      } else {
+                        nx = Math.max(1, Math.round(sp.lx / pvModel.length));
+                        ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+                      }
+                      count += nx * ny;
                     }
-                    count += nx * ny;
                   }
                 }
               } else {
@@ -2685,6 +2722,31 @@ export const useStore = create<CommonStoreState>(
                   if (e.type === ObjectType.SolarPanel && e.parentId === parentId) {
                     const sp = e as SolarPanelModel;
                     const pvModel = state.getPvModule(sp.pvModelName);
+                    if (pvModel) {
+                      let nx, ny;
+                      if (sp.orientation === Orientation.portrait) {
+                        nx = Math.max(1, Math.round(sp.lx / pvModel.width));
+                        ny = Math.max(1, Math.round(sp.ly / pvModel.length));
+                      } else {
+                        nx = Math.max(1, Math.round(sp.lx / pvModel.length));
+                        ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+                      }
+                      count += nx * ny;
+                    }
+                  }
+                }
+              }
+            });
+            return count;
+          },
+          countSolarPanelsOnRack(id) {
+            let count = 0;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && e.type === ObjectType.SolarPanel) {
+                  const sp = e as SolarPanelModel;
+                  const pvModel = state.getPvModule(sp.pvModelName);
+                  if (pvModel) {
                     let nx, ny;
                     if (sp.orientation === Orientation.portrait) {
                       nx = Math.max(1, Math.round(sp.lx / pvModel.width));
@@ -2694,6 +2756,7 @@ export const useStore = create<CommonStoreState>(
                       ny = Math.max(1, Math.round(sp.ly / pvModel.width));
                     }
                     count += nx * ny;
+                    break;
                   }
                 }
               }
@@ -2722,6 +2785,40 @@ export const useStore = create<CommonStoreState>(
               }
             });
             return count;
+          },
+          countAllChildSolarPanelDailyYields(parentId) {
+            let total = 0;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.parentId === parentId) {
+                  total += (e as SolarPanelModel).dailyYield ?? 0;
+                }
+              }
+            });
+            return total;
+          },
+          countAllSolarPanelDailyYields() {
+            let total = 0;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  total += (e as SolarPanelModel).dailyYield ?? 0;
+                }
+              }
+            });
+            return total;
+          },
+          // this should be called if any of the solar panels changes
+          clearAllSolarPanelYields() {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  const sp = e as SolarPanelModel;
+                  sp.dailyYield = 0;
+                  sp.yearlyYield = 0;
+                }
+              }
+            });
           },
 
           // must copy the elements because they may be pasted multiple times.
@@ -2801,7 +2898,7 @@ export const useStore = create<CommonStoreState>(
                 // so we have to copy its children and grandchildren from existing elements
                 let m = state.pastePoint;
                 const elem = state.elementsToPaste[0];
-                let newParent = state.getSelectedElement();
+                let newParent = state.selectedElement;
                 const oldParent = state.getParent(elem);
                 if (newParent) {
                   if (newParent.type === ObjectType.Polygon) {
@@ -2974,7 +3071,7 @@ export const useStore = create<CommonStoreState>(
                   pastedElements.push(...cutElements);
                 }
               }
-              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+              state.updateDesignInfo();
             });
             return pastedElements;
           },
@@ -3201,7 +3298,7 @@ export const useStore = create<CommonStoreState>(
                   if (state.elementsToPaste.length === 1 && approved) pastedElements.push(e);
                 }
               }
-              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+              state.updateDesignInfo();
             });
             return pastedElements;
           },
@@ -3328,6 +3425,11 @@ export const useStore = create<CommonStoreState>(
           },
 
           updateSceneRadiusFlag: false,
+          updateSceneRadius() {
+            immerSet((state: CommonStoreState) => {
+              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+            });
+          },
           sceneRadius: 10,
           setSceneRadius(radius) {
             immerSet((state: CommonStoreState) => {
@@ -3358,9 +3460,15 @@ export const useStore = create<CommonStoreState>(
           addedWindowId: null,
           deletedWindowAndParentId: null,
 
+          updateDesignInfoFlag: false,
+          updateDesignInfo() {
+            immerSet((state: CommonStoreState) => {
+              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+            });
+          },
+
           simulationInProgress: false,
           showSolarRadiationHeatmap: false,
-          updateDesignInfoFlag: false,
           locale: enUS,
           localFileName: 'aladdin.ala',
           createNewFileFlag: false,

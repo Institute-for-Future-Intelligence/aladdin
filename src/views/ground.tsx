@@ -62,6 +62,7 @@ const Ground = () => {
   const deletedFoundationId = useStore(Selector.deletedFoundationId);
   const deletedCuboidId = useStore(Selector.deletedCuboidId);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
+  const updateSceneRadius = useStore(Selector.updateSceneRadius);
 
   const { get: getThree, scene, invalidate } = useThree();
   const groundPlaneRef = useRef<Mesh>();
@@ -539,7 +540,7 @@ const Ground = () => {
     newPolygonVerticesMapRef.current.clear();
     newWallPointsMapRef.current.clear();
     setCommonStore((state) => {
-      state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+      state.updateSceneRadius();
       state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
       // set ref children state
       for (const e of state.elements) {
@@ -771,9 +772,7 @@ const Ground = () => {
           },
         } as UndoableMove;
         addUndoable(undoableMove);
-        setCommonStore((state) => {
-          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-        });
+        updateSceneRadius();
       }
     }
   };
@@ -825,7 +824,7 @@ const Ground = () => {
         isSettingFoundationEndPointRef.current = false;
         setCommonStore((state) => {
           state.addedFoundationId = null;
-          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+          state.updateSceneRadius();
         });
         if (elem.lx <= 0.1 || elem.ly <= 0.1) {
           removeElementById(elem.id, false);
@@ -836,15 +835,13 @@ const Ground = () => {
             addedElement: elem,
             undo: () => {
               removeElementById(undoableAdd.addedElement.id, false);
-              setCommonStore((state) => {
-                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-              });
+              updateSceneRadius();
             },
             redo: () => {
               setCommonStore((state) => {
                 state.elements.push(undoableAdd.addedElement);
                 state.selectedElement = undoableAdd.addedElement;
-                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+                state.updateSceneRadius();
               });
             },
           } as UndoableAdd;
@@ -857,7 +854,7 @@ const Ground = () => {
         isSettingCuboidEndPointRef.current = false;
         setCommonStore((state) => {
           state.addedCuboidId = null;
-          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+          state.updateSceneRadius();
         });
         if (elem.lx <= 0.1 || elem.ly <= 0.1) {
           removeElementById(elem.id, false);
@@ -868,15 +865,13 @@ const Ground = () => {
             addedElement: elem,
             undo: () => {
               removeElementById(undoableAdd.addedElement.id, false);
-              setCommonStore((state) => {
-                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-              });
+              updateSceneRadius();
             },
             redo: () => {
               setCommonStore((state) => {
                 state.elements.push(undoableAdd.addedElement);
                 state.selectedElement = undoableAdd.addedElement;
-                state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+                state.updateSceneRadius();
               });
             },
           } as UndoableAdd;
@@ -958,24 +953,22 @@ const Ground = () => {
           addedElement: addedElement,
           undo: () => {
             removeElementById(undoableAdd.addedElement.id, false);
-            setCommonStore((state) => {
-              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-            });
+            updateSceneRadius();
           },
           redo: () => {
             setCommonStore((state) => {
               state.elements.push(undoableAdd.addedElement);
               state.selectedElement = undoableAdd.addedElement;
-              state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+              state.updateSceneRadius();
+              state.updateDesignInfo();
             });
           },
         } as UndoableAdd;
         addUndoable(undoableAdd);
         setCommonStore((state) => {
           state.objectTypeToAdd = ObjectType.None;
-          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-          state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+          state.updateSceneRadius();
+          state.updateDesignInfo();
         });
       }
     } else {

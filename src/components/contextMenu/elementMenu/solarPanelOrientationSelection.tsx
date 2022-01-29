@@ -32,7 +32,7 @@ const SolarPanelOrientationSelection = ({
   const updateSolarPanelOrientationAboveFoundation = useStore(Selector.updateSolarPanelOrientationAboveFoundation);
   const updateSolarPanelOrientationForAll = useStore(Selector.updateSolarPanelOrientationForAll);
   const getParent = useStore(Selector.getParent);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
   const setElementSize = useStore(Selector.setElementSize);
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
@@ -41,7 +41,6 @@ const SolarPanelOrientationSelection = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const solarPanel = getSelectedElement() as SolarPanelModel;
   const [selectedOrientation, setSelectedOrientation] = useState<Orientation>(
     solarPanel?.orientation ?? Orientation.portrait,
   );

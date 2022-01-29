@@ -28,7 +28,7 @@ const SolarPanelTrackerSelection = ({
   const updateSolarPanelTrackerTypeAboveFoundation = useStore(Selector.updateSolarPanelTrackerTypeAboveFoundation);
   const updateSolarPanelTrackerTypeForAll = useStore(Selector.updateSolarPanelTrackerTypeForAll);
   const getParent = useStore(Selector.getParent);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
@@ -36,7 +36,6 @@ const SolarPanelTrackerSelection = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const solarPanel = getSelectedElement() as SolarPanelModel;
   const [selectedTrackerType, setSelectedTrackerType] = useState<TrackerType>(
     solarPanel?.trackerType ?? TrackerType.NO_TRACKER,
   );

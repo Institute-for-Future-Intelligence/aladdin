@@ -16,7 +16,7 @@ import { WallModel } from 'src/models/WallModel';
 import { ObjectType, WallTexture } from 'src/types';
 
 export const WallMenu = () => {
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const wall = useStore(Selector.selectedElement) as WallModel;
   const elementsToPaste = useStore(Selector.elementsToPaste);
   const language = useStore(Selector.language);
   const setApplyCount = useStore(Selector.setApplyCount);
@@ -28,8 +28,6 @@ export const WallMenu = () => {
 
   const lang = { lng: language };
   const paddingLeft = '36px';
-
-  const wall = getSelectedElement() as WallModel;
 
   const legalToPaste = () => {
     if (elementsToPaste && elementsToPaste.length > 0) {

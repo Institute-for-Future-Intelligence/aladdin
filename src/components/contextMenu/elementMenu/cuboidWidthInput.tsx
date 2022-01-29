@@ -36,7 +36,7 @@ const CuboidWidthInput = ({
   const updateElementLyById = useStore(Selector.updateElementLyById);
   const updateElementLyForAll = useStore(Selector.updateElementLyForAll);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const cuboid = useStore(Selector.selectedElement) as CuboidModel;
   const addUndoable = useStore(Selector.addUndoable);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
@@ -45,7 +45,6 @@ const CuboidWidthInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const cuboid = getSelectedElement() as CuboidModel;
   const [inputLy, setInputLy] = useState<number>(cuboid?.ly ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

@@ -25,7 +25,7 @@ const FoundationColorSelection = ({
   const elements = useStore(Selector.elements);
   const updateElementColorById = useStore(Selector.updateElementColorById);
   const updateElementColorForAll = useStore(Selector.updateElementColorForAll);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
@@ -33,7 +33,6 @@ const FoundationColorSelection = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const foundation = getSelectedElement() as FoundationModel;
   const [selectedColor, setSelectedColor] = useState<string>(foundation?.color ?? 'gray');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

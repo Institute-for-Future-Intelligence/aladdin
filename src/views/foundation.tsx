@@ -81,6 +81,7 @@ const Foundation = ({
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const setCommonStore = useStore(Selector.set);
+  const updateDesignInfo = useStore(Selector.updateDesignInfo);
   const setElementPosition = useStore(Selector.setElementPosition);
   const setElementSize = useStore(Selector.setElementSize);
   const updateElementLxById = useStore(Selector.updateElementLxById);
@@ -610,7 +611,7 @@ const Foundation = ({
         setCommonStore((state) => {
           state.elements.push(undoableAdd.addedElement);
           state.selectedElement = undoableAdd.addedElement;
-          state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
+          state.updateDesignInfo();
         });
       },
     } as UndoableAdd;
@@ -1666,9 +1667,7 @@ const Foundation = ({
                 if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, solarPanel.lx, dyl)) {
                   updateElementLyById(solarPanel.id, dyl);
                   setElementPosition(solarPanel.id, newCx, newCy);
-                  setCommonStore((state) => {
-                    state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
-                  });
+                  updateDesignInfo();
                 }
               }
               break;
@@ -1695,9 +1694,7 @@ const Foundation = ({
                 if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, dxl, solarPanel.ly)) {
                   updateElementLxById(solarPanel.id, dxl);
                   setElementPosition(solarPanel.id, newCx, newCy);
-                  setCommonStore((state) => {
-                    state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
-                  });
+                  updateDesignInfo();
                 }
               }
               break;

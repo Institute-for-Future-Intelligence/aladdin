@@ -33,7 +33,7 @@ export const CuboidMenu = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const cuboid = useStore(Selector.selectedElement) as CuboidModel;
   const addUndoable = useStore(Selector.addUndoable);
   const countAllChildElementsByType = useStore(Selector.countAllChildElementsByType);
   const countAllChildSolarPanels = useStore(Selector.countAllChildSolarPanels);
@@ -54,7 +54,6 @@ export const CuboidMenu = () => {
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
-  const cuboid = getSelectedElement() as CuboidModel;
   const humanCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Human, true) : 0;
   const treeCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Tree, true) : 0;
   const polygonCountCuboid = cuboid ? countAllChildElementsByType(cuboid.id, ObjectType.Polygon, true) : 0;

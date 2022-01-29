@@ -37,7 +37,7 @@ const WallTextureSelection = ({
   const updateWallTextureById = useStore(Selector.updateWallTextureById);
   const updateWallTextureAboveFoundation = useStore(Selector.updateWallTextureAboveFoundation);
   const updateWallTextureForAll = useStore(Selector.updateWallTextureForAll);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const wall = useStore(Selector.selectedElement) as WallModel;
   const addUndoable = useStore(Selector.addUndoable);
   const wallActionScope = useStore(Selector.wallActionScope);
   const setWallActionScope = useStore(Selector.setWallActionScope);
@@ -45,7 +45,6 @@ const WallTextureSelection = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const wall = getSelectedElement() as WallModel;
   const [selectedTexture, setSelectedTexture] = useState<WallTexture>(wall?.textureType ?? WallTexture.Default);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

@@ -25,7 +25,7 @@ const WallHeightInput = ({
   const updateWallHeightById = useStore(Selector.updateWallHeightById);
   const updateWallHeightAboveFoundation = useStore(Selector.updateWallHeightAboveFoundation);
   const updateWallHeightForAll = useStore(Selector.updateWallHeightForAll);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const wall = useStore(Selector.selectedElement) as WallModel;
   const addUndoable = useStore(Selector.addUndoable);
   const wallActionScope = useStore(Selector.wallActionScope);
   const setWallActionScope = useStore(Selector.setWallActionScope);
@@ -33,7 +33,6 @@ const WallHeightInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const wall = getSelectedElement() as WallModel;
   const [inputHeight, setInputHeight] = useState<number>(wall?.lz ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

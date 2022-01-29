@@ -39,7 +39,9 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
   const setPvDailyYield = useStore(Selector.setDailyPvYield);
+  const updateSolarPanelDailyYield = useStore(Selector.updateSolarPanelDailyYieldById);
   const setPvYearlyYield = useStore(Selector.setYearlyPvYield);
+  const updateSolarPanelYearlyYield = useStore(Selector.updateSolarPanelYearlyYieldById);
   const dailyPvFlag = useStore(Selector.dailyPvFlag);
   const yearlyPvFlag = useStore(Selector.yearlyPvFlag);
   const dailyIndividualOutputs = useStore(Selector.dailyPvIndividualOutputs);
@@ -150,6 +152,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       for (const e of elements) {
         if (e.type === ObjectType.SolarPanel) {
           const output = getDailyYield(e as SolarPanelModel);
+          updateSolarPanelDailyYield(
+            e.id,
+            output.reduce((a, b) => a + b, 0),
+          );
           index++;
           map.set('Panel' + index, output);
           labels.push(e.label ? e.label : 'Panel' + index);
@@ -175,6 +181,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       for (const e of elements) {
         if (e.type === ObjectType.SolarPanel) {
           const output = getDailyYield(e as SolarPanelModel);
+          updateSolarPanelDailyYield(
+            e.id,
+            output.reduce((a, b) => a + b, 0),
+          );
           for (let i = 0; i < 24; i++) {
             total[i] += output[i];
           }
@@ -397,7 +407,12 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       let index = 0;
       for (const e of elements) {
         if (e.type === ObjectType.SolarPanel) {
-          resultArr.push(getYearlyPvYield(e as SolarPanelModel));
+          const yearlyPvYield = getYearlyPvYield(e as SolarPanelModel);
+          updateSolarPanelYearlyYield(
+            e.id,
+            yearlyPvYield.reduce((a, b) => a + b, 0),
+          );
+          resultArr.push(yearlyPvYield);
           index++;
           labels.push(e.label ? e.label : 'Panel' + index);
         }
@@ -417,7 +432,12 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       const resultArr = [];
       for (const e of elements) {
         if (e.type === ObjectType.SolarPanel) {
-          resultArr.push(getYearlyPvYield(e as SolarPanelModel));
+          const yearlyPvYield = getYearlyPvYield(e as SolarPanelModel);
+          updateSolarPanelYearlyYield(
+            e.id,
+            yearlyPvYield.reduce((a, b) => a + b, 0),
+          );
+          resultArr.push(yearlyPvYield);
         }
       }
       const results = [];

@@ -22,7 +22,7 @@ import PolygonLineWidthSelection from './polygonLineWidthSelection';
 
 export const PolygonMenu = () => {
   const language = useStore(Selector.language);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const polygon = useStore(Selector.selectedElement) as PolygonModel;
   const updatePolygonFilledById = useStore(Selector.updatePolygonFilledById);
   const addUndoable = useStore(Selector.addUndoable);
   const elementsToPaste = useStore(Selector.elementsToPaste);
@@ -34,7 +34,6 @@ export const PolygonMenu = () => {
   const [fillColorDialogVisible, setFillColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [solarPanelLayoutWizardVisible, setSolarPanelLayoutWizardVisible] = useState(false);
-  const polygon = getSelectedElement() as PolygonModel;
   const lang = { lng: language };
 
   const togglePolygonFilled = (e: CheckboxChangeEvent) => {

@@ -26,7 +26,7 @@ const CuboidColorSelection = ({
   const updateCuboidColorBySide = useStore(Selector.updateCuboidColorBySide);
   const updateCuboidColorById = useStore(Selector.updateCuboidColorById);
   const updateCuboidColorForAll = useStore(Selector.updateCuboidColorForAll);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const cuboid = useStore(Selector.selectedElement) as CuboidModel;
   const addUndoable = useStore(Selector.addUndoable);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
@@ -35,7 +35,6 @@ const CuboidColorSelection = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const cuboid = getSelectedElement() as CuboidModel;
   const [selectedColor, setSelectedColor] = useState<string>(cuboid?.color ?? 'gray');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

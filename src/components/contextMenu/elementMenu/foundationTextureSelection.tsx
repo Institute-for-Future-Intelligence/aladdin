@@ -32,7 +32,7 @@ const FoundationTextureSelection = ({
   const elements = useStore(Selector.elements);
   const updateFoundationTextureById = useStore(Selector.updateFoundationTextureById);
   const updateFoundationTextureForAll = useStore(Selector.updateFoundationTextureForAll);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
@@ -40,7 +40,6 @@ const FoundationTextureSelection = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const foundation = getSelectedElement() as FoundationModel;
   const [selectedTexture, setSelectedTexture] = useState<FoundationTexture>(
     foundation?.textureType ?? FoundationTexture.NoTexture,
   );

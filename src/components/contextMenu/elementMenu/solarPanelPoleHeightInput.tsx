@@ -29,7 +29,7 @@ const SolarPanelPoleHeightInput = ({
   const updateSolarPanelPoleHeightAboveFoundation = useStore(Selector.updateSolarPanelPoleHeightAboveFoundation);
   const updateSolarPanelPoleHeightForAll = useStore(Selector.updateSolarPanelPoleHeightForAll);
   const getParent = useStore(Selector.getParent);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
@@ -37,7 +37,6 @@ const SolarPanelPoleHeightInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const solarPanel = getSelectedElement() as SolarPanelModel;
   const [inputPoleHeight, setInputPoleHeight] = useState<number>(solarPanel?.poleHeight ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
