@@ -16,6 +16,7 @@ import heatmap_01 from './examples/heatmap_01.json';
 import vegetative_buffer_01 from './examples/vegetative_buffer_01.json';
 import effect_tilt_angle_solar_panel from './examples/effect_tilt_angle_solar_panel.json';
 import effect_azimuth_solar_panel from './examples/effect_azimuth_solar_panel.json';
+import effect_orientation_solar_panel from './examples/effect_orientation_solar_panel.json';
 import why_solar_array from './examples/why_solar_array.json';
 import inter_row_spacing from './examples/inter_row_spacing.json';
 
@@ -177,6 +178,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'effect_azimuth_solar_panel':
         input = effect_azimuth_solar_panel;
+        break;
+      case 'effect_orientation_solar_panel':
+        input = effect_orientation_solar_panel;
         break;
       case 'why_solar_array':
         input = why_solar_array;
@@ -1148,6 +1152,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="inter_row_spacing" onClick={loadFile}>
             {i18n.t('menu.tutorials.InterRowSpacingOfSolarPanelArray', lang)}
+          </Menu.Item>
+          <Menu.Item key="effect_orientation_solar_panel" onClick={loadFile}>
+            {i18n.t('menu.tutorials.EffectOfOrientationOfSolarPanels', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>

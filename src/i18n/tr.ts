@@ -225,6 +225,7 @@ export const i18n_tr = {
         EffectOfAzimuthOfSolarPanel: 'Effect of Azimuth of a Solar Panel',
         CoveringGroundWithSolarPanels: 'Why Just Covering the Ground with Solar Panels is not a Good Idea',
         InterRowSpacingOfSolarPanelArray: 'Effect of Inter-Row Spacing in a Solar Panel Array',
+        EffectOfOrientationOfSolarPanels: 'Effect of Orientation of Solar Panels',
       },
       examplesSubMenu: 'Örnekler',
       solarEnergySubMenu: 'Güneþ Enerjisi',

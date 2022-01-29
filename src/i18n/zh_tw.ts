@@ -223,6 +223,7 @@ export const i18n_zh_tw = {
         EffectOfAzimuthOfSolarPanel: '光伏板方位角對發電量的影響',
         CoveringGroundWithSolarPanels: '為什麼我們不簡單地用光伏板覆蓋地面',
         InterRowSpacingOfSolarPanelArray: '光伏板陣列行間距對發電量的影響',
+        EffectOfOrientationOfSolarPanels: '光伏板排列方向對發電量的影響',
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太陽能',
