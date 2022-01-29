@@ -223,10 +223,12 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       empty.fill(0);
       return empty;
     }
+    const cosTilt = Math.cos(panel.tiltAngle);
+    const sinTilt = Math.sin(panel.tiltAngle);
     if (world.discretization === Discretization.EXACT) {
       lx = panel.lx;
-      ly = panel.ly * Math.cos(panel.tiltAngle);
-      lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
+      ly = panel.ly * cosTilt;
+      lz = panel.ly * Math.abs(sinTilt);
       if (panel.orientation === Orientation.portrait) {
         nx = Math.max(1, Math.round(panel.lx / pvModel.width));
         ny = Math.max(1, Math.round(panel.ly / pvModel.length));
@@ -240,8 +242,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       }
     } else {
       lx = panel.lx;
-      ly = panel.ly * Math.cos(panel.tiltAngle);
-      lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
+      ly = panel.ly * cosTilt;
+      lz = panel.ly * Math.abs(sinTilt);
       nx = Math.max(2, Math.round(panel.lx / cellSize));
       ny = Math.max(2, Math.round(panel.ly / cellSize));
       // nx and ny must be even (for circuit simulation)
@@ -251,9 +253,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const dx = lx / nx;
     const dy = ly / ny;
     const dz = lz / ny;
-    const x0 = center.x - lx / 2;
-    const y0 = center.y - ly / 2;
-    const z0 = panel.poleHeight + center.z - lz / 2;
+    // shift half cell size to the center of each grid cell
+    const x0 = center.x - (lx - cellSize) / 2;
+    const y0 = center.y - (ly - cellSize * cosTilt) / 2;
+    const z0 = parent.lz + panel.poleHeight + panel.lz - ((lz - cellSize * sinTilt) / 2) * Math.sign(panel.tiltAngle);
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
@@ -477,10 +480,12 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       empty.fill(0);
       return empty;
     }
+    const cosTilt = Math.cos(panel.tiltAngle);
+    const sinTilt = Math.sin(panel.tiltAngle);
     if (world.discretization === Discretization.EXACT) {
       lx = panel.lx;
-      ly = panel.ly * Math.cos(panel.tiltAngle);
-      lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
+      ly = panel.ly * cosTilt;
+      lz = panel.ly * Math.abs(sinTilt);
       if (panel.orientation === Orientation.portrait) {
         nx = Math.max(1, Math.round(panel.lx / pvModel.width));
         ny = Math.max(1, Math.round(panel.ly / pvModel.length));
@@ -494,8 +499,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       }
     } else {
       lx = panel.lx;
-      ly = panel.ly * Math.cos(panel.tiltAngle);
-      lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
+      ly = panel.ly * cosTilt;
+      lz = panel.ly * Math.abs(sinTilt);
       nx = Math.max(2, Math.round(panel.lx / cellSize));
       ny = Math.max(2, Math.round(panel.ly / cellSize));
       // nx and ny must be even (for circuit simulation)
@@ -505,9 +510,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const dx = lx / nx;
     const dy = ly / ny;
     const dz = lz / ny;
-    const x0 = center.x - lx / 2;
-    const y0 = center.y - ly / 2;
-    const z0 = panel.poleHeight + center.z - lz / 2;
+    // shift half cell size to the center of each grid cell
+    const x0 = center.x - (lx - cellSize) / 2;
+    const y0 = center.y - (ly - cellSize * cosTilt) / 2;
+    const z0 = parent.lz + panel.poleHeight + panel.lz - ((lz - cellSize * sinTilt) / 2) * Math.sign(panel.tiltAngle);
     const v = new Vector3();
     const center2d = new Vector2(center.x, center.y);
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));

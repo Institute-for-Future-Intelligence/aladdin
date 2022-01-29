@@ -369,17 +369,20 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     const month = now.getMonth();
     const date = now.getDate();
     const dayOfYear = Util.dayOfYear(now);
+    const cosTilt = Math.cos(panel.tiltAngle);
+    const sinTilt = Math.sin(panel.tiltAngle);
     const lx = panel.lx;
-    const ly = panel.ly * Math.cos(panel.tiltAngle);
-    const lz = panel.ly * Math.abs(Math.sin(panel.tiltAngle));
+    const ly = panel.ly * cosTilt;
+    const lz = panel.ly * Math.abs(sinTilt);
     const nx = Math.max(2, Math.round(panel.lx / cellSize));
     const ny = Math.max(2, Math.round(panel.ly / cellSize));
     const dx = lx / nx;
     const dy = ly / ny;
     const dz = lz / ny;
-    const x0 = center.x - lx / 2;
-    const y0 = center.y - ly / 2;
-    const z0 = panel.poleHeight + center.z - lz / 2;
+    // shift half cell size to the center of each grid cell
+    const x0 = center.x - (lx - cellSize) / 2;
+    const y0 = center.y - (ly - cellSize * cosTilt) / 2;
+    const z0 = parent.lz + panel.poleHeight + panel.lz - ((lz - cellSize * sinTilt) / 2) * Math.sign(panel.tiltAngle);
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputTotals = Array(nx)
