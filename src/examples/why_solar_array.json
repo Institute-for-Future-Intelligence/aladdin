@@ -1,6 +1,6 @@
 {
-  "docid": "s5jfRBWr7nDzq6Q5d1Skfj",
-  "timestamp": 1643472960388,
+  "docid": "qVDYFBgHKyYq4sgUuJKG3P",
+  "timestamp": 1643476620051,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -345,14 +345,14 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      28.419610831097458,
-      -20.28309925271416,
-      19.491353806220587
+      27.765552362304852,
+      -33.58893146877144,
+      21.74036845978605
     ],
     "panCenter": [
-      19.18346078228446,
-      4.930273689757476,
-      1.5137101845739365
+      15.700578278283736,
+      2.441435258509561,
+      0.07017002569005788
     ],
     "orthographic": false,
     "enableRotate": true,

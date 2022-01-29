@@ -43,6 +43,8 @@ import { UndoableResetView } from './undo/UndoableResetView';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Undoable } from './undo/Undoable';
 import { useStoreRef } from './stores/commonRef';
+import { UndoableDelete } from './undo/UndoableDelete';
+import { UndoablePaste } from './undo/UndoablePaste';
 
 const { SubMenu } = Menu;
 const { Option } = Select;
@@ -119,6 +121,13 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const axes = useStore(Selector.viewState.axes);
   const countObservers = useStore(Selector.countObservers);
   const countElementsByType = useStore(Selector.countElementsByType);
+  const selectedElement = useStore(Selector.selectedElement);
+  const elementsToPaste = useStore(Selector.elementsToPaste);
+  const pasteElements = useStore(Selector.pasteElementsByKey);
+  const copyElementById = useStore(Selector.copyElementById);
+  const removeElementById = useStore(Selector.removeElementById);
+  const copyCutElements = useStore(Selector.copyCutElements);
+  const getElementById = useStore(Selector.getElementById);
 
   const [aboutUs, setAboutUs] = useState(false);
 
@@ -478,12 +487,77 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     }
   };
 
+  const copySelectedElement = () => {
+    if (selectedElement) {
+      copyElementById(selectedElement.id);
+    }
+  };
+
+  const cutSelectedElement = () => {
+    if (selectedElement) {
+      removeElementById(selectedElement.id, true);
+      const cutElements = copyCutElements();
+      const undoableCut = {
+        name: 'Cut',
+        timestamp: Date.now(),
+        deletedElements: cutElements,
+        undo: () => {
+          setCommonStore((state) => {
+            if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
+              for (const e of undoableCut.deletedElements) {
+                state.elements.push(e);
+              }
+              state.selectedElement = undoableCut.deletedElements[0];
+            }
+          });
+        },
+        redo: () => {
+          if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
+            const elem = getElementById(undoableCut.deletedElements[0].id);
+            if (elem) {
+              removeElementById(elem.id, true);
+            }
+          }
+        },
+      } as UndoableDelete;
+      addUndoable(undoableCut);
+    }
+  };
+
+  const pasteSelectedElement = () => {
+    if (elementsToPaste && elementsToPaste.length > 0) {
+      const pastedElements = pasteElements();
+      if (pastedElements.length > 0) {
+        const undoablePaste = {
+          name: 'Paste by Key',
+          timestamp: Date.now(),
+          pastedElements: JSON.parse(JSON.stringify(pastedElements)),
+          undo: () => {
+            for (const elem of undoablePaste.pastedElements) {
+              removeElementById(elem.id, false);
+            }
+          },
+          redo: () => {
+            setCommonStore((state) => {
+              state.elements.push(...undoablePaste.pastedElements);
+              state.selectedElement = undoablePaste.pastedElements[0];
+              state.updateDesignInfo();
+            });
+          },
+        } as UndoablePaste;
+        addUndoable(undoablePaste);
+      }
+    }
+  };
+
   const viewAlreadyReset =
     cameraPosition[0] === cameraPosition[1] &&
     cameraPosition[1] === cameraPosition[2] &&
     panCenter[0] === 0 &&
     panCenter[1] === 0 &&
     panCenter[2] === 0;
+
+  const readyToPaste = elementsToPaste && elementsToPaste.length > 0;
 
   const menu = (
     <Menu>
@@ -577,8 +651,26 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       </SubMenu>
 
       {/* edit menu */}
-      {(undoManager.hasUndo() || undoManager.hasRedo()) && (
+      {(selectedElement || readyToPaste || undoManager.hasUndo() || undoManager.hasRedo()) && (
         <SubMenu key={'edit'} title={i18n.t('menu.editSubMenu', lang)}>
+          {selectedElement && (
+            <Menu.Item key="copy" onClick={copySelectedElement}>
+              {i18n.t('word.Copy', lang)}
+              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+C)</label>
+            </Menu.Item>
+          )}
+          {selectedElement && (
+            <Menu.Item key="cut" onClick={cutSelectedElement}>
+              {i18n.t('word.Cut', lang)}
+              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+X)</label>
+            </Menu.Item>
+          )}
+          {readyToPaste && (
+            <Menu.Item key="paste" onClick={pasteSelectedElement}>
+              {i18n.t('word.Paste', lang)}
+              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+V)</label>
+            </Menu.Item>
+          )}
           {undoManager.hasUndo() && (
             <Menu.Item
               key="undo"
