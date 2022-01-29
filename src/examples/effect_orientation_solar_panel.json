@@ -1,6 +1,6 @@
 {
-  "docid": "u6RRkEVHMKdooF8EctZ7aT",
-  "timestamp": 1643477769078,
+  "docid": "uwps48MWwk1jL4Qbr5ZMVe",
+  "timestamp": 1643478356126,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -50,7 +50,7 @@
       "poleRadius": 0.05,
       "poleHeight": 1,
       "poleSpacing": 3,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -66,7 +66,7 @@
       "id": "snQKvKf7xPrhuT28Bo2tYv",
       "selected": false,
       "dailyYield": 7.279546747940818,
-      "label": "R22",
+      "label": "L2",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
     },
     {
@@ -85,7 +85,7 @@
       "poleRadius": 0.05,
       "poleHeight": 1,
       "poleSpacing": 3,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -102,7 +102,7 @@
       "selected": false,
       "drawSunBeam": false,
       "dailyYield": 7.279546747940818,
-      "label": "R23",
+      "label": "L3",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
     },
     {
@@ -121,7 +121,7 @@
       "poleRadius": 0.05,
       "poleHeight": 1,
       "poleSpacing": 3,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -137,7 +137,7 @@
       "id": "pbozwPgQw2bzssDtJKTqSk",
       "selected": false,
       "dailyYield": 7.279546747940818,
-      "label": "R24",
+      "label": "L4",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
     },
     {
@@ -156,7 +156,7 @@
       "poleRadius": 0.05,
       "poleHeight": 1,
       "poleSpacing": 3,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -171,7 +171,7 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "3nSBw847J9tSxs8CwWughr",
       "selected": false,
-      "label": "R21",
+      "label": "L1",
       "dailyYield": 13.26305876347581,
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
     },
@@ -191,7 +191,7 @@
       "poleRadius": 0.05,
       "poleHeight": 1,
       "poleSpacing": 3,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -207,7 +207,7 @@
       "id": "pu9LeYFSmjuxaejn2VSzZ1",
       "selected": false,
       "dailyYield": 7.279546747940818,
-      "label": "R25",
+      "label": "L5",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
     },
     {
@@ -271,7 +271,7 @@
       "poleRadius": 0.05,
       "poleHeight": 1,
       "poleSpacing": 3,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -287,7 +287,7 @@
       "id": "6AH8jB41hnb2DKANJAvRwV",
       "selected": false,
       "dailyYield": 2.2942538181934733,
-      "label": "R12",
+      "label": "P2",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
     },
     {
@@ -306,7 +306,7 @@
       "poleRadius": 0.05,
       "poleHeight": 1,
       "poleSpacing": 3,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -322,7 +322,7 @@
       "id": "aB8iEcrZaWTL6xKZKhhAXB",
       "selected": false,
       "dailyYield": 2.2651420460150113,
-      "label": "R13",
+      "label": "P3",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
     },
     {
@@ -341,7 +341,7 @@
       "poleRadius": 0.05,
       "poleHeight": 1,
       "poleSpacing": 3,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -357,7 +357,7 @@
       "id": "2meA9SG5bqFDgzeFyXtF9Q",
       "selected": false,
       "dailyYield": 2.2651420460150113,
-      "label": "R14",
+      "label": "P4",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
     },
     {
@@ -376,7 +376,7 @@
       "poleRadius": 0.05,
       "poleHeight": 1,
       "poleSpacing": 3,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -392,7 +392,7 @@
       "id": "868aWiBhQX239e6oehaSij",
       "selected": false,
       "dailyYield": 13.26305876347581,
-      "label": "R11",
+      "label": "P1",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
     },
     {
@@ -411,7 +411,7 @@
       "poleRadius": 0.05,
       "poleHeight": 1,
       "poleSpacing": 3,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -427,7 +427,7 @@
       "id": "oBHHZdopRmiffSiEULht6u",
       "selected": false,
       "dailyYield": 2.2651420460150113,
-      "label": "R15",
+      "label": "P5",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
     },
     {
@@ -490,9 +490,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      22.871711869305237,
-      -23.800215374382628,
-      17.550130987997797
+      23.15502210196006,
+      -23.900377279903523,
+      17.30084126341914
     ],
     "panCenter": [
       16.676839641041024,
@@ -513,7 +513,7 @@
       -0.19805700089319547,
       5.501827899659354e-7
     ],
-    "solarRadiationHeatMapMaxValue": 18
+    "solarRadiationHeatMapMaxValue": 4.5
   },
   "notes": []
 }

@@ -233,7 +233,7 @@ const Foundation = ({
     if (foundationModel && showSolarRadiationHeatmap) {
       const heatmap = getHeatmap(foundationModel.id);
       if (heatmap) {
-        setHeatmapTexture(Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 100));
+        setHeatmapTexture(Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5));
       }
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);

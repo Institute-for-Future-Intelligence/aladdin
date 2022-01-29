@@ -221,6 +221,7 @@ export const i18n_zh_cn = {
         SolarRadiationToBox: '一个长方体受到的太阳能辐射分析',
         EffectOfTiltAngleOfSolarPanel: '光伏板倾斜角对发电量的影响',
         EffectOfAzimuthOfSolarPanel: '光伏板方位角对发电量的影响',
+        SolarTrackers: '自动追日器',
         CoveringGroundWithSolarPanels: '为什么我们不简单地用光伏板覆盖地面',
         InterRowSpacingOfSolarPanelArray: '光伏板阵列行间距对发电量的影响',
         EffectOfOrientationOfSolarPanels: '光伏板排列方向对发电量的影响',
@@ -231,9 +232,9 @@ export const i18n_zh_cn = {
       examples: {
         SunBeamAndHeliodon: '太阳光束和日影仪',
         SolarFarm: '太阳能农场',
+        SolarCanopyFormFactors: '太阳能天篷外形设计',
         VegetativeBuffer: '太阳能农场绿化带',
         SolarFarmInRealWorld: '模拟一个真实世界里的太阳能农场',
-        SolarTrackers: '自动追日器',
         SolarTrackersInRealWorld: '模拟一个真实世界里的追日光伏板阵列',
         SimpleHouse: '一栋简单的房屋',
         OfficeBuilding: '一栋简单的办公楼',

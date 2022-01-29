@@ -217,7 +217,7 @@ const Cuboid = ({
 
   useEffect(() => {
     if (cuboidModel && showSolarRadiationHeatmap) {
-      const maxValue = solarRadiationHeatmapMaxValue ?? 100;
+      const maxValue = solarRadiationHeatmapMaxValue ?? 5;
       const heatmapTop = getHeatmap(cuboidModel.id + '-top');
       if (heatmapTop) {
         setHeatmapTextureTop(Util.fetchHeatmapTexture(heatmapTop, maxValue));

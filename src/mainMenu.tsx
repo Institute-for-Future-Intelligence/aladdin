@@ -18,6 +18,7 @@ import effect_tilt_angle_solar_panel from './examples/effect_tilt_angle_solar_pa
 import effect_azimuth_solar_panel from './examples/effect_azimuth_solar_panel.json';
 import effect_orientation_solar_panel from './examples/effect_orientation_solar_panel.json';
 import why_solar_array from './examples/why_solar_array.json';
+import solar_canopy_form_factors from './examples/solar_canopy_form_factors.json';
 import inter_row_spacing from './examples/inter_row_spacing.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
@@ -172,6 +173,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'vegetative_buffer_01':
         input = vegetative_buffer_01;
+        break;
+      case 'solar_canopy_form_factors':
+        input = solar_canopy_form_factors;
         break;
       case 'effect_tilt_angle_solar_panel':
         input = effect_tilt_angle_solar_panel;
@@ -889,13 +893,13 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   {i18n.t('menu.physics.SolarRadiationHeatmapMaxValue', lang) + ':'}
                 </Space>
                 <InputNumber
-                  min={10}
-                  max={500}
+                  min={0.5}
+                  max={50}
                   step={1}
                   style={{ width: 60 }}
                   precision={1}
-                  value={solarRadiationHeatmapMaxValue ?? 100}
-                  formatter={(a) => Number(a).toFixed(0)}
+                  value={solarRadiationHeatmapMaxValue ?? 5}
+                  formatter={(a) => Number(a).toFixed(1)}
                   onChange={(value) => {
                     setCommonStore((state) => {
                       state.viewState.solarRadiationHeatMapMaxValue = value;
@@ -1147,6 +1151,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="effect_azimuth_solar_panel" onClick={loadFile}>
             {i18n.t('menu.tutorials.EffectOfAzimuthOfSolarPanel', lang)}
           </Menu.Item>
+          <Menu.Item key="solar_trackers" onClick={loadFile}>
+            {i18n.t('menu.tutorials.SolarTrackers', lang)}
+          </Menu.Item>
           <Menu.Item key="why_solar_array" onClick={loadFile}>
             {i18n.t('menu.tutorials.CoveringGroundWithSolarPanels', lang)}
           </Menu.Item>
@@ -1169,14 +1176,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="solar_farm_01" onClick={loadFile}>
             {i18n.t('menu.examples.SolarFarm', lang)}
           </Menu.Item>
+          <Menu.Item key="solar_canopy_form_factors" onClick={loadFile}>
+            {i18n.t('menu.examples.SolarCanopyFormFactors', lang)}
+          </Menu.Item>
           <Menu.Item key="vegetative_buffer_01" onClick={loadFile}>
             {i18n.t('menu.examples.VegetativeBuffer', lang)}
           </Menu.Item>
           <Menu.Item key="solar_farm_02" onClick={loadFile}>
             {i18n.t('menu.examples.SolarFarmInRealWorld', lang)}
-          </Menu.Item>
-          <Menu.Item key="solar_trackers" onClick={loadFile}>
-            {i18n.t('menu.examples.SolarTrackers', lang)}
           </Menu.Item>
           <Menu.Item key="solar_farm_03" onClick={loadFile}>
             {i18n.t('menu.examples.SolarTrackersInRealWorld', lang)}

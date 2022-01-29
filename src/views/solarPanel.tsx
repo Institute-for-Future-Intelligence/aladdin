@@ -184,7 +184,7 @@ const SolarPanel = ({
     if (solarPanel && showSolarRadiationHeatmap) {
       const heatmap = getHeatmap(solarPanel.id);
       if (heatmap) {
-        setHeatmapTexture(Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 100));
+        setHeatmapTexture(Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5));
       }
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);

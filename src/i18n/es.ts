@@ -222,6 +222,7 @@ export const i18n_es = {
         SolarRadiationToBox: 'Radiación solar a una caja',
         EffectOfTiltAngleOfSolarPanel: 'Effect of Tilt Angle',
         EffectOfAzimuthOfSolarPanel: 'Effect of Azimuth',
+        SolarTrackers: 'Seguidores solares',
         CoveringGroundWithSolarPanels: 'Why Just Covering the Ground with Solar Panels is not a Good Idea',
         InterRowSpacingOfSolarPanelArray: 'Effect of Inter-Row Spacing in a Solar Panel Array',
         EffectOfOrientationOfSolarPanels: 'Effect of Orientation of Solar Panels',
@@ -232,9 +233,9 @@ export const i18n_es = {
       examples: {
         SunBeamAndHeliodon: 'Rayo de sol y heliodon',
         SolarFarm: 'Granja solar',
+        SolarCanopyFormFactors: 'Solar Canopy Form Factors',
         VegetativeBuffer: 'Vegetative Buffer',
         SolarFarmInRealWorld: 'Granja solar en el mundo real',
-        SolarTrackers: 'Seguidores solares',
         SolarTrackersInRealWorld: 'Seguidores solares en el mundo real',
         SimpleHouse: 'Casa sencilla',
         OfficeBuilding: 'Edificio de oficinas',

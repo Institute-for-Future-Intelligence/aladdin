@@ -277,12 +277,12 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
 
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = (count * interval) / 60;
-    const clearness = weather.sunshineHours[month] / (30 * daylight);
-    applyClearness(topCellOutputTotals, clearness);
-    applyClearness(southCellOutputTotals, clearness);
-    applyClearness(northCellOutputTotals, clearness);
-    applyClearness(westCellOutputTotals, clearness);
-    applyClearness(eastCellOutputTotals, clearness);
+    const scaleFactor = weather.sunshineHours[month] / (30 * daylight * world.timesPerHour);
+    applyScaleFactor(topCellOutputTotals, scaleFactor);
+    applyScaleFactor(southCellOutputTotals, scaleFactor);
+    applyScaleFactor(northCellOutputTotals, scaleFactor);
+    applyScaleFactor(westCellOutputTotals, scaleFactor);
+    applyScaleFactor(eastCellOutputTotals, scaleFactor);
 
     // send heat map data to common store for visualization
     setHeatmap(cuboid.id + '-top', topCellOutputTotals);
@@ -347,8 +347,8 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     }
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = (count * interval) / 60;
-    const clearness = weather.sunshineHours[month] / (30 * daylight);
-    applyClearness(cellOutputTotals, clearness);
+    const scaleFactor = weather.sunshineHours[month] / (30 * daylight * world.timesPerHour);
+    applyScaleFactor(cellOutputTotals, scaleFactor);
     // send heat map data to common store for visualization
     setHeatmap(foundation.id, cellOutputTotals);
   };
@@ -450,16 +450,16 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     }
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = (count * interval) / 60;
-    const clearness = weather.sunshineHours[month] / (30 * daylight);
-    applyClearness(cellOutputTotals, clearness);
+    const scaleFactor = weather.sunshineHours[month] / (30 * daylight * world.timesPerHour);
+    applyScaleFactor(cellOutputTotals, scaleFactor);
     // send heat map data to common store for visualization
     setHeatmap(panel.id, cellOutputTotals);
   };
 
-  const applyClearness = (output: number[][], clearness: number) => {
+  const applyScaleFactor = (output: number[][], scaleFactor: number) => {
     for (let i = 0; i < output.length; i++) {
       for (let j = 0; j < output[i].length; j++) {
-        output[i][j] *= clearness;
+        output[i][j] *= scaleFactor;
       }
     }
   };

@@ -511,7 +511,7 @@
     "showHeatmap": false,
     "showSolarRadiationHeatmap": false,
     "showSunAngles": false,
-    "solarRadiationHeatMapMaxValue": 20
+    "solarRadiationHeatMapMaxValue": 4.5
   },
   "notes": []
 }

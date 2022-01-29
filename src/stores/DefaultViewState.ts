@@ -72,7 +72,7 @@ export class DefaultViewState implements ViewState {
     this.cameraZoom = 20;
 
     this.axes = true;
-    this.solarRadiationHeatMapMaxValue = 100;
+    this.solarRadiationHeatMapMaxValue = 5;
     this.shadowEnabled = true;
     this.theme = 'Default';
     this.heliodon = false;
@@ -129,7 +129,7 @@ export class DefaultViewState implements ViewState {
     viewState.panCenter2D = [0, 0, 0];
 
     viewState.axes = true;
-    viewState.solarRadiationHeatMapMaxValue = 100;
+    viewState.solarRadiationHeatMapMaxValue = 5;
     viewState.shadowEnabled = true;
     viewState.theme = 'Default';
     viewState.heliodon = false;
