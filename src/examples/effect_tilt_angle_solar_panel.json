@@ -327,7 +327,7 @@
     "heliodonPanelX": -1244,
     "theme": "Default",
     "autoRotate": false,
-    "groundColor": "forestgreen",
+    "groundColor": "#16cda5",
     "groundPanelY": 0,
     "heliodon": false,
     "axes": true,

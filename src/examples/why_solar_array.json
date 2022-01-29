@@ -1,6 +1,6 @@
 {
-  "docid": "eMPwqzvUQ5m46GMQL7EfYH",
-  "timestamp": 1643418106626,
+  "docid": "s5jfRBWr7nDzq6Q5d1Skfj",
+  "timestamp": 1643472960388,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -70,7 +70,7 @@
       "relativeAzimuth": 0,
       "orientation": "Landscape",
       "poleRadius": 0.05,
-      "poleHeight": 0.05,
+      "poleHeight": 0.15,
       "poleSpacing": 3,
       "showLabel": false,
       "normal": [
@@ -88,7 +88,7 @@
       "id": "tc8JHQj7hE233H7YfXfbjR",
       "selected": false,
       "drawSunBeam": false,
-      "label": "",
+      "label": "Block",
       "dailyYield": 103.86651140858137
     },
     {
@@ -122,7 +122,8 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "snQKvKf7xPrhuT28Bo2tYv",
       "selected": false,
-      "dailyYield": 17.598295752357192
+      "dailyYield": 17.598295752357192,
+      "label": "Row 2"
     },
     {
       "type": "Solar Panel",
@@ -156,7 +157,8 @@
       "id": "s6gwZqoX59Afjq9iWzuivT",
       "selected": false,
       "drawSunBeam": false,
-      "dailyYield": 17.598295752357192
+      "dailyYield": 17.598295752357192,
+      "label": "Row 3"
     },
     {
       "type": "Solar Panel",
@@ -189,7 +191,8 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "pbozwPgQw2bzssDtJKTqSk",
       "selected": false,
-      "dailyYield": 17.598295752357192
+      "dailyYield": 17.598295752357192,
+      "label": "Row 4"
     },
     {
       "type": "Solar Panel",
@@ -222,7 +225,7 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "3nSBw847J9tSxs8CwWughr",
       "selected": false,
-      "label": "444",
+      "label": "Row 1",
       "dailyYield": 20.418384465308375
     },
     {
@@ -256,7 +259,8 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "pu9LeYFSmjuxaejn2VSzZ1",
       "selected": false,
-      "dailyYield": 17.598295752357192
+      "dailyYield": 17.598295752357192,
+      "label": "Row 5"
     },
     {
       "type": "Foundation",
@@ -333,7 +337,7 @@
     "dailyLightSensorPanelX": -240,
     "weatherPanelX": 0,
     "heliodonPanelY": -33,
-    "groundColor": "forestgreen",
+    "groundColor": "#16cda5",
     "groundPanelY": 0,
     "groundImage": false,
     "showDailyPvYieldPanel": true,
@@ -341,14 +345,14 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      22.838018006690064,
-      -21.943423361216425,
-      20.574453566862317
+      28.419610831097458,
+      -20.28309925271416,
+      19.491353806220587
     ],
     "panCenter": [
-      12.028610126870971,
-      2.263884347457479,
-      2.0980018557573312
+      19.18346078228446,
+      4.930273689757476,
+      1.5137101845739365
     ],
     "orthographic": false,
     "enableRotate": true,

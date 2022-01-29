@@ -3149,9 +3149,21 @@ export const useStore = create<CommonStoreState>(
                               e.cy = nearestNeighbor.cy + dy;
                               e.cz = nearestNeighbor.cz + dz;
                               if (state.overlapWithSibling(e, 0.001)) {
-                                e.cx = oldX - dx;
-                                e.cy = oldY - dy;
-                                e.cz = oldZ - dz;
+                                // try the opposite direction first before giving up
+                                e.cx = elem.cx - dx;
+                                e.cy = elem.cy - dy;
+                                e.cz = elem.cz - dz;
+                                if (state.overlapWithSibling(e, 0.001)) {
+                                  // we may need to hop twice in the opposite direction
+                                  e.cx = elem.cx - 2 * dx;
+                                  e.cy = elem.cy - 2 * dy;
+                                  e.cz = elem.cz - 2 * dz;
+                                  if (state.overlapWithSibling(e, 0.001)) {
+                                    e.cx = oldX - dx;
+                                    e.cy = oldY - dy;
+                                    e.cz = oldZ - dz;
+                                  }
+                                }
                               }
                             } else {
                               e.cx += e.lx / parent.lx;

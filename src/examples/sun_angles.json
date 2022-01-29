@@ -72,7 +72,7 @@
     "weatherPanelY": 0,
     "heliodonPanelX": -6,
     "showStickyNotePanel": false,
-    "groundColor": "forestgreen",
+    "groundColor": "#16cda5",
     "weatherPanelX": 0,
     "heliodonPanelY": 9,
     "groundPanelX": 0,

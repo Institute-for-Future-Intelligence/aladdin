@@ -250,7 +250,7 @@
     "theme": "Default",
     "stickyNotePanelY": 0,
     "mapWeatherStations": false,
-    "groundColor": "forestgreen",
+    "groundColor": "#16cda5",
     "heliodon": true,
     "dailyLightSensorPanelX": -19,
     "axes": true,

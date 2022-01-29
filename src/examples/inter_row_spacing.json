@@ -1,6 +1,6 @@
 {
-  "docid": "63qGWjNagaHJSVhZ9gFMjM",
-  "timestamp": 1643418062404,
+  "docid": "5PhsxuY7EFGhabKQeLvkGD",
+  "timestamp": 1643473170041,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -65,7 +65,8 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "snQKvKf7xPrhuT28Bo2tYv",
       "selected": false,
-      "dailyYield": 17.594654911816438
+      "dailyYield": 17.594654911816438,
+      "label": "R22"
     },
     {
       "type": "Solar Panel",
@@ -99,7 +100,8 @@
       "id": "s6gwZqoX59Afjq9iWzuivT",
       "selected": false,
       "drawSunBeam": false,
-      "dailyYield": 17.557096724867407
+      "dailyYield": 17.557096724867407,
+      "label": "R23"
     },
     {
       "type": "Solar Panel",
@@ -132,7 +134,8 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "pbozwPgQw2bzssDtJKTqSk",
       "selected": false,
-      "dailyYield": 17.594654911816438
+      "dailyYield": 17.594654911816438,
+      "label": "R24"
     },
     {
       "type": "Solar Panel",
@@ -165,7 +168,7 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "3nSBw847J9tSxs8CwWughr",
       "selected": false,
-      "label": "444",
+      "label": "R21",
       "dailyYield": 20.418384465308375
     },
     {
@@ -199,7 +202,8 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "pu9LeYFSmjuxaejn2VSzZ1",
       "selected": false,
-      "dailyYield": 17.594654911816438
+      "dailyYield": 17.594654911816438,
+      "label": "R25"
     },
     {
       "type": "Foundation",
@@ -277,7 +281,8 @@
       "foundationId": "7LGxrgEwehUWBo5dH7C67q",
       "id": "oPGVYYGkGqjKAWacgXTr35",
       "selected": false,
-      "dailyYield": 11.701693771571362
+      "dailyYield": 11.701693771571362,
+      "label": "R12"
     },
     {
       "type": "Solar Panel",
@@ -310,7 +315,8 @@
       "foundationId": "7LGxrgEwehUWBo5dH7C67q",
       "id": "aiWW32QVkCjCBwtDMtjsXr",
       "selected": false,
-      "dailyYield": 20.418384465308375
+      "dailyYield": 20.418384465308375,
+      "label": "R11"
     },
     {
       "type": "Foundation",
@@ -365,7 +371,8 @@
       "foundationId": "7LGxrgEwehUWBo5dH7C67q",
       "id": "gFDw5Wxzxz1fZY32qoSLoy",
       "selected": false,
-      "dailyYield": 11.690410759479263
+      "dailyYield": 11.690410759479263,
+      "label": "R13"
     },
     {
       "type": "Solar Panel",
@@ -398,7 +405,8 @@
       "foundationId": "7LGxrgEwehUWBo5dH7C67q",
       "id": "3seUSu69aBJbCMJ1QTweLi",
       "selected": false,
-      "dailyYield": 11.701693771571362
+      "dailyYield": 11.701693771571362,
+      "label": "R14"
     },
     {
       "type": "Solar Panel",
@@ -431,7 +439,8 @@
       "foundationId": "7LGxrgEwehUWBo5dH7C67q",
       "id": "hgGFwiEpscwf16U1io4zpD",
       "selected": false,
-      "dailyYield": 11.701693771571362
+      "dailyYield": 11.701693771571362,
+      "label": "R15"
     }
   ],
   "view": {
@@ -463,7 +472,7 @@
     "dailyLightSensorPanelX": -240,
     "weatherPanelX": 0,
     "heliodonPanelY": -33,
-    "groundColor": "forestgreen",
+    "groundColor": "#16cda5",
     "groundPanelY": 0,
     "groundImage": false,
     "showDailyPvYieldPanel": true,
@@ -471,14 +480,14 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      23.38597890672998,
-      -20.304512742806903,
-      24.589991601417385
+      24.38465139170686,
+      -22.156685629666928,
+      25.12796039908284
     ],
     "panCenter": [
-      9.196647134671643,
-      1.258742574623375,
-      2.437897577922634
+      17.866361263600513,
+      2.5932978783171547,
+      2.7231261928650285
     ],
     "orthographic": false,
     "enableRotate": true,
