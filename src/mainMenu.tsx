@@ -17,6 +17,7 @@ import vegetative_buffer_01 from './examples/vegetative_buffer_01.json';
 import effect_tilt_angle_solar_panel from './examples/effect_tilt_angle_solar_panel.json';
 import effect_azimuth_solar_panel from './examples/effect_azimuth_solar_panel.json';
 import why_solar_array from './examples/why_solar_array.json';
+import inter_row_spacing from './examples/inter_row_spacing.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -170,6 +171,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'why_solar_array':
         input = why_solar_array;
+        break;
+      case 'inter_row_spacing':
+        input = inter_row_spacing;
         break;
       case 'solar_farm_01':
         input = solar_farm_01;
@@ -1049,6 +1053,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="why_solar_array" onClick={loadFile}>
             {i18n.t('menu.tutorials.CoveringGroundWithSolarPanels', lang)}
+          </Menu.Item>
+          <Menu.Item key="inter_row_spacing" onClick={loadFile}>
+            {i18n.t('menu.tutorials.InterRowSpacingOfSolarPanelArray', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>

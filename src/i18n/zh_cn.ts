@@ -222,6 +222,7 @@ export const i18n_zh_cn = {
         EffectOfTiltAngleOfSolarPanel: '光伏板倾斜角对发电量的影响',
         EffectOfAzimuthOfSolarPanel: '光伏板方位角对发电量的影响',
         CoveringGroundWithSolarPanels: '为什么我们不简单地用光伏板覆盖地面',
+        InterRowSpacingOfSolarPanelArray: '光伏板阵列行间距对发电量的影响',
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太阳能',

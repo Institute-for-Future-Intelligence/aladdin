@@ -1,6 +1,6 @@
 {
-  "docid": "eMPwqzvUQ5m46GMQL7EfYH",
-  "timestamp": 1643418106626,
+  "docid": "63qGWjNagaHJSVhZ9gFMjM",
+  "timestamp": 1643418062404,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -35,63 +35,6 @@
   },
   "elements": [
     {
-      "cy": 0.045715871759253096,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "lz": 0.1,
-      "ly": 15,
-      "id": "of4fAMi2p9MKmo6JDUYnfX",
-      "type": "Foundation",
-      "cx": -10.115014866732034,
-      "cz": 0.05,
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "lx": 18.175146995703113,
-      "selected": false,
-      "parentId": "Ground"
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": 0.0011792454640966676,
-      "cy": -0.015945367160926777,
-      "cz": 0.5000000074506872,
-      "lx": 15.744,
-      "ly": 13.888,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0,
-      "relativeAzimuth": 0,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 0.05,
-      "poleSpacing": 3,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "tc8JHQj7hE233H7YfXfbjR",
-      "selected": false,
-      "drawSunBeam": false,
-      "label": "",
-      "dailyYield": 103.86651140858137
-    },
-    {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
       "cx": 0.0001687190273044117,
@@ -122,7 +65,7 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "snQKvKf7xPrhuT28Bo2tYv",
       "selected": false,
-      "dailyYield": 17.598295752357192
+      "dailyYield": 17.594654911816438
     },
     {
       "type": "Solar Panel",
@@ -156,7 +99,7 @@
       "id": "s6gwZqoX59Afjq9iWzuivT",
       "selected": false,
       "drawSunBeam": false,
-      "dailyYield": 17.598295752357192
+      "dailyYield": 17.557096724867407
     },
     {
       "type": "Solar Panel",
@@ -189,7 +132,7 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "pbozwPgQw2bzssDtJKTqSk",
       "selected": false,
-      "dailyYield": 17.598295752357192
+      "dailyYield": 17.594654911816438
     },
     {
       "type": "Solar Panel",
@@ -256,7 +199,7 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "pu9LeYFSmjuxaejn2VSzZ1",
       "selected": false,
-      "dailyYield": 17.598295752357192
+      "dailyYield": 17.594654911816438
     },
     {
       "type": "Foundation",
@@ -302,6 +245,193 @@
       "id": "d3bJG1MfPQqauwCeM9B8UL",
       "selected": false,
       "ly": 0.6
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.0001687190273044117,
+      "cy": -0.23276330833803774,
+      "cz": 0.5000000074505806,
+      "lx": 15.744,
+      "ly": 1.984,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "7LGxrgEwehUWBo5dH7C67q",
+      "foundationId": "7LGxrgEwehUWBo5dH7C67q",
+      "id": "oPGVYYGkGqjKAWacgXTr35",
+      "selected": false,
+      "dailyYield": 11.701693771571362
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.0001681231182930395,
+      "cy": -0.37143595539707464,
+      "cz": 0.5000000074505451,
+      "lx": 15.744,
+      "ly": 1.984,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "7LGxrgEwehUWBo5dH7C67q",
+      "foundationId": "7LGxrgEwehUWBo5dH7C67q",
+      "id": "aiWW32QVkCjCBwtDMtjsXr",
+      "selected": false,
+      "dailyYield": 20.418384465308375
+    },
+    {
+      "type": "Foundation",
+      "cx": -9.466959404203182,
+      "cy": -0.00920136097199542,
+      "cz": 0.05,
+      "lx": 18.175146995703113,
+      "ly": 15,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "7LGxrgEwehUWBo5dH7C67q",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.0005055611729018629,
+      "cy": -0.09409066127900084,
+      "cz": 0.5000000074506161,
+      "lx": 15.744,
+      "ly": 1.984,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "7LGxrgEwehUWBo5dH7C67q",
+      "foundationId": "7LGxrgEwehUWBo5dH7C67q",
+      "id": "gFDw5Wxzxz1fZY32qoSLoy",
+      "selected": false,
+      "dailyYield": 11.690410759479263
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.0008424033184993142,
+      "cy": 0.044581985780036054,
+      "cz": 0.5000000074506517,
+      "lx": 15.744,
+      "ly": 1.984,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "7LGxrgEwehUWBo5dH7C67q",
+      "foundationId": "7LGxrgEwehUWBo5dH7C67q",
+      "id": "3seUSu69aBJbCMJ1QTweLi",
+      "selected": false,
+      "dailyYield": 11.701693771571362
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.0011792454640967656,
+      "cy": 0.18325463283907295,
+      "cz": 0.5000000074506872,
+      "lx": 15.744,
+      "ly": 1.984,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "7LGxrgEwehUWBo5dH7C67q",
+      "foundationId": "7LGxrgEwehUWBo5dH7C67q",
+      "id": "hgGFwiEpscwf16U1io4zpD",
+      "selected": false,
+      "dailyYield": 11.701693771571362
     }
   ],
   "view": {
@@ -341,14 +471,14 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      22.838018006690064,
-      -21.943423361216425,
-      20.574453566862317
+      23.38597890672998,
+      -20.304512742806903,
+      24.589991601417385
     ],
     "panCenter": [
-      12.028610126870971,
-      2.263884347457479,
-      2.0980018557573312
+      9.196647134671643,
+      1.258742574623375,
+      2.437897577922634
     ],
     "orthographic": false,
     "enableRotate": true,
