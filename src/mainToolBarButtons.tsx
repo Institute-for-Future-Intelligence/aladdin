@@ -112,6 +112,10 @@ const MainToolBarButtons = () => {
     }, 100);
   };
 
+  const x = () => {
+    console.log('aa');
+  };
+
   return (
     <div>
       <FontAwesomeIcon
@@ -122,47 +126,68 @@ const MainToolBarButtons = () => {
         style={{ paddingRight: '12px', cursor: 'pointer' }}
         onClick={resetToSelectMode}
       />
-      <img
-        title={i18n.t('toolbar.AddFoundation', lang)}
-        alt={'Foundation'}
-        src={FoundationImage}
-        height={56}
-        width={48}
+      <div
         style={{
-          paddingRight: '12px',
-          paddingBottom: '20px',
-          // CSS filter generator of color: https://codepen.io/sosuke/pen/Pjoqqp
-          filter:
-            objectTypeToAdd === ObjectType.Foundation
-              ? 'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)'
-              : 'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)',
-          cursor: 'pointer',
-          verticalAlign: 'middle',
+          verticalAlign: 'top',
+          display: 'inline-block',
+          marginTop: '4px',
+          marginRight: '8px',
         }}
-        onClick={() => {
-          setCommonStore((state) => {
-            state.objectTypeToAdd = ObjectType.Foundation;
-          });
-          useStoreRef.getState().setEnableOrbitController(false);
-          selectNone();
-        }}
-      />
+      >
+        <img
+          title={i18n.t('toolbar.AddFoundation', lang)}
+          alt={'Foundation'}
+          src={FoundationImage}
+          height={36}
+          width={36}
+          style={{
+            // CSS filter generator of color: https://codepen.io/sosuke/pen/Pjoqqp
+            filter:
+              objectTypeToAdd === ObjectType.Foundation
+                ? 'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)'
+                : 'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)',
+            cursor: 'pointer',
+            verticalAlign: 'middle',
+          }}
+          onClick={() => {
+            setCommonStore((state) => {
+              state.objectTypeToAdd = ObjectType.Foundation;
+            });
+            useStoreRef.getState().setEnableOrbitController(false);
+            selectNone();
+          }}
+        />
+        <label
+          style={{
+            verticalAlign: 'middle',
+            fontSize: '10px',
+            marginLeft: '4px',
+            width: '10px',
+            height: '36px',
+            color: '#666666',
+            fontWeight: 'bold',
+          }}
+          onClick={x}
+        >
+          ▽
+        </label>
+      </div>
       <img
         title={i18n.t('toolbar.AddWall', lang)}
         alt={'Wall'}
         src={WallImage}
-        height={56}
-        width={48}
+        height={36}
+        width={36}
         style={{
-          paddingRight: '12px',
-          paddingBottom: '20px',
+          marginTop: '4px',
+          marginRight: '8px',
           // CSS filter generator of color: https://codepen.io/sosuke/pen/Pjoqqp
           filter:
             objectTypeToAdd === ObjectType.Wall
               ? 'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)'
               : 'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)',
           cursor: 'pointer',
-          verticalAlign: 'middle',
+          verticalAlign: 'top',
         }}
         onClick={() => {
           setCommonStore((state) => {
@@ -176,17 +201,17 @@ const MainToolBarButtons = () => {
         title={i18n.t('toolbar.AddWindow', lang)}
         alt={'Window'}
         src={WindowImage}
-        height={56}
-        width={48}
+        height={36}
+        width={36}
         style={{
-          paddingRight: '12px',
-          paddingBottom: '20px',
+          marginTop: '4px',
+          marginRight: '8px',
           filter:
             objectTypeToAdd === ObjectType.Window
               ? 'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)'
               : 'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)',
           cursor: 'pointer',
-          verticalAlign: 'middle',
+          verticalAlign: 'top',
         }}
         onClick={() => {
           setCommonStore((state) => {
@@ -200,17 +225,17 @@ const MainToolBarButtons = () => {
         title={i18n.t('toolbar.AddRoof', lang)}
         alt={'Roof'}
         src={RoofImage}
-        height={56}
-        width={48}
+        height={36}
+        width={36}
         style={{
-          paddingRight: '12px',
-          paddingBottom: '20px',
+          marginTop: '4px',
+          marginRight: '8px',
           filter:
             objectTypeToAdd === ObjectType.Roof
               ? 'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)'
               : 'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)',
           cursor: 'pointer',
-          verticalAlign: 'middle',
+          verticalAlign: 'top',
         }}
         onClick={() => {
           setCommonStore((state) => {
@@ -252,17 +277,17 @@ const MainToolBarButtons = () => {
         title={i18n.t('toolbar.AddSolarPanel', lang)}
         alt={'Solar panel'}
         src={SolarPanelImage}
-        height={56}
-        width={48}
+        height={36}
+        width={36}
         style={{
-          paddingRight: '12px',
-          paddingBottom: '20px',
+          marginTop: '4px',
+          marginRight: '8px',
           filter:
             objectTypeToAdd === ObjectType.SolarPanel
               ? 'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)'
               : 'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)',
           cursor: 'pointer',
-          verticalAlign: 'middle',
+          verticalAlign: 'top',
         }}
         onClick={() => {
           setCommonStore((state) => {

@@ -575,7 +575,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       <ButtonsContainer>
         <Space direction="horizontal">
           <MainToolBarButtons />
-          <div style={{ verticalAlign: 'middle', paddingBottom: '20px' }}>
+          <div style={{ verticalAlign: 'top' }}>
             {user.displayName ? (
               <Dropdown overlay={avatarMenu} trigger={['click']}>
                 <a
