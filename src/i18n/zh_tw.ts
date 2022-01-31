@@ -577,6 +577,7 @@ export const i18n_zh_tw = {
       ShowSunAndTimeSettings: '顯示太陽和時間設置',
       ShowHeatmap: '顯示熱圖',
       DoYouReallyWantToClearContent: '您確定清空場景嗎',
+      ClickForMoreButtons: '點擊此處有更多按鈕',
     },
 
     tooltip: {

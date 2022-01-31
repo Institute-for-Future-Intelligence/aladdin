@@ -589,6 +589,7 @@ export const i18n_en = {
       ShowSunAndTimeSettings: 'Show sun and time settings',
       ShowHeatmap: 'Show heatmap',
       DoYouReallyWantToClearContent: 'Do you really want to clear the content',
+      ClickForMoreButtons: 'Click for more buttons',
     },
 
     tooltip: {

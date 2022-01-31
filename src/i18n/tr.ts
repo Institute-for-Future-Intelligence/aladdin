@@ -590,6 +590,7 @@ export const i18n_tr = {
       ShowSunAndTimeSettings: 'Show sun and time settings',
       ShowHeatmap: 'Show heatmap',
       DoYouReallyWantToClearContent: 'Ýçeriði gerçekten temizlemek istiyor musunuz?',
+      ClickForMoreButtons: 'Click for more buttons',
     },
 
     tooltip: {
