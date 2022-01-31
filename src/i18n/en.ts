@@ -590,6 +590,15 @@ export const i18n_en = {
       ShowHeatmap: 'Show heatmap',
       DoYouReallyWantToClearContent: 'Do you really want to clear the content',
       ClickForMoreButtons: 'Click for more buttons',
+      SwitchToAddingFoundation: 'Switch to Adding Foundation',
+      SwitchToAddingCuboid: 'Switch to Adding Cuboid',
+      SwitchToAddingWall: 'Switch to Adding Wall',
+      SwitchToAddingWindow: 'Switch to Adding Window',
+      SwitchToAddingRoof: 'Switch to Adding Roof',
+      SwitchToAddingSolarPanel: 'Switch to Adding Solar Panel',
+      SwitchToAddingSensor: 'Switch to Adding Sensor',
+      SwitchToAddingTree: 'Switch to Adding Tree',
+      SwitchToAddingPeople: 'Switch to Adding People',
     },
 
     tooltip: {

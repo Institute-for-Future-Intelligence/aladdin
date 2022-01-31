@@ -577,7 +577,16 @@ export const i18n_zh_cn = {
       ShowSunAndTimeSettings: '显示太阳和时间设置',
       ShowHeatmap: '显示热图',
       DoYouReallyWantToClearContent: '您确定清空场景吗',
-      ClickForMoreButtons: '点击此处有更多按钮',
+      ClickForMoreButtons: '点击此处切换到更多的按钮模式',
+      SwitchToAddingFoundation: '切换到添加地基模式',
+      SwitchToAddingCuboid: '切换到添加长方体模式',
+      SwitchToAddingWall: '切换到添加墙体模式',
+      SwitchToAddingWindow: '切换到添加窗户模式',
+      SwitchToAddingRoof: '切换到添加屋顶模式',
+      SwitchToAddingSolarPanel: '切换到添加光伏板模式',
+      SwitchToAddingSensor: '切换到添加传感器模式',
+      SwitchToAddingTree: '切换到添加树木模式',
+      SwitchToAddingPeople: '切换到添加人物模式',
     },
 
     tooltip: {

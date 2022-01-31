@@ -149,7 +149,7 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        {i18n.t('toolbar.AddFoundation', lang)}
+        {i18n.t('toolbar.SwitchToAddingFoundation', lang)}
       </Menu.Item>
       <Menu.Item
         style={{ userSelect: 'none' }}
@@ -170,7 +170,7 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        {i18n.t('toolbar.AddCuboid', lang)}
+        {i18n.t('toolbar.SwitchToAddingCuboid', lang)}
       </Menu.Item>
     </Menu>
   );
@@ -196,7 +196,7 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        {i18n.t('toolbar.AddWall', lang)}
+        {i18n.t('toolbar.SwitchToAddingWall', lang)}
       </Menu.Item>
       <Menu.Item
         style={{ userSelect: 'none' }}
@@ -217,7 +217,7 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        {i18n.t('toolbar.AddWindow', lang)}
+        {i18n.t('toolbar.SwitchToAddingWindow', lang)}
       </Menu.Item>
       <Menu.Item
         style={{ userSelect: 'none' }}
@@ -238,7 +238,7 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        {i18n.t('toolbar.AddRoof', lang)}
+        {i18n.t('toolbar.SwitchToAddingRoof', lang)}
       </Menu.Item>
     </Menu>
   );
@@ -264,7 +264,7 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        {i18n.t('toolbar.AddSolarPanel', lang)}
+        {i18n.t('toolbar.SwitchToAddingSolarPanel', lang)}
       </Menu.Item>
       <Menu.Item
         style={{ userSelect: 'none' }}
@@ -285,7 +285,7 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        {i18n.t('toolbar.AddSensor', lang)}
+        {i18n.t('toolbar.SwitchToAddingSensor', lang)}
       </Menu.Item>
     </Menu>
   );
@@ -311,7 +311,7 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        {i18n.t('toolbar.AddTree', lang)}
+        {i18n.t('toolbar.SwitchToAddingTree', lang)}
       </Menu.Item>
       <Menu.Item
         style={{ userSelect: 'none' }}
@@ -332,7 +332,7 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        {i18n.t('toolbar.AddPeople', lang)}
+        {i18n.t('toolbar.SwitchToAddingPeople', lang)}
       </Menu.Item>
     </Menu>
   );
@@ -426,7 +426,7 @@ const MainToolBarButtons = () => {
               fontWeight: 'bold',
             }}
           >
-            ▽
+            ▼
           </label>
         </Dropdown>
       </div>
@@ -505,7 +505,7 @@ const MainToolBarButtons = () => {
               fontWeight: 'bold',
             }}
           >
-            ▽
+            ▼
           </label>
         </Dropdown>
       </div>
@@ -567,7 +567,7 @@ const MainToolBarButtons = () => {
               fontWeight: 'bold',
             }}
           >
-            ▽
+            ▼
           </label>
         </Dropdown>
       </div>
@@ -629,7 +629,7 @@ const MainToolBarButtons = () => {
               fontWeight: 'bold',
             }}
           >
-            ▽
+            ▼
           </label>
         </Dropdown>
       </div>
