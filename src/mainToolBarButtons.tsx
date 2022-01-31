@@ -36,6 +36,10 @@ const MainToolBarButtons = () => {
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const clearContent = useStore(Selector.clearContent);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
+  const addedFoundationId = useStore(Selector.addedFoundationId);
+  const addedCuboidId = useStore(Selector.addedCuboidId);
+  const addedWallId = useStore(Selector.addedWallId);
+  const addedWindowId = useStore(Selector.addedWindowId);
   const addUndoable = useStore(Selector.addUndoable);
 
   const [category1Flag, setCategory1Flag] = useState(0);
@@ -43,6 +47,10 @@ const MainToolBarButtons = () => {
   const [category3Flag, setCategory3Flag] = useState(0);
   const [category4Flag, setCategory4Flag] = useState(0);
   const lang = { lng: language };
+
+  // CSS filter generator of color: https://codepen.io/sosuke/pen/Pjoqqp
+  const defaultFilter = 'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)';
+  const selectFilter = 'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)';
 
   const resetToSelectMode = () => {
     setCommonStore((state) => {
@@ -112,9 +120,13 @@ const MainToolBarButtons = () => {
     }, 100);
   };
 
-  // CSS filter generator of color: https://codepen.io/sosuke/pen/Pjoqqp
-  const defaultFilter = 'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)';
-  const selectFilter = 'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)';
+  const setMode = (type: ObjectType) => {
+    setCommonStore((state) => {
+      state.objectTypeToAdd = type;
+    });
+    useStoreRef.getState().setEnableOrbitController(false);
+    selectNone();
+  };
 
   const category1Menu = (
     <Menu>
@@ -123,7 +135,7 @@ const MainToolBarButtons = () => {
         key="add-foundation-menu-item"
         onClick={() => {
           setCategory1Flag(0);
-          resetToSelectMode();
+          setMode(ObjectType.Foundation);
         }}
       >
         <img
@@ -144,7 +156,7 @@ const MainToolBarButtons = () => {
         key="add-cuboid-menu-item"
         onClick={() => {
           setCategory1Flag(1);
-          resetToSelectMode();
+          setMode(ObjectType.Cuboid);
         }}
       >
         <img
@@ -170,7 +182,7 @@ const MainToolBarButtons = () => {
         key="add-wall-menu-item"
         onClick={() => {
           setCategory2Flag(0);
-          resetToSelectMode();
+          setMode(ObjectType.Wall);
         }}
       >
         <img
@@ -191,7 +203,7 @@ const MainToolBarButtons = () => {
         key="add-window-menu-item"
         onClick={() => {
           setCategory2Flag(1);
-          resetToSelectMode();
+          setMode(ObjectType.Window);
         }}
       >
         <img
@@ -212,7 +224,7 @@ const MainToolBarButtons = () => {
         key="add-roof-menu-item"
         onClick={() => {
           setCategory2Flag(2);
-          resetToSelectMode();
+          setMode(ObjectType.Roof);
         }}
       >
         <img
@@ -238,7 +250,7 @@ const MainToolBarButtons = () => {
         key="add-solar-panel-menu-item"
         onClick={() => {
           setCategory3Flag(0);
-          resetToSelectMode();
+          setMode(ObjectType.SolarPanel);
         }}
       >
         <img
@@ -259,7 +271,7 @@ const MainToolBarButtons = () => {
         key="add-sensor-menu-item"
         onClick={() => {
           setCategory3Flag(1);
-          resetToSelectMode();
+          setMode(ObjectType.Sensor);
         }}
       >
         <img
@@ -285,7 +297,7 @@ const MainToolBarButtons = () => {
         key="add-tree-menu-item"
         onClick={() => {
           setCategory4Flag(0);
-          resetToSelectMode();
+          setMode(ObjectType.Tree);
         }}
       >
         <img
@@ -306,7 +318,7 @@ const MainToolBarButtons = () => {
         key="add-human-menu-item"
         onClick={() => {
           setCategory4Flag(1);
-          resetToSelectMode();
+          setMode(ObjectType.Human);
         }}
       >
         <img
@@ -324,6 +336,12 @@ const MainToolBarButtons = () => {
       </Menu.Item>
     </Menu>
   );
+
+  const inSelectionMode = () => {
+    return (
+      objectTypeToAdd === ObjectType.None && !addedFoundationId && !addedCuboidId && !addedWallId && !addedWindowId
+    );
+  };
 
   return (
     <div>
@@ -343,7 +361,7 @@ const MainToolBarButtons = () => {
           height={36}
           width={36}
           style={{
-            filter: objectTypeToAdd === ObjectType.None ? selectFilter : defaultFilter,
+            filter: inSelectionMode() ? selectFilter : defaultFilter,
             cursor: 'pointer',
             verticalAlign: 'middle',
           }}
@@ -368,16 +386,12 @@ const MainToolBarButtons = () => {
             height={36}
             width={36}
             style={{
-              filter: objectTypeToAdd === ObjectType.Foundation ? selectFilter : defaultFilter,
+              filter: objectTypeToAdd === ObjectType.Foundation || addedFoundationId ? selectFilter : defaultFilter,
               cursor: 'pointer',
               verticalAlign: 'middle',
             }}
             onClick={() => {
-              setCommonStore((state) => {
-                state.objectTypeToAdd = ObjectType.Foundation;
-              });
-              useStoreRef.getState().setEnableOrbitController(false);
-              selectNone();
+              setMode(ObjectType.Foundation);
             }}
           />
         )}
@@ -389,16 +403,12 @@ const MainToolBarButtons = () => {
             height={36}
             width={36}
             style={{
-              filter: objectTypeToAdd === ObjectType.Cuboid ? selectFilter : defaultFilter,
+              filter: objectTypeToAdd === ObjectType.Cuboid || addedCuboidId ? selectFilter : defaultFilter,
               cursor: 'pointer',
               verticalAlign: 'middle',
             }}
             onClick={() => {
-              setCommonStore((state) => {
-                state.objectTypeToAdd = ObjectType.Cuboid;
-              });
-              useStoreRef.getState().setEnableOrbitController(false);
-              selectNone();
+              setMode(ObjectType.Cuboid);
             }}
           />
         )}
@@ -438,16 +448,12 @@ const MainToolBarButtons = () => {
             height={36}
             width={36}
             style={{
-              filter: objectTypeToAdd === ObjectType.Wall ? selectFilter : defaultFilter,
+              filter: objectTypeToAdd === ObjectType.Wall || addedWallId ? selectFilter : defaultFilter,
               cursor: 'pointer',
               verticalAlign: 'middle',
             }}
             onClick={() => {
-              setCommonStore((state) => {
-                state.objectTypeToAdd = ObjectType.Wall;
-              });
-              useStoreRef.getState().setEnableOrbitController(false);
-              selectNone();
+              setMode(ObjectType.Wall);
             }}
           />
         )}
@@ -459,16 +465,12 @@ const MainToolBarButtons = () => {
             height={36}
             width={36}
             style={{
-              filter: objectTypeToAdd === ObjectType.Window ? selectFilter : defaultFilter,
+              filter: objectTypeToAdd === ObjectType.Window || addedWindowId ? selectFilter : defaultFilter,
               cursor: 'pointer',
               verticalAlign: 'middle',
             }}
             onClick={() => {
-              setCommonStore((state) => {
-                state.objectTypeToAdd = ObjectType.Window;
-              });
-              useStoreRef.getState().setEnableOrbitController(false);
-              selectNone();
+              setMode(ObjectType.Window);
             }}
           />
         )}
@@ -485,11 +487,7 @@ const MainToolBarButtons = () => {
               verticalAlign: 'middle',
             }}
             onClick={() => {
-              setCommonStore((state) => {
-                state.objectTypeToAdd = ObjectType.Roof;
-              });
-              useStoreRef.getState().setEnableOrbitController(false);
-              selectNone();
+              setMode(ObjectType.Roof);
             }}
           />
         )}
@@ -534,11 +532,7 @@ const MainToolBarButtons = () => {
               verticalAlign: 'middle',
             }}
             onClick={() => {
-              setCommonStore((state) => {
-                state.objectTypeToAdd = ObjectType.SolarPanel;
-              });
-              useStoreRef.getState().setEnableOrbitController(false);
-              selectNone();
+              setMode(ObjectType.SolarPanel);
             }}
           />
         )}
@@ -555,11 +549,7 @@ const MainToolBarButtons = () => {
               verticalAlign: 'middle',
             }}
             onClick={() => {
-              setCommonStore((state) => {
-                state.objectTypeToAdd = ObjectType.Sensor;
-              });
-              useStoreRef.getState().setEnableOrbitController(false);
-              selectNone();
+              setMode(ObjectType.Sensor);
             }}
           />
         )}
@@ -604,11 +594,7 @@ const MainToolBarButtons = () => {
               verticalAlign: 'middle',
             }}
             onClick={() => {
-              setCommonStore((state) => {
-                state.objectTypeToAdd = ObjectType.Tree;
-              });
-              useStoreRef.getState().setEnableOrbitController(false);
-              selectNone();
+              setMode(ObjectType.Tree);
             }}
           />
         )}
@@ -625,11 +611,7 @@ const MainToolBarButtons = () => {
               verticalAlign: 'middle',
             }}
             onClick={() => {
-              setCommonStore((state) => {
-                state.objectTypeToAdd = ObjectType.Human;
-              });
-              useStoreRef.getState().setEnableOrbitController(false);
-              selectNone();
+              setMode(ObjectType.Human);
             }}
           />
         )}
