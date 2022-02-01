@@ -4,7 +4,17 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Cone, Cylinder, Line, Plane, Sphere } from '@react-three/drei';
-import { CanvasTexture, DoubleSide, Euler, Mesh, RepeatWrapping, TextureLoader, Vector3 } from 'three';
+import {
+  BackSide,
+  CanvasTexture,
+  DoubleSide,
+  Euler,
+  FrontSide,
+  Mesh,
+  RepeatWrapping,
+  TextureLoader,
+  Vector3,
+} from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -28,7 +38,6 @@ import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import ParabolicTroughMirrorImage from '../resources/trough_mirror.png';
 import { getSunDirection } from '../analysis/sunTools';
 import RotateHandle from '../components/rotateHandle';
-import Wireframe from '../components/wireframe';
 import i18n from '../i18n/i18n';
 import { LineData } from './LineData';
 import { ParabolicCylinder } from './shapes';
@@ -81,7 +90,8 @@ const ParabolicTrough = ({
   const [numberOfModules, setNumberOfModules] = useState(1);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
   const [updateFlag, setUpdateFlag] = useState(false);
-  const baseRef = useRef<Mesh>();
+  const frontSideRef = useRef<Mesh>();
+  const backSideRef = useRef<Mesh>();
   const moveHandleRef = useRef<Mesh>();
   const resizeHandleLowerRef = useRef<Mesh>();
   const resizeHandleUpperRef = useRef<Mesh>();
@@ -179,11 +189,10 @@ const ParabolicTrough = ({
     return new TextureLoader().load(ParabolicTroughMirrorImage, (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
       t.offset.set(0, 0);
-      t.repeat.x = numberOfModules;
-      t.repeat.y = 1;
+      t.repeat.set(1, 1);
       setUpdateFlag(!updateFlag);
     });
-  }, [numberOfModules]);
+  }, []);
 
   const euler = useMemo(() => {
     // east face in model coordinate system
@@ -258,8 +267,8 @@ const ParabolicTrough = ({
 
   const poles: Vector3[] = [];
   const poleZ = -poleHeight / 2 - lz / 2;
-  const poleNx = Math.floor((0.5 * lx) / poleSpacing);
-  const poleNy = Math.floor((0.5 * ly * Math.abs(Math.cos(tiltAngle))) / poleSpacing);
+  const poleNx = Math.floor((0.5 * ly) / poleSpacing);
+  const poleNy = Math.floor((0.5 * lx * Math.abs(Math.cos(tiltAngle))) / poleSpacing);
   const sinTilt = 0.5 * Math.sin(tiltAngle);
   const cosAz = Math.cos(relativeAzimuth) * poleSpacing;
   const sinAz = Math.sin(relativeAzimuth) * poleSpacing;
@@ -279,14 +288,14 @@ const ParabolicTrough = ({
   return (
     <group name={'Parabolic Trough Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
       <group rotation={relativeEuler}>
-        {/* draw parabolic cylinder */}
+        {/* draw front side parabolic cylinder */}
         <ParabolicCylinder
           receiveShadow={shadowEnabled}
           castShadow={shadowEnabled}
           uuid={id}
-          ref={baseRef}
+          ref={frontSideRef}
           args={[1, ly, lx, 16, 4]}
-          name={'Parabolic Trough'}
+          name={'Parabolic Trough Front Side'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
             selectMe(id, e, ActionType.Select);
@@ -295,7 +304,7 @@ const ParabolicTrough = ({
             selectMe(id, e, ActionType.Select);
             setCommonStore((state) => {
               if (e.intersections.length > 0) {
-                const intersected = e.intersections[0].object === baseRef.current;
+                const intersected = e.intersections[0].object === frontSideRef.current;
                 if (intersected) {
                   state.contextMenuObjectType = ObjectType.ParabolicTrough;
                 }
@@ -304,7 +313,7 @@ const ParabolicTrough = ({
           }}
           onPointerOver={(e) => {
             if (e.intersections.length > 0) {
-              const intersected = e.intersections[0].object === baseRef.current;
+              const intersected = e.intersections[0].object === frontSideRef.current;
               if (intersected) {
                 setHovered(true);
                 domElement.style.cursor = 'move';
@@ -318,9 +327,49 @@ const ParabolicTrough = ({
         >
           <meshStandardMaterial
             attach="material"
-            side={DoubleSide}
+            side={FrontSide}
             map={showSolarRadiationHeatmap && heatmapTexture ? heatmapTexture : texture}
           />
+        </ParabolicCylinder>
+
+        {/* draw back side parabolic cylinder */}
+        <ParabolicCylinder
+          receiveShadow={shadowEnabled}
+          castShadow={shadowEnabled}
+          uuid={id + ' backside'}
+          ref={backSideRef}
+          args={[1, ly, lx, 16, 4]}
+          name={'Parabolic Trough Back Side'}
+          onPointerDown={(e) => {
+            if (e.button === 2) return; // ignore right-click
+            selectMe(id, e, ActionType.Select);
+          }}
+          onContextMenu={(e) => {
+            selectMe(id, e, ActionType.Select);
+            setCommonStore((state) => {
+              if (e.intersections.length > 0) {
+                const intersected = e.intersections[0].object === backSideRef.current;
+                if (intersected) {
+                  state.contextMenuObjectType = ObjectType.ParabolicTrough;
+                }
+              }
+            });
+          }}
+          onPointerOver={(e) => {
+            if (e.intersections.length > 0) {
+              const intersected = e.intersections[0].object === backSideRef.current;
+              if (intersected) {
+                setHovered(true);
+                domElement.style.cursor = 'move';
+              }
+            }
+          }}
+          onPointerOut={(e) => {
+            setHovered(false);
+            domElement.style.cursor = 'default';
+          }}
+        >
+          <meshStandardMaterial attach="material" side={BackSide} color={'white'} />
         </ParabolicCylinder>
 
         {showSolarRadiationHeatmap &&
@@ -345,7 +394,7 @@ const ParabolicTrough = ({
         <Plane
           name={'Parabolic Trough Simulation Plane'}
           uuid={id}
-          args={[lx, ly]}
+          args={[ly, lx]}
           userData={{ simulation: true }}
           receiveShadow={false}
           castShadow={false}
@@ -520,9 +569,6 @@ const ParabolicTrough = ({
             </group>
           </>
         )}
-
-        {/* wireframe */}
-        {!selected && <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />}
       </group>
 
       {/* draw rotate handles */}

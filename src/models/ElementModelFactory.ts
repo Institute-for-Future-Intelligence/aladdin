@@ -178,7 +178,7 @@ export class ElementModelFactory {
       cx: x,
       cy: y,
       cz: z,
-      lx: lx ?? 3,
+      lx: lx ?? 10,
       ly: ly ?? 2,
       lz: 0.1,
       showLabel: false,
