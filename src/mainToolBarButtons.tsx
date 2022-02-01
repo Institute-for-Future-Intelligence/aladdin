@@ -12,6 +12,7 @@ import WindowImage from './assets/window.png';
 import RoofImage from './assets/roof.png';
 import TreeImage from './assets/tree.png';
 import HumanImage from './assets/human.png';
+import HeliostatImage from './assets/heliostat.png';
 
 import React, { useState } from 'react';
 import { useStore } from './stores/common';
@@ -42,10 +43,10 @@ const MainToolBarButtons = () => {
   const addedWindowId = useStore(Selector.addedWindowId);
   const addUndoable = useStore(Selector.addUndoable);
 
-  const [category1Flag, setCategory1Flag] = useState(0);
-  const [category2Flag, setCategory2Flag] = useState(0);
-  const [category3Flag, setCategory3Flag] = useState(0);
-  const [category4Flag, setCategory4Flag] = useState(0);
+  const [category1Flag, setCategory1Flag] = useState<ObjectType>(ObjectType.Foundation);
+  const [category2Flag, setCategory2Flag] = useState<ObjectType>(ObjectType.Wall);
+  const [category3Flag, setCategory3Flag] = useState<ObjectType>(ObjectType.SolarPanel);
+  const [category4Flag, setCategory4Flag] = useState<ObjectType>(ObjectType.Tree);
   const lang = { lng: language };
 
   // CSS filter generator of color: https://codepen.io/sosuke/pen/Pjoqqp
@@ -134,7 +135,7 @@ const MainToolBarButtons = () => {
         style={{ userSelect: 'none' }}
         key="add-foundation-menu-item"
         onClick={() => {
-          setCategory1Flag(0);
+          setCategory1Flag(ObjectType.Foundation);
           setMode(ObjectType.Foundation);
         }}
       >
@@ -155,7 +156,7 @@ const MainToolBarButtons = () => {
         style={{ userSelect: 'none' }}
         key="add-cuboid-menu-item"
         onClick={() => {
-          setCategory1Flag(1);
+          setCategory1Flag(ObjectType.Cuboid);
           setMode(ObjectType.Cuboid);
         }}
       >
@@ -181,7 +182,7 @@ const MainToolBarButtons = () => {
         style={{ userSelect: 'none' }}
         key="add-wall-menu-item"
         onClick={() => {
-          setCategory2Flag(0);
+          setCategory2Flag(ObjectType.Wall);
           setMode(ObjectType.Wall);
         }}
       >
@@ -202,7 +203,7 @@ const MainToolBarButtons = () => {
         style={{ userSelect: 'none' }}
         key="add-window-menu-item"
         onClick={() => {
-          setCategory2Flag(1);
+          setCategory2Flag(ObjectType.Window);
           setMode(ObjectType.Window);
         }}
       >
@@ -223,7 +224,7 @@ const MainToolBarButtons = () => {
         style={{ userSelect: 'none' }}
         key="add-roof-menu-item"
         onClick={() => {
-          setCategory2Flag(2);
+          setCategory2Flag(ObjectType.Roof);
           setMode(ObjectType.Roof);
         }}
       >
@@ -249,7 +250,7 @@ const MainToolBarButtons = () => {
         style={{ userSelect: 'none' }}
         key="add-solar-panel-menu-item"
         onClick={() => {
-          setCategory3Flag(0);
+          setCategory3Flag(ObjectType.SolarPanel);
           setMode(ObjectType.SolarPanel);
         }}
       >
@@ -270,7 +271,7 @@ const MainToolBarButtons = () => {
         style={{ userSelect: 'none' }}
         key="add-sensor-menu-item"
         onClick={() => {
-          setCategory3Flag(1);
+          setCategory3Flag(ObjectType.Sensor);
           setMode(ObjectType.Sensor);
         }}
       >
@@ -287,6 +288,27 @@ const MainToolBarButtons = () => {
         />
         {i18n.t('toolbar.SwitchToAddingSensor', lang)}
       </Menu.Item>
+      <Menu.Item
+        style={{ userSelect: 'none' }}
+        key="add-heliostat-menu-item"
+        onClick={() => {
+          setCategory3Flag(ObjectType.Heliostat);
+          setMode(ObjectType.Heliostat);
+        }}
+      >
+        <img
+          alt={'Heliostat'}
+          src={HeliostatImage}
+          height={36}
+          width={36}
+          style={{
+            filter: defaultFilter,
+            verticalAlign: 'middle',
+            marginRight: '10px',
+          }}
+        />
+        {i18n.t('toolbar.SwitchToAddingHeliostat', lang)}
+      </Menu.Item>
     </Menu>
   );
 
@@ -296,7 +318,7 @@ const MainToolBarButtons = () => {
         style={{ userSelect: 'none' }}
         key="add-tree-menu-item"
         onClick={() => {
-          setCategory4Flag(0);
+          setCategory4Flag(ObjectType.Tree);
           setMode(ObjectType.Tree);
         }}
       >
@@ -317,7 +339,7 @@ const MainToolBarButtons = () => {
         style={{ userSelect: 'none' }}
         key="add-human-menu-item"
         onClick={() => {
-          setCategory4Flag(1);
+          setCategory4Flag(ObjectType.Human);
           setMode(ObjectType.Human);
         }}
       >
@@ -378,7 +400,7 @@ const MainToolBarButtons = () => {
           marginRight: '8px',
         }}
       >
-        {category1Flag === 0 && (
+        {category1Flag === ObjectType.Foundation && (
           <img
             title={i18n.t('toolbar.AddFoundation', lang)}
             alt={'Foundation'}
@@ -395,7 +417,7 @@ const MainToolBarButtons = () => {
             }}
           />
         )}
-        {category1Flag === 1 && (
+        {category1Flag === ObjectType.Cuboid && (
           <img
             title={i18n.t('toolbar.AddCuboid', lang)}
             alt={'Cuboid'}
@@ -440,7 +462,7 @@ const MainToolBarButtons = () => {
           marginRight: '8px',
         }}
       >
-        {category2Flag === 0 && (
+        {category2Flag === ObjectType.Wall && (
           <img
             title={i18n.t('toolbar.AddWall', lang)}
             alt={'Wall'}
@@ -457,7 +479,7 @@ const MainToolBarButtons = () => {
             }}
           />
         )}
-        {category2Flag === 1 && (
+        {category2Flag === ObjectType.Window && (
           <img
             title={i18n.t('toolbar.AddWindow', lang)}
             alt={'Window'}
@@ -474,7 +496,7 @@ const MainToolBarButtons = () => {
             }}
           />
         )}
-        {category2Flag === 2 && (
+        {category2Flag === ObjectType.Roof && (
           <img
             title={i18n.t('toolbar.AddRoof', lang)}
             alt={'Roof'}
@@ -519,7 +541,7 @@ const MainToolBarButtons = () => {
           marginRight: '8px',
         }}
       >
-        {category3Flag === 0 && (
+        {category3Flag === ObjectType.SolarPanel && (
           <img
             title={i18n.t('toolbar.AddSolarPanel', lang)}
             alt={'Solar panel'}
@@ -536,7 +558,24 @@ const MainToolBarButtons = () => {
             }}
           />
         )}
-        {category3Flag === 1 && (
+        {category3Flag === ObjectType.Heliostat && (
+          <img
+            title={i18n.t('toolbar.AddHeliostat', lang)}
+            alt={'Heliostat'}
+            src={HeliostatImage}
+            height={36}
+            width={36}
+            style={{
+              filter: objectTypeToAdd === ObjectType.Heliostat ? selectFilter : defaultFilter,
+              cursor: 'pointer',
+              verticalAlign: 'middle',
+            }}
+            onClick={() => {
+              setMode(ObjectType.Heliostat);
+            }}
+          />
+        )}
+        {category3Flag === ObjectType.Sensor && (
           <img
             title={i18n.t('toolbar.AddSensor', lang)}
             alt={'Sensor'}
@@ -581,7 +620,7 @@ const MainToolBarButtons = () => {
           marginRight: '8px',
         }}
       >
-        {category4Flag === 0 && (
+        {category4Flag === ObjectType.Tree && (
           <img
             title={i18n.t('toolbar.AddTree', lang)}
             alt={'Tree'}
@@ -598,7 +637,7 @@ const MainToolBarButtons = () => {
             }}
           />
         )}
-        {category4Flag === 1 && (
+        {category4Flag === ObjectType.Human && (
           <img
             title={i18n.t('toolbar.AddPeople', lang)}
             alt={'Human'}
