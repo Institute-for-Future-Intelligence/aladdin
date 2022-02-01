@@ -63,3 +63,7 @@ export const UNIT_VECTOR_POS_Z = new Vector3(0, 0, 1);
 export const UNIT_VECTOR_NEG_Z = new Vector3(0, 0, -1);
 
 export const ORIGIN_VECTOR2 = new Vector2(0, 0);
+
+export const PARABOLIC_DISH_STRUCTURE_CENTRAL_POLE = 1;
+
+export const PARABOLIC_DISH_STRUCTURE_TRIPOD = 2;
