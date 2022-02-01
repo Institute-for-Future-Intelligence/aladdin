@@ -2449,6 +2449,25 @@ export const useStore = create<CommonStoreState>(
                   model = solarPanel;
                   state.elements.push(solarPanel);
                   break;
+                case ObjectType.ParabolicTrough:
+                  const parabolicTroughParentModel = parent as ElementModel;
+                  const parabolicTroughRelativeCoordinates = Util.relativeCoordinates(
+                    p.x,
+                    p.y,
+                    p.z,
+                    parabolicTroughParentModel,
+                  );
+                  const parabolicTrough = ElementModelFactory.makeParabolicTrough(
+                    parabolicTroughParentModel,
+                    parabolicTroughRelativeCoordinates.x,
+                    parabolicTroughRelativeCoordinates.y,
+                    parabolicTroughRelativeCoordinates.z,
+                    normal,
+                    'rotation' in parent ? parent.rotation : undefined,
+                  );
+                  model = parabolicTrough;
+                  state.elements.push(parabolicTrough);
+                  break;
                 case ObjectType.Foundation:
                   const foundation = ElementModelFactory.makeFoundation(p.x, p.y);
                   model = foundation;

@@ -21,6 +21,7 @@ import { Point2 } from './Point2';
 import { PolygonModel } from './PolygonModel';
 import { Util } from '../Util';
 import { HumanData } from '../HumanData';
+import { ParabolicTroughModel } from './ParabolicTroughModel';
 
 export class ElementModelFactory {
   static makeHuman(parentId: string, x: number, y: number, z?: number) {
@@ -146,6 +147,47 @@ export class ElementModelFactory {
       foundationId: foundationId,
       id: short.generate() as string,
     } as SolarPanelModel;
+  }
+
+  static makeParabolicTrough(
+    parent: ElementModel,
+    x: number,
+    y: number,
+    z?: number,
+    normal?: Vector3,
+    rotation?: number[],
+    lx?: number,
+    ly?: number,
+  ) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+    }
+    return {
+      type: ObjectType.ParabolicTrough,
+      moduleLength: 3,
+      relativeAzimuth: 0,
+      tiltAngle: 0,
+      drawSunBeam: false,
+      poleHeight: 1,
+      poleRadius: 0.05,
+      poleSpacing: 3,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: lx ?? 3,
+      ly: ly ?? 2,
+      lz: 0.1,
+      showLabel: false,
+      normal: normal ? normal.toArray() : [0, 0, 1],
+      rotation: rotation ? rotation : [0, 0, 0],
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as ParabolicTroughModel;
   }
 
   static makePolygon(parent: ElementModel, x: number, y: number, z: number, normal?: Vector3, rotation?: number[]) {

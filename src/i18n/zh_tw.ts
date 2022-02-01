@@ -105,6 +105,11 @@ export const i18n_zh_tw = {
       PolygonElement: '多邊形',
       SensorElement: '傳感器',
       SolarPanelElement: '光伏板',
+      WaterHeaterElement: '太陽能熱水器',
+      ParabolicDishElement: '拋物線碟',
+      ParabolicTroughElement: '拋物線槽',
+      FresnelReflectorElement: '菲涅耳反射鏡',
+      HeliostatElement: '定日鏡',
       ElementLocked: '固定',
     },
 

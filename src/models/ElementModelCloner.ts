@@ -24,6 +24,7 @@ import {
   UNIT_VECTOR_POS_Y,
   ZERO_TOLERANCE,
 } from '../constants';
+import { ParabolicTroughModel } from './ParabolicTroughModel';
 
 export class ElementModelCloner {
   static clone(
@@ -53,6 +54,12 @@ export class ElementModelCloner {
         if (parent) {
           // must have a parent
           clone = ElementModelCloner.cloneSolarPanel(parent, e as SolarPanelModel, x, y, z);
+        }
+        break;
+      case ObjectType.ParabolicTrough:
+        if (parent) {
+          // must have a parent
+          clone = ElementModelCloner.cloneParabolicTrough(parent, e as ParabolicTroughModel, x, y, z);
         }
         break;
       case ObjectType.Wall:
@@ -255,6 +262,43 @@ export class ElementModelCloner {
       foundationId: foundationId,
       id: short.generate() as string,
     } as SolarPanelModel;
+  }
+
+  private static cloneParabolicTrough(
+    parent: ElementModel,
+    trough: ParabolicTroughModel,
+    x: number,
+    y: number,
+    z?: number,
+  ) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+    }
+    return {
+      type: ObjectType.ParabolicTrough,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: trough.lx,
+      ly: trough.ly,
+      lz: trough.lz,
+      moduleLength: trough.moduleLength,
+      tiltAngle: trough.tiltAngle,
+      relativeAzimuth: trough.relativeAzimuth,
+      poleRadius: trough.poleRadius,
+      poleHeight: trough.poleHeight,
+      poleSpacing: trough.poleSpacing,
+      showLabel: trough.showLabel,
+      normal: [...trough.normal],
+      rotation: trough.parentId ? [...parent.rotation] : [0, 0, 0],
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as ParabolicTroughModel;
   }
 
   private static cloneFoundation(foundation: FoundationModel, x: number, y: number) {

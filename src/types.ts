@@ -5,16 +5,19 @@
 import { extend, Object3DNode } from '@react-three/fiber';
 import TextSprite from 'three-spritetext';
 import { MyOrbitControls } from './js/MyOrbitControls';
+import { ParabolicCylinderGeometry } from './js/ParabolicCylinderGeometry';
 
 // Extend makes these JSX elements (with the first character lower-cased)
 extend({ TextSprite });
 extend({ MyOrbitControls });
+extend({ ParabolicCylinderGeometry });
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
       textSprite: Object3DNode<TextSprite, typeof TextSprite>;
       myOrbitControls: Object3DNode<MyOrbitControls, typeof MyOrbitControls>;
+      parabolicCylinderGeometry: Object3DNode<ParabolicCylinderGeometry, typeof ParabolicCylinderGeometry>;
     }
   }
 }

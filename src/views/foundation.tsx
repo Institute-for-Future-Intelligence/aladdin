@@ -45,6 +45,7 @@ import {
 import { Util } from '../Util';
 import { ElementModel } from '../models/ElementModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
+import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import { PolarGrid } from './polarGrid';
 import { WallModel } from '../models/WallModel';
 import RotateHandle from '../components/rotateHandle';
@@ -60,6 +61,7 @@ import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
 import { HorizontalRuler } from './horizontalRuler';
 import { showError } from '../helpers';
+import { SolarCollector } from '../models/SolarCollector';
 
 const Foundation = ({
   id,
@@ -186,8 +188,17 @@ const Foundation = ({
   }, [hy]);
 
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
-  if (grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
-    intersectionPlanePosition.set(0, 0, foundationModel.lz / 2 + (grabRef.current as SolarPanelModel).poleHeight);
+  if (grabRef.current) {
+    let poleHeight = -1;
+    switch (grabRef.current.type) {
+      case ObjectType.SolarPanel:
+      case ObjectType.ParabolicTrough:
+        poleHeight = (grabRef.current as SolarCollector).poleHeight;
+        break;
+    }
+    if (poleHeight >= 0) {
+      intersectionPlanePosition.set(0, 0, foundationModel.lz / 2 + poleHeight);
+    }
   }
 
   useEffect(() => {
@@ -343,6 +354,10 @@ const Foundation = ({
       case ObjectType.Polygon:
       case ObjectType.Sensor:
       case ObjectType.SolarPanel:
+      case ObjectType.ParabolicDish:
+      case ObjectType.ParabolicTrough:
+      case ObjectType.FresnelReflector:
+      case ObjectType.Heliostat:
       case ObjectType.Wall:
         return true;
       default:
@@ -1002,7 +1017,8 @@ const Foundation = ({
           oldDimensionRef.current.set(selectedElement.lx, selectedElement.ly, selectedElement.lz);
           switch (selectedElement.type) {
             case ObjectType.SolarPanel:
-              oldAzimuthRef.current = (selectedElement as SolarPanelModel).relativeAzimuth;
+            case ObjectType.ParabolicTrough:
+              oldAzimuthRef.current = (selectedElement as SolarCollector).relativeAzimuth;
               break;
             case ObjectType.Polygon:
               oldVerticesRef.current = (selectedElement as PolygonModel).vertices.map((v) => ({ ...v }));

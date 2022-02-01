@@ -106,6 +106,11 @@ export const i18n_tr = {
       PolygonElement: 'Poligon',
       SensorElement: 'Sensör',
       SolarPanelElement: 'Güneþ Paneli',
+      WaterHeaterElement: 'Water Heater',
+      ParabolicDishElement: 'Parabolic Dish',
+      ParabolicTroughElement: 'Parabolic Trough',
+      FresnelReflectorElement: 'Fresnel Reflector',
+      HeliostatElement: 'Heliostat',
       ElementLocked: 'Kilitli',
     },
 

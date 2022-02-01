@@ -4,7 +4,7 @@
 
 import { SolarCollector } from './SolarCollector';
 
-export interface ParabolicDishModel extends SolarCollector {
+export interface ParabolicTroughModel extends SolarCollector {
   // a number in (0, 1), iron glass has a reflectance of 0.9
   // (but dirt and dust reduce it to 0.82, this is accounted for by Atmosphere)
   reflectance: number;
@@ -17,4 +17,5 @@ export interface ParabolicDishModel extends SolarCollector {
   moduleLength: number;
   apertureWidth: number;
   semilatusRectum: number;
+  poleSpacing: number;
 }

@@ -12,7 +12,7 @@ import WindowImage from './assets/window.png';
 import RoofImage from './assets/roof.png';
 import TreeImage from './assets/tree.png';
 import HumanImage from './assets/human.png';
-import HeliostatImage from './assets/heliostat.png';
+import ParabolicTroughImage from './assets/parabolic_trough.png';
 
 import React, { useState } from 'react';
 import { useStore } from './stores/common';
@@ -290,15 +290,15 @@ const MainToolBarButtons = () => {
       </Menu.Item>
       <Menu.Item
         style={{ userSelect: 'none' }}
-        key="add-heliostat-menu-item"
+        key="add-parabolic-trough-menu-item"
         onClick={() => {
-          setCategory3Flag(ObjectType.Heliostat);
-          setMode(ObjectType.Heliostat);
+          setCategory3Flag(ObjectType.ParabolicTrough);
+          setMode(ObjectType.ParabolicTrough);
         }}
       >
         <img
-          alt={'Heliostat'}
-          src={HeliostatImage}
+          alt={'Parabolic Trough'}
+          src={ParabolicTroughImage}
           height={36}
           width={36}
           style={{
@@ -307,7 +307,7 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        {i18n.t('toolbar.SwitchToAddingHeliostat', lang)}
+        {i18n.t('toolbar.SwitchToAddingParabolicTrough', lang)}
       </Menu.Item>
     </Menu>
   );
@@ -558,20 +558,20 @@ const MainToolBarButtons = () => {
             }}
           />
         )}
-        {category3Flag === ObjectType.Heliostat && (
+        {category3Flag === ObjectType.ParabolicTrough && (
           <img
-            title={i18n.t('toolbar.AddHeliostat', lang)}
-            alt={'Heliostat'}
-            src={HeliostatImage}
+            title={i18n.t('toolbar.AddParabolicTrough', lang)}
+            alt={'Parabolic Trough'}
+            src={ParabolicTroughImage}
             height={36}
             width={36}
             style={{
-              filter: objectTypeToAdd === ObjectType.Heliostat ? selectFilter : defaultFilter,
+              filter: objectTypeToAdd === ObjectType.ParabolicTrough ? selectFilter : defaultFilter,
               cursor: 'pointer',
               verticalAlign: 'middle',
             }}
             onClick={() => {
-              setMode(ObjectType.Heliostat);
+              setMode(ObjectType.ParabolicTrough);
             }}
           />
         )}

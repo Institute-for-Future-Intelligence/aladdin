@@ -26,6 +26,8 @@ import Polygon from './views/polygon';
 import { PolygonModel } from './models/PolygonModel';
 import { Group } from 'three';
 import { useStoreRef } from './stores/commonRef';
+import ParabolicTrough from './views/parabolicTrough';
+import { ParabolicTroughModel } from './models/ParabolicTroughModel';
 
 const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
@@ -59,6 +61,8 @@ const ElementsRenderer: React.FC = () => {
             return <Tree key={e.id} {...(e as TreeModel)} />;
           case ObjectType.SolarPanel:
             return <SolarPanel key={e.id} {...(e as SolarPanelModel)} />;
+          case ObjectType.ParabolicTrough:
+            return <ParabolicTrough key={e.id} {...(e as ParabolicTroughModel)} />;
           case ObjectType.Wall:
             return <Wall key={e.id} {...(e as WallModel)} />;
           case ObjectType.Roof:
