@@ -405,7 +405,10 @@ export const i18n_zh_cn = {
       ViewFromThisPerson: '视角移到此人位置',
     },
 
-    sensorMenu: {
+    solarCollectorMenu: {
+      RelativeAzimuth: '相对方位角',
+      PoleHeight: '支架高度',
+      DrawSunBeam: '显示光束',
       Label: '标签',
       KeepShowingLabel: '显示标签',
     },
@@ -420,14 +423,9 @@ export const i18n_zh_cn = {
       PanelsLong: '块光伏板长',
       TiltAngle: '倾斜角度',
       SouthFacingIsPositive: '朝南为正',
-      RelativeAzimuth: '相对方位角',
       Tracker: '追日系统',
       SolarTrackerFollowsSun: '追日系统提高光伏板产出。',
-      PoleHeight: '支架高度',
       PoleSpacing: '支柱间隔',
-      DrawSunBeam: '显示光束',
-      Label: '标签',
-      KeepShowingLabel: '显示标签',
       NoTracker: '无追日系统',
       HorizontalSingleAxisTracker: '水平单轴追日系统',
       VerticalSingleAxisTracker: '竖直单轴追日系统',

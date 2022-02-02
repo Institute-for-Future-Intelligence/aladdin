@@ -364,7 +364,7 @@ const SolarPanelPoleHeightInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('solarPanelMenu.PoleHeight', lang)}
+            {i18n.t('solarCollectorMenu.PoleHeight', lang)}
             <label style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +

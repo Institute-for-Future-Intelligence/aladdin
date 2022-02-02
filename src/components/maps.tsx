@@ -6,7 +6,6 @@ import React, { useCallback, useRef, useState } from 'react';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { UndoableChange } from '../undo/UndoableChange';
 
 const containerStyle = {

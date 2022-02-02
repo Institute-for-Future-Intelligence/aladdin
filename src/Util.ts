@@ -471,6 +471,17 @@ export class Util {
     return elem.type === ObjectType.Foundation || elem.type === ObjectType.Cuboid;
   }
 
+  static isSolarCollector(elem: ElementModel): boolean {
+    return (
+      elem.type === ObjectType.SolarPanel ||
+      elem.type === ObjectType.WaterHeater ||
+      elem.type === ObjectType.ParabolicDish ||
+      elem.type === ObjectType.ParabolicTrough ||
+      elem.type === ObjectType.FresnelReflector ||
+      elem.type === ObjectType.Heliostat
+    );
+  }
+
   static checkWindowState(elem: ElementModel): WindowState {
     const eMinX = elem.cx - elem.lx / 2;
     const eMaxX = elem.cx + elem.lx / 2;

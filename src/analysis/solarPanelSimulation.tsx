@@ -39,9 +39,9 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
   const setPvDailyYield = useStore(Selector.setDailyPvYield);
-  const updateSolarPanelDailyYield = useStore(Selector.updateSolarPanelDailyYieldById);
+  const updateSolarPanelDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
   const setPvYearlyYield = useStore(Selector.setYearlyPvYield);
-  const updateSolarPanelYearlyYield = useStore(Selector.updateSolarPanelYearlyYieldById);
+  const updateSolarPanelYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
   const dailyPvFlag = useStore(Selector.dailyPvFlag);
   const yearlyPvFlag = useStore(Selector.yearlyPvFlag);
   const dailyIndividualOutputs = useStore(Selector.dailyPvIndividualOutputs);

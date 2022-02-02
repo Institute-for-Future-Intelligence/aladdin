@@ -418,7 +418,10 @@ export const i18n_tr = {
       ViewFromThisPerson: 'View from This Person',
     },
 
-    sensorMenu: {
+    solarCollectorMenu: {
+      RelativeAzimuth: 'Göreceli Azimut',
+      PoleHeight: 'Direk Yüksekliði',
+      DrawSunBeam: 'Güneþ Iþýný çiz',
       Label: 'Etiket',
       KeepShowingLabel: 'Etiketi Göstermeye Devam Et',
     },
@@ -433,14 +436,9 @@ export const i18n_tr = {
       PanelsLong: 'panel uzunluðu',
       TiltAngle: 'Eðim Açýsý',
       SouthFacingIsPositive: 'Güney yönü pozitiftir.',
-      RelativeAzimuth: 'Göreceli Azimut',
       Tracker: 'Takipçi',
       SolarTrackerFollowsSun: 'Güneþ paneli verimini artýrmak için bir güneþ takip sistemi güneþi izler.',
-      PoleHeight: 'Direk Yüksekliði',
       PoleSpacing: 'Direk Aralýðý',
-      DrawSunBeam: 'Güneþ Iþýný çiz',
-      Label: 'Etiket',
-      KeepShowingLabel: 'Etiketi Göstermeye Devam Et',
       NoTracker: 'Takip Sistemi Yok',
       HorizontalSingleAxisTracker: 'Yatay Tek Eksenli Takip Sistemi',
       VerticalSingleAxisTracker: 'Dikey Tek Eksenli Takip Sistemi',

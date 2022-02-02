@@ -114,15 +114,15 @@ const ParabolicTrough = ({
     }
   }
 
-  const hx = lx / 2;
-  const hy = ly / 2;
-  const hz = lz / 2;
+  const depth = semiLatusRectum * 0.125 * ly * ly;
+  const hx = ly / 2;
+  const hy = lx / 2;
+  const hz = lz / 2 + depth;
   const positionLL = new Vector3(-hx, -hy, hz);
   const positionUL = new Vector3(-hx, hy, hz);
   const positionLR = new Vector3(hx, -hy, hz);
   const positionUR = new Vector3(hx, hy, hz);
   const trough = getElementById(id) as ParabolicTroughModel;
-  const depth = semiLatusRectum * 0.125 * ly * ly;
 
   useEffect(() => {
     if (trough && showSolarRadiationHeatmap) {

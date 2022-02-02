@@ -17,6 +17,7 @@ import {
   SensorMenu,
   SkyMenu,
   SolarPanelMenu,
+  ParabolicTroughMenu,
   TreeMenu,
   WallMenu,
   WindowMenu,
@@ -71,6 +72,12 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return (
           <Menu>
             <SolarPanelMenu />
+          </Menu>
+        );
+      case ObjectType.ParabolicTrough:
+        return (
+          <Menu>
+            <ParabolicTroughMenu />
           </Menu>
         );
       case ObjectType.Sensor:

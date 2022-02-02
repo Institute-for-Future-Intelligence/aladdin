@@ -251,9 +251,10 @@ export const solarPanelActionScope = (state: CommonStoreState) => state.solarPan
 
 export const setSolarPanelActionScope = (state: CommonStoreState) => state.setSolarPanelActionScope;
 
-export const updateSolarPanelDailyYieldById = (state: CommonStoreState) => state.updateSolarPanelDailyYieldById;
+export const updateSolarCollectorDailyYieldById = (state: CommonStoreState) => state.updateSolarCollectorDailyYieldById;
 
-export const updateSolarPanelYearlyYieldById = (state: CommonStoreState) => state.updateSolarPanelYearlyYieldById;
+export const updateSolarCollectorYearlyYieldById = (state: CommonStoreState) =>
+  state.updateSolarCollectorYearlyYieldById;
 
 export const updateSolarPanelModelById = (state: CommonStoreState) => state.updateSolarPanelModelById;
 
@@ -341,7 +342,8 @@ export const updateSolarPanelPoleSpacingAboveFoundation = (state: CommonStoreSta
 
 export const updateSolarPanelPoleSpacingForAll = (state: CommonStoreState) => state.updateSolarPanelPoleSpacingForAll;
 
-export const updateSolarPanelDrawSunBeamById = (state: CommonStoreState) => state.updateSolarPanelDrawSunBeamById;
+export const updateSolarCollectorDrawSunBeamById = (state: CommonStoreState) =>
+  state.updateSolarCollectorDrawSunBeamById;
 
 export const updateTreeTypeById = (state: CommonStoreState) => state.updateTreeTypeById;
 

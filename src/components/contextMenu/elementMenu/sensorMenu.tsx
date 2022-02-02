@@ -70,13 +70,13 @@ export const SensorMenu = () => {
         <Lock keyName={'sensor-lock'} />
         <Menu.Item key={'sensor-show-label'}>
           <Checkbox checked={!!sensor?.showLabel} onChange={showElementLabel}>
-            {i18n.t('sensorMenu.KeepShowingLabel', lang)}
+            {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
           </Checkbox>
         </Menu.Item>
         <Menu>
           <Menu.Item key={'sensor-label-text'} style={{ paddingLeft: '36px' }}>
             <Input
-              addonBefore={i18n.t('sensorMenu.Label', lang) + ':'}
+              addonBefore={i18n.t('solarCollectorMenu.Label', lang) + ':'}
               value={labelText}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
               onPressEnter={updateElementLabelText}

@@ -29,7 +29,7 @@ export const SolarPanelMenu = () => {
   const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
-  const updateSolarPanelDrawSunBeamById = useStore(Selector.updateSolarPanelDrawSunBeamById);
+  const updateSolarCollectorDrawSunBeamById = useStore(Selector.updateSolarCollectorDrawSunBeamById);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
@@ -103,14 +103,14 @@ export const SolarPanelMenu = () => {
         timestamp: Date.now(),
         checked: !solarPanel.drawSunBeam,
         undo: () => {
-          updateSolarPanelDrawSunBeamById(solarPanel.id, !undoableCheck.checked);
+          updateSolarCollectorDrawSunBeamById(solarPanel.id, !undoableCheck.checked);
         },
         redo: () => {
-          updateSolarPanelDrawSunBeamById(solarPanel.id, undoableCheck.checked);
+          updateSolarCollectorDrawSunBeamById(solarPanel.id, undoableCheck.checked);
         },
       } as UndoableCheck;
       addUndoable(undoableCheck);
-      updateSolarPanelDrawSunBeamById(solarPanel.id, checked);
+      updateSolarCollectorDrawSunBeamById(solarPanel.id, checked);
       setUpdateFlag(!updateFlag);
     }
   };
@@ -207,7 +207,7 @@ export const SolarPanelMenu = () => {
                   setAzimuthDialogVisible(true);
                 }}
               >
-                {i18n.t('solarPanelMenu.RelativeAzimuth', lang)} ...
+                {i18n.t('solarCollectorMenu.RelativeAzimuth', lang)} ...
               </Menu.Item>
 
               {/* solar tracker type */}
@@ -239,7 +239,7 @@ export const SolarPanelMenu = () => {
                   setPoleHeightDialogVisible(true);
                 }}
               >
-                {i18n.t('solarPanelMenu.PoleHeight', lang)} ...
+                {i18n.t('solarCollectorMenu.PoleHeight', lang)} ...
               </Menu.Item>
 
               {/* pole spacing */}
@@ -263,14 +263,14 @@ export const SolarPanelMenu = () => {
           {/* draw sun beam or not */}
           <Menu.Item key={'solar-panel-draw-sun-beam'}>
             <Checkbox checked={!!solarPanel?.drawSunBeam} onChange={(e) => drawSunBeam(e.target.checked)}>
-              {i18n.t('solarPanelMenu.DrawSunBeam', lang)}
+              {i18n.t('solarCollectorMenu.DrawSunBeam', lang)}
             </Checkbox>
           </Menu.Item>
 
           {/* show label or not */}
           <Menu.Item key={'solar-panel-show-label'}>
             <Checkbox checked={!!solarPanel?.showLabel} onChange={(e) => showLabel(e.target.checked)}>
-              {i18n.t('solarPanelMenu.KeepShowingLabel', lang)}
+              {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
             </Checkbox>
           </Menu.Item>
 
@@ -279,7 +279,7 @@ export const SolarPanelMenu = () => {
             {/* label text */}
             <Menu.Item key={'solar-panel-label-text'} style={{ paddingLeft: '36px' }}>
               <Input
-                addonBefore={i18n.t('solarPanelMenu.Label', lang) + ':'}
+                addonBefore={i18n.t('solarCollectorMenu.Label', lang) + ':'}
                 value={labelText}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
                 onPressEnter={updateLabelText}

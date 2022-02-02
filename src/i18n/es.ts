@@ -417,7 +417,10 @@ export const i18n_es = {
       ViewFromThisPerson: 'View from This Person',
     },
 
-    sensorMenu: {
+    solarCollectorMenu: {
+      RelativeAzimuth: 'Azimut relativa',
+      PoleHeight: 'Altura del poste',
+      DrawSunBeam: 'Dibujar rayo del sol',
       Label: 'Etiqueta',
       KeepShowingLabel: 'Seguir mostrando etiqueta',
     },
@@ -432,14 +435,9 @@ export const i18n_es = {
       PanelsLong: 'longitud paneles',
       TiltAngle: 'Inclinar ángulo',
       SouthFacingIsPositive: 'Orientado al sur es positivo',
-      RelativeAzimuth: 'Azimut relativa',
       Tracker: 'Seguidor',
       SolarTrackerFollowsSun: 'Un seguidor sigue el sol para incrementar las salidas de los paneles solares',
-      PoleHeight: 'Altura del poste',
       PoleSpacing: 'Espaciado entre postes',
-      DrawSunBeam: 'Dibujar rayo del sol',
-      Label: 'Etiqueta',
-      KeepShowingLabel: 'Seguir manteniendo la etiqueta',
       NoTracker: 'Sin seguimiento',
       HorizontalSingleAxisTracker: 'Seguidor horizontal de eje único',
       VerticalSingleAxisTracker: 'Seguidor vertical de eje único',

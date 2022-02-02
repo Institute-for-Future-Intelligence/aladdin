@@ -63,6 +63,7 @@ import { HumanData } from '../HumanData';
 import { SolarPanelArrayLayoutParams } from './SolarPanelArrayLayoutParams';
 import { DefaultSolarPanelArrayLayoutParams } from './DefaultSolarPanelArrayLayoutParams';
 import { Vantage } from '../analysis/Vantage';
+import { SolarCollector } from '../models/SolarCollector';
 
 enableMapSet();
 
@@ -192,6 +193,11 @@ export interface CommonStoreState {
   updateElementLzAboveFoundation: (type: ObjectType, foundationId: string, lz: number) => void;
   updateElementLzForAll: (type: ObjectType, lz: number) => void;
 
+  // for all types of solar collectors
+  updateSolarCollectorDrawSunBeamById: (id: string, drawSunBeam: boolean) => void;
+  updateSolarCollectorDailyYieldById: (id: string, dailyYield: number) => void;
+  updateSolarCollectorYearlyYieldById: (id: string, yearlyYield: number) => void;
+
   // for foundations
   foundationActionScope: Scope;
   setFoundationActionScope: (scope: Scope) => void;
@@ -230,8 +236,6 @@ export interface CommonStoreState {
   // for solar panels
   solarPanelActionScope: Scope;
   setSolarPanelActionScope: (scope: Scope) => void;
-  updateSolarPanelDailyYieldById: (id: string, dailyYield: number) => void;
-  updateSolarPanelYearlyYieldById: (id: string, yearlyYield: number) => void;
 
   updateSolarPanelModelById: (id: string, pvModelName: string) => void;
   updateSolarPanelModelOnSurface: (parentId: string, normal: number[] | undefined, pvModelName: string) => void;
@@ -289,8 +293,6 @@ export interface CommonStoreState {
   updateSolarPanelPoleSpacingOnSurface: (parentId: string, normal: number[] | undefined, poleSpacing: number) => void;
   updateSolarPanelPoleSpacingAboveFoundation: (foundationId: string, poleSpacing: number) => void;
   updateSolarPanelPoleSpacingForAll: (poleSpacing: number) => void;
-
-  updateSolarPanelDrawSunBeamById: (id: string, drawSunBeam: boolean) => void;
 
   // for walls
   wallActionScope: Scope;
@@ -1240,6 +1242,18 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          // for solar collectors
+          updateSolarCollectorDrawSunBeamById(id, drawSunBeam) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && Util.isSolarCollector(e)) {
+                  (e as SolarCollector).drawSunBeam = drawSunBeam;
+                  break;
+                }
+              }
+            });
+          },
+
           // for foundations
           foundationActionScope: Scope.OnlyThisObject,
           setFoundationActionScope(scope) {
@@ -1567,7 +1581,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          updateSolarPanelDailyYieldById(id, dailyYield) {
+          updateSolarCollectorDailyYieldById(id, dailyYield) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
@@ -1578,7 +1592,7 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          updateSolarPanelYearlyYieldById(id, yearlyYield) {
+          updateSolarCollectorYearlyYieldById(id, yearlyYield) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.id === id) {
@@ -2092,17 +2106,6 @@ export const useStore = create<CommonStoreState>(
                 if (e.type === ObjectType.SolarPanel && !e.locked) {
                   const sp = e as SolarPanelModel;
                   sp.poleSpacing = poleSpacing;
-                }
-              }
-            });
-          },
-
-          updateSolarPanelDrawSunBeamById(id, drawSunBeam) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id) {
-                  (e as SolarPanelModel).drawSunBeam = drawSunBeam;
-                  break;
                 }
               }
             });

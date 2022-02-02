@@ -393,7 +393,7 @@ const SolarPanelRelativeAzimuthInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('solarPanelMenu.RelativeAzimuth', lang)}
+            {i18n.t('solarCollectorMenu.RelativeAzimuth', lang)}
             <label style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +
