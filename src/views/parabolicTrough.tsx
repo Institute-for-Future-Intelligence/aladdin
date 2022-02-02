@@ -50,6 +50,7 @@ const ParabolicTrough = ({
   lx,
   ly,
   lz = 0.1,
+  semiLatusRectum = 1,
   tiltAngle,
   relativeAzimuth,
   moduleLength,
@@ -133,6 +134,7 @@ const ParabolicTrough = ({
   const positionLR = new Vector3(hx, -hy, hz);
   const positionUR = new Vector3(hx, hy, hz);
   const trough = getElementById(id) as ParabolicTroughModel;
+  const depth = semiLatusRectum * 0.125 * ly * ly;
 
   useEffect(() => {
     if (trough && showSolarRadiationHeatmap) {
@@ -149,8 +151,8 @@ const ParabolicTrough = ({
     const dx = lx / numberOfModules;
     for (let i = 1; i < numberOfModules; i++) {
       moduleLinesRef.current.push({
-        point1: new Vector3(-lx / 2 + i * dx, -ly / 2, lz),
-        point2: new Vector3(-lx / 2 + i * dx, ly / 2, lz),
+        point1: new Vector3(-ly / 2, -lx / 2 + i * dx, depth),
+        point2: new Vector3(ly / 2, -lx / 2 + i * dx, depth),
       } as LineData);
     }
   }, [lx, ly]);
@@ -265,20 +267,24 @@ const ParabolicTrough = ({
       : v;
   }, [drawSunBeam, normal, euler, relativeEuler]);
 
-  const poles: Vector3[] = [];
   const poleZ = -poleHeight / 2 - lz / 2;
-  const poleNx = Math.floor((0.5 * ly) / poleSpacing);
-  const poleNy = Math.floor((0.5 * lx * Math.abs(Math.cos(tiltAngle))) / poleSpacing);
-  const sinTilt = 0.5 * Math.sin(tiltAngle);
-  const cosAz = Math.cos(relativeAzimuth) * poleSpacing;
-  const sinAz = Math.sin(relativeAzimuth) * poleSpacing;
-  for (let ix = -poleNx; ix <= poleNx; ix++) {
-    for (let iy = -poleNy; iy <= poleNy; iy++) {
-      const xi = ix * cosAz - iy * sinAz;
-      const yi = ix * sinAz + iy * cosAz;
-      poles.push(new Vector3(xi, yi, poleZ + sinTilt * poleSpacing * iy));
+
+  const poles = useMemo<Vector3[]>(() => {
+    const poleArray: Vector3[] = [];
+    const poleNx = Math.floor((0.5 * ly) / poleSpacing);
+    const poleNy = Math.floor((0.5 * lx * Math.abs(Math.cos(tiltAngle))) / poleSpacing);
+    const sinTilt = 0.5 * Math.sin(tiltAngle);
+    const cosAz = Math.cos(relativeAzimuth) * poleSpacing;
+    const sinAz = Math.sin(relativeAzimuth) * poleSpacing;
+    for (let ix = -poleNx; ix <= poleNx; ix++) {
+      for (let iy = -poleNy; iy <= poleNy; iy++) {
+        const xi = ix * cosAz - iy * sinAz;
+        const yi = ix * sinAz + iy * cosAz;
+        poleArray.push(new Vector3(xi, yi, poleZ + sinTilt * poleSpacing * iy));
+      }
     }
-  }
+    return poleArray;
+  }, [poleSpacing, poleZ, relativeAzimuth, tiltAngle, lx, ly]);
 
   const baseSize = Math.max(1, (lx + ly) / 16);
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
@@ -294,7 +300,7 @@ const ParabolicTrough = ({
           castShadow={shadowEnabled}
           uuid={id}
           ref={frontSideRef}
-          args={[1, ly, lx, 16, 4]}
+          args={[semiLatusRectum, ly, lx, 16, 4]}
           name={'Parabolic Trough Front Side'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
@@ -338,7 +344,7 @@ const ParabolicTrough = ({
           castShadow={shadowEnabled}
           uuid={id + ' backside'}
           ref={backSideRef}
-          args={[1, ly, lx, 16, 4]}
+          args={[semiLatusRectum, ly, lx, 16, 4]}
           name={'Parabolic Trough Back Side'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
@@ -372,9 +378,7 @@ const ParabolicTrough = ({
           <meshStandardMaterial attach="material" side={BackSide} color={'white'} />
         </ParabolicCylinder>
 
-        {showSolarRadiationHeatmap &&
-          heatmapTexture &&
-          moduleLinesRef.current &&
+        {moduleLinesRef.current &&
           moduleLinesRef.current.map((lineData, index) => {
             return (
               <Line
@@ -390,11 +394,24 @@ const ParabolicTrough = ({
             );
           })}
 
+        {/* absorber tube: must be along the focal line */}
+        <Cylinder
+          name={'Parabolic Trough Absorber Tube'}
+          uuid={id}
+          args={[poleRadius, poleRadius, lx, 6, 2]}
+          position={[0, 0, 0.5 * semiLatusRectum]}
+          receiveShadow={false}
+          castShadow={true}
+        >
+          <meshBasicMaterial color={'white'} />
+        </Cylinder>
+
         {/* simulation panel */}
         <Plane
           name={'Parabolic Trough Simulation Plane'}
           uuid={id}
           args={[ly, lx]}
+          position={[0, 0, depth]}
           userData={{ simulation: true }}
           receiveShadow={false}
           castShadow={false}

@@ -367,20 +367,24 @@ const SolarPanel = ({
       : v;
   }, [drawSunBeam, normal, euler, relativeEuler]);
 
-  const poles: Vector3[] = [];
   const poleZ = -poleHeight / 2 - lz / 2;
-  const poleNx = Math.floor((0.5 * lx) / poleSpacing);
-  const poleNy = Math.floor((0.5 * ly * Math.abs(Math.cos(tiltAngle))) / poleSpacing);
-  const sinTilt = 0.5 * Math.sin(tiltAngle);
-  const cosAz = Math.cos(relativeAzimuth) * poleSpacing;
-  const sinAz = Math.sin(relativeAzimuth) * poleSpacing;
-  for (let ix = -poleNx; ix <= poleNx; ix++) {
-    for (let iy = -poleNy; iy <= poleNy; iy++) {
-      const xi = ix * cosAz - iy * sinAz;
-      const yi = ix * sinAz + iy * cosAz;
-      poles.push(new Vector3(xi, yi, poleZ + sinTilt * poleSpacing * iy));
+
+  const poles = useMemo<Vector3[]>(() => {
+    const poleArray: Vector3[] = [];
+    const poleNx = Math.floor((0.5 * lx) / poleSpacing);
+    const poleNy = Math.floor((0.5 * ly * Math.abs(Math.cos(tiltAngle))) / poleSpacing);
+    const sinTilt = 0.5 * Math.sin(tiltAngle);
+    const cosAz = Math.cos(relativeAzimuth) * poleSpacing;
+    const sinAz = Math.sin(relativeAzimuth) * poleSpacing;
+    for (let ix = -poleNx; ix <= poleNx; ix++) {
+      for (let iy = -poleNy; iy <= poleNy; iy++) {
+        const xi = ix * cosAz - iy * sinAz;
+        const yi = ix * sinAz + iy * cosAz;
+        poleArray.push(new Vector3(xi, yi, poleZ + sinTilt * poleSpacing * iy));
+      }
     }
-  }
+    return poleArray;
+  }, [relativeAzimuth, tiltAngle, poleSpacing, lx, ly, poleZ]);
 
   const baseSize = Math.max(1, (lx + ly) / 16);
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
