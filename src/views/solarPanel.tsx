@@ -206,18 +206,16 @@ const SolarPanel = ({
       const dy = ly / my;
       for (let i = 1; i < mx; i++) {
         solarPanelLinesRef.current.push({
-          point1: new Vector3(-lx / 2 + i * dx, -ly / 2, lz),
-          point2: new Vector3(-lx / 2 + i * dx, ly / 2, lz),
+          points: [new Vector3(-lx / 2 + i * dx, -ly / 2, lz), new Vector3(-lx / 2 + i * dx, ly / 2, lz)],
         } as LineData);
       }
       for (let i = 1; i < my; i++) {
         solarPanelLinesRef.current.push({
-          point1: new Vector3(-lx / 2, -ly / 2 + i * dy, lz),
-          point2: new Vector3(lx / 2, -ly / 2 + i * dy, lz),
+          points: [new Vector3(-lx / 2, -ly / 2 + i * dy, lz), new Vector3(lx / 2, -ly / 2 + i * dy, lz)],
         } as LineData);
       }
     }
-  }, [orientation, pvModelName, lx, ly]);
+  }, [orientation, pvModelName, lx, ly, lz]);
 
   useEffect(() => {
     const handlePointerUp = () => {
@@ -456,7 +454,7 @@ const SolarPanel = ({
                 name={'Solar Panel Lines'}
                 key={index}
                 userData={{ unintersectable: true }}
-                points={[lineData.point1, lineData.point2]}
+                points={lineData.points}
                 castShadow={false}
                 receiveShadow={false}
                 lineWidth={0.2}

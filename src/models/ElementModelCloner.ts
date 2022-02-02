@@ -291,7 +291,6 @@ export class ElementModelCloner {
       relativeAzimuth: trough.relativeAzimuth,
       poleRadius: trough.poleRadius,
       poleHeight: trough.poleHeight,
-      poleSpacing: trough.poleSpacing,
       showLabel: trough.showLabel,
       normal: [...trough.normal],
       rotation: trough.parentId ? [...parent.rotation] : [0, 0, 0],

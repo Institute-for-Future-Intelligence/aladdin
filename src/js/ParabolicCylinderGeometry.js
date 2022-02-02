@@ -115,4 +115,4 @@ class ParabolicCylinderGeometry extends BufferGeometry {
 
 }
 
-export { ParabolicCylinderGeometry, ParabolicCylinderGeometry as CylinderBufferGeometry };
+export { ParabolicCylinderGeometry, ParabolicCylinderGeometry as ParabolicCylinderBufferGeometry };

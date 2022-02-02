@@ -4,17 +4,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Cone, Cylinder, Line, Plane, Sphere } from '@react-three/drei';
-import {
-  BackSide,
-  CanvasTexture,
-  DoubleSide,
-  Euler,
-  FrontSide,
-  Mesh,
-  RepeatWrapping,
-  TextureLoader,
-  Vector3,
-} from 'three';
+import { BackSide, CanvasTexture, Color, DoubleSide, Euler, FrontSide, Mesh, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -56,13 +46,12 @@ const ParabolicTrough = ({
   moduleLength,
   poleHeight,
   poleRadius,
-  poleSpacing,
   drawSunBeam,
   rotation = [0, 0, 0],
   normal = [0, 0, 1],
   color = 'white',
   lineColor = 'black',
-  lineWidth = 0.1,
+  lineWidth = 0.5,
   selected = false,
   showLabel = false,
   locked = false,
@@ -90,7 +79,6 @@ const ParabolicTrough = ({
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [numberOfModules, setNumberOfModules] = useState(1);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
-  const [updateFlag, setUpdateFlag] = useState(false);
   const frontSideRef = useRef<Mesh>();
   const backSideRef = useRef<Mesh>();
   const moveHandleRef = useRef<Mesh>();
@@ -99,11 +87,11 @@ const ParabolicTrough = ({
   const resizeHandleLeftRef = useRef<Mesh>();
   const resizeHandleRightRef = useRef<Mesh>();
   const pointerDown = useRef<boolean>(false);
-  const moduleLinesRef = useRef<LineData[]>();
 
   const sunBeamLength = Math.max(100, 5 * sceneRadius);
   const troughNormal = new Vector3().fromArray(normal);
   const lang = { lng: language };
+  const parabolaSegments = 16;
 
   if (parentId) {
     const p = getElementById(parentId);
@@ -147,15 +135,7 @@ const ParabolicTrough = ({
 
   useEffect(() => {
     setNumberOfModules(Math.max(1, Math.round(lx / moduleLength)));
-    moduleLinesRef.current = [];
-    const dx = lx / numberOfModules;
-    for (let i = 1; i < numberOfModules; i++) {
-      moduleLinesRef.current.push({
-        point1: new Vector3(-ly / 2, -lx / 2 + i * dx, depth),
-        point2: new Vector3(ly / 2, -lx / 2 + i * dx, depth),
-      } as LineData);
-    }
-  }, [lx, ly]);
+  }, [lx]);
 
   useEffect(() => {
     const handlePointerUp = () => {
@@ -186,15 +166,6 @@ const ParabolicTrough = ({
           i18n.t('word.MeterAbbreviation', lang))
     );
   }, [trough?.label, locked, language, cx, cy, cz]);
-
-  const texture = useMemo(() => {
-    return new TextureLoader().load(ParabolicTroughMirrorImage, (t) => {
-      t.wrapS = t.wrapT = RepeatWrapping;
-      t.offset.set(0, 0);
-      t.repeat.set(1, 1);
-      setUpdateFlag(!updateFlag);
-    });
-  }, []);
 
   const euler = useMemo(() => {
     // east face in model coordinate system
@@ -270,21 +241,31 @@ const ParabolicTrough = ({
   const poleZ = -poleHeight / 2 - lz / 2;
 
   const poles = useMemo<Vector3[]>(() => {
-    const poleArray: Vector3[] = [];
-    const poleNx = Math.floor((0.5 * ly) / poleSpacing);
-    const poleNy = Math.floor((0.5 * lx * Math.abs(Math.cos(tiltAngle))) / poleSpacing);
-    const sinTilt = 0.5 * Math.sin(tiltAngle);
-    const cosAz = Math.cos(relativeAzimuth) * poleSpacing;
-    const sinAz = Math.sin(relativeAzimuth) * poleSpacing;
-    for (let ix = -poleNx; ix <= poleNx; ix++) {
-      for (let iy = -poleNy; iy <= poleNy; iy++) {
-        const xi = ix * cosAz - iy * sinAz;
-        const yi = ix * sinAz + iy * cosAz;
-        poleArray.push(new Vector3(xi, yi, poleZ + sinTilt * poleSpacing * iy));
-      }
+    const array: Vector3[] = [];
+    const cosAz = Math.cos(relativeAzimuth) * moduleLength;
+    const sinAz = Math.sin(relativeAzimuth) * moduleLength;
+    const i2 = numberOfModules / 2 - 0.5;
+    for (let i = 0; i < numberOfModules; i++) {
+      array.push(new Vector3(-(i - i2) * sinAz, (i - i2) * cosAz, poleZ));
     }
-    return poleArray;
-  }, [poleSpacing, poleZ, relativeAzimuth, tiltAngle, lx, ly]);
+    return array;
+  }, [numberOfModules, moduleLength, poleZ, relativeAzimuth]);
+
+  const moduleLines = useMemo<LineData[]>(() => {
+    const array: LineData[] = [];
+    const dx = lx / numberOfModules;
+    const t0 = -0.5 * ly;
+    const dt = ly / parabolaSegments;
+    for (let i = 0; i <= numberOfModules; i++) {
+      const line: Vector3[] = [];
+      for (let j = 0; j <= parabolaSegments; j++) {
+        const t = t0 + j * dt;
+        line.push(new Vector3(semiLatusRectum * t, -lx / 2 + i * dx, (semiLatusRectum * t * t) / 2));
+      }
+      array.push({ points: line } as LineData);
+    }
+    return array;
+  }, [lx, ly, numberOfModules]);
 
   const baseSize = Math.max(1, (lx + ly) / 16);
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
@@ -300,7 +281,7 @@ const ParabolicTrough = ({
           castShadow={shadowEnabled}
           uuid={id}
           ref={frontSideRef}
-          args={[semiLatusRectum, ly, lx, 16, 4]}
+          args={[semiLatusRectum, ly, lx, parabolaSegments, 4]}
           name={'Parabolic Trough Front Side'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
@@ -331,11 +312,17 @@ const ParabolicTrough = ({
             domElement.style.cursor = 'default';
           }}
         >
-          <meshStandardMaterial
-            attach="material"
-            side={FrontSide}
-            map={showSolarRadiationHeatmap && heatmapTexture ? heatmapTexture : texture}
-          />
+          {showSolarRadiationHeatmap && heatmapTexture ? (
+            <meshStandardMaterial attach="material" side={FrontSide} map={heatmapTexture} />
+          ) : (
+            <meshPhongMaterial
+              attach="material"
+              specular={new Color('white')}
+              shininess={10}
+              side={FrontSide}
+              color={'skyblue'}
+            />
+          )}
         </ParabolicCylinder>
 
         {/* draw back side parabolic cylinder */}
@@ -344,7 +331,7 @@ const ParabolicTrough = ({
           castShadow={shadowEnabled}
           uuid={id + ' backside'}
           ref={backSideRef}
-          args={[semiLatusRectum, ly, lx, 16, 4]}
+          args={[semiLatusRectum, ly, lx, parabolaSegments, 4]}
           name={'Parabolic Trough Back Side'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
@@ -378,23 +365,60 @@ const ParabolicTrough = ({
           <meshStandardMaterial attach="material" side={BackSide} color={'white'} />
         </ParabolicCylinder>
 
-        {moduleLinesRef.current &&
-          moduleLinesRef.current.map((lineData, index) => {
+        {moduleLines &&
+          moduleLines.map((lineData, index) => {
             return (
-              <Line
-                name={'Parabolic Trough Lines'}
-                key={index}
-                userData={{ unintersectable: true }}
-                points={[lineData.point1, lineData.point2]}
-                castShadow={false}
-                receiveShadow={false}
-                lineWidth={0.2}
-                color={'black'}
-              />
+              <React.Fragment key={index}>
+                <Line
+                  name={'Parabolic Trough Rim Lines'}
+                  userData={{ unintersectable: true }}
+                  points={lineData.points}
+                  castShadow={false}
+                  receiveShadow={false}
+                  lineWidth={lineWidth}
+                  color={lineColor}
+                />
+                <Line
+                  name={'Parabolic Trough Focal Liines'}
+                  userData={{ unintersectable: true }}
+                  points={[
+                    lineData.points[parabolaSegments / 2].clone(),
+                    lineData.points[parabolaSegments / 2].clone().add(new Vector3(0, 0, 0.5 * semiLatusRectum)),
+                  ]}
+                  castShadow={false}
+                  receiveShadow={false}
+                  lineWidth={1}
+                  color={'white'}
+                />
+              </React.Fragment>
             );
           })}
+        <Line
+          name={'Parabolic Trough Outline 1'}
+          userData={{ unintersectable: true }}
+          points={[
+            [-ly / 2, -lx / 2, depth],
+            [-ly / 2, lx / 2, depth],
+          ]}
+          castShadow={false}
+          receiveShadow={false}
+          lineWidth={lineWidth}
+          color={lineColor}
+        />
+        <Line
+          name={'Parabolic Trough Outline 2'}
+          userData={{ unintersectable: true }}
+          points={[
+            [ly / 2, -lx / 2, depth],
+            [ly / 2, lx / 2, depth],
+          ]}
+          castShadow={false}
+          receiveShadow={false}
+          lineWidth={lineWidth}
+          color={lineColor}
+        />
 
-        {/* absorber tube: must be along the focal line */}
+        {/* absorber tube along the focal line */}
         <Cylinder
           name={'Parabolic Trough Absorber Tube'}
           uuid={id}
