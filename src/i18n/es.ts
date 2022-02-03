@@ -35,6 +35,8 @@ export const i18n_es = {
       MeterAbbreviation: 'm',
       Version: 'Versión',
       Options: 'Opciones',
+      Maximum: 'Maximum',
+      Minimum: 'Minimum',
       MaximumNumber: 'Número máximo',
       MinimumNumber: 'Minimum Number',
       MaximumValue: 'Maximum Value',

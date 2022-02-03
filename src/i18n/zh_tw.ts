@@ -35,6 +35,8 @@ export const i18n_zh_tw = {
       MeterAbbreviation: '米',
       Version: '版本',
       Options: '選項',
+      Maximum: '最大',
+      Minimum: '最小',
       MaximumNumber: '最多',
       MinimumNumber: '最少',
       MaximumValue: '最大值',

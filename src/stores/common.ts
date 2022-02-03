@@ -306,6 +306,13 @@ export interface CommonStoreState {
   // for parabolic troughs
   parabolicTroughActionScope: Scope;
   setParabolicTroughActionScope: (scope: Scope) => void;
+
+  // for parabolic troughs and Fresnel reflectors
+  updateModuleLengthById: (id: string, moduleLength: number) => void;
+  updateModuleLengthAboveFoundation: (type: ObjectType, foundationId: string, moduleLength: number) => void;
+  updateModuleLengthForAll: (type: ObjectType, moduleLength: number) => void;
+
+  // for parabolic troughs and dishes
   updateParabolaLatusRectumById: (id: string, latusRectum: number) => void;
   updateParabolaLatusRectumAboveFoundation: (type: ObjectType, foundationId: string, latusRectum: number) => void;
   updateParabolaLatusRectumForAll: (type: ObjectType, latusRectum: number) => void;
@@ -2129,7 +2136,45 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          // for both parabolic troughs and dishes
+          // for parabolic troughs and Fresnel reflectors
+          updateModuleLengthById(id, moduleLength) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && !e.locked) {
+                  if (e.type === ObjectType.ParabolicTrough) {
+                    (e as ParabolicTroughModel).moduleLength = moduleLength;
+                    break;
+                  }
+                }
+              }
+            });
+          },
+          updateModuleLengthAboveFoundation(type, foundationId, moduleLength) {
+            if (!Util.isParabolicTroughOrFresnelReflector(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.foundationId === foundationId && !e.locked) {
+                  if (e.type === ObjectType.ParabolicTrough) {
+                    (e as ParabolicTroughModel).moduleLength = moduleLength;
+                  }
+                }
+              }
+            });
+          },
+          updateModuleLengthForAll(type, moduleLength) {
+            if (!Util.isParabolicTroughOrFresnelReflector(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (!e.locked) {
+                  if (e.type === ObjectType.ParabolicTrough) {
+                    (e as ParabolicTroughModel).moduleLength = moduleLength;
+                  }
+                }
+              }
+            });
+          },
+
+          // for parabolic troughs and dishes
           updateParabolaLatusRectumById(id, latusRectum) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {

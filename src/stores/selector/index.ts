@@ -357,6 +357,12 @@ export const updateParabolaLatusRectumAboveFoundation = (state: CommonStoreState
 
 export const updateParabolaLatusRectumForAll = (state: CommonStoreState) => state.updateParabolaLatusRectumForAll;
 
+export const updateModuleLengthById = (state: CommonStoreState) => state.updateModuleLengthById;
+
+export const updateModuleLengthAboveFoundation = (state: CommonStoreState) => state.updateModuleLengthAboveFoundation;
+
+export const updateModuleLengthForAll = (state: CommonStoreState) => state.updateModuleLengthForAll;
+
 export const updateTreeTypeById = (state: CommonStoreState) => state.updateTreeTypeById;
 
 export const updateTreeShowModelById = (state: CommonStoreState) => state.updateTreeShowModelById;

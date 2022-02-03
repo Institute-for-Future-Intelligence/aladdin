@@ -263,7 +263,7 @@ const ParabolicTroughWidthInput = ({
   return (
     <>
       <Modal
-        width={550}
+        width={600}
         visible={dialogVisible}
         title={
           <div
@@ -321,7 +321,9 @@ const ParabolicTroughWidthInput = ({
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.MaximumNumber', lang)}: 10 {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.MinimumValue', lang)}: 1 {i18n.t('word.MeterAbbreviation', lang)}
+              <br />
+              {i18n.t('word.MaximumValue', lang)}: 10 {i18n.t('word.MeterAbbreviation', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
@@ -330,7 +332,7 @@ const ParabolicTroughWidthInput = ({
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            span={17}
           >
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">

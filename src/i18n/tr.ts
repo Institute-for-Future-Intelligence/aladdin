@@ -36,6 +36,8 @@ export const i18n_tr = {
       MeterAbbreviation: 'm',
       Version: 'Sürüm',
       Options: 'Seçenekler',
+      Maximum: 'Maximum',
+      Minimum: 'Minimum',
       MaximumNumber: 'Maksimum Sayý',
       MinimumNumber: 'Minimum Number',
       MaximumValue: 'Maximum Value',

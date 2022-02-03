@@ -131,7 +131,7 @@ const ParabolicTrough = ({
 
   useEffect(() => {
     setNumberOfModules(Math.max(1, Math.round(lx / moduleLength)));
-  }, [lx]);
+  }, [lx, moduleLength]);
 
   useEffect(() => {
     const handlePointerUp = () => {
@@ -466,7 +466,7 @@ const ParabolicTrough = ({
             <group>
               <Box
                 ref={resizeHandleLowerRef}
-                position={[(positionLL.x + positionLR.x) / 2, positionLL.y, positionLL.z]}
+                position={[(positionLL.x + positionLR.x) / 2, positionLL.y, positionLL.z - depth]}
                 args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                 name={ResizeHandleType.Lower}
                 onPointerDown={(e) => {
@@ -496,7 +496,7 @@ const ParabolicTrough = ({
               </Box>
               <Box
                 ref={resizeHandleUpperRef}
-                position={[(positionUL.x + positionUR.x) / 2, positionUL.y, positionUL.z]}
+                position={[(positionUL.x + positionUR.x) / 2, positionUL.y, positionUL.z - depth]}
                 args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                 name={ResizeHandleType.Upper}
                 onPointerDown={(e) => {
@@ -595,7 +595,7 @@ const ParabolicTrough = ({
           {/* rotate handles */}
           <RotateHandle
             id={id}
-            position={[0, -ly / 2 - rotateHandleSize / 2, actualPoleHeight]}
+            position={[0, -lx / 2 - rotateHandleSize / 2, actualPoleHeight]}
             color={
               hoveredHandle === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Upper
                 ? HIGHLIGHT_HANDLE_COLOR
@@ -608,7 +608,7 @@ const ParabolicTrough = ({
           />
           <RotateHandle
             id={id}
-            position={[0, ly / 2 + rotateHandleSize / 2, actualPoleHeight]}
+            position={[0, lx / 2 + rotateHandleSize / 2, actualPoleHeight]}
             color={
               hoveredHandle === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Lower
                 ? HIGHLIGHT_HANDLE_COLOR
@@ -641,7 +641,7 @@ const ParabolicTrough = ({
           );
         })}
 
-      {/*draw sun beam*/}
+      {/* draw sun beam */}
       {drawSunBeam && sunDirection.z > 0 && (
         <group rotation={[-euler.x, 0, -euler.z]}>
           <Line
@@ -694,7 +694,7 @@ const ParabolicTrough = ({
         </group>
       )}
 
-      {/*draw label */}
+      {/* draw label */}
       {(hovered || showLabel) && !selected && (
         <textSprite
           userData={{ unintersectable: true }}
