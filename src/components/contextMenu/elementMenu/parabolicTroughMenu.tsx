@@ -11,10 +11,10 @@ import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
-import SolarPanelWidthInput from './solarPanelWidthInput';
-import SolarPanelRelativeAzimuthInput from './solarPanelRelativeAzimuthInput';
-import SolarPanelPoleHeightInput from './solarPanelPoleHeightInput';
 import ParabolicTroughLengthInput from './ParabolicTroughLengthInput';
+import ParabolicTroughWidthInput from './ParabolicTroughWidthInput';
+import ParabolicTroughPoleHeightInput from './ParabolicTroughPoleHeightInput';
+import ParabolicTroughRelativeAzimuthInput from './parabolicTroughRelativeAzimuthInput';
 
 export const ParabolicTroughMenu = () => {
   const language = useStore(Selector.language);
@@ -28,6 +28,7 @@ export const ParabolicTroughMenu = () => {
   const [labelText, setLabelText] = useState<string>('');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [moduleLengthDialogVisible, setModuleLengthDialogVisible] = useState(false);
+  const [latusRectumDialogVisible, setLatusRectumDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
@@ -124,7 +125,7 @@ export const ParabolicTroughMenu = () => {
           </Menu.Item>
 
           {/* trough width */}
-          <SolarPanelWidthInput dialogVisible={widthDialogVisible} setDialogVisible={setWidthDialogVisible} />
+          <ParabolicTroughWidthInput dialogVisible={widthDialogVisible} setDialogVisible={setWidthDialogVisible} />
           <Menu.Item
             key={'parabolic-trough-width'}
             style={{ paddingLeft: '36px' }}
@@ -137,7 +138,7 @@ export const ParabolicTroughMenu = () => {
           </Menu.Item>
 
           {/* relative azimuth to the parent element */}
-          <SolarPanelRelativeAzimuthInput
+          <ParabolicTroughRelativeAzimuthInput
             dialogVisible={azimuthDialogVisible}
             setDialogVisible={setAzimuthDialogVisible}
           />
@@ -153,7 +154,7 @@ export const ParabolicTroughMenu = () => {
           </Menu.Item>
 
           {/* pole height */}
-          <SolarPanelPoleHeightInput
+          <ParabolicTroughPoleHeightInput
             dialogVisible={poleHeightDialogVisible}
             setDialogVisible={setPoleHeightDialogVisible}
           />

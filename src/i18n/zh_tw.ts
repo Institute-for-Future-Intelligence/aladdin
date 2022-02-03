@@ -453,6 +453,16 @@ export const i18n_zh_tw = {
       TemperatureCoefficientOfPmax: 'Pmax溫度係數',
     },
 
+    parabolicTroughMenu: {
+      ModuleLength: '模塊長度',
+      Modules: '模塊',
+      ModulesLong: '模塊長',
+      LatusRectum: '通徑',
+      OnlyThisParabolicTrough: '只這個拋物線槽',
+      AllParabolicTroughsAboveFoundation: '同一地基上所有的拋物線槽',
+      AllParabolicTroughs: '所有的拋物線槽',
+    },
+
     wallMenu: {
       TextureDefault: '默認材質',
       Texture01: '一號材質',

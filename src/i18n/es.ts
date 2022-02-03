@@ -448,6 +448,33 @@ export const i18n_es = {
       AllSolarPanels: 'Todos los paneles solares',
     },
 
+    pvModelPanel: {
+      SolarPanelSpecs: 'Especificaciones del panel solar',
+      Model: 'Modelo',
+      PanelSize: 'Tamaño del panel',
+      Cells: 'Celdas',
+      CellType: 'Tipo de celda',
+      Monocrystalline: 'Monocristalino',
+      Polycrystalline: 'Policristalino',
+      ThinFilm: 'Película delgada',
+      Black: 'Negro',
+      Blue: 'Azul',
+      ShadeTolerance: 'Tolerancia a la sombra',
+      SolarCellEfficiency: 'Eficiencia de la célula solar',
+      NominalOperatingCellTemperature: 'Temperatura nominal de la celda de funcionamiento',
+      TemperatureCoefficientOfPmax: 'Coeficiente de temperatura de Pmax',
+    },
+
+    parabolicTroughMenu: {
+      ModuleLength: 'Module Length',
+      Modules: 'modules',
+      ModulesLong: 'modules long',
+      LatusRectum: 'Latus Rectum',
+      OnlyThisParabolicTrough: 'Only This Parabolic Trough',
+      AllParabolicTroughsAboveFoundation: 'All Parabolic Troughs Above the Same Foundation',
+      AllParabolicTroughs: 'All Parabolic Troughs',
+    },
+
     wallMenu: {
       TextureDefault: 'Por defecto',
       Texture01: 'Textura 1',
@@ -467,23 +494,6 @@ export const i18n_es = {
     },
 
     windowMenu: {},
-
-    pvModelPanel: {
-      SolarPanelSpecs: 'Especificaciones del panel solar',
-      Model: 'Modelo',
-      PanelSize: 'Tamaño del panel',
-      Cells: 'Celdas',
-      CellType: 'Tipo de celda',
-      Monocrystalline: 'Monocristalino',
-      Polycrystalline: 'Policristalino',
-      ThinFilm: 'Película delgada',
-      Black: 'Negro',
-      Blue: 'Azul',
-      ShadeTolerance: 'Tolerancia a la sombra',
-      SolarCellEfficiency: 'Eficiencia de la célula solar',
-      NominalOperatingCellTemperature: 'Temperatura nominal de la celda de funcionamiento',
-      TemperatureCoefficientOfPmax: 'Coeficiente de temperatura de Pmax',
-    },
 
     siteInfoPanel: {
       High: 'Alto',

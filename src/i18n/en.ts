@@ -417,7 +417,7 @@ export const i18n_en = {
       ViewFromThisPerson: 'View from This Person',
     },
 
-    sensorMenu: {
+    solarCollectorMenu: {
       RelativeAzimuth: 'Relative Azimuth',
       PoleHeight: 'Pole Height',
       DrawSunBeam: 'Draw Sun Beam',
@@ -448,6 +448,33 @@ export const i18n_en = {
       AllSolarPanels: 'All Solar Panels',
     },
 
+    pvModelPanel: {
+      SolarPanelSpecs: 'Solar Panel Specs',
+      Model: 'Model',
+      PanelSize: 'Panel Size',
+      Cells: 'Cells',
+      CellType: 'Cell Type',
+      Monocrystalline: 'Monocrystalline',
+      Polycrystalline: 'Polycrystalline',
+      ThinFilm: 'Thin Film',
+      Black: 'Black',
+      Blue: 'Blue',
+      ShadeTolerance: 'Shade Tolerance',
+      SolarCellEfficiency: 'Solar Cell Efficiency',
+      NominalOperatingCellTemperature: 'Nominal Operating Cell Temperature',
+      TemperatureCoefficientOfPmax: 'Temperature Coefficient of Pmax',
+    },
+
+    parabolicTroughMenu: {
+      ModuleLength: 'Module Length',
+      Modules: 'modules',
+      ModulesLong: 'modules long',
+      LatusRectum: 'Latus Rectum',
+      OnlyThisParabolicTrough: 'Only This Parabolic Trough',
+      AllParabolicTroughsAboveFoundation: 'All Parabolic Troughs Above the Same Foundation',
+      AllParabolicTroughs: 'All Parabolic Troughs',
+    },
+
     wallMenu: {
       TextureDefault: 'Default',
       Texture01: 'Texture 1',
@@ -467,23 +494,6 @@ export const i18n_en = {
     },
 
     windowMenu: {},
-
-    pvModelPanel: {
-      SolarPanelSpecs: 'Solar Panel Specs',
-      Model: 'Model',
-      PanelSize: 'Panel Size',
-      Cells: 'Cells',
-      CellType: 'Cell Type',
-      Monocrystalline: 'Monocrystalline',
-      Polycrystalline: 'Polycrystalline',
-      ThinFilm: 'Thin Film',
-      Black: 'Black',
-      Blue: 'Blue',
-      ShadeTolerance: 'Shade Tolerance',
-      SolarCellEfficiency: 'Solar Cell Efficiency',
-      NominalOperatingCellTemperature: 'Nominal Operating Cell Temperature',
-      TemperatureCoefficientOfPmax: 'Temperature Coefficient of Pmax',
-    },
 
     siteInfoPanel: {
       High: 'High',

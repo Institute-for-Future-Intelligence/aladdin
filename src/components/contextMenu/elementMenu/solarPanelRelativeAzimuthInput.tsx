@@ -24,12 +24,10 @@ const SolarPanelRelativeAzimuthInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateSolarPanelRelativeAzimuthById = useStore(Selector.updateSolarPanelRelativeAzimuthById);
-  const updateSolarPanelRelativeAzimuthOnSurface = useStore(Selector.updateSolarPanelRelativeAzimuthOnSurface);
-  const updateSolarPanelRelativeAzimuthAboveFoundation = useStore(
-    Selector.updateSolarPanelRelativeAzimuthAboveFoundation,
-  );
-  const updateSolarPanelRelativeAzimuthForAll = useStore(Selector.updateSolarPanelRelativeAzimuthForAll);
+  const updateRelativeAzimuthById = useStore(Selector.updateSolarCollectorRelativeAzimuthById);
+  const updateRelativeAzimuthOnSurface = useStore(Selector.updateSolarCollectorRelativeAzimuthOnSurface);
+  const updateRelativeAzimuthAboveFoundation = useStore(Selector.updateSolarCollectorRelativeAzimuthAboveFoundation);
+  const updateRelativeAzimuthForAll = useStore(Selector.updateSolarCollectorRelativeAzimuthForAll);
   const getParent = useStore(Selector.getParent);
   const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -179,15 +177,15 @@ const SolarPanelRelativeAzimuthInput = ({
             newValue: value,
             undo: () => {
               for (const [id, ta] of undoableChangeAll.oldValues.entries()) {
-                updateSolarPanelRelativeAzimuthById(id, ta as number);
+                updateRelativeAzimuthById(id, ta as number);
               }
             },
             redo: () => {
-              updateSolarPanelRelativeAzimuthForAll(undoableChangeAll.newValue as number);
+              updateRelativeAzimuthForAll(ObjectType.SolarPanel, undoableChangeAll.newValue as number);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
-          updateSolarPanelRelativeAzimuthForAll(value);
+          updateRelativeAzimuthForAll(ObjectType.SolarPanel, value);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -220,12 +218,13 @@ const SolarPanelRelativeAzimuthInput = ({
               groupId: solarPanel.foundationId,
               undo: () => {
                 for (const [id, ta] of undoableChangeAboveFoundation.oldValues.entries()) {
-                  updateSolarPanelRelativeAzimuthById(id, ta as number);
+                  updateRelativeAzimuthById(id, ta as number);
                 }
               },
               redo: () => {
                 if (undoableChangeAboveFoundation.groupId) {
-                  updateSolarPanelRelativeAzimuthAboveFoundation(
+                  updateRelativeAzimuthAboveFoundation(
+                    ObjectType.SolarPanel,
                     undoableChangeAboveFoundation.groupId,
                     undoableChangeAboveFoundation.newValue as number,
                   );
@@ -233,7 +232,7 @@ const SolarPanelRelativeAzimuthInput = ({
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
-            updateSolarPanelRelativeAzimuthAboveFoundation(solarPanel.foundationId, value);
+            updateRelativeAzimuthAboveFoundation(ObjectType.SolarPanel, solarPanel.foundationId, value);
             setApplyCount(applyCount + 1);
           }
         }
@@ -300,12 +299,13 @@ const SolarPanelRelativeAzimuthInput = ({
                 normal: normal,
                 undo: () => {
                   for (const [id, ta] of undoableChangeOnSurface.oldValues.entries()) {
-                    updateSolarPanelRelativeAzimuthById(id, ta as number);
+                    updateRelativeAzimuthById(id, ta as number);
                   }
                 },
                 redo: () => {
                   if (undoableChangeOnSurface.groupId) {
-                    updateSolarPanelRelativeAzimuthOnSurface(
+                    updateRelativeAzimuthOnSurface(
+                      ObjectType.SolarPanel,
                       undoableChangeOnSurface.groupId,
                       undoableChangeOnSurface.normal,
                       undoableChangeOnSurface.newValue as number,
@@ -314,7 +314,7 @@ const SolarPanelRelativeAzimuthInput = ({
                 },
               } as UndoableChangeGroup;
               addUndoable(undoableChangeOnSurface);
-              updateSolarPanelRelativeAzimuthOnSurface(solarPanel.parentId, normal, value);
+              updateRelativeAzimuthOnSurface(ObjectType.SolarPanel, solarPanel.parentId, normal, value);
               setApplyCount(applyCount + 1);
             }
           }
@@ -335,14 +335,14 @@ const SolarPanelRelativeAzimuthInput = ({
               newValue: value,
               changedElementId: solarPanel.id,
               undo: () => {
-                updateSolarPanelRelativeAzimuthById(undoableChange.changedElementId, undoableChange.oldValue as number);
+                updateRelativeAzimuthById(undoableChange.changedElementId, undoableChange.oldValue as number);
               },
               redo: () => {
-                updateSolarPanelRelativeAzimuthById(undoableChange.changedElementId, undoableChange.newValue as number);
+                updateRelativeAzimuthById(undoableChange.changedElementId, undoableChange.newValue as number);
               },
             } as UndoableChange;
             addUndoable(undoableChange);
-            updateSolarPanelRelativeAzimuthById(solarPanel.id, value);
+            updateRelativeAzimuthById(solarPanel.id, value);
             setApplyCount(applyCount + 1);
           }
         }

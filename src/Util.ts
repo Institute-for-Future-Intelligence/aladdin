@@ -25,6 +25,7 @@ import { WallModel } from './models/WallModel';
 import { PolygonModel } from './models/PolygonModel';
 import { Point2 } from './models/Point2';
 import { useStore } from './stores/common';
+import { ParabolicTroughModel } from './models/ParabolicTroughModel';
 
 export class Util {
   static fetchIntersectables(scene: Scene): Object3D[] {
@@ -340,15 +341,44 @@ export class Util {
     return Math.abs(sensor.cx) < 0.5 - sensor.lx / parent.lx && Math.abs(sensor.cy) < 0.5 - sensor.ly / parent.ly;
   }
 
-  static isSolarPanelWithinHorizontalSurface(solarPanel: SolarPanelModel, parent: ElementModel): boolean {
-    const x0 = solarPanel.cx * parent.lx;
-    const y0 = solarPanel.cy * parent.ly;
-    const cosaz = Math.cos(solarPanel.relativeAzimuth);
-    const sinaz = Math.sin(solarPanel.relativeAzimuth);
+  static isSolarPanelWithinHorizontalSurface(panel: SolarPanelModel, parent: ElementModel): boolean {
+    const x0 = panel.cx * parent.lx;
+    const y0 = panel.cy * parent.ly;
+    const cosaz = Math.cos(panel.relativeAzimuth);
+    const sinaz = Math.sin(panel.relativeAzimuth);
     const dx = parent.lx * 0.5;
     const dy = parent.ly * 0.5;
-    const rx = solarPanel.lx * 0.5;
-    const ry = solarPanel.ly * 0.5 * Math.cos(solarPanel.tiltAngle);
+    const rx = panel.lx * 0.5;
+    const ry = panel.ly * 0.5 * Math.cos(panel.tiltAngle);
+    // vertex 1
+    let x = x0 + rx * cosaz - ry * sinaz;
+    let y = y0 + rx * sinaz + ry * cosaz;
+    if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
+    // vertex 2
+    x = x0 + rx * cosaz + ry * sinaz;
+    y = y0 + rx * sinaz - ry * cosaz;
+    if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
+    // vertex 3
+    x = x0 - rx * cosaz - ry * sinaz;
+    y = y0 - rx * sinaz + ry * cosaz;
+    if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
+    // vertex 4
+    x = x0 - rx * cosaz + ry * sinaz;
+    y = y0 - rx * sinaz - ry * cosaz;
+    if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
+    // all in
+    return true;
+  }
+
+  static isParabolicTroughWithinHorizontalSurface(trough: ParabolicTroughModel, parent: ElementModel): boolean {
+    const x0 = trough.cx * parent.lx;
+    const y0 = trough.cy * parent.ly;
+    const cosaz = Math.cos(trough.relativeAzimuth);
+    const sinaz = Math.sin(trough.relativeAzimuth);
+    const dx = parent.lx * 0.5;
+    const dy = parent.ly * 0.5;
+    const rx = trough.ly * 0.5 * Math.cos(trough.tiltAngle);
+    const ry = trough.lx * 0.5;
     // vertex 1
     let x = x0 + rx * cosaz - ry * sinaz;
     let y = y0 + rx * sinaz + ry * cosaz;
@@ -472,13 +502,17 @@ export class Util {
   }
 
   static isSolarCollector(elem: ElementModel): boolean {
+    return Util.isSolarCollectorType(elem.type);
+  }
+
+  static isSolarCollectorType(type: ObjectType): boolean {
     return (
-      elem.type === ObjectType.SolarPanel ||
-      elem.type === ObjectType.WaterHeater ||
-      elem.type === ObjectType.ParabolicDish ||
-      elem.type === ObjectType.ParabolicTrough ||
-      elem.type === ObjectType.FresnelReflector ||
-      elem.type === ObjectType.Heliostat
+      type === ObjectType.SolarPanel ||
+      type === ObjectType.WaterHeater ||
+      type === ObjectType.ParabolicDish ||
+      type === ObjectType.ParabolicTrough ||
+      type === ObjectType.FresnelReflector ||
+      type === ObjectType.Heliostat
     );
   }
 

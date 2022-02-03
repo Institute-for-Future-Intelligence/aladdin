@@ -194,6 +194,28 @@ export interface CommonStoreState {
   updateElementLzForAll: (type: ObjectType, lz: number) => void;
 
   // for all types of solar collectors
+  updateSolarCollectorRelativeAzimuthById: (id: string, relativeAzimuth: number) => void;
+  updateSolarCollectorRelativeAzimuthOnSurface: (
+    type: ObjectType,
+    parentId: string,
+    normal: number[] | undefined,
+    relativeAzimuth: number,
+  ) => void;
+  updateSolarCollectorRelativeAzimuthAboveFoundation: (
+    type: ObjectType,
+    foundationId: string,
+    relativeAzimuth: number,
+  ) => void;
+  updateSolarCollectorRelativeAzimuthForAll: (type: ObjectType, relativeAzimuth: number) => void;
+  updateSolarCollectorPoleHeightById: (id: string, poleHeight: number) => void;
+  updateSolarCollectorPoleHeightOnSurface: (
+    type: ObjectType,
+    parentId: string,
+    normal: number[] | undefined,
+    poleHeight: number,
+  ) => void;
+  updateSolarCollectorPoleHeightAboveFoundation: (type: ObjectType, foundationId: string, poleHeight: number) => void;
+  updateSolarCollectorPoleHeightForAll: (type: ObjectType, poleHeight: number) => void;
   updateSolarCollectorDrawSunBeamById: (id: string, drawSunBeam: boolean) => void;
   updateSolarCollectorDailyYieldById: (id: string, dailyYield: number) => void;
   updateSolarCollectorYearlyYieldById: (id: string, yearlyYield: number) => void;
@@ -257,15 +279,6 @@ export interface CommonStoreState {
   updateSolarPanelTiltAngleAboveFoundation: (foundationId: string, tiltAngle: number) => void;
   updateSolarPanelTiltAngleForAll: (tiltAngle: number) => void;
 
-  updateSolarPanelRelativeAzimuthById: (id: string, relativeAzimuth: number) => void;
-  updateSolarPanelRelativeAzimuthOnSurface: (
-    parentId: string,
-    normal: number[] | undefined,
-    relativeAzimuth: number,
-  ) => void;
-  updateSolarPanelRelativeAzimuthAboveFoundation: (foundationId: string, relativeAzimuth: number) => void;
-  updateSolarPanelRelativeAzimuthForAll: (relativeAzimuth: number) => void;
-
   updateSolarPanelOrientationById: (id: string, orientation: Orientation) => void;
   updateSolarPanelOrientationOnSurface: (
     parentId: string,
@@ -284,15 +297,14 @@ export interface CommonStoreState {
   updateSolarPanelTrackerTypeAboveFoundation: (foundationId: string, trackerType: TrackerType) => void;
   updateSolarPanelTrackerTypeForAll: (trackerType: TrackerType) => void;
 
-  updateSolarPanelPoleHeightById: (id: string, poleHeight: number) => void;
-  updateSolarPanelPoleHeightOnSurface: (parentId: string, normal: number[] | undefined, poleHeight: number) => void;
-  updateSolarPanelPoleHeightAboveFoundation: (foundationId: string, poleHeight: number) => void;
-  updateSolarPanelPoleHeightForAll: (poleHeight: number) => void;
-
   updateSolarPanelPoleSpacingById: (id: string, poleSpacing: number) => void;
   updateSolarPanelPoleSpacingOnSurface: (parentId: string, normal: number[] | undefined, poleSpacing: number) => void;
   updateSolarPanelPoleSpacingAboveFoundation: (foundationId: string, poleSpacing: number) => void;
   updateSolarPanelPoleSpacingForAll: (poleSpacing: number) => void;
+
+  // for parabolic troughs
+  parabolicTroughActionScope: Scope;
+  setParabolicTroughActionScope: (scope: Scope) => void;
 
   // for walls
   wallActionScope: Scope;
@@ -1243,11 +1255,129 @@ export const useStore = create<CommonStoreState>(
           },
 
           // for solar collectors
+          updateSolarCollectorRelativeAzimuthById(id, relativeAzimuth) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && !e.locked && Util.isSolarCollector(e)) {
+                  (e as SolarCollector).relativeAzimuth = relativeAzimuth;
+                  state.selectedElementAngle = relativeAzimuth;
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarCollectorRelativeAzimuthAboveFoundation(type, foundationId, relativeAzimuth) {
+            if (!Util.isSolarCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && e.foundationId === foundationId && !e.locked) {
+                  (e as SolarCollector).relativeAzimuth = relativeAzimuth;
+                }
+              }
+            });
+          },
+          updateSolarCollectorRelativeAzimuthOnSurface(type, parentId, normal, relativeAzimuth) {
+            if (!Util.isSolarCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && !e.locked) {
+                  let found;
+                  if (normal) {
+                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+                  } else {
+                    found = e.parentId === parentId;
+                  }
+                  if (found) {
+                    (e as SolarCollector).relativeAzimuth = relativeAzimuth;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarCollectorRelativeAzimuthForAll(type, relativeAzimuth) {
+            if (!Util.isSolarCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && !e.locked) {
+                  (e as SolarCollector).relativeAzimuth = relativeAzimuth;
+                }
+              }
+            });
+          },
+
+          updateSolarCollectorPoleHeightById(id, poleHeight) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && !e.locked && Util.isSolarCollector(e)) {
+                  (e as SolarCollector).poleHeight = poleHeight;
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarCollectorPoleHeightAboveFoundation(type, foundationId, poleHeight) {
+            if (!Util.isSolarCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.foundationId === foundationId && !e.locked && e.type === type) {
+                  (e as SolarCollector).poleHeight = poleHeight;
+                }
+              }
+            });
+          },
+          updateSolarCollectorPoleHeightOnSurface(type, parentId, normal, poleHeight) {
+            if (!Util.isSolarCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (!e.locked && e.type === type) {
+                  let found;
+                  if (normal) {
+                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+                  } else {
+                    found = e.parentId === parentId;
+                  }
+                  if (found) {
+                    (e as SolarCollector).poleHeight = poleHeight;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarCollectorPoleHeightForAll(type, poleHeight) {
+            if (!Util.isSolarCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && !e.locked) {
+                  (e as SolarCollector).poleHeight = poleHeight;
+                }
+              }
+            });
+          },
           updateSolarCollectorDrawSunBeamById(id, drawSunBeam) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.id === id && Util.isSolarCollector(e)) {
                   (e as SolarCollector).drawSunBeam = drawSunBeam;
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarCollectorDailyYieldById(id, dailyYield) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && Util.isSolarCollector(e)) {
+                  (e as SolarCollector).dailyYield = dailyYield;
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarCollectorYearlyYieldById(id, yearlyYield) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && Util.isSolarCollector(e)) {
+                  (e as SolarCollector).yearlyYield = yearlyYield;
                   break;
                 }
               }
@@ -1581,29 +1711,6 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          updateSolarCollectorDailyYieldById(id, dailyYield) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id) {
-                  const sp = e as SolarPanelModel;
-                  sp.dailyYield = dailyYield;
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarCollectorYearlyYieldById(id, yearlyYield) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id) {
-                  const sp = e as SolarPanelModel;
-                  sp.yearlyYield = yearlyYield;
-                  break;
-                }
-              }
-            });
-          },
-
           updateSolarPanelModelById(id, pvModelName) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -1868,57 +1975,6 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          updateSolarPanelRelativeAzimuthById(id, relativeAzimuth) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  sp.relativeAzimuth = relativeAzimuth;
-                  state.selectedElementAngle = relativeAzimuth;
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPanelRelativeAzimuthAboveFoundation(foundationId, relativeAzimuth) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  sp.relativeAzimuth = relativeAzimuth;
-                }
-              }
-            });
-          },
-          updateSolarPanelRelativeAzimuthOnSurface(parentId, normal, relativeAzimuth) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  let found;
-                  if (normal) {
-                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
-                  } else {
-                    found = e.parentId === parentId;
-                  }
-                  if (found) {
-                    const sp = e as SolarPanelModel;
-                    sp.relativeAzimuth = relativeAzimuth;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarPanelRelativeAzimuthForAll(relativeAzimuth) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  sp.relativeAzimuth = relativeAzimuth;
-                }
-              }
-            });
-          },
-
           updateSolarPanelOrientationById(id, orientation) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -2011,56 +2067,6 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          updateSolarPanelPoleHeightById(id, poleHeight) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  sp.poleHeight = poleHeight;
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPanelPoleHeightAboveFoundation(foundationId, poleHeight) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  sp.poleHeight = poleHeight;
-                }
-              }
-            });
-          },
-          updateSolarPanelPoleHeightOnSurface(parentId, normal, poleHeight) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  let found;
-                  if (normal) {
-                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
-                  } else {
-                    found = e.parentId === parentId;
-                  }
-                  if (found) {
-                    const sp = e as SolarPanelModel;
-                    sp.poleHeight = poleHeight;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarPanelPoleHeightForAll(poleHeight) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  sp.poleHeight = poleHeight;
-                }
-              }
-            });
-          },
-
           updateSolarPanelPoleSpacingById(id, poleSpacing) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -2108,6 +2114,14 @@ export const useStore = create<CommonStoreState>(
                   sp.poleSpacing = poleSpacing;
                 }
               }
+            });
+          },
+
+          // for parabolic troughs
+          parabolicTroughActionScope: Scope.OnlyThisObject,
+          setParabolicTroughActionScope(scope) {
+            immerSet((state: CommonStoreState) => {
+              state.parabolicTroughActionScope = scope;
             });
           },
 

@@ -449,6 +449,33 @@ export const i18n_tr = {
       AllSolarPanels: 'Tüm Güneþ Panelleri',
     },
 
+    pvModelPanel: {
+      SolarPanelSpecs: 'Güneþ Paneli Özellikleri',
+      Model: 'Model',
+      PanelSize: 'Panel Boyutu',
+      Cells: 'Hücreler',
+      CellType: 'Hücre Tipi',
+      Monocrystalline: 'Monokristal',
+      Polycrystalline: 'Polikristal',
+      ThinFilm: 'Ýnce Tabaka',
+      Black: 'Siyah',
+      Blue: 'Mavi',
+      ShadeTolerance: 'Gölge Toleransý',
+      SolarCellEfficiency: 'Güneþ Pili Verimliliði',
+      NominalOperatingCellTemperature: 'Nominal Çalýþma Hücresi Sýcaklýðý',
+      TemperatureCoefficientOfPmax: 'Pmax Sýcaklýk Katsayýsý',
+    },
+
+    parabolicTroughMenu: {
+      ModuleLength: 'Module Length',
+      Modules: 'modules',
+      ModulesLong: 'modules long',
+      LatusRectum: 'Latus Rectum',
+      OnlyThisParabolicTrough: 'Only This Parabolic Trough',
+      AllParabolicTroughsAboveFoundation: 'All Parabolic Troughs Above the Same Foundation',
+      AllParabolicTroughs: 'All Parabolic Troughs',
+    },
+
     wallMenu: {
       TextureDefault: 'Varsayýlan',
       Texture01: 'Tekstür 1',
@@ -468,23 +495,6 @@ export const i18n_tr = {
     },
 
     windowMenu: {},
-
-    pvModelPanel: {
-      SolarPanelSpecs: 'Güneþ Paneli Özellikleri',
-      Model: 'Model',
-      PanelSize: 'Panel Boyutu',
-      Cells: 'Hücreler',
-      CellType: 'Hücre Tipi',
-      Monocrystalline: 'Monokristal',
-      Polycrystalline: 'Polikristal',
-      ThinFilm: 'Ýnce Tabaka',
-      Black: 'Siyah',
-      Blue: 'Mavi',
-      ShadeTolerance: 'Gölge Toleransý',
-      SolarCellEfficiency: 'Güneþ Pili Verimliliði',
-      NominalOperatingCellTemperature: 'Nominal Çalýþma Hücresi Sýcaklýðý',
-      TemperatureCoefficientOfPmax: 'Pmax Sýcaklýk Katsayýsý',
-    },
 
     siteInfoPanel: {
       High: 'Yüksek',

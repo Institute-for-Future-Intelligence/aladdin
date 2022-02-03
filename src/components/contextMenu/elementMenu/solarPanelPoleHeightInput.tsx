@@ -24,15 +24,15 @@ const SolarPanelPoleHeightInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateSolarPanelPoleHeightById = useStore(Selector.updateSolarPanelPoleHeightById);
-  const updateSolarPanelPoleHeightOnSurface = useStore(Selector.updateSolarPanelPoleHeightOnSurface);
-  const updateSolarPanelPoleHeightAboveFoundation = useStore(Selector.updateSolarPanelPoleHeightAboveFoundation);
-  const updateSolarPanelPoleHeightForAll = useStore(Selector.updateSolarPanelPoleHeightForAll);
+  const updatePoleHeightById = useStore(Selector.updateSolarCollectorPoleHeightById);
+  const updatePoleHeightOnSurface = useStore(Selector.updateSolarCollectorPoleHeightOnSurface);
+  const updatePoleHeightAboveFoundation = useStore(Selector.updateSolarCollectorPoleHeightAboveFoundation);
+  const updatePoleHeightForAll = useStore(Selector.updateSolarCollectorPoleHeightForAll);
   const getParent = useStore(Selector.getParent);
   const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
-  const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
+  const actionScope = useStore(Selector.solarPanelActionScope);
+  const setActionScope = useStore(Selector.setSolarPanelActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
@@ -54,12 +54,12 @@ const SolarPanelPoleHeightInput = ({
   }, [solarPanel]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setSolarPanelActionScope(e.target.value);
+    setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
   const needChange = (poleHeight: number) => {
-    switch (solarPanelActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
@@ -122,7 +122,7 @@ const SolarPanelPoleHeightInput = ({
     if (!solarPanel) return;
     if (!needChange(value)) return;
     rejectedValue.current = undefined;
-    switch (solarPanelActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         rejectRef.current = false;
         for (const elem of elements) {
@@ -150,15 +150,15 @@ const SolarPanelPoleHeightInput = ({
             newValue: value,
             undo: () => {
               for (const [id, ph] of undoableChangeAll.oldValues.entries()) {
-                updateSolarPanelPoleHeightById(id, ph as number);
+                updatePoleHeightById(id, ph as number);
               }
             },
             redo: () => {
-              updateSolarPanelPoleHeightForAll(undoableChangeAll.newValue as number);
+              updatePoleHeightForAll(ObjectType.SolarPanel, undoableChangeAll.newValue as number);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
-          updateSolarPanelPoleHeightForAll(value);
+          updatePoleHeightForAll(ObjectType.SolarPanel, value);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -191,12 +191,13 @@ const SolarPanelPoleHeightInput = ({
               groupId: solarPanel.foundationId,
               undo: () => {
                 for (const [id, ph] of undoableChangeAboveFoundation.oldValues.entries()) {
-                  updateSolarPanelPoleHeightById(id, ph as number);
+                  updatePoleHeightById(id, ph as number);
                 }
               },
               redo: () => {
                 if (undoableChangeAboveFoundation.groupId) {
-                  updateSolarPanelPoleHeightAboveFoundation(
+                  updatePoleHeightAboveFoundation(
+                    ObjectType.SolarPanel,
                     undoableChangeAboveFoundation.groupId,
                     undoableChangeAboveFoundation.newValue as number,
                   );
@@ -204,7 +205,7 @@ const SolarPanelPoleHeightInput = ({
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
-            updateSolarPanelPoleHeightAboveFoundation(solarPanel.foundationId, value);
+            updatePoleHeightAboveFoundation(ObjectType.SolarPanel, solarPanel.foundationId, value);
             setApplyCount(applyCount + 1);
           }
         }
@@ -272,12 +273,13 @@ const SolarPanelPoleHeightInput = ({
               normal: normal,
               undo: () => {
                 for (const [id, ph] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateSolarPanelPoleHeightById(id, ph as number);
+                  updatePoleHeightById(id, ph as number);
                 }
               },
               redo: () => {
                 if (undoableChangeOnSurface.groupId) {
-                  updateSolarPanelPoleHeightOnSurface(
+                  updatePoleHeightOnSurface(
+                    ObjectType.SolarPanel,
                     undoableChangeOnSurface.groupId,
                     undoableChangeOnSurface.normal,
                     undoableChangeOnSurface.newValue as number,
@@ -286,7 +288,7 @@ const SolarPanelPoleHeightInput = ({
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeOnSurface);
-            updateSolarPanelPoleHeightOnSurface(solarPanel.parentId, normal, value);
+            updatePoleHeightOnSurface(ObjectType.SolarPanel, solarPanel.parentId, normal, value);
             setApplyCount(applyCount + 1);
           }
         }
@@ -306,14 +308,14 @@ const SolarPanelPoleHeightInput = ({
               newValue: value,
               changedElementId: solarPanel.id,
               undo: () => {
-                updateSolarPanelPoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
+                updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
               },
               redo: () => {
-                updateSolarPanelPoleHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
+                updatePoleHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
               },
             } as UndoableChange;
             addUndoable(undoableChange);
-            updateSolarPanelPoleHeightById(solarPanel.id, value);
+            updatePoleHeightById(solarPanel.id, value);
             setApplyCount(applyCount + 1);
           }
         }
@@ -425,7 +427,7 @@ const SolarPanelPoleHeightInput = ({
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={16}
           >
-            <Radio.Group onChange={onScopeChange} value={solarPanelActionScope}>
+            <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>

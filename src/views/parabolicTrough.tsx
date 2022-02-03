@@ -25,7 +25,6 @@ import {
 import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { Util } from '../Util';
 import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
-import ParabolicTroughMirrorImage from '../resources/trough_mirror.png';
 import { getSunDirection } from '../analysis/sunTools';
 import RotateHandle from '../components/rotateHandle';
 import i18n from '../i18n/i18n';
@@ -117,11 +116,11 @@ const ParabolicTrough = ({
   const depth = semiLatusRectum * 0.125 * ly * ly;
   const hx = ly / 2;
   const hy = lx / 2;
-  const hz = lz / 2 + depth;
-  const positionLL = new Vector3(-hx, -hy, hz);
-  const positionUL = new Vector3(-hx, hy, hz);
-  const positionLR = new Vector3(hx, -hy, hz);
-  const positionUR = new Vector3(hx, hy, hz);
+  const hz = lz / 2;
+  const positionLL = new Vector3(-hx, -hy, hz + depth);
+  const positionUL = new Vector3(-hx, hy, hz + depth);
+  const positionLR = new Vector3(hx, -hy, hz + depth);
+  const positionUR = new Vector3(hx, hy, hz + depth);
   const trough = getElementById(id) as ParabolicTroughModel;
 
   useEffect(() => {
