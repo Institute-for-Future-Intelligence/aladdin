@@ -51,6 +51,7 @@ class ParabolicCylinderGeometry extends BufferGeometry {
       let groupCount = 0;
       const u0 = -0.5;
       const du = 1 / widthSegments;
+      const max = width/semiLatusRectum;
 
       // generate vertices, normals and uvs
       // the parametric equation of a parabola y = x^2/(4a) is x = 2at, y = at^2, where 2a is the semi-latus rectum
@@ -60,7 +61,7 @@ class ParabolicCylinderGeometry extends BufferGeometry {
         // current row
         for ( let x = 0; x <= widthSegments; x ++ ) {
           const u = u0 + x * du;
-          const t = u * width;
+          const t = u * max;
           // vertex
           vertex.x = semiLatusRectum * t;
           vertex.y = - v * length + halfHeight;

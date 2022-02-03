@@ -36,6 +36,9 @@ export const i18n_zh_tw = {
       Version: '版本',
       Options: '選項',
       MaximumNumber: '最多',
+      MinimumNumber: '最少',
+      MaximumValue: '最大值',
+      MinimumValue: '最小值',
       Or: '或',
       None: '無',
       High: '高',
@@ -408,6 +411,8 @@ export const i18n_zh_tw = {
     solarCollectorMenu: {
       RelativeAzimuth: '相對方位角',
       PoleHeight: '支架高度',
+      ExtraPoleHeight: '額外的支架高度',
+      ExtraPoleHeightInAdditionToHalfWidth: '寬度一半額外的支架高度',
       DrawSunBeam: '顯示光束',
       Label: '標籤',
       KeepShowingLabel: '顯示標籤',

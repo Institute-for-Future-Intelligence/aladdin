@@ -16,10 +16,6 @@ import {
   MOVE_HANDLE_RADIUS,
   RESIZE_HANDLE_COLOR,
   RESIZE_HANDLE_SIZE,
-  UNIT_VECTOR_NEG_X,
-  UNIT_VECTOR_NEG_Y,
-  UNIT_VECTOR_POS_X,
-  UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
 } from '../constants';
 import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
@@ -88,16 +84,17 @@ const ParabolicTrough = ({
   const pointerDown = useRef<boolean>(false);
 
   const sunBeamLength = Math.max(100, 5 * sceneRadius);
-  const troughNormal = new Vector3().fromArray(normal);
   const lang = { lng: language };
   const parabolaSegments = 16;
+
+  const actualPoleHeight = poleHeight + ly / 2;
 
   if (parentId) {
     const p = getElementById(parentId);
     if (p) {
       switch (p.type) {
         case ObjectType.Foundation:
-          cz = poleHeight + lz / 2 + p.lz;
+          cz = actualPoleHeight + lz / 2 + p.lz;
           if (Util.isZero(rotation[2])) {
             cx = p.cx + cx * p.lx;
             cy = p.cy + cy * p.ly;
@@ -116,7 +113,7 @@ const ParabolicTrough = ({
   const hx = ly / 2;
   const hy = lx / 2;
   const hz = lz / 2;
-  const depth = (latusRectum * hx * hx) / 4; // the distance from the bottom to the aperture plane
+  const depth = (hx * hx) / latusRectum; // the distance from the bottom to the aperture plane
   const positionLL = new Vector3(-hx, -hy, hz + depth);
   const positionUL = new Vector3(-hx, hy, hz + depth);
   const positionLR = new Vector3(hx, -hy, hz + depth);
@@ -166,26 +163,10 @@ const ParabolicTrough = ({
     );
   }, [trough?.label, locked, language, cx, cy, cz]);
 
+  // in model coordinate system
   const euler = useMemo(() => {
-    // east face in model coordinate system
-    if (Util.isSame(troughNormal, UNIT_VECTOR_POS_X)) {
-      return new Euler(HALF_PI, 0, rotation[2] + HALF_PI, 'ZXY');
-    }
-    // west face in model coordinate system
-    if (Util.isSame(troughNormal, UNIT_VECTOR_NEG_X)) {
-      return new Euler(HALF_PI, 0, rotation[2] - HALF_PI, 'ZXY');
-    }
-    // north face in the model coordinate system
-    if (Util.isSame(troughNormal, UNIT_VECTOR_POS_Y)) {
-      return new Euler(HALF_PI, 0, rotation[2] + Math.PI, 'ZXY');
-    }
-    // south face in the model coordinate system
-    if (Util.isSame(troughNormal, UNIT_VECTOR_NEG_Y)) {
-      return new Euler(HALF_PI, 0, rotation[2], 'ZXY');
-    }
-    // top face in model coordinate system
     return new Euler(0, 0, rotation[2], 'ZXY');
-  }, [normal, rotation]);
+  }, [rotation]);
 
   const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
     if (e.intersections.length > 0) {
@@ -219,14 +200,11 @@ const ParabolicTrough = ({
   const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot) : sunDirection;
 
   const relativeEuler = useMemo(() => {
-    if (Util.isSame(troughNormal, UNIT_VECTOR_POS_Z)) {
-      if (sunDirection.z > 0) {
-        return new Euler(0, Math.atan2(rotatedSunDirection.x, rotatedSunDirection.z), 0, 'ZXY');
-      }
-      return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
+    if (sunDirection.z > 0) {
+      return new Euler(0, Math.atan2(rotatedSunDirection.x, rotatedSunDirection.z), 0, 'ZXY');
     }
-    return new Euler();
-  }, [sunDirection, tiltAngle, relativeAzimuth, normal]);
+    return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
+  }, [sunDirection, tiltAngle, relativeAzimuth]);
 
   const normalVector = useMemo(() => {
     const v = new Vector3();
@@ -237,7 +215,7 @@ const ParabolicTrough = ({
       : v;
   }, [drawSunBeam, normal, euler, relativeEuler]);
 
-  const poleZ = -poleHeight / 2 - lz / 2;
+  const poleZ = -(actualPoleHeight + lz) / 2;
 
   const poles = useMemo<Vector3[]>(() => {
     const array: Vector3[] = [];
@@ -253,8 +231,8 @@ const ParabolicTrough = ({
   const moduleLines = useMemo<LineData[]>(() => {
     const array: LineData[] = [];
     const dx = lx / numberOfModules;
-    const t0 = -0.5 * ly;
-    const dt = ly / parabolaSegments;
+    const t0 = -ly / latusRectum;
+    const dt = (-2 * t0) / parabolaSegments;
     for (let i = 0; i <= numberOfModules; i++) {
       const line: Vector3[] = [];
       for (let j = 0; j <= parabolaSegments; j++) {
@@ -613,11 +591,11 @@ const ParabolicTrough = ({
 
       {/* draw rotate handles */}
       {selected && !locked && (
-        <group position={[0, 0, -poleHeight]} rotation={[0, 0, relativeEuler.z]}>
+        <group position={[0, 0, -actualPoleHeight]} rotation={[0, 0, relativeEuler.z]}>
           {/* rotate handles */}
           <RotateHandle
             id={id}
-            position={[0, -ly / 2 - rotateHandleSize / 2, poleHeight]}
+            position={[0, -ly / 2 - rotateHandleSize / 2, actualPoleHeight]}
             color={
               hoveredHandle === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Upper
                 ? HIGHLIGHT_HANDLE_COLOR
@@ -630,7 +608,7 @@ const ParabolicTrough = ({
           />
           <RotateHandle
             id={id}
-            position={[0, ly / 2 + rotateHandleSize / 2, poleHeight]}
+            position={[0, ly / 2 + rotateHandleSize / 2, actualPoleHeight]}
             color={
               hoveredHandle === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Lower
                 ? HIGHLIGHT_HANDLE_COLOR
@@ -645,7 +623,7 @@ const ParabolicTrough = ({
       )}
 
       {/* draw poles */}
-      {poleHeight > 0 &&
+      {actualPoleHeight > 0 &&
         poles.map((p, i) => {
           return (
             <Cylinder
@@ -654,7 +632,7 @@ const ParabolicTrough = ({
               name={'Pole ' + i}
               castShadow={shadowEnabled}
               receiveShadow={shadowEnabled}
-              args={[poleRadius, poleRadius, poleHeight + (p.z - poleZ) * 2 + lz, 6, 2]}
+              args={[poleRadius, poleRadius, actualPoleHeight + (p.z - poleZ) * 2 + lz, 6, 2]}
               position={p}
               rotation={[HALF_PI, 0, 0]}
             >

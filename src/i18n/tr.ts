@@ -37,6 +37,9 @@ export const i18n_tr = {
       Version: 'Sürüm',
       Options: 'Seçenekler',
       MaximumNumber: 'Maksimum Sayý',
+      MinimumNumber: 'Minimum Number',
+      MaximumValue: 'Maximum Value',
+      MinimumValue: 'Minimum Value',
       Or: 'Veya',
       None: 'Hiçbiri',
       High: 'High',
@@ -421,6 +424,8 @@ export const i18n_tr = {
     solarCollectorMenu: {
       RelativeAzimuth: 'Göreceli Azimut',
       PoleHeight: 'Direk Yüksekliði',
+      ExtraPoleHeight: 'Extra Pole Height',
+      ExtraPoleHeightInAdditionToHalfWidth: 'Extra Pole Height in Addition to Half Width',
       DrawSunBeam: 'Güneþ Iþýný çiz',
       Label: 'Etiket',
       KeepShowingLabel: 'Etiketi Göstermeye Devam Et',

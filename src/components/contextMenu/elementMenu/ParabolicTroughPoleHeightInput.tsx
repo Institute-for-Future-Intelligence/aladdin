@@ -12,7 +12,6 @@ import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { Util } from '../../../Util';
 import { ZERO_TOLERANCE } from '../../../constants';
 
 const ParabolicTroughPoleHeightInput = ({
@@ -257,7 +256,7 @@ const ParabolicTroughPoleHeightInput = ({
   return (
     <>
       <Modal
-        width={550}
+        width={600}
         visible={dialogVisible}
         title={
           <div
@@ -265,7 +264,7 @@ const ParabolicTroughPoleHeightInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('solarCollectorMenu.PoleHeight', lang)}
+            {i18n.t('solarCollectorMenu.ExtraPoleHeightInAdditionToHalfWidth', lang)}
             <label style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +
@@ -324,7 +323,7 @@ const ParabolicTroughPoleHeightInput = ({
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            span={17}
           >
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">

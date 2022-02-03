@@ -36,6 +36,9 @@ export const i18n_es = {
       Version: 'Versión',
       Options: 'Opciones',
       MaximumNumber: 'Número máximo',
+      MinimumNumber: 'Minimum Number',
+      MaximumValue: 'Maximum Value',
+      MinimumValue: 'Minimum Value',
       Or: 'O',
       None: 'Ninguno',
       High: 'High',
@@ -420,6 +423,8 @@ export const i18n_es = {
     solarCollectorMenu: {
       RelativeAzimuth: 'Azimut relativa',
       PoleHeight: 'Altura del poste',
+      ExtraPoleHeight: 'Extra Pole Height',
+      ExtraPoleHeightInAdditionToHalfWidth: 'Extra Pole Height in Addition to Half Width',
       DrawSunBeam: 'Dibujar rayo del sol',
       Label: 'Etiqueta',
       KeepShowingLabel: 'Seguir mostrando etiqueta',

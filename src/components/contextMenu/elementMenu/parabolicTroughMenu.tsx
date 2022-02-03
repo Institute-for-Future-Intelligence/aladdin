@@ -170,7 +170,7 @@ export const ParabolicTroughMenu = () => {
             {i18n.t('solarCollectorMenu.RelativeAzimuth', lang)} ...
           </Menu.Item>
 
-          {/* pole height */}
+          {/* extra pole height in addition to the half of the aperture width */}
           <ParabolicTroughPoleHeightInput
             dialogVisible={poleHeightDialogVisible}
             setDialogVisible={setPoleHeightDialogVisible}
@@ -183,7 +183,7 @@ export const ParabolicTroughMenu = () => {
               setPoleHeightDialogVisible(true);
             }}
           >
-            {i18n.t('solarCollectorMenu.PoleHeight', lang)} ...
+            {i18n.t('solarCollectorMenu.ExtraPoleHeight', lang)} ...
           </Menu.Item>
 
           {/* draw sun beam or not */}
