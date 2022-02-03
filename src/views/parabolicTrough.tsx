@@ -39,7 +39,7 @@ const ParabolicTrough = ({
   lx,
   ly,
   lz = 0.1,
-  semiLatusRectum = 1,
+  latusRectum = 2,
   tiltAngle,
   relativeAzimuth,
   moduleLength,
@@ -113,10 +113,10 @@ const ParabolicTrough = ({
     }
   }
 
-  const depth = semiLatusRectum * 0.125 * ly * ly;
   const hx = ly / 2;
   const hy = lx / 2;
   const hz = lz / 2;
+  const depth = (latusRectum * hx * hx) / 4; // the distance from the bottom to the aperture plane
   const positionLL = new Vector3(-hx, -hy, hz + depth);
   const positionUL = new Vector3(-hx, hy, hz + depth);
   const positionLR = new Vector3(hx, -hy, hz + depth);
@@ -259,12 +259,12 @@ const ParabolicTrough = ({
       const line: Vector3[] = [];
       for (let j = 0; j <= parabolaSegments; j++) {
         const t = t0 + j * dt;
-        line.push(new Vector3(semiLatusRectum * t, -lx / 2 + i * dx, (semiLatusRectum * t * t) / 2));
+        line.push(new Vector3((latusRectum * t) / 2, -lx / 2 + i * dx, (latusRectum * t * t) / 4));
       }
       array.push({ points: line } as LineData);
     }
     return array;
-  }, [lx, ly, numberOfModules]);
+  }, [lx, ly, numberOfModules, latusRectum]);
 
   const baseSize = Math.max(1, (lx + ly) / 16);
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
@@ -280,7 +280,7 @@ const ParabolicTrough = ({
           castShadow={shadowEnabled}
           uuid={id}
           ref={frontSideRef}
-          args={[semiLatusRectum, ly, lx, parabolaSegments, 4]}
+          args={[latusRectum / 2, ly, lx, parabolaSegments, 4]}
           name={'Parabolic Trough Front Side'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
@@ -330,7 +330,7 @@ const ParabolicTrough = ({
           castShadow={shadowEnabled}
           uuid={id + ' backside'}
           ref={backSideRef}
-          args={[semiLatusRectum, ly, lx, parabolaSegments, 4]}
+          args={[latusRectum / 2, ly, lx, parabolaSegments, 4]}
           name={'Parabolic Trough Back Side'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
@@ -382,7 +382,7 @@ const ParabolicTrough = ({
                   userData={{ unintersectable: true }}
                   points={[
                     lineData.points[parabolaSegments / 2].clone(),
-                    lineData.points[parabolaSegments / 2].clone().add(new Vector3(0, 0, 0.5 * semiLatusRectum)),
+                    lineData.points[parabolaSegments / 2].clone().add(new Vector3(0, 0, 0.25 * latusRectum)),
                   ]}
                   castShadow={false}
                   receiveShadow={false}
@@ -422,7 +422,7 @@ const ParabolicTrough = ({
           name={'Parabolic Trough Absorber Tube'}
           uuid={id}
           args={[poleRadius, poleRadius, lx, 6, 2]}
-          position={[0, 0, 0.5 * semiLatusRectum]}
+          position={[0, 0, 0.25 * latusRectum]}
           receiveShadow={false}
           castShadow={true}
         >

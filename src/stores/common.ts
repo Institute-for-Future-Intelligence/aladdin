@@ -64,6 +64,7 @@ import { SolarPanelArrayLayoutParams } from './SolarPanelArrayLayoutParams';
 import { DefaultSolarPanelArrayLayoutParams } from './DefaultSolarPanelArrayLayoutParams';
 import { Vantage } from '../analysis/Vantage';
 import { SolarCollector } from '../models/SolarCollector';
+import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 
 enableMapSet();
 
@@ -305,6 +306,9 @@ export interface CommonStoreState {
   // for parabolic troughs
   parabolicTroughActionScope: Scope;
   setParabolicTroughActionScope: (scope: Scope) => void;
+  updateParabolaLatusRectumById: (id: string, latusRectum: number) => void;
+  updateParabolaLatusRectumAboveFoundation: (type: ObjectType, foundationId: string, latusRectum: number) => void;
+  updateParabolaLatusRectumForAll: (type: ObjectType, latusRectum: number) => void;
 
   // for walls
   wallActionScope: Scope;
@@ -2122,6 +2126,44 @@ export const useStore = create<CommonStoreState>(
           setParabolicTroughActionScope(scope) {
             immerSet((state: CommonStoreState) => {
               state.parabolicTroughActionScope = scope;
+            });
+          },
+
+          // for both parabolic troughs and dishes
+          updateParabolaLatusRectumById(id, latusRectum) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && !e.locked) {
+                  if (e.type === ObjectType.ParabolicTrough) {
+                    (e as ParabolicTroughModel).latusRectum = latusRectum;
+                    break;
+                  }
+                }
+              }
+            });
+          },
+          updateParabolaLatusRectumAboveFoundation(type, foundationId, latusRectum) {
+            if (!Util.isParabolaType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.foundationId === foundationId && !e.locked) {
+                  if (e.type === ObjectType.ParabolicTrough) {
+                    (e as ParabolicTroughModel).latusRectum = latusRectum;
+                  }
+                }
+              }
+            });
+          },
+          updateParabolaLatusRectumForAll(type, latusRectum) {
+            if (!Util.isParabolaType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (!e.locked) {
+                  if (e.type === ObjectType.ParabolicTrough) {
+                    (e as ParabolicTroughModel).latusRectum = latusRectum;
+                  }
+                }
+              }
             });
           },
 

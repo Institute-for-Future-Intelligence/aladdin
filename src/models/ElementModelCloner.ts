@@ -287,6 +287,7 @@ export class ElementModelCloner {
       ly: trough.ly,
       lz: trough.lz,
       moduleLength: trough.moduleLength,
+      latusRectum: trough.latusRectum,
       tiltAngle: trough.tiltAngle,
       relativeAzimuth: trough.relativeAzimuth,
       poleRadius: trough.poleRadius,

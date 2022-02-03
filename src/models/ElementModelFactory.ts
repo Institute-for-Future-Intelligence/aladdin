@@ -169,6 +169,7 @@ export class ElementModelFactory {
     return {
       type: ObjectType.ParabolicTrough,
       moduleLength: 3,
+      latusRectum: 2,
       relativeAzimuth: 0,
       tiltAngle: 0,
       drawSunBeam: false,

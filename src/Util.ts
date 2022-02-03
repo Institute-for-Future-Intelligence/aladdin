@@ -516,6 +516,10 @@ export class Util {
     );
   }
 
+  static isParabolaType(type: ObjectType): boolean {
+    return type === ObjectType.ParabolicDish || type === ObjectType.ParabolicTrough;
+  }
+
   static checkWindowState(elem: ElementModel): WindowState {
     const eMinX = elem.cx - elem.lx / 2;
     const eMaxX = elem.cx + elem.lx / 2;

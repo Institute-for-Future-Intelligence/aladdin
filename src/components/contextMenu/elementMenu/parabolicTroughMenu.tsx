@@ -15,6 +15,7 @@ import ParabolicTroughLengthInput from './ParabolicTroughLengthInput';
 import ParabolicTroughWidthInput from './ParabolicTroughWidthInput';
 import ParabolicTroughPoleHeightInput from './ParabolicTroughPoleHeightInput';
 import ParabolicTroughRelativeAzimuthInput from './parabolicTroughRelativeAzimuthInput';
+import ParabolicTroughLatusRectumInput from './ParabolicTroughLatusRectumInput';
 
 export const ParabolicTroughMenu = () => {
   const language = useStore(Selector.language);
@@ -135,6 +136,22 @@ export const ParabolicTroughMenu = () => {
             }}
           >
             {i18n.t('word.Width', lang)} ...
+          </Menu.Item>
+
+          {/* latus rectum */}
+          <ParabolicTroughLatusRectumInput
+            dialogVisible={latusRectumDialogVisible}
+            setDialogVisible={setLatusRectumDialogVisible}
+          />
+          <Menu.Item
+            key={'parabolic-trough-latus-rectum'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setLatusRectumDialogVisible(true);
+            }}
+          >
+            {i18n.t('parabolicTroughMenu.LatusRectum', lang)} ...
           </Menu.Item>
 
           {/* relative azimuth to the parent element */}

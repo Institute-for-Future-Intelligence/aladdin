@@ -17,6 +17,6 @@ export interface ParabolicTroughModel extends SolarCollector {
 
   // ly is the aperture width, lx is the module length multiplied by the number of modules
   moduleLength: number;
-  // parabola y = x^2/4f, semi-latus rectum p = 2f, f is the focal parameter
-  semiLatusRectum: number;
+  // parabola y = x^2/4f, latus rectum p = 4f, f is the focal parameter
+  latusRectum: number;
 }
