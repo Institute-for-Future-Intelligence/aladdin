@@ -268,7 +268,7 @@ const ParabolicTroughLengthInput = ({
   };
 
   // for some reason, we have to confirm the type first. otherwise, other popup menus may invoke this
-  return parabolicTrough.type === ObjectType.ParabolicTrough ? (
+  return parabolicTrough?.type === ObjectType.ParabolicTrough ? (
     <>
       <Modal
         width={600}

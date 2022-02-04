@@ -363,7 +363,9 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);
     const originalNormal = normal.clone();
-    const zRot = parent.rotation[2] + panel.relativeAzimuth;
+    const rot = parent.rotation[2];
+    const zRot = rot + panel.relativeAzimuth;
+    const zRotZero = Util.isZero(zRot);
     if (Math.abs(panel.tiltAngle) > 0.001 && panel.trackerType === TrackerType.NO_TRACKER) {
       // TODO: right now we assume a parent rotation is always around the z-axis
       //normal.applyAxisAngle(UNIT_VECTOR_POS_X, panel.tiltAngle).applyAxisAngle(UNIT_VECTOR_POS_Z, zRot);
@@ -401,7 +403,6 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           // when the sun is out
           if (panel.trackerType !== TrackerType.NO_TRACKER) {
             // dynamic angles
-            const rot = parent.rotation[2];
             const rotatedSunDirection = rot
               ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
               : sunDirection.clone();
@@ -437,7 +438,6 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
           const dot = normal.dot(sunDirection);
           const v2 = new Vector2();
-          const zRotZero = Util.isZero(zRot);
           for (let kx = 0; kx < nx; kx++) {
             for (let ky = 0; ky < ny; ky++) {
               cellOutputTotals[kx][ky] += indirectRadiation;
@@ -470,7 +470,6 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     const center = Util.absoluteCoordinates(trough.cx, trough.cy, trough.cz, parent);
     const normal = new Vector3().fromArray(trough.normal);
     const originalNormal = normal.clone();
-    const zRot = parent.rotation[2] + trough.relativeAzimuth;
     const year = now.getFullYear();
     const month = now.getMonth();
     const date = now.getDate();
@@ -487,37 +486,41 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
     const z0 = parent.lz + actualPoleHeight + trough.lz + depth;
-    console.log(z0, trough.moduleLength);
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputTotals = Array(nx)
       .fill(0)
       .map(() => Array(ny).fill(0));
     let count = 0;
+    const rot = parent.rotation[2];
+    const zRot = rot + trough.relativeAzimuth;
+    const zRotZero = Util.isZero(zRot);
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         const currentTime = new Date(year, month, date, i, j * interval);
         const sunDirection = getSunDirection(currentTime, world.latitude);
         if (sunDirection.z > 0) {
           // when the sun is out
-          const rot = parent.rotation[2];
-          const rotatedSunDirection = rot
-            ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
-            : sunDirection.clone();
-          const ori = originalNormal.clone();
-          const qRotHSAT = new Quaternion().setFromUnitVectors(
-            UNIT_VECTOR_POS_Z,
-            new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
-          );
-          normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotHSAT)));
+          // const rotatedSunDirection = rot
+          //   ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
+          //   : sunDirection.clone();
+          // const ori = originalNormal.clone();
+          // const qRotHSAT = new Quaternion().setFromUnitVectors(
+          //   UNIT_VECTOR_POS_Z,
+          //   new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
+          // );
+          // normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotHSAT)));
           count++;
           const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+          // we don't want to show indirect radiation
+          //const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
           const dot = normal.dot(sunDirection);
           const v2 = new Vector2();
-          const zRotZero = Util.isZero(zRot);
           for (let kx = 0; kx < nx; kx++) {
             for (let ky = 0; ky < ny; ky++) {
+              //cellOutputTotals[kx][ky] += indirectRadiation;
               if (dot > 0) {
+                // TODO: we have to use the parabolic surface, not the aperture surface
                 v2.set(x0 + kx * dx, y0 + ky * dy);
                 if (!zRotZero) v2.rotateAround(center2d, zRot);
                 v.set(v2.x, v2.y, z0);

@@ -1120,15 +1120,19 @@ const Cuboid = ({
         {cuboidModel && cuboidModel.faceColors ? (
           faces.map((i) => {
             if (textureTypes && textureTypes[i] !== CuboidTexture.NoTexture) {
-              return <meshStandardMaterial key={i} attachArray="material" color={'white'} map={textures[i]} />;
+              return showSolarRadiationHeatmap ? (
+                <meshBasicMaterial key={i} attachArray="material" color={'white'} map={textures[i]} />
+              ) : (
+                <meshStandardMaterial key={i} attachArray="material" color={'white'} map={textures[i]} />
+              );
             } else {
-              return (
+              return showSolarRadiationHeatmap ? (
+                <meshBasicMaterial key={i} attachArray="material" color={'white'} map={textures[i]} />
+              ) : (
                 <meshStandardMaterial
                   key={i}
                   attachArray="material"
-                  color={
-                    showSolarRadiationHeatmap ? 'white' : cuboidModel.faceColors ? cuboidModel.faceColors[i] : color
-                  }
+                  color={cuboidModel.faceColors ? cuboidModel.faceColors[i] : color}
                   map={textures[i]}
                 />
               );

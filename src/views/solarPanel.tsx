@@ -436,10 +436,11 @@ const SolarPanel = ({
         >
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial
-            attachArray="material"
-            map={showSolarRadiationHeatmap && heatmapTexture ? heatmapTexture : texture}
-          />
+          {showSolarRadiationHeatmap && heatmapTexture ? (
+            <meshBasicMaterial attachArray="material" map={heatmapTexture} />
+          ) : (
+            <meshStandardMaterial attachArray="material" map={texture} />
+          )}
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />

@@ -291,7 +291,7 @@ const ParabolicTrough = ({
           }}
         >
           {showSolarRadiationHeatmap && heatmapTexture ? (
-            <meshStandardMaterial attach="material" side={FrontSide} map={heatmapTexture} />
+            <meshBasicMaterial attach="material" side={FrontSide} map={heatmapTexture} />
           ) : (
             <meshPhongMaterial
               attach="material"
@@ -419,6 +419,17 @@ const ParabolicTrough = ({
           castShadow={false}
           visible={false}
         >
+          {/*{showSolarRadiationHeatmap && heatmapTexture ? (*/}
+          {/*  <meshBasicMaterial attach="material" side={FrontSide} map={heatmapTexture}/>*/}
+          {/*) : (*/}
+          {/*  <meshPhongMaterial*/}
+          {/*    attach="material"*/}
+          {/*    specular={new Color('white')}*/}
+          {/*    shininess={10}*/}
+          {/*    side={FrontSide}*/}
+          {/*    color={'skyblue'}*/}
+          {/*  />*/}
+          {/*)}*/}
           <meshBasicMaterial side={DoubleSide} />
         </Plane>
 

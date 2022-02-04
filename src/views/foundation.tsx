@@ -1751,19 +1751,23 @@ const Foundation = ({
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
-        <meshStandardMaterial
-          attachArray="material"
-          color={
-            showSolarRadiationHeatmap && heatmapTexture
-              ? 'white'
-              : textureType === FoundationTexture.NoTexture
-              ? color
-              : 'white'
-          }
-          map={showSolarRadiationHeatmap && heatmapTexture ? heatmapTexture : texture}
-          transparent={groundImage}
-          opacity={opacity}
-        />
+        {showSolarRadiationHeatmap && heatmapTexture ? (
+          <meshBasicMaterial
+            attachArray="material"
+            color={'white'}
+            map={heatmapTexture}
+            transparent={groundImage}
+            opacity={opacity}
+          />
+        ) : (
+          <meshStandardMaterial
+            attachArray="material"
+            color={textureType === FoundationTexture.NoTexture ? color : 'white'}
+            map={texture}
+            transparent={groundImage}
+            opacity={opacity}
+          />
+        )}
         <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
       </Box>
 
