@@ -5,7 +5,20 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PyramidRoofModel, RoofModel } from 'src/models/RoofModel';
 import { useStore } from 'src/stores/common';
-import { DoubleSide, Euler, Mesh, Raycaster, Shape, Vector2, Vector3 } from 'three';
+import {
+  BoxBufferGeometry,
+  BoxGeometry,
+  BufferGeometry,
+  DoubleSide,
+  Euler,
+  Matrix4,
+  Mesh,
+  MeshStandardMaterial,
+  Raycaster,
+  Shape,
+  Vector2,
+  Vector3,
+} from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { Box, Line, Plane, Sphere } from '@react-three/drei';
@@ -17,6 +30,7 @@ import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
 import wall from '../wall/wall';
 import { ObjectType } from 'src/types';
+import { CSG } from 'three-csg-ts';
 
 const centerPointPosition = new Vector3();
 const intersectionPlanePosition = new Vector3();
@@ -288,10 +302,7 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected }: Pyrami
             if (leftPoint.distanceTo(rightPoint) > 0.1) {
               return (
                 <group name={`Roof segment ${idx}`} key={idx}>
-                  <mesh castShadow>
-                    <convexGeometry args={[v]} />
-                    <meshStandardMaterial side={DoubleSide} color="#2F4F4F" />
-                  </mesh>
+                  <RoofSegment v={v} />
                   <Line points={[leftPoint, rightPoint]} lineWidth={0.2} />
                   {showCenterWireFrame && (
                     <>
@@ -356,6 +367,41 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected }: Pyrami
         />
       )}
     </group>
+  );
+};
+
+const RoofSegment = ({ v }: { v: Vector3[] }) => {
+  const mat = useMemo(() => {
+    return new MeshStandardMaterial();
+  }, []);
+  const meshRef = useRef<Mesh>(null);
+
+  if (meshRef.current) {
+    v.push(new Vector3(0, 0, -0.001));
+
+    const roofMesh = new Mesh(new ConvexGeometry(v), mat);
+
+    // todo: if has window
+    if (false) {
+      // const h: Vector3[] = [];
+      // h.push(new Vector3(0, 0, -3));
+      // h.push(new Vector3(0, 0, 3));
+      // h.push(new Vector3(1, 1, -3));
+      // h.push(new Vector3(1, 1, 3));
+      // h.push(new Vector3(1, -1, -3));
+      // h.push(new Vector3(1, -1, 3));
+      // const holeMesh = new Mesh(new ConvexGeometry(h), mat);
+      // const res = CSG.subtract(roofMesh, holeMesh);
+      // meshRef.current.geometry = res.geometry;
+    } else {
+      meshRef.current.geometry = roofMesh.geometry;
+    }
+  }
+
+  return (
+    <mesh ref={meshRef} castShadow>
+      <meshStandardMaterial side={DoubleSide} color="#2F4F4F" />
+    </mesh>
   );
 };
 
