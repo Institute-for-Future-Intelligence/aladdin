@@ -23,6 +23,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
+import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 
 export interface SolarRadiationSimulationProps {
   city: string | null;
@@ -114,6 +115,9 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           break;
         case ObjectType.SolarPanel:
           generateHeatmapForSolarPanel(e as SolarPanelModel);
+          break;
+        case ObjectType.ParabolicTrough:
+          generateHeatmapForParabolicTrough(e as ParabolicTroughModel);
           break;
       }
     }
@@ -404,15 +408,15 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
             const ori = originalNormal.clone();
             switch (panel.trackerType) {
               case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
-                const qrotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
-                normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qrotAADAT)));
+                const qRotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
+                normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotAADAT)));
                 break;
               case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
-                const qrotHSAT = new Quaternion().setFromUnitVectors(
+                const qRotHSAT = new Quaternion().setFromUnitVectors(
                   UNIT_VECTOR_POS_Z,
                   new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
                 );
-                normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qrotHSAT)));
+                normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotHSAT)));
                 break;
               case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
                 if (Math.abs(panel.tiltAngle) > 0.001) {
@@ -457,6 +461,81 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     applyScaleFactor(cellOutputTotals, scaleFactor);
     // send heat map data to common store for visualization
     setHeatmap(panel.id, cellOutputTotals);
+  };
+
+  // parabolic troughs harvest ONLY direct solar radiation
+  const generateHeatmapForParabolicTrough = (trough: ParabolicTroughModel) => {
+    const parent = getParent(trough);
+    if (!parent) throw new Error('parent of parabolic trough does not exist');
+    const center = Util.absoluteCoordinates(trough.cx, trough.cy, trough.cz, parent);
+    const normal = new Vector3().fromArray(trough.normal);
+    const originalNormal = normal.clone();
+    const zRot = parent.rotation[2] + trough.relativeAzimuth;
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const date = now.getDate();
+    const dayOfYear = Util.dayOfYear(now);
+    const lx = trough.lx;
+    const ly = trough.ly;
+    const depth = (ly * ly) / (4 * trough.latusRectum); // the distance from the bottom to the aperture plane
+    const actualPoleHeight = trough.poleHeight + ly / 2;
+    const nx = Math.max(2, Math.round(trough.lx / cellSize));
+    const ny = Math.max(2, Math.round(trough.ly / cellSize));
+    const dx = lx / nx;
+    const dy = ly / ny;
+    // shift half cell size to the center of each grid cell
+    const x0 = center.x - (lx - cellSize) / 2;
+    const y0 = center.y - (ly - cellSize) / 2;
+    const z0 = parent.lz + actualPoleHeight + trough.lz + depth;
+    console.log(z0, trough.moduleLength);
+    const center2d = new Vector2(center.x, center.y);
+    const v = new Vector3();
+    const cellOutputTotals = Array(nx)
+      .fill(0)
+      .map(() => Array(ny).fill(0));
+    let count = 0;
+    for (let i = 0; i < 24; i++) {
+      for (let j = 0; j < world.timesPerHour; j++) {
+        const currentTime = new Date(year, month, date, i, j * interval);
+        const sunDirection = getSunDirection(currentTime, world.latitude);
+        if (sunDirection.z > 0) {
+          // when the sun is out
+          const rot = parent.rotation[2];
+          const rotatedSunDirection = rot
+            ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
+            : sunDirection.clone();
+          const ori = originalNormal.clone();
+          const qRotHSAT = new Quaternion().setFromUnitVectors(
+            UNIT_VECTOR_POS_Z,
+            new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
+          );
+          normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotHSAT)));
+          count++;
+          const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+          const dot = normal.dot(sunDirection);
+          const v2 = new Vector2();
+          const zRotZero = Util.isZero(zRot);
+          for (let kx = 0; kx < nx; kx++) {
+            for (let ky = 0; ky < ny; ky++) {
+              if (dot > 0) {
+                v2.set(x0 + kx * dx, y0 + ky * dy);
+                if (!zRotZero) v2.rotateAround(center2d, zRot);
+                v.set(v2.x, v2.y, z0);
+                if (!inShadow(trough.id, v, sunDirection)) {
+                  cellOutputTotals[kx][ky] += dot * peakRadiation;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+    const daylight = (count * interval) / 60;
+    const scaleFactor = weather.sunshineHours[month] / (30 * daylight * world.timesPerHour);
+    applyScaleFactor(cellOutputTotals, scaleFactor);
+    // send heat map data to common store for visualization
+    setHeatmap(trough.id, cellOutputTotals);
   };
 
   const applyScaleFactor = (output: number[][], scaleFactor: number) => {

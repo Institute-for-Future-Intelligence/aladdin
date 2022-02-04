@@ -11,12 +11,13 @@ import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
-import ParabolicTroughLengthInput from './ParabolicTroughLengthInput';
-import ParabolicTroughWidthInput from './ParabolicTroughWidthInput';
-import ParabolicTroughPoleHeightInput from './ParabolicTroughPoleHeightInput';
+import ParabolicTroughLengthInput from './parabolicTroughLengthInput';
+import ParabolicTroughWidthInput from './parabolicTroughWidthInput';
+import ParabolicTroughPoleHeightInput from './parabolicTroughPoleHeightInput';
 import ParabolicTroughRelativeAzimuthInput from './parabolicTroughRelativeAzimuthInput';
-import ParabolicTroughLatusRectumInput from './ParabolicTroughLatusRectumInput';
-import ParabolicTroughModuleLengthInput from './ParabolicTroughModuleLengthInput';
+import ParabolicTroughLatusRectumInput from './parabolicTroughLatusRectumInput';
+import ParabolicTroughModuleLengthInput from './parabolicTroughModuleLengthInput';
+import { ObjectType } from '../../../types';
 
 export const ParabolicTroughMenu = () => {
   const language = useStore(Selector.language);

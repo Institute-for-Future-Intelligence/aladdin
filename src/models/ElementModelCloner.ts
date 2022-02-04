@@ -286,6 +286,7 @@ export class ElementModelCloner {
       lx: trough.lx,
       ly: trough.ly,
       lz: trough.lz,
+      absorberTubeRadius: trough.absorberTubeRadius,
       moduleLength: trough.moduleLength,
       latusRectum: trough.latusRectum,
       tiltAngle: trough.tiltAngle,

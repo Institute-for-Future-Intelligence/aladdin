@@ -35,6 +35,7 @@ const ParabolicTrough = ({
   lx,
   ly,
   lz = 0.1,
+  absorberTubeRadius = 0.05,
   latusRectum = 2,
   tiltAngle,
   relativeAzimuth,
@@ -399,7 +400,7 @@ const ParabolicTrough = ({
         <Cylinder
           name={'Parabolic Trough Absorber Tube'}
           uuid={id}
-          args={[poleRadius, poleRadius, lx, 6, 2]}
+          args={[absorberTubeRadius, absorberTubeRadius, lx, 6, 2]}
           position={[0, 0, 0.25 * latusRectum]}
           receiveShadow={false}
           castShadow={true}

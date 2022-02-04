@@ -13,8 +13,9 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
+import { Util } from '../../../Util';
 
-const ParabolicTroughPoleHeightInput = ({
+const ParabolicTroughModuleLengthInput = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -23,9 +24,9 @@ const ParabolicTroughPoleHeightInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updatePoleHeightById = useStore(Selector.updateSolarCollectorPoleHeightById);
-  const updatePoleHeightAboveFoundation = useStore(Selector.updateSolarCollectorPoleHeightAboveFoundation);
-  const updatePoleHeightForAll = useStore(Selector.updateSolarCollectorPoleHeightForAll);
+  const updateModuleLengthById = useStore(Selector.updateModuleLengthById);
+  const updateModuleLengthAboveFoundation = useStore(Selector.updateModuleLengthAboveFoundation);
+  const updateModuleLengthForAll = useStore(Selector.updateModuleLengthForAll);
   const getParent = useStore(Selector.getParent);
   const parabolicTrough = useStore(Selector.selectedElement) as ParabolicTroughModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -35,7 +36,7 @@ const ParabolicTroughPoleHeightInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputPoleHeight, setInputPoleHeight] = useState<number>(parabolicTrough?.poleHeight ?? 1);
+  const [inputModuleLength, setInputModuleLength] = useState<number>(parabolicTrough?.moduleLength ?? 3);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -47,7 +48,7 @@ const ParabolicTroughPoleHeightInput = ({
 
   useEffect(() => {
     if (parabolicTrough) {
-      setInputPoleHeight(parabolicTrough.poleHeight);
+      setInputModuleLength(parabolicTrough.moduleLength);
     }
   }, [parabolicTrough]);
 
@@ -56,13 +57,32 @@ const ParabolicTroughPoleHeightInput = ({
     setUpdateFlag(!updateFlag);
   };
 
-  const needChange = (poleHeight: number) => {
+  const withinParent = (trough: ParabolicTroughModel, moduleLength: number) => {
+    const parent = getParent(trough);
+    if (parent) {
+      const clone = JSON.parse(JSON.stringify(trough)) as ParabolicTroughModel;
+      clone.moduleLength = moduleLength;
+      return Util.isParabolicTroughWithinHorizontalSurface(clone, parent);
+    }
+    return false;
+  };
+
+  const rejectChange = (trough: ParabolicTroughModel, moduleLength: number) => {
+    // check if the new module length will cause the parabolic trough to be out of the bound
+    if (!withinParent(trough, moduleLength)) {
+      return true;
+    }
+    // other check?
+    return false;
+  };
+
+  const needChange = (moduleLength: number) => {
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.ParabolicTrough && !e.locked) {
-            const pt = e as ParabolicTroughModel;
-            if (Math.abs(pt.poleHeight - poleHeight) > ZERO_TOLERANCE) {
+            const trough = e as ParabolicTroughModel;
+            if (Math.abs(trough.moduleLength - moduleLength) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -71,35 +91,22 @@ const ParabolicTroughPoleHeightInput = ({
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
           if (e.type === ObjectType.ParabolicTrough && e.foundationId === parabolicTrough?.foundationId && !e.locked) {
-            const pt = e as ParabolicTroughModel;
-            if (Math.abs(pt.poleHeight - poleHeight) > ZERO_TOLERANCE) {
+            const trough = e as ParabolicTroughModel;
+            if (Math.abs(trough.moduleLength - moduleLength) > ZERO_TOLERANCE) {
               return true;
             }
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
-        const parent = getParent(parabolicTrough);
-        if (parent) {
-          for (const e of elements) {
-            if (e.type === ObjectType.ParabolicTrough && e.parentId === parabolicTrough.parentId && !e.locked) {
-              const pt = e as ParabolicTroughModel;
-              if (Math.abs(pt.poleHeight - poleHeight) > ZERO_TOLERANCE) {
-                return true;
-              }
-            }
-          }
-        }
-        break;
       default:
-        if (Math.abs(parabolicTrough?.poleHeight - poleHeight) > ZERO_TOLERANCE) {
+        if (Math.abs(parabolicTrough?.moduleLength - moduleLength) > ZERO_TOLERANCE) {
           return true;
         }
     }
     return false;
   };
 
-  const setPoleHeight = (value: number) => {
+  const setModuleLength = (value: number) => {
     if (!parabolicTrough) return;
     if (!needChange(value)) return;
     rejectedValue.current = undefined;
@@ -108,7 +115,7 @@ const ParabolicTroughPoleHeightInput = ({
         rejectRef.current = false;
         for (const elem of elements) {
           if (elem.type === ObjectType.ParabolicTrough) {
-            if (0.5 * elem.ly * Math.abs(Math.sin((elem as ParabolicTroughModel).tiltAngle)) > value) {
+            if (rejectChange(elem as ParabolicTroughModel, value)) {
               rejectRef.current = true;
               break;
             }
@@ -116,30 +123,30 @@ const ParabolicTroughPoleHeightInput = ({
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputPoleHeight(parabolicTrough.poleHeight);
+          setInputModuleLength(parabolicTrough.moduleLength);
         } else {
-          const oldPoleHeightsAll = new Map<string, number>();
+          const oldModuleLengthsAll = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.ParabolicTrough) {
-              oldPoleHeightsAll.set(elem.id, (elem as ParabolicTroughModel).poleHeight);
+              oldModuleLengthsAll.set(elem.id, (elem as ParabolicTroughModel).moduleLength);
             }
           }
           const undoableChangeAll = {
-            name: 'Set Pole Height for All Parabolic Troughs',
+            name: 'Set Module Length for All Parabolic Troughs',
             timestamp: Date.now(),
-            oldValues: oldPoleHeightsAll,
+            oldValues: oldModuleLengthsAll,
             newValue: value,
             undo: () => {
-              for (const [id, ph] of undoableChangeAll.oldValues.entries()) {
-                updatePoleHeightById(id, ph as number);
+              for (const [id, ml] of undoableChangeAll.oldValues.entries()) {
+                updateModuleLengthById(id, ml as number);
               }
             },
             redo: () => {
-              updatePoleHeightForAll(ObjectType.ParabolicTrough, undoableChangeAll.newValue as number);
+              updateModuleLengthForAll(ObjectType.ParabolicTrough, undoableChangeAll.newValue as number);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
-          updatePoleHeightForAll(ObjectType.ParabolicTrough, value);
+          updateModuleLengthForAll(ObjectType.ParabolicTrough, value);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -148,7 +155,7 @@ const ParabolicTroughPoleHeightInput = ({
           rejectRef.current = false;
           for (const elem of elements) {
             if (elem.type === ObjectType.ParabolicTrough && elem.foundationId === parabolicTrough.foundationId) {
-              if (0.5 * elem.ly * Math.abs(Math.sin((elem as ParabolicTroughModel).tiltAngle)) > value) {
+              if (rejectChange(elem as ParabolicTroughModel, value)) {
                 rejectRef.current = true;
                 break;
               }
@@ -156,28 +163,28 @@ const ParabolicTroughPoleHeightInput = ({
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputPoleHeight(parabolicTrough.poleHeight);
+            setInputModuleLength(parabolicTrough.moduleLength);
           } else {
-            const oldPoleHeightsAboveFoundation = new Map<string, number>();
+            const oldModuleLengthsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
               if (elem.type === ObjectType.ParabolicTrough && elem.foundationId === parabolicTrough.foundationId) {
-                oldPoleHeightsAboveFoundation.set(elem.id, (elem as ParabolicTroughModel).poleHeight);
+                oldModuleLengthsAboveFoundation.set(elem.id, (elem as ParabolicTroughModel).moduleLength);
               }
             }
             const undoableChangeAboveFoundation = {
-              name: 'Set Pole Height for All Parabolic Troughs Above Foundation',
+              name: 'Set Module Length for All Parabolic Troughs Above Foundation',
               timestamp: Date.now(),
-              oldValues: oldPoleHeightsAboveFoundation,
+              oldValues: oldModuleLengthsAboveFoundation,
               newValue: value,
               groupId: parabolicTrough.foundationId,
               undo: () => {
-                for (const [id, ph] of undoableChangeAboveFoundation.oldValues.entries()) {
-                  updatePoleHeightById(id, ph as number);
+                for (const [id, ml] of undoableChangeAboveFoundation.oldValues.entries()) {
+                  updateModuleLengthById(id, ml as number);
                 }
               },
               redo: () => {
                 if (undoableChangeAboveFoundation.groupId) {
-                  updatePoleHeightAboveFoundation(
+                  updateModuleLengthAboveFoundation(
                     ObjectType.ParabolicTrough,
                     undoableChangeAboveFoundation.groupId,
                     undoableChangeAboveFoundation.newValue as number,
@@ -186,34 +193,34 @@ const ParabolicTroughPoleHeightInput = ({
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
-            updatePoleHeightAboveFoundation(ObjectType.ParabolicTrough, parabolicTrough.foundationId, value);
+            updateModuleLengthAboveFoundation(ObjectType.ParabolicTrough, parabolicTrough.foundationId, value);
             setApplyCount(applyCount + 1);
           }
         }
         break;
       default:
         if (parabolicTrough) {
-          const oldPoleHeight = parabolicTrough.poleHeight;
-          rejectRef.current = 0.5 * parabolicTrough.ly * Math.abs(Math.sin(parabolicTrough.tiltAngle)) > value;
+          const oldModuleLength = parabolicTrough.moduleLength;
+          rejectRef.current = rejectChange(parabolicTrough, value);
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputPoleHeight(oldPoleHeight);
+            setInputModuleLength(oldModuleLength);
           } else {
             const undoableChange = {
-              name: 'Set Parabolic Trough Pole Height',
+              name: 'Set Parabolic Trough Module Length',
               timestamp: Date.now(),
-              oldValue: oldPoleHeight,
+              oldValue: oldModuleLength,
               newValue: value,
               changedElementId: parabolicTrough.id,
               undo: () => {
-                updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
+                updateModuleLengthById(undoableChange.changedElementId, undoableChange.oldValue as number);
               },
               redo: () => {
-                updatePoleHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
+                updateModuleLengthById(undoableChange.changedElementId, undoableChange.newValue as number);
               },
             } as UndoableChange;
             addUndoable(undoableChange);
-            updatePoleHeightById(parabolicTrough.id, value);
+            updateModuleLengthById(parabolicTrough.id, value);
             setApplyCount(applyCount + 1);
           }
         }
@@ -235,7 +242,7 @@ const ParabolicTroughPoleHeightInput = ({
   };
 
   const close = () => {
-    setInputPoleHeight(parabolicTrough.poleHeight);
+    setInputModuleLength(parabolicTrough.moduleLength);
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -246,14 +253,14 @@ const ParabolicTroughPoleHeightInput = ({
   };
 
   const ok = () => {
-    setPoleHeight(inputPoleHeight);
+    setModuleLength(inputModuleLength);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
     }
   };
 
-  return (
+  return parabolicTrough.type === ObjectType.ParabolicTrough ? (
     <>
       <Modal
         width={600}
@@ -264,12 +271,12 @@ const ParabolicTroughPoleHeightInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('solarCollectorMenu.ExtraPoleHeightInAdditionToHalfWidth', lang)}
+            {i18n.t('parabolicTroughMenu.ModuleLength', lang)}
             <label style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +
                   i18n.t('message.NotApplicableToSelectedAction', lang) +
-                  (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(1) + ')' : '')
+                  (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
                 : ''}
             </label>
           </div>
@@ -278,7 +285,7 @@ const ParabolicTroughPoleHeightInput = ({
           <Button
             key="Apply"
             onClick={() => {
-              setPoleHeight(inputPoleHeight);
+              setModuleLength(inputModuleLength);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -303,18 +310,20 @@ const ParabolicTroughPoleHeightInput = ({
         <Row gutter={6}>
           <Col className="gutter-row" span={6}>
             <InputNumber
-              min={0}
-              max={5}
+              min={1}
+              max={10}
+              step={0.5}
               style={{ width: 120 }}
-              step={0.1}
               precision={2}
-              value={inputPoleHeight}
+              value={inputModuleLength}
               formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputPoleHeight(value)}
+              onChange={(value) => setInputModuleLength(value)}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0, 5] {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.MinimumValue', lang)}: 1 {i18n.t('word.MeterAbbreviation', lang)}
+              <br />
+              {i18n.t('word.MaximumValue', lang)}: 10 {i18n.t('word.MeterAbbreviation', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
@@ -342,7 +351,9 @@ const ParabolicTroughPoleHeightInput = ({
         </Row>
       </Modal>
     </>
+  ) : (
+    <></>
   );
 };
 
-export default ParabolicTroughPoleHeightInput;
+export default ParabolicTroughModuleLengthInput;

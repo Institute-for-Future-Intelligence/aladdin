@@ -260,7 +260,7 @@ const ParabolicTroughWidthInput = ({
     }
   };
 
-  return (
+  return parabolicTrough.type === ObjectType.ParabolicTrough ? (
     <>
       <Modal
         width={600}
@@ -351,6 +351,8 @@ const ParabolicTroughWidthInput = ({
         </Row>
       </Modal>
     </>
+  ) : (
+    <></>
   );
 };
 

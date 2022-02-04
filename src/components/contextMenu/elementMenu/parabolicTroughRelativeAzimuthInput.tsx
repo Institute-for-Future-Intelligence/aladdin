@@ -260,7 +260,7 @@ const ParabolicTroughRelativeAzimuthInput = ({
     }
   };
 
-  return (
+  return parabolicTrough.type === ObjectType.ParabolicTrough ? (
     <>
       <Modal
         width={600}
@@ -352,6 +352,8 @@ const ParabolicTroughRelativeAzimuthInput = ({
         </Row>
       </Modal>
     </>
+  ) : (
+    <></>
   );
 };
 

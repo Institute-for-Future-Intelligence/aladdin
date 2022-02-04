@@ -15,7 +15,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
 import { Util } from '../../../Util';
 
-const ParabolicTroughModuleLengthInput = ({
+const ParabolicTroughLatusRectumInput = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -24,9 +24,9 @@ const ParabolicTroughModuleLengthInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateModuleLengthById = useStore(Selector.updateModuleLengthById);
-  const updateModuleLengthAboveFoundation = useStore(Selector.updateModuleLengthAboveFoundation);
-  const updateModuleLengthForAll = useStore(Selector.updateModuleLengthForAll);
+  const updateLatusRectumById = useStore(Selector.updateParabolaLatusRectumById);
+  const updateLatusRectumAboveFoundation = useStore(Selector.updateParabolaLatusRectumAboveFoundation);
+  const updateLatusRectumForAll = useStore(Selector.updateParabolaLatusRectumForAll);
   const getParent = useStore(Selector.getParent);
   const parabolicTrough = useStore(Selector.selectedElement) as ParabolicTroughModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -36,7 +36,7 @@ const ParabolicTroughModuleLengthInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputModuleLength, setInputModuleLength] = useState<number>(parabolicTrough?.moduleLength ?? 3);
+  const [inputLatusRectum, setInputLatusRectum] = useState<number>(parabolicTrough?.latusRectum ?? 2);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -48,7 +48,7 @@ const ParabolicTroughModuleLengthInput = ({
 
   useEffect(() => {
     if (parabolicTrough) {
-      setInputModuleLength(parabolicTrough.moduleLength);
+      setInputLatusRectum(parabolicTrough.latusRectum);
     }
   }, [parabolicTrough]);
 
@@ -57,32 +57,32 @@ const ParabolicTroughModuleLengthInput = ({
     setUpdateFlag(!updateFlag);
   };
 
-  const withinParent = (trough: ParabolicTroughModel, moduleLength: number) => {
+  const withinParent = (trough: ParabolicTroughModel, latusRectum: number) => {
     const parent = getParent(trough);
     if (parent) {
       const clone = JSON.parse(JSON.stringify(trough)) as ParabolicTroughModel;
-      clone.moduleLength = moduleLength;
+      clone.latusRectum = latusRectum;
       return Util.isParabolicTroughWithinHorizontalSurface(clone, parent);
     }
     return false;
   };
 
-  const rejectChange = (trough: ParabolicTroughModel, moduleLength: number) => {
-    // check if the new module length will cause the parabolic trough to be out of the bound
-    if (!withinParent(trough, moduleLength)) {
+  const rejectChange = (trough: ParabolicTroughModel, latusRectum: number) => {
+    // check if the new latus rectum will cause the parabolic trough to be out of the bound
+    if (!withinParent(trough, latusRectum)) {
       return true;
     }
     // other check?
     return false;
   };
 
-  const needChange = (moduleLength: number) => {
+  const needChange = (latusRectum: number) => {
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.ParabolicTrough && !e.locked) {
             const trough = e as ParabolicTroughModel;
-            if (Math.abs(trough.moduleLength - moduleLength) > ZERO_TOLERANCE) {
+            if (Math.abs(trough.latusRectum - latusRectum) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -92,21 +92,21 @@ const ParabolicTroughModuleLengthInput = ({
         for (const e of elements) {
           if (e.type === ObjectType.ParabolicTrough && e.foundationId === parabolicTrough?.foundationId && !e.locked) {
             const trough = e as ParabolicTroughModel;
-            if (Math.abs(trough.moduleLength - moduleLength) > ZERO_TOLERANCE) {
+            if (Math.abs(trough.latusRectum - latusRectum) > ZERO_TOLERANCE) {
               return true;
             }
           }
         }
         break;
       default:
-        if (Math.abs(parabolicTrough?.moduleLength - moduleLength) > ZERO_TOLERANCE) {
+        if (Math.abs(parabolicTrough?.latusRectum - latusRectum) > ZERO_TOLERANCE) {
           return true;
         }
     }
     return false;
   };
 
-  const setModuleLength = (value: number) => {
+  const setLatusRectum = (value: number) => {
     if (!parabolicTrough) return;
     if (!needChange(value)) return;
     rejectedValue.current = undefined;
@@ -123,30 +123,30 @@ const ParabolicTroughModuleLengthInput = ({
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputModuleLength(parabolicTrough.moduleLength);
+          setInputLatusRectum(parabolicTrough.latusRectum);
         } else {
-          const oldModuleLengthsAll = new Map<string, number>();
+          const oldLatusRectumsAll = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.ParabolicTrough) {
-              oldModuleLengthsAll.set(elem.id, (elem as ParabolicTroughModel).moduleLength);
+              oldLatusRectumsAll.set(elem.id, (elem as ParabolicTroughModel).latusRectum);
             }
           }
           const undoableChangeAll = {
-            name: 'Set Module Length for All Parabolic Troughs',
+            name: 'Set Latus Rectum for All Parabolic Troughs',
             timestamp: Date.now(),
-            oldValues: oldModuleLengthsAll,
+            oldValues: oldLatusRectumsAll,
             newValue: value,
             undo: () => {
-              for (const [id, ml] of undoableChangeAll.oldValues.entries()) {
-                updateModuleLengthById(id, ml as number);
+              for (const [id, lr] of undoableChangeAll.oldValues.entries()) {
+                updateLatusRectumById(id, lr as number);
               }
             },
             redo: () => {
-              updateModuleLengthForAll(ObjectType.ParabolicTrough, undoableChangeAll.newValue as number);
+              updateLatusRectumForAll(ObjectType.ParabolicTrough, undoableChangeAll.newValue as number);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
-          updateModuleLengthForAll(ObjectType.ParabolicTrough, value);
+          updateLatusRectumForAll(ObjectType.ParabolicTrough, value);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -163,28 +163,28 @@ const ParabolicTroughModuleLengthInput = ({
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputModuleLength(parabolicTrough.moduleLength);
+            setInputLatusRectum(parabolicTrough.ly);
           } else {
-            const oldModuleLengthsAboveFoundation = new Map<string, number>();
+            const oldLatusRectumsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
               if (elem.type === ObjectType.ParabolicTrough && elem.foundationId === parabolicTrough.foundationId) {
-                oldModuleLengthsAboveFoundation.set(elem.id, (elem as ParabolicTroughModel).moduleLength);
+                oldLatusRectumsAboveFoundation.set(elem.id, (elem as ParabolicTroughModel).latusRectum);
               }
             }
             const undoableChangeAboveFoundation = {
-              name: 'Set Module Length for All Parabolic Troughs Above Foundation',
+              name: 'Set Latus Rectum for All Parabolic Troughs Above Foundation',
               timestamp: Date.now(),
-              oldValues: oldModuleLengthsAboveFoundation,
+              oldValues: oldLatusRectumsAboveFoundation,
               newValue: value,
               groupId: parabolicTrough.foundationId,
               undo: () => {
-                for (const [id, ml] of undoableChangeAboveFoundation.oldValues.entries()) {
-                  updateModuleLengthById(id, ml as number);
+                for (const [id, lr] of undoableChangeAboveFoundation.oldValues.entries()) {
+                  updateLatusRectumById(id, lr as number);
                 }
               },
               redo: () => {
                 if (undoableChangeAboveFoundation.groupId) {
-                  updateModuleLengthAboveFoundation(
+                  updateLatusRectumAboveFoundation(
                     ObjectType.ParabolicTrough,
                     undoableChangeAboveFoundation.groupId,
                     undoableChangeAboveFoundation.newValue as number,
@@ -193,34 +193,34 @@ const ParabolicTroughModuleLengthInput = ({
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
-            updateModuleLengthAboveFoundation(ObjectType.ParabolicTrough, parabolicTrough.foundationId, value);
+            updateLatusRectumAboveFoundation(ObjectType.ParabolicTrough, parabolicTrough.foundationId, value);
             setApplyCount(applyCount + 1);
           }
         }
         break;
       default:
         if (parabolicTrough) {
-          const oldModuleLength = parabolicTrough.moduleLength;
+          const oldLatusRectum = parabolicTrough.latusRectum;
           rejectRef.current = rejectChange(parabolicTrough, value);
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputModuleLength(oldModuleLength);
+            setInputLatusRectum(oldLatusRectum);
           } else {
             const undoableChange = {
-              name: 'Set Parabolic Trough Module Length',
+              name: 'Set Parabolic Trough Latus Rectum',
               timestamp: Date.now(),
-              oldValue: oldModuleLength,
+              oldValue: oldLatusRectum,
               newValue: value,
               changedElementId: parabolicTrough.id,
               undo: () => {
-                updateModuleLengthById(undoableChange.changedElementId, undoableChange.oldValue as number);
+                updateLatusRectumById(undoableChange.changedElementId, undoableChange.oldValue as number);
               },
               redo: () => {
-                updateModuleLengthById(undoableChange.changedElementId, undoableChange.newValue as number);
+                updateLatusRectumById(undoableChange.changedElementId, undoableChange.newValue as number);
               },
             } as UndoableChange;
             addUndoable(undoableChange);
-            updateModuleLengthById(parabolicTrough.id, value);
+            updateLatusRectumById(parabolicTrough.id, value);
             setApplyCount(applyCount + 1);
           }
         }
@@ -242,7 +242,7 @@ const ParabolicTroughModuleLengthInput = ({
   };
 
   const close = () => {
-    setInputModuleLength(parabolicTrough.moduleLength);
+    setInputLatusRectum(parabolicTrough.latusRectum);
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -253,14 +253,14 @@ const ParabolicTroughModuleLengthInput = ({
   };
 
   const ok = () => {
-    setModuleLength(inputModuleLength);
+    setLatusRectum(inputLatusRectum);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
     }
   };
 
-  return (
+  return parabolicTrough.type === ObjectType.ParabolicTrough ? (
     <>
       <Modal
         width={600}
@@ -271,7 +271,7 @@ const ParabolicTroughModuleLengthInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('parabolicTroughMenu.ModuleLength', lang)}
+            {i18n.t('parabolicTroughMenu.LatusRectum', lang)}
             <label style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +
@@ -285,7 +285,7 @@ const ParabolicTroughModuleLengthInput = ({
           <Button
             key="Apply"
             onClick={() => {
-              setModuleLength(inputModuleLength);
+              setLatusRectum(inputLatusRectum);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -311,19 +311,19 @@ const ParabolicTroughModuleLengthInput = ({
           <Col className="gutter-row" span={6}>
             <InputNumber
               min={1}
-              max={10}
+              max={20}
               step={0.5}
               style={{ width: 120 }}
               precision={2}
-              value={inputModuleLength}
+              value={inputLatusRectum}
               formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputModuleLength(value)}
+              onChange={(value) => setInputLatusRectum(value)}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.MinimumValue', lang)}: 1 {i18n.t('word.MeterAbbreviation', lang)}
               <br />
-              {i18n.t('word.MaximumValue', lang)}: 10 {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.MaximumValue', lang)}: 20 {i18n.t('word.MeterAbbreviation', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
@@ -351,7 +351,9 @@ const ParabolicTroughModuleLengthInput = ({
         </Row>
       </Modal>
     </>
+  ) : (
+    <></>
   );
 };
 
-export default ParabolicTroughModuleLengthInput;
+export default ParabolicTroughLatusRectumInput;

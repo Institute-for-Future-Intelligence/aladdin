@@ -172,6 +172,7 @@ export class ElementModelFactory {
       latusRectum: 2,
       relativeAzimuth: 0,
       tiltAngle: 0,
+      absorberTubeRadius: 0.05,
       drawSunBeam: false,
       poleHeight: 1,
       poleRadius: 0.05,

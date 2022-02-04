@@ -14,6 +14,7 @@ export interface ParabolicTroughModel extends SolarCollector {
   // (since it is modeled as a whole plate, this factor deducts the areas of gaps, frames, etc.)
   opticalEfficiency: number;
   thermalEfficiency: number;
+  absorberTubeRadius: number;
 
   // ly is the aperture width, lx is the module length multiplied by the number of modules
   moduleLength: number;
