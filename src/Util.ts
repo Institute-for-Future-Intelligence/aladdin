@@ -456,6 +456,11 @@ export class Util {
   static isPositionRelative(objectType: ObjectType): boolean {
     return (
       objectType === ObjectType.SolarPanel ||
+      objectType === ObjectType.ParabolicTrough ||
+      objectType === ObjectType.ParabolicDish ||
+      objectType === ObjectType.FresnelReflector ||
+      objectType === ObjectType.Heliostat ||
+      objectType === ObjectType.WaterHeater ||
       objectType === ObjectType.Sensor ||
       objectType === ObjectType.Polygon ||
       objectType === ObjectType.Window ||

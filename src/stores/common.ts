@@ -3158,13 +3158,14 @@ export const useStore = create<CommonStoreState>(
                       }
                       break;
                     }
-                    case ObjectType.SolarPanel: {
+                    case ObjectType.SolarPanel:
+                    case ObjectType.ParabolicTrough: {
                       if (state.overlapWithSibling(e)) {
                         // overlap, do not approve
                         showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
                       } else {
                         if (newParent) {
-                          approved = Util.isSolarCollectorWithinHorizontalSurface(e as SolarPanelModel, newParent);
+                          approved = Util.isSolarCollectorWithinHorizontalSurface(e as SolarCollector, newParent);
                           if (!approved) {
                             showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                           }
@@ -3289,6 +3290,7 @@ export const useStore = create<CommonStoreState>(
                       approved = true;
                       break;
                     case ObjectType.SolarPanel:
+                    case ObjectType.ParabolicTrough:
                       if (e.parentId) {
                         const parent = state.getParent(e);
                         if (parent) {
@@ -3335,7 +3337,7 @@ export const useStore = create<CommonStoreState>(
                               parent.type === ObjectType.Foundation ||
                               (parent.type === ObjectType.Cuboid && Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY))
                             ) {
-                              if (Util.isSolarCollectorWithinHorizontalSurface(e as SolarPanelModel, parent)) {
+                              if (Util.isSolarCollectorWithinHorizontalSurface(e as SolarCollector, parent)) {
                                 state.elements.push(e);
                                 state.elementsToPaste = [e];
                                 approved = true;

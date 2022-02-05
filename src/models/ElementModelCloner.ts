@@ -274,7 +274,6 @@ export class ElementModelCloner {
     let foundationId;
     switch (parent.type) {
       case ObjectType.Foundation:
-      case ObjectType.Cuboid:
         foundationId = parent.id;
         break;
     }

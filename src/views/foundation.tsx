@@ -91,7 +91,7 @@ const Foundation = ({
   const updateWallLeftJointsById = useStore(Selector.updateWallLeftJointsById);
   const updateWallRightJointsById = useStore(Selector.updateWallRightJointsById);
   const updateWallLeftPointById = useStore(Selector.updateWallLeftPointById);
-  const updateSolarPanelRelativeAzimuthById = useStore(Selector.updateSolarCollectorRelativeAzimuthById);
+  const updateSolarCollectorRelativeAzimuthById = useStore(Selector.updateSolarCollectorRelativeAzimuthById);
   const updatePolygonVertexPositionById = useStore(Selector.updatePolygonVertexPositionById);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const removeElementById = useStore(Selector.removeElementById);
@@ -192,8 +192,12 @@ const Foundation = ({
     let poleHeight = -1;
     switch (grabRef.current.type) {
       case ObjectType.SolarPanel:
+        poleHeight = (grabRef.current as SolarPanelModel).poleHeight;
+        break;
       case ObjectType.ParabolicTrough:
-        poleHeight = (grabRef.current as SolarCollector).poleHeight;
+        // pole height of parabolic trough is relative to its half width
+        const trough = grabRef.current as ParabolicTroughModel;
+        poleHeight = trough.poleHeight + trough.lx / 2;
         break;
     }
     if (poleHeight >= 0) {
@@ -1229,11 +1233,11 @@ const Foundation = ({
             addUndoable(undoableResize);
           }
         } else if (rotateHandleTypeRef.current) {
-          // currently, solar panels are the only type of child that can be rotated
-          if (grabRef.current.type === ObjectType.SolarPanel) {
-            const solarPanel = grabRef.current as SolarPanelModel;
+          // currently, solar collectors are the only type of child that can be rotated
+          if (Util.isSolarCollector(grabRef.current)) {
+            const collector = grabRef.current as SolarCollector;
             if (Math.abs(newAzimuthRef.current - oldAzimuthRef.current) > ZERO_TOLERANCE) {
-              if (isSolarPanelNewAzimuthOk(solarPanel, newAzimuthRef.current)) {
+              if (isSolarCollectorNewAzimuthOk(collector, newAzimuthRef.current)) {
                 setCommonStore((state) => {
                   state.selectedElementAngle = newAzimuthRef.current;
                 });
@@ -1242,15 +1246,15 @@ const Foundation = ({
                   timestamp: Date.now(),
                   oldValue: oldAzimuthRef.current,
                   newValue: newAzimuthRef.current,
-                  changedElementId: solarPanel.id,
+                  changedElementId: collector.id,
                   undo: () => {
-                    updateSolarPanelRelativeAzimuthById(
+                    updateSolarCollectorRelativeAzimuthById(
                       undoableRotate.changedElementId,
                       undoableRotate.oldValue as number,
                     );
                   },
                   redo: () => {
-                    updateSolarPanelRelativeAzimuthById(
+                    updateSolarCollectorRelativeAzimuthById(
                       undoableRotate.changedElementId,
                       undoableRotate.newValue as number,
                     );
@@ -1258,17 +1262,17 @@ const Foundation = ({
                 } as UndoableChange;
                 addUndoable(undoableRotate);
               } else {
-                updateSolarPanelRelativeAzimuthById(solarPanel.id, oldAzimuthRef.current);
+                updateSolarCollectorRelativeAzimuthById(collector.id, oldAzimuthRef.current);
               }
             }
           }
         } else {
-          // for moving sensors and solar panels
+          // for moving sensors and solar collectors
           newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
           if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
             let accept = true;
-            if (elem.type === ObjectType.SolarPanel) {
-              accept = isSolarPanelNewPositionOk(elem as SolarPanelModel, elem.cx, elem.cy);
+            if (Util.isSolarCollector(elem)) {
+              accept = isSolarCollectorNewPositionOk(elem as SolarCollector, elem.cx, elem.cy);
             }
             if (accept) {
               const undoableMove = {
@@ -1315,7 +1319,7 @@ const Foundation = ({
 
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (!foundationModel) return;
-    if (grabRef.current?.type === ObjectType.SolarPanel) return;
+    if (grabRef.current && Util.isSolarCollector(grabRef.current)) return;
     const objectTypeToAdd = objectTypeToAddRef.current;
     if (!grabRef.current && !addedWallID && objectTypeToAdd !== ObjectType.Wall) return;
     if (grabRef.current?.parentId !== id && objectTypeToAdd === ObjectType.None) return;
@@ -1568,8 +1572,8 @@ const Foundation = ({
     }
   };
 
-  const isSolarPanelNewPositionOk = (sp: SolarPanelModel, cx: number, cy: number) => {
-    const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
+  const isSolarCollectorNewPositionOk = (sc: SolarCollector, cx: number, cy: number) => {
+    const clone = JSON.parse(JSON.stringify(sc)) as SolarCollector;
     clone.cx = cx;
     clone.cy = cy;
     if (overlapWithSibling(clone)) {
@@ -1583,8 +1587,8 @@ const Foundation = ({
     return true;
   };
 
-  const isSolarPanelNewAzimuthOk = (sp: SolarPanelModel, az: number) => {
-    const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
+  const isSolarCollectorNewAzimuthOk = (sc: SolarCollector, az: number) => {
+    const clone = JSON.parse(JSON.stringify(sc)) as SolarCollector;
     clone.relativeAzimuth = az;
     if (overlapWithSibling(clone)) {
       showError(i18n.t('message.RotationCancelledBecauseOfOverlap', lang));
@@ -1597,13 +1601,18 @@ const Foundation = ({
     return true;
   };
 
-  const isSolarPanelNewSizeOk = (sp: SolarPanelModel, cx: number, cy: number, lx: number, ly: number) => {
-    // check if the new length will cause the solar panel to intersect with the foundation
-    if (sp.tiltAngle !== 0 && 0.5 * ly * Math.abs(Math.sin(sp.tiltAngle)) > sp.poleHeight) {
+  const isSolarCollectorNewSizeOk = (sc: SolarCollector, cx: number, cy: number, lx: number, ly: number) => {
+    // check if the new length will cause the solar collector to intersect with the foundation
+    if (
+      sc.type === ObjectType.SolarPanel &&
+      sc.tiltAngle !== 0 &&
+      0.5 * ly * Math.abs(Math.sin(sc.tiltAngle)) > sc.poleHeight
+    ) {
+      // we only need to check solar panels, other collectors are guaranteed to not touch the ground
       return false;
     }
     // check if the new size will be within the foundation
-    const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
+    const clone = JSON.parse(JSON.stringify(sc)) as SolarCollector;
     clone.cx = cx;
     clone.cy = cy;
     clone.lx = lx;
@@ -1611,21 +1620,21 @@ const Foundation = ({
     return Util.isSolarCollectorWithinHorizontalSurface(clone, foundationModel);
   };
 
-  const handleSolarPanelPointerOut = (e: ThreeEvent<PointerEvent>) => {
-    if (grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
+  const handleSolarCollectorPointerOut = (e: ThreeEvent<PointerEvent>) => {
+    if (grabRef.current && Util.isSolarCollector(grabRef.current)) {
       // Have to get the latest from the store (we may change this to ref in the future)
-      const sp = useStore.getState().getElementById(grabRef.current.id) as SolarPanelModel;
-      if (moveHandleTypeRef.current && !isSolarPanelNewPositionOk(sp, sp.cx, sp.cy)) {
+      const sp = useStore.getState().getElementById(grabRef.current.id) as SolarCollector;
+      if (moveHandleTypeRef.current && !isSolarCollectorNewPositionOk(sp, sp.cx, sp.cy)) {
         setElementPosition(sp.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
       }
     }
   };
 
-  const handleSolarPanelPointerMove = (e: ThreeEvent<PointerEvent>) => {
+  const handleSolarCollectorPointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (!intersectPlaneRef.current) return;
     if (grabRef.current && foundationModel) {
-      if (grabRef.current.type !== ObjectType.SolarPanel) return;
-      const solarPanel = grabRef.current as SolarPanelModel;
+      if (!Util.isSolarCollector(grabRef.current)) return;
+      const collector = grabRef.current as SolarCollector;
       setRayCast(e);
       const intersects = ray.intersectObjects([intersectPlaneRef.current]);
       if (intersects.length > 0) {
@@ -1635,85 +1644,139 @@ const Foundation = ({
         const resizeHandleType = resizeHandleTypeRef.current;
         if (moveHandleType && foundationModel) {
           p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
-          setElementPosition(solarPanel.id, p.x, p.y);
+          setElementPosition(collector.id, p.x, p.y);
         } else if (rotateHandleType) {
           // tilt of solar panels not handled here
           if (rotateHandleType === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Lower) {
             const pr = foundationModel.rotation[2]; // parent rotation
             const pc = new Vector2(foundationModel.cx, foundationModel.cy); // world parent center
-            const cc = new Vector2(foundationModel.lx * solarPanel.cx, foundationModel.ly * solarPanel.cy) //local current center
+            const cc = new Vector2(foundationModel.lx * collector.cx, foundationModel.ly * collector.cy) //local current center
               .rotateAround(ORIGIN_VECTOR2, pr); // add parent rotation
             const wc = new Vector2().addVectors(cc, pc); // world current center
             const rotation =
               Math.atan2(-p.x + wc.x, p.y - wc.y) - pr + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
             const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * TWO_PI : 0; // make sure angle is between -PI to PI
             const newAzimuth = rotation + offset;
-            updateSolarPanelRelativeAzimuthById(solarPanel.id, newAzimuth);
+            updateSolarCollectorRelativeAzimuthById(collector.id, newAzimuth);
             newAzimuthRef.current = newAzimuth;
           }
         } else if (resizeHandleType) {
           const resizeAnchor = resizeAnchorRef.current;
-          const pvModel = getPvModule(solarPanel.pvModelName);
           const wp = new Vector2(p.x, p.y);
           const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
           const distance = wp.distanceTo(resizeAnchor2D);
-          const angle = solarPanel.relativeAzimuth + rotation[2]; // world panel azimuth
+          const angle = collector.relativeAzimuth + rotation[2]; // world panel azimuth
           const rp = new Vector2().subVectors(wp, resizeAnchor2D); // relative vector from anchor to pointer
-          switch (resizeHandleType) {
-            case ResizeHandleType.Lower:
-            case ResizeHandleType.Upper:
-              {
-                const sign = resizeHandleType === ResizeHandleType.Lower ? 1 : -1;
-                const theta = rp.angle() - angle + sign * HALF_PI;
-                let dyl = distance * Math.cos(theta);
-                if (solarPanel.orientation === Orientation.portrait) {
-                  const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));
-                  dyl = nx * pvModel.length;
-                } else {
-                  const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
-                  dyl = nx * pvModel.width;
+          const wbc = new Vector2(cx, cy); // world foundation center
+          if (collector.type === ObjectType.SolarPanel) {
+            const solarPanel = collector as SolarPanelModel;
+            const pvModel = getPvModule(solarPanel.pvModelName);
+            switch (resizeHandleType) {
+              case ResizeHandleType.Lower:
+              case ResizeHandleType.Upper:
+                {
+                  const sign = resizeHandleType === ResizeHandleType.Lower ? 1 : -1;
+                  const theta = rp.angle() - angle + sign * HALF_PI;
+                  let dyl = distance * Math.cos(theta);
+                  if (solarPanel.orientation === Orientation.portrait) {
+                    const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));
+                    dyl = nx * pvModel.length;
+                  } else {
+                    const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
+                    dyl = nx * pvModel.width;
+                  }
+                  const wcx = resizeAnchor.x + (sign * (dyl * Math.sin(angle))) / 2;
+                  const wcy = resizeAnchor.y - (sign * (dyl * Math.cos(angle))) / 2;
+                  const wc = new Vector2(wcx, wcy); // world panel center
+                  const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
+                  const newCx = rc.x / lx;
+                  const newCy = rc.y / ly;
+                  if (isSolarCollectorNewSizeOk(collector, newCx, newCy, collector.lx, dyl)) {
+                    updateElementLyById(collector.id, dyl);
+                    setElementPosition(collector.id, newCx, newCy);
+                    updateDesignInfo();
+                  }
                 }
-                const wcx = resizeAnchor.x + (sign * (dyl * Math.sin(angle))) / 2;
-                const wcy = resizeAnchor.y - (sign * (dyl * Math.cos(angle))) / 2;
-                const wc = new Vector2(wcx, wcy); // world panel center
-                const wbc = new Vector2(cx, cy); // world foundation center
-                const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
-                const newCx = rc.x / lx;
-                const newCy = rc.y / ly;
-                if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, solarPanel.lx, dyl)) {
-                  updateElementLyById(solarPanel.id, dyl);
-                  setElementPosition(solarPanel.id, newCx, newCy);
-                  updateDesignInfo();
+                break;
+              case ResizeHandleType.Left:
+              case ResizeHandleType.Right:
+                {
+                  let sign = resizeHandleType === ResizeHandleType.Left ? -1 : 1;
+                  const theta = rp.angle() - angle + (resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
+                  let dxl = distance * Math.cos(theta);
+                  if (solarPanel.orientation === Orientation.portrait) {
+                    const nx = Math.max(1, Math.ceil((dxl - pvModel.width / 2) / pvModel.width));
+                    dxl = nx * pvModel.width;
+                  } else {
+                    const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
+                    dxl = nx * pvModel.length;
+                  }
+                  const wcx = resizeAnchor.x + (sign * (dxl * Math.cos(angle))) / 2;
+                  const wcy = resizeAnchor.y + (sign * (dxl * Math.sin(angle))) / 2;
+                  const wc = new Vector2(wcx, wcy);
+                  const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
+                  const newCx = rc.x / lx;
+                  const newCy = rc.y / ly;
+                  if (isSolarCollectorNewSizeOk(collector, newCx, newCy, dxl, collector.ly)) {
+                    updateElementLxById(collector.id, dxl);
+                    setElementPosition(collector.id, newCx, newCy);
+                    updateDesignInfo();
+                  }
                 }
-              }
-              break;
-            case ResizeHandleType.Left:
-            case ResizeHandleType.Right:
-              {
-                let sign = resizeHandleType === ResizeHandleType.Left ? -1 : 1;
-                const theta = rp.angle() - angle + (resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
-                let dxl = distance * Math.cos(theta);
-                if (solarPanel.orientation === Orientation.portrait) {
-                  const nx = Math.max(1, Math.ceil((dxl - pvModel.width / 2) / pvModel.width));
-                  dxl = nx * pvModel.width;
-                } else {
-                  const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
-                  dxl = nx * pvModel.length;
+                break;
+            }
+          } else if (collector.type === ObjectType.ParabolicTrough) {
+            const parabolicTrough = collector as ParabolicTroughModel;
+            switch (resizeHandleType) {
+              case ResizeHandleType.Lower:
+              case ResizeHandleType.Upper:
+                {
+                  const sign = resizeHandleType === ResizeHandleType.Lower ? 1 : -1;
+                  const theta = rp.angle() - angle + sign * HALF_PI;
+                  let dyl = distance * Math.cos(theta);
+                  const n = Math.max(
+                    1,
+                    Math.ceil((dyl - parabolicTrough.moduleLength / 2) / parabolicTrough.moduleLength),
+                  );
+                  dyl = n * parabolicTrough.moduleLength;
+                  const wcx = resizeAnchor.x + (sign * (dyl * Math.sin(angle))) / 2;
+                  const wcy = resizeAnchor.y - (sign * (dyl * Math.cos(angle))) / 2;
+                  const wc = new Vector2(wcx, wcy); // world panel center
+                  const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
+                  const newCx = rc.x / lx;
+                  const newCy = rc.y / ly;
+                  if (isSolarCollectorNewSizeOk(collector, newCx, newCy, collector.lx, dyl)) {
+                    updateElementLyById(collector.id, dyl);
+                    setElementPosition(collector.id, newCx, newCy);
+                    updateDesignInfo();
+                  }
                 }
-                const wcx = resizeAnchor.x + (sign * (dxl * Math.cos(angle))) / 2;
-                const wcy = resizeAnchor.y + (sign * (dxl * Math.sin(angle))) / 2;
-                const wc = new Vector2(wcx, wcy);
-                const wbc = new Vector2(cx, cy);
-                const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
-                const newCx = rc.x / lx;
-                const newCy = rc.y / ly;
-                if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, dxl, solarPanel.ly)) {
-                  updateElementLxById(solarPanel.id, dxl);
-                  setElementPosition(solarPanel.id, newCx, newCy);
-                  updateDesignInfo();
+                break;
+              case ResizeHandleType.Left:
+              case ResizeHandleType.Right:
+                {
+                  let sign = resizeHandleType === ResizeHandleType.Left ? -1 : 1;
+                  const theta = rp.angle() - angle + (resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
+                  let dxl = distance * Math.cos(theta);
+                  const nx = Math.max(
+                    1,
+                    Math.ceil((dxl - parabolicTrough.moduleLength / 2) / parabolicTrough.moduleLength),
+                  );
+                  dxl = nx * parabolicTrough.moduleLength;
+                  const wcx = resizeAnchor.x + (sign * (dxl * Math.cos(angle))) / 2;
+                  const wcy = resizeAnchor.y + (sign * (dxl * Math.sin(angle))) / 2;
+                  const wc = new Vector2(wcx, wcy);
+                  const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
+                  const newCx = rc.x / lx;
+                  const newCy = rc.y / ly;
+                  if (isSolarCollectorNewSizeOk(collector, newCx, newCy, dxl, collector.ly)) {
+                    updateElementLxById(collector.id, dxl);
+                    setElementPosition(collector.id, newCx, newCy);
+                    updateDesignInfo();
+                  }
                 }
-              }
-              break;
+                break;
+            }
           }
         }
       }
@@ -1772,22 +1835,22 @@ const Foundation = ({
       </Box>
 
       {/* intersection plane */}
-      {grabRef.current?.type === ObjectType.SolarPanel && !grabRef.current.locked && (
+      {grabRef.current && Util.isSolarCollector(grabRef.current) && !grabRef.current.locked && (
         <Plane
           ref={intersectPlaneRef}
           name={'Foundation Intersection Plane'}
           position={intersectionPlanePosition}
           args={[lx, ly]}
           visible={false}
-          onPointerMove={handleSolarPanelPointerMove}
-          onPointerOut={handleSolarPanelPointerOut}
+          onPointerMove={handleSolarCollectorPointerMove}
+          onPointerOut={handleSolarCollectorPointerOut}
         />
       )}
 
       {showGrid && (
         <>
-          {rotateHandleTypeRef.current && grabRef.current?.type === ObjectType.SolarPanel && (
-            <PolarGrid element={grabRef.current} height={(grabRef.current as SolarPanelModel).poleHeight + hz} />
+          {rotateHandleTypeRef.current && grabRef.current && Util.isSolarCollector(grabRef.current) && (
+            <PolarGrid element={grabRef.current} height={(grabRef.current as SolarCollector).poleHeight + hz} />
           )}
           {(moveHandleTypeRef.current || resizeHandleTypeRef.current || addedWallID) && (
             <ElementGrid hx={hx} hy={hy} hz={hz} />
