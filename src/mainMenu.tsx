@@ -102,6 +102,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const discretization = useStore(Selector.world.discretization);
   const solarPanelGridCellSize = useStore(Selector.world.solarPanelGridCellSize);
   const solarPanelVisibilityGridCellSize = useStore(Selector.world.solarPanelVisibilityGridCellSize);
+  const parabolicTroughTimesPerHour = useStore(Selector.world.parabolicTroughTimesPerHour);
+  const parabolicTroughGridCellSize = useStore(Selector.world.parabolicTroughGridCellSize);
   const solarRadiationHeatmapGridCellSize = useStore(Selector.world.solarRadiationHeatmapGridCellSize);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const orthographic = useStore(Selector.viewState.orthographic);
@@ -844,7 +846,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
 
       {/* analysis menu */}
       <SubMenu key={'analysis'} title={i18n.t('menu.analysisSubMenu', lang)}>
-        {/*physics*/}
+        {/* physics */}
         <SubMenu key={'physics'} title={i18n.t('menu.physicsSubMenu', lang)}>
           <Menu.Item
             key={'daily-solar-radiation-heatmap'}
@@ -911,8 +913,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </SubMenu>
         </SubMenu>
 
-        {/*sensors*/}
-        <SubMenu key={'sensors'} title={i18n.t('menu.sensorsSubMenu', lang)}>
+        {/* sensors */}
+        <SubMenu key={'sensors'} title={i18n.t('menu.sensorSubMenu', lang)}>
           <Menu.Item
             key={'sensor-collect-daily-data'}
             onClick={() => {
@@ -931,7 +933,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               }, 100);
             }}
           >
-            {i18n.t('menu.sensors.CollectDailyData', lang)}
+            {i18n.t('menu.sensor.CollectDailyData', lang)}
           </Menu.Item>
           <Menu.Item
             key={'sensor-collect-yearly-data'}
@@ -951,12 +953,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               }, 100);
             }}
           >
-            {i18n.t('menu.sensors.CollectYearlyData', lang)}
+            {i18n.t('menu.sensor.CollectYearlyData', lang)}
           </Menu.Item>
           <SubMenu key={'sensor-simulation-options'} title={i18n.t('word.Options', lang)}>
             <Menu>
               <Menu.Item key={'sensor-simulation-sampling-frequency'}>
-                <Space style={{ width: '150px' }}>{i18n.t('menu.sensors.SamplingFrequency', lang) + ':'}</Space>
+                <Space style={{ width: '150px' }}>{i18n.t('menu.sensor.SamplingFrequency', lang) + ':'}</Space>
                 <InputNumber
                   min={1}
                   max={60}
@@ -971,14 +973,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                     });
                   }}
                 />
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensors.TimesPerHour', lang)}</Space>
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.TimesPerHour', lang)}</Space>
               </Menu.Item>
             </Menu>
           </SubMenu>
         </SubMenu>
 
         {/* solar panels */}
-        <SubMenu key={'solar-panels'} title={i18n.t('menu.solarPanelsSubMenu', lang)}>
+        <SubMenu key={'solar-panels'} title={i18n.t('menu.solarPanelSubMenu', lang)}>
           <Menu.Item
             key={'solar-panel-daily-yield'}
             onClick={() => {
@@ -998,7 +1000,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               }, 100);
             }}
           >
-            {i18n.t('menu.solarPanels.AnalyzeDailyYield', lang)}
+            {i18n.t('menu.solarPanel.AnalyzeDailyYield', lang)}
           </Menu.Item>
           <Menu.Item
             key={'solar-panel-yearly-yield'}
@@ -1019,22 +1021,22 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               }, 100);
             }}
           >
-            {i18n.t('menu.solarPanels.AnalyzeYearlyYield', lang)}
+            {i18n.t('menu.solarPanel.AnalyzeYearlyYield', lang)}
           </Menu.Item>
           <SubMenu
             key={'solar-panel-energy-analysis-options'}
-            title={i18n.t('menu.solarPanels.EnergyAnalysisOptions', lang)}
+            title={i18n.t('menu.solarPanel.EnergyAnalysisOptions', lang)}
           >
             <Menu>
               <Menu.Item key={'solar-panel-simulation-sampling-frequency'}>
-                <Space style={{ width: '150px' }}>{i18n.t('menu.sensors.SamplingFrequency', lang) + ':'}</Space>
+                <Space style={{ width: '150px' }}>{i18n.t('menu.sensor.SamplingFrequency', lang) + ':'}</Space>
                 <InputNumber
                   min={1}
                   max={60}
                   step={1}
                   style={{ width: 60 }}
                   precision={0}
-                  value={timesPerHour}
+                  value={timesPerHour ?? 4}
                   formatter={(a) => Number(a).toFixed(0)}
                   onChange={(value) => {
                     setCommonStore((state) => {
@@ -1042,10 +1044,10 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                     });
                   }}
                 />
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensors.TimesPerHour', lang)}</Space>
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.TimesPerHour', lang)}</Space>
               </Menu.Item>
               <Menu.Item key={'solar-panel-discretization'}>
-                <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanels.PanelDiscretization', lang) + ':'}</Space>
+                <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanel.PanelDiscretization', lang) + ':'}</Space>
                 <Select
                   style={{ width: '165px' }}
                   value={discretization ?? Discretization.APPROXIMATE}
@@ -1056,16 +1058,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   }}
                 >
                   <Option key={Discretization.EXACT} value={Discretization.EXACT}>
-                    {i18n.t('menu.solarPanels.Exact', lang)}
+                    {i18n.t('menu.solarPanel.Exact', lang)}
                   </Option>
                   <Option key={Discretization.APPROXIMATE} value={Discretization.APPROXIMATE}>
-                    {i18n.t('menu.solarPanels.Approximate', lang)}
+                    {i18n.t('menu.solarPanel.Approximate', lang)}
                   </Option>
                 </Select>
               </Menu.Item>
               {(!discretization || discretization === Discretization.APPROXIMATE) && (
                 <Menu.Item key={'solar-panel-simulation-grid-cell-size'}>
-                  <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanels.EnergyGridCellSize', lang) + ':'}</Space>
+                  <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanel.EnergyGridCellSize', lang) + ':'}</Space>
                   <InputNumber
                     min={0.1}
                     max={5}
@@ -1103,16 +1105,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               }, 100);
             }}
           >
-            {i18n.t('menu.solarPanels.AnalyzeVisibility', lang)}
+            {i18n.t('menu.solarPanel.AnalyzeVisibility', lang)}
           </Menu.Item>
           <SubMenu
             key={'solar-panel-visibility-analysis-options'}
-            title={i18n.t('menu.solarPanels.VisibilityAnalysisOptions', lang)}
+            title={i18n.t('menu.solarPanel.VisibilityAnalysisOptions', lang)}
           >
             <Menu>
               <Menu.Item key={'solar-panel-visibility-grid-cell-size'}>
                 <Space style={{ paddingRight: '10px' }}>
-                  {i18n.t('menu.solarPanels.VisibilityGridCellSize', lang) + ':'}
+                  {i18n.t('menu.solarPanel.VisibilityGridCellSize', lang) + ':'}
                 </Space>
                 <InputNumber
                   min={0.1}
@@ -1125,6 +1127,95 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   onChange={(value) => {
                     setCommonStore((state) => {
                       state.world.solarPanelVisibilityGridCellSize = value;
+                    });
+                  }}
+                />
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
+              </Menu.Item>
+            </Menu>
+          </SubMenu>
+        </SubMenu>
+
+        {/* parabolic troughs */}
+        <SubMenu key={'parabolic-trough'} title={i18n.t('menu.parabolicTroughSubMenu', lang)}>
+          <Menu.Item
+            key={'parabolic-trough-daily-yield'}
+            onClick={() => {
+              const parabolicTroughCount = countElementsByType(ObjectType.ParabolicTrough);
+              if (parabolicTroughCount === 0) {
+                showInfo(i18n.t('analysisManager.NoParabolicTroughForAnalysis', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.dailyParabolicTroughIndividualOutputs = false;
+                  state.dailyParabolicTroughFlag = !state.dailyParabolicTroughFlag;
+                });
+              }, 100);
+            }}
+          >
+            {i18n.t('menu.parabolicTrough.AnalyzeDailyYield', lang)}
+          </Menu.Item>
+          <Menu.Item
+            key={'parabolic-trough-yearly-yield'}
+            onClick={() => {
+              const parabolicTroughCount = countElementsByType(ObjectType.ParabolicTrough);
+              if (parabolicTroughCount === 0) {
+                showInfo(i18n.t('analysisManager.NoParabolicTroughForAnalysis', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.yearlyParabolicTroughIndividualOutputs = false;
+                  state.yearlyParabolicTroughFlag = !state.yearlyParabolicTroughFlag;
+                });
+              }, 100);
+            }}
+          >
+            {i18n.t('menu.parabolicTrough.AnalyzeYearlyYield', lang)}
+          </Menu.Item>
+          <SubMenu
+            key={'parabolic-trough-analysis-options'}
+            title={i18n.t('menu.parabolicTrough.AnalysisOptions', lang)}
+          >
+            <Menu>
+              <Menu.Item key={'parabolic-trough-simulation-sampling-frequency'}>
+                <Space style={{ width: '150px' }}>{i18n.t('menu.sensor.SamplingFrequency', lang) + ':'}</Space>
+                <InputNumber
+                  min={1}
+                  max={60}
+                  step={1}
+                  style={{ width: 60 }}
+                  precision={0}
+                  value={parabolicTroughTimesPerHour ?? 4}
+                  formatter={(a) => Number(a).toFixed(0)}
+                  onChange={(value) => {
+                    setCommonStore((state) => {
+                      state.world.parabolicTroughTimesPerHour = value;
+                    });
+                  }}
+                />
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.TimesPerHour', lang)}</Space>
+              </Menu.Item>
+              <Menu.Item key={'parabolic-trough-simulation-grid-cell-size'}>
+                <Space style={{ width: '150px' }}>{i18n.t('menu.parabolicTrough.GridCellSize', lang) + ':'}</Space>
+                <InputNumber
+                  min={0.1}
+                  max={5}
+                  step={0.1}
+                  style={{ width: 60 }}
+                  precision={1}
+                  value={parabolicTroughGridCellSize ?? 0.5}
+                  formatter={(a) => Number(a).toFixed(1)}
+                  onChange={(value) => {
+                    setCommonStore((state) => {
+                      state.world.parabolicTroughGridCellSize = value;
                     });
                   }}
                 />

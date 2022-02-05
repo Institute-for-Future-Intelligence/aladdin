@@ -106,3 +106,21 @@ export const showVisibilityResultsPanel = (state: CommonStoreState) =>
 export const visibilityResultsPanelX = (state: CommonStoreState) => state.viewState.visibilityResultsPanelX;
 
 export const visibilityResultsPanelY = (state: CommonStoreState) => state.viewState.visibilityResultsPanelY;
+
+export const showDailyParabolicTroughYieldPanel = (state: CommonStoreState) =>
+  state.viewState.showDailyParabolicTroughYieldPanel;
+
+export const dailyParabolicTroughYieldPanelX = (state: CommonStoreState) =>
+  state.viewState.dailyParabolicTroughYieldPanelX;
+
+export const dailyParabolicTroughYieldPanelY = (state: CommonStoreState) =>
+  state.viewState.dailyParabolicTroughYieldPanelY;
+
+export const showYearlyParabolicTroughYieldPanel = (state: CommonStoreState) =>
+  state.viewState.showYearlyParabolicTroughYieldPanel;
+
+export const yearlyParabolicTroughYieldPanelX = (state: CommonStoreState) =>
+  state.viewState.yearlyParabolicTroughYieldPanelX;
+
+export const yearlyParabolicTroughYieldPanelY = (state: CommonStoreState) =>
+  state.viewState.yearlyParabolicTroughYieldPanelY;

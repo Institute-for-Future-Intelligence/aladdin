@@ -205,6 +205,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const normal = new Vector3().fromArray(panel.normal);
     const originalNormal = normal.clone();
     const zRot = parent.rotation[2] + panel.relativeAzimuth;
+    const zRotZero = Util.isZero(zRot);
     if (Math.abs(panel.tiltAngle) > 0.001 && panel.trackerType === TrackerType.NO_TRACKER) {
       // TODO: right now we assume a parent rotation is always around the z-axis
       normal.applyEuler(new Euler(panel.tiltAngle, 0, zRot, 'ZYX'));
@@ -260,6 +261,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
+    const rot = parent.rotation[2];
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         // a shift of 30 minutes minute half of the interval ensures the symmetry of the result around noon
@@ -269,22 +271,21 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           // when the sun is out
           if (panel.trackerType !== TrackerType.NO_TRACKER) {
             // dynamic angles
-            const rot = parent.rotation[2];
             const rotatedSunDirection = rot
               ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
               : sunDirection.clone();
             const ori = originalNormal.clone();
             switch (panel.trackerType) {
               case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
-                const qrotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
-                normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qrotAADAT)));
+                const qRotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
+                normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotAADAT)));
                 break;
               case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
-                const qrotHSAT = new Quaternion().setFromUnitVectors(
+                const qRotHSAT = new Quaternion().setFromUnitVectors(
                   UNIT_VECTOR_POS_Z,
                   new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
                 );
-                normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qrotHSAT)));
+                normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotHSAT)));
                 break;
               case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
                 if (Math.abs(panel.tiltAngle) > 0.001) {
@@ -305,7 +306,6 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
           const dot = normal.dot(sunDirection);
           const v2 = new Vector2();
-          const zRotZero = Util.isZero(zRot);
           for (let kx = 0; kx < nx; kx++) {
             for (let ky = 0; ky < ny; ky++) {
               cellOutputs[kx][ky] = indirectRadiation;
@@ -410,7 +410,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       let index = 0;
       for (const e of elements) {
         if (e.type === ObjectType.SolarPanel) {
-          const yearlyPvYield = getYearlyPvYield(e as SolarPanelModel);
+          const yearlyPvYield = getYearlyYield(e as SolarPanelModel);
           updateSolarPanelYearlyYield(
             e.id,
             yearlyPvYield.reduce((a, b) => a + b, 0),
@@ -435,7 +435,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       const resultArr = [];
       for (const e of elements) {
         if (e.type === ObjectType.SolarPanel) {
-          const yearlyPvYield = getYearlyPvYield(e as SolarPanelModel);
+          const yearlyPvYield = getYearlyYield(e as SolarPanelModel);
           updateSolarPanelYearlyYield(
             e.id,
             yearlyPvYield.reduce((a, b) => a + b, 0),
@@ -458,7 +458,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     }
   };
 
-  const getYearlyPvYield = (panel: SolarPanelModel) => {
+  const getYearlyYield = (panel: SolarPanelModel) => {
     const data = [];
     const parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
@@ -466,6 +466,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const normal = new Vector3().fromArray(panel.normal);
     const originalNormal = normal.clone();
     const zRot = parent.rotation[2] + panel.relativeAzimuth;
+    const zRotZero = Util.isZero(zRot);
     if (Math.abs(panel.tiltAngle) > 0.001 && panel.trackerType === TrackerType.NO_TRACKER) {
       // TODO: right now we assume a parent rotation is always around the z-axis
       normal.applyEuler(new Euler(panel.tiltAngle, 0, zRot, 'ZYX'));
@@ -517,6 +518,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const v = new Vector3();
     const center2d = new Vector2(center.x, center.y);
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
+    const rot = parent.rotation[2];
     for (let month = 0; month < 12; month++) {
       const midMonth = new Date(year, month, date);
       const dayOfYear = Util.dayOfYear(midMonth);
@@ -530,22 +532,21 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
             // when the sun is out
             if (panel.trackerType !== TrackerType.NO_TRACKER) {
               // dynamic angles
-              const rot = parent.rotation[2];
               const rotatedSunDirection = rot
                 ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
                 : sunDirection.clone();
               const ori = originalNormal.clone();
               switch (panel.trackerType) {
                 case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
-                  const qrotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
-                  normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qrotAADAT)));
+                  const qRotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
+                  normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotAADAT)));
                   break;
                 case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
-                  const qrotHSAT = new Quaternion().setFromUnitVectors(
+                  const qRotHSAT = new Quaternion().setFromUnitVectors(
                     UNIT_VECTOR_POS_Z,
                     new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
                   );
-                  normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qrotHSAT)));
+                  normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotHSAT)));
                   break;
                 case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
                   if (Math.abs(panel.tiltAngle) > 0.001) {
@@ -564,12 +565,11 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
             count++;
             const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
             const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
+            const dot = normal.dot(sunDirection);
             const v2 = new Vector2();
-            const zRotZero = Util.isZero(zRot);
             for (let kx = 0; kx < nx; kx++) {
               for (let ky = 0; ky < ny; ky++) {
                 cellOutputs[kx][ky] = indirectRadiation;
-                const dot = normal.dot(sunDirection);
                 if (dot > 0) {
                   v2.set(x0 + kx * dx, y0 + ky * dy);
                   if (!zRotZero) v2.rotateAround(center2d, zRot);

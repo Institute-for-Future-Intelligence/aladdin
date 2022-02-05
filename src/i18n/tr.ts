@@ -206,15 +206,15 @@ export const i18n_tr = {
         SolarRadiationHeatmapGridCellSize: 'Solar Radiation Heatmap Grid Cell Size',
         SolarRadiationHeatmapMaxValue: 'Solar Radiation Heatmap Maximum Value',
       },
-      sensorsSubMenu: 'Sensörler',
-      sensors: {
+      sensorSubMenu: 'Sensörler',
+      sensor: {
         CollectDailyData: 'Günlük Veri Topla',
         CollectYearlyData: 'Yýllýk Veri Topla',
         SamplingFrequency: 'Örnekleme Sýklýðý',
         TimesPerHour: 'Saatlik',
       },
-      solarPanelsSubMenu: 'Güneþ Panelleri',
-      solarPanels: {
+      solarPanelSubMenu: 'Güneþ Panelleri',
+      solarPanel: {
         AnalyzeDailyYield: 'Günlük Verim Analizi',
         AnalyzeYearlyYield: 'Yýllýk Verim Analizi',
         AnalyzeVisibility: 'Analyze Visibility',
@@ -225,6 +225,14 @@ export const i18n_tr = {
         VisibilityGridCellSize: 'View Factor Grid Cell Size',
         EnergyAnalysisOptions: 'Energy Analysis Options',
         VisibilityAnalysisOptions: 'Visibility Analysis Options',
+      },
+      parabolicTroughSubMenu: 'Parabolic Trough',
+      parabolicTrough: {
+        AnalyzeDailyYield: 'Analyze Daily Yield',
+        AnalyzeYearlyYield: 'Analyze Yearly Yield',
+        Discretization: 'Discretization',
+        GridCellSize: 'Grid Cell Size',
+        AnalysisOptions: 'Analysis Options',
       },
       tutorialsSubMenu: 'Tutorials',
       solarEnergyScienceSubMenu: 'Solar Science',
@@ -558,6 +566,17 @@ export const i18n_tr = {
       ShowOutputsOfIndividualSolarPanels: 'Herbir güneþ panelinin verimini göster',
     },
 
+    parabolicTroughYieldPanel: {
+      ParabolicTroughDailyYield: 'Parabolic Trough Daily Yield',
+      ParabolicTroughYearlyYield: 'Parabolic Trough Yearly Yield',
+      Yield: 'Yield',
+      YieldPerHour: 'Yield per Hour',
+      DailyTotal: 'Daily Total',
+      YearlyTotal: 'Yearly Total',
+      HoverForBreakdown: 'Hover for breakdown',
+      ShowOutputsOfIndividualParabolicTroughs: 'Show outputs of individual parabolic troughs',
+    },
+
     heliodonPanel: {
       SunAndTimeSettings: 'Sun & Time Settings',
       SunAngles: 'Açý',
@@ -592,6 +611,11 @@ export const i18n_tr = {
       NoSensorForCollectingData: 'Veri toplamak için sensör yok.',
       NoSolarPanelForAnalysis: 'Analiz için güneþ paneli yok.',
       NoObserverForVisibilityAnalysis: 'There is no observer for visibility analysis.',
+      NoWaterHeaterForAnalysis: 'There is no water heater for analysis.',
+      NoParabolicDishForAnalysis: 'There is no parabolic dish for analysis.',
+      NoParabolicTroughForAnalysis: 'There is no parabolic trough for analysis.',
+      NoFresnelReflectorForAnalysis: 'There is no Fresnel reflector for analysis.',
+      NoHeliostatForAnalysis: 'There is no heliostat for analysis.',
     },
 
     toolbar: {

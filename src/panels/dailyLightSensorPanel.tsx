@@ -71,8 +71,8 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
   const now = new Date(useStore(Selector.world.date));
   const sensorLabels = useStore(Selector.sensorLabels);
   const sensorData = useStore(Selector.dailyLightSensorData);
-  const dailyLightSensorPanelX = useStore(Selector.viewState.dailyLightSensorPanelX);
-  const dailyLightSensorPanelY = useStore(Selector.viewState.dailyLightSensorPanelY);
+  const panelX = useStore(Selector.viewState.dailyLightSensorPanelX);
+  const panelY = useStore(Selector.viewState.dailyLightSensorPanelY);
   const countElementsByType = useStore(Selector.countElementsByType);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
@@ -83,8 +83,8 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 460;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(dailyLightSensorPanelX) ? 0 : Math.max(dailyLightSensorPanelX, wOffset - window.innerWidth),
-    y: isNaN(dailyLightSensorPanelY) ? 0 : Math.min(dailyLightSensorPanelY, window.innerHeight - hOffset),
+    x: isNaN(panelX) ? 0 : Math.max(panelX, wOffset - window.innerWidth),
+    y: isNaN(panelY) ? 0 : Math.min(panelY, window.innerHeight - hOffset),
   });
 
   const lang = { lng: language };
@@ -94,8 +94,8 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
   useEffect(() => {
     const handleResize = () => {
       setCurPosition({
-        x: Math.max(dailyLightSensorPanelX, wOffset - window.innerWidth),
-        y: Math.min(dailyLightSensorPanelY, window.innerHeight - hOffset),
+        x: Math.max(panelX, wOffset - window.innerWidth),
+        y: Math.min(panelY, window.innerHeight - hOffset),
       });
     };
     window.addEventListener('resize', handleResize);

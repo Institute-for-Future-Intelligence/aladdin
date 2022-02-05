@@ -28,6 +28,9 @@ export class DefaultWorldModel implements WorldModel {
   solarPanelVisibilityGridCellSize: number;
   solarRadiationHeatmapGridCellSize: number;
 
+  parabolicTroughTimesPerHour: number;
+  parabolicTroughGridCellSize: number;
+
   constructor() {
     this.latitude = 42.2844063;
     this.longitude = -71.3488548;
@@ -46,6 +49,9 @@ export class DefaultWorldModel implements WorldModel {
     this.discretization = Discretization.APPROXIMATE;
     this.solarPanelVisibilityGridCellSize = 0.2;
     this.solarRadiationHeatmapGridCellSize = 0.5;
+
+    this.parabolicTroughTimesPerHour = 4;
+    this.parabolicTroughGridCellSize = 0.5;
   }
 
   getElements() {

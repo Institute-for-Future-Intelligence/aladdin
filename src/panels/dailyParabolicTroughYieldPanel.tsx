@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -8,8 +8,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { GraphDataType, ObjectType } from '../types';
-import { MONTHS } from '../constants';
-import { Util } from '../Util';
+import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
 import { screenshot, showInfo } from '../helpers';
@@ -18,8 +17,8 @@ import i18n from '../i18n/i18n';
 
 const Container = styled.div`
   position: fixed;
-  top: 85px;
-  right: 36px;
+  top: 80px;
+  right: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -62,20 +61,20 @@ const Header = styled.div`
   }
 `;
 
-export interface YearlyPvYieldPanelProps {
+export interface DailyParabolicTroughYieldPanelProps {
   city: string | null;
 }
 
-const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
+const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanelProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
-  const now = useStore(Selector.world.date);
-  const yearlyYield = useStore(Selector.yearlyPvYield);
-  const individualOutputs = useStore(Selector.yearlyPvIndividualOutputs);
-  const solarPanelLabels = useStore(Selector.solarPanelLabels);
+  const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
-  const panelX = useStore(Selector.viewState.yearlyPvYieldPanelX);
-  const panelY = useStore(Selector.viewState.yearlyPvYieldPanelY);
+  const dailyYield = useStore(Selector.dailyParabolicTroughYield);
+  const individualOutputs = useStore(Selector.dailyParabolicTroughIndividualOutputs);
+  const panelX = useStore(Selector.viewState.dailyParabolicTroughYieldPanelX);
+  const panelY = useStore(Selector.viewState.dailyParabolicTroughYieldPanelY);
+  const parabolicTroughLabels = useStore(Selector.parabolicTroughLabels);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -89,27 +88,27 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
     y: isNaN(panelY) ? 0 : Math.min(panelY, window.innerHeight - hOffset),
   });
   const [sum, setSum] = useState(0);
-  const panelSumRef = useRef(new Map<string, number>());
+  const troughSumRef = useRef(new Map<string, number>());
 
-  const responsiveHeight = 100;
-  const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
   const lang = { lng: language };
+  const responsiveHeight = 100;
 
   useEffect(() => {
     let s = 0;
-    panelSumRef.current.clear();
-    for (const datum of yearlyYield) {
+    troughSumRef.current.clear();
+    for (const datum of dailyYield) {
       for (const prop in datum) {
         if (datum.hasOwnProperty(prop)) {
-          if (prop !== 'Month') {
+          if (prop !== 'Hour') {
             s += datum[prop] as number;
-            panelSumRef.current.set(prop, (panelSumRef.current.get(prop) ?? 0) + (datum[prop] as number));
+            troughSumRef.current.set(prop, (troughSumRef.current.get(prop) ?? 0) + (datum[prop] as number));
           }
         }
       }
     }
     setSum(s);
-  }, [yearlyYield]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dailyYield]);
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
@@ -135,32 +134,32 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
-      state.viewState.yearlyPvYieldPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-      state.viewState.yearlyPvYieldPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+      state.viewState.dailyParabolicTroughYieldPanelX = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.dailyParabolicTroughYieldPanelY = Math.min(ui.y, window.innerHeight - hOffset);
     });
   };
 
   const closePanel = () => {
     setCommonStore((state) => {
-      state.viewState.showYearlyPvYieldPanel = false;
+      state.viewState.showDailyParabolicTroughYieldPanel = false;
     });
   };
 
-  const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
+  const parabolicTroughCount = countElementsByType(ObjectType.ParabolicTrough);
   useEffect(() => {
-    if (solarPanelCount < 2 && individualOutputs) {
+    if (parabolicTroughCount < 2 && individualOutputs) {
       setCommonStore((state) => {
-        state.yearlyPvIndividualOutputs = false;
+        state.dailyParabolicTroughIndividualOutputs = false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [solarPanelCount]);
+  }, [parabolicTroughCount]);
 
-  const labelX = 'Month';
-  const labelY = i18n.t('solarPanelYieldPanel.Yield', lang);
+  const labelX = 'Hour';
+  const labelY = i18n.t('parabolicTroughYieldPanel.YieldPerHour', lang);
   let totalTooltip = '';
   if (individualOutputs) {
-    panelSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
+    troughSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
     totalTooltip += '——————————\n';
     totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
@@ -179,9 +178,9 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>
-              {i18n.t('solarPanelYieldPanel.SolarPanelYearlyYield', lang)}:{' '}
+              {i18n.t('parabolicTroughYieldPanel.ParabolicTroughDailyYield', lang)}:{' '}
               {i18n.t('sensorPanel.WeatherDataFrom', lang)}
-              {' ' + city}
+              {' ' + city} | {moment(now).format('MM/DD')}
             </span>
             <span
               style={{ cursor: 'pointer' }}
@@ -196,37 +195,38 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
             </span>
           </Header>
           <LineGraph
-            type={GraphDataType.YearlyPvYeild}
-            dataSource={yearlyYield.map(({ Daylight, Clearness, ...item }) => item)}
-            labels={solarPanelLabels}
+            type={GraphDataType.DailyParabolicTroughYield}
+            dataSource={dailyYield}
+            labels={parabolicTroughLabels}
             height={responsiveHeight}
             labelX={labelX}
             labelY={labelY}
             unitY={i18n.t('word.kWh', lang)}
             yMin={0}
-            curveType={'natural'}
+            curveType={'linear'}
             fractionDigits={2}
-            referenceX={referenceX}
+            symbolCount={24}
+            referenceX={now.getHours()}
           />
           <Space style={{ alignSelf: 'center' }}>
-            {individualOutputs && solarPanelCount > 1 ? (
+            {individualOutputs && parabolicTroughCount > 1 ? (
               <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                {i18n.t('solarPanelYieldPanel.HoverForBreakdown', lang)}
+                {i18n.t('parabolicTroughYieldPanel.HoverForBreakdown', lang)}
               </Space>
             ) : (
-              <Space>
-                {i18n.t('solarPanelYieldPanel.YearlyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
+              <Space style={{ cursor: 'default' }}>
+                {i18n.t('parabolicTroughYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
               </Space>
             )}
-            {solarPanelCount > 1 && (
+            {parabolicTroughCount > 1 && (
               <Switch
-                title={i18n.t('solarPanelYieldPanel.ShowOutputsOfIndividualSolarPanels', lang)}
+                title={i18n.t('parabolicTroughYieldPanel.ShowOutputsOfIndividualParabolicTroughs', lang)}
                 checkedChildren={<UnorderedListOutlined />}
                 unCheckedChildren={<UnorderedListOutlined />}
                 checked={individualOutputs}
                 onChange={(checked) => {
-                  if (solarPanelCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                  if (parabolicTroughCount === 0) {
+                    showInfo(i18n.t('analysisManager.NoParabolicTroughForAnalysis', lang));
                     return;
                   }
                   showInfo(i18n.t('message.SimulationStarted', lang));
@@ -234,8 +234,8 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                   setTimeout(() => {
                     setCommonStore((state) => {
                       state.simulationInProgress = true;
-                      state.yearlyPvIndividualOutputs = checked;
-                      state.yearlyPvFlag = !state.yearlyPvFlag;
+                      state.dailyParabolicTroughIndividualOutputs = checked;
+                      state.dailyParabolicTroughFlag = !state.dailyParabolicTroughFlag;
                     });
                   }, 100);
                 }}
@@ -246,8 +246,8 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
               icon={<ReloadOutlined />}
               title={i18n.t('word.Update', lang)}
               onClick={() => {
-                if (solarPanelCount === 0) {
-                  showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                if (parabolicTroughCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoParabolicTroughForAnalysis', lang));
                   return;
                 }
                 showInfo(i18n.t('message.SimulationStarted', lang));
@@ -255,7 +255,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                 setTimeout(() => {
                   setCommonStore((state) => {
                     state.simulationInProgress = true;
-                    state.yearlyPvFlag = !state.yearlyPvFlag;
+                    state.dailyParabolicTroughFlag = !state.dailyParabolicTroughFlag;
                   });
                 }, 100);
               }}
@@ -265,8 +265,8 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
               icon={<SaveOutlined />}
               title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
-                screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-pv-yield', {}).then(() => {
-                  showInfo(i18n.t('message:ScreenshotSaved', lang));
+                screenshot('line-graph-' + labelX + '-' + labelY, 'daily-parabolic-trough-yield', {}).then(() => {
+                  showInfo(i18n.t('message.ScreenshotSaved', lang));
                 });
               }}
             />
@@ -277,4 +277,4 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   );
 };
 
-export default React.memo(YearlyPvYieldPanel);
+export default React.memo(DailyParabolicTroughYieldPanel);

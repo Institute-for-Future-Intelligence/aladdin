@@ -482,9 +482,27 @@ export const solarPanelLabels = (state: CommonStoreState) => state.solarPanelLab
 
 export const setSolarPanelLabels = (state: CommonStoreState) => state.setSolarPanelLabels;
 
-export const sensorLabels = (state: CommonStoreState) => state.sensorLabels;
+export const dailyParabolicTroughYield = (state: CommonStoreState) => state.dailyParabolicTroughYield;
 
-export const setSensorLabels = (state: CommonStoreState) => state.setSensorLabels;
+export const dailyParabolicTroughFlag = (state: CommonStoreState) => state.dailyParabolicTroughFlag;
+
+export const dailyParabolicTroughIndividualOutputs = (state: CommonStoreState) =>
+  state.dailyParabolicTroughIndividualOutputs;
+
+export const setDailyParabolicTroughYield = (state: CommonStoreState) => state.setDailyParabolicTroughYield;
+
+export const yearlyParabolicTroughYield = (state: CommonStoreState) => state.yearlyParabolicTroughYield;
+
+export const yearlyParabolicTroughFlag = (state: CommonStoreState) => state.yearlyParabolicTroughFlag;
+
+export const yearlyParabolicTroughIndividualOutputs = (state: CommonStoreState) =>
+  state.yearlyParabolicTroughIndividualOutputs;
+
+export const setYearlyParabolicTroughYield = (state: CommonStoreState) => state.setYearlyParabolicTroughYield;
+
+export const parabolicTroughLabels = (state: CommonStoreState) => state.parabolicTroughLabels;
+
+export const setParabolicTroughLabels = (state: CommonStoreState) => state.setParabolicTroughLabels;
 
 export const dailyLightSensorData = (state: CommonStoreState) => state.dailyLightSensorData;
 
@@ -497,6 +515,10 @@ export const yearlyLightSensorData = (state: CommonStoreState) => state.yearlyLi
 export const yearlyLightSensorFlag = (state: CommonStoreState) => state.yearlyLightSensorFlag;
 
 export const setYearlyLightSensorData = (state: CommonStoreState) => state.setYearlyLightSensorData;
+
+export const sensorLabels = (state: CommonStoreState) => state.sensorLabels;
+
+export const setSensorLabels = (state: CommonStoreState) => state.setSensorLabels;
 
 // handles
 export const hoveredHandle = (state: CommonStoreState) => state.hoveredHandle;

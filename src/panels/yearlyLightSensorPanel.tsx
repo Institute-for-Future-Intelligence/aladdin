@@ -73,8 +73,8 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   const now = useStore(Selector.world.date);
   const sensorData = useStore(Selector.yearlyLightSensorData);
   const sensorLabels = useStore(Selector.sensorLabels);
-  const yearlyLightSensorPanelX = useStore(Selector.viewState.yearlyLightSensorPanelX);
-  const yearlyLightSensorPanelY = useStore(Selector.viewState.yearlyLightSensorPanelY);
+  const panelX = useStore(Selector.viewState.yearlyLightSensorPanelX);
+  const panelY = useStore(Selector.viewState.yearlyLightSensorPanelY);
   const countElementsByType = useStore(Selector.countElementsByType);
 
   const [daylightGraph, setDaylightGraph] = useState(true);
@@ -84,8 +84,8 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 540;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(yearlyLightSensorPanelX) ? 0 : Math.max(yearlyLightSensorPanelX, wOffset - window.innerWidth),
-    y: isNaN(yearlyLightSensorPanelY) ? 0 : Math.min(yearlyLightSensorPanelY, window.innerHeight - hOffset),
+    x: isNaN(panelX) ? 0 : Math.max(panelX, wOffset - window.innerWidth),
+    y: isNaN(panelY) ? 0 : Math.min(panelY, window.innerHeight - hOffset),
   });
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
@@ -100,8 +100,8 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   useEffect(() => {
     const handleResize = () => {
       setCurPosition({
-        x: Math.max(yearlyLightSensorPanelX, wOffset - window.innerWidth),
-        y: Math.min(yearlyLightSensorPanelY, window.innerHeight - hOffset),
+        x: Math.max(panelX, wOffset - window.innerWidth),
+        y: Math.min(panelY, window.innerHeight - hOffset),
       });
     };
     window.addEventListener('resize', handleResize);

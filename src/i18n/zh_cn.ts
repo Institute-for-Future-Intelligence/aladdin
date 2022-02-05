@@ -204,15 +204,15 @@ export const i18n_zh_cn = {
         SolarRadiationHeatmapGridCellSize: '太阳辐射热图网格的尺寸',
         SolarRadiationHeatmapMaxValue: '太阳辐射热图最大值',
       },
-      sensorsSubMenu: '传感器',
-      sensors: {
+      sensorSubMenu: '传感器',
+      sensor: {
         CollectDailyData: '收集当天数据',
         CollectYearlyData: '收集全年数据',
         SamplingFrequency: '采样频率',
         TimesPerHour: '每小时次数',
       },
-      solarPanelsSubMenu: '太阳能光伏板',
-      solarPanels: {
+      solarPanelSubMenu: '太阳能光伏板',
+      solarPanel: {
         AnalyzeDailyYield: '分析当天产出',
         AnalyzeYearlyYield: '分析全年产出',
         AnalyzeVisibility: '分析可见度',
@@ -223,6 +223,14 @@ export const i18n_zh_cn = {
         VisibilityGridCellSize: '视界因子计算网格的尺寸',
         EnergyAnalysisOptions: '能量分析选项',
         VisibilityAnalysisOptions: '可见度分析选项',
+      },
+      parabolicTroughSubMenu: '抛物线槽',
+      parabolicTrough: {
+        AnalyzeDailyYield: '分析当天产出',
+        AnalyzeYearlyYield: '分析全年产出',
+        Discretization: '抛物线槽离散化方法',
+        GridCellSize: '计算网格的尺寸',
+        AnalysisOptions: '分析选项',
       },
       tutorialsSubMenu: '教程',
       solarEnergyScienceSubMenu: '太阳能科学',
@@ -542,7 +550,18 @@ export const i18n_zh_cn = {
       DailyTotal: '日发电总量',
       YearlyTotal: '年发电总量',
       HoverForBreakdown: '在此停留鼠标分列发电量',
-      ShowOutputsOfIndividualSolarPanels: '显示每个光伏单位单独发电量',
+      ShowOutputsOfIndividualSolarPanels: '显示每行光伏板单独发电量',
+    },
+
+    parabolicTroughYieldPanel: {
+      ParabolicTroughDailyYield: '抛物线槽日发电量',
+      ParabolicTroughYearlyYield: '抛物线槽年发电量',
+      Yield: '发电量',
+      YieldPerHour: '每小时发电量',
+      DailyTotal: '日发电总量',
+      YearlyTotal: '年发电总量',
+      HoverForBreakdown: '在此停留鼠标分列发电量',
+      ShowOutputsOfIndividualParabolicTroughs: '显示每行抛物线槽单独发电量',
     },
 
     heliodonPanel: {
@@ -579,6 +598,11 @@ export const i18n_zh_cn = {
       NoSensorForCollectingData: '没有传感器收集数据。',
       NoSolarPanelForAnalysis: '没有光伏板可以分析。',
       NoObserverForVisibilityAnalysis: '没有找到可见度分析的观察者。',
+      NoWaterHeaterForAnalysis: '沒有太阳能热水器可以分析。',
+      NoParabolicDishForAnalysis: '沒有抛物线碟可以分析。',
+      NoParabolicTroughForAnalysis: '沒有抛物线槽可以分析。',
+      NoFresnelReflectorForAnalysis: '沒有菲涅耳反射镜可以分析。',
+      NoHeliostatForAnalysis: '沒有定日镜可以分析。',
     },
 
     toolbar: {

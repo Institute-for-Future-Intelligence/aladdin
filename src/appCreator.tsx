@@ -52,6 +52,9 @@ import SolarPanelVisibility from './analysis/solarPanelVisibility';
 import ShareLink from './shareLinks';
 import VisibilityResultsPanel from './panels/visibilityResultsPanel';
 import SolarRadiationSimulation from './analysis/solarRadiationSimulation';
+import YearlyParabolicTroughYieldPanel from './panels/yearlyParabolicTroughYieldPanel';
+import DailyParabolicTroughYieldPanel from './panels/dailyParabolicTroughYieldPanel';
+import ParabolicTroughSimulation, { ParabolicTroughSimulationProps } from './analysis/parabolicTroughSimulation';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -86,6 +89,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showDailyPvYieldPanel = useStore(Selector.viewState.showDailyPvYieldPanel);
   const showYearlyPvYieldPanel = useStore(Selector.viewState.showYearlyPvYieldPanel);
   const showVisibilityResultsPanel = useStore(Selector.viewState.showVisibilityResultsPanel);
+  const showDailyParabolicTroughYieldPanel = useStore(Selector.viewState.showDailyParabolicTroughYieldPanel);
+  const showYearlyParabolicTroughYieldPanel = useStore(Selector.viewState.showYearlyParabolicTroughYieldPanel);
   const addedFoundationId = useStore(Selector.addedFoundationId);
   const addedCuboidId = useStore(Selector.addedCuboidId);
 
@@ -321,6 +326,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {showYearlyPvYieldPanel && <YearlyPvYieldPanel city={city} />}
       {showDailyPvYieldPanel && <DailyPvYieldPanel city={city} />}
       {showVisibilityResultsPanel && <VisibilityResultsPanel />}
+      {showYearlyParabolicTroughYieldPanel && <YearlyParabolicTroughYieldPanel city={city} />}
+      {showDailyParabolicTroughYieldPanel && <DailyParabolicTroughYieldPanel city={city} />}
       <DropdownContextMenu>
         <div>
           <Canvas
@@ -350,6 +357,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             <SensorSimulation city={city} />
             <SolarPanelSimulation city={city} />
             <SolarPanelVisibility />
+            <ParabolicTroughSimulation city={city} />
           </Canvas>
           <KeyboardListener
             canvas={canvasRef.current}

@@ -168,6 +168,10 @@ export class ElementModelFactory {
     }
     return {
       type: ObjectType.ParabolicTrough,
+      reflectance: 0.9,
+      absorptance: 0.95,
+      opticalEfficiency: 0.7,
+      thermalEfficiency: 0.3,
       moduleLength: 3,
       latusRectum: 2,
       relativeAzimuth: 0,

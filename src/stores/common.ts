@@ -402,6 +402,17 @@ export interface CommonStoreState {
   solarPanelLabels: string[];
   setSolarPanelLabels: (labels: string[]) => void;
 
+  dailyParabolicTroughYield: DatumEntry[];
+  dailyParabolicTroughFlag: boolean;
+  dailyParabolicTroughIndividualOutputs: boolean;
+  setDailyParabolicTroughYield: (data: DatumEntry[]) => void;
+  yearlyParabolicTroughYield: DatumEntry[];
+  yearlyParabolicTroughFlag: boolean;
+  yearlyParabolicTroughIndividualOutputs: boolean;
+  setYearlyParabolicTroughYield: (data: DatumEntry[]) => void;
+  parabolicTroughLabels: string[];
+  setParabolicTroughLabels: (labels: string[]) => void;
+
   sunlightDirection: Vector3;
   setSunlightDirection: (vector: Vector3) => void;
 
@@ -637,6 +648,29 @@ export const useStore = create<CommonStoreState>(
           setSolarPanelLabels(labels) {
             immerSet((state: CommonStoreState) => {
               state.solarPanelLabels = [...labels];
+            });
+          },
+
+          yearlyParabolicTroughYield: [],
+          yearlyParabolicTroughFlag: false,
+          yearlyParabolicTroughIndividualOutputs: false,
+          setYearlyParabolicTroughYield(data) {
+            immerSet((state: CommonStoreState) => {
+              state.yearlyParabolicTroughYield = [...data];
+            });
+          },
+          dailyParabolicTroughYield: [],
+          dailyParabolicTroughFlag: false,
+          dailyParabolicTroughIndividualOutputs: false,
+          setDailyParabolicTroughYield(data) {
+            immerSet((state: CommonStoreState) => {
+              state.dailyParabolicTroughYield = [...data];
+            });
+          },
+          parabolicTroughLabels: [],
+          setParabolicTroughLabels(labels) {
+            immerSet((state: CommonStoreState) => {
+              state.parabolicTroughLabels = [...labels];
             });
           },
 

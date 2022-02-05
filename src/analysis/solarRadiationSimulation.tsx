@@ -18,12 +18,12 @@ import {
   UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
 } from '../constants';
+import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
-import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 
 export interface SolarRadiationSimulationProps {
   city: string | null;
@@ -504,11 +504,11 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
             ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
             : sunDirection.clone();
           const ori = originalNormal.clone();
-          const qRotHSAT = new Quaternion().setFromUnitVectors(
+          const qRot = new Quaternion().setFromUnitVectors(
             UNIT_VECTOR_POS_Z,
             new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
           );
-          normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotHSAT)));
+          normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRot)));
           count++;
           const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
           const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);

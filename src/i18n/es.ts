@@ -205,15 +205,15 @@ export const i18n_es = {
         SolarRadiationHeatmapGridCellSize: 'Solar Radiation Heatmap Grid Cell Size',
         SolarRadiationHeatmapMaxValue: 'Solar Radiation Heatmap Maximum Value',
       },
-      sensorsSubMenu: 'Sensores',
-      sensors: {
+      sensorSubMenu: 'Sensores',
+      sensor: {
         CollectDailyData: 'Recoger datos diarios',
         CollectYearlyData: 'Recoger datos anuales',
         SamplingFrequency: 'Frecuencia de muestreo',
         TimesPerHour: 'Veces per hora',
       },
-      solarPanelsSubMenu: 'Paneles solares',
-      solarPanels: {
+      solarPanelSubMenu: 'Paneles solares',
+      solarPanel: {
         AnalyzeDailyYield: 'Analizar el rendimiento diario',
         AnalyzeYearlyYield: 'Analizar el rendimiento anual',
         AnalyzeVisibility: 'Analyze Visibility',
@@ -224,6 +224,14 @@ export const i18n_es = {
         VisibilityGridCellSize: 'View Factor Grid Cell Size',
         EnergyAnalysisOptions: 'Energy Analysis Options',
         VisibilityAnalysisOptions: 'Visibility Analysis Options',
+      },
+      parabolicTroughSubMenu: 'Parabolic Trough',
+      parabolicTrough: {
+        AnalyzeDailyYield: 'Analyze Daily Yield',
+        AnalyzeYearlyYield: 'Analyze Yearly Yield',
+        Discretization: 'Discretization',
+        GridCellSize: 'Grid Cell Size',
+        AnalysisOptions: 'Analysis Options',
       },
       tutorialsSubMenu: 'Tutorials',
       solarEnergyScienceSubMenu: 'Solar Science',
@@ -557,6 +565,17 @@ export const i18n_es = {
       ShowOutputsOfIndividualSolarPanels: 'Mostrar salidas de paneles solares individuales',
     },
 
+    parabolicTroughYieldPanel: {
+      ParabolicTroughDailyYield: 'Parabolic Trough Daily Yield',
+      ParabolicTroughYearlyYield: 'Parabolic Trough Yearly Yield',
+      Yield: 'Yield',
+      YieldPerHour: 'Yield per Hour',
+      DailyTotal: 'Daily Total',
+      YearlyTotal: 'Yearly Total',
+      HoverForBreakdown: 'Hover for breakdown',
+      ShowOutputsOfIndividualParabolicTroughs: 'Show outputs of individual parabolic troughs',
+    },
+
     heliodonPanel: {
       SunAndTimeSettings: 'Sun & Time Settings',
       SunAngles: 'Ángulos',
@@ -591,6 +610,11 @@ export const i18n_es = {
       NoSensorForCollectingData: 'Sin sensor para recopilar datos',
       NoSolarPanelForAnalysis: 'Sin panel solar para el análisis',
       NoObserverForVisibilityAnalysis: 'There is no observer for visibility analysis.',
+      NoWaterHeaterForAnalysis: 'There is no water heater for analysis.',
+      NoParabolicDishForAnalysis: 'There is no parabolic dish for analysis.',
+      NoParabolicTroughForAnalysis: 'There is no parabolic trough for analysis.',
+      NoFresnelReflectorForAnalysis: 'There is no Fresnel reflector for analysis.',
+      NoHeliostatForAnalysis: 'There is no heliostat for analysis.',
     },
 
     toolbar: {

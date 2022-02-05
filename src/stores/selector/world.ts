@@ -12,6 +12,8 @@ export const date = (state: CommonStoreState) => state.world.date;
 
 export const address = (state: CommonStoreState) => state.world.address;
 
+export const timesPerHour = (state: CommonStoreState) => state.world.timesPerHour;
+
 export const discretization = (state: CommonStoreState) => state.world.discretization;
 
 export const solarRadiationHeatmapGridCellSize = (state: CommonStoreState) =>
@@ -22,4 +24,6 @@ export const solarPanelGridCellSize = (state: CommonStoreState) => state.world.s
 export const solarPanelVisibilityGridCellSize = (state: CommonStoreState) =>
   state.world.solarPanelVisibilityGridCellSize;
 
-export const timesPerHour = (state: CommonStoreState) => state.world.timesPerHour;
+export const parabolicTroughTimesPerHour = (state: CommonStoreState) => state.world.parabolicTroughTimesPerHour;
+
+export const parabolicTroughGridCellSize = (state: CommonStoreState) => state.world.parabolicTroughGridCellSize;

@@ -58,15 +58,17 @@ export interface DatumEntry {
 }
 
 export enum GraphDataType {
-  HourlyTemperatures = 0,
-  MonthlyTemperatures = 1,
-  SunshineHours = 2,
-  DaylightData = 3,
-  ClearnessData = 4,
-  YearlyRadiationSensorData = 5,
-  DailyRadiationSensorData = 6,
-  YearlyPvYeild = 7,
-  DailyPvYield = 8,
+  HourlyTemperatures = 1,
+  MonthlyTemperatures = 2,
+  SunshineHours = 3,
+  DaylightData = 4,
+  ClearnessData = 5,
+  YearlyRadiationSensorData = 6,
+  DailyRadiationSensorData = 7,
+  YearlyPvYeild = 8,
+  DailyPvYield = 9,
+  YearlyParabolicTroughYeild = 10,
+  DailyParabolicTroughYield = 11,
 }
 
 export enum Theme {

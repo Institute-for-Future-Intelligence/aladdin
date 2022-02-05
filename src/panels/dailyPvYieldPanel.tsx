@@ -71,9 +71,9 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
   const dailyYield = useStore(Selector.dailyPvYield);
-  const dailyPvIndividualOutputs = useStore(Selector.dailyPvIndividualOutputs);
-  const dailyPvYieldPanelX = useStore(Selector.viewState.dailyPvYieldPanelX);
-  const dailyPvYieldPanelY = useStore(Selector.viewState.dailyPvYieldPanelY);
+  const individualOutputs = useStore(Selector.dailyPvIndividualOutputs);
+  const panelX = useStore(Selector.viewState.dailyPvYieldPanelX);
+  const panelY = useStore(Selector.viewState.dailyPvYieldPanelY);
   const solarPanelLabels = useStore(Selector.solarPanelLabels);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
@@ -84,8 +84,8 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(dailyPvYieldPanelX) ? 0 : Math.max(dailyPvYieldPanelX, wOffset - window.innerWidth),
-    y: isNaN(dailyPvYieldPanelY) ? 0 : Math.min(dailyPvYieldPanelY, window.innerHeight - hOffset),
+    x: isNaN(panelX) ? 0 : Math.max(panelX, wOffset - window.innerWidth),
+    y: isNaN(panelY) ? 0 : Math.min(panelY, window.innerHeight - hOffset),
   });
   const [sum, setSum] = useState(0);
   const panelSumRef = useRef(new Map<string, number>());
@@ -114,8 +114,8 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   useEffect(() => {
     const handleResize = () => {
       setCurPosition({
-        x: Math.max(dailyPvYieldPanelX, wOffset - window.innerWidth),
-        y: Math.min(dailyPvYieldPanelY, window.innerHeight - hOffset),
+        x: Math.max(panelX, wOffset - window.innerWidth),
+        y: Math.min(panelY, window.innerHeight - hOffset),
       });
     };
     window.addEventListener('resize', handleResize);
@@ -147,7 +147,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
 
   const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
   useEffect(() => {
-    if (solarPanelCount < 2 && dailyPvIndividualOutputs) {
+    if (solarPanelCount < 2 && individualOutputs) {
       setCommonStore((state) => {
         state.dailyPvIndividualOutputs = false;
       });
@@ -158,7 +158,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const labelX = 'Hour';
   const labelY = i18n.t('solarPanelYieldPanel.YieldPerHour', lang);
   let totalTooltip = '';
-  if (dailyPvIndividualOutputs) {
+  if (individualOutputs) {
     panelSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
     totalTooltip += '——————————\n';
     totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
@@ -208,7 +208,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
             referenceX={now.getHours()}
           />
           <Space style={{ alignSelf: 'center' }}>
-            {dailyPvIndividualOutputs && solarPanelCount > 1 ? (
+            {individualOutputs && solarPanelCount > 1 ? (
               <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
                 {i18n.t('solarPanelYieldPanel.HoverForBreakdown', lang)}
               </Space>
@@ -222,7 +222,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                 title={i18n.t('solarPanelYieldPanel.ShowOutputsOfIndividualSolarPanels', lang)}
                 checkedChildren={<UnorderedListOutlined />}
                 unCheckedChildren={<UnorderedListOutlined />}
-                checked={dailyPvIndividualOutputs}
+                checked={individualOutputs}
                 onChange={(checked) => {
                   if (solarPanelCount === 0) {
                     showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));

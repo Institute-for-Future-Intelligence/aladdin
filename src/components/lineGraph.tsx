@@ -104,6 +104,14 @@ const LineGraph = ({
             name = labels && labels[i] ? labels[i] : 'Panel' + (i + 1);
           }
           break;
+        case GraphDataType.DailyParabolicTroughYield:
+        case GraphDataType.YearlyParabolicTroughYeild:
+          if (lineCount === 1) {
+            name = 'Total';
+          } else {
+            name = labels && labels[i] ? labels[i] : 'Trough' + (i + 1);
+          }
+          break;
       }
       const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
       const symbol = createSymbol(SYMBOLS[i], symbolSize, symbolCount, opacity);
