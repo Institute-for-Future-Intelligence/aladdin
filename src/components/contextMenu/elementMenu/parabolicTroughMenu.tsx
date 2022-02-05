@@ -17,6 +17,9 @@ import ParabolicTroughPoleHeightInput from './parabolicTroughPoleHeightInput';
 import ParabolicTroughLatusRectumInput from './parabolicTroughLatusRectumInput';
 import ParabolicTroughModuleLengthInput from './parabolicTroughModuleLengthInput';
 import ParabolicTroughReflectanceInput from './parabolicTroughReflectanceInput';
+import ParabolicTroughAbsorptanceInput from './parabolicTroughAbsorptanceInput';
+import ParabolicTroughOpticalEfficiencyInput from './parabolicTroughOpticalEfficiencyInput';
+import ParabolicTroughThermalEfficiencyInput from './parabolicTroughThermalEfficiencyInput';
 
 export const ParabolicTroughMenu = () => {
   const language = useStore(Selector.language);
@@ -35,6 +38,9 @@ export const ParabolicTroughMenu = () => {
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [poleHeightDialogVisible, setPoleHeightDialogVisible] = useState(false);
   const [reflectanceDialogVisible, setReflectanceDialogVisible] = useState(false);
+  const [absorptanceDialogVisible, setAbsorptanceDialogVisible] = useState(false);
+  const [opticalEfficiencyDialogVisible, setOpticalEfficiencyDialogVisible] = useState(false);
+  const [thermalEfficiencyDialogVisible, setThermalEfficiencyDialogVisible] = useState(false);
 
   const lang = { lng: language };
 
@@ -201,6 +207,54 @@ export const ParabolicTroughMenu = () => {
             }}
           >
             {i18n.t('concentratedSolarPowerCollectorMenu.Reflectance', lang)} ...
+          </Menu.Item>
+
+          {/* absorptance */}
+          <ParabolicTroughAbsorptanceInput
+            dialogVisible={absorptanceDialogVisible}
+            setDialogVisible={setAbsorptanceDialogVisible}
+          />
+          <Menu.Item
+            key={'parabolic-trough-absorptance'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setAbsorptanceDialogVisible(true);
+            }}
+          >
+            {i18n.t('concentratedSolarPowerCollectorMenu.Absorptance', lang)} ...
+          </Menu.Item>
+
+          {/* optical efficiency */}
+          <ParabolicTroughOpticalEfficiencyInput
+            dialogVisible={opticalEfficiencyDialogVisible}
+            setDialogVisible={setOpticalEfficiencyDialogVisible}
+          />
+          <Menu.Item
+            key={'parabolic-trough-optical-efficiency'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setOpticalEfficiencyDialogVisible(true);
+            }}
+          >
+            {i18n.t('concentratedSolarPowerCollectorMenu.OpticalEfficiency', lang)} ...
+          </Menu.Item>
+
+          {/* thermal efficiency */}
+          <ParabolicTroughThermalEfficiencyInput
+            dialogVisible={thermalEfficiencyDialogVisible}
+            setDialogVisible={setThermalEfficiencyDialogVisible}
+          />
+          <Menu.Item
+            key={'parabolic-trough-thermal-efficiency'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setThermalEfficiencyDialogVisible(true);
+            }}
+          >
+            {i18n.t('concentratedSolarPowerCollectorMenu.ThermalEfficiency', lang)} ...
           </Menu.Item>
 
           {/* draw sun beam or not */}
