@@ -463,7 +463,6 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     setHeatmap(panel.id, cellOutputTotals);
   };
 
-  // parabolic troughs harvest ONLY direct solar radiation
   const generateHeatmapForParabolicTrough = (trough: ParabolicTroughModel) => {
     const parent = getParent(trough);
     if (!parent) throw new Error('parent of parabolic trough does not exist');
@@ -474,12 +473,12 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     const month = now.getMonth();
     const date = now.getDate();
     const dayOfYear = Util.dayOfYear(now);
-    const lx = trough.lx;
-    const ly = trough.ly;
-    const depth = (ly * ly) / (4 * trough.latusRectum); // the distance from the bottom to the aperture plane
-    const actualPoleHeight = trough.poleHeight + ly / 2;
-    const nx = Math.max(2, Math.round(trough.lx / cellSize));
-    const ny = Math.max(2, Math.round(trough.ly / cellSize));
+    const lx = trough.ly;
+    const ly = trough.lx;
+    const depth = (lx * lx) / (4 * trough.latusRectum); // the distance from the bottom to the aperture plane
+    const actualPoleHeight = trough.poleHeight + lx / 2;
+    const nx = Math.max(2, Math.round(trough.ly / cellSize));
+    const ny = Math.max(2, Math.round(trough.lx / cellSize));
     const dx = lx / nx;
     const dy = ly / ny;
     // shift half cell size to the center of each grid cell
@@ -501,31 +500,30 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
         const sunDirection = getSunDirection(currentTime, world.latitude);
         if (sunDirection.z > 0) {
           // when the sun is out
-          // const rotatedSunDirection = rot
-          //   ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
-          //   : sunDirection.clone();
-          // const ori = originalNormal.clone();
-          // const qRotHSAT = new Quaternion().setFromUnitVectors(
-          //   UNIT_VECTOR_POS_Z,
-          //   new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
-          // );
-          // normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotHSAT)));
+          const rotatedSunDirection = rot
+            ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
+            : sunDirection.clone();
+          const ori = originalNormal.clone();
+          const qRotHSAT = new Quaternion().setFromUnitVectors(
+            UNIT_VECTOR_POS_Z,
+            new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
+          );
+          normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotHSAT)));
           count++;
           const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-          // we don't want to show indirect radiation
-          //const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
+          const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
           const dot = normal.dot(sunDirection);
           const v2 = new Vector2();
-          for (let kx = 0; kx < nx; kx++) {
-            for (let ky = 0; ky < ny; ky++) {
-              //cellOutputTotals[kx][ky] += indirectRadiation;
+          for (let ku = 0; ku < nx; ku++) {
+            for (let kv = 0; kv < ny; kv++) {
+              cellOutputTotals[ku][kv] += indirectRadiation;
               if (dot > 0) {
                 // TODO: we have to use the parabolic surface, not the aperture surface
-                v2.set(x0 + kx * dx, y0 + ky * dy);
+                v2.set(x0 + ku * dx, y0 + kv * dy);
                 if (!zRotZero) v2.rotateAround(center2d, zRot);
                 v.set(v2.x, v2.y, z0);
                 if (!inShadow(trough.id, v, sunDirection)) {
-                  cellOutputTotals[kx][ky] += dot * peakRadiation;
+                  cellOutputTotals[ku][kv] += dot * peakRadiation;
                 }
               }
             }

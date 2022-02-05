@@ -895,7 +895,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 <InputNumber
                   min={0.5}
                   max={50}
-                  step={1}
+                  step={0.5}
                   style={{ width: 60 }}
                   precision={1}
                   value={solarRadiationHeatmapMaxValue ?? 5}

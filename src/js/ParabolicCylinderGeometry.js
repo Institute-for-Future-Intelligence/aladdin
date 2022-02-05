@@ -72,8 +72,8 @@ class ParabolicCylinderGeometry extends BufferGeometry {
           normal.set( -semiLatusRectum*t, 0, semiLatusRectum ).normalize();
           normals.push( normal.x, normal.y, normal.z );
 
-          // uv
-          uvs.push( u, 1 - v );
+          // uv (make sure that u and v are within 0 and 1)
+          uvs.push( u - u0, 1 - v );
 
           // save index of vertex in respective row
           indexRow.push( index ++ );
