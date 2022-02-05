@@ -20,6 +20,7 @@ import effect_orientation_solar_panel from './examples/effect_orientation_solar_
 import why_solar_array from './examples/why_solar_array.json';
 import solar_canopy_form_factors from './examples/solar_canopy_form_factors.json';
 import inter_row_spacing from './examples/inter_row_spacing.json';
+import parabolic_trough_array from './examples/parabolic_trough_array.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -205,6 +206,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'solar_trackers':
         input = solar_trackers;
+        break;
+      case 'parabolic_trough_array':
+        input = parabolic_trough_array;
         break;
       case 'simple_house_01':
         input = simple_house_01;
@@ -1272,6 +1276,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="vegetative_buffer_01" onClick={loadFile}>
             {i18n.t('menu.examples.VegetativeBuffer', lang)}
+          </Menu.Item>
+          <Menu.Item key="parabolic_trough_array" onClick={loadFile}>
+            {i18n.t('menu.examples.ParabolicTroughArray', lang)}
           </Menu.Item>
           <Menu.Item key="solar_farm_02" onClick={loadFile}>
             {i18n.t('menu.examples.SolarFarmInRealWorld', lang)}

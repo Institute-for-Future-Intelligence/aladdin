@@ -14,9 +14,9 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import ParabolicTroughLengthInput from './parabolicTroughLengthInput';
 import ParabolicTroughWidthInput from './parabolicTroughWidthInput';
 import ParabolicTroughPoleHeightInput from './parabolicTroughPoleHeightInput';
-import ParabolicTroughRelativeAzimuthInput from './parabolicTroughRelativeAzimuthInput';
 import ParabolicTroughLatusRectumInput from './parabolicTroughLatusRectumInput';
 import ParabolicTroughModuleLengthInput from './parabolicTroughModuleLengthInput';
+import ParabolicTroughReflectanceInput from './parabolicTroughReflectanceInput';
 
 export const ParabolicTroughMenu = () => {
   const language = useStore(Selector.language);
@@ -33,8 +33,8 @@ export const ParabolicTroughMenu = () => {
   const [latusRectumDialogVisible, setLatusRectumDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
-  const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
   const [poleHeightDialogVisible, setPoleHeightDialogVisible] = useState(false);
+  const [reflectanceDialogVisible, setReflectanceDialogVisible] = useState(false);
 
   const lang = { lng: language };
 
@@ -171,22 +171,6 @@ export const ParabolicTroughMenu = () => {
             {i18n.t('parabolicTroughMenu.LatusRectum', lang)} ...
           </Menu.Item>
 
-          {/* relative azimuth to the parent element */}
-          <ParabolicTroughRelativeAzimuthInput
-            dialogVisible={azimuthDialogVisible}
-            setDialogVisible={setAzimuthDialogVisible}
-          />
-          <Menu.Item
-            key={'parabolic-trough-relative-azimuth'}
-            style={{ paddingLeft: '36px' }}
-            onClick={() => {
-              setApplyCount(0);
-              setAzimuthDialogVisible(true);
-            }}
-          >
-            {i18n.t('solarCollectorMenu.RelativeAzimuth', lang)} ...
-          </Menu.Item>
-
           {/* extra pole height in addition to the half of the aperture width */}
           <ParabolicTroughPoleHeightInput
             dialogVisible={poleHeightDialogVisible}
@@ -201,6 +185,22 @@ export const ParabolicTroughMenu = () => {
             }}
           >
             {i18n.t('solarCollectorMenu.ExtraPoleHeight', lang)} ...
+          </Menu.Item>
+
+          {/* reflectance */}
+          <ParabolicTroughReflectanceInput
+            dialogVisible={reflectanceDialogVisible}
+            setDialogVisible={setReflectanceDialogVisible}
+          />
+          <Menu.Item
+            key={'parabolic-trough-reflectance'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setReflectanceDialogVisible(true);
+            }}
+          >
+            {i18n.t('concentratedSolarPowerCollectorMenu.Reflectance', lang)} ...
           </Menu.Item>
 
           {/* draw sun beam or not */}

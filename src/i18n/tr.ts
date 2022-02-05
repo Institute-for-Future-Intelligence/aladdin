@@ -252,6 +252,7 @@ export const i18n_tr = {
       examples: {
         SunBeamAndHeliodon: 'Güneþ Iþýný ve Heliodon',
         SolarFarm: 'Güneþ Tarlasý',
+        ParabolicTroughArray: 'Parabolic Trough Array',
         SolarCanopyFormFactors: 'Solar Canopy Form Factors',
         VegetativeBuffer: 'Vegetative Buffer',
         SolarFarmInRealWorld: 'Gerçek Dünyada Güneþ Tarlasý',
@@ -439,6 +440,13 @@ export const i18n_tr = {
       DrawSunBeam: 'Güneþ Iþýný çiz',
       Label: 'Etiket',
       KeepShowingLabel: 'Etiketi Göstermeye Devam Et',
+    },
+
+    concentratedSolarPowerCollectorMenu: {
+      Reflectance: 'Reflectance',
+      Absorptance: 'Absorptance',
+      OpticalEfficiency: 'Optical Efficiency',
+      ThermalEfficiency: 'Thermal Efficiency',
     },
 
     solarPanelMenu: {

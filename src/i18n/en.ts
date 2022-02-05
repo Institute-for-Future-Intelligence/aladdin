@@ -251,6 +251,7 @@ export const i18n_en = {
       examples: {
         SunBeamAndHeliodon: 'Sun Beam and Heliodon',
         SolarFarm: 'Solar Farm',
+        ParabolicTroughArray: 'Parabolic Trough Array',
         SolarCanopyFormFactors: 'Solar Canopy Form Factors',
         VegetativeBuffer: 'Vegetative Buffer',
         SolarFarmInRealWorld: 'Solar Farm in the Real World',
@@ -438,6 +439,13 @@ export const i18n_en = {
       DrawSunBeam: 'Draw Sun Beam',
       Label: 'Label',
       KeepShowingLabel: 'Keep Showing Label',
+    },
+
+    concentratedSolarPowerCollectorMenu: {
+      Reflectance: 'Reflectance',
+      Absorptance: 'Absorptance',
+      OpticalEfficiency: 'Optical Efficiency',
+      ThermalEfficiency: 'Thermal Efficiency',
     },
 
     solarPanelMenu: {

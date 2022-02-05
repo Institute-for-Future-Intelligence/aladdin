@@ -22,7 +22,6 @@ import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleT
 import { Util } from '../Util';
 import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import { getSunDirection } from '../analysis/sunTools';
-import RotateHandle from '../components/rotateHandle';
 import i18n from '../i18n/i18n';
 import { LineData } from './LineData';
 import { ParabolicCylinder } from './shapes';
@@ -35,6 +34,7 @@ const ParabolicTrough = ({
   lx,
   ly,
   lz = 0.1,
+  reflectance = 0.9,
   absorberTubeRadius = 0.05,
   latusRectum = 2,
   tiltAngle,
@@ -65,7 +65,6 @@ const ParabolicTrough = ({
   const selectMe = useStore(Selector.selectMe);
   const sceneRadius = useStore(Selector.sceneRadius);
   const resizeHandleType = useStore(Selector.resizeHandleType);
-  const rotateHandleType = useStore(Selector.rotateHandleType);
 
   const {
     gl: { domElement },
@@ -248,7 +247,6 @@ const ParabolicTrough = ({
   const baseSize = Math.max(1, (lx + ly) / 16);
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
   const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 2;
-  const rotateHandleSize = (baseSize * 2) / 3;
 
   return (
     <group name={'Parabolic Trough Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
@@ -296,7 +294,7 @@ const ParabolicTrough = ({
             <meshPhongMaterial
               attach="material"
               specular={new Color('white')}
-              shininess={10}
+              shininess={100 * reflectance}
               side={FrontSide}
               color={'skyblue'}
             />

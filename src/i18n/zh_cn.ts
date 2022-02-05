@@ -250,6 +250,7 @@ export const i18n_zh_cn = {
       examples: {
         SunBeamAndHeliodon: '太阳光束和日影仪',
         SolarFarm: '太阳能农场',
+        ParabolicTroughArray: '抛物线槽阵列',
         SolarCanopyFormFactors: '太阳能天篷外形设计',
         VegetativeBuffer: '太阳能农场绿化带',
         SolarFarmInRealWorld: '模拟一个真实世界里的太阳能农场',
@@ -426,6 +427,13 @@ export const i18n_zh_cn = {
       DrawSunBeam: '显示光束',
       Label: '标签',
       KeepShowingLabel: '显示标签',
+    },
+
+    concentratedSolarPowerCollectorMenu: {
+      Reflectance: '反射率',
+      Absorptance: '吸收率',
+      OpticalEfficiency: '光学效率',
+      ThermalEfficiency: '热学效率',
     },
 
     solarPanelMenu: {

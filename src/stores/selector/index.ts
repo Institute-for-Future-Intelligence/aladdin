@@ -346,6 +346,34 @@ export const updateSolarPanelPoleSpacingForAll = (state: CommonStoreState) => st
 export const updateSolarCollectorDrawSunBeamById = (state: CommonStoreState) =>
   state.updateSolarCollectorDrawSunBeamById;
 
+export const updateCspReflectanceById = (state: CommonStoreState) => state.updateCspReflectanceById;
+
+export const updateCspReflectanceAboveFoundation = (state: CommonStoreState) =>
+  state.updateCspReflectanceAboveFoundation;
+
+export const updateCspReflectanceForAll = (state: CommonStoreState) => state.updateCspReflectanceForAll;
+
+export const updateCspAbsorptanceById = (state: CommonStoreState) => state.updateCspAbsorptanceById;
+
+export const updateCspAbsorptanceAboveFoundation = (state: CommonStoreState) =>
+  state.updateCspAbsorptanceAboveFoundation;
+
+export const updateCspAbsorptanceForAll = (state: CommonStoreState) => state.updateCspAbsorptanceForAll;
+
+export const updateCspOpticalEfficiencyById = (state: CommonStoreState) => state.updateCspOpticalEfficiencyById;
+
+export const updateCspOpticalEfficiencyAboveFoundation = (state: CommonStoreState) =>
+  state.updateCspOpticalEfficiencyAboveFoundation;
+
+export const updateCspOpticalEfficiencyForAll = (state: CommonStoreState) => state.updateCspOpticalEfficiencyForAll;
+
+export const updateCspThermalEfficiencyById = (state: CommonStoreState) => state.updateCspThermalEfficiencyById;
+
+export const updateCspThermalEfficiencyAboveFoundation = (state: CommonStoreState) =>
+  state.updateCspThermalEfficiencyAboveFoundation;
+
+export const updateCspThermalEfficiencyForAll = (state: CommonStoreState) => state.updateCspThermalEfficiencyForAll;
+
 export const parabolicTroughActionScope = (state: CommonStoreState) => state.parabolicTroughActionScope;
 
 export const setParabolicTroughActionScope = (state: CommonStoreState) => state.setParabolicTroughActionScope;

@@ -65,6 +65,7 @@ import { DefaultSolarPanelArrayLayoutParams } from './DefaultSolarPanelArrayLayo
 import { Vantage } from '../analysis/Vantage';
 import { SolarCollector } from '../models/SolarCollector';
 import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
+import { ConcentratedSolarPowerCollector } from '../models/ConcentratedSolarPowerCollector';
 
 enableMapSet();
 
@@ -220,6 +221,28 @@ export interface CommonStoreState {
   updateSolarCollectorDrawSunBeamById: (id: string, drawSunBeam: boolean) => void;
   updateSolarCollectorDailyYieldById: (id: string, dailyYield: number) => void;
   updateSolarCollectorYearlyYieldById: (id: string, yearlyYield: number) => void;
+
+  // for all types of concentrated solar power collectors
+  updateCspReflectanceById: (id: string, reflectance: number) => void;
+  updateCspReflectanceAboveFoundation: (type: ObjectType, foundationId: string, reflectance: number) => void;
+  updateCspReflectanceForAll: (type: ObjectType, reflectance: number) => void;
+  updateCspAbsorptanceById: (id: string, absorptance: number) => void;
+  updateCspAbsorptanceAboveFoundation: (type: ObjectType, foundationId: string, absorptance: number) => void;
+  updateCspAbsorptanceForAll: (type: ObjectType, absorptance: number) => void;
+  updateCspOpticalEfficiencyById: (id: string, opticalEfficiency: number) => void;
+  updateCspOpticalEfficiencyAboveFoundation: (
+    type: ObjectType,
+    foundationId: string,
+    opticalEfficiency: number,
+  ) => void;
+  updateCspOpticalEfficiencyForAll: (type: ObjectType, opticalEfficiency: number) => void;
+  updateCspThermalEfficiencyById: (id: string, thermalEfficiency: number) => void;
+  updateCspThermalEfficiencyAboveFoundation: (
+    type: ObjectType,
+    foundationId: string,
+    thermalEfficiency: number,
+  ) => void;
+  updateCspThermalEfficiencyForAll: (type: ObjectType, thermalEfficiency: number) => void;
 
   // for foundations
   foundationActionScope: Scope;
@@ -1424,6 +1447,131 @@ export const useStore = create<CommonStoreState>(
                 if (e.id === id && Util.isSolarCollector(e)) {
                   (e as SolarCollector).yearlyYield = yearlyYield;
                   break;
+                }
+              }
+            });
+          },
+
+          // for concentrated solar power collectors
+          updateCspReflectanceById(id, reflectance) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && Util.isCspCollector(e)) {
+                  (e as ConcentratedSolarPowerCollector).reflectance = reflectance;
+                  break;
+                }
+              }
+            });
+          },
+          updateCspReflectanceAboveFoundation(type, foundationId, reflectance) {
+            if (!Util.isCspCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && e.foundationId === foundationId) {
+                  (e as ConcentratedSolarPowerCollector).reflectance = reflectance;
+                }
+              }
+            });
+          },
+          updateCspReflectanceForAll(type, reflectance) {
+            if (!Util.isCspCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type) {
+                  (e as ConcentratedSolarPowerCollector).reflectance = reflectance;
+                }
+              }
+            });
+          },
+
+          updateCspAbsorptanceById(id, absorptance) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && Util.isCspCollector(e)) {
+                  (e as ConcentratedSolarPowerCollector).absorptance = absorptance;
+                  break;
+                }
+              }
+            });
+          },
+          updateCspAbsorptanceAboveFoundation(type, foundationId, absorptance) {
+            if (!Util.isCspCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && e.foundationId === foundationId) {
+                  (e as ConcentratedSolarPowerCollector).absorptance = absorptance;
+                }
+              }
+            });
+          },
+          updateCspAbsorptanceForAll(type, absorptance) {
+            if (!Util.isCspCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type) {
+                  (e as ConcentratedSolarPowerCollector).absorptance = absorptance;
+                }
+              }
+            });
+          },
+
+          updateCspOpticalEfficiencyById(id, opticalEfficiency) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && Util.isCspCollector(e)) {
+                  (e as ConcentratedSolarPowerCollector).opticalEfficiency = opticalEfficiency;
+                  break;
+                }
+              }
+            });
+          },
+          updateCspOpticalEfficiencyAboveFoundation(type, foundationId, opticalEfficiency) {
+            if (!Util.isCspCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && e.foundationId === foundationId) {
+                  (e as ConcentratedSolarPowerCollector).opticalEfficiency = opticalEfficiency;
+                }
+              }
+            });
+          },
+          updateCspOpticalEfficiencyForAll(type, opticalEfficiency) {
+            if (!Util.isCspCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type) {
+                  (e as ConcentratedSolarPowerCollector).opticalEfficiency = opticalEfficiency;
+                }
+              }
+            });
+          },
+
+          updateCspThermalEfficiencyById(id, thermalEfficiency) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && Util.isCspCollector(e)) {
+                  (e as ConcentratedSolarPowerCollector).thermalEfficiency = thermalEfficiency;
+                  break;
+                }
+              }
+            });
+          },
+          updateCspThermalEfficiencyAboveFoundation(type, foundationId, thermalEfficiency) {
+            if (!Util.isCspCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && e.foundationId === foundationId) {
+                  (e as ConcentratedSolarPowerCollector).thermalEfficiency = thermalEfficiency;
+                }
+              }
+            });
+          },
+          updateCspThermalEfficiencyForAll(type, thermalEfficiency) {
+            if (!Util.isCspCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type) {
+                  (e as ConcentratedSolarPowerCollector).thermalEfficiency = thermalEfficiency;
                 }
               }
             });

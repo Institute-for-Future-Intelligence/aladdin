@@ -221,6 +221,10 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             }
             break;
           case ObjectType.SolarPanel:
+          case ObjectType.ParabolicDish:
+          case ObjectType.ParabolicTrough:
+          case ObjectType.FresnelReflector:
+          case ObjectType.Heliostat:
             displacement = -moveStepRelative;
             break;
         }
@@ -279,6 +283,10 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             }
             break;
           case ObjectType.SolarPanel:
+          case ObjectType.ParabolicDish:
+          case ObjectType.ParabolicTrough:
+          case ObjectType.FresnelReflector:
+          case ObjectType.Heliostat:
             displacement = moveStepRelative;
             break;
         }
@@ -337,6 +345,10 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             }
             break;
           case ObjectType.SolarPanel:
+          case ObjectType.ParabolicDish:
+          case ObjectType.ParabolicTrough:
+          case ObjectType.FresnelReflector:
+          case ObjectType.Heliostat:
             displacement = moveStepRelative;
             break;
         }
@@ -389,6 +401,10 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             }
             break;
           case ObjectType.SolarPanel:
+          case ObjectType.ParabolicDish:
+          case ObjectType.ParabolicTrough:
+          case ObjectType.FresnelReflector:
+          case ObjectType.Heliostat:
             displacement = -moveStepRelative;
             break;
         }
