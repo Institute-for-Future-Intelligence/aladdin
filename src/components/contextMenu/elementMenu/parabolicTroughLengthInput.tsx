@@ -15,6 +15,9 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
 import { Util } from '../../../Util';
 
+// for parabolic troughs, since the default alignment is north-south, ly is always much larger than lx.
+// to agree with the convention, we call ly length and lx width, reversed from most other elements in Aladdin.
+
 const ParabolicTroughLengthInput = ({
   dialogVisible,
   setDialogVisible,
@@ -24,9 +27,9 @@ const ParabolicTroughLengthInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateLxById = useStore(Selector.updateElementLxById);
-  const updateLxAboveFoundation = useStore(Selector.updateElementLxAboveFoundation);
-  const updateLxForAll = useStore(Selector.updateElementLxForAll);
+  const updateLyById = useStore(Selector.updateElementLyById);
+  const updateLyAboveFoundation = useStore(Selector.updateElementLyAboveFoundation);
+  const updateLyForAll = useStore(Selector.updateElementLyForAll);
   const getParent = useStore(Selector.getParent);
   const parabolicTrough = useStore(Selector.selectedElement) as ParabolicTroughModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -36,7 +39,7 @@ const ParabolicTroughLengthInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputLength, setInputLength] = useState<number>(parabolicTrough?.lx ?? 9);
+  const [inputLength, setInputLength] = useState<number>(parabolicTrough?.ly ?? 9);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -48,7 +51,7 @@ const ParabolicTroughLengthInput = ({
 
   useEffect(() => {
     if (parabolicTrough) {
-      setInputLength(parabolicTrough.lx);
+      setInputLength(parabolicTrough.ly);
     }
   }, [parabolicTrough]);
 
@@ -57,32 +60,32 @@ const ParabolicTroughLengthInput = ({
     setUpdateFlag(!updateFlag);
   };
 
-  const withinParent = (trough: ParabolicTroughModel, lx: number) => {
+  const withinParent = (trough: ParabolicTroughModel, ly: number) => {
     const parent = getParent(trough);
     if (parent) {
       const clone = JSON.parse(JSON.stringify(trough)) as ParabolicTroughModel;
-      clone.lx = lx;
-      return Util.isParabolicTroughWithinHorizontalSurface(clone, parent);
+      clone.ly = ly;
+      return Util.isSolarCollectorWithinHorizontalSurface(clone, parent);
     }
     return false;
   };
 
-  const rejectChange = (trough: ParabolicTroughModel, lx: number) => {
+  const rejectChange = (trough: ParabolicTroughModel, ly: number) => {
     // check if the new length will cause the parabolic trough to be out of the bound
-    if (!withinParent(trough, lx)) {
+    if (!withinParent(trough, ly)) {
       return true;
     }
     // other check?
     return false;
   };
 
-  const needChange = (lx: number) => {
+  const needChange = (ly: number) => {
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.ParabolicTrough && !e.locked) {
             const trough = e as ParabolicTroughModel;
-            if (Math.abs(trough.lx - lx) > ZERO_TOLERANCE) {
+            if (Math.abs(trough.ly - ly) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -92,14 +95,14 @@ const ParabolicTroughLengthInput = ({
         for (const e of elements) {
           if (e.type === ObjectType.ParabolicTrough && e.foundationId === parabolicTrough?.foundationId && !e.locked) {
             const trough = e as ParabolicTroughModel;
-            if (Math.abs(trough.lx - lx) > ZERO_TOLERANCE) {
+            if (Math.abs(trough.ly - ly) > ZERO_TOLERANCE) {
               return true;
             }
           }
         }
         break;
       default:
-        if (Math.abs(parabolicTrough?.lx - lx) > ZERO_TOLERANCE) {
+        if (Math.abs(parabolicTrough?.ly - ly) > ZERO_TOLERANCE) {
           return true;
         }
     }
@@ -123,12 +126,12 @@ const ParabolicTroughLengthInput = ({
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputLength(parabolicTrough.lx);
+          setInputLength(parabolicTrough.ly);
         } else {
           const oldLengthsAll = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.ParabolicTrough) {
-              oldLengthsAll.set(elem.id, elem.lx);
+              oldLengthsAll.set(elem.id, elem.ly);
             }
           }
           const undoableChangeAll = {
@@ -137,16 +140,16 @@ const ParabolicTroughLengthInput = ({
             oldValues: oldLengthsAll,
             newValue: value,
             undo: () => {
-              for (const [id, lx] of undoableChangeAll.oldValues.entries()) {
-                updateLxById(id, lx as number);
+              for (const [id, ly] of undoableChangeAll.oldValues.entries()) {
+                updateLyById(id, ly as number);
               }
             },
             redo: () => {
-              updateLxForAll(ObjectType.ParabolicTrough, undoableChangeAll.newValue as number);
+              updateLyForAll(ObjectType.ParabolicTrough, undoableChangeAll.newValue as number);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
-          updateLxForAll(ObjectType.ParabolicTrough, value);
+          updateLyForAll(ObjectType.ParabolicTrough, value);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -163,12 +166,12 @@ const ParabolicTroughLengthInput = ({
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputLength(parabolicTrough.lx);
+            setInputLength(parabolicTrough.ly);
           } else {
             const oldLengthsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
               if (elem.type === ObjectType.ParabolicTrough && elem.foundationId === parabolicTrough.foundationId) {
-                oldLengthsAboveFoundation.set(elem.id, elem.lx);
+                oldLengthsAboveFoundation.set(elem.id, elem.ly);
               }
             }
             const undoableChangeAboveFoundation = {
@@ -178,13 +181,13 @@ const ParabolicTroughLengthInput = ({
               newValue: value,
               groupId: parabolicTrough.foundationId,
               undo: () => {
-                for (const [id, lx] of undoableChangeAboveFoundation.oldValues.entries()) {
-                  updateLxById(id, lx as number);
+                for (const [id, ly] of undoableChangeAboveFoundation.oldValues.entries()) {
+                  updateLyById(id, ly as number);
                 }
               },
               redo: () => {
                 if (undoableChangeAboveFoundation.groupId) {
-                  updateLxAboveFoundation(
+                  updateLyAboveFoundation(
                     ObjectType.ParabolicTrough,
                     undoableChangeAboveFoundation.groupId,
                     undoableChangeAboveFoundation.newValue as number,
@@ -193,14 +196,14 @@ const ParabolicTroughLengthInput = ({
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
-            updateLxAboveFoundation(ObjectType.ParabolicTrough, parabolicTrough.foundationId, value);
+            updateLyAboveFoundation(ObjectType.ParabolicTrough, parabolicTrough.foundationId, value);
             setApplyCount(applyCount + 1);
           }
         }
         break;
       default:
         if (parabolicTrough) {
-          const oldLength = parabolicTrough.lx;
+          const oldLength = parabolicTrough.ly;
           rejectRef.current = rejectChange(parabolicTrough, value);
           if (rejectRef.current) {
             rejectedValue.current = value;
@@ -213,14 +216,14 @@ const ParabolicTroughLengthInput = ({
               newValue: value,
               changedElementId: parabolicTrough.id,
               undo: () => {
-                updateLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
+                updateLyById(undoableChange.changedElementId, undoableChange.oldValue as number);
               },
               redo: () => {
-                updateLxById(undoableChange.changedElementId, undoableChange.newValue as number);
+                updateLyById(undoableChange.changedElementId, undoableChange.newValue as number);
               },
             } as UndoableChange;
             addUndoable(undoableChange);
-            updateLxById(parabolicTrough.id, value);
+            updateLyById(parabolicTrough.id, value);
             setApplyCount(applyCount + 1);
           }
         }
@@ -241,15 +244,8 @@ const ParabolicTroughLengthInput = ({
     }
   };
 
-  const modularize = (value: number) => {
-    let w = value ?? 1;
-    const n = Math.max(1, Math.ceil((w - parabolicTrough.moduleLength / 2) / parabolicTrough.moduleLength));
-    w = n * parabolicTrough.moduleLength;
-    return w;
-  };
-
   const close = () => {
-    setInputLength(parabolicTrough.lx);
+    setInputLength(parabolicTrough.ly);
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -267,7 +263,13 @@ const ParabolicTroughLengthInput = ({
     }
   };
 
-  // for some reason, we have to confirm the type first. otherwise, other popup menus may invoke this
+  const modularize = (value: number) => {
+    let length = value ?? 1;
+    const n = Math.max(1, Math.ceil((length - parabolicTrough.moduleLength / 2) / parabolicTrough.moduleLength));
+    length = n * parabolicTrough.moduleLength;
+    return length;
+  };
+
   return parabolicTrough?.type === ObjectType.ParabolicTrough ? (
     <>
       <Modal

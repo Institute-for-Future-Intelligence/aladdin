@@ -88,7 +88,7 @@ const ParabolicTrough = ({
   const lang = { lng: language };
   const parabolaSegments = 16;
 
-  const actualPoleHeight = poleHeight + ly / 2;
+  const actualPoleHeight = poleHeight + lx / 2;
 
   if (parentId) {
     const p = getElementById(parentId);
@@ -111,8 +111,8 @@ const ParabolicTrough = ({
     }
   }
 
-  const hx = ly / 2;
-  const hy = lx / 2;
+  const hx = lx / 2;
+  const hy = ly / 2;
   const hz = lz / 2;
   const depth = (hx * hx) / latusRectum; // the distance from the bottom to the aperture plane
   const positionLL = new Vector3(-hx, -hy, hz + depth);
@@ -131,8 +131,8 @@ const ParabolicTrough = ({
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
   useEffect(() => {
-    setNumberOfModules(Math.max(1, Math.round(lx / moduleLength)));
-  }, [lx, moduleLength]);
+    setNumberOfModules(Math.max(1, Math.round(ly / moduleLength)));
+  }, [ly, moduleLength]);
 
   useEffect(() => {
     const handlePointerUp = () => {
@@ -231,14 +231,14 @@ const ParabolicTrough = ({
 
   const moduleLines = useMemo<LineData[]>(() => {
     const array: LineData[] = [];
-    const dx = lx / numberOfModules;
-    const t0 = -ly / latusRectum;
+    const dy = ly / numberOfModules;
+    const t0 = -lx / latusRectum;
     const dt = (-2 * t0) / parabolaSegments;
     for (let i = 0; i <= numberOfModules; i++) {
       const line: Vector3[] = [];
       for (let j = 0; j <= parabolaSegments; j++) {
         const t = t0 + j * dt;
-        line.push(new Vector3((latusRectum * t) / 2, -lx / 2 + i * dx, (latusRectum * t * t) / 4));
+        line.push(new Vector3((latusRectum * t) / 2, -ly / 2 + i * dy, (latusRectum * t * t) / 4));
       }
       array.push({ points: line } as LineData);
     }
@@ -259,7 +259,7 @@ const ParabolicTrough = ({
           castShadow={shadowEnabled}
           uuid={id}
           ref={frontSideRef}
-          args={[latusRectum / 2, ly, lx, parabolaSegments, 4]}
+          args={[latusRectum / 2, lx, ly, parabolaSegments, 4]}
           name={'Parabolic Trough Front Side'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
@@ -309,7 +309,7 @@ const ParabolicTrough = ({
           castShadow={shadowEnabled}
           uuid={id + ' backside'}
           ref={backSideRef}
-          args={[latusRectum / 2, ly, lx, parabolaSegments, 4]}
+          args={[latusRectum / 2, lx, ly, parabolaSegments, 4]}
           name={'Parabolic Trough Back Side'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
@@ -375,8 +375,8 @@ const ParabolicTrough = ({
           name={'Parabolic Trough Outline 1'}
           userData={{ unintersectable: true }}
           points={[
-            [-ly / 2, -lx / 2, depth],
-            [-ly / 2, lx / 2, depth],
+            [-lx / 2, -ly / 2, depth],
+            [-lx / 2, ly / 2, depth],
           ]}
           castShadow={false}
           receiveShadow={false}
@@ -387,8 +387,8 @@ const ParabolicTrough = ({
           name={'Parabolic Trough Outline 2'}
           userData={{ unintersectable: true }}
           points={[
-            [ly / 2, -lx / 2, depth],
-            [ly / 2, lx / 2, depth],
+            [lx / 2, -ly / 2, depth],
+            [lx / 2, ly / 2, depth],
           ]}
           castShadow={false}
           receiveShadow={false}
@@ -400,7 +400,7 @@ const ParabolicTrough = ({
         <Cylinder
           name={'Parabolic Trough Absorber Tube'}
           uuid={id}
-          args={[absorberTubeRadius, absorberTubeRadius, lx, 6, 2]}
+          args={[absorberTubeRadius, absorberTubeRadius, ly, 6, 2]}
           position={[0, 0, 0.25 * latusRectum]}
           receiveShadow={false}
           castShadow={true}
@@ -412,7 +412,7 @@ const ParabolicTrough = ({
         <Plane
           name={'Parabolic Trough Simulation Plane'}
           uuid={id}
-          args={[ly, lx]}
+          args={[lx, ly]}
           position={[0, 0, depth]}
           userData={{ simulation: true }}
           receiveShadow={false}
@@ -607,7 +607,7 @@ const ParabolicTrough = ({
           {/* rotate handles */}
           <RotateHandle
             id={id}
-            position={[0, -lx / 2 - rotateHandleSize / 2, actualPoleHeight]}
+            position={[0, -ly / 2 - rotateHandleSize / 2, actualPoleHeight]}
             color={
               hoveredHandle === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Upper
                 ? HIGHLIGHT_HANDLE_COLOR
@@ -620,7 +620,7 @@ const ParabolicTrough = ({
           />
           <RotateHandle
             id={id}
-            position={[0, lx / 2 + rotateHandleSize / 2, actualPoleHeight]}
+            position={[0, ly / 2 + rotateHandleSize / 2, actualPoleHeight]}
             color={
               hoveredHandle === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Lower
                 ? HIGHLIGHT_HANDLE_COLOR

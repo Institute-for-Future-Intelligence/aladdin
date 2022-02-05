@@ -473,12 +473,12 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     const month = now.getMonth();
     const date = now.getDate();
     const dayOfYear = Util.dayOfYear(now);
-    const lx = trough.ly;
-    const ly = trough.lx;
+    const lx = trough.lx;
+    const ly = trough.ly;
     const depth = (lx * lx) / (4 * trough.latusRectum); // the distance from the bottom to the aperture plane
     const actualPoleHeight = trough.poleHeight + lx / 2;
-    const nx = Math.max(2, Math.round(trough.ly / cellSize));
-    const ny = Math.max(2, Math.round(trough.lx / cellSize));
+    const nx = Math.max(2, Math.round(trough.lx / cellSize));
+    const ny = Math.max(2, Math.round(trough.ly / cellSize));
     const dx = lx / nx;
     const dy = ly / ny;
     // shift half cell size to the center of each grid cell

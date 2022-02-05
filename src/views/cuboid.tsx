@@ -793,7 +793,7 @@ const Cuboid = ({
     }
     if (Util.isIdentical(sp.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
       // only check solar panels on top face
-      if (!Util.isSolarPanelWithinHorizontalSurface(clone, cuboidModel)) {
+      if (!Util.isSolarCollectorWithinHorizontalSurface(clone, cuboidModel)) {
         showError(i18n.t('message.MoveOutsideBoundaryCancelled', lang));
         return false;
       }
@@ -808,7 +808,7 @@ const Cuboid = ({
       showError(i18n.t('message.RotationCancelledBecauseOfOverlap', lang));
       return false;
     }
-    if (!Util.isSolarPanelWithinHorizontalSurface(clone, cuboidModel)) {
+    if (!Util.isSolarCollectorWithinHorizontalSurface(clone, cuboidModel)) {
       showError(i18n.t('message.RotationOutsideBoundaryCancelled', lang));
       return false;
     }
@@ -826,7 +826,7 @@ const Cuboid = ({
     clone.cy = cy;
     clone.lx = lx;
     clone.ly = ly;
-    if (!Util.isSolarPanelWithinHorizontalSurface(clone, cuboidModel)) {
+    if (!Util.isSolarCollectorWithinHorizontalSurface(clone, cuboidModel)) {
       // showError(i18n.t('message.ResizingOutsideBoundaryCancelled', lang));
       return false;
     }

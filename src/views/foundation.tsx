@@ -1576,7 +1576,7 @@ const Foundation = ({
       showError(i18n.t('message.MoveCancelledBecauseOfOverlap', lang));
       return false;
     }
-    if (!Util.isSolarPanelWithinHorizontalSurface(clone, foundationModel)) {
+    if (!Util.isSolarCollectorWithinHorizontalSurface(clone, foundationModel)) {
       showError(i18n.t('message.MoveOutsideBoundaryCancelled', lang));
       return false;
     }
@@ -1590,7 +1590,7 @@ const Foundation = ({
       showError(i18n.t('message.RotationCancelledBecauseOfOverlap', lang));
       return false;
     }
-    if (!Util.isSolarPanelWithinHorizontalSurface(clone, foundationModel)) {
+    if (!Util.isSolarCollectorWithinHorizontalSurface(clone, foundationModel)) {
       showError(i18n.t('message.RotationOutsideBoundaryCancelled', lang));
       return false;
     }
@@ -1608,7 +1608,7 @@ const Foundation = ({
     clone.cy = cy;
     clone.lx = lx;
     clone.ly = ly;
-    return Util.isSolarPanelWithinHorizontalSurface(clone, foundationModel);
+    return Util.isSolarCollectorWithinHorizontalSurface(clone, foundationModel);
   };
 
   const handleSolarPanelPointerOut = (e: ThreeEvent<PointerEvent>) => {

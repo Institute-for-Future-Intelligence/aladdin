@@ -174,13 +174,13 @@ export class ElementModelFactory {
       tiltAngle: 0,
       absorberTubeRadius: 0.05,
       drawSunBeam: false,
-      poleHeight: 1,
+      poleHeight: 0.2, // extra pole height in addition to half of the width
       poleRadius: 0.05,
       cx: x,
       cy: y,
       cz: z,
-      lx: lx ?? 9,
-      ly: ly ?? 2,
+      lx: lx ?? 2,
+      ly: ly ?? 9, // north-south alignment by default
       lz: 0.1,
       showLabel: false,
       normal: normal ? normal.toArray() : [0, 0, 1],

@@ -17,7 +17,6 @@ import ParabolicTroughPoleHeightInput from './parabolicTroughPoleHeightInput';
 import ParabolicTroughRelativeAzimuthInput from './parabolicTroughRelativeAzimuthInput';
 import ParabolicTroughLatusRectumInput from './parabolicTroughLatusRectumInput';
 import ParabolicTroughModuleLengthInput from './parabolicTroughModuleLengthInput';
-import { ObjectType } from '../../../types';
 
 export const ParabolicTroughMenu = () => {
   const language = useStore(Selector.language);

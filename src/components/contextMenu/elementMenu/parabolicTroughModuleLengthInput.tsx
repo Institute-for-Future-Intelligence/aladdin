@@ -62,7 +62,7 @@ const ParabolicTroughModuleLengthInput = ({
     if (parent) {
       const clone = JSON.parse(JSON.stringify(trough)) as ParabolicTroughModel;
       clone.moduleLength = moduleLength;
-      return Util.isParabolicTroughWithinHorizontalSurface(clone, parent);
+      return Util.isSolarCollectorWithinHorizontalSurface(clone, parent);
     }
     return false;
   };

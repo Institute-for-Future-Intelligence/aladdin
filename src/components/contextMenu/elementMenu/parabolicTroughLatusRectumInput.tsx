@@ -62,7 +62,7 @@ const ParabolicTroughLatusRectumInput = ({
     if (parent) {
       const clone = JSON.parse(JSON.stringify(trough)) as ParabolicTroughModel;
       clone.latusRectum = latusRectum;
-      return Util.isParabolicTroughWithinHorizontalSurface(clone, parent);
+      return Util.isSolarCollectorWithinHorizontalSurface(clone, parent);
     }
     return false;
   };
@@ -163,7 +163,7 @@ const ParabolicTroughLatusRectumInput = ({
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputLatusRectum(parabolicTrough.ly);
+            setInputLatusRectum(parabolicTrough.latusRectum);
           } else {
             const oldLatusRectumsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {

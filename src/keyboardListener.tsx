@@ -181,7 +181,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     }
     if (clone.type === ObjectType.SolarPanel) {
       const parent = getParent(elem);
-      if (parent && !Util.isSolarPanelWithinHorizontalSurface(clone as SolarPanelModel, parent)) {
+      if (parent && !Util.isSolarCollectorWithinHorizontalSurface(clone as SolarPanelModel, parent)) {
         showError(i18n.t('message.MoveOutsideBoundaryCancelled', lang));
         return false;
       }

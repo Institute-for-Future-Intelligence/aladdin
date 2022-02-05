@@ -62,7 +62,7 @@ const ParabolicTroughRelativeAzimuthInput = ({
     if (parent) {
       const clone = JSON.parse(JSON.stringify(trough)) as ParabolicTroughModel;
       clone.relativeAzimuth = azimuth;
-      return Util.isParabolicTroughWithinHorizontalSurface(clone, parent);
+      return Util.isSolarCollectorWithinHorizontalSurface(clone, parent);
     }
     return false;
   };

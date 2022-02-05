@@ -194,7 +194,7 @@ const ParabolicTroughPoleHeightInput = ({
       default:
         if (parabolicTrough) {
           const oldPoleHeight = parabolicTrough.poleHeight;
-          rejectRef.current = 0.5 * parabolicTrough.ly * Math.abs(Math.sin(parabolicTrough.tiltAngle)) > value;
+          rejectRef.current = 0.5 * parabolicTrough.lx * Math.abs(Math.sin(parabolicTrough.tiltAngle)) > value;
           if (rejectRef.current) {
             rejectedValue.current = value;
             setInputPoleHeight(oldPoleHeight);
