@@ -210,7 +210,7 @@ const ParabolicTroughReflectanceInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('concentratedSolarPowerCollectorMenu.Reflectance', lang)}
+            {i18n.t('concentratedSolarPowerCollectorMenu.ReflectorReflectance', lang)}
           </div>
         }
         footer={[

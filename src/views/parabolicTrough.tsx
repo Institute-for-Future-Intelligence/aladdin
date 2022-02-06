@@ -394,7 +394,7 @@ const ParabolicTrough = ({
           color={lineColor}
         />
 
-        {/* absorber tube along the focal line */}
+        {/* absorber tube along the focal line (focal length = latus rectum / 4) */}
         <Cylinder
           name={'Parabolic Trough Absorber Tube'}
           uuid={id}

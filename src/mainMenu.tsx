@@ -17,6 +17,7 @@ import vegetative_buffer_01 from './examples/vegetative_buffer_01.json';
 import effect_tilt_angle_solar_panel from './examples/effect_tilt_angle_solar_panel.json';
 import effect_azimuth_solar_panel from './examples/effect_azimuth_solar_panel.json';
 import effect_azimuth_parabolic_trough from './examples/effect_azimuth_parabolic_trough.json';
+import effect_latus_rectum_parabolic_trough from './examples/effect_latus_rectum_parabolic_trough.json';
 import effect_orientation_solar_panel from './examples/effect_orientation_solar_panel.json';
 import why_solar_array from './examples/why_solar_array.json';
 import solar_canopy_form_factors from './examples/solar_canopy_form_factors.json';
@@ -189,6 +190,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'effect_azimuth_parabolic_trough':
         input = effect_azimuth_parabolic_trough;
+        break;
+      case 'effect_latus_rectum_parabolic_trough':
+        input = effect_latus_rectum_parabolic_trough;
         break;
       case 'effect_orientation_solar_panel':
         input = effect_orientation_solar_panel;
@@ -1270,6 +1274,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         <SubMenu key={'concentrated-solar-power'} title={i18n.t('menu.concentratedSolarPowerSubMenu', lang)}>
           <Menu.Item key="effect_azimuth_parabolic_trough" onClick={loadFile}>
             {i18n.t('menu.tutorials.EffectOfAzimuthOfParabolicTrough', lang)}
+          </Menu.Item>
+          <Menu.Item key="effect_latus_rectum_parabolic_trough" onClick={loadFile}>
+            {i18n.t('menu.tutorials.EffectOfLatusRectumOfParabolicTrough', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>

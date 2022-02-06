@@ -210,7 +210,7 @@ const ParabolicTroughAbsorptanceInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('concentratedSolarPowerCollectorMenu.Absorptance', lang)}
+            {i18n.t('concentratedSolarPowerCollectorMenu.ReceiverAbsorptance', lang)}
           </div>
         }
         footer={[

@@ -22,6 +22,7 @@ export class DefaultWorldModel implements WorldModel {
   latitude: number;
   longitude: number;
   address: string;
+  airAttenuationCoefficient: number;
   timesPerHour: number;
   solarPanelGridCellSize: number;
   discretization: Discretization;
@@ -43,6 +44,8 @@ export class DefaultWorldModel implements WorldModel {
       thermalDiffusivity: 0.05,
       snowReflectionFactors: new Array(12).fill(0),
     } as GroundModel;
+
+    this.airAttenuationCoefficient = 0.01;
 
     this.timesPerHour = 4; // how many times per hour to collect data
     this.solarPanelGridCellSize = 0.5;

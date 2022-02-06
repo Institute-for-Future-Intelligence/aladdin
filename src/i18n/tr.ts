@@ -248,6 +248,7 @@ export const i18n_tr = {
         InterRowSpacingOfSolarPanelArray: 'Effect of Inter-Row Spacing in a Solar Panel Array',
         EffectOfOrientationOfSolarPanels: 'Effect of Orientation of Solar Panels',
         EffectOfAzimuthOfParabolicTrough: 'Effect of Azimuth of a Parabolic Trough',
+        EffectOfLatusRectumOfParabolicTrough: 'Effect of Latus Rectum of a Parabolic Trough',
       },
       examplesSubMenu: 'Örnekler',
       solarEnergySubMenu: 'Güneþ Enerjisi',
@@ -283,6 +284,7 @@ export const i18n_tr = {
       ThemeDesert: 'Çöl',
       ThemeForest: 'Orman',
       ThemeGrassland: 'Savana',
+      SunlightAttenuationCoefficientInAir: 'Sunlight Attenuation Coefficient in Air',
     },
 
     groundMenu: {
@@ -446,10 +448,10 @@ export const i18n_tr = {
     },
 
     concentratedSolarPowerCollectorMenu: {
-      Reflectance: 'Reflectance',
-      Absorptance: 'Absorptance',
-      OpticalEfficiency: 'Optical Efficiency',
-      ThermalEfficiency: 'Thermal Efficiency',
+      ReflectorReflectance: 'Reflector Reflectance',
+      ReceiverAbsorptance: 'Receiver Absorptance',
+      ReflectorOpticalEfficiency: 'Reflector Optical Efficiency',
+      ReceiverThermalEfficiency: 'Receiver Thermal Efficiency',
     },
 
     solarPanelMenu: {

@@ -212,7 +212,7 @@ const ParabolicTroughOpticalEfficiencyInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('concentratedSolarPowerCollectorMenu.OpticalEfficiency', lang)}
+            {i18n.t('concentratedSolarPowerCollectorMenu.ReflectorOpticalEfficiency', lang)}
           </div>
         }
         footer={[

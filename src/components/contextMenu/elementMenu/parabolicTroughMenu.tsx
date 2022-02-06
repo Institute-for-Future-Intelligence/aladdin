@@ -206,7 +206,7 @@ export const ParabolicTroughMenu = () => {
               setReflectanceDialogVisible(true);
             }}
           >
-            {i18n.t('concentratedSolarPowerCollectorMenu.Reflectance', lang)} ...
+            {i18n.t('concentratedSolarPowerCollectorMenu.ReflectorReflectance', lang)} ...
           </Menu.Item>
 
           {/* absorptance */}
@@ -222,7 +222,7 @@ export const ParabolicTroughMenu = () => {
               setAbsorptanceDialogVisible(true);
             }}
           >
-            {i18n.t('concentratedSolarPowerCollectorMenu.Absorptance', lang)} ...
+            {i18n.t('concentratedSolarPowerCollectorMenu.ReceiverAbsorptance', lang)} ...
           </Menu.Item>
 
           {/* optical efficiency */}
@@ -238,7 +238,7 @@ export const ParabolicTroughMenu = () => {
               setOpticalEfficiencyDialogVisible(true);
             }}
           >
-            {i18n.t('concentratedSolarPowerCollectorMenu.OpticalEfficiency', lang)} ...
+            {i18n.t('concentratedSolarPowerCollectorMenu.ReflectorOpticalEfficiency', lang)} ...
           </Menu.Item>
 
           {/* thermal efficiency */}
@@ -254,7 +254,7 @@ export const ParabolicTroughMenu = () => {
               setThermalEfficiencyDialogVisible(true);
             }}
           >
-            {i18n.t('concentratedSolarPowerCollectorMenu.ThermalEfficiency', lang)} ...
+            {i18n.t('concentratedSolarPowerCollectorMenu.ReceiverThermalEfficiency', lang)} ...
           </Menu.Item>
 
           {/* draw sun beam or not */}

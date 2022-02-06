@@ -246,6 +246,7 @@ export const i18n_zh_tw = {
         InterRowSpacingOfSolarPanelArray: '光伏板陣列行間距對發電量的影響',
         EffectOfOrientationOfSolarPanels: '光伏板排列方向對發電量的影響',
         EffectOfAzimuthOfParabolicTrough: '拋物線槽方位角對發電量的影響',
+        EffectOfLatusRectumOfParabolicTrough: '拋物線槽通徑對發電量的影響',
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太陽能',
@@ -281,6 +282,7 @@ export const i18n_zh_tw = {
       ThemeDesert: '沙漠',
       ThemeForest: '森林',
       ThemeGrassland: '草原',
+      SunlightAttenuationCoefficientInAir: '陽光在空氣中傳播的衰減係數',
     },
 
     groundMenu: {
@@ -433,10 +435,10 @@ export const i18n_zh_tw = {
     },
 
     concentratedSolarPowerCollectorMenu: {
-      Reflectance: '反射率',
-      Absorptance: '吸收率',
-      OpticalEfficiency: '光學效率',
-      ThermalEfficiency: '熱學效率',
+      ReflectorReflectance: '反射器鏡面反射率',
+      ReceiverAbsorptance: '接收器吸收率',
+      ReflectorOpticalEfficiency: '反射器光效率',
+      ReceiverThermalEfficiency: '接收器熱效率',
     },
 
     solarPanelMenu: {

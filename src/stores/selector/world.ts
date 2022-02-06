@@ -12,6 +12,8 @@ export const date = (state: CommonStoreState) => state.world.date;
 
 export const address = (state: CommonStoreState) => state.world.address;
 
+export const airAttenuationCoefficient = (state: CommonStoreState) => state.world.airAttenuationCoefficient;
+
 export const timesPerHour = (state: CommonStoreState) => state.world.timesPerHour;
 
 export const discretization = (state: CommonStoreState) => state.world.discretization;

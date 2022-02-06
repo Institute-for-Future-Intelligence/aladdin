@@ -32,7 +32,8 @@
     "solarPanelGridCellSize": 0.5,
     "discretization": "Approximate",
     "solarPanelVisibilityGridCellSize": 0.2,
-    "solarRadiationHeatmapGridCellSize": 0.7
+    "solarRadiationHeatmapGridCellSize": 0.7,
+    "airAttenuationCoefficient": 0.01
   },
   "elements": [
     {

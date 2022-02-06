@@ -196,6 +196,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     const dx = lx / nx;
     const dy = ly / ny;
     const depth = (lx * lx) / (4 * trough.latusRectum); // the distance from the bottom to the aperture plane
+    // const focalLength = 0.25*trough.latusRectum; // equal to the distance from the directrix to the horizontal axis
     const actualPoleHeight = trough.poleHeight + lx / 2;
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
@@ -261,6 +262,9 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = (count * interval) / 60;
     const clearness = weather.sunshineHours[month] / (30 * daylight);
+    // all the light beams travel the same distance from the reflection point to the focus,
+    // irrespective of where they hit the parabolic surface. So there is no additional attenuation
+    // that needs to be accounted for.
     const factor =
       trough.lx *
       trough.ly *
@@ -349,6 +353,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     const dx = lx / nx;
     const dy = ly / ny;
     const depth = (lx * lx) / (4 * trough.latusRectum); // the distance from the bottom to the aperture plane
+    // const focalLength = 0.25*trough.latusRectum; // equal to the distance from the directrix to the horizontal axis
     const actualPoleHeight = trough.poleHeight + lx / 2;
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
@@ -417,6 +422,9 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
       }
       const daylight = (count * interval) / 60;
       const clearness = weather.sunshineHours[midMonth.getMonth()] / (30 * daylight);
+      // all the light beams travel the same distance from the reflection point to the focus,
+      // irrespective of where they hit the parabolic surface. So there is no additional attenuation
+      // that needs to be accounted for.
       const factor =
         trough.lx *
         trough.ly *

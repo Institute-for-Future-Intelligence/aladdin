@@ -212,7 +212,7 @@ const ParabolicTroughThermalEfficiencyInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('concentratedSolarPowerCollectorMenu.ThermalEfficiency', lang)}
+            {i18n.t('concentratedSolarPowerCollectorMenu.ReceiverThermalEfficiency', lang)}
           </div>
         }
         footer={[

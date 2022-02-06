@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { Checkbox, Menu, Radio } from 'antd';
+import { Checkbox, InputNumber, Menu, Radio, Space } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -18,6 +18,7 @@ export const SkyMenu = () => {
   const axes = useStore(Selector.viewState.axes);
   const theme = useStore(Selector.viewState.theme);
   const language = useStore(Selector.language);
+  const airAttenuationCoefficient = useStore(Selector.world.airAttenuationCoefficient) ?? 0.01;
 
   const lang = { lng: language };
 
@@ -37,6 +38,12 @@ export const SkyMenu = () => {
   const setTheme = (theme: string) => {
     setCommonStore((state) => {
       state.viewState.theme = theme;
+    });
+  };
+
+  const setAirAttenuationCoefficient = (value: number) => {
+    setCommonStore((state) => {
+      state.world.airAttenuationCoefficient = value;
     });
   };
 
@@ -102,6 +109,39 @@ export const SkyMenu = () => {
           </Radio>
         </Radio.Group>
       </SubMenu>
+
+      <Menu>
+        <Menu.Item style={{ paddingLeft: '36px' }} key={'air-attenuation-coefficient'}>
+          <Space style={{ width: '250px' }}>{i18n.t('skyMenu.SunlightAttenuationCoefficientInAir', lang) + ':'}</Space>
+          <InputNumber
+            min={0}
+            max={0.1}
+            step={0.001}
+            precision={3}
+            value={airAttenuationCoefficient}
+            onChange={(value) => {
+              if (value) {
+                const oldAttenuationCoefficient = airAttenuationCoefficient;
+                const newAttenuationCoefficient = value;
+                const undoableChange = {
+                  name: 'Set Sunlight Attenuation Coefficient of Air',
+                  timestamp: Date.now(),
+                  oldValue: oldAttenuationCoefficient,
+                  newValue: newAttenuationCoefficient,
+                  undo: () => {
+                    setAirAttenuationCoefficient(undoableChange.oldValue as number);
+                  },
+                  redo: () => {
+                    setAirAttenuationCoefficient(undoableChange.newValue as number);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                setAirAttenuationCoefficient(newAttenuationCoefficient);
+              }
+            }}
+          />
+        </Menu.Item>
+      </Menu>
     </>
   );
 };
