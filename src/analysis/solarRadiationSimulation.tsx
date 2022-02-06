@@ -520,16 +520,27 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
           const dot = normal.dot(sunDirection);
           const v2 = new Vector2();
+          let tmpX = 0;
+          let disX = 0;
+          let areaRatio = 1;
+          const lr2 = 4 / (trough.latusRectum * trough.latusRectum);
+          // we have to calculate the irradiance on the parabolic surface, not the aperture surface.
+          // the irradiance on the former is less than that on the latter because of the area difference.
+          // the relationship between a unit area on the parabolic surface and that on the aperture surface
+          // is S = A * sqrt(1 + 4 * x^2 / p^2), where p is the latus rectum, x is the distance from the center
+          // of the parabola, and A is the unit area on the aperture area.
           for (let ku = 0; ku < nx; ku++) {
+            tmpX = x0 + ku * dx;
+            disX = tmpX - center.x;
+            areaRatio = 1 / Math.sqrt(1 + disX * disX * lr2);
             for (let kv = 0; kv < ny; kv++) {
               cellOutputTotals[ku][kv] += indirectRadiation;
               if (dot > 0) {
-                // TODO: we have to use the parabolic surface, not the aperture surface
-                v2.set(x0 + ku * dx, y0 + kv * dy);
+                v2.set(tmpX, y0 + kv * dy);
                 if (!zRotZero) v2.rotateAround(center2d, zRot);
                 v.set(v2.x, v2.y, z0);
                 if (!inShadow(trough.id, v, sunDirection)) {
-                  cellOutputTotals[ku][kv] += dot * peakRadiation;
+                  cellOutputTotals[ku][kv] += dot * peakRadiation * areaRatio;
                 }
               }
             }

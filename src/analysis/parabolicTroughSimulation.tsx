@@ -237,7 +237,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
             for (let ky = 0; ky < ny; ky++) {
               cellOutputs[kx][ky] = 0;
               if (dot > 0) {
-                // TODO: we have to use the parabolic surface, not the aperture surface
+                // simplify the simulation by using the aperture surface instead of the parabolic surface
                 v2.set(x0 + kx * dx, y0 + ky * dy);
                 if (!zRotZero) v2.rotateAround(center2d, zRot);
                 v.set(v2.x, v2.y, z0);
@@ -394,7 +394,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
               for (let ky = 0; ky < ny; ky++) {
                 cellOutputs[kx][ky] = 0;
                 if (dot > 0) {
-                  // TODO: we have to use the parabolic surface, not the aperture surface
+                  // simplify the simulation by using the aperture surface instead of the parabolic surface
                   v2.set(x0 + kx * dx, y0 + ky * dy);
                   if (!zRotZero) v2.rotateAround(center2d, zRot);
                   v.set(v2.x, v2.y, z0);
