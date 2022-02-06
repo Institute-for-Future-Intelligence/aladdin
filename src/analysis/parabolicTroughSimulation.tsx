@@ -207,6 +207,8 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
       .fill(0)
       .map(() => Array(ny).fill(0));
     const rot = parent.rotation[2];
+    const cosRot = zRotZero ? 1 : Math.cos(zRot);
+    const sinRot = zRotZero ? 0 : Math.sin(zRot);
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < (world.parabolicTroughTimesPerHour ?? 4); j++) {
         // a shift of 30 minutes minute half of the interval ensures the symmetry of the result around noon
@@ -220,7 +222,11 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
           const ori = originalNormal.clone();
           const qRot = new Quaternion().setFromUnitVectors(
             UNIT_VECTOR_POS_Z,
-            new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
+            new Vector3(
+              rotatedSunDirection.x * cosRot,
+              rotatedSunDirection.x * sinRot,
+              rotatedSunDirection.z,
+            ).normalize(),
           );
           normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRot)));
           count++;
@@ -354,6 +360,8 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
       .fill(0)
       .map(() => Array(ny).fill(0));
     const rot = parent.rotation[2];
+    const cosRot = zRotZero ? 1 : Math.cos(zRot);
+    const sinRot = zRotZero ? 0 : Math.sin(zRot);
     for (let month = 0; month < 12; month++) {
       const midMonth = new Date(year, month, date);
       const dayOfYear = Util.dayOfYear(midMonth);
@@ -371,7 +379,11 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
             const ori = originalNormal.clone();
             const qRot = new Quaternion().setFromUnitVectors(
               UNIT_VECTOR_POS_Z,
-              new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
+              new Vector3(
+                rotatedSunDirection.x * cosRot,
+                rotatedSunDirection.x * sinRot,
+                rotatedSunDirection.z,
+              ).normalize(),
             );
             normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRot)));
             count++;

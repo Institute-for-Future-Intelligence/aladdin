@@ -16,6 +16,7 @@ import heatmap_01 from './examples/heatmap_01.json';
 import vegetative_buffer_01 from './examples/vegetative_buffer_01.json';
 import effect_tilt_angle_solar_panel from './examples/effect_tilt_angle_solar_panel.json';
 import effect_azimuth_solar_panel from './examples/effect_azimuth_solar_panel.json';
+import effect_azimuth_parabolic_trough from './examples/effect_azimuth_parabolic_trough.json';
 import effect_orientation_solar_panel from './examples/effect_orientation_solar_panel.json';
 import why_solar_array from './examples/why_solar_array.json';
 import solar_canopy_form_factors from './examples/solar_canopy_form_factors.json';
@@ -185,6 +186,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'effect_azimuth_solar_panel':
         input = effect_azimuth_solar_panel;
+        break;
+      case 'effect_azimuth_parabolic_trough':
+        input = effect_azimuth_parabolic_trough;
         break;
       case 'effect_orientation_solar_panel':
         input = effect_orientation_solar_panel;
@@ -1240,6 +1244,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="solar_radiation_to_box" onClick={loadFile}>
             {i18n.t('menu.tutorials.SolarRadiationToBox', lang)}
           </Menu.Item>
+        </SubMenu>
+        {/* photovoltaic solar power */}
+        <SubMenu key={'photovoltaic-solar-power'} title={i18n.t('menu.photovoltaicSolarPowerSubMenu', lang)}>
           <Menu.Item key="effect_tilt_angle_solar_panel" onClick={loadFile}>
             {i18n.t('menu.tutorials.EffectOfTiltAngleOfSolarPanel', lang)}
           </Menu.Item>
@@ -1257,6 +1264,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="effect_orientation_solar_panel" onClick={loadFile}>
             {i18n.t('menu.tutorials.EffectOfOrientationOfSolarPanels', lang)}
+          </Menu.Item>
+        </SubMenu>
+        {/* concentrated solar power */}
+        <SubMenu key={'concentrated-solar-power'} title={i18n.t('menu.concentratedSolarPowerSubMenu', lang)}>
+          <Menu.Item key="effect_azimuth_parabolic_trough" onClick={loadFile}>
+            {i18n.t('menu.tutorials.EffectOfAzimuthOfParabolicTrough', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>

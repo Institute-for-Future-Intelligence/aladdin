@@ -235,6 +235,8 @@ export const i18n_es = {
       },
       tutorialsSubMenu: 'Tutorials',
       solarEnergyScienceSubMenu: 'Solar Science',
+      photovoltaicSolarPowerSubMenu: 'Photovoltaic Solar Power',
+      concentratedSolarPowerSubMenu: 'Concentrated Solar Power',
       tutorials: {
         SunAngles: 'Ángulos solares relativos a un observador en el suelo',
         SolarRadiationToBox: 'Radiación solar a una caja',
@@ -244,6 +246,7 @@ export const i18n_es = {
         CoveringGroundWithSolarPanels: 'Why Just Covering the Ground with Solar Panels is not a Good Idea',
         InterRowSpacingOfSolarPanelArray: 'Effect of Inter-Row Spacing in a Solar Panel Array',
         EffectOfOrientationOfSolarPanels: 'Effect of Orientation of Solar Panels',
+        EffectOfAzimuthOfParabolicTrough: 'Effect of Azimuth of a Parabolic Trough',
       },
       examplesSubMenu: 'Ejemplos',
       solarEnergySubMenu: 'Energía Solar',

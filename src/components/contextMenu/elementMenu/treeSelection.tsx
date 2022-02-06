@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Select } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -24,9 +24,10 @@ const { Option } = Select;
 const TreeSelection = () => {
   const language = useStore(Selector.language);
   const updateTreeTypeById = useStore(Selector.updateTreeTypeById);
-  const tree = useStore(Selector.selectedElement) as TreeModel;
   const addUndoable = useStore(Selector.addUndoable);
+  const tree = useStore.getState().getSelectedElement() as TreeModel;
 
+  const [updateFlag, setUpdateFlag] = useState(false);
   const lang = { lng: language };
 
   return (
@@ -52,6 +53,7 @@ const TreeSelection = () => {
             } as UndoableChange;
             addUndoable(undoableChange);
             updateTreeTypeById(tree.id, value);
+            setUpdateFlag(!updateFlag);
           }
         }
       }}

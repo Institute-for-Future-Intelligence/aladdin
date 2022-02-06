@@ -27,12 +27,13 @@ export const HumanMenu = () => {
   const updateHumanObserverById = useStore(Selector.updateHumanObserverById);
   const selectNone = useStore(Selector.selectNone);
 
+  const [animationFlag, setAnimationFlag] = useState(false);
+
   const editable = !human?.locked;
   const requestRef = useRef<number>(0);
   const previousFrameTime = useRef<number>(-1);
   const firstCall = useRef<boolean>(true);
   const animateMove = useRef<boolean>(false);
-  const [animationFlag, setAnimationFlag] = useState(false);
 
   useEffect(() => {
     if (animateMove.current) {

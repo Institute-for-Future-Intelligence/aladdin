@@ -1102,6 +1102,7 @@ const Ground = () => {
                       break;
                     }
                     case ObjectType.SolarPanel:
+                    case ObjectType.ParabolicTrough:
                     case ObjectType.Sensor:
                       const centerAbsPos = new Vector3(
                         e.cx * selectedElement.lx,
@@ -1519,6 +1520,7 @@ const Ground = () => {
                 }
                 break;
               case ObjectType.SolarPanel:
+              case ObjectType.ParabolicTrough:
               case ObjectType.Sensor:
                 if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
                   const centerAbsPos = absPosMapRef.current.get(e.id);

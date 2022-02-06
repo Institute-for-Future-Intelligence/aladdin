@@ -588,7 +588,7 @@
     "showWeatherPanel": false,
     "yearlyLightSensorPanelY": 0,
     "heliodonPanelX": 0,
-    "theme": "Default",
+    "theme": "Desert",
     "autoRotate": false,
     "groundColor": "#16cda5",
     "groundPanelY": 0,

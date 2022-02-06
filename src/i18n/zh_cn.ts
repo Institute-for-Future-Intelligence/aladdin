@@ -234,6 +234,8 @@ export const i18n_zh_cn = {
       },
       tutorialsSubMenu: '教程',
       solarEnergyScienceSubMenu: '太阳能科学',
+      photovoltaicSolarPowerSubMenu: '光伏发电',
+      concentratedSolarPowerSubMenu: '光热发电',
       tutorials: {
         SunAngles: '太阳相对于地面观察者的角度',
         SolarRadiationToBox: '一个长方体受到的太阳能辐射分析',
@@ -243,6 +245,7 @@ export const i18n_zh_cn = {
         CoveringGroundWithSolarPanels: '为什么我们不简单地用光伏板覆盖地面',
         InterRowSpacingOfSolarPanelArray: '光伏板阵列行间距对发电量的影响',
         EffectOfOrientationOfSolarPanels: '光伏板排列方向对发电量的影响',
+        EffectOfAzimuthOfParabolicTrough: '抛物线槽方位角对发电量的影响',
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太阳能',

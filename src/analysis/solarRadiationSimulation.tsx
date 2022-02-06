@@ -494,6 +494,8 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     const rot = parent.rotation[2];
     const zRot = rot + trough.relativeAzimuth;
     const zRotZero = Util.isZero(zRot);
+    const cosRot = zRotZero ? 1 : Math.cos(zRot);
+    const sinRot = zRotZero ? 0 : Math.sin(zRot);
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         const currentTime = new Date(year, month, date, i, j * interval);
@@ -506,7 +508,11 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           const ori = originalNormal.clone();
           const qRot = new Quaternion().setFromUnitVectors(
             UNIT_VECTOR_POS_Z,
-            new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
+            new Vector3(
+              rotatedSunDirection.x * cosRot,
+              rotatedSunDirection.x * sinRot,
+              rotatedSunDirection.z,
+            ).normalize(),
           );
           normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRot)));
           count++;

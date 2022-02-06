@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Select } from 'antd';
 import { HumanName } from '../../../types';
 import JackImage from '../../../resources/jack.png';
@@ -38,9 +38,10 @@ const { Option } = Select;
 const HumanSelection = () => {
   const language = useStore(Selector.language);
   const updateHumanNameById = useStore(Selector.updateHumanNameById);
-  const human = useStore(Selector.selectedElement) as HumanModel;
   const addUndoable = useStore(Selector.addUndoable);
+  const human = useStore.getState().getSelectedElement() as HumanModel;
 
+  const [updateFlag, setUpdateFlag] = useState(false);
   const lang = { lng: language };
 
   return (
@@ -66,6 +67,7 @@ const HumanSelection = () => {
             } as UndoableChange;
             addUndoable(undoableChange);
             updateHumanNameById(human.id, value);
+            setUpdateFlag(!updateFlag);
           }
         }
       }}

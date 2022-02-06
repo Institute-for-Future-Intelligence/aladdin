@@ -297,13 +297,24 @@ export class Util {
   static doesParentContainAllChildren(parent: ElementModel, children: ElementModel[]): boolean {
     for (const e of children) {
       switch (e.type) {
+        // solar panels can be installed on any surface, but we can only check horizontal surfaces now
         case ObjectType.SolarPanel:
           if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
-            if (!Util.isSolarCollectorWithinHorizontalSurface(e as SolarPanelModel, parent)) {
+            if (!Util.isSolarCollectorWithinHorizontalSurface(e as SolarCollector, parent)) {
               return false;
             }
           }
           break;
+        // these CSP collectors can only be installed on a foundation
+        case ObjectType.ParabolicDish:
+        case ObjectType.ParabolicTrough:
+        case ObjectType.FresnelReflector:
+        case ObjectType.Heliostat:
+          if (!Util.isSolarCollectorWithinHorizontalSurface(e as SolarCollector, parent)) {
+            return false;
+          }
+          break;
+        // sensors can be placed on any surface, but we can only check horizontal surfaces now
         case ObjectType.Sensor:
           if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
             if (!Util.isSensorWithin(e as SensorModel, parent)) {
