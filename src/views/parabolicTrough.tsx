@@ -643,7 +643,7 @@ const ParabolicTrough = ({
               sunDirection.clone().multiplyScalar(sunBeamLength),
             ]}
             name={'Sun Beam -0.3'}
-            lineWidth={0.5}
+            lineWidth={0.25}
             color={'white'}
           />
           <Line
@@ -654,7 +654,7 @@ const ParabolicTrough = ({
               sunDirection.clone().multiplyScalar(sunBeamLength),
             ]}
             name={'Sun Beam -0.6'}
-            lineWidth={0.5}
+            lineWidth={0.25}
             color={'white'}
           />
           <Line
@@ -665,7 +665,7 @@ const ParabolicTrough = ({
               sunDirection.clone().multiplyScalar(sunBeamLength),
             ]}
             name={'Sun Beam -0.9'}
-            lineWidth={0.5}
+            lineWidth={0.25}
             color={'white'}
           />
           <Line
@@ -675,7 +675,7 @@ const ParabolicTrough = ({
               sunDirection.clone().multiplyScalar(sunBeamLength),
             ]}
             name={'Sun Beam 0.0'}
-            lineWidth={0.5}
+            lineWidth={0.25}
             color={'white'}
           />
           <Line
@@ -686,7 +686,7 @@ const ParabolicTrough = ({
               sunDirection.clone().multiplyScalar(sunBeamLength),
             ]}
             name={'Sun Beam 0.3'}
-            lineWidth={0.5}
+            lineWidth={0.25}
             color={'white'}
           />
           <Line
@@ -697,7 +697,7 @@ const ParabolicTrough = ({
               sunDirection.clone().multiplyScalar(sunBeamLength),
             ]}
             name={'Sun Beam 0.6'}
-            lineWidth={0.5}
+            lineWidth={0.25}
             color={'white'}
           />
           <Line
@@ -708,7 +708,7 @@ const ParabolicTrough = ({
               sunDirection.clone().multiplyScalar(sunBeamLength),
             ]}
             name={'Sun Beam 0.9'}
-            lineWidth={0.5}
+            lineWidth={0.25}
             color={'white'}
           />
         </group>
