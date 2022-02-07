@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Cone, Cylinder, Line, Plane, Sphere } from '@react-three/drei';
+import { Box, Cylinder, Line, Plane, Sphere } from '@react-three/drei';
 import { BackSide, CanvasTexture, Color, DoubleSide, Euler, FrontSide, Mesh, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
@@ -87,7 +87,10 @@ const ParabolicTrough = ({
   const lang = { lng: language };
   const parabolaSegments = 16;
 
-  const actualPoleHeight = poleHeight + lx / 2;
+  const hx = lx / 2;
+  const hy = ly / 2;
+  const hz = lz / 2;
+  const actualPoleHeight = poleHeight + hx;
 
   if (parentId) {
     const p = getElementById(parentId);
@@ -110,10 +113,8 @@ const ParabolicTrough = ({
     }
   }
 
-  const hx = lx / 2;
-  const hy = ly / 2;
-  const hz = lz / 2;
   const depth = (hx * hx) / latusRectum; // the distance from the bottom to the aperture plane
+  const focalLength = 0.25 * latusRectum;
   const positionLL = new Vector3(-hx, -hy, hz + depth);
   const positionUL = new Vector3(-hx, hy, hz + depth);
   const positionLR = new Vector3(hx, -hy, hz + depth);
@@ -206,15 +207,6 @@ const ParabolicTrough = ({
     return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
   }, [sunDirection, tiltAngle, relativeAzimuth]);
 
-  const normalVector = useMemo(() => {
-    const v = new Vector3();
-    return drawSunBeam
-      ? v
-          .fromArray(normal)
-          .applyEuler(new Euler(relativeEuler.x, relativeEuler.y, relativeEuler.z + rotation[2], 'ZXY'))
-      : v;
-  }, [drawSunBeam, normal, euler, relativeEuler]);
-
   const poleZ = -(actualPoleHeight + lz) / 2;
 
   const poles = useMemo<Vector3[]>(() => {
@@ -237,7 +229,7 @@ const ParabolicTrough = ({
       const line: Vector3[] = [];
       for (let j = 0; j <= parabolaSegments; j++) {
         const t = t0 + j * dt;
-        line.push(new Vector3((latusRectum * t) / 2, -ly / 2 + i * dy, (latusRectum * t * t) / 4));
+        line.push(new Vector3((latusRectum * t) / 2, -hy + i * dy, (latusRectum * t * t) / 4));
       }
       array.push({ points: line } as LineData);
     }
@@ -359,7 +351,7 @@ const ParabolicTrough = ({
                   userData={{ unintersectable: true }}
                   points={[
                     lineData.points[parabolaSegments / 2].clone(),
-                    lineData.points[parabolaSegments / 2].clone().add(new Vector3(0, 0, 0.25 * latusRectum)),
+                    lineData.points[parabolaSegments / 2].clone().add(new Vector3(0, 0, focalLength)),
                   ]}
                   castShadow={false}
                   receiveShadow={false}
@@ -373,8 +365,8 @@ const ParabolicTrough = ({
           name={'Parabolic Trough Outline 1'}
           userData={{ unintersectable: true }}
           points={[
-            [-lx / 2, -ly / 2, depth],
-            [-lx / 2, ly / 2, depth],
+            [-hx, -hy, depth],
+            [-hx, hy, depth],
           ]}
           castShadow={false}
           receiveShadow={false}
@@ -385,8 +377,8 @@ const ParabolicTrough = ({
           name={'Parabolic Trough Outline 2'}
           userData={{ unintersectable: true }}
           points={[
-            [lx / 2, -ly / 2, depth],
-            [lx / 2, ly / 2, depth],
+            [hx, -hy, depth],
+            [hx, hy, depth],
           ]}
           castShadow={false}
           receiveShadow={false}
@@ -399,7 +391,7 @@ const ParabolicTrough = ({
           name={'Parabolic Trough Absorber Tube'}
           uuid={id}
           args={[absorberTubeRadius, absorberTubeRadius, ly, 6, 2]}
-          position={[0, 0, 0.25 * latusRectum]}
+          position={[0, 0, focalLength]}
           receiveShadow={false}
           castShadow={true}
         >
@@ -417,17 +409,6 @@ const ParabolicTrough = ({
           castShadow={false}
           visible={false}
         >
-          {/*{showSolarRadiationHeatmap && heatmapTexture ? (*/}
-          {/*  <meshBasicMaterial attach="material" side={FrontSide} map={heatmapTexture}/>*/}
-          {/*) : (*/}
-          {/*  <meshPhongMaterial*/}
-          {/*    attach="material"*/}
-          {/*    specular={new Color('white')}*/}
-          {/*    shininess={10}*/}
-          {/*    side={FrontSide}*/}
-          {/*    color={'skyblue'}*/}
-          {/*  />*/}
-          {/*)}*/}
           <meshBasicMaterial side={DoubleSide} />
         </Plane>
 
@@ -437,15 +418,15 @@ const ParabolicTrough = ({
             name={'Selection highlight lines'}
             userData={{ unintersectable: true }}
             points={[
-              [-lx / 2, -ly / 2, 0],
-              [-lx / 2, ly / 2, 0],
-              [lx / 2, ly / 2, 0],
-              [lx / 2, -ly / 2, 0],
-              [-lx / 2, -ly / 2, 0],
+              [-hx, -hy, depth],
+              [-hx, hy, depth],
+              [hx, hy, depth],
+              [hx, -hy, depth],
+              [-hx, -hy, depth],
             ]}
             castShadow={false}
             receiveShadow={false}
-            lineWidth={2}
+            lineWidth={1}
             color={LOCKED_ELEMENT_SELECTION_COLOR}
           />
         )}
@@ -605,7 +586,7 @@ const ParabolicTrough = ({
       {/*    /!* rotate handles *!/*/}
       {/*    <RotateHandle*/}
       {/*      id={id}*/}
-      {/*      position={[0, -ly / 2 - rotateHandleSize / 2, actualPoleHeight]}*/}
+      {/*      position={[0, -hy - rotateHandleSize / 2, actualPoleHeight]}*/}
       {/*      color={*/}
       {/*        hoveredHandle === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Upper*/}
       {/*          ? HIGHLIGHT_HANDLE_COLOR*/}
@@ -618,7 +599,7 @@ const ParabolicTrough = ({
       {/*    />*/}
       {/*    <RotateHandle*/}
       {/*      id={id}*/}
-      {/*      position={[0, ly / 2 + rotateHandleSize / 2, actualPoleHeight]}*/}
+      {/*      position={[0, hy + rotateHandleSize / 2, actualPoleHeight]}*/}
       {/*      color={*/}
       {/*        hoveredHandle === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Lower*/}
       {/*          ? HIGHLIGHT_HANDLE_COLOR*/}
@@ -656,51 +637,80 @@ const ParabolicTrough = ({
         <group rotation={[-euler.x, 0, -euler.z]}>
           <Line
             userData={{ unintersectable: true }}
-            points={[[0, 0, 0], sunDirection.clone().multiplyScalar(sunBeamLength)]}
-            name={'Sun Beam'}
+            points={[
+              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
+              new Vector3(-0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler),
+              sunDirection.clone().multiplyScalar(sunBeamLength),
+            ]}
+            name={'Sun Beam -0.3'}
             lineWidth={0.5}
             color={'white'}
           />
           <Line
             userData={{ unintersectable: true }}
-            points={[[0, 0, 0], normalVector.clone().multiplyScalar(0.75)]}
-            name={'Normal Vector'}
+            points={[
+              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
+              new Vector3(-0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler),
+              sunDirection.clone().multiplyScalar(sunBeamLength),
+            ]}
+            name={'Sun Beam -0.6'}
             lineWidth={0.5}
             color={'white'}
           />
           <Line
             userData={{ unintersectable: true }}
-            points={[sunDirection.clone().multiplyScalar(0.5), normalVector.clone().multiplyScalar(0.5)]}
-            name={'Angle'}
+            points={[
+              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
+              new Vector3(-0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler),
+              sunDirection.clone().multiplyScalar(sunBeamLength),
+            ]}
+            name={'Sun Beam -0.9'}
             lineWidth={0.5}
             color={'white'}
           />
-          <textSprite
+          <Line
             userData={{ unintersectable: true }}
-            name={'Angle Value'}
-            text={Util.toDegrees(sunDirection.angleTo(normalVector)).toFixed(1) + '°'}
-            fontSize={20}
-            fontFace={'Times Roman'}
-            textHeight={0.1}
-            position={sunDirection
-              .clone()
-              .multiplyScalar(0.75)
-              .add(normalVector.clone().multiplyScalar(0.75))
-              .multiplyScalar(0.5)}
+            points={[
+              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
+              sunDirection.clone().multiplyScalar(sunBeamLength),
+            ]}
+            name={'Sun Beam 0.0'}
+            lineWidth={0.5}
+            color={'white'}
           />
-          <group
-            position={normalVector.clone().multiplyScalar(0.75)}
-            rotation={[HALF_PI + euler.x + relativeEuler.x, 0, euler.z + relativeEuler.z, 'ZXY']}
-          >
-            <Cone
-              userData={{ unintersectable: true }}
-              args={[0.04, 0.2, 4, 2]}
-              name={'Normal Vector Arrow Head'}
-              rotation={[0, 0, -relativeEuler.y]}
-            >
-              <meshStandardMaterial attach="material" color={'white'} />
-            </Cone>
-          </group>
+          <Line
+            userData={{ unintersectable: true }}
+            points={[
+              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
+              new Vector3(0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler),
+              sunDirection.clone().multiplyScalar(sunBeamLength),
+            ]}
+            name={'Sun Beam 0.3'}
+            lineWidth={0.5}
+            color={'white'}
+          />
+          <Line
+            userData={{ unintersectable: true }}
+            points={[
+              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
+              new Vector3(0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler),
+              sunDirection.clone().multiplyScalar(sunBeamLength),
+            ]}
+            name={'Sun Beam 0.6'}
+            lineWidth={0.5}
+            color={'white'}
+          />
+          <Line
+            userData={{ unintersectable: true }}
+            points={[
+              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
+              new Vector3(0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler),
+              sunDirection.clone().multiplyScalar(sunBeamLength),
+            ]}
+            name={'Sun Beam 0.9'}
+            lineWidth={0.5}
+            color={'white'}
+          />
         </group>
       )}
 
@@ -713,7 +723,7 @@ const ParabolicTrough = ({
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}
-          position={[0, 0, Math.max((ly / 2) * Math.abs(Math.sin(trough.tiltAngle)) + 0.1, 0.2)]}
+          position={[0, 0, Math.max(hy * Math.abs(Math.sin(trough.tiltAngle)) + 0.1, 0.2)]}
         />
       )}
     </group>

@@ -301,6 +301,7 @@ export const i18n_en = {
 
     foundationMenu: {
       RemoveAllUnlockedSolarPanels: 'Remove All Unlocked Solar Panels',
+      RemoveAllUnlockedParabolicTroughs: 'Remove All Unlocked Parabolic Troughs',
       RemoveAllUnlockedSensors: 'Remove All Unlocked Sensors',
       RemoveAllUnlockedWalls: 'Remove All Unlocked Walls',
       RemoveAllUnlockedPolygons: 'Remove All Unlocked Polygons',
@@ -320,6 +321,9 @@ export const i18n_en = {
       SolarPanels: 'Solar Panels',
       DoYouReallyWantToRemoveAllSolarPanelsOnFoundation:
         'Do you really want to remove all the solar panels on this foundation that are not locked',
+      ParabolicTroughs: 'Parabolic Troughs',
+      DoYouReallyWantToRemoveAllParabolicTroughsOnFoundation:
+        'Do you really want to remove all the parabolic troughs on this foundation that are not locked',
       Sensors: 'Sensors',
       DoYouReallyWantToRemoveAllSensorsOnFoundation:
         'Do you really want to remove all the sensors on this foundation that are not locked',

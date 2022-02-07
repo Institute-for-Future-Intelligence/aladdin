@@ -302,6 +302,7 @@ export const i18n_tr = {
 
     foundationMenu: {
       RemoveAllUnlockedSolarPanels: 'Tüm Güneþ Panellerini Kaldýr',
+      RemoveAllUnlockedParabolicTroughs: 'Remove All Unlocked Parabolic Troughs',
       RemoveAllUnlockedSensors: 'Tüm Sensörleri Kaldýr',
       RemoveAllUnlockedWalls: 'Tüm Duvarlarý Kaldýr',
       RemoveAllUnlockedPolygons: 'Tüm Poligonlarý Kaldýr',
@@ -321,6 +322,9 @@ export const i18n_tr = {
       SolarPanels: 'Güneþ Panelleri',
       DoYouReallyWantToRemoveAllSolarPanelsOnFoundation:
         'Bu temel üzerindeki tüm güneþ panellerini gerçekten kaldýrmak istiyor musunuz that are not locked',
+      ParabolicTroughs: 'Parabolic Troughs',
+      DoYouReallyWantToRemoveAllParabolicTroughsOnFoundation:
+        'Do you really want to remove all the parabolic troughs on this foundation that are not locked',
       Sensors: 'Sensörler',
       DoYouReallyWantToRemoveAllSensorsOnFoundation:
         'Bu temel üzerindeki tüm sensörleri gerçekten kaldýrmak istiyor musunuz that are not locked',

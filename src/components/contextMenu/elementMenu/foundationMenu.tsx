@@ -54,6 +54,9 @@ export const FoundationMenu = () => {
     ? countAllChildElementsByType(foundation.id, ObjectType.SolarPanel, true)
     : 0;
   const solarPanelCountFoundation = foundation ? countAllChildSolarPanels(foundation.id, true) : 0;
+  const parabolicTroughCountFoundation = foundation
+    ? countAllChildElementsByType(foundation.id, ObjectType.ParabolicTrough, true)
+    : 0;
   const lang = { lng: language };
 
   const legalToPaste = () => {
@@ -90,6 +93,7 @@ export const FoundationMenu = () => {
         <Lock keyName={'foundation-lock'} />
         {(sensorCountFoundation > 0 ||
           solarPanelCountFoundation > 0 ||
+          parabolicTroughCountFoundation > 0 ||
           treeCountFoundation > 0 ||
           humanCountFoundation > 0 ||
           wallCountFoundation > 0 ||
@@ -236,6 +240,53 @@ export const FoundationMenu = () => {
                   {i18n.t('foundationMenu.RemoveAllUnlockedSolarPanels', lang)}&nbsp; ({solarPanelCountFoundation}{' '}
                   {i18n.t('foundationMenu.SolarPanels', lang)}, {solarRackCountFoundation}{' '}
                   {i18n.t('foundationMenu.Racks', lang)})
+                </Menu.Item>
+              )}
+
+              {parabolicTroughCountFoundation > 0 && (
+                <Menu.Item
+                  key={'remove-all-parabolic-troughs-on-foundation'}
+                  onClick={() => {
+                    Modal.confirm({
+                      title:
+                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllParabolicTroughsOnFoundation', lang) +
+                        ' (' +
+                        parabolicTroughCountFoundation +
+                        ' ' +
+                        i18n.t('foundationMenu.ParabolicTroughs', lang) +
+                        ')?',
+                      icon: <ExclamationCircleOutlined />,
+                      onOk: () => {
+                        if (foundation) {
+                          const removed = elements.filter(
+                            (e) => !e.locked && e.type === ObjectType.ParabolicTrough && e.parentId === foundation.id,
+                          );
+                          removeAllChildElementsByType(foundation.id, ObjectType.ParabolicTrough);
+                          const removedElements = JSON.parse(JSON.stringify(removed));
+                          const undoableRemoveAllParabolicTroughChildren = {
+                            name: 'Remove All Parabolic Troughs on Foundation',
+                            timestamp: Date.now(),
+                            parentId: foundation.id,
+                            removedElements: removedElements,
+                            undo: () => {
+                              setCommonStore((state) => {
+                                state.elements.push(...undoableRemoveAllParabolicTroughChildren.removedElements);
+                              });
+                            },
+                            redo: () => {
+                              removeAllChildElementsByType(
+                                undoableRemoveAllParabolicTroughChildren.parentId,
+                                ObjectType.ParabolicTrough,
+                              );
+                            },
+                          } as UndoableRemoveAllChildren;
+                          addUndoable(undoableRemoveAllParabolicTroughChildren);
+                        }
+                      },
+                    });
+                  }}
+                >
+                  {i18n.t('foundationMenu.RemoveAllUnlockedParabolicTroughs', lang)} ({parabolicTroughCountFoundation})
                 </Menu.Item>
               )}
 

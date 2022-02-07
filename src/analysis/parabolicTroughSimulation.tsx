@@ -264,7 +264,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     const clearness = weather.sunshineHours[month] / (30 * daylight);
     // all the light beams travel the same distance from the reflection point to the focus,
     // irrespective of where they hit the parabolic surface. So there is no additional attenuation
-    // that needs to be accounted for.
+    // difference that needs to be accounted for.
     const factor =
       trough.lx *
       trough.ly *
@@ -424,7 +424,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
       const clearness = weather.sunshineHours[midMonth.getMonth()] / (30 * daylight);
       // all the light beams travel the same distance from the reflection point to the focus,
       // irrespective of where they hit the parabolic surface. So there is no additional attenuation
-      // that needs to be accounted for.
+      // difference that needs to be accounted for.
       const factor =
         trough.lx *
         trough.ly *

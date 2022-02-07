@@ -206,12 +206,12 @@ const SolarPanel = ({
       const dy = ly / my;
       for (let i = 1; i < mx; i++) {
         solarPanelLinesRef.current.push({
-          points: [new Vector3(-lx / 2 + i * dx, -ly / 2, lz), new Vector3(-lx / 2 + i * dx, ly / 2, lz)],
+          points: [new Vector3(-hx + i * dx, -hy, lz), new Vector3(-hx + i * dx, hy, lz)],
         } as LineData);
       }
       for (let i = 1; i < my; i++) {
         solarPanelLinesRef.current.push({
-          points: [new Vector3(-lx / 2, -ly / 2 + i * dy, lz), new Vector3(lx / 2, -ly / 2 + i * dy, lz)],
+          points: [new Vector3(-hx, -hy + i * dy, lz), new Vector3(hx, -hy + i * dy, lz)],
         } as LineData);
       }
     }
@@ -483,11 +483,11 @@ const SolarPanel = ({
             name={'Selection highlight lines'}
             userData={{ unintersectable: true }}
             points={[
-              [-lx / 2, -ly / 2, 0],
-              [-lx / 2, ly / 2, 0],
-              [lx / 2, ly / 2, 0],
-              [lx / 2, -ly / 2, 0],
-              [-lx / 2, -ly / 2, 0],
+              [-hx, -hy, 0],
+              [-hx, hy, 0],
+              [hx, hy, 0],
+              [hx, -hy, 0],
+              [-hx, -hy, 0],
             ]}
             castShadow={false}
             receiveShadow={false}
@@ -654,7 +654,7 @@ const SolarPanel = ({
           {/* rotate handles */}
           <RotateHandle
             id={id}
-            position={[0, -ly / 2 - rotateHandleSize / 2, poleHeight]}
+            position={[0, -hy - rotateHandleSize / 2, poleHeight]}
             color={
               hoveredHandle === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Upper
                 ? HIGHLIGHT_HANDLE_COLOR
@@ -667,7 +667,7 @@ const SolarPanel = ({
           />
           <RotateHandle
             id={id}
-            position={[0, ly / 2 + rotateHandleSize / 2, poleHeight]}
+            position={[0, hy + rotateHandleSize / 2, poleHeight]}
             color={
               hoveredHandle === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Lower
                 ? HIGHLIGHT_HANDLE_COLOR
@@ -913,7 +913,7 @@ const SolarPanel = ({
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}
-          position={[0, 0, Math.max((ly / 2) * Math.abs(Math.sin(solarPanel.tiltAngle)) + 0.1, 0.2)]}
+          position={[0, 0, Math.max(hy * Math.abs(Math.sin(solarPanel.tiltAngle)) + 0.1, 0.2)]}
         />
       )}
     </group>

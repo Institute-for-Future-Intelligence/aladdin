@@ -300,6 +300,7 @@ export const i18n_zh_tw = {
 
     foundationMenu: {
       RemoveAllUnlockedSolarPanels: '刪除此地基上所有非固定的光伏板',
+      RemoveAllUnlockedParabolicTroughs: '刪除此地基上所有非固定的拋物線槽',
       RemoveAllUnlockedSensors: '刪除此地基上所有非固定的傳感器',
       RemoveAllUnlockedWalls: '刪除此地基上所有非固定的牆',
       RemoveAllUnlockedPolygons: '刪除此地基上所有非固定的多邊形',
@@ -318,6 +319,8 @@ export const i18n_zh_tw = {
       Texture10: '十號材質',
       SolarPanels: '光伏板',
       DoYouReallyWantToRemoveAllSolarPanelsOnFoundation: '你確定刪除此地基上所有非固定的光伏板嗎',
+      ParabolicTroughs: '拋物線槽',
+      DoYouReallyWantToRemoveAllParabolicTroughsOnFoundation: '你確定刪除此地基上所有非固定的拋物線槽嗎',
       Sensors: '傳感器',
       DoYouReallyWantToRemoveAllSensorsOnFoundation: '你確定刪除此地基上所有非固定的傳感器嗎',
       Walls: '牆',

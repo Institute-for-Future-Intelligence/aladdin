@@ -1730,6 +1730,7 @@ const Foundation = ({
             switch (resizeHandleType) {
               case ResizeHandleType.Lower:
               case ResizeHandleType.Upper:
+                // these two handles change the length, which is controlled by module length
                 {
                   const sign = resizeHandleType === ResizeHandleType.Lower ? 1 : -1;
                   const theta = rp.angle() - angle + sign * HALF_PI;
@@ -1754,15 +1755,11 @@ const Foundation = ({
                 break;
               case ResizeHandleType.Left:
               case ResizeHandleType.Right:
+                // these two handles change the width, which is not controlled by module length
                 {
                   let sign = resizeHandleType === ResizeHandleType.Left ? -1 : 1;
                   const theta = rp.angle() - angle + (resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
                   let dxl = distance * Math.cos(theta);
-                  const nx = Math.max(
-                    1,
-                    Math.ceil((dxl - parabolicTrough.moduleLength / 2) / parabolicTrough.moduleLength),
-                  );
-                  dxl = nx * parabolicTrough.moduleLength;
                   const wcx = resizeAnchor.x + (sign * (dxl * Math.cos(angle))) / 2;
                   const wcy = resizeAnchor.y + (sign * (dxl * Math.sin(angle))) / 2;
                   const wc = new Vector2(wcx, wcy);
