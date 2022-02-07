@@ -5,6 +5,7 @@
 import * as React from 'react';
 import { Mesh } from 'three';
 import { ParabolicCylinderGeometry } from '../js/ParabolicCylinderGeometry';
+import { ParaboloidGeometry } from '../js/ParaboloidGeometry';
 
 export type Args<T> = T extends new (...args: any) => any ? ConstructorParameters<T> : T;
 export type ShapeProps<T> = Omit<JSX.IntrinsicElements['mesh'], 'args'> & {
@@ -23,3 +24,4 @@ function create<T>(type: string) {
 }
 
 export const ParabolicCylinder = create<typeof ParabolicCylinderGeometry>('ParabolicCylinder');
+export const Paraboloid = create<typeof ParaboloidGeometry>('Paraboloid');

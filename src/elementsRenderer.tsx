@@ -28,6 +28,8 @@ import { Group } from 'three';
 import { useStoreRef } from './stores/commonRef';
 import ParabolicTrough from './views/parabolicTrough';
 import { ParabolicTroughModel } from './models/ParabolicTroughModel';
+import ParabolicDish from './views/parabolicDish';
+import { ParabolicDishModel } from './models/ParabolicDishModel';
 
 const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
@@ -61,6 +63,8 @@ const ElementsRenderer: React.FC = () => {
             return <Tree key={e.id} {...(e as TreeModel)} />;
           case ObjectType.SolarPanel:
             return <SolarPanel key={e.id} {...(e as SolarPanelModel)} />;
+          case ObjectType.ParabolicDish:
+            return <ParabolicDish key={e.id} {...(e as ParabolicDishModel)} />;
           case ObjectType.ParabolicTrough:
             return <ParabolicTrough key={e.id} {...(e as ParabolicTroughModel)} />;
           case ObjectType.Wall:

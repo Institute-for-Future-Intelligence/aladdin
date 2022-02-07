@@ -13,6 +13,7 @@ import RoofImage from './assets/roof.png';
 import TreeImage from './assets/tree.png';
 import HumanImage from './assets/human.png';
 import ParabolicTroughImage from './assets/parabolic_trough.png';
+import ParabolicDishImage from './assets/parabolic_dish.png';
 
 import React, { useState } from 'react';
 import { useStore } from './stores/common';
@@ -309,6 +310,27 @@ const MainToolBarButtons = () => {
         />
         {i18n.t('toolbar.SwitchToAddingParabolicTrough', lang)}
       </Menu.Item>
+      <Menu.Item
+        style={{ userSelect: 'none' }}
+        key="add-parabolic-dish-menu-item"
+        onClick={() => {
+          setCategory3Flag(ObjectType.ParabolicDish);
+          setMode(ObjectType.ParabolicDish);
+        }}
+      >
+        <img
+          alt={'Parabolic Dish'}
+          src={ParabolicDishImage}
+          height={36}
+          width={36}
+          style={{
+            filter: defaultFilter,
+            verticalAlign: 'middle',
+            marginRight: '10px',
+          }}
+        />
+        {i18n.t('toolbar.SwitchToAddingParabolicDish', lang)}
+      </Menu.Item>
     </Menu>
   );
 
@@ -572,6 +594,23 @@ const MainToolBarButtons = () => {
             }}
             onClick={() => {
               setMode(ObjectType.ParabolicTrough);
+            }}
+          />
+        )}
+        {category3Flag === ObjectType.ParabolicDish && (
+          <img
+            title={i18n.t('toolbar.AddParabolicDish', lang)}
+            alt={'Parabolic Dish'}
+            src={ParabolicDishImage}
+            height={36}
+            width={36}
+            style={{
+              filter: objectTypeToAdd === ObjectType.ParabolicDish ? selectFilter : defaultFilter,
+              cursor: 'pointer',
+              verticalAlign: 'middle',
+            }}
+            onClick={() => {
+              setMode(ObjectType.ParabolicDish);
             }}
           />
         )}

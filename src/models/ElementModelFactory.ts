@@ -2,7 +2,16 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import { CuboidTexture, HumanName, ObjectType, Orientation, TrackerType, TreeType, WallTexture } from '../types';
+import {
+  CuboidTexture,
+  HumanName,
+  ObjectType,
+  Orientation,
+  ParabolicDishStructureType,
+  TrackerType,
+  TreeType,
+  WallTexture,
+} from '../types';
 import short from 'short-uuid';
 import { Vector3 } from 'three';
 import { ElementModel } from './ElementModel';
@@ -22,6 +31,7 @@ import { PolygonModel } from './PolygonModel';
 import { Util } from '../Util';
 import { HumanData } from '../HumanData';
 import { ParabolicTroughModel } from './ParabolicTroughModel';
+import { ParabolicDishModel } from './ParabolicDishModel';
 
 export class ElementModelFactory {
   static makeHuman(parentId: string, x: number, y: number, z?: number) {
@@ -162,7 +172,6 @@ export class ElementModelFactory {
     let foundationId;
     switch (parent.type) {
       case ObjectType.Foundation:
-      case ObjectType.Cuboid:
         foundationId = parent.id;
         break;
     }
@@ -193,6 +202,52 @@ export class ElementModelFactory {
       foundationId: foundationId,
       id: short.generate() as string,
     } as ParabolicTroughModel;
+  }
+
+  static makeParabolicDish(
+    parent: ElementModel,
+    x: number,
+    y: number,
+    z?: number,
+    normal?: Vector3,
+    rotation?: number[],
+    lx?: number,
+    ly?: number,
+  ) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+        foundationId = parent.id;
+        break;
+    }
+    return {
+      type: ObjectType.ParabolicDish,
+      reflectance: 0.9,
+      absorptance: 0.95,
+      opticalEfficiency: 0.7,
+      thermalEfficiency: 0.3,
+      moduleLength: 3,
+      latusRectum: 2,
+      relativeAzimuth: 0,
+      tiltAngle: 0,
+      structureType: ParabolicDishStructureType.CentralPole,
+      receiverRadius: 0.05,
+      drawSunBeam: false,
+      poleHeight: 0.2, // extra pole height in addition to the radius (half of lx or ly)
+      poleRadius: 0.05,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: lx ?? 4, // diameter of the rim
+      ly: ly ?? 4, // diameter of the rim (identical to lx)
+      lz: 0.1,
+      showLabel: false,
+      normal: normal ? normal.toArray() : [0, 0, 1],
+      rotation: rotation ? rotation : [0, 0, 0],
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as ParabolicDishModel;
   }
 
   static makePolygon(parent: ElementModel, x: number, y: number, z: number, normal?: Vector3, rotation?: number[]) {

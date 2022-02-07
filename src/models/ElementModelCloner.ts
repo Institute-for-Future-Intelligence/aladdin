@@ -25,6 +25,7 @@ import {
   ZERO_TOLERANCE,
 } from '../constants';
 import { ParabolicTroughModel } from './ParabolicTroughModel';
+import { ParabolicDishModel } from './ParabolicDishModel';
 
 export class ElementModelCloner {
   static clone(
@@ -60,6 +61,12 @@ export class ElementModelCloner {
         if (parent) {
           // must have a parent
           clone = ElementModelCloner.cloneParabolicTrough(parent, e as ParabolicTroughModel, x, y, z);
+        }
+        break;
+      case ObjectType.ParabolicDish:
+        if (parent) {
+          // must have a parent
+          clone = ElementModelCloner.cloneParabolicDish(parent, e as ParabolicDishModel, x, y, z);
         }
         break;
       case ObjectType.Wall:
@@ -303,6 +310,41 @@ export class ElementModelCloner {
       foundationId: foundationId,
       id: short.generate() as string,
     } as ParabolicTroughModel;
+  }
+
+  private static cloneParabolicDish(parent: ElementModel, dish: ParabolicDishModel, x: number, y: number, z?: number) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+        foundationId = parent.id;
+        break;
+    }
+    return {
+      type: ObjectType.ParabolicDish,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: dish.lx,
+      ly: dish.ly,
+      lz: dish.lz,
+      reflectance: dish.reflectance,
+      absorptance: dish.absorptance,
+      opticalEfficiency: dish.opticalEfficiency,
+      thermalEfficiency: dish.thermalEfficiency,
+      receiverRadius: dish.receiverRadius,
+      structureType: dish.structureType,
+      latusRectum: dish.latusRectum,
+      tiltAngle: dish.tiltAngle,
+      relativeAzimuth: dish.relativeAzimuth,
+      poleRadius: dish.poleRadius,
+      poleHeight: dish.poleHeight,
+      showLabel: dish.showLabel,
+      normal: [...dish.normal],
+      rotation: dish.parentId ? [...parent.rotation] : [0, 0, 0],
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as ParabolicDishModel;
   }
 
   private static cloneFoundation(foundation: FoundationModel, x: number, y: number) {

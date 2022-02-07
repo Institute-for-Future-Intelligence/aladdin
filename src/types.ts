@@ -6,11 +6,13 @@ import { extend, Object3DNode } from '@react-three/fiber';
 import TextSprite from 'three-spritetext';
 import { MyOrbitControls } from './js/MyOrbitControls';
 import { ParabolicCylinderGeometry } from './js/ParabolicCylinderGeometry';
+import { ParaboloidGeometry } from './js/ParaboloidGeometry';
 
 // Extend makes these JSX elements (with the first character lower-cased)
 extend({ TextSprite });
 extend({ MyOrbitControls });
 extend({ ParabolicCylinderGeometry });
+extend({ ParaboloidGeometry });
 
 declare global {
   namespace JSX {
@@ -18,6 +20,7 @@ declare global {
       textSprite: Object3DNode<TextSprite, typeof TextSprite>;
       myOrbitControls: Object3DNode<MyOrbitControls, typeof MyOrbitControls>;
       parabolicCylinderGeometry: Object3DNode<ParabolicCylinderGeometry, typeof ParabolicCylinderGeometry>;
+      paraboloidGeometry: Object3DNode<ParaboloidGeometry, typeof ParaboloidGeometry>;
     }
   }
 }
@@ -69,6 +72,12 @@ export enum GraphDataType {
   DailyPvYield = 9,
   YearlyParabolicTroughYeild = 10,
   DailyParabolicTroughYield = 11,
+  YearlyParabolicDishYeild = 12,
+  DailyParabolicDishYield = 13,
+  YearlyFresnelReflectorYeild = 14,
+  DailyFresnelReflectorYield = 15,
+  YearlyHeliostatYeild = 16,
+  DailyHeliostatYield = 17,
 }
 
 export enum Theme {
@@ -106,6 +115,11 @@ export enum ObjectType {
   Polygon = 'Polygon',
   PolygonVertex = 'Polygon Vertex',
   None = 'None',
+}
+
+export enum ParabolicDishStructureType {
+  CentralPole = 1,
+  Tripod = 2,
 }
 
 export enum ActionType {

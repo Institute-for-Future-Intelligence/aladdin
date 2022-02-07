@@ -20,13 +20,13 @@ import {
 } from '../constants';
 import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { Util } from '../Util';
-import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
+import { ParabolicDishModel } from '../models/ParabolicDishModel';
 import { getSunDirection } from '../analysis/sunTools';
 import i18n from '../i18n/i18n';
 import { LineData } from './LineData';
-import { ParabolicCylinder } from './shapes';
+import { Paraboloid } from './shapes';
 
-const ParabolicTrough = ({
+const ParabolicDish = ({
   id,
   cx,
   cy,
@@ -35,11 +35,10 @@ const ParabolicTrough = ({
   ly,
   lz = 0.1,
   reflectance = 0.9,
-  absorberTubeRadius = 0.05,
+  receiverRadius = 0.05,
   latusRectum = 2,
   tiltAngle,
   relativeAzimuth,
-  moduleLength,
   poleHeight,
   poleRadius,
   drawSunBeam,
@@ -51,7 +50,7 @@ const ParabolicTrough = ({
   showLabel = false,
   locked = false,
   parentId,
-}: ParabolicTroughModel) => {
+}: ParabolicDishModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const date = useStore(Selector.world.date);
@@ -71,7 +70,6 @@ const ParabolicTrough = ({
 
   const [hovered, setHovered] = useState(false);
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
-  const [numberOfModules, setNumberOfModules] = useState(1);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
   const frontSideRef = useRef<Mesh>();
   const backSideRef = useRef<Mesh>();
@@ -86,7 +84,7 @@ const ParabolicTrough = ({
   const lang = { lng: language };
   const parabolaSegments = 16;
 
-  const hx = lx / 2;
+  const hx = lx / 2; // lx and ly both represent the diameter of the dish, so they are identical
   const hy = ly / 2;
   const hz = lz / 2;
   const actualPoleHeight = poleHeight + hx;
@@ -118,20 +116,16 @@ const ParabolicTrough = ({
   const positionUL = new Vector3(-hx, hy, hz + depth);
   const positionLR = new Vector3(hx, -hy, hz + depth);
   const positionUR = new Vector3(hx, hy, hz + depth);
-  const trough = getElementById(id) as ParabolicTroughModel;
+  const dish = getElementById(id) as ParabolicDishModel;
 
   useEffect(() => {
-    if (trough && showSolarRadiationHeatmap) {
-      const heatmap = getHeatmap(trough.id);
+    if (dish && showSolarRadiationHeatmap) {
+      const heatmap = getHeatmap(dish.id);
       if (heatmap) {
         setHeatmapTexture(Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5));
       }
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
-
-  useEffect(() => {
-    setNumberOfModules(Math.max(1, Math.round(ly / moduleLength)));
-  }, [ly, moduleLength]);
 
   useEffect(() => {
     const handlePointerUp = () => {
@@ -146,9 +140,9 @@ const ParabolicTrough = ({
 
   const labelText = useMemo(() => {
     return (
-      (trough?.label ? trough.label : i18n.t('shared.ParabolicTroughElement', lang)) +
-      (trough.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
-      (trough?.label
+      (dish?.label ? dish.label : i18n.t('shared.ParabolicDishElement', lang)) +
+      (dish.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (dish?.label
         ? ''
         : '\n' +
           i18n.t('word.Coordinates', lang) +
@@ -161,7 +155,7 @@ const ParabolicTrough = ({
           ') ' +
           i18n.t('word.MeterAbbreviation', lang))
     );
-  }, [trough?.label, locked, language, cx, cy, cz]);
+  }, [dish?.label, locked, language, cx, cy, cz]);
 
   // in model coordinate system
   const euler = useMemo(() => {
@@ -208,48 +202,26 @@ const ParabolicTrough = ({
 
   const poleZ = -(actualPoleHeight + lz) / 2;
 
-  const poles = useMemo<Vector3[]>(() => {
-    const array: Vector3[] = [];
-    const cosAz = Math.cos(relativeAzimuth) * moduleLength;
-    const sinAz = Math.sin(relativeAzimuth) * moduleLength;
-    const i2 = numberOfModules / 2 - 0.5;
-    for (let i = 0; i < numberOfModules; i++) {
-      array.push(new Vector3(-(i - i2) * sinAz, (i - i2) * cosAz, poleZ));
-    }
-    return array;
-  }, [numberOfModules, moduleLength, poleZ, relativeAzimuth]);
-
   const moduleLines = useMemo<LineData[]>(() => {
     const array: LineData[] = [];
-    const dy = ly / numberOfModules;
-    const t0 = -lx / latusRectum;
-    const dt = (-2 * t0) / parabolaSegments;
-    for (let i = 0; i <= numberOfModules; i++) {
-      const line: Vector3[] = [];
-      for (let j = 0; j <= parabolaSegments; j++) {
-        const t = t0 + j * dt;
-        line.push(new Vector3((latusRectum * t) / 2, -hy + i * dy, (latusRectum * t * t) / 4));
-      }
-      array.push({ points: line } as LineData);
-    }
     return array;
-  }, [lx, ly, numberOfModules, latusRectum]);
+  }, [lx, ly, latusRectum]);
 
   const baseSize = Math.max(1, (lx + ly) / 16);
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
   const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 2;
 
   return (
-    <group name={'Parabolic Trough Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
+    <group name={'Parabolic Dish Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
       <group rotation={relativeEuler}>
-        {/* draw front side parabolic cylinder */}
-        <ParabolicCylinder
+        {/* draw front side parabolic dish */}
+        <Paraboloid
           receiveShadow={shadowEnabled}
           castShadow={shadowEnabled}
           uuid={id}
           ref={frontSideRef}
           args={[latusRectum / 2, lx, ly, parabolaSegments, 4]}
-          name={'Parabolic Trough Front Side'}
+          name={'Parabolic Dish Front Side'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
             selectMe(id, e, ActionType.Select);
@@ -290,16 +262,16 @@ const ParabolicTrough = ({
               color={'skyblue'}
             />
           )}
-        </ParabolicCylinder>
+        </Paraboloid>
 
-        {/* draw back side parabolic cylinder */}
-        <ParabolicCylinder
+        {/* draw back side parabolic dish */}
+        <Paraboloid
           receiveShadow={shadowEnabled}
           castShadow={shadowEnabled}
           uuid={id + ' backside'}
           ref={backSideRef}
           args={[latusRectum / 2, lx, ly, parabolaSegments, 4]}
-          name={'Parabolic Trough Back Side'}
+          name={'Parabolic Dish Back Side'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
             selectMe(id, e, ActionType.Select);
@@ -310,7 +282,7 @@ const ParabolicTrough = ({
               if (e.intersections.length > 0) {
                 const intersected = e.intersections[0].object === backSideRef.current;
                 if (intersected) {
-                  state.contextMenuObjectType = ObjectType.ParabolicTrough;
+                  state.contextMenuObjectType = ObjectType.ParabolicDish;
                 }
               }
             });
@@ -330,14 +302,14 @@ const ParabolicTrough = ({
           }}
         >
           <meshStandardMaterial attach="material" side={BackSide} color={'white'} />
-        </ParabolicCylinder>
+        </Paraboloid>
 
         {moduleLines &&
           moduleLines.map((lineData, index) => {
             return (
               <React.Fragment key={index}>
                 <Line
-                  name={'Parabolic Trough Rim Lines'}
+                  name={'Parabolic Dish Rim Lines'}
                   userData={{ unintersectable: true }}
                   points={lineData.points}
                   castShadow={false}
@@ -345,23 +317,11 @@ const ParabolicTrough = ({
                   lineWidth={lineWidth}
                   color={lineColor}
                 />
-                <Line
-                  name={'Parabolic Trough Focal Lines'}
-                  userData={{ unintersectable: true }}
-                  points={[
-                    lineData.points[parabolaSegments / 2].clone(),
-                    lineData.points[parabolaSegments / 2].clone().add(new Vector3(0, 0, focalLength)),
-                  ]}
-                  castShadow={false}
-                  receiveShadow={false}
-                  lineWidth={1}
-                  color={'white'}
-                />
               </React.Fragment>
             );
           })}
         <Line
-          name={'Parabolic Trough Outline 1'}
+          name={'Parabolic Dish Outline 1'}
           userData={{ unintersectable: true }}
           points={[
             [-hx, -hy, depth],
@@ -373,7 +333,7 @@ const ParabolicTrough = ({
           color={lineColor}
         />
         <Line
-          name={'Parabolic Trough Outline 2'}
+          name={'Parabolic Dish Outline 2'}
           userData={{ unintersectable: true }}
           points={[
             [hx, -hy, depth],
@@ -389,7 +349,7 @@ const ParabolicTrough = ({
         <Cylinder
           name={'Parabolic Trough Absorber Tube'}
           uuid={id}
-          args={[absorberTubeRadius, absorberTubeRadius, ly, 6, 2]}
+          args={[receiverRadius, receiverRadius, ly, 6, 2]}
           position={[0, 0, focalLength]}
           receiveShadow={false}
           castShadow={true}
@@ -613,23 +573,19 @@ const ParabolicTrough = ({
       {/*)}*/}
 
       {/* draw poles */}
-      {actualPoleHeight > 0 &&
-        poles.map((p, i) => {
-          return (
-            <Cylinder
-              userData={{ unintersectable: true }}
-              key={i}
-              name={'Pole ' + i}
-              castShadow={shadowEnabled}
-              receiveShadow={shadowEnabled}
-              args={[poleRadius, poleRadius, actualPoleHeight + (p.z - poleZ) * 2 + lz, 6, 2]}
-              position={p}
-              rotation={[HALF_PI, 0, 0]}
-            >
-              <meshStandardMaterial attach="material" color={color} />
-            </Cylinder>
-          );
-        })}
+      {actualPoleHeight > 0 && (
+        <Cylinder
+          userData={{ unintersectable: true }}
+          name={'Pole'}
+          castShadow={shadowEnabled}
+          receiveShadow={shadowEnabled}
+          args={[poleRadius, poleRadius, actualPoleHeight - poleZ * 2 + lz, 6, 2]}
+          position={[0, 0, 0]}
+          rotation={[HALF_PI, 0, 0]}
+        >
+          <meshStandardMaterial attach="material" color={color} />
+        </Cylinder>
+      )}
 
       {/* draw sun beam */}
       {drawSunBeam && sunDirection.z > 0 && (
@@ -722,7 +678,7 @@ const ParabolicTrough = ({
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}
-          position={[0, 0, Math.max(hy * Math.abs(Math.sin(trough.tiltAngle)) + 0.1, 0.2)]}
+          position={[0, 0, Math.max(hy * Math.abs(Math.sin(dish.tiltAngle)) + 0.1, 0.2)]}
         />
       )}
     </group>
@@ -731,4 +687,4 @@ const ParabolicTrough = ({
 
 // this one may not use React.memo as it needs to move with its parent.
 // there may be a way to notify a memorized component when its parent changes
-export default ParabolicTrough;
+export default ParabolicDish;

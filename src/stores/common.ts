@@ -64,8 +64,9 @@ import { SolarPanelArrayLayoutParams } from './SolarPanelArrayLayoutParams';
 import { DefaultSolarPanelArrayLayoutParams } from './DefaultSolarPanelArrayLayoutParams';
 import { Vantage } from '../analysis/Vantage';
 import { SolarCollector } from '../models/SolarCollector';
-import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import { ConcentratedSolarPowerCollector } from '../models/ConcentratedSolarPowerCollector';
+import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
+import { ParabolicDishModel } from '../models/ParabolicDishModel';
 
 enableMapSet();
 
@@ -330,6 +331,10 @@ export interface CommonStoreState {
   parabolicTroughActionScope: Scope;
   setParabolicTroughActionScope: (scope: Scope) => void;
 
+  // for parabolic dishes
+  parabolicDishActionScope: Scope;
+  setParabolicDishActionScope: (scope: Scope) => void;
+
   // for parabolic troughs and Fresnel reflectors
   updateModuleLengthById: (id: string, moduleLength: number) => void;
   updateModuleLengthAboveFoundation: (type: ObjectType, foundationId: string, moduleLength: number) => void;
@@ -435,6 +440,17 @@ export interface CommonStoreState {
   setYearlyParabolicTroughYield: (data: DatumEntry[]) => void;
   parabolicTroughLabels: string[];
   setParabolicTroughLabels: (labels: string[]) => void;
+
+  dailyParabolicDishYield: DatumEntry[];
+  dailyParabolicDishFlag: boolean;
+  dailyParabolicDishIndividualOutputs: boolean;
+  setDailyParabolicDishYield: (data: DatumEntry[]) => void;
+  yearlyParabolicDishYield: DatumEntry[];
+  yearlyParabolicDishFlag: boolean;
+  yearlyParabolicDishIndividualOutputs: boolean;
+  setYearlyParabolicDishYield: (data: DatumEntry[]) => void;
+  parabolicDishLabels: string[];
+  setParabolicDishLabels: (labels: string[]) => void;
 
   sunlightDirection: Vector3;
   setSunlightDirection: (vector: Vector3) => void;
@@ -694,6 +710,29 @@ export const useStore = create<CommonStoreState>(
           setParabolicTroughLabels(labels) {
             immerSet((state: CommonStoreState) => {
               state.parabolicTroughLabels = [...labels];
+            });
+          },
+
+          yearlyParabolicDishYield: [],
+          yearlyParabolicDishFlag: false,
+          yearlyParabolicDishIndividualOutputs: false,
+          setYearlyParabolicDishYield(data) {
+            immerSet((state: CommonStoreState) => {
+              state.yearlyParabolicDishYield = [...data];
+            });
+          },
+          dailyParabolicDishYield: [],
+          dailyParabolicDishFlag: false,
+          dailyParabolicDishIndividualOutputs: false,
+          setDailyParabolicDishYield(data) {
+            immerSet((state: CommonStoreState) => {
+              state.dailyParabolicDishYield = [...data];
+            });
+          },
+          parabolicDishLabels: [],
+          setParabolicDishLabels(labels) {
+            immerSet((state: CommonStoreState) => {
+              state.parabolicDishLabels = [...labels];
             });
           },
 
@@ -2318,6 +2357,14 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          // for parabolic dishes
+          parabolicDishActionScope: Scope.OnlyThisObject,
+          setParabolicDishActionScope(scope) {
+            immerSet((state: CommonStoreState) => {
+              state.parabolicDishActionScope = scope;
+            });
+          },
+
           // for parabolic troughs and Fresnel reflectors
           updateModuleLengthById(id, moduleLength) {
             immerSet((state: CommonStoreState) => {
@@ -2363,8 +2410,10 @@ export const useStore = create<CommonStoreState>(
                 if (e.id === id && !e.locked) {
                   if (e.type === ObjectType.ParabolicTrough) {
                     (e as ParabolicTroughModel).latusRectum = latusRectum;
-                    break;
+                  } else if (e.type === ObjectType.ParabolicDish) {
+                    (e as ParabolicDishModel).latusRectum = latusRectum;
                   }
+                  break;
                 }
               }
             });
@@ -2376,6 +2425,8 @@ export const useStore = create<CommonStoreState>(
                 if (e.foundationId === foundationId && !e.locked) {
                   if (e.type === ObjectType.ParabolicTrough) {
                     (e as ParabolicTroughModel).latusRectum = latusRectum;
+                  } else if (e.type === ObjectType.ParabolicDish) {
+                    (e as ParabolicDishModel).latusRectum = latusRectum;
                   }
                 }
               }
@@ -2388,6 +2439,8 @@ export const useStore = create<CommonStoreState>(
                 if (!e.locked) {
                   if (e.type === ObjectType.ParabolicTrough) {
                     (e as ParabolicTroughModel).latusRectum = latusRectum;
+                  } else if (e.type === ObjectType.ParabolicDish) {
+                    (e as ParabolicDishModel).latusRectum = latusRectum;
                   }
                 }
               }
@@ -2753,6 +2806,25 @@ export const useStore = create<CommonStoreState>(
                   );
                   model = parabolicTrough;
                   state.elements.push(parabolicTrough);
+                  break;
+                case ObjectType.ParabolicDish:
+                  const parabolicDishParentModel = parent as ElementModel;
+                  const parabolicDishRelativeCoordinates = Util.relativeCoordinates(
+                    p.x,
+                    p.y,
+                    p.z,
+                    parabolicDishParentModel,
+                  );
+                  const parabolicDish = ElementModelFactory.makeParabolicDish(
+                    parabolicDishParentModel,
+                    parabolicDishRelativeCoordinates.x,
+                    parabolicDishRelativeCoordinates.y,
+                    parabolicDishRelativeCoordinates.z,
+                    normal,
+                    'rotation' in parent ? parent.rotation : undefined,
+                  );
+                  model = parabolicDish;
+                  state.elements.push(parabolicDish);
                   break;
                 case ObjectType.Foundation:
                   const foundation = ElementModelFactory.makeFoundation(p.x, p.y);
@@ -3307,6 +3379,7 @@ export const useStore = create<CommonStoreState>(
                       break;
                     }
                     case ObjectType.SolarPanel:
+                    case ObjectType.ParabolicDish:
                     case ObjectType.ParabolicTrough: {
                       if (state.overlapWithSibling(e)) {
                         // overlap, do not approve
@@ -3438,6 +3511,7 @@ export const useStore = create<CommonStoreState>(
                       approved = true;
                       break;
                     case ObjectType.SolarPanel:
+                    case ObjectType.ParabolicDish:
                     case ObjectType.ParabolicTrough:
                       if (e.parentId) {
                         const parent = state.getParent(e);
