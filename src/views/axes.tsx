@@ -64,6 +64,7 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
       {/* x axis */}
       <Line
         userData={{ unintersectable: true }}
+        name={'x axis line'}
         points={[
           [-endPoint, 0, cameraZ],
           [endPoint, 0, cameraZ],
@@ -136,6 +137,7 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
 
       {/* y axis */}
       <Line
+        name={'y axis line'}
         userData={{ unintersectable: true }}
         points={[
           [0, -endPoint, cameraZ],
@@ -212,6 +214,7 @@ const Axes = ({ lineWidth = 1, endPoint = 1000, showTickMarks = true, showTickLa
       {!orthographic && (
         <Line
           userData={{ unintersectable: true }}
+          name={'z axis line'}
           points={[
             [0, 0, 0],
             [0, 0, endPoint],

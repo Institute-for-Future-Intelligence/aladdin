@@ -130,7 +130,7 @@ const ParabolicDish = ({
   const positionUR = new Vector3(hx, hy, hz + depth);
   const dish = getElementById(id) as ParabolicDishModel;
   const glowTexture = useTexture(GlowImage);
-  const haloRadius = receiverRadius + 0.5;
+  const haloRadius = receiverRadius + 1;
 
   useEffect(() => {
     if (dish && showSolarRadiationHeatmap) {
@@ -437,6 +437,7 @@ const ParabolicDish = ({
               </React.Fragment>
             );
           })}
+
         {/* simulation element */}
         <Circle
           name={'Parabolic Dish Simulation Circle'}
