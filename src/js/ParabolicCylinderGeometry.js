@@ -69,7 +69,7 @@ class ParabolicCylinderGeometry extends BufferGeometry {
           vertices.push( vertex.x, vertex.y, vertex.z );
 
           // normal vector: (-dy/du, dx/du), tangential vector: (dx/du, dy/du)
-          normal.set( -semiLatusRectum*t, 0, semiLatusRectum ).normalize();
+          normal.set( -semiLatusRectum * t, 0, semiLatusRectum ).normalize();
           normals.push( normal.x, normal.y, normal.z );
 
           // uv (make sure that u and v are within 0 and 1)

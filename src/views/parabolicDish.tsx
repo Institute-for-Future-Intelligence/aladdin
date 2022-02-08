@@ -35,7 +35,8 @@ const ParabolicDish = ({
   ly,
   lz = 0.1,
   reflectance = 0.9,
-  receiverRadius = 0.05,
+  receiverRadius = 0.2,
+  receiverPoleRadius = 0.05,
   latusRectum = 2,
   tiltAngle,
   relativeAzimuth,
@@ -82,7 +83,8 @@ const ParabolicDish = ({
 
   const sunBeamLength = Math.max(100, 5 * sceneRadius);
   const lang = { lng: language };
-  const parabolaSegments = 16;
+  const radialSegments = 160;
+  const depthSegments = 80;
 
   const hx = lx / 2; // lx and ly both represent the diameter of the dish, so they are identical
   const hy = ly / 2;
@@ -220,7 +222,7 @@ const ParabolicDish = ({
           castShadow={shadowEnabled}
           uuid={id}
           ref={frontSideRef}
-          args={[latusRectum / 2, lx, ly, parabolaSegments, 4]}
+          args={[latusRectum / 2, lx / 2, radialSegments, depthSegments]}
           name={'Parabolic Dish Front Side'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
@@ -270,8 +272,9 @@ const ParabolicDish = ({
           castShadow={shadowEnabled}
           uuid={id + ' backside'}
           ref={backSideRef}
-          args={[latusRectum / 2, lx, ly, parabolaSegments, 4]}
+          args={[latusRectum / 2, lx / 2, radialSegments, depthSegments]}
           name={'Parabolic Dish Back Side'}
+          position={[0, 0, -lz / 2]}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
             selectMe(id, e, ActionType.Select);
@@ -345,12 +348,24 @@ const ParabolicDish = ({
           color={lineColor}
         />
 
-        {/* absorber tube along the focal line (focal length = latus rectum / 4) */}
+        {/* receiver at the focus (focal length = latus rectum / 4) */}
         <Cylinder
-          name={'Parabolic Trough Absorber Tube'}
+          name={'Parabolic Dish Receiver'}
           uuid={id}
-          args={[receiverRadius, receiverRadius, ly, 6, 2]}
-          position={[0, 0, focalLength]}
+          args={[receiverRadius, receiverRadius, 0.2, 12, 2]}
+          rotation={[HALF_PI, 0, 0]}
+          position={[0, 0, focalLength - 0.1]}
+          receiveShadow={false}
+          castShadow={true}
+        >
+          <meshBasicMaterial color={'white'} />
+        </Cylinder>
+        <Cylinder
+          name={'Parabolic Dish Receiver Pole'}
+          uuid={id}
+          args={[receiverPoleRadius, receiverPoleRadius, focalLength, 6, 2]}
+          rotation={[HALF_PI, 0, 0]}
+          position={[0, 0, focalLength / 2]}
           receiveShadow={false}
           castShadow={true}
         >
@@ -579,8 +594,8 @@ const ParabolicDish = ({
           name={'Pole'}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
-          args={[poleRadius, poleRadius, actualPoleHeight - poleZ * 2 + lz, 6, 2]}
-          position={[0, 0, 0]}
+          args={[poleRadius, poleRadius, actualPoleHeight + lz, 6, 2]}
+          position={[0, 0, -actualPoleHeight / 2 - lz / 2]}
           rotation={[HALF_PI, 0, 0]}
         >
           <meshStandardMaterial attach="material" color={color} />

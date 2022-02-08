@@ -6,29 +6,27 @@ import {BufferGeometry, Float32BufferAttribute, Vector3} from "three";
 
 class ParaboloidGeometry extends BufferGeometry {
 
-  constructor( radius = 1, widthSegments = 32, heightSegments = 16, thetaStart = 0, thetaLength = Math.PI ) {
+  constructor( semiLatusRectum = 1, rimRadius = 1, radialSegments = 16, depthSegments = 4) {
 
     super();
     this.type = 'ParaboloidGeometry';
 
     this.parameters = {
-      radius: radius,
-      widthSegments: widthSegments,
-      heightSegments: heightSegments,
-      thetaStart: thetaStart,
-      thetaLength: thetaLength
+      semilatusRectum: semiLatusRectum,
+      rimRadius: rimRadius,
+      radialSegments: radialSegments,
+      depthSegments: depthSegments
     };
 
-    widthSegments = Math.max( 3, Math.floor( widthSegments ) );
-    heightSegments = Math.max( 2, Math.floor( heightSegments ) );
-
-    const thetaEnd = Math.min( thetaStart + thetaLength, Math.PI );
+    radialSegments = Math.max( 3, Math.floor( radialSegments ) );
+    depthSegments = Math.max( 2, Math.floor( depthSegments ) );
 
     let index = 0;
     const grid = [];
 
     const vertex = new Vector3();
     const normal = new Vector3();
+    const tangential = new Vector3();
 
     // buffers
 
@@ -37,51 +35,50 @@ class ParaboloidGeometry extends BufferGeometry {
     const normals = [];
     const uvs = [];
 
+    const TWO_PI = Math.PI * 2;
+    const depth = rimRadius * rimRadius / (2 * semiLatusRectum);
+    const dy = 1 / depthSegments;
+    let cos, sin;
+
     // generate vertices, normals and uvs
 
-    for ( let iy = 0; iy <= heightSegments; iy ++ ) {
+    for ( let iy = 0; iy <= depthSegments; iy ++ ) {
 
       const verticesRow = [];
 
-      const v = iy / heightSegments;
+      const v = iy * dy;
+      const t = v * depth;
 
       // special case for the poles
 
       let uOffset = 0;
-
-      if ( iy === 0 && thetaStart === 0 ) {
-
-        uOffset = 0.5 / widthSegments;
-
-      } else if ( iy === heightSegments && thetaEnd === Math.PI ) {
-
-        uOffset = - 0.5 / widthSegments;
-
+      if ( iy === 0) {
+        uOffset = 0.5 / radialSegments;
+      } else if ( iy === depthSegments) {
+        uOffset = - 0.5 / radialSegments;
       }
 
-      const TWO_PI = Math.PI*2;
+      for ( let ix = 0; ix <= radialSegments; ix ++ ) {
 
-      for ( let ix = 0; ix <= widthSegments; ix ++ ) {
-
-        const u = ix / widthSegments;
+        const u = ix / radialSegments;
+        cos = Math.cos( u * TWO_PI );
+        sin = Math.sin( u * TWO_PI );
 
         // vertex
-
-        vertex.x = - radius * Math.cos( u * TWO_PI ) * Math.sin( thetaStart + v * thetaLength );
-        vertex.y = radius * Math.cos( thetaStart + v * thetaLength );
-        vertex.z = radius * Math.sin( u * TWO_PI ) * Math.sin( thetaStart + v * thetaLength );
-
+        vertex.x = semiLatusRectum * cos * t;
+        vertex.y = semiLatusRectum * sin * t;
+        vertex.z = semiLatusRectum * t * t / 2;
         vertices.push( vertex.x, vertex.y, vertex.z );
 
-        // normal
+        // tangential vector
+        tangential.set(semiLatusRectum * cos, semiLatusRectum * sin, semiLatusRectum * t).normalize();
 
-        normal.copy( vertex ).normalize();
+        // normal vector
+        normal.crossVectors(tangential, new Vector3(cos, sin, 0));
         normals.push( normal.x, normal.y, normal.z );
 
         // uv
-
         uvs.push( u + uOffset, 1 - v );
-
         verticesRow.push( index ++ );
 
       }
@@ -92,24 +89,18 @@ class ParaboloidGeometry extends BufferGeometry {
 
     // indices
 
-    for ( let iy = 0; iy < heightSegments; iy ++ ) {
-
-      for ( let ix = 0; ix < widthSegments; ix ++ ) {
-
+    for ( let iy = 0; iy < depthSegments; iy ++ ) {
+      for ( let ix = 0; ix < radialSegments; ix ++ ) {
         const a = grid[ iy ][ ix + 1 ];
         const b = grid[ iy ][ ix ];
         const c = grid[ iy + 1 ][ ix ];
         const d = grid[ iy + 1 ][ ix + 1 ];
-
-        if ( iy !== 0 || thetaStart > 0 ) indices.push( a, b, d );
-        if ( iy !== heightSegments - 1 || thetaEnd < Math.PI ) indices.push( b, c, d );
-
+        if ( iy !== 0) indices.push( a, b, d );
+        if ( iy !== depthSegments - 1) indices.push( b, c, d );
       }
-
     }
 
     // build geometry
-
     this.setIndex( indices );
     this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
     this.setAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
@@ -118,9 +109,7 @@ class ParaboloidGeometry extends BufferGeometry {
   }
 
   static fromJSON( data ) {
-
-    return new ParaboloidGeometry( data.radius, data.widthSegments, data.heightSegments, data.thetaStart, data.thetaLength );
-
+    return new ParaboloidGeometry(data.semiLatusRectum, data.rimRadius, data.radialSegments, data.depthSegments);
   }
 
 }

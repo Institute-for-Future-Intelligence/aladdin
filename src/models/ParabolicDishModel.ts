@@ -11,4 +11,6 @@ export interface ParabolicDishModel extends ConcentratedSolarPowerCollector {
   structureType: number;
 
   receiverRadius: number;
+
+  receiverPoleRadius: number;
 }
