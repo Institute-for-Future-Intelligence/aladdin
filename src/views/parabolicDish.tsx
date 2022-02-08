@@ -94,7 +94,7 @@ const ParabolicDish = ({
   const sunBeamLength = Math.max(100, 5 * sceneRadius);
   const lang = { lng: language };
   const radialSegments = 32;
-  const depthSegments = 4;
+  const depthSegments = 8;
 
   const hx = lx / 2; // lx and ly both represent the diameter of the dish, so they are identical
   const hy = ly / 2;

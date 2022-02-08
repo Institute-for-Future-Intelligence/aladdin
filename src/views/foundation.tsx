@@ -46,6 +46,7 @@ import { Util } from '../Util';
 import { ElementModel } from '../models/ElementModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
+import { ParabolicDishModel } from '../models/ParabolicDishModel';
 import { PolarGrid } from './polarGrid';
 import { WallModel } from '../models/WallModel';
 import RotateHandle from '../components/rotateHandle';
@@ -198,6 +199,11 @@ const Foundation = ({
         // pole height of parabolic trough is relative to its half width
         const trough = grabRef.current as ParabolicTroughModel;
         poleHeight = trough.poleHeight + trough.lx / 2;
+        break;
+      case ObjectType.ParabolicDish:
+        // pole height of parabolic dish is relative to its radius
+        const dish = grabRef.current as ParabolicDishModel;
+        poleHeight = dish.poleHeight + dish.lx / 2 + (dish.lx * dish.lx) / (4 * dish.latusRectum);
         break;
     }
     if (poleHeight >= 0) {
@@ -1182,7 +1188,7 @@ const Foundation = ({
           newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
           newDimensionRef.current.set(elem.lx, elem.ly, elem.lz);
           if (
-            newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE &&
+            newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE ||
             newDimensionRef.current.distanceToSquared(oldDimensionRef.current) > ZERO_TOLERANCE
           ) {
             const undoableResize = {
@@ -1771,6 +1777,21 @@ const Foundation = ({
                     setElementPosition(collector.id, newCx, newCy);
                     updateDesignInfo();
                   }
+                }
+                break;
+            }
+          } else if (collector.type === ObjectType.ParabolicDish) {
+            const parabolicDish = collector as ParabolicDishModel;
+            switch (resizeHandleType) {
+              case ResizeHandleType.Left:
+              case ResizeHandleType.Right:
+              case ResizeHandleType.Lower:
+              case ResizeHandleType.Upper: // all handles change the diameter of the dish
+                const diameter = Math.min(10, distance);
+                if (isSolarCollectorNewSizeOk(collector, parabolicDish.cx, parabolicDish.cy, collector.lx, diameter)) {
+                  updateElementLxById(collector.id, diameter);
+                  updateElementLyById(collector.id, diameter);
+                  updateDesignInfo();
                 }
                 break;
             }
