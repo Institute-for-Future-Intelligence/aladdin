@@ -76,6 +76,7 @@ export const i18n_zh_cn = {
       Length: '长度',
       Width: '宽度',
       Height: '高度',
+      Radius: '半径',
       Angle: '角度',
       Azimuth: '方位角',
       Coordinates: '坐标',
@@ -492,6 +493,15 @@ export const i18n_zh_cn = {
       OnlyThisParabolicTrough: '只这个抛物线槽',
       AllParabolicTroughsAboveFoundation: '同一地基上所有的抛物线槽',
       AllParabolicTroughs: '所有的抛物线槽',
+    },
+
+    parabolicDishMenu: {
+      RimDiameter: '外圈直径',
+      LatusRectum: '通径',
+      ExtraPoleHeightInAdditionToRadius: '半径之外额外的支架高度',
+      OnlyThisParabolicDish: '只这个抛物线碟',
+      AllParabolicDishesAboveFoundation: '同一地基上所有的抛物线碟',
+      AllParabolicDishes: '所有的抛物线碟',
     },
 
     wallMenu: {

@@ -7,15 +7,14 @@ import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } 
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { ParabolicTroughModel } from '../../../models/ParabolicTroughModel';
+import { ParabolicDishModel } from '../../../models/ParabolicDishModel';
 import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { Util } from '../../../Util';
 import { ZERO_TOLERANCE } from '../../../constants';
 
-const ParabolicTroughRelativeAzimuthInput = ({
+const ParabolicDishPoleHeightInput = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -24,19 +23,19 @@ const ParabolicTroughRelativeAzimuthInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateRelativeAzimuthById = useStore(Selector.updateSolarCollectorRelativeAzimuthById);
-  const updateRelativeAzimuthAboveFoundation = useStore(Selector.updateSolarCollectorRelativeAzimuthAboveFoundation);
-  const updateRelativeAzimuthForAll = useStore(Selector.updateSolarCollectorRelativeAzimuthForAll);
+  const updatePoleHeightById = useStore(Selector.updateSolarCollectorPoleHeightById);
+  const updatePoleHeightAboveFoundation = useStore(Selector.updateSolarCollectorPoleHeightAboveFoundation);
+  const updatePoleHeightForAll = useStore(Selector.updateSolarCollectorPoleHeightForAll);
   const getParent = useStore(Selector.getParent);
-  const parabolicTrough = useStore(Selector.selectedElement) as ParabolicTroughModel;
+  const parabolicDish = useStore(Selector.selectedElement) as ParabolicDishModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const actionScope = useStore(Selector.parabolicTroughActionScope);
-  const setActionScope = useStore(Selector.setParabolicTroughActionScope);
+  const actionScope = useStore(Selector.parabolicDishActionScope);
+  const setActionScope = useStore(Selector.setParabolicDishActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputRelativeAzimuth, setInputRelativeAzimuth] = useState<number>(parabolicTrough?.relativeAzimuth ?? 0);
+  const [inputPoleHeight, setInputPoleHeight] = useState<number>(parabolicDish?.poleHeight ?? 1);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -47,42 +46,23 @@ const ParabolicTroughRelativeAzimuthInput = ({
   const lang = { lng: language };
 
   useEffect(() => {
-    if (parabolicTrough) {
-      setInputRelativeAzimuth(parabolicTrough.relativeAzimuth);
+    if (parabolicDish) {
+      setInputPoleHeight(parabolicDish.poleHeight);
     }
-  }, [parabolicTrough]);
+  }, [parabolicDish]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
-  const withinParent = (trough: ParabolicTroughModel, azimuth: number) => {
-    const parent = getParent(trough);
-    if (parent) {
-      const clone = JSON.parse(JSON.stringify(trough)) as ParabolicTroughModel;
-      clone.relativeAzimuth = azimuth;
-      return Util.isSolarCollectorWithinHorizontalSurface(clone, parent);
-    }
-    return false;
-  };
-
-  const rejectChange = (trough: ParabolicTroughModel, azimuth: number) => {
-    // check if the new relative azimuth will cause the solar panel to be out of the bound
-    if (!withinParent(trough, azimuth)) {
-      return true;
-    }
-    // other check?
-    return false;
-  };
-
-  const needChange = (azimuth: number) => {
+  const needChange = (poleHeight: number) => {
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.ParabolicTrough && !e.locked) {
-            const pt = e as ParabolicTroughModel;
-            if (Math.abs(pt.relativeAzimuth - azimuth) > ZERO_TOLERANCE) {
+          if (e.type === ObjectType.ParabolicDish && !e.locked) {
+            const pt = e as ParabolicDishModel;
+            if (Math.abs(pt.poleHeight - poleHeight) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -90,32 +70,45 @@ const ParabolicTroughRelativeAzimuthInput = ({
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (e.type === ObjectType.ParabolicTrough && e.foundationId === parabolicTrough?.foundationId && !e.locked) {
-            const pt = e as ParabolicTroughModel;
-            if (Math.abs(pt.relativeAzimuth - azimuth) > ZERO_TOLERANCE) {
+          if (e.type === ObjectType.ParabolicDish && e.foundationId === parabolicDish?.foundationId && !e.locked) {
+            const pt = e as ParabolicDishModel;
+            if (Math.abs(pt.poleHeight - poleHeight) > ZERO_TOLERANCE) {
               return true;
             }
           }
         }
         break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        const parent = getParent(parabolicDish);
+        if (parent) {
+          for (const e of elements) {
+            if (e.type === ObjectType.ParabolicDish && e.parentId === parabolicDish.parentId && !e.locked) {
+              const pt = e as ParabolicDishModel;
+              if (Math.abs(pt.poleHeight - poleHeight) > ZERO_TOLERANCE) {
+                return true;
+              }
+            }
+          }
+        }
+        break;
       default:
-        if (Math.abs(parabolicTrough?.relativeAzimuth - azimuth) > ZERO_TOLERANCE) {
+        if (Math.abs(parabolicDish?.poleHeight - poleHeight) > ZERO_TOLERANCE) {
           return true;
         }
     }
     return false;
   };
 
-  const setRelativeAzimuth = (value: number) => {
-    if (!parabolicTrough) return;
+  const setPoleHeight = (value: number) => {
+    if (!parabolicDish) return;
     if (!needChange(value)) return;
     rejectedValue.current = undefined;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         rejectRef.current = false;
         for (const elem of elements) {
-          if (elem.type === ObjectType.ParabolicTrough) {
-            if (rejectChange(elem as ParabolicTroughModel, value)) {
+          if (elem.type === ObjectType.ParabolicDish) {
+            if (0.5 * elem.ly * Math.abs(Math.sin((elem as ParabolicDishModel).tiltAngle)) > value) {
               rejectRef.current = true;
               break;
             }
@@ -123,39 +116,39 @@ const ParabolicTroughRelativeAzimuthInput = ({
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputRelativeAzimuth(parabolicTrough.relativeAzimuth);
+          setInputPoleHeight(parabolicDish.poleHeight);
         } else {
-          const oldRelativeAzimuthsAll = new Map<string, number>();
+          const oldPoleHeightsAll = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.ParabolicTrough) {
-              oldRelativeAzimuthsAll.set(elem.id, (elem as ParabolicTroughModel).relativeAzimuth);
+            if (elem.type === ObjectType.ParabolicDish) {
+              oldPoleHeightsAll.set(elem.id, (elem as ParabolicDishModel).poleHeight);
             }
           }
           const undoableChangeAll = {
-            name: 'Set Relative Azimuth for All Parabolic Troughs',
+            name: 'Set Pole Height for All Parabolic Dishes',
             timestamp: Date.now(),
-            oldValues: oldRelativeAzimuthsAll,
+            oldValues: oldPoleHeightsAll,
             newValue: value,
             undo: () => {
-              for (const [id, ta] of undoableChangeAll.oldValues.entries()) {
-                updateRelativeAzimuthById(id, ta as number);
+              for (const [id, ph] of undoableChangeAll.oldValues.entries()) {
+                updatePoleHeightById(id, ph as number);
               }
             },
             redo: () => {
-              updateRelativeAzimuthForAll(ObjectType.ParabolicTrough, undoableChangeAll.newValue as number);
+              updatePoleHeightForAll(ObjectType.ParabolicDish, undoableChangeAll.newValue as number);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
-          updateRelativeAzimuthForAll(ObjectType.ParabolicTrough, value);
+          updatePoleHeightForAll(ObjectType.ParabolicDish, value);
           setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (parabolicTrough.foundationId) {
+        if (parabolicDish.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
-            if (elem.type === ObjectType.ParabolicTrough && elem.foundationId === parabolicTrough.foundationId) {
-              if (rejectChange(elem as ParabolicTroughModel, value)) {
+            if (elem.type === ObjectType.ParabolicDish && elem.foundationId === parabolicDish.foundationId) {
+              if (0.5 * elem.ly * Math.abs(Math.sin((elem as ParabolicDishModel).tiltAngle)) > value) {
                 rejectRef.current = true;
                 break;
               }
@@ -163,29 +156,29 @@ const ParabolicTroughRelativeAzimuthInput = ({
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputRelativeAzimuth(parabolicTrough.relativeAzimuth);
+            setInputPoleHeight(parabolicDish.poleHeight);
           } else {
-            const oldRelativeAzimuthsAboveFoundation = new Map<string, number>();
+            const oldPoleHeightsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
-              if (elem.type === ObjectType.ParabolicTrough && elem.foundationId === parabolicTrough.foundationId) {
-                oldRelativeAzimuthsAboveFoundation.set(elem.id, (elem as ParabolicTroughModel).relativeAzimuth);
+              if (elem.type === ObjectType.ParabolicDish && elem.foundationId === parabolicDish.foundationId) {
+                oldPoleHeightsAboveFoundation.set(elem.id, (elem as ParabolicDishModel).poleHeight);
               }
             }
             const undoableChangeAboveFoundation = {
-              name: 'Set Relative Azimuth for All Parabolic Troughs Above Foundation',
+              name: 'Set Pole Height for All Parabolic Dishes Above Foundation',
               timestamp: Date.now(),
-              oldValues: oldRelativeAzimuthsAboveFoundation,
+              oldValues: oldPoleHeightsAboveFoundation,
               newValue: value,
-              groupId: parabolicTrough.foundationId,
+              groupId: parabolicDish.foundationId,
               undo: () => {
-                for (const [id, ta] of undoableChangeAboveFoundation.oldValues.entries()) {
-                  updateRelativeAzimuthById(id, ta as number);
+                for (const [id, ph] of undoableChangeAboveFoundation.oldValues.entries()) {
+                  updatePoleHeightById(id, ph as number);
                 }
               },
               redo: () => {
                 if (undoableChangeAboveFoundation.groupId) {
-                  updateRelativeAzimuthAboveFoundation(
-                    ObjectType.ParabolicTrough,
+                  updatePoleHeightAboveFoundation(
+                    ObjectType.ParabolicDish,
                     undoableChangeAboveFoundation.groupId,
                     undoableChangeAboveFoundation.newValue as number,
                   );
@@ -193,34 +186,34 @@ const ParabolicTroughRelativeAzimuthInput = ({
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
-            updateRelativeAzimuthAboveFoundation(ObjectType.ParabolicTrough, parabolicTrough.foundationId, value);
+            updatePoleHeightAboveFoundation(ObjectType.ParabolicDish, parabolicDish.foundationId, value);
             setApplyCount(applyCount + 1);
           }
         }
         break;
       default:
-        if (parabolicTrough) {
-          const oldRelativeAzimuth = parabolicTrough.relativeAzimuth;
-          rejectRef.current = rejectChange(parabolicTrough, value);
+        if (parabolicDish) {
+          const oldPoleHeight = parabolicDish.poleHeight;
+          rejectRef.current = 0.5 * parabolicDish.lx * Math.abs(Math.sin(parabolicDish.tiltAngle)) > value;
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputRelativeAzimuth(oldRelativeAzimuth);
+            setInputPoleHeight(oldPoleHeight);
           } else {
             const undoableChange = {
-              name: 'Set Parabolic Trough Relative Azimuth',
+              name: 'Set Parabolic Dish Pole Height',
               timestamp: Date.now(),
-              oldValue: oldRelativeAzimuth,
+              oldValue: oldPoleHeight,
               newValue: value,
-              changedElementId: parabolicTrough.id,
+              changedElementId: parabolicDish.id,
               undo: () => {
-                updateRelativeAzimuthById(undoableChange.changedElementId, undoableChange.oldValue as number);
+                updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
               },
               redo: () => {
-                updateRelativeAzimuthById(undoableChange.changedElementId, undoableChange.newValue as number);
+                updatePoleHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
               },
             } as UndoableChange;
             addUndoable(undoableChange);
-            updateRelativeAzimuthById(parabolicTrough.id, value);
+            updatePoleHeightById(parabolicDish.id, value);
             setApplyCount(applyCount + 1);
           }
         }
@@ -242,7 +235,7 @@ const ParabolicTroughRelativeAzimuthInput = ({
   };
 
   const close = () => {
-    setInputRelativeAzimuth(parabolicTrough.relativeAzimuth);
+    setInputPoleHeight(parabolicDish.poleHeight);
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -253,14 +246,14 @@ const ParabolicTroughRelativeAzimuthInput = ({
   };
 
   const ok = () => {
-    setRelativeAzimuth(inputRelativeAzimuth);
+    setPoleHeight(inputPoleHeight);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
     }
   };
 
-  return parabolicTrough?.type === ObjectType.ParabolicTrough ? (
+  return parabolicDish?.type === ObjectType.ParabolicDish ? (
     <>
       <Modal
         width={600}
@@ -271,14 +264,12 @@ const ParabolicTroughRelativeAzimuthInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('solarCollectorMenu.RelativeAzimuth', lang)}
+            {i18n.t('parabolicDishMenu.ExtraPoleHeightInAdditionToRadius', lang)}
             <label style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +
                   i18n.t('message.NotApplicableToSelectedAction', lang) +
-                  (rejectedValue.current !== undefined
-                    ? ' (' + Util.toDegrees(rejectedValue.current).toFixed(1) + '°)'
-                    : '')
+                  (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(1) + ')' : '')
                 : ''}
             </label>
           </div>
@@ -287,7 +278,7 @@ const ParabolicTroughRelativeAzimuthInput = ({
           <Button
             key="Apply"
             onClick={() => {
-              setRelativeAzimuth(inputRelativeAzimuth);
+              setPoleHeight(inputPoleHeight);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -312,23 +303,22 @@ const ParabolicTroughRelativeAzimuthInput = ({
         <Row gutter={6}>
           <Col className="gutter-row" span={6}>
             <InputNumber
-              min={-180}
-              max={180}
+              min={0}
+              max={5}
               style={{ width: 120 }}
-              precision={1}
-              value={Util.toDegrees(inputRelativeAzimuth)}
-              step={1}
-              formatter={(a) => Number(a).toFixed(1) + '°'}
-              onChange={(value) => setInputRelativeAzimuth(Util.toRadians(value))}
+              step={0.1}
+              precision={2}
+              value={inputPoleHeight}
+              formatter={(a) => Number(a).toFixed(2)}
+              onChange={(value) => setInputPoleHeight(value)}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [-180°, 180°]
-              <br />
-              {i18n.t('message.AzimuthOfNorthIsZero', lang)}
-              <br />
-              {i18n.t('message.CounterclockwiseAzimuthIsPositive', lang)}
+              {i18n.t('word.Range', lang)}: [0, 5] {i18n.t('word.MeterAbbreviation', lang)}
             </div>
+          </Col>
+          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+            {i18n.t('word.MeterAbbreviation', lang)}
           </Col>
           <Col
             className="gutter-row"
@@ -337,15 +327,11 @@ const ParabolicTroughRelativeAzimuthInput = ({
           >
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>
-                  {i18n.t('parabolicTroughMenu.OnlyThisParabolicTrough', lang)}
-                </Radio>
+                <Radio value={Scope.OnlyThisObject}>{i18n.t('parabolicDishMenu.OnlyThisParabolicDish', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('parabolicTroughMenu.AllParabolicTroughsAboveFoundation', lang)}
+                  {i18n.t('parabolicDishMenu.AllParabolicDishesAboveFoundation', lang)}
                 </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>
-                  {i18n.t('parabolicTroughMenu.AllParabolicTroughs', lang)}
-                </Radio>
+                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('parabolicDishMenu.AllParabolicDishes', lang)}</Radio>
               </Space>
             </Radio.Group>
           </Col>
@@ -357,4 +343,4 @@ const ParabolicTroughRelativeAzimuthInput = ({
   );
 };
 
-export default ParabolicTroughRelativeAzimuthInput;
+export default ParabolicDishPoleHeightInput;

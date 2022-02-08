@@ -12,6 +12,7 @@ export * from './sensorMenu';
 export * from './skyMenu';
 export * from './solarPanleMenu';
 export * from './parabolicTroughMenu';
+export * from './parabolicDishMenu';
 export * from './treeMenu';
 export * from './wallMenu';
 export * from './windowMenu';

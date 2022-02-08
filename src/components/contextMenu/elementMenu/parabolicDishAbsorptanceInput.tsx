@@ -7,14 +7,14 @@ import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } 
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { ParabolicTroughModel } from '../../../models/ParabolicTroughModel';
+import { ParabolicDishModel } from '../../../models/ParabolicDishModel';
 import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
 
-const ParabolicTroughAbsorptanceInput = ({
+const ParabolicDishAbsorptanceInput = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -26,15 +26,15 @@ const ParabolicTroughAbsorptanceInput = ({
   const updateById = useStore(Selector.updateCspAbsorptanceById);
   const updateAboveFoundation = useStore(Selector.updateCspAbsorptanceAboveFoundation);
   const updateForAll = useStore(Selector.updateCspAbsorptanceForAll);
-  const parabolicTrough = useStore(Selector.selectedElement) as ParabolicTroughModel;
+  const parabolicDish = useStore(Selector.selectedElement) as ParabolicDishModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const actionScope = useStore(Selector.parabolicTroughActionScope);
-  const setActionScope = useStore(Selector.setParabolicTroughActionScope);
+  const actionScope = useStore(Selector.parabolicDishActionScope);
+  const setActionScope = useStore(Selector.setParabolicDishActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputAbsorptance, setInputAbsorptance] = useState<number>(parabolicTrough?.absorptance ?? 0.95);
+  const [inputAbsorptance, setInputAbsorptance] = useState<number>(parabolicDish?.absorptance ?? 0.95);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -43,10 +43,10 @@ const ParabolicTroughAbsorptanceInput = ({
   const lang = { lng: language };
 
   useEffect(() => {
-    if (parabolicTrough) {
-      setInputAbsorptance(parabolicTrough.absorptance);
+    if (parabolicDish) {
+      setInputAbsorptance(parabolicDish.absorptance);
     }
-  }, [parabolicTrough]);
+  }, [parabolicDish]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
@@ -57,9 +57,9 @@ const ParabolicTroughAbsorptanceInput = ({
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.ParabolicTrough && !e.locked) {
-            const pt = e as ParabolicTroughModel;
-            if (Math.abs(pt.absorptance - absorptance) > ZERO_TOLERANCE) {
+          if (e.type === ObjectType.ParabolicDish && !e.locked) {
+            const pd = e as ParabolicDishModel;
+            if (Math.abs(pd.absorptance - absorptance) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -67,16 +67,16 @@ const ParabolicTroughAbsorptanceInput = ({
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (e.type === ObjectType.ParabolicTrough && e.foundationId === parabolicTrough?.foundationId && !e.locked) {
-            const pt = e as ParabolicTroughModel;
-            if (Math.abs(pt.absorptance - absorptance) > ZERO_TOLERANCE) {
+          if (e.type === ObjectType.ParabolicDish && e.foundationId === parabolicDish?.foundationId && !e.locked) {
+            const pd = e as ParabolicDishModel;
+            if (Math.abs(pd.absorptance - absorptance) > ZERO_TOLERANCE) {
               return true;
             }
           }
         }
         break;
       default:
-        if (Math.abs(parabolicTrough?.absorptance - absorptance) > ZERO_TOLERANCE) {
+        if (Math.abs(parabolicDish?.absorptance - absorptance) > ZERO_TOLERANCE) {
           return true;
         }
     }
@@ -84,18 +84,18 @@ const ParabolicTroughAbsorptanceInput = ({
   };
 
   const setAbsorptance = (value: number) => {
-    if (!parabolicTrough) return;
+    if (!parabolicDish) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldAbsorptancesAll = new Map<string, number>();
         for (const elem of elements) {
-          if (elem.type === ObjectType.ParabolicTrough) {
-            oldAbsorptancesAll.set(elem.id, (elem as ParabolicTroughModel).absorptance);
+          if (elem.type === ObjectType.ParabolicDish) {
+            oldAbsorptancesAll.set(elem.id, (elem as ParabolicDishModel).absorptance);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Absorptance for All Parabolic Troughs',
+          name: 'Set Absorptance for All Parabolic Dishes',
           timestamp: Date.now(),
           oldValues: oldAbsorptancesAll,
           newValue: value,
@@ -105,27 +105,27 @@ const ParabolicTroughAbsorptanceInput = ({
             }
           },
           redo: () => {
-            updateForAll(ObjectType.ParabolicTrough, undoableChangeAll.newValue as number);
+            updateForAll(ObjectType.ParabolicDish, undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateForAll(ObjectType.ParabolicTrough, value);
+        updateForAll(ObjectType.ParabolicDish, value);
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (parabolicTrough.foundationId) {
+        if (parabolicDish.foundationId) {
           const oldAbsorptancesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.ParabolicTrough && elem.foundationId === parabolicTrough.foundationId) {
-              oldAbsorptancesAboveFoundation.set(elem.id, (elem as ParabolicTroughModel).absorptance);
+            if (elem.type === ObjectType.ParabolicDish && elem.foundationId === parabolicDish.foundationId) {
+              oldAbsorptancesAboveFoundation.set(elem.id, (elem as ParabolicDishModel).absorptance);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Absorptance for All Parabolic Troughs Above Foundation',
+            name: 'Set Absorptance for All Parabolic Dishes Above Foundation',
             timestamp: Date.now(),
             oldValues: oldAbsorptancesAboveFoundation,
             newValue: value,
-            groupId: parabolicTrough.foundationId,
+            groupId: parabolicDish.foundationId,
             undo: () => {
               for (const [id, ab] of undoableChangeAboveFoundation.oldValues.entries()) {
                 updateById(id, ab as number);
@@ -134,7 +134,7 @@ const ParabolicTroughAbsorptanceInput = ({
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
                 updateAboveFoundation(
-                  ObjectType.ParabolicTrough,
+                  ObjectType.ParabolicDish,
                   undoableChangeAboveFoundation.groupId,
                   undoableChangeAboveFoundation.newValue as number,
                 );
@@ -142,19 +142,19 @@ const ParabolicTroughAbsorptanceInput = ({
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateAboveFoundation(ObjectType.ParabolicTrough, parabolicTrough.foundationId, value);
+          updateAboveFoundation(ObjectType.ParabolicDish, parabolicDish.foundationId, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
-        if (parabolicTrough) {
-          const oldAbsorptance = parabolicTrough.absorptance;
+        if (parabolicDish) {
+          const oldAbsorptance = parabolicDish.absorptance;
           const undoableChange = {
-            name: 'Set Parabolic Trough Absorptance',
+            name: 'Set Parabolic Dish Absorptance',
             timestamp: Date.now(),
             oldValue: oldAbsorptance,
             newValue: value,
-            changedElementId: parabolicTrough.id,
+            changedElementId: parabolicDish.id,
             undo: () => {
               updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
@@ -163,7 +163,7 @@ const ParabolicTroughAbsorptanceInput = ({
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(parabolicTrough.id, value);
+          updateById(parabolicDish.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -184,7 +184,7 @@ const ParabolicTroughAbsorptanceInput = ({
   };
 
   const close = () => {
-    setInputAbsorptance(parabolicTrough.absorptance);
+    setInputAbsorptance(parabolicDish.absorptance);
     setDialogVisible(false);
   };
 
@@ -199,7 +199,7 @@ const ParabolicTroughAbsorptanceInput = ({
     setApplyCount(0);
   };
 
-  return parabolicTrough?.type === ObjectType.ParabolicTrough ? (
+  return parabolicDish?.type === ObjectType.ParabolicDish ? (
     <>
       <Modal
         width={600}
@@ -263,15 +263,11 @@ const ParabolicTroughAbsorptanceInput = ({
           >
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>
-                  {i18n.t('parabolicTroughMenu.OnlyThisParabolicTrough', lang)}
-                </Radio>
+                <Radio value={Scope.OnlyThisObject}>{i18n.t('parabolicDishMenu.OnlyThisParabolicDish', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('parabolicTroughMenu.AllParabolicTroughsAboveFoundation', lang)}
+                  {i18n.t('parabolicDishMenu.AllParabolicDishesAboveFoundation', lang)}
                 </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>
-                  {i18n.t('parabolicTroughMenu.AllParabolicTroughs', lang)}
-                </Radio>
+                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('parabolicDishMenu.AllParabolicDishes', lang)}</Radio>
               </Space>
             </Radio.Group>
           </Col>
@@ -283,4 +279,4 @@ const ParabolicTroughAbsorptanceInput = ({
   );
 };
 
-export default ParabolicTroughAbsorptanceInput;
+export default ParabolicDishAbsorptanceInput;

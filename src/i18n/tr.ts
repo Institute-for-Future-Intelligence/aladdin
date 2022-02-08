@@ -77,6 +77,7 @@ export const i18n_tr = {
       Length: 'Uzunluk',
       Width: 'Geniþlik',
       Height: 'Yükseklik',
+      Radius: 'Radius',
       Angle: 'Açý',
       Azimuth: 'Azimut',
       Coordinates: 'Coordinates',
@@ -506,6 +507,15 @@ export const i18n_tr = {
       OnlyThisParabolicTrough: 'Only This Parabolic Trough',
       AllParabolicTroughsAboveFoundation: 'All Parabolic Troughs Above the Same Foundation',
       AllParabolicTroughs: 'All Parabolic Troughs',
+    },
+
+    parabolicDishMenu: {
+      RimDiameter: 'Rim Diameter',
+      LatusRectum: 'Latus Rectum',
+      ExtraPoleHeightInAdditionToRadius: 'Extra Pole Height in Addition to Radius',
+      OnlyThisParabolicDish: 'Only This Parabolic Dish',
+      AllParabolicDishesAboveFoundation: 'All Parabolic Dishes Above the Same Foundation',
+      AllParabolicDishes: 'All Parabolic Dishes',
     },
 
     wallMenu: {

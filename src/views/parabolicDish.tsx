@@ -255,7 +255,7 @@ const ParabolicDish = ({
           castShadow={shadowEnabled}
           uuid={id}
           ref={frontSideRef}
-          args={[latusRectum / 2, lx / 2, radialSegments, depthSegments]}
+          args={[latusRectum / 2, hx, radialSegments, depthSegments]}
           name={'Parabolic Dish Front Side'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
@@ -440,7 +440,7 @@ const ParabolicDish = ({
             <group>
               <Box
                 ref={resizeHandleLowerRef}
-                position={[(positionLL.x + positionLR.x) / 2, positionLL.y, positionLL.z - depth]}
+                position={[(positionLL.x + positionLR.x) / 2, positionLL.y, positionLL.z]}
                 args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                 name={ResizeHandleType.Lower}
                 onPointerDown={(e) => {
@@ -470,7 +470,7 @@ const ParabolicDish = ({
               </Box>
               <Box
                 ref={resizeHandleUpperRef}
-                position={[(positionUL.x + positionUR.x) / 2, positionUL.y, positionUL.z - depth]}
+                position={[(positionUL.x + positionUR.x) / 2, positionUL.y, positionUL.z]}
                 args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                 name={ResizeHandleType.Upper}
                 onPointerDown={(e) => {
@@ -562,39 +562,6 @@ const ParabolicDish = ({
           </>
         )}
       </group>
-
-      {/* draw rotate handles */}
-      {/*{selected && !locked && (*/}
-      {/*  <group position={[0, 0, -actualPoleHeight]} rotation={[0, 0, relativeEuler.z]}>*/}
-      {/*    /!* rotate handles *!/*/}
-      {/*    <RotateHandle*/}
-      {/*      id={id}*/}
-      {/*      position={[0, -hy - rotateHandleSize / 2, actualPoleHeight]}*/}
-      {/*      color={*/}
-      {/*        hoveredHandle === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Upper*/}
-      {/*          ? HIGHLIGHT_HANDLE_COLOR*/}
-      {/*          : RESIZE_HANDLE_COLOR*/}
-      {/*      }*/}
-      {/*      ratio={rotateHandleSize}*/}
-      {/*      handleType={RotateHandleType.Upper}*/}
-      {/*      hoverHandle={hoverHandle}*/}
-      {/*      noHoverHandle={noHoverHandle}*/}
-      {/*    />*/}
-      {/*    <RotateHandle*/}
-      {/*      id={id}*/}
-      {/*      position={[0, hy + rotateHandleSize / 2, actualPoleHeight]}*/}
-      {/*      color={*/}
-      {/*        hoveredHandle === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Lower*/}
-      {/*          ? HIGHLIGHT_HANDLE_COLOR*/}
-      {/*          : RESIZE_HANDLE_COLOR*/}
-      {/*      }*/}
-      {/*      ratio={rotateHandleSize}*/}
-      {/*      handleType={RotateHandleType.Lower}*/}
-      {/*      hoverHandle={hoverHandle}*/}
-      {/*      noHoverHandle={noHoverHandle}*/}
-      {/*    />*/}
-      {/*  </group>*/}
-      {/*)}*/}
 
       {/* draw poles */}
       {actualPoleHeight > 0 && (
