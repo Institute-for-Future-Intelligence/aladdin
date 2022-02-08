@@ -24,6 +24,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
+import { ParabolicDishModel } from '../models/ParabolicDishModel';
 
 export interface SolarRadiationSimulationProps {
   city: string | null;
@@ -118,6 +119,9 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           break;
         case ObjectType.ParabolicTrough:
           generateHeatmapForParabolicTrough(e as ParabolicTroughModel);
+          break;
+        case ObjectType.ParabolicDish:
+          generateHeatmapForParabolicDish(e as ParabolicDishModel);
           break;
       }
     }
@@ -528,7 +532,8 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           // the irradiance on the former is less than that on the latter because of the area difference.
           // the relationship between a unit area on the parabolic surface and that on the aperture surface
           // is S = A * sqrt(1 + 4 * x^2 / p^2), where p is the latus rectum, x is the distance from the center
-          // of the parabola, and A is the unit area on the aperture area.
+          // of the parabola, and A is the unit area on the aperture area. Note that this modification only
+          // applies to direct radiation. Indirect radiation can come from any direction.
           for (let ku = 0; ku < nx; ku++) {
             tmpX = x0 + ku * dx;
             disX = tmpX - center.x;
@@ -554,6 +559,98 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     applyScaleFactor(cellOutputTotals, scaleFactor);
     // send heat map data to common store for visualization
     setHeatmap(trough.id, cellOutputTotals);
+  };
+
+  const generateHeatmapForParabolicDish = (dish: ParabolicDishModel) => {
+    const parent = getParent(dish);
+    if (!parent) throw new Error('parent of parabolic dish does not exist');
+    const center = Util.absoluteCoordinates(dish.cx, dish.cy, dish.cz, parent);
+    const normal = new Vector3().fromArray(dish.normal);
+    const originalNormal = normal.clone();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const date = now.getDate();
+    const dayOfYear = Util.dayOfYear(now);
+    const lx = dish.lx;
+    const ly = dish.ly;
+    const depth = (lx * lx) / (4 * dish.latusRectum); // the distance from the bottom to the aperture circle
+    const actualPoleHeight = dish.poleHeight + lx / 2;
+    const nx = Math.max(2, Math.round(dish.lx / cellSize));
+    const ny = Math.max(2, Math.round(dish.ly / cellSize));
+    const dx = lx / nx;
+    const dy = ly / ny;
+    // shift half cell size to the center of each grid cell
+    const x0 = center.x - (lx - cellSize) / 2;
+    const y0 = center.y - (ly - cellSize) / 2;
+    const z0 = parent.lz + actualPoleHeight + dish.lz + depth;
+    const center2d = new Vector2(center.x, center.y);
+    const v = new Vector3();
+    const cellOutputTotals = Array(nx)
+      .fill(0)
+      .map(() => Array(ny).fill(0));
+    let count = 0;
+    const rot = parent.rotation[2];
+    const zRot = rot + dish.relativeAzimuth;
+    const zRotZero = Util.isZero(zRot);
+    for (let i = 0; i < 24; i++) {
+      for (let j = 0; j < world.timesPerHour; j++) {
+        const currentTime = new Date(year, month, date, i, j * interval);
+        const sunDirection = getSunDirection(currentTime, world.latitude);
+        if (sunDirection.z > 0) {
+          // when the sun is out
+          const rotatedSunDirection = rot
+            ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
+            : sunDirection.clone();
+          const ori = originalNormal.clone();
+          const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
+          normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRot)));
+          count++;
+          const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+          const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
+          const dot = normal.dot(sunDirection);
+          const v2 = new Vector2();
+          let tmpX = 0;
+          let tmpY = 0;
+          let disX = 0;
+          let disY = 0;
+          let areaRatio = 1;
+          const lr2 = 4 / (dish.latusRectum * dish.latusRectum);
+          // we have to calculate the irradiance on the parabolic surface, not the aperture surface.
+          // the irradiance on the former is less than that on the latter because of the area difference.
+          // the relationship between a unit area on the parabolic surface and that on the aperture surface
+          // is S = A * sqrt(1 + 4 * (x^2 + y^2) / p^2), where p is the latus rectum, x is the x distance
+          // from the center of the paraboloid, y is the y distance from the center of the paraboloid,
+          // and A is the unit area on the aperture area. Note that this modification only
+          // applies to direct radiation. Indirect radiation can come from any direction.
+          for (let ku = 0; ku < nx; ku++) {
+            tmpX = x0 + ku * dx;
+            disX = tmpX - center.x;
+            if (Math.abs(disX) > lx / 2) continue;
+            for (let kv = 0; kv < ny; kv++) {
+              tmpY = y0 + kv * dy;
+              disY = tmpY - center.y;
+              if (Math.abs(disY) > ly / 2) continue;
+              cellOutputTotals[ku][kv] += indirectRadiation;
+              if (dot > 0) {
+                v2.set(tmpX, tmpY);
+                if (!zRotZero) v2.rotateAround(center2d, zRot);
+                v.set(v2.x, v2.y, z0);
+                if (!inShadow(dish.id, v, sunDirection)) {
+                  areaRatio = 1 / Math.sqrt(1 + (disX * disX + disY * disY) * lr2);
+                  cellOutputTotals[ku][kv] += dot * peakRadiation * areaRatio;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+    const daylight = (count * interval) / 60;
+    const scaleFactor = weather.sunshineHours[month] / (30 * daylight * world.timesPerHour);
+    applyScaleFactor(cellOutputTotals, scaleFactor);
+    // send heat map data to common store for visualization
+    setHeatmap(dish.id, cellOutputTotals);
   };
 
   const applyScaleFactor = (output: number[][], scaleFactor: number) => {

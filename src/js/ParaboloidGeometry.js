@@ -4,6 +4,8 @@
 
 import {BufferGeometry, Float32BufferAttribute, Vector3} from "three";
 
+// paraboloid of revolution: z = (x^2 + y^2) / a, where a is the latus rectum (twice of the semi-latus rectum)
+
 class ParaboloidGeometry extends BufferGeometry {
 
   constructor( semiLatusRectum = 1, rimRadius = 1, radialSegments = 16, depthSegments = 4) {
@@ -26,8 +28,8 @@ class ParaboloidGeometry extends BufferGeometry {
 
     const vertex = new Vector3();
     const normal = new Vector3();
-    const tangential1 = new Vector3();
-    const tangential2 = new Vector3();
+    const tangent1 = new Vector3();
+    const tangent2 = new Vector3();
 
     // buffers
 
@@ -50,14 +52,11 @@ class ParaboloidGeometry extends BufferGeometry {
       const v = iy * dy;
       const t = v * depth;
 
-      // special case for the poles
-
-      let uOffset = 0;
-      if ( iy === 0) {
-        uOffset = 0.5 / radialSegments;
-      } else if ( iy === depthSegments) {
-        uOffset = - 0.5 / radialSegments;
-      }
+      // special case for the bottom
+      // let uOffset = 0;
+      // if ( iy === 0) {
+      //   uOffset = 0.5 / radialSegments;
+      // }
 
       for ( let ix = 0; ix <= radialSegments; ix ++ ) {
 
@@ -72,15 +71,16 @@ class ParaboloidGeometry extends BufferGeometry {
         vertices.push( vertex.x, vertex.y, vertex.z );
 
         // tangential vectors
-        tangential1.set(semiLatusRectum * sin, -semiLatusRectum * cos, semiLatusRectum * t).normalize();
-        tangential2.set(cos, sin, 0);
+        tangent1.set(semiLatusRectum * sin, -semiLatusRectum * cos, semiLatusRectum * t).normalize();
+        tangent2.set(cos, sin, 0);
 
         // normal vector
-        normal.crossVectors(tangential1, tangential2);
+        normal.crossVectors(tangent1, tangent2);
         normals.push( normal.x, normal.y, normal.z );
 
         // uv
-        uvs.push( u + uOffset, 1 - v );
+        uvs.push( 0.5 * v * cos + 0.5, 0.5 * v * sin + 0.5 );
+
         verticesRow.push( index ++ );
 
       }

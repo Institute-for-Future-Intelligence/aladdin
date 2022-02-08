@@ -198,7 +198,13 @@ const ParabolicDish = ({
 
   const relativeEuler = useMemo(() => {
     if (sunDirection.z > 0) {
-      return new Euler(0, Math.atan2(rotatedSunDirection.x, rotatedSunDirection.z), 0, 'ZXY');
+      const r = Math.sqrt(Math.pow(rotatedSunDirection.x, 2) + Math.pow(rotatedSunDirection.y, 2));
+      return new Euler(
+        Math.atan2(r, rotatedSunDirection.z),
+        0,
+        Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + HALF_PI,
+        'ZXY',
+      );
     }
     return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
   }, [sunDirection, tiltAngle, relativeAzimuth]);
