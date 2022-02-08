@@ -3,8 +3,8 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Circle, Cylinder, Line, Sphere } from '@react-three/drei';
-import { BackSide, CanvasTexture, Color, DoubleSide, Euler, FrontSide, Mesh, Vector3 } from 'three';
+import { Box, Circle, Cylinder, Line, Sphere, useTexture } from '@react-three/drei';
+import { AdditiveBlending, BackSide, CanvasTexture, Color, DoubleSide, Euler, FrontSide, Mesh, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -19,13 +19,21 @@ import {
   TWO_PI,
   UNIT_VECTOR_POS_Z,
 } from '../constants';
-import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
+import {
+  ActionType,
+  MoveHandleType,
+  ObjectType,
+  ParabolicDishStructureType,
+  ResizeHandleType,
+  RotateHandleType,
+} from '../types';
 import { Util } from '../Util';
 import { ParabolicDishModel } from '../models/ParabolicDishModel';
 import { getSunDirection } from '../analysis/sunTools';
 import i18n from '../i18n/i18n';
 import { LineData } from './LineData';
 import { Paraboloid } from './shapes';
+import GlowImage from '../resources/glow.png';
 
 const ParabolicDish = ({
   id,
@@ -36,8 +44,9 @@ const ParabolicDish = ({
   ly,
   lz = 0.1,
   reflectance = 0.9,
-  receiverRadius = 0.2,
-  receiverPoleRadius = 0.05,
+  structureType = ParabolicDishStructureType.CentralPole,
+  receiverRadius = 0.25,
+  receiverPoleRadius = 0.1,
   latusRectum = 2,
   tiltAngle,
   relativeAzimuth,
@@ -120,6 +129,8 @@ const ParabolicDish = ({
   const positionLR = new Vector3(hx, -hy, hz + depth);
   const positionUR = new Vector3(hx, hy, hz + depth);
   const dish = getElementById(id) as ParabolicDishModel;
+  const glowTexture = useTexture(GlowImage);
+  const haloRadius = receiverRadius + 0.5;
 
   useEffect(() => {
     if (dish && showSolarRadiationHeatmap) {
@@ -242,6 +253,19 @@ const ParabolicDish = ({
     return array;
   }, [hx, latusRectum]);
 
+  const tripodLines = useMemo<LineData[]>(() => {
+    const array: LineData[] = [];
+    let angle;
+    for (let i = 0; i < 3; i++) {
+      angle = (TWO_PI * i) / 3;
+      const line: Vector3[] = [];
+      line.push(new Vector3(hx * Math.cos(angle), hx * Math.sin(angle), depth));
+      line.push(new Vector3(0, 0, focalLength));
+      array.push({ points: line } as LineData);
+    }
+    return array;
+  }, [hx, latusRectum]);
+
   const baseSize = Math.max(1, (lx + ly) / 16);
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
   const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 2;
@@ -337,7 +361,7 @@ const ParabolicDish = ({
             domElement.style.cursor = 'default';
           }}
         >
-          <meshStandardMaterial attach="material" side={BackSide} color={'white'} />
+          <meshStandardMaterial attach="material" side={BackSide} color={color} />
         </Paraboloid>
 
         {wireframeLines &&
@@ -361,26 +385,58 @@ const ParabolicDish = ({
         <Cylinder
           name={'Parabolic Dish Receiver'}
           uuid={id}
-          args={[receiverRadius, receiverRadius, 0.2, 12, 2]}
+          args={[receiverRadius, receiverRadius, 0.5, 12, 2]}
           rotation={[HALF_PI, 0, 0]}
           position={[0, 0, focalLength - 0.1]}
           receiveShadow={false}
           castShadow={true}
         >
-          <meshBasicMaterial color={'white'} />
+          <meshBasicMaterial color={color} />
         </Cylinder>
-        <Cylinder
-          name={'Parabolic Dish Receiver Pole'}
-          uuid={id}
-          args={[receiverPoleRadius, receiverPoleRadius, focalLength, 6, 2]}
-          rotation={[HALF_PI, 0, 0]}
-          position={[0, 0, focalLength / 2]}
-          receiveShadow={false}
-          castShadow={true}
-        >
-          <meshBasicMaterial color={'white'} />
-        </Cylinder>
-
+        {/* simple glow effect to create a halo */}
+        {sunDirection.z > 0 && (
+          <mesh position={[0, 0, focalLength - 0.1]}>
+            <sprite scale={[haloRadius, haloRadius, haloRadius]}>
+              <spriteMaterial
+                map={glowTexture}
+                transparent={false}
+                color={0xffffff}
+                blending={AdditiveBlending}
+                depthWrite={false} // this must be set to hide the rectangle of the texture image
+              />
+            </sprite>
+          </mesh>
+        )}
+        {structureType === ParabolicDishStructureType.CentralPole && (
+          <Cylinder
+            name={'Parabolic Dish Receiver Pole'}
+            uuid={id}
+            args={[receiverPoleRadius, receiverPoleRadius, focalLength, 6, 2]}
+            rotation={[HALF_PI, 0, 0]}
+            position={[0, 0, focalLength / 2]}
+            receiveShadow={false}
+            castShadow={true}
+          >
+            <meshBasicMaterial color={color} />
+          </Cylinder>
+        )}
+        {structureType === ParabolicDishStructureType.Tripod &&
+          tripodLines &&
+          tripodLines.map((lineData, index) => {
+            return (
+              <React.Fragment key={index}>
+                <Line
+                  name={'Parabolic Dish Tripod Lines'}
+                  userData={{ unintersectable: true }}
+                  points={lineData.points}
+                  castShadow={false}
+                  receiveShadow={false}
+                  lineWidth={1}
+                  color={color}
+                />
+              </React.Fragment>
+            );
+          })}
         {/* simulation element */}
         <Circle
           name={'Parabolic Dish Simulation Circle'}

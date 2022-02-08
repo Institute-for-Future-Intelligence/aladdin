@@ -509,6 +509,9 @@ export const i18n_es = {
     },
 
     parabolicDishMenu: {
+      ReceiverStructure: 'Receiver Structure',
+      CentralPole: 'Central Pole',
+      Tripod: 'Tripod',
       RimDiameter: 'Rim Diameter',
       LatusRectum: 'Latus Rectum',
       ExtraPoleHeightInAdditionToRadius: 'Extra Pole Height in Addition to Radius',

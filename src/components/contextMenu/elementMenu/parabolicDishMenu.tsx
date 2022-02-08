@@ -18,6 +18,7 @@ import ParabolicDishReflectanceInput from './parabolicDishReflectanceInput';
 import ParabolicDishAbsorptanceInput from './parabolicDishAbsorptanceInput';
 import ParabolicDishOpticalEfficiencyInput from './parabolicDishOpticalEfficiencyInput';
 import ParabolicDishThermalEfficiencyInput from './parabolicDishThermalEfficiencyInput';
+import ParabolicDishStructureTypeInput from './parabolicDishStructureTypeInput';
 
 export const ParabolicDishMenu = () => {
   const language = useStore(Selector.language);
@@ -30,6 +31,7 @@ export const ParabolicDishMenu = () => {
 
   const [labelText, setLabelText] = useState<string>('');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [structureTypeDialogVisible, setStructureTypeDialogVisible] = useState(false);
   const [latusRectumDialogVisible, setLatusRectumDialogVisible] = useState(false);
   const [diameterDialogVisible, setDiameterDialogVisible] = useState(false);
   const [poleHeightDialogVisible, setPoleHeightDialogVisible] = useState(false);
@@ -145,6 +147,22 @@ export const ParabolicDishMenu = () => {
             }}
           >
             {i18n.t('parabolicDishMenu.LatusRectum', lang)} ...
+          </Menu.Item>
+
+          {/* structure type */}
+          <ParabolicDishStructureTypeInput
+            dialogVisible={structureTypeDialogVisible}
+            setDialogVisible={setStructureTypeDialogVisible}
+          />
+          <Menu.Item
+            key={'parabolic-dish-structure-type'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setStructureTypeDialogVisible(true);
+            }}
+          >
+            {i18n.t('parabolicDishMenu.ReceiverStructure', lang)} ...
           </Menu.Item>
 
           {/* extra pole height in addition to the aperture radius */}

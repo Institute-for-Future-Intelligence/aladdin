@@ -496,6 +496,9 @@ export const i18n_zh_tw = {
     },
 
     parabolicDishMenu: {
+      ReceiverStructure: '接收器結構',
+      CentralPole: '中心直柱',
+      Tripod: '三腳架',
       RimDiameter: '外圈直徑',
       LatusRectum: '通徑',
       ExtraPoleHeightInAdditionToRadius: '半徑之外額外的支架高度',

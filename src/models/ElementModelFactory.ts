@@ -231,8 +231,8 @@ export class ElementModelFactory {
       relativeAzimuth: 0,
       tiltAngle: 0,
       structureType: ParabolicDishStructureType.CentralPole,
-      receiverRadius: 0.2,
-      receiverPoleRadius: 0.05,
+      receiverRadius: 0.25,
+      receiverPoleRadius: 0.1,
       drawSunBeam: false,
       poleHeight: 0.2, // extra pole height in addition to the radius (half of lx or ly)
       poleRadius: 0.05,

@@ -382,6 +382,15 @@ export const parabolicDishActionScope = (state: CommonStoreState) => state.parab
 
 export const setParabolicDishActionScope = (state: CommonStoreState) => state.setParabolicDishActionScope;
 
+export const updateParabolicDishStructureTypeById = (state: CommonStoreState) =>
+  state.updateParabolicDishStructureTypeById;
+
+export const updateParabolicDishStructureTypeAboveFoundation = (state: CommonStoreState) =>
+  state.updateParabolicDishStructureTypeAboveFoundation;
+
+export const updateParabolicDishStructureTypeForAll = (state: CommonStoreState) =>
+  state.updateParabolicDishStructureTypeForAll;
+
 export const updateParabolaLatusRectumById = (state: CommonStoreState) => state.updateParabolaLatusRectumById;
 
 export const updateParabolaLatusRectumAboveFoundation = (state: CommonStoreState) =>

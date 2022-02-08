@@ -22,6 +22,7 @@ import {
   MoveHandleType,
   ObjectType,
   Orientation,
+  ParabolicDishStructureType,
   PolygonTexture,
   ResizeHandleType,
   RotateHandleType,
@@ -334,6 +335,12 @@ export interface CommonStoreState {
   // for parabolic dishes
   parabolicDishActionScope: Scope;
   setParabolicDishActionScope: (scope: Scope) => void;
+  updateParabolicDishStructureTypeById: (id: string, structureType: ParabolicDishStructureType) => void;
+  updateParabolicDishStructureTypeAboveFoundation: (
+    foundationId: string,
+    structureType: ParabolicDishStructureType,
+  ) => void;
+  updateParabolicDishStructureTypeForAll: (structureType: ParabolicDishStructureType) => void;
 
   // for parabolic troughs and Fresnel reflectors
   updateModuleLengthById: (id: string, moduleLength: number) => void;
@@ -2362,6 +2369,40 @@ export const useStore = create<CommonStoreState>(
           setParabolicDishActionScope(scope) {
             immerSet((state: CommonStoreState) => {
               state.parabolicDishActionScope = scope;
+            });
+          },
+          updateParabolicDishStructureTypeById(id, structureType) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && !e.locked) {
+                  if (e.type === ObjectType.ParabolicDish) {
+                    (e as ParabolicDishModel).structureType = structureType;
+                    break;
+                  }
+                }
+              }
+            });
+          },
+          updateParabolicDishStructureTypeAboveFoundation(foundationId, structureType) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.foundationId === foundationId && !e.locked) {
+                  if (e.type === ObjectType.ParabolicDish) {
+                    (e as ParabolicDishModel).structureType = structureType;
+                  }
+                }
+              }
+            });
+          },
+          updateParabolicDishStructureTypeForAll(structureType) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (!e.locked) {
+                  if (e.type === ObjectType.ParabolicDish) {
+                    (e as ParabolicDishModel).structureType = structureType;
+                  }
+                }
+              }
             });
           },
 
