@@ -39,7 +39,7 @@ class ParaboloidGeometry extends BufferGeometry {
     const uvs = [];
 
     const TWO_PI = Math.PI * 2;
-    const depth = rimRadius * rimRadius / (2 * semiLatusRectum);
+    const maxY = rimRadius  /  semiLatusRectum;
     const dy = 1 / depthSegments;
     let cos, sin;
 
@@ -50,7 +50,7 @@ class ParaboloidGeometry extends BufferGeometry {
       const verticesRow = [];
 
       const v = iy * dy;
-      const t = v * depth;
+      const t = v * maxY;
 
       // special case for the bottom
       // let uOffset = 0;

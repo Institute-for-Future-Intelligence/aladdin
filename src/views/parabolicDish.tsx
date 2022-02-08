@@ -217,13 +217,13 @@ const ParabolicDish = ({
     const outer: Vector3[] = [];
     const inner: Vector3[] = [];
     let angle, cos, sin;
-    const depth2 = (0.25 * hx * hx) / latusRectum;
+    const depth4 = 0.25 * depth;
     for (let i = 0; i <= radialSegments; i++) {
       angle = (TWO_PI * i) / radialSegments;
       cos = Math.cos(angle);
       sin = Math.sin(angle);
       outer.push(new Vector3(hx * cos, hx * sin, depth));
-      inner.push(new Vector3((hx * cos) / 2, (hx * sin) / 2, depth2));
+      inner.push(new Vector3((hx * cos) / 2, (hx * sin) / 2, depth4));
     }
     array.push({ points: outer } as LineData);
     array.push({ points: inner } as LineData);
