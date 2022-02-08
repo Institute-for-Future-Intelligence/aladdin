@@ -26,7 +26,8 @@ class ParaboloidGeometry extends BufferGeometry {
 
     const vertex = new Vector3();
     const normal = new Vector3();
-    const tangential = new Vector3();
+    const tangential1 = new Vector3();
+    const tangential2 = new Vector3();
 
     // buffers
 
@@ -70,11 +71,12 @@ class ParaboloidGeometry extends BufferGeometry {
         vertex.z = semiLatusRectum * t * t / 2;
         vertices.push( vertex.x, vertex.y, vertex.z );
 
-        // tangential vector
-        tangential.set(semiLatusRectum * cos, semiLatusRectum * sin, semiLatusRectum * t).normalize();
+        // tangential vectors
+        tangential1.set(semiLatusRectum * sin, -semiLatusRectum * cos, semiLatusRectum * t).normalize();
+        tangential2.set(cos, sin, 0);
 
         // normal vector
-        normal.crossVectors(tangential, new Vector3(cos, sin, 0));
+        normal.crossVectors(tangential1, tangential2);
         normals.push( normal.x, normal.y, normal.z );
 
         // uv
@@ -88,7 +90,6 @@ class ParaboloidGeometry extends BufferGeometry {
     }
 
     // indices
-
     for ( let iy = 0; iy < depthSegments; iy ++ ) {
       for ( let ix = 0; ix < radialSegments; ix ++ ) {
         const a = grid[ iy ][ ix + 1 ];
@@ -96,7 +97,12 @@ class ParaboloidGeometry extends BufferGeometry {
         const c = grid[ iy + 1 ][ ix ];
         const d = grid[ iy + 1 ][ ix + 1 ];
         if ( iy !== 0) indices.push( a, b, d );
-        if ( iy !== depthSegments - 1) indices.push( b, c, d );
+        if ( iy !== depthSegments - 1) {
+          indices.push( b, c, d );
+        } else if ( iy === depthSegments - 1) {
+          indices.push( a, b, c);
+          indices.push( a, c, d );
+        }
       }
     }
 

@@ -96,7 +96,7 @@ const ParabolicTrough = ({
     if (p) {
       switch (p.type) {
         case ObjectType.Foundation:
-          cz = actualPoleHeight + lz / 2 + p.lz;
+          cz = actualPoleHeight + hz + p.lz;
           if (Util.isZero(rotation[2])) {
             cx = p.cx + cx * p.lx;
             cy = p.cy + cy * p.ly;
@@ -300,6 +300,7 @@ const ParabolicTrough = ({
           ref={backSideRef}
           args={[latusRectum / 2, lx, ly, parabolaSegments, 4]}
           name={'Parabolic Trough Back Side'}
+          // position={[0, 0, -hz]}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
             selectMe(id, e, ActionType.Select);
@@ -397,7 +398,7 @@ const ParabolicTrough = ({
           <meshBasicMaterial color={'white'} />
         </Cylinder>
 
-        {/* simulation panel */}
+        {/* simulation element */}
         <Plane
           name={'Parabolic Trough Simulation Plane'}
           uuid={id}

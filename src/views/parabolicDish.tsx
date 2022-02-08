@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Cylinder, Line, Plane, Sphere } from '@react-three/drei';
+import { Box, Circle, Cylinder, Line, Sphere } from '@react-three/drei';
 import { BackSide, CanvasTexture, Color, DoubleSide, Euler, FrontSide, Mesh, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
@@ -16,6 +16,7 @@ import {
   MOVE_HANDLE_RADIUS,
   RESIZE_HANDLE_COLOR,
   RESIZE_HANDLE_SIZE,
+  TWO_PI,
   UNIT_VECTOR_POS_Z,
 } from '../constants';
 import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
@@ -46,7 +47,7 @@ const ParabolicDish = ({
   rotation = [0, 0, 0],
   color = 'white',
   lineColor = 'black',
-  lineWidth = 0.5,
+  lineWidth = 0.25,
   selected = false,
   showLabel = false,
   locked = false,
@@ -83,8 +84,8 @@ const ParabolicDish = ({
 
   const sunBeamLength = Math.max(100, 5 * sceneRadius);
   const lang = { lng: language };
-  const radialSegments = 160;
-  const depthSegments = 80;
+  const radialSegments = 32;
+  const depthSegments = 4;
 
   const hx = lx / 2; // lx and ly both represent the diameter of the dish, so they are identical
   const hy = ly / 2;
@@ -96,7 +97,7 @@ const ParabolicDish = ({
     if (p) {
       switch (p.type) {
         case ObjectType.Foundation:
-          cz = actualPoleHeight + lz / 2 + p.lz;
+          cz = actualPoleHeight + hz + p.lz;
           if (Util.isZero(rotation[2])) {
             cx = p.cx + cx * p.lx;
             cy = p.cy + cy * p.ly;
@@ -204,10 +205,36 @@ const ParabolicDish = ({
 
   const poleZ = -(actualPoleHeight + lz) / 2;
 
-  const moduleLines = useMemo<LineData[]>(() => {
+  const wireframeLines = useMemo<LineData[]>(() => {
     const array: LineData[] = [];
+    // draw rim lines
+    const outer: Vector3[] = [];
+    const inner: Vector3[] = [];
+    let angle, cos, sin;
+    const depth2 = (0.25 * hx * hx) / latusRectum;
+    for (let i = 0; i <= radialSegments; i++) {
+      angle = (TWO_PI * i) / radialSegments;
+      cos = Math.cos(angle);
+      sin = Math.sin(angle);
+      outer.push(new Vector3(hx * cos, hx * sin, depth));
+      inner.push(new Vector3((hx * cos) / 2, (hx * sin) / 2, depth2));
+    }
+    array.push({ points: outer } as LineData);
+    array.push({ points: inner } as LineData);
+    // draw radial lines
+    for (let i = 0; i < 12; i++) {
+      angle = (TWO_PI * i) / 12;
+      cos = Math.cos(angle);
+      sin = Math.sin(angle);
+      const line: Vector3[] = [];
+      for (let j = 0; j <= depthSegments; j++) {
+        const dx = j === 0 ? 0 : (j / depthSegments) * hx;
+        line.push(new Vector3(dx * cos, dx * sin, (dx * dx) / latusRectum + 0.01));
+      }
+      array.push({ points: line } as LineData);
+    }
     return array;
-  }, [lx, ly, latusRectum]);
+  }, [hx, latusRectum]);
 
   const baseSize = Math.max(1, (lx + ly) / 16);
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
@@ -234,7 +261,7 @@ const ParabolicDish = ({
               if (e.intersections.length > 0) {
                 const intersected = e.intersections[0].object === frontSideRef.current;
                 if (intersected) {
-                  state.contextMenuObjectType = ObjectType.ParabolicTrough;
+                  state.contextMenuObjectType = ObjectType.ParabolicDish;
                 }
               }
             });
@@ -272,9 +299,9 @@ const ParabolicDish = ({
           castShadow={shadowEnabled}
           uuid={id + ' backside'}
           ref={backSideRef}
-          args={[latusRectum / 2, lx / 2, radialSegments, depthSegments]}
+          args={[latusRectum / 2, hx, radialSegments, depthSegments]}
           name={'Parabolic Dish Back Side'}
-          position={[0, 0, -lz / 2]}
+          // position={[0, 0, -hz]}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
             selectMe(id, e, ActionType.Select);
@@ -307,12 +334,12 @@ const ParabolicDish = ({
           <meshStandardMaterial attach="material" side={BackSide} color={'white'} />
         </Paraboloid>
 
-        {moduleLines &&
-          moduleLines.map((lineData, index) => {
+        {wireframeLines &&
+          wireframeLines.map((lineData, index) => {
             return (
               <React.Fragment key={index}>
                 <Line
-                  name={'Parabolic Dish Rim Lines'}
+                  name={'Parabolic Dish Wireframe'}
                   userData={{ unintersectable: true }}
                   points={lineData.points}
                   castShadow={false}
@@ -323,30 +350,6 @@ const ParabolicDish = ({
               </React.Fragment>
             );
           })}
-        <Line
-          name={'Parabolic Dish Outline 1'}
-          userData={{ unintersectable: true }}
-          points={[
-            [-hx, -hy, depth],
-            [-hx, hy, depth],
-          ]}
-          castShadow={false}
-          receiveShadow={false}
-          lineWidth={lineWidth}
-          color={lineColor}
-        />
-        <Line
-          name={'Parabolic Dish Outline 2'}
-          userData={{ unintersectable: true }}
-          points={[
-            [hx, -hy, depth],
-            [hx, hy, depth],
-          ]}
-          castShadow={false}
-          receiveShadow={false}
-          lineWidth={lineWidth}
-          color={lineColor}
-        />
 
         {/* receiver at the focus (focal length = latus rectum / 4) */}
         <Cylinder
@@ -372,11 +375,11 @@ const ParabolicDish = ({
           <meshBasicMaterial color={'white'} />
         </Cylinder>
 
-        {/* simulation panel */}
-        <Plane
-          name={'Parabolic Trough Simulation Plane'}
+        {/* simulation element */}
+        <Circle
+          name={'Parabolic Dish Simulation Circle'}
           uuid={id}
-          args={[lx, ly]}
+          args={[lx / 2, radialSegments]}
           position={[0, 0, depth]}
           userData={{ simulation: true }}
           receiveShadow={false}
@@ -384,7 +387,7 @@ const ParabolicDish = ({
           visible={false}
         >
           <meshBasicMaterial side={DoubleSide} />
-        </Plane>
+        </Circle>
 
         {/* highlight it when it is selected but locked */}
         {selected && locked && (
@@ -595,7 +598,7 @@ const ParabolicDish = ({
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
           args={[poleRadius, poleRadius, actualPoleHeight + lz, 6, 2]}
-          position={[0, 0, -actualPoleHeight / 2 - lz / 2]}
+          position={[0, 0, poleZ]}
           rotation={[HALF_PI, 0, 0]}
         >
           <meshStandardMaterial attach="material" color={color} />
