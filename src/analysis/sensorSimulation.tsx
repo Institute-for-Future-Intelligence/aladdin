@@ -10,7 +10,7 @@ import { useStore } from '../stores/common';
 import { DatumEntry, ObjectType } from '../types';
 import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
-import { MONTHS, UNIT_VECTOR_POS_Z } from '../constants';
+import { MONTHS, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
 import { SensorModel } from '../models/SensorModel';
 import * as Selector from '../stores/selector';
 import { showInfo } from '../helpers';
@@ -165,7 +165,8 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     }
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = (count * interval) / 60;
-    const clearness = weather.sunshineHours[month] / (30 * daylight);
+    // daylight can be zero such as at north or south poles!
+    const clearness = daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight) : 0;
     return result.map((x) => (x * clearness) / world.timesPerHour);
   };
 
@@ -239,7 +240,8 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
         }
       }
       const daylight = (count * interval) / 60;
-      const clearness = weather.sunshineHours[midMonth.getMonth()] / (30 * daylight);
+      // daylight can be zero such as at north or south poles!
+      const clearness = daylight > ZERO_TOLERANCE ? weather.sunshineHours[midMonth.getMonth()] / (30 * daylight) : 0;
       total *= clearness; // apply clearness
       total /= world.timesPerHour; // convert the unit of timeStep from minute to hour so that we get kWh
       data.push({

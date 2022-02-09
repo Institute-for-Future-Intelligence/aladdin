@@ -1,0 +1,167 @@
+{
+  "docid": "iyGqi28EttPq8itEvZFREi",
+  "timestamp": 1644417637478,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "latitude": 0,
+    "timesPerHour": 30,
+    "date": "Wed Sep 22 2021 15:00:00 GMT-0400 (Eastern Daylight Time)",
+    "longitude": -71.3488548,
+    "name": "default",
+    "address": "",
+    "ground": {
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "albedo": 0.3,
+      "thermalDiffusivity": 0.05
+    },
+    "orthographic": false,
+    "cameraZoom": 28.63945562104857
+  },
+  "elements": [
+    {
+      "cy": 0.900803118273501,
+      "name": "Jess",
+      "type": "Human",
+      "cz": 0,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "cx": 3.2452189539248018,
+      "selected": false,
+      "id": "8si9AKQwGf4sYiD91xfFr6",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "lx": 0.6,
+      "ly": 0.6,
+      "lz": 1.4
+    },
+    {
+      "type": "Foundation",
+      "cx": -0.02034256309656146,
+      "cy": -0.0945631153454527,
+      "cz": 0.05,
+      "lx": 4.039349774896637,
+      "ly": 4.009416382499952,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "id": "vtjS16tFJ2nQYaRPqaTXtD",
+      "textureType": "Foundation Texture #2"
+    },
+    {
+      "type": "Sensor",
+      "cx": 0.24583065540477922,
+      "cy": -0.24570551313996075,
+      "cz": 0.5000000074505806,
+      "lx": 0.1,
+      "ly": 0.1,
+      "lz": 0.01,
+      "showLabel": true,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "vtjS16tFJ2nQYaRPqaTXtD",
+      "foundationId": "vtjS16tFJ2nQYaRPqaTXtD",
+      "id": "1RgbN67ETfax1aEC4UN1sd",
+      "selected": false
+    }
+  ],
+  "view": {
+    "mapWeatherStations": false,
+    "showGroundPanel": false,
+    "showSiteInfoPanel": true,
+    "mapTilt": 0,
+    "groundPanelY": 0,
+    "yearlyLightSensorPanelY": 5,
+    "axes": true,
+    "showHeliodonPanel": true,
+    "showWeatherPanel": false,
+    "dailyLightSensorPanelY": 203,
+    "mapType": "roadmap",
+    "groundImage": false,
+    "autoRotate": false,
+    "dailyLightSensorPanelX": -31,
+    "showYearlyLightSensorPanel": true,
+    "weatherPanelY": 0,
+    "heliodonPanelX": -1238,
+    "showStickyNotePanel": true,
+    "groundColor": "#16cda5",
+    "weatherPanelX": 0,
+    "heliodonPanelY": 316,
+    "groundPanelX": 0,
+    "shadowEnabled": true,
+    "theme": "Default",
+    "heliodon": true,
+    "stickyNotePanelY": 0,
+    "yearlyLightSensorPanelX": -1,
+    "showDailyLightSensorPanel": false,
+    "mapZoom": 16,
+    "stickyNotePanelX": 0,
+    "cameraPosition": [
+      17.45429780555339,
+      -27.230848823611872,
+      9.767159755317197
+    ],
+    "panCenter": [
+      0,
+      0,
+      0
+    ],
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 58.72652247402654,
+    "showInstructionPanel": true,
+    "cameraPosition2D": [
+      0,
+      -0.00004000177797536253,
+      39.9999999999795
+    ],
+    "panCenter2D": [
+      0,
+      0,
+      0
+    ],
+    "showSunAngles": true
+  },
+  "notes": [
+    "The solar radiation at different locations of the Earth in different seasons is largely responsible for local climate. Overall, every place on the Earth has about the same hours of daylight in total (ideally 144 hours), regardless of where it is. However, the distribution throughout the year is vastly different, resulting in large temperature variations across the globe. You can change the latitude to investigate these relationships. Make sure to refresh the graph after changing any variables."
+  ]
+}

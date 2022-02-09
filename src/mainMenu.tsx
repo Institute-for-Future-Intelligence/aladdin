@@ -3,6 +3,7 @@
  */
 
 import sun_angles from './examples/sun_angles.json';
+import insolation_and_climate from './examples/insolation_and_climate.json';
 import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
 import sun_beam_at_center from './examples/sun_beam_at_center.json';
 import office_building_01 from './examples/office_building_01.json';
@@ -23,6 +24,7 @@ import why_solar_array from './examples/why_solar_array.json';
 import solar_canopy_form_factors from './examples/solar_canopy_form_factors.json';
 import inter_row_spacing from './examples/inter_row_spacing.json';
 import parabolic_trough_array from './examples/parabolic_trough_array.json';
+import parabolic_dish_focus_sunlight from './examples/parabolic_dish_focus_sunlight.json';
 import parabolic_dish_array from './examples/parabolic_dish_array.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
@@ -162,6 +164,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'sun_angles':
         input = sun_angles;
         break;
+      case 'insolation_and_climate':
+        input = insolation_and_climate;
+        break;
       case 'solar_radiation_to_box':
         input = solar_radiation_to_box;
         break;
@@ -194,6 +199,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'effect_latus_rectum_parabolic_trough':
         input = effect_latus_rectum_parabolic_trough;
+        break;
+      case 'parabolic_dish_focus_sunlight':
+        input = parabolic_dish_focus_sunlight;
         break;
       case 'effect_orientation_solar_panel':
         input = effect_orientation_solar_panel;
@@ -1335,6 +1343,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="sun_angles" onClick={loadFile}>
             {i18n.t('menu.tutorials.SunAngles', lang)}
           </Menu.Item>
+          <Menu.Item key="insolation_and_climate" onClick={loadFile}>
+            {i18n.t('menu.tutorials.InsolationAndClimate', lang)}
+          </Menu.Item>
           <Menu.Item key="solar_radiation_to_box" onClick={loadFile}>
             {i18n.t('menu.tutorials.SolarRadiationToBox', lang)}
           </Menu.Item>
@@ -1362,6 +1373,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </SubMenu>
         {/* concentrated solar power */}
         <SubMenu key={'concentrated-solar-power'} title={i18n.t('menu.concentratedSolarPowerSubMenu', lang)}>
+          <Menu.Item key="parabolic_dish_focus_sunlight" onClick={loadFile}>
+            {i18n.t('menu.tutorials.FocusSunlightWithParabolicDish', lang)}
+          </Menu.Item>
           <Menu.Item key="effect_azimuth_parabolic_trough" onClick={loadFile}>
             {i18n.t('menu.tutorials.EffectOfAzimuthOfParabolicTrough', lang)}
           </Menu.Item>

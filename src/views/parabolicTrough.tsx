@@ -287,7 +287,7 @@ const ParabolicTrough = ({
               specular={new Color('white')}
               shininess={100 * reflectance}
               side={FrontSide}
-              color={'skyblue'}
+              color={'lightskyblue'}
             />
           )}
         </ParabolicCylinder>

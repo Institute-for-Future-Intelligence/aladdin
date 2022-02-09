@@ -235,7 +235,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
               labelY={i18n.t('word.Daylight', lang)}
               unitY={i18n.t('word.Hour', lang)}
               yMin={0}
-              curveType={'natural'}
+              curveType={'linear'}
               fractionDigits={1}
               referenceX={referenceX}
             />
@@ -265,7 +265,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
               labelY={labelY}
               unitY={'kWh/m²/' + i18n.t('word.Day', lang)}
               yMin={0}
-              curveType={'natural'}
+              curveType={'linear'}
               fractionDigits={2}
               referenceX={referenceX}
             />

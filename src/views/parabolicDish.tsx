@@ -51,7 +51,7 @@ const ParabolicDish = ({
   tiltAngle,
   relativeAzimuth,
   poleHeight,
-  poleRadius,
+  poleRadius = 0.2,
   drawSunBeam,
   rotation = [0, 0, 0],
   color = 'white',
@@ -268,7 +268,7 @@ const ParabolicDish = ({
 
   const baseSize = Math.max(1, (lx + ly) / 16);
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
-  const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 2;
+  const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 3;
 
   return (
     <group name={'Parabolic Dish Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
@@ -318,7 +318,7 @@ const ParabolicDish = ({
               specular={new Color('white')}
               shininess={100 * reflectance}
               side={FrontSide}
-              color={'skyblue'}
+              color={'lightskyblue'}
             />
           )}
         </Paraboloid>
@@ -407,19 +407,17 @@ const ParabolicDish = ({
             </sprite>
           </mesh>
         )}
-        {structureType === ParabolicDishStructureType.CentralPole && (
-          <Cylinder
-            name={'Parabolic Dish Receiver Pole'}
-            uuid={id}
-            args={[receiverPoleRadius, receiverPoleRadius, focalLength, 6, 2]}
-            rotation={[HALF_PI, 0, 0]}
-            position={[0, 0, focalLength / 2]}
-            receiveShadow={false}
-            castShadow={true}
-          >
-            <meshBasicMaterial color={color} />
-          </Cylinder>
-        )}
+        <Cylinder
+          name={'Parabolic Dish Receiver Pole'}
+          uuid={id}
+          args={[receiverPoleRadius, receiverPoleRadius, focalLength, 6, 2]}
+          rotation={[HALF_PI, 0, 0]}
+          position={[0, 0, focalLength / 2]}
+          receiveShadow={false}
+          castShadow={true}
+        >
+          <meshBasicMaterial color={color} />
+        </Cylinder>
         {structureType === ParabolicDishStructureType.Tripod &&
           tripodLines &&
           tripodLines.map((lineData, index) => {
@@ -434,6 +432,13 @@ const ParabolicDish = ({
                   lineWidth={1}
                   color={color}
                 />
+                <Sphere
+                  position={new Vector3(lineData.points[0].x, lineData.points[0].y, lineData.points[0].z)}
+                  args={[receiverPoleRadius / 2, 4, 4]}
+                  name={'Parabolic Dish Tripod Joint'}
+                >
+                  <meshBasicMaterial attach="material" color={color} />
+                </Sphere>
               </React.Fragment>
             );
           })}

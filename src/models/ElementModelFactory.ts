@@ -235,7 +235,7 @@ export class ElementModelFactory {
       receiverPoleRadius: 0.1,
       drawSunBeam: false,
       poleHeight: 0.2, // extra pole height in addition to the radius (half of lx or ly)
-      poleRadius: 0.05,
+      poleRadius: 0.2,
       cx: x,
       cy: y,
       cz: z,

@@ -245,6 +245,7 @@ export const i18n_zh_tw = {
       concentratedSolarPowerSubMenu: '光熱發電',
       tutorials: {
         SunAngles: '太陽相對於地面觀察者的角度',
+        InsolationAndClimate: '太陽輻射和氣候的關係',
         SolarRadiationToBox: '一個長方體受到的太陽能輻射分析',
         EffectOfTiltAngleOfSolarPanel: '光伏板傾斜角對發電量的影響',
         EffectOfAzimuthOfSolarPanel: '光伏板方位角對發電量的影響',
@@ -254,6 +255,7 @@ export const i18n_zh_tw = {
         EffectOfOrientationOfSolarPanels: '光伏板排列方向對發電量的影響',
         EffectOfAzimuthOfParabolicTrough: '拋物線槽方位角對發電量的影響',
         EffectOfLatusRectumOfParabolicTrough: '拋物線槽通徑對發電量的影響',
+        FocusSunlightWithParabolicDish: '用拋物線碟聚焦阳光',
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太陽能',

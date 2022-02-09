@@ -246,6 +246,7 @@ export const i18n_es = {
       concentratedSolarPowerSubMenu: 'Concentrated Solar Power',
       tutorials: {
         SunAngles: 'Ángulos solares relativos a un observador en el suelo',
+        InsolationAndClimate: 'Insolation and Climate',
         SolarRadiationToBox: 'Radiación solar a una caja',
         EffectOfTiltAngleOfSolarPanel: 'Effect of Tilt Angle',
         EffectOfAzimuthOfSolarPanel: 'Effect of Azimuth',
@@ -255,6 +256,7 @@ export const i18n_es = {
         EffectOfOrientationOfSolarPanels: 'Effect of Orientation of Solar Panels',
         EffectOfAzimuthOfParabolicTrough: 'Effect of Azimuth of a Parabolic Trough',
         EffectOfLatusRectumOfParabolicTrough: 'Effect of Latus Rectum of a Parabolic Trough',
+        FocusSunlightWithParabolicDish: 'Focus Sunlight with a Parabolic Dish',
       },
       examplesSubMenu: 'Ejemplos',
       solarEnergySubMenu: 'Energía Solar',
