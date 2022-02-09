@@ -26,6 +26,6 @@ export interface WorldModel {
   discretization: Discretization;
   solarPanelVisibilityGridCellSize: number;
 
-  parabolicTroughTimesPerHour: number;
-  parabolicTroughGridCellSize: number;
+  cspTimesPerHour: number;
+  cspGridCellSize: number;
 }

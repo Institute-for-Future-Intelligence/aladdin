@@ -124,3 +124,19 @@ export const yearlyParabolicTroughYieldPanelX = (state: CommonStoreState) =>
 
 export const yearlyParabolicTroughYieldPanelY = (state: CommonStoreState) =>
   state.viewState.yearlyParabolicTroughYieldPanelY;
+
+export const showDailyParabolicDishYieldPanel = (state: CommonStoreState) =>
+  state.viewState.showDailyParabolicDishYieldPanel;
+
+export const dailyParabolicDishYieldPanelX = (state: CommonStoreState) => state.viewState.dailyParabolicDishYieldPanelX;
+
+export const dailyParabolicDishYieldPanelY = (state: CommonStoreState) => state.viewState.dailyParabolicDishYieldPanelY;
+
+export const showYearlyParabolicDishYieldPanel = (state: CommonStoreState) =>
+  state.viewState.showYearlyParabolicDishYieldPanel;
+
+export const yearlyParabolicDishYieldPanelX = (state: CommonStoreState) =>
+  state.viewState.yearlyParabolicDishYieldPanelX;
+
+export const yearlyParabolicDishYieldPanelY = (state: CommonStoreState) =>
+  state.viewState.yearlyParabolicDishYieldPanelY;

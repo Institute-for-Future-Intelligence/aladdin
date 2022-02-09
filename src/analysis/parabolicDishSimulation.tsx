@@ -14,28 +14,28 @@ import { AirMass } from './analysisConstants';
 import { MONTHS, UNIT_VECTOR_POS_Z } from '../constants';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
-import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
+import { ParabolicDishModel } from '../models/ParabolicDishModel';
 
-export interface ParabolicTroughSimulationProps {
+export interface ParabolicDishSimulationProps {
   city: string | null;
 }
 
-const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => {
+const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
-  const setDailyYield = useStore(Selector.setDailyParabolicTroughYield);
+  const setDailyYield = useStore(Selector.setDailyParabolicDishYield);
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
-  const setYearlyYield = useStore(Selector.setYearlyParabolicTroughYield);
+  const setYearlyYield = useStore(Selector.setYearlyParabolicDishYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
-  const dailyFlag = useStore(Selector.dailyParabolicTroughFlag);
-  const yearlyFlag = useStore(Selector.yearlyParabolicTroughFlag);
-  const dailyIndividualOutputs = useStore(Selector.dailyParabolicTroughIndividualOutputs);
-  const yearlyIndividualOutputs = useStore(Selector.yearlyParabolicTroughIndividualOutputs);
-  const setParabolicTroughLabels = useStore(Selector.setParabolicTroughLabels);
+  const dailyFlag = useStore(Selector.dailyParabolicDishFlag);
+  const yearlyFlag = useStore(Selector.yearlyParabolicDishFlag);
+  const dailyIndividualOutputs = useStore(Selector.dailyParabolicDishIndividualOutputs);
+  const yearlyIndividualOutputs = useStore(Selector.yearlyParabolicDishIndividualOutputs);
+  const setParabolicDishLabels = useStore(Selector.setParabolicDishLabels);
 
   const { scene } = useThree();
   const lang = { lng: language };
@@ -55,7 +55,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     if (loadedDaily.current) {
       // avoid calling on first render
       if (elements && elements.length > 0) {
-        getDailyYieldForAllParabolicTroughs();
+        getDailyYieldForAllParabolicDishes();
         showInfo(i18n.t('message.SimulationCompleted', lang));
       }
     } else {
@@ -71,7 +71,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     if (loadedYearly.current) {
       // avoid calling on first render
       if (elements && elements.length > 0) {
-        getYearlyYieldForAllParabolicTroughs();
+        getYearlyYieldForAllParabolicDishes();
         showInfo(i18n.t('message.SimulationCompleted', lang));
       }
     } else {
@@ -83,11 +83,11 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearlyFlag]);
 
-  const inShadow = (troughId: string, position: Vector3, sunDirection: Vector3) => {
+  const inShadow = (dishId: string, position: Vector3, sunDirection: Vector3) => {
     if (objectsRef.current.length > 1) {
       intersectionsRef.current.length = 0;
       ray.set(position, sunDirection);
-      const objects = objectsRef.current.filter((obj) => obj.uuid !== troughId);
+      const objects = objectsRef.current.filter((obj) => obj.uuid !== dishId);
       ray.intersectObjects(objects, false, intersectionsRef.current);
       return intersectionsRef.current.length > 0;
     }
@@ -116,7 +116,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     }
   };
 
-  const getDailyYieldForAllParabolicTroughs = () => {
+  const getDailyYieldForAllParabolicDishes = () => {
     fetchObjects();
     if (dailyIndividualOutputs) {
       const total = new Array(24).fill(0);
@@ -124,15 +124,15 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
       let index = 0;
       const labels = [];
       for (const e of elements) {
-        if (e.type === ObjectType.ParabolicTrough) {
-          const output = getDailyYield(e as ParabolicTroughModel);
+        if (e.type === ObjectType.ParabolicDish) {
+          const output = getDailyYield(e as ParabolicDishModel);
           updateDailyYield(
             e.id,
             output.reduce((a, b) => a + b, 0),
           );
           index++;
-          map.set('Trough' + index, output);
-          labels.push(e.label ? e.label : 'Trough' + index);
+          map.set('Dish' + index, output);
+          labels.push(e.label ? e.label : 'Dish' + index);
           for (let i = 0; i < 24; i++) {
             total[i] += output[i];
           }
@@ -143,18 +143,18 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
         const datum: DatumEntry = {};
         datum['Hour'] = i;
         for (let k = 1; k <= index; k++) {
-          const key = 'Trough' + k;
+          const key = 'Dish' + k;
           datum[labels[k - 1]] = map.get(key)?.[i];
         }
         data.push(datum);
       }
       setDailyYield(data);
-      setParabolicTroughLabels(labels);
+      setParabolicDishLabels(labels);
     } else {
       const total = new Array(24).fill(0);
       for (const e of elements) {
-        if (e.type === ObjectType.ParabolicTrough) {
-          const output = getDailyYield(e as ParabolicTroughModel);
+        if (e.type === ObjectType.ParabolicDish) {
+          const output = getDailyYield(e as ParabolicDishModel);
           updateDailyYield(
             e.id,
             output.reduce((a, b) => a + b, 0),
@@ -172,13 +172,13 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     }
   };
 
-  const getDailyYield = (trough: ParabolicTroughModel) => {
-    const parent = getParent(trough);
-    if (!parent) throw new Error('parent of parabolic trough does not exist');
-    const center = Util.absoluteCoordinates(trough.cx, trough.cy, trough.cz, parent);
-    const normal = new Vector3().fromArray(trough.normal);
+  const getDailyYield = (dish: ParabolicDishModel) => {
+    const parent = getParent(dish);
+    if (!parent) throw new Error('parent of parabolic dish does not exist');
+    const center = Util.absoluteCoordinates(dish.cx, dish.cy, dish.cz, parent);
+    const normal = new Vector3().fromArray(dish.normal);
     const originalNormal = normal.clone();
-    const zRot = parent.rotation[2] + trough.relativeAzimuth;
+    const zRot = parent.rotation[2] + dish.relativeAzimuth;
     const zRotZero = Util.isZero(zRot);
     const result = new Array(24).fill(0);
     const year = now.getFullYear();
@@ -186,30 +186,28 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     const date = now.getDate();
     const dayOfYear = Util.dayOfYear(now);
     let count = 0;
-    const lx = trough.lx;
-    const ly = trough.ly;
-    let nx = Math.max(2, Math.round(trough.lx / cellSize));
-    let ny = Math.max(2, Math.round(trough.ly / cellSize));
+    const lx = dish.lx;
+    const ly = dish.ly;
+    let nx = Math.max(2, Math.round(dish.lx / cellSize));
+    let ny = Math.max(2, Math.round(dish.ly / cellSize));
     // nx and ny must be even (for circuit simulation)
     if (nx % 2 !== 0) nx += 1;
     if (ny % 2 !== 0) ny += 1;
     const dx = lx / nx;
     const dy = ly / ny;
-    const depth = (lx * lx) / (4 * trough.latusRectum); // the distance from the bottom to the aperture plane
-    // const focalLength = 0.25*trough.latusRectum; // equal to the distance from the directrix to the horizontal axis
-    const actualPoleHeight = trough.poleHeight + lx / 2;
+    const depth = (lx * lx) / (4 * dish.latusRectum); // the distance from the bottom to the aperture plane
+    // const focalLength = 0.25*dish.latusRectum; // equal to the distance from the directrix to the horizontal axis
+    const actualPoleHeight = dish.poleHeight + lx / 2;
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = parent.lz + actualPoleHeight + trough.lz + depth;
+    const z0 = parent.lz + actualPoleHeight + dish.lz + depth;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputs = Array(nx)
       .fill(0)
       .map(() => Array(ny).fill(0));
     const rot = parent.rotation[2];
-    const cosRot = zRotZero ? 1 : Math.cos(zRot);
-    const sinRot = zRotZero ? 0 : Math.sin(zRot);
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < (world.cspTimesPerHour ?? 4); j++) {
         // a shift of 30 minutes minute half of the interval ensures the symmetry of the result around noon
@@ -221,14 +219,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
             ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
             : sunDirection.clone();
           const ori = originalNormal.clone();
-          const qRot = new Quaternion().setFromUnitVectors(
-            UNIT_VECTOR_POS_Z,
-            new Vector3(
-              rotatedSunDirection.x * cosRot,
-              rotatedSunDirection.x * sinRot,
-              rotatedSunDirection.z,
-            ).normalize(),
-          );
+          const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
           normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRot)));
           count++;
           const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
@@ -242,7 +233,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
                 v2.set(x0 + kx * dx, y0 + ky * dy);
                 if (!zRotZero) v2.rotateAround(center2d, zRot);
                 v.set(v2.x, v2.y, z0);
-                if (!inShadow(trough.id, v, sunDirection)) {
+                if (!inShadow(dish.id, v, sunDirection)) {
                   // direct radiation
                   cellOutputs[kx][ky] += dot * peakRadiation;
                 }
@@ -266,32 +257,32 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     // irrespective of where they hit the parabolic surface. So there is no additional attenuation
     // difference that needs to be accounted for.
     const factor =
-      trough.lx *
-      trough.ly *
-      trough.opticalEfficiency *
-      trough.thermalEfficiency *
-      trough.absorptance *
-      trough.reflectance *
+      dish.lx *
+      dish.ly *
+      dish.opticalEfficiency *
+      dish.thermalEfficiency *
+      dish.absorptance *
+      dish.reflectance *
       (1 - dustLoss);
     return result.map((x) => (x * factor * clearness) / (world.cspTimesPerHour ?? 4));
   };
 
-  const getYearlyYieldForAllParabolicTroughs = () => {
+  const getYearlyYieldForAllParabolicDishes = () => {
     fetchObjects();
     if (yearlyIndividualOutputs) {
       const resultArr = [];
       const labels = [];
       let index = 0;
       for (const e of elements) {
-        if (e.type === ObjectType.ParabolicTrough) {
-          const yearlyPvYield = getYearlyYield(e as ParabolicTroughModel);
+        if (e.type === ObjectType.ParabolicDish) {
+          const yearlyPvYield = getYearlyYield(e as ParabolicDishModel);
           updateYearlyYield(
             e.id,
             yearlyPvYield.reduce((a, b) => a + b, 0),
           );
           resultArr.push(yearlyPvYield);
           index++;
-          labels.push(e.label ? e.label : 'Trough' + index);
+          labels.push(e.label ? e.label : 'Dish' + index);
         }
       }
       const results = [];
@@ -304,12 +295,12 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
         results.push(r);
       }
       setYearlyYield(results);
-      setParabolicTroughLabels(labels);
+      setParabolicDishLabels(labels);
     } else {
       const resultArr = [];
       for (const e of elements) {
-        if (e.type === ObjectType.ParabolicTrough) {
-          const yearlyPvYield = getYearlyYield(e as ParabolicTroughModel);
+        if (e.type === ObjectType.ParabolicDish) {
+          const yearlyPvYield = getYearlyYield(e as ParabolicDishModel);
           updateYearlyYield(
             e.id,
             yearlyPvYield.reduce((a, b) => a + b, 0),
@@ -332,41 +323,39 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     }
   };
 
-  const getYearlyYield = (trough: ParabolicTroughModel) => {
+  const getYearlyYield = (dish: ParabolicDishModel) => {
     const data: any[] = [];
-    const parent = getParent(trough);
-    if (!parent) throw new Error('parent of parabolic trough does not exist');
-    const center = Util.absoluteCoordinates(trough.cx, trough.cy, trough.cz, parent);
-    const normal = new Vector3().fromArray(trough.normal);
+    const parent = getParent(dish);
+    if (!parent) throw new Error('parent of parabolic dish does not exist');
+    const center = Util.absoluteCoordinates(dish.cx, dish.cy, dish.cz, parent);
+    const normal = new Vector3().fromArray(dish.normal);
     const originalNormal = normal.clone();
-    const zRot = parent.rotation[2] + trough.relativeAzimuth;
+    const zRot = parent.rotation[2] + dish.relativeAzimuth;
     const zRotZero = Util.isZero(zRot);
     const year = now.getFullYear();
     const date = 15;
-    const lx = trough.lx;
-    const ly = trough.ly;
-    let nx = Math.max(2, Math.round(trough.lx / cellSize));
-    let ny = Math.max(2, Math.round(trough.ly / cellSize));
+    const lx = dish.lx;
+    const ly = dish.ly;
+    let nx = Math.max(2, Math.round(dish.lx / cellSize));
+    let ny = Math.max(2, Math.round(dish.ly / cellSize));
     // nx and ny must be even (for circuit simulation)
     if (nx % 2 !== 0) nx += 1;
     if (ny % 2 !== 0) ny += 1;
     const dx = lx / nx;
     const dy = ly / ny;
-    const depth = (lx * lx) / (4 * trough.latusRectum); // the distance from the bottom to the aperture plane
-    // const focalLength = 0.25*trough.latusRectum; // equal to the distance from the directrix to the horizontal axis
-    const actualPoleHeight = trough.poleHeight + lx / 2;
+    const depth = (lx * lx) / (4 * dish.latusRectum); // the distance from the bottom to the aperture plane
+    // const focalLength = 0.25*dish.latusRectum; // equal to the distance from the directrix to the horizontal axis
+    const actualPoleHeight = dish.poleHeight + lx / 2;
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = parent.lz + actualPoleHeight + trough.lz + depth;
+    const z0 = parent.lz + actualPoleHeight + dish.lz + depth;
     const v = new Vector3();
     const center2d = new Vector2(center.x, center.y);
     const cellOutputs = Array(nx)
       .fill(0)
       .map(() => Array(ny).fill(0));
     const rot = parent.rotation[2];
-    const cosRot = zRotZero ? 1 : Math.cos(zRot);
-    const sinRot = zRotZero ? 0 : Math.sin(zRot);
     for (let month = 0; month < 12; month++) {
       const midMonth = new Date(year, month, date);
       const dayOfYear = Util.dayOfYear(midMonth);
@@ -382,14 +371,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
               ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
               : sunDirection.clone();
             const ori = originalNormal.clone();
-            const qRot = new Quaternion().setFromUnitVectors(
-              UNIT_VECTOR_POS_Z,
-              new Vector3(
-                rotatedSunDirection.x * cosRot,
-                rotatedSunDirection.x * sinRot,
-                rotatedSunDirection.z,
-              ).normalize(),
-            );
+            const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
             normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRot)));
             count++;
             const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
@@ -403,7 +385,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
                   v2.set(x0 + kx * dx, y0 + ky * dy);
                   if (!zRotZero) v2.rotateAround(center2d, zRot);
                   v.set(v2.x, v2.y, z0);
-                  if (!inShadow(trough.id, v, sunDirection)) {
+                  if (!inShadow(dish.id, v, sunDirection)) {
                     // direct radiation
                     cellOutputs[kx][ky] += dot * peakRadiation;
                   }
@@ -426,12 +408,12 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
       // irrespective of where they hit the parabolic surface. So there is no additional attenuation
       // difference that needs to be accounted for.
       const factor =
-        trough.lx *
-        trough.ly *
-        trough.opticalEfficiency *
-        trough.thermalEfficiency *
-        trough.absorptance *
-        trough.reflectance *
+        dish.lx *
+        dish.ly *
+        dish.opticalEfficiency *
+        dish.thermalEfficiency *
+        dish.absorptance *
+        dish.reflectance *
         (1 - dustLoss);
       dailyYield *= clearness * factor;
       dailyYield /= world.cspTimesPerHour ?? 4; // convert the unit of timeStep from minute to hour so that we get kWh
@@ -443,4 +425,4 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
   return <></>;
 };
 
-export default React.memo(ParabolicTroughSimulation);
+export default React.memo(ParabolicDishSimulation);

@@ -55,6 +55,9 @@ import SolarRadiationSimulation from './analysis/solarRadiationSimulation';
 import YearlyParabolicTroughYieldPanel from './panels/yearlyParabolicTroughYieldPanel';
 import DailyParabolicTroughYieldPanel from './panels/dailyParabolicTroughYieldPanel';
 import ParabolicTroughSimulation, { ParabolicTroughSimulationProps } from './analysis/parabolicTroughSimulation';
+import DailyParabolicDishYieldPanel from './panels/dailyParabolicDishYieldPanel';
+import YearlyParabolicDishYieldPanel from './panels/yearlyParabolicDishYieldPanel';
+import ParabolicDishSimulation from './analysis/parabolicDishSimulation';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -91,6 +94,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showVisibilityResultsPanel = useStore(Selector.viewState.showVisibilityResultsPanel);
   const showDailyParabolicTroughYieldPanel = useStore(Selector.viewState.showDailyParabolicTroughYieldPanel);
   const showYearlyParabolicTroughYieldPanel = useStore(Selector.viewState.showYearlyParabolicTroughYieldPanel);
+  const showDailyParabolicDishYieldPanel = useStore(Selector.viewState.showDailyParabolicDishYieldPanel);
+  const showYearlyParabolicDishYieldPanel = useStore(Selector.viewState.showYearlyParabolicDishYieldPanel);
   const addedFoundationId = useStore(Selector.addedFoundationId);
   const addedCuboidId = useStore(Selector.addedCuboidId);
 
@@ -328,6 +333,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {showVisibilityResultsPanel && <VisibilityResultsPanel />}
       {showYearlyParabolicTroughYieldPanel && <YearlyParabolicTroughYieldPanel city={city} />}
       {showDailyParabolicTroughYieldPanel && <DailyParabolicTroughYieldPanel city={city} />}
+      {showYearlyParabolicDishYieldPanel && <YearlyParabolicDishYieldPanel city={city} />}
+      {showDailyParabolicDishYieldPanel && <DailyParabolicDishYieldPanel city={city} />}
       <DropdownContextMenu>
         <div>
           <Canvas
@@ -358,6 +365,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             <SolarPanelSimulation city={city} />
             <SolarPanelVisibility />
             <ParabolicTroughSimulation city={city} />
+            <ParabolicDishSimulation city={city} />
           </Canvas>
           <KeyboardListener
             canvas={canvasRef.current}

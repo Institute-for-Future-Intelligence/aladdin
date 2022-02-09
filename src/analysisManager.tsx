@@ -15,6 +15,8 @@ const AnalysisManager = () => {
   const solarPanelVisibilityFlag = useStore(Selector.solarPanelVisibilityFlag);
   const dailyParabolicTroughFlag = useStore(Selector.dailyParabolicTroughFlag);
   const yearlyParabolicTroughFlag = useStore(Selector.yearlyParabolicTroughFlag);
+  const dailyParabolicDishFlag = useStore(Selector.dailyParabolicDishFlag);
+  const yearlyParabolicDishFlag = useStore(Selector.yearlyParabolicDishFlag);
 
   const firstCallSolarPanelVisibilityFlag = useRef<boolean>(true);
   const firstCallDailyLightSensorFlag = useRef<boolean>(true);
@@ -23,6 +25,8 @@ const AnalysisManager = () => {
   const firstCallYearlyPvFlag = useRef<boolean>(true);
   const firstCallDailyParabolicTroughFlag = useRef<boolean>(true);
   const firstCallYearlyParabolicTroughFlag = useRef<boolean>(true);
+  const firstCallDailyParabolicDishFlag = useRef<boolean>(true);
+  const firstCallYearlyParabolicDishFlag = useRef<boolean>(true);
 
   useEffect(() => {
     if (firstCallSolarPanelVisibilityFlag.current) {
@@ -100,6 +104,28 @@ const AnalysisManager = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearlyParabolicTroughFlag]);
+
+  useEffect(() => {
+    if (firstCallDailyParabolicDishFlag.current) {
+      firstCallDailyParabolicDishFlag.current = false;
+    } else {
+      setCommonStore((state) => {
+        state.viewState.showDailyParabolicDishYieldPanel = true;
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dailyParabolicDishFlag]);
+
+  useEffect(() => {
+    if (firstCallYearlyParabolicDishFlag.current) {
+      firstCallYearlyParabolicDishFlag.current = false;
+    } else {
+      setCommonStore((state) => {
+        state.viewState.showYearlyParabolicDishYieldPanel = true;
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [yearlyParabolicDishFlag]);
 
   return <></>;
 };

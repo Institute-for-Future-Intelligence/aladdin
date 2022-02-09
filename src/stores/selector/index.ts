@@ -545,6 +545,28 @@ export const parabolicTroughLabels = (state: CommonStoreState) => state.paraboli
 
 export const setParabolicTroughLabels = (state: CommonStoreState) => state.setParabolicTroughLabels;
 
+export const dailyParabolicDishYield = (state: CommonStoreState) => state.dailyParabolicDishYield;
+
+export const dailyParabolicDishFlag = (state: CommonStoreState) => state.dailyParabolicDishFlag;
+
+export const dailyParabolicDishIndividualOutputs = (state: CommonStoreState) =>
+  state.dailyParabolicDishIndividualOutputs;
+
+export const setDailyParabolicDishYield = (state: CommonStoreState) => state.setDailyParabolicDishYield;
+
+export const yearlyParabolicDishYield = (state: CommonStoreState) => state.yearlyParabolicDishYield;
+
+export const yearlyParabolicDishFlag = (state: CommonStoreState) => state.yearlyParabolicDishFlag;
+
+export const yearlyParabolicDishIndividualOutputs = (state: CommonStoreState) =>
+  state.yearlyParabolicDishIndividualOutputs;
+
+export const setYearlyParabolicDishYield = (state: CommonStoreState) => state.setYearlyParabolicDishYield;
+
+export const parabolicDishLabels = (state: CommonStoreState) => state.parabolicDishLabels;
+
+export const setParabolicDishLabels = (state: CommonStoreState) => state.setParabolicDishLabels;
+
 export const dailyLightSensorData = (state: CommonStoreState) => state.dailyLightSensorData;
 
 export const dailyLightSensorFlag = (state: CommonStoreState) => state.dailyLightSensorFlag;

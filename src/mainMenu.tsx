@@ -23,6 +23,7 @@ import why_solar_array from './examples/why_solar_array.json';
 import solar_canopy_form_factors from './examples/solar_canopy_form_factors.json';
 import inter_row_spacing from './examples/inter_row_spacing.json';
 import parabolic_trough_array from './examples/parabolic_trough_array.json';
+import parabolic_dish_array from './examples/parabolic_dish_array.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -105,8 +106,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const discretization = useStore(Selector.world.discretization);
   const solarPanelGridCellSize = useStore(Selector.world.solarPanelGridCellSize);
   const solarPanelVisibilityGridCellSize = useStore(Selector.world.solarPanelVisibilityGridCellSize);
-  const parabolicTroughTimesPerHour = useStore(Selector.world.parabolicTroughTimesPerHour);
-  const parabolicTroughGridCellSize = useStore(Selector.world.parabolicTroughGridCellSize);
+  const cspTimesPerHour = useStore(Selector.world.cspTimesPerHour);
+  const cspGridCellSize = useStore(Selector.world.cspGridCellSize);
   const solarRadiationHeatmapGridCellSize = useStore(Selector.world.solarRadiationHeatmapGridCellSize);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const orthographic = useStore(Selector.viewState.orthographic);
@@ -217,6 +218,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'parabolic_trough_array':
         input = parabolic_trough_array;
+        break;
+      case 'parabolic_dish_array':
+        input = parabolic_dish_array;
         break;
       case 'simple_house_01':
         input = simple_house_01;
@@ -1205,11 +1209,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   step={1}
                   style={{ width: 60 }}
                   precision={0}
-                  value={parabolicTroughTimesPerHour ?? 4}
+                  value={cspTimesPerHour ?? 4}
                   formatter={(a) => Number(a).toFixed(0)}
                   onChange={(value) => {
                     setCommonStore((state) => {
-                      state.world.parabolicTroughTimesPerHour = value;
+                      state.world.cspTimesPerHour = value;
                     });
                   }}
                 />
@@ -1223,11 +1227,97 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   step={0.1}
                   style={{ width: 60 }}
                   precision={1}
-                  value={parabolicTroughGridCellSize ?? 0.5}
+                  value={cspGridCellSize ?? 0.5}
                   formatter={(a) => Number(a).toFixed(1)}
                   onChange={(value) => {
                     setCommonStore((state) => {
-                      state.world.parabolicTroughGridCellSize = value;
+                      state.world.cspGridCellSize = value;
+                    });
+                  }}
+                />
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
+              </Menu.Item>
+            </Menu>
+          </SubMenu>
+        </SubMenu>
+
+        {/* parabolic dishes */}
+        <SubMenu key={'parabolic-dish'} title={i18n.t('menu.parabolicDishSubMenu', lang)}>
+          <Menu.Item
+            key={'parabolic-dish-daily-yield'}
+            onClick={() => {
+              const parabolicDishCount = countElementsByType(ObjectType.ParabolicDish);
+              if (parabolicDishCount === 0) {
+                showInfo(i18n.t('analysisManager.NoParabolicDishForAnalysis', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.dailyParabolicDishIndividualOutputs = false;
+                  state.dailyParabolicDishFlag = !state.dailyParabolicDishFlag;
+                });
+              }, 100);
+            }}
+          >
+            {i18n.t('menu.parabolicDish.AnalyzeDailyYield', lang)}
+          </Menu.Item>
+          <Menu.Item
+            key={'parabolic-dish-yearly-yield'}
+            onClick={() => {
+              const parabolicDishCount = countElementsByType(ObjectType.ParabolicDish);
+              if (parabolicDishCount === 0) {
+                showInfo(i18n.t('analysisManager.NoParabolicDishForAnalysis', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.yearlyParabolicDishIndividualOutputs = false;
+                  state.yearlyParabolicDishFlag = !state.yearlyParabolicDishFlag;
+                });
+              }, 100);
+            }}
+          >
+            {i18n.t('menu.parabolicDish.AnalyzeYearlyYield', lang)}
+          </Menu.Item>
+          <SubMenu key={'parabolic-dish-analysis-options'} title={i18n.t('menu.parabolicDish.AnalysisOptions', lang)}>
+            <Menu>
+              <Menu.Item key={'parabolic-dish-simulation-sampling-frequency'}>
+                <Space style={{ width: '150px' }}>{i18n.t('menu.sensor.SamplingFrequency', lang) + ':'}</Space>
+                <InputNumber
+                  min={1}
+                  max={60}
+                  step={1}
+                  style={{ width: 60 }}
+                  precision={0}
+                  value={cspTimesPerHour ?? 4}
+                  formatter={(a) => Number(a).toFixed(0)}
+                  onChange={(value) => {
+                    setCommonStore((state) => {
+                      state.world.cspTimesPerHour = value;
+                    });
+                  }}
+                />
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.TimesPerHour', lang)}</Space>
+              </Menu.Item>
+              <Menu.Item key={'parabolic-dish-simulation-grid-cell-size'}>
+                <Space style={{ width: '150px' }}>{i18n.t('menu.parabolicDish.GridCellSize', lang) + ':'}</Space>
+                <InputNumber
+                  min={0.1}
+                  max={5}
+                  step={0.1}
+                  style={{ width: 60 }}
+                  precision={1}
+                  value={cspGridCellSize ?? 0.5}
+                  formatter={(a) => Number(a).toFixed(1)}
+                  onChange={(value) => {
+                    setCommonStore((state) => {
+                      state.world.cspGridCellSize = value;
                     });
                   }}
                 />
@@ -1299,6 +1389,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="parabolic_trough_array" onClick={loadFile}>
             {i18n.t('menu.examples.ParabolicTroughArray', lang)}
+          </Menu.Item>
+          <Menu.Item key="parabolic_dish_array" onClick={loadFile}>
+            {i18n.t('menu.examples.ParabolicDishArray', lang)}
           </Menu.Item>
           <Menu.Item key="solar_farm_02" onClick={loadFile}>
             {i18n.t('menu.examples.SolarFarmInRealWorld', lang)}

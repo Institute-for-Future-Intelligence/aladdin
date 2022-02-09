@@ -26,6 +26,6 @@ export const solarPanelGridCellSize = (state: CommonStoreState) => state.world.s
 export const solarPanelVisibilityGridCellSize = (state: CommonStoreState) =>
   state.world.solarPanelVisibilityGridCellSize;
 
-export const parabolicTroughTimesPerHour = (state: CommonStoreState) => state.world.parabolicTroughTimesPerHour;
+export const cspTimesPerHour = (state: CommonStoreState) => state.world.cspTimesPerHour;
 
-export const parabolicTroughGridCellSize = (state: CommonStoreState) => state.world.parabolicTroughGridCellSize;
+export const cspGridCellSize = (state: CommonStoreState) => state.world.cspGridCellSize;

@@ -57,6 +57,15 @@ export const FoundationMenu = () => {
   const parabolicTroughCountFoundation = foundation
     ? countAllChildElementsByType(foundation.id, ObjectType.ParabolicTrough, true)
     : 0;
+  const parabolicDishCountFoundation = foundation
+    ? countAllChildElementsByType(foundation.id, ObjectType.ParabolicDish, true)
+    : 0;
+  const fresnelReflectorCountFoundation = foundation
+    ? countAllChildElementsByType(foundation.id, ObjectType.FresnelReflector, true)
+    : 0;
+  const heliostatCountFoundation = foundation
+    ? countAllChildElementsByType(foundation.id, ObjectType.Heliostat, true)
+    : 0;
   const lang = { lng: language };
 
   const legalToPaste = () => {
@@ -94,6 +103,9 @@ export const FoundationMenu = () => {
         {(sensorCountFoundation > 0 ||
           solarPanelCountFoundation > 0 ||
           parabolicTroughCountFoundation > 0 ||
+          parabolicDishCountFoundation > 0 ||
+          fresnelReflectorCountFoundation > 0 ||
+          heliostatCountFoundation > 0 ||
           treeCountFoundation > 0 ||
           humanCountFoundation > 0 ||
           wallCountFoundation > 0 ||
@@ -287,6 +299,148 @@ export const FoundationMenu = () => {
                   }}
                 >
                   {i18n.t('foundationMenu.RemoveAllUnlockedParabolicTroughs', lang)} ({parabolicTroughCountFoundation})
+                </Menu.Item>
+              )}
+
+              {parabolicDishCountFoundation > 0 && (
+                <Menu.Item
+                  key={'remove-all-parabolic-dishes-on-foundation'}
+                  onClick={() => {
+                    Modal.confirm({
+                      title:
+                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllParabolicDishesOnFoundation', lang) +
+                        ' (' +
+                        parabolicDishCountFoundation +
+                        ' ' +
+                        i18n.t('foundationMenu.ParabolicDishes', lang) +
+                        ')?',
+                      icon: <ExclamationCircleOutlined />,
+                      onOk: () => {
+                        if (foundation) {
+                          const removed = elements.filter(
+                            (e) => !e.locked && e.type === ObjectType.ParabolicDish && e.parentId === foundation.id,
+                          );
+                          removeAllChildElementsByType(foundation.id, ObjectType.ParabolicDish);
+                          const removedElements = JSON.parse(JSON.stringify(removed));
+                          const undoableRemoveAllParabolicDishChildren = {
+                            name: 'Remove All Parabolic Dishes on Foundation',
+                            timestamp: Date.now(),
+                            parentId: foundation.id,
+                            removedElements: removedElements,
+                            undo: () => {
+                              setCommonStore((state) => {
+                                state.elements.push(...undoableRemoveAllParabolicDishChildren.removedElements);
+                              });
+                            },
+                            redo: () => {
+                              removeAllChildElementsByType(
+                                undoableRemoveAllParabolicDishChildren.parentId,
+                                ObjectType.ParabolicDish,
+                              );
+                            },
+                          } as UndoableRemoveAllChildren;
+                          addUndoable(undoableRemoveAllParabolicDishChildren);
+                        }
+                      },
+                    });
+                  }}
+                >
+                  {i18n.t('foundationMenu.RemoveAllUnlockedParabolicDishes', lang)} ({parabolicDishCountFoundation})
+                </Menu.Item>
+              )}
+
+              {fresnelReflectorCountFoundation > 0 && (
+                <Menu.Item
+                  key={'remove-all-fresnel-reflector-on-foundation'}
+                  onClick={() => {
+                    Modal.confirm({
+                      title:
+                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllFresnelReflectorsOnFoundation', lang) +
+                        ' (' +
+                        fresnelReflectorCountFoundation +
+                        ' ' +
+                        i18n.t('foundationMenu.FresnelReflectors', lang) +
+                        ')?',
+                      icon: <ExclamationCircleOutlined />,
+                      onOk: () => {
+                        if (foundation) {
+                          const removed = elements.filter(
+                            (e) => !e.locked && e.type === ObjectType.FresnelReflector && e.parentId === foundation.id,
+                          );
+                          removeAllChildElementsByType(foundation.id, ObjectType.FresnelReflector);
+                          const removedElements = JSON.parse(JSON.stringify(removed));
+                          const undoableRemoveAllFresnelReflectorChildren = {
+                            name: 'Remove All Fresnel Reflectors on Foundation',
+                            timestamp: Date.now(),
+                            parentId: foundation.id,
+                            removedElements: removedElements,
+                            undo: () => {
+                              setCommonStore((state) => {
+                                state.elements.push(...undoableRemoveAllFresnelReflectorChildren.removedElements);
+                              });
+                            },
+                            redo: () => {
+                              removeAllChildElementsByType(
+                                undoableRemoveAllFresnelReflectorChildren.parentId,
+                                ObjectType.FresnelReflector,
+                              );
+                            },
+                          } as UndoableRemoveAllChildren;
+                          addUndoable(undoableRemoveAllFresnelReflectorChildren);
+                        }
+                      },
+                    });
+                  }}
+                >
+                  {i18n.t('foundationMenu.RemoveAllUnlockedFresnelReflectors', lang)} ({fresnelReflectorCountFoundation}
+                  )
+                </Menu.Item>
+              )}
+
+              {heliostatCountFoundation > 0 && (
+                <Menu.Item
+                  key={'remove-all-heliostats-on-foundation'}
+                  onClick={() => {
+                    Modal.confirm({
+                      title:
+                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllHeliostatsOnFoundation', lang) +
+                        ' (' +
+                        heliostatCountFoundation +
+                        ' ' +
+                        i18n.t('foundationMenu.Heliostats', lang) +
+                        ')?',
+                      icon: <ExclamationCircleOutlined />,
+                      onOk: () => {
+                        if (foundation) {
+                          const removed = elements.filter(
+                            (e) => !e.locked && e.type === ObjectType.Heliostat && e.parentId === foundation.id,
+                          );
+                          removeAllChildElementsByType(foundation.id, ObjectType.Heliostat);
+                          const removedElements = JSON.parse(JSON.stringify(removed));
+                          const undoableRemoveAllHeliostatChildren = {
+                            name: 'Remove All Heliostats on Foundation',
+                            timestamp: Date.now(),
+                            parentId: foundation.id,
+                            removedElements: removedElements,
+                            undo: () => {
+                              setCommonStore((state) => {
+                                state.elements.push(...undoableRemoveAllHeliostatChildren.removedElements);
+                              });
+                            },
+                            redo: () => {
+                              removeAllChildElementsByType(
+                                undoableRemoveAllHeliostatChildren.parentId,
+                                ObjectType.Heliostat,
+                              );
+                            },
+                          } as UndoableRemoveAllChildren;
+                          addUndoable(undoableRemoveAllHeliostatChildren);
+                        }
+                      },
+                    });
+                  }}
+                >
+                  {i18n.t('foundationMenu.RemoveAllUnlockedHeliostats', lang)} ({heliostatCountFoundation})
                 </Menu.Item>
               )}
 

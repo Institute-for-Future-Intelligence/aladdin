@@ -229,7 +229,13 @@ export const i18n_zh_cn = {
       parabolicTrough: {
         AnalyzeDailyYield: '分析当天产出',
         AnalyzeYearlyYield: '分析全年产出',
-        Discretization: '抛物线槽离散化方法',
+        GridCellSize: '计算网格的尺寸',
+        AnalysisOptions: '分析选项',
+      },
+      parabolicDishSubMenu: '抛物线碟',
+      parabolicDish: {
+        AnalyzeDailyYield: '分析当天产出',
+        AnalyzeYearlyYield: '分析全年产出',
         GridCellSize: '计算网格的尺寸',
         AnalysisOptions: '分析选项',
       },
@@ -256,6 +262,7 @@ export const i18n_zh_cn = {
         SunBeamAndHeliodon: '太阳光束和日影仪',
         SolarFarm: '太阳能农场',
         ParabolicTroughArray: '抛物线槽阵列',
+        ParabolicDishArray: '抛物线碟阵列',
         SolarCanopyFormFactors: '太阳能天篷外形设计',
         VegetativeBuffer: '太阳能农场绿化带',
         SolarFarmInRealWorld: '模拟一个真实世界里的太阳能农场',
@@ -302,6 +309,9 @@ export const i18n_zh_cn = {
     foundationMenu: {
       RemoveAllUnlockedSolarPanels: '删除此地基上所有非固定的光伏板',
       RemoveAllUnlockedParabolicTroughs: '删除此地基上所有非固定的抛物线槽',
+      RemoveAllUnlockedParabolicDishes: '删除此地基上所有非固定的抛物线碟',
+      RemoveAllUnlockedFresnelReflectors: '删除此地基上所有非固定的菲涅耳反射镜',
+      RemoveAllUnlockedHeliostats: '删除此地基上所有非固定的定日镜',
       RemoveAllUnlockedSensors: '删除此地基上所有非固定的传感器',
       RemoveAllUnlockedWalls: '删除此地基上所有非固定的墙',
       RemoveAllUnlockedPolygons: '删除此地基上所有非固定的多边形',
@@ -322,6 +332,12 @@ export const i18n_zh_cn = {
       DoYouReallyWantToRemoveAllSolarPanelsOnFoundation: '你确定删除此地基上所有非固定的光伏板吗',
       ParabolicTroughs: '抛物线槽',
       DoYouReallyWantToRemoveAllParabolicTroughsOnFoundation: '你确定删除此地基上所有非固定的抛物线槽吗',
+      ParabolicDishes: '抛物线碟',
+      DoYouReallyWantToRemoveAllParabolicDishesOnFoundation: '你确定删除此地基上所有非固定的抛物线碟吗',
+      FresnelReflectors: '菲涅耳反射镜',
+      DoYouReallyWantToRemoveAllFresnelReflectorsOnFoundation: '你确定删除此地基上所有非固定的菲涅耳反射镜吗',
+      Heliostats: '定日镜',
+      DoYouReallyWantToRemoveAllHeliostatsOnFoundation: '你确定删除此地基上所有非固定的定日镜吗',
       Sensors: '传感器',
       DoYouReallyWantToRemoveAllSensorsOnFoundation: '你确定删除此地基上所有非固定的传感器吗',
       Walls: '墙',
@@ -591,6 +607,17 @@ export const i18n_zh_cn = {
       YearlyTotal: '年发电总量',
       HoverForBreakdown: '在此停留鼠标分列发电量',
       ShowOutputsOfIndividualParabolicTroughs: '显示每行抛物线槽单独发电量',
+    },
+
+    parabolicDishYieldPanel: {
+      ParabolicDishDailyYield: '抛物线碟日发电量',
+      ParabolicDishYearlyYield: '抛物线碟年发电量',
+      Yield: '发电量',
+      YieldPerHour: '每小时发电量',
+      DailyTotal: '日发电总量',
+      YearlyTotal: '年发电总量',
+      HoverForBreakdown: '在此停留鼠标分列发电量',
+      ShowOutputsOfIndividualParabolicDishes: '显示每个抛物线碟单独发电量',
     },
 
     heliodonPanel: {

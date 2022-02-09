@@ -231,7 +231,13 @@ export const i18n_tr = {
       parabolicTrough: {
         AnalyzeDailyYield: 'Analyze Daily Yield',
         AnalyzeYearlyYield: 'Analyze Yearly Yield',
-        Discretization: 'Discretization',
+        GridCellSize: 'Grid Cell Size',
+        AnalysisOptions: 'Analysis Options',
+      },
+      parabolicDishSubMenu: 'Parabolic Dish',
+      parabolicDish: {
+        AnalyzeDailyYield: 'Analyze Daily Yield',
+        AnalyzeYearlyYield: 'Analyze Yearly Yield',
         GridCellSize: 'Grid Cell Size',
         AnalysisOptions: 'Analysis Options',
       },
@@ -258,6 +264,7 @@ export const i18n_tr = {
         SunBeamAndHeliodon: 'Güneþ Iþýný ve Heliodon',
         SolarFarm: 'Güneþ Tarlasý',
         ParabolicTroughArray: 'Parabolic Trough Array',
+        ParabolicDishArray: 'Parabolic Dish Array',
         SolarCanopyFormFactors: 'Solar Canopy Form Factors',
         VegetativeBuffer: 'Vegetative Buffer',
         SolarFarmInRealWorld: 'Gerçek Dünyada Güneþ Tarlasý',
@@ -304,6 +311,9 @@ export const i18n_tr = {
     foundationMenu: {
       RemoveAllUnlockedSolarPanels: 'Tüm Güneþ Panellerini Kaldýr',
       RemoveAllUnlockedParabolicTroughs: 'Remove All Unlocked Parabolic Troughs',
+      RemoveAllUnlockedParabolicDishes: 'Remove All Unlocked Parabolic Dishes',
+      RemoveAllUnlockedFresnelReflectors: 'Remove All Unlocked Fresnel Reflectors',
+      RemoveAllUnlockedHeliostats: 'Remove All Unlocked Heliostats',
       RemoveAllUnlockedSensors: 'Tüm Sensörleri Kaldýr',
       RemoveAllUnlockedWalls: 'Tüm Duvarlarý Kaldýr',
       RemoveAllUnlockedPolygons: 'Tüm Poligonlarý Kaldýr',
@@ -326,6 +336,15 @@ export const i18n_tr = {
       ParabolicTroughs: 'Parabolic Troughs',
       DoYouReallyWantToRemoveAllParabolicTroughsOnFoundation:
         'Do you really want to remove all the parabolic troughs on this foundation that are not locked',
+      ParabolicDishes: 'Parabolic Dishes',
+      DoYouReallyWantToRemoveAllParabolicDishesOnFoundation:
+        'Do you really want to remove all the parabolic dishes on this foundation that are not locked',
+      FresnelReflectors: 'Fresnel Reflectors',
+      DoYouReallyWantToRemoveAllFresnelReflectorsOnFoundation:
+        'Do you really want to remove all the Fresnel reflectors on this foundation that are not locked',
+      Heliostats: 'Heliostats',
+      DoYouReallyWantToRemoveAllHeliostatsOnFoundation:
+        'Do you really want to remove all the heliostats on this foundation that are not locked',
       Sensors: 'Sensörler',
       DoYouReallyWantToRemoveAllSensorsOnFoundation:
         'Bu temel üzerindeki tüm sensörleri gerçekten kaldýrmak istiyor musunuz that are not locked',
@@ -605,6 +624,17 @@ export const i18n_tr = {
       YearlyTotal: 'Yearly Total',
       HoverForBreakdown: 'Hover for breakdown',
       ShowOutputsOfIndividualParabolicTroughs: 'Show outputs of individual parabolic troughs',
+    },
+
+    parabolicDishYieldPanel: {
+      ParabolicDishDailyYield: 'Parabolic Dish Daily Yield',
+      ParabolicDishYearlyYield: 'Parabolic Dish Yearly Yield',
+      Yield: 'Yield',
+      YieldPerHour: 'Yield per Hour',
+      DailyTotal: 'Daily Total',
+      YearlyTotal: 'Yearly Total',
+      HoverForBreakdown: 'Hover for breakdown',
+      ShowOutputsOfIndividualParabolicDishes: 'Show outputs of individual parabolic dishes',
     },
 
     heliodonPanel: {
