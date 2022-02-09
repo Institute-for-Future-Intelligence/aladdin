@@ -26,6 +26,7 @@ import {
 } from '../constants';
 import { ParabolicTroughModel } from './ParabolicTroughModel';
 import { ParabolicDishModel } from './ParabolicDishModel';
+import { FresnelReflectorModel } from './FresnelReflectorModel';
 
 export class ElementModelCloner {
   static clone(
@@ -67,6 +68,12 @@ export class ElementModelCloner {
         if (parent) {
           // must have a parent
           clone = ElementModelCloner.cloneParabolicDish(parent, e as ParabolicDishModel, x, y, z);
+        }
+        break;
+      case ObjectType.FresnelReflector:
+        if (parent) {
+          // must have a parent
+          clone = ElementModelCloner.cloneFresnelReflector(parent, e as FresnelReflectorModel, x, y, z);
         }
         break;
       case ObjectType.Wall:
@@ -345,6 +352,45 @@ export class ElementModelCloner {
       foundationId: foundationId,
       id: short.generate() as string,
     } as ParabolicDishModel;
+  }
+
+  private static cloneFresnelReflector(
+    parent: ElementModel,
+    trough: FresnelReflectorModel,
+    x: number,
+    y: number,
+    z?: number,
+  ) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+        foundationId = parent.id;
+        break;
+    }
+    return {
+      type: ObjectType.FresnelReflector,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: trough.lx,
+      ly: trough.ly,
+      lz: trough.lz,
+      reflectance: trough.reflectance,
+      absorptance: trough.absorptance,
+      opticalEfficiency: trough.opticalEfficiency,
+      thermalEfficiency: trough.thermalEfficiency,
+      moduleLength: trough.moduleLength,
+      tiltAngle: trough.tiltAngle,
+      relativeAzimuth: trough.relativeAzimuth,
+      poleRadius: trough.poleRadius,
+      poleHeight: trough.poleHeight,
+      showLabel: trough.showLabel,
+      normal: [...trough.normal],
+      rotation: trough.parentId ? [...parent.rotation] : [0, 0, 0],
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as FresnelReflectorModel;
   }
 
   private static cloneFoundation(foundation: FoundationModel, x: number, y: number) {

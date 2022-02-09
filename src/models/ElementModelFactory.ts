@@ -32,6 +32,7 @@ import { Util } from '../Util';
 import { HumanData } from '../HumanData';
 import { ParabolicTroughModel } from './ParabolicTroughModel';
 import { ParabolicDishModel } from './ParabolicDishModel';
+import { FresnelReflectorModel } from './FresnelReflectorModel';
 
 export class ElementModelFactory {
   static makeHuman(parentId: string, x: number, y: number, z?: number) {
@@ -249,6 +250,49 @@ export class ElementModelFactory {
       foundationId: foundationId,
       id: short.generate() as string,
     } as ParabolicDishModel;
+  }
+
+  static makeFresnelReflector(
+    parent: ElementModel,
+    x: number,
+    y: number,
+    z?: number,
+    normal?: Vector3,
+    rotation?: number[],
+    lx?: number,
+    ly?: number,
+  ) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+        foundationId = parent.id;
+        break;
+    }
+    return {
+      type: ObjectType.FresnelReflector,
+      reflectance: 0.9,
+      absorptance: 0.95,
+      opticalEfficiency: 0.7,
+      thermalEfficiency: 0.3,
+      moduleLength: 3,
+      relativeAzimuth: 0,
+      tiltAngle: 0,
+      drawSunBeam: false,
+      poleHeight: 0.2, // extra pole height in addition to half of the width
+      poleRadius: 0.05,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: lx ?? 2,
+      ly: ly ?? 9, // north-south alignment by default
+      lz: 0.1,
+      showLabel: false,
+      normal: normal ? normal.toArray() : [0, 0, 1],
+      rotation: rotation ? rotation : [0, 0, 0],
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as FresnelReflectorModel;
   }
 
   static makePolygon(parent: ElementModel, x: number, y: number, z: number, normal?: Vector3, rotation?: number[]) {

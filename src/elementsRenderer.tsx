@@ -30,6 +30,8 @@ import ParabolicTrough from './views/parabolicTrough';
 import { ParabolicTroughModel } from './models/ParabolicTroughModel';
 import ParabolicDish from './views/parabolicDish';
 import { ParabolicDishModel } from './models/ParabolicDishModel';
+import FresnelReflector from './views/fresnelReflector';
+import { FresnelReflectorModel } from './models/FresnelReflectorModel';
 
 const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
@@ -67,6 +69,8 @@ const ElementsRenderer: React.FC = () => {
             return <ParabolicDish key={e.id} {...(e as ParabolicDishModel)} />;
           case ObjectType.ParabolicTrough:
             return <ParabolicTrough key={e.id} {...(e as ParabolicTroughModel)} />;
+          case ObjectType.FresnelReflector:
+            return <FresnelReflector key={e.id} {...(e as FresnelReflectorModel)} />;
           case ObjectType.Wall:
             return <Wall key={e.id} {...(e as WallModel)} />;
           case ObjectType.Roof:

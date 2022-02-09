@@ -5,5 +5,6 @@
 import { ConcentratedSolarPowerCollector } from './ConcentratedSolarPowerCollector';
 
 export interface FresnelReflectorModel extends ConcentratedSolarPowerCollector {
+  // lx is the width, ly is the module length multiplied by the number of modules
   moduleLength: number;
 }

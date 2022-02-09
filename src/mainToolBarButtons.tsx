@@ -14,6 +14,7 @@ import TreeImage from './assets/tree.png';
 import HumanImage from './assets/human.png';
 import ParabolicTroughImage from './assets/parabolic_trough.png';
 import ParabolicDishImage from './assets/parabolic_dish.png';
+import FresnelReflectorImage from './assets/fresnel_reflector.png';
 
 import React, { useState } from 'react';
 import { useStore } from './stores/common';
@@ -331,6 +332,27 @@ const MainToolBarButtons = () => {
         />
         {i18n.t('toolbar.SwitchToAddingParabolicDish', lang)}
       </Menu.Item>
+      <Menu.Item
+        style={{ userSelect: 'none' }}
+        key="add-fresnel-reflector-menu-item"
+        onClick={() => {
+          setCategory3Flag(ObjectType.FresnelReflector);
+          setMode(ObjectType.FresnelReflector);
+        }}
+      >
+        <img
+          alt={'Fresnel Reflector'}
+          src={FresnelReflectorImage}
+          height={36}
+          width={36}
+          style={{
+            filter: defaultFilter,
+            verticalAlign: 'middle',
+            marginRight: '10px',
+          }}
+        />
+        {i18n.t('toolbar.SwitchToAddingFresnelReflector', lang)}
+      </Menu.Item>
     </Menu>
   );
 
@@ -611,6 +633,23 @@ const MainToolBarButtons = () => {
             }}
             onClick={() => {
               setMode(ObjectType.ParabolicDish);
+            }}
+          />
+        )}
+        {category3Flag === ObjectType.FresnelReflector && (
+          <img
+            title={i18n.t('toolbar.AddFresnelReflector', lang)}
+            alt={'Fresnel Reflector'}
+            src={FresnelReflectorImage}
+            height={36}
+            width={36}
+            style={{
+              filter: objectTypeToAdd === ObjectType.FresnelReflector ? selectFilter : defaultFilter,
+              cursor: 'pointer',
+              verticalAlign: 'middle',
+            }}
+            onClick={() => {
+              setMode(ObjectType.FresnelReflector);
             }}
           />
         )}

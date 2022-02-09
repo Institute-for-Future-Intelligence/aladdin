@@ -3,8 +3,9 @@
  */
 
 import { ElementModel } from './ElementModel';
-import { FoundationTexture } from '../types';
+import { FoundationTexture, SolarReceiver } from '../types';
 
 export interface FoundationModel extends ElementModel {
   textureType: FoundationTexture;
+  solarReceiver?: SolarReceiver;
 }

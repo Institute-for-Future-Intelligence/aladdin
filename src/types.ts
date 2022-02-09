@@ -122,6 +122,11 @@ export enum ParabolicDishStructureType {
   Tripod = 2,
 }
 
+export enum SolarReceiver {
+  Tube = 1,
+  Tower = 2,
+}
+
 export enum ActionType {
   Select = 'Select',
   Move = 'Move',

@@ -1,12 +1,12 @@
 {
-  "docid": "iFuF4F21yDQxuF7AK5drth",
-  "timestamp": 1644414984908,
+  "docid": "6iiWYQDrr9q95Wh5zAdjxV",
+  "timestamp": 1644420206104,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "name": "default",
-    "date": "Wed Jun 22 2022 15:00:00 GMT-0400 (Eastern Daylight Time)",
+    "date": "Thu Sep 22 2022 14:00:00 GMT-0400 (Eastern Daylight Time)",
     "ground": {
       "albedo": 0.3,
       "thermalDiffusivity": 0.05,
@@ -68,7 +68,7 @@
       "opticalEfficiency": 0.7,
       "thermalEfficiency": 0.3,
       "moduleLength": 3,
-      "latusRectum": 12,
+      "latusRectum": 15,
       "relativeAzimuth": 0,
       "tiltAngle": 0,
       "structureType": 2,
@@ -102,8 +102,8 @@
     {
       "type": "Human",
       "name": "Jack",
-      "cx": -4.9395052975337865,
-      "cy": 4.104621398416292,
+      "cx": 2.1160523019559125,
+      "cy": -2.004760697934909,
       "cz": 0.05000000074505806,
       "lx": 0.6,
       "lz": 1.8,
@@ -119,7 +119,47 @@
       ],
       "parentId": "1jWhHcaUD3hYBmq8heF7Mt",
       "id": "5yjJpM6KSokHFbghVSmguB",
-      "selected": false
+      "selected": false,
+      "ly": 0.6
+    },
+    {
+      "type": "Cuboid",
+      "cx": -0.0385404512454377,
+      "cy": 0.14330355436037368,
+      "cz": 0.5,
+      "lx": 1.410367011670566,
+      "ly": 1.229722993301011,
+      "lz": 1,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "id": "wjK4XRngAZ84SKTN23jchz"
     }
   ],
   "view": {
@@ -156,24 +196,24 @@
     "showDailyLightSensorPanel": false,
     "shadowEnabled": true,
     "cameraPosition": [
-      -12.507732310636287,
-      -13.100739719194824,
-      6.034015528059619
+      -2.42018328063582,
+      -15.878268188373026,
+      3.8943744657694412
     ],
     "panCenter": [
-      1.808658350342908,
-      2.5143036682641413,
-      4.361170911981709
+      2.874525283798386,
+      1.555148727597212,
+      3.8943744657694412
     ],
     "orthographic": false,
     "enableRotate": true,
-    "cameraZoom": 24.55475326309651,
+    "cameraZoom": 31.733468832186784,
     "stickyNotePanelX": 0,
     "stickyNotePanelY": 0,
     "cameraPosition2D": [
       0,
       -0.000020000888987681265,
-      19.999999999989964
+      19.999999999989623
     ],
     "panCenter2D": [
       0,

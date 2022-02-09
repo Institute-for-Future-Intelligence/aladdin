@@ -63,6 +63,7 @@ import { Point2 } from '../models/Point2';
 import { HorizontalRuler } from './horizontalRuler';
 import { showError } from '../helpers';
 import { SolarCollector } from '../models/SolarCollector';
+import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 
 const Foundation = ({
   id,
@@ -78,6 +79,7 @@ const Foundation = ({
   locked = false,
   selected = false,
   textureType = FoundationTexture.NoTexture,
+  solarReceiver,
 }: FoundationModel) => {
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic);
@@ -204,6 +206,11 @@ const Foundation = ({
         // pole height of parabolic dish is relative to its radius
         const dish = grabRef.current as ParabolicDishModel;
         poleHeight = dish.poleHeight + dish.lx / 2 + (dish.lx * dish.lx) / (4 * dish.latusRectum);
+        break;
+      case ObjectType.FresnelReflector:
+        // pole height of Fresnel reflector is relative to its half width
+        const reflector = grabRef.current as FresnelReflectorModel;
+        poleHeight = reflector.poleHeight + reflector.lx / 2;
         break;
     }
     if (poleHeight >= 0) {
@@ -1028,6 +1035,7 @@ const Foundation = ({
           switch (selectedElement.type) {
             case ObjectType.SolarPanel:
             case ObjectType.ParabolicTrough:
+            case ObjectType.FresnelReflector:
               oldAzimuthRef.current = (selectedElement as SolarCollector).relativeAzimuth;
               break;
             case ObjectType.Polygon:
@@ -1746,6 +1754,55 @@ const Foundation = ({
                     Math.ceil((dyl - parabolicTrough.moduleLength / 2) / parabolicTrough.moduleLength),
                   );
                   dyl = n * parabolicTrough.moduleLength;
+                  const wcx = resizeAnchor.x + (sign * (dyl * Math.sin(angle))) / 2;
+                  const wcy = resizeAnchor.y - (sign * (dyl * Math.cos(angle))) / 2;
+                  const wc = new Vector2(wcx, wcy); // world panel center
+                  const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
+                  const newCx = rc.x / lx;
+                  const newCy = rc.y / ly;
+                  if (isSolarCollectorNewSizeOk(collector, newCx, newCy, collector.lx, dyl)) {
+                    updateElementLyById(collector.id, dyl);
+                    setElementPosition(collector.id, newCx, newCy);
+                    updateDesignInfo();
+                  }
+                }
+                break;
+              case ResizeHandleType.Left:
+              case ResizeHandleType.Right:
+                // these two handles change the width, which is not controlled by module length
+                {
+                  let sign = resizeHandleType === ResizeHandleType.Left ? -1 : 1;
+                  const theta = rp.angle() - angle + (resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
+                  let dxl = distance * Math.cos(theta);
+                  const wcx = resizeAnchor.x + (sign * (dxl * Math.cos(angle))) / 2;
+                  const wcy = resizeAnchor.y + (sign * (dxl * Math.sin(angle))) / 2;
+                  const wc = new Vector2(wcx, wcy);
+                  const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
+                  const newCx = rc.x / lx;
+                  const newCy = rc.y / ly;
+                  if (isSolarCollectorNewSizeOk(collector, newCx, newCy, dxl, collector.ly)) {
+                    updateElementLxById(collector.id, dxl);
+                    setElementPosition(collector.id, newCx, newCy);
+                    updateDesignInfo();
+                  }
+                }
+                break;
+            }
+          } else if (collector.type === ObjectType.FresnelReflector) {
+            const fresnelReflector = collector as FresnelReflectorModel;
+            switch (resizeHandleType) {
+              case ResizeHandleType.Lower:
+              case ResizeHandleType.Upper:
+                // these two handles change the length, which is controlled by module length
+                {
+                  const sign = resizeHandleType === ResizeHandleType.Lower ? 1 : -1;
+                  const theta = rp.angle() - angle + sign * HALF_PI;
+                  let dyl = distance * Math.cos(theta);
+                  const n = Math.max(
+                    1,
+                    Math.ceil((dyl - fresnelReflector.moduleLength / 2) / fresnelReflector.moduleLength),
+                  );
+                  dyl = n * fresnelReflector.moduleLength;
                   const wcx = resizeAnchor.x + (sign * (dyl * Math.sin(angle))) / 2;
                   const wcy = resizeAnchor.y - (sign * (dyl * Math.cos(angle))) / 2;
                   const wc = new Vector2(wcx, wcy); // world panel center

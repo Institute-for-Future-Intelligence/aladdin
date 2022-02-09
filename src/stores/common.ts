@@ -332,6 +332,10 @@ export interface CommonStoreState {
   parabolicTroughActionScope: Scope;
   setParabolicTroughActionScope: (scope: Scope) => void;
 
+  // for Fresnel reflectors
+  fresnelReflectorActionScope: Scope;
+  setFresnelReflectorActionScope: (scope: Scope) => void;
+
   // for parabolic dishes
   parabolicDishActionScope: Scope;
   setParabolicDishActionScope: (scope: Scope) => void;
@@ -2366,6 +2370,14 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          // for Fresnel reflector
+          fresnelReflectorActionScope: Scope.OnlyThisObject,
+          setFresnelReflectorActionScope(scope) {
+            immerSet((state: CommonStoreState) => {
+              state.fresnelReflectorActionScope = scope;
+            });
+          },
+
           // for parabolic dishes
           parabolicDishActionScope: Scope.OnlyThisObject,
           setParabolicDishActionScope(scope) {
@@ -2868,6 +2880,25 @@ export const useStore = create<CommonStoreState>(
                   );
                   model = parabolicDish;
                   state.elements.push(parabolicDish);
+                  break;
+                case ObjectType.FresnelReflector:
+                  const fresnelReflectorParentModel = parent as ElementModel;
+                  const fresnelReflectorRelativeCoordinates = Util.relativeCoordinates(
+                    p.x,
+                    p.y,
+                    p.z,
+                    fresnelReflectorParentModel,
+                  );
+                  const fresnelReflector = ElementModelFactory.makeFresnelReflector(
+                    fresnelReflectorParentModel,
+                    fresnelReflectorRelativeCoordinates.x,
+                    fresnelReflectorRelativeCoordinates.y,
+                    fresnelReflectorRelativeCoordinates.z,
+                    normal,
+                    'rotation' in parent ? parent.rotation : undefined,
+                  );
+                  model = fresnelReflector;
+                  state.elements.push(fresnelReflector);
                   break;
                 case ObjectType.Foundation:
                   const foundation = ElementModelFactory.makeFoundation(p.x, p.y);
@@ -3423,6 +3454,8 @@ export const useStore = create<CommonStoreState>(
                     }
                     case ObjectType.SolarPanel:
                     case ObjectType.ParabolicDish:
+                    case ObjectType.Heliostat:
+                    case ObjectType.FresnelReflector:
                     case ObjectType.ParabolicTrough: {
                       if (state.overlapWithSibling(e)) {
                         // overlap, do not approve
@@ -3554,6 +3587,8 @@ export const useStore = create<CommonStoreState>(
                       approved = true;
                       break;
                     case ObjectType.SolarPanel:
+                    case ObjectType.FresnelReflector:
+                    case ObjectType.Heliostat:
                     case ObjectType.ParabolicDish:
                     case ObjectType.ParabolicTrough:
                       if (e.parentId) {
