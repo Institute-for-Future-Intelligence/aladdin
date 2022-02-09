@@ -529,6 +529,15 @@ export const i18n_en = {
       AllParabolicTroughs: 'All Parabolic Troughs',
     },
 
+    fresnelReflectorMenu: {
+      ModuleLength: 'Module Length',
+      Modules: 'modules',
+      ModulesLong: 'modules long',
+      OnlyThisFresnelReflector: 'Only This Fresnel Reflector',
+      AllFresnelReflectorsAboveFoundation: 'All Fresnel Reflectors Above the Same Foundation',
+      AllFresnelReflectors: 'All Fresnel Reflectors',
+    },
+
     parabolicDishMenu: {
       ReceiverStructure: 'Receiver Structure',
       CentralPole: 'Central Pole',

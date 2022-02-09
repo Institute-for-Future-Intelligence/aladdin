@@ -378,6 +378,10 @@ export const parabolicTroughActionScope = (state: CommonStoreState) => state.par
 
 export const setParabolicTroughActionScope = (state: CommonStoreState) => state.setParabolicTroughActionScope;
 
+export const fresnelReflectorActionScope = (state: CommonStoreState) => state.fresnelReflectorActionScope;
+
+export const setFresnelReflectorActionScope = (state: CommonStoreState) => state.setFresnelReflectorActionScope;
+
 export const parabolicDishActionScope = (state: CommonStoreState) => state.parabolicDishActionScope;
 
 export const setParabolicDishActionScope = (state: CommonStoreState) => state.setParabolicDishActionScope;

@@ -513,6 +513,15 @@ export const i18n_zh_tw = {
       AllParabolicTroughs: '所有的拋物線槽',
     },
 
+    fresnelReflectorMenu: {
+      ModuleLength: '模塊長度',
+      Modules: '模塊',
+      ModulesLong: '模塊長',
+      OnlyThisFresnelReflector: '只這個菲涅耳反射鏡',
+      AllFresnelReflectorsAboveFoundation: '同一地基上所有的菲涅耳反射鏡',
+      AllFresnelReflectors: '所有的菲涅耳反射鏡',
+    },
+
     parabolicDishMenu: {
       ReceiverStructure: '接收器結構',
       CentralPole: '中心直柱',
