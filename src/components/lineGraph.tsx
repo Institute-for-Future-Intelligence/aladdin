@@ -139,7 +139,7 @@ const LineGraph = ({
       );
     }
     return lines;
-  }, [lineCount, lineWidth, symbolCount, symbolSize, legendDataKey]);
+  }, [labels, lineCount, lineWidth, symbolCount, symbolSize, legendDataKey]);
 
   // @ts-ignore
   const onMouseDown = (e) => {};
