@@ -191,6 +191,8 @@ export const foundationActionScope = (state: CommonStoreState) => state.foundati
 
 export const setFoundationActionScope = (state: CommonStoreState) => state.setFoundationActionScope;
 
+export const updateFoundationSolarReceiverById = (state: CommonStoreState) => state.updateFoundationSolarReceiverById;
+
 export const updateFoundationTextureById = (state: CommonStoreState) => state.updateFoundationTextureById;
 
 export const updateFoundationTextureForAll = (state: CommonStoreState) => state.updateFoundationTextureForAll;
@@ -451,6 +453,9 @@ export const countElementsByType = (state: CommonStoreState) => state.countEleme
 export const countObservers = (state: CommonStoreState) => state.countObservers;
 
 export const countAllChildElementsByType = (state: CommonStoreState) => state.countAllChildElementsByType;
+
+export const countAllChildElementsByTypeOnFoundation = (state: CommonStoreState) =>
+  state.countAllChildElementsByTypeOnFoundation;
 
 export const countAllChildSolarPanels = (state: CommonStoreState) => state.countAllChildSolarPanels;
 

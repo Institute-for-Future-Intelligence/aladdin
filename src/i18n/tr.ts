@@ -366,6 +366,9 @@ export const i18n_tr = {
       AllConnectedFoundations: 'Tüm Baðlantýlý Temeller',
       AllFoundations: 'Tüm Temeller',
       AddPolygon: 'Poligon Ekle',
+      SelectSolarReceiver: 'Select Solar Receiver',
+      ReceiverTubeForFresnelReflectors: 'Receiver Tube for Fresnel Reflectors',
+      ReceiverTowerForHeliostats: 'Receiver Tower for Heliostats',
     },
 
     cuboidMenu: {

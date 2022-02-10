@@ -365,6 +365,9 @@ export const i18n_es = {
       AllConnectedFoundations: 'Todas las bases conectadas',
       AllFoundations: 'Todas las bases',
       AddPolygon: 'Añadir polígono',
+      SelectSolarReceiver: 'Select Solar Receiver',
+      ReceiverTubeForFresnelReflectors: 'Receiver Tube for Fresnel Reflectors',
+      ReceiverTowerForHeliostats: 'Receiver Tower for Heliostats',
     },
 
     cuboidMenu: {

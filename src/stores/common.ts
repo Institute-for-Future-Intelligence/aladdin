@@ -27,6 +27,7 @@ import {
   ResizeHandleType,
   RotateHandleType,
   Scope,
+  SolarReceiver,
   TrackerType,
   TreeType,
   User,
@@ -68,6 +69,7 @@ import { SolarCollector } from '../models/SolarCollector';
 import { ConcentratedSolarPowerCollector } from '../models/ConcentratedSolarPowerCollector';
 import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import { ParabolicDishModel } from '../models/ParabolicDishModel';
+import { ElementCounter } from './ElementCounter';
 
 enableMapSet();
 
@@ -251,6 +253,7 @@ export interface CommonStoreState {
   setFoundationActionScope: (scope: Scope) => void;
   updateFoundationTextureById: (id: string, texture: FoundationTexture) => void;
   updateFoundationTextureForAll: (texture: FoundationTexture) => void;
+  updateFoundationSolarReceiverById: (id: string, receiver: SolarReceiver | undefined) => void;
 
   // for cuboids
   cuboidActionScope: Scope;
@@ -409,6 +412,8 @@ export interface CommonStoreState {
   countElementsByReferenceId: (id: string) => number;
   removeElementsByReferenceId: (id: string, cache: boolean) => void;
   getChildren: (id: string) => ElementModel[];
+  // the following goes faster than counting individual types of children on foundation through multiple loops
+  countAllChildElementsByTypeOnFoundation: (foundationId: string) => ElementCounter;
   countAllChildElementsByType: (parentId: string, type: ObjectType, excludeLocked?: boolean) => number;
   countAllChildSolarPanels: (parentId: string, excludeLocked?: boolean) => number; // special case as a rack may have many solar panels
   countAllSolarPanels: () => number;
@@ -1686,6 +1691,16 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && !e.locked) {
                   (e as FoundationModel).textureType = texture;
+                }
+              }
+            });
+          },
+          updateFoundationSolarReceiverById(id, receiver) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  (e as FoundationModel).solarReceiver = receiver;
+                  break;
                 }
               }
             });
@@ -3161,6 +3176,61 @@ export const useStore = create<CommonStoreState>(
               }
               state.updateDesignInfo();
             });
+          },
+          countAllChildElementsByTypeOnFoundation(foundationId) {
+            const counter = new ElementCounter();
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (!e.locked && e.foundationId === foundationId) {
+                  switch (e.type) {
+                    case ObjectType.Wall:
+                      counter.wallCount++;
+                      break;
+                    case ObjectType.Human:
+                      counter.humanCount++;
+                      break;
+                    case ObjectType.Tree:
+                      counter.treeCount++;
+                      break;
+                    case ObjectType.Polygon:
+                      counter.polygonCount++;
+                      break;
+                    case ObjectType.Sensor:
+                      counter.sensorCount++;
+                      break;
+                    case ObjectType.SolarPanel:
+                      counter.solarPanelCount++;
+                      const sp = e as SolarPanelModel;
+                      const pvModel = state.getPvModule(sp.pvModelName);
+                      if (pvModel) {
+                        let nx, ny;
+                        if (sp.orientation === Orientation.portrait) {
+                          nx = Math.max(1, Math.round(sp.lx / pvModel.width));
+                          ny = Math.max(1, Math.round(sp.ly / pvModel.length));
+                        } else {
+                          nx = Math.max(1, Math.round(sp.lx / pvModel.length));
+                          ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+                        }
+                        counter.solarPanelModuleCount += nx * ny;
+                      }
+                      break;
+                    case ObjectType.ParabolicDish:
+                      counter.parabolicDishCount++;
+                      break;
+                    case ObjectType.ParabolicTrough:
+                      counter.parabolicTroughCount++;
+                      break;
+                    case ObjectType.FresnelReflector:
+                      counter.fresnelReflectorCount++;
+                      break;
+                    case ObjectType.Heliostat:
+                      counter.heliostatCount++;
+                      break;
+                  }
+                }
+              }
+            });
+            return counter;
           },
           countAllChildElementsByType(parentId, type, excludeLocked) {
             let count = 0;

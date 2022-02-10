@@ -354,6 +354,9 @@ export const i18n_zh_tw = {
       AllConnectedFoundations: '所有相連的地基',
       AllFoundations: '所有的地基',
       AddPolygon: '添加多邊形',
+      SelectSolarReceiver: '選擇太陽能吸收器',
+      ReceiverTubeForFresnelReflectors: '和菲涅爾反射鏡配套的吸熱長管',
+      ReceiverTowerForHeliostats: '和定日鏡配套的吸熱高塔',
     },
 
     cuboidMenu: {

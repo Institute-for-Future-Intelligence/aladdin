@@ -3,13 +3,13 @@
  */
 
 import React, { useState } from 'react';
-import { Menu, Modal } from 'antd';
+import { Menu, Modal, Radio, Space } from 'antd';
 import { Copy, Cut, Lock, Paste } from '../menuItems';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { FoundationTexture, ObjectType } from '../../../types';
+import { FoundationTexture, ObjectType, SolarReceiver } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 import FoundationColorSelection from './foundationColorSelection';
@@ -22,6 +22,8 @@ import { FoundationModel } from '../../../models/FoundationModel';
 import { UndoableAdd } from '../../../undo/UndoableAdd';
 import { Vector3 } from 'three';
 import { UNIT_VECTOR_POS_Z } from '../../../constants';
+import { UndoableChange } from '../../../undo/UndoableChange';
+import { ElementCounter } from '../../../stores/ElementCounter';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -29,15 +31,16 @@ export const FoundationMenu = () => {
   const elements = useStore(Selector.elements);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const countAllChildElementsByType = useStore(Selector.countAllChildElementsByType);
-  const countAllChildSolarPanels = useStore(Selector.countAllChildSolarPanels);
+  const countAllChildElementsByTypeOnFoundation = useStore(Selector.countAllChildElementsByTypeOnFoundation);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
   const elementsToPaste = useStore(Selector.elementsToPaste);
   const addElement = useStore(Selector.addElement);
   const removeElementById = useStore(Selector.removeElementById);
   const setApplyCount = useStore(Selector.setApplyCount);
+  const updateFoundationSolarReceiverById = useStore(Selector.updateFoundationSolarReceiverById);
 
+  const [selectedSolarReceiver, setSelectedSolarReceiver] = useState(foundation?.solarReceiver);
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
@@ -45,27 +48,7 @@ export const FoundationMenu = () => {
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
-  const humanCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Human, true) : 0;
-  const treeCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Tree, true) : 0;
-  const wallCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Wall, true) : 0;
-  const polygonCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Polygon, true) : 0;
-  const sensorCountFoundation = foundation ? countAllChildElementsByType(foundation.id, ObjectType.Sensor, true) : 0;
-  const solarRackCountFoundation = foundation
-    ? countAllChildElementsByType(foundation.id, ObjectType.SolarPanel, true)
-    : 0;
-  const solarPanelCountFoundation = foundation ? countAllChildSolarPanels(foundation.id, true) : 0;
-  const parabolicTroughCountFoundation = foundation
-    ? countAllChildElementsByType(foundation.id, ObjectType.ParabolicTrough, true)
-    : 0;
-  const parabolicDishCountFoundation = foundation
-    ? countAllChildElementsByType(foundation.id, ObjectType.ParabolicDish, true)
-    : 0;
-  const fresnelReflectorCountFoundation = foundation
-    ? countAllChildElementsByType(foundation.id, ObjectType.FresnelReflector, true)
-    : 0;
-  const heliostatCountFoundation = foundation
-    ? countAllChildElementsByType(foundation.id, ObjectType.Heliostat, true)
-    : 0;
+  const counter = foundation ? countAllChildElementsByTypeOnFoundation(foundation.id) : new ElementCounter();
   const lang = { lng: language };
 
   const legalToPaste = () => {
@@ -100,19 +83,19 @@ export const FoundationMenu = () => {
         <Copy keyName={'foundation-copy'} />
         {editable && <Cut keyName={'foundation-cut'} />}
         <Lock keyName={'foundation-lock'} />
-        {(sensorCountFoundation > 0 ||
-          solarPanelCountFoundation > 0 ||
-          parabolicTroughCountFoundation > 0 ||
-          parabolicDishCountFoundation > 0 ||
-          fresnelReflectorCountFoundation > 0 ||
-          heliostatCountFoundation > 0 ||
-          treeCountFoundation > 0 ||
-          humanCountFoundation > 0 ||
-          wallCountFoundation > 0 ||
-          polygonCountFoundation > 0) &&
+        {(counter.sensorCount > 0 ||
+          counter.solarPanelCount > 0 ||
+          counter.parabolicTroughCount > 0 ||
+          counter.parabolicDishCount > 0 ||
+          counter.fresnelReflectorCount > 0 ||
+          counter.heliostatCount > 0 ||
+          counter.treeCount > 0 ||
+          counter.humanCount > 0 ||
+          counter.wallCount > 0 ||
+          counter.polygonCount > 0) &&
           contextMenuObjectType && (
             <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
-              {wallCountFoundation > 0 && (
+              {counter.wallCount > 0 && (
                 <Menu.Item
                   key={'remove-all-walls-on-foundation'}
                   onClick={() => {
@@ -120,7 +103,7 @@ export const FoundationMenu = () => {
                       title:
                         i18n.t('foundationMenu.DoYouReallyWantToRemoveAllWallsOnFoundation', lang) +
                         ' (' +
-                        wallCountFoundation +
+                        counter.wallCount +
                         ' ' +
                         i18n.t('foundationMenu.Walls', lang) +
                         ')?',
@@ -153,11 +136,11 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedWalls', lang)} ({wallCountFoundation})
+                  {i18n.t('foundationMenu.RemoveAllUnlockedWalls', lang)} ({counter.wallCount})
                 </Menu.Item>
               )}
 
-              {sensorCountFoundation > 0 && (
+              {counter.sensorCount > 0 && (
                 <Menu.Item
                   key={'remove-all-sensors-on-foundation'}
                   onClick={() => {
@@ -165,7 +148,7 @@ export const FoundationMenu = () => {
                       title:
                         i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSensorsOnFoundation', lang) +
                         ' (' +
-                        sensorCountFoundation +
+                        counter.sensorCount +
                         ' ' +
                         i18n.t('foundationMenu.Sensors', lang) +
                         ')?',
@@ -197,11 +180,11 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedSensors', lang)} ({sensorCountFoundation})
+                  {i18n.t('foundationMenu.RemoveAllUnlockedSensors', lang)} ({counter.sensorCount})
                 </Menu.Item>
               )}
 
-              {solarPanelCountFoundation > 0 && (
+              {counter.solarPanelCount > 0 && (
                 <Menu.Item
                   key={'remove-all-solar-panels-on-foundation'}
                   onClick={() => {
@@ -209,11 +192,11 @@ export const FoundationMenu = () => {
                       title:
                         i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSolarPanelsOnFoundation', lang) +
                         ' (' +
-                        solarPanelCountFoundation +
+                        counter.solarPanelModuleCount +
                         ' ' +
                         i18n.t('foundationMenu.SolarPanels', lang) +
                         ', ' +
-                        solarRackCountFoundation +
+                        counter.solarPanelCount +
                         ' ' +
                         i18n.t('foundationMenu.Racks', lang) +
                         ')?',
@@ -249,13 +232,13 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedSolarPanels', lang)}&nbsp; ({solarPanelCountFoundation}{' '}
-                  {i18n.t('foundationMenu.SolarPanels', lang)}, {solarRackCountFoundation}{' '}
+                  {i18n.t('foundationMenu.RemoveAllUnlockedSolarPanels', lang)}&nbsp; ({counter.solarPanelModuleCount}{' '}
+                  {i18n.t('foundationMenu.SolarPanels', lang)}, {counter.solarPanelCount}{' '}
                   {i18n.t('foundationMenu.Racks', lang)})
                 </Menu.Item>
               )}
 
-              {parabolicTroughCountFoundation > 0 && (
+              {counter.parabolicTroughCount > 0 && (
                 <Menu.Item
                   key={'remove-all-parabolic-troughs-on-foundation'}
                   onClick={() => {
@@ -263,7 +246,7 @@ export const FoundationMenu = () => {
                       title:
                         i18n.t('foundationMenu.DoYouReallyWantToRemoveAllParabolicTroughsOnFoundation', lang) +
                         ' (' +
-                        parabolicTroughCountFoundation +
+                        counter.parabolicTroughCount +
                         ' ' +
                         i18n.t('foundationMenu.ParabolicTroughs', lang) +
                         ')?',
@@ -298,11 +281,11 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedParabolicTroughs', lang)} ({parabolicTroughCountFoundation})
+                  {i18n.t('foundationMenu.RemoveAllUnlockedParabolicTroughs', lang)} ({counter.parabolicTroughCount})
                 </Menu.Item>
               )}
 
-              {parabolicDishCountFoundation > 0 && (
+              {counter.parabolicDishCount > 0 && (
                 <Menu.Item
                   key={'remove-all-parabolic-dishes-on-foundation'}
                   onClick={() => {
@@ -310,7 +293,7 @@ export const FoundationMenu = () => {
                       title:
                         i18n.t('foundationMenu.DoYouReallyWantToRemoveAllParabolicDishesOnFoundation', lang) +
                         ' (' +
-                        parabolicDishCountFoundation +
+                        counter.parabolicDishCount +
                         ' ' +
                         i18n.t('foundationMenu.ParabolicDishes', lang) +
                         ')?',
@@ -345,11 +328,11 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedParabolicDishes', lang)} ({parabolicDishCountFoundation})
+                  {i18n.t('foundationMenu.RemoveAllUnlockedParabolicDishes', lang)} ({counter.parabolicDishCount})
                 </Menu.Item>
               )}
 
-              {fresnelReflectorCountFoundation > 0 && (
+              {counter.fresnelReflectorCount > 0 && (
                 <Menu.Item
                   key={'remove-all-fresnel-reflector-on-foundation'}
                   onClick={() => {
@@ -357,7 +340,7 @@ export const FoundationMenu = () => {
                       title:
                         i18n.t('foundationMenu.DoYouReallyWantToRemoveAllFresnelReflectorsOnFoundation', lang) +
                         ' (' +
-                        fresnelReflectorCountFoundation +
+                        counter.fresnelReflectorCount +
                         ' ' +
                         i18n.t('foundationMenu.FresnelReflectors', lang) +
                         ')?',
@@ -392,12 +375,11 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedFresnelReflectors', lang)} ({fresnelReflectorCountFoundation}
-                  )
+                  {i18n.t('foundationMenu.RemoveAllUnlockedFresnelReflectors', lang)} ({counter.fresnelReflectorCount})
                 </Menu.Item>
               )}
 
-              {heliostatCountFoundation > 0 && (
+              {counter.heliostatCount > 0 && (
                 <Menu.Item
                   key={'remove-all-heliostats-on-foundation'}
                   onClick={() => {
@@ -405,7 +387,7 @@ export const FoundationMenu = () => {
                       title:
                         i18n.t('foundationMenu.DoYouReallyWantToRemoveAllHeliostatsOnFoundation', lang) +
                         ' (' +
-                        heliostatCountFoundation +
+                        counter.heliostatCount +
                         ' ' +
                         i18n.t('foundationMenu.Heliostats', lang) +
                         ')?',
@@ -440,11 +422,11 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedHeliostats', lang)} ({heliostatCountFoundation})
+                  {i18n.t('foundationMenu.RemoveAllUnlockedHeliostats', lang)} ({counter.heliostatCount})
                 </Menu.Item>
               )}
 
-              {polygonCountFoundation > 0 && (
+              {counter.polygonCount > 0 && (
                 <Menu.Item
                   key={'remove-all-polygons-on-foundation'}
                   onClick={() => {
@@ -452,7 +434,7 @@ export const FoundationMenu = () => {
                       title:
                         i18n.t('foundationMenu.DoYouReallyWantToRemoveAllPolygonsOnFoundation', lang) +
                         ' (' +
-                        polygonCountFoundation +
+                        counter.polygonCount +
                         ' ' +
                         i18n.t('foundationMenu.Polygons', lang) +
                         ')?',
@@ -487,11 +469,11 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedPolygons', lang)} ({polygonCountFoundation})
+                  {i18n.t('foundationMenu.RemoveAllUnlockedPolygons', lang)} ({counter.polygonCount})
                 </Menu.Item>
               )}
 
-              {humanCountFoundation > 0 && (
+              {counter.humanCount > 0 && (
                 <Menu.Item
                   key={'remove-all-humans-on-foundation'}
                   onClick={() => {
@@ -499,7 +481,7 @@ export const FoundationMenu = () => {
                       title:
                         i18n.t('foundationMenu.DoYouReallyWantToRemoveAllHumansOnFoundation', lang) +
                         ' (' +
-                        humanCountFoundation +
+                        counter.humanCount +
                         ' ' +
                         i18n.t('foundationMenu.Humans', lang) +
                         ')?',
@@ -531,11 +513,11 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedHumans', lang)} ({humanCountFoundation})
+                  {i18n.t('foundationMenu.RemoveAllUnlockedHumans', lang)} ({counter.humanCount})
                 </Menu.Item>
               )}
 
-              {treeCountFoundation > 0 && (
+              {counter.treeCount > 0 && (
                 <Menu.Item
                   key={'remove-all-trees-on-foundation'}
                   onClick={() => {
@@ -543,7 +525,7 @@ export const FoundationMenu = () => {
                       title:
                         i18n.t('foundationMenu.DoYouReallyWantToRemoveAllTreesOnFoundation', lang) +
                         ' (' +
-                        treeCountFoundation +
+                        counter.treeCount +
                         ' ' +
                         i18n.t('foundationMenu.Trees', lang) +
                         ')?',
@@ -575,7 +557,7 @@ export const FoundationMenu = () => {
                     });
                   }}
                 >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedTrees', lang)} ({treeCountFoundation})
+                  {i18n.t('foundationMenu.RemoveAllUnlockedTrees', lang)} ({counter.treeCount})
                 </Menu.Item>
               )}
             </SubMenu>
@@ -700,6 +682,55 @@ export const FoundationMenu = () => {
         >
           {i18n.t('foundationMenu.AddPolygon', lang)}
         </Menu.Item>
+
+        {(counter.fresnelReflectorCount > 0 || counter.heliostatCount > 0) && (
+          <SubMenu
+            key={'select-solar-receiver'}
+            title={i18n.t('foundationMenu.SelectSolarReceiver', lang)}
+            style={{ paddingLeft: '24px' }}
+          >
+            <Radio.Group
+              value={selectedSolarReceiver}
+              style={{ paddingLeft: '12px' }}
+              onChange={(e) => {
+                if (foundation) {
+                  const oldReceiver = foundation.solarReceiver;
+                  const newReceiver = e.target.value;
+                  const undoableChange = {
+                    name: 'Select Solar Receiver for Selected Foundation',
+                    timestamp: Date.now(),
+                    oldValue: oldReceiver,
+                    newValue: newReceiver,
+                    changedElementId: foundation.id,
+                    undo: () => {
+                      updateFoundationSolarReceiverById(
+                        undoableChange.changedElementId,
+                        undoableChange.oldValue as SolarReceiver,
+                      );
+                    },
+                    redo: () => {
+                      updateFoundationSolarReceiverById(
+                        undoableChange.changedElementId,
+                        undoableChange.newValue as SolarReceiver,
+                      );
+                    },
+                  } as UndoableChange;
+                  addUndoable(undoableChange);
+                  updateFoundationSolarReceiverById(foundation.id, newReceiver);
+                  setSelectedSolarReceiver(newReceiver);
+                }
+              }}
+            >
+              <Space direction="vertical">
+                <Radio value={undefined}>{i18n.t('word.None', lang)}</Radio>
+                <Radio value={SolarReceiver.Tube}>
+                  {i18n.t('foundationMenu.ReceiverTubeForFresnelReflectors', lang)}
+                </Radio>
+                <Radio value={SolarReceiver.Tower}>{i18n.t('foundationMenu.ReceiverTowerForHeliostats', lang)}</Radio>
+              </Space>
+            </Radio.Group>
+          </SubMenu>
+        )}
       </Menu.ItemGroup>
     )
   );

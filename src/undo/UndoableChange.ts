@@ -3,13 +3,29 @@
  */
 
 import { Undoable } from './Undoable';
-import { CuboidTexture, LineStyle, ParabolicDishStructureType } from '../types';
+import { CuboidTexture, LineStyle, ParabolicDishStructureType, SolarReceiver } from '../types';
 import { Point2 } from '../models/Point2';
 import { Vector3 } from 'three';
 
 export interface UndoableChange extends Undoable {
-  oldValue: string | number | string[] | CuboidTexture[] | Point2[] | LineStyle | ParabolicDishStructureType;
-  newValue: string | number | string[] | CuboidTexture[] | Point2[] | LineStyle | ParabolicDishStructureType;
+  oldValue:
+    | string
+    | number
+    | string[]
+    | CuboidTexture[]
+    | Point2[]
+    | LineStyle
+    | ParabolicDishStructureType
+    | SolarReceiver;
+  newValue:
+    | string
+    | number
+    | string[]
+    | CuboidTexture[]
+    | Point2[]
+    | LineStyle
+    | ParabolicDishStructureType
+    | SolarReceiver;
   changedElementId: string;
   changedSideIndex?: number;
   oldChildrenParentIdMap?: Map<string, string>;

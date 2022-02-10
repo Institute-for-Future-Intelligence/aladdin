@@ -12,7 +12,7 @@ import FoundationTexture06 from '../resources/foundation_06.png';
 import FoundationTexture07 from '../resources/foundation_07.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Plane, Sphere } from '@react-three/drei';
+import { Box, Cylinder, Plane, Sphere } from '@react-three/drei';
 import { CanvasTexture, Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
@@ -26,6 +26,7 @@ import {
   Orientation,
   ResizeHandleType,
   RotateHandleType,
+  SolarReceiver,
   WallSide,
 } from '../types';
 import {
@@ -2249,6 +2250,19 @@ const Foundation = ({
               textHeight={0.2}
               position={[hx, hy, hz + 0.2]}
             />
+          )}
+          {solarReceiver === SolarReceiver.Tube && (
+            <Cylinder
+              userData={{ unintersectable: true }}
+              name={'Receiver Pole 1'}
+              castShadow={false}
+              receiveShadow={false}
+              args={[1, 1, 2, 6, 2]}
+              position={[0, 0, 0]}
+              rotation={[HALF_PI, 0, 0]}
+            >
+              <meshStandardMaterial attach="material" color={'white'} />
+            </Cylinder>
           )}
         </>
       )}
