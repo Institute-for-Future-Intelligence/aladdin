@@ -11,7 +11,7 @@ import * as Selector from 'src/stores/selector';
 import { DatumEntry, ObjectType } from '../types';
 import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
-import { MONTHS, UNIT_VECTOR_POS_Z } from '../constants';
+import { MONTHS, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
@@ -261,7 +261,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     }
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = (count * interval) / 60;
-    const clearness = weather.sunshineHours[month] / (30 * daylight);
+    const clearness = daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight) : 0;
     // all the light beams travel the same distance from the reflection point to the focus,
     // irrespective of where they hit the parabolic surface. So there is no additional attenuation
     // difference that needs to be accounted for.
@@ -421,7 +421,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
         }
       }
       const daylight = (count * interval) / 60;
-      const clearness = weather.sunshineHours[midMonth.getMonth()] / (30 * daylight);
+      const clearness = daylight > ZERO_TOLERANCE ? weather.sunshineHours[midMonth.getMonth()] / (30 * daylight) : 0;
       // all the light beams travel the same distance from the reflection point to the focus,
       // irrespective of where they hit the parabolic surface. So there is no additional attenuation
       // difference that needs to be accounted for.

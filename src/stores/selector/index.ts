@@ -549,6 +549,28 @@ export const parabolicTroughLabels = (state: CommonStoreState) => state.paraboli
 
 export const setParabolicTroughLabels = (state: CommonStoreState) => state.setParabolicTroughLabels;
 
+export const dailyFresnelReflectorYield = (state: CommonStoreState) => state.dailyFresnelReflectorYield;
+
+export const dailyFresnelReflectorFlag = (state: CommonStoreState) => state.dailyFresnelReflectorFlag;
+
+export const dailyFresnelReflectorIndividualOutputs = (state: CommonStoreState) =>
+  state.dailyFresnelReflectorIndividualOutputs;
+
+export const setDailyFresnelReflectorYield = (state: CommonStoreState) => state.setDailyFresnelReflectorYield;
+
+export const yearlyFresnelReflectorYield = (state: CommonStoreState) => state.yearlyFresnelReflectorYield;
+
+export const yearlyFresnelReflectorFlag = (state: CommonStoreState) => state.yearlyFresnelReflectorFlag;
+
+export const yearlyFresnelReflectorIndividualOutputs = (state: CommonStoreState) =>
+  state.yearlyFresnelReflectorIndividualOutputs;
+
+export const setYearlyFresnelReflectorYield = (state: CommonStoreState) => state.setYearlyFresnelReflectorYield;
+
+export const fresnelReflectorLabels = (state: CommonStoreState) => state.fresnelReflectorLabels;
+
+export const setFresnelReflectorLabels = (state: CommonStoreState) => state.setFresnelReflectorLabels;
+
 export const dailyParabolicDishYield = (state: CommonStoreState) => state.dailyParabolicDishYield;
 
 export const dailyParabolicDishFlag = (state: CommonStoreState) => state.dailyParabolicDishFlag;

@@ -17,6 +17,7 @@ import {
   UNIT_VECTOR_POS_X,
   UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
+  ZERO_TOLERANCE,
 } from '../constants';
 import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
@@ -25,6 +26,7 @@ import { CuboidModel } from '../models/CuboidModel';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { ParabolicDishModel } from '../models/ParabolicDishModel';
+import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 
 export interface SolarRadiationSimulationProps {
   city: string | null;
@@ -119,6 +121,9 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           break;
         case ObjectType.ParabolicTrough:
           generateHeatmapForParabolicTrough(e as ParabolicTroughModel);
+          break;
+        case ObjectType.FresnelReflector:
+          generateHeatmapForFresnelReflector(e as FresnelReflectorModel);
           break;
         case ObjectType.ParabolicDish:
           generateHeatmapForParabolicDish(e as ParabolicDishModel);
@@ -285,7 +290,8 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
 
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = (count * interval) / 60;
-    const scaleFactor = weather.sunshineHours[month] / (30 * daylight * world.timesPerHour);
+    const scaleFactor =
+      daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
     applyScaleFactor(topCellOutputTotals, scaleFactor);
     applyScaleFactor(southCellOutputTotals, scaleFactor);
     applyScaleFactor(northCellOutputTotals, scaleFactor);
@@ -355,7 +361,8 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     }
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = (count * interval) / 60;
-    const scaleFactor = weather.sunshineHours[month] / (30 * daylight * world.timesPerHour);
+    const scaleFactor =
+      daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
     applyScaleFactor(cellOutputTotals, scaleFactor);
     // send heat map data to common store for visualization
     setHeatmap(foundation.id, cellOutputTotals);
@@ -461,7 +468,8 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     }
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = (count * interval) / 60;
-    const scaleFactor = weather.sunshineHours[month] / (30 * daylight * world.timesPerHour);
+    const scaleFactor =
+      daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
     applyScaleFactor(cellOutputTotals, scaleFactor);
     // send heat map data to common store for visualization
     setHeatmap(panel.id, cellOutputTotals);
@@ -555,10 +563,94 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     }
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = (count * interval) / 60;
-    const scaleFactor = weather.sunshineHours[month] / (30 * daylight * world.timesPerHour);
+    const scaleFactor =
+      daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
     applyScaleFactor(cellOutputTotals, scaleFactor);
     // send heat map data to common store for visualization
     setHeatmap(trough.id, cellOutputTotals);
+  };
+
+  const generateHeatmapForFresnelReflector = (reflector: FresnelReflectorModel) => {
+    const parent = getParent(reflector);
+    if (!parent) throw new Error('parent of Fresnel reflector does not exist');
+    const center = Util.absoluteCoordinates(reflector.cx, reflector.cy, reflector.cz, parent);
+    const normal = new Vector3().fromArray(reflector.normal);
+    const originalNormal = normal.clone();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const date = now.getDate();
+    const dayOfYear = Util.dayOfYear(now);
+    const lx = reflector.lx;
+    const ly = reflector.ly;
+    const actualPoleHeight = reflector.poleHeight + lx / 2;
+    const nx = Math.max(2, Math.round(reflector.lx / cellSize));
+    const ny = Math.max(2, Math.round(reflector.ly / cellSize));
+    const dx = lx / nx;
+    const dy = ly / ny;
+    // shift half cell size to the center of each grid cell
+    const x0 = center.x - (lx - cellSize) / 2;
+    const y0 = center.y - (ly - cellSize) / 2;
+    const z0 = parent.lz + actualPoleHeight + reflector.lz;
+    const center2d = new Vector2(center.x, center.y);
+    const v = new Vector3();
+    const cellOutputTotals = Array(nx)
+      .fill(0)
+      .map(() => Array(ny).fill(0));
+    let count = 0;
+    const rot = parent.rotation[2];
+    const zRot = rot + reflector.relativeAzimuth;
+    const zRotZero = Util.isZero(zRot);
+    const cosRot = zRotZero ? 1 : Math.cos(zRot);
+    const sinRot = zRotZero ? 0 : Math.sin(zRot);
+    for (let i = 0; i < 24; i++) {
+      for (let j = 0; j < world.timesPerHour; j++) {
+        const currentTime = new Date(year, month, date, i, j * interval);
+        const sunDirection = getSunDirection(currentTime, world.latitude);
+        if (sunDirection.z > 0) {
+          // when the sun is out
+          const rotatedSunDirection = rot
+            ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
+            : sunDirection.clone();
+          const ori = originalNormal.clone();
+          const qRot = new Quaternion().setFromUnitVectors(
+            UNIT_VECTOR_POS_Z,
+            new Vector3(
+              rotatedSunDirection.x * cosRot,
+              rotatedSunDirection.x * sinRot,
+              rotatedSunDirection.z,
+            ).normalize(),
+          );
+          normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRot)));
+          count++;
+          const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+          const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
+          const dot = normal.dot(sunDirection);
+          const v2 = new Vector2();
+          let tmpX = 0;
+          for (let ku = 0; ku < nx; ku++) {
+            tmpX = x0 + ku * dx;
+            for (let kv = 0; kv < ny; kv++) {
+              cellOutputTotals[ku][kv] += indirectRadiation;
+              if (dot > 0) {
+                v2.set(tmpX, y0 + kv * dy);
+                if (!zRotZero) v2.rotateAround(center2d, zRot);
+                v.set(v2.x, v2.y, z0);
+                if (!inShadow(reflector.id, v, sunDirection)) {
+                  cellOutputTotals[ku][kv] += dot * peakRadiation;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+    const daylight = (count * interval) / 60;
+    const scaleFactor =
+      daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
+    applyScaleFactor(cellOutputTotals, scaleFactor);
+    // send heat map data to common store for visualization
+    setHeatmap(reflector.id, cellOutputTotals);
   };
 
   const generateHeatmapForParabolicDish = (dish: ParabolicDishModel) => {
@@ -647,7 +739,8 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     }
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = (count * interval) / 60;
-    const scaleFactor = weather.sunshineHours[month] / (30 * daylight * world.timesPerHour);
+    const scaleFactor =
+      daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
     applyScaleFactor(cellOutputTotals, scaleFactor);
     // send heat map data to common store for visualization
     setHeatmap(dish.id, cellOutputTotals);

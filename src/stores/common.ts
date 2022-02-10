@@ -452,6 +452,17 @@ export interface CommonStoreState {
   parabolicTroughLabels: string[];
   setParabolicTroughLabels: (labels: string[]) => void;
 
+  dailyFresnelReflectorYield: DatumEntry[];
+  dailyFresnelReflectorFlag: boolean;
+  dailyFresnelReflectorIndividualOutputs: boolean;
+  setDailyFresnelReflectorYield: (data: DatumEntry[]) => void;
+  yearlyFresnelReflectorYield: DatumEntry[];
+  yearlyFresnelReflectorFlag: boolean;
+  yearlyFresnelReflectorIndividualOutputs: boolean;
+  setYearlyFresnelReflectorYield: (data: DatumEntry[]) => void;
+  fresnelReflectorLabels: string[];
+  setFresnelReflectorLabels: (labels: string[]) => void;
+
   dailyParabolicDishYield: DatumEntry[];
   dailyParabolicDishFlag: boolean;
   dailyParabolicDishIndividualOutputs: boolean;
@@ -721,6 +732,29 @@ export const useStore = create<CommonStoreState>(
           setParabolicTroughLabels(labels) {
             immerSet((state: CommonStoreState) => {
               state.parabolicTroughLabels = [...labels];
+            });
+          },
+
+          yearlyFresnelReflectorYield: [],
+          yearlyFresnelReflectorFlag: false,
+          yearlyFresnelReflectorIndividualOutputs: false,
+          setYearlyFresnelReflectorYield(data) {
+            immerSet((state: CommonStoreState) => {
+              state.yearlyFresnelReflectorYield = [...data];
+            });
+          },
+          dailyFresnelReflectorYield: [],
+          dailyFresnelReflectorFlag: false,
+          dailyFresnelReflectorIndividualOutputs: false,
+          setDailyFresnelReflectorYield(data) {
+            immerSet((state: CommonStoreState) => {
+              state.dailyFresnelReflectorYield = [...data];
+            });
+          },
+          fresnelReflectorLabels: [],
+          setFresnelReflectorLabels(labels) {
+            immerSet((state: CommonStoreState) => {
+              state.fresnelReflectorLabels = [...labels];
             });
           },
 

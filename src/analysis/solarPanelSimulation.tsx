@@ -11,7 +11,7 @@ import * as Selector from 'src/stores/selector';
 import { DatumEntry, Discretization, ObjectType, Orientation, ShadeTolerance, TrackerType } from '../types';
 import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
-import { MONTHS, UNIT_VECTOR_POS_X, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z } from '../constants';
+import { MONTHS, UNIT_VECTOR_POS_X, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
 import { PvModel } from '../models/PvModel';
@@ -392,7 +392,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     }
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = (count * interval) / 60;
-    const clearness = weather.sunshineHours[month] / (30 * daylight);
+    const clearness = daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight) : 0;
     const factor =
       panel.lx *
       panel.ly *
@@ -652,7 +652,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         }
       }
       const daylight = (count * interval) / 60;
-      const clearness = weather.sunshineHours[midMonth.getMonth()] / (30 * daylight);
+      const clearness = daylight > ZERO_TOLERANCE ? weather.sunshineHours[midMonth.getMonth()] / (30 * daylight) : 0;
       const factor =
         panel.lx *
         panel.ly *

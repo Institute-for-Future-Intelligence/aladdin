@@ -162,6 +162,6 @@
     "showSunAngles": true
   },
   "notes": [
-    "The solar radiation at different locations of the Earth in different seasons is largely responsible for local climate. Overall, every place on the Earth has about the same hours of daylight in total (ideally 144 hours), regardless of where it is. However, the distribution throughout the year is vastly different, resulting in large temperature variations across the globe. You can change the latitude to investigate these relationships. Make sure to refresh the graph after changing any variables."
+    "The solar radiation at different locations of the Earth in different seasons is largely responsible for local climate. Overall, every place on the Earth has about the same hours of daylight in total (ideally 12×365=4,380 hours), regardless of where it is. However, the distribution throughout the year is vastly different, resulting in large temperature variations across the globe. You can change the latitude to investigate these relationships. Make sure to refresh the graph after changing any variables."
   ]
 }
