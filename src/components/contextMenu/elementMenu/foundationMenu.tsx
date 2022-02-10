@@ -31,7 +31,7 @@ export const FoundationMenu = () => {
   const elements = useStore(Selector.elements);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const countAllChildElementsByTypeOnFoundation = useStore(Selector.countAllChildElementsByTypeOnFoundation);
+  const countAllOffspringsByType = useStore(Selector.countAllOffspringsByTypeAtOnce);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
   const elementsToPaste = useStore(Selector.elementsToPaste);
@@ -48,7 +48,7 @@ export const FoundationMenu = () => {
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
-  const counter = foundation ? countAllChildElementsByTypeOnFoundation(foundation.id) : new ElementCounter();
+  const counter = foundation ? countAllOffspringsByType(foundation.id) : new ElementCounter();
   const lang = { lng: language };
 
   const legalToPaste = () => {
@@ -83,485 +83,472 @@ export const FoundationMenu = () => {
         <Copy keyName={'foundation-copy'} />
         {editable && <Cut keyName={'foundation-cut'} />}
         <Lock keyName={'foundation-lock'} />
-        {(counter.sensorCount > 0 ||
-          counter.solarPanelCount > 0 ||
-          counter.parabolicTroughCount > 0 ||
-          counter.parabolicDishCount > 0 ||
-          counter.fresnelReflectorCount > 0 ||
-          counter.heliostatCount > 0 ||
-          counter.treeCount > 0 ||
-          counter.humanCount > 0 ||
-          counter.wallCount > 0 ||
-          counter.polygonCount > 0) &&
-          contextMenuObjectType && (
-            <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
-              {counter.wallCount > 0 && (
-                <Menu.Item
-                  key={'remove-all-walls-on-foundation'}
-                  onClick={() => {
-                    Modal.confirm({
-                      title:
-                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllWallsOnFoundation', lang) +
-                        ' (' +
-                        counter.wallCount +
-                        ' ' +
-                        i18n.t('foundationMenu.Walls', lang) +
-                        ')?',
-                      icon: <ExclamationCircleOutlined />,
-                      onOk: () => {
-                        if (foundation) {
-                          const removed = elements.filter(
-                            (e) => !e.locked && e.type === ObjectType.Wall && e.parentId === foundation.id,
-                          );
-                          removeAllChildElementsByType(foundation.id, ObjectType.Wall);
-                          const removedElements = JSON.parse(JSON.stringify(removed));
-                          const undoableRemoveAllWallChildren = {
-                            name: 'Remove All Walls on Foundation',
-                            timestamp: Date.now(),
-                            parentId: foundation.id,
-                            removedElements: removedElements,
-                            undo: () => {
-                              setCommonStore((state) => {
-                                state.elements.push(...undoableRemoveAllWallChildren.removedElements);
-                                state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
-                              });
-                            },
-                            redo: () => {
-                              removeAllChildElementsByType(undoableRemoveAllWallChildren.parentId, ObjectType.Wall);
-                            },
-                          } as UndoableRemoveAllChildren;
-                          addUndoable(undoableRemoveAllWallChildren);
-                        }
-                      },
-                    });
-                  }}
-                >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedWalls', lang)} ({counter.wallCount})
-                </Menu.Item>
-              )}
+        {counter.gotSome() && contextMenuObjectType && (
+          <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
+            {counter.wallCount > 0 && (
+              <Menu.Item
+                key={'remove-all-walls-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllWallsOnFoundation', lang) +
+                      ' (' +
+                      counter.wallCount +
+                      ' ' +
+                      i18n.t('foundationMenu.Walls', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (foundation) {
+                        const removed = elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.Wall && e.parentId === foundation.id,
+                        );
+                        removeAllChildElementsByType(foundation.id, ObjectType.Wall);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllWallChildren = {
+                          name: 'Remove All Walls on Foundation',
+                          timestamp: Date.now(),
+                          parentId: foundation.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllWallChildren.removedElements);
+                              state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(undoableRemoveAllWallChildren.parentId, ObjectType.Wall);
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllWallChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllUnlockedWalls', lang)} ({counter.wallCount})
+              </Menu.Item>
+            )}
 
-              {counter.sensorCount > 0 && (
-                <Menu.Item
-                  key={'remove-all-sensors-on-foundation'}
-                  onClick={() => {
-                    Modal.confirm({
-                      title:
-                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSensorsOnFoundation', lang) +
-                        ' (' +
-                        counter.sensorCount +
-                        ' ' +
-                        i18n.t('foundationMenu.Sensors', lang) +
-                        ')?',
-                      icon: <ExclamationCircleOutlined />,
-                      onOk: () => {
-                        if (foundation) {
-                          const removed = elements.filter(
-                            (e) => !e.locked && e.type === ObjectType.Sensor && e.parentId === foundation.id,
-                          );
-                          removeAllChildElementsByType(foundation.id, ObjectType.Sensor);
-                          const removedElements = JSON.parse(JSON.stringify(removed));
-                          const undoableRemoveAllSensorChildren = {
-                            name: 'Remove All Sensors on Foundation',
-                            timestamp: Date.now(),
-                            parentId: foundation.id,
-                            removedElements: removedElements,
-                            undo: () => {
-                              setCommonStore((state) => {
-                                state.elements.push(...undoableRemoveAllSensorChildren.removedElements);
-                              });
-                            },
-                            redo: () => {
-                              removeAllChildElementsByType(undoableRemoveAllSensorChildren.parentId, ObjectType.Sensor);
-                            },
-                          } as UndoableRemoveAllChildren;
-                          addUndoable(undoableRemoveAllSensorChildren);
-                        }
-                      },
-                    });
-                  }}
-                >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedSensors', lang)} ({counter.sensorCount})
-                </Menu.Item>
-              )}
+            {counter.sensorCount > 0 && (
+              <Menu.Item
+                key={'remove-all-sensors-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSensorsOnFoundation', lang) +
+                      ' (' +
+                      counter.sensorCount +
+                      ' ' +
+                      i18n.t('foundationMenu.Sensors', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (foundation) {
+                        const removed = elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.Sensor && e.parentId === foundation.id,
+                        );
+                        removeAllChildElementsByType(foundation.id, ObjectType.Sensor);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllSensorChildren = {
+                          name: 'Remove All Sensors on Foundation',
+                          timestamp: Date.now(),
+                          parentId: foundation.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllSensorChildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(undoableRemoveAllSensorChildren.parentId, ObjectType.Sensor);
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllSensorChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllUnlockedSensors', lang)} ({counter.sensorCount})
+              </Menu.Item>
+            )}
 
-              {counter.solarPanelCount > 0 && (
-                <Menu.Item
-                  key={'remove-all-solar-panels-on-foundation'}
-                  onClick={() => {
-                    Modal.confirm({
-                      title:
-                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSolarPanelsOnFoundation', lang) +
-                        ' (' +
-                        counter.solarPanelModuleCount +
-                        ' ' +
-                        i18n.t('foundationMenu.SolarPanels', lang) +
-                        ', ' +
-                        counter.solarPanelCount +
-                        ' ' +
-                        i18n.t('foundationMenu.Racks', lang) +
-                        ')?',
-                      icon: <ExclamationCircleOutlined />,
-                      onOk: () => {
-                        if (foundation) {
-                          const removed = elements.filter(
-                            (e) => !e.locked && e.type === ObjectType.SolarPanel && e.parentId === foundation.id,
-                          );
-                          removeAllChildElementsByType(foundation.id, ObjectType.SolarPanel);
-                          const removedElements = JSON.parse(JSON.stringify(removed));
-                          const undoableRemoveAllSolarPanelChildren = {
-                            name: 'Remove All Solar Panels on Foundation',
-                            timestamp: Date.now(),
-                            parentId: foundation.id,
-                            removedElements: removedElements,
-                            undo: () => {
-                              setCommonStore((state) => {
-                                state.elements.push(...undoableRemoveAllSolarPanelChildren.removedElements);
-                                state.updateDesignInfo();
-                              });
-                            },
-                            redo: () => {
-                              removeAllChildElementsByType(
-                                undoableRemoveAllSolarPanelChildren.parentId,
-                                ObjectType.SolarPanel,
-                              );
-                            },
-                          } as UndoableRemoveAllChildren;
-                          addUndoable(undoableRemoveAllSolarPanelChildren);
-                        }
-                      },
-                    });
-                  }}
-                >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedSolarPanels', lang)}&nbsp; ({counter.solarPanelModuleCount}{' '}
-                  {i18n.t('foundationMenu.SolarPanels', lang)}, {counter.solarPanelCount}{' '}
-                  {i18n.t('foundationMenu.Racks', lang)})
-                </Menu.Item>
-              )}
+            {counter.solarPanelCount > 0 && (
+              <Menu.Item
+                key={'remove-all-solar-panels-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSolarPanelsOnFoundation', lang) +
+                      ' (' +
+                      counter.solarPanelModuleCount +
+                      ' ' +
+                      i18n.t('foundationMenu.SolarPanels', lang) +
+                      ', ' +
+                      counter.solarPanelCount +
+                      ' ' +
+                      i18n.t('foundationMenu.Racks', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (foundation) {
+                        const removed = elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.SolarPanel && e.parentId === foundation.id,
+                        );
+                        removeAllChildElementsByType(foundation.id, ObjectType.SolarPanel);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllSolarPanelChildren = {
+                          name: 'Remove All Solar Panels on Foundation',
+                          timestamp: Date.now(),
+                          parentId: foundation.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllSolarPanelChildren.removedElements);
+                              state.updateDesignInfo();
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(
+                              undoableRemoveAllSolarPanelChildren.parentId,
+                              ObjectType.SolarPanel,
+                            );
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllSolarPanelChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllUnlockedSolarPanels', lang)}&nbsp; ({counter.solarPanelModuleCount}{' '}
+                {i18n.t('foundationMenu.SolarPanels', lang)}, {counter.solarPanelCount}{' '}
+                {i18n.t('foundationMenu.Racks', lang)})
+              </Menu.Item>
+            )}
 
-              {counter.parabolicTroughCount > 0 && (
-                <Menu.Item
-                  key={'remove-all-parabolic-troughs-on-foundation'}
-                  onClick={() => {
-                    Modal.confirm({
-                      title:
-                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllParabolicTroughsOnFoundation', lang) +
-                        ' (' +
-                        counter.parabolicTroughCount +
-                        ' ' +
-                        i18n.t('foundationMenu.ParabolicTroughs', lang) +
-                        ')?',
-                      icon: <ExclamationCircleOutlined />,
-                      onOk: () => {
-                        if (foundation) {
-                          const removed = elements.filter(
-                            (e) => !e.locked && e.type === ObjectType.ParabolicTrough && e.parentId === foundation.id,
-                          );
-                          removeAllChildElementsByType(foundation.id, ObjectType.ParabolicTrough);
-                          const removedElements = JSON.parse(JSON.stringify(removed));
-                          const undoableRemoveAllParabolicTroughChildren = {
-                            name: 'Remove All Parabolic Troughs on Foundation',
-                            timestamp: Date.now(),
-                            parentId: foundation.id,
-                            removedElements: removedElements,
-                            undo: () => {
-                              setCommonStore((state) => {
-                                state.elements.push(...undoableRemoveAllParabolicTroughChildren.removedElements);
-                              });
-                            },
-                            redo: () => {
-                              removeAllChildElementsByType(
-                                undoableRemoveAllParabolicTroughChildren.parentId,
-                                ObjectType.ParabolicTrough,
-                              );
-                            },
-                          } as UndoableRemoveAllChildren;
-                          addUndoable(undoableRemoveAllParabolicTroughChildren);
-                        }
-                      },
-                    });
-                  }}
-                >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedParabolicTroughs', lang)} ({counter.parabolicTroughCount})
-                </Menu.Item>
-              )}
+            {counter.parabolicTroughCount > 0 && (
+              <Menu.Item
+                key={'remove-all-parabolic-troughs-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllParabolicTroughsOnFoundation', lang) +
+                      ' (' +
+                      counter.parabolicTroughCount +
+                      ' ' +
+                      i18n.t('foundationMenu.ParabolicTroughs', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (foundation) {
+                        const removed = elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.ParabolicTrough && e.parentId === foundation.id,
+                        );
+                        removeAllChildElementsByType(foundation.id, ObjectType.ParabolicTrough);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllParabolicTroughChildren = {
+                          name: 'Remove All Parabolic Troughs on Foundation',
+                          timestamp: Date.now(),
+                          parentId: foundation.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllParabolicTroughChildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(
+                              undoableRemoveAllParabolicTroughChildren.parentId,
+                              ObjectType.ParabolicTrough,
+                            );
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllParabolicTroughChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllUnlockedParabolicTroughs', lang)} ({counter.parabolicTroughCount})
+              </Menu.Item>
+            )}
 
-              {counter.parabolicDishCount > 0 && (
-                <Menu.Item
-                  key={'remove-all-parabolic-dishes-on-foundation'}
-                  onClick={() => {
-                    Modal.confirm({
-                      title:
-                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllParabolicDishesOnFoundation', lang) +
-                        ' (' +
-                        counter.parabolicDishCount +
-                        ' ' +
-                        i18n.t('foundationMenu.ParabolicDishes', lang) +
-                        ')?',
-                      icon: <ExclamationCircleOutlined />,
-                      onOk: () => {
-                        if (foundation) {
-                          const removed = elements.filter(
-                            (e) => !e.locked && e.type === ObjectType.ParabolicDish && e.parentId === foundation.id,
-                          );
-                          removeAllChildElementsByType(foundation.id, ObjectType.ParabolicDish);
-                          const removedElements = JSON.parse(JSON.stringify(removed));
-                          const undoableRemoveAllParabolicDishChildren = {
-                            name: 'Remove All Parabolic Dishes on Foundation',
-                            timestamp: Date.now(),
-                            parentId: foundation.id,
-                            removedElements: removedElements,
-                            undo: () => {
-                              setCommonStore((state) => {
-                                state.elements.push(...undoableRemoveAllParabolicDishChildren.removedElements);
-                              });
-                            },
-                            redo: () => {
-                              removeAllChildElementsByType(
-                                undoableRemoveAllParabolicDishChildren.parentId,
-                                ObjectType.ParabolicDish,
-                              );
-                            },
-                          } as UndoableRemoveAllChildren;
-                          addUndoable(undoableRemoveAllParabolicDishChildren);
-                        }
-                      },
-                    });
-                  }}
-                >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedParabolicDishes', lang)} ({counter.parabolicDishCount})
-                </Menu.Item>
-              )}
+            {counter.parabolicDishCount > 0 && (
+              <Menu.Item
+                key={'remove-all-parabolic-dishes-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllParabolicDishesOnFoundation', lang) +
+                      ' (' +
+                      counter.parabolicDishCount +
+                      ' ' +
+                      i18n.t('foundationMenu.ParabolicDishes', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (foundation) {
+                        const removed = elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.ParabolicDish && e.parentId === foundation.id,
+                        );
+                        removeAllChildElementsByType(foundation.id, ObjectType.ParabolicDish);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllParabolicDishChildren = {
+                          name: 'Remove All Parabolic Dishes on Foundation',
+                          timestamp: Date.now(),
+                          parentId: foundation.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllParabolicDishChildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(
+                              undoableRemoveAllParabolicDishChildren.parentId,
+                              ObjectType.ParabolicDish,
+                            );
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllParabolicDishChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllUnlockedParabolicDishes', lang)} ({counter.parabolicDishCount})
+              </Menu.Item>
+            )}
 
-              {counter.fresnelReflectorCount > 0 && (
-                <Menu.Item
-                  key={'remove-all-fresnel-reflector-on-foundation'}
-                  onClick={() => {
-                    Modal.confirm({
-                      title:
-                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllFresnelReflectorsOnFoundation', lang) +
-                        ' (' +
-                        counter.fresnelReflectorCount +
-                        ' ' +
-                        i18n.t('foundationMenu.FresnelReflectors', lang) +
-                        ')?',
-                      icon: <ExclamationCircleOutlined />,
-                      onOk: () => {
-                        if (foundation) {
-                          const removed = elements.filter(
-                            (e) => !e.locked && e.type === ObjectType.FresnelReflector && e.parentId === foundation.id,
-                          );
-                          removeAllChildElementsByType(foundation.id, ObjectType.FresnelReflector);
-                          const removedElements = JSON.parse(JSON.stringify(removed));
-                          const undoableRemoveAllFresnelReflectorChildren = {
-                            name: 'Remove All Fresnel Reflectors on Foundation',
-                            timestamp: Date.now(),
-                            parentId: foundation.id,
-                            removedElements: removedElements,
-                            undo: () => {
-                              setCommonStore((state) => {
-                                state.elements.push(...undoableRemoveAllFresnelReflectorChildren.removedElements);
-                              });
-                            },
-                            redo: () => {
-                              removeAllChildElementsByType(
-                                undoableRemoveAllFresnelReflectorChildren.parentId,
-                                ObjectType.FresnelReflector,
-                              );
-                            },
-                          } as UndoableRemoveAllChildren;
-                          addUndoable(undoableRemoveAllFresnelReflectorChildren);
-                        }
-                      },
-                    });
-                  }}
-                >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedFresnelReflectors', lang)} ({counter.fresnelReflectorCount})
-                </Menu.Item>
-              )}
+            {counter.fresnelReflectorCount > 0 && (
+              <Menu.Item
+                key={'remove-all-fresnel-reflector-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllFresnelReflectorsOnFoundation', lang) +
+                      ' (' +
+                      counter.fresnelReflectorCount +
+                      ' ' +
+                      i18n.t('foundationMenu.FresnelReflectors', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (foundation) {
+                        const removed = elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.FresnelReflector && e.parentId === foundation.id,
+                        );
+                        removeAllChildElementsByType(foundation.id, ObjectType.FresnelReflector);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllFresnelReflectorChildren = {
+                          name: 'Remove All Fresnel Reflectors on Foundation',
+                          timestamp: Date.now(),
+                          parentId: foundation.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllFresnelReflectorChildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(
+                              undoableRemoveAllFresnelReflectorChildren.parentId,
+                              ObjectType.FresnelReflector,
+                            );
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllFresnelReflectorChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllUnlockedFresnelReflectors', lang)} ({counter.fresnelReflectorCount})
+              </Menu.Item>
+            )}
 
-              {counter.heliostatCount > 0 && (
-                <Menu.Item
-                  key={'remove-all-heliostats-on-foundation'}
-                  onClick={() => {
-                    Modal.confirm({
-                      title:
-                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllHeliostatsOnFoundation', lang) +
-                        ' (' +
-                        counter.heliostatCount +
-                        ' ' +
-                        i18n.t('foundationMenu.Heliostats', lang) +
-                        ')?',
-                      icon: <ExclamationCircleOutlined />,
-                      onOk: () => {
-                        if (foundation) {
-                          const removed = elements.filter(
-                            (e) => !e.locked && e.type === ObjectType.Heliostat && e.parentId === foundation.id,
-                          );
-                          removeAllChildElementsByType(foundation.id, ObjectType.Heliostat);
-                          const removedElements = JSON.parse(JSON.stringify(removed));
-                          const undoableRemoveAllHeliostatChildren = {
-                            name: 'Remove All Heliostats on Foundation',
-                            timestamp: Date.now(),
-                            parentId: foundation.id,
-                            removedElements: removedElements,
-                            undo: () => {
-                              setCommonStore((state) => {
-                                state.elements.push(...undoableRemoveAllHeliostatChildren.removedElements);
-                              });
-                            },
-                            redo: () => {
-                              removeAllChildElementsByType(
-                                undoableRemoveAllHeliostatChildren.parentId,
-                                ObjectType.Heliostat,
-                              );
-                            },
-                          } as UndoableRemoveAllChildren;
-                          addUndoable(undoableRemoveAllHeliostatChildren);
-                        }
-                      },
-                    });
-                  }}
-                >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedHeliostats', lang)} ({counter.heliostatCount})
-                </Menu.Item>
-              )}
+            {counter.heliostatCount > 0 && (
+              <Menu.Item
+                key={'remove-all-heliostats-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllHeliostatsOnFoundation', lang) +
+                      ' (' +
+                      counter.heliostatCount +
+                      ' ' +
+                      i18n.t('foundationMenu.Heliostats', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (foundation) {
+                        const removed = elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.Heliostat && e.parentId === foundation.id,
+                        );
+                        removeAllChildElementsByType(foundation.id, ObjectType.Heliostat);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllHeliostatChildren = {
+                          name: 'Remove All Heliostats on Foundation',
+                          timestamp: Date.now(),
+                          parentId: foundation.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllHeliostatChildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(
+                              undoableRemoveAllHeliostatChildren.parentId,
+                              ObjectType.Heliostat,
+                            );
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllHeliostatChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllUnlockedHeliostats', lang)} ({counter.heliostatCount})
+              </Menu.Item>
+            )}
 
-              {counter.polygonCount > 0 && (
-                <Menu.Item
-                  key={'remove-all-polygons-on-foundation'}
-                  onClick={() => {
-                    Modal.confirm({
-                      title:
-                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllPolygonsOnFoundation', lang) +
-                        ' (' +
-                        counter.polygonCount +
-                        ' ' +
-                        i18n.t('foundationMenu.Polygons', lang) +
-                        ')?',
-                      icon: <ExclamationCircleOutlined />,
-                      onOk: () => {
-                        if (foundation) {
-                          const removed = elements.filter(
-                            (e) => !e.locked && e.type === ObjectType.Polygon && e.parentId === foundation.id,
-                          );
-                          removeAllChildElementsByType(foundation.id, ObjectType.Polygon);
-                          const removedElements = JSON.parse(JSON.stringify(removed));
-                          const undoableRemoveAllPolygonChildren = {
-                            name: 'Remove All Polygons on Foundation',
-                            timestamp: Date.now(),
-                            parentId: foundation.id,
-                            removedElements: removedElements,
-                            undo: () => {
-                              setCommonStore((state) => {
-                                state.elements.push(...undoableRemoveAllPolygonChildren.removedElements);
-                              });
-                            },
-                            redo: () => {
-                              removeAllChildElementsByType(
-                                undoableRemoveAllPolygonChildren.parentId,
-                                ObjectType.Polygon,
-                              );
-                            },
-                          } as UndoableRemoveAllChildren;
-                          addUndoable(undoableRemoveAllPolygonChildren);
-                        }
-                      },
-                    });
-                  }}
-                >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedPolygons', lang)} ({counter.polygonCount})
-                </Menu.Item>
-              )}
+            {counter.polygonCount > 0 && (
+              <Menu.Item
+                key={'remove-all-polygons-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllPolygonsOnFoundation', lang) +
+                      ' (' +
+                      counter.polygonCount +
+                      ' ' +
+                      i18n.t('foundationMenu.Polygons', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (foundation) {
+                        const removed = elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.Polygon && e.parentId === foundation.id,
+                        );
+                        removeAllChildElementsByType(foundation.id, ObjectType.Polygon);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllPolygonChildren = {
+                          name: 'Remove All Polygons on Foundation',
+                          timestamp: Date.now(),
+                          parentId: foundation.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllPolygonChildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(undoableRemoveAllPolygonChildren.parentId, ObjectType.Polygon);
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllPolygonChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllUnlockedPolygons', lang)} ({counter.polygonCount})
+              </Menu.Item>
+            )}
 
-              {counter.humanCount > 0 && (
-                <Menu.Item
-                  key={'remove-all-humans-on-foundation'}
-                  onClick={() => {
-                    Modal.confirm({
-                      title:
-                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllHumansOnFoundation', lang) +
-                        ' (' +
-                        counter.humanCount +
-                        ' ' +
-                        i18n.t('foundationMenu.Humans', lang) +
-                        ')?',
-                      icon: <ExclamationCircleOutlined />,
-                      onOk: () => {
-                        if (foundation) {
-                          const removed = elements.filter(
-                            (e) => !e.locked && e.type === ObjectType.Human && e.parentId === foundation.id,
-                          );
-                          removeAllChildElementsByType(foundation.id, ObjectType.Human);
-                          const removedElements = JSON.parse(JSON.stringify(removed));
-                          const undoableRemoveAllHumanChildren = {
-                            name: 'Remove All Humans on Foundation',
-                            timestamp: Date.now(),
-                            parentId: foundation.id,
-                            removedElements: removedElements,
-                            undo: () => {
-                              setCommonStore((state) => {
-                                state.elements.push(...undoableRemoveAllHumanChildren.removedElements);
-                              });
-                            },
-                            redo: () => {
-                              removeAllChildElementsByType(undoableRemoveAllHumanChildren.parentId, ObjectType.Human);
-                            },
-                          } as UndoableRemoveAllChildren;
-                          addUndoable(undoableRemoveAllHumanChildren);
-                        }
-                      },
-                    });
-                  }}
-                >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedHumans', lang)} ({counter.humanCount})
-                </Menu.Item>
-              )}
+            {counter.humanCount > 0 && (
+              <Menu.Item
+                key={'remove-all-humans-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllHumansOnFoundation', lang) +
+                      ' (' +
+                      counter.humanCount +
+                      ' ' +
+                      i18n.t('foundationMenu.Humans', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (foundation) {
+                        const removed = elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.Human && e.parentId === foundation.id,
+                        );
+                        removeAllChildElementsByType(foundation.id, ObjectType.Human);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllHumanChildren = {
+                          name: 'Remove All Humans on Foundation',
+                          timestamp: Date.now(),
+                          parentId: foundation.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllHumanChildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(undoableRemoveAllHumanChildren.parentId, ObjectType.Human);
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllHumanChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllUnlockedHumans', lang)} ({counter.humanCount})
+              </Menu.Item>
+            )}
 
-              {counter.treeCount > 0 && (
-                <Menu.Item
-                  key={'remove-all-trees-on-foundation'}
-                  onClick={() => {
-                    Modal.confirm({
-                      title:
-                        i18n.t('foundationMenu.DoYouReallyWantToRemoveAllTreesOnFoundation', lang) +
-                        ' (' +
-                        counter.treeCount +
-                        ' ' +
-                        i18n.t('foundationMenu.Trees', lang) +
-                        ')?',
-                      icon: <ExclamationCircleOutlined />,
-                      onOk: () => {
-                        if (foundation) {
-                          const removed = elements.filter(
-                            (e) => !e.locked && e.type === ObjectType.Tree && e.parentId === foundation.id,
-                          );
-                          removeAllChildElementsByType(foundation.id, ObjectType.Tree);
-                          const removedElements = JSON.parse(JSON.stringify(removed));
-                          const undoableRemoveAllTreeChildren = {
-                            name: 'Remove All Trees on Foundation',
-                            timestamp: Date.now(),
-                            parentId: foundation.id,
-                            removedElements: removedElements,
-                            undo: () => {
-                              setCommonStore((state) => {
-                                state.elements.push(...undoableRemoveAllTreeChildren.removedElements);
-                              });
-                            },
-                            redo: () => {
-                              removeAllChildElementsByType(undoableRemoveAllTreeChildren.parentId, ObjectType.Tree);
-                            },
-                          } as UndoableRemoveAllChildren;
-                          addUndoable(undoableRemoveAllTreeChildren);
-                        }
-                      },
-                    });
-                  }}
-                >
-                  {i18n.t('foundationMenu.RemoveAllUnlockedTrees', lang)} ({counter.treeCount})
-                </Menu.Item>
-              )}
-            </SubMenu>
-          )}
+            {counter.treeCount > 0 && (
+              <Menu.Item
+                key={'remove-all-trees-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllTreesOnFoundation', lang) +
+                      ' (' +
+                      counter.treeCount +
+                      ' ' +
+                      i18n.t('foundationMenu.Trees', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (foundation) {
+                        const removed = elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.Tree && e.parentId === foundation.id,
+                        );
+                        removeAllChildElementsByType(foundation.id, ObjectType.Tree);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllTreeChildren = {
+                          name: 'Remove All Trees on Foundation',
+                          timestamp: Date.now(),
+                          parentId: foundation.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllTreeChildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(undoableRemoveAllTreeChildren.parentId, ObjectType.Tree);
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllTreeChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllUnlockedTrees', lang)} ({counter.treeCount})
+              </Menu.Item>
+            )}
+          </SubMenu>
+        )}
 
         {editable && (!foundation.textureType || foundation.textureType === FoundationTexture.NoTexture) && (
           <>

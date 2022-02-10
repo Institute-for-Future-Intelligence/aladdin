@@ -14,4 +14,19 @@ export class ElementCounter {
   parabolicTroughCount: number = 0;
   fresnelReflectorCount: number = 0;
   heliostatCount: number = 0;
+
+  gotSome() {
+    return (
+      this.wallCount > 0 ||
+      this.humanCount > 0 ||
+      this.treeCount > 0 ||
+      this.polygonCount > 0 ||
+      this.sensorCount > 0 ||
+      this.solarPanelCount > 0 ||
+      this.parabolicTroughCount > 0 ||
+      this.parabolicDishCount > 0 ||
+      this.fresnelReflectorCount > 0 ||
+      this.heliostatCount > 0
+    );
+  }
 }

@@ -412,8 +412,8 @@ export interface CommonStoreState {
   countElementsByReferenceId: (id: string) => number;
   removeElementsByReferenceId: (id: string, cache: boolean) => void;
   getChildren: (id: string) => ElementModel[];
-  // the following goes faster than counting individual types of children on foundation through multiple loops
-  countAllChildElementsByTypeOnFoundation: (foundationId: string) => ElementCounter;
+  // the following goes faster than counting individual types of children through multiple loops
+  countAllOffspringsByTypeAtOnce: (ancestorId: string) => ElementCounter;
   countAllChildElementsByType: (parentId: string, type: ObjectType, excludeLocked?: boolean) => number;
   countAllChildSolarPanels: (parentId: string, excludeLocked?: boolean) => number; // special case as a rack may have many solar panels
   countAllSolarPanels: () => number;
@@ -3177,11 +3177,12 @@ export const useStore = create<CommonStoreState>(
               state.updateDesignInfo();
             });
           },
-          countAllChildElementsByTypeOnFoundation(foundationId) {
+          countAllOffspringsByTypeAtOnce(ancestorId) {
             const counter = new ElementCounter();
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (!e.locked && e.foundationId === foundationId) {
+                // foundationId applies to both foundations and cuboids, should have been named ancestorId
+                if (!e.locked && e.foundationId === ancestorId) {
                   switch (e.type) {
                     case ObjectType.Wall:
                       counter.wallCount++;
