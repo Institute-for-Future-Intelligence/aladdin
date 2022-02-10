@@ -8,4 +8,7 @@ import { FoundationTexture, SolarReceiver } from '../types';
 export interface FoundationModel extends ElementModel {
   textureType: FoundationTexture;
   solarReceiver?: SolarReceiver;
+  solarReceiverTubeRadius?: number;
+  solarReceiverTubeRelativeLength?: number;
+  solarReceiverTubeMountHeight?: number;
 }

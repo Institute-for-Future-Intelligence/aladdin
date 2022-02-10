@@ -193,6 +193,15 @@ export const setFoundationActionScope = (state: CommonStoreState) => state.setFo
 
 export const updateFoundationSolarReceiverById = (state: CommonStoreState) => state.updateFoundationSolarReceiverById;
 
+export const updateFoundationSolarReceiverTubeRadiusById = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverTubeRadiusById;
+
+export const updateFoundationSolarReceiverTubeRelativeLengthById = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverTubeRelativeLengthById;
+
+export const updateFoundationSolarReceiverTubeMountHeightById = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverTubeMountHeightById;
+
 export const updateFoundationTextureById = (state: CommonStoreState) => state.updateFoundationTextureById;
 
 export const updateFoundationTextureForAll = (state: CommonStoreState) => state.updateFoundationTextureForAll;

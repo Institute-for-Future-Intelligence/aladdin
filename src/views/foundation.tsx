@@ -81,6 +81,9 @@ const Foundation = ({
   selected = false,
   textureType = FoundationTexture.NoTexture,
   solarReceiver,
+  solarReceiverTubeRadius = 0.1,
+  solarReceiverTubeMountHeight = 10,
+  solarReceiverTubeRelativeLength = 0.8,
 }: FoundationModel) => {
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic);
@@ -2252,17 +2255,41 @@ const Foundation = ({
             />
           )}
           {solarReceiver === SolarReceiver.Tube && (
-            <Cylinder
-              userData={{ unintersectable: true }}
-              name={'Receiver Pole 1'}
-              castShadow={false}
-              receiveShadow={false}
-              args={[1, 1, 2, 6, 2]}
-              position={[0, 0, 0]}
-              rotation={[HALF_PI, 0, 0]}
-            >
-              <meshStandardMaterial attach="material" color={'white'} />
-            </Cylinder>
+            <group>
+              <Cylinder
+                userData={{ unintersectable: true }}
+                name={'Receiver Tube Pole 1'}
+                castShadow={false}
+                receiveShadow={false}
+                args={[solarReceiverTubeRadius, solarReceiverTubeRadius, solarReceiverTubeMountHeight, 6, 2]}
+                position={[0, (-solarReceiverTubeRelativeLength * ly) / 2, solarReceiverTubeMountHeight / 2 + lz]}
+                rotation={[HALF_PI, 0, 0]}
+              >
+                <meshStandardMaterial attach="material" color={'white'} />
+              </Cylinder>
+              <Cylinder
+                userData={{ unintersectable: true }}
+                name={'Receiver Tube Pole 2'}
+                castShadow={false}
+                receiveShadow={false}
+                args={[solarReceiverTubeRadius, solarReceiverTubeRadius, solarReceiverTubeMountHeight, 6, 2]}
+                position={[0, (solarReceiverTubeRelativeLength * ly) / 2, solarReceiverTubeMountHeight / 2 + lz]}
+                rotation={[HALF_PI, 0, 0]}
+              >
+                <meshStandardMaterial attach="material" color={'white'} />
+              </Cylinder>
+              <Cylinder
+                userData={{ unintersectable: true }}
+                name={'Receiver Tube'}
+                castShadow={false}
+                receiveShadow={false}
+                args={[solarReceiverTubeRadius, solarReceiverTubeRadius, solarReceiverTubeRelativeLength * ly, 6, 2]}
+                position={[0, 0, solarReceiverTubeMountHeight + lz]}
+                rotation={[0, 0, 0]}
+              >
+                <meshStandardMaterial attach="material" color={'white'} />
+              </Cylinder>
+            </group>
           )}
         </>
       )}

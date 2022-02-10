@@ -254,6 +254,9 @@ export interface CommonStoreState {
   updateFoundationTextureById: (id: string, texture: FoundationTexture) => void;
   updateFoundationTextureForAll: (texture: FoundationTexture) => void;
   updateFoundationSolarReceiverById: (id: string, receiver: SolarReceiver | undefined) => void;
+  updateFoundationSolarReceiverTubeRadiusById: (id: string, radius: number) => void;
+  updateFoundationSolarReceiverTubeRelativeLengthById: (id: string, relativeLength: number) => void;
+  updateFoundationSolarReceiverTubeMountHeightById: (id: string, mountHeight: number) => void;
 
   // for cuboids
   cuboidActionScope: Scope;
@@ -1700,6 +1703,36 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
                   (e as FoundationModel).solarReceiver = receiver;
+                  break;
+                }
+              }
+            });
+          },
+          updateFoundationSolarReceiverTubeRadiusById(id, radius) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  (e as FoundationModel).solarReceiverTubeRadius = radius;
+                  break;
+                }
+              }
+            });
+          },
+          updateFoundationSolarReceiverTubeRelativeLengthById(id, relativeLength) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  (e as FoundationModel).solarReceiverTubeRelativeLength = relativeLength;
+                  break;
+                }
+              }
+            });
+          },
+          updateFoundationSolarReceiverTubeMountHeightById(id, mountHeight) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  (e as FoundationModel).solarReceiverTubeMountHeight = mountHeight;
                   break;
                 }
               }
@@ -3182,7 +3215,7 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 // foundationId applies to both foundations and cuboids, should have been named ancestorId
-                if (!e.locked && e.foundationId === ancestorId) {
+                if (!e.locked && (e.parentId === ancestorId || e.foundationId === ancestorId)) {
                   switch (e.type) {
                     case ObjectType.Wall:
                       counter.wallCount++;
