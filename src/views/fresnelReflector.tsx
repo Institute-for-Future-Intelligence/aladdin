@@ -226,13 +226,14 @@ const FresnelReflector = ({
       const axisRefDot = reflectorToReceiver.dot(rotationAxis);
       reflectorToReceiver.sub(rotationAxis.multiplyScalar(Util.isZero(axisRefDot) ? 0.001 : axisRefDot)).normalize();
       let normalVector = reflectorToReceiver.add(sunDirection).multiplyScalar(0.5).normalize();
+      if (rot) normalVector.applyAxisAngle(UNIT_VECTOR_POS_Z, -rot);
       if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
         normalVector = new Vector3(-0.001, 0, 1).normalize();
       }
       return new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY');
     }
     return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
-  }, [receiverCenter, sunDirection, tiltAngle, relativeAzimuth]);
+  }, [receiverCenter, sunDirection, tiltAngle, relativeAzimuth, rot]);
 
   const poleZ = -(actualPoleHeight + lz) / 2;
 

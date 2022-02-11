@@ -4,7 +4,7 @@
 
 import short from 'short-uuid';
 import { HumanModel } from './HumanModel';
-import { CuboidTexture, ObjectType } from '../types';
+import { CuboidTexture, ObjectType, SolarReceiver } from '../types';
 import { TreeModel } from './TreeModel';
 import { SensorModel } from './SensorModel';
 import { FoundationModel } from './FoundationModel';
@@ -407,6 +407,11 @@ export class ElementModelCloner {
       parentId: foundation.parentId,
       color: foundation.color,
       textureType: foundation.textureType,
+      solarReceiver: foundation.solarReceiver,
+      solarReceiverTubeRadius: foundation.solarReceiverTubeRadius,
+      solarReceiverTubeRelativeLength: foundation.solarReceiverTubeRelativeLength,
+      solarReceiverTubeMountHeight: foundation.solarReceiverTubeMountHeight,
+      solarReceiverTubePoleNumber: foundation.solarReceiverTubePoleNumber,
       id: short.generate() as string,
     } as FoundationModel;
   }
