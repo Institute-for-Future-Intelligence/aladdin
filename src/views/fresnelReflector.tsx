@@ -17,6 +17,7 @@ import {
   RESIZE_HANDLE_COLOR,
   RESIZE_HANDLE_SIZE,
   UNIT_VECTOR_POS_Z,
+  ZERO_TOLERANCE,
 } from '../constants';
 import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { Util } from '../Util';
@@ -24,6 +25,7 @@ import { getSunDirection } from '../analysis/sunTools';
 import i18n from '../i18n/i18n';
 import { LineData } from './LineData';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
+import { FoundationModel } from '../models/FoundationModel';
 
 const FresnelReflector = ({
   id,
@@ -85,25 +87,23 @@ const FresnelReflector = ({
   const hy = ly / 2;
   const hz = lz / 2;
   const actualPoleHeight = poleHeight + hx;
+  const parent = getElementById(parentId);
 
-  if (parentId) {
-    const p = getElementById(parentId);
-    if (p) {
-      switch (p.type) {
-        case ObjectType.Foundation:
-          cz = actualPoleHeight + hz + p.lz;
-          if (Util.isZero(rotation[2])) {
-            cx = p.cx + cx * p.lx;
-            cy = p.cy + cy * p.ly;
-          } else {
-            // we must rotate the real length, not normalized length
-            const v = new Vector3(cx * p.lx, cy * p.ly, 0);
-            v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
-            cx = p.cx + v.x;
-            cy = p.cy + v.y;
-          }
-          break;
-      }
+  if (parent) {
+    switch (parent.type) {
+      case ObjectType.Foundation:
+        cz = actualPoleHeight + hz + parent.lz;
+        if (Util.isZero(rotation[2])) {
+          cx = parent.cx + cx * parent.lx;
+          cy = parent.cy + cy * parent.ly;
+        } else {
+          // we must rotate the real length, not normalized length
+          const v = new Vector3(cx * parent.lx, cy * parent.ly, 0);
+          v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
+          cx = parent.cx + v.x;
+          cy = parent.cy + v.y;
+        }
+        break;
     }
   }
 
@@ -189,12 +189,47 @@ const FresnelReflector = ({
   const sunDirection = useMemo(() => {
     return getSunDirection(new Date(date), latitude);
   }, [date, latitude]);
-  const rot = getElementById(parentId)?.rotation[2];
-  const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot) : sunDirection;
+  const rot = parent?.rotation[2];
+
+  const receiverCenter = useMemo(() => {
+    if (parent) {
+      if (parent.type === ObjectType.Foundation) {
+        const foundation = parent as FoundationModel;
+        if (foundation.solarReceiver) {
+          // convert the receiver's coordinates into those relative to the center of this reflector
+          return new Vector3(
+            foundation.cx - cx,
+            foundation.cy - cy,
+            foundation.lz - cz + (foundation.solarReceiverTubeMountHeight ?? 10),
+          );
+        }
+      }
+    }
+    return null;
+  }, [parentId]);
+
+  const shiftedReceiverCenter = useRef<Vector3>(new Vector3());
 
   const relativeEuler = useMemo(() => {
-    if (sunDirection.z > 0) {
-      return new Euler(0, Math.atan2(rotatedSunDirection.x, rotatedSunDirection.z), 0, 'ZXY');
+    if (receiverCenter && sunDirection.z > 0) {
+      // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
+      const rotationAxis = rot ? new Vector3(Math.sin(rot), Math.cos(rot), 0) : new Vector3(0, 1, 0);
+      shiftedReceiverCenter.current.set(receiverCenter.x, receiverCenter.y, receiverCenter.z);
+      // how much the reflected light should shift in the direction of the receiver tube?
+      const shift =
+        sunDirection.z < ZERO_TOLERANCE
+          ? 0
+          : (-receiverCenter.z * (sunDirection.y * rotationAxis.y + sunDirection.x * rotationAxis.x)) / sunDirection.z;
+      shiftedReceiverCenter.current.x += shift * rotationAxis.x;
+      shiftedReceiverCenter.current.y += shift * rotationAxis.y;
+      const reflectorToReceiver = shiftedReceiverCenter.current.clone().normalize();
+      const axisRefDot = reflectorToReceiver.dot(rotationAxis);
+      reflectorToReceiver.sub(rotationAxis.multiplyScalar(Util.isZero(axisRefDot) ? 0.001 : axisRefDot)).normalize();
+      let normalVector = reflectorToReceiver.add(sunDirection).multiplyScalar(0.5).normalize();
+      if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
+        normalVector = new Vector3(-0.001, 0, 1).normalize();
+      }
+      return new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY');
     }
     return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
   }, [sunDirection, tiltAngle, relativeAzimuth]);
@@ -535,7 +570,8 @@ const FresnelReflector = ({
           <Line
             userData={{ unintersectable: true }}
             points={[
-              new Vector3(0, 0, 0).applyEuler(relativeEuler),
+              shiftedReceiverCenter.current,
+              new Vector3(0, 0, hz),
               sunDirection.clone().multiplyScalar(sunBeamLength),
             ]}
             name={'Sun Beam'}
