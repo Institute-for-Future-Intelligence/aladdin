@@ -221,10 +221,8 @@ const FresnelReflector = ({
           ? 0
           : (-receiverCenter.z * (sunDirection.y * rotationAxis.y + sunDirection.x * rotationAxis.x)) / sunDirection.z;
       shiftedReceiverCenter.current.x += shift * rotationAxis.x;
-      shiftedReceiverCenter.current.y += shift * rotationAxis.y;
+      shiftedReceiverCenter.current.y -= shift * rotationAxis.y;
       const reflectorToReceiver = shiftedReceiverCenter.current.clone().normalize();
-      const axisRefDot = reflectorToReceiver.dot(rotationAxis);
-      reflectorToReceiver.sub(rotationAxis.multiplyScalar(Util.isZero(axisRefDot) ? 0.001 : axisRefDot)).normalize();
       let normalVector = reflectorToReceiver.add(sunDirection).multiplyScalar(0.5).normalize();
       if (rot) normalVector.applyAxisAngle(UNIT_VECTOR_POS_Z, -rot);
       if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
