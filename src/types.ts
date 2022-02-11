@@ -119,7 +119,8 @@ export enum ObjectType {
 
 export enum ParabolicDishStructureType {
   CentralPole = 1,
-  Tripod = 2,
+  CentralPoleWithTripod = 2,
+  Quadrupod = 3,
 }
 
 export enum SolarReceiver {

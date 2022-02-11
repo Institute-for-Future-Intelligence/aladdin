@@ -203,7 +203,7 @@ const ParabolicDishStructureTypeInput = ({
   return parabolicDish?.type === ObjectType.ParabolicDish ? (
     <>
       <Modal
-        width={600}
+        width={640}
         visible={dialogVisible}
         title={
           <div
@@ -241,20 +241,26 @@ const ParabolicDishStructureTypeInput = ({
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={8}>
             <Select value={inputStructureType} onChange={(value) => setInputStructureType(value)}>
               <Option key={ParabolicDishStructureType.CentralPole} value={ParabolicDishStructureType.CentralPole}>
                 {i18n.t('parabolicDishMenu.CentralPole', lang)}
               </Option>
-              <Option key={ParabolicDishStructureType.Tripod} value={ParabolicDishStructureType.Tripod}>
-                {i18n.t('parabolicDishMenu.Tripod', lang)}
+              <Option
+                key={ParabolicDishStructureType.CentralPoleWithTripod}
+                value={ParabolicDishStructureType.CentralPoleWithTripod}
+              >
+                {i18n.t('parabolicDishMenu.CentralPoleWithTripod', lang)}
+              </Option>
+              <Option key={ParabolicDishStructureType.Quadrupod} value={ParabolicDishStructureType.Quadrupod}>
+                {i18n.t('parabolicDishMenu.Quadrupod', lang)}
               </Option>
             </Select>
           </Col>
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={17}
+            span={16}
           >
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">

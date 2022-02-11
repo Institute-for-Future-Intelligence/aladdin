@@ -253,18 +253,37 @@ const ParabolicDish = ({
     return array;
   }, [hx, latusRectum]);
 
-  const tripodLines = useMemo<LineData[]>(() => {
-    const array: LineData[] = [];
-    let angle;
-    for (let i = 0; i < 3; i++) {
-      angle = (TWO_PI * i) / 3;
-      const line: Vector3[] = [];
-      line.push(new Vector3(hx * Math.cos(angle), hx * Math.sin(angle), depth));
-      line.push(new Vector3(0, 0, focalLength));
-      array.push({ points: line } as LineData);
+  const tripodLines = useMemo<LineData[] | undefined>(() => {
+    if (structureType === ParabolicDishStructureType.CentralPoleWithTripod) {
+      const array: LineData[] = [];
+      let angle;
+      for (let i = 0; i < 3; i++) {
+        angle = (TWO_PI * i) / 3;
+        const line: Vector3[] = [];
+        line.push(new Vector3(hx * Math.cos(angle), hx * Math.sin(angle), depth));
+        line.push(new Vector3(0, 0, focalLength));
+        array.push({ points: line } as LineData);
+      }
+      return array;
     }
-    return array;
-  }, [hx, latusRectum]);
+    return undefined;
+  }, [hx, latusRectum, structureType]);
+
+  const quadrupodLines = useMemo<LineData[] | undefined>(() => {
+    if (structureType === ParabolicDishStructureType.Quadrupod) {
+      const array: LineData[] = [];
+      let angle;
+      for (let i = 0; i < 4; i++) {
+        angle = (TWO_PI * i) / 4;
+        const line: Vector3[] = [];
+        line.push(new Vector3(hx * Math.cos(angle), hx * Math.sin(angle), depth));
+        line.push(new Vector3(0, 0, focalLength));
+        array.push({ points: line } as LineData);
+      }
+      return array;
+    }
+    return undefined;
+  }, [hx, latusRectum, structureType]);
 
   const baseSize = Math.max(1, (lx + ly) / 16);
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
@@ -407,18 +426,21 @@ const ParabolicDish = ({
             </sprite>
           </mesh>
         )}
-        <Cylinder
-          name={'Parabolic Dish Receiver Pole'}
-          uuid={id}
-          args={[receiverPoleRadius, receiverPoleRadius, focalLength, 6, 2]}
-          rotation={[HALF_PI, 0, 0]}
-          position={[0, 0, focalLength / 2]}
-          receiveShadow={false}
-          castShadow={true}
-        >
-          <meshBasicMaterial color={color} />
-        </Cylinder>
-        {structureType === ParabolicDishStructureType.Tripod &&
+        {(structureType === ParabolicDishStructureType.CentralPole ||
+          structureType === ParabolicDishStructureType.CentralPoleWithTripod) && (
+          <Cylinder
+            name={'Parabolic Dish Receiver Pole'}
+            uuid={id}
+            args={[receiverPoleRadius, receiverPoleRadius, focalLength, 6, 2]}
+            rotation={[HALF_PI, 0, 0]}
+            position={[0, 0, focalLength / 2]}
+            receiveShadow={false}
+            castShadow={true}
+          >
+            <meshBasicMaterial color={color} />
+          </Cylinder>
+        )}
+        {structureType === ParabolicDishStructureType.CentralPoleWithTripod &&
           tripodLines &&
           tripodLines.map((lineData, index) => {
             return (
@@ -436,6 +458,30 @@ const ParabolicDish = ({
                   position={new Vector3(lineData.points[0].x, lineData.points[0].y, lineData.points[0].z)}
                   args={[receiverPoleRadius / 2, 4, 4]}
                   name={'Parabolic Dish Tripod Joint'}
+                >
+                  <meshBasicMaterial attach="material" color={color} />
+                </Sphere>
+              </React.Fragment>
+            );
+          })}
+        {structureType === ParabolicDishStructureType.Quadrupod &&
+          quadrupodLines &&
+          quadrupodLines.map((lineData, index) => {
+            return (
+              <React.Fragment key={index}>
+                <Line
+                  name={'Parabolic Dish Quadrupod Lines'}
+                  userData={{ unintersectable: true }}
+                  points={lineData.points}
+                  castShadow={false}
+                  receiveShadow={false}
+                  lineWidth={2}
+                  color={color}
+                />
+                <Sphere
+                  position={new Vector3(lineData.points[0].x, lineData.points[0].y, lineData.points[0].z)}
+                  args={[receiverPoleRadius / 2, 4, 4]}
+                  name={'Parabolic Dish Quadrupod Joint'}
                 >
                   <meshBasicMaterial attach="material" color={color} />
                 </Sphere>

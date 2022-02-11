@@ -206,7 +206,7 @@ const FresnelReflector = ({
       }
     }
     return null;
-  }, [parentId]);
+  }, [parent]);
 
   const shiftedReceiverCenter = useRef<Vector3>(new Vector3());
 
@@ -232,7 +232,7 @@ const FresnelReflector = ({
       return new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY');
     }
     return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
-  }, [sunDirection, tiltAngle, relativeAzimuth]);
+  }, [receiverCenter, sunDirection, tiltAngle, relativeAzimuth]);
 
   const poleZ = -(actualPoleHeight + lz) / 2;
 
@@ -569,11 +569,15 @@ const FresnelReflector = ({
         <group rotation={[-euler.x, 0, -euler.z]}>
           <Line
             userData={{ unintersectable: true }}
-            points={[
-              shiftedReceiverCenter.current,
-              new Vector3(0, 0, hz),
-              sunDirection.clone().multiplyScalar(sunBeamLength),
-            ]}
+            points={
+              receiverCenter
+                ? [
+                    shiftedReceiverCenter.current,
+                    new Vector3(0, 0, hz),
+                    sunDirection.clone().multiplyScalar(sunBeamLength),
+                  ]
+                : [new Vector3(0, 0, hz), sunDirection.clone().multiplyScalar(sunBeamLength)]
+            }
             name={'Sun Beam'}
             lineWidth={0.25}
             color={'white'}
