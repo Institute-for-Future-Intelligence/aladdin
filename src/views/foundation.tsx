@@ -84,6 +84,7 @@ const Foundation = ({
   solarReceiverTubeRadius = 0.1,
   solarReceiverTubeMountHeight = 10,
   solarReceiverTubeRelativeLength = 0.8,
+  solarReceiverTubePoleNumber = 5,
 }: FoundationModel) => {
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic);
@@ -221,6 +222,18 @@ const Foundation = ({
       intersectionPlanePosition.set(0, 0, foundationModel.lz / 2 + poleHeight);
     }
   }
+
+  const solarReceiverTubePoles = useMemo<Vector3[] | undefined>(() => {
+    if (solarReceiver !== SolarReceiver.Tube) return undefined;
+    const array: Vector3[] = [];
+    const dy = (solarReceiverTubeRelativeLength * ly) / (solarReceiverTubePoleNumber + 1);
+    for (let i = 1; i <= solarReceiverTubePoleNumber; i++) {
+      array.push(
+        new Vector3(0, i * dy - (solarReceiverTubeRelativeLength * ly) / 2, solarReceiverTubeMountHeight / 2 + lz),
+      );
+    }
+    return array;
+  }, [solarReceiverTubePoleNumber, solarReceiverTubeMountHeight, solarReceiverTubeRelativeLength]);
 
   useEffect(() => {
     const unsubscribe = useStore.subscribe((state) => {
@@ -2258,7 +2271,7 @@ const Foundation = ({
             <group>
               <Cylinder
                 userData={{ unintersectable: true }}
-                name={'Receiver Tube Pole 1'}
+                name={'Receiver Vertical Tube 1'}
                 castShadow={false}
                 receiveShadow={false}
                 args={[solarReceiverTubeRadius, solarReceiverTubeRadius, solarReceiverTubeMountHeight, 6, 2]}
@@ -2269,7 +2282,7 @@ const Foundation = ({
               </Cylinder>
               <Cylinder
                 userData={{ unintersectable: true }}
-                name={'Receiver Tube Pole 2'}
+                name={'Receiver Vertical Tube 2'}
                 castShadow={false}
                 receiveShadow={false}
                 args={[solarReceiverTubeRadius, solarReceiverTubeRadius, solarReceiverTubeMountHeight, 6, 2]}
@@ -2280,7 +2293,7 @@ const Foundation = ({
               </Cylinder>
               <Cylinder
                 userData={{ unintersectable: true }}
-                name={'Receiver Tube'}
+                name={'Receiver Horizontal Tube'}
                 castShadow={false}
                 receiveShadow={false}
                 args={[solarReceiverTubeRadius, solarReceiverTubeRadius, solarReceiverTubeRelativeLength * ly, 6, 2]}
@@ -2289,6 +2302,30 @@ const Foundation = ({
               >
                 <meshStandardMaterial attach="material" color={'white'} />
               </Cylinder>
+              {/* draw poles */}
+              {solarReceiverTubePoles &&
+                solarReceiverTubePoles.map((p, i) => {
+                  return (
+                    <Cylinder
+                      userData={{ unintersectable: true }}
+                      key={i}
+                      name={'Solar Receiver Pole ' + i}
+                      castShadow={shadowEnabled}
+                      receiveShadow={shadowEnabled}
+                      args={[
+                        solarReceiverTubeRadius / 2,
+                        solarReceiverTubeRadius / 2,
+                        solarReceiverTubeMountHeight,
+                        4,
+                        2,
+                      ]}
+                      position={p}
+                      rotation={[HALF_PI, 0, 0]}
+                    >
+                      <meshStandardMaterial attach="material" color={'white'} />
+                    </Cylinder>
+                  );
+                })}
             </group>
           )}
         </>

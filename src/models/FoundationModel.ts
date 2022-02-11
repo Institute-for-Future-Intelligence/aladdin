@@ -11,4 +11,5 @@ export interface FoundationModel extends ElementModel {
   solarReceiverTubeRadius?: number;
   solarReceiverTubeRelativeLength?: number;
   solarReceiverTubeMountHeight?: number;
+  solarReceiverTubePoleNumber?: number;
 }
