@@ -233,7 +233,7 @@ const Foundation = ({
       );
     }
     return array;
-  }, [solarReceiverTubePoleNumber, solarReceiverTubeMountHeight, solarReceiverTubeRelativeLength]);
+  }, [lx, ly, solarReceiverTubePoleNumber, solarReceiverTubeMountHeight, solarReceiverTubeRelativeLength]);
 
   useEffect(() => {
     const unsubscribe = useStore.subscribe((state) => {
@@ -2310,8 +2310,8 @@ const Foundation = ({
                       userData={{ unintersectable: true }}
                       key={i}
                       name={'Solar Receiver Pole ' + i}
-                      castShadow={shadowEnabled}
-                      receiveShadow={shadowEnabled}
+                      castShadow={false}
+                      receiveShadow={false}
                       args={[
                         solarReceiverTubeRadius / 2,
                         solarReceiverTubeRadius / 2,

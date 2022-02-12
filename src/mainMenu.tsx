@@ -26,6 +26,7 @@ import inter_row_spacing from './examples/inter_row_spacing.json';
 import parabolic_trough_array from './examples/parabolic_trough_array.json';
 import parabolic_dish_focus_sunlight from './examples/parabolic_dish_focus_sunlight.json';
 import parabolic_dish_array from './examples/parabolic_dish_array.json';
+import linear_fresnel_reflectors from './examples/linear_fresnel_reflectors.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -229,6 +230,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'parabolic_dish_array':
         input = parabolic_dish_array;
+        break;
+      case 'linear_fresnel_reflectors':
+        input = linear_fresnel_reflectors;
         break;
       case 'simple_house_01':
         input = simple_house_01;
@@ -1381,6 +1385,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="effect_latus_rectum_parabolic_trough" onClick={loadFile}>
             {i18n.t('menu.tutorials.EffectOfLatusRectumOfParabolicTrough', lang)}
+          </Menu.Item>
+          <Menu.Item key="linear_fresnel_reflectors" onClick={loadFile}>
+            {i18n.t('menu.tutorials.LinearFresnelReflectors', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>

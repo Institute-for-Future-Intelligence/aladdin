@@ -258,6 +258,7 @@ export const i18n_tr = {
         EffectOfAzimuthOfParabolicTrough: 'Effect of Azimuth of a Parabolic Trough',
         EffectOfLatusRectumOfParabolicTrough: 'Effect of Latus Rectum of a Parabolic Trough',
         FocusSunlightWithParabolicDish: 'Focus Sunlight with a Parabolic Dish',
+        LinearFresnelReflectors: 'Linear Fresnel Reflectors',
       },
       examplesSubMenu: 'Örnekler',
       solarEnergySubMenu: 'Güneþ Enerjisi',
