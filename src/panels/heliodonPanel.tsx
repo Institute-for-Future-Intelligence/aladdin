@@ -120,7 +120,7 @@ const HeliodonPanel = () => {
         const day = date.getDate();
         date.setHours(date.getHours(), date.getMinutes() + 15);
         date.setDate(day);
-        changeTime(date);
+        changeTime(date, false);
         previousFrameTime.current = currentFrameTime;
       }
     } else {
@@ -128,26 +128,28 @@ const HeliodonPanel = () => {
     }
   };
 
-  const changeTime = (time: Date) => {
+  const changeTime = (time: Date, undoable: boolean) => {
     const d = new Date(date);
     d.setHours(time.getHours(), time.getMinutes());
-    const undoableChange = {
-      name: 'Set Time',
-      timestamp: Date.now(),
-      oldValue: dateString,
-      newValue: d.toString(),
-      undo: () => {
-        setCommonStore((state) => {
-          state.world.date = undoableChange.oldValue as string;
-        });
-      },
-      redo: () => {
-        setCommonStore((state) => {
-          state.world.date = undoableChange.newValue as string;
-        });
-      },
-    } as UndoableChange;
-    addUndoable(undoableChange);
+    if (undoable) {
+      const undoableChange = {
+        name: 'Set Time',
+        timestamp: Date.now(),
+        oldValue: dateString,
+        newValue: d.toString(),
+        undo: () => {
+          setCommonStore((state) => {
+            state.world.date = undoableChange.oldValue as string;
+          });
+        },
+        redo: () => {
+          setCommonStore((state) => {
+            state.world.date = undoableChange.newValue as string;
+          });
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+    }
     setCommonStore((state) => {
       state.world.date = d.toString();
     });
@@ -338,7 +340,7 @@ const HeliodonPanel = () => {
                 value={moment(date, 'HH:mm')}
                 format={'HH:mm'}
                 onChange={(t) => {
-                  if (t) changeTime?.(t.toDate());
+                  if (t) changeTime?.(t.toDate(), true);
                 }}
               />
             </div>
