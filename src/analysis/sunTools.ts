@@ -10,14 +10,28 @@ import { TWO_PI, UNIT_VECTOR_POS_Z } from '../constants';
 
 export const TILT_ANGLE = (23.45 / 180.0) * Math.PI;
 
+const DAY_MILLISECONDS = 1000 * 60 * 60 * 24;
+const HALF_DAY_MINUTES = 720;
+
 export const computeDeclinationAngle = (date: Date) => {
-  const days = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
+  const days = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / DAY_MILLISECONDS);
   return TILT_ANGLE * Math.sin((TWO_PI * (284 + days)) / 365.25);
 };
 
+// https://en.wikipedia.org/wiki/Sunrise_equation
+// from sunrise to noon and from noon to sunset have the same minutes
+export const computeSunriseAndSunsetInMinutes = (date: Date, latitude: number) => {
+  const a = Math.tan(Util.toRadians(latitude)) * Math.tan(computeDeclinationAngle(date));
+  if (Math.abs(a) > 1) {
+    return { sunrise: 0, sunset: a > 0 ? HALF_DAY_MINUTES * 2 : 0 };
+  }
+  const b = (60 * Math.acos(-a)) / Util.toRadians(15);
+  return { sunrise: HALF_DAY_MINUTES - b, sunset: HALF_DAY_MINUTES + b };
+};
+
 export const computeHourAngle = (date: Date) => {
-  const minutes = date.getHours() * 60 + date.getMinutes() - 12 * 60;
-  return (minutes / (12.0 * 60.0)) * Math.PI;
+  const minutes = date.getHours() * 60 + date.getMinutes() - HALF_DAY_MINUTES;
+  return (minutes / HALF_DAY_MINUTES) * Math.PI;
 };
 
 export const getSunDirection = (date: Date, latitude: number) => {

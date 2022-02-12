@@ -14,6 +14,7 @@ import i18n from '../i18n/i18n';
 import { UndoableCheck } from '../undo/UndoableCheck';
 import { UndoableChange } from '../undo/UndoableChange';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
+import { computeSunriseAndSunsetInMinutes } from '../analysis/sunTools';
 
 const Container = styled.div`
   position: absolute;
@@ -86,7 +87,12 @@ const HeliodonPanel = () => {
     y: isNaN(heliodonPanelY) ? 0 : Math.min(heliodonPanelY, window.innerHeight - hOffset),
   });
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+
   const date = useMemo(() => new Date(dateString), [dateString]);
+  const sunriseAndSunsetInMinutes = useMemo(() => {
+    return computeSunriseAndSunsetInMinutes(date, latitude);
+  }, [date, latitude]);
+
   const lang = { lng: language };
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
@@ -112,12 +118,30 @@ const HeliodonPanel = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [animateSun]);
 
+  useEffect(() => {
+    if (animateSun) {
+      if (sunriseAndSunsetInMinutes.sunset === 0) {
+        cancelAnimationFrame(requestRef.current);
+        setCommonStore((state) => {
+          state.animateSun = false;
+        });
+      }
+    }
+  }, [sunriseAndSunsetInMinutes.sunset]);
+
   const animate = () => {
     if (animateSun) {
       requestRef.current = requestAnimationFrame(animate);
       const currentFrameTime = Date.now();
       if (currentFrameTime - previousFrameTime.current > 100) {
         const day = date.getDate();
+        const totalMinutes = date.getMinutes() + date.getHours() * 60;
+        // unfortunately, we have to get the latest latitude (which may be changed while the animation is running)
+        // and then recalculate the sunrise and sunset time in the animation loop
+        const sunMinutes = computeSunriseAndSunsetInMinutes(date, useStore.getState().world.latitude);
+        if (totalMinutes > sunMinutes.sunset) {
+          date.setHours(sunMinutes.sunrise / 60, date.getMinutes() + 15);
+        }
         date.setHours(date.getHours(), date.getMinutes() + 15);
         date.setDate(day);
         changeTime(date, false);
@@ -269,34 +293,36 @@ const HeliodonPanel = () => {
                 />
               </div>
             )}
-            <div>
-              {i18n.t('word.Animate', lang)}
-              <br />
-              <Switch
-                checked={animateSun}
-                onChange={(checked) => {
-                  const undoableCheck = {
-                    name: 'Animate Heliodon',
-                    timestamp: Date.now(),
-                    checked: !animateSun,
-                    undo: () => {
-                      setCommonStore((state) => {
-                        state.animateSun = !undoableCheck.checked;
-                      });
-                    },
-                    redo: () => {
-                      setCommonStore((state) => {
-                        state.animateSun = undoableCheck.checked;
-                      });
-                    },
-                  } as UndoableCheck;
-                  addUndoable(undoableCheck);
-                  setCommonStore((state) => {
-                    state.animateSun = checked;
-                  });
-                }}
-              />
-            </div>
+            {sunriseAndSunsetInMinutes.sunset > 0 && (
+              <div>
+                {i18n.t('word.Animate', lang)}
+                <br />
+                <Switch
+                  checked={animateSun}
+                  onChange={(checked) => {
+                    const undoableCheck = {
+                      name: 'Animate Heliodon',
+                      timestamp: Date.now(),
+                      checked: !animateSun,
+                      undo: () => {
+                        setCommonStore((state) => {
+                          state.animateSun = !undoableCheck.checked;
+                        });
+                      },
+                      redo: () => {
+                        setCommonStore((state) => {
+                          state.animateSun = undoableCheck.checked;
+                        });
+                      },
+                    } as UndoableCheck;
+                    addUndoable(undoableCheck);
+                    setCommonStore((state) => {
+                      state.animateSun = checked;
+                    });
+                  }}
+                />
+              </div>
+            )}
             <div>
               {i18n.t('word.Date', lang)}
               <br />
