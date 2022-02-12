@@ -517,7 +517,6 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           const rotatedSunDirection = rot
             ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
             : sunDirection.clone();
-          const ori = originalNormal.clone();
           const qRot = new Quaternion().setFromUnitVectors(
             UNIT_VECTOR_POS_Z,
             new Vector3(
@@ -526,7 +525,7 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
               rotatedSunDirection.z,
             ).normalize(),
           );
-          normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRot)));
+          normal.copy(originalNormal.clone().applyEuler(new Euler().setFromQuaternion(qRot)));
           count++;
           const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
           const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
@@ -573,6 +572,8 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
   const generateHeatmapForFresnelReflector = (reflector: FresnelReflectorModel) => {
     const parent = getParent(reflector);
     if (!parent) throw new Error('parent of Fresnel reflector does not exist');
+    if (parent.type !== ObjectType.Foundation) return;
+    const foundation = parent as FoundationModel;
     const center = Util.absoluteCoordinates(reflector.cx, reflector.cy, reflector.cz, parent);
     const normal = new Vector3().fromArray(reflector.normal);
     const originalNormal = normal.clone();
@@ -590,7 +591,7 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = parent.lz + actualPoleHeight + reflector.lz;
+    const z0 = foundation.lz + actualPoleHeight + reflector.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputTotals = Array(nx)
@@ -602,25 +603,44 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     const zRotZero = Util.isZero(zRot);
     const cosRot = zRotZero ? 1 : Math.cos(zRot);
     const sinRot = zRotZero ? 0 : Math.sin(zRot);
+    // convert the receiver's coordinates into those relative to the center of this reflector
+    const receiverCenter = foundation.solarReceiver
+      ? new Vector3(
+          foundation.cx - reflector.cx,
+          foundation.cy - reflector.cy,
+          foundation.lz - reflector.cz + (foundation.solarReceiverTubeMountHeight ?? 10),
+        )
+      : undefined;
+    // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
+    const rotationAxis = new Vector3(sinRot, cosRot, 0);
+    const shiftedReceiverCenter = new Vector3();
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         const currentTime = new Date(year, month, date, i, j * interval);
         const sunDirection = getSunDirection(currentTime, world.latitude);
         if (sunDirection.z > 0) {
           // when the sun is out
-          const rotatedSunDirection = rot
-            ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
-            : sunDirection.clone();
-          const ori = originalNormal.clone();
-          const qRot = new Quaternion().setFromUnitVectors(
-            UNIT_VECTOR_POS_Z,
-            new Vector3(
-              rotatedSunDirection.x * cosRot,
-              rotatedSunDirection.x * sinRot,
-              rotatedSunDirection.z,
-            ).normalize(),
-          );
-          normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRot)));
+          if (receiverCenter) {
+            // the reflector moves only when there is a receiver
+            shiftedReceiverCenter.set(receiverCenter.x, receiverCenter.y, receiverCenter.z);
+            // how much the reflected light should shift in the direction of the receiver tube?
+            const shift =
+              sunDirection.z < ZERO_TOLERANCE
+                ? 0
+                : (-receiverCenter.z * (sunDirection.y * rotationAxis.y + sunDirection.x * rotationAxis.x)) /
+                  sunDirection.z;
+            shiftedReceiverCenter.x += shift * rotationAxis.x;
+            shiftedReceiverCenter.y -= shift * rotationAxis.y;
+            const reflectorToReceiver = shiftedReceiverCenter.clone().normalize();
+            // no need to normalize as both vectors to add have already been normalized
+            let normalVector = reflectorToReceiver.add(sunDirection).multiplyScalar(0.5);
+            if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
+              normalVector = new Vector3(-0.001, 0, 1).normalize();
+            }
+            normal.copy(
+              originalNormal.clone().applyEuler(new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY')),
+            );
+          }
           count++;
           const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
           const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
@@ -693,9 +713,8 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           const rotatedSunDirection = rot
             ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
             : sunDirection.clone();
-          const ori = originalNormal.clone();
           const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
-          normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRot)));
+          normal.copy(originalNormal.clone().applyEuler(new Euler().setFromQuaternion(qRot)));
           count++;
           const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
           const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);

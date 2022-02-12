@@ -83,7 +83,7 @@ export const FoundationMenu = () => {
         <Copy keyName={'foundation-copy'} />
         {editable && <Cut keyName={'foundation-cut'} />}
         <Lock keyName={'foundation-lock'} />
-        {counter.gotSome() && contextMenuObjectType && (
+        {editable && counter.gotSome() && contextMenuObjectType && (
           <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
             {counter.wallCount > 0 && (
               <Menu.Item
@@ -670,7 +670,7 @@ export const FoundationMenu = () => {
           {i18n.t('foundationMenu.AddPolygon', lang)}
         </Menu.Item>
 
-        {(counter.fresnelReflectorCount > 0 || counter.heliostatCount > 0) && (
+        {editable && (counter.fresnelReflectorCount > 0 || counter.heliostatCount > 0) && (
           <SubMenu
             key={'select-solar-receiver'}
             title={i18n.t('foundationMenu.SelectSolarReceiver', lang)}
