@@ -223,11 +223,19 @@ const FresnelReflector = ({
       shiftedReceiverCenter.current.x += shift * rotationAxis.x;
       shiftedReceiverCenter.current.y -= shift * rotationAxis.y;
       const reflectorToReceiver = shiftedReceiverCenter.current.clone().normalize();
-      let normalVector = reflectorToReceiver.add(sunDirection).multiplyScalar(0.5).normalize();
-      if (rot) normalVector.applyAxisAngle(UNIT_VECTOR_POS_Z, -rot);
+      // no need to normalize as both vectors to add have already been normalized
+      let normalVector = reflectorToReceiver.add(sunDirection).multiplyScalar(0.5);
       if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
         normalVector = new Vector3(-0.001, 0, 1).normalize();
       }
+      const sunDirectionClone = sunDirection.clone();
+      if (rot) {
+        normalVector.applyAxisAngle(UNIT_VECTOR_POS_Z, -rot);
+        sunDirectionClone.applyAxisAngle(UNIT_VECTOR_POS_Z, -rot);
+      }
+      const delta = (sunDirectionClone.y / sunDirectionClone.z) * receiverCenter.z;
+      shiftedReceiverCenter.current.x -= (shift - delta) * rotationAxis.x;
+      shiftedReceiverCenter.current.y += (shift - delta) * rotationAxis.y;
       return new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY');
     }
     return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
