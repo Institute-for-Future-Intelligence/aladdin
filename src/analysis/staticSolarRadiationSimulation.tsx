@@ -4,7 +4,7 @@
 
 import React, { useEffect, useMemo, useRef } from 'react';
 import { calculateDiffuseAndReflectedRadiation, calculatePeakRadiation, getSunDirection } from './sunTools';
-import { Euler, Intersection, Object3D, Quaternion, Raycaster, Vector2, Vector3 } from 'three';
+import { Euler, Intersection, Object3D, Raycaster, Vector2, Vector3 } from 'three';
 import { useThree } from '@react-three/fiber';
 import { useStore } from '../stores/common';
 import * as Selector from 'src/stores/selector';
@@ -19,20 +19,20 @@ import {
   UNIT_VECTOR_POS_Z,
   ZERO_TOLERANCE,
 } from '../constants';
-import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
-import { ParabolicDishModel } from '../models/ParabolicDishModel';
-import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 
-export interface SolarRadiationSimulationProps {
+export interface StaticSolarRadiationSimulationProps {
   city: string | null;
 }
 
-const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
+// note that this cannot be used for anything related to CSP as CPS must move to track or reflect the sun
+// for the same reason, this cannot be used for PV with trackers.
+
+const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
@@ -118,15 +118,6 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
           break;
         case ObjectType.SolarPanel:
           generateHeatmapForSolarPanel(e as SolarPanelModel);
-          break;
-        case ObjectType.ParabolicTrough:
-          generateHeatmapForParabolicTrough(e as ParabolicTroughModel);
-          break;
-        case ObjectType.FresnelReflector:
-          generateHeatmapForFresnelReflector(e as FresnelReflectorModel);
-          break;
-        case ObjectType.ParabolicDish:
-          generateHeatmapForParabolicDish(e as ParabolicDishModel);
           break;
       }
     }
@@ -371,13 +362,13 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
   const generateHeatmapForSolarPanel = (panel: SolarPanelModel) => {
     const parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
+    if (panel.trackerType !== TrackerType.NO_TRACKER) throw new Error('trackers must not use static simulation');
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);
-    const originalNormal = normal.clone();
     const rot = parent.rotation[2];
     const zRot = rot + panel.relativeAzimuth;
     const zRotZero = Util.isZero(zRot);
-    if (Math.abs(panel.tiltAngle) > 0.001 && panel.trackerType === TrackerType.NO_TRACKER) {
+    if (Math.abs(panel.tiltAngle) > 0.001) {
       // TODO: right now we assume a parent rotation is always around the z-axis
       //normal.applyAxisAngle(UNIT_VECTOR_POS_X, panel.tiltAngle).applyAxisAngle(UNIT_VECTOR_POS_Z, zRot);
       normal.applyEuler(new Euler(panel.tiltAngle, 0, zRot, 'ZYX'));
@@ -412,38 +403,6 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
         const sunDirection = getSunDirection(currentTime, world.latitude);
         if (sunDirection.z > 0) {
           // when the sun is out
-          if (panel.trackerType !== TrackerType.NO_TRACKER) {
-            // dynamic angles
-            const rotatedSunDirection = rot
-              ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
-              : sunDirection.clone();
-            const ori = originalNormal.clone();
-            switch (panel.trackerType) {
-              case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
-                const qRotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
-                normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotAADAT)));
-                break;
-              case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
-                const qRotHSAT = new Quaternion().setFromUnitVectors(
-                  UNIT_VECTOR_POS_Z,
-                  new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
-                );
-                normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotHSAT)));
-                break;
-              case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
-                if (Math.abs(panel.tiltAngle) > 0.001) {
-                  const v2d = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
-                  const az = Math.acos(UNIT_VECTOR_POS_Y.dot(v2d)) * Math.sign(v2d.x);
-                  ori.applyAxisAngle(UNIT_VECTOR_POS_X, panel.tiltAngle);
-                  ori.applyAxisAngle(UNIT_VECTOR_POS_Z, az + rot);
-                  normal.copy(ori);
-                }
-                break;
-              case TrackerType.TILTED_SINGLE_AXIS_TRACKER:
-                // TODO
-                break;
-            }
-          }
           count++;
           const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
           const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
@@ -475,296 +434,6 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
     setHeatmap(panel.id, cellOutputTotals);
   };
 
-  const generateHeatmapForParabolicTrough = (trough: ParabolicTroughModel) => {
-    const parent = getParent(trough);
-    if (!parent) throw new Error('parent of parabolic trough does not exist');
-    const center = Util.absoluteCoordinates(trough.cx, trough.cy, trough.cz, parent);
-    const normal = new Vector3().fromArray(trough.normal);
-    const originalNormal = normal.clone();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const date = now.getDate();
-    const dayOfYear = Util.dayOfYear(now);
-    const lx = trough.lx;
-    const ly = trough.ly;
-    const depth = (lx * lx) / (4 * trough.latusRectum); // the distance from the bottom to the aperture plane
-    const actualPoleHeight = trough.poleHeight + lx / 2;
-    const nx = Math.max(2, Math.round(trough.lx / cellSize));
-    const ny = Math.max(2, Math.round(trough.ly / cellSize));
-    const dx = lx / nx;
-    const dy = ly / ny;
-    // shift half cell size to the center of each grid cell
-    const x0 = center.x - (lx - cellSize) / 2;
-    const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = parent.lz + actualPoleHeight + trough.lz + depth;
-    const center2d = new Vector2(center.x, center.y);
-    const v = new Vector3();
-    const cellOutputTotals = Array(nx)
-      .fill(0)
-      .map(() => Array(ny).fill(0));
-    let count = 0;
-    const rot = parent.rotation[2];
-    const zRot = rot + trough.relativeAzimuth;
-    const zRotZero = Util.isZero(zRot);
-    const cosRot = zRotZero ? 1 : Math.cos(zRot);
-    const sinRot = zRotZero ? 0 : Math.sin(zRot);
-    for (let i = 0; i < 24; i++) {
-      for (let j = 0; j < world.timesPerHour; j++) {
-        const currentTime = new Date(year, month, date, i, j * interval);
-        const sunDirection = getSunDirection(currentTime, world.latitude);
-        if (sunDirection.z > 0) {
-          // when the sun is out
-          const rotatedSunDirection = rot
-            ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
-            : sunDirection.clone();
-          const qRot = new Quaternion().setFromUnitVectors(
-            UNIT_VECTOR_POS_Z,
-            new Vector3(
-              rotatedSunDirection.x * cosRot,
-              rotatedSunDirection.x * sinRot,
-              rotatedSunDirection.z,
-            ).normalize(),
-          );
-          normal.copy(originalNormal.clone().applyEuler(new Euler().setFromQuaternion(qRot)));
-          count++;
-          const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-          const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
-          const dot = normal.dot(sunDirection);
-          const v2 = new Vector2();
-          let tmpX = 0;
-          let disX = 0;
-          let areaRatio = 1;
-          const lr2 = 4 / (trough.latusRectum * trough.latusRectum);
-          // we have to calculate the irradiance on the parabolic surface, not the aperture surface.
-          // the irradiance on the former is less than that on the latter because of the area difference.
-          // the relationship between a unit area on the parabolic surface and that on the aperture surface
-          // is S = A * sqrt(1 + 4 * x^2 / p^2), where p is the latus rectum, x is the distance from the center
-          // of the parabola, and A is the unit area on the aperture area. Note that this modification only
-          // applies to direct radiation. Indirect radiation can come from any direction.
-          for (let ku = 0; ku < nx; ku++) {
-            tmpX = x0 + ku * dx;
-            disX = tmpX - center.x;
-            areaRatio = 1 / Math.sqrt(1 + disX * disX * lr2);
-            for (let kv = 0; kv < ny; kv++) {
-              cellOutputTotals[ku][kv] += indirectRadiation;
-              if (dot > 0) {
-                v2.set(tmpX, y0 + kv * dy);
-                if (!zRotZero) v2.rotateAround(center2d, zRot);
-                v.set(v2.x, v2.y, z0);
-                if (!inShadow(trough.id, v, sunDirection)) {
-                  cellOutputTotals[ku][kv] += dot * peakRadiation * areaRatio;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
-    const daylight = (count * interval) / 60;
-    const scaleFactor =
-      daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
-    applyScaleFactor(cellOutputTotals, scaleFactor);
-    // send heat map data to common store for visualization
-    setHeatmap(trough.id, cellOutputTotals);
-  };
-
-  const generateHeatmapForFresnelReflector = (reflector: FresnelReflectorModel) => {
-    const parent = getParent(reflector);
-    if (!parent) throw new Error('parent of Fresnel reflector does not exist');
-    if (parent.type !== ObjectType.Foundation) return;
-    const foundation = parent as FoundationModel;
-    const center = Util.absoluteCoordinates(reflector.cx, reflector.cy, reflector.cz, parent);
-    const normal = new Vector3().fromArray(reflector.normal);
-    const originalNormal = normal.clone();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const date = now.getDate();
-    const dayOfYear = Util.dayOfYear(now);
-    const lx = reflector.lx;
-    const ly = reflector.ly;
-    const actualPoleHeight = reflector.poleHeight + lx / 2;
-    const nx = Math.max(2, Math.round(reflector.lx / cellSize));
-    const ny = Math.max(2, Math.round(reflector.ly / cellSize));
-    const dx = lx / nx;
-    const dy = ly / ny;
-    // shift half cell size to the center of each grid cell
-    const x0 = center.x - (lx - cellSize) / 2;
-    const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = foundation.lz + actualPoleHeight + reflector.lz;
-    const center2d = new Vector2(center.x, center.y);
-    const v = new Vector3();
-    const cellOutputTotals = Array(nx)
-      .fill(0)
-      .map(() => Array(ny).fill(0));
-    let count = 0;
-    const rot = parent.rotation[2];
-    const zRot = rot + reflector.relativeAzimuth;
-    const zRotZero = Util.isZero(zRot);
-    const cosRot = zRotZero ? 1 : Math.cos(zRot);
-    const sinRot = zRotZero ? 0 : Math.sin(zRot);
-    // convert the receiver's coordinates into those relative to the center of this reflector
-    const receiverCenter = foundation.solarReceiver
-      ? new Vector3(
-          foundation.cx - reflector.cx,
-          foundation.cy - reflector.cy,
-          foundation.lz - reflector.cz + (foundation.solarReceiverTubeMountHeight ?? 10),
-        )
-      : undefined;
-    // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
-    const rotationAxis = new Vector3(sinRot, cosRot, 0);
-    const shiftedReceiverCenter = new Vector3();
-    for (let i = 0; i < 24; i++) {
-      for (let j = 0; j < world.timesPerHour; j++) {
-        const currentTime = new Date(year, month, date, i, j * interval);
-        const sunDirection = getSunDirection(currentTime, world.latitude);
-        if (sunDirection.z > 0) {
-          // when the sun is out
-          if (receiverCenter) {
-            // the reflector moves only when there is a receiver
-            shiftedReceiverCenter.set(receiverCenter.x, receiverCenter.y, receiverCenter.z);
-            // how much the reflected light should shift in the direction of the receiver tube?
-            const shift =
-              sunDirection.z < ZERO_TOLERANCE
-                ? 0
-                : (-receiverCenter.z * (sunDirection.y * rotationAxis.y + sunDirection.x * rotationAxis.x)) /
-                  sunDirection.z;
-            shiftedReceiverCenter.x += shift * rotationAxis.x;
-            shiftedReceiverCenter.y -= shift * rotationAxis.y;
-            const reflectorToReceiver = shiftedReceiverCenter.clone().normalize();
-            // no need to normalize as both vectors to add have already been normalized
-            let normalVector = reflectorToReceiver.add(sunDirection).multiplyScalar(0.5);
-            if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
-              normalVector = new Vector3(-0.001, 0, 1).normalize();
-            }
-            normal.copy(
-              originalNormal.clone().applyEuler(new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY')),
-            );
-          }
-          count++;
-          const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-          const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
-          const dot = normal.dot(sunDirection);
-          const v2 = new Vector2();
-          let tmpX = 0;
-          for (let ku = 0; ku < nx; ku++) {
-            tmpX = x0 + ku * dx;
-            for (let kv = 0; kv < ny; kv++) {
-              cellOutputTotals[ku][kv] += indirectRadiation;
-              if (dot > 0) {
-                v2.set(tmpX, y0 + kv * dy);
-                if (!zRotZero) v2.rotateAround(center2d, zRot);
-                v.set(v2.x, v2.y, z0);
-                if (!inShadow(reflector.id, v, sunDirection)) {
-                  cellOutputTotals[ku][kv] += dot * peakRadiation;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
-    const daylight = (count * interval) / 60;
-    const scaleFactor =
-      daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
-    applyScaleFactor(cellOutputTotals, scaleFactor);
-    // send heat map data to common store for visualization
-    setHeatmap(reflector.id, cellOutputTotals);
-  };
-
-  const generateHeatmapForParabolicDish = (dish: ParabolicDishModel) => {
-    const parent = getParent(dish);
-    if (!parent) throw new Error('parent of parabolic dish does not exist');
-    const center = Util.absoluteCoordinates(dish.cx, dish.cy, dish.cz, parent);
-    const normal = new Vector3().fromArray(dish.normal);
-    const originalNormal = normal.clone();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const date = now.getDate();
-    const dayOfYear = Util.dayOfYear(now);
-    const lx = dish.lx;
-    const ly = dish.ly;
-    const depth = (lx * lx) / (4 * dish.latusRectum); // the distance from the bottom to the aperture circle
-    const actualPoleHeight = dish.poleHeight + lx / 2;
-    const nx = Math.max(2, Math.round(dish.lx / cellSize));
-    const ny = Math.max(2, Math.round(dish.ly / cellSize));
-    const dx = lx / nx;
-    const dy = ly / ny;
-    // shift half cell size to the center of each grid cell
-    const x0 = center.x - (lx - cellSize) / 2;
-    const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = parent.lz + actualPoleHeight + dish.lz + depth;
-    const center2d = new Vector2(center.x, center.y);
-    const v = new Vector3();
-    const cellOutputTotals = Array(nx)
-      .fill(0)
-      .map(() => Array(ny).fill(0));
-    let count = 0;
-    const rot = parent.rotation[2];
-    const zRot = rot + dish.relativeAzimuth;
-    const zRotZero = Util.isZero(zRot);
-    for (let i = 0; i < 24; i++) {
-      for (let j = 0; j < world.timesPerHour; j++) {
-        const currentTime = new Date(year, month, date, i, j * interval);
-        const sunDirection = getSunDirection(currentTime, world.latitude);
-        if (sunDirection.z > 0) {
-          // when the sun is out
-          const rotatedSunDirection = rot
-            ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
-            : sunDirection.clone();
-          const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
-          normal.copy(originalNormal.clone().applyEuler(new Euler().setFromQuaternion(qRot)));
-          count++;
-          const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-          const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
-          const dot = normal.dot(sunDirection);
-          const v2 = new Vector2();
-          let tmpX = 0;
-          let tmpY = 0;
-          let disX = 0;
-          let disY = 0;
-          let areaRatio = 1;
-          const lr2 = 4 / (dish.latusRectum * dish.latusRectum);
-          // we have to calculate the irradiance on the parabolic surface, not the aperture surface.
-          // the irradiance on the former is less than that on the latter because of the area difference.
-          // the relationship between a unit area on the parabolic surface and that on the aperture surface
-          // is S = A * sqrt(1 + 4 * (x^2 + y^2) / p^2), where p is the latus rectum, x is the x distance
-          // from the center of the paraboloid, y is the y distance from the center of the paraboloid,
-          // and A is the unit area on the aperture area. Note that this modification only
-          // applies to direct radiation. Indirect radiation can come from any direction.
-          for (let ku = 0; ku < nx; ku++) {
-            tmpX = x0 + ku * dx;
-            disX = tmpX - center.x;
-            if (Math.abs(disX) > lx / 2) continue;
-            for (let kv = 0; kv < ny; kv++) {
-              tmpY = y0 + kv * dy;
-              disY = tmpY - center.y;
-              if (Math.abs(disY) > ly / 2) continue;
-              cellOutputTotals[ku][kv] += indirectRadiation;
-              if (dot > 0) {
-                v2.set(tmpX, tmpY);
-                if (!zRotZero) v2.rotateAround(center2d, zRot);
-                v.set(v2.x, v2.y, z0);
-                if (!inShadow(dish.id, v, sunDirection)) {
-                  areaRatio = 1 / Math.sqrt(1 + (disX * disX + disY * disY) * lr2);
-                  cellOutputTotals[ku][kv] += dot * peakRadiation * areaRatio;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
-    const daylight = (count * interval) / 60;
-    const scaleFactor =
-      daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
-    applyScaleFactor(cellOutputTotals, scaleFactor);
-    // send heat map data to common store for visualization
-    setHeatmap(dish.id, cellOutputTotals);
-  };
-
   const applyScaleFactor = (output: number[][], scaleFactor: number) => {
     for (let i = 0; i < output.length; i++) {
       for (let j = 0; j < output[i].length; j++) {
@@ -776,4 +445,4 @@ const SolarRadiationSimulation = ({ city }: SolarRadiationSimulationProps) => {
   return <></>;
 };
 
-export default React.memo(SolarRadiationSimulation);
+export default React.memo(StaticSolarRadiationSimulation);

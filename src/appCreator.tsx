@@ -51,14 +51,14 @@ import { UndoableCameraChange } from './undo/UndoableCameraChange';
 import SolarPanelVisibility from './analysis/solarPanelVisibility';
 import ShareLink from './shareLinks';
 import VisibilityResultsPanel from './panels/visibilityResultsPanel';
-import SolarRadiationSimulation from './analysis/solarRadiationSimulation';
+import StaticSolarRadiationSimulation from './analysis/staticSolarRadiationSimulation';
+import DynamicSolarRadiationSimulation from './analysis/dynamicSolarRadiationSimulation';
 import YearlyParabolicTroughYieldPanel from './panels/yearlyParabolicTroughYieldPanel';
 import DailyParabolicTroughYieldPanel from './panels/dailyParabolicTroughYieldPanel';
 import ParabolicTroughSimulation from './analysis/parabolicTroughSimulation';
 import DailyParabolicDishYieldPanel from './panels/dailyParabolicDishYieldPanel';
 import YearlyParabolicDishYieldPanel from './panels/yearlyParabolicDishYieldPanel';
 import ParabolicDishSimulation from './analysis/parabolicDishSimulation';
-import DynamicSolarRadiationSimulation from './analysis/dynamicSolarRadiationSimulation';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -361,7 +361,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               {/* <Obj/> */}
             </Suspense>
             <SceneRadiusCalculator />
-            <SolarRadiationSimulation city={city} />
+            <StaticSolarRadiationSimulation city={city} />
             <DynamicSolarRadiationSimulation city={city} />
             <SensorSimulation city={city} />
             <SolarPanelSimulation city={city} />

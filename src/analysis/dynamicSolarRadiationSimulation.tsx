@@ -199,13 +199,13 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
             calculateSolarPanel(e as SolarPanelModel);
             break;
           case ObjectType.ParabolicTrough:
-            // calculateParabolicTrough(e as ParabolicTroughModel);
+            calculateParabolicTrough(e as ParabolicTroughModel);
             break;
           case ObjectType.FresnelReflector:
             calculateFresnelReflector(e as FresnelReflectorModel);
             break;
           case ObjectType.ParabolicDish:
-            // calculateParabolicDish(e as ParabolicDishModel);
+            calculateParabolicDish(e as ParabolicDishModel);
             break;
         }
       }
@@ -584,6 +584,88 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     }
   };
 
+  const calculateParabolicTrough = (trough: ParabolicTroughModel) => {
+    const parent = getParent(trough);
+    if (!parent) throw new Error('parent of parabolic trough does not exist');
+    const dayOfYear = Util.dayOfYear(dateRef.current);
+    const center = Util.absoluteCoordinates(trough.cx, trough.cy, trough.cz, parent);
+    const normal = new Vector3().fromArray(trough.normal);
+    const originalNormal = normal.clone();
+    const lx = trough.lx;
+    const ly = trough.ly;
+    const depth = (lx * lx) / (4 * trough.latusRectum); // the distance from the bottom to the aperture plane
+    const actualPoleHeight = trough.poleHeight + lx / 2;
+    const nx = Math.max(2, Math.round(trough.lx / cellSize));
+    const ny = Math.max(2, Math.round(trough.ly / cellSize));
+    const dx = lx / nx;
+    const dy = ly / ny;
+    // shift half cell size to the center of each grid cell
+    const x0 = center.x - (lx - cellSize) / 2;
+    const y0 = center.y - (ly - cellSize) / 2;
+    const z0 = parent.lz + actualPoleHeight + trough.lz + depth;
+    const center2d = new Vector2(center.x, center.y);
+    const v = new Vector3();
+    let cellOutputs = cellOutputsMapRef.current.get(trough.id);
+    if (!cellOutputs) {
+      cellOutputs = Array(nx)
+        .fill(0)
+        .map(() => Array(ny).fill(0));
+      cellOutputsMapRef.current.set(trough.id, cellOutputs);
+    }
+    const rot = parent.rotation[2];
+    const zRot = rot + trough.relativeAzimuth;
+    const zRotZero = Util.isZero(zRot);
+    const cosRot = zRotZero ? 1 : Math.cos(zRot);
+    const sinRot = zRotZero ? 0 : Math.sin(zRot);
+    const sunDirection = getSunDirection(dateRef.current, world.latitude);
+    if (sunDirection.z > 0) {
+      // when the sun is out
+      const rotatedSunDirection = rot
+        ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
+        : sunDirection.clone();
+      const qRot = new Quaternion().setFromUnitVectors(
+        UNIT_VECTOR_POS_Z,
+        new Vector3(rotatedSunDirection.x * cosRot, rotatedSunDirection.x * sinRot, rotatedSunDirection.z).normalize(),
+      );
+      normal.copy(originalNormal.clone().applyEuler(new Euler().setFromQuaternion(qRot)));
+      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+      const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+        world.ground,
+        dateRef.current.getMonth(),
+        normal,
+        peakRadiation,
+      );
+      const dot = normal.dot(sunDirection);
+      const v2 = new Vector2();
+      let tmpX = 0;
+      let disX = 0;
+      let areaRatio = 1;
+      const lr2 = 4 / (trough.latusRectum * trough.latusRectum);
+      // we have to calculate the irradiance on the parabolic surface, not the aperture surface.
+      // the irradiance on the former is less than that on the latter because of the area difference.
+      // the relationship between a unit area on the parabolic surface and that on the aperture surface
+      // is S = A * sqrt(1 + 4 * x^2 / p^2), where p is the latus rectum, x is the distance from the center
+      // of the parabola, and A is the unit area on the aperture area. Note that this modification only
+      // applies to direct radiation. Indirect radiation can come from any direction.
+      for (let ku = 0; ku < nx; ku++) {
+        tmpX = x0 + ku * dx;
+        disX = tmpX - center.x;
+        areaRatio = 1 / Math.sqrt(1 + disX * disX * lr2);
+        for (let kv = 0; kv < ny; kv++) {
+          cellOutputs[ku][kv] += indirectRadiation;
+          if (dot > 0) {
+            v2.set(tmpX, y0 + kv * dy);
+            if (!zRotZero) v2.rotateAround(center2d, zRot);
+            v.set(v2.x, v2.y, z0);
+            if (!inShadow(trough.id, v, sunDirection)) {
+              cellOutputs[ku][kv] += dot * peakRadiation * areaRatio;
+            }
+          }
+        }
+      }
+    }
+  };
+
   const calculateFresnelReflector = (reflector: FresnelReflectorModel) => {
     const parent = getParent(reflector);
     if (!parent) throw new Error('parent of Fresnel reflector does not exist');
@@ -673,6 +755,90 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
             v.set(v2.x, v2.y, z0);
             if (!inShadow(reflector.id, v, sunDirection)) {
               cellOutputs[ku][kv] += dot * peakRadiation;
+            }
+          }
+        }
+      }
+    }
+  };
+
+  const calculateParabolicDish = (dish: ParabolicDishModel) => {
+    const parent = getParent(dish);
+    if (!parent) throw new Error('parent of parabolic dish does not exist');
+    const dayOfYear = Util.dayOfYear(dateRef.current);
+    const center = Util.absoluteCoordinates(dish.cx, dish.cy, dish.cz, parent);
+    const normal = new Vector3().fromArray(dish.normal);
+    const originalNormal = normal.clone();
+    const lx = dish.lx;
+    const ly = dish.ly;
+    const depth = (lx * lx) / (4 * dish.latusRectum); // the distance from the bottom to the aperture circle
+    const actualPoleHeight = dish.poleHeight + lx / 2;
+    const nx = Math.max(2, Math.round(dish.lx / cellSize));
+    const ny = Math.max(2, Math.round(dish.ly / cellSize));
+    const dx = lx / nx;
+    const dy = ly / ny;
+    // shift half cell size to the center of each grid cell
+    const x0 = center.x - (lx - cellSize) / 2;
+    const y0 = center.y - (ly - cellSize) / 2;
+    const z0 = parent.lz + actualPoleHeight + dish.lz + depth;
+    const center2d = new Vector2(center.x, center.y);
+    const v = new Vector3();
+    let cellOutputs = cellOutputsMapRef.current.get(dish.id);
+    if (!cellOutputs) {
+      cellOutputs = Array(nx)
+        .fill(0)
+        .map(() => Array(ny).fill(0));
+      cellOutputsMapRef.current.set(dish.id, cellOutputs);
+    }
+    const rot = parent.rotation[2];
+    const zRot = rot + dish.relativeAzimuth;
+    const zRotZero = Util.isZero(zRot);
+    const sunDirection = getSunDirection(dateRef.current, world.latitude);
+    if (sunDirection.z > 0) {
+      // when the sun is out
+      const rotatedSunDirection = rot
+        ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
+        : sunDirection.clone();
+      const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
+      normal.copy(originalNormal.clone().applyEuler(new Euler().setFromQuaternion(qRot)));
+      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+      const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+        world.ground,
+        dateRef.current.getMonth(),
+        normal,
+        peakRadiation,
+      );
+      const dot = normal.dot(sunDirection);
+      const v2 = new Vector2();
+      let tmpX = 0;
+      let tmpY = 0;
+      let disX = 0;
+      let disY = 0;
+      let areaRatio = 1;
+      const lr2 = 4 / (dish.latusRectum * dish.latusRectum);
+      // we have to calculate the irradiance on the parabolic surface, not the aperture surface.
+      // the irradiance on the former is less than that on the latter because of the area difference.
+      // the relationship between a unit area on the parabolic surface and that on the aperture surface
+      // is S = A * sqrt(1 + 4 * (x^2 + y^2) / p^2), where p is the latus rectum, x is the x distance
+      // from the center of the paraboloid, y is the y distance from the center of the paraboloid,
+      // and A is the unit area on the aperture area. Note that this modification only
+      // applies to direct radiation. Indirect radiation can come from any direction.
+      for (let ku = 0; ku < nx; ku++) {
+        tmpX = x0 + ku * dx;
+        disX = tmpX - center.x;
+        if (Math.abs(disX) > lx / 2) continue;
+        for (let kv = 0; kv < ny; kv++) {
+          tmpY = y0 + kv * dy;
+          disY = tmpY - center.y;
+          if (Math.abs(disY) > ly / 2) continue;
+          cellOutputs[ku][kv] += indirectRadiation;
+          if (dot > 0) {
+            v2.set(tmpX, tmpY);
+            if (!zRotZero) v2.rotateAround(center2d, zRot);
+            v.set(v2.x, v2.y, z0);
+            if (!inShadow(dish.id, v, sunDirection)) {
+              areaRatio = 1 / Math.sqrt(1 + (disX * disX + disY * disY) * lr2);
+              cellOutputs[ku][kv] += dot * peakRadiation * areaRatio;
             }
           }
         }
