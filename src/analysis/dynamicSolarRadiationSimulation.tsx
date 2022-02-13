@@ -142,14 +142,17 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     if (runSimulation) {
       const totalMinutes = dateRef.current.getMinutes() + dateRef.current.getHours() * 60;
       if (totalMinutes >= sunMinutes.sunset) {
-        dateRef.current.setHours(sunMinutes.sunrise / 60, sunMinutes.sunrise % 60);
         cancelAnimationFrame(requestRef.current);
-        showInfo(i18n.t('message.SimulationCompleted', lang));
-        animationCompletedRef.current = true;
-        updateHeatmaps();
         setCommonStore((state) => {
           state.runSimulation = false;
           state.world.date = originalDateRef.current.toString();
+        });
+        showInfo(i18n.t('message.SimulationCompleted', lang));
+        animationCompletedRef.current = true;
+        updateHeatmaps();
+        // the following must be set with a different callback so that the useEffect hook of app.ts
+        // is not triggered to cancel the solar radiation heat map
+        setCommonStore((state) => {
           state.showSolarRadiationHeatmap = true;
         });
         return;

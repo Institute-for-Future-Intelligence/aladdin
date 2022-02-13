@@ -18,7 +18,15 @@ import {
 import { CanvasTexture, Color, Euler, Object3D, Scene, Vector2, Vector3 } from 'three';
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
-import { MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType, WindowState } from './types';
+import {
+  MoveHandleType,
+  ObjectType,
+  Orientation,
+  ResizeHandleType,
+  RotateHandleType,
+  TrackerType,
+  WindowState,
+} from './types';
 import { PvModel } from './models/PvModel';
 import { SensorModel } from './models/SensorModel';
 import { WallModel } from './models/WallModel';
@@ -36,6 +44,21 @@ export class Util {
       }
     });
     return objects;
+  }
+
+  static hasMovingParts(elements: ElementModel[]): boolean {
+    for (const e of elements) {
+      switch (e.type) {
+        case ObjectType.ParabolicDish:
+        case ObjectType.ParabolicTrough:
+        case ObjectType.FresnelReflector:
+        case ObjectType.Heliostat:
+          return true;
+        case ObjectType.SolarPanel:
+          if ((e as SolarPanelModel).trackerType !== TrackerType.NO_TRACKER) return true;
+      }
+    }
+    return false;
   }
 
   static lineIntersection(from1: Point2, to1: Point2, from2: Point2, to2: Point2): Point2 | undefined {

@@ -30,9 +30,11 @@ import { UndoableRemoveAll } from './undo/UndoableRemoveAll';
 import { UndoableCheck } from './undo/UndoableCheck';
 import { useStoreRef } from './stores/commonRef';
 import { showInfo } from './helpers';
+import { Util } from './Util';
 
 const MainToolBarButtons = () => {
   const setCommonStore = useStore(Selector.set);
+  const elements = useStore.getState().elements;
   const language = useStore(Selector.language);
   const selectNone = useStore(Selector.selectNone);
   const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
@@ -110,7 +112,7 @@ const MainToolBarButtons = () => {
     });
   };
 
-  const toggleSolarRadiationHeatmap = () => {
+  const toggleStaticSolarRadiationHeatmap = () => {
     showInfo(i18n.t('message.SimulationStarted', lang));
     // give it 0.1 second for the info to show up
     setTimeout(() => {
@@ -124,7 +126,7 @@ const MainToolBarButtons = () => {
     }, 100);
   };
 
-  const toggleSolarRadiationHeatmap2 = () => {
+  const toggleDynamicSolarRadiationHeatmap = () => {
     if (!runSimulation) {
       showInfo(i18n.t('message.SimulationStarted', lang));
     }
@@ -779,7 +781,7 @@ const MainToolBarButtons = () => {
         size={'3x'}
         color={showSolarRadiationHeatmap ? 'antiquewhite' : '#666666'}
         style={{ paddingRight: '12px', cursor: 'pointer' }}
-        onClick={toggleSolarRadiationHeatmap2}
+        onClick={Util.hasMovingParts(elements) ? toggleDynamicSolarRadiationHeatmap : toggleStaticSolarRadiationHeatmap}
       />
       <FontAwesomeIcon
         title={i18n.t('toolbar.ShowSunAndTimeSettings', lang)}
