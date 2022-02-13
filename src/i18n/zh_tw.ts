@@ -571,6 +571,11 @@ export const i18n_zh_tw = {
       SceneRadius: '場景半徑',
     },
 
+    heatmapControlPanel: {
+      ColorContrast: '熱圖顏色對比度',
+      ClickUpOrDownArrowButtonsToChange: '點擊上下箭頭改變參數',
+    },
+
     instructionPanel: {
       Rotate: '旋轉',
       DragMouse: '拖動滑鼠',

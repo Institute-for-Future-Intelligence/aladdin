@@ -587,6 +587,11 @@ export const i18n_es = {
       EstimatedSceneScope: 'Alcance de la escena estimado',
     },
 
+    heatmapControlPanel: {
+      ColorContrast: 'Color Contrast',
+      ClickUpOrDownArrowButtonsToChange: 'Click up or down arrow buttons to change',
+    },
+
     instructionPanel: {
       Rotate: 'Rotar',
       DragMouse: 'Arrastrar el ratón',

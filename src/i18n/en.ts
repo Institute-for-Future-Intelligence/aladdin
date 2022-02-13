@@ -587,6 +587,11 @@ export const i18n_en = {
       SceneRadius: 'Scene radius',
     },
 
+    heatmapControlPanel: {
+      ColorContrast: 'Color Contrast',
+      ClickUpOrDownArrowButtonsToChange: 'Click up or down arrow buttons to change',
+    },
+
     instructionPanel: {
       Rotate: 'Rotate',
       DragMouse: 'Drag mouse',

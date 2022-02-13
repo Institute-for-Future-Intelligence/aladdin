@@ -588,6 +588,11 @@ export const i18n_tr = {
       SceneRadius: 'Faliyet Alaný Yarýçapý',
     },
 
+    heatmapControlPanel: {
+      ColorContrast: 'Color Contrast',
+      ClickUpOrDownArrowButtonsToChange: 'Click up or down arrow buttons to change',
+    },
+
     instructionPanel: {
       Rotate: 'Döndür',
       DragMouse: 'Fareyi sürükleyin',

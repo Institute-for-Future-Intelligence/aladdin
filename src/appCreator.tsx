@@ -59,6 +59,7 @@ import ParabolicTroughSimulation from './analysis/parabolicTroughSimulation';
 import DailyParabolicDishYieldPanel from './panels/dailyParabolicDishYieldPanel';
 import YearlyParabolicDishYieldPanel from './panels/yearlyParabolicDishYieldPanel';
 import ParabolicDishSimulation from './analysis/parabolicDishSimulation';
+import HeatmapControlPanel from './panels/heatmapControlPanel';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -88,6 +89,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
   const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
   const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const showDailyLightSensorPanel = useStore(Selector.viewState.showDailyLightSensorPanel);
   const showYearlyLightSensorPanel = useStore(Selector.viewState.showYearlyLightSensorPanel);
   const showDailyPvYieldPanel = useStore(Selector.viewState.showDailyPvYieldPanel);
@@ -336,6 +338,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {showDailyParabolicTroughYieldPanel && <DailyParabolicTroughYieldPanel city={city} />}
       {showYearlyParabolicDishYieldPanel && <YearlyParabolicDishYieldPanel city={city} />}
       {showDailyParabolicDishYieldPanel && <DailyParabolicDishYieldPanel city={city} />}
+      {showSolarRadiationHeatmap && <HeatmapControlPanel />}
       <DropdownContextMenu>
         <div>
           <Canvas

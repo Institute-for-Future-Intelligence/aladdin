@@ -571,6 +571,11 @@ export const i18n_zh_cn = {
       SceneRadius: '场景半径',
     },
 
+    heatmapControlPanel: {
+      ColorContrast: '热图颜色对比度',
+      ClickUpOrDownArrowButtonsToChange: '点击上下箭头改变参数',
+    },
+
     instructionPanel: {
       Rotate: '旋转',
       DragMouse: '拖动鼠标',
