@@ -116,6 +116,7 @@ export interface CommonStoreState {
 
   aabb: Box3; // axis-aligned bounding box of elements
   animateSun: boolean;
+  runSimulation: boolean;
   clickObjectType: ObjectType | null;
   contextMenuObjectType: ObjectType | null;
   duringCameraInteraction: boolean;
@@ -793,6 +794,7 @@ export const useStore = create<CommonStoreState>(
           // determine the scopes of the axes.
           aabb: new Box3(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)),
           animateSun: false,
+          runSimulation: false,
           clickObjectType: null,
           contextMenuObjectType: null,
           duringCameraInteraction: false,

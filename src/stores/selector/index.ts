@@ -83,6 +83,8 @@ export const aabb = (state: CommonStoreState) => state.aabb;
 
 export const animateSun = (state: CommonStoreState) => state.animateSun;
 
+export const runSimulation = (state: CommonStoreState) => state.runSimulation;
+
 export const updateSceneRadiusFlag = (state: CommonStoreState) => state.updateSceneRadiusFlag;
 
 export const updateSceneRadius = (state: CommonStoreState) => state.updateSceneRadius;

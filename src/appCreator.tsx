@@ -54,10 +54,11 @@ import VisibilityResultsPanel from './panels/visibilityResultsPanel';
 import SolarRadiationSimulation from './analysis/solarRadiationSimulation';
 import YearlyParabolicTroughYieldPanel from './panels/yearlyParabolicTroughYieldPanel';
 import DailyParabolicTroughYieldPanel from './panels/dailyParabolicTroughYieldPanel';
-import ParabolicTroughSimulation, { ParabolicTroughSimulationProps } from './analysis/parabolicTroughSimulation';
+import ParabolicTroughSimulation from './analysis/parabolicTroughSimulation';
 import DailyParabolicDishYieldPanel from './panels/dailyParabolicDishYieldPanel';
 import YearlyParabolicDishYieldPanel from './panels/yearlyParabolicDishYieldPanel';
 import ParabolicDishSimulation from './analysis/parabolicDishSimulation';
+import DynamicSolarRadiationSimulation from './analysis/dynamicSolarRadiationSimulation';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -361,6 +362,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             </Suspense>
             <SceneRadiusCalculator />
             <SolarRadiationSimulation city={city} />
+            <DynamicSolarRadiationSimulation city={city} />
             <SensorSimulation city={city} />
             <SolarPanelSimulation city={city} />
             <SolarPanelVisibility />

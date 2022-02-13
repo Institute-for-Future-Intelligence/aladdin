@@ -154,6 +154,7 @@ export const i18n_zh_cn = {
       ScreenshotSaved: '截屏图片保存在下载文件夹里。',
       SimulationStarted: '模拟开始。',
       SimulationCompleted: '模拟结束。',
+      SimulationAborted: '模拟取消。',
     },
 
     menu: {

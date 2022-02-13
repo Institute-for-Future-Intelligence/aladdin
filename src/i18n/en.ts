@@ -155,6 +155,7 @@ export const i18n_en = {
       ScreenshotSaved: 'Screenshot was saved.',
       SimulationStarted: 'Simulation started.',
       SimulationCompleted: 'Simulation completed.',
+      SimulationAborted: 'Simulation aborted.',
     },
 
     menu: {
