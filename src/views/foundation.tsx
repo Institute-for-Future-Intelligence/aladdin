@@ -2296,7 +2296,13 @@ const Foundation = ({
                 name={'Receiver Horizontal Tube'}
                 castShadow={false}
                 receiveShadow={false}
-                args={[solarReceiverTubeRadius, solarReceiverTubeRadius, solarReceiverTubeRelativeLength * ly, 6, 2]}
+                args={[
+                  solarReceiverTubeRadius,
+                  solarReceiverTubeRadius,
+                  solarReceiverTubeRelativeLength * ly + solarReceiverTubeRadius,
+                  6,
+                  2,
+                ]}
                 position={[0, 0, solarReceiverTubeMountHeight + lz]}
                 rotation={[0, 0, 0]}
               >

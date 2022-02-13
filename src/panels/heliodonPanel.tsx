@@ -68,6 +68,7 @@ const HeliodonPanel = () => {
   const latitude = useStore(Selector.world.latitude);
   const address = useStore(Selector.world.address);
   const animateSun = useStore(Selector.animateSun);
+  const runSimulation = useStore(Selector.runSimulation);
   const showSunAngles = useStore(Selector.viewState.showSunAngles);
   const heliodon = useStore(Selector.viewState.heliodon);
   const heliodonPanelX = useStore(Selector.viewState.heliodonPanelX);
@@ -293,7 +294,7 @@ const HeliodonPanel = () => {
                 />
               </div>
             )}
-            {sunriseAndSunsetInMinutes.sunset > 0 && (
+            {sunriseAndSunsetInMinutes.sunset > 0 && !runSimulation && (
               <div>
                 {i18n.t('word.Animate', lang)}
                 <br />
@@ -323,93 +324,97 @@ const HeliodonPanel = () => {
                 />
               </div>
             )}
-            <div>
-              {i18n.t('word.Date', lang)}
-              <br />
-              <DatePicker
-                value={moment(date)}
-                onChange={(d) => {
-                  if (d) {
-                    const day = new Date(date);
-                    const m = d.toDate();
-                    day.setFullYear(m.getFullYear());
-                    day.setMonth(m.getMonth());
-                    day.setDate(m.getDate());
-                    const undoableChange = {
-                      name: 'Set Date',
-                      timestamp: Date.now(),
-                      oldValue: dateString,
-                      newValue: day.toString(),
-                      undo: () => {
+            {!runSimulation && (
+              <>
+                <div>
+                  {i18n.t('word.Date', lang)}
+                  <br />
+                  <DatePicker
+                    value={moment(date)}
+                    onChange={(d) => {
+                      if (d) {
+                        const day = new Date(date);
+                        const m = d.toDate();
+                        day.setFullYear(m.getFullYear());
+                        day.setMonth(m.getMonth());
+                        day.setDate(m.getDate());
+                        const undoableChange = {
+                          name: 'Set Date',
+                          timestamp: Date.now(),
+                          oldValue: dateString,
+                          newValue: day.toString(),
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.world.date = undoableChange.oldValue as string;
+                            });
+                          },
+                          redo: () => {
+                            setCommonStore((state) => {
+                              state.world.date = undoableChange.newValue as string;
+                            });
+                          },
+                        } as UndoableChange;
+                        addUndoable(undoableChange);
                         setCommonStore((state) => {
-                          state.world.date = undoableChange.oldValue as string;
+                          state.world.date = day.toString();
                         });
-                      },
-                      redo: () => {
-                        setCommonStore((state) => {
-                          state.world.date = undoableChange.newValue as string;
-                        });
-                      },
-                    } as UndoableChange;
-                    addUndoable(undoableChange);
-                    setCommonStore((state) => {
-                      state.world.date = day.toString();
-                    });
-                  }
-                }}
-              />
-            </div>
-            <div>
-              {i18n.t('word.Time', lang)}
-              <br />
-              <TimePicker
-                value={moment(date, 'HH:mm')}
-                format={'HH:mm'}
-                onChange={(t) => {
-                  if (t) changeTime?.(t.toDate(), true);
-                }}
-              />
-            </div>
-            <div>
-              {i18n.t('word.Latitude', lang)}: {latitude.toFixed(2)}°
-              <Slider
-                style={{ width: '110px' }}
-                marks={{ '-90': '-90°', 0: '0°', 90: '90°' }}
-                min={-90}
-                max={90}
-                value={latitude}
-                tooltipVisible={false}
-                onChange={(value: number) => {
-                  const undoableChangeLocation = {
-                    name: 'Set Latitude',
-                    timestamp: Date.now(),
-                    oldLatitude: latitude,
-                    newLatitude: value,
-                    oldAddress: address,
-                    newAddress: '',
-                    undo: () => {
+                      }
+                    }}
+                  />
+                </div>
+                <div>
+                  {i18n.t('word.Time', lang)}
+                  <br />
+                  <TimePicker
+                    value={moment(date, 'HH:mm')}
+                    format={'HH:mm'}
+                    onChange={(t) => {
+                      if (t) changeTime?.(t.toDate(), true);
+                    }}
+                  />
+                </div>
+                <div>
+                  {i18n.t('word.Latitude', lang)}: {latitude.toFixed(2)}°
+                  <Slider
+                    style={{ width: '110px' }}
+                    marks={{ '-90': '-90°', 0: '0°', 90: '90°' }}
+                    min={-90}
+                    max={90}
+                    value={latitude}
+                    tooltipVisible={false}
+                    onChange={(value: number) => {
+                      const undoableChangeLocation = {
+                        name: 'Set Latitude',
+                        timestamp: Date.now(),
+                        oldLatitude: latitude,
+                        newLatitude: value,
+                        oldAddress: address,
+                        newAddress: '',
+                        undo: () => {
+                          setCommonStore((state) => {
+                            state.world.latitude = undoableChangeLocation.oldLatitude;
+                            state.world.address = undoableChangeLocation.oldAddress;
+                          });
+                          setUpdateFlag(!updateFlag);
+                        },
+                        redo: () => {
+                          setCommonStore((state) => {
+                            state.world.latitude = undoableChangeLocation.newLatitude;
+                            state.world.address = undoableChangeLocation.newAddress;
+                          });
+                          setUpdateFlag(!updateFlag);
+                        },
+                      } as UndoableChangeLocation;
+                      addUndoable(undoableChangeLocation);
                       setCommonStore((state) => {
-                        state.world.latitude = undoableChangeLocation.oldLatitude;
-                        state.world.address = undoableChangeLocation.oldAddress;
+                        state.world.latitude = value;
+                        state.world.address = '';
                       });
-                      setUpdateFlag(!updateFlag);
-                    },
-                    redo: () => {
-                      setCommonStore((state) => {
-                        state.world.latitude = undoableChangeLocation.newLatitude;
-                        state.world.address = undoableChangeLocation.newAddress;
-                      });
-                      setUpdateFlag(!updateFlag);
-                    },
-                  } as UndoableChangeLocation;
-                  addUndoable(undoableChangeLocation);
-                  setCommonStore((state) => {
-                    state.world.latitude = value;
-                    state.world.address = '';
-                  });
-                }}
-              />
-            </div>
+                    }}
+                  />
+                </div>
+              </>
+            )}
           </Space>
         </ColumnWrapper>
       </Container>

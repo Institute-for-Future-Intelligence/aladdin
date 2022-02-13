@@ -50,6 +50,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const { scene } = useThree();
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
+  const now = new Date(world.date);
   const elevation = city ? weather.elevation : 0;
   const interval = 60 / world.timesPerHour;
   const ray = useMemo(() => new Raycaster(), []);
@@ -57,22 +58,22 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
   const requestRef = useRef<number>(0);
-  const animationCompletedRef = useRef<boolean>(false);
-  const dateRef = useRef<Date>(new Date(world.date));
+  const simulationCompletedRef = useRef<boolean>(false);
   const originalDateRef = useRef<Date>(new Date(world.date));
   const cellOutputsMapRef = useRef<Map<string, number[][]>>(new Map<string, number[][]>());
 
   const sunMinutes = useMemo(() => {
-    return computeSunriseAndSunsetInMinutes(dateRef.current, world.latitude);
-  }, [world.latitude]);
+    return computeSunriseAndSunsetInMinutes(now, world.latitude);
+  }, [world.date, world.latitude]);
 
   useEffect(() => {
     if (runSimulation) {
       init();
       requestRef.current = requestAnimationFrame(simulate);
       return () => {
+        // this is called when the recursive call of requestAnimationFrame exits
         cancelAnimationFrame(requestRef.current);
-        if (!animationCompletedRef.current) {
+        if (!simulationCompletedRef.current) {
           showInfo(i18n.t('message.SimulationAborted', lang));
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toString();
@@ -83,13 +84,16 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runSimulation]);
 
+  // getting ready for the simulation
   const init = () => {
-    const day = dateRef.current.getDate();
-    dateRef.current.setDate(day);
-    dateRef.current.setHours(sunMinutes.sunrise / 60, sunMinutes.sunrise % 60);
+    const day = now.getDate();
+    now.setDate(day);
+    // beginning from sunrise
+    now.setHours(sunMinutes.sunrise / 60, sunMinutes.sunrise % 60);
     originalDateRef.current = new Date(world.date);
-    animationCompletedRef.current = false;
+    simulationCompletedRef.current = false;
     fetchObjects();
+    // clear the buffer arrays if any
     for (const e of elements) {
       switch (e.type) {
         case ObjectType.Foundation:
@@ -109,9 +113,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const daylight = (sunMinutes.sunset - sunMinutes.sunrise) / 60;
     // divide by times per hour as the radiation is added up that many times
     const scaleFactor =
-      daylight > ZERO_TOLERANCE
-        ? weather.sunshineHours[dateRef.current.getMonth()] / (30 * daylight * world.timesPerHour)
-        : 0;
+      daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * world.timesPerHour) : 0;
     for (const e of elements) {
       switch (e.type) {
         case ObjectType.Foundation:
@@ -145,8 +147,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   };
 
   const setCuboidHeatmap = (id: string, side: string, scaleFactor: number) => {
-    // cellOutputsWest = Util.transpose(cellOutputsWest);
-    // cellOutputsEast = Util.transpose(cellOutputsEast);
     const data = cellOutputsMapRef.current.get(id + '-' + side);
     if (data) {
       for (let i = 0; i < data.length; i++) {
@@ -165,7 +165,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
 
   const simulate = () => {
     if (runSimulation) {
-      const totalMinutes = dateRef.current.getMinutes() + dateRef.current.getHours() * 60;
+      const totalMinutes = now.getMinutes() + now.getHours() * 60;
       if (totalMinutes >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
@@ -173,19 +173,19 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           state.world.date = originalDateRef.current.toString();
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
-        animationCompletedRef.current = true;
+        simulationCompletedRef.current = true;
         updateHeatmaps();
-        // the following must be set with a different callback so that the useEffect hook of app.ts
+        // the following must be set with a different common store callback so that the useEffect hook of app.ts
         // is not triggered to cancel the solar radiation heat map
         setCommonStore((state) => {
           state.showSolarRadiationHeatmap = true;
         });
         return;
       }
-      requestRef.current = requestAnimationFrame(simulate);
-      dateRef.current.setHours(dateRef.current.getHours(), dateRef.current.getMinutes() + interval);
+      // this is where time advances (by incrementing the minutes with the given interval)
+      now.setHours(now.getHours(), now.getMinutes() + interval);
       setCommonStore((state) => {
-        state.world.date = dateRef.current.toString();
+        state.world.date = now.toString();
       });
       for (const e of elements) {
         switch (e.type) {
@@ -209,6 +209,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
             break;
         }
       }
+      // recursive call to the next step of the simulation
+      requestRef.current = requestAnimationFrame(simulate);
     }
   };
 
@@ -246,7 +248,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   };
 
   const calculateCuboid = (cuboid: CuboidModel) => {
-    const dayOfYear = Util.dayOfYear(dateRef.current);
+    const dayOfYear = Util.dayOfYear(now);
     const lx = cuboid.lx;
     const ly = cuboid.ly;
     const lz = cuboid.lz;
@@ -308,7 +310,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const westX = cuboid.cx - cuboid.lx / 2;
     const eastX = cuboid.cx + cuboid.lx / 2;
 
-    const sunDirection = getSunDirection(dateRef.current, world.latitude);
+    const sunDirection = getSunDirection(now, world.latitude);
     if (sunDirection.z > 0) {
       // when the sun is out
       const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
@@ -316,7 +318,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       // top face
       let indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
-        dateRef.current.getMonth(),
+        now.getMonth(),
         normalTop,
         peakRadiation,
       );
@@ -343,7 +345,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       vc = cuboid.cz - lz / 2;
       indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
-        dateRef.current.getMonth(),
+        now.getMonth(),
         normalSouth,
         peakRadiation,
       );
@@ -366,7 +368,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       // north face
       indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
-        dateRef.current.getMonth(),
+        now.getMonth(),
         normalNorth,
         peakRadiation,
       );
@@ -391,7 +393,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       vc = cuboid.cz - lz / 2;
       indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
-        dateRef.current.getMonth(),
+        now.getMonth(),
         normalWest,
         peakRadiation,
       );
@@ -414,7 +416,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       // east face
       indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
-        dateRef.current.getMonth(),
+        now.getMonth(),
         normalEast,
         peakRadiation,
       );
@@ -437,7 +439,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   };
 
   const calculateFoundation = (foundation: FoundationModel) => {
-    const dayOfYear = Util.dayOfYear(dateRef.current);
+    const dayOfYear = Util.dayOfYear(now);
     const lx = foundation.lx;
     const ly = foundation.ly;
     const lz = foundation.lz;
@@ -456,13 +458,13 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         .map(() => Array(ny).fill(0));
       cellOutputsMapRef.current.set(foundation.id, cellOutputs);
     }
-    const sunDirection = getSunDirection(dateRef.current, world.latitude);
+    const sunDirection = getSunDirection(now, world.latitude);
     if (sunDirection.z > 0) {
       // when the sun is out
       const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
       const indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
-        dateRef.current.getMonth(),
+        now.getMonth(),
         UNIT_VECTOR_POS_Z,
         peakRadiation,
       );
@@ -488,7 +490,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const calculateSolarPanel = (panel: SolarPanelModel) => {
     const parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
-    const dayOfYear = Util.dayOfYear(dateRef.current);
+    const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);
     const originalNormal = normal.clone();
@@ -523,7 +525,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         .map(() => Array(ny).fill(0));
       cellOutputsMapRef.current.set(panel.id, cellOutputs);
     }
-    const sunDirection = getSunDirection(dateRef.current, world.latitude);
+    const sunDirection = getSunDirection(now, world.latitude);
     if (sunDirection.z > 0) {
       // when the sun is out
       if (panel.trackerType !== TrackerType.NO_TRACKER) {
@@ -561,7 +563,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
       const indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
-        dateRef.current.getMonth(),
+        now.getMonth(),
         normal,
         peakRadiation,
       );
@@ -587,7 +589,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const calculateParabolicTrough = (trough: ParabolicTroughModel) => {
     const parent = getParent(trough);
     if (!parent) throw new Error('parent of parabolic trough does not exist');
-    const dayOfYear = Util.dayOfYear(dateRef.current);
+    const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(trough.cx, trough.cy, trough.cz, parent);
     const normal = new Vector3().fromArray(trough.normal);
     const originalNormal = normal.clone();
@@ -617,7 +619,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const zRotZero = Util.isZero(zRot);
     const cosRot = zRotZero ? 1 : Math.cos(zRot);
     const sinRot = zRotZero ? 0 : Math.sin(zRot);
-    const sunDirection = getSunDirection(dateRef.current, world.latitude);
+    const sunDirection = getSunDirection(now, world.latitude);
     if (sunDirection.z > 0) {
       // when the sun is out
       const rotatedSunDirection = rot
@@ -631,7 +633,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
       const indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
-        dateRef.current.getMonth(),
+        now.getMonth(),
         normal,
         peakRadiation,
       );
@@ -670,7 +672,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const parent = getParent(reflector);
     if (!parent) throw new Error('parent of Fresnel reflector does not exist');
     if (parent.type !== ObjectType.Foundation) return;
-    const dayOfYear = Util.dayOfYear(dateRef.current);
+    const dayOfYear = Util.dayOfYear(now);
     const foundation = parent as FoundationModel;
     const center = Util.absoluteCoordinates(reflector.cx, reflector.cy, reflector.cz, parent);
     const normal = new Vector3().fromArray(reflector.normal);
@@ -711,7 +713,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
     const rotationAxis = new Vector3(sinRot, cosRot, 0);
     const shiftedReceiverCenter = new Vector3();
-    const sunDirection = getSunDirection(dateRef.current, world.latitude);
+    const sunDirection = getSunDirection(now, world.latitude);
     if (sunDirection.z > 0) {
       // when the sun is out
       if (receiverCenter) {
@@ -738,7 +740,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
       const indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
-        dateRef.current.getMonth(),
+        now.getMonth(),
         normal,
         peakRadiation,
       );
@@ -765,7 +767,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const calculateParabolicDish = (dish: ParabolicDishModel) => {
     const parent = getParent(dish);
     if (!parent) throw new Error('parent of parabolic dish does not exist');
-    const dayOfYear = Util.dayOfYear(dateRef.current);
+    const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(dish.cx, dish.cy, dish.cz, parent);
     const normal = new Vector3().fromArray(dish.normal);
     const originalNormal = normal.clone();
@@ -793,7 +795,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const rot = parent.rotation[2];
     const zRot = rot + dish.relativeAzimuth;
     const zRotZero = Util.isZero(zRot);
-    const sunDirection = getSunDirection(dateRef.current, world.latitude);
+    const sunDirection = getSunDirection(now, world.latitude);
     if (sunDirection.z > 0) {
       // when the sun is out
       const rotatedSunDirection = rot
@@ -804,7 +806,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
       const indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
-        dateRef.current.getMonth(),
+        now.getMonth(),
         normal,
         peakRadiation,
       );
