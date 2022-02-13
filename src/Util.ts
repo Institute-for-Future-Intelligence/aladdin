@@ -93,6 +93,10 @@ export class Util {
     return array2d[0].map((col, i) => array2d.map((row) => row[i]));
   }
 
+  static clone2DArray(array: any[][]) {
+    return array.map((row) => [...row]);
+  }
+
   static fetchHeatmapTexture(data: number[][] | undefined, maxValue: number, flip?: boolean): CanvasTexture | null {
     if (!data) return null;
     const canvas = document.createElement('canvas') as HTMLCanvasElement;

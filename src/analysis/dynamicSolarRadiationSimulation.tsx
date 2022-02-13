@@ -24,12 +24,12 @@ import {
   UNIT_VECTOR_POS_Z,
   ZERO_TOLERANCE,
 } from '../constants';
-import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
+import { showInfo } from '../helpers';
+import i18n from '../i18n/i18n';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
-import { showInfo } from '../helpers';
-import i18n from '../i18n/i18n';
+import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import { ParabolicDishModel } from '../models/ParabolicDishModel';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 
@@ -45,7 +45,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
   const setHeatmap = useStore(Selector.setHeatmap);
-  const getHeatmap = useStore(Selector.getHeatmap);
   const runSimulation = useStore(Selector.runSimulation);
 
   const { scene } = useThree();
@@ -116,7 +115,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     for (const e of elements) {
       switch (e.type) {
         case ObjectType.Foundation:
-        case ObjectType.Cuboid:
         case ObjectType.SolarPanel:
         case ObjectType.ParabolicTrough:
         case ObjectType.FresnelReflector:
@@ -128,12 +126,39 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
                 data[i][j] *= scaleFactor;
               }
             }
+            // send a copy of the heat map data to common store for visualization
             setHeatmap(
               e.id,
               data.map((a) => [...a]),
             );
           }
           break;
+        case ObjectType.Cuboid:
+          setCuboidHeatmap(e.id, 'top', scaleFactor);
+          setCuboidHeatmap(e.id, 'south', scaleFactor);
+          setCuboidHeatmap(e.id, 'north', scaleFactor);
+          setCuboidHeatmap(e.id, 'west', scaleFactor);
+          setCuboidHeatmap(e.id, 'east', scaleFactor);
+          break;
+      }
+    }
+  };
+
+  const setCuboidHeatmap = (id: string, side: string, scaleFactor: number) => {
+    // cellOutputsWest = Util.transpose(cellOutputsWest);
+    // cellOutputsEast = Util.transpose(cellOutputsEast);
+    const data = cellOutputsMapRef.current.get(id + '-' + side);
+    if (data) {
+      for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < data[i].length; j++) {
+          data[i][j] *= scaleFactor;
+        }
+      }
+      // send a copy of the heat map data to common store for visualization
+      if (side === 'east' || side === 'west') {
+        setHeatmap(id + '-' + side, Util.transpose(Util.clone2DArray(data)));
+      } else {
+        setHeatmap(id + '-' + side, Util.clone2DArray(data));
       }
     }
   };
@@ -168,10 +193,10 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
             calculateFoundation(e as FoundationModel);
             break;
           case ObjectType.Cuboid:
-            // calculateCuboid(e as CuboidModel);
+            calculateCuboid(e as CuboidModel);
             break;
           case ObjectType.SolarPanel:
-            // calculateSolarPanel(e as SolarPanelModel);
+            calculateSolarPanel(e as SolarPanelModel);
             break;
           case ObjectType.ParabolicTrough:
             // calculateParabolicTrough(e as ParabolicTroughModel);
@@ -220,6 +245,197 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     }
   };
 
+  const calculateCuboid = (cuboid: CuboidModel) => {
+    const dayOfYear = Util.dayOfYear(dateRef.current);
+    const lx = cuboid.lx;
+    const ly = cuboid.ly;
+    const lz = cuboid.lz;
+    const nx = Math.max(2, Math.round(lx / cellSize));
+    const ny = Math.max(2, Math.round(ly / cellSize));
+    const nz = Math.max(2, Math.round(lz / cellSize));
+    const dx = lx / nx;
+    const dy = ly / ny;
+    const dz = lz / nz;
+
+    // initialize the arrays
+    let cellOutputsTop = cellOutputsMapRef.current.get(cuboid.id + '-top');
+    if (!cellOutputsTop) {
+      cellOutputsTop = Array(nx)
+        .fill(0)
+        .map(() => Array(ny).fill(0));
+      cellOutputsMapRef.current.set(cuboid.id + '-top', cellOutputsTop);
+    }
+    let cellOutputsSouth = cellOutputsMapRef.current.get(cuboid.id + '-south');
+    if (!cellOutputsSouth) {
+      cellOutputsSouth = Array(nx)
+        .fill(0)
+        .map(() => Array(nz).fill(0));
+      cellOutputsMapRef.current.set(cuboid.id + '-south', cellOutputsSouth);
+    }
+    let cellOutputsNorth = cellOutputsMapRef.current.get(cuboid.id + '-north');
+    if (!cellOutputsNorth) {
+      cellOutputsNorth = Array(nx)
+        .fill(0)
+        .map(() => Array(nz).fill(0));
+      cellOutputsMapRef.current.set(cuboid.id + '-north', cellOutputsNorth);
+    }
+    let cellOutputsWest = cellOutputsMapRef.current.get(cuboid.id + '-west');
+    if (!cellOutputsWest) {
+      cellOutputsWest = Array(ny)
+        .fill(0)
+        .map(() => Array(nz).fill(0));
+      cellOutputsMapRef.current.set(cuboid.id + '-west', cellOutputsWest);
+    }
+    let cellOutputsEast = cellOutputsMapRef.current.get(cuboid.id + '-east');
+    if (!cellOutputsEast) {
+      cellOutputsEast = Array(ny)
+        .fill(0)
+        .map(() => Array(nz).fill(0));
+      cellOutputsMapRef.current.set(cuboid.id + '-east', cellOutputsEast);
+    }
+
+    const normalTop = UNIT_VECTOR_POS_Z;
+    const normalSouth = UNIT_VECTOR_NEG_Y.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, cuboid.rotation[2]);
+    const normalNorth = UNIT_VECTOR_POS_Y.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, cuboid.rotation[2]);
+    const normalWest = UNIT_VECTOR_NEG_X.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, cuboid.rotation[2]);
+    const normalEast = UNIT_VECTOR_POS_X.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, cuboid.rotation[2]);
+
+    const vec = new Vector3();
+    const center2d = new Vector2(cuboid.cx, cuboid.cy);
+    const v2 = new Vector2();
+    const southY = cuboid.cy - cuboid.ly / 2;
+    const northY = cuboid.cy + cuboid.ly / 2;
+    const westX = cuboid.cx - cuboid.lx / 2;
+    const eastX = cuboid.cx + cuboid.lx / 2;
+
+    const sunDirection = getSunDirection(dateRef.current, world.latitude);
+    if (sunDirection.z > 0) {
+      // when the sun is out
+      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+
+      // top face
+      let indirectRadiation = calculateDiffuseAndReflectedRadiation(
+        world.ground,
+        dateRef.current.getMonth(),
+        normalTop,
+        peakRadiation,
+      );
+      let dot = normalTop.dot(sunDirection);
+      let uc = cuboid.cx - lx / 2;
+      let vc = cuboid.cy - ly / 2;
+      for (let u = 0; u < nx; u++) {
+        for (let v = 0; v < ny; v++) {
+          cellOutputsTop[u][v] += indirectRadiation;
+          if (dot > 0) {
+            v2.set(uc + u * dx, vc + v * dy);
+            v2.rotateAround(center2d, cuboid.rotation[2]);
+            vec.set(v2.x, v2.y, lz);
+            if (!inShadow(cuboid.id, vec, sunDirection)) {
+              // direct radiation
+              cellOutputsTop[u][v] += dot * peakRadiation;
+            }
+          }
+        }
+      }
+
+      // south face
+      uc = cuboid.cx - lx / 2;
+      vc = cuboid.cz - lz / 2;
+      indirectRadiation = calculateDiffuseAndReflectedRadiation(
+        world.ground,
+        dateRef.current.getMonth(),
+        normalSouth,
+        peakRadiation,
+      );
+      dot = normalSouth.dot(sunDirection);
+      for (let u = 0; u < nx; u++) {
+        for (let v = 0; v < nz; v++) {
+          cellOutputsSouth[u][v] += indirectRadiation;
+          if (dot > 0) {
+            v2.set(uc + u * dx, southY);
+            v2.rotateAround(center2d, cuboid.rotation[2]);
+            vec.set(v2.x, v2.y, vc + v * dz);
+            if (!inShadow(cuboid.id, vec, sunDirection)) {
+              // direct radiation
+              cellOutputsSouth[u][v] += dot * peakRadiation;
+            }
+          }
+        }
+      }
+
+      // north face
+      indirectRadiation = calculateDiffuseAndReflectedRadiation(
+        world.ground,
+        dateRef.current.getMonth(),
+        normalNorth,
+        peakRadiation,
+      );
+      dot = normalNorth.dot(sunDirection);
+      for (let u = 0; u < nx; u++) {
+        for (let v = 0; v < nz; v++) {
+          cellOutputsNorth[u][v] += indirectRadiation;
+          if (dot > 0) {
+            v2.set(uc + u * dx, northY);
+            v2.rotateAround(center2d, cuboid.rotation[2]);
+            vec.set(v2.x, v2.y, vc + (nz - v) * dz);
+            if (!inShadow(cuboid.id, vec, sunDirection)) {
+              // direct radiation
+              cellOutputsNorth[u][v] += dot * peakRadiation;
+            }
+          }
+        }
+      }
+
+      // west face
+      uc = cuboid.cy - ly / 2;
+      vc = cuboid.cz - lz / 2;
+      indirectRadiation = calculateDiffuseAndReflectedRadiation(
+        world.ground,
+        dateRef.current.getMonth(),
+        normalWest,
+        peakRadiation,
+      );
+      dot = normalWest.dot(sunDirection);
+      for (let u = 0; u < ny; u++) {
+        for (let v = 0; v < nz; v++) {
+          cellOutputsWest[u][v] += indirectRadiation;
+          if (dot > 0) {
+            v2.set(westX, uc + u * dy);
+            v2.rotateAround(center2d, cuboid.rotation[2]);
+            vec.set(v2.x, v2.y, vc + v * dz);
+            if (!inShadow(cuboid.id, vec, sunDirection)) {
+              // direct radiation
+              cellOutputsWest[u][v] += dot * peakRadiation;
+            }
+          }
+        }
+      }
+
+      // east face
+      indirectRadiation = calculateDiffuseAndReflectedRadiation(
+        world.ground,
+        dateRef.current.getMonth(),
+        normalEast,
+        peakRadiation,
+      );
+      dot = normalEast.dot(sunDirection);
+      for (let u = 0; u < ny; u++) {
+        for (let v = 0; v < nz; v++) {
+          cellOutputsEast[u][v] += indirectRadiation;
+          if (dot > 0) {
+            v2.set(eastX, uc + u * dy);
+            v2.rotateAround(center2d, cuboid.rotation[2]);
+            vec.set(v2.x, v2.y, vc + v * dz);
+            if (!inShadow(cuboid.id, vec, sunDirection)) {
+              // direct radiation
+              cellOutputsEast[u][v] += dot * peakRadiation;
+            }
+          }
+        }
+      }
+    }
+  };
+
   const calculateFoundation = (foundation: FoundationModel) => {
     const dayOfYear = Util.dayOfYear(dateRef.current);
     const lx = foundation.lx;
@@ -238,7 +454,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       cellOutputs = Array(nx)
         .fill(0)
         .map(() => Array(ny).fill(0));
-      // send heat map data to common store for visualization
       cellOutputsMapRef.current.set(foundation.id, cellOutputs);
     }
     const sunDirection = getSunDirection(dateRef.current, world.latitude);
@@ -261,6 +476,105 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
             v2.rotateAround(center2d, foundation.rotation[2]);
             v.set(v2.x, v2.y, lz);
             if (!inShadow(foundation.id, v, sunDirection)) {
+              // direct radiation
+              cellOutputs[kx][ky] += dot * peakRadiation;
+            }
+          }
+        }
+      }
+    }
+  };
+
+  const calculateSolarPanel = (panel: SolarPanelModel) => {
+    const parent = getParent(panel);
+    if (!parent) throw new Error('parent of solar panel does not exist');
+    const dayOfYear = Util.dayOfYear(dateRef.current);
+    const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    const normal = new Vector3().fromArray(panel.normal);
+    const originalNormal = normal.clone();
+    const rot = parent.rotation[2];
+    const zRot = rot + panel.relativeAzimuth;
+    const zRotZero = Util.isZero(zRot);
+    if (Math.abs(panel.tiltAngle) > 0.001 && panel.trackerType === TrackerType.NO_TRACKER) {
+      // TODO: right now we assume a parent rotation is always around the z-axis
+      //normal.applyAxisAngle(UNIT_VECTOR_POS_X, panel.tiltAngle).applyAxisAngle(UNIT_VECTOR_POS_Z, zRot);
+      normal.applyEuler(new Euler(panel.tiltAngle, 0, zRot, 'ZYX'));
+    }
+    const cosTilt = Math.cos(panel.tiltAngle);
+    const sinTilt = Math.sin(panel.tiltAngle);
+    const lx = panel.lx;
+    const ly = panel.ly * cosTilt;
+    const lz = panel.ly * Math.abs(sinTilt);
+    const nx = Math.max(2, Math.round(panel.lx / cellSize));
+    const ny = Math.max(2, Math.round(panel.ly / cellSize));
+    const dx = lx / nx;
+    const dy = ly / ny;
+    const dz = lz / ny;
+    // shift half cell size to the center of each grid cell
+    const x0 = center.x - (lx - cellSize) / 2;
+    const y0 = center.y - (ly - cellSize * cosTilt) / 2;
+    const z0 = parent.lz + panel.poleHeight + panel.lz - ((lz - cellSize * sinTilt) / 2) * Math.sign(panel.tiltAngle);
+    const center2d = new Vector2(center.x, center.y);
+    const v = new Vector3();
+    let cellOutputs = cellOutputsMapRef.current.get(panel.id);
+    if (!cellOutputs) {
+      cellOutputs = Array(nx)
+        .fill(0)
+        .map(() => Array(ny).fill(0));
+      cellOutputsMapRef.current.set(panel.id, cellOutputs);
+    }
+    const sunDirection = getSunDirection(dateRef.current, world.latitude);
+    if (sunDirection.z > 0) {
+      // when the sun is out
+      if (panel.trackerType !== TrackerType.NO_TRACKER) {
+        // dynamic angles
+        const rotatedSunDirection = rot
+          ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
+          : sunDirection.clone();
+        const ori = originalNormal.clone();
+        switch (panel.trackerType) {
+          case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
+            const qRotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
+            normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotAADAT)));
+            break;
+          case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
+            const qRotHSAT = new Quaternion().setFromUnitVectors(
+              UNIT_VECTOR_POS_Z,
+              new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
+            );
+            normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotHSAT)));
+            break;
+          case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
+            if (Math.abs(panel.tiltAngle) > 0.001) {
+              const v2d = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
+              const az = Math.acos(UNIT_VECTOR_POS_Y.dot(v2d)) * Math.sign(v2d.x);
+              ori.applyAxisAngle(UNIT_VECTOR_POS_X, panel.tiltAngle);
+              ori.applyAxisAngle(UNIT_VECTOR_POS_Z, az + rot);
+              normal.copy(ori);
+            }
+            break;
+          case TrackerType.TILTED_SINGLE_AXIS_TRACKER:
+            // TODO
+            break;
+        }
+      }
+      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+      const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+        world.ground,
+        dateRef.current.getMonth(),
+        normal,
+        peakRadiation,
+      );
+      const dot = normal.dot(sunDirection);
+      const v2 = new Vector2();
+      for (let kx = 0; kx < nx; kx++) {
+        for (let ky = 0; ky < ny; ky++) {
+          cellOutputs[kx][ky] += indirectRadiation;
+          if (dot > 0) {
+            v2.set(x0 + kx * dx, y0 + ky * dy);
+            if (!zRotZero) v2.rotateAround(center2d, zRot);
+            v.set(v2.x, v2.y, z0 + ky * dz);
+            if (!inShadow(panel.id, v, sunDirection)) {
               // direct radiation
               cellOutputs[kx][ky] += dot * peakRadiation;
             }
@@ -297,7 +611,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       cellOutputs = Array(nx)
         .fill(0)
         .map(() => Array(ny).fill(0));
-      // send heat map data to common store for visualization
       cellOutputsMapRef.current.set(reflector.id, cellOutputs);
     }
     const rot = parent.rotation[2];
