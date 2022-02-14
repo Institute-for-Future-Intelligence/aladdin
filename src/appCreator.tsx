@@ -60,6 +60,7 @@ import DailyParabolicDishYieldPanel from './panels/dailyParabolicDishYieldPanel'
 import YearlyParabolicDishYieldPanel from './panels/yearlyParabolicDishYieldPanel';
 import ParabolicDishSimulation from './analysis/parabolicDishSimulation';
 import HeatmapControlPanel from './panels/heatmapControlPanel';
+import SimulationControlPanel from './panels/simulationControlPanel';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -219,7 +220,12 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
 
   return (
     <div className="App">
-      {(loading || simulationInProgress) && <Spinner />}
+      {(loading || simulationInProgress) && (
+        <>
+          <SimulationControlPanel />
+          <Spinner />
+        </>
+      )}
       <div
         style={{
           backgroundColor: 'lightblue',

@@ -155,6 +155,7 @@ export const i18n_zh_tw = {
       SimulationStarted: '模擬開始。',
       SimulationCompleted: '模擬結束。',
       SimulationAborted: '模擬取消。',
+      CancelSimulation: '取消模擬',
     },
 
     menu: {

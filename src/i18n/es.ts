@@ -156,6 +156,7 @@ export const i18n_es = {
       SimulationStarted: 'Simulation started.',
       SimulationCompleted: 'Simulation completed.',
       SimulationAborted: 'Simulation aborted.',
+      CancelSimulation: 'Cancel simulation',
     },
 
     menu: {

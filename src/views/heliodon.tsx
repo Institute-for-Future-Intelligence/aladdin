@@ -161,7 +161,7 @@ const Heliodon = ({ date, hourAngle, declinationAngle, worldLatitude }: Heliodon
     const step = (max - min) / HOUR_DIVISIONS;
     for (let h = min; h < max + step / 2; h += step) {
       const v = computeSunLocation(radius, h, decline, latitude);
-      if (v.z > -0.1) {
+      if (v.z > -0.01) {
         points.push(v);
       }
     }
