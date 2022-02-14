@@ -70,6 +70,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
           showInfo(i18n.t('message.SimulationAborted', lang));
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toString();
+            state.simulationInProgress = false;
           });
         }
       };
@@ -99,7 +100,8 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       if (totalMinutes >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
-          state.runSimulation = false;
+          state.runSimulationForFresnelReflectors = false;
+          state.simulationInProgress = false;
           state.world.date = originalDateRef.current.toString();
           state.viewState.showDailyFresnelReflectorYieldPanel = true;
         });
@@ -301,6 +303,16 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
             }
           }
         }
+      }
+      const output = dailyOutputsMapRef.current.get(reflector.id);
+      if (output) {
+        let sum = 0;
+        for (let kx = 0; kx < nx; kx++) {
+          for (let ky = 0; ky < ny; ky++) {
+            sum += cellOutputs[kx][ky];
+          }
+        }
+        output[now.getHours()] += sum / (nx * ny);
       }
     }
   };

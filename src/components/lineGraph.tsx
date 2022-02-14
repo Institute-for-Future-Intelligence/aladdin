@@ -120,6 +120,22 @@ const LineGraph = ({
             name = labels && labels[i] ? labels[i] : 'Dish' + (i + 1);
           }
           break;
+        case GraphDataType.DailyFresnelReflectorYield:
+        case GraphDataType.YearlyFresnelReflectorYeild:
+          if (lineCount === 1) {
+            name = 'Total';
+          } else {
+            name = labels && labels[i] ? labels[i] : 'Reflector' + (i + 1);
+          }
+          break;
+        case GraphDataType.DailyHeliostatYield:
+        case GraphDataType.YearlyHeliostatYeild:
+          if (lineCount === 1) {
+            name = 'Total';
+          } else {
+            name = labels && labels[i] ? labels[i] : 'Heliostat' + (i + 1);
+          }
+          break;
       }
       const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
       const symbol = createSymbol(SYMBOLS[i], symbolSize, symbolCount, opacity);

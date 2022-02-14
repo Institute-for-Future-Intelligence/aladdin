@@ -50,6 +50,8 @@ import { useStoreRef } from './stores/commonRef';
 import { UndoableCameraChange } from './undo/UndoableCameraChange';
 import SolarPanelVisibility from './analysis/solarPanelVisibility';
 import ShareLink from './shareLinks';
+import HeatmapControlPanel from './panels/heatmapControlPanel';
+import SimulationControlPanel from './panels/simulationControlPanel';
 import VisibilityResultsPanel from './panels/visibilityResultsPanel';
 import StaticSolarRadiationSimulation from './analysis/staticSolarRadiationSimulation';
 import DynamicSolarRadiationSimulation from './analysis/dynamicSolarRadiationSimulation';
@@ -59,8 +61,9 @@ import ParabolicTroughSimulation from './analysis/parabolicTroughSimulation';
 import DailyParabolicDishYieldPanel from './panels/dailyParabolicDishYieldPanel';
 import YearlyParabolicDishYieldPanel from './panels/yearlyParabolicDishYieldPanel';
 import ParabolicDishSimulation from './analysis/parabolicDishSimulation';
-import HeatmapControlPanel from './panels/heatmapControlPanel';
-import SimulationControlPanel from './panels/simulationControlPanel';
+import FresnelReflectorSimulation from './analysis/fresnelReflectorSimulation';
+import DailyFresnelReflectorYieldPanel from './panels/dailyFresnelReflectorYieldPanel';
+import YearlyFresnelReflectorYieldPanel from './panels/yearlyFresnelReflectorYieldPanel';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -100,6 +103,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showYearlyParabolicTroughYieldPanel = useStore(Selector.viewState.showYearlyParabolicTroughYieldPanel);
   const showDailyParabolicDishYieldPanel = useStore(Selector.viewState.showDailyParabolicDishYieldPanel);
   const showYearlyParabolicDishYieldPanel = useStore(Selector.viewState.showYearlyParabolicDishYieldPanel);
+  const showDailyFresnelReflectorYieldPanel = useStore(Selector.viewState.showDailyFresnelReflectorYieldPanel);
+  const showYearlyFresnelReflectorYieldPanel = useStore(Selector.viewState.showYearlyFresnelReflectorYieldPanel);
   const addedFoundationId = useStore(Selector.addedFoundationId);
   const addedCuboidId = useStore(Selector.addedCuboidId);
 
@@ -344,6 +349,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {showDailyParabolicTroughYieldPanel && <DailyParabolicTroughYieldPanel city={city} />}
       {showYearlyParabolicDishYieldPanel && <YearlyParabolicDishYieldPanel city={city} />}
       {showDailyParabolicDishYieldPanel && <DailyParabolicDishYieldPanel city={city} />}
+      {showDailyFresnelReflectorYieldPanel && <DailyFresnelReflectorYieldPanel city={city} />}
+      {showYearlyFresnelReflectorYieldPanel && <YearlyFresnelReflectorYieldPanel city={city} />}
       {showSolarRadiationHeatmap && <HeatmapControlPanel />}
       <DropdownContextMenu>
         <div>
@@ -377,6 +384,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             <SolarPanelVisibility />
             <ParabolicTroughSimulation city={city} />
             <ParabolicDishSimulation city={city} />
+            <FresnelReflectorSimulation city={city} />
           </Canvas>
           <KeyboardListener
             canvas={canvasRef.current}

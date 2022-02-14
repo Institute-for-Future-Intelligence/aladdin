@@ -674,6 +674,28 @@ export const i18n_tr = {
       ShowOutputsOfIndividualParabolicDishes: 'Show outputs of individual parabolic dishes',
     },
 
+    fresnelReflectorYieldPanel: {
+      FresnelReflectorDailyYield: 'Fresnel Reflector Daily Yield',
+      FresnelReflectorYearlyYield: 'Fresnel Reflector Yearly Yield',
+      Yield: 'Yield',
+      YieldPerHour: 'Yield per Hour',
+      DailyTotal: 'Daily Total',
+      YearlyTotal: 'Yearly Total',
+      HoverForBreakdown: 'Hover for breakdown',
+      ShowOutputsOfIndividualFresnelReflectors: 'Show outputs of individual Fresnel feflectors',
+    },
+
+    heliostatYieldPanel: {
+      HeliostatDailyYield: 'Heliostat Daily Yield',
+      HeliostatYearlyYield: 'Heliostat Yearly Yield',
+      Yield: 'Yield',
+      YieldPerHour: 'Yield per Hour',
+      DailyTotal: 'Daily Total',
+      YearlyTotal: 'Yearly Total',
+      HoverForBreakdown: 'Hover for breakdown',
+      ShowOutputsOfIndividualFresnelHeliostats: 'Show outputs of individual heliostats',
+    },
+
     heliodonPanel: {
       SunAndTimeSettings: 'Sun & Time Settings',
       SunAngles: 'Açý',

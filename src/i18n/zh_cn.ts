@@ -657,6 +657,28 @@ export const i18n_zh_cn = {
       ShowOutputsOfIndividualParabolicDishes: '显示每个抛物线碟单独发电量',
     },
 
+    fresnelReflectorYieldPanel: {
+      FresnelReflectorDailyYield: '菲涅耳反射镜日发电量',
+      FresnelReflectorYearlyYield: '菲涅耳反射镜年发电量',
+      Yield: '发电量',
+      YieldPerHour: '每小时发电量',
+      DailyTotal: '日发电总量',
+      YearlyTotal: '年发电总量',
+      HoverForBreakdown: '在此停留鼠标分列发电量',
+      ShowOutputsOfIndividualFresnelReflectors: '显示每个菲涅耳反射镜单独发电量',
+    },
+
+    heliostatYieldPanel: {
+      HeliostatDailyYield: '定日镜日发电量',
+      HeliostatYearlyYield: '定日镜年发电量',
+      Yield: '发电量',
+      YieldPerHour: '每小时发电量',
+      DailyTotal: '日发电总量',
+      YearlyTotal: '年发电总量',
+      HoverForBreakdown: '在此停留鼠标分列发电量',
+      ShowOutputsOfIndividualFresnelHeliostats: '显示每个定日镜单独发电量',
+    },
+
     heliodonPanel: {
       SunAndTimeSettings: '太阳和时间设置',
       SunAngles: '角度',
