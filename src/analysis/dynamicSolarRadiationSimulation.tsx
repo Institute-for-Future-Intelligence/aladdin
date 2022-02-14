@@ -77,6 +77,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           showInfo(i18n.t('message.SimulationAborted', lang));
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toString();
+            state.simulationInProgress = false;
           });
         }
       };
@@ -86,10 +87,11 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
 
   // getting ready for the simulation
   const init = () => {
-    const day = now.getDate();
-    now.setDate(day);
+    setCommonStore((state) => {
+      state.simulationInProgress = true;
+    });
     // beginning from sunrise
-    now.setHours(sunMinutes.sunrise / 60, sunMinutes.sunrise % 60);
+    now.setHours(Math.floor(sunMinutes.sunrise / 60), sunMinutes.sunrise % 60);
     originalDateRef.current = new Date(world.date);
     simulationCompletedRef.current = false;
     fetchObjects();
@@ -179,6 +181,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         // is not triggered to cancel the solar radiation heat map
         setCommonStore((state) => {
           state.showSolarRadiationHeatmap = true;
+          state.simulationInProgress = false;
         });
         return;
       }
@@ -231,18 +234,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       const components = content[0].children;
       objectsRef.current.length = 0;
       for (const c of components) {
-        fetchSimulationElements(c, objectsRef.current);
-      }
-    }
-  };
-
-  const fetchSimulationElements = (obj: Object3D, arr: Object3D[]) => {
-    if (obj.userData['simulation']) {
-      arr.push(obj);
-    }
-    if (obj.children.length > 0) {
-      for (const c of obj.children) {
-        fetchSimulationElements(c, arr);
+        Util.fetchSimulationElements(c, objectsRef.current);
       }
     }
   };

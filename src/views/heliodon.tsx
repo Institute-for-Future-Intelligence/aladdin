@@ -18,7 +18,13 @@ import {
   TextGeometryParameters,
   Vector3,
 } from 'three';
-import { computeDeclinationAngle, computeSunLocation, TILT_ANGLE } from '../analysis/sunTools';
+import {
+  computeDeclinationAngle,
+  computeHourAngleAtMinute,
+  computeSunLocation,
+  computeSunriseAndSunsetInMinutes,
+  TILT_ANGLE,
+} from '../analysis/sunTools';
 import { Line, Plane as Drei_Plane, useTexture } from '@react-three/drei';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -26,17 +32,18 @@ import { useLoader } from '@react-three/fiber';
 import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
 import { HALF_PI, TWO_PI, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
 
-const HOUR_DIVISIONS = 96;
+const HOUR_DIVISIONS = 48;
 const BASE_DIVISIONS = 72;
 const DECLINATION_DIVISIONS = 12;
 
 interface HeliodonProps {
+  date: Date;
   hourAngle: number;
   declinationAngle: number;
   worldLatitude: number;
 }
 
-const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps) => {
+const Heliodon = ({ date, hourAngle, declinationAngle, worldLatitude }: HeliodonProps) => {
   const radius = useStore(Selector.sceneRadius);
   const showSunAngles = useStore(Selector.viewState.showSunAngles);
 
@@ -70,7 +77,7 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
     setLatitude(Util.toRadians(worldLatitude));
   }, [worldLatitude]);
 
-  const nRibLines = 5;
+  const nRibLines = 6;
 
   const [baseGeometry, lineGeometry] = useMemo(() => {
     const baseGeometry = new BufferGeometry();
@@ -131,22 +138,29 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
   }, [radius]);
 
   const sunPathPoints = useMemo(() => {
-    const step = TWO_PI / HOUR_DIVISIONS;
     const points = [];
-    for (let h = -Math.PI; h < Math.PI + step / 2.0; h += step) {
+    const sunMinutes = computeSunriseAndSunsetInMinutes(date, Util.toDegrees(latitude));
+    const min = computeHourAngleAtMinute(sunMinutes.sunrise);
+    const max = computeHourAngleAtMinute(sunMinutes.sunset);
+    const step = (max - min) / HOUR_DIVISIONS;
+    for (let h = min; h < max + step / 2; h += step) {
       const v = computeSunLocation(radius, h, declinationAngle, latitude);
-      if (v.z > -0.1) {
+      if (v.z > -0.01) {
         points.push(v);
       }
     }
     return points;
   }, [latitude, radius, declinationAngle]);
 
-  const getSunPathPointsByDate = (d: number) => {
-    const step = TWO_PI / HOUR_DIVISIONS;
+  const getSunPathPointsByDate = (day: Date) => {
+    const decline = computeDeclinationAngle(day);
     const points = [];
-    for (let h = -Math.PI; h < Math.PI + step / 2.0; h += step) {
-      const v = computeSunLocation(radius, h, d, latitude);
+    const sunMinutes = computeSunriseAndSunsetInMinutes(day, Util.toDegrees(latitude));
+    const min = computeHourAngleAtMinute(sunMinutes.sunrise);
+    const max = computeHourAngleAtMinute(sunMinutes.sunset);
+    const step = (max - min) / HOUR_DIVISIONS;
+    for (let h = min; h < max + step / 2; h += step) {
+      const v = computeSunLocation(radius, h, decline, latitude);
       if (v.z > -0.1) {
         points.push(v);
       }
@@ -155,12 +169,10 @@ const Heliodon = ({ hourAngle, declinationAngle, worldLatitude }: HeliodonProps)
   };
 
   const pointArraySunPaths = useMemo(() => {
-    const dMin = computeDeclinationAngle(new Date(2021, 11, 22));
-    const dMax = computeDeclinationAngle(new Date(2021, 5, 22));
-    const delta = (dMax - dMin) / nRibLines;
     const arr = [];
     for (let i = 0; i <= nRibLines; i++) {
-      arr.push(getSunPathPointsByDate(dMin + i * delta));
+      const day = new Date(2021, i === 0 ? 11 : i - 1, 22);
+      arr.push(getSunPathPointsByDate(day));
     }
     return arr;
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -85,17 +85,6 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     return false;
   };
 
-  const fetchSimulationElements = (sensorId: string, obj: Object3D, arr: Object3D[]) => {
-    if (obj.userData['simulation'] && obj.uuid !== sensorId) {
-      arr.push(obj);
-    }
-    if (obj.children.length > 0) {
-      for (const c of obj.children) {
-        fetchSimulationElements(sensorId, c, arr);
-      }
-    }
-  };
-
   const collectAllDailyLightSensorData = () => {
     const map = new Map<string, number[]>();
     let index = 0;
@@ -139,7 +128,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     if (content.length > 0) {
       const components = content[0].children;
       for (const c of components) {
-        fetchSimulationElements(sensor.id, c, objects);
+        Util.getSimulationElements(c, objects, sensor.id);
       }
     }
     for (let i = 0; i < 24; i++) {
@@ -216,7 +205,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       if (content.length > 0) {
         const components = content[0].children;
         for (const c of components) {
-          fetchSimulationElements(sensor.id, c, objects);
+          Util.getSimulationElements(c, objects, sensor.id);
         }
       }
       for (let hour = 0; hour < 24; hour++) {

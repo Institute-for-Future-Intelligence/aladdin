@@ -126,18 +126,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       const components = content[0].children;
       objectsRef.current.length = 0;
       for (const c of components) {
-        fetchSimulationElements(c, objectsRef.current);
-      }
-    }
-  };
-
-  const fetchSimulationElements = (obj: Object3D, arr: Object3D[]) => {
-    if (obj.userData['simulation']) {
-      arr.push(obj);
-    }
-    if (obj.children.length > 0) {
-      for (const c of obj.children) {
-        fetchSimulationElements(c, arr);
+        Util.fetchSimulationElements(c, objectsRef.current);
       }
     }
   };

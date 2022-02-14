@@ -7,7 +7,7 @@ import { Euler, Intersection, Object3D, Raycaster, Vector2, Vector3 } from 'thre
 import { useThree } from '@react-three/fiber';
 import { useStore } from '../stores/common';
 import * as Selector from 'src/stores/selector';
-import { ObjectType, Orientation } from '../types';
+import { ObjectType } from '../types';
 import { Util } from '../Util';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { HumanModel } from '../models/HumanModel';
@@ -54,18 +54,7 @@ const SolarPanelVisibility = () => {
       const components = content[0].children;
       objectsRef.current.length = 0;
       for (const c of components) {
-        fetchSimulationElements(c, objectsRef.current);
-      }
-    }
-  };
-
-  const fetchSimulationElements = (obj: Object3D, arr: Object3D[]) => {
-    if (obj.userData['simulation'] || obj.userData['eyeball']) {
-      arr.push(obj);
-    }
-    if (obj.children.length > 0) {
-      for (const c of obj.children) {
-        fetchSimulationElements(c, arr);
+        Util.fetchSimulationElements(c, objectsRef.current);
       }
     }
   };

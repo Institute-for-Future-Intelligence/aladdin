@@ -46,6 +46,28 @@ export class Util {
     return objects;
   }
 
+  static fetchSimulationElements(obj: Object3D, arr: Object3D[]) {
+    if (obj.userData['simulation']) {
+      arr.push(obj);
+    }
+    if (obj.children.length > 0) {
+      for (const c of obj.children) {
+        Util.fetchSimulationElements(c, arr);
+      }
+    }
+  }
+
+  static getSimulationElements(obj: Object3D, arr: Object3D[], id?: string) {
+    if (obj.userData['simulation'] && obj.uuid !== id) {
+      arr.push(obj);
+    }
+    if (obj.children.length > 0) {
+      for (const c of obj.children) {
+        Util.getSimulationElements(c, arr, id);
+      }
+    }
+  }
+
   static hasMovingParts(elements: ElementModel[]): boolean {
     for (const e of elements) {
       switch (e.type) {

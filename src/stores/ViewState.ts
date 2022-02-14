@@ -38,6 +38,10 @@ export interface ViewState {
   showYearlyParabolicTroughYieldPanel: boolean;
   showDailyParabolicDishYieldPanel: boolean;
   showYearlyParabolicDishYieldPanel: boolean;
+  showDailyFresnelReflectorYieldPanel: boolean;
+  showYearlyFresnelReflectorYieldPanel: boolean;
+  showDailyHeliostatYieldPanel: boolean;
+  showYearlyHeliostatYieldPanel: boolean;
 
   heliodonPanelX: number;
   heliodonPanelY: number;
@@ -65,6 +69,14 @@ export interface ViewState {
   dailyParabolicDishYieldPanelY: number;
   yearlyParabolicDishYieldPanelX: number;
   yearlyParabolicDishYieldPanelY: number;
+  dailyFresnelReflectorYieldPanelX: number;
+  dailyFresnelReflectorYieldPanelY: number;
+  yearlyFresnelReflectorYieldPanelX: number;
+  yearlyFresnelReflectorYieldPanelY: number;
+  dailyHeliostatYieldPanelX: number;
+  dailyHeliostatYieldPanelY: number;
+  yearlyHeliostatYieldPanelX: number;
+  yearlyHeliostatYieldPanelY: number;
 
   mapZoom: number;
   mapType: string;

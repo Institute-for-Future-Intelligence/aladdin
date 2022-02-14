@@ -140,3 +140,33 @@ export const yearlyParabolicDishYieldPanelX = (state: CommonStoreState) =>
 
 export const yearlyParabolicDishYieldPanelY = (state: CommonStoreState) =>
   state.viewState.yearlyParabolicDishYieldPanelY;
+
+export const showDailyFresnelReflectorYieldPanel = (state: CommonStoreState) =>
+  state.viewState.showDailyFresnelReflectorYieldPanel;
+
+export const dailyFresnelReflectorYieldPanelX = (state: CommonStoreState) =>
+  state.viewState.dailyFresnelReflectorYieldPanelX;
+
+export const dailyFresnelReflectorYieldPanelY = (state: CommonStoreState) =>
+  state.viewState.dailyFresnelReflectorYieldPanelY;
+
+export const showYearlyFresnelReflectorYieldPanel = (state: CommonStoreState) =>
+  state.viewState.showYearlyFresnelReflectorYieldPanel;
+
+export const yearlyFresnelReflectorYieldPanelX = (state: CommonStoreState) =>
+  state.viewState.yearlyFresnelReflectorYieldPanelX;
+
+export const yearlyFresnelReflectorYieldPanelY = (state: CommonStoreState) =>
+  state.viewState.yearlyFresnelReflectorYieldPanelY;
+
+export const showDailyHeliostatYieldPanel = (state: CommonStoreState) => state.viewState.showDailyHeliostatYieldPanel;
+
+export const dailyHeliostatYieldPanelX = (state: CommonStoreState) => state.viewState.dailyHeliostatYieldPanelX;
+
+export const dailyHeliostatYieldPanelY = (state: CommonStoreState) => state.viewState.dailyHeliostatYieldPanelY;
+
+export const showYearlyHeliostatYieldPanel = (state: CommonStoreState) => state.viewState.showYearlyHeliostatYieldPanel;
+
+export const yearlyHeliostatYieldPanelX = (state: CommonStoreState) => state.viewState.yearlyHeliostatYieldPanelX;
+
+export const yearlyHeliostatYieldPanelY = (state: CommonStoreState) => state.viewState.yearlyHeliostatYieldPanelY;

@@ -7,6 +7,7 @@ import { Util } from '../Util';
 import { AirMass, ASHRAE_C, SOLAR_CONSTANT } from './analysisConstants';
 import { GroundModel } from '../models/GroundModel';
 import { TWO_PI, UNIT_VECTOR_POS_Z } from '../constants';
+import { useStore } from '../stores/common';
 
 export const TILT_ANGLE = (23.45 / 180.0) * Math.PI;
 
@@ -32,6 +33,10 @@ export const computeSunriseAndSunsetInMinutes = (date: Date, latitude: number) =
 export const computeHourAngle = (date: Date) => {
   const minutes = date.getHours() * 60 + date.getMinutes() - HALF_DAY_MINUTES;
   return (minutes / HALF_DAY_MINUTES) * Math.PI;
+};
+
+export const computeHourAngleAtMinute = (minutes: number) => {
+  return (minutes / HALF_DAY_MINUTES - 1) * Math.PI;
 };
 
 export const getSunDirection = (date: Date, latitude: number) => {

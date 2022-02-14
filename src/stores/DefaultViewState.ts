@@ -39,6 +39,10 @@ export class DefaultViewState implements ViewState {
   showYearlyParabolicTroughYieldPanel: boolean;
   showDailyParabolicDishYieldPanel: boolean;
   showYearlyParabolicDishYieldPanel: boolean;
+  showDailyFresnelReflectorYieldPanel: boolean;
+  showYearlyFresnelReflectorYieldPanel: boolean;
+  showDailyHeliostatYieldPanel: boolean;
+  showYearlyHeliostatYieldPanel: boolean;
   autoRotate: boolean;
 
   heliodonPanelX: number;
@@ -67,6 +71,14 @@ export class DefaultViewState implements ViewState {
   dailyParabolicDishYieldPanelY: number;
   yearlyParabolicDishYieldPanelX: number;
   yearlyParabolicDishYieldPanelY: number;
+  dailyFresnelReflectorYieldPanelX: number;
+  dailyFresnelReflectorYieldPanelY: number;
+  yearlyFresnelReflectorYieldPanelX: number;
+  yearlyFresnelReflectorYieldPanelY: number;
+  dailyHeliostatYieldPanelX: number;
+  dailyHeliostatYieldPanelY: number;
+  yearlyHeliostatYieldPanelX: number;
+  yearlyHeliostatYieldPanelY: number;
 
   mapZoom: number;
   mapType: string;
@@ -108,6 +120,10 @@ export class DefaultViewState implements ViewState {
     this.showYearlyParabolicTroughYieldPanel = false;
     this.showDailyParabolicDishYieldPanel = false;
     this.showYearlyParabolicDishYieldPanel = false;
+    this.showDailyFresnelReflectorYieldPanel = false;
+    this.showYearlyFresnelReflectorYieldPanel = false;
+    this.showDailyHeliostatYieldPanel = false;
+    this.showYearlyHeliostatYieldPanel = false;
     this.autoRotate = false;
 
     this.heliodonPanelX = 0;
@@ -136,6 +152,14 @@ export class DefaultViewState implements ViewState {
     this.dailyParabolicDishYieldPanelY = 0;
     this.yearlyParabolicDishYieldPanelX = 0;
     this.yearlyParabolicDishYieldPanelY = 0;
+    this.dailyFresnelReflectorYieldPanelX = 0;
+    this.dailyFresnelReflectorYieldPanelY = 0;
+    this.yearlyFresnelReflectorYieldPanelX = 0;
+    this.yearlyFresnelReflectorYieldPanelY = 0;
+    this.dailyHeliostatYieldPanelX = 0;
+    this.dailyHeliostatYieldPanelY = 0;
+    this.yearlyHeliostatYieldPanelX = 0;
+    this.yearlyHeliostatYieldPanelY = 0;
 
     this.mapZoom = 18;
     this.mapType = 'roadmap';
@@ -177,6 +201,10 @@ export class DefaultViewState implements ViewState {
     viewState.showYearlyParabolicTroughYieldPanel = false;
     viewState.showDailyParabolicDishYieldPanel = false;
     viewState.showYearlyParabolicDishYieldPanel = false;
+    viewState.showDailyFresnelReflectorYieldPanel = false;
+    viewState.showYearlyFresnelReflectorYieldPanel = false;
+    viewState.showDailyHeliostatYieldPanel = false;
+    viewState.showYearlyHeliostatYieldPanel = false;
     viewState.autoRotate = false;
 
     viewState.heliodonPanelX = 0;
@@ -205,6 +233,14 @@ export class DefaultViewState implements ViewState {
     viewState.dailyParabolicDishYieldPanelY = 0;
     viewState.yearlyParabolicDishYieldPanelX = 0;
     viewState.yearlyParabolicDishYieldPanelY = 0;
+    viewState.dailyFresnelReflectorYieldPanelX = 0;
+    viewState.dailyFresnelReflectorYieldPanelY = 0;
+    viewState.yearlyFresnelReflectorYieldPanelX = 0;
+    viewState.yearlyFresnelReflectorYieldPanelY = 0;
+    viewState.dailyHeliostatYieldPanelX = 0;
+    viewState.dailyHeliostatYieldPanelY = 0;
+    viewState.yearlyHeliostatYieldPanelX = 0;
+    viewState.yearlyHeliostatYieldPanelY = 0;
 
     viewState.mapZoom = 18;
     viewState.mapType = 'roadmap';

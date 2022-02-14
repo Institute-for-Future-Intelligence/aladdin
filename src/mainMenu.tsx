@@ -1274,6 +1274,95 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </SubMenu>
         </SubMenu>
 
+        {/* Fresnel reflector */}
+        <SubMenu key={'fresnel-reflector'} title={i18n.t('menu.fresnelReflectorSubMenu', lang)}>
+          <Menu.Item
+            key={'fresnel-reflector-daily-yield'}
+            onClick={() => {
+              const fresnelReflectorCount = countElementsByType(ObjectType.FresnelReflector);
+              if (fresnelReflectorCount === 0) {
+                showInfo(i18n.t('analysisManager.NoFresnelReflectorForAnalysis', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.dailyFresnelReflectorIndividualOutputs = false;
+                  state.runSimulationForFresnelReflectors = true;
+                });
+              }, 100);
+            }}
+          >
+            {i18n.t('menu.fresnelReflector.AnalyzeDailyYield', lang)}
+          </Menu.Item>
+          <Menu.Item
+            key={'fresnel-reflector-yearly-yield'}
+            onClick={() => {
+              const fresnelReflectorCount = countElementsByType(ObjectType.FresnelReflector);
+              if (fresnelReflectorCount === 0) {
+                showInfo(i18n.t('analysisManager.NoFresnelReflectorForAnalysis', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.yearlyParabolicTroughIndividualOutputs = false;
+                  state.runSimulationForFresnelReflectors = true;
+                });
+              }, 100);
+            }}
+          >
+            {i18n.t('menu.fresnelReflector.AnalyzeYearlyYield', lang)}
+          </Menu.Item>
+          <SubMenu
+            key={'fresnel-reflector-analysis-options'}
+            title={i18n.t('menu.fresnelReflector.AnalysisOptions', lang)}
+          >
+            <Menu>
+              <Menu.Item key={'fresnel-reflector-simulation-sampling-frequency'}>
+                <Space style={{ width: '150px' }}>{i18n.t('menu.sensor.SamplingFrequency', lang) + ':'}</Space>
+                <InputNumber
+                  min={1}
+                  max={60}
+                  step={1}
+                  style={{ width: 60 }}
+                  precision={0}
+                  value={cspTimesPerHour ?? 4}
+                  formatter={(a) => Number(a).toFixed(0)}
+                  onChange={(value) => {
+                    setCommonStore((state) => {
+                      state.world.cspTimesPerHour = value;
+                    });
+                  }}
+                />
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.TimesPerHour', lang)}</Space>
+              </Menu.Item>
+              <Menu.Item key={'fresnel-reflector-simulation-grid-cell-size'}>
+                <Space style={{ width: '150px' }}>{i18n.t('menu.fresnelReflector.GridCellSize', lang) + ':'}</Space>
+                <InputNumber
+                  min={0.1}
+                  max={5}
+                  step={0.1}
+                  style={{ width: 60 }}
+                  precision={1}
+                  value={cspGridCellSize ?? 0.5}
+                  formatter={(a) => Number(a).toFixed(1)}
+                  onChange={(value) => {
+                    setCommonStore((state) => {
+                      state.world.cspGridCellSize = value;
+                    });
+                  }}
+                />
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
+              </Menu.Item>
+            </Menu>
+          </SubMenu>
+        </SubMenu>
+
         {/* parabolic dishes */}
         <SubMenu key={'parabolic-dish'} title={i18n.t('menu.parabolicDishSubMenu', lang)}>
           <Menu.Item

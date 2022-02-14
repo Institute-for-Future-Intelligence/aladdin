@@ -34,7 +34,14 @@ const HeliodonWrapper = () => {
 
   return (
     <>
-      {heliodon && <Heliodon hourAngle={hourAngle} declinationAngle={declinationAngle} worldLatitude={worldLatitude} />}
+      {heliodon && (
+        <Heliodon
+          date={new Date(dateString)}
+          hourAngle={hourAngle}
+          declinationAngle={declinationAngle}
+          worldLatitude={worldLatitude}
+        />
+      )}
     </>
   );
 };

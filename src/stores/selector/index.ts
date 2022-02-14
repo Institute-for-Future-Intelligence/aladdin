@@ -564,6 +564,8 @@ export const parabolicTroughLabels = (state: CommonStoreState) => state.paraboli
 
 export const setParabolicTroughLabels = (state: CommonStoreState) => state.setParabolicTroughLabels;
 
+export const runSimulationForFresnelReflectors = (state: CommonStoreState) => state.runSimulationForFresnelReflectors;
+
 export const dailyFresnelReflectorYield = (state: CommonStoreState) => state.dailyFresnelReflectorYield;
 
 export const dailyFresnelReflectorFlag = (state: CommonStoreState) => state.dailyFresnelReflectorFlag;
