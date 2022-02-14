@@ -103,6 +103,8 @@ export interface MainMenuProps {
 const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenuProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
+  const elements = useStore.getState().elements;
+  const selectNone = useStore(Selector.selectNone);
   const undoManager = useStore(Selector.undoManager);
   const addUndoable = useStore(Selector.addUndoable);
   const timesPerHour = useStore(Selector.world.timesPerHour);
@@ -139,6 +141,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const removeElementById = useStore(Selector.removeElementById);
   const copyCutElements = useStore(Selector.copyCutElements);
   const getElementById = useStore(Selector.getElementById);
+  const runSimulation = useStore(Selector.runSimulation);
 
   const [aboutUs, setAboutUs] = useState(false);
 
@@ -595,6 +598,33 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     panCenter[1] === 0 &&
     panCenter[2] === 0;
 
+  const toggleStaticSolarRadiationHeatmap = () => {
+    showInfo(i18n.t('message.SimulationStarted', lang));
+    // give it 0.1 second for the info to show up
+    setTimeout(() => {
+      selectNone();
+      setCommonStore((state) => {
+        state.simulationInProgress = true;
+        // set below to false first to ensure update (it will be set to true after the simulation)
+        state.showSolarRadiationHeatmap = false;
+        state.dailySolarRadiationSimulationFlag = !state.dailySolarRadiationSimulationFlag;
+      });
+    }, 100);
+  };
+
+  const toggleDynamicSolarRadiationHeatmap = () => {
+    if (!runSimulation) {
+      showInfo(i18n.t('message.SimulationStarted', lang));
+    }
+    // give it 0.1 second for the info to show up
+    setTimeout(() => {
+      selectNone();
+      setCommonStore((state) => {
+        state.runSimulation = !state.runSimulation;
+      });
+    }, 100);
+  };
+
   const readyToPaste = elementsToPaste && elementsToPaste.length > 0;
 
   const menu = (
@@ -878,18 +908,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         <SubMenu key={'physics'} title={i18n.t('menu.physicsSubMenu', lang)}>
           <Menu.Item
             key={'daily-solar-radiation-heatmap'}
-            onClick={() => {
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                setCommonStore((state) => {
-                  state.simulationInProgress = true;
-                  // set below to false first to ensure update (it will be set to true after the simulation)
-                  state.showSolarRadiationHeatmap = false;
-                  state.dailySolarRadiationSimulationFlag = !state.dailySolarRadiationSimulationFlag;
-                });
-              }, 100);
-            }}
+            onClick={
+              Util.hasMovingParts(elements) ? toggleDynamicSolarRadiationHeatmap : toggleStaticSolarRadiationHeatmap
+            }
           >
             {i18n.t('menu.physics.DailySolarRadiationHeatmap', lang)}
           </Menu.Item>

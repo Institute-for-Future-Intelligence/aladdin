@@ -11,7 +11,6 @@ import i18n from '../i18n/i18n';
 
 const Container = styled.div`
   position: absolute;
-  top: 110px;
   left: 0;
   margin: 0;
   display: flex;
@@ -47,11 +46,12 @@ const HeatmapControlPanel = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+  const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
 
   const lang = { lng: language };
 
   return (
-    <Container>
+    <Container style={{ top: showSiteInfoPanel ? '110px' : '80px' }}>
       <ColumnWrapper>
         <Space direction={'horizontal'} style={{ color: 'antiquewhite', fontSize: '10px' }}>
           {i18n.t('heatmapControlPanel.ColorContrast', lang) + ':'}
