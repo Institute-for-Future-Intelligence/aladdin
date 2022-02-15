@@ -204,23 +204,24 @@ const ParabolicTrough = ({
       return new Euler(0, Math.atan2(rotatedSunDirection.x, rotatedSunDirection.z), 0, 'ZXY');
     }
     return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
-  }, [sunDirection, tiltAngle, relativeAzimuth]);
+  }, [rot, sunDirection, tiltAngle, relativeAzimuth]);
 
+  // FIXME: This only works when the foundation has zero azimuth
   const reflectedLightShift = useMemo(() => {
     if (sunDirection.z > 0) {
-      // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
-      const rotationAxis = rot ? new Vector3(Math.sin(rot), Math.cos(rot), 0) : new Vector3(0, 1, 0);
+      const cosRot = rot ? Math.cos(rot) : 1;
+      const sinRot = rot ? Math.sin(rot) : 0;
       // how much the reflected light should shift in the direction of the receiver tube?
-      const tubeHeight = (focalLength * Math.abs(sunDirection.z)) / Math.hypot(sunDirection.x, sunDirection.z);
-      return (-tubeHeight * (sunDirection.y * rotationAxis.y + sunDirection.x * rotationAxis.x)) / sunDirection.z;
+      return (
+        (-focalLength * (sunDirection.x * sinRot + sunDirection.y * cosRot)) /
+        Math.hypot(sunDirection.x, sunDirection.z)
+      );
     }
     return 0;
   }, [sunDirection, rot, focalLength]);
 
-  const focusPoint = new Vector3(0, 0, focalLength)
-    .applyEuler(relativeEuler)
-    .add(new Vector3(0, reflectedLightShift, 0));
-  const sunPoint = sunDirection.clone().multiplyScalar(sunBeamLength);
+  const focusPoint = new Vector3(0, reflectedLightShift, focalLength).applyEuler(relativeEuler);
+  const sunPoint = sunDirection.clone().multiplyScalar(sunBeamLength).applyEuler(new Euler(-euler.x, 0, -euler.z));
 
   const poleZ = -(actualPoleHeight + lz) / 2;
 
@@ -650,7 +651,7 @@ const ParabolicTrough = ({
 
       {/* draw sun beam */}
       {drawSunBeam && sunDirection.z > 0 && (
-        <group rotation={[-euler.x, 0, -euler.z]}>
+        <group>
           <Line
             userData={{ unintersectable: true }}
             points={[focusPoint, new Vector3(-0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler), sunPoint]}
