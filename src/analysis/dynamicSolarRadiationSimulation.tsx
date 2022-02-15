@@ -112,7 +112,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
 
   const updateHeatmaps = () => {
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
-    const daylight = (sunMinutes.sunset - sunMinutes.sunrise) / 60;
+    const daylight = sunMinutes.daylight() / 60;
     // divide by times per hour as the radiation is added up that many times
     const scaleFactor =
       daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * world.timesPerHour) : 0;

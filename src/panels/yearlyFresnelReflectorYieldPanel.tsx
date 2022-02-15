@@ -233,6 +233,7 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
+                      state.runYearlySimulationForFresnelReflectors = true;
                       state.simulationInProgress = true;
                       state.yearlyFresnelReflectorIndividualOutputs = checked;
                       state.yearlyFresnelReflectorFlag = !state.yearlyFresnelReflectorFlag;
@@ -254,6 +255,7 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
                 // give it 0.1 second for the info to show up
                 setTimeout(() => {
                   setCommonStore((state) => {
+                    state.runYearlySimulationForFresnelReflectors = true;
                     state.simulationInProgress = true;
                     state.yearlyFresnelReflectorFlag = !state.yearlyFresnelReflectorFlag;
                   });

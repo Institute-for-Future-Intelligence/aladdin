@@ -461,7 +461,8 @@ export interface CommonStoreState {
   parabolicTroughLabels: string[];
   setParabolicTroughLabels: (labels: string[]) => void;
 
-  runSimulationForFresnelReflectors: boolean;
+  runDailySimulationForFresnelReflectors: boolean;
+  runYearlySimulationForFresnelReflectors: boolean;
   dailyFresnelReflectorYield: DatumEntry[];
   dailyFresnelReflectorFlag: boolean;
   dailyFresnelReflectorIndividualOutputs: boolean;
@@ -745,7 +746,8 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          runSimulationForFresnelReflectors: false,
+          runDailySimulationForFresnelReflectors: false,
+          runYearlySimulationForFresnelReflectors: false,
           yearlyFresnelReflectorYield: [],
           yearlyFresnelReflectorFlag: false,
           yearlyFresnelReflectorIndividualOutputs: false,

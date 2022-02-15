@@ -16,11 +16,12 @@ import * as Selector from 'src/stores/selector';
 import { DatumEntry, ObjectType } from '../types';
 import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
-import { UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
+import { MONTHS, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import { FoundationModel } from '../models/FoundationModel';
+import { SunMinutes } from './SunMinutes';
 
 export interface FresnelReflectorSimulationProps {
   city: string | null;
@@ -36,8 +37,12 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const setDailyYield = useStore(Selector.setDailyFresnelReflectorYield);
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
   const dailyIndividualOutputs = useStore(Selector.dailyFresnelReflectorIndividualOutputs);
+  const setYearlyYield = useStore(Selector.setYearlyFresnelReflectorYield);
+  const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
+  const yearlyIndividualOutputs = useStore(Selector.yearlyFresnelReflectorIndividualOutputs);
   const setFresnelReflectorLabels = useStore(Selector.setFresnelReflectorLabels);
-  const runDailySimulation = useStore(Selector.runSimulationForFresnelReflectors);
+  const runDailySimulation = useStore(Selector.runDailySimulationForFresnelReflectors);
+  const runYearlySimulation = useStore(Selector.runYearlySimulationForFresnelReflectors);
 
   const { scene } = useThree();
   const lang = { lng: language };
@@ -54,15 +59,18 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const simulationCompletedRef = useRef<boolean>(false);
   const originalDateRef = useRef<Date>(new Date(world.date));
   const dailyOutputsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
+  const yearlyOutputsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
+  const monthRef = useRef<number>(0);
 
   const sunMinutes = useMemo(() => {
     return computeSunriseAndSunsetInMinutes(now, world.latitude);
   }, [world.date, world.latitude]);
+  const sunMinutesRef = useRef<SunMinutes>(sunMinutes);
 
   useEffect(() => {
     if (runDailySimulation) {
-      init();
-      requestRef.current = requestAnimationFrame(simulate);
+      initDaily();
+      requestRef.current = requestAnimationFrame(simulateDaily);
       return () => {
         // this is called when the recursive call of requestAnimationFrame exits
         cancelAnimationFrame(requestRef.current);
@@ -78,36 +86,60 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runDailySimulation]);
 
-  // getting ready for the simulation
-  const init = () => {
+  useEffect(() => {
+    if (runYearlySimulation) {
+      initYearly();
+      requestRef.current = requestAnimationFrame(simulateYearly);
+      return () => {
+        // this is called when the recursive call of requestAnimationFrame exits
+        cancelAnimationFrame(requestRef.current);
+        if (!simulationCompletedRef.current) {
+          showInfo(i18n.t('message.SimulationAborted', lang));
+          setCommonStore((state) => {
+            state.world.date = originalDateRef.current.toString();
+            state.simulationInProgress = false;
+          });
+        }
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runYearlySimulation]);
+
+  // do the daily simulation
+
+  const initDaily = () => {
     originalDateRef.current = new Date(world.date);
     // beginning from just a bit before sunrise
     now.setHours(Math.floor(sunMinutes.sunrise / 60), 0.5 * interval - 30);
     simulationCompletedRef.current = false;
     fetchObjects();
-    // reset the result arrays
+    // reset the total result arrays to zeros
     for (const e of elements) {
       if (e.type === ObjectType.FresnelReflector) {
-        const result = new Array(24).fill(0);
-        dailyOutputsMapRef.current.set(e.id, result);
+        const result = dailyOutputsMapRef.current.get(e.id);
+        if (result) {
+          result.fill(0);
+        } else {
+          dailyOutputsMapRef.current.set(e.id, new Array(24).fill(0));
+        }
       }
     }
   };
 
-  const simulate = () => {
+  const simulateDaily = () => {
     if (runDailySimulation) {
       const totalMinutes = now.getMinutes() + now.getHours() * 60;
       if (totalMinutes >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
-          state.runSimulationForFresnelReflectors = false;
+          state.runDailySimulationForFresnelReflectors = false;
           state.simulationInProgress = false;
           state.world.date = originalDateRef.current.toString();
           state.viewState.showDailyFresnelReflectorYieldPanel = true;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
-        finish();
+        finishDaily();
         return;
       }
       // this is where time advances (by incrementing the minutes with the given interval)
@@ -121,13 +153,13 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         }
       }
       // recursive call to the next step of the simulation
-      requestRef.current = requestAnimationFrame(simulate);
+      requestRef.current = requestAnimationFrame(simulateDaily);
     }
   };
 
-  const finish = () => {
+  const finishDaily = () => {
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
-    const daylight = (sunMinutes.sunset - sunMinutes.sunrise) / 60;
+    const daylight = sunMinutes.daylight() / 60;
     // divide by times per hour as the radiation is added up that many times
     const scale =
       daylight > ZERO_TOLERANCE
@@ -211,6 +243,183 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         data.push({ Hour: i, Total: total[i] } as DatumEntry);
       }
       setDailyYield(data);
+    }
+  };
+
+  // do the yearly simulation
+
+  const initYearly = () => {
+    originalDateRef.current = new Date(world.date);
+    // begin from January, 22
+    monthRef.current = 0;
+    now.setMonth(0, 22);
+    sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
+    now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), 0.5 * interval - 30);
+    // set the initial date so that the scene gets a chance to render before the simulation starts
+    setCommonStore((state) => {
+      state.world.date = now.toString();
+    });
+    simulationCompletedRef.current = false;
+    fetchObjects();
+    // reset the total result arrays to zeros
+    for (const e of elements) {
+      if (e.type === ObjectType.FresnelReflector) {
+        const dailyResult = dailyOutputsMapRef.current.get(e.id);
+        if (dailyResult) {
+          dailyResult.fill(0);
+        } else {
+          dailyOutputsMapRef.current.set(e.id, new Array(24).fill(0));
+        }
+        const yearlyResult = yearlyOutputsMapRef.current.get(e.id);
+        if (yearlyResult) {
+          yearlyResult.fill(0);
+        } else {
+          yearlyOutputsMapRef.current.set(e.id, new Array(12).fill(0));
+        }
+      }
+    }
+  };
+
+  const simulateYearly = () => {
+    if (runYearlySimulation) {
+      const totalMinutes = now.getMinutes() + now.getHours() * 60;
+      if (totalMinutes < sunMinutesRef.current.sunset) {
+        // this is where time advances (by incrementing the minutes with the given interval)
+        now.setHours(now.getHours(), now.getMinutes() + interval);
+        setCommonStore((state) => {
+          state.world.date = now.toString();
+        });
+        for (const e of elements) {
+          if (e.type === ObjectType.FresnelReflector) {
+            calculateYield(e as FresnelReflectorModel);
+          }
+        }
+        // recursive call to the next step of the simulation within the current day
+        requestRef.current = requestAnimationFrame(simulateYearly);
+      } else {
+        if (monthRef.current === 12) {
+          cancelAnimationFrame(requestRef.current);
+          setCommonStore((state) => {
+            state.runYearlySimulationForFresnelReflectors = false;
+            state.simulationInProgress = false;
+            state.world.date = originalDateRef.current.toString();
+            state.viewState.showYearlyFresnelReflectorYieldPanel = true;
+          });
+          showInfo(i18n.t('message.SimulationCompleted', lang));
+          simulationCompletedRef.current = true;
+          finishYearly();
+        } else {
+          finishMonthly();
+          monthRef.current++;
+          now.setMonth(monthRef.current, 22);
+          sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
+          now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), 0.5 * interval - 30);
+          // reset the daily result arrays to zeros
+          for (const e of elements) {
+            if (e.type === ObjectType.FresnelReflector) {
+              const dailyResult = dailyOutputsMapRef.current.get(e.id);
+              if (dailyResult) {
+                dailyResult.fill(0);
+              } else {
+                dailyOutputsMapRef.current.set(e.id, new Array(24).fill(0));
+              }
+            }
+          }
+          // recursive call to the next step of the simulation to the 22nd of the next month
+          requestRef.current = requestAnimationFrame(simulateYearly);
+        }
+      }
+    }
+  };
+
+  const finishMonthly = () => {
+    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+    const daylight = sunMinutesRef.current.daylight() / 60;
+    // divide by times per hour as the radiation is added up that many times
+    const scale =
+      daylight > ZERO_TOLERANCE
+        ? weather.sunshineHours[now.getMonth()] / (30 * daylight * (world.cspTimesPerHour ?? 4))
+        : 0;
+    for (const e of elements) {
+      if (e.type === ObjectType.FresnelReflector) {
+        const reflector = e as FresnelReflectorModel;
+        const result = dailyOutputsMapRef.current.get(reflector.id);
+        if (result) {
+          const total = yearlyOutputsMapRef.current.get(reflector.id);
+          if (total) {
+            const sumDaily = result.reduce((a, b) => a + b, 0);
+            const factor =
+              reflector.lx *
+              reflector.ly *
+              reflector.opticalEfficiency *
+              reflector.thermalEfficiency *
+              reflector.absorptance *
+              reflector.reflectance *
+              (1 - dustLoss);
+            total[monthRef.current] += sumDaily * factor * scale;
+          }
+        }
+      }
+    }
+  };
+
+  const finishYearly = () => {
+    generateYearlyYieldData();
+  };
+
+  const generateYearlyYieldData = () => {
+    if (yearlyIndividualOutputs) {
+      const resultArr = [];
+      const labels = [];
+      let index = 0;
+      for (const e of elements) {
+        if (e.type === ObjectType.FresnelReflector) {
+          const output = yearlyOutputsMapRef.current.get(e.id);
+          if (output) {
+            updateYearlyYield(
+              e.id,
+              output.reduce((a, b) => a + b, 0),
+            );
+            resultArr.push(output);
+            index++;
+            labels.push(e.label ? e.label : 'Reflector' + index);
+          }
+        }
+      }
+      const results = [];
+      for (let month = 0; month < 12; month++) {
+        const r: DatumEntry = {};
+        r['Month'] = MONTHS[month];
+        for (const [i, a] of resultArr.entries()) {
+          r[labels[i]] = a[month] * 30;
+        }
+        results.push(r);
+      }
+      setYearlyYield(results);
+      setFresnelReflectorLabels(labels);
+    } else {
+      const resultArr = [];
+      for (const e of elements) {
+        if (e.type === ObjectType.FresnelReflector) {
+          const output = yearlyOutputsMapRef.current.get(e.id);
+          if (output) {
+            updateYearlyYield(
+              e.id,
+              output.reduce((a, b) => a + b, 0),
+            );
+            resultArr.push(output);
+          }
+        }
+      }
+      const results = [];
+      for (let month = 0; month < 12; month++) {
+        let total = 0;
+        for (const result of resultArr) {
+          total += result[month];
+        }
+        results.push({ Month: MONTHS[month], Total: total * 30 } as DatumEntry);
+      }
+      setYearlyYield(results);
     }
   };
 

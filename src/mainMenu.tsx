@@ -1290,7 +1290,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 setCommonStore((state) => {
                   state.simulationInProgress = true;
                   state.dailyFresnelReflectorIndividualOutputs = false;
-                  state.runSimulationForFresnelReflectors = true;
+                  state.runDailySimulationForFresnelReflectors = true;
                 });
               }, 100);
             }}
@@ -1311,7 +1311,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 setCommonStore((state) => {
                   state.simulationInProgress = true;
                   state.yearlyParabolicTroughIndividualOutputs = false;
-                  state.runSimulationForFresnelReflectors = true;
+                  state.runYearlySimulationForFresnelReflectors = true;
                 });
               }, 100);
             }}
