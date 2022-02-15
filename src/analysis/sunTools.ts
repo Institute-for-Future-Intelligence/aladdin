@@ -7,7 +7,6 @@ import { Util } from '../Util';
 import { AirMass, ASHRAE_C, SOLAR_CONSTANT } from './analysisConstants';
 import { GroundModel } from '../models/GroundModel';
 import { TWO_PI, UNIT_VECTOR_POS_Z } from '../constants';
-import { useStore } from '../stores/common';
 
 export const TILT_ANGLE = (23.45 / 180.0) * Math.PI;
 

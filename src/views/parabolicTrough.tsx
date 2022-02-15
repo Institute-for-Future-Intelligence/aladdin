@@ -206,7 +206,7 @@ const ParabolicTrough = ({
     return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
   }, [rot, sunDirection, tiltAngle, relativeAzimuth]);
 
-  // FIXME: This only works when the foundation has zero azimuth
+  // FIXME: This only works when the foundation has zero azimuth or the time is at noon
   const reflectedLightShift = useMemo(() => {
     if (sunDirection.z > 0) {
       const cosRot = rot ? Math.cos(rot) : 1;

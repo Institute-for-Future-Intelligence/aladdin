@@ -37,7 +37,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
   const dailyIndividualOutputs = useStore(Selector.dailyFresnelReflectorIndividualOutputs);
   const setFresnelReflectorLabels = useStore(Selector.setFresnelReflectorLabels);
-  const runSimulation = useStore(Selector.runSimulationForFresnelReflectors);
+  const runDailySimulation = useStore(Selector.runSimulationForFresnelReflectors);
 
   const { scene } = useThree();
   const lang = { lng: language };
@@ -48,7 +48,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const now = new Date(world.date);
   const dustLoss = 0.05;
   const cellSize = world.cspGridCellSize ?? 0.5;
-  const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
+  const objectsRef = useRef<Object3D[]>([]);
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
   const requestRef = useRef<number>(0);
   const simulationCompletedRef = useRef<boolean>(false);
@@ -60,7 +60,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   }, [world.date, world.latitude]);
 
   useEffect(() => {
-    if (runSimulation) {
+    if (runDailySimulation) {
       init();
       requestRef.current = requestAnimationFrame(simulate);
       return () => {
@@ -76,7 +76,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runSimulation]);
+  }, [runDailySimulation]);
 
   // getting ready for the simulation
   const init = () => {
@@ -95,7 +95,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   };
 
   const simulate = () => {
-    if (runSimulation) {
+    if (runDailySimulation) {
       const totalMinutes = now.getMinutes() + now.getHours() * 60;
       if (totalMinutes >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
@@ -216,11 +216,13 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
 
   // there is room for performance improvement if we figure out a way to cache a lot of things used below
   const calculateYield = (reflector: FresnelReflectorModel) => {
+    const sunDirection = getSunDirection(now, world.latitude);
+    if (sunDirection.z < ZERO_TOLERANCE) return;
     const parent = getParent(reflector);
     if (!parent) throw new Error('parent of Fresnel reflector does not exist');
     if (parent.type !== ObjectType.Foundation) return;
-    const dayOfYear = Util.dayOfYear(now);
     const foundation = parent as FoundationModel;
+    const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(reflector.cx, reflector.cy, reflector.cz, parent);
     const normal = new Vector3().fromArray(reflector.normal);
     const originalNormal = normal.clone();
@@ -256,64 +258,58 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
     const rotationAxis = new Vector3(sinRot, cosRot, 0);
     const shiftedReceiverCenter = new Vector3();
-    const sunDirection = getSunDirection(now, world.latitude);
-    if (sunDirection.z > 0) {
-      // when the sun is out
-      if (receiverCenter) {
-        // the reflector moves only when there is a receiver
-        shiftedReceiverCenter.set(receiverCenter.x, receiverCenter.y, receiverCenter.z);
-        // how much the reflected light should shift in the direction of the receiver tube?
-        const shift =
-          sunDirection.z < ZERO_TOLERANCE
-            ? 0
-            : (-receiverCenter.z * (sunDirection.y * rotationAxis.y + sunDirection.x * rotationAxis.x)) /
-              sunDirection.z;
-        shiftedReceiverCenter.x += shift * rotationAxis.x;
-        shiftedReceiverCenter.y -= shift * rotationAxis.y;
-        const reflectorToReceiver = shiftedReceiverCenter.clone().normalize();
-        // no need to normalize as both vectors to add have already been normalized
-        let normalVector = reflectorToReceiver.add(sunDirection).multiplyScalar(0.5);
-        if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
-          normalVector = new Vector3(-0.001, 0, 1).normalize();
-        }
-        normal.copy(
-          originalNormal.clone().applyEuler(new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY')),
-        );
+    // when the sun is out
+    if (receiverCenter) {
+      // the reflector moves only when there is a receiver
+      shiftedReceiverCenter.set(receiverCenter.x, receiverCenter.y, receiverCenter.z);
+      // how much the reflected light should shift in the direction of the receiver tube?
+      const shift =
+        (-receiverCenter.z * (sunDirection.y * rotationAxis.y + sunDirection.x * rotationAxis.x)) / sunDirection.z;
+      shiftedReceiverCenter.x += shift * rotationAxis.x;
+      shiftedReceiverCenter.y -= shift * rotationAxis.y;
+      const reflectorToReceiver = shiftedReceiverCenter.clone().normalize();
+      // no need to normalize as both vectors to add have already been normalized
+      let normalVector = reflectorToReceiver.add(sunDirection).multiplyScalar(0.5);
+      if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
+        normalVector = new Vector3(-0.001, 0, 1).normalize();
       }
-      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-      const indirectRadiation = calculateDiffuseAndReflectedRadiation(
-        world.ground,
-        now.getMonth(),
-        normal,
-        peakRadiation,
+      normal.copy(
+        originalNormal.clone().applyEuler(new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY')),
       );
-      const dot = normal.dot(sunDirection);
-      const v2 = new Vector2();
-      let tmpX = 0;
-      for (let ku = 0; ku < nx; ku++) {
-        tmpX = x0 + ku * dx;
-        for (let kv = 0; kv < ny; kv++) {
-          cellOutputs[ku][kv] += indirectRadiation;
-          if (dot > 0) {
-            v2.set(tmpX, y0 + kv * dy);
-            if (!zRotZero) v2.rotateAround(center2d, zRot);
-            v.set(v2.x, v2.y, z0);
-            if (!inShadow(reflector.id, v, sunDirection)) {
-              cellOutputs[ku][kv] += dot * peakRadiation;
-            }
+    }
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+    const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+      world.ground,
+      now.getMonth(),
+      normal,
+      peakRadiation,
+    );
+    const dot = normal.dot(sunDirection);
+    const v2 = new Vector2();
+    let tmpX = 0;
+    for (let ku = 0; ku < nx; ku++) {
+      tmpX = x0 + ku * dx;
+      for (let kv = 0; kv < ny; kv++) {
+        cellOutputs[ku][kv] += indirectRadiation;
+        if (dot > 0) {
+          v2.set(tmpX, y0 + kv * dy);
+          if (!zRotZero) v2.rotateAround(center2d, zRot);
+          v.set(v2.x, v2.y, z0);
+          if (!inShadow(reflector.id, v, sunDirection)) {
+            cellOutputs[ku][kv] += dot * peakRadiation;
           }
         }
       }
-      const output = dailyOutputsMapRef.current.get(reflector.id);
-      if (output) {
-        let sum = 0;
-        for (let kx = 0; kx < nx; kx++) {
-          for (let ky = 0; ky < ny; ky++) {
-            sum += cellOutputs[kx][ky];
-          }
+    }
+    const output = dailyOutputsMapRef.current.get(reflector.id);
+    if (output) {
+      let sum = 0;
+      for (let kx = 0; kx < nx; kx++) {
+        for (let ky = 0; ky < ny; ky++) {
+          sum += cellOutputs[kx][ky];
         }
-        output[now.getHours()] += sum / (nx * ny);
       }
+      output[now.getHours()] += sum / (nx * ny);
     }
   };
 

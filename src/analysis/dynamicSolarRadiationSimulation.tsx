@@ -240,6 +240,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   };
 
   const calculateCuboid = (cuboid: CuboidModel) => {
+    const sunDirection = getSunDirection(now, world.latitude);
+    if (sunDirection.z <= 0) return; // when the sun is not out
     const dayOfYear = Util.dayOfYear(now);
     const lx = cuboid.lx;
     const ly = cuboid.ly;
@@ -302,128 +304,104 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const westX = cuboid.cx - cuboid.lx / 2;
     const eastX = cuboid.cx + cuboid.lx / 2;
 
-    const sunDirection = getSunDirection(now, world.latitude);
-    if (sunDirection.z > 0) {
-      // when the sun is out
-      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
 
-      // top face
-      let indirectRadiation = calculateDiffuseAndReflectedRadiation(
-        world.ground,
-        now.getMonth(),
-        normalTop,
-        peakRadiation,
-      );
-      let dot = normalTop.dot(sunDirection);
-      let uc = cuboid.cx - lx / 2;
-      let vc = cuboid.cy - ly / 2;
-      for (let u = 0; u < nx; u++) {
-        for (let v = 0; v < ny; v++) {
-          cellOutputsTop[u][v] += indirectRadiation;
-          if (dot > 0) {
-            v2.set(uc + u * dx, vc + v * dy);
-            v2.rotateAround(center2d, cuboid.rotation[2]);
-            vec.set(v2.x, v2.y, lz);
-            if (!inShadow(cuboid.id, vec, sunDirection)) {
-              // direct radiation
-              cellOutputsTop[u][v] += dot * peakRadiation;
-            }
+    // top face
+    let indirectRadiation = calculateDiffuseAndReflectedRadiation(
+      world.ground,
+      now.getMonth(),
+      normalTop,
+      peakRadiation,
+    );
+    let dot = normalTop.dot(sunDirection);
+    let uc = cuboid.cx - lx / 2;
+    let vc = cuboid.cy - ly / 2;
+    for (let u = 0; u < nx; u++) {
+      for (let v = 0; v < ny; v++) {
+        cellOutputsTop[u][v] += indirectRadiation;
+        if (dot > 0) {
+          v2.set(uc + u * dx, vc + v * dy);
+          v2.rotateAround(center2d, cuboid.rotation[2]);
+          vec.set(v2.x, v2.y, lz);
+          if (!inShadow(cuboid.id, vec, sunDirection)) {
+            // direct radiation
+            cellOutputsTop[u][v] += dot * peakRadiation;
           }
         }
       }
+    }
 
-      // south face
-      uc = cuboid.cx - lx / 2;
-      vc = cuboid.cz - lz / 2;
-      indirectRadiation = calculateDiffuseAndReflectedRadiation(
-        world.ground,
-        now.getMonth(),
-        normalSouth,
-        peakRadiation,
-      );
-      dot = normalSouth.dot(sunDirection);
-      for (let u = 0; u < nx; u++) {
-        for (let v = 0; v < nz; v++) {
-          cellOutputsSouth[u][v] += indirectRadiation;
-          if (dot > 0) {
-            v2.set(uc + u * dx, southY);
-            v2.rotateAround(center2d, cuboid.rotation[2]);
-            vec.set(v2.x, v2.y, vc + v * dz);
-            if (!inShadow(cuboid.id, vec, sunDirection)) {
-              // direct radiation
-              cellOutputsSouth[u][v] += dot * peakRadiation;
-            }
+    // south face
+    uc = cuboid.cx - lx / 2;
+    vc = cuboid.cz - lz / 2;
+    indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, now.getMonth(), normalSouth, peakRadiation);
+    dot = normalSouth.dot(sunDirection);
+    for (let u = 0; u < nx; u++) {
+      for (let v = 0; v < nz; v++) {
+        cellOutputsSouth[u][v] += indirectRadiation;
+        if (dot > 0) {
+          v2.set(uc + u * dx, southY);
+          v2.rotateAround(center2d, cuboid.rotation[2]);
+          vec.set(v2.x, v2.y, vc + v * dz);
+          if (!inShadow(cuboid.id, vec, sunDirection)) {
+            // direct radiation
+            cellOutputsSouth[u][v] += dot * peakRadiation;
           }
         }
       }
+    }
 
-      // north face
-      indirectRadiation = calculateDiffuseAndReflectedRadiation(
-        world.ground,
-        now.getMonth(),
-        normalNorth,
-        peakRadiation,
-      );
-      dot = normalNorth.dot(sunDirection);
-      for (let u = 0; u < nx; u++) {
-        for (let v = 0; v < nz; v++) {
-          cellOutputsNorth[u][v] += indirectRadiation;
-          if (dot > 0) {
-            v2.set(uc + u * dx, northY);
-            v2.rotateAround(center2d, cuboid.rotation[2]);
-            vec.set(v2.x, v2.y, vc + (nz - v) * dz);
-            if (!inShadow(cuboid.id, vec, sunDirection)) {
-              // direct radiation
-              cellOutputsNorth[u][v] += dot * peakRadiation;
-            }
+    // north face
+    indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, now.getMonth(), normalNorth, peakRadiation);
+    dot = normalNorth.dot(sunDirection);
+    for (let u = 0; u < nx; u++) {
+      for (let v = 0; v < nz; v++) {
+        cellOutputsNorth[u][v] += indirectRadiation;
+        if (dot > 0) {
+          v2.set(uc + u * dx, northY);
+          v2.rotateAround(center2d, cuboid.rotation[2]);
+          vec.set(v2.x, v2.y, vc + (nz - v) * dz);
+          if (!inShadow(cuboid.id, vec, sunDirection)) {
+            // direct radiation
+            cellOutputsNorth[u][v] += dot * peakRadiation;
           }
         }
       }
+    }
 
-      // west face
-      uc = cuboid.cy - ly / 2;
-      vc = cuboid.cz - lz / 2;
-      indirectRadiation = calculateDiffuseAndReflectedRadiation(
-        world.ground,
-        now.getMonth(),
-        normalWest,
-        peakRadiation,
-      );
-      dot = normalWest.dot(sunDirection);
-      for (let u = 0; u < ny; u++) {
-        for (let v = 0; v < nz; v++) {
-          cellOutputsWest[u][v] += indirectRadiation;
-          if (dot > 0) {
-            v2.set(westX, uc + u * dy);
-            v2.rotateAround(center2d, cuboid.rotation[2]);
-            vec.set(v2.x, v2.y, vc + v * dz);
-            if (!inShadow(cuboid.id, vec, sunDirection)) {
-              // direct radiation
-              cellOutputsWest[u][v] += dot * peakRadiation;
-            }
+    // west face
+    uc = cuboid.cy - ly / 2;
+    vc = cuboid.cz - lz / 2;
+    indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, now.getMonth(), normalWest, peakRadiation);
+    dot = normalWest.dot(sunDirection);
+    for (let u = 0; u < ny; u++) {
+      for (let v = 0; v < nz; v++) {
+        cellOutputsWest[u][v] += indirectRadiation;
+        if (dot > 0) {
+          v2.set(westX, uc + u * dy);
+          v2.rotateAround(center2d, cuboid.rotation[2]);
+          vec.set(v2.x, v2.y, vc + v * dz);
+          if (!inShadow(cuboid.id, vec, sunDirection)) {
+            // direct radiation
+            cellOutputsWest[u][v] += dot * peakRadiation;
           }
         }
       }
+    }
 
-      // east face
-      indirectRadiation = calculateDiffuseAndReflectedRadiation(
-        world.ground,
-        now.getMonth(),
-        normalEast,
-        peakRadiation,
-      );
-      dot = normalEast.dot(sunDirection);
-      for (let u = 0; u < ny; u++) {
-        for (let v = 0; v < nz; v++) {
-          cellOutputsEast[u][v] += indirectRadiation;
-          if (dot > 0) {
-            v2.set(eastX, uc + u * dy);
-            v2.rotateAround(center2d, cuboid.rotation[2]);
-            vec.set(v2.x, v2.y, vc + v * dz);
-            if (!inShadow(cuboid.id, vec, sunDirection)) {
-              // direct radiation
-              cellOutputsEast[u][v] += dot * peakRadiation;
-            }
+    // east face
+    indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, now.getMonth(), normalEast, peakRadiation);
+    dot = normalEast.dot(sunDirection);
+    for (let u = 0; u < ny; u++) {
+      for (let v = 0; v < nz; v++) {
+        cellOutputsEast[u][v] += indirectRadiation;
+        if (dot > 0) {
+          v2.set(eastX, uc + u * dy);
+          v2.rotateAround(center2d, cuboid.rotation[2]);
+          vec.set(v2.x, v2.y, vc + v * dz);
+          if (!inShadow(cuboid.id, vec, sunDirection)) {
+            // direct radiation
+            cellOutputsEast[u][v] += dot * peakRadiation;
           }
         }
       }
@@ -431,6 +409,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   };
 
   const calculateFoundation = (foundation: FoundationModel) => {
+    const sunDirection = getSunDirection(now, world.latitude);
+    if (sunDirection.z <= 0) return; // when the sun is not out
     const dayOfYear = Util.dayOfYear(now);
     const lx = foundation.lx;
     const ly = foundation.ly;
@@ -450,29 +430,25 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         .map(() => Array(ny).fill(0));
       cellOutputsMapRef.current.set(foundation.id, cellOutputs);
     }
-    const sunDirection = getSunDirection(now, world.latitude);
-    if (sunDirection.z > 0) {
-      // when the sun is out
-      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-      const indirectRadiation = calculateDiffuseAndReflectedRadiation(
-        world.ground,
-        now.getMonth(),
-        UNIT_VECTOR_POS_Z,
-        peakRadiation,
-      );
-      const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
-      const v2 = new Vector2();
-      for (let kx = 0; kx < nx; kx++) {
-        for (let ky = 0; ky < ny; ky++) {
-          cellOutputs[kx][ky] += indirectRadiation;
-          if (dot > 0) {
-            v2.set(x0 + kx * dx, y0 + ky * dy);
-            v2.rotateAround(center2d, foundation.rotation[2]);
-            v.set(v2.x, v2.y, lz);
-            if (!inShadow(foundation.id, v, sunDirection)) {
-              // direct radiation
-              cellOutputs[kx][ky] += dot * peakRadiation;
-            }
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+    const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+      world.ground,
+      now.getMonth(),
+      UNIT_VECTOR_POS_Z,
+      peakRadiation,
+    );
+    const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
+    const v2 = new Vector2();
+    for (let kx = 0; kx < nx; kx++) {
+      for (let ky = 0; ky < ny; ky++) {
+        cellOutputs[kx][ky] += indirectRadiation;
+        if (dot > 0) {
+          v2.set(x0 + kx * dx, y0 + ky * dy);
+          v2.rotateAround(center2d, foundation.rotation[2]);
+          v.set(v2.x, v2.y, lz);
+          if (!inShadow(foundation.id, v, sunDirection)) {
+            // direct radiation
+            cellOutputs[kx][ky] += dot * peakRadiation;
           }
         }
       }
@@ -480,6 +456,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   };
 
   const calculateSolarPanel = (panel: SolarPanelModel) => {
+    const sunDirection = getSunDirection(now, world.latitude);
+    if (sunDirection.z <= 0) return; // when the sun is not out
     const parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
     const dayOfYear = Util.dayOfYear(now);
@@ -517,61 +495,57 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         .map(() => Array(ny).fill(0));
       cellOutputsMapRef.current.set(panel.id, cellOutputs);
     }
-    const sunDirection = getSunDirection(now, world.latitude);
-    if (sunDirection.z > 0) {
-      // when the sun is out
-      if (panel.trackerType !== TrackerType.NO_TRACKER) {
-        // dynamic angles
-        const rotatedSunDirection = rot
-          ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
-          : sunDirection.clone();
-        const ori = originalNormal.clone();
-        switch (panel.trackerType) {
-          case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
-            const qRotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
-            normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotAADAT)));
-            break;
-          case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
-            const qRotHSAT = new Quaternion().setFromUnitVectors(
-              UNIT_VECTOR_POS_Z,
-              new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
-            );
-            normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotHSAT)));
-            break;
-          case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
-            if (Math.abs(panel.tiltAngle) > 0.001) {
-              const v2d = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
-              const az = Math.acos(UNIT_VECTOR_POS_Y.dot(v2d)) * Math.sign(v2d.x);
-              ori.applyAxisAngle(UNIT_VECTOR_POS_X, panel.tiltAngle);
-              ori.applyAxisAngle(UNIT_VECTOR_POS_Z, az + rot);
-              normal.copy(ori);
-            }
-            break;
-          case TrackerType.TILTED_SINGLE_AXIS_TRACKER:
-            // TODO
-            break;
-        }
+    if (panel.trackerType !== TrackerType.NO_TRACKER) {
+      // dynamic angles
+      const rotatedSunDirection = rot
+        ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
+        : sunDirection.clone();
+      const ori = originalNormal.clone();
+      switch (panel.trackerType) {
+        case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
+          const qRotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
+          normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotAADAT)));
+          break;
+        case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
+          const qRotHSAT = new Quaternion().setFromUnitVectors(
+            UNIT_VECTOR_POS_Z,
+            new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
+          );
+          normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotHSAT)));
+          break;
+        case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
+          if (Math.abs(panel.tiltAngle) > 0.001) {
+            const v2d = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
+            const az = Math.acos(UNIT_VECTOR_POS_Y.dot(v2d)) * Math.sign(v2d.x);
+            ori.applyAxisAngle(UNIT_VECTOR_POS_X, panel.tiltAngle);
+            ori.applyAxisAngle(UNIT_VECTOR_POS_Z, az + rot);
+            normal.copy(ori);
+          }
+          break;
+        case TrackerType.TILTED_SINGLE_AXIS_TRACKER:
+          // TODO
+          break;
       }
-      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-      const indirectRadiation = calculateDiffuseAndReflectedRadiation(
-        world.ground,
-        now.getMonth(),
-        normal,
-        peakRadiation,
-      );
-      const dot = normal.dot(sunDirection);
-      const v2 = new Vector2();
-      for (let kx = 0; kx < nx; kx++) {
-        for (let ky = 0; ky < ny; ky++) {
-          cellOutputs[kx][ky] += indirectRadiation;
-          if (dot > 0) {
-            v2.set(x0 + kx * dx, y0 + ky * dy);
-            if (!zRotZero) v2.rotateAround(center2d, zRot);
-            v.set(v2.x, v2.y, z0 + ky * dz);
-            if (!inShadow(panel.id, v, sunDirection)) {
-              // direct radiation
-              cellOutputs[kx][ky] += dot * peakRadiation;
-            }
+    }
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+    const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+      world.ground,
+      now.getMonth(),
+      normal,
+      peakRadiation,
+    );
+    const dot = normal.dot(sunDirection);
+    const v2 = new Vector2();
+    for (let kx = 0; kx < nx; kx++) {
+      for (let ky = 0; ky < ny; ky++) {
+        cellOutputs[kx][ky] += indirectRadiation;
+        if (dot > 0) {
+          v2.set(x0 + kx * dx, y0 + ky * dy);
+          if (!zRotZero) v2.rotateAround(center2d, zRot);
+          v.set(v2.x, v2.y, z0 + ky * dz);
+          if (!inShadow(panel.id, v, sunDirection)) {
+            // direct radiation
+            cellOutputs[kx][ky] += dot * peakRadiation;
           }
         }
       }
@@ -579,6 +553,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   };
 
   const calculateParabolicTrough = (trough: ParabolicTroughModel) => {
+    const sunDirection = getSunDirection(now, world.latitude);
+    if (sunDirection.z <= 0) return; // when the sun is not out
     const parent = getParent(trough);
     if (!parent) throw new Error('parent of parabolic trough does not exist');
     const dayOfYear = Util.dayOfYear(now);
@@ -611,49 +587,45 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const zRotZero = Util.isZero(zRot);
     const cosRot = zRotZero ? 1 : Math.cos(zRot);
     const sinRot = zRotZero ? 0 : Math.sin(zRot);
-    const sunDirection = getSunDirection(now, world.latitude);
-    if (sunDirection.z > 0) {
-      // when the sun is out
-      const rotatedSunDirection = rot
-        ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
-        : sunDirection.clone();
-      const qRot = new Quaternion().setFromUnitVectors(
-        UNIT_VECTOR_POS_Z,
-        new Vector3(rotatedSunDirection.x * cosRot, rotatedSunDirection.x * sinRot, rotatedSunDirection.z).normalize(),
-      );
-      normal.copy(originalNormal.clone().applyEuler(new Euler().setFromQuaternion(qRot)));
-      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-      const indirectRadiation = calculateDiffuseAndReflectedRadiation(
-        world.ground,
-        now.getMonth(),
-        normal,
-        peakRadiation,
-      );
-      const dot = normal.dot(sunDirection);
-      const v2 = new Vector2();
-      let tmpX = 0;
-      let disX = 0;
-      let areaRatio = 1;
-      const lr2 = 4 / (trough.latusRectum * trough.latusRectum);
-      // we have to calculate the irradiance on the parabolic surface, not the aperture surface.
-      // the irradiance on the former is less than that on the latter because of the area difference.
-      // the relationship between a unit area on the parabolic surface and that on the aperture surface
-      // is S = A * sqrt(1 + 4 * x^2 / p^2), where p is the latus rectum, x is the distance from the center
-      // of the parabola, and A is the unit area on the aperture area. Note that this modification only
-      // applies to direct radiation. Indirect radiation can come from any direction.
-      for (let ku = 0; ku < nx; ku++) {
-        tmpX = x0 + ku * dx;
-        disX = tmpX - center.x;
-        areaRatio = 1 / Math.sqrt(1 + disX * disX * lr2);
-        for (let kv = 0; kv < ny; kv++) {
-          cellOutputs[ku][kv] += indirectRadiation;
-          if (dot > 0) {
-            v2.set(tmpX, y0 + kv * dy);
-            if (!zRotZero) v2.rotateAround(center2d, zRot);
-            v.set(v2.x, v2.y, z0);
-            if (!inShadow(trough.id, v, sunDirection)) {
-              cellOutputs[ku][kv] += dot * peakRadiation * areaRatio;
-            }
+    const rotatedSunDirection = rot
+      ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
+      : sunDirection.clone();
+    const qRot = new Quaternion().setFromUnitVectors(
+      UNIT_VECTOR_POS_Z,
+      new Vector3(rotatedSunDirection.x * cosRot, rotatedSunDirection.x * sinRot, rotatedSunDirection.z).normalize(),
+    );
+    normal.copy(originalNormal.clone().applyEuler(new Euler().setFromQuaternion(qRot)));
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+    const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+      world.ground,
+      now.getMonth(),
+      normal,
+      peakRadiation,
+    );
+    const dot = normal.dot(sunDirection);
+    const v2 = new Vector2();
+    let tmpX = 0;
+    let disX = 0;
+    let areaRatio = 1;
+    const lr2 = 4 / (trough.latusRectum * trough.latusRectum);
+    // we have to calculate the irradiance on the parabolic surface, not the aperture surface.
+    // the irradiance on the former is less than that on the latter because of the area difference.
+    // the relationship between a unit area on the parabolic surface and that on the aperture surface
+    // is S = A * sqrt(1 + 4 * x^2 / p^2), where p is the latus rectum, x is the distance from the center
+    // of the parabola, and A is the unit area on the aperture area. Note that this modification only
+    // applies to direct radiation. Indirect radiation can come from any direction.
+    for (let ku = 0; ku < nx; ku++) {
+      tmpX = x0 + ku * dx;
+      disX = tmpX - center.x;
+      areaRatio = 1 / Math.sqrt(1 + disX * disX * lr2);
+      for (let kv = 0; kv < ny; kv++) {
+        cellOutputs[ku][kv] += indirectRadiation;
+        if (dot > 0) {
+          v2.set(tmpX, y0 + kv * dy);
+          if (!zRotZero) v2.rotateAround(center2d, zRot);
+          v.set(v2.x, v2.y, z0);
+          if (!inShadow(trough.id, v, sunDirection)) {
+            cellOutputs[ku][kv] += dot * peakRadiation * areaRatio;
           }
         }
       }
@@ -661,6 +633,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   };
 
   const calculateFresnelReflector = (reflector: FresnelReflectorModel) => {
+    const sunDirection = getSunDirection(now, world.latitude);
+    if (sunDirection.z < ZERO_TOLERANCE) return; // when the sun is not out
     const parent = getParent(reflector);
     if (!parent) throw new Error('parent of Fresnel reflector does not exist');
     if (parent.type !== ObjectType.Foundation) return;
@@ -705,51 +679,45 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
     const rotationAxis = new Vector3(sinRot, cosRot, 0);
     const shiftedReceiverCenter = new Vector3();
-    const sunDirection = getSunDirection(now, world.latitude);
-    if (sunDirection.z > 0) {
-      // when the sun is out
-      if (receiverCenter) {
-        // the reflector moves only when there is a receiver
-        shiftedReceiverCenter.set(receiverCenter.x, receiverCenter.y, receiverCenter.z);
-        // how much the reflected light should shift in the direction of the receiver tube?
-        const shift =
-          sunDirection.z < ZERO_TOLERANCE
-            ? 0
-            : (-receiverCenter.z * (sunDirection.y * rotationAxis.y + sunDirection.x * rotationAxis.x)) /
-              sunDirection.z;
-        shiftedReceiverCenter.x += shift * rotationAxis.x;
-        shiftedReceiverCenter.y -= shift * rotationAxis.y;
-        const reflectorToReceiver = shiftedReceiverCenter.clone().normalize();
-        // no need to normalize as both vectors to add have already been normalized
-        let normalVector = reflectorToReceiver.add(sunDirection).multiplyScalar(0.5);
-        if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
-          normalVector = new Vector3(-0.001, 0, 1).normalize();
-        }
-        normal.copy(
-          originalNormal.clone().applyEuler(new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY')),
-        );
+    // when the sun is out
+    if (receiverCenter) {
+      // the reflector moves only when there is a receiver
+      shiftedReceiverCenter.set(receiverCenter.x, receiverCenter.y, receiverCenter.z);
+      // how much the reflected light should shift in the direction of the receiver tube?
+      const shift =
+        (-receiverCenter.z * (sunDirection.y * rotationAxis.y + sunDirection.x * rotationAxis.x)) / sunDirection.z;
+      shiftedReceiverCenter.x += shift * rotationAxis.x;
+      shiftedReceiverCenter.y -= shift * rotationAxis.y;
+      const reflectorToReceiver = shiftedReceiverCenter.clone().normalize();
+      // no need to normalize as both vectors to add have already been normalized
+      let normalVector = reflectorToReceiver.add(sunDirection).multiplyScalar(0.5);
+      if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
+        normalVector = new Vector3(-0.001, 0, 1).normalize();
       }
-      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-      const indirectRadiation = calculateDiffuseAndReflectedRadiation(
-        world.ground,
-        now.getMonth(),
-        normal,
-        peakRadiation,
+      normal.copy(
+        originalNormal.clone().applyEuler(new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY')),
       );
-      const dot = normal.dot(sunDirection);
-      const v2 = new Vector2();
-      let tmpX = 0;
-      for (let ku = 0; ku < nx; ku++) {
-        tmpX = x0 + ku * dx;
-        for (let kv = 0; kv < ny; kv++) {
-          cellOutputs[ku][kv] += indirectRadiation;
-          if (dot > 0) {
-            v2.set(tmpX, y0 + kv * dy);
-            if (!zRotZero) v2.rotateAround(center2d, zRot);
-            v.set(v2.x, v2.y, z0);
-            if (!inShadow(reflector.id, v, sunDirection)) {
-              cellOutputs[ku][kv] += dot * peakRadiation;
-            }
+    }
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+    const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+      world.ground,
+      now.getMonth(),
+      normal,
+      peakRadiation,
+    );
+    const dot = normal.dot(sunDirection);
+    const v2 = new Vector2();
+    let tmpX = 0;
+    for (let ku = 0; ku < nx; ku++) {
+      tmpX = x0 + ku * dx;
+      for (let kv = 0; kv < ny; kv++) {
+        cellOutputs[ku][kv] += indirectRadiation;
+        if (dot > 0) {
+          v2.set(tmpX, y0 + kv * dy);
+          if (!zRotZero) v2.rotateAround(center2d, zRot);
+          v.set(v2.x, v2.y, z0);
+          if (!inShadow(reflector.id, v, sunDirection)) {
+            cellOutputs[ku][kv] += dot * peakRadiation;
           }
         }
       }
@@ -757,6 +725,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   };
 
   const calculateParabolicDish = (dish: ParabolicDishModel) => {
+    const sunDirection = getSunDirection(now, world.latitude);
+    if (sunDirection.z <= 0) return; // when the sun is not out
     const parent = getParent(dish);
     if (!parent) throw new Error('parent of parabolic dish does not exist');
     const dayOfYear = Util.dayOfYear(now);
@@ -787,53 +757,49 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const rot = parent.rotation[2];
     const zRot = rot + dish.relativeAzimuth;
     const zRotZero = Util.isZero(zRot);
-    const sunDirection = getSunDirection(now, world.latitude);
-    if (sunDirection.z > 0) {
-      // when the sun is out
-      const rotatedSunDirection = rot
-        ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
-        : sunDirection.clone();
-      const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
-      normal.copy(originalNormal.clone().applyEuler(new Euler().setFromQuaternion(qRot)));
-      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-      const indirectRadiation = calculateDiffuseAndReflectedRadiation(
-        world.ground,
-        now.getMonth(),
-        normal,
-        peakRadiation,
-      );
-      const dot = normal.dot(sunDirection);
-      const v2 = new Vector2();
-      let tmpX = 0;
-      let tmpY = 0;
-      let disX = 0;
-      let disY = 0;
-      let areaRatio = 1;
-      const lr2 = 4 / (dish.latusRectum * dish.latusRectum);
-      // we have to calculate the irradiance on the parabolic surface, not the aperture surface.
-      // the irradiance on the former is less than that on the latter because of the area difference.
-      // the relationship between a unit area on the parabolic surface and that on the aperture surface
-      // is S = A * sqrt(1 + 4 * (x^2 + y^2) / p^2), where p is the latus rectum, x is the x distance
-      // from the center of the paraboloid, y is the y distance from the center of the paraboloid,
-      // and A is the unit area on the aperture area. Note that this modification only
-      // applies to direct radiation. Indirect radiation can come from any direction.
-      for (let ku = 0; ku < nx; ku++) {
-        tmpX = x0 + ku * dx;
-        disX = tmpX - center.x;
-        if (Math.abs(disX) > lx / 2) continue;
-        for (let kv = 0; kv < ny; kv++) {
-          tmpY = y0 + kv * dy;
-          disY = tmpY - center.y;
-          if (Math.abs(disY) > ly / 2) continue;
-          cellOutputs[ku][kv] += indirectRadiation;
-          if (dot > 0) {
-            v2.set(tmpX, tmpY);
-            if (!zRotZero) v2.rotateAround(center2d, zRot);
-            v.set(v2.x, v2.y, z0);
-            if (!inShadow(dish.id, v, sunDirection)) {
-              areaRatio = 1 / Math.sqrt(1 + (disX * disX + disY * disY) * lr2);
-              cellOutputs[ku][kv] += dot * peakRadiation * areaRatio;
-            }
+    const rotatedSunDirection = rot
+      ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
+      : sunDirection.clone();
+    const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
+    normal.copy(originalNormal.clone().applyEuler(new Euler().setFromQuaternion(qRot)));
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+    const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+      world.ground,
+      now.getMonth(),
+      normal,
+      peakRadiation,
+    );
+    const dot = normal.dot(sunDirection);
+    const v2 = new Vector2();
+    let tmpX = 0;
+    let tmpY = 0;
+    let disX = 0;
+    let disY = 0;
+    let areaRatio = 1;
+    const lr2 = 4 / (dish.latusRectum * dish.latusRectum);
+    // we have to calculate the irradiance on the parabolic surface, not the aperture surface.
+    // the irradiance on the former is less than that on the latter because of the area difference.
+    // the relationship between a unit area on the parabolic surface and that on the aperture surface
+    // is S = A * sqrt(1 + 4 * (x^2 + y^2) / p^2), where p is the latus rectum, x is the x distance
+    // from the center of the paraboloid, y is the y distance from the center of the paraboloid,
+    // and A is the unit area on the aperture area. Note that this modification only
+    // applies to direct radiation. Indirect radiation can come from any direction.
+    for (let ku = 0; ku < nx; ku++) {
+      tmpX = x0 + ku * dx;
+      disX = tmpX - center.x;
+      if (Math.abs(disX) > lx / 2) continue;
+      for (let kv = 0; kv < ny; kv++) {
+        tmpY = y0 + kv * dy;
+        disY = tmpY - center.y;
+        if (Math.abs(disY) > ly / 2) continue;
+        cellOutputs[ku][kv] += indirectRadiation;
+        if (dot > 0) {
+          v2.set(tmpX, tmpY);
+          if (!zRotZero) v2.rotateAround(center2d, zRot);
+          v.set(v2.x, v2.y, z0);
+          if (!inShadow(dish.id, v, sunDirection)) {
+            areaRatio = 1 / Math.sqrt(1 + (disX * disX + disY * disY) * lr2);
+            cellOutputs[ku][kv] += dot * peakRadiation * areaRatio;
           }
         }
       }

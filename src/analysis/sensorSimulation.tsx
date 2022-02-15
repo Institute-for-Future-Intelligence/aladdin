@@ -77,10 +77,10 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
 
   const inShadow = (content: Object3D[], objects: Object3D[], position: Vector3, sunDirection: Vector3) => {
     // convert the position and direction from physics model to the coordinate system of three.js
-    ray.set(position, sunDirection);
     if (content.length > 0) {
-      const intersects = ray.intersectObjects(objects);
-      return intersects.length > 0;
+      ray.set(position, sunDirection);
+      const intersects = ray.intersectObjects(objects, false);
+      return intersects && intersects.length > 0;
     }
     return false;
   };
