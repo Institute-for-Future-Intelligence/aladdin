@@ -206,6 +206,22 @@ const ParabolicTrough = ({
     return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
   }, [sunDirection, tiltAngle, relativeAzimuth]);
 
+  const reflectedLightShift = useMemo(() => {
+    if (sunDirection.z > 0) {
+      // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
+      const rotationAxis = rot ? new Vector3(Math.sin(rot), Math.cos(rot), 0) : new Vector3(0, 1, 0);
+      // how much the reflected light should shift in the direction of the receiver tube?
+      const tubeHeight = (focalLength * Math.abs(sunDirection.z)) / Math.hypot(sunDirection.x, sunDirection.z);
+      return (-tubeHeight * (sunDirection.y * rotationAxis.y + sunDirection.x * rotationAxis.x)) / sunDirection.z;
+    }
+    return 0;
+  }, [sunDirection, rot, focalLength]);
+
+  const focusPoint = new Vector3(0, 0, focalLength)
+    .applyEuler(relativeEuler)
+    .add(new Vector3(0, reflectedLightShift, 0));
+  const sunPoint = sunDirection.clone().multiplyScalar(sunBeamLength);
+
   const poleZ = -(actualPoleHeight + lz) / 2;
 
   const poles = useMemo<Vector3[]>(() => {
@@ -637,76 +653,49 @@ const ParabolicTrough = ({
         <group rotation={[-euler.x, 0, -euler.z]}>
           <Line
             userData={{ unintersectable: true }}
-            points={[
-              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
-              new Vector3(-0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler),
-              sunDirection.clone().multiplyScalar(sunBeamLength),
-            ]}
+            points={[focusPoint, new Vector3(-0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler), sunPoint]}
             name={'Sun Beam -0.3'}
             lineWidth={0.25}
             color={'white'}
           />
           <Line
             userData={{ unintersectable: true }}
-            points={[
-              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
-              new Vector3(-0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler),
-              sunDirection.clone().multiplyScalar(sunBeamLength),
-            ]}
+            points={[focusPoint, new Vector3(-0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler), sunPoint]}
             name={'Sun Beam -0.6'}
             lineWidth={0.25}
             color={'white'}
           />
           <Line
             userData={{ unintersectable: true }}
-            points={[
-              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
-              new Vector3(-0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler),
-              sunDirection.clone().multiplyScalar(sunBeamLength),
-            ]}
+            points={[focusPoint, new Vector3(-0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler), sunPoint]}
             name={'Sun Beam -0.9'}
             lineWidth={0.25}
             color={'white'}
           />
           <Line
             userData={{ unintersectable: true }}
-            points={[
-              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
-              sunDirection.clone().multiplyScalar(sunBeamLength),
-            ]}
+            points={[focusPoint, new Vector3(0, 0, 0), sunPoint]}
             name={'Sun Beam 0.0'}
             lineWidth={0.25}
             color={'white'}
           />
           <Line
             userData={{ unintersectable: true }}
-            points={[
-              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
-              new Vector3(0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler),
-              sunDirection.clone().multiplyScalar(sunBeamLength),
-            ]}
+            points={[focusPoint, new Vector3(0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler), sunPoint]}
             name={'Sun Beam 0.3'}
             lineWidth={0.25}
             color={'white'}
           />
           <Line
             userData={{ unintersectable: true }}
-            points={[
-              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
-              new Vector3(0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler),
-              sunDirection.clone().multiplyScalar(sunBeamLength),
-            ]}
+            points={[focusPoint, new Vector3(0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler), sunPoint]}
             name={'Sun Beam 0.6'}
             lineWidth={0.25}
             color={'white'}
           />
           <Line
             userData={{ unintersectable: true }}
-            points={[
-              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
-              new Vector3(0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler),
-              sunDirection.clone().multiplyScalar(sunBeamLength),
-            ]}
+            points={[focusPoint, new Vector3(0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler), sunPoint]}
             name={'Sun Beam 0.9'}
             lineWidth={0.25}
             color={'white'}
