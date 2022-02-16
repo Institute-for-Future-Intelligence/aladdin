@@ -409,9 +409,9 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     // convert the receiver's coordinates into those relative to the center of this reflector
     const receiverCenter = foundation.solarReceiver
       ? new Vector3(
-          foundation.cx - reflector.cx,
-          foundation.cy - reflector.cy,
-          foundation.lz - reflector.cz + (foundation.solarReceiverTubeMountHeight ?? 10),
+          -reflector.cx * foundation.lx,
+          -reflector.cy * foundation.ly,
+          foundation.lz + (foundation.solarReceiverTubeMountHeight ?? 10),
         )
       : undefined;
     // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)

@@ -177,6 +177,10 @@ const FoundationLengthInput = ({
           case ObjectType.Wall:
             break;
           case ObjectType.SolarPanel:
+          case ObjectType.ParabolicTrough:
+          case ObjectType.ParabolicDish:
+          case ObjectType.FresnelReflector:
+          case ObjectType.Heliostat:
           case ObjectType.Sensor:
             const p = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(ORIGIN_VECTOR2, azimuth);
             denormalizedPosMapRef.current.set(c.id, p);
@@ -211,6 +215,10 @@ const FoundationLengthInput = ({
             // TODO
             break;
           case ObjectType.SolarPanel:
+          case ObjectType.ParabolicTrough:
+          case ObjectType.ParabolicDish:
+          case ObjectType.FresnelReflector:
+          case ObjectType.Heliostat:
           case ObjectType.Sensor:
             const p = denormalizedPosMapRef.current.get(c.id);
             if (p) {

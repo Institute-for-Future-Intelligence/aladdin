@@ -275,6 +275,8 @@ export const i18n_en = {
         EffectOfLatusRectumOfParabolicTrough: 'Effect of Latus Rectum of a Parabolic Trough',
         FocusSunlightWithParabolicDish: 'Focus Sunlight with a Parabolic Dish',
         LinearFresnelReflectors: 'Linear Fresnel Reflectors',
+        EffectOfReceiverTubeHeightForLinearFresnelReflectors:
+          'Effect of Receiver Tube Height for Linear Fresnel Reflectors',
       },
       examplesSubMenu: 'Examples',
       solarEnergySubMenu: 'Solar Energy',

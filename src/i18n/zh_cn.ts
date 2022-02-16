@@ -274,6 +274,7 @@ export const i18n_zh_cn = {
         EffectOfLatusRectumOfParabolicTrough: '抛物线槽通径对发电量的影响',
         FocusSunlightWithParabolicDish: '用抛物线碟聚焦陽光',
         LinearFresnelReflectors: '用直线式菲涅尔反射镜聚焦陽光',
+        EffectOfReceiverTubeHeightForLinearFresnelReflectors: '吸热长管的安装高度对直线式菲涅尔反射镜发电量的影响',
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太阳能',
