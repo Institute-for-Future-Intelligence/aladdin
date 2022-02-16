@@ -375,6 +375,7 @@ export const i18n_zh_tw = {
       SelectSolarReceiver: '選擇太陽能吸收器',
       ReceiverTubeForFresnelReflectors: '和菲涅爾反射鏡配套的吸熱長管',
       ReceiverTowerForHeliostats: '和定日鏡配套的吸熱高塔',
+      ReceiverTubeMountHeightForFresnelReflectors: '吸熱長管的安装高度',
     },
 
     cuboidMenu: {

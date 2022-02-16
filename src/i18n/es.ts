@@ -386,6 +386,7 @@ export const i18n_es = {
       SelectSolarReceiver: 'Select Solar Receiver',
       ReceiverTubeForFresnelReflectors: 'Receiver Tube for Fresnel Reflectors',
       ReceiverTowerForHeliostats: 'Receiver Tower for Heliostats',
+      ReceiverTubeMountHeightForFresnelReflectors: 'Mount Height of Receiver Tube for Fresnel Reflectors',
     },
 
     cuboidMenu: {

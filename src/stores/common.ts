@@ -258,6 +258,7 @@ export interface CommonStoreState {
   updateFoundationSolarReceiverTubeRadiusById: (id: string, radius: number) => void;
   updateFoundationSolarReceiverTubeRelativeLengthById: (id: string, relativeLength: number) => void;
   updateFoundationSolarReceiverTubeMountHeightById: (id: string, mountHeight: number) => void;
+  updateFoundationSolarReceiverTubeMountHeightForAll: (mountHeight: number) => void;
 
   // for cuboids
   cuboidActionScope: Scope;
@@ -1738,8 +1739,23 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  (e as FoundationModel).solarReceiverTubeMountHeight = mountHeight;
+                  const f = e as FoundationModel;
+                  if (f.solarReceiver) {
+                    f.solarReceiverTubeMountHeight = mountHeight;
+                  }
                   break;
+                }
+              }
+            });
+          },
+          updateFoundationSolarReceiverTubeMountHeightForAll(mountHeight) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarReceiver) {
+                    f.solarReceiverTubeMountHeight = mountHeight;
+                  }
                 }
               }
             });

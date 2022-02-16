@@ -24,6 +24,7 @@ import { Vector3 } from 'three';
 import { UNIT_VECTOR_POS_Z } from '../../../constants';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { ElementCounter } from '../../../stores/ElementCounter';
+import FoundationSolarReceiverTubeMountHeightInput from './foundationSolarReceiverTubeMountHeightInput';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -47,6 +48,7 @@ export const FoundationMenu = () => {
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
+  const [receiverTubeMountHeightDialogVisible, setReceiverTubeMountHeightDialogVisible] = useState(false);
 
   const counter = foundation ? countAllOffspringsByType(foundation.id) : new ElementCounter();
   const lang = { lng: language };
@@ -717,6 +719,24 @@ export const FoundationMenu = () => {
               </Space>
             </Radio.Group>
           </SubMenu>
+        )}
+        {editable && foundation.solarReceiver === SolarReceiver.Tube && (
+          <>
+            <FoundationSolarReceiverTubeMountHeightInput
+              dialogVisible={receiverTubeMountHeightDialogVisible}
+              setDialogVisible={setReceiverTubeMountHeightDialogVisible}
+            />
+            <Menu.Item
+              key={'foundation-solar-receiver-tube-mount-height'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setReceiverTubeMountHeightDialogVisible(true);
+              }}
+            >
+              {i18n.t('foundationMenu.ReceiverTubeMountHeightForFresnelReflectors', lang)} ...
+            </Menu.Item>
+          </>
         )}
       </Menu.ItemGroup>
     )

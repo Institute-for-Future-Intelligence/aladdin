@@ -204,6 +204,9 @@ export const updateFoundationSolarReceiverTubeRelativeLengthById = (state: Commo
 export const updateFoundationSolarReceiverTubeMountHeightById = (state: CommonStoreState) =>
   state.updateFoundationSolarReceiverTubeMountHeightById;
 
+export const updateFoundationSolarReceiverTubeMountHeightForAll = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverTubeMountHeightForAll;
+
 export const updateFoundationTextureById = (state: CommonStoreState) => state.updateFoundationTextureById;
 
 export const updateFoundationTextureForAll = (state: CommonStoreState) => state.updateFoundationTextureForAll;

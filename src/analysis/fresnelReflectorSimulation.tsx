@@ -43,6 +43,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const setFresnelReflectorLabels = useStore(Selector.setFresnelReflectorLabels);
   const runDailySimulation = useStore(Selector.runDailySimulationForFresnelReflectors);
   const runYearlySimulation = useStore(Selector.runYearlySimulationForFresnelReflectors);
+  const showDailyFresnelReflectorYieldPanel = useStore(Selector.viewState.showDailyFresnelReflectorYieldPanel);
 
   const { scene } = useThree();
   const lang = { lng: language };
@@ -312,6 +313,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         }
       }
     }
+    if (showDailyFresnelReflectorYieldPanel) finishDaily();
   };
 
   // TODO:

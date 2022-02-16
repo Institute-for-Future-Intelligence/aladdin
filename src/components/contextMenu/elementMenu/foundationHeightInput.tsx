@@ -253,7 +253,7 @@ const FoundationHeightInput = ({
           updateCzOfChildren(foundation, value);
           updateLzAndCz(foundation.id, value);
           const undoableChange = {
-            name: 'Set Foundation Width',
+            name: 'Set Foundation Height',
             timestamp: Date.now(),
             oldValue: oldLz,
             newValue: value,
