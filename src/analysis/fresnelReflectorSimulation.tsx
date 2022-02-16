@@ -48,7 +48,8 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
   const elevation = city ? weather.elevation : 0;
-  const minuteInterval = 60 / (world.cspTimesPerHour ?? 4);
+  const timesPerHour = world.cspTimesPerHour ?? 4;
+  const minuteInterval = 60 / timesPerHour;
   const daysPerYear = world.cspDaysPerYear ?? 6;
   const monthInterval = 12 / daysPerYear;
   const ray = useMemo(() => new Raycaster(), []);
@@ -64,9 +65,12 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const yearlyOutputsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const sampledDayRef = useRef<number>(0);
 
+  // this is used in daily simulation that should respond to change of date and latitude
   const sunMinutes = useMemo(() => {
     return computeSunriseAndSunsetInMinutes(now, world.latitude);
   }, [world.date, world.latitude]);
+
+  // this is used in yearly simulation in which the date is changed programmatically based on the current latitude
   const sunMinutesRef = useRef<SunMinutes>(sunMinutes);
 
   useEffect(() => {
@@ -107,25 +111,15 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runYearlySimulation]);
 
-  // do the daily simulation
+  /* do the daily simulation */
 
   const initDaily = () => {
     originalDateRef.current = new Date(world.date);
-    // beginning from just a bit before sunrise
-    now.setHours(Math.floor(sunMinutes.sunrise / 60), 0.5 * minuteInterval - 30);
+    // beginning 30 minutes before the sunrise hour just in case and to provide a cue
+    now.setHours(Math.floor(sunMinutes.sunrise / 60), -30);
     simulationCompletedRef.current = false;
     fetchObjects();
-    // reset the total result arrays to zeros
-    for (const e of elements) {
-      if (e.type === ObjectType.FresnelReflector) {
-        const result = dailyOutputsMapRef.current.get(e.id);
-        if (result) {
-          result.fill(0);
-        } else {
-          dailyOutputsMapRef.current.set(e.id, new Array(24).fill(0));
-        }
-      }
-    }
+    resetDailyOutputsMap();
   };
 
   const simulateDaily = () => {
@@ -145,10 +139,13 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         return;
       }
       // this is where time advances (by incrementing the minutes with the given interval)
+      // minutes more than 60 results in the increase of the hour accordingly
       now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
+      // this forces the scene to be re-rendered
       setCommonStore((state) => {
         state.world.date = now.toString();
       });
+      // will the calculation immediately use the latest geometry after re-rendering?
       for (const e of elements) {
         if (e.type === ObjectType.FresnelReflector) {
           calculateYield(e as FresnelReflectorModel);
@@ -160,28 +157,15 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   };
 
   const finishDaily = () => {
-    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
-    const daylight = sunMinutes.daylight() / 60;
-    // divide by times per hour as the radiation is added up that many times
-    const scale =
-      daylight > ZERO_TOLERANCE
-        ? weather.sunshineHours[now.getMonth()] / (30 * daylight * (world.cspTimesPerHour ?? 4))
-        : 0;
+    const timeFactor = getTimeFactor();
     for (const e of elements) {
       if (e.type === ObjectType.FresnelReflector) {
         const reflector = e as FresnelReflectorModel;
         const result = dailyOutputsMapRef.current.get(reflector.id);
         if (result) {
-          const factor =
-            reflector.lx *
-            reflector.ly *
-            reflector.opticalEfficiency *
-            reflector.thermalEfficiency *
-            reflector.absorptance *
-            reflector.reflectance *
-            (1 - dustLoss);
+          const factor = getElementFactor(reflector) * timeFactor;
           for (let i = 0; i < result.length; i++) {
-            if (result[i] !== 0) result[i] *= factor * scale;
+            if (result[i] !== 0) result[i] *= factor;
           }
         }
       }
@@ -189,6 +173,9 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     generateDailyYieldData();
   };
 
+  // TODO:
+  // Figure out a way to regenerate the graph without redoing the calculation
+  // when switching between individual and total outputs
   const generateDailyYieldData = () => {
     if (dailyIndividualOutputs) {
       const total = new Array(24).fill(0);
@@ -205,7 +192,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
             );
             index++;
             map.set('Reflector' + index, output);
-            labels.push(e.label ? e.label : 'Reflector' + index);
+            labels.push(e.label ?? 'Reflector' + index);
             for (let i = 0; i < 24; i++) {
               total[i] += output[i];
             }
@@ -248,38 +235,23 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     }
   };
 
-  // do the yearly simulation
+  /* do the yearly simulation */
 
   const initYearly = () => {
     originalDateRef.current = new Date(world.date);
-    // begin from January, 22
     sampledDayRef.current = 0;
+    // begin from January, 22
     now.setMonth(0, 22);
     sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
-    now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), 0.5 * minuteInterval - 30);
+    now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -30);
     // set the initial date so that the scene gets a chance to render before the simulation starts
     setCommonStore((state) => {
       state.world.date = now.toString();
     });
     simulationCompletedRef.current = false;
     fetchObjects();
-    // reset the total result arrays to zeros
-    for (const e of elements) {
-      if (e.type === ObjectType.FresnelReflector) {
-        const dailyResult = dailyOutputsMapRef.current.get(e.id);
-        if (dailyResult) {
-          dailyResult.fill(0);
-        } else {
-          dailyOutputsMapRef.current.set(e.id, new Array(24).fill(0));
-        }
-        const yearlyResult = yearlyOutputsMapRef.current.get(e.id);
-        if (yearlyResult && yearlyResult.length === daysPerYear) {
-          yearlyResult.fill(0);
-        } else {
-          yearlyOutputsMapRef.current.set(e.id, new Array(daysPerYear).fill(0));
-        }
-      }
-    }
+    resetDailyOutputsMap();
+    resetYearlyOutputsMap();
   };
 
   const simulateYearly = () => {
@@ -300,7 +272,8 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         requestRef.current = requestAnimationFrame(simulateYearly);
       } else {
         finishMonthly();
-        if (sampledDayRef.current === daysPerYear - 1) {
+        sampledDayRef.current++;
+        if (sampledDayRef.current === daysPerYear) {
           cancelAnimationFrame(requestRef.current);
           setCommonStore((state) => {
             state.runYearlySimulationForFresnelReflectors = false;
@@ -310,38 +283,22 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
           });
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;
-          finishYearly();
+          generateYearlyYieldData();
           return;
         }
-        sampledDayRef.current++;
+        // go to the next month
         now.setMonth(sampledDayRef.current * monthInterval, 22);
         sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
-        now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), 0.5 * minuteInterval - 30);
-        // reset the daily result arrays to zeros
-        for (const e of elements) {
-          if (e.type === ObjectType.FresnelReflector) {
-            const dailyResult = dailyOutputsMapRef.current.get(e.id);
-            if (dailyResult) {
-              dailyResult.fill(0);
-            } else {
-              dailyOutputsMapRef.current.set(e.id, new Array(24).fill(0));
-            }
-          }
-        }
-        // recursive call to the next step of the simulation to the 22nd of the next month
+        now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -30);
+        resetDailyOutputsMap();
+        // recursive call to the next step of the simulation
         requestRef.current = requestAnimationFrame(simulateYearly);
       }
     }
   };
 
   const finishMonthly = () => {
-    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
-    const daylight = sunMinutesRef.current.daylight() / 60;
-    // divide by times per hour as the radiation is added up that many times
-    const scale =
-      daylight > ZERO_TOLERANCE
-        ? weather.sunshineHours[now.getMonth()] / (30 * daylight * (world.cspTimesPerHour ?? 4))
-        : 0;
+    const timeFactor = getTimeFactor();
     for (const e of elements) {
       if (e.type === ObjectType.FresnelReflector) {
         const reflector = e as FresnelReflectorModel;
@@ -350,25 +307,16 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
           const total = yearlyOutputsMapRef.current.get(reflector.id);
           if (total) {
             const sumDaily = result.reduce((a, b) => a + b, 0);
-            const factor =
-              reflector.lx *
-              reflector.ly *
-              reflector.opticalEfficiency *
-              reflector.thermalEfficiency *
-              reflector.absorptance *
-              reflector.reflectance *
-              (1 - dustLoss);
-            total[sampledDayRef.current] += sumDaily * factor * scale;
+            total[sampledDayRef.current] += sumDaily * timeFactor * getElementFactor(reflector);
           }
         }
       }
     }
   };
 
-  const finishYearly = () => {
-    generateYearlyYieldData();
-  };
-
+  // TODO:
+  // Figure out a way to regenerate the graph without redoing the calculation
+  // when switching between individual and total outputs
   const generateYearlyYieldData = () => {
     if (yearlyIndividualOutputs) {
       const resultArr = [];
@@ -384,7 +332,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
             );
             resultArr.push(output);
             index++;
-            labels.push(e.label ? e.label : 'Reflector' + index);
+            labels.push(e.label ?? 'Reflector' + index);
           }
         }
       }
@@ -428,7 +376,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   // there is room for performance improvement if we figure out a way to cache a lot of things used below
   const calculateYield = (reflector: FresnelReflectorModel) => {
     const sunDirection = getSunDirection(now, world.latitude);
-    if (sunDirection.z < ZERO_TOLERANCE) return;
+    if (sunDirection.z < ZERO_TOLERANCE) return; // when the sun is not out
     const parent = getParent(reflector);
     if (!parent) throw new Error('parent of Fresnel reflector does not exist');
     if (parent.type !== ObjectType.Foundation) return;
@@ -450,10 +398,8 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     const z0 = foundation.lz + actualPoleHeight + reflector.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
-    const cellOutputs = Array(nx)
-      .fill(0)
-      .map(() => Array(ny).fill(0));
     const rot = parent.rotation[2];
+    // we do not handle relative azimuth yet, so this is just a placeholder
     const zRot = rot + reflector.relativeAzimuth;
     const zRotZero = Util.isZero(zRot);
     const cosRot = zRotZero ? 1 : Math.cos(zRot);
@@ -469,7 +415,6 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
     const rotationAxis = new Vector3(sinRot, cosRot, 0);
     const shiftedReceiverCenter = new Vector3();
-    // when the sun is out
     if (receiverCenter) {
       // the reflector moves only when there is a receiver
       shiftedReceiverCenter.set(receiverCenter.x, receiverCenter.y, receiverCenter.z);
@@ -479,8 +424,9 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       shiftedReceiverCenter.x += shift * rotationAxis.x;
       shiftedReceiverCenter.y -= shift * rotationAxis.y;
       const reflectorToReceiver = shiftedReceiverCenter.clone().normalize();
-      // no need to normalize as both vectors to add have already been normalized
+      // no need to normalize the following vector as both vectors to add have already been normalized
       let normalVector = reflectorToReceiver.add(sunDirection).multiplyScalar(0.5);
+      // avoid singularity: atan(x, y) = infinity if x = 0
       if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
         normalVector = new Vector3(-0.001, 0, 1).normalize();
       }
@@ -488,6 +434,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         originalNormal.clone().applyEuler(new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY')),
       );
     }
+    // the unit of radiation is kW/m^2
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
       world.ground,
@@ -495,33 +442,48 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       normal,
       peakRadiation,
     );
+    let sum = 0;
     const dot = normal.dot(sunDirection);
     const v2 = new Vector2();
     let tmpX = 0;
     for (let ku = 0; ku < nx; ku++) {
       tmpX = x0 + ku * dx;
       for (let kv = 0; kv < ny; kv++) {
-        cellOutputs[ku][kv] += indirectRadiation;
+        sum += indirectRadiation;
         if (dot > 0) {
           v2.set(tmpX, y0 + kv * dy);
           if (!zRotZero) v2.rotateAround(center2d, zRot);
           v.set(v2.x, v2.y, z0);
           if (!inShadow(reflector.id, v, sunDirection)) {
-            cellOutputs[ku][kv] += dot * peakRadiation;
+            sum += dot * peakRadiation;
           }
         }
       }
     }
     const output = dailyOutputsMapRef.current.get(reflector.id);
     if (output) {
-      let sum = 0;
-      for (let kx = 0; kx < nx; kx++) {
-        for (let ky = 0; ky < ny; ky++) {
-          sum += cellOutputs[kx][ky];
-        }
-      }
+      // the output is the average radiation density, hence we have to divide it by nx * ny
       output[now.getHours()] += sum / (nx * ny);
     }
+  };
+
+  // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+  // (divided by times per hour as the radiation is added up that many times in an hour)
+  const getTimeFactor = () => {
+    const daylight = sunMinutesRef.current.daylight() / 60;
+    return daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * timesPerHour) : 0;
+  };
+
+  const getElementFactor = (reflector: FresnelReflectorModel) => {
+    return (
+      reflector.lx *
+      reflector.ly *
+      reflector.opticalEfficiency *
+      reflector.thermalEfficiency *
+      reflector.absorptance *
+      reflector.reflectance *
+      (1 - dustLoss)
+    );
   };
 
   const inShadow = (reflectorId: string, position: Vector3, sunDirection: Vector3) => {
@@ -542,6 +504,32 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       objectsRef.current.length = 0;
       for (const c of components) {
         Util.fetchSimulationElements(c, objectsRef.current);
+      }
+    }
+  };
+
+  const resetDailyOutputsMap = () => {
+    for (const e of elements) {
+      if (e.type === ObjectType.FresnelReflector) {
+        const result = dailyOutputsMapRef.current.get(e.id);
+        if (result) {
+          result.fill(0);
+        } else {
+          dailyOutputsMapRef.current.set(e.id, new Array(24).fill(0));
+        }
+      }
+    }
+  };
+
+  const resetYearlyOutputsMap = () => {
+    for (const e of elements) {
+      if (e.type === ObjectType.FresnelReflector) {
+        const yearlyResult = yearlyOutputsMapRef.current.get(e.id);
+        if (yearlyResult && yearlyResult.length === daysPerYear) {
+          yearlyResult.fill(0);
+        } else {
+          yearlyOutputsMapRef.current.set(e.id, new Array(daysPerYear).fill(0));
+        }
       }
     }
   };
