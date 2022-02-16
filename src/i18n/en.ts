@@ -214,6 +214,7 @@ export const i18n_en = {
         CollectYearlyData: 'Collect Yearly Data',
         SamplingFrequency: 'Sampling Frequency',
         TimesPerHour: 'Times per Hour',
+        DaysPerYear: 'Days per Year',
       },
       solarPanelSubMenu: 'Solar Panel',
       solarPanel: {

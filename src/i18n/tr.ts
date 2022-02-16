@@ -215,6 +215,7 @@ export const i18n_tr = {
         CollectYearlyData: 'Yýllýk Veri Topla',
         SamplingFrequency: 'Örnekleme Sýklýðý',
         TimesPerHour: 'Saatlik',
+        DaysPerYear: 'Days per Year',
       },
       solarPanelSubMenu: 'Güneþ Panelleri',
       solarPanel: {

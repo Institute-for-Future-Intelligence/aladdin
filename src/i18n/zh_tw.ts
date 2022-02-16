@@ -212,7 +212,8 @@ export const i18n_zh_tw = {
         CollectDailyData: '收集當天數據',
         CollectYearlyData: '收集全年數據',
         SamplingFrequency: '採樣頻率',
-        TimesPerHour: '每小時次數',
+        TimesPerHour: '每小時採樣次數',
+        DaysPerYear: '每一年採樣天數',
       },
       solarPanelSubMenu: '太陽能光伏板',
       solarPanel: {

@@ -273,7 +273,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
           dailyOutputsMapRef.current.set(e.id, new Array(24).fill(0));
         }
         const yearlyResult = yearlyOutputsMapRef.current.get(e.id);
-        if (yearlyResult) {
+        if (yearlyResult && yearlyResult.length === daysPerYear) {
           yearlyResult.fill(0);
         } else {
           yearlyOutputsMapRef.current.set(e.id, new Array(daysPerYear).fill(0));

@@ -112,6 +112,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const solarPanelGridCellSize = useStore(Selector.world.solarPanelGridCellSize);
   const solarPanelVisibilityGridCellSize = useStore(Selector.world.solarPanelVisibilityGridCellSize);
   const cspTimesPerHour = useStore(Selector.world.cspTimesPerHour);
+  const cspDaysPerYear = useStore(Selector.world.cspDaysPerYear);
   const cspGridCellSize = useStore(Selector.world.cspGridCellSize);
   const solarRadiationHeatmapGridCellSize = useStore(Selector.world.solarRadiationHeatmapGridCellSize);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
@@ -1340,6 +1341,28 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   }}
                 />
                 <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.TimesPerHour', lang)}</Space>
+              </Menu.Item>
+              <Menu.Item key={'fresnel-reflector-simulation-sampling-days'}>
+                <Select
+                  style={{ marginLeft: '150px', width: '60px' }}
+                  value={cspDaysPerYear ?? 6}
+                  onChange={(value) => {
+                    setCommonStore((state) => {
+                      state.world.cspDaysPerYear = value;
+                    });
+                  }}
+                >
+                  <Option key={4} value={4}>
+                    4
+                  </Option>
+                  <Option key={6} value={6}>
+                    6
+                  </Option>
+                  <Option key={12} value={12}>
+                    12
+                  </Option>
+                </Select>
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.DaysPerYear', lang)}</Space>
               </Menu.Item>
               <Menu.Item key={'fresnel-reflector-simulation-grid-cell-size'}>
                 <Space style={{ width: '150px' }}>{i18n.t('menu.fresnelReflector.GridCellSize', lang) + ':'}</Space>
