@@ -24,12 +24,14 @@ export class DefaultWorldModel implements WorldModel {
   address: string;
   airAttenuationCoefficient: number;
   timesPerHour: number;
+  daysPerYear: number;
   solarPanelGridCellSize: number;
   discretization: Discretization;
   solarPanelVisibilityGridCellSize: number;
   solarRadiationHeatmapGridCellSize: number;
 
   cspTimesPerHour: number;
+  cspDaysPerYear: number;
   cspGridCellSize: number;
 
   constructor() {
@@ -48,12 +50,14 @@ export class DefaultWorldModel implements WorldModel {
     this.airAttenuationCoefficient = 0.01;
 
     this.timesPerHour = 4; // how many times per hour to collect data
+    this.daysPerYear = 12; // how many days per year for sampling
     this.solarPanelGridCellSize = 0.5;
     this.discretization = Discretization.APPROXIMATE;
     this.solarPanelVisibilityGridCellSize = 0.2;
     this.solarRadiationHeatmapGridCellSize = 0.5;
 
     this.cspTimesPerHour = 4;
+    this.cspDaysPerYear = 4;
     this.cspGridCellSize = 0.5;
   }
 

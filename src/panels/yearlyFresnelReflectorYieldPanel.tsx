@@ -69,6 +69,7 @@ export interface YearlyFresnelReflectorYieldPanelProps {
 const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldPanelProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
+  const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
   const now = useStore(Selector.world.date);
   const yearlyYield = useStore(Selector.yearlyFresnelReflectorYield);
   const individualOutputs = useStore(Selector.yearlyFresnelReflectorIndividualOutputs);
@@ -162,7 +163,8 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
   if (individualOutputs) {
     reflectorSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
     totalTooltip += '——————————\n';
-    totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
+    totalTooltip +=
+      i18n.t('word.Total', lang) + ': ' + ((sum * 12) / daysPerYear).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
 
   return (
@@ -215,7 +217,8 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
               </Space>
             ) : (
               <Space>
-                {i18n.t('fresnelReflectorYieldPanel.YearlyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
+                {i18n.t('fresnelReflectorYieldPanel.YearlyTotal', lang)}:{((sum * 12) / daysPerYear).toFixed(2)}{' '}
+                {i18n.t('word.kWh', lang)}
               </Space>
             )}
             {fresnelReflectorCount > 1 && (

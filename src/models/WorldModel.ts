@@ -21,11 +21,13 @@ export interface WorldModel {
   airAttenuationCoefficient: number;
 
   timesPerHour: number;
+  daysPerYear: number;
   solarRadiationHeatmapGridCellSize: number;
   solarPanelGridCellSize: number;
   discretization: Discretization;
   solarPanelVisibilityGridCellSize: number;
 
   cspTimesPerHour: number;
+  cspDaysPerYear: number;
   cspGridCellSize: number;
 }

@@ -48,7 +48,9 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
   const elevation = city ? weather.elevation : 0;
-  const interval = 60 / (world.cspTimesPerHour ?? 4);
+  const minuteInterval = 60 / (world.cspTimesPerHour ?? 4);
+  const daysPerYear = world.cspDaysPerYear ?? 6;
+  const monthInterval = 12 / daysPerYear;
   const ray = useMemo(() => new Raycaster(), []);
   const now = new Date(world.date);
   const dustLoss = 0.05;
@@ -60,7 +62,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const originalDateRef = useRef<Date>(new Date(world.date));
   const dailyOutputsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const yearlyOutputsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
-  const monthRef = useRef<number>(0);
+  const sampledDayRef = useRef<number>(0);
 
   const sunMinutes = useMemo(() => {
     return computeSunriseAndSunsetInMinutes(now, world.latitude);
@@ -110,7 +112,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const initDaily = () => {
     originalDateRef.current = new Date(world.date);
     // beginning from just a bit before sunrise
-    now.setHours(Math.floor(sunMinutes.sunrise / 60), 0.5 * interval - 30);
+    now.setHours(Math.floor(sunMinutes.sunrise / 60), 0.5 * minuteInterval - 30);
     simulationCompletedRef.current = false;
     fetchObjects();
     // reset the total result arrays to zeros
@@ -143,7 +145,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         return;
       }
       // this is where time advances (by incrementing the minutes with the given interval)
-      now.setHours(now.getHours(), now.getMinutes() + interval);
+      now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
       setCommonStore((state) => {
         state.world.date = now.toString();
       });
@@ -251,10 +253,10 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const initYearly = () => {
     originalDateRef.current = new Date(world.date);
     // begin from January, 22
-    monthRef.current = 0;
+    sampledDayRef.current = 0;
     now.setMonth(0, 22);
     sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
-    now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), 0.5 * interval - 30);
+    now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), 0.5 * minuteInterval - 30);
     // set the initial date so that the scene gets a chance to render before the simulation starts
     setCommonStore((state) => {
       state.world.date = now.toString();
@@ -274,7 +276,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         if (yearlyResult) {
           yearlyResult.fill(0);
         } else {
-          yearlyOutputsMapRef.current.set(e.id, new Array(12).fill(0));
+          yearlyOutputsMapRef.current.set(e.id, new Array(daysPerYear).fill(0));
         }
       }
     }
@@ -285,7 +287,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       const totalMinutes = now.getMinutes() + now.getHours() * 60;
       if (totalMinutes < sunMinutesRef.current.sunset) {
         // this is where time advances (by incrementing the minutes with the given interval)
-        now.setHours(now.getHours(), now.getMinutes() + interval);
+        now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
         setCommonStore((state) => {
           state.world.date = now.toString();
         });
@@ -297,7 +299,8 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         // recursive call to the next step of the simulation within the current day
         requestRef.current = requestAnimationFrame(simulateYearly);
       } else {
-        if (monthRef.current === 12) {
+        finishMonthly();
+        if (sampledDayRef.current === daysPerYear - 1) {
           cancelAnimationFrame(requestRef.current);
           setCommonStore((state) => {
             state.runYearlySimulationForFresnelReflectors = false;
@@ -308,26 +311,25 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;
           finishYearly();
-        } else {
-          finishMonthly();
-          monthRef.current++;
-          now.setMonth(monthRef.current, 22);
-          sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
-          now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), 0.5 * interval - 30);
-          // reset the daily result arrays to zeros
-          for (const e of elements) {
-            if (e.type === ObjectType.FresnelReflector) {
-              const dailyResult = dailyOutputsMapRef.current.get(e.id);
-              if (dailyResult) {
-                dailyResult.fill(0);
-              } else {
-                dailyOutputsMapRef.current.set(e.id, new Array(24).fill(0));
-              }
+          return;
+        }
+        sampledDayRef.current++;
+        now.setMonth(sampledDayRef.current * monthInterval, 22);
+        sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
+        now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), 0.5 * minuteInterval - 30);
+        // reset the daily result arrays to zeros
+        for (const e of elements) {
+          if (e.type === ObjectType.FresnelReflector) {
+            const dailyResult = dailyOutputsMapRef.current.get(e.id);
+            if (dailyResult) {
+              dailyResult.fill(0);
+            } else {
+              dailyOutputsMapRef.current.set(e.id, new Array(24).fill(0));
             }
           }
-          // recursive call to the next step of the simulation to the 22nd of the next month
-          requestRef.current = requestAnimationFrame(simulateYearly);
         }
+        // recursive call to the next step of the simulation to the 22nd of the next month
+        requestRef.current = requestAnimationFrame(simulateYearly);
       }
     }
   };
@@ -356,7 +358,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
               reflector.absorptance *
               reflector.reflectance *
               (1 - dustLoss);
-            total[monthRef.current] += sumDaily * factor * scale;
+            total[sampledDayRef.current] += sumDaily * factor * scale;
           }
         }
       }
@@ -387,11 +389,11 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         }
       }
       const results = [];
-      for (let month = 0; month < 12; month++) {
+      for (let month = 0; month < 12; month += monthInterval) {
         const r: DatumEntry = {};
         r['Month'] = MONTHS[month];
         for (const [i, a] of resultArr.entries()) {
-          r[labels[i]] = a[month] * 30;
+          r[labels[i]] = a[month / monthInterval] * 30;
         }
         results.push(r);
       }
@@ -412,10 +414,10 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         }
       }
       const results = [];
-      for (let month = 0; month < 12; month++) {
+      for (let month = 0; month < 12; month += monthInterval) {
         let total = 0;
         for (const result of resultArr) {
-          total += result[month];
+          total += result[month / monthInterval];
         }
         results.push({ Month: MONTHS[month], Total: total * 30 } as DatumEntry);
       }
