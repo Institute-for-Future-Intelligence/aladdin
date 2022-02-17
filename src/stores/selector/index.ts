@@ -207,6 +207,24 @@ export const updateFoundationSolarReceiverTubeMountHeightById = (state: CommonSt
 export const updateFoundationSolarReceiverTubeMountHeightForAll = (state: CommonStoreState) =>
   state.updateFoundationSolarReceiverTubeMountHeightForAll;
 
+export const updateFoundationSolarReceiverAbsorptanceById = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverAbsorptanceById;
+
+export const updateFoundationSolarReceiverAbsorptanceForAll = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverAbsorptanceForAll;
+
+export const updateFoundationSolarReceiverOpticalEfficiencyById = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverOpticalEfficiencyById;
+
+export const updateFoundationSolarReceiverOpticalEfficiencyForAll = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverOpticalEfficiencyForAll;
+
+export const updateFoundationSolarReceiverThermalEfficiencyById = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverThermalEfficiencyById;
+
+export const updateFoundationSolarReceiverThermalEfficiencyForAll = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverThermalEfficiencyForAll;
+
 export const updateFoundationTextureById = (state: CommonStoreState) => state.updateFoundationTextureById;
 
 export const updateFoundationTextureForAll = (state: CommonStoreState) => state.updateFoundationTextureForAll;

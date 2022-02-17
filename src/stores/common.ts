@@ -266,6 +266,12 @@ export interface CommonStoreState {
   updateFoundationSolarReceiverTubeRelativeLengthById: (id: string, relativeLength: number) => void;
   updateFoundationSolarReceiverTubeMountHeightById: (id: string, mountHeight: number) => void;
   updateFoundationSolarReceiverTubeMountHeightForAll: (mountHeight: number) => void;
+  updateFoundationSolarReceiverAbsorptanceById: (id: string, absorptance: number) => void;
+  updateFoundationSolarReceiverAbsorptanceForAll: (absorptance: number) => void;
+  updateFoundationSolarReceiverOpticalEfficiencyById: (id: string, efficiency: number) => void;
+  updateFoundationSolarReceiverOpticalEfficiencyForAll: (efficiency: number) => void;
+  updateFoundationSolarReceiverThermalEfficiencyById: (id: string, efficiency: number) => void;
+  updateFoundationSolarReceiverThermalEfficiencyForAll: (efficiency: number) => void;
 
   // for cuboids
   cuboidActionScope: Scope;
@@ -1767,6 +1773,81 @@ export const useStore = create<CommonStoreState>(
                   const f = e as FoundationModel;
                   if (f.solarReceiver) {
                     f.solarReceiverTubeMountHeight = mountHeight;
+                  }
+                }
+              }
+            });
+          },
+          updateFoundationSolarReceiverAbsorptanceById(id, absorptance) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarReceiver) {
+                    f.solarReceiverAbsorptance = absorptance;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateFoundationSolarReceiverAbsorptanceForAll(absorptance) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarReceiver) {
+                    f.solarReceiverAbsorptance = absorptance;
+                  }
+                }
+              }
+            });
+          },
+          updateFoundationSolarReceiverOpticalEfficiencyById(id, efficiency) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarReceiver) {
+                    f.solarReceiverOpticalEfficiency = efficiency;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateFoundationSolarReceiverOpticalEfficiencyForAll(efficiency) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarReceiver) {
+                    f.solarReceiverOpticalEfficiency = efficiency;
+                  }
+                }
+              }
+            });
+          },
+          updateFoundationSolarReceiverThermalEfficiencyById(id, efficiency) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarReceiver) {
+                    f.solarReceiverThermalEfficiency = efficiency;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateFoundationSolarReceiverThermalEfficiencyForAll(efficiency) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarReceiver) {
+                    f.solarReceiverThermalEfficiency = efficiency;
                   }
                 }
               }

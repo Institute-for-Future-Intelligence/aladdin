@@ -25,6 +25,9 @@ import { UNIT_VECTOR_POS_Z } from '../../../constants';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { ElementCounter } from '../../../stores/ElementCounter';
 import FoundationSolarReceiverTubeMountHeightInput from './foundationSolarReceiverTubeMountHeightInput';
+import FoundationSolarReceiverAbsorptanceInput from './foundationSolarReceiverAbsorptanceInput';
+import FoundationSolarReceiverOpticalEfficiencyInput from './foundationSolarReceiverOpticalEfficiencyInput';
+import FoundationSolarReceiverThermalEfficiencyInput from './foundationSolarReceiverThermalEfficiencyInput';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -49,6 +52,9 @@ export const FoundationMenu = () => {
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
   const [receiverTubeMountHeightDialogVisible, setReceiverTubeMountHeightDialogVisible] = useState(false);
+  const [receiverAbsorptanceDialogVisible, setReceiverAbsorptanceDialogVisible] = useState(false);
+  const [receiverOpticalEfficiencyDialogVisible, setReceiverOpticalEfficiencyDialogVisible] = useState(false);
+  const [receiverThermalEfficiencyDialogVisible, setReceiverThermalEfficiencyDialogVisible] = useState(false);
 
   const counter = foundation ? countAllOffspringsByType(foundation.id) : new ElementCounter();
   const lang = { lng: language };
@@ -736,6 +742,57 @@ export const FoundationMenu = () => {
             >
               {i18n.t('foundationMenu.ReceiverTubeMountHeightForFresnelReflectors', lang)} ...
             </Menu.Item>
+
+            <SubMenu
+              key={'foundation-solar-receiver-physical-properties'}
+              title={i18n.t('foundationMenu.SolarReceiverPhysicalProperties', lang)}
+              style={{ paddingLeft: '24px' }}
+            >
+              <FoundationSolarReceiverAbsorptanceInput
+                dialogVisible={receiverAbsorptanceDialogVisible}
+                setDialogVisible={setReceiverAbsorptanceDialogVisible}
+              />
+              <Menu.Item
+                key={'foundation-solar-receiver-tube-absorptance'}
+                style={{ paddingLeft: '36px' }}
+                onClick={() => {
+                  setApplyCount(0);
+                  setReceiverAbsorptanceDialogVisible(true);
+                }}
+              >
+                {i18n.t('foundationMenu.SolarReceiverAbsorptance', lang)} ...
+              </Menu.Item>
+
+              <FoundationSolarReceiverOpticalEfficiencyInput
+                dialogVisible={receiverOpticalEfficiencyDialogVisible}
+                setDialogVisible={setReceiverOpticalEfficiencyDialogVisible}
+              />
+              <Menu.Item
+                key={'foundation-solar-receiver-optical-efficiency'}
+                style={{ paddingLeft: '36px' }}
+                onClick={() => {
+                  setApplyCount(0);
+                  setReceiverOpticalEfficiencyDialogVisible(true);
+                }}
+              >
+                {i18n.t('foundationMenu.SolarReceiverOpticalEfficiency', lang)} ...
+              </Menu.Item>
+
+              <FoundationSolarReceiverThermalEfficiencyInput
+                dialogVisible={receiverThermalEfficiencyDialogVisible}
+                setDialogVisible={setReceiverThermalEfficiencyDialogVisible}
+              />
+              <Menu.Item
+                key={'foundation-solar-receiver-thermal-efficiency'}
+                style={{ paddingLeft: '36px' }}
+                onClick={() => {
+                  setApplyCount(0);
+                  setReceiverThermalEfficiencyDialogVisible(true);
+                }}
+              >
+                {i18n.t('foundationMenu.SolarReceiverThermalEfficiency', lang)} ...
+              </Menu.Item>
+            </SubMenu>
           </>
         )}
       </Menu.ItemGroup>

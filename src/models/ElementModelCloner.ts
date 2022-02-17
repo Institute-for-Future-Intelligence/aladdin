@@ -409,9 +409,9 @@ export class ElementModelCloner {
       solarReceiverTubeRelativeLength: foundation.solarReceiverTubeRelativeLength,
       solarReceiverTubeMountHeight: foundation.solarReceiverTubeMountHeight,
       solarReceiverTubePoleNumber: foundation.solarReceiverTubePoleNumber,
-      solarReceiverTubeAbsorptance: foundation.solarReceiverTubeAbsorptance,
-      solarReceiverTubeOpticalEfficiency: foundation.solarReceiverTubeOpticalEfficiency,
-      solarReceiverTubeThermalEfficiency: foundation.solarReceiverTubeThermalEfficiency,
+      solarReceiverAbsorptance: foundation.solarReceiverAbsorptance,
+      solarReceiverOpticalEfficiency: foundation.solarReceiverOpticalEfficiency,
+      solarReceiverThermalEfficiency: foundation.solarReceiverThermalEfficiency,
       id: short.generate() as string,
     } as FoundationModel;
   }

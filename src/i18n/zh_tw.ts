@@ -382,6 +382,10 @@ export const i18n_zh_tw = {
       ReceiverTubeForFresnelReflectors: '和菲涅爾反射鏡配套的吸熱長管',
       ReceiverTowerForHeliostats: '和定日鏡配套的吸熱高塔',
       ReceiverTubeMountHeightForFresnelReflectors: '吸熱長管的安装高度',
+      SolarReceiverPhysicalProperties: '太陽能吸收器的物理性質',
+      SolarReceiverAbsorptance: '太陽能吸收器的吸收率',
+      SolarReceiverOpticalEfficiency: '太陽能吸收器的光效率',
+      SolarReceiverThermalEfficiency: '太陽能吸收器的熱效率',
     },
 
     cuboidMenu: {

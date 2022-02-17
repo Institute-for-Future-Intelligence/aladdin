@@ -395,6 +395,10 @@ export const i18n_tr = {
       ReceiverTubeForFresnelReflectors: 'Receiver Tube for Fresnel Reflectors',
       ReceiverTowerForHeliostats: 'Receiver Tower for Heliostats',
       ReceiverTubeMountHeightForFresnelReflectors: 'Mount Height of Receiver Tube for Fresnel Reflectors',
+      SolarReceiverPhysicalProperties: 'Physical Properties of Solar Receiver',
+      SolarReceiverAbsorptance: 'Absorptance of Solar Receiver',
+      SolarReceiverOpticalEfficiency: 'Optical Efficiency of Solar Receiver',
+      SolarReceiverThermalEfficiency: 'Thermal Efficiency of Solar Receiver',
     },
 
     cuboidMenu: {

@@ -514,9 +514,9 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     if (parent.type === ObjectType.Foundation) {
       const foundation = parent as FoundationModel;
       systemEfficiency *=
-        (foundation.solarReceiverTubeOpticalEfficiency ?? 0.7) *
-        (foundation.solarReceiverTubeThermalEfficiency ?? 0.3) *
-        (foundation.solarReceiverTubeAbsorptance ?? 0.95);
+        (foundation.solarReceiverOpticalEfficiency ?? 0.7) *
+        (foundation.solarReceiverThermalEfficiency ?? 0.3) *
+        (foundation.solarReceiverAbsorptance ?? 0.95);
     }
     return reflector.lx * reflector.ly * reflector.reflectance * systemEfficiency * (1 - dustLoss);
   };
