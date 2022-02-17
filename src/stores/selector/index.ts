@@ -369,26 +369,32 @@ export const updateCspReflectanceAboveFoundation = (state: CommonStoreState) =>
 
 export const updateCspReflectanceForAll = (state: CommonStoreState) => state.updateCspReflectanceForAll;
 
-export const updateCspAbsorptanceById = (state: CommonStoreState) => state.updateCspAbsorptanceById;
+export const updateParabolicCollectorAbsorptanceById = (state: CommonStoreState) =>
+  state.updateParabolicCollectorAbsorptanceById;
 
-export const updateCspAbsorptanceAboveFoundation = (state: CommonStoreState) =>
-  state.updateCspAbsorptanceAboveFoundation;
+export const updateParabolicCollectorAbsorptanceAboveFoundation = (state: CommonStoreState) =>
+  state.updateParabolicCollectorAbsorptanceAboveFoundation;
 
-export const updateCspAbsorptanceForAll = (state: CommonStoreState) => state.updateCspAbsorptanceForAll;
+export const updateParabolicCollectorAbsorptanceForAll = (state: CommonStoreState) =>
+  state.updateParabolicCollectorAbsorptanceForAll;
 
-export const updateCspOpticalEfficiencyById = (state: CommonStoreState) => state.updateCspOpticalEfficiencyById;
+export const updateParabolicCollectorOpticalEfficiencyById = (state: CommonStoreState) =>
+  state.updateParabolicCollectorOpticalEfficiencyById;
 
-export const updateCspOpticalEfficiencyAboveFoundation = (state: CommonStoreState) =>
-  state.updateCspOpticalEfficiencyAboveFoundation;
+export const updateParabolicCollectorOpticalEfficiencyAboveFoundation = (state: CommonStoreState) =>
+  state.updateParabolicCollectorOpticalEfficiencyAboveFoundation;
 
-export const updateCspOpticalEfficiencyForAll = (state: CommonStoreState) => state.updateCspOpticalEfficiencyForAll;
+export const updateParabolicCollectorOpticalEfficiencyForAll = (state: CommonStoreState) =>
+  state.updateParabolicCollectorOpticalEfficiencyForAll;
 
-export const updateCspThermalEfficiencyById = (state: CommonStoreState) => state.updateCspThermalEfficiencyById;
+export const updateParabolicCollectorThermalEfficiencyById = (state: CommonStoreState) =>
+  state.updateParabolicCollectorThermalEfficiencyById;
 
-export const updateCspThermalEfficiencyAboveFoundation = (state: CommonStoreState) =>
-  state.updateCspThermalEfficiencyAboveFoundation;
+export const updateParabolicCollectorThermalEfficiencyAboveFoundation = (state: CommonStoreState) =>
+  state.updateParabolicCollectorThermalEfficiencyAboveFoundation;
 
-export const updateCspThermalEfficiencyForAll = (state: CommonStoreState) => state.updateCspThermalEfficiencyForAll;
+export const updateParabolicCollectorThermalEfficiencyForAll = (state: CommonStoreState) =>
+  state.updateParabolicCollectorThermalEfficiencyForAll;
 
 export const parabolicTroughActionScope = (state: CommonStoreState) => state.parabolicTroughActionScope;
 

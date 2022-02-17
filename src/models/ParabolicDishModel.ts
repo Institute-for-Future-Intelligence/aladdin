@@ -2,12 +2,9 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { ConcentratedSolarPowerCollector } from './ConcentratedSolarPowerCollector';
+import { ParabolicCollector } from './ParabolicCollector';
 
-export interface ParabolicDishModel extends ConcentratedSolarPowerCollector {
-  // parabola y = x^2/4f, latus rectum p = 4f, f is the focal parameter
-  latusRectum: number;
-
+export interface ParabolicDishModel extends ParabolicCollector {
   structureType: number;
 
   receiverRadius: number;

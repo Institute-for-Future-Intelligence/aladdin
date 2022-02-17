@@ -508,15 +508,17 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   };
 
   const getElementFactor = (reflector: FresnelReflectorModel) => {
-    return (
-      reflector.lx *
-      reflector.ly *
-      reflector.opticalEfficiency *
-      reflector.thermalEfficiency *
-      reflector.absorptance *
-      reflector.reflectance *
-      (1 - dustLoss)
-    );
+    const parent = getParent(reflector);
+    if (!parent) throw new Error('parent of Fresnel reflector does not exist');
+    let systemEfficiency = 1;
+    if (parent.type === ObjectType.Foundation) {
+      const foundation = parent as FoundationModel;
+      systemEfficiency *=
+        (foundation.solarReceiverTubeOpticalEfficiency ?? 0.7) *
+        (foundation.solarReceiverTubeThermalEfficiency ?? 0.3) *
+        (foundation.solarReceiverTubeAbsorptance ?? 0.95);
+    }
+    return reflector.lx * reflector.ly * reflector.reflectance * systemEfficiency * (1 - dustLoss);
   };
 
   const inShadow = (reflectorId: string, position: Vector3, sunDirection: Vector3) => {

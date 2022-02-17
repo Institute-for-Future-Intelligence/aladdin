@@ -558,6 +558,10 @@ export class Util {
     );
   }
 
+  static isParabolicCollector(elem: ElementModel): boolean {
+    return Util.isParabolaType(elem.type);
+  }
+
   static isParabolaType(type: ObjectType): boolean {
     return type === ObjectType.ParabolicDish || type === ObjectType.ParabolicTrough;
   }

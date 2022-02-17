@@ -70,6 +70,7 @@ import { ConcentratedSolarPowerCollector } from '../models/ConcentratedSolarPowe
 import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import { ParabolicDishModel } from '../models/ParabolicDishModel';
 import { ElementCounter } from './ElementCounter';
+import { ParabolicCollector } from '../models/ParabolicCollector';
 
 enableMapSet();
 
@@ -231,23 +232,29 @@ export interface CommonStoreState {
   updateCspReflectanceById: (id: string, reflectance: number) => void;
   updateCspReflectanceAboveFoundation: (type: ObjectType, foundationId: string, reflectance: number) => void;
   updateCspReflectanceForAll: (type: ObjectType, reflectance: number) => void;
-  updateCspAbsorptanceById: (id: string, absorptance: number) => void;
-  updateCspAbsorptanceAboveFoundation: (type: ObjectType, foundationId: string, absorptance: number) => void;
-  updateCspAbsorptanceForAll: (type: ObjectType, absorptance: number) => void;
-  updateCspOpticalEfficiencyById: (id: string, opticalEfficiency: number) => void;
-  updateCspOpticalEfficiencyAboveFoundation: (
+
+  // for all types of parabolic solar collectors (that are standalone units)
+  updateParabolicCollectorAbsorptanceById: (id: string, absorptance: number) => void;
+  updateParabolicCollectorAbsorptanceAboveFoundation: (
+    type: ObjectType,
+    foundationId: string,
+    absorptance: number,
+  ) => void;
+  updateParabolicCollectorAbsorptanceForAll: (type: ObjectType, absorptance: number) => void;
+  updateParabolicCollectorOpticalEfficiencyById: (id: string, opticalEfficiency: number) => void;
+  updateParabolicCollectorOpticalEfficiencyAboveFoundation: (
     type: ObjectType,
     foundationId: string,
     opticalEfficiency: number,
   ) => void;
-  updateCspOpticalEfficiencyForAll: (type: ObjectType, opticalEfficiency: number) => void;
-  updateCspThermalEfficiencyById: (id: string, thermalEfficiency: number) => void;
-  updateCspThermalEfficiencyAboveFoundation: (
+  updateParabolicCollectorOpticalEfficiencyForAll: (type: ObjectType, opticalEfficiency: number) => void;
+  updateParabolicCollectorThermalEfficiencyById: (id: string, thermalEfficiency: number) => void;
+  updateParabolicCollectorThermalEfficiencyAboveFoundation: (
     type: ObjectType,
     foundationId: string,
     thermalEfficiency: number,
   ) => void;
-  updateCspThermalEfficiencyForAll: (type: ObjectType, thermalEfficiency: number) => void;
+  updateParabolicCollectorThermalEfficiencyForAll: (type: ObjectType, thermalEfficiency: number) => void;
 
   // for foundations
   foundationActionScope: Scope;
@@ -1590,94 +1597,94 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          updateCspAbsorptanceById(id, absorptance) {
+          updateParabolicCollectorAbsorptanceById(id, absorptance) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.id === id && Util.isCspCollector(e)) {
-                  (e as ConcentratedSolarPowerCollector).absorptance = absorptance;
+                if (e.id === id && Util.isParabolicCollector(e)) {
+                  (e as ParabolicCollector).absorptance = absorptance;
                   break;
                 }
               }
             });
           },
-          updateCspAbsorptanceAboveFoundation(type, foundationId, absorptance) {
-            if (!Util.isCspCollectorType(type)) return;
+          updateParabolicCollectorAbsorptanceAboveFoundation(type, foundationId, absorptance) {
+            if (!Util.isParabolaType(type)) return;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === type && e.foundationId === foundationId) {
-                  (e as ConcentratedSolarPowerCollector).absorptance = absorptance;
+                  (e as ParabolicCollector).absorptance = absorptance;
                 }
               }
             });
           },
-          updateCspAbsorptanceForAll(type, absorptance) {
-            if (!Util.isCspCollectorType(type)) return;
+          updateParabolicCollectorAbsorptanceForAll(type, absorptance) {
+            if (!Util.isParabolaType(type)) return;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === type) {
-                  (e as ConcentratedSolarPowerCollector).absorptance = absorptance;
+                  (e as ParabolicCollector).absorptance = absorptance;
                 }
               }
             });
           },
 
-          updateCspOpticalEfficiencyById(id, opticalEfficiency) {
+          updateParabolicCollectorOpticalEfficiencyById(id, opticalEfficiency) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.id === id && Util.isCspCollector(e)) {
-                  (e as ConcentratedSolarPowerCollector).opticalEfficiency = opticalEfficiency;
+                if (e.id === id && Util.isParabolicCollector(e)) {
+                  (e as ParabolicCollector).opticalEfficiency = opticalEfficiency;
                   break;
                 }
               }
             });
           },
-          updateCspOpticalEfficiencyAboveFoundation(type, foundationId, opticalEfficiency) {
-            if (!Util.isCspCollectorType(type)) return;
+          updateParabolicCollectorOpticalEfficiencyAboveFoundation(type, foundationId, opticalEfficiency) {
+            if (!Util.isParabolaType(type)) return;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === type && e.foundationId === foundationId) {
-                  (e as ConcentratedSolarPowerCollector).opticalEfficiency = opticalEfficiency;
+                  (e as ParabolicCollector).opticalEfficiency = opticalEfficiency;
                 }
               }
             });
           },
-          updateCspOpticalEfficiencyForAll(type, opticalEfficiency) {
-            if (!Util.isCspCollectorType(type)) return;
+          updateParabolicCollectorOpticalEfficiencyForAll(type, opticalEfficiency) {
+            if (!Util.isParabolaType(type)) return;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === type) {
-                  (e as ConcentratedSolarPowerCollector).opticalEfficiency = opticalEfficiency;
+                  (e as ParabolicCollector).opticalEfficiency = opticalEfficiency;
                 }
               }
             });
           },
 
-          updateCspThermalEfficiencyById(id, thermalEfficiency) {
+          updateParabolicCollectorThermalEfficiencyById(id, thermalEfficiency) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.id === id && Util.isCspCollector(e)) {
-                  (e as ConcentratedSolarPowerCollector).thermalEfficiency = thermalEfficiency;
+                if (e.id === id && Util.isParabolicCollector(e)) {
+                  (e as ParabolicCollector).thermalEfficiency = thermalEfficiency;
                   break;
                 }
               }
             });
           },
-          updateCspThermalEfficiencyAboveFoundation(type, foundationId, thermalEfficiency) {
-            if (!Util.isCspCollectorType(type)) return;
+          updateParabolicCollectorThermalEfficiencyAboveFoundation(type, foundationId, thermalEfficiency) {
+            if (!Util.isParabolaType(type)) return;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === type && e.foundationId === foundationId) {
-                  (e as ConcentratedSolarPowerCollector).thermalEfficiency = thermalEfficiency;
+                  (e as ParabolicCollector).thermalEfficiency = thermalEfficiency;
                 }
               }
             });
           },
-          updateCspThermalEfficiencyForAll(type, thermalEfficiency) {
-            if (!Util.isCspCollectorType(type)) return;
+          updateParabolicCollectorThermalEfficiencyForAll(type, thermalEfficiency) {
+            if (!Util.isParabolaType(type)) return;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === type) {
-                  (e as ConcentratedSolarPowerCollector).thermalEfficiency = thermalEfficiency;
+                  (e as ParabolicCollector).thermalEfficiency = thermalEfficiency;
                 }
               }
             });

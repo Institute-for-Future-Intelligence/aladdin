@@ -92,7 +92,7 @@ const Foundation = ({
   selected = false,
   textureType = FoundationTexture.NoTexture,
   solarReceiver,
-  solarReceiverTubeRadius = 0.1,
+  solarReceiverTubeRadius = 0.2,
   solarReceiverTubeMountHeight = 10,
   solarReceiverTubeRelativeLength = 0.8,
   solarReceiverTubePoleNumber = 5,
@@ -2317,7 +2317,7 @@ const Foundation = ({
                   3 * HALF_PI,
                   Math.PI,
                 ]}
-                position={[0, 0, solarReceiverTubeMountHeight + lz]}
+                position={[0, 0, solarReceiverTubeMountHeight + lz - solarReceiverTubeRadius * 2]}
                 rotation={[0, 0, 0]}
               >
                 <meshStandardMaterial attach="material" color={'white'} side={DoubleSide} />
