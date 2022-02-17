@@ -488,6 +488,8 @@ export const selectedElementHeight = (state: CommonStoreState) => state.selected
 
 export const simulationInProgress = (state: CommonStoreState) => state.simulationInProgress;
 
+export const simulationPaused = (state: CommonStoreState) => state.simulationPaused;
+
 export const updateDesignInfo = (state: CommonStoreState) => state.updateDesignInfo;
 
 export const updateDesignInfoFlag = (state: CommonStoreState) => state.updateDesignInfoFlag;
@@ -572,6 +574,12 @@ export const runDailySimulationForFresnelReflectors = (state: CommonStoreState) 
 
 export const runYearlySimulationForFresnelReflectors = (state: CommonStoreState) =>
   state.runYearlySimulationForFresnelReflectors;
+
+export const pauseDailySimulationForFresnelReflectors = (state: CommonStoreState) =>
+  state.pauseDailySimulationForFresnelReflectors;
+
+export const pauseYearlySimulationForFresnelReflectors = (state: CommonStoreState) =>
+  state.pauseYearlySimulationForFresnelReflectors;
 
 export const dailyFresnelReflectorYield = (state: CommonStoreState) => state.dailyFresnelReflectorYield;
 

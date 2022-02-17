@@ -70,6 +70,8 @@ export const i18n_en = {
       Apply: 'Apply',
       Close: 'Close',
       ApplyTo: 'Apply to',
+      Pause: 'Pause',
+      Resume: 'Resume',
       Clear: 'Clear',
       Warning: 'Warning',
       Reminder: 'Reminder',
@@ -156,7 +158,10 @@ export const i18n_en = {
       SimulationStarted: 'Simulation started.',
       SimulationCompleted: 'Simulation completed.',
       SimulationAborted: 'Simulation aborted.',
+      SimulationPaused: 'Simulation paused.',
       CancelSimulation: 'Cancel simulation',
+      PauseSimulation: 'Pause simulation',
+      ResumeSimulation: 'Resume simulation',
     },
 
     menu: {

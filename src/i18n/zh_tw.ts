@@ -70,6 +70,8 @@ export const i18n_zh_tw = {
       Apply: '應用',
       Close: '關閉',
       ApplyTo: '適用於',
+      Pause: '暫停',
+      Resume: '繼續',
       Clear: '清空',
       Warning: '警告',
       Reminder: '提醒',
@@ -155,7 +157,10 @@ export const i18n_zh_tw = {
       SimulationStarted: '模擬開始。',
       SimulationCompleted: '模擬結束。',
       SimulationAborted: '模擬取消。',
+      SimulationPaused: '模擬暫停。',
       CancelSimulation: '取消模擬',
+      PauseSimulation: '暫停模擬',
+      ResumeSimulation: '繼續模擬',
     },
 
     menu: {

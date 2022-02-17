@@ -30,6 +30,7 @@ const Container = styled.div`
 const SimulationControlPanel = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
+  const simulationPaused = useStore(Selector.simulationPaused);
 
   const lang = { lng: language };
 
@@ -41,12 +42,36 @@ const SimulationControlPanel = () => {
     });
   };
 
+  const pause = () => {
+    setCommonStore((state) => {
+      state.pauseDailySimulationForFresnelReflectors = true;
+      state.pauseYearlySimulationForFresnelReflectors = true;
+    });
+  };
+
+  const resume = () => {
+    setCommonStore((state) => {
+      state.pauseDailySimulationForFresnelReflectors = false;
+      state.pauseYearlySimulationForFresnelReflectors = false;
+    });
+  };
+
   return (
     <Container>
       <Space direction={'horizontal'} style={{ color: 'antiquewhite', fontSize: '10px' }}>
         <Button type="primary" onClick={cancel} title={i18n.t('message.CancelSimulation', lang)}>
           {i18n.t('word.Cancel', lang)}
         </Button>
+        {!simulationPaused && (
+          <Button type="primary" onClick={pause} title={i18n.t('message.PauseSimulation', lang)}>
+            {i18n.t('word.Pause', lang)}
+          </Button>
+        )}
+        {simulationPaused && (
+          <Button type="primary" onClick={resume} title={i18n.t('message.ResumeSimulation', lang)}>
+            {i18n.t('word.Resume', lang)}
+          </Button>
+        )}
       </Space>
     </Container>
   );

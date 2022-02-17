@@ -464,6 +464,8 @@ export interface CommonStoreState {
 
   runDailySimulationForFresnelReflectors: boolean;
   runYearlySimulationForFresnelReflectors: boolean;
+  pauseDailySimulationForFresnelReflectors: boolean;
+  pauseYearlySimulationForFresnelReflectors: boolean;
   dailyFresnelReflectorYield: DatumEntry[];
   dailyFresnelReflectorFlag: boolean;
   dailyFresnelReflectorIndividualOutputs: boolean;
@@ -515,6 +517,7 @@ export interface CommonStoreState {
   deletedWindowAndParentId: string[] | null;
 
   simulationInProgress: boolean;
+  simulationPaused: boolean;
   showSolarRadiationHeatmap: boolean;
   updateDesignInfo: () => void;
   updateDesignInfoFlag: boolean;
@@ -749,6 +752,8 @@ export const useStore = create<CommonStoreState>(
 
           runDailySimulationForFresnelReflectors: false,
           runYearlySimulationForFresnelReflectors: false,
+          pauseDailySimulationForFresnelReflectors: false,
+          pauseYearlySimulationForFresnelReflectors: false,
           yearlyFresnelReflectorYield: [],
           yearlyFresnelReflectorFlag: false,
           yearlyFresnelReflectorIndividualOutputs: false,
@@ -4099,6 +4104,7 @@ export const useStore = create<CommonStoreState>(
           },
 
           simulationInProgress: false,
+          simulationPaused: false,
           showSolarRadiationHeatmap: false,
           locale: enUS,
           localFileName: 'aladdin.ala',

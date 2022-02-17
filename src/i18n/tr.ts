@@ -71,6 +71,8 @@ export const i18n_tr = {
       Apply: 'Uygula',
       Close: 'Kapat',
       ApplyTo: 'Uygulanacak',
+      Pause: 'Pause',
+      Resume: 'Resume',
       Clear: 'Temizle',
       Warning: 'Uyarý',
       Reminder: 'Reminder',
@@ -157,7 +159,10 @@ export const i18n_tr = {
       SimulationStarted: 'Simulation started.',
       SimulationCompleted: 'Simulation completed.',
       SimulationAborted: 'Simulation aborted.',
+      SimulationPaused: 'Simulation paused.',
       CancelSimulation: 'Cancel simulation',
+      PauseSimulation: 'Pause simulation',
+      ResumeSimulation: 'Resume simulation',
     },
 
     menu: {

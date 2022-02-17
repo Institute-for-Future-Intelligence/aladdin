@@ -13,7 +13,18 @@ import FoundationTexture07 from '../resources/foundation_07.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Cylinder, Plane, Sphere } from '@react-three/drei';
-import { CanvasTexture, Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
+import {
+  CanvasTexture,
+  DoubleSide,
+  Euler,
+  Group,
+  Mesh,
+  Raycaster,
+  RepeatWrapping,
+  TextureLoader,
+  Vector2,
+  Vector3,
+} from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
 import { FoundationModel } from '../models/FoundationModel';
@@ -2297,16 +2308,19 @@ const Foundation = ({
                 castShadow={false}
                 receiveShadow={false}
                 args={[
-                  solarReceiverTubeRadius,
-                  solarReceiverTubeRadius,
-                  solarReceiverTubeRelativeLength * ly + solarReceiverTubeRadius,
+                  solarReceiverTubeRadius * 4,
+                  solarReceiverTubeRadius * 4,
+                  solarReceiverTubeRelativeLength * ly + solarReceiverTubeRadius * 2,
                   6,
                   2,
+                  false,
+                  3 * HALF_PI,
+                  Math.PI,
                 ]}
                 position={[0, 0, solarReceiverTubeMountHeight + lz]}
                 rotation={[0, 0, 0]}
               >
-                <meshStandardMaterial attach="material" color={'white'} />
+                <meshStandardMaterial attach="material" color={'white'} side={DoubleSide} />
               </Cylinder>
               {/* draw poles */}
               {solarReceiverTubePoles &&

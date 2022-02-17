@@ -234,6 +234,7 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
                   setTimeout(() => {
                     setCommonStore((state) => {
                       state.runDailySimulationForFresnelReflectors = true;
+                      state.pauseDailySimulationForFresnelReflectors = false;
                       state.simulationInProgress = true;
                       state.dailyFresnelReflectorIndividualOutputs = checked;
                       state.dailyFresnelReflectorFlag = !state.dailyFresnelReflectorFlag;
@@ -256,6 +257,7 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
                 setTimeout(() => {
                   setCommonStore((state) => {
                     state.runDailySimulationForFresnelReflectors = true;
+                    state.pauseDailySimulationForFresnelReflectors = false;
                     state.simulationInProgress = true;
                     state.dailyFresnelReflectorFlag = !state.dailyFresnelReflectorFlag;
                   });

@@ -43,6 +43,8 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const setFresnelReflectorLabels = useStore(Selector.setFresnelReflectorLabels);
   const runDailySimulation = useStore(Selector.runDailySimulationForFresnelReflectors);
   const runYearlySimulation = useStore(Selector.runYearlySimulationForFresnelReflectors);
+  const pauseDailySimulation = useStore(Selector.pauseDailySimulationForFresnelReflectors);
+  const pauseYearlySimulation = useStore(Selector.pauseYearlySimulationForFresnelReflectors);
   const showDailyFresnelReflectorYieldPanel = useStore(Selector.viewState.showDailyFresnelReflectorYieldPanel);
 
   const { scene } = useThree();
@@ -65,6 +67,8 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const dailyOutputsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const yearlyOutputsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const sampledDayRef = useRef<number>(0);
+  const pauseRef = useRef<boolean>(false);
+  const pausedDateRef = useRef<Date>(new Date(world.date));
 
   // this is used in daily simulation that should respond to change of date and latitude
   const sunMinutes = useMemo(() => {
@@ -74,9 +78,12 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   // this is used in yearly simulation in which the date is changed programmatically based on the current latitude
   const sunMinutesRef = useRef<SunMinutes>(sunMinutes);
 
+  /* do the daily simulation */
+
   useEffect(() => {
     if (runDailySimulation) {
       initDaily();
+      pauseRef.current = false;
       requestRef.current = requestAnimationFrame(simulateDaily);
       return () => {
         // this is called when the recursive call of requestAnimationFrame exits
@@ -86,51 +93,54 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toString();
             state.simulationInProgress = false;
+            state.simulationPaused = false;
           });
         }
+        pauseRef.current = false;
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runDailySimulation]);
 
   useEffect(() => {
-    if (runYearlySimulation) {
-      initYearly();
-      requestRef.current = requestAnimationFrame(simulateYearly);
-      return () => {
-        // this is called when the recursive call of requestAnimationFrame exits
-        cancelAnimationFrame(requestRef.current);
-        if (!simulationCompletedRef.current) {
-          showInfo(i18n.t('message.SimulationAborted', lang));
-          setCommonStore((state) => {
-            state.world.date = originalDateRef.current.toString();
-            state.simulationInProgress = false;
-          });
-        }
-      };
+    pauseRef.current = pauseDailySimulation;
+    if (pauseDailySimulation) {
+      pausedDateRef.current = new Date(now.getTime());
+      cancelAnimationFrame(requestRef.current);
+      setCommonStore((state) => {
+        state.simulationPaused = true;
+      });
+      showInfo(i18n.t('message.SimulationPaused', lang));
+    } else {
+      setCommonStore((state) => {
+        state.simulationPaused = false;
+      });
+      simulateDaily();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runYearlySimulation]);
-
-  /* do the daily simulation */
+  }, [pauseDailySimulation]);
 
   const initDaily = () => {
-    originalDateRef.current = new Date(world.date);
-    // beginning 30 minutes before the sunrise hour just in case and to provide a cue
-    now.setHours(Math.floor(sunMinutes.sunrise / 60), -30);
+    if (pauseRef.current) {
+      now.setTime(pausedDateRef.current.getTime());
+    } else {
+      originalDateRef.current = new Date(world.date);
+      // beginning 30 minutes before the sunrise hour just in case and to provide a cue
+      now.setHours(Math.floor(sunMinutes.sunrise / 60), -30);
+    }
     simulationCompletedRef.current = false;
     fetchObjects();
     resetDailyOutputsMap();
   };
 
   const simulateDaily = () => {
-    if (runDailySimulation) {
+    if (runDailySimulation && !pauseRef.current) {
       const totalMinutes = now.getMinutes() + now.getHours() * 60;
       if (totalMinutes >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
           state.runDailySimulationForFresnelReflectors = false;
           state.simulationInProgress = false;
+          state.simulationPaused = false;
           state.world.date = originalDateRef.current.toString();
           state.viewState.showDailyFresnelReflectorYieldPanel = true;
         });
@@ -238,6 +248,26 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
 
   /* do the yearly simulation */
 
+  useEffect(() => {
+    if (runYearlySimulation) {
+      initYearly();
+      requestRef.current = requestAnimationFrame(simulateYearly);
+      return () => {
+        // this is called when the recursive call of requestAnimationFrame exits
+        cancelAnimationFrame(requestRef.current);
+        if (!simulationCompletedRef.current) {
+          showInfo(i18n.t('message.SimulationAborted', lang));
+          setCommonStore((state) => {
+            state.world.date = originalDateRef.current.toString();
+            state.simulationInProgress = false;
+            state.simulationPaused = false;
+          });
+        }
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runYearlySimulation]);
+
   const initYearly = () => {
     originalDateRef.current = new Date(world.date);
     sampledDayRef.current = 0;
@@ -279,6 +309,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
           setCommonStore((state) => {
             state.runYearlySimulationForFresnelReflectors = false;
             state.simulationInProgress = false;
+            state.simulationPaused = false;
             state.world.date = originalDateRef.current.toString();
             state.viewState.showYearlyFresnelReflectorYieldPanel = true;
           });
