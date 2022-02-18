@@ -237,7 +237,6 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
                       state.pauseDailySimulationForFresnelReflectors = false;
                       state.simulationInProgress = true;
                       state.dailyFresnelReflectorIndividualOutputs = checked;
-                      state.dailyFresnelReflectorFlag = !state.dailyFresnelReflectorFlag;
                     });
                   }, 100);
                 }}
@@ -259,7 +258,6 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
                     state.runDailySimulationForFresnelReflectors = true;
                     state.pauseDailySimulationForFresnelReflectors = false;
                     state.simulationInProgress = true;
-                    state.dailyFresnelReflectorFlag = !state.dailyFresnelReflectorFlag;
                   });
                 }, 100);
               }}

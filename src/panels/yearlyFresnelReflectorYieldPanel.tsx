@@ -237,9 +237,9 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
                   setTimeout(() => {
                     setCommonStore((state) => {
                       state.runYearlySimulationForFresnelReflectors = true;
+                      state.pauseYearlySimulationForFresnelReflectors = false;
                       state.simulationInProgress = true;
                       state.yearlyFresnelReflectorIndividualOutputs = checked;
-                      state.yearlyFresnelReflectorFlag = !state.yearlyFresnelReflectorFlag;
                     });
                   }, 100);
                 }}
@@ -259,8 +259,8 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
                 setTimeout(() => {
                   setCommonStore((state) => {
                     state.runYearlySimulationForFresnelReflectors = true;
+                    state.pauseYearlySimulationForFresnelReflectors = false;
                     state.simulationInProgress = true;
-                    state.yearlyFresnelReflectorFlag = !state.yearlyFresnelReflectorFlag;
                   });
                 }, 100);
               }}

@@ -483,11 +483,9 @@ export interface CommonStoreState {
   pauseDailySimulationForFresnelReflectors: boolean;
   pauseYearlySimulationForFresnelReflectors: boolean;
   dailyFresnelReflectorYield: DatumEntry[];
-  dailyFresnelReflectorFlag: boolean;
   dailyFresnelReflectorIndividualOutputs: boolean;
   setDailyFresnelReflectorYield: (data: DatumEntry[]) => void;
   yearlyFresnelReflectorYield: DatumEntry[];
-  yearlyFresnelReflectorFlag: boolean;
   yearlyFresnelReflectorIndividualOutputs: boolean;
   setYearlyFresnelReflectorYield: (data: DatumEntry[]) => void;
   fresnelReflectorLabels: string[];
@@ -770,20 +768,18 @@ export const useStore = create<CommonStoreState>(
           runYearlySimulationForFresnelReflectors: false,
           pauseDailySimulationForFresnelReflectors: false,
           pauseYearlySimulationForFresnelReflectors: false,
-          yearlyFresnelReflectorYield: [],
-          yearlyFresnelReflectorFlag: false,
-          yearlyFresnelReflectorIndividualOutputs: false,
-          setYearlyFresnelReflectorYield(data) {
-            immerSet((state: CommonStoreState) => {
-              state.yearlyFresnelReflectorYield = [...data];
-            });
-          },
           dailyFresnelReflectorYield: [],
-          dailyFresnelReflectorFlag: false,
           dailyFresnelReflectorIndividualOutputs: false,
           setDailyFresnelReflectorYield(data) {
             immerSet((state: CommonStoreState) => {
               state.dailyFresnelReflectorYield = [...data];
+            });
+          },
+          yearlyFresnelReflectorYield: [],
+          yearlyFresnelReflectorIndividualOutputs: false,
+          setYearlyFresnelReflectorYield(data) {
+            immerSet((state: CommonStoreState) => {
+              state.yearlyFresnelReflectorYield = [...data];
             });
           },
           fresnelReflectorLabels: [],

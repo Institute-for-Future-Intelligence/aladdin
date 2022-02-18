@@ -552,6 +552,8 @@ export const showSolarRadiationHeatmap = (state: CommonStoreState) => state.show
 
 export const dailySolarRadiationSimulationFlag = (state: CommonStoreState) => state.dailySolarRadiationSimulationFlag;
 
+// solar panels (PV)
+
 export const solarPanelVisibilityFlag = (state: CommonStoreState) => state.solarPanelVisibilityFlag;
 
 export const solarPanelVisibilityResults = (state: CommonStoreState) => state.solarPanelVisibilityResults;
@@ -576,6 +578,8 @@ export const solarPanelLabels = (state: CommonStoreState) => state.solarPanelLab
 
 export const setSolarPanelLabels = (state: CommonStoreState) => state.setSolarPanelLabels;
 
+// parabolic troughs (CSP)
+
 export const dailyParabolicTroughYield = (state: CommonStoreState) => state.dailyParabolicTroughYield;
 
 export const dailyParabolicTroughFlag = (state: CommonStoreState) => state.dailyParabolicTroughFlag;
@@ -598,6 +602,8 @@ export const parabolicTroughLabels = (state: CommonStoreState) => state.paraboli
 
 export const setParabolicTroughLabels = (state: CommonStoreState) => state.setParabolicTroughLabels;
 
+// Fresnel reflectors (CSP)
+
 export const runDailySimulationForFresnelReflectors = (state: CommonStoreState) =>
   state.runDailySimulationForFresnelReflectors;
 
@@ -612,16 +618,12 @@ export const pauseYearlySimulationForFresnelReflectors = (state: CommonStoreStat
 
 export const dailyFresnelReflectorYield = (state: CommonStoreState) => state.dailyFresnelReflectorYield;
 
-export const dailyFresnelReflectorFlag = (state: CommonStoreState) => state.dailyFresnelReflectorFlag;
-
 export const dailyFresnelReflectorIndividualOutputs = (state: CommonStoreState) =>
   state.dailyFresnelReflectorIndividualOutputs;
 
 export const setDailyFresnelReflectorYield = (state: CommonStoreState) => state.setDailyFresnelReflectorYield;
 
 export const yearlyFresnelReflectorYield = (state: CommonStoreState) => state.yearlyFresnelReflectorYield;
-
-export const yearlyFresnelReflectorFlag = (state: CommonStoreState) => state.yearlyFresnelReflectorFlag;
 
 export const yearlyFresnelReflectorIndividualOutputs = (state: CommonStoreState) =>
   state.yearlyFresnelReflectorIndividualOutputs;
@@ -631,6 +633,8 @@ export const setYearlyFresnelReflectorYield = (state: CommonStoreState) => state
 export const fresnelReflectorLabels = (state: CommonStoreState) => state.fresnelReflectorLabels;
 
 export const setFresnelReflectorLabels = (state: CommonStoreState) => state.setFresnelReflectorLabels;
+
+// parabolic dishes (CSP)
 
 export const dailyParabolicDishYield = (state: CommonStoreState) => state.dailyParabolicDishYield;
 
@@ -654,15 +658,17 @@ export const parabolicDishLabels = (state: CommonStoreState) => state.parabolicD
 
 export const setParabolicDishLabels = (state: CommonStoreState) => state.setParabolicDishLabels;
 
-export const dailyLightSensorData = (state: CommonStoreState) => state.dailyLightSensorData;
+// sensors
 
 export const dailyLightSensorFlag = (state: CommonStoreState) => state.dailyLightSensorFlag;
+
+export const yearlyLightSensorFlag = (state: CommonStoreState) => state.yearlyLightSensorFlag;
+
+export const dailyLightSensorData = (state: CommonStoreState) => state.dailyLightSensorData;
 
 export const setDailyLightSensorData = (state: CommonStoreState) => state.setDailyLightSensorData;
 
 export const yearlyLightSensorData = (state: CommonStoreState) => state.yearlyLightSensorData;
-
-export const yearlyLightSensorFlag = (state: CommonStoreState) => state.yearlyLightSensorFlag;
 
 export const setYearlyLightSensorData = (state: CommonStoreState) => state.setYearlyLightSensorData;
 
@@ -671,6 +677,7 @@ export const sensorLabels = (state: CommonStoreState) => state.sensorLabels;
 export const setSensorLabels = (state: CommonStoreState) => state.setSensorLabels;
 
 // handles
+
 export const hoveredHandle = (state: CommonStoreState) => state.hoveredHandle;
 
 export const moveHandleType = (state: CommonStoreState) => state.moveHandleType;
@@ -684,6 +691,7 @@ export const rotateHandleType = (state: CommonStoreState) => state.rotateHandleT
 export const resizeAnchor = (state: CommonStoreState) => state.resizeAnchor;
 
 // elements
+
 export const isAddingElement = (state: CommonStoreState) => state.isAddingElement;
 
 export const addedFoundationId = (state: CommonStoreState) => state.addedFoundationId;
