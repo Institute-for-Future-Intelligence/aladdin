@@ -222,6 +222,7 @@ export const i18n_tr = {
         SamplingFrequency: 'Örnekleme Sýklýðý',
         TimesPerHour: 'Saatlik',
         DaysPerYear: 'Days per Year',
+        SensorSimulationNoAnimation: 'No Animation for Collecting Sensor Data',
       },
       solarPanelSubMenu: 'Güneþ Panelleri',
       solarPanel: {

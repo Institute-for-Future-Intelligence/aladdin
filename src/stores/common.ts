@@ -444,11 +444,13 @@ export interface CommonStoreState {
   clearAllSolarPanelYields: () => void;
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
 
+  runDailyLightSensor: boolean;
+  pauseDailyLightSensor: boolean;
+  runYearlyLightSensor: boolean;
+  pauseYearlyLightSensor: boolean;
   dailyLightSensorData: DatumEntry[];
-  dailyLightSensorFlag: boolean;
   setDailyLightSensorData: (data: DatumEntry[]) => void;
   yearlyLightSensorData: DatumEntry[];
-  yearlyLightSensorFlag: boolean;
   setYearlyLightSensorData: (data: DatumEntry[]) => void;
   sensorLabels: string[];
   setSensorLabels: (labels: string[]) => void;
@@ -694,18 +696,20 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          yearlyLightSensorData: [],
-          yearlyLightSensorFlag: false,
-          setYearlyLightSensorData(data) {
-            immerSet((state: CommonStoreState) => {
-              state.yearlyLightSensorData = [...data];
-            });
-          },
+          runDailyLightSensor: false,
+          pauseDailyLightSensor: false,
+          runYearlyLightSensor: false,
+          pauseYearlyLightSensor: false,
           dailyLightSensorData: [],
-          dailyLightSensorFlag: false,
           setDailyLightSensorData(data) {
             immerSet((state: CommonStoreState) => {
               state.dailyLightSensorData = [...data];
+            });
+          },
+          yearlyLightSensorData: [],
+          setYearlyLightSensorData(data) {
+            immerSet((state: CommonStoreState) => {
+              state.yearlyLightSensorData = [...data];
             });
           },
           sensorLabels: [],

@@ -186,8 +186,9 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
                 // give it 0.1 second for the info to show up
                 setTimeout(() => {
                   setCommonStore((state) => {
+                    state.runDailyLightSensor = true;
+                    state.pauseDailyLightSensor = false;
                     state.simulationInProgress = true;
-                    state.dailyLightSensorFlag = !state.dailyLightSensorFlag;
                   });
                 }, 100);
               }}

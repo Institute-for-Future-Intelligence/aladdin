@@ -1,11 +1,12 @@
 {
-  "docid": "ofH4SdXucnqLyAEBVPkSrz",
-  "timestamp": 1639932165848,
-  "owner": "Charles Xie",
-  "email": "charles@intofuture.org",
+  "docid": "rd18BxwD1stg8o4Xf9FtwU",
+  "timestamp": 1645223454874,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
   "world": {
     "date": "Tue Jun 22 2021 12:00:00 GMT-0400 (Eastern Daylight Time)",
-    "timesPerHour": 20,
+    "timesPerHour": 6,
     "address": "Natick, MA",
     "latitude": 42.2844063,
     "longitude": -71.3488548,
@@ -29,7 +30,8 @@
       ],
       "thermalDiffusivity": 0.05,
       "albedo": 0.3
-    }
+    },
+    "noAnimationForSensorDataCollection": true
   },
   "elements": [
     {
@@ -50,7 +52,10 @@
         0,
         0
       ],
-      "parentId": "Ground"
+      "parentId": "Ground",
+      "lx": 0.6,
+      "ly": 0.6,
+      "lz": 1.8
     },
     {
       "selected": false,
@@ -70,7 +75,10 @@
       "cz": -0.009999999999999095,
       "type": "Human",
       "cx": 2.399220108700476,
-      "parentId": "Ground"
+      "parentId": "Ground",
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 1.85
     },
     {
       "cx": 0.20566332108722207,
@@ -268,9 +276,9 @@
     "yearlyLightSensorPanelX": -905,
     "showHeliodonPanel": false,
     "cameraPosition": [
-      10.005268074983197,
-      19.586316833033376,
-      4.2016662562416585
+      10.005268074983192,
+      19.586316833033372,
+      4.201666256241655
     ],
     "panCenter": [
       -2.432389491951708,

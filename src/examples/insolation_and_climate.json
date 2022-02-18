@@ -6,7 +6,7 @@
   "email": null,
   "world": {
     "latitude": 0,
-    "timesPerHour": 30,
+    "timesPerHour": 6,
     "date": "Wed Sep 22 2021 15:00:00 GMT-0400 (Eastern Daylight Time)",
     "longitude": -71.3488548,
     "name": "default",
@@ -30,7 +30,8 @@
       "thermalDiffusivity": 0.05
     },
     "orthographic": false,
-    "cameraZoom": 28.63945562104857
+    "cameraZoom": 28.63945562104857,
+    "noAnimationForSensorDataCollection": true
   },
   "elements": [
     {

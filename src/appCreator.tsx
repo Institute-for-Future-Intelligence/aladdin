@@ -97,7 +97,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
   const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
-  const notAnimateSimulation = useStore(Selector.world.notAnimateSimulation);
+  const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);
   const showDailyLightSensorPanel = useStore(Selector.viewState.showDailyLightSensorPanel);
   const showYearlyLightSensorPanel = useStore(Selector.viewState.showYearlyLightSensorPanel);
   const showDailyPvYieldPanel = useStore(Selector.viewState.showDailyPvYieldPanel);
@@ -231,7 +231,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
     <div className="App">
       {(loading || simulationInProgress) && (
         <>
-          {(!notAnimateSimulation || Util.hasMovingParts(elements)) && <SimulationControlPanel />}
+          {(!noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)) && <SimulationControlPanel />}
           <Spinner spinning={!simulationPaused} />
         </>
       )}

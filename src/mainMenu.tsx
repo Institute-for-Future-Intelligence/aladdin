@@ -145,7 +145,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const copyCutElements = useStore(Selector.copyCutElements);
   const getElementById = useStore(Selector.getElementById);
   const runSimulation = useStore(Selector.runSimulation);
-  const notAnimateSimulation = useStore(Selector.world.notAnimateSimulation);
+  const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);
+  const noAnimationForSensorDataCollection = useStore(Selector.world.noAnimationForSensorDataCollection);
 
   const [aboutUs, setAboutUs] = useState(false);
 
@@ -973,10 +974,10 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   {i18n.t('menu.physics.SolarRadiationHeatmapNoAnimation', lang) + ':'}
                 </Space>
                 <Switch
-                  checked={notAnimateSimulation}
+                  checked={noAnimationForHeatmapSimulation}
                   onChange={(checked) => {
                     setCommonStore((state) => {
-                      state.world.notAnimateSimulation = checked;
+                      state.world.noAnimationForHeatmapSimulation = checked;
                     });
                   }}
                 />
@@ -1000,7 +1001,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               setTimeout(() => {
                 setCommonStore((state) => {
                   state.simulationInProgress = true;
-                  state.dailyLightSensorFlag = !state.dailyLightSensorFlag;
+                  state.runDailyLightSensor = true;
                 });
               }, 100);
             }}
@@ -1020,7 +1021,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               setTimeout(() => {
                 setCommonStore((state) => {
                   state.simulationInProgress = true;
-                  state.yearlyLightSensorFlag = !state.yearlyLightSensorFlag;
+                  state.runYearlyLightSensor = true;
                 });
               }, 100);
             }}
@@ -1046,6 +1047,19 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   }}
                 />
                 <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.TimesPerHour', lang)}</Space>
+              </Menu.Item>
+              <Menu.Item key={'sensor-simulation-no-animation'}>
+                <Space style={{ width: '280px' }}>
+                  {i18n.t('menu.sensor.SensorSimulationNoAnimation', lang) + ':'}
+                </Space>
+                <Switch
+                  checked={noAnimationForSensorDataCollection}
+                  onChange={(checked) => {
+                    setCommonStore((state) => {
+                      state.world.noAnimationForSensorDataCollection = checked;
+                    });
+                  }}
+                />
               </Menu.Item>
             </Menu>
           </SubMenu>
@@ -1333,7 +1347,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               setTimeout(() => {
                 setCommonStore((state) => {
                   state.simulationInProgress = true;
-                  state.yearlyParabolicTroughIndividualOutputs = false;
+                  state.yearlyFresnelReflectorIndividualOutputs = false;
                   state.runYearlySimulationForFresnelReflectors = true;
                 });
               }, 100);

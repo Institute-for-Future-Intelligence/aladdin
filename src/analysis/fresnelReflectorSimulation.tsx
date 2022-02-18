@@ -126,8 +126,8 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       pauseRef.current = false;
     } else {
       originalDateRef.current = new Date(world.date);
-      // beginning 30 minutes before the sunrise hour just in case and to provide a cue
-      now.setHours(Math.floor(sunMinutes.sunrise / 60), -30);
+      // beginning some minutes before the sunrise hour just in case and to provide a cue
+      now.setHours(Math.floor(sunMinutes.sunrise / 60), minuteInterval / 2 - 30);
     }
     simulationCompletedRef.current = false;
     fetchObjects();
@@ -299,7 +299,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       sampledDayRef.current = 0;
       now.setMonth(0, 22); // begin from January, 22
       sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
-      now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -30);
+      now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), minuteInterval / 2 - 30);
       // set the initial date so that the scene gets a chance to render before the simulation starts
       setCommonStore((state) => {
         state.world.date = now.toString();
@@ -347,7 +347,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         // go to the next month
         now.setMonth(sampledDayRef.current * monthInterval, 22);
         sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
-        now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -30);
+        now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), minuteInterval / 2 - 30);
         resetDailyOutputsMap();
         // recursive call to the next step of the simulation
         requestRef.current = requestAnimationFrame(simulateYearly);
@@ -431,6 +431,8 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       setYearlyYield(results);
     }
   };
+
+  /* shared functions */
 
   // there is room for performance improvement if we figure out a way to cache a lot of things used below
   const calculateYield = (reflector: FresnelReflectorModel) => {
@@ -522,7 +524,9 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     const output = dailyOutputsMapRef.current.get(reflector.id);
     if (output) {
       // the output is the average radiation density, hence we have to divide it by nx * ny
-      output[now.getHours()] += sum / (nx * ny);
+      // if the minutes are greater than 30 or 30, it is counted as the output of the next hour
+      // to maintain the symmetry around noon
+      output[now.getMinutes() >= 30 ? now.getHours() + 1 : now.getHours()] += sum / (nx * ny);
     }
   };
 

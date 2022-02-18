@@ -208,8 +208,9 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
+                      state.runYearlyLightSensor = true;
+                      state.pauseYearlyLightSensor = false;
                       state.simulationInProgress = true;
-                      state.yearlyLightSensorFlag = !state.yearlyLightSensorFlag;
                     });
                   }, 100);
                 }}

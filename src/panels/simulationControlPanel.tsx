@@ -39,6 +39,10 @@ const SimulationControlPanel = () => {
     setCommonStore((state) => {
       state.runSimulation = false;
       state.pauseSimulation = false;
+      state.runDailyLightSensor = false;
+      state.pauseDailyLightSensor = false;
+      state.runYearlyLightSensor = false;
+      state.pauseYearlyLightSensor = false;
       state.runDailySimulationForFresnelReflectors = false;
       state.runYearlySimulationForFresnelReflectors = false;
       state.pauseDailySimulationForFresnelReflectors = false;
@@ -50,6 +54,12 @@ const SimulationControlPanel = () => {
     setCommonStore((state) => {
       if (state.runSimulation) {
         state.pauseSimulation = true;
+      }
+      if (state.runDailyLightSensor) {
+        state.pauseDailyLightSensor = true;
+      }
+      if (state.runYearlyLightSensor) {
+        state.pauseYearlyLightSensor = true;
       }
       if (state.runDailySimulationForFresnelReflectors) {
         state.pauseDailySimulationForFresnelReflectors = true;
@@ -64,6 +74,12 @@ const SimulationControlPanel = () => {
     setCommonStore((state) => {
       if (state.runSimulation) {
         state.pauseSimulation = false;
+      }
+      if (state.runDailyLightSensor) {
+        state.pauseDailyLightSensor = false;
+      }
+      if (state.runYearlyLightSensor) {
+        state.pauseYearlyLightSensor = false;
       }
       if (state.runDailySimulationForFresnelReflectors) {
         state.pauseDailySimulationForFresnelReflectors = false;

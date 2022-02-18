@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Checkbox, Input, Menu } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { useStore } from '../../../stores/common';
@@ -22,6 +22,12 @@ export const SensorMenu = () => {
 
   const [labelText, setLabelText] = useState<string>(sensor?.label ?? '');
   const lang = { lng: language };
+
+  useEffect(() => {
+    if (sensor) {
+      setLabelText(sensor.label ?? '');
+    }
+  }, [sensor?.label]);
 
   const updateElementLabelText = () => {
     if (sensor) {

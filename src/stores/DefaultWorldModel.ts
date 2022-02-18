@@ -27,13 +27,15 @@ export class DefaultWorldModel implements WorldModel {
   daysPerYear: number;
   solarPanelGridCellSize: number;
   discretization: Discretization;
-  notAnimateSimulation: boolean;
   solarPanelVisibilityGridCellSize: number;
   solarRadiationHeatmapGridCellSize: number;
 
   cspTimesPerHour: number;
   cspDaysPerYear: number;
   cspGridCellSize: number;
+
+  noAnimationForHeatmapSimulation: boolean;
+  noAnimationForSensorDataCollection: boolean;
 
   constructor() {
     this.latitude = 42.2844063;
@@ -56,11 +58,13 @@ export class DefaultWorldModel implements WorldModel {
     this.discretization = Discretization.APPROXIMATE;
     this.solarPanelVisibilityGridCellSize = 0.2;
     this.solarRadiationHeatmapGridCellSize = 0.5;
-    this.notAnimateSimulation = false;
 
     this.cspTimesPerHour = 4;
     this.cspDaysPerYear = 4;
     this.cspGridCellSize = 0.5;
+
+    this.noAnimationForHeatmapSimulation = false;
+    this.noAnimationForSensorDataCollection = false;
   }
 
   getElements() {

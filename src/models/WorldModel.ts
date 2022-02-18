@@ -22,7 +22,6 @@ export interface WorldModel {
 
   timesPerHour: number;
   daysPerYear: number;
-  notAnimateSimulation: boolean;
   solarRadiationHeatmapGridCellSize: number;
   solarPanelGridCellSize: number;
   discretization: Discretization;
@@ -31,4 +30,7 @@ export interface WorldModel {
   cspTimesPerHour: number;
   cspDaysPerYear: number;
   cspGridCellSize: number;
+
+  noAnimationForHeatmapSimulation: boolean;
+  noAnimationForSensorDataCollection: boolean;
 }

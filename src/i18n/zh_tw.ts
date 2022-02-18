@@ -220,6 +220,7 @@ export const i18n_zh_tw = {
         SamplingFrequency: '採樣頻率',
         TimesPerHour: '每小時採樣次數',
         DaysPerYear: '每一年採樣天數',
+        SensorSimulationNoAnimation: '若無移動部件則省略動畫',
       },
       solarPanelSubMenu: '太陽能光伏板',
       solarPanel: {

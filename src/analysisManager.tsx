@@ -8,8 +8,6 @@ import * as Selector from './stores/selector';
 
 const AnalysisManager = () => {
   const setCommonStore = useStore(Selector.set);
-  const dailyLightSensorFlag = useStore(Selector.dailyLightSensorFlag);
-  const yearlyLightSensorFlag = useStore(Selector.yearlyLightSensorFlag);
   const dailyPvFlag = useStore(Selector.dailyPvFlag);
   const yearlyPvFlag = useStore(Selector.yearlyPvFlag);
   const solarPanelVisibilityFlag = useStore(Selector.solarPanelVisibilityFlag);
@@ -19,8 +17,6 @@ const AnalysisManager = () => {
   const yearlyParabolicDishFlag = useStore(Selector.yearlyParabolicDishFlag);
 
   const firstCallSolarPanelVisibilityFlag = useRef<boolean>(true);
-  const firstCallDailyLightSensorFlag = useRef<boolean>(true);
-  const firstCallYearlyLightSensorFlag = useRef<boolean>(true);
   const firstCallDailyPvFlag = useRef<boolean>(true);
   const firstCallYearlyPvFlag = useRef<boolean>(true);
   const firstCallDailyParabolicTroughFlag = useRef<boolean>(true);
@@ -38,28 +34,6 @@ const AnalysisManager = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solarPanelVisibilityFlag]);
-
-  useEffect(() => {
-    if (firstCallDailyLightSensorFlag.current) {
-      firstCallDailyLightSensorFlag.current = false;
-    } else {
-      setCommonStore((state) => {
-        state.viewState.showDailyLightSensorPanel = true;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dailyLightSensorFlag]);
-
-  useEffect(() => {
-    if (firstCallYearlyLightSensorFlag.current) {
-      firstCallYearlyLightSensorFlag.current = false;
-    } else {
-      setCommonStore((state) => {
-        state.viewState.showYearlyLightSensorPanel = true;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [yearlyLightSensorFlag]);
 
   useEffect(() => {
     if (firstCallDailyPvFlag.current) {

@@ -221,6 +221,7 @@ export const i18n_en = {
         SamplingFrequency: 'Sampling Frequency',
         TimesPerHour: 'Times per Hour',
         DaysPerYear: 'Days per Year',
+        SensorSimulationNoAnimation: 'No Animation for Collecting Sensor Data',
       },
       solarPanelSubMenu: 'Solar Panel',
       solarPanel: {

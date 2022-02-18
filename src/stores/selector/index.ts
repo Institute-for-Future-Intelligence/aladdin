@@ -660,9 +660,13 @@ export const setParabolicDishLabels = (state: CommonStoreState) => state.setPara
 
 // sensors
 
-export const dailyLightSensorFlag = (state: CommonStoreState) => state.dailyLightSensorFlag;
+export const runDailyLightSensor = (state: CommonStoreState) => state.runDailyLightSensor;
 
-export const yearlyLightSensorFlag = (state: CommonStoreState) => state.yearlyLightSensorFlag;
+export const pauseDailyLightSensor = (state: CommonStoreState) => state.pauseDailyLightSensor;
+
+export const runYearlyLightSensor = (state: CommonStoreState) => state.runYearlyLightSensor;
+
+export const pauseYearlyLightSensor = (state: CommonStoreState) => state.pauseYearlyLightSensor;
 
 export const dailyLightSensorData = (state: CommonStoreState) => state.dailyLightSensorData;
 

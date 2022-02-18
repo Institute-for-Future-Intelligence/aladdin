@@ -38,7 +38,7 @@ const MainToolBarButtons = () => {
   const language = useStore(Selector.language);
   const selectNone = useStore(Selector.selectNone);
   const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
-  const notAnimateSimulation = useStore(Selector.world.notAnimateSimulation);
+  const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const clearContent = useStore(Selector.clearContent);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
@@ -783,7 +783,7 @@ const MainToolBarButtons = () => {
         color={showSolarRadiationHeatmap ? 'antiquewhite' : '#666666'}
         style={{ paddingRight: '12px', cursor: 'pointer' }}
         onClick={
-          !notAnimateSimulation || Util.hasMovingParts(elements)
+          !noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)
             ? toggleDynamicSolarRadiationHeatmap
             : toggleStaticSolarRadiationHeatmap
         }
