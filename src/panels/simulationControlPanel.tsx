@@ -31,6 +31,7 @@ const SimulationControlPanel = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const simulationPaused = useStore(Selector.simulationPaused);
+  const showDesignInfoPanel = useStore(Selector.viewState.showDesignInfoPanel);
 
   const lang = { lng: language };
 
@@ -74,7 +75,7 @@ const SimulationControlPanel = () => {
   };
 
   return (
-    <Container>
+    <Container style={{ bottom: showDesignInfoPanel ? '42px' : '6px' }}>
       <Space direction={'horizontal'} style={{ color: 'antiquewhite', fontSize: '10px' }}>
         <Button type="primary" onClick={cancel} title={i18n.t('message.CancelSimulation', lang)}>
           {i18n.t('word.Cancel', lang)}

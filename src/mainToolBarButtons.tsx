@@ -31,7 +31,6 @@ import { UndoableCheck } from './undo/UndoableCheck';
 import { useStoreRef } from './stores/commonRef';
 import { showInfo } from './helpers';
 import { Util } from './Util';
-import { ALWAYS_RUN_DYNAMIC_SIMULATION } from './constants';
 
 const MainToolBarButtons = () => {
   const setCommonStore = useStore(Selector.set);
@@ -39,6 +38,7 @@ const MainToolBarButtons = () => {
   const language = useStore(Selector.language);
   const selectNone = useStore(Selector.selectNone);
   const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
+  const notAnimateSimulation = useStore(Selector.world.notAnimateSimulation);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const clearContent = useStore(Selector.clearContent);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
@@ -783,7 +783,7 @@ const MainToolBarButtons = () => {
         color={showSolarRadiationHeatmap ? 'antiquewhite' : '#666666'}
         style={{ paddingRight: '12px', cursor: 'pointer' }}
         onClick={
-          ALWAYS_RUN_DYNAMIC_SIMULATION || Util.hasMovingParts(elements)
+          !notAnimateSimulation || Util.hasMovingParts(elements)
             ? toggleDynamicSolarRadiationHeatmap
             : toggleStaticSolarRadiationHeatmap
         }

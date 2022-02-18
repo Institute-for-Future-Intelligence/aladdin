@@ -27,6 +27,7 @@ export class DefaultWorldModel implements WorldModel {
   daysPerYear: number;
   solarPanelGridCellSize: number;
   discretization: Discretization;
+  notAnimateSimulation: boolean;
   solarPanelVisibilityGridCellSize: number;
   solarRadiationHeatmapGridCellSize: number;
 
@@ -55,6 +56,7 @@ export class DefaultWorldModel implements WorldModel {
     this.discretization = Discretization.APPROXIMATE;
     this.solarPanelVisibilityGridCellSize = 0.2;
     this.solarRadiationHeatmapGridCellSize = 0.5;
+    this.notAnimateSimulation = false;
 
     this.cspTimesPerHour = 4;
     this.cspDaysPerYear = 4;

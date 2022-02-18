@@ -64,6 +64,7 @@ import ParabolicDishSimulation from './analysis/parabolicDishSimulation';
 import FresnelReflectorSimulation from './analysis/fresnelReflectorSimulation';
 import DailyFresnelReflectorYieldPanel from './panels/dailyFresnelReflectorYieldPanel';
 import YearlyFresnelReflectorYieldPanel from './panels/yearlyFresnelReflectorYieldPanel';
+import { Util } from './Util';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -71,6 +72,7 @@ export interface AppCreatorProps {
 
 const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const setCommonStore = useStore(Selector.set);
+  const elements = useStore.getState().elements;
   const language = useStore(Selector.language);
   const changed = useStore(Selector.changed);
   const addUndoable = useStore(Selector.addUndoable);
@@ -95,6 +97,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
   const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const notAnimateSimulation = useStore(Selector.world.notAnimateSimulation);
   const showDailyLightSensorPanel = useStore(Selector.viewState.showDailyLightSensorPanel);
   const showYearlyLightSensorPanel = useStore(Selector.viewState.showYearlyLightSensorPanel);
   const showDailyPvYieldPanel = useStore(Selector.viewState.showDailyPvYieldPanel);
@@ -228,7 +231,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
     <div className="App">
       {(loading || simulationInProgress) && (
         <>
-          <SimulationControlPanel />
+          {(!notAnimateSimulation || Util.hasMovingParts(elements)) && <SimulationControlPanel />}
           <Spinner spinning={!simulationPaused} />
         </>
       )}

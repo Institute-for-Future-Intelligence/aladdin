@@ -212,6 +212,7 @@ export const i18n_en = {
         SolarRadiationHeatmapOptions: 'Solar Radiation Heatmap Options',
         SolarRadiationHeatmapGridCellSize: 'Solar Radiation Heatmap Grid Cell Size',
         SolarRadiationHeatmapMaxValue: 'Solar Radiation Heatmap Maximum Value',
+        SolarRadiationHeatmapNoAnimation: 'No Animation for Static Model',
       },
       sensorSubMenu: 'Sensor',
       sensor: {

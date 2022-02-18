@@ -38,7 +38,7 @@ import enUS from 'antd/lib/locale/en_US';
 import React, { useState } from 'react';
 import { useStore } from './stores/common';
 import styled from 'styled-components';
-import { Checkbox, Dropdown, InputNumber, Menu, Modal, Radio, Select, Space } from 'antd';
+import { Checkbox, Dropdown, InputNumber, Menu, Modal, Radio, Select, Space, Switch } from 'antd';
 import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
 import About from './about';
@@ -144,6 +144,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const copyCutElements = useStore(Selector.copyCutElements);
   const getElementById = useStore(Selector.getElementById);
   const runSimulation = useStore(Selector.runSimulation);
+  const notAnimateSimulation = useStore(Selector.world.notAnimateSimulation);
 
   const [aboutUs, setAboutUs] = useState(false);
 
@@ -959,6 +960,19 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   onChange={(value) => {
                     setCommonStore((state) => {
                       state.viewState.solarRadiationHeatMapMaxValue = value;
+                    });
+                  }}
+                />
+              </Menu.Item>
+              <Menu.Item key={'solar-radiation-heatmap-no-animation'}>
+                <Space style={{ width: '280px' }}>
+                  {i18n.t('menu.physics.SolarRadiationHeatmapNoAnimation', lang) + ':'}
+                </Space>
+                <Switch
+                  checked={notAnimateSimulation}
+                  onChange={(checked) => {
+                    setCommonStore((state) => {
+                      state.world.notAnimateSimulation = checked;
                     });
                   }}
                 />

@@ -211,6 +211,7 @@ export const i18n_zh_tw = {
         SolarRadiationHeatmapOptions: '太陽輻射熱圖選項',
         SolarRadiationHeatmapGridCellSize: '太陽輻射熱圖網格的尺寸',
         SolarRadiationHeatmapMaxValue: '太陽輻射熱圖最大值',
+        SolarRadiationHeatmapNoAnimation: '若無移動部件則省略動畫',
       },
       sensorSubMenu: '傳感器',
       sensor: {
