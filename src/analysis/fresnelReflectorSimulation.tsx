@@ -83,7 +83,6 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   useEffect(() => {
     if (runDailySimulation) {
       initDaily();
-      pauseRef.current = false;
       requestRef.current = requestAnimationFrame(simulateDaily);
       return () => {
         // this is called when the recursive call of requestAnimationFrame exits
@@ -115,13 +114,16 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       setCommonStore((state) => {
         state.simulationPaused = false;
       });
+      // continue the simulation
       simulateDaily();
     }
   }, [pauseDailySimulation]);
 
   const initDaily = () => {
     if (pauseRef.current) {
+      // if the simulation has been paused, continue from the paused date
       now.setTime(pausedDateRef.current.getTime());
+      pauseRef.current = false;
     } else {
       originalDateRef.current = new Date(world.date);
       // beginning 30 minutes before the sunrise hour just in case and to provide a cue
@@ -263,22 +265,46 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
             state.simulationPaused = false;
           });
         }
+        pauseRef.current = false;
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runYearlySimulation]);
 
+  useEffect(() => {
+    pauseRef.current = pauseYearlySimulation;
+    if (pauseYearlySimulation) {
+      pausedDateRef.current = new Date(now.getTime());
+      cancelAnimationFrame(requestRef.current);
+      setCommonStore((state) => {
+        state.simulationPaused = true;
+      });
+      showInfo(i18n.t('message.SimulationPaused', lang));
+    } else {
+      setCommonStore((state) => {
+        state.simulationPaused = false;
+      });
+      // continue the simulation
+      simulateYearly();
+    }
+  }, [pauseYearlySimulation]);
+
   const initYearly = () => {
-    originalDateRef.current = new Date(world.date);
-    sampledDayRef.current = 0;
-    // begin from January, 22
-    now.setMonth(0, 22);
-    sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
-    now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -30);
-    // set the initial date so that the scene gets a chance to render before the simulation starts
-    setCommonStore((state) => {
-      state.world.date = now.toString();
-    });
+    if (pauseRef.current) {
+      // if the simulation has been paused, continue from the paused date
+      now.setTime(pausedDateRef.current.getTime());
+      pauseRef.current = false;
+    } else {
+      originalDateRef.current = new Date(world.date);
+      sampledDayRef.current = 0;
+      now.setMonth(0, 22); // begin from January, 22
+      sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
+      now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -30);
+      // set the initial date so that the scene gets a chance to render before the simulation starts
+      setCommonStore((state) => {
+        state.world.date = now.toString();
+      });
+    }
     simulationCompletedRef.current = false;
     fetchObjects();
     resetDailyOutputsMap();
@@ -286,7 +312,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   };
 
   const simulateYearly = () => {
-    if (runYearlySimulation) {
+    if (runYearlySimulation && !pauseRef.current) {
       const totalMinutes = now.getMinutes() + now.getHours() * 60;
       if (totalMinutes < sunMinutesRef.current.sunset) {
         // this is where time advances (by incrementing the minutes with the given interval)

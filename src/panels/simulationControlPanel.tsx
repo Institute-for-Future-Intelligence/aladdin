@@ -39,20 +39,30 @@ const SimulationControlPanel = () => {
       state.runSimulation = false;
       state.runDailySimulationForFresnelReflectors = false;
       state.runYearlySimulationForFresnelReflectors = false;
+      state.pauseDailySimulationForFresnelReflectors = false;
+      state.pauseYearlySimulationForFresnelReflectors = false;
     });
   };
 
   const pause = () => {
     setCommonStore((state) => {
-      state.pauseDailySimulationForFresnelReflectors = true;
-      state.pauseYearlySimulationForFresnelReflectors = true;
+      if (state.runDailySimulationForFresnelReflectors) {
+        state.pauseDailySimulationForFresnelReflectors = true;
+      }
+      if (state.runYearlySimulationForFresnelReflectors) {
+        state.pauseYearlySimulationForFresnelReflectors = true;
+      }
     });
   };
 
   const resume = () => {
     setCommonStore((state) => {
-      state.pauseDailySimulationForFresnelReflectors = false;
-      state.pauseYearlySimulationForFresnelReflectors = false;
+      if (state.runDailySimulationForFresnelReflectors) {
+        state.pauseDailySimulationForFresnelReflectors = false;
+      }
+      if (state.runYearlySimulationForFresnelReflectors) {
+        state.pauseYearlySimulationForFresnelReflectors = false;
+      }
     });
   };
 

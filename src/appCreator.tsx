@@ -79,6 +79,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const worldLongitude = useStore(Selector.world.longitude);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const simulationInProgress = useStore(Selector.simulationInProgress);
+  const simulationPaused = useStore(Selector.simulationPaused);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const sceneRadius = useStore(Selector.sceneRadius);
   const cameraZoom = useStore(Selector.viewState.cameraZoom) ?? 20;
@@ -228,7 +229,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {(loading || simulationInProgress) && (
         <>
           <SimulationControlPanel />
-          <Spinner />
+          <Spinner spinning={!simulationPaused} />
         </>
       )}
       <div
