@@ -66,32 +66,6 @@
       "solarReceiverApertureWidth": 1
     },
     {
-      "type": "Sensor",
-      "cx": -0.04131137325285942,
-      "cy": -0.04075500290358627,
-      "cz": 0,
-      "lx": 0.1,
-      "ly": 0.1,
-      "lz": 0.01,
-      "parentId": "kxHYpYsUs7XEocuTYAj1Qu",
-      "foundationId": "kxHYpYsUs7XEocuTYAj1Qu",
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "id": "vk2bUQCrQ9atyAvbvmNJw4",
-      "showLabel": true,
-      "light": true,
-      "heatFlux": false,
-      "selected": false
-    },
-    {
       "type": "Fresnel Reflector",
       "reflectance": 0.9,
       "absorptance": 0.95,

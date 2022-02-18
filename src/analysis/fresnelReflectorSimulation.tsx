@@ -356,7 +356,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   };
 
   const finishMonthly = () => {
-    const timeFactor = getTimeFactor();
+    const timeFactor = getTimeFactorByMonth();
     for (const e of elements) {
       if (e.type === ObjectType.FresnelReflector) {
         const reflector = e as FresnelReflectorModel;
@@ -533,6 +533,11 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   // apply clearness and convert the unit of time step from minute to hour so that we get kWh
   // (divided by times per hour as the radiation is added up that many times in an hour)
   const getTimeFactor = () => {
+    const daylight = sunMinutes.daylight() / 60;
+    return daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * timesPerHour) : 0;
+  };
+
+  const getTimeFactorByMonth = () => {
     const daylight = sunMinutesRef.current.daylight() / 60;
     return daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * timesPerHour) : 0;
   };
