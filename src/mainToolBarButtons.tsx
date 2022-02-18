@@ -31,6 +31,7 @@ import { UndoableCheck } from './undo/UndoableCheck';
 import { useStoreRef } from './stores/commonRef';
 import { showInfo } from './helpers';
 import { Util } from './Util';
+import { ALWAYS_RUN_DYNAMIC_SIMULATION } from './constants';
 
 const MainToolBarButtons = () => {
   const setCommonStore = useStore(Selector.set);
@@ -781,7 +782,11 @@ const MainToolBarButtons = () => {
         size={'3x'}
         color={showSolarRadiationHeatmap ? 'antiquewhite' : '#666666'}
         style={{ paddingRight: '12px', cursor: 'pointer' }}
-        onClick={Util.hasMovingParts(elements) ? toggleDynamicSolarRadiationHeatmap : toggleStaticSolarRadiationHeatmap}
+        onClick={
+          ALWAYS_RUN_DYNAMIC_SIMULATION || Util.hasMovingParts(elements)
+            ? toggleDynamicSolarRadiationHeatmap
+            : toggleStaticSolarRadiationHeatmap
+        }
       />
       <FontAwesomeIcon
         title={i18n.t('toolbar.ShowSunAndTimeSettings', lang)}

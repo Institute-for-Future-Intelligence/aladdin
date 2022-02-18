@@ -85,6 +85,8 @@ export const animateSun = (state: CommonStoreState) => state.animateSun;
 
 export const runSimulation = (state: CommonStoreState) => state.runSimulation;
 
+export const pauseSimulation = (state: CommonStoreState) => state.pauseSimulation;
+
 export const updateSceneRadiusFlag = (state: CommonStoreState) => state.updateSceneRadiusFlag;
 
 export const updateSceneRadius = (state: CommonStoreState) => state.updateSceneRadius;

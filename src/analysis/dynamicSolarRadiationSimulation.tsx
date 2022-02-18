@@ -46,6 +46,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const getParent = useStore(Selector.getParent);
   const setHeatmap = useStore(Selector.setHeatmap);
   const runSimulation = useStore(Selector.runSimulation);
+  const pauseSimulation = useStore(Selector.pauseSimulation);
 
   const { scene } = useThree();
   const lang = { lng: language };
@@ -61,6 +62,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const simulationCompletedRef = useRef<boolean>(false);
   const originalDateRef = useRef<Date>(new Date(world.date));
   const cellOutputsMapRef = useRef<Map<string, number[][]>>(new Map<string, number[][]>());
+  const pauseRef = useRef<boolean>(false);
+  const pausedDateRef = useRef<Date>(new Date(world.date));
 
   const sunMinutes = useMemo(() => {
     return computeSunriseAndSunsetInMinutes(now, world.latitude);
@@ -84,6 +87,24 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runSimulation]);
+
+  useEffect(() => {
+    pauseRef.current = pauseSimulation;
+    if (pauseSimulation) {
+      pausedDateRef.current = new Date(now.getTime());
+      cancelAnimationFrame(requestRef.current);
+      setCommonStore((state) => {
+        state.simulationPaused = true;
+      });
+      showInfo(i18n.t('message.SimulationPaused', lang));
+    } else {
+      setCommonStore((state) => {
+        state.simulationPaused = false;
+      });
+      // continue the simulation
+      simulate();
+    }
+  }, [pauseSimulation]);
 
   // getting ready for the simulation
   const init = () => {
@@ -166,7 +187,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   };
 
   const simulate = () => {
-    if (runSimulation) {
+    if (runSimulation && !pauseRef.current) {
       const totalMinutes = now.getMinutes() + now.getHours() * 60;
       if (totalMinutes >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);

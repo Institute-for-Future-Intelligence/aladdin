@@ -37,6 +37,7 @@ const SimulationControlPanel = () => {
   const cancel = () => {
     setCommonStore((state) => {
       state.runSimulation = false;
+      state.pauseSimulation = false;
       state.runDailySimulationForFresnelReflectors = false;
       state.runYearlySimulationForFresnelReflectors = false;
       state.pauseDailySimulationForFresnelReflectors = false;
@@ -46,6 +47,9 @@ const SimulationControlPanel = () => {
 
   const pause = () => {
     setCommonStore((state) => {
+      if (state.runSimulation) {
+        state.pauseSimulation = true;
+      }
       if (state.runDailySimulationForFresnelReflectors) {
         state.pauseDailySimulationForFresnelReflectors = true;
       }
@@ -57,6 +61,9 @@ const SimulationControlPanel = () => {
 
   const resume = () => {
     setCommonStore((state) => {
+      if (state.runSimulation) {
+        state.pauseSimulation = false;
+      }
       if (state.runDailySimulationForFresnelReflectors) {
         state.pauseDailySimulationForFresnelReflectors = false;
       }
