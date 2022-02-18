@@ -27,6 +27,7 @@ import parabolic_trough_array from './examples/parabolic_trough_array.json';
 import parabolic_dish_focus_sunlight from './examples/parabolic_dish_focus_sunlight.json';
 import parabolic_dish_array from './examples/parabolic_dish_array.json';
 import linear_fresnel_reflectors from './examples/linear_fresnel_reflectors.json';
+import linear_fresnel_reflectors_two_receivers from './examples/linear_fresnel_reflectors_two_receivers.json';
 import effect_receiver_tube_height from './examples/effect_receiver_tube_height.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
@@ -239,6 +240,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'linear_fresnel_reflectors':
         input = linear_fresnel_reflectors;
+        break;
+      case 'linear_fresnel_reflectors_two_receivers':
+        input = linear_fresnel_reflectors_two_receivers;
         break;
       case 'effect_receiver_tube_height':
         input = effect_receiver_tube_height;
@@ -1542,6 +1546,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="effect_receiver_tube_height" onClick={loadFile}>
             {i18n.t('menu.tutorials.EffectOfReceiverTubeHeightForLinearFresnelReflectors', lang)}
+          </Menu.Item>
+          <Menu.Item key="linear_fresnel_reflectors_two_receivers" onClick={loadFile}>
+            {i18n.t('menu.tutorials.LinearFresnelReflectorsWithTwoReceivers', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>

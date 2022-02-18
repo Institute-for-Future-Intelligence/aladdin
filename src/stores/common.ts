@@ -71,6 +71,7 @@ import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import { ParabolicDishModel } from '../models/ParabolicDishModel';
 import { ElementCounter } from './ElementCounter';
 import { ParabolicCollector } from '../models/ParabolicCollector';
+import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 
 enableMapSet();
 
@@ -2627,6 +2628,9 @@ export const useStore = create<CommonStoreState>(
                   if (e.type === ObjectType.ParabolicTrough) {
                     (e as ParabolicTroughModel).moduleLength = moduleLength;
                     break;
+                  } else if (e.type === ObjectType.FresnelReflector) {
+                    (e as FresnelReflectorModel).moduleLength = moduleLength;
+                    break;
                   }
                 }
               }
@@ -2639,6 +2643,8 @@ export const useStore = create<CommonStoreState>(
                 if (e.foundationId === foundationId && !e.locked) {
                   if (e.type === ObjectType.ParabolicTrough) {
                     (e as ParabolicTroughModel).moduleLength = moduleLength;
+                  } else if (e.type === ObjectType.FresnelReflector) {
+                    (e as FresnelReflectorModel).moduleLength = moduleLength;
                   }
                 }
               }
@@ -2651,6 +2657,8 @@ export const useStore = create<CommonStoreState>(
                 if (!e.locked) {
                   if (e.type === ObjectType.ParabolicTrough) {
                     (e as ParabolicTroughModel).moduleLength = moduleLength;
+                  } else if (e.type === ObjectType.FresnelReflector) {
+                    (e as FresnelReflectorModel).moduleLength = moduleLength;
                   }
                 }
               }
