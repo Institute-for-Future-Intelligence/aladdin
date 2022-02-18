@@ -92,8 +92,8 @@ const Foundation = ({
   selected = false,
   textureType = FoundationTexture.NoTexture,
   solarReceiver,
-  solarReceiverTubeRadius = 0.2,
-  solarReceiverTubeMountHeight = 10,
+  solarReceiverApertureWidth = 0.6,
+  solarReceiverHeight = 10,
   solarReceiverTubeRelativeLength = 0.8,
   solarReceiverTubePoleNumber = 5,
 }: FoundationModel) => {
@@ -239,12 +239,10 @@ const Foundation = ({
     const array: Vector3[] = [];
     const dy = (solarReceiverTubeRelativeLength * ly) / (solarReceiverTubePoleNumber + 1);
     for (let i = 1; i <= solarReceiverTubePoleNumber; i++) {
-      array.push(
-        new Vector3(0, i * dy - (solarReceiverTubeRelativeLength * ly) / 2, solarReceiverTubeMountHeight / 2 + lz),
-      );
+      array.push(new Vector3(0, i * dy - (solarReceiverTubeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz));
     }
     return array;
-  }, [lx, ly, solarReceiverTubePoleNumber, solarReceiverTubeMountHeight, solarReceiverTubeRelativeLength]);
+  }, [lx, ly, solarReceiverTubePoleNumber, solarReceiverHeight, solarReceiverTubeRelativeLength]);
 
   useEffect(() => {
     const unsubscribe = useStore.subscribe((state) => {
@@ -2285,8 +2283,8 @@ const Foundation = ({
                 name={'Receiver Vertical Tube 1'}
                 castShadow={false}
                 receiveShadow={false}
-                args={[solarReceiverTubeRadius, solarReceiverTubeRadius, solarReceiverTubeMountHeight, 6, 2]}
-                position={[0, (-solarReceiverTubeRelativeLength * ly) / 2, solarReceiverTubeMountHeight / 2 + lz]}
+                args={[solarReceiverApertureWidth / 4, solarReceiverApertureWidth / 4, solarReceiverHeight, 6, 2]}
+                position={[0, (-solarReceiverTubeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz]}
                 rotation={[HALF_PI, 0, 0]}
               >
                 <meshStandardMaterial attach="material" color={'white'} />
@@ -2296,8 +2294,8 @@ const Foundation = ({
                 name={'Receiver Vertical Tube 2'}
                 castShadow={false}
                 receiveShadow={false}
-                args={[solarReceiverTubeRadius, solarReceiverTubeRadius, solarReceiverTubeMountHeight, 6, 2]}
-                position={[0, (solarReceiverTubeRelativeLength * ly) / 2, solarReceiverTubeMountHeight / 2 + lz]}
+                args={[solarReceiverApertureWidth / 4, solarReceiverApertureWidth / 4, solarReceiverHeight, 6, 2]}
+                position={[0, (solarReceiverTubeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz]}
                 rotation={[HALF_PI, 0, 0]}
               >
                 <meshStandardMaterial attach="material" color={'white'} />
@@ -2308,16 +2306,16 @@ const Foundation = ({
                 castShadow={false}
                 receiveShadow={false}
                 args={[
-                  solarReceiverTubeRadius * 4,
-                  solarReceiverTubeRadius * 4,
-                  solarReceiverTubeRelativeLength * ly + solarReceiverTubeRadius * 2,
+                  solarReceiverApertureWidth / 2,
+                  solarReceiverApertureWidth / 2,
+                  solarReceiverTubeRelativeLength * ly + solarReceiverApertureWidth / 2,
                   6,
                   2,
                   false,
                   3 * HALF_PI,
                   Math.PI,
                 ]}
-                position={[0, 0, solarReceiverTubeMountHeight + lz - solarReceiverTubeRadius * 2]}
+                position={[0, 0, solarReceiverHeight + lz - solarReceiverApertureWidth / 4]}
                 rotation={[0, 0, 0]}
               >
                 <meshStandardMaterial attach="material" color={'white'} side={DoubleSide} />
@@ -2332,13 +2330,7 @@ const Foundation = ({
                       name={'Solar Receiver Pole ' + i}
                       castShadow={false}
                       receiveShadow={false}
-                      args={[
-                        solarReceiverTubeRadius / 2,
-                        solarReceiverTubeRadius / 2,
-                        solarReceiverTubeMountHeight,
-                        4,
-                        2,
-                      ]}
+                      args={[solarReceiverApertureWidth / 8, solarReceiverApertureWidth / 8, solarReceiverHeight, 4, 2]}
                       position={p}
                       rotation={[HALF_PI, 0, 0]}
                     >

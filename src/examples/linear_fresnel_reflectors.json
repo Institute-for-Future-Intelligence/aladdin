@@ -1,6 +1,6 @@
 {
-  "docid": "krNDY5XY2NM4oAwiMmFGB2",
-  "timestamp": 1645055105469,
+  "docid": "rABPS5US7ognrMnCZ8rUcV",
+  "timestamp": 1645193295074,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -62,7 +62,8 @@
       "selected": false,
       "solarReceiver": 1,
       "locked": false,
-      "solarReceiverTubeMountHeight": 16
+      "solarReceiverHeight": 16,
+      "solarReceiverApertureWidth": 1
     },
     {
       "type": "Sensor",
@@ -696,9 +697,9 @@
     "enableRotate": true,
     "ambientLightIntensity": 0.1,
     "cameraPosition": [
-      -4.3134808033828484,
-      -59.86674316721002,
-      7.504588219826619
+      0.21299989166615563,
+      -59.188603955836555,
+      12.473162077661332
     ],
     "cameraPosition2D": [
       0,

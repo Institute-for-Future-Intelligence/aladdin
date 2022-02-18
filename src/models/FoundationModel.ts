@@ -12,10 +12,10 @@ export interface FoundationModel extends ElementModel {
   solarReceiverAbsorptance?: number; // the percentage of energy absorbed by the receiver
   solarReceiverOpticalEfficiency?: number;
   solarReceiverThermalEfficiency?: number;
+  solarReceiverApertureWidth?: number;
+  solarReceiverHeight?: number;
 
   // tube receiver for Fresnel reflectors
-  solarReceiverTubeRadius?: number;
   solarReceiverTubeRelativeLength?: number;
-  solarReceiverTubeMountHeight?: number;
   solarReceiverTubePoleNumber?: number;
 }

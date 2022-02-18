@@ -264,10 +264,11 @@ export interface CommonStoreState {
   updateFoundationTextureById: (id: string, texture: FoundationTexture) => void;
   updateFoundationTextureForAll: (texture: FoundationTexture) => void;
   updateFoundationSolarReceiverById: (id: string, receiver: SolarReceiver | undefined) => void;
-  updateFoundationSolarReceiverTubeRadiusById: (id: string, radius: number) => void;
   updateFoundationSolarReceiverTubeRelativeLengthById: (id: string, relativeLength: number) => void;
-  updateFoundationSolarReceiverTubeMountHeightById: (id: string, mountHeight: number) => void;
-  updateFoundationSolarReceiverTubeMountHeightForAll: (mountHeight: number) => void;
+  updateFoundationSolarReceiverApertureWidthById: (id: string, apertureWidth: number) => void;
+  updateFoundationSolarReceiverApertureWidthForAll: (apertureWidth: number) => void;
+  updateFoundationSolarReceiverHeightById: (id: string, height: number) => void;
+  updateFoundationSolarReceiverHeightForAll: (height: number) => void;
   updateFoundationSolarReceiverAbsorptanceById: (id: string, absorptance: number) => void;
   updateFoundationSolarReceiverAbsorptanceForAll: (absorptance: number) => void;
   updateFoundationSolarReceiverOpticalEfficiencyById: (id: string, efficiency: number) => void;
@@ -1736,16 +1737,6 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          updateFoundationSolarReceiverTubeRadiusById(id, radius) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  (e as FoundationModel).solarReceiverTubeRadius = radius;
-                  break;
-                }
-              }
-            });
-          },
           updateFoundationSolarReceiverTubeRelativeLengthById(id, relativeLength) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -1756,26 +1747,48 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          updateFoundationSolarReceiverTubeMountHeightById(id, mountHeight) {
+          updateFoundationSolarReceiverApertureWidthById(id, apertureWidth) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  (e as FoundationModel).solarReceiverApertureWidth = apertureWidth;
+                  break;
+                }
+              }
+            });
+          },
+          updateFoundationSolarReceiverApertureWidthForAll(apertureWidth) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarReceiver) {
+                    f.solarReceiverApertureWidth = apertureWidth;
+                  }
+                }
+              }
+            });
+          },
+          updateFoundationSolarReceiverHeightById(id, height) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
                   const f = e as FoundationModel;
                   if (f.solarReceiver) {
-                    f.solarReceiverTubeMountHeight = mountHeight;
+                    f.solarReceiverHeight = height;
                   }
                   break;
                 }
               }
             });
           },
-          updateFoundationSolarReceiverTubeMountHeightForAll(mountHeight) {
+          updateFoundationSolarReceiverHeightForAll(height) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && !e.locked) {
                   const f = e as FoundationModel;
                   if (f.solarReceiver) {
-                    f.solarReceiverTubeMountHeight = mountHeight;
+                    f.solarReceiverHeight = height;
                   }
                 }
               }

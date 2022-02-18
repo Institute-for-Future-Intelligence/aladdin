@@ -197,17 +197,17 @@ export const setFoundationActionScope = (state: CommonStoreState) => state.setFo
 
 export const updateFoundationSolarReceiverById = (state: CommonStoreState) => state.updateFoundationSolarReceiverById;
 
-export const updateFoundationSolarReceiverTubeRadiusById = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverTubeRadiusById;
+export const updateFoundationSolarReceiverApertureWidthById = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverApertureWidthById;
 
-export const updateFoundationSolarReceiverTubeRelativeLengthById = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverTubeRelativeLengthById;
+export const updateFoundationSolarReceiverApertureWidthForAll = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverApertureWidthForAll;
 
-export const updateFoundationSolarReceiverTubeMountHeightById = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverTubeMountHeightById;
+export const updateFoundationSolarReceiverHeightById = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverHeightById;
 
-export const updateFoundationSolarReceiverTubeMountHeightForAll = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverTubeMountHeightForAll;
+export const updateFoundationSolarReceiverHeightForAll = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverHeightForAll;
 
 export const updateFoundationSolarReceiverAbsorptanceById = (state: CommonStoreState) =>
   state.updateFoundationSolarReceiverAbsorptanceById;
@@ -226,6 +226,9 @@ export const updateFoundationSolarReceiverThermalEfficiencyById = (state: Common
 
 export const updateFoundationSolarReceiverThermalEfficiencyForAll = (state: CommonStoreState) =>
   state.updateFoundationSolarReceiverThermalEfficiencyForAll;
+
+export const updateFoundationSolarReceiverTubeRelativeLengthById = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverTubeRelativeLengthById;
 
 export const updateFoundationTextureById = (state: CommonStoreState) => state.updateFoundationTextureById;
 

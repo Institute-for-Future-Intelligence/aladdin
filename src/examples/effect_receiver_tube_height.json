@@ -82,7 +82,7 @@
       "parentId": "Ground",
       "textureType": "No Foundation Texture",
       "solarReceiver": 1,
-      "solarReceiverTubeMountHeight": 10,
+      "solarReceiverHeight": 10,
       "id": "dzfAzy3H4GMkDSbVLaRN5i",
       "selected": false
     },
@@ -181,7 +181,7 @@
       "parentId": "Ground",
       "textureType": "No Foundation Texture",
       "solarReceiver": 1,
-      "solarReceiverTubeMountHeight": 20,
+      "solarReceiverHeight": 20,
       "id": "5Xds31NJFC5WSWmddVnFan",
       "selected": false
     },

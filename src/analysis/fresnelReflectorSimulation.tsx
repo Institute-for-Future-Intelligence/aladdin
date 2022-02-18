@@ -468,7 +468,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       ? new Vector3(
           -reflector.cx * foundation.lx,
           -reflector.cy * foundation.ly,
-          foundation.lz + (foundation.solarReceiverTubeMountHeight ?? 10),
+          foundation.lz + (foundation.solarReceiverHeight ?? 10),
         )
       : undefined;
     // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
