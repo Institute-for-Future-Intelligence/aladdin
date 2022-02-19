@@ -285,6 +285,7 @@ export const i18n_en = {
         LinearFresnelReflectorsWithTwoReceivers: 'Linear Fresnel Reflectors with Two Receivers',
         EffectOfReceiverTubeHeightForLinearFresnelReflectors:
           'Effect of Receiver Tube Height for Linear Fresnel Reflectors',
+        EffectOfAzimuthOfLinearFresnelReflectors: 'Effect of Azimuth of Linear Fresnel Reflectors',
       },
       examplesSubMenu: 'Examples',
       solarEnergySubMenu: 'Solar Energy',

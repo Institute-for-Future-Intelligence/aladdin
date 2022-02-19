@@ -29,6 +29,7 @@ import parabolic_dish_array from './examples/parabolic_dish_array.json';
 import linear_fresnel_reflectors from './examples/linear_fresnel_reflectors.json';
 import linear_fresnel_reflectors_two_receivers from './examples/linear_fresnel_reflectors_two_receivers.json';
 import effect_receiver_tube_height from './examples/effect_receiver_tube_height.json';
+import effect_azimuth_fresnel_reflector from './examples/effect_azimuth_fresnel_reflector.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -247,6 +248,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'effect_receiver_tube_height':
         input = effect_receiver_tube_height;
+        break;
+      case 'effect_azimuth_fresnel_reflector':
+        input = effect_azimuth_fresnel_reflector;
         break;
       case 'simple_house_01':
         input = simple_house_01;
@@ -1560,6 +1564,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="effect_receiver_tube_height" onClick={loadFile}>
             {i18n.t('menu.tutorials.EffectOfReceiverTubeHeightForLinearFresnelReflectors', lang)}
+          </Menu.Item>
+          <Menu.Item key="effect_azimuth_fresnel_reflector" onClick={loadFile}>
+            {i18n.t('menu.tutorials.EffectOfAzimuthOfLinearFresnelReflectors', lang)}
           </Menu.Item>
           <Menu.Item key="linear_fresnel_reflectors_two_receivers" onClick={loadFile}>
             {i18n.t('menu.tutorials.LinearFresnelReflectorsWithTwoReceivers', lang)}

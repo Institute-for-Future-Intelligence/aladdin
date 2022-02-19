@@ -692,15 +692,14 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     // convert the receiver's coordinates into those relative to the center of this reflector
     const receiverCenter = foundation.solarReceiver
       ? new Vector3(
-          -reflector.cx * foundation.lx,
-          -reflector.cy * foundation.ly,
-          foundation.lz + (foundation.solarReceiverHeight ?? 10),
+          foundation.cx - center.x,
+          foundation.cy - center.y,
+          foundation.cz - center.z + (foundation.solarReceiverHeight ?? 10),
         )
       : undefined;
     // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
     const rotationAxis = new Vector3(sinRot, cosRot, 0);
     const shiftedReceiverCenter = new Vector3();
-    // when the sun is out
     if (receiverCenter) {
       // the reflector moves only when there is a receiver
       shiftedReceiverCenter.set(receiverCenter.x, receiverCenter.y, receiverCenter.z);
@@ -714,8 +713,11 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
         normalVector = new Vector3(-0.001, 0, 1).normalize();
       }
+      if (!zRotZero) {
+        normalVector.applyAxisAngle(UNIT_VECTOR_POS_Z, -zRot);
+      }
       normal.copy(
-        originalNormal.clone().applyEuler(new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY')),
+        originalNormal.clone().applyEuler(new Euler(0, Math.atan2(normalVector.x, normalVector.z), zRot, 'ZXY')),
       );
     }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);

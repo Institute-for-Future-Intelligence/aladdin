@@ -283,6 +283,7 @@ export const i18n_zh_cn = {
         LinearFresnelReflectors: '用直线式菲涅尔反射镜聚焦陽光',
         LinearFresnelReflectorsWithTwoReceivers: '配备两个吸收器的直线式菲涅尔反射镜',
         EffectOfReceiverTubeHeightForLinearFresnelReflectors: '吸热长管的安装高度对直线式菲涅尔反射镜发电量的影响',
+        EffectOfAzimuthOfLinearFresnelReflectors: '直线式菲涅尔反射镜方位角对发电量的影响',
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太阳能',
