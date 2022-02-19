@@ -710,8 +710,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       shiftedReceiverCenter.x += shift * rotationAxis.x;
       shiftedReceiverCenter.y -= shift * rotationAxis.y;
       const reflectorToReceiver = shiftedReceiverCenter.clone().normalize();
-      // no need to normalize as both vectors to add have already been normalized
-      let normalVector = reflectorToReceiver.add(sunDirection).multiplyScalar(0.5);
+      let normalVector = reflectorToReceiver.add(sunDirection).normalize();
       if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
         normalVector = new Vector3(-0.001, 0, 1).normalize();
       }

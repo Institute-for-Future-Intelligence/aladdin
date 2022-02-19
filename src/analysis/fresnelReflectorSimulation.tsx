@@ -468,9 +468,9 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     // convert the receiver's coordinates into those relative to the center of this reflector
     const receiverCenter = foundation.solarReceiver
       ? new Vector3(
-          -reflector.cx * foundation.lx,
-          -reflector.cy * foundation.ly,
-          foundation.lz + (foundation.solarReceiverHeight ?? 10),
+          foundation.cx - center.x,
+          foundation.cy - center.y,
+          foundation.cz - center.z + (foundation.solarReceiverHeight ?? 10),
         )
       : undefined;
     // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
@@ -485,24 +485,20 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       shiftedReceiverCenter.x += shift * rotationAxis.x;
       shiftedReceiverCenter.y -= shift * rotationAxis.y;
       const reflectorToReceiver = shiftedReceiverCenter.clone().normalize();
-      // no need to normalize the following vector as both vectors to add have already been normalized
-      let normalVector = reflectorToReceiver.add(sunDirection).multiplyScalar(0.5);
+      let normalVector = reflectorToReceiver.add(sunDirection).normalize();
       // avoid singularity: atan(x, y) = infinity if x = 0
       if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
         normalVector = new Vector3(-0.001, 0, 1).normalize();
       }
+      if (!zRotZero) {
+        normalVector.applyAxisAngle(UNIT_VECTOR_POS_Z, -zRot);
+      }
       normal.copy(
-        originalNormal.clone().applyEuler(new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY')),
+        originalNormal.clone().applyEuler(new Euler(0, Math.atan2(normalVector.x, normalVector.z), zRot, 'ZXY')),
       );
     }
     // the unit of radiation is kW/m^2
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-    const indirectRadiation = calculateDiffuseAndReflectedRadiation(
-      world.ground,
-      now.getMonth(),
-      normal,
-      peakRadiation,
-    );
     let sum = 0;
     const dot = normal.dot(sunDirection);
     const v2 = new Vector2();
@@ -510,7 +506,6 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     for (let ku = 0; ku < nx; ku++) {
       tmpX = x0 + ku * dx;
       for (let kv = 0; kv < ny; kv++) {
-        sum += indirectRadiation;
         if (dot > 0) {
           v2.set(tmpX, y0 + kv * dy);
           if (!zRotZero) v2.rotateAround(center2d, zRot);
