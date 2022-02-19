@@ -25,6 +25,7 @@ export class DefaultWorldModel implements WorldModel {
   airAttenuationCoefficient: number;
   timesPerHour: number;
   daysPerYear: number;
+  dustLoss: number;
   solarPanelGridCellSize: number;
   discretization: Discretization;
   solarPanelVisibilityGridCellSize: number;
@@ -54,6 +55,7 @@ export class DefaultWorldModel implements WorldModel {
 
     this.timesPerHour = 4; // how many times per hour to collect data
     this.daysPerYear = 12; // how many days per year for sampling
+    this.dustLoss = 0.05;
     this.solarPanelGridCellSize = 0.5;
     this.discretization = Discretization.APPROXIMATE;
     this.solarPanelVisibilityGridCellSize = 0.2;

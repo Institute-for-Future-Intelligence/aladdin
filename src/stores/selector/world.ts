@@ -18,6 +18,8 @@ export const timesPerHour = (state: CommonStoreState) => state.world.timesPerHou
 
 export const daysPerYear = (state: CommonStoreState) => state.world.daysPerYear;
 
+export const dustLoss = (state: CommonStoreState) => state.world.dustLoss;
+
 export const discretization = (state: CommonStoreState) => state.world.discretization;
 
 export const solarRadiationHeatmapGridCellSize = (state: CommonStoreState) =>

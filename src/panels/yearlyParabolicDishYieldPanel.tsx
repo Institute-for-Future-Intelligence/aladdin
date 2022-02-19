@@ -69,6 +69,7 @@ export interface YearlyParabolicDishYieldPanelProps {
 const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
+  const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
   const now = useStore(Selector.world.date);
   const yearlyYield = useStore(Selector.yearlyParabolicDishYield);
   const individualOutputs = useStore(Selector.yearlyParabolicDishIndividualOutputs);
@@ -162,7 +163,8 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
   if (individualOutputs) {
     dishSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
     totalTooltip += '——————————\n';
-    totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
+    totalTooltip +=
+      i18n.t('word.Total', lang) + ': ' + ((sum * 12) / daysPerYear).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
 
   return (
@@ -215,7 +217,8 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
               </Space>
             ) : (
               <Space>
-                {i18n.t('parabolicDishYieldPanel.YearlyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
+                {i18n.t('parabolicDishYieldPanel.YearlyTotal', lang)}:{((sum * 12) / daysPerYear).toFixed(2)}{' '}
+                {i18n.t('word.kWh', lang)}
               </Space>
             )}
             {parabolicDishCount > 1 && (
@@ -233,9 +236,10 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
+                      state.runYearlySimulationForParabolicDishes = true;
+                      state.pauseYearlySimulationForParabolicDishes = false;
                       state.simulationInProgress = true;
                       state.yearlyParabolicDishIndividualOutputs = checked;
-                      state.yearlyParabolicDishFlag = !state.yearlyParabolicDishFlag;
                     });
                   }, 100);
                 }}
@@ -254,8 +258,9 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
                 // give it 0.1 second for the info to show up
                 setTimeout(() => {
                   setCommonStore((state) => {
+                    state.runYearlySimulationForParabolicDishes = true;
+                    state.pauseYearlySimulationForParabolicDishes = false;
                     state.simulationInProgress = true;
-                    state.yearlyParabolicDishFlag = !state.yearlyParabolicDishFlag;
                   });
                 }, 100);
               }}

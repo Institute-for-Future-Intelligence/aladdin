@@ -1464,7 +1464,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 setCommonStore((state) => {
                   state.simulationInProgress = true;
                   state.dailyParabolicDishIndividualOutputs = false;
-                  state.dailyParabolicDishFlag = !state.dailyParabolicDishFlag;
+                  state.runDailySimulationForParabolicDishes = true;
                 });
               }, 100);
             }}
@@ -1485,7 +1485,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 setCommonStore((state) => {
                   state.simulationInProgress = true;
                   state.yearlyParabolicDishIndividualOutputs = false;
-                  state.yearlyParabolicDishFlag = !state.yearlyParabolicDishFlag;
+                  state.runYearlySimulationForParabolicDishes = true;
                 });
               }, 100);
             }}
@@ -1511,6 +1511,28 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   }}
                 />
                 <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.TimesPerHour', lang)}</Space>
+              </Menu.Item>
+              <Menu.Item key={'parabolic-dish-simulation-sampling-days'}>
+                <Select
+                  style={{ marginLeft: '150px', width: '60px' }}
+                  value={cspDaysPerYear ?? 6}
+                  onChange={(value) => {
+                    setCommonStore((state) => {
+                      state.world.cspDaysPerYear = value;
+                    });
+                  }}
+                >
+                  <Option key={4} value={4}>
+                    4
+                  </Option>
+                  <Option key={6} value={6}>
+                    6
+                  </Option>
+                  <Option key={12} value={12}>
+                    12
+                  </Option>
+                </Select>
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.DaysPerYear', lang)}</Space>
               </Menu.Item>
               <Menu.Item key={'parabolic-dish-simulation-grid-cell-size'}>
                 <Space style={{ width: '150px' }}>{i18n.t('menu.parabolicDish.GridCellSize', lang) + ':'}</Space>

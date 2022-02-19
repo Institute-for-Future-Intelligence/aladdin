@@ -495,12 +495,14 @@ export interface CommonStoreState {
   fresnelReflectorLabels: string[];
   setFresnelReflectorLabels: (labels: string[]) => void;
 
+  runDailySimulationForParabolicDishes: boolean;
+  runYearlySimulationForParabolicDishes: boolean;
+  pauseDailySimulationForParabolicDishes: boolean;
+  pauseYearlySimulationForParabolicDishes: boolean;
   dailyParabolicDishYield: DatumEntry[];
-  dailyParabolicDishFlag: boolean;
   dailyParabolicDishIndividualOutputs: boolean;
   setDailyParabolicDishYield: (data: DatumEntry[]) => void;
   yearlyParabolicDishYield: DatumEntry[];
-  yearlyParabolicDishFlag: boolean;
   yearlyParabolicDishIndividualOutputs: boolean;
   setYearlyParabolicDishYield: (data: DatumEntry[]) => void;
   parabolicDishLabels: string[];
@@ -797,20 +799,22 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          yearlyParabolicDishYield: [],
-          yearlyParabolicDishFlag: false,
-          yearlyParabolicDishIndividualOutputs: false,
-          setYearlyParabolicDishYield(data) {
-            immerSet((state: CommonStoreState) => {
-              state.yearlyParabolicDishYield = [...data];
-            });
-          },
+          runDailySimulationForParabolicDishes: false,
+          runYearlySimulationForParabolicDishes: false,
+          pauseDailySimulationForParabolicDishes: false,
+          pauseYearlySimulationForParabolicDishes: false,
           dailyParabolicDishYield: [],
-          dailyParabolicDishFlag: false,
           dailyParabolicDishIndividualOutputs: false,
           setDailyParabolicDishYield(data) {
             immerSet((state: CommonStoreState) => {
               state.dailyParabolicDishYield = [...data];
+            });
+          },
+          yearlyParabolicDishYield: [],
+          yearlyParabolicDishIndividualOutputs: false,
+          setYearlyParabolicDishYield(data) {
+            immerSet((state: CommonStoreState) => {
+              state.yearlyParabolicDishYield = [...data];
             });
           },
           parabolicDishLabels: [],

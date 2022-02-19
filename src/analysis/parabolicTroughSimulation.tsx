@@ -51,7 +51,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
   const monthInterval = 12 / daysPerYear;
   const ray = useMemo(() => new Raycaster(), []);
   const now = new Date(world.date);
-  const dustLoss = 0.05;
+  const dustLoss = world.dustLoss ?? 0.05;
   const cellSize = world.cspGridCellSize ?? 0.5;
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
@@ -453,7 +453,6 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     const rot = parent.rotation[2];
     const cosRot = zRotZero ? 1 : Math.cos(zRot);
     const sinRot = zRotZero ? 0 : Math.sin(zRot);
-    // a shift of 30 minutes minute half of the interval ensures the symmetry of the result around noon
     const rotatedSunDirection = rot
       ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
       : sunDirection.clone();

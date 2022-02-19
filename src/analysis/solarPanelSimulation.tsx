@@ -59,7 +59,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const loadedDaily = useRef(false);
   const loadedYearly = useRef(false);
   const inverterEfficiency = 0.95;
-  const dustLoss = 0.05;
+  const dustLoss = world.dustLoss ?? 0.05;
   const cellSize = world.solarPanelGridCellSize ?? 0.25;
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection

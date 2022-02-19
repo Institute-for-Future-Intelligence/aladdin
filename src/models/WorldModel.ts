@@ -22,6 +22,7 @@ export interface WorldModel {
 
   timesPerHour: number;
   daysPerYear: number;
+  dustLoss: number;
   solarRadiationHeatmapGridCellSize: number;
   solarPanelGridCellSize: number;
   discretization: Discretization;

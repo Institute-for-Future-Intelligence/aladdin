@@ -52,7 +52,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const monthInterval = 12 / daysPerYear;
   const ray = useMemo(() => new Raycaster(), []);
   const now = new Date(world.date);
-  const dustLoss = 0.05;
+  const dustLoss = world.dustLoss ?? 0.05;
   const cellSize = world.cspGridCellSize ?? 0.5;
   const objectsRef = useRef<Object3D[]>([]);
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection

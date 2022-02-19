@@ -233,9 +233,10 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
+                      state.runDailySimulationForParabolicDishes = true;
+                      state.pauseDailySimulationForParabolicDishes = false;
                       state.simulationInProgress = true;
                       state.dailyParabolicDishIndividualOutputs = checked;
-                      state.dailyParabolicDishFlag = !state.dailyParabolicDishFlag;
                     });
                   }, 100);
                 }}
@@ -254,8 +255,9 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
                 // give it 0.1 second for the info to show up
                 setTimeout(() => {
                   setCommonStore((state) => {
+                    state.runDailySimulationForParabolicDishes = true;
+                    state.pauseDailySimulationForParabolicDishes = false;
                     state.simulationInProgress = true;
-                    state.dailyParabolicDishFlag = !state.dailyParabolicDishFlag;
                   });
                 }, 100);
               }}

@@ -644,9 +644,19 @@ export const setFresnelReflectorLabels = (state: CommonStoreState) => state.setF
 
 // parabolic dishes (CSP)
 
-export const dailyParabolicDishYield = (state: CommonStoreState) => state.dailyParabolicDishYield;
+export const runDailySimulationForParabolicDishes = (state: CommonStoreState) =>
+  state.runDailySimulationForParabolicDishes;
 
-export const dailyParabolicDishFlag = (state: CommonStoreState) => state.dailyParabolicDishFlag;
+export const runYearlySimulationForParabolicDishes = (state: CommonStoreState) =>
+  state.runYearlySimulationForParabolicDishes;
+
+export const pauseDailySimulationForParabolicDishes = (state: CommonStoreState) =>
+  state.pauseDailySimulationForParabolicDishes;
+
+export const pauseYearlySimulationForParabolicDishes = (state: CommonStoreState) =>
+  state.pauseYearlySimulationForParabolicDishes;
+
+export const dailyParabolicDishYield = (state: CommonStoreState) => state.dailyParabolicDishYield;
 
 export const dailyParabolicDishIndividualOutputs = (state: CommonStoreState) =>
   state.dailyParabolicDishIndividualOutputs;
@@ -654,8 +664,6 @@ export const dailyParabolicDishIndividualOutputs = (state: CommonStoreState) =>
 export const setDailyParabolicDishYield = (state: CommonStoreState) => state.setDailyParabolicDishYield;
 
 export const yearlyParabolicDishYield = (state: CommonStoreState) => state.yearlyParabolicDishYield;
-
-export const yearlyParabolicDishFlag = (state: CommonStoreState) => state.yearlyParabolicDishFlag;
 
 export const yearlyParabolicDishIndividualOutputs = (state: CommonStoreState) =>
   state.yearlyParabolicDishIndividualOutputs;
