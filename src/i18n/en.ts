@@ -165,6 +165,13 @@ export const i18n_en = {
     },
 
     menu: {
+      AnalysisOptions: 'Analysis Options',
+      option: {
+        GridCellSize: 'Grid Cell Size',
+        SamplingFrequency: 'Sampling Frequency',
+        TimesPerHour: 'Times per Hour',
+        DaysPerYear: 'Days per Year',
+      },
       mainMenu: 'Main Menu',
       cloudMenu: 'Cloud Menu',
       fileSubMenu: 'File',
@@ -218,9 +225,6 @@ export const i18n_en = {
       sensor: {
         CollectDailyData: 'Collect Daily Data',
         CollectYearlyData: 'Collect Yearly Data',
-        SamplingFrequency: 'Sampling Frequency',
-        TimesPerHour: 'Times per Hour',
-        DaysPerYear: 'Days per Year',
         SensorSimulationNoAnimation: 'No Animation for Collecting Sensor Data',
       },
       solarPanelSubMenu: 'Solar Panel',
@@ -240,29 +244,21 @@ export const i18n_en = {
       parabolicTrough: {
         AnalyzeDailyYield: 'Analyze Daily Yield',
         AnalyzeYearlyYield: 'Analyze Yearly Yield',
-        GridCellSize: 'Grid Cell Size',
-        AnalysisOptions: 'Analysis Options',
       },
       parabolicDishSubMenu: 'Parabolic Dish',
       parabolicDish: {
         AnalyzeDailyYield: 'Analyze Daily Yield',
         AnalyzeYearlyYield: 'Analyze Yearly Yield',
-        GridCellSize: 'Grid Cell Size',
-        AnalysisOptions: 'Analysis Options',
       },
       fresnelReflectorSubMenu: 'Fresnel Reflector',
       fresnelReflector: {
         AnalyzeDailyYield: 'Analyze Daily Yield',
         AnalyzeYearlyYield: 'Analyze Yearly Yield',
-        GridCellSize: 'Grid Cell Size',
-        AnalysisOptions: 'Analysis Options',
       },
       heliostatSubMenu: 'Heliostat',
       heliostat: {
         AnalyzeDailyYield: 'Analyze Daily Yield',
         AnalyzeYearlyYield: 'Analyze Yearly Yield',
-        GridCellSize: 'Grid Cell Size',
-        AnalysisOptions: 'Analysis Options',
       },
       tutorialsSubMenu: 'Tutorials',
       solarEnergyScienceSubMenu: 'Solar Science',

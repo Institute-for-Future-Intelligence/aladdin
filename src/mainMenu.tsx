@@ -57,6 +57,7 @@ import { Undoable } from './undo/Undoable';
 import { useStoreRef } from './stores/commonRef';
 import { UndoableDelete } from './undo/UndoableDelete';
 import { UndoablePaste } from './undo/UndoablePaste';
+import CspSimulationSettings from './components/contextMenu/elementMenu/cspSimulationSettings';
 
 const { SubMenu } = Menu;
 const { Option } = Select;
@@ -114,9 +115,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const discretization = useStore(Selector.world.discretization);
   const solarPanelGridCellSize = useStore(Selector.world.solarPanelGridCellSize);
   const solarPanelVisibilityGridCellSize = useStore(Selector.world.solarPanelVisibilityGridCellSize);
-  const cspTimesPerHour = useStore(Selector.world.cspTimesPerHour);
-  const cspDaysPerYear = useStore(Selector.world.cspDaysPerYear);
-  const cspGridCellSize = useStore(Selector.world.cspGridCellSize);
   const solarRadiationHeatmapGridCellSize = useStore(Selector.world.solarRadiationHeatmapGridCellSize);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const orthographic = useStore(Selector.viewState.orthographic);
@@ -1035,7 +1033,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <SubMenu key={'sensor-simulation-options'} title={i18n.t('word.Options', lang)}>
             <Menu>
               <Menu.Item key={'sensor-simulation-sampling-frequency'}>
-                <Space style={{ width: '150px' }}>{i18n.t('menu.sensor.SamplingFrequency', lang) + ':'}</Space>
+                <Space style={{ width: '150px' }}>{i18n.t('menu.option.SamplingFrequency', lang) + ':'}</Space>
                 <InputNumber
                   min={1}
                   max={60}
@@ -1050,7 +1048,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                     });
                   }}
                 />
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.TimesPerHour', lang)}</Space>
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.option.TimesPerHour', lang)}</Space>
               </Menu.Item>
               <Menu.Item key={'sensor-simulation-no-animation'}>
                 <Space style={{ width: '280px' }}>
@@ -1119,7 +1117,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           >
             <Menu>
               <Menu.Item key={'solar-panel-simulation-sampling-frequency'}>
-                <Space style={{ width: '150px' }}>{i18n.t('menu.sensor.SamplingFrequency', lang) + ':'}</Space>
+                <Space style={{ width: '150px' }}>{i18n.t('menu.option.SamplingFrequency', lang) + ':'}</Space>
                 <InputNumber
                   min={1}
                   max={60}
@@ -1134,7 +1132,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                     });
                   }}
                 />
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.TimesPerHour', lang)}</Space>
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.option.TimesPerHour', lang)}</Space>
               </Menu.Item>
               <Menu.Item key={'solar-panel-discretization'}>
                 <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanel.PanelDiscretization', lang) + ':'}</Space>
@@ -1270,71 +1268,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           >
             {i18n.t('menu.parabolicTrough.AnalyzeYearlyYield', lang)}
           </Menu.Item>
-          <SubMenu
-            key={'parabolic-trough-analysis-options'}
-            title={i18n.t('menu.parabolicTrough.AnalysisOptions', lang)}
-          >
-            <Menu>
-              <Menu.Item key={'parabolic-trough-simulation-sampling-frequency'}>
-                <Space style={{ width: '150px' }}>{i18n.t('menu.sensor.SamplingFrequency', lang) + ':'}</Space>
-                <InputNumber
-                  min={1}
-                  max={60}
-                  step={1}
-                  style={{ width: 60 }}
-                  precision={0}
-                  value={cspTimesPerHour ?? 4}
-                  formatter={(a) => Number(a).toFixed(0)}
-                  onChange={(value) => {
-                    setCommonStore((state) => {
-                      state.world.cspTimesPerHour = value;
-                    });
-                  }}
-                />
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.TimesPerHour', lang)}</Space>
-              </Menu.Item>
-              <Menu.Item key={'parabolic-trough-simulation-sampling-days'}>
-                <Select
-                  style={{ marginLeft: '150px', width: '60px' }}
-                  value={cspDaysPerYear ?? 6}
-                  onChange={(value) => {
-                    setCommonStore((state) => {
-                      state.world.cspDaysPerYear = value;
-                    });
-                  }}
-                >
-                  <Option key={4} value={4}>
-                    4
-                  </Option>
-                  <Option key={6} value={6}>
-                    6
-                  </Option>
-                  <Option key={12} value={12}>
-                    12
-                  </Option>
-                </Select>
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.DaysPerYear', lang)}</Space>
-              </Menu.Item>
-              <Menu.Item key={'parabolic-trough-simulation-grid-cell-size'}>
-                <Space style={{ width: '150px' }}>{i18n.t('menu.parabolicTrough.GridCellSize', lang) + ':'}</Space>
-                <InputNumber
-                  min={0.1}
-                  max={5}
-                  step={0.1}
-                  style={{ width: 60 }}
-                  precision={1}
-                  value={cspGridCellSize ?? 0.5}
-                  formatter={(a) => Number(a).toFixed(1)}
-                  onChange={(value) => {
-                    setCommonStore((state) => {
-                      state.world.cspGridCellSize = value;
-                    });
-                  }}
-                />
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
-              </Menu.Item>
-            </Menu>
-          </SubMenu>
+          <CspSimulationSettings name={'parabolic-trough'} />
         </SubMenu>
 
         {/* Fresnel reflector */}
@@ -1381,71 +1315,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           >
             {i18n.t('menu.fresnelReflector.AnalyzeYearlyYield', lang)}
           </Menu.Item>
-          <SubMenu
-            key={'fresnel-reflector-analysis-options'}
-            title={i18n.t('menu.fresnelReflector.AnalysisOptions', lang)}
-          >
-            <Menu>
-              <Menu.Item key={'fresnel-reflector-simulation-sampling-frequency'}>
-                <Space style={{ width: '150px' }}>{i18n.t('menu.sensor.SamplingFrequency', lang) + ':'}</Space>
-                <InputNumber
-                  min={1}
-                  max={60}
-                  step={1}
-                  style={{ width: 60 }}
-                  precision={0}
-                  value={cspTimesPerHour ?? 4}
-                  formatter={(a) => Number(a).toFixed(0)}
-                  onChange={(value) => {
-                    setCommonStore((state) => {
-                      state.world.cspTimesPerHour = value;
-                    });
-                  }}
-                />
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.TimesPerHour', lang)}</Space>
-              </Menu.Item>
-              <Menu.Item key={'fresnel-reflector-simulation-sampling-days'}>
-                <Select
-                  style={{ marginLeft: '150px', width: '60px' }}
-                  value={cspDaysPerYear ?? 6}
-                  onChange={(value) => {
-                    setCommonStore((state) => {
-                      state.world.cspDaysPerYear = value;
-                    });
-                  }}
-                >
-                  <Option key={4} value={4}>
-                    4
-                  </Option>
-                  <Option key={6} value={6}>
-                    6
-                  </Option>
-                  <Option key={12} value={12}>
-                    12
-                  </Option>
-                </Select>
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.DaysPerYear', lang)}</Space>
-              </Menu.Item>
-              <Menu.Item key={'fresnel-reflector-simulation-grid-cell-size'}>
-                <Space style={{ width: '150px' }}>{i18n.t('menu.fresnelReflector.GridCellSize', lang) + ':'}</Space>
-                <InputNumber
-                  min={0.1}
-                  max={5}
-                  step={0.1}
-                  style={{ width: 60 }}
-                  precision={1}
-                  value={cspGridCellSize ?? 0.5}
-                  formatter={(a) => Number(a).toFixed(1)}
-                  onChange={(value) => {
-                    setCommonStore((state) => {
-                      state.world.cspGridCellSize = value;
-                    });
-                  }}
-                />
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
-              </Menu.Item>
-            </Menu>
-          </SubMenu>
+          <CspSimulationSettings name={'fresnel-reflector'} />
         </SubMenu>
 
         {/* parabolic dishes */}
@@ -1492,68 +1362,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           >
             {i18n.t('menu.parabolicDish.AnalyzeYearlyYield', lang)}
           </Menu.Item>
-          <SubMenu key={'parabolic-dish-analysis-options'} title={i18n.t('menu.parabolicDish.AnalysisOptions', lang)}>
-            <Menu>
-              <Menu.Item key={'parabolic-dish-simulation-sampling-frequency'}>
-                <Space style={{ width: '150px' }}>{i18n.t('menu.sensor.SamplingFrequency', lang) + ':'}</Space>
-                <InputNumber
-                  min={1}
-                  max={60}
-                  step={1}
-                  style={{ width: 60 }}
-                  precision={0}
-                  value={cspTimesPerHour ?? 4}
-                  formatter={(a) => Number(a).toFixed(0)}
-                  onChange={(value) => {
-                    setCommonStore((state) => {
-                      state.world.cspTimesPerHour = value;
-                    });
-                  }}
-                />
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.TimesPerHour', lang)}</Space>
-              </Menu.Item>
-              <Menu.Item key={'parabolic-dish-simulation-sampling-days'}>
-                <Select
-                  style={{ marginLeft: '150px', width: '60px' }}
-                  value={cspDaysPerYear ?? 6}
-                  onChange={(value) => {
-                    setCommonStore((state) => {
-                      state.world.cspDaysPerYear = value;
-                    });
-                  }}
-                >
-                  <Option key={4} value={4}>
-                    4
-                  </Option>
-                  <Option key={6} value={6}>
-                    6
-                  </Option>
-                  <Option key={12} value={12}>
-                    12
-                  </Option>
-                </Select>
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.sensor.DaysPerYear', lang)}</Space>
-              </Menu.Item>
-              <Menu.Item key={'parabolic-dish-simulation-grid-cell-size'}>
-                <Space style={{ width: '150px' }}>{i18n.t('menu.parabolicDish.GridCellSize', lang) + ':'}</Space>
-                <InputNumber
-                  min={0.1}
-                  max={5}
-                  step={0.1}
-                  style={{ width: 60 }}
-                  precision={1}
-                  value={cspGridCellSize ?? 0.5}
-                  formatter={(a) => Number(a).toFixed(1)}
-                  onChange={(value) => {
-                    setCommonStore((state) => {
-                      state.world.cspGridCellSize = value;
-                    });
-                  }}
-                />
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
-              </Menu.Item>
-            </Menu>
-          </SubMenu>
+          <CspSimulationSettings name={'parabolic-dish'} />
         </SubMenu>
       </SubMenu>
 

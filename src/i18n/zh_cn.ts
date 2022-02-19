@@ -164,6 +164,13 @@ export const i18n_zh_cn = {
     },
 
     menu: {
+      AnalysisOptions: '分析选项',
+      option: {
+        GridCellSize: '计算网格的尺寸',
+        SamplingFrequency: '采样频率',
+        TimesPerHour: '每小时采样次数',
+        DaysPerYear: '每一年采样天数',
+      },
       mainMenu: '主菜单',
       cloudMenu: '云菜单',
       fileSubMenu: '文件',
@@ -217,9 +224,6 @@ export const i18n_zh_cn = {
       sensor: {
         CollectDailyData: '收集当天数据',
         CollectYearlyData: '收集全年数据',
-        SamplingFrequency: '采样频率',
-        TimesPerHour: '每小时采样次数',
-        DaysPerYear: '每一年采样天数',
         SensorSimulationNoAnimation: '若无移动部件则省略动画',
       },
       solarPanelSubMenu: '太阳能光伏板',
@@ -239,29 +243,21 @@ export const i18n_zh_cn = {
       parabolicTrough: {
         AnalyzeDailyYield: '分析当天产出',
         AnalyzeYearlyYield: '分析全年产出',
-        GridCellSize: '计算网格的尺寸',
-        AnalysisOptions: '分析选项',
       },
       parabolicDishSubMenu: '抛物线碟',
       parabolicDish: {
         AnalyzeDailyYield: '分析当天产出',
         AnalyzeYearlyYield: '分析全年产出',
-        GridCellSize: '计算网格的尺寸',
-        AnalysisOptions: '分析选项',
       },
       fresnelReflectorSubMenu: '菲涅尔反射镜',
       fresnelReflector: {
         AnalyzeDailyYield: '分析当天产出',
         AnalyzeYearlyYield: '分析全年产出',
-        GridCellSize: '计算网格的尺寸',
-        AnalysisOptions: '分析选项',
       },
       heliostatSubMenu: '定日镜',
       heliostat: {
         AnalyzeDailyYield: '分析当天产出',
         AnalyzeYearlyYield: '分析全年产出',
-        GridCellSize: '计算网格的尺寸',
-        AnalysisOptions: '分析选项',
       },
       tutorialsSubMenu: '教程',
       solarEnergyScienceSubMenu: '太阳能科学',
