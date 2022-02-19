@@ -3,12 +3,7 @@
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
-import {
-  calculateDiffuseAndReflectedRadiation,
-  calculatePeakRadiation,
-  computeSunriseAndSunsetInMinutes,
-  getSunDirection,
-} from './sunTools';
+import { calculatePeakRadiation, computeSunriseAndSunsetInMinutes, getSunDirection } from './sunTools';
 import { Euler, Intersection, Object3D, Raycaster, Vector2, Vector3 } from 'three';
 import { useThree } from '@react-three/fiber';
 import { useStore } from '../stores/common';
@@ -385,10 +380,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         if (e.type === ObjectType.FresnelReflector) {
           const output = yearlyOutputsMapRef.current.get(e.id);
           if (output) {
-            updateYearlyYield(
-              e.id,
-              output.reduce((a, b) => a + b, 0),
-            );
+            updateYearlyYield(e.id, output.reduce((a, b) => a + b, 0) * monthInterval);
             resultArr.push(output);
             index++;
             labels.push(e.label ?? 'Reflector' + index);
@@ -412,10 +404,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         if (e.type === ObjectType.FresnelReflector) {
           const output = yearlyOutputsMapRef.current.get(e.id);
           if (output) {
-            updateYearlyYield(
-              e.id,
-              output.reduce((a, b) => a + b, 0),
-            );
+            updateYearlyYield(e.id, output.reduce((a, b) => a + b, 0) * monthInterval);
             resultArr.push(output);
           }
         }

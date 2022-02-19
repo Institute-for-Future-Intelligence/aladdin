@@ -469,12 +469,14 @@ export interface CommonStoreState {
   solarPanelLabels: string[];
   setSolarPanelLabels: (labels: string[]) => void;
 
+  runDailySimulationForParabolicTroughs: boolean;
+  runYearlySimulationForParabolicTroughs: boolean;
+  pauseDailySimulationForParabolicTroughs: boolean;
+  pauseYearlySimulationForParabolicTroughs: boolean;
   dailyParabolicTroughYield: DatumEntry[];
-  dailyParabolicTroughFlag: boolean;
   dailyParabolicTroughIndividualOutputs: boolean;
   setDailyParabolicTroughYield: (data: DatumEntry[]) => void;
   yearlyParabolicTroughYield: DatumEntry[];
-  yearlyParabolicTroughFlag: boolean;
   yearlyParabolicTroughIndividualOutputs: boolean;
   setYearlyParabolicTroughYield: (data: DatumEntry[]) => void;
   parabolicTroughLabels: string[];
@@ -745,20 +747,22 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          yearlyParabolicTroughYield: [],
-          yearlyParabolicTroughFlag: false,
-          yearlyParabolicTroughIndividualOutputs: false,
-          setYearlyParabolicTroughYield(data) {
-            immerSet((state: CommonStoreState) => {
-              state.yearlyParabolicTroughYield = [...data];
-            });
-          },
+          runDailySimulationForParabolicTroughs: false,
+          runYearlySimulationForParabolicTroughs: false,
+          pauseDailySimulationForParabolicTroughs: false,
+          pauseYearlySimulationForParabolicTroughs: false,
           dailyParabolicTroughYield: [],
-          dailyParabolicTroughFlag: false,
           dailyParabolicTroughIndividualOutputs: false,
           setDailyParabolicTroughYield(data) {
             immerSet((state: CommonStoreState) => {
               state.dailyParabolicTroughYield = [...data];
+            });
+          },
+          yearlyParabolicTroughYield: [],
+          yearlyParabolicTroughIndividualOutputs: false,
+          setYearlyParabolicTroughYield(data) {
+            immerSet((state: CommonStoreState) => {
+              state.yearlyParabolicTroughYield = [...data];
             });
           },
           parabolicTroughLabels: [],

@@ -11,16 +11,12 @@ const AnalysisManager = () => {
   const dailyPvFlag = useStore(Selector.dailyPvFlag);
   const yearlyPvFlag = useStore(Selector.yearlyPvFlag);
   const solarPanelVisibilityFlag = useStore(Selector.solarPanelVisibilityFlag);
-  const dailyParabolicTroughFlag = useStore(Selector.dailyParabolicTroughFlag);
-  const yearlyParabolicTroughFlag = useStore(Selector.yearlyParabolicTroughFlag);
   const dailyParabolicDishFlag = useStore(Selector.dailyParabolicDishFlag);
   const yearlyParabolicDishFlag = useStore(Selector.yearlyParabolicDishFlag);
 
   const firstCallSolarPanelVisibilityFlag = useRef<boolean>(true);
   const firstCallDailyPvFlag = useRef<boolean>(true);
   const firstCallYearlyPvFlag = useRef<boolean>(true);
-  const firstCallDailyParabolicTroughFlag = useRef<boolean>(true);
-  const firstCallYearlyParabolicTroughFlag = useRef<boolean>(true);
   const firstCallDailyParabolicDishFlag = useRef<boolean>(true);
   const firstCallYearlyParabolicDishFlag = useRef<boolean>(true);
 
@@ -56,28 +52,6 @@ const AnalysisManager = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearlyPvFlag]);
-
-  useEffect(() => {
-    if (firstCallDailyParabolicTroughFlag.current) {
-      firstCallDailyParabolicTroughFlag.current = false;
-    } else {
-      setCommonStore((state) => {
-        state.viewState.showDailyParabolicTroughYieldPanel = true;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dailyParabolicTroughFlag]);
-
-  useEffect(() => {
-    if (firstCallYearlyParabolicTroughFlag.current) {
-      firstCallYearlyParabolicTroughFlag.current = false;
-    } else {
-      setCommonStore((state) => {
-        state.viewState.showYearlyParabolicTroughYieldPanel = true;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [yearlyParabolicTroughFlag]);
 
   useEffect(() => {
     if (firstCallDailyParabolicDishFlag.current) {

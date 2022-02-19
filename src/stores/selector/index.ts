@@ -580,9 +580,19 @@ export const setSolarPanelLabels = (state: CommonStoreState) => state.setSolarPa
 
 // parabolic troughs (CSP)
 
-export const dailyParabolicTroughYield = (state: CommonStoreState) => state.dailyParabolicTroughYield;
+export const runDailySimulationForParabolicTroughs = (state: CommonStoreState) =>
+  state.runDailySimulationForParabolicTroughs;
 
-export const dailyParabolicTroughFlag = (state: CommonStoreState) => state.dailyParabolicTroughFlag;
+export const runYearlySimulationForParabolicTroughs = (state: CommonStoreState) =>
+  state.runYearlySimulationForParabolicTroughs;
+
+export const pauseDailySimulationForParabolicTroughs = (state: CommonStoreState) =>
+  state.pauseDailySimulationForParabolicTroughs;
+
+export const pauseYearlySimulationForParabolicTroughs = (state: CommonStoreState) =>
+  state.pauseYearlySimulationForParabolicTroughs;
+
+export const dailyParabolicTroughYield = (state: CommonStoreState) => state.dailyParabolicTroughYield;
 
 export const dailyParabolicTroughIndividualOutputs = (state: CommonStoreState) =>
   state.dailyParabolicTroughIndividualOutputs;
@@ -590,8 +600,6 @@ export const dailyParabolicTroughIndividualOutputs = (state: CommonStoreState) =
 export const setDailyParabolicTroughYield = (state: CommonStoreState) => state.setDailyParabolicTroughYield;
 
 export const yearlyParabolicTroughYield = (state: CommonStoreState) => state.yearlyParabolicTroughYield;
-
-export const yearlyParabolicTroughFlag = (state: CommonStoreState) => state.yearlyParabolicTroughFlag;
 
 export const yearlyParabolicTroughIndividualOutputs = (state: CommonStoreState) =>
   state.yearlyParabolicTroughIndividualOutputs;

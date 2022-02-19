@@ -69,6 +69,7 @@ export interface YearlyParabolicTroughYieldPanelProps {
 const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPanelProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
+  const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
   const now = useStore(Selector.world.date);
   const yearlyYield = useStore(Selector.yearlyParabolicTroughYield);
   const individualOutputs = useStore(Selector.yearlyParabolicTroughIndividualOutputs);
@@ -162,7 +163,8 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
   if (individualOutputs) {
     troughSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
     totalTooltip += '——————————\n';
-    totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
+    totalTooltip +=
+      i18n.t('word.Total', lang) + ': ' + ((sum * 12) / daysPerYear).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
 
   return (
@@ -215,7 +217,8 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
               </Space>
             ) : (
               <Space>
-                {i18n.t('parabolicTroughYieldPanel.YearlyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
+                {i18n.t('parabolicTroughYieldPanel.YearlyTotal', lang)}:{((sum * 12) / daysPerYear).toFixed(2)}{' '}
+                {i18n.t('word.kWh', lang)}
               </Space>
             )}
             {parabolicTroughCount > 1 && (
@@ -233,9 +236,10 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
+                      state.runYearlySimulationForParabolicTroughs = true;
+                      state.pauseYearlySimulationForParabolicTroughs = false;
                       state.simulationInProgress = true;
                       state.yearlyParabolicTroughIndividualOutputs = checked;
-                      state.yearlyParabolicTroughFlag = !state.yearlyParabolicTroughFlag;
                     });
                   }, 100);
                 }}
@@ -254,8 +258,9 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
                 // give it 0.1 second for the info to show up
                 setTimeout(() => {
                   setCommonStore((state) => {
+                    state.runYearlySimulationForParabolicTroughs = true;
+                    state.pauseYearlySimulationForParabolicTroughs = false;
                     state.simulationInProgress = true;
-                    state.yearlyParabolicTroughFlag = !state.yearlyParabolicTroughFlag;
                   });
                 }, 100);
               }}

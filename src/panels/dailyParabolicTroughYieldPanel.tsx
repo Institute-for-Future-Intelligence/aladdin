@@ -233,9 +233,10 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
+                      state.runDailySimulationForParabolicTroughs = true;
+                      state.pauseDailySimulationForParabolicTroughs = false;
                       state.simulationInProgress = true;
                       state.dailyParabolicTroughIndividualOutputs = checked;
-                      state.dailyParabolicTroughFlag = !state.dailyParabolicTroughFlag;
                     });
                   }, 100);
                 }}
@@ -254,8 +255,9 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
                 // give it 0.1 second for the info to show up
                 setTimeout(() => {
                   setCommonStore((state) => {
+                    state.runDailySimulationForParabolicTroughs = true;
+                    state.pauseDailySimulationForParabolicTroughs = false;
                     state.simulationInProgress = true;
-                    state.dailyParabolicTroughFlag = !state.dailyParabolicTroughFlag;
                   });
                 }, 100);
               }}
