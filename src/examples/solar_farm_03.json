@@ -5,7 +5,7 @@
   "email": "charles@intofuture.org",
   "world": {
     "latitude": 35.81284404374666,
-    "solarPanelGridCellSize": 0.5,
+    "pvGridCellSize": 0.5,
     "timesPerHour": 4,
     "longitude": -78.7501240418377,
     "ground": {
@@ -31,7 +31,9 @@
     "name": "default",
     "orthographic": false,
     "cameraZoom": 35.16173831821251,
-    "solarRadiationHeatmapGridCellSize": 1
+    "solarRadiationHeatmapGridCellSize": 1,
+    "noAnimationForSolarPanelSimulation": true,
+    "noAnimationForHeatmapSimulation": true
   },
   "elements": [
     {

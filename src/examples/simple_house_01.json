@@ -12,6 +12,8 @@
     "name": "default",
     "orthographic": false,
     "cameraZoom": 35,
+    "noAnimationForSolarPanelSimulation": true,
+    "noAnimationForHeatmapSimulation": true,
     "ground": {
       "snowReflectionFactors": [
         0,

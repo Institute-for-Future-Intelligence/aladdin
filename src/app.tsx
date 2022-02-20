@@ -13,7 +13,6 @@ import { Beforeunload } from 'react-beforeunload';
 import { ConfigProvider } from 'antd';
 import AppCreator from './appCreator';
 import LocalFileManager from './localFileManager';
-import AnalysisManager from './analysisManager';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);
@@ -65,7 +64,6 @@ const App = () => {
           </Beforeunload>
         )}
         <LocalFileManager viewOnly={viewOnly} />
-        <AnalysisManager />
       </ErrorPage>
     </ConfigProvider>
   );

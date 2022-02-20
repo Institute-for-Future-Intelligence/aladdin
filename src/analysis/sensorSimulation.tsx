@@ -414,7 +414,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     setSensorLabels(labels);
   };
 
-  /* shared functions */
+  /* shared functions between daily and yearly simulation */
 
   const resetDailyDataMap = () => {
     for (const e of elements) {

@@ -30,7 +30,9 @@
     },
     "date": "Wed Sep 22 2021 12:00:00 GMT-0400 (Eastern Daylight Time)",
     "orthographic": false,
-    "cameraZoom": 43.16939043526371
+    "cameraZoom": 43.16939043526371,
+    "noAnimationForSolarPanelSimulation": true,
+    "noAnimationForHeatmapSimulation": true
   },
   "elements": [
     {

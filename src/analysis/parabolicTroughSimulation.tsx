@@ -420,7 +420,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     }
   };
 
-  /* shared functions */
+  /* shared functions between daily and yearly simulation */
 
   // there is room for performance improvement if we figure out a way to cache a lot of things used below
   const calculateYield = (trough: ParabolicTroughModel) => {

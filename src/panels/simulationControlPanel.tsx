@@ -40,14 +40,27 @@ const SimulationControlPanel = () => {
       state.runStaticSimulation = false;
       state.runDynamicSimulation = false;
       state.pauseSimulation = false;
+
       state.runDailyLightSensor = false;
-      state.pauseDailyLightSensor = false;
       state.runYearlyLightSensor = false;
+      state.pauseDailyLightSensor = false;
       state.pauseYearlyLightSensor = false;
+
+      state.runDailySimulationForSolarPanels = false;
+      state.runYearlySimulationForSolarPanels = false;
+      state.pauseDailySimulationForSolarPanels = false;
+      state.pauseYearlySimulationForSolarPanels = false;
+
       state.runDailySimulationForParabolicTroughs = false;
       state.runYearlySimulationForParabolicTroughs = false;
+      state.pauseDailySimulationForParabolicTroughs = false;
+      state.pauseYearlySimulationForParabolicTroughs = false;
+
       state.runDailySimulationForParabolicDishes = false;
       state.runYearlySimulationForParabolicDishes = false;
+      state.pauseDailySimulationForParabolicDishes = false;
+      state.pauseYearlySimulationForParabolicDishes = false;
+
       state.runDailySimulationForFresnelReflectors = false;
       state.runYearlySimulationForFresnelReflectors = false;
       state.pauseDailySimulationForFresnelReflectors = false;
@@ -60,24 +73,35 @@ const SimulationControlPanel = () => {
       if (state.runDynamicSimulation) {
         state.pauseSimulation = true;
       }
+
       if (state.runDailyLightSensor) {
         state.pauseDailyLightSensor = true;
       }
       if (state.runYearlyLightSensor) {
         state.pauseYearlyLightSensor = true;
       }
+
+      if (state.runDailySimulationForSolarPanels) {
+        state.pauseDailySimulationForSolarPanels = true;
+      }
+      if (state.runYearlySimulationForSolarPanels) {
+        state.pauseYearlySimulationForSolarPanels = true;
+      }
+
       if (state.runDailySimulationForParabolicTroughs) {
         state.pauseDailySimulationForParabolicTroughs = true;
       }
       if (state.runYearlySimulationForParabolicTroughs) {
         state.pauseYearlySimulationForParabolicTroughs = true;
       }
+
       if (state.runDailySimulationForParabolicDishes) {
         state.pauseDailySimulationForParabolicDishes = true;
       }
       if (state.runYearlySimulationForParabolicDishes) {
         state.pauseYearlySimulationForParabolicDishes = true;
       }
+
       if (state.runDailySimulationForFresnelReflectors) {
         state.pauseDailySimulationForFresnelReflectors = true;
       }
@@ -92,24 +116,35 @@ const SimulationControlPanel = () => {
       if (state.runDynamicSimulation) {
         state.pauseSimulation = false;
       }
+
       if (state.runDailyLightSensor) {
         state.pauseDailyLightSensor = false;
       }
       if (state.runYearlyLightSensor) {
         state.pauseYearlyLightSensor = false;
       }
+
+      if (state.runDailySimulationForSolarPanels) {
+        state.pauseDailySimulationForSolarPanels = false;
+      }
+      if (state.runYearlySimulationForSolarPanels) {
+        state.pauseYearlySimulationForSolarPanels = false;
+      }
+
       if (state.runDailySimulationForParabolicTroughs) {
         state.pauseDailySimulationForParabolicTroughs = false;
       }
       if (state.runYearlySimulationForParabolicTroughs) {
         state.pauseYearlySimulationForParabolicTroughs = false;
       }
+
       if (state.runDailySimulationForParabolicDishes) {
         state.pauseDailySimulationForParabolicDishes = false;
       }
       if (state.runYearlySimulationForParabolicDishes) {
         state.pauseYearlySimulationForParabolicDishes = false;
       }
+
       if (state.runDailySimulationForFresnelReflectors) {
         state.pauseDailySimulationForFresnelReflectors = false;
       }

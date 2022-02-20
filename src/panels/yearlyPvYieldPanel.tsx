@@ -69,6 +69,7 @@ export interface YearlyPvYieldPanelProps {
 const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
+  const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
   const now = useStore(Selector.world.date);
   const yearlyYield = useStore(Selector.yearlyPvYield);
   const individualOutputs = useStore(Selector.yearlyPvIndividualOutputs);
@@ -162,7 +163,8 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   if (individualOutputs) {
     panelSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
     totalTooltip += '——————————\n';
-    totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
+    totalTooltip +=
+      i18n.t('word.Total', lang) + ': ' + ((sum * 12) / daysPerYear).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
 
   return (
@@ -215,7 +217,8 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
               </Space>
             ) : (
               <Space>
-                {i18n.t('solarPanelYieldPanel.YearlyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
+                {i18n.t('solarPanelYieldPanel.YearlyTotal', lang)}:{((sum * 12) / daysPerYear).toFixed(2)}{' '}
+                {i18n.t('word.kWh', lang)}
               </Space>
             )}
             {solarPanelCount > 1 && (
@@ -235,7 +238,8 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                     setCommonStore((state) => {
                       state.simulationInProgress = true;
                       state.yearlyPvIndividualOutputs = checked;
-                      state.yearlyPvFlag = !state.yearlyPvFlag;
+                      state.runYearlySimulationForSolarPanels = true;
+                      state.pauseYearlySimulationForSolarPanels = false;
                     });
                   }, 100);
                 }}
@@ -255,7 +259,8 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                 setTimeout(() => {
                   setCommonStore((state) => {
                     state.simulationInProgress = true;
-                    state.yearlyPvFlag = !state.yearlyPvFlag;
+                    state.runYearlySimulationForSolarPanels = true;
+                    state.pauseYearlySimulationForSolarPanels = false;
                   });
                 }, 100);
               }}

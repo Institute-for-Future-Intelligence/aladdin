@@ -554,21 +554,26 @@ export const showSolarRadiationHeatmap = (state: CommonStoreState) => state.show
 
 // solar panels (PV)
 
-export const solarPanelVisibilityFlag = (state: CommonStoreState) => state.solarPanelVisibilityFlag;
+export const runSolarPanelVisibilityAnalysis = (state: CommonStoreState) => state.runSolarPanelVisibilityAnalysis;
 
 export const solarPanelVisibilityResults = (state: CommonStoreState) => state.solarPanelVisibilityResults;
 
-export const dailyPvYield = (state: CommonStoreState) => state.dailyPvYield;
+export const runDailySimulationForSolarPanels = (state: CommonStoreState) => state.runDailySimulationForSolarPanels;
 
-export const dailyPvFlag = (state: CommonStoreState) => state.dailyPvFlag;
+export const runYearlySimulationForSolarPanels = (state: CommonStoreState) => state.runYearlySimulationForSolarPanels;
+
+export const pauseDailySimulationForSolarPanels = (state: CommonStoreState) => state.pauseDailySimulationForSolarPanels;
+
+export const pauseYearlySimulationForSolarPanels = (state: CommonStoreState) =>
+  state.pauseYearlySimulationForSolarPanels;
+
+export const dailyPvYield = (state: CommonStoreState) => state.dailyPvYield;
 
 export const dailyPvIndividualOutputs = (state: CommonStoreState) => state.dailyPvIndividualOutputs;
 
 export const setDailyPvYield = (state: CommonStoreState) => state.setDailyPvYield;
 
 export const yearlyPvYield = (state: CommonStoreState) => state.yearlyPvYield;
-
-export const yearlyPvFlag = (state: CommonStoreState) => state.yearlyPvFlag;
 
 export const yearlyPvIndividualOutputs = (state: CommonStoreState) => state.yearlyPvIndividualOutputs;
 

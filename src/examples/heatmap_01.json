@@ -6,7 +6,7 @@
   "email": null,
   "world": {
     "latitude": 42.2844063,
-    "solarPanelGridCellSize": 0.5,
+    "pvGridCellSize": 0.5,
     "timesPerHour": 4,
     "longitude": -71.3488548,
     "ground": {

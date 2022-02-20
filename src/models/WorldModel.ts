@@ -24,7 +24,7 @@ export interface WorldModel {
   daysPerYear: number;
   dustLoss: number;
   solarRadiationHeatmapGridCellSize: number;
-  solarPanelGridCellSize: number;
+  pvGridCellSize: number;
   discretization: Discretization;
   solarPanelVisibilityGridCellSize: number;
 
@@ -34,4 +34,5 @@ export interface WorldModel {
 
   noAnimationForHeatmapSimulation: boolean;
   noAnimationForSensorDataCollection: boolean;
+  noAnimationForSolarPanelSimulation: boolean;
 }

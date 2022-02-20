@@ -21,32 +21,32 @@ const SolarPanelVisibility = () => {
   const elements = useStore.getState().elements;
   const setCommonStore = useStore(Selector.set);
   const getParent = useStore(Selector.getParent);
-  const solarPanelVisibilityFlag = useStore(Selector.solarPanelVisibilityFlag);
+  const runAnalysis = useStore(Selector.runSolarPanelVisibilityAnalysis);
 
   const { scene } = useThree();
   const lang = { lng: language };
   const ray = useMemo(() => new Raycaster(), []);
   const cellSize = world.solarPanelVisibilityGridCellSize ?? 0.2;
-  const loaded = useRef(false);
   const vantagesRef = useRef<Vantage[]>([]);
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
 
   useEffect(() => {
-    if (loaded.current) {
-      // avoid calling on first render
+    if (runAnalysis) {
       if (elements && elements.length > 0) {
         analyze();
+        setCommonStore((state) => {
+          state.viewState.showSolarPanelVisibilityResultsPanel = true;
+          state.runSolarPanelVisibilityAnalysis = false;
+        });
         showInfo(i18n.t('message.SimulationCompleted', lang));
       }
-    } else {
-      loaded.current = true;
     }
     setCommonStore((state) => {
       state.simulationInProgress = false;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [solarPanelVisibilityFlag]);
+  }, [runAnalysis]);
 
   const fetchObjects = () => {
     const content = scene.children.filter((c) => c.name === 'Content');

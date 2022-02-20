@@ -29,7 +29,7 @@
     "longitude": -110.9747108,
     "address": "Tucson, AZ, USA",
     "timesPerHour": 4,
-    "solarPanelGridCellSize": 0.5,
+    "pvGridCellSize": 0.25,
     "discretization": "Approximate",
     "solarPanelVisibilityGridCellSize": 0.2,
     "solarRadiationHeatmapGridCellSize": 0.7,

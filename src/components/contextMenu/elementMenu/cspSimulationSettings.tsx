@@ -28,7 +28,7 @@ const CspSimulationSettings = ({ name }: { name: string }) => {
             min={1}
             max={60}
             step={1}
-            style={{ width: 60 }}
+            style={{ width: 72 }}
             precision={0}
             value={cspTimesPerHour ?? 4}
             formatter={(a) => Number(a).toFixed(0)}
@@ -42,7 +42,7 @@ const CspSimulationSettings = ({ name }: { name: string }) => {
         </Menu.Item>
         <Menu.Item key={name + '-simulation-sampling-days'}>
           <Select
-            style={{ marginLeft: '150px', width: '60px' }}
+            style={{ marginLeft: '150px', width: '72px' }}
             value={cspDaysPerYear ?? 6}
             onChange={(value) => {
               setCommonStore((state) => {
@@ -67,11 +67,11 @@ const CspSimulationSettings = ({ name }: { name: string }) => {
           <InputNumber
             min={0.1}
             max={5}
-            step={0.1}
-            style={{ width: 60 }}
-            precision={1}
+            step={0.05}
+            style={{ width: 72 }}
+            precision={2}
             value={cspGridCellSize ?? 0.5}
-            formatter={(a) => Number(a).toFixed(1)}
+            formatter={(a) => Number(a).toFixed(2)}
             onChange={(value) => {
               setCommonStore((state) => {
                 state.world.cspGridCellSize = value;

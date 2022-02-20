@@ -234,7 +234,8 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                     setCommonStore((state) => {
                       state.simulationInProgress = true;
                       state.dailyPvIndividualOutputs = checked;
-                      state.dailyPvFlag = !state.dailyPvFlag;
+                      state.runDailySimulationForSolarPanels = true;
+                      state.pauseDailySimulationForSolarPanels = false;
                     });
                   }, 100);
                 }}
@@ -254,7 +255,8 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                 setTimeout(() => {
                   setCommonStore((state) => {
                     state.simulationInProgress = true;
-                    state.dailyPvFlag = !state.dailyPvFlag;
+                    state.runDailySimulationForSolarPanels = true;
+                    state.pauseDailySimulationForSolarPanels = false;
                   });
                 }, 100);
               }}

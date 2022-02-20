@@ -29,7 +29,9 @@
     },
     "name": "default",
     "discretization": "Approximate",
-    "solarRadiationHeatmapGridCellSize": 2
+    "solarRadiationHeatmapGridCellSize": 2,
+    "noAnimationForSolarPanelSimulation": true,
+    "noAnimationForHeatmapSimulation": true
   },
   "elements": [
     {

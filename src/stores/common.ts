@@ -456,14 +456,16 @@ export interface CommonStoreState {
   sensorLabels: string[];
   setSensorLabels: (labels: string[]) => void;
 
-  solarPanelVisibilityFlag: boolean;
+  runSolarPanelVisibilityAnalysis: boolean;
   solarPanelVisibilityResults: Map<Vantage, Map<string, number>>;
+  runDailySimulationForSolarPanels: boolean;
+  pauseDailySimulationForSolarPanels: boolean;
+  runYearlySimulationForSolarPanels: boolean;
+  pauseYearlySimulationForSolarPanels: boolean;
   dailyPvYield: DatumEntry[];
-  dailyPvFlag: boolean;
   dailyPvIndividualOutputs: boolean;
   setDailyPvYield: (data: DatumEntry[]) => void;
   yearlyPvYield: DatumEntry[];
-  yearlyPvFlag: boolean;
   yearlyPvIndividualOutputs: boolean;
   setYearlyPvYield: (data: DatumEntry[]) => void;
   solarPanelLabels: string[];
@@ -723,22 +725,24 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          solarPanelVisibilityFlag: false,
+          runSolarPanelVisibilityAnalysis: false,
           solarPanelVisibilityResults: new Map<Vantage, Map<string, number>>(),
-          yearlyPvYield: [],
-          yearlyPvFlag: false,
-          yearlyPvIndividualOutputs: false,
-          setYearlyPvYield(data) {
-            immerSet((state: CommonStoreState) => {
-              state.yearlyPvYield = [...data];
-            });
-          },
+          runDailySimulationForSolarPanels: false,
+          pauseDailySimulationForSolarPanels: false,
+          runYearlySimulationForSolarPanels: false,
+          pauseYearlySimulationForSolarPanels: false,
           dailyPvYield: [],
-          dailyPvFlag: false,
           dailyPvIndividualOutputs: false,
           setDailyPvYield(data) {
             immerSet((state: CommonStoreState) => {
               state.dailyPvYield = [...data];
+            });
+          },
+          yearlyPvYield: [],
+          yearlyPvIndividualOutputs: false,
+          setYearlyPvYield(data) {
+            immerSet((state: CommonStoreState) => {
+              state.yearlyPvYield = [...data];
             });
           },
           solarPanelLabels: [],

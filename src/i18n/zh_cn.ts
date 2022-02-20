@@ -238,6 +238,7 @@ export const i18n_zh_cn = {
         VisibilityGridCellSize: '视界因子计算网格的尺寸',
         EnergyAnalysisOptions: '能量分析选项',
         VisibilityAnalysisOptions: '可见度分析选项',
+        SolarPanelSimulationNoAnimation: '若无移动部件则省略动画',
       },
       parabolicTroughSubMenu: '抛物线槽',
       parabolicTrough: {

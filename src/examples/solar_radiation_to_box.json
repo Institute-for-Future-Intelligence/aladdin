@@ -31,7 +31,8 @@
       "thermalDiffusivity": 0.05,
       "albedo": 0.3
     },
-    "noAnimationForSensorDataCollection": true
+    "noAnimationForSensorDataCollection": true,
+    "noAnimationForHeatmapSimulation": true
   },
   "elements": [
     {

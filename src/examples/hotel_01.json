@@ -30,7 +30,9 @@
     "latitude": 42.3600825,
     "address": "Boston, MA, USA",
     "cameraZoom": 15.475618749999999,
-    "solarRadiationHeatmapGridCellSize": 2
+    "solarRadiationHeatmapGridCellSize": 2,
+    "noAnimationForSolarPanelSimulation": true,
+    "noAnimationForHeatmapSimulation": true
   },
   "elements": [
     {

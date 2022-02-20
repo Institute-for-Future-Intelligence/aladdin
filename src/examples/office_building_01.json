@@ -30,7 +30,9 @@
     "timesPerHour": 20,
     "orthographic": false,
     "cameraZoom": 15.475618749999999,
-    "solarRadiationHeatmapGridCellSize": 2
+    "solarRadiationHeatmapGridCellSize": 2,
+    "noAnimationForSolarPanelSimulation": true,
+    "noAnimationForHeatmapSimulation": true
   },
   "elements": [
     {

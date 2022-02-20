@@ -26,7 +26,7 @@ export class DefaultWorldModel implements WorldModel {
   timesPerHour: number;
   daysPerYear: number;
   dustLoss: number;
-  solarPanelGridCellSize: number;
+  pvGridCellSize: number;
   discretization: Discretization;
   solarPanelVisibilityGridCellSize: number;
   solarRadiationHeatmapGridCellSize: number;
@@ -37,6 +37,7 @@ export class DefaultWorldModel implements WorldModel {
 
   noAnimationForHeatmapSimulation: boolean;
   noAnimationForSensorDataCollection: boolean;
+  noAnimationForSolarPanelSimulation: boolean;
 
   constructor() {
     this.latitude = 42.2844063;
@@ -56,7 +57,7 @@ export class DefaultWorldModel implements WorldModel {
     this.timesPerHour = 4; // how many times per hour to collect data
     this.daysPerYear = 12; // how many days per year for sampling
     this.dustLoss = 0.05;
-    this.solarPanelGridCellSize = 0.5;
+    this.pvGridCellSize = 0.5;
     this.discretization = Discretization.APPROXIMATE;
     this.solarPanelVisibilityGridCellSize = 0.2;
     this.solarRadiationHeatmapGridCellSize = 0.5;
@@ -67,6 +68,7 @@ export class DefaultWorldModel implements WorldModel {
 
     this.noAnimationForHeatmapSimulation = false;
     this.noAnimationForSensorDataCollection = false;
+    this.noAnimationForSolarPanelSimulation = false;
   }
 
   getElements() {

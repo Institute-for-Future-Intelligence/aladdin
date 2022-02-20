@@ -240,6 +240,7 @@ export const i18n_tr = {
         VisibilityGridCellSize: 'View Factor Grid Cell Size',
         EnergyAnalysisOptions: 'Energy Analysis Options',
         VisibilityAnalysisOptions: 'Visibility Analysis Options',
+        SolarPanelSimulationNoAnimation: 'No Animation for Solar Panel Simulation',
       },
       parabolicTroughSubMenu: 'Parabolic Trough',
       parabolicTrough: {

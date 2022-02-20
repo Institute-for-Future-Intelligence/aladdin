@@ -31,7 +31,9 @@
     "date": "Wed Sep 22 2021 12:00:00 GMT-0400 (Eastern Daylight Time)",
     "orthographic": false,
     "cameraZoom": 43.16939043526371,
-    "solarRadiationHeatmapGridCellSize": 0.5
+    "solarRadiationHeatmapGridCellSize": 0.5,
+    "noAnimationForSolarPanelSimulation": true,
+    "noAnimationForHeatmapSimulation": true
   },
   "elements": [
     {

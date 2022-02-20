@@ -40,12 +40,12 @@ import enUS from 'antd/lib/locale/en_US';
 import React, { useState } from 'react';
 import { useStore } from './stores/common';
 import styled from 'styled-components';
-import { Checkbox, Dropdown, InputNumber, Menu, Modal, Radio, Select, Space, Switch } from 'antd';
+import { Checkbox, Dropdown, InputNumber, Menu, Modal, Radio, Space, Switch } from 'antd';
 import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
 import About from './about';
 import { saveImage, showInfo } from './helpers';
-import { Discretization, Language, ObjectType } from './types';
+import { Language, ObjectType } from './types';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
 import { Util } from './Util';
@@ -58,9 +58,9 @@ import { useStoreRef } from './stores/commonRef';
 import { UndoableDelete } from './undo/UndoableDelete';
 import { UndoablePaste } from './undo/UndoablePaste';
 import CspSimulationSettings from './components/contextMenu/elementMenu/cspSimulationSettings';
+import PvSimulationSettings from './components/contextMenu/elementMenu/pvSimulationSettings';
 
 const { SubMenu } = Menu;
-const { Option } = Select;
 
 const radioStyle = {
   display: 'block',
@@ -112,8 +112,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const undoManager = useStore(Selector.undoManager);
   const addUndoable = useStore(Selector.addUndoable);
   const timesPerHour = useStore(Selector.world.timesPerHour);
-  const discretization = useStore(Selector.world.discretization);
-  const solarPanelGridCellSize = useStore(Selector.world.solarPanelGridCellSize);
   const solarPanelVisibilityGridCellSize = useStore(Selector.world.solarPanelVisibilityGridCellSize);
   const solarRadiationHeatmapGridCellSize = useStore(Selector.world.solarRadiationHeatmapGridCellSize);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
@@ -1083,7 +1081,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 setCommonStore((state) => {
                   state.simulationInProgress = true;
                   state.dailyPvIndividualOutputs = false;
-                  state.dailyPvFlag = !state.dailyPvFlag;
+                  state.runDailySimulationForSolarPanels = true;
                 });
               }, 100);
             }}
@@ -1104,77 +1102,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 setCommonStore((state) => {
                   state.simulationInProgress = true;
                   state.yearlyPvIndividualOutputs = false;
-                  state.yearlyPvFlag = !state.yearlyPvFlag;
+                  state.runYearlySimulationForSolarPanels = true;
                 });
               }, 100);
             }}
           >
             {i18n.t('menu.solarPanel.AnalyzeYearlyYield', lang)}
           </Menu.Item>
-          <SubMenu
-            key={'solar-panel-energy-analysis-options'}
-            title={i18n.t('menu.solarPanel.EnergyAnalysisOptions', lang)}
-          >
-            <Menu>
-              <Menu.Item key={'solar-panel-simulation-sampling-frequency'}>
-                <Space style={{ width: '150px' }}>{i18n.t('menu.option.SamplingFrequency', lang) + ':'}</Space>
-                <InputNumber
-                  min={1}
-                  max={60}
-                  step={1}
-                  style={{ width: 60 }}
-                  precision={0}
-                  value={timesPerHour ?? 4}
-                  formatter={(a) => Number(a).toFixed(0)}
-                  onChange={(value) => {
-                    setCommonStore((state) => {
-                      state.world.timesPerHour = value;
-                    });
-                  }}
-                />
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.option.TimesPerHour', lang)}</Space>
-              </Menu.Item>
-              <Menu.Item key={'solar-panel-discretization'}>
-                <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanel.PanelDiscretization', lang) + ':'}</Space>
-                <Select
-                  style={{ width: '165px' }}
-                  value={discretization ?? Discretization.APPROXIMATE}
-                  onChange={(value) => {
-                    setCommonStore((state) => {
-                      state.world.discretization = value;
-                    });
-                  }}
-                >
-                  <Option key={Discretization.EXACT} value={Discretization.EXACT}>
-                    {i18n.t('menu.solarPanel.Exact', lang)}
-                  </Option>
-                  <Option key={Discretization.APPROXIMATE} value={Discretization.APPROXIMATE}>
-                    {i18n.t('menu.solarPanel.Approximate', lang)}
-                  </Option>
-                </Select>
-              </Menu.Item>
-              {(!discretization || discretization === Discretization.APPROXIMATE) && (
-                <Menu.Item key={'solar-panel-simulation-grid-cell-size'}>
-                  <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanel.EnergyGridCellSize', lang) + ':'}</Space>
-                  <InputNumber
-                    min={0.1}
-                    max={5}
-                    step={0.1}
-                    style={{ width: 60 }}
-                    precision={1}
-                    value={solarPanelGridCellSize ?? 0.5}
-                    formatter={(a) => Number(a).toFixed(1)}
-                    onChange={(value) => {
-                      setCommonStore((state) => {
-                        state.world.solarPanelGridCellSize = value;
-                      });
-                    }}
-                  />
-                  <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
-                </Menu.Item>
-              )}
-            </Menu>
-          </SubMenu>
+          <PvSimulationSettings />
           <Menu.Item
             key={'solar-panel-visibility'}
             onClick={() => {
@@ -1188,7 +1123,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               setTimeout(() => {
                 setCommonStore((state) => {
                   state.simulationInProgress = true;
-                  state.solarPanelVisibilityFlag = !state.solarPanelVisibilityFlag;
+                  state.runSolarPanelVisibilityAnalysis = !state.runSolarPanelVisibilityAnalysis;
                 });
               }, 100);
             }}
@@ -1271,53 +1206,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <CspSimulationSettings name={'parabolic-trough'} />
         </SubMenu>
 
-        {/* Fresnel reflector */}
-        <SubMenu key={'fresnel-reflector'} title={i18n.t('menu.fresnelReflectorSubMenu', lang)}>
-          <Menu.Item
-            key={'fresnel-reflector-daily-yield'}
-            onClick={() => {
-              const fresnelReflectorCount = countElementsByType(ObjectType.FresnelReflector);
-              if (fresnelReflectorCount === 0) {
-                showInfo(i18n.t('analysisManager.NoFresnelReflectorForAnalysis', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                setCommonStore((state) => {
-                  state.simulationInProgress = true;
-                  state.dailyFresnelReflectorIndividualOutputs = false;
-                  state.runDailySimulationForFresnelReflectors = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.fresnelReflector.AnalyzeDailyYield', lang)}
-          </Menu.Item>
-          <Menu.Item
-            key={'fresnel-reflector-yearly-yield'}
-            onClick={() => {
-              const fresnelReflectorCount = countElementsByType(ObjectType.FresnelReflector);
-              if (fresnelReflectorCount === 0) {
-                showInfo(i18n.t('analysisManager.NoFresnelReflectorForAnalysis', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                setCommonStore((state) => {
-                  state.simulationInProgress = true;
-                  state.yearlyFresnelReflectorIndividualOutputs = false;
-                  state.runYearlySimulationForFresnelReflectors = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.fresnelReflector.AnalyzeYearlyYield', lang)}
-          </Menu.Item>
-          <CspSimulationSettings name={'fresnel-reflector'} />
-        </SubMenu>
-
         {/* parabolic dishes */}
         <SubMenu key={'parabolic-dish'} title={i18n.t('menu.parabolicDishSubMenu', lang)}>
           <Menu.Item
@@ -1363,6 +1251,53 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             {i18n.t('menu.parabolicDish.AnalyzeYearlyYield', lang)}
           </Menu.Item>
           <CspSimulationSettings name={'parabolic-dish'} />
+        </SubMenu>
+
+        {/* Fresnel reflector */}
+        <SubMenu key={'fresnel-reflector'} title={i18n.t('menu.fresnelReflectorSubMenu', lang)}>
+          <Menu.Item
+            key={'fresnel-reflector-daily-yield'}
+            onClick={() => {
+              const fresnelReflectorCount = countElementsByType(ObjectType.FresnelReflector);
+              if (fresnelReflectorCount === 0) {
+                showInfo(i18n.t('analysisManager.NoFresnelReflectorForAnalysis', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.dailyFresnelReflectorIndividualOutputs = false;
+                  state.runDailySimulationForFresnelReflectors = true;
+                });
+              }, 100);
+            }}
+          >
+            {i18n.t('menu.fresnelReflector.AnalyzeDailyYield', lang)}
+          </Menu.Item>
+          <Menu.Item
+            key={'fresnel-reflector-yearly-yield'}
+            onClick={() => {
+              const fresnelReflectorCount = countElementsByType(ObjectType.FresnelReflector);
+              if (fresnelReflectorCount === 0) {
+                showInfo(i18n.t('analysisManager.NoFresnelReflectorForAnalysis', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.yearlyFresnelReflectorIndividualOutputs = false;
+                  state.runYearlySimulationForFresnelReflectors = true;
+                });
+              }, 100);
+            }}
+          >
+            {i18n.t('menu.fresnelReflector.AnalyzeYearlyYield', lang)}
+          </Menu.Item>
+          <CspSimulationSettings name={'fresnel-reflector'} />
         </SubMenu>
       </SubMenu>
 

@@ -30,7 +30,7 @@
     "address": "Natick, MA",
     "airAttenuationCoefficient": 0.01,
     "timesPerHour": 4,
-    "solarPanelGridCellSize": 0.5,
+    "pvGridCellSize": 0.5,
     "discretization": "Approximate",
     "solarPanelVisibilityGridCellSize": 0.2,
     "solarRadiationHeatmapGridCellSize": 0.5,

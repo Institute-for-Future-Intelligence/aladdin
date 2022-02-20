@@ -1,11 +1,12 @@
 {
-  "docid": "rhBETS6z8ZeTcqvvoFMKR6",
-  "timestamp": 1642980670252,
+  "docid": "rSSbe8riyJzohjwFKk6TPu",
+  "timestamp": 1645378622223,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
-    "timesPerHour": 20,
+    "timesPerHour": 10,
+    "pvGridCellSize": 0.25,
     "address": "Natick, MA",
     "name": "default",
     "longitude": -71.3488548,
@@ -30,7 +31,9 @@
     },
     "date": "Wed Sep 22 2021 12:00:00 GMT-0400 (Eastern Daylight Time)",
     "orthographic": false,
-    "cameraZoom": 43.16939043526371
+    "cameraZoom": 43.16939043526371,
+    "noAnimationForSolarPanelSimulation": true,
+    "noAnimationForHeatmapSimulation": true
   },
   "elements": [
     {
@@ -310,7 +313,8 @@
       ],
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "id": "vDEckHeU6T8epe3YRNBYqh",
-      "selected": false
+      "selected": false,
+      "ly": 0.6
     }
   ],
   "view": {

@@ -25,7 +25,7 @@ export const discretization = (state: CommonStoreState) => state.world.discretiz
 export const solarRadiationHeatmapGridCellSize = (state: CommonStoreState) =>
   state.world.solarRadiationHeatmapGridCellSize;
 
-export const solarPanelGridCellSize = (state: CommonStoreState) => state.world.solarPanelGridCellSize;
+export const pvGridCellSize = (state: CommonStoreState) => state.world.pvGridCellSize;
 
 export const solarPanelVisibilityGridCellSize = (state: CommonStoreState) =>
   state.world.solarPanelVisibilityGridCellSize;
@@ -40,3 +40,6 @@ export const noAnimationForHeatmapSimulation = (state: CommonStoreState) => stat
 
 export const noAnimationForSensorDataCollection = (state: CommonStoreState) =>
   state.world.noAnimationForSensorDataCollection;
+
+export const noAnimationForSolarPanelSimulation = (state: CommonStoreState) =>
+  state.world.noAnimationForSolarPanelSimulation;
