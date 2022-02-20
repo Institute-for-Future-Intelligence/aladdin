@@ -969,19 +969,21 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   }}
                 />
               </Menu.Item>
-              <Menu.Item key={'solar-radiation-heatmap-no-animation'}>
-                <Space style={{ width: '280px' }}>
-                  {i18n.t('menu.physics.SolarRadiationHeatmapNoAnimation', lang) + ':'}
-                </Space>
-                <Switch
-                  checked={noAnimationForHeatmapSimulation}
-                  onChange={(checked) => {
-                    setCommonStore((state) => {
-                      state.world.noAnimationForHeatmapSimulation = checked;
-                    });
-                  }}
-                />
-              </Menu.Item>
+              {!Util.hasMovingParts(elements) && (
+                <Menu.Item key={'solar-radiation-heatmap-no-animation'}>
+                  <Space style={{ width: '280px' }}>
+                    {i18n.t('menu.physics.SolarRadiationHeatmapNoAnimation', lang) + ':'}
+                  </Space>
+                  <Switch
+                    checked={noAnimationForHeatmapSimulation}
+                    onChange={(checked) => {
+                      setCommonStore((state) => {
+                        state.world.noAnimationForHeatmapSimulation = checked;
+                      });
+                    }}
+                  />
+                </Menu.Item>
+              )}
             </Menu>
           </SubMenu>
         </SubMenu>
@@ -1048,19 +1050,21 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 />
                 <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.option.TimesPerHour', lang)}</Space>
               </Menu.Item>
-              <Menu.Item key={'sensor-simulation-no-animation'}>
-                <Space style={{ width: '280px' }}>
-                  {i18n.t('menu.sensor.SensorSimulationNoAnimation', lang) + ':'}
-                </Space>
-                <Switch
-                  checked={noAnimationForSensorDataCollection}
-                  onChange={(checked) => {
-                    setCommonStore((state) => {
-                      state.world.noAnimationForSensorDataCollection = checked;
-                    });
-                  }}
-                />
-              </Menu.Item>
+              {!Util.hasMovingParts(elements) && (
+                <Menu.Item key={'sensor-simulation-no-animation'}>
+                  <Space style={{ width: '280px' }}>
+                    {i18n.t('menu.sensor.SensorSimulationNoAnimation', lang) + ':'}
+                  </Space>
+                  <Switch
+                    checked={noAnimationForSensorDataCollection}
+                    onChange={(checked) => {
+                      setCommonStore((state) => {
+                        state.world.noAnimationForSensorDataCollection = checked;
+                      });
+                    }}
+                  />
+                </Menu.Item>
+              )}
             </Menu>
           </SubMenu>
         </SubMenu>

@@ -217,7 +217,7 @@ const VisibilityResultsPanel = () => {
                 setTimeout(() => {
                   setCommonStore((state) => {
                     state.simulationInProgress = true;
-                    state.runSolarPanelVisibilityAnalysis = !state.runSolarPanelVisibilityAnalysis;
+                    state.runSolarPanelVisibilityAnalysis = true;
                   });
                 }, 100);
               }}

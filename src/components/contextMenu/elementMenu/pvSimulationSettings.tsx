@@ -8,9 +8,11 @@ import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
 import { Discretization } from '../../../types';
+import { Util } from '../../../Util';
 
 const PvSimulationSettings = () => {
   const setCommonStore = useStore(Selector.set);
+  const elements = useStore.getState().elements;
   const language = useStore(Selector.language);
   const timesPerHour = useStore(Selector.world.timesPerHour);
   const daysPerYear = useStore(Selector.world.daysPerYear);
@@ -104,19 +106,21 @@ const PvSimulationSettings = () => {
             <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
           </Menu.Item>
         )}
-        <Menu.Item key={'solar-panel-simulation-no-animation'}>
-          <Space style={{ width: '280px' }}>
-            {i18n.t('menu.solarPanel.SolarPanelSimulationNoAnimation', lang) + ':'}
-          </Space>
-          <Switch
-            checked={noAnimationForSolarPanelSimulation}
-            onChange={(checked) => {
-              setCommonStore((state) => {
-                state.world.noAnimationForSolarPanelSimulation = checked;
-              });
-            }}
-          />
-        </Menu.Item>
+        {!Util.hasMovingParts(elements) && (
+          <Menu.Item key={'solar-panel-simulation-no-animation'}>
+            <Space style={{ width: '280px' }}>
+              {i18n.t('menu.solarPanel.SolarPanelSimulationNoAnimation', lang) + ':'}
+            </Space>
+            <Switch
+              checked={noAnimationForSolarPanelSimulation}
+              onChange={(checked) => {
+                setCommonStore((state) => {
+                  state.world.noAnimationForSolarPanelSimulation = checked;
+                });
+              }}
+            />
+          </Menu.Item>
+        )}
       </Menu>
     </SubMenu>
   );
