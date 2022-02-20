@@ -143,7 +143,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const removeElementById = useStore(Selector.removeElementById);
   const copyCutElements = useStore(Selector.copyCutElements);
   const getElementById = useStore(Selector.getElementById);
-  const runSimulation = useStore(Selector.runSimulation);
+  const runDynamicSimulation = useStore(Selector.runDynamicSimulation);
+  const runStaticSimulation = useStore(Selector.runStaticSimulation);
   const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);
   const noAnimationForSensorDataCollection = useStore(Selector.world.noAnimationForSensorDataCollection);
 
@@ -612,28 +613,27 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     panCenter[2] === 0;
 
   const toggleStaticSolarRadiationHeatmap = () => {
-    showInfo(i18n.t('message.SimulationStarted', lang));
-    // give it 0.1 second for the info to show up
-    setTimeout(() => {
-      selectNone();
-      setCommonStore((state) => {
-        state.simulationInProgress = true;
-        // set below to false first to ensure update (it will be set to true after the simulation)
-        state.showSolarRadiationHeatmap = false;
-        state.dailySolarRadiationSimulationFlag = !state.dailySolarRadiationSimulationFlag;
-      });
-    }, 100);
-  };
-
-  const toggleDynamicSolarRadiationHeatmap = () => {
-    if (!runSimulation) {
+    if (!runStaticSimulation) {
       showInfo(i18n.t('message.SimulationStarted', lang));
     }
     // give it 0.1 second for the info to show up
     setTimeout(() => {
       selectNone();
       setCommonStore((state) => {
-        state.runSimulation = !state.runSimulation;
+        state.runStaticSimulation = !state.runStaticSimulation;
+      });
+    }, 100);
+  };
+
+  const toggleDynamicSolarRadiationHeatmap = () => {
+    if (!runDynamicSimulation) {
+      showInfo(i18n.t('message.SimulationStarted', lang));
+    }
+    // give it 0.1 second for the info to show up
+    setTimeout(() => {
+      selectNone();
+      setCommonStore((state) => {
+        state.runDynamicSimulation = !state.runDynamicSimulation;
       });
     }, 100);
   };

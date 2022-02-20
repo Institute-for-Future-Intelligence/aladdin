@@ -45,7 +45,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
   const setHeatmap = useStore(Selector.setHeatmap);
-  const runSimulation = useStore(Selector.runSimulation);
+  const runSimulation = useStore(Selector.runDynamicSimulation);
   const pauseSimulation = useStore(Selector.pauseSimulation);
 
   const { scene } = useThree();
@@ -192,7 +192,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       if (totalMinutes >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
-          state.runSimulation = false;
+          state.runDynamicSimulation = false;
           state.world.date = originalDateRef.current.toString();
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));

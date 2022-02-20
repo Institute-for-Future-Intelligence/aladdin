@@ -83,7 +83,9 @@ export const aabb = (state: CommonStoreState) => state.aabb;
 
 export const animateSun = (state: CommonStoreState) => state.animateSun;
 
-export const runSimulation = (state: CommonStoreState) => state.runSimulation;
+export const runDynamicSimulation = (state: CommonStoreState) => state.runDynamicSimulation;
+
+export const runStaticSimulation = (state: CommonStoreState) => state.runStaticSimulation;
 
 export const pauseSimulation = (state: CommonStoreState) => state.pauseSimulation;
 
@@ -549,8 +551,6 @@ export const sunlightDirection = (state: CommonStoreState) => state.sunlightDire
 export const setSunlightDirection = (state: CommonStoreState) => state.setSunlightDirection;
 
 export const showSolarRadiationHeatmap = (state: CommonStoreState) => state.showSolarRadiationHeatmap;
-
-export const dailySolarRadiationSimulationFlag = (state: CommonStoreState) => state.dailySolarRadiationSimulationFlag;
 
 // solar panels (PV)
 

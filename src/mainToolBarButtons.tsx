@@ -47,7 +47,8 @@ const MainToolBarButtons = () => {
   const addedWallId = useStore(Selector.addedWallId);
   const addedWindowId = useStore(Selector.addedWindowId);
   const addUndoable = useStore(Selector.addUndoable);
-  const runSimulation = useStore(Selector.runSimulation);
+  const runDynamicSimulation = useStore(Selector.runDynamicSimulation);
+  const runStaticSimulation = useStore(Selector.runStaticSimulation);
 
   const [category1Flag, setCategory1Flag] = useState<ObjectType>(ObjectType.Foundation);
   const [category2Flag, setCategory2Flag] = useState<ObjectType>(ObjectType.Wall);
@@ -114,28 +115,27 @@ const MainToolBarButtons = () => {
   };
 
   const toggleStaticSolarRadiationHeatmap = () => {
-    showInfo(i18n.t('message.SimulationStarted', lang));
-    // give it 0.1 second for the info to show up
-    setTimeout(() => {
-      selectNone();
-      setCommonStore((state) => {
-        state.simulationInProgress = true;
-        // set below to false first to ensure update (it will be set to true after the simulation)
-        state.showSolarRadiationHeatmap = false;
-        state.dailySolarRadiationSimulationFlag = !state.dailySolarRadiationSimulationFlag;
-      });
-    }, 100);
-  };
-
-  const toggleDynamicSolarRadiationHeatmap = () => {
-    if (!runSimulation) {
+    if (!runStaticSimulation) {
       showInfo(i18n.t('message.SimulationStarted', lang));
     }
     // give it 0.1 second for the info to show up
     setTimeout(() => {
       selectNone();
       setCommonStore((state) => {
-        state.runSimulation = !state.runSimulation;
+        state.runStaticSimulation = !state.runStaticSimulation;
+      });
+    }, 100);
+  };
+
+  const toggleDynamicSolarRadiationHeatmap = () => {
+    if (!runDynamicSimulation) {
+      showInfo(i18n.t('message.SimulationStarted', lang));
+    }
+    // give it 0.1 second for the info to show up
+    setTimeout(() => {
+      selectNone();
+      setCommonStore((state) => {
+        state.runDynamicSimulation = !state.runDynamicSimulation;
       });
     }, 100);
   };

@@ -118,7 +118,8 @@ export interface CommonStoreState {
 
   aabb: Box3; // axis-aligned bounding box of elements
   animateSun: boolean;
-  runSimulation: boolean;
+  runDynamicSimulation: boolean;
+  runStaticSimulation: boolean;
   pauseSimulation: boolean;
   clickObjectType: ObjectType | null;
   contextMenuObjectType: ObjectType | null;
@@ -455,7 +456,6 @@ export interface CommonStoreState {
   sensorLabels: string[];
   setSensorLabels: (labels: string[]) => void;
 
-  dailySolarRadiationSimulationFlag: boolean;
   solarPanelVisibilityFlag: boolean;
   solarPanelVisibilityResults: Map<Vantage, Map<string, number>>;
   dailyPvYield: DatumEntry[];
@@ -723,7 +723,6 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          dailySolarRadiationSimulationFlag: false,
           solarPanelVisibilityFlag: false,
           solarPanelVisibilityResults: new Map<Vantage, Map<string, number>>(),
           yearlyPvYield: [],
@@ -828,7 +827,8 @@ export const useStore = create<CommonStoreState>(
           // determine the scopes of the axes.
           aabb: new Box3(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)),
           animateSun: false,
-          runSimulation: false,
+          runDynamicSimulation: false,
+          runStaticSimulation: false,
           pauseSimulation: false,
           clickObjectType: null,
           contextMenuObjectType: null,

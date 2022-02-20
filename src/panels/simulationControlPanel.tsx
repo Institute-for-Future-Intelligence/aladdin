@@ -37,7 +37,8 @@ const SimulationControlPanel = () => {
 
   const cancel = () => {
     setCommonStore((state) => {
-      state.runSimulation = false;
+      state.runStaticSimulation = false;
+      state.runDynamicSimulation = false;
       state.pauseSimulation = false;
       state.runDailyLightSensor = false;
       state.pauseDailyLightSensor = false;
@@ -56,7 +57,7 @@ const SimulationControlPanel = () => {
 
   const pause = () => {
     setCommonStore((state) => {
-      if (state.runSimulation) {
+      if (state.runDynamicSimulation) {
         state.pauseSimulation = true;
       }
       if (state.runDailyLightSensor) {
@@ -88,7 +89,7 @@ const SimulationControlPanel = () => {
 
   const resume = () => {
     setCommonStore((state) => {
-      if (state.runSimulation) {
+      if (state.runDynamicSimulation) {
         state.pauseSimulation = false;
       }
       if (state.runDailyLightSensor) {

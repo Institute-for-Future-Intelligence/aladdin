@@ -39,8 +39,8 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
-  const dailySolarRadiationSimulationFlag = useStore(Selector.dailySolarRadiationSimulationFlag);
   const setHeatmap = useStore(Selector.setHeatmap);
+  const runSimulation = useStore(Selector.runStaticSimulation);
 
   const { scene } = useThree();
   const lang = { lng: language };
@@ -49,29 +49,24 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   const interval = 60 / world.timesPerHour;
   const ray = useMemo(() => new Raycaster(), []);
   const now = new Date(world.date);
-  const loaded = useRef<boolean>(false);
   const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
 
   useEffect(() => {
-    if (loaded.current) {
-      // avoid calling on first render
+    if (runSimulation) {
       if (elements && elements.length > 0) {
         generateHeatmaps();
         setCommonStore((state) => {
           state.showSolarRadiationHeatmap = true;
+          state.simulationInProgress = false;
+          state.runStaticSimulation = false;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
       }
-    } else {
-      loaded.current = true;
     }
-    setCommonStore((state) => {
-      state.simulationInProgress = false;
-    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dailySolarRadiationSimulationFlag]);
+  }, [runSimulation]);
 
   const inShadow = (elementId: string, position: Vector3, sunDirection: Vector3) => {
     if (objectsRef.current.length > 1) {

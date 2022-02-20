@@ -68,7 +68,7 @@ const HeliodonPanel = () => {
   const latitude = useStore(Selector.world.latitude);
   const address = useStore(Selector.world.address);
   const animateSun = useStore(Selector.animateSun);
-  const runSimulation = useStore(Selector.runSimulation);
+  const runSimulation = useStore(Selector.runDynamicSimulation);
   const showSunAngles = useStore(Selector.viewState.showSunAngles);
   const heliodon = useStore(Selector.viewState.heliodon);
   const heliodonPanelX = useStore(Selector.viewState.heliodonPanelX);
