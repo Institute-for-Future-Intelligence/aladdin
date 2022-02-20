@@ -93,9 +93,12 @@ const Foundation = ({
   textureType = FoundationTexture.NoTexture,
   solarReceiver,
   solarReceiverApertureWidth = 0.6,
-  solarReceiverHeight = 10,
+  solarReceiverHeight = 20,
   solarReceiverTubeRelativeLength = 0.8,
   solarReceiverTubePoleNumber = 5,
+  solarTowerRadius = 0.5,
+  solarTowerCentralReceiverRadius = 1,
+  solarTowerCentralReceiverHeight = 2,
 }: FoundationModel) => {
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic);
@@ -2338,6 +2341,38 @@ const Foundation = ({
                     </Cylinder>
                   );
                 })}
+            </group>
+          )}
+          {solarReceiver === SolarReceiver.Tower && (
+            <group>
+              <Cylinder
+                userData={{ unintersectable: true }}
+                name={'Tower'}
+                castShadow={false}
+                receiveShadow={false}
+                args={[solarTowerRadius, solarTowerRadius, solarReceiverHeight, 6, 2]}
+                position={[0, 0, solarReceiverHeight / 2 + lz]}
+                rotation={[HALF_PI, 0, 0]}
+              >
+                <meshStandardMaterial attach="material" color={'white'} />
+              </Cylinder>
+              <Cylinder
+                userData={{ unintersectable: true }}
+                name={'Center Receiver'}
+                castShadow={false}
+                receiveShadow={false}
+                args={[
+                  solarTowerCentralReceiverRadius,
+                  solarTowerCentralReceiverRadius,
+                  solarTowerCentralReceiverHeight,
+                  10,
+                  2,
+                ]}
+                position={[0, 0, solarReceiverHeight + lz]}
+                rotation={[HALF_PI, 0, 0]}
+              >
+                <meshStandardMaterial attach="material" color={'white'} />
+              </Cylinder>
             </group>
           )}
         </>

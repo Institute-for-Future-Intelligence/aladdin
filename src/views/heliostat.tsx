@@ -193,7 +193,7 @@ const Heliostat = ({
           return new Vector3(
             foundation.cx - cx,
             foundation.cy - cy,
-            foundation.cz - cz + (foundation.solarReceiverHeight ?? 10),
+            foundation.cz - cz + (foundation.solarReceiverHeight ?? 20),
           );
         }
       }

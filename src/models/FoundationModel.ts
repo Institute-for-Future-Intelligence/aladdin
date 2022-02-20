@@ -15,6 +15,11 @@ export interface FoundationModel extends ElementModel {
   solarReceiverApertureWidth?: number;
   solarReceiverHeight?: number;
 
+  // tower for heliostats
+  solarTowerRadius?: number;
+  solarTowerCentralReceiverRadius?: number;
+  solarTowerCentralReceiverHeight?: number;
+
   // tube receiver for Fresnel reflectors
   solarReceiverTubeRelativeLength?: number;
   solarReceiverTubePoleNumber?: number;
