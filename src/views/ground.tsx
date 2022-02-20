@@ -63,6 +63,7 @@ const Ground = () => {
   const deletedCuboidId = useStore(Selector.deletedCuboidId);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const updateSceneRadius = useStore(Selector.updateSceneRadius);
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
 
   const { get: getThree, scene, invalidate } = useThree();
   const groundPlaneRef = useRef<Mesh>();
@@ -1637,7 +1638,11 @@ const Ground = () => {
         onPointerMove={handleGroundPointerMove}
         onPointerOut={handleGroundPointerOut}
       >
-        <meshStandardMaterial depthTest={false} color={groundColor} />
+        {showSolarRadiationHeatmap ? (
+          <meshBasicMaterial color={groundColor} />
+        ) : (
+          <meshStandardMaterial depthTest={false} color={groundColor} />
+        )}
       </Plane>
     </>
   );
