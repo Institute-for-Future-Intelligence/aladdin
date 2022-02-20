@@ -556,6 +556,12 @@ export const i18n_zh_tw = {
       AllFresnelReflectors: '所有的菲涅耳反射鏡',
     },
 
+    heliostatMenu: {
+      OnlyThisHeliostat: '只這個定日鏡',
+      AllHeliostatsAboveFoundation: '同一地基上所有的定日鏡',
+      AllHeliostats: '所有的定日鏡',
+    },
+
     parabolicDishMenu: {
       ReceiverStructure: '接收器結構',
       CentralPole: '中心直柱',

@@ -27,6 +27,7 @@ import {
 import { ParabolicTroughModel } from './ParabolicTroughModel';
 import { ParabolicDishModel } from './ParabolicDishModel';
 import { FresnelReflectorModel } from './FresnelReflectorModel';
+import { HeliostatModel } from './HeliostatModel';
 
 export class ElementModelCloner {
   static clone(
@@ -74,6 +75,12 @@ export class ElementModelCloner {
         if (parent) {
           // must have a parent
           clone = ElementModelCloner.cloneFresnelReflector(parent, e as FresnelReflectorModel, x, y, z);
+        }
+        break;
+      case ObjectType.Heliostat:
+        if (parent) {
+          // must have a parent
+          clone = ElementModelCloner.cloneHeliostat(parent, e as HeliostatModel, x, y, z);
         }
         break;
       case ObjectType.Wall:
@@ -388,6 +395,35 @@ export class ElementModelCloner {
       foundationId: foundationId,
       id: short.generate() as string,
     } as FresnelReflectorModel;
+  }
+
+  private static cloneHeliostat(parent: ElementModel, heliostat: HeliostatModel, x: number, y: number, z?: number) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+        foundationId = parent.id;
+        break;
+    }
+    return {
+      type: ObjectType.Heliostat,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: heliostat.lx,
+      ly: heliostat.ly,
+      lz: heliostat.lz,
+      reflectance: heliostat.reflectance,
+      tiltAngle: heliostat.tiltAngle,
+      relativeAzimuth: heliostat.relativeAzimuth,
+      poleRadius: heliostat.poleRadius,
+      poleHeight: heliostat.poleHeight,
+      showLabel: heliostat.showLabel,
+      normal: [...heliostat.normal],
+      rotation: heliostat.parentId ? [...parent.rotation] : [0, 0, 0],
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as HeliostatModel;
   }
 
   private static cloneFoundation(foundation: FoundationModel, x: number, y: number) {

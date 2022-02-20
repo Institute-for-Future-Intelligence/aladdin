@@ -429,6 +429,10 @@ export const fresnelReflectorActionScope = (state: CommonStoreState) => state.fr
 
 export const setFresnelReflectorActionScope = (state: CommonStoreState) => state.setFresnelReflectorActionScope;
 
+export const heliostatActionScope = (state: CommonStoreState) => state.heliostatActionScope;
+
+export const setHeliostatActionScope = (state: CommonStoreState) => state.setHeliostatActionScope;
+
 export const parabolicDishActionScope = (state: CommonStoreState) => state.parabolicDishActionScope;
 
 export const setParabolicDishActionScope = (state: CommonStoreState) => state.setParabolicDishActionScope;

@@ -23,6 +23,7 @@ import {
   WallMenu,
   WindowMenu,
   FresnelReflectorMenu,
+  HeliostatMenu,
 } from './elementMenu';
 
 export interface ContextMenuProps {
@@ -82,16 +83,22 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
             <ParabolicTroughMenu />
           </Menu>
         );
+      case ObjectType.ParabolicDish:
+        return (
+          <Menu>
+            <ParabolicDishMenu />
+          </Menu>
+        );
       case ObjectType.FresnelReflector:
         return (
           <Menu>
             <FresnelReflectorMenu />
           </Menu>
         );
-      case ObjectType.ParabolicDish:
+      case ObjectType.Heliostat:
         return (
           <Menu>
-            <ParabolicDishMenu />
+            <HeliostatMenu />
           </Menu>
         );
       case ObjectType.Sensor:

@@ -15,6 +15,7 @@ import HumanImage from './assets/human.png';
 import ParabolicTroughImage from './assets/parabolic_trough.png';
 import ParabolicDishImage from './assets/parabolic_dish.png';
 import FresnelReflectorImage from './assets/fresnel_reflector.png';
+import HeliostatImage from './assets/heliostat.png';
 
 import React, { useState } from 'react';
 import { useStore } from './stores/common';
@@ -370,6 +371,27 @@ const MainToolBarButtons = () => {
         />
         {i18n.t('toolbar.SwitchToAddingFresnelReflector', lang)}
       </Menu.Item>
+      <Menu.Item
+        style={{ userSelect: 'none' }}
+        key="add-heliostat-menu-item"
+        onClick={() => {
+          setCategory3Flag(ObjectType.Heliostat);
+          setMode(ObjectType.Heliostat);
+        }}
+      >
+        <img
+          alt={'Heliostat'}
+          src={HeliostatImage}
+          height={36}
+          width={36}
+          style={{
+            filter: defaultFilter,
+            verticalAlign: 'middle',
+            marginRight: '10px',
+          }}
+        />
+        {i18n.t('toolbar.SwitchToAddingHeliostat', lang)}
+      </Menu.Item>
     </Menu>
   );
 
@@ -667,6 +689,23 @@ const MainToolBarButtons = () => {
             }}
             onClick={() => {
               setMode(ObjectType.FresnelReflector);
+            }}
+          />
+        )}
+        {category3Flag === ObjectType.Heliostat && (
+          <img
+            title={i18n.t('toolbar.AddHeliostat', lang)}
+            alt={'Heliostat'}
+            src={HeliostatImage}
+            height={36}
+            width={36}
+            style={{
+              filter: objectTypeToAdd === ObjectType.Heliostat ? selectFilter : defaultFilter,
+              cursor: 'pointer',
+              verticalAlign: 'middle',
+            }}
+            onClick={() => {
+              setMode(ObjectType.Heliostat);
             }}
           />
         )}

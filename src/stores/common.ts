@@ -361,6 +361,10 @@ export interface CommonStoreState {
   fresnelReflectorActionScope: Scope;
   setFresnelReflectorActionScope: (scope: Scope) => void;
 
+  // for heliostats
+  heliostatActionScope: Scope;
+  setHeliostatActionScope: (scope: Scope) => void;
+
   // for parabolic dishes
   parabolicDishActionScope: Scope;
   setParabolicDishActionScope: (scope: Scope) => void;
@@ -2603,6 +2607,14 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          // for heliostat
+          heliostatActionScope: Scope.OnlyThisObject,
+          setHeliostatActionScope(scope) {
+            immerSet((state: CommonStoreState) => {
+              state.heliostatActionScope = scope;
+            });
+          },
+
           // for parabolic dishes
           parabolicDishActionScope: Scope.OnlyThisObject,
           setParabolicDishActionScope(scope) {
@@ -3131,6 +3143,20 @@ export const useStore = create<CommonStoreState>(
                   );
                   model = fresnelReflector;
                   state.elements.push(fresnelReflector);
+                  break;
+                case ObjectType.Heliostat:
+                  const heliostatParentModel = parent as ElementModel;
+                  const heliostatRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, heliostatParentModel);
+                  const heliostat = ElementModelFactory.makeHeliostat(
+                    heliostatParentModel,
+                    heliostatRelativeCoordinates.x,
+                    heliostatRelativeCoordinates.y,
+                    heliostatRelativeCoordinates.z,
+                    normal,
+                    'rotation' in parent ? parent.rotation : undefined,
+                  );
+                  model = heliostat;
+                  state.elements.push(heliostat);
                   break;
                 case ObjectType.Foundation:
                   const foundation = ElementModelFactory.makeFoundation(p.x, p.y);

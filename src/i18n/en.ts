@@ -573,6 +573,12 @@ export const i18n_en = {
       AllFresnelReflectors: 'All Fresnel Reflectors',
     },
 
+    heliostatMenu: {
+      OnlyThisHeliostat: 'Only This Heliostat',
+      AllHeliostatsAboveFoundation: 'All Heliostats Above the Same Foundation',
+      AllHeliostats: 'All Heliostats',
+    },
+
     parabolicDishMenu: {
       ReceiverStructure: 'Receiver Structure',
       CentralPole: 'Central Pole',
