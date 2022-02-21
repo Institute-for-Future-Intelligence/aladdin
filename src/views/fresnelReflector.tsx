@@ -206,7 +206,7 @@ const FresnelReflector = ({
       }
     }
     return null;
-  }, [parent]);
+  }, [parent, cx, cy, cz]);
 
   const shiftedReceiverCenter = useRef<Vector3>(new Vector3());
 
@@ -278,8 +278,7 @@ const FresnelReflector = ({
           castShadow={shadowEnabled}
           uuid={id}
           ref={baseRef}
-          args={[lx, lz, ly]}
-          rotation={[HALF_PI, 0, 0]}
+          args={[lx, ly, lz]}
           name={'Fresnel Reflector'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
@@ -312,6 +311,8 @@ const FresnelReflector = ({
         >
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
+          <meshStandardMaterial attachArray="material" color={color} />
+          <meshStandardMaterial attachArray="material" color={color} />
           {showSolarRadiationHeatmap && heatmapTexture ? (
             <meshBasicMaterial attachArray="material" side={FrontSide} map={heatmapTexture} />
           ) : (
@@ -323,8 +324,6 @@ const FresnelReflector = ({
               color={'lightskyblue'}
             />
           )}
-          <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
         </Box>
 

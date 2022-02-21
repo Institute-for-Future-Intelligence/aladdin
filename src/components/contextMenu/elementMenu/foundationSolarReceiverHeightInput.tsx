@@ -7,7 +7,7 @@ import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } 
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { ObjectType, Scope } from 'src/types';
+import { ObjectType, Scope, SolarReceiver } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
@@ -33,7 +33,9 @@ const FoundationSolarReceiverHeightInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputReceiverHeight, setInputReceiverHeight] = useState<number>(foundation?.solarReceiverHeight ?? 10);
+  const [inputReceiverHeight, setInputReceiverHeight] = useState<number>(
+    foundation?.solarReceiverHeight ?? (foundation?.solarReceiver === SolarReceiver.Tower ? 20 : 10),
+  );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -43,7 +45,9 @@ const FoundationSolarReceiverHeightInput = ({
 
   useEffect(() => {
     if (foundation) {
-      setInputReceiverHeight(foundation.solarReceiverHeight ?? 10);
+      setInputReceiverHeight(
+        foundation.solarReceiverHeight ?? (foundation.solarReceiver === SolarReceiver.Tube ? 10 : 20),
+      );
     }
   }, [foundation]);
 

@@ -10,10 +10,12 @@ import FoundationTexture04 from '../resources/foundation_04.png';
 import FoundationTexture05 from '../resources/foundation_05.png';
 import FoundationTexture06 from '../resources/foundation_06.png';
 import FoundationTexture07 from '../resources/foundation_07.png';
+import GlowImage from '../resources/glow.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Cylinder, Plane, Sphere } from '@react-three/drei';
+import { Box, Cylinder, Plane, Sphere, useTexture } from '@react-three/drei';
 import {
+  AdditiveBlending,
   CanvasTexture,
   DoubleSide,
   Euler,
@@ -76,6 +78,7 @@ import { HorizontalRuler } from './horizontalRuler';
 import { showError } from '../helpers';
 import { SolarCollector } from '../models/SolarCollector';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
+import { getSunDirection } from '../analysis/sunTools';
 
 const Foundation = ({
   id,
@@ -93,15 +96,17 @@ const Foundation = ({
   textureType = FoundationTexture.NoTexture,
   solarReceiver,
   solarReceiverApertureWidth = 0.6,
-  solarReceiverHeight = 20,
+  solarReceiverHeight = solarReceiver === SolarReceiver.Tube ? 10 : 20,
   solarReceiverTubeRelativeLength = 0.8,
   solarReceiverTubePoleNumber = 5,
   solarTowerRadius = 0.5,
-  solarTowerCentralReceiverRadius = 1,
+  solarTowerCentralReceiverRadius = 0.75,
   solarTowerCentralReceiverHeight = 2,
 }: FoundationModel) => {
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic);
+  const date = useStore(Selector.world.date);
+  const latitude = useStore(Selector.world.latitude);
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const setCommonStore = useStore(Selector.set);
@@ -199,6 +204,8 @@ const Foundation = ({
   const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
   const rotateHandleSize = 0.6 * ratio;
+  const glowTexture = useTexture(GlowImage);
+  const haloSize = solarTowerCentralReceiverHeight * 2 + 1;
 
   const lowerRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
     return [0, -hy - rotateHandleSize, 0];
@@ -245,7 +252,7 @@ const Foundation = ({
       array.push(new Vector3(0, i * dy - (solarReceiverTubeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz));
     }
     return array;
-  }, [lx, ly, solarReceiverTubePoleNumber, solarReceiverHeight, solarReceiverTubeRelativeLength]);
+  }, [solarReceiver, lx, ly, solarReceiverTubePoleNumber, solarReceiverHeight, solarReceiverTubeRelativeLength]);
 
   useEffect(() => {
     const unsubscribe = useStore.subscribe((state) => {
@@ -321,6 +328,10 @@ const Foundation = ({
         return { x: 1, y: 1 };
     }
   };
+
+  const sunDirection = useMemo(() => {
+    return getSunDirection(new Date(date), latitude);
+  }, [date, latitude]);
 
   const textureLoader = useMemo(() => {
     let textureImg;
@@ -1663,7 +1674,7 @@ const Foundation = ({
     return Util.isSolarCollectorWithinHorizontalSurface(clone, foundationModel);
   };
 
-  const handleSolarCollectorPointerOut = (e: ThreeEvent<PointerEvent>) => {
+  const handleSolarCollectorPointerOut = () => {
     if (grabRef.current && Util.isSolarCollector(grabRef.current)) {
       // Have to get the latest from the store (we may change this to ref in the future)
       const sp = useStore.getState().getElementById(grabRef.current.id) as SolarCollector;
@@ -2373,6 +2384,20 @@ const Foundation = ({
               >
                 <meshStandardMaterial attach="material" color={'white'} />
               </Cylinder>
+              {/* simple glow effect to create a halo */}
+              {sunDirection.z > 0 && (
+                <mesh position={[0, 0, solarReceiverHeight + lz]}>
+                  <sprite scale={[haloSize, haloSize, haloSize]}>
+                    <spriteMaterial
+                      map={glowTexture}
+                      transparent={false}
+                      color={0xffffff}
+                      blending={AdditiveBlending}
+                      depthWrite={false} // this must be set to hide the rectangle of the texture image
+                    />
+                  </sprite>
+                </mesh>
+              )}
             </group>
           )}
         </>

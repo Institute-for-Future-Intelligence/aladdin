@@ -338,7 +338,7 @@ const SolarPanel = ({
       if (sunDirection.z > 0) {
         switch (trackerType) {
           case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
-            const r = Math.sqrt(Math.pow(rotatedSunDirection.x, 2) + Math.pow(rotatedSunDirection.y, 2));
+            const r = Math.hypot(rotatedSunDirection.x, rotatedSunDirection.y);
             return new Euler(
               Math.atan2(r, rotatedSunDirection.z),
               0,
@@ -402,8 +402,7 @@ const SolarPanel = ({
           castShadow={shadowEnabled}
           uuid={id}
           ref={baseRef}
-          args={[lx, lz, ly]}
-          rotation={[HALF_PI, 0, 0]}
+          args={[lx, ly, lz]}
           name={'Solar Panel'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
@@ -436,13 +435,13 @@ const SolarPanel = ({
         >
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
+          <meshStandardMaterial attachArray="material" color={color} />
+          <meshStandardMaterial attachArray="material" color={color} />
           {showSolarRadiationHeatmap && heatmapTexture ? (
             <meshBasicMaterial attachArray="material" map={heatmapTexture} />
           ) : (
             <meshStandardMaterial attachArray="material" map={texture} />
           )}
-          <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
         </Box>
 

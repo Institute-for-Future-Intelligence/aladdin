@@ -597,39 +597,6 @@ const ParabolicTrough = ({
         )}
       </group>
 
-      {/* draw rotate handles */}
-      {/*{selected && !locked && (*/}
-      {/*  <group position={[0, 0, -actualPoleHeight]} rotation={[0, 0, relativeEuler.z]}>*/}
-      {/*    /!* rotate handles *!/*/}
-      {/*    <RotateHandle*/}
-      {/*      id={id}*/}
-      {/*      position={[0, -hy - rotateHandleSize / 2, actualPoleHeight]}*/}
-      {/*      color={*/}
-      {/*        hoveredHandle === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Upper*/}
-      {/*          ? HIGHLIGHT_HANDLE_COLOR*/}
-      {/*          : RESIZE_HANDLE_COLOR*/}
-      {/*      }*/}
-      {/*      ratio={rotateHandleSize}*/}
-      {/*      handleType={RotateHandleType.Upper}*/}
-      {/*      hoverHandle={hoverHandle}*/}
-      {/*      noHoverHandle={noHoverHandle}*/}
-      {/*    />*/}
-      {/*    <RotateHandle*/}
-      {/*      id={id}*/}
-      {/*      position={[0, hy + rotateHandleSize / 2, actualPoleHeight]}*/}
-      {/*      color={*/}
-      {/*        hoveredHandle === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Lower*/}
-      {/*          ? HIGHLIGHT_HANDLE_COLOR*/}
-      {/*          : RESIZE_HANDLE_COLOR*/}
-      {/*      }*/}
-      {/*      ratio={rotateHandleSize}*/}
-      {/*      handleType={RotateHandleType.Lower}*/}
-      {/*      hoverHandle={hoverHandle}*/}
-      {/*      noHoverHandle={noHoverHandle}*/}
-      {/*    />*/}
-      {/*  </group>*/}
-      {/*)}*/}
-
       {/* draw poles */}
       {actualPoleHeight > 0 &&
         poles.map((p, i) => {

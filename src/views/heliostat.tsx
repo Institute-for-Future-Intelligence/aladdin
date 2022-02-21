@@ -17,7 +17,6 @@ import {
   RESIZE_HANDLE_COLOR,
   RESIZE_HANDLE_SIZE,
   UNIT_VECTOR_POS_Z,
-  ZERO_TOLERANCE,
 } from '../constants';
 import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import { Util } from '../Util';
@@ -199,36 +198,21 @@ const Heliostat = ({
       }
     }
     return null;
-  }, [parent]);
-
-  const shiftedReceiverCenter = useRef<Vector3>(new Vector3());
+  }, [parent, cx, cy, cz]);
 
   const relativeEuler = useMemo(() => {
     if (receiverCenter && sunDirection.z > 0) {
-      // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
-      const rotationAxis = rot ? new Vector3(Math.sin(rot), Math.cos(rot), 0) : new Vector3(0, 1, 0);
-      shiftedReceiverCenter.current.set(receiverCenter.x, receiverCenter.y, receiverCenter.z);
-      // how much the reflected light should shift in the direction of the receiver tube?
-      const shift =
-        sunDirection.z < ZERO_TOLERANCE
-          ? 0
-          : (-receiverCenter.z * (sunDirection.y * rotationAxis.y + sunDirection.x * rotationAxis.x)) / sunDirection.z;
-      shiftedReceiverCenter.current.x += shift * rotationAxis.x;
-      shiftedReceiverCenter.current.y -= shift * rotationAxis.y;
-      const heliostatToReceiver = shiftedReceiverCenter.current.clone().normalize();
+      const heliostatToReceiver = receiverCenter.clone().normalize();
       let normalVector = heliostatToReceiver.add(sunDirection).normalize();
       if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
         normalVector = new Vector3(-0.001, 0, 1).normalize();
       }
-      const sunDirectionClone = sunDirection.clone();
       if (rot) {
         normalVector.applyAxisAngle(UNIT_VECTOR_POS_Z, -rot);
-        sunDirectionClone.applyAxisAngle(UNIT_VECTOR_POS_Z, -rot);
       }
-      const delta = (sunDirectionClone.y / sunDirectionClone.z) * receiverCenter.z;
-      shiftedReceiverCenter.current.x -= (shift - delta) * rotationAxis.x;
-      shiftedReceiverCenter.current.y += (shift - delta) * rotationAxis.y;
-      return new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY');
+      // convert the normal vector to euler
+      const r = Math.hypot(normalVector.x, normalVector.y);
+      return new Euler(Math.atan2(r, normalVector.z), 0, Math.atan2(normalVector.y, normalVector.x) + HALF_PI, 'ZXY');
     }
     return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
   }, [receiverCenter, sunDirection, tiltAngle, relativeAzimuth, rot]);
@@ -247,8 +231,7 @@ const Heliostat = ({
           castShadow={shadowEnabled}
           uuid={id}
           ref={baseRef}
-          args={[lx, lz, ly]}
-          rotation={[HALF_PI, 0, 0]}
+          args={[lx, ly, lz]}
           name={'Heliostat'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
@@ -281,6 +264,8 @@ const Heliostat = ({
         >
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
+          <meshStandardMaterial attachArray="material" color={color} />
+          <meshStandardMaterial attachArray="material" color={color} />
           {showSolarRadiationHeatmap && heatmapTexture ? (
             <meshBasicMaterial attachArray="material" side={FrontSide} map={heatmapTexture} />
           ) : (
@@ -292,8 +277,6 @@ const Heliostat = ({
               color={'lightskyblue'}
             />
           )}
-          <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
         </Box>
 
@@ -501,11 +484,7 @@ const Heliostat = ({
             userData={{ unintersectable: true }}
             points={
               receiverCenter
-                ? [
-                    shiftedReceiverCenter.current,
-                    new Vector3(0, 0, hz),
-                    sunDirection.clone().multiplyScalar(sunBeamLength),
-                  ]
+                ? [receiverCenter, new Vector3(0, 0, hz), sunDirection.clone().multiplyScalar(sunBeamLength)]
                 : [new Vector3(0, 0, hz), sunDirection.clone().multiplyScalar(sunBeamLength)]
             }
             name={'Sun Beam'}

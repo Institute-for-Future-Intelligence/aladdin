@@ -209,7 +209,7 @@ const ParabolicDish = ({
 
   const relativeEuler = useMemo(() => {
     if (sunDirection.z > 0) {
-      const r = Math.sqrt(Math.pow(rotatedSunDirection.x, 2) + Math.pow(rotatedSunDirection.y, 2));
+      const r = Math.hypot(rotatedSunDirection.x, rotatedSunDirection.y);
       return new Euler(
         Math.atan2(r, rotatedSunDirection.z),
         0,

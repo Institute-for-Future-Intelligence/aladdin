@@ -728,7 +728,7 @@ export const FoundationMenu = () => {
             </Radio.Group>
           </SubMenu>
         )}
-        {editable && foundation.solarReceiver === SolarReceiver.Tube && (
+        {editable && foundation.solarReceiver && (
           <SubMenu
             key={'foundation-solar-receiver-physical-properties'}
             title={i18n.t('foundationMenu.SolarReceiverPhysicalProperties', lang)}
@@ -749,20 +749,24 @@ export const FoundationMenu = () => {
               {i18n.t('foundationMenu.SolarReceiverHeight', lang)} ...
             </Menu.Item>
 
-            <FoundationSolarReceiverApertureWidthInput
-              dialogVisible={receiverApertureDialogVisible}
-              setDialogVisible={setReceiverApertureDialogVisible}
-            />
-            <Menu.Item
-              key={'foundation-solar-receiver-tube-aperture-width'}
-              style={{ paddingLeft: '36px' }}
-              onClick={() => {
-                setApplyCount(0);
-                setReceiverApertureDialogVisible(true);
-              }}
-            >
-              {i18n.t('foundationMenu.SolarReceiverApertureWidth', lang)} ...
-            </Menu.Item>
+            {foundation.solarReceiver === SolarReceiver.Tube && (
+              <>
+                <FoundationSolarReceiverApertureWidthInput
+                  dialogVisible={receiverApertureDialogVisible}
+                  setDialogVisible={setReceiverApertureDialogVisible}
+                />
+                <Menu.Item
+                  key={'foundation-solar-receiver-tube-aperture-width'}
+                  style={{ paddingLeft: '36px' }}
+                  onClick={() => {
+                    setApplyCount(0);
+                    setReceiverApertureDialogVisible(true);
+                  }}
+                >
+                  {i18n.t('foundationMenu.SolarReceiverApertureWidth', lang)} ...
+                </Menu.Item>
+              </>
+            )}
 
             <FoundationSolarReceiverAbsorptanceInput
               dialogVisible={receiverAbsorptanceDialogVisible}
