@@ -17,6 +17,7 @@ import { ObjectType, TrackerType } from '../types';
 import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
 import {
+  HALF_PI,
   UNIT_VECTOR_NEG_X,
   UNIT_VECTOR_NEG_Y,
   UNIT_VECTOR_POS_X,
@@ -32,6 +33,7 @@ import { CuboidModel } from '../models/CuboidModel';
 import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import { ParabolicDishModel } from '../models/ParabolicDishModel';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
+import { HeliostatModel } from '../models/HeliostatModel';
 
 export interface DynamicSolarRadiationSimulationProps {
   city: string | null;
@@ -123,8 +125,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         case ObjectType.Cuboid:
         case ObjectType.SolarPanel:
         case ObjectType.ParabolicTrough:
-        case ObjectType.FresnelReflector:
         case ObjectType.ParabolicDish:
+        case ObjectType.FresnelReflector:
+        case ObjectType.Heliostat:
           cellOutputsMapRef.current.delete(e.id);
           break;
       }
@@ -142,8 +145,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         case ObjectType.Foundation:
         case ObjectType.SolarPanel:
         case ObjectType.ParabolicTrough:
-        case ObjectType.FresnelReflector:
         case ObjectType.ParabolicDish:
+        case ObjectType.FresnelReflector:
+        case ObjectType.Heliostat:
           const data = cellOutputsMapRef.current.get(e.id);
           if (data) {
             for (let i = 0; i < data.length; i++) {
@@ -225,11 +229,14 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           case ObjectType.ParabolicTrough:
             calculateParabolicTrough(e as ParabolicTroughModel);
             break;
+          case ObjectType.ParabolicDish:
+            calculateParabolicDish(e as ParabolicDishModel);
+            break;
           case ObjectType.FresnelReflector:
             calculateFresnelReflector(e as FresnelReflectorModel);
             break;
-          case ObjectType.ParabolicDish:
-            calculateParabolicDish(e as ParabolicDishModel);
+          case ObjectType.Heliostat:
+            calculateHeliostat(e as HeliostatModel);
             break;
         }
       }
@@ -653,6 +660,88 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     }
   };
 
+  const calculateParabolicDish = (dish: ParabolicDishModel) => {
+    const sunDirection = getSunDirection(now, world.latitude);
+    if (sunDirection.z <= 0) return; // when the sun is not out
+    const parent = getParent(dish);
+    if (!parent) throw new Error('parent of parabolic dish does not exist');
+    const dayOfYear = Util.dayOfYear(now);
+    const center = Util.absoluteCoordinates(dish.cx, dish.cy, dish.cz, parent);
+    const normal = new Vector3().fromArray(dish.normal);
+    const originalNormal = normal.clone();
+    const lx = dish.lx;
+    const ly = dish.ly;
+    const depth = (lx * lx) / (4 * dish.latusRectum); // the distance from the bottom to the aperture circle
+    const actualPoleHeight = dish.poleHeight + lx / 2;
+    const nx = Math.max(2, Math.round(dish.lx / cellSize));
+    const ny = Math.max(2, Math.round(dish.ly / cellSize));
+    const dx = lx / nx;
+    const dy = ly / ny;
+    // shift half cell size to the center of each grid cell
+    const x0 = center.x - (lx - cellSize) / 2;
+    const y0 = center.y - (ly - cellSize) / 2;
+    const z0 = parent.lz + actualPoleHeight + dish.lz + depth;
+    const center2d = new Vector2(center.x, center.y);
+    const v = new Vector3();
+    let cellOutputs = cellOutputsMapRef.current.get(dish.id);
+    if (!cellOutputs) {
+      cellOutputs = Array(nx)
+        .fill(0)
+        .map(() => Array(ny).fill(0));
+      cellOutputsMapRef.current.set(dish.id, cellOutputs);
+    }
+    const rot = parent.rotation[2];
+    const zRot = rot + dish.relativeAzimuth;
+    const zRotZero = Util.isZero(zRot);
+    const rotatedSunDirection = rot
+      ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
+      : sunDirection.clone();
+    const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
+    normal.copy(originalNormal.clone().applyEuler(new Euler().setFromQuaternion(qRot)));
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+    const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+      world.ground,
+      now.getMonth(),
+      normal,
+      peakRadiation,
+    );
+    const dot = normal.dot(sunDirection);
+    const v2 = new Vector2();
+    let tmpX = 0;
+    let tmpY = 0;
+    let disX = 0;
+    let disY = 0;
+    let areaRatio = 1;
+    const lr2 = 4 / (dish.latusRectum * dish.latusRectum);
+    // we have to calculate the irradiance on the parabolic surface, not the aperture surface.
+    // the irradiance on the former is less than that on the latter because of the area difference.
+    // the relationship between a unit area on the parabolic surface and that on the aperture surface
+    // is S = A * sqrt(1 + 4 * (x^2 + y^2) / p^2), where p is the latus rectum, x is the x distance
+    // from the center of the paraboloid, y is the y distance from the center of the paraboloid,
+    // and A is the unit area on the aperture area. Note that this modification only
+    // applies to direct radiation. Indirect radiation can come from any direction.
+    for (let ku = 0; ku < nx; ku++) {
+      tmpX = x0 + ku * dx;
+      disX = tmpX - center.x;
+      if (Math.abs(disX) > lx / 2) continue;
+      for (let kv = 0; kv < ny; kv++) {
+        tmpY = y0 + kv * dy;
+        disY = tmpY - center.y;
+        if (Math.abs(disY) > ly / 2) continue;
+        cellOutputs[ku][kv] += indirectRadiation;
+        if (dot > 0) {
+          v2.set(tmpX, tmpY);
+          if (!zRotZero) v2.rotateAround(center2d, zRot);
+          v.set(v2.x, v2.y, z0);
+          if (!inShadow(dish.id, v, sunDirection)) {
+            areaRatio = 1 / Math.sqrt(1 + (disX * disX + disY * disY) * lr2);
+            cellOutputs[ku][kv] += dot * peakRadiation * areaRatio;
+          }
+        }
+      }
+    }
+  };
+
   const calculateFresnelReflector = (reflector: FresnelReflectorModel) => {
     const sunDirection = getSunDirection(now, world.latitude);
     if (sunDirection.z < ZERO_TOLERANCE) return; // when the sun is not out
@@ -746,44 +835,67 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     }
   };
 
-  const calculateParabolicDish = (dish: ParabolicDishModel) => {
+  const calculateHeliostat = (heliostat: HeliostatModel) => {
     const sunDirection = getSunDirection(now, world.latitude);
-    if (sunDirection.z <= 0) return; // when the sun is not out
-    const parent = getParent(dish);
-    if (!parent) throw new Error('parent of parabolic dish does not exist');
+    if (sunDirection.z < ZERO_TOLERANCE) return; // when the sun is not out
+    const parent = getParent(heliostat);
+    if (!parent) throw new Error('parent of Fresnel reflector does not exist');
+    if (parent.type !== ObjectType.Foundation) return;
     const dayOfYear = Util.dayOfYear(now);
-    const center = Util.absoluteCoordinates(dish.cx, dish.cy, dish.cz, parent);
-    const normal = new Vector3().fromArray(dish.normal);
+    const foundation = parent as FoundationModel;
+    const center = Util.absoluteCoordinates(heliostat.cx, heliostat.cy, heliostat.cz, parent);
+    const normal = new Vector3().fromArray(heliostat.normal);
     const originalNormal = normal.clone();
-    const lx = dish.lx;
-    const ly = dish.ly;
-    const depth = (lx * lx) / (4 * dish.latusRectum); // the distance from the bottom to the aperture circle
-    const actualPoleHeight = dish.poleHeight + lx / 2;
-    const nx = Math.max(2, Math.round(dish.lx / cellSize));
-    const ny = Math.max(2, Math.round(dish.ly / cellSize));
+    const lx = heliostat.lx;
+    const ly = heliostat.ly;
+    const actualPoleHeight = heliostat.poleHeight + Math.max(lx, ly) / 2;
+    const nx = Math.max(2, Math.round(heliostat.lx / cellSize));
+    const ny = Math.max(2, Math.round(heliostat.ly / cellSize));
     const dx = lx / nx;
     const dy = ly / ny;
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = parent.lz + actualPoleHeight + dish.lz + depth;
+    const z0 = foundation.lz + actualPoleHeight + heliostat.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
-    let cellOutputs = cellOutputsMapRef.current.get(dish.id);
+    let cellOutputs = cellOutputsMapRef.current.get(heliostat.id);
     if (!cellOutputs) {
       cellOutputs = Array(nx)
         .fill(0)
         .map(() => Array(ny).fill(0));
-      cellOutputsMapRef.current.set(dish.id, cellOutputs);
+      cellOutputsMapRef.current.set(heliostat.id, cellOutputs);
     }
     const rot = parent.rotation[2];
-    const zRot = rot + dish.relativeAzimuth;
+    const zRot = rot + heliostat.relativeAzimuth;
     const zRotZero = Util.isZero(zRot);
-    const rotatedSunDirection = rot
-      ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
-      : sunDirection.clone();
-    const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
-    normal.copy(originalNormal.clone().applyEuler(new Euler().setFromQuaternion(qRot)));
+    // convert the receiver's coordinates into those relative to the center of this reflector
+    const receiverCenter = foundation.solarReceiver
+      ? new Vector3(
+          foundation.cx - center.x,
+          foundation.cy - center.y,
+          foundation.cz - center.z + (foundation.solarReceiverHeight ?? 20),
+        )
+      : undefined;
+    if (receiverCenter) {
+      const heliostatToReceiver = receiverCenter.clone().normalize();
+      let normalVector = heliostatToReceiver.add(sunDirection).normalize();
+      if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
+        normalVector = new Vector3(-0.001, 0, 1).normalize();
+      }
+      if (rot) {
+        normalVector.applyAxisAngle(UNIT_VECTOR_POS_Z, -rot);
+      }
+      // convert the normal vector to euler
+      const r = Math.hypot(normalVector.x, normalVector.y);
+      normal.copy(
+        originalNormal
+          .clone()
+          .applyEuler(
+            new Euler(Math.atan2(r, normalVector.z), 0, Math.atan2(normalVector.y, normalVector.x) + HALF_PI, 'ZXY'),
+          ),
+      );
+    }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
       world.ground,
@@ -794,34 +906,16 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const dot = normal.dot(sunDirection);
     const v2 = new Vector2();
     let tmpX = 0;
-    let tmpY = 0;
-    let disX = 0;
-    let disY = 0;
-    let areaRatio = 1;
-    const lr2 = 4 / (dish.latusRectum * dish.latusRectum);
-    // we have to calculate the irradiance on the parabolic surface, not the aperture surface.
-    // the irradiance on the former is less than that on the latter because of the area difference.
-    // the relationship between a unit area on the parabolic surface and that on the aperture surface
-    // is S = A * sqrt(1 + 4 * (x^2 + y^2) / p^2), where p is the latus rectum, x is the x distance
-    // from the center of the paraboloid, y is the y distance from the center of the paraboloid,
-    // and A is the unit area on the aperture area. Note that this modification only
-    // applies to direct radiation. Indirect radiation can come from any direction.
     for (let ku = 0; ku < nx; ku++) {
       tmpX = x0 + ku * dx;
-      disX = tmpX - center.x;
-      if (Math.abs(disX) > lx / 2) continue;
       for (let kv = 0; kv < ny; kv++) {
-        tmpY = y0 + kv * dy;
-        disY = tmpY - center.y;
-        if (Math.abs(disY) > ly / 2) continue;
         cellOutputs[ku][kv] += indirectRadiation;
         if (dot > 0) {
-          v2.set(tmpX, tmpY);
+          v2.set(tmpX, y0 + kv * dy);
           if (!zRotZero) v2.rotateAround(center2d, zRot);
           v.set(v2.x, v2.y, z0);
-          if (!inShadow(dish.id, v, sunDirection)) {
-            areaRatio = 1 / Math.sqrt(1 + (disX * disX + disY * disY) * lr2);
-            cellOutputs[ku][kv] += dot * peakRadiation * areaRatio;
+          if (!inShadow(heliostat.id, v, sunDirection)) {
+            cellOutputs[ku][kv] += dot * peakRadiation;
           }
         }
       }

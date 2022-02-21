@@ -198,7 +198,7 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
             </span>
           </Header>
           <LineGraph
-            type={GraphDataType.YearlyParabolicTroughYeild}
+            type={GraphDataType.YearlyParabolicTroughYield}
             dataSource={yearlyYield.map(({ Daylight, Clearness, ...item }) => item)}
             labels={parabolicTroughLabels}
             height={responsiveHeight}

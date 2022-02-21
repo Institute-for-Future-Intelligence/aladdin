@@ -65,6 +65,9 @@ import FresnelReflectorSimulation from './analysis/fresnelReflectorSimulation';
 import DailyFresnelReflectorYieldPanel from './panels/dailyFresnelReflectorYieldPanel';
 import YearlyFresnelReflectorYieldPanel from './panels/yearlyFresnelReflectorYieldPanel';
 import { Util } from './Util';
+import DailyHeliostatYieldPanel from './panels/dailyHeliostatYieldPanel';
+import YearlyHeliostatYieldPanel from './panels/yearlyHeliostatYieldPanel';
+import HeliostatSimulation from './analysis/heliostatSimulation';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -109,6 +112,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showYearlyParabolicDishYieldPanel = useStore(Selector.viewState.showYearlyParabolicDishYieldPanel);
   const showDailyFresnelReflectorYieldPanel = useStore(Selector.viewState.showDailyFresnelReflectorYieldPanel);
   const showYearlyFresnelReflectorYieldPanel = useStore(Selector.viewState.showYearlyFresnelReflectorYieldPanel);
+  const showDailyHeliostatYieldPanel = useStore(Selector.viewState.showDailyHeliostatYieldPanel);
+  const showYearlyHeliostatYieldPanel = useStore(Selector.viewState.showYearlyHeliostatYieldPanel);
   const addedFoundationId = useStore(Selector.addedFoundationId);
   const addedCuboidId = useStore(Selector.addedCuboidId);
 
@@ -355,6 +360,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {showDailyParabolicDishYieldPanel && <DailyParabolicDishYieldPanel city={city} />}
       {showDailyFresnelReflectorYieldPanel && <DailyFresnelReflectorYieldPanel city={city} />}
       {showYearlyFresnelReflectorYieldPanel && <YearlyFresnelReflectorYieldPanel city={city} />}
+      {showDailyHeliostatYieldPanel && <DailyHeliostatYieldPanel city={city} />}
+      {showYearlyHeliostatYieldPanel && <YearlyHeliostatYieldPanel city={city} />}
       {showSolarRadiationHeatmap && <HeatmapControlPanel />}
       <DropdownContextMenu>
         <div>
@@ -389,6 +396,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             <ParabolicTroughSimulation city={city} />
             <ParabolicDishSimulation city={city} />
             <FresnelReflectorSimulation city={city} />
+            <HeliostatSimulation city={city} />
           </Canvas>
           <KeyboardListener
             canvas={canvasRef.current}

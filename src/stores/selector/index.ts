@@ -651,6 +651,32 @@ export const fresnelReflectorLabels = (state: CommonStoreState) => state.fresnel
 
 export const setFresnelReflectorLabels = (state: CommonStoreState) => state.setFresnelReflectorLabels;
 
+// heliostats (CSP)
+
+export const runDailySimulationForHeliostats = (state: CommonStoreState) => state.runDailySimulationForHeliostats;
+
+export const runYearlySimulationForHeliostats = (state: CommonStoreState) => state.runYearlySimulationForHeliostats;
+
+export const pauseDailySimulationForHeliostats = (state: CommonStoreState) => state.pauseDailySimulationForHeliostats;
+
+export const pauseYearlySimulationForHeliostats = (state: CommonStoreState) => state.pauseYearlySimulationForHeliostats;
+
+export const dailyHeliostatYield = (state: CommonStoreState) => state.dailyHeliostatYield;
+
+export const dailyHeliostatIndividualOutputs = (state: CommonStoreState) => state.dailyHeliostatIndividualOutputs;
+
+export const setDailyHeliostatYield = (state: CommonStoreState) => state.setDailyHeliostatYield;
+
+export const yearlyHeliostatYield = (state: CommonStoreState) => state.yearlyHeliostatYield;
+
+export const yearlyHeliostatIndividualOutputs = (state: CommonStoreState) => state.yearlyHeliostatIndividualOutputs;
+
+export const setYearlyHeliostatYield = (state: CommonStoreState) => state.setYearlyHeliostatYield;
+
+export const heliostatLabels = (state: CommonStoreState) => state.heliostatLabels;
+
+export const setHeliostatLabels = (state: CommonStoreState) => state.setHeliostatLabels;
+
 // parabolic dishes (CSP)
 
 export const runDailySimulationForParabolicDishes = (state: CommonStoreState) =>

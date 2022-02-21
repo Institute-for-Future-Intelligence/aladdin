@@ -65,6 +65,11 @@ const SimulationControlPanel = () => {
       state.runYearlySimulationForFresnelReflectors = false;
       state.pauseDailySimulationForFresnelReflectors = false;
       state.pauseYearlySimulationForFresnelReflectors = false;
+
+      state.runDailySimulationForHeliostats = false;
+      state.runYearlySimulationForHeliostats = false;
+      state.pauseDailySimulationForHeliostats = false;
+      state.pauseYearlySimulationForHeliostats = false;
     });
   };
 
@@ -108,6 +113,13 @@ const SimulationControlPanel = () => {
       if (state.runYearlySimulationForFresnelReflectors) {
         state.pauseYearlySimulationForFresnelReflectors = true;
       }
+
+      if (state.runDailySimulationForHeliostats) {
+        state.pauseDailySimulationForHeliostats = true;
+      }
+      if (state.runYearlySimulationForHeliostats) {
+        state.pauseYearlySimulationForHeliostats = true;
+      }
     });
   };
 
@@ -150,6 +162,13 @@ const SimulationControlPanel = () => {
       }
       if (state.runYearlySimulationForFresnelReflectors) {
         state.pauseYearlySimulationForFresnelReflectors = false;
+      }
+
+      if (state.runDailySimulationForHeliostats) {
+        state.pauseDailySimulationForHeliostats = false;
+      }
+      if (state.runYearlySimulationForHeliostats) {
+        state.pauseYearlySimulationForHeliostats = false;
       }
     });
   };

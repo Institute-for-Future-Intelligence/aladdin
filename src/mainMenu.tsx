@@ -30,6 +30,7 @@ import linear_fresnel_reflectors from './examples/linear_fresnel_reflectors.json
 import linear_fresnel_reflectors_two_receivers from './examples/linear_fresnel_reflectors_two_receivers.json';
 import effect_receiver_tube_height from './examples/effect_receiver_tube_height.json';
 import effect_azimuth_fresnel_reflector from './examples/effect_azimuth_fresnel_reflector.json';
+import cosine_efficiency_heliostats from './examples/cosine_efficiency_heliostats.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -248,6 +249,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'effect_azimuth_fresnel_reflector':
         input = effect_azimuth_fresnel_reflector;
+        break;
+      case 'cosine_efficiency_heliostats':
+        input = cosine_efficiency_heliostats;
         break;
       case 'simple_house_01':
         input = simple_house_01;
@@ -1303,6 +1307,53 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <CspSimulationSettings name={'fresnel-reflector'} />
         </SubMenu>
+
+        {/* heliostat */}
+        <SubMenu key={'heliostat'} title={i18n.t('menu.heliostatSubMenu', lang)}>
+          <Menu.Item
+            key={'heliostat-daily-yield'}
+            onClick={() => {
+              const heliostatCount = countElementsByType(ObjectType.Heliostat);
+              if (heliostatCount === 0) {
+                showInfo(i18n.t('analysisManager.NoHeliostatForAnalysis', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.dailyHeliostatIndividualOutputs = false;
+                  state.runDailySimulationForHeliostats = true;
+                });
+              }, 100);
+            }}
+          >
+            {i18n.t('menu.heliostat.AnalyzeDailyYield', lang)}
+          </Menu.Item>
+          <Menu.Item
+            key={'heliostat-yearly-yield'}
+            onClick={() => {
+              const heliostatCount = countElementsByType(ObjectType.Heliostat);
+              if (heliostatCount === 0) {
+                showInfo(i18n.t('analysisManager.NoHeliostatForAnalysis', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.yearlyHeliostatIndividualOutputs = false;
+                  state.runYearlySimulationForHeliostats = true;
+                });
+              }, 100);
+            }}
+          >
+            {i18n.t('menu.heliostat.AnalyzeYearlyYield', lang)}
+          </Menu.Item>
+          <CspSimulationSettings name={'heliostat'} />
+        </SubMenu>
       </SubMenu>
 
       {/* tutorials menu */}
@@ -1362,6 +1413,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="linear_fresnel_reflectors_two_receivers" onClick={loadFile}>
             {i18n.t('menu.tutorials.LinearFresnelReflectorsWithTwoReceivers', lang)}
+          </Menu.Item>
+          <Menu.Item key="cosine_efficiency_heliostats" onClick={loadFile}>
+            {i18n.t('menu.tutorials.CosineEfficiencyOfHeliostats', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>

@@ -488,6 +488,19 @@ export interface CommonStoreState {
   parabolicTroughLabels: string[];
   setParabolicTroughLabels: (labels: string[]) => void;
 
+  runDailySimulationForParabolicDishes: boolean;
+  runYearlySimulationForParabolicDishes: boolean;
+  pauseDailySimulationForParabolicDishes: boolean;
+  pauseYearlySimulationForParabolicDishes: boolean;
+  dailyParabolicDishYield: DatumEntry[];
+  dailyParabolicDishIndividualOutputs: boolean;
+  setDailyParabolicDishYield: (data: DatumEntry[]) => void;
+  yearlyParabolicDishYield: DatumEntry[];
+  yearlyParabolicDishIndividualOutputs: boolean;
+  setYearlyParabolicDishYield: (data: DatumEntry[]) => void;
+  parabolicDishLabels: string[];
+  setParabolicDishLabels: (labels: string[]) => void;
+
   runDailySimulationForFresnelReflectors: boolean;
   runYearlySimulationForFresnelReflectors: boolean;
   pauseDailySimulationForFresnelReflectors: boolean;
@@ -501,18 +514,18 @@ export interface CommonStoreState {
   fresnelReflectorLabels: string[];
   setFresnelReflectorLabels: (labels: string[]) => void;
 
-  runDailySimulationForParabolicDishes: boolean;
-  runYearlySimulationForParabolicDishes: boolean;
-  pauseDailySimulationForParabolicDishes: boolean;
-  pauseYearlySimulationForParabolicDishes: boolean;
-  dailyParabolicDishYield: DatumEntry[];
-  dailyParabolicDishIndividualOutputs: boolean;
-  setDailyParabolicDishYield: (data: DatumEntry[]) => void;
-  yearlyParabolicDishYield: DatumEntry[];
-  yearlyParabolicDishIndividualOutputs: boolean;
-  setYearlyParabolicDishYield: (data: DatumEntry[]) => void;
-  parabolicDishLabels: string[];
-  setParabolicDishLabels: (labels: string[]) => void;
+  runDailySimulationForHeliostats: boolean;
+  runYearlySimulationForHeliostats: boolean;
+  pauseDailySimulationForHeliostats: boolean;
+  pauseYearlySimulationForHeliostats: boolean;
+  dailyHeliostatYield: DatumEntry[];
+  dailyHeliostatIndividualOutputs: boolean;
+  setDailyHeliostatYield: (data: DatumEntry[]) => void;
+  yearlyHeliostatYield: DatumEntry[];
+  yearlyHeliostatIndividualOutputs: boolean;
+  setYearlyHeliostatYield: (data: DatumEntry[]) => void;
+  heliostatLabels: string[];
+  setHeliostatLabels: (labels: string[]) => void;
 
   sunlightDirection: Vector3;
   setSunlightDirection: (vector: Vector3) => void;
@@ -781,6 +794,31 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          runDailySimulationForParabolicDishes: false,
+          runYearlySimulationForParabolicDishes: false,
+          pauseDailySimulationForParabolicDishes: false,
+          pauseYearlySimulationForParabolicDishes: false,
+          dailyParabolicDishYield: [],
+          dailyParabolicDishIndividualOutputs: false,
+          setDailyParabolicDishYield(data) {
+            immerSet((state: CommonStoreState) => {
+              state.dailyParabolicDishYield = [...data];
+            });
+          },
+          yearlyParabolicDishYield: [],
+          yearlyParabolicDishIndividualOutputs: false,
+          setYearlyParabolicDishYield(data) {
+            immerSet((state: CommonStoreState) => {
+              state.yearlyParabolicDishYield = [...data];
+            });
+          },
+          parabolicDishLabels: [],
+          setParabolicDishLabels(labels) {
+            immerSet((state: CommonStoreState) => {
+              state.parabolicDishLabels = [...labels];
+            });
+          },
+
           runDailySimulationForFresnelReflectors: false,
           runYearlySimulationForFresnelReflectors: false,
           pauseDailySimulationForFresnelReflectors: false,
@@ -806,28 +844,28 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          runDailySimulationForParabolicDishes: false,
-          runYearlySimulationForParabolicDishes: false,
-          pauseDailySimulationForParabolicDishes: false,
-          pauseYearlySimulationForParabolicDishes: false,
-          dailyParabolicDishYield: [],
-          dailyParabolicDishIndividualOutputs: false,
-          setDailyParabolicDishYield(data) {
+          runDailySimulationForHeliostats: false,
+          runYearlySimulationForHeliostats: false,
+          pauseDailySimulationForHeliostats: false,
+          pauseYearlySimulationForHeliostats: false,
+          dailyHeliostatYield: [],
+          dailyHeliostatIndividualOutputs: false,
+          setDailyHeliostatYield(data) {
             immerSet((state: CommonStoreState) => {
-              state.dailyParabolicDishYield = [...data];
+              state.dailyHeliostatYield = [...data];
             });
           },
-          yearlyParabolicDishYield: [],
-          yearlyParabolicDishIndividualOutputs: false,
-          setYearlyParabolicDishYield(data) {
+          yearlyHeliostatYield: [],
+          yearlyHeliostatIndividualOutputs: false,
+          setYearlyHeliostatYield(data) {
             immerSet((state: CommonStoreState) => {
-              state.yearlyParabolicDishYield = [...data];
+              state.yearlyHeliostatYield = [...data];
             });
           },
-          parabolicDishLabels: [],
-          setParabolicDishLabels(labels) {
+          heliostatLabels: [],
+          setHeliostatLabels(labels) {
             immerSet((state: CommonStoreState) => {
-              state.parabolicDishLabels = [...labels];
+              state.heliostatLabels = [...labels];
             });
           },
 

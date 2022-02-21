@@ -8,8 +8,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { GraphDataType, ObjectType } from '../types';
-import { MONTHS } from '../constants';
-import { Util } from '../Util';
+import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
 import { screenshot, showInfo } from '../helpers';
@@ -18,8 +17,8 @@ import i18n from '../i18n/i18n';
 
 const Container = styled.div`
   position: fixed;
-  top: 85px;
-  right: 36px;
+  top: 80px;
+  right: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -62,21 +61,20 @@ const Header = styled.div`
   }
 `;
 
-export interface YearlyParabolicDishYieldPanelProps {
+export interface DailyHeliostatYieldPanelProps {
   city: string | null;
 }
 
-const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelProps) => {
+const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
-  const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
-  const now = useStore(Selector.world.date);
-  const yearlyYield = useStore(Selector.yearlyParabolicDishYield);
-  const individualOutputs = useStore(Selector.yearlyParabolicDishIndividualOutputs);
-  const parabolicDishLabels = useStore(Selector.parabolicDishLabels);
+  const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
-  const panelX = useStore(Selector.viewState.yearlyParabolicDishYieldPanelX);
-  const panelY = useStore(Selector.viewState.yearlyParabolicDishYieldPanelY);
+  const dailyYield = useStore(Selector.dailyHeliostatYield);
+  const individualOutputs = useStore(Selector.dailyHeliostatIndividualOutputs);
+  const panelX = useStore(Selector.viewState.dailyHeliostatYieldPanelX);
+  const panelY = useStore(Selector.viewState.dailyHeliostatYieldPanelY);
+  const heliostatLabels = useStore(Selector.heliostatLabels);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -90,27 +88,27 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
     y: isNaN(panelY) ? 0 : Math.min(panelY, window.innerHeight - hOffset),
   });
   const [sum, setSum] = useState(0);
-  const dishSumRef = useRef(new Map<string, number>());
+  const heliostatSumRef = useRef(new Map<string, number>());
 
-  const responsiveHeight = 100;
-  const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
   const lang = { lng: language };
+  const responsiveHeight = 100;
 
   useEffect(() => {
     let s = 0;
-    dishSumRef.current.clear();
-    for (const datum of yearlyYield) {
+    heliostatSumRef.current.clear();
+    for (const datum of dailyYield) {
       for (const prop in datum) {
         if (datum.hasOwnProperty(prop)) {
-          if (prop !== 'Month') {
+          if (prop !== 'Hour') {
             s += datum[prop] as number;
-            dishSumRef.current.set(prop, (dishSumRef.current.get(prop) ?? 0) + (datum[prop] as number));
+            heliostatSumRef.current.set(prop, (heliostatSumRef.current.get(prop) ?? 0) + (datum[prop] as number));
           }
         }
       }
     }
     setSum(s);
-  }, [yearlyYield]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dailyYield]);
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
@@ -136,35 +134,34 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
-      state.viewState.yearlyParabolicDishYieldPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-      state.viewState.yearlyParabolicDishYieldPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+      state.viewState.dailyHeliostatYieldPanelX = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.dailyHeliostatYieldPanelY = Math.min(ui.y, window.innerHeight - hOffset);
     });
   };
 
   const closePanel = () => {
     setCommonStore((state) => {
-      state.viewState.showYearlyParabolicDishYieldPanel = false;
+      state.viewState.showDailyHeliostatYieldPanel = false;
     });
   };
 
-  const parabolicDishCount = countElementsByType(ObjectType.ParabolicDish);
+  const heliostatCount = countElementsByType(ObjectType.Heliostat);
   useEffect(() => {
-    if (parabolicDishCount < 2 && individualOutputs) {
+    if (heliostatCount < 2 && individualOutputs) {
       setCommonStore((state) => {
-        state.yearlyParabolicDishIndividualOutputs = false;
+        state.dailyHeliostatIndividualOutputs = false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parabolicDishCount]);
+  }, [heliostatCount]);
 
-  const labelX = 'Month';
-  const labelY = i18n.t('parabolicDishYieldPanel.Yield', lang);
+  const labelX = 'Hour';
+  const labelY = i18n.t('heliostatYieldPanel.YieldPerHour', lang);
   let totalTooltip = '';
   if (individualOutputs) {
-    dishSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
+    heliostatSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
     totalTooltip += '——————————\n';
-    totalTooltip +=
-      i18n.t('word.Total', lang) + ': ' + ((sum * 12) / daysPerYear).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
+    totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
 
   return (
@@ -181,9 +178,8 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>
-              {i18n.t('parabolicDishYieldPanel.ParabolicDishYearlyYield', lang)}:{' '}
-              {i18n.t('sensorPanel.WeatherDataFrom', lang)}
-              {' ' + city}
+              {i18n.t('heliostatYieldPanel.HeliostatDailyYield', lang)}: {i18n.t('sensorPanel.WeatherDataFrom', lang)}
+              {' ' + city} | {moment(now).format('MM/DD')}
             </span>
             <span
               style={{ cursor: 'pointer' }}
@@ -198,48 +194,48 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
             </span>
           </Header>
           <LineGraph
-            type={GraphDataType.YearlyParabolicDishYield}
-            dataSource={yearlyYield.map(({ Daylight, Clearness, ...item }) => item)}
-            labels={parabolicDishLabels}
+            type={GraphDataType.DailyHeliostatYield}
+            dataSource={dailyYield}
+            labels={heliostatLabels}
             height={responsiveHeight}
             labelX={labelX}
             labelY={labelY}
             unitY={i18n.t('word.kWh', lang)}
             yMin={0}
-            curveType={'natural'}
+            curveType={'linear'}
             fractionDigits={2}
-            referenceX={referenceX}
+            symbolCount={24}
+            referenceX={now.getHours()}
           />
           <Space style={{ alignSelf: 'center' }}>
-            {individualOutputs && parabolicDishCount > 1 ? (
+            {individualOutputs && heliostatCount > 1 ? (
               <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                {i18n.t('parabolicDishYieldPanel.HoverForBreakdown', lang)}
+                {i18n.t('heliostatYieldPanel.HoverForBreakdown', lang)}
               </Space>
             ) : (
-              <Space>
-                {i18n.t('parabolicDishYieldPanel.YearlyTotal', lang)}:{((sum * 12) / daysPerYear).toFixed(2)}{' '}
-                {i18n.t('word.kWh', lang)}
+              <Space style={{ cursor: 'default' }}>
+                {i18n.t('heliostatYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
               </Space>
             )}
-            {parabolicDishCount > 1 && (
+            {heliostatCount > 1 && (
               <Switch
-                title={i18n.t('parabolicDishYieldPanel.ShowOutputsOfIndividualParabolicDishes', lang)}
+                title={i18n.t('heliostatYieldPanel.ShowOutputsOfIndividualHeliostats', lang)}
                 checkedChildren={<UnorderedListOutlined />}
                 unCheckedChildren={<UnorderedListOutlined />}
                 checked={individualOutputs}
                 onChange={(checked) => {
-                  if (parabolicDishCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoParabolicDishForAnalysis', lang));
+                  if (heliostatCount === 0) {
+                    showInfo(i18n.t('analysisManager.NoHeliostatForAnalysis', lang));
                     return;
                   }
                   showInfo(i18n.t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
-                      state.runYearlySimulationForParabolicDishes = true;
-                      state.pauseYearlySimulationForParabolicDishes = false;
+                      state.runDailySimulationForHeliostats = true;
+                      state.pauseDailySimulationForHeliostats = false;
                       state.simulationInProgress = true;
-                      state.yearlyParabolicDishIndividualOutputs = checked;
+                      state.dailyHeliostatIndividualOutputs = checked;
                     });
                   }, 100);
                 }}
@@ -250,16 +246,16 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
               icon={<ReloadOutlined />}
               title={i18n.t('word.Update', lang)}
               onClick={() => {
-                if (parabolicDishCount === 0) {
-                  showInfo(i18n.t('analysisManager.NoParabolicDishForAnalysis', lang));
+                if (heliostatCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoHeliostatForAnalysis', lang));
                   return;
                 }
                 showInfo(i18n.t('message.SimulationStarted', lang));
                 // give it 0.1 second for the info to show up
                 setTimeout(() => {
                   setCommonStore((state) => {
-                    state.runYearlySimulationForParabolicDishes = true;
-                    state.pauseYearlySimulationForParabolicDishes = false;
+                    state.runDailySimulationForHeliostats = true;
+                    state.pauseDailySimulationForHeliostats = false;
                     state.simulationInProgress = true;
                   });
                 }, 100);
@@ -270,8 +266,8 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
               icon={<SaveOutlined />}
               title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
-                screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-parabolic-dish-yield', {}).then(() => {
-                  showInfo(i18n.t('message:ScreenshotSaved', lang));
+                screenshot('line-graph-' + labelX + '-' + labelY, 'daily-heliostat-yield', {}).then(() => {
+                  showInfo(i18n.t('message.ScreenshotSaved', lang));
                 });
               }}
             />
@@ -282,4 +278,4 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
   );
 };
 
-export default React.memo(YearlyParabolicDishYieldPanel);
+export default React.memo(DailyHeliostatYieldPanel);

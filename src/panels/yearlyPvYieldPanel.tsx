@@ -198,7 +198,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
             </span>
           </Header>
           <LineGraph
-            type={GraphDataType.YearlyPvYeild}
+            type={GraphDataType.YearlyPvYield}
             dataSource={yearlyYield.map(({ Daylight, Clearness, ...item }) => item)}
             labels={solarPanelLabels}
             height={responsiveHeight}

@@ -198,7 +198,7 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
             </span>
           </Header>
           <LineGraph
-            type={GraphDataType.YearlyFresnelReflectorYeild}
+            type={GraphDataType.YearlyFresnelReflectorYield}
             dataSource={yearlyYield.map(({ Daylight, Clearness, ...item }) => item)}
             labels={fresnelReflectorLabels}
             height={responsiveHeight}
@@ -270,7 +270,7 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
               icon={<SaveOutlined />}
               title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
-                screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-fresnel-feflector-yield', {}).then(() => {
+                screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-fresnel-reflector-yield', {}).then(() => {
                   showInfo(i18n.t('message:ScreenshotSaved', lang));
                 });
               }}

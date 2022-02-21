@@ -97,7 +97,7 @@ const LineGraph = ({
           name = labels && labels[i] ? labels[i] : 'Radiation' + (i + 1);
           break;
         case GraphDataType.DailyPvYield:
-        case GraphDataType.YearlyPvYeild:
+        case GraphDataType.YearlyPvYield:
           if (lineCount === 1) {
             name = 'Total';
           } else {
@@ -105,7 +105,7 @@ const LineGraph = ({
           }
           break;
         case GraphDataType.DailyParabolicTroughYield:
-        case GraphDataType.YearlyParabolicTroughYeild:
+        case GraphDataType.YearlyParabolicTroughYield:
           if (lineCount === 1) {
             name = 'Total';
           } else {
@@ -113,7 +113,7 @@ const LineGraph = ({
           }
           break;
         case GraphDataType.DailyParabolicDishYield:
-        case GraphDataType.YearlyParabolicDishYeild:
+        case GraphDataType.YearlyParabolicDishYield:
           if (lineCount === 1) {
             name = 'Total';
           } else {
@@ -121,7 +121,7 @@ const LineGraph = ({
           }
           break;
         case GraphDataType.DailyFresnelReflectorYield:
-        case GraphDataType.YearlyFresnelReflectorYeild:
+        case GraphDataType.YearlyFresnelReflectorYield:
           if (lineCount === 1) {
             name = 'Total';
           } else {
@@ -129,7 +129,7 @@ const LineGraph = ({
           }
           break;
         case GraphDataType.DailyHeliostatYield:
-        case GraphDataType.YearlyHeliostatYeild:
+        case GraphDataType.YearlyHeliostatYield:
           if (lineCount === 1) {
             name = 'Total';
           } else {

@@ -284,6 +284,7 @@ export const i18n_tr = {
         EffectOfReceiverTubeHeightForLinearFresnelReflectors:
           'Effect of Receiver Tube Height for Linear Fresnel Reflectors',
         EffectOfAzimuthOfLinearFresnelReflectors: 'Effect of Azimuth of Linear Fresnel Reflectors',
+        CosineEfficiencyOfHeliostats: 'Cosine Efficiency of Heliostats',
       },
       examplesSubMenu: 'Örnekler',
       solarEnergySubMenu: 'Güneþ Enerjisi',
@@ -714,7 +715,7 @@ export const i18n_tr = {
       DailyTotal: 'Daily Total',
       YearlyTotal: 'Yearly Total',
       HoverForBreakdown: 'Hover for breakdown',
-      ShowOutputsOfIndividualFresnelHeliostats: 'Show outputs of individual heliostats',
+      ShowOutputsOfIndividualHeliostats: 'Show outputs of individual heliostats',
     },
 
     heliodonPanel: {

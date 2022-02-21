@@ -281,6 +281,7 @@ export const i18n_zh_cn = {
         LinearFresnelReflectorsWithTwoReceivers: '配备两个吸收器的直线式菲涅尔反射镜',
         EffectOfReceiverTubeHeightForLinearFresnelReflectors: '吸热长管的安装高度对直线式菲涅尔反射镜发电量的影响',
         EffectOfAzimuthOfLinearFresnelReflectors: '直线式菲涅尔反射镜方位角对发电量的影响',
+        CosineEfficiencyOfHeliostats: '定日镜的余弦效率',
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太阳能',
@@ -696,7 +697,7 @@ export const i18n_zh_cn = {
       DailyTotal: '日发电总量',
       YearlyTotal: '年发电总量',
       HoverForBreakdown: '在此停留鼠标分列发电量',
-      ShowOutputsOfIndividualFresnelHeliostats: '显示每个定日镜单独发电量',
+      ShowOutputsOfIndividualHeliostats: '显示每个定日镜单独发电量',
     },
 
     heliodonPanel: {
