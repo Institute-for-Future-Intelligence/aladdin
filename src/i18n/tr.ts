@@ -285,6 +285,7 @@ export const i18n_tr = {
           'Effect of Receiver Tube Height for Linear Fresnel Reflectors',
         EffectOfAzimuthOfLinearFresnelReflectors: 'Effect of Azimuth of Linear Fresnel Reflectors',
         CosineEfficiencyOfHeliostats: 'Cosine Efficiency of Heliostats',
+        ShadowingAndBlockingOfHeliostats: 'Shadowing and Blocking of Heliostats',
       },
       examplesSubMenu: 'Örnekler',
       solarEnergySubMenu: 'Güneþ Enerjisi',

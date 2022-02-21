@@ -31,6 +31,7 @@ import linear_fresnel_reflectors_two_receivers from './examples/linear_fresnel_r
 import effect_receiver_tube_height from './examples/effect_receiver_tube_height.json';
 import effect_azimuth_fresnel_reflector from './examples/effect_azimuth_fresnel_reflector.json';
 import cosine_efficiency_heliostats from './examples/cosine_efficiency_heliostats.json';
+import shadowing_blocking_heliostats from './examples/shadowing_blocking_heliostats.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -252,6 +253,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'cosine_efficiency_heliostats':
         input = cosine_efficiency_heliostats;
+        break;
+      case 'shadowing_blocking_heliostats':
+        input = shadowing_blocking_heliostats;
         break;
       case 'simple_house_01':
         input = simple_house_01;
@@ -1416,6 +1420,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="cosine_efficiency_heliostats" onClick={loadFile}>
             {i18n.t('menu.tutorials.CosineEfficiencyOfHeliostats', lang)}
+          </Menu.Item>
+          <Menu.Item key="shadowing_blocking_heliostats" onClick={loadFile}>
+            {i18n.t('menu.tutorials.ShadowingAndBlockingOfHeliostats', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>

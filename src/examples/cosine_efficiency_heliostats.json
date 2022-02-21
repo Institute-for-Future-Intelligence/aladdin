@@ -1,0 +1,287 @@
+{
+  "docid": "8FjZnWCEc39zEpNwp51Bns",
+  "timestamp": 1645460936486,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "latitude": 33.4483771,
+    "solarPanelGridCellSize": 0.5,
+    "timesPerHour": 4,
+    "longitude": -112.0740373,
+    "ground": {
+      "albedo": 0.3,
+      "thermalDiffusivity": 0.05,
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "address": "Phoenix, AZ, USA",
+    "date": "Mon Mar 22 2021 12:00:00 GMT-0400 (Eastern Daylight Time)",
+    "name": "default",
+    "orthographic": false,
+    "cameraZoom": 35.16173831821251,
+    "solarRadiationHeatmapGridCellSize": 1
+  },
+  "elements": [
+    {
+      "cy": -0.041483328317633114,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 0.1,
+      "ly": 56,
+      "id": "of4fAMi2p9MKmo6JDUYnfX",
+      "type": "Foundation",
+      "cx": -0.10913665374106213,
+      "cz": 0.05,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 48,
+      "selected": false,
+      "parentId": "Ground",
+      "solarReceiver": 2,
+      "solarReceiverHeight": 20,
+      "locked": true
+    },
+    {
+      "type": "Human",
+      "name": "Jack",
+      "cx": 3.2193530626125146,
+      "cy": -2.9734078597551292,
+      "cz": 0.05000000074505806,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "qnU7wNUFWabF7Yh9Ri8Vn5",
+      "selected": false,
+      "lx": 0.6,
+      "ly": 0.6,
+      "lz": 1.8
+    },
+    {
+      "type": "Heliostat",
+      "reflectance": 0.9,
+      "relativeAzimuth": 0,
+      "tiltAngle": 0,
+      "drawSunBeam": true,
+      "poleHeight": 0.2,
+      "poleRadius": 0.05,
+      "cx": 0.0004895609926147317,
+      "cy": -0.20737855784061227,
+      "cz": 0.5000000074505806,
+      "lx": 4,
+      "ly": 6,
+      "lz": 0.1,
+      "showLabel": true,
+      "label": "4",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "9caRxtuWoQpc52Rcvx4m2Y",
+      "selected": false,
+      "dailyYield": 25.59597205852084,
+      "yearlyYield": 311.4614380820491
+    },
+    {
+      "type": "Heliostat",
+      "reflectance": 0.9,
+      "relativeAzimuth": 0,
+      "tiltAngle": 0,
+      "drawSunBeam": true,
+      "poleHeight": 0.2,
+      "poleRadius": 0.05,
+      "cx": -0.000773921356256882,
+      "cy": 0.4327509634160523,
+      "cz": 0.5000000074505806,
+      "lx": 4,
+      "ly": 6,
+      "lz": 0.1,
+      "showLabel": true,
+      "label": "3",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "3qHYF54uoRjqCcVSRMJa3K",
+      "selected": false,
+      "dailyYield": 28.888231364804646,
+      "yearlyYield": 341.6536704139208
+    },
+    {
+      "type": "Heliostat",
+      "cx": 0.0027886687628078007,
+      "cy": -0.41384481120536054,
+      "cz": 0.5000000074505806,
+      "lx": 4,
+      "ly": 6,
+      "lz": 0.1,
+      "reflectance": 0.9,
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "poleRadius": 0.05,
+      "poleHeight": 0.2,
+      "showLabel": true,
+      "label": "2",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "g1F68TNqBqLxmye4TdM9aX",
+      "selected": false,
+      "drawSunBeam": true,
+      "dailyYield": 23.314190283597984,
+      "yearlyYield": 285.77957159626914
+    },
+    {
+      "type": "Heliostat",
+      "cx": 0.003581112158779376,
+      "cy": 0.2256213567639617,
+      "cz": 0.5000000074505806,
+      "lx": 4,
+      "ly": 6,
+      "lz": 0.1,
+      "reflectance": 0.9,
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "poleRadius": 0.05,
+      "poleHeight": 0.2,
+      "showLabel": true,
+      "label": "1",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "hdPEQL9d6tCZYhADdWFZfX",
+      "selected": false,
+      "drawSunBeam": true,
+      "dailyYield": 29.108913473883288,
+      "yearlyYield": 347.0340046876023
+    }
+  ],
+  "view": {
+    "yearlyPvYieldPanelX": -25,
+    "autoRotate": false,
+    "mapZoom": 19,
+    "axes": true,
+    "theme": "Default",
+    "showSiteInfoPanel": true,
+    "showDesignInfoPanel": true,
+    "showWeatherPanel": false,
+    "groundPanelX": 0,
+    "dailyPvYieldPanelX": -4,
+    "dailyLightSensorPanelY": 232,
+    "showDailyLightSensorPanel": false,
+    "mapTilt": 0,
+    "yearlyPvYieldPanelY": 16,
+    "yearlyLightSensorPanelX": 0,
+    "showGroundPanel": false,
+    "showHeliodonPanel": false,
+    "heliodon": false,
+    "weatherPanelY": 0,
+    "heliodonPanelX": -1205,
+    "dailyPvYieldPanelY": 3,
+    "mapWeatherStations": false,
+    "yearlyLightSensorPanelY": 0,
+    "showPvDailyYieldPanel": true,
+    "showYearlyPvYieldPanel": false,
+    "dailyLightSensorPanelX": -240,
+    "weatherPanelX": 0,
+    "heliodonPanelY": 17,
+    "groundColor": "forestgreen",
+    "groundPanelY": 0,
+    "groundImage": false,
+    "showDailyPvYieldPanel": false,
+    "shadowEnabled": true,
+    "showYearlyLightSensorPanel": false,
+    "mapType": "hybrid",
+    "cameraPosition": [
+      -59.81099377207656,
+      -1.3321897008588723,
+      7.556432837410264
+    ],
+    "panCenter": [
+      -1.9066551550283481,
+      -2.872076351117812,
+      7.55643283741026
+    ],
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 7.169718448170838,
+    "showInstructionPanel": true,
+    "showMapPanel": false,
+    "cameraPosition2D": [
+      8.410285062152344,
+      12.466838396919735,
+      50.00001246725703
+    ],
+    "panCenter2D": [
+      8.410285062152344,
+      12.466888399142201,
+      0.000012467288726847116
+    ],
+    "solarRadiationHeatMapMaxValue": 6,
+    "showDailyHeliostatYieldPanel": false,
+    "dailyHeliostatYieldPanelX": null,
+    "dailyHeliostatYieldPanelY": null,
+    "showYearlyHeliostatYieldPanel": false
+  },
+  "notes": []
+}

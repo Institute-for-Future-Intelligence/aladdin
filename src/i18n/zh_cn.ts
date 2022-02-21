@@ -282,6 +282,7 @@ export const i18n_zh_cn = {
         EffectOfReceiverTubeHeightForLinearFresnelReflectors: '吸热长管的安装高度对直线式菲涅尔反射镜发电量的影响',
         EffectOfAzimuthOfLinearFresnelReflectors: '直线式菲涅尔反射镜方位角对发电量的影响',
         CosineEfficiencyOfHeliostats: '定日镜的余弦效率',
+        ShadowingAndBlockingOfHeliostats: '定日镜的阴影和遮挡',
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太阳能',
