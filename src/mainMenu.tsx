@@ -148,6 +148,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const runStaticSimulation = useStore(Selector.runStaticSimulation);
   const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);
   const noAnimationForSensorDataCollection = useStore(Selector.world.noAnimationForSensorDataCollection);
+  const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);
 
   const [aboutUs, setAboutUs] = useState(false);
 
@@ -981,6 +982,19 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   }}
                 />
               </Menu.Item>
+              {Util.hasHeliostatOrFresnelReflectors(elements) && (
+                <Menu.Item key={'solar-radiation-heatmap-reflection-only'}>
+                  <Space style={{ width: '280px' }}>{i18n.t('menu.physics.ReflectionHeatmap', lang) + ':'}</Space>
+                  <Switch
+                    checked={solarRadiationHeatmapReflectionOnly}
+                    onChange={(checked) => {
+                      setCommonStore((state) => {
+                        state.viewState.solarRadiationHeatMapReflectionOnly = checked;
+                      });
+                    }}
+                  />
+                </Menu.Item>
+              )}
               {!Util.hasMovingParts(elements) && (
                 <Menu.Item key={'solar-radiation-heatmap-no-animation'}>
                   <Space style={{ width: '280px' }}>

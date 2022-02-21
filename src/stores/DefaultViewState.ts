@@ -16,6 +16,7 @@ export class DefaultViewState implements ViewState {
 
   axes: boolean;
   solarRadiationHeatMapMaxValue: number;
+  solarRadiationHeatMapReflectionOnly: boolean; // for heliostats and Fresnel reflectors
   shadowEnabled: boolean;
   theme: string;
   heliodon: boolean;
@@ -97,6 +98,7 @@ export class DefaultViewState implements ViewState {
 
     this.axes = true;
     this.solarRadiationHeatMapMaxValue = 5;
+    this.solarRadiationHeatMapReflectionOnly = false;
     this.shadowEnabled = true;
     this.theme = 'Default';
     this.heliodon = false;
@@ -178,6 +180,7 @@ export class DefaultViewState implements ViewState {
 
     viewState.axes = true;
     viewState.solarRadiationHeatMapMaxValue = 5;
+    viewState.solarRadiationHeatMapReflectionOnly = false;
     viewState.shadowEnabled = true;
     viewState.theme = 'Default';
     viewState.heliodon = false;

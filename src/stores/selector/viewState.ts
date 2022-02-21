@@ -8,6 +8,9 @@ export const shadowEnabled = (state: CommonStoreState) => state.viewState.shadow
 
 export const solarRadiationHeatmapMaxValue = (state: CommonStoreState) => state.viewState.solarRadiationHeatMapMaxValue;
 
+export const solarRadiationHeatmapReflectionOnly = (state: CommonStoreState) =>
+  state.viewState.solarRadiationHeatMapReflectionOnly;
+
 export const axes = (state: CommonStoreState) => state.viewState.axes;
 
 export const ambientLightIntensity = (state: CommonStoreState) => state.viewState.ambientLightIntensity;

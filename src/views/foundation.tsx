@@ -136,6 +136,7 @@ const Foundation = ({
   const hoveredHandle = useStore(Selector.hoveredHandle);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+  const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);
   const getHeatmap = useStore(Selector.getHeatmap);
 
   const {
@@ -298,9 +299,11 @@ const Foundation = ({
       const heatmap = getHeatmap(foundationModel.id);
       if (heatmap) {
         setHeatmapTexture(Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5));
+      } else {
+        setHeatmapTexture(null);
       }
     }
-  }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
+  }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue, solarRadiationHeatmapReflectionOnly]);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;

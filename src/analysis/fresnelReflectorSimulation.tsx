@@ -465,6 +465,8 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
     const rotationAxis = new Vector3(sinRot, cosRot, 0);
     const shiftedReceiverCenter = new Vector3();
+    let normalEuler;
+    let reflectorToReceiver;
     if (receiverCenter) {
       // the reflector moves only when there is a receiver
       shiftedReceiverCenter.set(receiverCenter.x, receiverCenter.y, receiverCenter.z);
@@ -473,7 +475,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         (-receiverCenter.z * (sunDirection.y * rotationAxis.y + sunDirection.x * rotationAxis.x)) / sunDirection.z;
       shiftedReceiverCenter.x += shift * rotationAxis.x;
       shiftedReceiverCenter.y -= shift * rotationAxis.y;
-      const reflectorToReceiver = shiftedReceiverCenter.clone().normalize();
+      reflectorToReceiver = shiftedReceiverCenter.clone().normalize();
       let normalVector = reflectorToReceiver.add(sunDirection).normalize();
       // avoid singularity: atan(x, y) = infinity if x = 0
       if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
@@ -482,24 +484,28 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       if (!zRotZero) {
         normalVector.applyAxisAngle(UNIT_VECTOR_POS_Z, -zRot);
       }
-      normal.copy(
-        originalNormal.clone().applyEuler(new Euler(0, Math.atan2(normalVector.x, normalVector.z), zRot, 'ZXY')),
-      );
+      normalEuler = new Euler(0, Math.atan2(normalVector.x, normalVector.z), zRot, 'ZXY');
+      normal.copy(originalNormal.clone().applyEuler(normalEuler));
+    } else {
+      reflectorToReceiver = new Vector3(0, 0, 1);
+      normalEuler = new Euler();
     }
     // the unit of radiation is kW/m^2
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-    let sum = 0;
     const dot = normal.dot(sunDirection);
-    const v2 = new Vector2();
+    const v2d = new Vector2();
+    const dv = new Vector3();
+    let sum = 0;
     let tmpX = 0;
     for (let ku = 0; ku < nx; ku++) {
       tmpX = x0 + ku * dx;
       for (let kv = 0; kv < ny; kv++) {
         if (dot > 0) {
-          v2.set(tmpX, y0 + kv * dy);
-          if (!zRotZero) v2.rotateAround(center2d, zRot);
-          v.set(v2.x, v2.y, z0);
-          if (!inShadow(reflector.id, v, sunDirection)) {
+          v2d.set(tmpX, y0 + kv * dy);
+          dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
+          dv.applyEuler(normalEuler);
+          v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
+          if (!inShadow(reflector.id, v, sunDirection) && !inShadow(reflector.id, v, reflectorToReceiver)) {
             sum += dot * peakRadiation;
           }
         }

@@ -219,6 +219,7 @@ export const i18n_zh_cn = {
         SolarRadiationHeatmapGridCellSize: '太阳辐射热图网格的尺寸',
         SolarRadiationHeatmapMaxValue: '太阳辐射热图最大值',
         SolarRadiationHeatmapNoAnimation: '若无移动部件则省略动画',
+        ReflectionHeatmap: '反射热图',
       },
       sensorSubMenu: '传感器',
       sensor: {

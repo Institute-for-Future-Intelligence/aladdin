@@ -460,9 +460,11 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
           foundation.cz - center.z + (foundation.solarReceiverHeight ?? 10),
         )
       : undefined;
+    let heliostatToReceiver;
+    let normalEuler;
     if (receiverCenter) {
-      const heliostatToReceiver = receiverCenter.clone().normalize();
-      let normalVector = heliostatToReceiver.add(sunDirection).normalize();
+      heliostatToReceiver = receiverCenter.clone().normalize();
+      let normalVector = heliostatToReceiver.clone().add(sunDirection).normalize();
       if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
         normalVector = new Vector3(-0.001, 0, 1).normalize();
       }
@@ -471,28 +473,33 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
       }
       // convert the normal vector to euler
       const r = Math.hypot(normalVector.x, normalVector.y);
-      normal.copy(
-        originalNormal
-          .clone()
-          .applyEuler(
-            new Euler(Math.atan2(r, normalVector.z), 0, Math.atan2(normalVector.y, normalVector.x) + HALF_PI, 'ZXY'),
-          ),
+      normalEuler = new Euler(
+        Math.atan2(r, normalVector.z),
+        0,
+        Math.atan2(normalVector.y, normalVector.x) + HALF_PI,
+        'ZXY',
       );
+      normal.copy(originalNormal.clone().applyEuler(normalEuler));
+    } else {
+      heliostatToReceiver = new Vector3(0, 0, 1);
+      normalEuler = new Euler();
     }
     // the unit of radiation is kW/m^2
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-    let sum = 0;
     const dot = normal.dot(sunDirection);
-    const v2 = new Vector2();
+    const v2d = new Vector2();
+    const dv = new Vector3();
+    let sum = 0;
     let tmpX = 0;
     for (let ku = 0; ku < nx; ku++) {
       tmpX = x0 + ku * dx;
       for (let kv = 0; kv < ny; kv++) {
         if (dot > 0) {
-          v2.set(tmpX, y0 + kv * dy);
-          if (!zRotZero) v2.rotateAround(center2d, zRot);
-          v.set(v2.x, v2.y, z0);
-          if (!inShadow(heliostat.id, v, sunDirection)) {
+          v2d.set(tmpX, y0 + kv * dy);
+          dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
+          dv.applyEuler(normalEuler);
+          v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
+          if (!inShadow(heliostat.id, v, sunDirection) && !inShadow(heliostat.id, v, heliostatToReceiver)) {
             sum += dot * peakRadiation;
           }
         }

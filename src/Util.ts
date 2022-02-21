@@ -83,6 +83,13 @@ export class Util {
     return false;
   }
 
+  static hasHeliostatOrFresnelReflectors(elements: ElementModel[]): boolean {
+    for (const e of elements) {
+      if (e.type === ObjectType.FresnelReflector || e.type === ObjectType.Heliostat) return true;
+    }
+    return false;
+  }
+
   static lineIntersection(from1: Point2, to1: Point2, from2: Point2, to2: Point2): Point2 | undefined {
     const dx: number = to1.x - from1.x;
     const dy: number = to1.y - from1.y;

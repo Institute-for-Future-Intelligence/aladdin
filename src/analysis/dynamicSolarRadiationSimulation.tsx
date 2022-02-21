@@ -47,8 +47,10 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
   const setHeatmap = useStore(Selector.setHeatmap);
+  const clearHeatmaps = useStore(Selector.clearHeatmaps);
   const runSimulation = useStore(Selector.runDynamicSimulation);
   const pauseSimulation = useStore(Selector.pauseSimulation);
+  const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);
 
   const { scene } = useThree();
   const lang = { lng: language };
@@ -135,6 +137,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   };
 
   const updateHeatmaps = () => {
+    clearHeatmaps();
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = sunMinutes.daylight() / 60;
     // divide by times per hour as the radiation is added up that many times
@@ -215,29 +218,42 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       setCommonStore((state) => {
         state.world.date = now.toString();
       });
-      for (const e of elements) {
-        switch (e.type) {
-          case ObjectType.Foundation:
-            calculateFoundation(e as FoundationModel);
-            break;
-          case ObjectType.Cuboid:
-            calculateCuboid(e as CuboidModel);
-            break;
-          case ObjectType.SolarPanel:
-            calculateSolarPanel(e as SolarPanelModel);
-            break;
-          case ObjectType.ParabolicTrough:
-            calculateParabolicTrough(e as ParabolicTroughModel);
-            break;
-          case ObjectType.ParabolicDish:
-            calculateParabolicDish(e as ParabolicDishModel);
-            break;
-          case ObjectType.FresnelReflector:
-            calculateFresnelReflector(e as FresnelReflectorModel);
-            break;
-          case ObjectType.Heliostat:
-            calculateHeliostat(e as HeliostatModel);
-            break;
+      if (solarRadiationHeatmapReflectionOnly) {
+        for (const e of elements) {
+          switch (e.type) {
+            case ObjectType.FresnelReflector:
+              calculateFresnelReflector(e as FresnelReflectorModel);
+              break;
+            case ObjectType.Heliostat:
+              calculateHeliostat(e as HeliostatModel);
+              break;
+          }
+        }
+      } else {
+        for (const e of elements) {
+          switch (e.type) {
+            case ObjectType.Foundation:
+              calculateFoundation(e as FoundationModel);
+              break;
+            case ObjectType.Cuboid:
+              calculateCuboid(e as CuboidModel);
+              break;
+            case ObjectType.SolarPanel:
+              calculateSolarPanel(e as SolarPanelModel);
+              break;
+            case ObjectType.ParabolicTrough:
+              calculateParabolicTrough(e as ParabolicTroughModel);
+              break;
+            case ObjectType.ParabolicDish:
+              calculateParabolicDish(e as ParabolicDishModel);
+              break;
+            case ObjectType.FresnelReflector:
+              calculateFresnelReflector(e as FresnelReflectorModel);
+              break;
+            case ObjectType.Heliostat:
+              calculateHeliostat(e as HeliostatModel);
+              break;
+          }
         }
       }
       // recursive call to the next step of the simulation
@@ -789,6 +805,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
     const rotationAxis = new Vector3(sinRot, cosRot, 0);
     const shiftedReceiverCenter = new Vector3();
+    let normalEuler;
+    let reflectorToReceiver;
     if (receiverCenter) {
       // the reflector moves only when there is a receiver
       shiftedReceiverCenter.set(receiverCenter.x, receiverCenter.y, receiverCenter.z);
@@ -797,7 +815,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         (-receiverCenter.z * (sunDirection.y * rotationAxis.y + sunDirection.x * rotationAxis.x)) / sunDirection.z;
       shiftedReceiverCenter.x += shift * rotationAxis.x;
       shiftedReceiverCenter.y -= shift * rotationAxis.y;
-      const reflectorToReceiver = shiftedReceiverCenter.clone().normalize();
+      reflectorToReceiver = shiftedReceiverCenter.clone().normalize();
       let normalVector = reflectorToReceiver.add(sunDirection).normalize();
       if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
         normalVector = new Vector3(-0.001, 0, 1).normalize();
@@ -805,9 +823,11 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       if (!zRotZero) {
         normalVector.applyAxisAngle(UNIT_VECTOR_POS_Z, -zRot);
       }
-      normal.copy(
-        originalNormal.clone().applyEuler(new Euler(0, Math.atan2(normalVector.x, normalVector.z), zRot, 'ZXY')),
-      );
+      normalEuler = new Euler(0, Math.atan2(normalVector.x, normalVector.z), zRot, 'ZXY');
+      normal.copy(originalNormal.clone().applyEuler(normalEuler));
+    } else {
+      reflectorToReceiver = new Vector3(0, 0, 1);
+      normalEuler = new Euler();
     }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
@@ -817,18 +837,37 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       peakRadiation,
     );
     const dot = normal.dot(sunDirection);
-    const v2 = new Vector2();
+    const v2d = new Vector2();
+    const dv = new Vector3();
     let tmpX = 0;
-    for (let ku = 0; ku < nx; ku++) {
-      tmpX = x0 + ku * dx;
-      for (let kv = 0; kv < ny; kv++) {
-        cellOutputs[ku][kv] += indirectRadiation;
-        if (dot > 0) {
-          v2.set(tmpX, y0 + kv * dy);
-          if (!zRotZero) v2.rotateAround(center2d, zRot);
-          v.set(v2.x, v2.y, z0);
-          if (!inShadow(reflector.id, v, sunDirection)) {
-            cellOutputs[ku][kv] += dot * peakRadiation;
+    if (solarRadiationHeatmapReflectionOnly) {
+      for (let ku = 0; ku < nx; ku++) {
+        tmpX = x0 + ku * dx;
+        for (let kv = 0; kv < ny; kv++) {
+          if (dot > 0) {
+            v2d.set(tmpX, y0 + kv * dy);
+            dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
+            dv.applyEuler(normalEuler);
+            v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
+            if (!inShadow(reflector.id, v, sunDirection) && !inShadow(reflector.id, v, reflectorToReceiver)) {
+              cellOutputs[ku][kv] += dot * peakRadiation;
+            }
+          }
+        }
+      }
+    } else {
+      for (let ku = 0; ku < nx; ku++) {
+        tmpX = x0 + ku * dx;
+        for (let kv = 0; kv < ny; kv++) {
+          cellOutputs[ku][kv] += indirectRadiation;
+          if (dot > 0) {
+            v2d.set(tmpX, y0 + kv * dy);
+            dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
+            dv.applyEuler(normalEuler);
+            v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
+            if (!inShadow(reflector.id, v, sunDirection)) {
+              cellOutputs[ku][kv] += dot * peakRadiation;
+            }
           }
         }
       }
@@ -867,8 +906,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       cellOutputsMapRef.current.set(heliostat.id, cellOutputs);
     }
     const rot = parent.rotation[2];
-    const zRot = rot + heliostat.relativeAzimuth;
-    const zRotZero = Util.isZero(zRot);
     // convert the receiver's coordinates into those relative to the center of this reflector
     const receiverCenter = foundation.solarReceiver
       ? new Vector3(
@@ -877,9 +914,11 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           foundation.cz - center.z + (foundation.solarReceiverHeight ?? 20),
         )
       : undefined;
+    let heliostatToReceiver;
+    let normalEuler;
     if (receiverCenter) {
-      const heliostatToReceiver = receiverCenter.clone().normalize();
-      let normalVector = heliostatToReceiver.add(sunDirection).normalize();
+      heliostatToReceiver = receiverCenter.clone().normalize();
+      let normalVector = heliostatToReceiver.clone().add(sunDirection).normalize();
       if (Util.isSame(normalVector, UNIT_VECTOR_POS_Z)) {
         normalVector = new Vector3(-0.001, 0, 1).normalize();
       }
@@ -888,13 +927,16 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       }
       // convert the normal vector to euler
       const r = Math.hypot(normalVector.x, normalVector.y);
-      normal.copy(
-        originalNormal
-          .clone()
-          .applyEuler(
-            new Euler(Math.atan2(r, normalVector.z), 0, Math.atan2(normalVector.y, normalVector.x) + HALF_PI, 'ZXY'),
-          ),
+      normalEuler = new Euler(
+        Math.atan2(r, normalVector.z),
+        0,
+        Math.atan2(normalVector.y, normalVector.x) + HALF_PI,
+        'ZXY',
       );
+      normal.copy(originalNormal.clone().applyEuler(normalEuler));
+    } else {
+      heliostatToReceiver = new Vector3(0, 0, 1);
+      normalEuler = new Euler();
     }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
@@ -904,18 +946,37 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       peakRadiation,
     );
     const dot = normal.dot(sunDirection);
-    const v2 = new Vector2();
+    const v2d = new Vector2();
+    const dv = new Vector3();
     let tmpX = 0;
-    for (let ku = 0; ku < nx; ku++) {
-      tmpX = x0 + ku * dx;
-      for (let kv = 0; kv < ny; kv++) {
-        cellOutputs[ku][kv] += indirectRadiation;
-        if (dot > 0) {
-          v2.set(tmpX, y0 + kv * dy);
-          if (!zRotZero) v2.rotateAround(center2d, zRot);
-          v.set(v2.x, v2.y, z0);
-          if (!inShadow(heliostat.id, v, sunDirection)) {
-            cellOutputs[ku][kv] += dot * peakRadiation;
+    if (solarRadiationHeatmapReflectionOnly) {
+      for (let ku = 0; ku < nx; ku++) {
+        tmpX = x0 + ku * dx;
+        for (let kv = 0; kv < ny; kv++) {
+          if (dot > 0) {
+            v2d.set(tmpX, y0 + kv * dy);
+            dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
+            dv.applyEuler(normalEuler);
+            v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
+            if (!inShadow(heliostat.id, v, sunDirection) && !inShadow(heliostat.id, v, heliostatToReceiver)) {
+              cellOutputs[ku][kv] += dot * peakRadiation;
+            }
+          }
+        }
+      }
+    } else {
+      for (let ku = 0; ku < nx; ku++) {
+        tmpX = x0 + ku * dx;
+        for (let kv = 0; kv < ny; kv++) {
+          cellOutputs[ku][kv] += indirectRadiation;
+          if (dot > 0) {
+            v2d.set(tmpX, y0 + kv * dy);
+            dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
+            dv.applyEuler(normalEuler);
+            v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
+            if (!inShadow(heliostat.id, v, sunDirection)) {
+              cellOutputs[ku][kv] += dot * peakRadiation;
+            }
           }
         }
       }
