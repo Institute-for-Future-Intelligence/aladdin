@@ -283,6 +283,7 @@ export const i18n_zh_cn = {
         EffectOfAzimuthOfLinearFresnelReflectors: '直线式菲涅尔反射镜方位角对发电量的影响',
         CosineEfficiencyOfHeliostats: '定日镜的余弦效率',
         ShadowingAndBlockingOfHeliostats: '定日镜的阴影和遮挡',
+        EffectSolarPowerTowerHeight: '吸收塔高度对发电量的影响',
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太阳能',

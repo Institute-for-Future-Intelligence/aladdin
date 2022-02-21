@@ -285,6 +285,7 @@ export const i18n_en = {
         EffectOfAzimuthOfLinearFresnelReflectors: 'Effect of Azimuth of Linear Fresnel Reflectors',
         CosineEfficiencyOfHeliostats: 'Cosine Efficiency of Heliostats',
         ShadowingAndBlockingOfHeliostats: 'Shadowing and Blocking of Heliostats',
+        EffectSolarPowerTowerHeight: 'Effect of Solar Power Tower Height',
       },
       examplesSubMenu: 'Examples',
       solarEnergySubMenu: 'Solar Energy',

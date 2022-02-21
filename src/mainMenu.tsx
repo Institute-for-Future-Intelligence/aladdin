@@ -32,6 +32,7 @@ import effect_receiver_tube_height from './examples/effect_receiver_tube_height.
 import effect_azimuth_fresnel_reflector from './examples/effect_azimuth_fresnel_reflector.json';
 import cosine_efficiency_heliostats from './examples/cosine_efficiency_heliostats.json';
 import shadowing_blocking_heliostats from './examples/shadowing_blocking_heliostats.json';
+import effect_solar_power_tower_height from './examples/effect_solar_power_tower_height.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -256,6 +257,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'shadowing_blocking_heliostats':
         input = shadowing_blocking_heliostats;
+        break;
+      case 'effect_solar_power_tower_height':
+        input = effect_solar_power_tower_height;
         break;
       case 'simple_house_01':
         input = simple_house_01;
@@ -1423,6 +1427,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="shadowing_blocking_heliostats" onClick={loadFile}>
             {i18n.t('menu.tutorials.ShadowingAndBlockingOfHeliostats', lang)}
+          </Menu.Item>
+          <Menu.Item key="effect_solar_power_tower_height" onClick={loadFile}>
+            {i18n.t('menu.tutorials.EffectSolarPowerTowerHeight', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>
