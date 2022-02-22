@@ -638,7 +638,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       UNIT_VECTOR_POS_Z,
       new Vector3(rotatedSunDirection.x * cosRot, rotatedSunDirection.x * sinRot, rotatedSunDirection.z).normalize(),
     );
-    normal.copy(originalNormal.clone().applyEuler(new Euler().setFromQuaternion(qRot)));
+    const normalEuler = new Euler().setFromQuaternion(qRot);
+    normal.copy(originalNormal.clone().applyEuler(normalEuler));
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
       world.ground,
@@ -647,7 +648,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       peakRadiation,
     );
     const dot = normal.dot(sunDirection);
-    const v2 = new Vector2();
+    const v2d = new Vector2();
+    const dv = new Vector3();
     let tmpX = 0;
     let disX = 0;
     let areaRatio = 1;
@@ -665,9 +667,13 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       for (let kv = 0; kv < ny; kv++) {
         cellOutputs[ku][kv] += indirectRadiation;
         if (dot > 0) {
-          v2.set(tmpX, y0 + kv * dy);
-          if (!zRotZero) v2.rotateAround(center2d, zRot);
-          v.set(v2.x, v2.y, z0);
+          v2d.set(tmpX, y0 + kv * dy);
+          // TODO: this implementation differs from that for Fresnel reflectors
+          // so we must rotate here. this can be avoided.
+          if (!zRotZero) v2d.rotateAround(center2d, zRot);
+          dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
+          dv.applyEuler(normalEuler);
+          v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
           if (!inShadow(trough.id, v, sunDirection)) {
             cellOutputs[ku][kv] += dot * peakRadiation * areaRatio;
           }
@@ -713,7 +719,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
       : sunDirection.clone();
     const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
-    normal.copy(originalNormal.clone().applyEuler(new Euler().setFromQuaternion(qRot)));
+    const normalEuler = new Euler().setFromQuaternion(qRot);
+    normal.copy(originalNormal.clone().applyEuler(normalEuler));
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
       world.ground,
@@ -722,7 +729,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       peakRadiation,
     );
     const dot = normal.dot(sunDirection);
-    const v2 = new Vector2();
+    const v2d = new Vector2();
+    const dv = new Vector3();
     let tmpX = 0;
     let tmpY = 0;
     let disX = 0;
@@ -746,9 +754,11 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         if (Math.abs(disY) > ly / 2) continue;
         cellOutputs[ku][kv] += indirectRadiation;
         if (dot > 0) {
-          v2.set(tmpX, tmpY);
-          if (!zRotZero) v2.rotateAround(center2d, zRot);
-          v.set(v2.x, v2.y, z0);
+          v2d.set(tmpX, tmpY);
+          if (!zRotZero) v2d.rotateAround(center2d, zRot);
+          dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
+          dv.applyEuler(normalEuler);
+          v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
           if (!inShadow(dish.id, v, sunDirection)) {
             areaRatio = 1 / Math.sqrt(1 + (disX * disX + disY * disY) * lr2);
             cellOutputs[ku][kv] += dot * peakRadiation * areaRatio;

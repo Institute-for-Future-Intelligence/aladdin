@@ -456,23 +456,26 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     const rotatedSunDirection = rot
       ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
       : sunDirection.clone();
-    const ori = originalNormal.clone();
     const qRot = new Quaternion().setFromUnitVectors(
       UNIT_VECTOR_POS_Z,
       new Vector3(rotatedSunDirection.x * cosRot, rotatedSunDirection.x * sinRot, rotatedSunDirection.z).normalize(),
     );
-    normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRot)));
+    const normalEuler = new Euler().setFromQuaternion(qRot);
+    normal.copy(originalNormal.clone().applyEuler(normalEuler));
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const dot = normal.dot(sunDirection);
-    const v2 = new Vector2();
+    const v2d = new Vector2();
+    const dv = new Vector3();
     let sum = 0;
     for (let kx = 0; kx < nx; kx++) {
       for (let ky = 0; ky < ny; ky++) {
         if (dot > 0) {
           // simplify the simulation by using the aperture surface instead of the parabolic surface
-          v2.set(x0 + kx * dx, y0 + ky * dy);
-          if (!zRotZero) v2.rotateAround(center2d, zRot);
-          v.set(v2.x, v2.y, z0);
+          v2d.set(x0 + kx * dx, y0 + ky * dy);
+          if (!zRotZero) v2d.rotateAround(center2d, zRot);
+          dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
+          dv.applyEuler(normalEuler);
+          v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
           if (!inShadow(trough.id, v, sunDirection)) {
             // direct radiation
             sum += dot * peakRadiation;
