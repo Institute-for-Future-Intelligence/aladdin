@@ -507,29 +507,18 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);
-    const originalNormal = normal.clone();
     const rot = parent.rotation[2];
     const zRot = rot + panel.relativeAzimuth;
-    const zRotZero = Util.isZero(zRot);
-    if (Math.abs(panel.tiltAngle) > 0.001 && panel.trackerType === TrackerType.NO_TRACKER) {
-      // TODO: right now we assume a parent rotation is always around the z-axis
-      //normal.applyAxisAngle(UNIT_VECTOR_POS_X, panel.tiltAngle).applyAxisAngle(UNIT_VECTOR_POS_Z, zRot);
-      normal.applyEuler(new Euler(panel.tiltAngle, 0, zRot, 'ZYX'));
-    }
-    const cosTilt = Math.cos(panel.tiltAngle);
-    const sinTilt = Math.sin(panel.tiltAngle);
     const lx = panel.lx;
-    const ly = panel.ly * cosTilt;
-    const lz = panel.ly * Math.abs(sinTilt);
+    const ly = panel.ly;
     const nx = Math.max(2, Math.round(panel.lx / cellSize));
     const ny = Math.max(2, Math.round(panel.ly / cellSize));
     const dx = lx / nx;
     const dy = ly / ny;
-    const dz = lz / ny;
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
-    const y0 = center.y - (ly - cellSize * cosTilt) / 2;
-    const z0 = parent.lz + panel.poleHeight + panel.lz - ((lz - cellSize * sinTilt) / 2) * Math.sign(panel.tiltAngle);
+    const y0 = center.y - (ly - cellSize) / 2;
+    const z0 = parent.lz + panel.poleHeight + panel.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     let cellOutputs = cellOutputsMapRef.current.get(panel.id);
@@ -539,31 +528,29 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         .map(() => Array(ny).fill(0));
       cellOutputsMapRef.current.set(panel.id, cellOutputs);
     }
+    let normalEuler = new Euler(panel.tiltAngle, 0, zRot, 'ZYX');
     if (panel.trackerType !== TrackerType.NO_TRACKER) {
       // dynamic angles
       const rotatedSunDirection = rot
         ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
         : sunDirection.clone();
-      const ori = originalNormal.clone();
       switch (panel.trackerType) {
         case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
           const qRotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
-          normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotAADAT)));
+          normalEuler = new Euler().setFromQuaternion(qRotAADAT);
           break;
         case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
           const qRotHSAT = new Quaternion().setFromUnitVectors(
             UNIT_VECTOR_POS_Z,
             new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
           );
-          normal.copy(ori.applyEuler(new Euler().setFromQuaternion(qRotHSAT)));
+          normalEuler = new Euler().setFromQuaternion(qRotHSAT);
           break;
         case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
           if (Math.abs(panel.tiltAngle) > 0.001) {
-            const v2d = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
-            const az = Math.acos(UNIT_VECTOR_POS_Y.dot(v2d)) * Math.sign(v2d.x);
-            ori.applyAxisAngle(UNIT_VECTOR_POS_X, panel.tiltAngle);
-            ori.applyAxisAngle(UNIT_VECTOR_POS_Z, az + rot);
-            normal.copy(ori);
+            const v2 = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
+            const az = Math.acos(UNIT_VECTOR_POS_Y.dot(v2)) * Math.sign(v2.x);
+            normalEuler = new Euler(panel.tiltAngle, 0, az + rot, 'ZYX');
           }
           break;
         case TrackerType.TILTED_SINGLE_AXIS_TRACKER:
@@ -571,6 +558,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           break;
       }
     }
+    normal.applyEuler(normalEuler);
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
       world.ground,
@@ -579,14 +567,16 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       peakRadiation,
     );
     const dot = normal.dot(sunDirection);
-    const v2 = new Vector2();
+    const v2d = new Vector2();
+    const dv = new Vector3();
     for (let kx = 0; kx < nx; kx++) {
       for (let ky = 0; ky < ny; ky++) {
         cellOutputs[kx][ky] += indirectRadiation;
         if (dot > 0) {
-          v2.set(x0 + kx * dx, y0 + ky * dy);
-          if (!zRotZero) v2.rotateAround(center2d, zRot);
-          v.set(v2.x, v2.y, z0 + ky * dz);
+          v2d.set(x0 + kx * dx, y0 + ky * dy);
+          dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
+          dv.applyEuler(normalEuler);
+          v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
           if (!inShadow(panel.id, v, sunDirection)) {
             // direct radiation
             cellOutputs[kx][ky] += dot * peakRadiation;

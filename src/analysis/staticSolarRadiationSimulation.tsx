@@ -346,35 +346,28 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   const generateHeatmapForSolarPanel = (panel: SolarPanelModel) => {
     const parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
-    if (panel.trackerType !== TrackerType.NO_TRACKER) throw new Error('trackers must not use static simulation');
+    if (panel.trackerType !== TrackerType.NO_TRACKER) throw new Error('trackers cannot use static simulation');
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);
     const rot = parent.rotation[2];
     const zRot = rot + panel.relativeAzimuth;
-    const zRotZero = Util.isZero(zRot);
-    if (Math.abs(panel.tiltAngle) > 0.001) {
-      // TODO: right now we assume a parent rotation is always around the z-axis
-      //normal.applyAxisAngle(UNIT_VECTOR_POS_X, panel.tiltAngle).applyAxisAngle(UNIT_VECTOR_POS_Z, zRot);
-      normal.applyEuler(new Euler(panel.tiltAngle, 0, zRot, 'ZYX'));
-    }
+    // TODO: right now we assume a parent rotation is always around the z-axis
+    const normalEuler = new Euler(panel.tiltAngle, 0, zRot, 'ZYX');
+    normal.applyEuler(normalEuler);
     const year = now.getFullYear();
     const month = now.getMonth();
     const date = now.getDate();
     const dayOfYear = Util.dayOfYear(now);
-    const cosTilt = Math.cos(panel.tiltAngle);
-    const sinTilt = Math.sin(panel.tiltAngle);
     const lx = panel.lx;
-    const ly = panel.ly * cosTilt;
-    const lz = panel.ly * Math.abs(sinTilt);
+    const ly = panel.ly;
     const nx = Math.max(2, Math.round(panel.lx / cellSize));
     const ny = Math.max(2, Math.round(panel.ly / cellSize));
     const dx = lx / nx;
     const dy = ly / ny;
-    const dz = lz / ny;
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
-    const y0 = center.y - (ly - cellSize * cosTilt) / 2;
-    const z0 = parent.lz + panel.poleHeight + panel.lz - ((lz - cellSize * sinTilt) / 2) * Math.sign(panel.tiltAngle);
+    const y0 = center.y - (ly - cellSize) / 2;
+    const z0 = parent.lz + panel.poleHeight + panel.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputTotals = Array(nx)
@@ -391,14 +384,16 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
           const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
           const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
           const dot = normal.dot(sunDirection);
-          const v2 = new Vector2();
+          const v2d = new Vector2();
+          const dv = new Vector3();
           for (let kx = 0; kx < nx; kx++) {
             for (let ky = 0; ky < ny; ky++) {
               cellOutputTotals[kx][ky] += indirectRadiation;
               if (dot > 0) {
-                v2.set(x0 + kx * dx, y0 + ky * dy);
-                if (!zRotZero) v2.rotateAround(center2d, zRot);
-                v.set(v2.x, v2.y, z0 + ky * dz);
+                v2d.set(x0 + kx * dx, y0 + ky * dy);
+                dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
+                dv.applyEuler(normalEuler);
+                v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
                 if (!inShadow(panel.id, v, sunDirection)) {
                   // direct radiation
                   cellOutputTotals[kx][ky] += dot * peakRadiation;
