@@ -205,6 +205,9 @@ export interface CommonStoreState {
   updateElementLzForAll: (type: ObjectType, lz: number) => void;
 
   // for all types of solar collectors
+  updateSolarCollectorDrawSunBeamById: (id: string, draw: boolean) => void;
+  updateSolarCollectorDrawSunBeamAboveFoundation: (type: ObjectType, foundationId: string, draw: boolean) => void;
+  updateSolarCollectorDrawSunBeamForAll: (type: ObjectType, draw: boolean) => void;
   updateSolarCollectorRelativeAzimuthById: (id: string, relativeAzimuth: number) => void;
   updateSolarCollectorRelativeAzimuthOnSurface: (
     type: ObjectType,
@@ -227,7 +230,6 @@ export interface CommonStoreState {
   ) => void;
   updateSolarCollectorPoleHeightAboveFoundation: (type: ObjectType, foundationId: string, poleHeight: number) => void;
   updateSolarCollectorPoleHeightForAll: (type: ObjectType, poleHeight: number) => void;
-  updateSolarCollectorDrawSunBeamById: (id: string, drawSunBeam: boolean) => void;
   updateSolarCollectorDailyYieldById: (id: string, dailyYield: number) => void;
   updateSolarCollectorYearlyYieldById: (id: string, yearlyYield: number) => void;
 
@@ -1500,6 +1502,42 @@ export const useStore = create<CommonStoreState>(
           },
 
           // for solar collectors
+          updateSolarCollectorDrawSunBeamById(id, draw) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && !e.locked) {
+                  if (Util.isSolarCollector(e)) {
+                    (e as SolarCollector).drawSunBeam = draw;
+                    break;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarCollectorDrawSunBeamAboveFoundation(type, foundationId, draw) {
+            if (!Util.isSolarCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.foundationId === foundationId && !e.locked) {
+                  if (e.type === type) {
+                    (e as SolarCollector).drawSunBeam = draw;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarCollectorDrawSunBeamForAll(type, draw) {
+            if (!Util.isSolarCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (!e.locked) {
+                  if (e.type === type) {
+                    (e as SolarCollector).drawSunBeam = draw;
+                  }
+                }
+              }
+            });
+          },
           updateSolarCollectorRelativeAzimuthById(id, relativeAzimuth) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -1594,16 +1632,6 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === type && !e.locked) {
                   (e as SolarCollector).poleHeight = poleHeight;
-                }
-              }
-            });
-          },
-          updateSolarCollectorDrawSunBeamById(id, drawSunBeam) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.id === id && Util.isSolarCollector(e)) {
-                  (e as SolarCollector).drawSunBeam = drawSunBeam;
-                  break;
                 }
               }
             });

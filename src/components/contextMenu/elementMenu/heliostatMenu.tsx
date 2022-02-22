@@ -15,13 +15,13 @@ import HeliostatWidthInput from './heliostatWidthInput';
 import HeliostatLengthInput from './heliostatLengthInput';
 import HeliostatPoleHeightInput from './heliostatPoleHeightInput';
 import HeliostatReflectanceInput from './heliostatReflectorReflectanceInput';
+import HeliostatDrawSunbeamSelection from './heliostatDrawSunbeamSelection';
 
 export const HeliostatMenu = () => {
   const language = useStore(Selector.language);
   const heliostat = useStore(Selector.selectedElement) as HeliostatModel;
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
-  const updateSolarCollectorDrawSunBeamById = useStore(Selector.updateSolarCollectorDrawSunBeamById);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
@@ -31,6 +31,7 @@ export const HeliostatMenu = () => {
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [poleHeightDialogVisible, setPoleHeightDialogVisible] = useState(false);
   const [reflectanceDialogVisible, setReflectanceDialogVisible] = useState(false);
+  const [sunBeamDialogVisible, setSunBeamDialogVisible] = useState(false);
 
   const lang = { lng: language };
 
@@ -77,25 +78,6 @@ export const HeliostatMenu = () => {
       } as UndoableChange;
       addUndoable(undoableChange);
       updateElementLabelById(heliostat.id, labelText);
-      setUpdateFlag(!updateFlag);
-    }
-  };
-
-  const drawSunBeam = (checked: boolean) => {
-    if (heliostat) {
-      const undoableCheck = {
-        name: 'Show Sun Beam',
-        timestamp: Date.now(),
-        checked: !heliostat.drawSunBeam,
-        undo: () => {
-          updateSolarCollectorDrawSunBeamById(heliostat.id, !undoableCheck.checked);
-        },
-        redo: () => {
-          updateSolarCollectorDrawSunBeamById(heliostat.id, undoableCheck.checked);
-        },
-      } as UndoableCheck;
-      addUndoable(undoableCheck);
-      updateSolarCollectorDrawSunBeamById(heliostat.id, checked);
       setUpdateFlag(!updateFlag);
     }
   };
@@ -168,10 +150,19 @@ export const HeliostatMenu = () => {
           </Menu.Item>
 
           {/* draw sun beam or not */}
-          <Menu.Item key={'heliostat-draw-sun-beam'}>
-            <Checkbox checked={!!heliostat?.drawSunBeam} onChange={(e) => drawSunBeam(e.target.checked)}>
-              {i18n.t('solarCollectorMenu.DrawSunBeam', lang)}
-            </Checkbox>
+          <HeliostatDrawSunbeamSelection
+            dialogVisible={sunBeamDialogVisible}
+            setDialogVisible={setSunBeamDialogVisible}
+          />
+          <Menu.Item
+            key={'heliostat-draw-sun-beam'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setSunBeamDialogVisible(true);
+            }}
+          >
+            {i18n.t('solarCollectorMenu.DrawSunBeam', lang)} ...
           </Menu.Item>
 
           {/* show label or not */}

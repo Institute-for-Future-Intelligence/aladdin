@@ -9,6 +9,7 @@ import { Vector3 } from 'three';
 
 export interface UndoableChange extends Undoable {
   oldValue:
+    | boolean
     | string
     | number
     | string[]
@@ -18,6 +19,7 @@ export interface UndoableChange extends Undoable {
     | ParabolicDishStructureType
     | SolarReceiver;
   newValue:
+    | boolean
     | string
     | number
     | string[]

@@ -9,16 +9,8 @@ import { useStore } from '../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import {
-  HALF_PI,
-  HIGHLIGHT_HANDLE_COLOR,
-  LOCKED_ELEMENT_SELECTION_COLOR,
-  MOVE_HANDLE_RADIUS,
-  RESIZE_HANDLE_COLOR,
-  RESIZE_HANDLE_SIZE,
-  UNIT_VECTOR_POS_Z,
-} from '../constants';
-import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
+import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR, MOVE_HANDLE_RADIUS, UNIT_VECTOR_POS_Z } from '../constants';
+import { ActionType, MoveHandleType, ObjectType } from '../types';
 import { Util } from '../Util';
 import { getSunDirection } from '../analysis/sunTools';
 import i18n from '../i18n/i18n';
@@ -59,21 +51,15 @@ const Heliostat = ({
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
   const sceneRadius = useStore(Selector.sceneRadius);
-  const resizeHandleType = useStore(Selector.resizeHandleType);
 
   const {
     gl: { domElement },
   } = useThree();
 
   const [hovered, setHovered] = useState(false);
-  const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
   const baseRef = useRef<Mesh>();
   const moveHandleRef = useRef<Mesh>();
-  const resizeHandleLowerRef = useRef<Mesh>();
-  const resizeHandleUpperRef = useRef<Mesh>();
-  const resizeHandleLeftRef = useRef<Mesh>();
-  const resizeHandleRightRef = useRef<Mesh>();
   const pointerDown = useRef<boolean>(false);
 
   const sunBeamLength = Math.max(100, 5 * sceneRadius);
@@ -103,10 +89,6 @@ const Heliostat = ({
     }
   }
 
-  const positionLL = new Vector3(-hx, -hy, hz);
-  const positionUL = new Vector3(-hx, hy, hz);
-  const positionLR = new Vector3(hx, -hy, hz);
-  const positionUR = new Vector3(hx, hy, hz);
   const heliostat = getElementById(id) as HeliostatModel;
 
   useEffect(() => {
@@ -153,28 +135,16 @@ const Heliostat = ({
     return new Euler(0, 0, rotation[2], 'ZXY');
   }, [rotation]);
 
-  const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
+  const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType) => {
     if (e.intersections.length > 0) {
       const intersected = e.intersections[0].object === e.eventObject;
       if (intersected) {
-        setHoveredHandle(handle);
-        if (handle === MoveHandleType.Top) {
-          domElement.style.cursor = 'move';
-        } else if (
-          handle === RotateHandleType.Lower ||
-          handle === RotateHandleType.Upper ||
-          handle === RotateHandleType.Tilt
-        ) {
-          domElement.style.cursor = 'grab';
-        } else {
-          domElement.style.cursor = 'pointer';
-        }
+        domElement.style.cursor = handle === MoveHandleType.Default ? 'move' : 'pointer';
       }
     }
   };
 
   const noHoverHandle = () => {
-    setHoveredHandle(null);
     domElement.style.cursor = 'default';
   };
 
@@ -219,8 +189,7 @@ const Heliostat = ({
 
   const poleZ = -(actualPoleHeight + lz) / 2;
   const baseSize = Math.max(1, (lx + ly) / 16);
-  const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
-  const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 2;
+  const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 4;
 
   return (
     <group name={'Heliostat Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
@@ -313,7 +282,7 @@ const Heliostat = ({
           />
         )}
 
-        {/* move & resize handles */}
+        {/* move handle */}
         {selected && !locked && (
           <>
             {/* draw move handle */}
@@ -323,7 +292,7 @@ const Heliostat = ({
               args={[moveHandleSize, 6, 6]}
               name={MoveHandleType.Default}
               onPointerOver={(e) => {
-                hoverHandle(e, MoveHandleType.Top);
+                hoverHandle(e, MoveHandleType.Default);
               }}
               onPointerOut={(e) => {
                 noHoverHandle();
@@ -334,130 +303,6 @@ const Heliostat = ({
             >
               <meshStandardMaterial attach="material" color={'orange'} />
             </Sphere>
-
-            {/* draw resize handles */}
-            <group>
-              <Box
-                ref={resizeHandleLowerRef}
-                position={[(positionLL.x + positionLR.x) / 2, positionLL.y, positionLL.z - hz]}
-                args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
-                name={ResizeHandleType.Lower}
-                onPointerDown={(e) => {
-                  selectMe(id, e, ActionType.Resize);
-                  if (resizeHandleLeftRef.current) {
-                    setCommonStore((state) => {
-                      const anchor = resizeHandleLowerRef.current!.localToWorld(new Vector3(0, ly, -positionLL.z));
-                      state.resizeAnchor.copy(anchor);
-                    });
-                  }
-                }}
-                onPointerOver={(e) => {
-                  hoverHandle(e, ResizeHandleType.Lower);
-                }}
-                onPointerOut={(e) => {
-                  noHoverHandle();
-                }}
-              >
-                <meshStandardMaterial
-                  attach="material"
-                  color={
-                    hoveredHandle === ResizeHandleType.Lower || resizeHandleType === ResizeHandleType.Lower
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : RESIZE_HANDLE_COLOR
-                  }
-                />
-              </Box>
-              <Box
-                ref={resizeHandleUpperRef}
-                position={[(positionUL.x + positionUR.x) / 2, positionUL.y, positionUL.z - hz]}
-                args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
-                name={ResizeHandleType.Upper}
-                onPointerDown={(e) => {
-                  selectMe(id, e, ActionType.Resize);
-                  if (resizeHandleLeftRef.current) {
-                    setCommonStore((state) => {
-                      const anchor = resizeHandleUpperRef.current!.localToWorld(new Vector3(0, -ly, -positionUL.z));
-                      state.resizeAnchor.copy(anchor);
-                    });
-                  }
-                }}
-                onPointerOver={(e) => {
-                  hoverHandle(e, ResizeHandleType.Upper);
-                }}
-                onPointerOut={(e) => {
-                  noHoverHandle();
-                }}
-              >
-                <meshStandardMaterial
-                  attach="material"
-                  color={
-                    hoveredHandle === ResizeHandleType.Upper || resizeHandleType === ResizeHandleType.Upper
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : RESIZE_HANDLE_COLOR
-                  }
-                />
-              </Box>
-              <Box
-                ref={resizeHandleLeftRef}
-                position={[positionLL.x, (positionLL.y + positionUL.y) / 2, positionLL.z]}
-                args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
-                name={ResizeHandleType.Left}
-                onPointerDown={(e) => {
-                  selectMe(id, e, ActionType.Resize);
-                  if (resizeHandleLeftRef.current) {
-                    setCommonStore((state) => {
-                      const anchor = resizeHandleLeftRef.current!.localToWorld(new Vector3(lx, 0, -positionLL.z));
-                      state.resizeAnchor.copy(anchor);
-                    });
-                  }
-                }}
-                onPointerOver={(e) => {
-                  hoverHandle(e, ResizeHandleType.Left);
-                }}
-                onPointerOut={(e) => {
-                  noHoverHandle();
-                }}
-              >
-                <meshStandardMaterial
-                  attach="material"
-                  color={
-                    hoveredHandle === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Left
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : RESIZE_HANDLE_COLOR
-                  }
-                />
-              </Box>
-              <Box
-                ref={resizeHandleRightRef}
-                position={[positionLR.x, (positionLR.y + positionUR.y) / 2, positionLR.z]}
-                args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
-                name={ResizeHandleType.Right}
-                onPointerDown={(e) => {
-                  selectMe(id, e, ActionType.Resize);
-                  if (resizeHandleLeftRef.current) {
-                    setCommonStore((state) => {
-                      const anchor = resizeHandleRightRef.current!.localToWorld(new Vector3(-lx, 0, -positionLR.z));
-                      state.resizeAnchor.copy(anchor);
-                    });
-                  }
-                }}
-                onPointerOver={(e) => {
-                  hoverHandle(e, ResizeHandleType.Right);
-                }}
-                onPointerOut={(e) => {
-                  noHoverHandle();
-                }}
-              >
-                <meshStandardMaterial
-                  attach="material"
-                  color={
-                    hoveredHandle === ResizeHandleType.Right || resizeHandleType === ResizeHandleType.Right
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : RESIZE_HANDLE_COLOR
-                  }
-                />
-              </Box>
-            </group>
           </>
         )}
       </group>

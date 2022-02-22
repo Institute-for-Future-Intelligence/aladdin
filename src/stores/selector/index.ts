@@ -331,6 +331,15 @@ export const updateSolarPanelTiltAngleAboveFoundation = (state: CommonStoreState
 
 export const updateSolarPanelTiltAngleForAll = (state: CommonStoreState) => state.updateSolarPanelTiltAngleForAll;
 
+export const updateSolarCollectorDrawSunBeamById = (state: CommonStoreState) =>
+  state.updateSolarCollectorDrawSunBeamById;
+
+export const updateSolarCollectorDrawSunBeamAboveFoundation = (state: CommonStoreState) =>
+  state.updateSolarCollectorDrawSunBeamAboveFoundation;
+
+export const updateSolarCollectorDrawSunBeamForAll = (state: CommonStoreState) =>
+  state.updateSolarCollectorDrawSunBeamForAll;
+
 export const updateSolarCollectorRelativeAzimuthById = (state: CommonStoreState) =>
   state.updateSolarCollectorRelativeAzimuthById;
 
@@ -383,9 +392,6 @@ export const updateSolarPanelPoleSpacingAboveFoundation = (state: CommonStoreSta
   state.updateSolarPanelPoleSpacingAboveFoundation;
 
 export const updateSolarPanelPoleSpacingForAll = (state: CommonStoreState) => state.updateSolarPanelPoleSpacingForAll;
-
-export const updateSolarCollectorDrawSunBeamById = (state: CommonStoreState) =>
-  state.updateSolarCollectorDrawSunBeamById;
 
 export const updateCspReflectanceById = (state: CommonStoreState) => state.updateCspReflectanceById;
 
