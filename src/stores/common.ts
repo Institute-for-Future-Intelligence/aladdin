@@ -72,6 +72,7 @@ import { ParabolicDishModel } from '../models/ParabolicDishModel';
 import { ElementCounter } from './ElementCounter';
 import { ParabolicCollector } from '../models/ParabolicCollector';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
+import { HeliostatModel } from '../models/HeliostatModel';
 
 enableMapSet();
 
@@ -366,6 +367,9 @@ export interface CommonStoreState {
   // for heliostats
   heliostatActionScope: Scope;
   setHeliostatActionScope: (scope: Scope) => void;
+  updateHeliostatTowerById: (id: string, towerId: string) => void;
+  updateHeliostatTowerAboveFoundation: (foundationId: string, towerId: string) => void;
+  updateHeliostatTowerForAll: (towerId: string) => void;
 
   // for parabolic dishes
   parabolicDishActionScope: Scope;
@@ -2678,6 +2682,40 @@ export const useStore = create<CommonStoreState>(
           setHeliostatActionScope(scope) {
             immerSet((state: CommonStoreState) => {
               state.heliostatActionScope = scope;
+            });
+          },
+          updateHeliostatTowerById(id, towerId) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && !e.locked) {
+                  if (e.type === ObjectType.Heliostat) {
+                    (e as HeliostatModel).towerId = towerId;
+                    break;
+                  }
+                }
+              }
+            });
+          },
+          updateHeliostatTowerAboveFoundation(foundationId, towerId) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.foundationId === foundationId && !e.locked) {
+                  if (e.type === ObjectType.Heliostat) {
+                    (e as HeliostatModel).towerId = towerId;
+                  }
+                }
+              }
+            });
+          },
+          updateHeliostatTowerForAll(towerId) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (!e.locked) {
+                  if (e.type === ObjectType.Heliostat) {
+                    (e as HeliostatModel).towerId = towerId;
+                  }
+                }
+              }
             });
           },
 

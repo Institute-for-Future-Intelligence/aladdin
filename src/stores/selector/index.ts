@@ -439,6 +439,13 @@ export const heliostatActionScope = (state: CommonStoreState) => state.heliostat
 
 export const setHeliostatActionScope = (state: CommonStoreState) => state.setHeliostatActionScope;
 
+export const updateHeliostatTowerById = (state: CommonStoreState) => state.updateHeliostatTowerById;
+
+export const updateHeliostatTowerAboveFoundation = (state: CommonStoreState) =>
+  state.updateHeliostatTowerAboveFoundation;
+
+export const updateHeliostatTowerForAll = (state: CommonStoreState) => state.updateHeliostatTowerForAll;
+
 export const parabolicDishActionScope = (state: CommonStoreState) => state.parabolicDishActionScope;
 
 export const setParabolicDishActionScope = (state: CommonStoreState) => state.setParabolicDishActionScope;

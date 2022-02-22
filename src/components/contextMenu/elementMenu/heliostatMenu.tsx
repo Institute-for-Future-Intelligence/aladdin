@@ -15,7 +15,8 @@ import HeliostatWidthInput from './heliostatWidthInput';
 import HeliostatLengthInput from './heliostatLengthInput';
 import HeliostatPoleHeightInput from './heliostatPoleHeightInput';
 import HeliostatReflectanceInput from './heliostatReflectorReflectanceInput';
-import HeliostatDrawSunbeamSelection from './heliostatDrawSunbeamSelection';
+import HeliostatDrawSunBeamSelection from './heliostatDrawSunBeamSelection';
+import HeliostatTowerSelection from './heliostatTowerSelection';
 
 export const HeliostatMenu = () => {
   const language = useStore(Selector.language);
@@ -32,6 +33,7 @@ export const HeliostatMenu = () => {
   const [poleHeightDialogVisible, setPoleHeightDialogVisible] = useState(false);
   const [reflectanceDialogVisible, setReflectanceDialogVisible] = useState(false);
   const [sunBeamDialogVisible, setSunBeamDialogVisible] = useState(false);
+  const [towerDialogVisible, setTowerDialogVisible] = useState(false);
 
   const lang = { lng: language };
 
@@ -91,6 +93,19 @@ export const HeliostatMenu = () => {
       <Lock keyName={'heliostat-lock'} />
       {heliostat && editable && (
         <>
+          {/* select tower */}
+          <HeliostatTowerSelection dialogVisible={towerDialogVisible} setDialogVisible={setTowerDialogVisible} />
+          <Menu.Item
+            key={'heliostat-tower'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setTowerDialogVisible(true);
+            }}
+          >
+            {i18n.t('heliostatMenu.SelectTowerToReflectSunlightTo', lang)} ...
+          </Menu.Item>
+
           {/* heliostat length */}
           <HeliostatLengthInput dialogVisible={lengthDialogVisible} setDialogVisible={setLengthDialogVisible} />
           <Menu.Item
@@ -150,7 +165,7 @@ export const HeliostatMenu = () => {
           </Menu.Item>
 
           {/* draw sun beam or not */}
-          <HeliostatDrawSunbeamSelection
+          <HeliostatDrawSunBeamSelection
             dialogVisible={sunBeamDialogVisible}
             setDialogVisible={setSunBeamDialogVisible}
           />

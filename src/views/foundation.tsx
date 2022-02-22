@@ -2365,7 +2365,7 @@ const Foundation = ({
                 castShadow={false}
                 receiveShadow={false}
                 args={[solarTowerRadius, solarTowerRadius, solarReceiverHeight, 6, 2]}
-                position={[0, 0, solarReceiverHeight / 2 + lz]}
+                position={[0, 0, solarReceiverHeight / 2]}
                 rotation={[HALF_PI, 0, 0]}
               >
                 <meshStandardMaterial attach="material" color={'white'} />
@@ -2382,14 +2382,14 @@ const Foundation = ({
                   10,
                   2,
                 ]}
-                position={[0, 0, solarReceiverHeight + lz]}
+                position={[0, 0, solarReceiverHeight]}
                 rotation={[HALF_PI, 0, 0]}
               >
                 <meshStandardMaterial attach="material" color={'white'} />
               </Cylinder>
               {/* simple glow effect to create a halo */}
               {sunDirection.z > 0 && (
-                <mesh position={[0, 0, solarReceiverHeight + lz]}>
+                <mesh position={[0, 0, solarReceiverHeight]}>
                   <sprite scale={[haloSize, haloSize, haloSize]}>
                     <spriteMaterial
                       map={glowTexture}

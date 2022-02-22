@@ -4,4 +4,6 @@
 
 import { ConcentratedSolarPowerCollector } from './ConcentratedSolarPowerCollector';
 
-export interface HeliostatModel extends ConcentratedSolarPowerCollector {}
+export interface HeliostatModel extends ConcentratedSolarPowerCollector {
+  towerId: string; // the ID of the tower foundation, if not set, use its parent
+}

@@ -33,6 +33,7 @@ import effect_azimuth_fresnel_reflector from './examples/effect_azimuth_fresnel_
 import cosine_efficiency_heliostats from './examples/cosine_efficiency_heliostats.json';
 import shadowing_blocking_heliostats from './examples/shadowing_blocking_heliostats.json';
 import effect_solar_power_tower_height from './examples/effect_solar_power_tower_height.json';
+import solar_power_tower from './examples/solar_power_tower.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -261,6 +262,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'effect_solar_power_tower_height':
         input = effect_solar_power_tower_height;
+        break;
+      case 'solar_power_tower':
+        input = solar_power_tower;
         break;
       case 'simple_house_01':
         input = simple_house_01;
@@ -1435,6 +1439,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="linear_fresnel_reflectors_two_receivers" onClick={loadFile}>
             {i18n.t('menu.tutorials.LinearFresnelReflectorsWithTwoReceivers', lang)}
+          </Menu.Item>
+          <Menu.Item key="solar_power_tower" onClick={loadFile}>
+            {i18n.t('menu.tutorials.SolarPowerTower', lang)}
           </Menu.Item>
           <Menu.Item key="cosine_efficiency_heliostats" onClick={loadFile}>
             {i18n.t('menu.tutorials.CosineEfficiencyOfHeliostats', lang)}

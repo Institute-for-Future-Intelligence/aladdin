@@ -29,7 +29,7 @@ const Heliostat = ({
   tiltAngle,
   relativeAzimuth,
   poleHeight,
-  poleRadius,
+  poleRadius = Math.min(lx, ly) / 20,
   drawSunBeam,
   rotation = [0, 0, 0],
   color = 'white',
@@ -39,6 +39,7 @@ const Heliostat = ({
   showLabel = false,
   locked = false,
   parentId,
+  towerId,
 }: HeliostatModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
@@ -154,21 +155,38 @@ const Heliostat = ({
   const rot = parent?.rotation[2];
 
   const receiverCenter = useMemo(() => {
-    if (parent) {
-      if (parent.type === ObjectType.Foundation) {
-        const foundation = parent as FoundationModel;
-        if (foundation.solarReceiver) {
-          // convert the receiver's coordinates into those relative to the center of this heliostat
-          return new Vector3(
-            foundation.cx - cx,
-            foundation.cy - cy,
-            foundation.cz - cz + (foundation.solarReceiverHeight ?? 20),
-          );
+    if (towerId) {
+      const tower = getElementById(towerId);
+      if (tower) {
+        if (tower.type === ObjectType.Foundation) {
+          const foundation = tower as FoundationModel;
+          if (foundation.solarReceiver) {
+            // convert the receiver's coordinates into those relative to the center of this heliostat
+            return new Vector3(
+              foundation.cx - cx,
+              foundation.cy - cy,
+              foundation.cz - cz + (foundation.solarReceiverHeight ?? 20),
+            );
+          }
+        }
+      }
+    } else {
+      if (parent) {
+        if (parent.type === ObjectType.Foundation) {
+          const foundation = parent as FoundationModel;
+          if (foundation.solarReceiver) {
+            // convert the receiver's coordinates into those relative to the center of this heliostat
+            return new Vector3(
+              foundation.cx - cx,
+              foundation.cy - cy,
+              foundation.cz - cz + (foundation.solarReceiverHeight ?? 20),
+            );
+          }
         }
       }
     }
     return null;
-  }, [parent, cx, cy, cz]);
+  }, [parent, cx, cy, cz, towerId]);
 
   const relativeEuler = useMemo(() => {
     if (receiverCenter && sunDirection.z > 0) {

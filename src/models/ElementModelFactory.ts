@@ -316,7 +316,7 @@ export class ElementModelFactory {
       tiltAngle: 0,
       drawSunBeam: false,
       poleHeight: 0.2, // extra pole height in addition to half of the width or height, whichever is larger
-      poleRadius: 0.05,
+      poleRadius: 0.1,
       cx: x,
       cy: y,
       cz: z,

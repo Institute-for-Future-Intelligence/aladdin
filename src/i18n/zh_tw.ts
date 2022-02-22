@@ -285,6 +285,7 @@ export const i18n_zh_tw = {
         CosineEfficiencyOfHeliostats: '定日鏡的餘弦效率',
         ShadowingAndBlockingOfHeliostats: '定日鏡的陰影和遮擋',
         EffectSolarPowerTowerHeight: '吸收塔高度對發電量的影響',
+        SolarPowerTower: '塔式光熱發電站',
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太陽能',
@@ -561,6 +562,8 @@ export const i18n_zh_tw = {
     },
 
     heliostatMenu: {
+      Tower: '吸收塔',
+      SelectTowerToReflectSunlightTo: '選擇陽光反射到的吸收塔',
       OnlyThisHeliostat: '只這個定日鏡',
       AllHeliostatsAboveFoundation: '同一地基上所有的定日鏡',
       AllHeliostats: '所有的定日鏡',

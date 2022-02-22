@@ -288,6 +288,7 @@ export const i18n_tr = {
         CosineEfficiencyOfHeliostats: 'Cosine Efficiency of Heliostats',
         ShadowingAndBlockingOfHeliostats: 'Shadowing and Blocking of Heliostats',
         EffectSolarPowerTowerHeight: 'Effect of Solar Power Tower Height',
+        SolarPowerTower: 'Solar Power Tower',
       },
       examplesSubMenu: 'Örnekler',
       solarEnergySubMenu: 'Güneþ Enerjisi',
@@ -579,6 +580,8 @@ export const i18n_tr = {
     },
 
     heliostatMenu: {
+      Tower: 'Tower',
+      SelectTowerToReflectSunlightTo: 'Select Tower to Reflect Sunlight to',
       OnlyThisHeliostat: 'Only This Heliostat',
       AllHeliostatsAboveFoundation: 'All Heliostats Above the Same Foundation',
       AllHeliostats: 'All Heliostats',
