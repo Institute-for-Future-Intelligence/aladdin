@@ -2,21 +2,18 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Space, Switch } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { HeliostatModel } from '../../../models/HeliostatModel';
-import { ObjectType, Scope, SolarReceiver } from '../../../types';
+import { FresnelReflectorModel } from '../../../models/FresnelReflectorModel';
+import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { FoundationModel } from '../../../models/FoundationModel';
 
-const { Option } = Select;
-
-const HeliostatTowerSelection = ({
+const FresnelReflectorDrawSunBeamSelection = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -25,19 +22,18 @@ const HeliostatTowerSelection = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const getElementById = useStore(Selector.getElementById);
-  const updateById = useStore(Selector.updateSolarReceiverById);
-  const updateAboveFoundation = useStore(Selector.updateSolarReceiverAboveFoundation);
-  const updateForAll = useStore(Selector.updateSolarReceiverForAll);
-  const heliostat = useStore(Selector.selectedElement) as HeliostatModel;
+  const updateById = useStore(Selector.updateSolarCollectorDrawSunBeamById);
+  const updateAboveFoundation = useStore(Selector.updateSolarCollectorDrawSunBeamAboveFoundation);
+  const updateForAll = useStore(Selector.updateSolarCollectorDrawSunBeamForAll);
+  const fresnelReflector = useStore(Selector.selectedElement) as FresnelReflectorModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const actionScope = useStore(Selector.heliostatActionScope);
-  const setActionScope = useStore(Selector.setHeliostatActionScope);
+  const actionScope = useStore(Selector.fresnelReflectorActionScope);
+  const setActionScope = useStore(Selector.setFresnelReflectorActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [selectedTowerId, setSelectedTowerId] = useState<string>(heliostat?.towerId ?? 'None');
+  const [sunBeam, setSunBeam] = useState<boolean>(!!fresnelReflector?.drawSunBeam);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -45,50 +41,24 @@ const HeliostatTowerSelection = ({
 
   const lang = { lng: language };
 
-  const towers = useMemo(() => {
-    const towerIds: string[] = [];
-    for (const e of elements) {
-      if (e.type === ObjectType.Foundation) {
-        const f = e as FoundationModel;
-        if (f.solarReceiver === SolarReceiver.Tower) {
-          towerIds.push(f.id);
-        }
-      }
-    }
-    return towerIds;
-  }, [elements]);
-
   useEffect(() => {
-    setSelectedTowerId('None');
-    if (heliostat) {
-      if (heliostat.towerId) {
-        setSelectedTowerId(heliostat.towerId);
-      } else {
-        const parent = getElementById(heliostat.parentId);
-        if (parent) {
-          if (
-            parent.type === ObjectType.Foundation &&
-            (parent as FoundationModel).solarReceiver === SolarReceiver.Tower
-          ) {
-            setSelectedTowerId(parent.id);
-          }
-        }
-      }
+    if (fresnelReflector) {
+      setSunBeam(fresnelReflector.drawSunBeam);
     }
-  }, [heliostat]);
+  }, [fresnelReflector]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
-  const needChange = (towerId: string) => {
+  const needChange = (drawSunBeam: boolean) => {
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Heliostat && !e.locked) {
-            const hs = e as HeliostatModel;
-            if (hs.towerId !== towerId) {
+          if (e.type === ObjectType.FresnelReflector && !e.locked) {
+            const fr = e as FresnelReflectorModel;
+            if (fr.drawSunBeam !== drawSunBeam) {
               return true;
             }
           }
@@ -96,103 +66,107 @@ const HeliostatTowerSelection = ({
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (e.type === ObjectType.Heliostat && e.foundationId === heliostat?.foundationId && !e.locked) {
-            const hs = e as HeliostatModel;
-            if (hs.towerId !== towerId) {
+          if (
+            e.type === ObjectType.FresnelReflector &&
+            e.foundationId === fresnelReflector?.foundationId &&
+            !e.locked
+          ) {
+            const fr = e as FresnelReflectorModel;
+            if (fr.drawSunBeam !== drawSunBeam) {
               return true;
             }
           }
         }
         break;
       default:
-        if (heliostat?.towerId !== towerId) {
+        if (fresnelReflector?.drawSunBeam !== drawSunBeam) {
           return true;
         }
     }
     return false;
   };
 
-  const setTowerId = (value: string) => {
-    if (!heliostat) return;
+  const setDrawSunBeam = (value: boolean) => {
+    if (!fresnelReflector) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldValuesAll = new Map<string, string>();
+        const oldValuesAll = new Map<string, boolean>();
         for (const elem of elements) {
-          if (elem.type === ObjectType.Heliostat) {
-            oldValuesAll.set(elem.id, (elem as HeliostatModel).towerId);
+          if (elem.type === ObjectType.FresnelReflector) {
+            oldValuesAll.set(elem.id, (elem as FresnelReflectorModel).drawSunBeam);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Tower for All Heliostats',
+          name: 'Draw Sun Beam for All Fresnel Reflectors',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, ti] of undoableChangeAll.oldValues.entries()) {
-              updateById(id, ti as string);
+            for (const [id, sb] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, sb as boolean);
             }
           },
           redo: () => {
-            updateForAll(ObjectType.Heliostat, undoableChangeAll.newValue as string);
+            updateForAll(ObjectType.FresnelReflector, undoableChangeAll.newValue as boolean);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateForAll(ObjectType.Heliostat, value);
+        updateForAll(ObjectType.FresnelReflector, value);
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (heliostat.foundationId) {
-          const oldValuesAboveFoundation = new Map<string, string>();
+        if (fresnelReflector.foundationId) {
+          const oldValuesAboveFoundation = new Map<string, boolean>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.Heliostat && elem.foundationId === heliostat.foundationId) {
-              oldValuesAboveFoundation.set(elem.id, (elem as HeliostatModel).towerId);
+            if (elem.type === ObjectType.FresnelReflector && elem.foundationId === fresnelReflector.foundationId) {
+              oldValuesAboveFoundation.set(elem.id, (elem as FresnelReflectorModel).drawSunBeam);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Tower for All Heliostats Above Foundation',
+            name: 'Draw Sun Beam for All Fresnel Reflectors Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
-            groupId: heliostat.foundationId,
+            groupId: fresnelReflector.foundationId,
             undo: () => {
-              for (const [id, ti] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updateById(id, ti as string);
+              for (const [id, sb] of undoableChangeAboveFoundation.oldValues.entries()) {
+                updateById(id, sb as boolean);
               }
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
                 updateAboveFoundation(
-                  ObjectType.Heliostat,
+                  ObjectType.FresnelReflector,
                   undoableChangeAboveFoundation.groupId,
-                  undoableChangeAboveFoundation.newValue as string,
+                  undoableChangeAboveFoundation.newValue as boolean,
                 );
               }
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateAboveFoundation(ObjectType.Heliostat, heliostat.foundationId, value);
+          updateAboveFoundation(ObjectType.FresnelReflector, fresnelReflector.foundationId, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
-        if (heliostat) {
-          const oldValue = heliostat.towerId;
+        if (fresnelReflector) {
+          const oldValue = fresnelReflector.drawSunBeam;
           const undoableChange = {
-            name: 'Set Tower for Heliostat',
+            name: 'Draw Sun Beam for Fresnel Reflector',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
-            changedElementId: heliostat.id,
+            changedElementId: fresnelReflector.id,
             undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as string);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as boolean);
             },
             redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as string);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as boolean);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(heliostat.id, value);
+          updateById(fresnelReflector.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -213,7 +187,7 @@ const HeliostatTowerSelection = ({
   };
 
   const close = () => {
-    setTowerId(heliostat.towerId);
+    setDrawSunBeam(fresnelReflector.drawSunBeam);
     setDialogVisible(false);
   };
 
@@ -223,17 +197,15 @@ const HeliostatTowerSelection = ({
   };
 
   const ok = () => {
-    if (selectedTowerId) {
-      setTowerId(selectedTowerId);
-    }
+    setDrawSunBeam(sunBeam);
     setDialogVisible(false);
     setApplyCount(0);
   };
 
-  return heliostat?.type === ObjectType.Heliostat ? (
+  return fresnelReflector?.type === ObjectType.FresnelReflector ? (
     <>
       <Modal
-        width={600}
+        width={500}
         visible={dialogVisible}
         title={
           <div
@@ -241,16 +213,14 @@ const HeliostatTowerSelection = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('heliostatMenu.SelectTowerToReflectSunlightTo', lang)}
+            {i18n.t('solarCollectorMenu.DrawSunBeam', lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
-              if (selectedTowerId) {
-                setTowerId(selectedTowerId);
-              }
+              setDrawSunBeam(sunBeam);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -273,35 +243,30 @@ const HeliostatTowerSelection = ({
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={8}>
-            <Select
-              style={{ width: '120px' }}
-              value={selectedTowerId}
-              onChange={(value) => {
-                setSelectedTowerId(value);
+          <Col className="gutter-row" span={4}>
+            <Switch
+              checked={sunBeam}
+              onChange={(checked) => {
+                setSunBeam(checked);
               }}
-            >
-              {towers.map((s, i) => {
-                return (
-                  <Option key={i} value={s}>
-                    {i18n.t('heliostatMenu.Tower', lang) + ' ' + (i + 1)}
-                  </Option>
-                );
-              })}
-            </Select>
+            />
           </Col>
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            span={20}
           >
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('heliostatMenu.OnlyThisHeliostat', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('heliostatMenu.AllHeliostatsAboveFoundation', lang)}
+                <Radio value={Scope.OnlyThisObject}>
+                  {i18n.t('fresnelReflectorMenu.OnlyThisFresnelReflector', lang)}
                 </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('heliostatMenu.AllHeliostats', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                  {i18n.t('fresnelReflectorMenu.AllFresnelReflectorsAboveFoundation', lang)}
+                </Radio>
+                <Radio value={Scope.AllObjectsOfThisType}>
+                  {i18n.t('fresnelReflectorMenu.AllFresnelReflectors', lang)}
+                </Radio>
               </Space>
             </Radio.Group>
           </Col>
@@ -313,4 +278,4 @@ const HeliostatTowerSelection = ({
   );
 };
 
-export default HeliostatTowerSelection;
+export default FresnelReflectorDrawSunBeamSelection;

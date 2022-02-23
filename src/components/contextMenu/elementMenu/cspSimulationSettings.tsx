@@ -66,7 +66,7 @@ const CspSimulationSettings = ({ name }: { name: string }) => {
           <Space style={{ width: '150px' }}>{i18n.t('menu.option.GridCellSize', lang) + ':'}</Space>
           <InputNumber
             min={0.1}
-            max={5}
+            max={20}
             step={0.05}
             style={{ width: 72 }}
             precision={2}

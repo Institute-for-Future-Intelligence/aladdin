@@ -16,13 +16,14 @@ import FresnelReflectorWidthInput from './fresnelReflectorWidthInput';
 import FresnelReflectorPoleHeightInput from './fresnelReflectorPoleHeightInput';
 import FresnelReflectorModuleLengthInput from './fresnelReflectorModuleLengthInput';
 import FresnelReflectorReflectanceInput from './fresnelReflectorReflectanceInput';
+import FresnelReflectorReceiverSelection from './fresnelReflectorReceiverSelection';
+import FresnelReflectorDrawSunBeamSelection from './fresnelReflectorDrawSunBeamSelection';
 
 export const FresnelReflectorMenu = () => {
   const language = useStore(Selector.language);
   const fresnelReflector = useStore(Selector.selectedElement) as FresnelReflectorModel;
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
-  const updateSolarCollectorDrawSunBeamById = useStore(Selector.updateSolarCollectorDrawSunBeamById);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
@@ -33,6 +34,8 @@ export const FresnelReflectorMenu = () => {
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [poleHeightDialogVisible, setPoleHeightDialogVisible] = useState(false);
   const [reflectanceDialogVisible, setReflectanceDialogVisible] = useState(false);
+  const [receiverDialogVisible, setReceiverDialogVisible] = useState(false);
+  const [sunBeamDialogVisible, setSunBeamDialogVisible] = useState(false);
 
   const lang = { lng: language };
 
@@ -83,25 +86,6 @@ export const FresnelReflectorMenu = () => {
     }
   };
 
-  const drawSunBeam = (checked: boolean) => {
-    if (fresnelReflector) {
-      const undoableCheck = {
-        name: 'Show Sun Beam',
-        timestamp: Date.now(),
-        checked: !fresnelReflector.drawSunBeam,
-        undo: () => {
-          updateSolarCollectorDrawSunBeamById(fresnelReflector.id, !undoableCheck.checked);
-        },
-        redo: () => {
-          updateSolarCollectorDrawSunBeamById(fresnelReflector.id, undoableCheck.checked);
-        },
-      } as UndoableCheck;
-      addUndoable(undoableCheck);
-      updateSolarCollectorDrawSunBeamById(fresnelReflector.id, checked);
-      setUpdateFlag(!updateFlag);
-    }
-  };
-
   const editable = !fresnelReflector?.locked;
 
   return (
@@ -111,6 +95,22 @@ export const FresnelReflectorMenu = () => {
       <Lock keyName={'fresnel-reflector-lock'} />
       {fresnelReflector && editable && (
         <>
+          {/* receiver */}
+          <FresnelReflectorReceiverSelection
+            dialogVisible={receiverDialogVisible}
+            setDialogVisible={setReceiverDialogVisible}
+          />
+          <Menu.Item
+            key={'fresnel-reflector-receiver'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setReceiverDialogVisible(true);
+            }}
+          >
+            {i18n.t('fresnelReflectorMenu.SelectReceiverToReflectSunlightTo', lang)} ...
+          </Menu.Item>
+
           {/* reflector length */}
           <FresnelReflectorLengthInput dialogVisible={lengthDialogVisible} setDialogVisible={setLengthDialogVisible} />
           <Menu.Item
@@ -186,10 +186,19 @@ export const FresnelReflectorMenu = () => {
           </Menu.Item>
 
           {/* draw sun beam or not */}
-          <Menu.Item key={'fresnel-reflector-draw-sun-beam'}>
-            <Checkbox checked={!!fresnelReflector?.drawSunBeam} onChange={(e) => drawSunBeam(e.target.checked)}>
-              {i18n.t('solarCollectorMenu.DrawSunBeam', lang)}
-            </Checkbox>
+          <FresnelReflectorDrawSunBeamSelection
+            dialogVisible={sunBeamDialogVisible}
+            setDialogVisible={setSunBeamDialogVisible}
+          />
+          <Menu.Item
+            key={'fresnel-reflector-draw-sun-beam'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setSunBeamDialogVisible(true);
+            }}
+          >
+            {i18n.t('solarCollectorMenu.DrawSunBeam', lang)} ...
           </Menu.Item>
 
           {/* show label or not */}

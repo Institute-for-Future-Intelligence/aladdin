@@ -325,7 +325,7 @@ const FresnelReflectorLengthInput = ({
           <Col className="gutter-row" span={6}>
             <InputNumber
               min={fresnelReflector.moduleLength}
-              max={100 * fresnelReflector.moduleLength}
+              max={200 * fresnelReflector.moduleLength}
               step={fresnelReflector.moduleLength}
               style={{ width: 120 }}
               precision={2}
@@ -345,7 +345,7 @@ const FresnelReflectorLengthInput = ({
                 ' ' +
                 i18n.t('fresnelReflectorMenu.ModulesLong', lang)}
               <br />
-              {i18n.t('word.Maximum', lang)}: 100 {i18n.t('fresnelReflectorMenu.Modules', lang)}
+              {i18n.t('word.Maximum', lang)}: 200 {i18n.t('fresnelReflectorMenu.Modules', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>

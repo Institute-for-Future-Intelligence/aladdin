@@ -577,6 +577,10 @@ export class Util {
     return type === ObjectType.FresnelReflector || type === ObjectType.ParabolicTrough;
   }
 
+  static isHeliostatOrFresnelReflector(type: ObjectType): boolean {
+    return type === ObjectType.FresnelReflector || type === ObjectType.Heliostat;
+  }
+
   static checkWindowState(elem: ElementModel): WindowState {
     const eMinX = elem.cx - elem.lx / 2;
     const eMaxX = elem.cx + elem.lx / 2;

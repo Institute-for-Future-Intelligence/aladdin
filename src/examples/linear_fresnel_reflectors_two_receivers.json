@@ -1,6 +1,6 @@
 {
-  "docid": "kQGgVSCibhrwX7TCgSh3qB",
-  "timestamp": 1645190356553,
+  "docid": "qR8udueqf5t2BgywNZauN7",
+  "timestamp": 1645626342591,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -40,10 +40,10 @@
   "elements": [
     {
       "type": "Foundation",
-      "cx": -14.051871154057915,
-      "cy": -0.5235319676210313,
+      "cx": 0.9362263534654288,
+      "cy": -0.12687492649763793,
       "cz": 0.05,
-      "lx": 60,
+      "lx": 27,
       "ly": 40,
       "lz": 0.1,
       "normal": [
@@ -60,15 +60,14 @@
       "textureType": "No Foundation Texture",
       "id": "kxHYpYsUs7XEocuTYAj1Qu",
       "selected": false,
-      "solarReceiver": 1,
-      "locked": true,
+      "locked": false,
       "solarReceiverHeight": 10
     },
     {
       "type": "Human",
       "name": "Juro",
-      "cx": 5.75067889557695,
-      "cy": 21.18871027812314,
+      "cx": 5.337210314381737,
+      "cy": 22.31208205622077,
       "cz": 0,
       "lx": 0.6,
       "lz": 1.9,
@@ -89,11 +88,11 @@
     },
     {
       "type": "Fresnel Reflector",
-      "cx": 0.0839014858683386,
-      "cy": 0.004703887260030747,
+      "cx": -0.35253117677918383,
+      "cy": -0.011856551439747325,
       "cz": 0,
       "lx": 1,
-      "ly": 30,
+      "ly": 32,
       "lz": 0.1,
       "reflectance": 0.9,
       "absorptance": 0.95,
@@ -121,15 +120,16 @@
       "selected": false,
       "label": "W7",
       "dailyYield": 44.06161701730329,
-      "drawSunBeam": true
+      "drawSunBeam": true,
+      "receiverId": "1X6Dcn8HZPSPCzJkugC2rm"
     },
     {
       "type": "Fresnel Reflector",
-      "cx": 0.1396330586291832,
-      "cy": 0.0055544624728038235,
+      "cx": -0.2286832373106403,
+      "cy": -0.011005976226974253,
       "cz": 0,
       "lx": 1,
-      "ly": 30,
+      "ly": 32,
       "lz": 0.1,
       "reflectance": 0.9,
       "absorptance": 0.95,
@@ -157,15 +157,16 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "W6",
-      "dailyYield": 42.98127622697738
+      "dailyYield": 42.98127622697738,
+      "receiverId": "1X6Dcn8HZPSPCzJkugC2rm"
     },
     {
       "type": "Fresnel Reflector",
-      "cx": 0.19536463139002783,
-      "cy": 0.0064050376855769,
+      "cx": -0.10483529784209675,
+      "cy": -0.010155401014201173,
       "cz": 0,
       "lx": 1,
-      "ly": 30,
+      "ly": 32,
       "lz": 0.1,
       "reflectance": 0.9,
       "absorptance": 0.95,
@@ -193,15 +194,16 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "W5",
-      "dailyYield": 41.73423512181963
+      "dailyYield": 41.73423512181963,
+      "receiverId": "1X6Dcn8HZPSPCzJkugC2rm"
     },
     {
       "type": "Fresnel Reflector",
-      "cx": 0.2510962041508724,
-      "cy": 0.007255612898349976,
+      "cx": 0.019012641626446784,
+      "cy": -0.009304825801428097,
       "cz": 0,
       "lx": 1,
-      "ly": 30,
+      "ly": 32,
       "lz": 0.1,
       "reflectance": 0.9,
       "absorptance": 0.95,
@@ -229,15 +231,16 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "W4",
-      "dailyYield": 40.58279685978863
+      "dailyYield": 40.58279685978863,
+      "receiverId": "1X6Dcn8HZPSPCzJkugC2rm"
     },
     {
       "type": "Fresnel Reflector",
-      "cx": 0.30682777691171703,
-      "cy": 0.008106188111123052,
+      "cx": 0.14286058109499036,
+      "cy": -0.00845425058865502,
       "cz": 0,
       "lx": 1,
-      "ly": 30,
+      "ly": 32,
       "lz": 0.1,
       "reflectance": 0.9,
       "absorptance": 0.95,
@@ -265,15 +268,16 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "W3",
-      "dailyYield": 39.824526702788496
+      "dailyYield": 39.824526702788496,
+      "receiverId": "1X6Dcn8HZPSPCzJkugC2rm"
     },
     {
       "type": "Fresnel Reflector",
-      "cx": 0.36255934967256165,
-      "cy": 0.008956763323896128,
+      "cx": 0.26670852056353395,
+      "cy": -0.007603675375881946,
       "cz": 0,
       "lx": 1,
-      "ly": 30,
+      "ly": 32,
       "lz": 0.1,
       "reflectance": 0.9,
       "absorptance": 0.95,
@@ -301,15 +305,16 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "W2",
-      "dailyYield": 39.207621566599144
+      "dailyYield": 39.207621566599144,
+      "receiverId": "1X6Dcn8HZPSPCzJkugC2rm"
     },
     {
       "type": "Fresnel Reflector",
-      "cx": 0.41829092243340626,
-      "cy": 0.009807338536669204,
+      "cx": 0.3905564600320776,
+      "cy": -0.006753100163108869,
       "cz": 0,
       "lx": 1,
-      "ly": 30,
+      "ly": 32,
       "lz": 0.1,
       "reflectance": 0.9,
       "absorptance": 0.95,
@@ -337,247 +342,17 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "W1",
-      "dailyYield": 39.41143610212906
-    },
-    {
-      "type": "Fresnel Reflector",
-      "cx": -0.08329323241419526,
-      "cy": 0.0021521616217115187,
-      "cz": 0,
-      "lx": 1,
-      "ly": 30,
-      "lz": 0.1,
-      "reflectance": 0.9,
-      "moduleLength": 2,
-      "tiltAngle": 0,
-      "relativeAzimuth": 0,
-      "poleRadius": 0.05,
-      "poleHeight": 0.2,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "1X6Dcn8HZPSPCzJkugC2rm",
-      "foundationId": "1X6Dcn8HZPSPCzJkugC2rm",
-      "id": "dVoqF2YUdzuiYnCpprizu7",
-      "selected": false,
-      "drawSunBeam": true,
-      "label": "E1",
-      "dailyYield": 43.63793295098634
-    },
-    {
-      "type": "Fresnel Reflector",
-      "cx": -0.13902480517503987,
-      "cy": 0.0013015864089384425,
-      "cz": 0,
-      "lx": 1,
-      "ly": 30,
-      "lz": 0.1,
-      "reflectance": 0.9,
-      "moduleLength": 2,
-      "tiltAngle": 0,
-      "relativeAzimuth": 0,
-      "poleRadius": 0.05,
-      "poleHeight": 0.2,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "1X6Dcn8HZPSPCzJkugC2rm",
-      "foundationId": "1X6Dcn8HZPSPCzJkugC2rm",
-      "id": "3hnrfDc7qCwxwFVtBPnyAx",
-      "selected": false,
-      "drawSunBeam": true,
-      "label": "E2",
-      "dailyYield": 42.3311741763214
-    },
-    {
-      "type": "Fresnel Reflector",
-      "cx": -0.1947563779358845,
-      "cy": 0.00045101119616536636,
-      "cz": 0,
-      "lx": 1,
-      "ly": 30,
-      "lz": 0.1,
-      "reflectance": 0.9,
-      "moduleLength": 2,
-      "tiltAngle": 0,
-      "relativeAzimuth": 0,
-      "poleRadius": 0.05,
-      "poleHeight": 0.2,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "1X6Dcn8HZPSPCzJkugC2rm",
-      "foundationId": "1X6Dcn8HZPSPCzJkugC2rm",
-      "id": "krR36AMazkeB2EZLPxEmGb",
-      "selected": false,
-      "drawSunBeam": true,
-      "label": "E3",
-      "dailyYield": 41.25778030804527
-    },
-    {
-      "type": "Fresnel Reflector",
-      "cx": -0.25048795069672913,
-      "cy": -0.0003995640166077098,
-      "cz": 0,
-      "lx": 1,
-      "ly": 30,
-      "lz": 0.1,
-      "reflectance": 0.9,
-      "moduleLength": 2,
-      "tiltAngle": 0,
-      "relativeAzimuth": 0,
-      "poleRadius": 0.05,
-      "poleHeight": 0.2,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "1X6Dcn8HZPSPCzJkugC2rm",
-      "foundationId": "1X6Dcn8HZPSPCzJkugC2rm",
-      "id": "f1gDqWGhpMA73p4Vi2VG8N",
-      "selected": false,
-      "drawSunBeam": true,
-      "label": "E4",
-      "dailyYield": 40.06232689039622
-    },
-    {
-      "type": "Fresnel Reflector",
-      "cx": -0.30621952345757375,
-      "cy": -0.001250139229380786,
-      "cz": 0,
-      "lx": 1,
-      "ly": 30,
-      "lz": 0.1,
-      "reflectance": 0.9,
-      "moduleLength": 2,
-      "tiltAngle": 0,
-      "relativeAzimuth": 0,
-      "poleRadius": 0.05,
-      "poleHeight": 0.2,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "1X6Dcn8HZPSPCzJkugC2rm",
-      "foundationId": "1X6Dcn8HZPSPCzJkugC2rm",
-      "id": "s4GS7geuUqDvrExxrRjKkH",
-      "selected": false,
-      "drawSunBeam": true,
-      "label": "E5",
-      "dailyYield": 39.302039595841705
-    },
-    {
-      "type": "Fresnel Reflector",
-      "cx": -0.36195109621841837,
-      "cy": -0.002100714442153862,
-      "cz": 0,
-      "lx": 1,
-      "ly": 30,
-      "lz": 0.1,
-      "reflectance": 0.9,
-      "moduleLength": 2,
-      "tiltAngle": 0,
-      "relativeAzimuth": 0,
-      "poleRadius": 0.05,
-      "poleHeight": 0.2,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "1X6Dcn8HZPSPCzJkugC2rm",
-      "foundationId": "1X6Dcn8HZPSPCzJkugC2rm",
-      "id": "iYPVeczd9HDEkdYxuEQPPN",
-      "selected": false,
-      "drawSunBeam": true,
-      "label": "E6",
-      "dailyYield": 38.684044284094135
-    },
-    {
-      "type": "Fresnel Reflector",
-      "cx": -0.417682668979263,
-      "cy": -0.0029512896549269384,
-      "cz": 0,
-      "lx": 1,
-      "ly": 30,
-      "lz": 0.1,
-      "reflectance": 0.9,
-      "moduleLength": 2,
-      "tiltAngle": 0,
-      "relativeAzimuth": 0,
-      "poleRadius": 0.05,
-      "poleHeight": 0.2,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "1X6Dcn8HZPSPCzJkugC2rm",
-      "foundationId": "1X6Dcn8HZPSPCzJkugC2rm",
-      "id": "pnL2GqZJNf9kD8w2SHtHWC",
-      "selected": false,
-      "drawSunBeam": true,
-      "label": "E7",
-      "dailyYield": 39.17655687535994
+      "dailyYield": 39.41143610212906,
+      "receiverId": "1X6Dcn8HZPSPCzJkugC2rm"
     },
     {
       "type": "Foundation",
-      "cx": 14.330250482520627,
-      "cy": -0.4574320863103949,
-      "cz": 0.05,
-      "lx": 60,
+      "cx": 14.471950838588711,
+      "cy": -0.06574070597754514,
+      "cz": 0.25,
+      "lx": 2.9789007603004762,
       "ly": 40,
-      "lz": 0.1,
+      "lz": 0.5,
       "normal": [
         0,
         0,
@@ -594,7 +369,280 @@
       "solarReceiverHeight": 10,
       "id": "1X6Dcn8HZPSPCzJkugC2rm",
       "selected": false,
-      "locked": true
+      "locked": false
+    },
+    {
+      "type": "Fresnel Reflector",
+      "cx": -0.35253117677918383,
+      "cy": -0.011856551439747325,
+      "cz": 0,
+      "lx": 1,
+      "ly": 32,
+      "lz": 0.1,
+      "reflectance": 0.9,
+      "moduleLength": 2,
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "poleRadius": 0.05,
+      "poleHeight": 0.2,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "uPxivXJTh4z2zMrqhzNvo3",
+      "foundationId": "uPxivXJTh4z2zMrqhzNvo3",
+      "id": "9VYUH8fPAbbYtPyjX2bXhM",
+      "selected": false,
+      "receiverId": "qFoXmrcbqf43nhfNvsKiMV",
+      "drawSunBeam": true
+    },
+    {
+      "type": "Fresnel Reflector",
+      "cx": -0.2286832373106403,
+      "cy": -0.011005976226974253,
+      "cz": 0,
+      "lx": 1,
+      "ly": 32,
+      "lz": 0.1,
+      "reflectance": 0.9,
+      "moduleLength": 2,
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "poleRadius": 0.05,
+      "poleHeight": 0.2,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "uPxivXJTh4z2zMrqhzNvo3",
+      "foundationId": "uPxivXJTh4z2zMrqhzNvo3",
+      "id": "oZQVT7upKS5gxcv41KySPP",
+      "selected": false,
+      "receiverId": "qFoXmrcbqf43nhfNvsKiMV",
+      "drawSunBeam": true
+    },
+    {
+      "type": "Fresnel Reflector",
+      "cx": -0.10483529784209675,
+      "cy": -0.010155401014201173,
+      "cz": 0,
+      "lx": 1,
+      "ly": 32,
+      "lz": 0.1,
+      "reflectance": 0.9,
+      "moduleLength": 2,
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "poleRadius": 0.05,
+      "poleHeight": 0.2,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "uPxivXJTh4z2zMrqhzNvo3",
+      "foundationId": "uPxivXJTh4z2zMrqhzNvo3",
+      "id": "fscHgrZH2yNiKzCaZR3ZeJ",
+      "selected": false,
+      "receiverId": "qFoXmrcbqf43nhfNvsKiMV",
+      "drawSunBeam": true
+    },
+    {
+      "type": "Fresnel Reflector",
+      "cx": 0.019012641626446784,
+      "cy": -0.009304825801428097,
+      "cz": 0,
+      "lx": 1,
+      "ly": 32,
+      "lz": 0.1,
+      "reflectance": 0.9,
+      "moduleLength": 2,
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "poleRadius": 0.05,
+      "poleHeight": 0.2,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "uPxivXJTh4z2zMrqhzNvo3",
+      "foundationId": "uPxivXJTh4z2zMrqhzNvo3",
+      "id": "jnn6CBMvkkU1925yAPrHAB",
+      "selected": false,
+      "receiverId": "qFoXmrcbqf43nhfNvsKiMV",
+      "drawSunBeam": true
+    },
+    {
+      "type": "Fresnel Reflector",
+      "cx": 0.14286058109499036,
+      "cy": -0.00845425058865502,
+      "cz": 0,
+      "lx": 1,
+      "ly": 32,
+      "lz": 0.1,
+      "reflectance": 0.9,
+      "moduleLength": 2,
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "poleRadius": 0.05,
+      "poleHeight": 0.2,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "uPxivXJTh4z2zMrqhzNvo3",
+      "foundationId": "uPxivXJTh4z2zMrqhzNvo3",
+      "id": "hJhtsSd1FMChUsTYyy5v9N",
+      "selected": false,
+      "receiverId": "qFoXmrcbqf43nhfNvsKiMV",
+      "drawSunBeam": true
+    },
+    {
+      "type": "Fresnel Reflector",
+      "cx": 0.26670852056353395,
+      "cy": -0.007603675375881946,
+      "cz": 0,
+      "lx": 1,
+      "ly": 32,
+      "lz": 0.1,
+      "reflectance": 0.9,
+      "moduleLength": 2,
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "poleRadius": 0.05,
+      "poleHeight": 0.2,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "uPxivXJTh4z2zMrqhzNvo3",
+      "foundationId": "uPxivXJTh4z2zMrqhzNvo3",
+      "id": "6CbyGsZ43oQRJAfjen8bXu",
+      "selected": false,
+      "receiverId": "qFoXmrcbqf43nhfNvsKiMV",
+      "drawSunBeam": true
+    },
+    {
+      "type": "Fresnel Reflector",
+      "cx": 0.3905564600320776,
+      "cy": -0.006753100163108869,
+      "cz": 0,
+      "lx": 1,
+      "ly": 32,
+      "lz": 0.1,
+      "reflectance": 0.9,
+      "moduleLength": 2,
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "poleRadius": 0.05,
+      "poleHeight": 0.2,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "uPxivXJTh4z2zMrqhzNvo3",
+      "foundationId": "uPxivXJTh4z2zMrqhzNvo3",
+      "id": "rKXjH4ndrtiJLk3pNba97R",
+      "selected": false,
+      "receiverId": "qFoXmrcbqf43nhfNvsKiMV",
+      "drawSunBeam": true
+    },
+    {
+      "type": "Foundation",
+      "cx": -0.5305173175473676,
+      "cy": -0.07406922653934842,
+      "cz": 0.05,
+      "lx": 27,
+      "ly": 40,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "No Foundation Texture",
+      "solarReceiverHeight": 10,
+      "id": "uPxivXJTh4z2zMrqhzNvo3",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -13.207999911998343,
+      "cy": -0.09629786579027738,
+      "cz": 0.25,
+      "lx": 2.9789007603004762,
+      "ly": 40,
+      "lz": 0.5,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "No Foundation Texture",
+      "solarReceiver": 1,
+      "solarReceiverHeight": 10,
+      "id": "qFoXmrcbqf43nhfNvsKiMV",
+      "selected": false
     }
   ],
   "view": {
@@ -602,19 +650,19 @@
     "enableRotate": true,
     "ambientLightIntensity": 0.1,
     "cameraPosition": [
-      -1.250767473676448,
-      46.64731651386175,
-      3.452731242922386
+      -0.3129797106794272,
+      39.88898545191547,
+      4.992858019561682
     ],
     "cameraPosition2D": [
       0.0944682441377376,
       -0.000020000888987681265,
-      19.999999999987143
+      19.999999999987036
     ],
     "panCenter": [
-      0.05824021741888206,
-      -0.007493286135755702,
-      0.05671829697906721
+      0.8058435707077831,
+      0.012606002026723155,
+      0.7017828626797659
     ],
     "panCenter2D": [
       0.0944682441377376,

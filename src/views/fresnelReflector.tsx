@@ -50,6 +50,7 @@ const FresnelReflector = ({
   showLabel = false,
   locked = false,
   parentId,
+  receiverId,
 }: FresnelReflectorModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
@@ -192,21 +193,38 @@ const FresnelReflector = ({
   const rot = parent?.rotation[2];
 
   const receiverCenter = useMemo(() => {
-    if (parent) {
-      if (parent.type === ObjectType.Foundation) {
-        const foundation = parent as FoundationModel;
-        if (foundation.solarReceiver) {
-          // convert the receiver's coordinates into those relative to the center of this reflector
-          return new Vector3(
-            foundation.cx - cx,
-            foundation.cy - cy,
-            foundation.cz - cz + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 10),
-          );
+    if (receiverId) {
+      const receiver = getElementById(receiverId);
+      if (receiver) {
+        if (receiver.type === ObjectType.Foundation) {
+          const foundation = receiver as FoundationModel;
+          if (foundation.solarReceiver) {
+            // convert the receiver's coordinates into those relative to the center of this reflector
+            return new Vector3(
+              foundation.cx - cx,
+              foundation.cy - cy,
+              foundation.cz - cz + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 10),
+            );
+          }
+        }
+      }
+    } else {
+      if (parent) {
+        if (parent.type === ObjectType.Foundation) {
+          const foundation = parent as FoundationModel;
+          if (foundation.solarReceiver) {
+            // convert the receiver's coordinates into those relative to the center of this reflector
+            return new Vector3(
+              foundation.cx - cx,
+              foundation.cy - cy,
+              foundation.cz - cz + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 10),
+            );
+          }
         }
       }
     }
     return null;
-  }, [parent, cx, cy, cz]);
+  }, [parent, cx, cy, cz, receiverId]);
 
   const shiftedReceiverCenter = useRef<Vector3>(new Vector3());
 

@@ -553,6 +553,8 @@ export const i18n_zh_cn = {
     },
 
     fresnelReflectorMenu: {
+      Receiver: '吸收管',
+      SelectReceiverToReflectSunlightTo: '选择阳光反射到的吸收管',
       ModuleLength: '模块长度',
       Modules: '模块',
       ModulesLong: '模块长',

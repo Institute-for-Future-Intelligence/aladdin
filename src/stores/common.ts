@@ -367,9 +367,11 @@ export interface CommonStoreState {
   // for heliostats
   heliostatActionScope: Scope;
   setHeliostatActionScope: (scope: Scope) => void;
-  updateHeliostatTowerById: (id: string, towerId: string) => void;
-  updateHeliostatTowerAboveFoundation: (foundationId: string, towerId: string) => void;
-  updateHeliostatTowerForAll: (towerId: string) => void;
+
+  // for Fresnel reflectors and heliostats
+  updateSolarReceiverById: (id: string, receiverId: string) => void;
+  updateSolarReceiverAboveFoundation: (type: ObjectType, foundationId: string, receiverId: string) => void;
+  updateSolarReceiverForAll: (type: ObjectType, receiverId: string) => void;
 
   // for parabolic dishes
   parabolicDishActionScope: Scope;
@@ -2684,35 +2686,44 @@ export const useStore = create<CommonStoreState>(
               state.heliostatActionScope = scope;
             });
           },
-          updateHeliostatTowerById(id, towerId) {
+          updateSolarReceiverById(id, receiverId) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.id === id && !e.locked) {
                   if (e.type === ObjectType.Heliostat) {
-                    (e as HeliostatModel).towerId = towerId;
+                    (e as HeliostatModel).towerId = receiverId;
+                    break;
+                  } else if (e.type === ObjectType.FresnelReflector) {
+                    (e as FresnelReflectorModel).receiverId = receiverId;
                     break;
                   }
                 }
               }
             });
           },
-          updateHeliostatTowerAboveFoundation(foundationId, towerId) {
+          updateSolarReceiverAboveFoundation(type: ObjectType, foundationId, receiverId) {
+            if (!Util.isHeliostatOrFresnelReflector(type)) return;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.foundationId === foundationId && !e.locked) {
                   if (e.type === ObjectType.Heliostat) {
-                    (e as HeliostatModel).towerId = towerId;
+                    (e as HeliostatModel).towerId = receiverId;
+                  } else if (e.type === ObjectType.FresnelReflector) {
+                    (e as FresnelReflectorModel).receiverId = receiverId;
                   }
                 }
               }
             });
           },
-          updateHeliostatTowerForAll(towerId) {
+          updateSolarReceiverForAll(type, receiverId) {
+            if (!Util.isHeliostatOrFresnelReflector(type)) return;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (!e.locked) {
                   if (e.type === ObjectType.Heliostat) {
-                    (e as HeliostatModel).towerId = towerId;
+                    (e as HeliostatModel).towerId = receiverId;
+                  } else if (e.type === ObjectType.FresnelReflector) {
+                    (e as FresnelReflectorModel).receiverId = receiverId;
                   }
                 }
               }

@@ -97,7 +97,7 @@ const Foundation = ({
   solarReceiver,
   solarReceiverApertureWidth = 0.6,
   solarReceiverHeight = solarReceiver === SolarReceiver.Tube ? 10 : 20,
-  solarReceiverTubeRelativeLength = 0.8,
+  solarReceiverTubeRelativeLength = 0.9,
   solarReceiverTubePoleNumber = 5,
   solarTowerRadius = 0.5,
   solarTowerCentralReceiverRadius = 0.75,

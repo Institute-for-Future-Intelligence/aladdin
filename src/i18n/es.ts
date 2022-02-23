@@ -570,6 +570,8 @@ export const i18n_es = {
     },
 
     fresnelReflectorMenu: {
+      Receiver: 'Receiver',
+      SelectReceiverToReflectSunlightTo: 'Select Receiver to Reflect Sunlight to',
       ModuleLength: 'Module Length',
       Modules: 'modules',
       ModulesLong: 'modules long',

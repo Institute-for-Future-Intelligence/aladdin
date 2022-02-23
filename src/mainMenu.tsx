@@ -953,7 +953,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 </Space>
                 <InputNumber
                   min={0.1}
-                  max={5}
+                  max={20}
                   step={0.1}
                   style={{ width: 60 }}
                   precision={1}
