@@ -192,20 +192,20 @@ const FresnelReflector = ({
   }, [date, latitude]);
   const rot = parent?.rotation[2];
 
+  // TODO: how to get an updated version of the memorized receiver
+  const receiver = receiverId && receiverId !== parentId ? getElementById(receiverId) : null;
+
   const receiverCenter = useMemo(() => {
-    if (receiverId) {
-      const receiver = getElementById(receiverId);
-      if (receiver) {
-        if (receiver.type === ObjectType.Foundation) {
-          const foundation = receiver as FoundationModel;
-          if (foundation.solarReceiver) {
-            // convert the receiver's coordinates into those relative to the center of this reflector
-            return new Vector3(
-              (foundation.cx - cx) * (rot ? Math.cos(rot) : 1),
-              (foundation.cy - cy) * (rot ? Math.sin(rot) : 0),
-              foundation.cz - cz + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 10),
-            );
-          }
+    if (receiver) {
+      if (receiver.type === ObjectType.Foundation) {
+        const foundation = receiver as FoundationModel;
+        if (foundation.solarReceiver) {
+          // convert the receiver's coordinates into those relative to the center of this reflector
+          return new Vector3(
+            (foundation.cx - cx) * (rot ? Math.cos(rot) : 1),
+            (foundation.cy - cy) * (rot ? Math.sin(rot) : 0),
+            foundation.cz - cz + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 10),
+          );
         }
       }
     } else {
@@ -224,7 +224,7 @@ const FresnelReflector = ({
       }
     }
     return null;
-  }, [parent, cx, cy, cz, receiverId]);
+  }, [parent, cx, cy, cz, receiverId, receiver?.cx, receiver?.cy, receiver?.cz]);
 
   const shiftedReceiverCenter = useRef<Vector3>(new Vector3());
 
@@ -256,7 +256,7 @@ const FresnelReflector = ({
       return new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY');
     }
     return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
-  }, [receiverCenter, sunDirection, tiltAngle, relativeAzimuth, rot]);
+  }, [receiverCenter, sunDirection, tiltAngle, relativeAzimuth, rot, receiver?.cx, receiver?.cy, receiver?.cz]);
 
   const poleZ = -(actualPoleHeight + lz) / 2;
 

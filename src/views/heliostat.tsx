@@ -154,20 +154,20 @@ const Heliostat = ({
   }, [date, latitude]);
   const rot = parent?.rotation[2];
 
+  // TODO: how to get an updated version of the memorized tower
+  const tower = towerId && towerId !== parentId ? getElementById(towerId) : null;
+
   const receiverCenter = useMemo(() => {
-    if (towerId) {
-      const tower = getElementById(towerId);
-      if (tower) {
-        if (tower.type === ObjectType.Foundation) {
-          const foundation = tower as FoundationModel;
-          if (foundation.solarReceiver) {
-            // convert the receiver's coordinates into those relative to the center of this heliostat
-            return new Vector3(
-              foundation.cx - cx,
-              foundation.cy - cy,
-              foundation.cz - cz + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 20),
-            );
-          }
+    if (tower) {
+      if (tower.type === ObjectType.Foundation) {
+        const foundation = tower as FoundationModel;
+        if (foundation.solarReceiver) {
+          // convert the receiver's coordinates into those relative to the center of this heliostat
+          return new Vector3(
+            foundation.cx - cx,
+            foundation.cy - cy,
+            foundation.cz - cz + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 20),
+          );
         }
       }
     } else {
@@ -186,7 +186,7 @@ const Heliostat = ({
       }
     }
     return null;
-  }, [parent, cx, cy, cz, towerId]);
+  }, [parent, cx, cy, cz, towerId, tower?.cx, tower?.cy, tower?.cz]);
 
   const relativeEuler = useMemo(() => {
     if (receiverCenter && sunDirection.z > 0) {
@@ -203,7 +203,7 @@ const Heliostat = ({
       return new Euler(Math.atan2(r, normalVector.z), 0, Math.atan2(normalVector.y, normalVector.x) + HALF_PI, 'ZXY');
     }
     return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
-  }, [receiverCenter, sunDirection, tiltAngle, relativeAzimuth, rot]);
+  }, [receiverCenter, sunDirection, tiltAngle, relativeAzimuth, rot, tower?.cx, tower?.cy, tower?.cz]);
 
   const poleZ = -(actualPoleHeight + lz) / 2;
   const baseSize = Math.max(1, (lx + ly) / 16);
