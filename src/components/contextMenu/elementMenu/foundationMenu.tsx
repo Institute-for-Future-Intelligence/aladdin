@@ -29,6 +29,7 @@ import FoundationSolarReceiverAbsorptanceInput from './foundationSolarReceiverAb
 import FoundationSolarReceiverOpticalEfficiencyInput from './foundationSolarReceiverOpticalEfficiencyInput';
 import FoundationSolarReceiverThermalEfficiencyInput from './foundationSolarReceiverThermalEfficiencyInput';
 import FoundationSolarReceiverApertureWidthInput from './foundationSolarReceiverApertureWidthInput';
+import FoundationSolarReceiverPoleNumberInput from './foundationSolarReceiverPoleNumberInput';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -54,6 +55,7 @@ export const FoundationMenu = () => {
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
   const [receiverHeightDialogVisible, setReceiverHeightDialogVisible] = useState(false);
   const [receiverApertureDialogVisible, setReceiverApertureDialogVisible] = useState(false);
+  const [receiverPoleNumberDialogVisible, setReceiverPoleNumberDialogVisible] = useState(false);
   const [receiverAbsorptanceDialogVisible, setReceiverAbsorptanceDialogVisible] = useState(false);
   const [receiverOpticalEfficiencyDialogVisible, setReceiverOpticalEfficiencyDialogVisible] = useState(false);
   const [receiverThermalEfficiencyDialogVisible, setReceiverThermalEfficiencyDialogVisible] = useState(false);
@@ -764,6 +766,20 @@ export const FoundationMenu = () => {
                   }}
                 >
                   {i18n.t('foundationMenu.SolarReceiverApertureWidth', lang)} ...
+                </Menu.Item>
+                <FoundationSolarReceiverPoleNumberInput
+                  dialogVisible={receiverPoleNumberDialogVisible}
+                  setDialogVisible={setReceiverPoleNumberDialogVisible}
+                />
+                <Menu.Item
+                  key={'foundation-solar-receiver-tube-pole-number'}
+                  style={{ paddingLeft: '36px' }}
+                  onClick={() => {
+                    setApplyCount(0);
+                    setReceiverPoleNumberDialogVisible(true);
+                  }}
+                >
+                  {i18n.t('foundationMenu.SolarReceiverTubePoleNumber', lang)} ...
                 </Menu.Item>
               </>
             )}

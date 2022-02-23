@@ -390,6 +390,7 @@ export const i18n_zh_tw = {
       SolarReceiverPhysicalProperties: '太陽能吸收器的物理性質',
       SolarReceiverHeight: '太陽能吸收器的安装高度',
       SolarReceiverApertureWidth: '太陽能吸收器的孔徑',
+      SolarReceiverTubePoleNumber: '太陽能吸收器的支柱數量',
       SolarReceiverAbsorptance: '太陽能吸收器的吸收率',
       SolarReceiverOpticalEfficiency: '太陽能吸收器的光效率',
       SolarReceiverThermalEfficiency: '太陽能吸收器的熱效率',

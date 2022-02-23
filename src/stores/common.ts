@@ -271,6 +271,8 @@ export interface CommonStoreState {
   updateFoundationSolarReceiverTubeRelativeLengthById: (id: string, relativeLength: number) => void;
   updateFoundationSolarReceiverApertureWidthById: (id: string, apertureWidth: number) => void;
   updateFoundationSolarReceiverApertureWidthForAll: (apertureWidth: number) => void;
+  updateFoundationSolarReceiverPoleNumberById: (id: string, poleNumber: number) => void;
+  updateFoundationSolarReceiverPoleNumberForAll: (poleNumber: number) => void;
   updateFoundationSolarReceiverHeightById: (id: string, height: number) => void;
   updateFoundationSolarReceiverHeightForAll: (height: number) => void;
   updateFoundationSolarReceiverAbsorptanceById: (id: string, absorptance: number) => void;
@@ -1852,6 +1854,28 @@ export const useStore = create<CommonStoreState>(
                   const f = e as FoundationModel;
                   if (f.solarReceiver) {
                     f.solarReceiverApertureWidth = apertureWidth;
+                  }
+                }
+              }
+            });
+          },
+          updateFoundationSolarReceiverPoleNumberById(id, poleNumber) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  (e as FoundationModel).solarReceiverTubePoleNumber = poleNumber;
+                  break;
+                }
+              }
+            });
+          },
+          updateFoundationSolarReceiverPoleNumberForAll(poleNumber) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarReceiver) {
+                    f.solarReceiverTubePoleNumber = poleNumber;
                   }
                 }
               }

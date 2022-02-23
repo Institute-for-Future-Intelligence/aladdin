@@ -205,6 +205,12 @@ export const updateFoundationSolarReceiverApertureWidthById = (state: CommonStor
 export const updateFoundationSolarReceiverApertureWidthForAll = (state: CommonStoreState) =>
   state.updateFoundationSolarReceiverApertureWidthForAll;
 
+export const updateFoundationSolarReceiverPoleNumberById = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverPoleNumberById;
+
+export const updateFoundationSolarReceiverPoleNumberForAll = (state: CommonStoreState) =>
+  state.updateFoundationSolarReceiverPoleNumberForAll;
+
 export const updateFoundationSolarReceiverHeightById = (state: CommonStoreState) =>
   state.updateFoundationSolarReceiverHeightById;
 

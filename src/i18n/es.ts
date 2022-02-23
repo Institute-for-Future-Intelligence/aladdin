@@ -402,6 +402,7 @@ export const i18n_es = {
       SolarReceiverPhysicalProperties: 'Physical Properties of Solar Receiver',
       SolarReceiverHeight: 'Height of Solar Receiver',
       SolarReceiverApertureWidth: 'Aperture Width of Solar Receiver',
+      SolarReceiverTubePoleNumber: 'Pole Number for Solar Receiver Tube',
       SolarReceiverAbsorptance: 'Absorptance of Solar Receiver',
       SolarReceiverOpticalEfficiency: 'Optical Efficiency of Solar Receiver',
       SolarReceiverThermalEfficiency: 'Thermal Efficiency of Solar Receiver',
