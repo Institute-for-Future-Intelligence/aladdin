@@ -299,35 +299,35 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
 
     // initialize the arrays
     let cellOutputsTop = cellOutputsMapRef.current.get(cuboid.id + '-top');
-    if (!cellOutputsTop) {
+    if (!cellOutputsTop || cellOutputsTop.length !== nx || cellOutputsTop[0].length !== ny) {
       cellOutputsTop = Array(nx)
         .fill(0)
         .map(() => Array(ny).fill(0));
       cellOutputsMapRef.current.set(cuboid.id + '-top', cellOutputsTop);
     }
     let cellOutputsSouth = cellOutputsMapRef.current.get(cuboid.id + '-south');
-    if (!cellOutputsSouth) {
+    if (!cellOutputsSouth || cellOutputsSouth.length !== nx || cellOutputsSouth[0].length !== nz) {
       cellOutputsSouth = Array(nx)
         .fill(0)
         .map(() => Array(nz).fill(0));
       cellOutputsMapRef.current.set(cuboid.id + '-south', cellOutputsSouth);
     }
     let cellOutputsNorth = cellOutputsMapRef.current.get(cuboid.id + '-north');
-    if (!cellOutputsNorth) {
+    if (!cellOutputsNorth || cellOutputsNorth.length !== nx || cellOutputsNorth[0].length !== nz) {
       cellOutputsNorth = Array(nx)
         .fill(0)
         .map(() => Array(nz).fill(0));
       cellOutputsMapRef.current.set(cuboid.id + '-north', cellOutputsNorth);
     }
     let cellOutputsWest = cellOutputsMapRef.current.get(cuboid.id + '-west');
-    if (!cellOutputsWest) {
+    if (!cellOutputsWest || cellOutputsWest.length !== ny || cellOutputsWest[0].length !== nz) {
       cellOutputsWest = Array(ny)
         .fill(0)
         .map(() => Array(nz).fill(0));
       cellOutputsMapRef.current.set(cuboid.id + '-west', cellOutputsWest);
     }
     let cellOutputsEast = cellOutputsMapRef.current.get(cuboid.id + '-east');
-    if (!cellOutputsEast) {
+    if (!cellOutputsEast || cellOutputsEast.length !== ny || cellOutputsEast[0].length !== nz) {
       cellOutputsEast = Array(ny)
         .fill(0)
         .map(() => Array(nz).fill(0));
@@ -468,7 +468,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const center2d = new Vector2(foundation.cx, foundation.cy);
     const v = new Vector3();
     let cellOutputs = cellOutputsMapRef.current.get(foundation.id);
-    if (!cellOutputs) {
+    if (!cellOutputs || cellOutputs.length !== nx || cellOutputs[0].length !== ny) {
       cellOutputs = Array(nx)
         .fill(0)
         .map(() => Array(ny).fill(0));
@@ -522,7 +522,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     let cellOutputs = cellOutputsMapRef.current.get(panel.id);
-    if (!cellOutputs) {
+    if (!cellOutputs || cellOutputs.length !== nx || cellOutputs[0].length !== ny) {
       cellOutputs = Array(nx)
         .fill(0)
         .map(() => Array(ny).fill(0));
@@ -610,7 +610,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     let cellOutputs = cellOutputsMapRef.current.get(trough.id);
-    if (!cellOutputs) {
+    if (!cellOutputs || cellOutputs.length !== nx || cellOutputs[0].length !== ny) {
       cellOutputs = Array(nx)
         .fill(0)
         .map(() => Array(ny).fill(0));
@@ -696,7 +696,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     let cellOutputs = cellOutputsMapRef.current.get(dish.id);
-    if (!cellOutputs) {
+    if (!cellOutputs || cellOutputs.length !== nx || cellOutputs[0].length !== ny) {
       cellOutputs = Array(nx)
         .fill(0)
         .map(() => Array(ny).fill(0));
@@ -783,7 +783,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     let cellOutputs = cellOutputsMapRef.current.get(reflector.id);
-    if (!cellOutputs) {
+    if (!cellOutputs || cellOutputs.length !== nx || cellOutputs[0].length !== ny) {
       cellOutputs = Array(nx)
         .fill(0)
         .map(() => Array(ny).fill(0));
@@ -899,7 +899,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     let cellOutputs = cellOutputsMapRef.current.get(heliostat.id);
-    if (!cellOutputs) {
+    if (!cellOutputs || cellOutputs.length !== nx || cellOutputs[0].length !== ny) {
       cellOutputs = Array(nx)
         .fill(0)
         .map(() => Array(ny).fill(0));

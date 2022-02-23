@@ -41,7 +41,7 @@ const GroundImage = () => {
   const scale = MERCATOR_PROJECTION_SCALE_CONSTANT * Math.cos(Util.toRadians(latitude)) * zoomScale;
 
   return (
-    <mesh rotation={[0, 0, 0]} position={[0, 0, 0]} renderOrder={-1} scale={[scale, scale, 1]}>
+    <mesh rotation={[0, 0, 0]} position={[0, 0, 0]} renderOrder={-1} scale={[scale, scale, 1]} receiveShadow={true}>
       <planeBufferGeometry args={[100, 100]} />
       <meshStandardMaterial attach="material" depthTest={false} side={DoubleSide} map={texture} opacity={1} />
     </mesh>

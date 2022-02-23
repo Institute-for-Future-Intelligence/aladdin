@@ -35,8 +35,8 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 640px;
-  height: 500px;
+  width: 600px;
+  height: 480px;
   padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
@@ -221,6 +221,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
               </span>
             </Header>
             <Table
+              size={'small'}
               style={{ width: '100%' }}
               dataSource={cloudFileArray}
               pagination={{
