@@ -250,10 +250,10 @@ const Foundation = ({
     const array: Vector3[] = [];
     const dy = (solarReceiverTubeRelativeLength * ly) / (solarReceiverTubePoleNumber + 1);
     for (let i = 1; i <= solarReceiverTubePoleNumber; i++) {
-      array.push(new Vector3(0, i * dy - (solarReceiverTubeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz));
+      array.push(new Vector3(0, i * dy - (solarReceiverTubeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz / 2));
     }
     return array;
-  }, [solarReceiver, lx, ly, solarReceiverTubePoleNumber, solarReceiverHeight, solarReceiverTubeRelativeLength]);
+  }, [solarReceiver, lx, ly, lz, solarReceiverTubePoleNumber, solarReceiverHeight, solarReceiverTubeRelativeLength]);
 
   useEffect(() => {
     const unsubscribe = useStore.subscribe((state) => {
@@ -2301,7 +2301,7 @@ const Foundation = ({
                 castShadow={false}
                 receiveShadow={false}
                 args={[solarReceiverApertureWidth / 4, solarReceiverApertureWidth / 4, solarReceiverHeight, 6, 2]}
-                position={[0, (-solarReceiverTubeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz]}
+                position={[0, (-solarReceiverTubeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz / 2]}
                 rotation={[HALF_PI, 0, 0]}
               >
                 <meshStandardMaterial attach="material" color={'white'} />
@@ -2312,7 +2312,7 @@ const Foundation = ({
                 castShadow={false}
                 receiveShadow={false}
                 args={[solarReceiverApertureWidth / 4, solarReceiverApertureWidth / 4, solarReceiverHeight, 6, 2]}
-                position={[0, (solarReceiverTubeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz]}
+                position={[0, (solarReceiverTubeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz / 2]}
                 rotation={[HALF_PI, 0, 0]}
               >
                 <meshStandardMaterial attach="material" color={'white'} />
@@ -2332,7 +2332,7 @@ const Foundation = ({
                   3 * HALF_PI,
                   Math.PI,
                 ]}
-                position={[0, 0, solarReceiverHeight + lz - solarReceiverApertureWidth / 4]}
+                position={[0, 0, solarReceiverHeight + lz / 2 - solarReceiverApertureWidth / 4]}
                 rotation={[0, 0, 0]}
               >
                 <meshStandardMaterial attach="material" color={'white'} side={DoubleSide} />
@@ -2365,7 +2365,7 @@ const Foundation = ({
                 castShadow={false}
                 receiveShadow={false}
                 args={[solarTowerRadius, solarTowerRadius, solarReceiverHeight, 6, 2]}
-                position={[0, 0, solarReceiverHeight / 2]}
+                position={[0, 0, solarReceiverHeight / 2 + lz / 2]}
                 rotation={[HALF_PI, 0, 0]}
               >
                 <meshStandardMaterial attach="material" color={'white'} />
@@ -2382,14 +2382,14 @@ const Foundation = ({
                   10,
                   2,
                 ]}
-                position={[0, 0, solarReceiverHeight]}
+                position={[0, 0, solarReceiverHeight + lz / 2]}
                 rotation={[HALF_PI, 0, 0]}
               >
                 <meshStandardMaterial attach="material" color={'white'} />
               </Cylinder>
               {/* simple glow effect to create a halo */}
               {sunDirection.z > 0 && (
-                <mesh position={[0, 0, solarReceiverHeight]}>
+                <mesh position={[0, 0, solarReceiverHeight + lz / 2]}>
                   <sprite scale={[haloSize, haloSize, haloSize]}>
                     <spriteMaterial
                       map={glowTexture}

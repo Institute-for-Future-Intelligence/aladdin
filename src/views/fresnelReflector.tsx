@@ -200,7 +200,7 @@ const FresnelReflector = ({
           return new Vector3(
             foundation.cx - cx,
             foundation.cy - cy,
-            foundation.cz - cz + (foundation.solarReceiverHeight ?? 10),
+            foundation.cz - cz + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 10),
           );
         }
       }
