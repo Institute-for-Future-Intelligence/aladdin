@@ -201,8 +201,8 @@ const FresnelReflector = ({
           if (foundation.solarReceiver) {
             // convert the receiver's coordinates into those relative to the center of this reflector
             return new Vector3(
-              foundation.cx - cx,
-              foundation.cy - cy,
+              (foundation.cx - cx) * (rot ? Math.cos(rot) : 1),
+              (foundation.cy - cy) * (rot ? Math.sin(rot) : 0),
               foundation.cz - cz + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 10),
             );
           }
@@ -215,8 +215,8 @@ const FresnelReflector = ({
           if (foundation.solarReceiver) {
             // convert the receiver's coordinates into those relative to the center of this reflector
             return new Vector3(
-              foundation.cx - cx,
-              foundation.cy - cy,
+              (foundation.cx - cx) * (rot ? Math.cos(rot) : 1),
+              (foundation.cy - cy) * (rot ? Math.sin(rot) : 0),
               foundation.cz - cz + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 10),
             );
           }
@@ -578,7 +578,7 @@ const FresnelReflector = ({
               name={'Pole ' + i}
               castShadow={shadowEnabled}
               receiveShadow={shadowEnabled}
-              args={[poleRadius, poleRadius, actualPoleHeight + (p.z - poleZ) * 2 + lz, 6, 2]}
+              args={[poleRadius, poleRadius, actualPoleHeight + (p.z - poleZ) * 2 + lz, 4, 2]}
               position={p}
               rotation={[HALF_PI, 0, 0]}
             >
