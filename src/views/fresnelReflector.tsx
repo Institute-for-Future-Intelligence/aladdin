@@ -40,7 +40,7 @@ const FresnelReflector = ({
   relativeAzimuth,
   moduleLength,
   poleHeight,
-  poleRadius,
+  poleRadius = 0.1,
   drawSunBeam,
   rotation = [0, 0, 0],
   color = 'white',
@@ -81,7 +81,7 @@ const FresnelReflector = ({
   const resizeHandleRightRef = useRef<Mesh>();
   const pointerDown = useRef<boolean>(false);
 
-  const sunBeamLength = Math.max(100, 5 * sceneRadius);
+  const sunBeamLength = Math.max(100, 50 * sceneRadius);
   const lang = { lng: language };
 
   const hx = lx / 2;
@@ -113,6 +113,7 @@ const FresnelReflector = ({
   const positionLR = new Vector3(hx, -hy, hz);
   const positionUR = new Vector3(hx, hy, hz);
   const fresnelReflector = getElementById(id) as FresnelReflectorModel;
+  const aaa = false;
 
   useEffect(() => {
     if (fresnelReflector && showSolarRadiationHeatmap) {
@@ -348,17 +349,16 @@ const FresnelReflector = ({
         {moduleLines &&
           moduleLines.map((lineData, index) => {
             return (
-              <React.Fragment key={index}>
-                <Line
-                  name={'Fresnel Reflector Module Lines'}
-                  userData={{ unintersectable: true }}
-                  points={lineData.points}
-                  castShadow={false}
-                  receiveShadow={false}
-                  lineWidth={lineWidth}
-                  color={lineColor}
-                />
-              </React.Fragment>
+              <Line
+                key={index}
+                name={'Fresnel Reflector Module Line'}
+                userData={{ unintersectable: true }}
+                points={lineData.points}
+                castShadow={false}
+                receiveShadow={false}
+                lineWidth={lineWidth}
+                color={lineColor}
+              />
             );
           })}
         <Line
@@ -576,8 +576,8 @@ const FresnelReflector = ({
               userData={{ unintersectable: true }}
               key={i}
               name={'Pole ' + i}
-              castShadow={shadowEnabled}
-              receiveShadow={shadowEnabled}
+              castShadow={false}
+              receiveShadow={false}
               args={[poleRadius, poleRadius, actualPoleHeight + (p.z - poleZ) * 2 + lz, 4, 2]}
               position={p}
               rotation={[HALF_PI, 0, 0]}

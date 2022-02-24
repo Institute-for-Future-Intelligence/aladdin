@@ -315,7 +315,7 @@ const FresnelReflectorModuleLengthInput = ({
           <Col className="gutter-row" span={6}>
             <InputNumber
               min={1}
-              max={10}
+              max={20}
               step={0.5}
               style={{ width: 120 }}
               precision={2}

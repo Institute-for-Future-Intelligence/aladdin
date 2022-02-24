@@ -90,7 +90,7 @@
       "tiltAngle": 0,
       "drawSunBeam": true,
       "poleHeight": 0.2,
-      "poleRadius": 0.05,
+      "poleRadius": 0.1,
       "cx": 0.0016316459694108918,
       "cy": 0.056499757261125036,
       "cz": 0.5000000074505806,
@@ -123,7 +123,7 @@
       "tiltAngle": 0,
       "drawSunBeam": true,
       "poleHeight": 0.2,
-      "poleRadius": 0.05,
+      "poleRadius": 0.1,
       "cx": 0.001226078643743118,
       "cy": 0.16634053951298922,
       "cz": 0.5000000074505806,
@@ -160,7 +160,7 @@
       "reflectance": 0.9,
       "tiltAngle": 0,
       "relativeAzimuth": 0,
-      "poleRadius": 0.05,
+      "poleRadius": 0.1,
       "poleHeight": 0.2,
       "showLabel": true,
       "normal": [
@@ -193,7 +193,7 @@
       "reflectance": 0.9,
       "tiltAngle": 0,
       "relativeAzimuth": 0,
-      "poleRadius": 0.05,
+      "poleRadius": 0.1,
       "poleHeight": 0.2,
       "showLabel": true,
       "normal": [
@@ -226,7 +226,7 @@
       "reflectance": 0.9,
       "tiltAngle": 0,
       "relativeAzimuth": 0,
-      "poleRadius": 0.05,
+      "poleRadius": 0.1,
       "poleHeight": 0.2,
       "showLabel": true,
       "normal": [
@@ -258,7 +258,7 @@
       "reflectance": 0.9,
       "tiltAngle": 0,
       "relativeAzimuth": 0,
-      "poleRadius": 0.05,
+      "poleRadius": 0.1,
       "poleHeight": 0.2,
       "showLabel": true,
       "normal": [

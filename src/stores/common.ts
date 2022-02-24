@@ -4354,7 +4354,7 @@ export const useStore = create<CommonStoreState>(
               state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
             });
           },
-          sceneRadius: 10,
+          sceneRadius: 100,
           setSceneRadius(radius) {
             immerSet((state: CommonStoreState) => {
               state.sceneRadius = radius;

@@ -124,7 +124,7 @@ const SolarPanel = ({
   const solarPanelLinesRef = useRef<LineData[]>();
   const ray = useMemo(() => new Raycaster(), []);
 
-  const sunBeamLength = Math.max(100, 5 * sceneRadius);
+  const sunBeamLength = Math.max(100, 50 * sceneRadius);
   const panelNormal = new Vector3().fromArray(normal);
   const pvModel = getPvModule(pvModelName) ?? getPvModule('SPR-X21-335-BLK');
   const lang = { lng: language };

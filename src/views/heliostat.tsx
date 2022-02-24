@@ -63,7 +63,7 @@ const Heliostat = ({
   const moveHandleRef = useRef<Mesh>();
   const pointerDown = useRef<boolean>(false);
 
-  const sunBeamLength = Math.max(100, 5 * sceneRadius);
+  const sunBeamLength = Math.max(100, 50 * sceneRadius);
   const lang = { lng: language };
 
   const hx = lx / 2;
