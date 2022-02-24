@@ -676,9 +676,9 @@ const ParabolicDish = ({
         <Cylinder
           userData={{ unintersectable: true }}
           name={'Pole'}
-          castShadow={shadowEnabled}
-          receiveShadow={shadowEnabled}
-          args={[poleRadius, poleRadius, actualPoleHeight + lz, 6, 2]}
+          castShadow={false}
+          receiveShadow={false}
+          args={[poleRadius, poleRadius, actualPoleHeight + lz, 4, 2]}
           position={[0, 0, poleZ]}
           rotation={[HALF_PI, 0, 0]}
         >

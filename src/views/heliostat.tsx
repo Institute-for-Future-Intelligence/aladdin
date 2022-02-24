@@ -206,7 +206,7 @@ const Heliostat = ({
   }, [receiverCenter, sunDirection, tiltAngle, relativeAzimuth, rot, tower?.cx, tower?.cy, tower?.cz]);
 
   const poleZ = -(actualPoleHeight + lz) / 2;
-  const baseSize = Math.max(1, (lx + ly) / 16);
+  const baseSize = Math.max(1, (lx + ly) / 8);
   const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 4;
 
   return (
@@ -302,26 +302,25 @@ const Heliostat = ({
 
         {/* move handle */}
         {selected && !locked && (
-          <>
-            {/* draw move handle */}
-            <Sphere
-              ref={moveHandleRef}
-              position={new Vector3(0, 0, 0)}
-              args={[moveHandleSize, 6, 6]}
-              name={MoveHandleType.Default}
-              onPointerOver={(e) => {
-                hoverHandle(e, MoveHandleType.Default);
-              }}
-              onPointerOut={(e) => {
-                noHoverHandle();
-              }}
-              onPointerDown={(e) => {
-                selectMe(id, e, ActionType.Move);
-              }}
-            >
-              <meshStandardMaterial attach="material" color={'orange'} />
-            </Sphere>
-          </>
+          <Sphere
+            ref={moveHandleRef}
+            position={new Vector3(0, 0, 0)}
+            args={[moveHandleSize, 6, 6]}
+            name={MoveHandleType.Default}
+            castShadow={false}
+            receiveShadow={false}
+            onPointerOver={(e) => {
+              hoverHandle(e, MoveHandleType.Default);
+            }}
+            onPointerOut={(e) => {
+              noHoverHandle();
+            }}
+            onPointerDown={(e) => {
+              selectMe(id, e, ActionType.Move);
+            }}
+          >
+            <meshStandardMaterial attach="material" color={'orange'} />
+          </Sphere>
         )}
       </group>
 
@@ -330,9 +329,9 @@ const Heliostat = ({
         <Cylinder
           userData={{ unintersectable: true }}
           name={'Pole'}
-          castShadow={shadowEnabled}
-          receiveShadow={shadowEnabled}
-          args={[poleRadius, poleRadius, actualPoleHeight + lz, 6, 2]}
+          castShadow={false}
+          receiveShadow={false}
+          args={[poleRadius, poleRadius, actualPoleHeight + lz, 4, 2]}
           position={new Vector3(0, 0, poleZ)}
           rotation={[HALF_PI, 0, 0]}
         >
@@ -342,19 +341,20 @@ const Heliostat = ({
 
       {/* draw sun beam */}
       {drawSunBeam && sunDirection.z > 0 && (
-        <group rotation={[-euler.x, 0, -euler.z]}>
-          <Line
-            userData={{ unintersectable: true }}
-            points={
-              receiverCenter
-                ? [receiverCenter, new Vector3(0, 0, hz), sunDirection.clone().multiplyScalar(sunBeamLength)]
-                : [new Vector3(0, 0, hz), sunDirection.clone().multiplyScalar(sunBeamLength)]
-            }
-            name={'Sun Beam'}
-            lineWidth={0.25}
-            color={'white'}
-          />
-        </group>
+        <Line
+          rotation={[-euler.x, 0, -euler.z]}
+          userData={{ unintersectable: true }}
+          points={
+            receiverCenter
+              ? [receiverCenter, new Vector3(0, 0, hz), sunDirection.clone().multiplyScalar(sunBeamLength)]
+              : [new Vector3(0, 0, hz), sunDirection.clone().multiplyScalar(sunBeamLength)]
+          }
+          name={'Sun Beam'}
+          lineWidth={0.25}
+          color={'white'}
+          castShadow={false}
+          receiveShadow={false}
+        />
       )}
 
       {/* draw label */}
@@ -366,6 +366,8 @@ const Heliostat = ({
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}
+          castShadow={false}
+          receiveShadow={false}
           position={[0, 0, Math.max(hy * Math.abs(Math.sin(heliostat.tiltAngle)) + 0.1, 0.2)]}
         />
       )}

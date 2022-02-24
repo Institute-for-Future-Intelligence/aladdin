@@ -428,6 +428,8 @@ const FresnelReflector = ({
               position={new Vector3(0, 0, 0)}
               args={[moveHandleSize, 6, 6]}
               name={MoveHandleType.Default}
+              castShadow={false}
+              receiveShadow={false}
               onPointerOver={(e) => {
                 hoverHandle(e, MoveHandleType.Top);
               }}
@@ -448,6 +450,8 @@ const FresnelReflector = ({
                 position={[(positionLL.x + positionLR.x) / 2, positionLL.y, positionLL.z - hz]}
                 args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                 name={ResizeHandleType.Lower}
+                castShadow={false}
+                receiveShadow={false}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Resize);
                   if (resizeHandleLeftRef.current) {
@@ -478,6 +482,8 @@ const FresnelReflector = ({
                 position={[(positionUL.x + positionUR.x) / 2, positionUL.y, positionUL.z - hz]}
                 args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                 name={ResizeHandleType.Upper}
+                castShadow={false}
+                receiveShadow={false}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Resize);
                   if (resizeHandleLeftRef.current) {
@@ -508,6 +514,8 @@ const FresnelReflector = ({
                 position={[positionLL.x, (positionLL.y + positionUL.y) / 2, positionLL.z]}
                 args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                 name={ResizeHandleType.Left}
+                castShadow={false}
+                receiveShadow={false}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Resize);
                   if (resizeHandleLeftRef.current) {
@@ -538,6 +546,8 @@ const FresnelReflector = ({
                 position={[positionLR.x, (positionLR.y + positionUR.y) / 2, positionLR.z]}
                 args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                 name={ResizeHandleType.Right}
+                castShadow={false}
+                receiveShadow={false}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Resize);
                   if (resizeHandleLeftRef.current) {
@@ -571,19 +581,36 @@ const FresnelReflector = ({
       {/* draw poles */}
       {actualPoleHeight > 0 &&
         poles.map((p, i) => {
+          if (poles.length < 20) {
+            return (
+              <Cylinder
+                userData={{ unintersectable: true }}
+                key={i}
+                name={'Pole ' + i}
+                castShadow={false}
+                receiveShadow={false}
+                args={[poleRadius, poleRadius, actualPoleHeight + (p.z - poleZ) * 2 + lz, 4, 2]}
+                position={p}
+                rotation={[HALF_PI, 0, 0]}
+              >
+                <meshStandardMaterial attach="material" color={color} />
+              </Cylinder>
+            );
+          }
           return (
-            <Cylinder
-              userData={{ unintersectable: true }}
+            <Line
               key={i}
-              name={'Pole ' + i}
+              name={'Pole line ' + i}
+              userData={{ unintersectable: true }}
+              points={[
+                [p.x, p.y, p.z - poleZ],
+                [p.x, p.y, p.z + poleZ],
+              ]}
               castShadow={false}
               receiveShadow={false}
-              args={[poleRadius, poleRadius, actualPoleHeight + (p.z - poleZ) * 2 + lz, 4, 2]}
-              position={p}
-              rotation={[HALF_PI, 0, 0]}
-            >
-              <meshStandardMaterial attach="material" color={color} />
-            </Cylinder>
+              lineWidth={poleRadius * 20}
+              color={'gray'}
+            />
           );
         })}
 
@@ -604,6 +631,8 @@ const FresnelReflector = ({
             name={'Sun Beam'}
             lineWidth={0.25}
             color={'white'}
+            castShadow={false}
+            receiveShadow={false}
           />
         </group>
       )}
@@ -617,6 +646,8 @@ const FresnelReflector = ({
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}
+          castShadow={false}
+          receiveShadow={false}
           position={[0, 0, Math.max(hy * Math.abs(Math.sin(fresnelReflector.tiltAngle)) + 0.1, 0.2)]}
         />
       )}

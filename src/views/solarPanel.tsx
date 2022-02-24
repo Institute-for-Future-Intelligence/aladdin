@@ -834,19 +834,36 @@ const SolarPanel = ({
       {poleHeight > 0 &&
         faceUp &&
         poles.map((p, i) => {
+          if (poles.length < 10) {
+            return (
+              <Cylinder
+                userData={{ unintersectable: true }}
+                key={i}
+                name={'Pole ' + i}
+                castShadow={false}
+                receiveShadow={false}
+                args={[poleRadius, poleRadius, poleHeight + (p.z - poleZ) * 2 + lz, 4, 2]}
+                position={p}
+                rotation={[HALF_PI, 0, 0]}
+              >
+                <meshStandardMaterial attach="material" color={color} />
+              </Cylinder>
+            );
+          }
           return (
-            <Cylinder
-              userData={{ unintersectable: true }}
+            <Line
               key={i}
-              name={'Pole ' + i}
-              castShadow={shadowEnabled}
-              receiveShadow={shadowEnabled}
-              args={[poleRadius, poleRadius, poleHeight + (p.z - poleZ) * 2 + lz, 6, 2]}
-              position={p}
-              rotation={[HALF_PI, 0, 0]}
-            >
-              <meshStandardMaterial attach="material" color={color} />
-            </Cylinder>
+              name={'Pole line ' + i}
+              userData={{ unintersectable: true }}
+              points={[
+                [p.x, p.y, p.z - poleZ],
+                [p.x, p.y, p.z + poleZ],
+              ]}
+              castShadow={false}
+              receiveShadow={false}
+              lineWidth={poleRadius * 20}
+              color={'gray'}
+            />
           );
         })}
 
