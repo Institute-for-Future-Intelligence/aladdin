@@ -937,7 +937,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item
             key={'daily-solar-radiation-heatmap'}
             onClick={
-              Util.hasMovingParts(elements) ? toggleDynamicSolarRadiationHeatmap : toggleStaticSolarRadiationHeatmap
+              !noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)
+                ? toggleDynamicSolarRadiationHeatmap
+                : toggleStaticSolarRadiationHeatmap
             }
           >
             {i18n.t('menu.physics.DailySolarRadiationHeatmap', lang)}

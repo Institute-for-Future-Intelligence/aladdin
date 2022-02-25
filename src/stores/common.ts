@@ -4432,6 +4432,7 @@ export const useStore = create<CommonStoreState>(
           'viewState',
           'notes',
           'user',
+          'sceneRadius',
           'weatherData',
           'sensorLabels',
           'solarPanelLabels',

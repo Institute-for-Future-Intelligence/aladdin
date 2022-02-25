@@ -81,7 +81,7 @@ const FresnelReflector = ({
   const resizeHandleRightRef = useRef<Mesh>();
   const pointerDown = useRef<boolean>(false);
 
-  const sunBeamLength = Math.max(100, 50 * sceneRadius);
+  const sunBeamLength = Math.max(100, 10 * sceneRadius);
   const lang = { lng: language };
 
   const hx = lx / 2;
@@ -113,7 +113,6 @@ const FresnelReflector = ({
   const positionLR = new Vector3(hx, -hy, hz);
   const positionUR = new Vector3(hx, hy, hz);
   const fresnelReflector = getElementById(id) as FresnelReflectorModel;
-  const aaa = false;
 
   useEffect(() => {
     if (fresnelReflector && showSolarRadiationHeatmap) {
@@ -284,7 +283,7 @@ const FresnelReflector = ({
     return array;
   }, [lx, ly, numberOfModules]);
 
-  const baseSize = Math.max(1, (lx + ly) / 16);
+  const baseSize = Math.max(1, Math.min(lx * 5, ly * 5, (lx + ly) / 16));
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
   const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 2;
 

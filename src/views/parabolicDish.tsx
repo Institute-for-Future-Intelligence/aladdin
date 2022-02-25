@@ -91,7 +91,7 @@ const ParabolicDish = ({
   const resizeHandleRightRef = useRef<Mesh>();
   const pointerDown = useRef<boolean>(false);
 
-  const sunBeamLength = Math.max(100, 50 * sceneRadius);
+  const sunBeamLength = Math.max(100, 10 * sceneRadius);
   const lang = { lng: language };
   const radialSegments = 32;
   const depthSegments = 8;
