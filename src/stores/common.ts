@@ -9,6 +9,7 @@ import { WorldModel } from '../models/WorldModel';
 import { ElementModel } from '../models/ElementModel';
 import { WeatherModel } from '../models/WeatherModel';
 import weather from '../resources/weather.csv';
+import solar_radiation from '../resources/solar_radiation.csv';
 import pvmodules from '../resources/pvmodules.csv';
 import Papa from 'papaparse';
 import { Util } from '../Util';
@@ -73,6 +74,7 @@ import { ElementCounter } from './ElementCounter';
 import { ParabolicCollector } from '../models/ParabolicCollector';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import { HeliostatModel } from '../models/HeliostatModel';
+import { SolarRadiationData } from '../models/SolarRadiationData';
 
 enableMapSet();
 
@@ -111,6 +113,9 @@ export interface CommonStoreState {
   weatherData: { [key: string]: WeatherModel };
   getWeather: (location: string) => WeatherModel;
   loadWeatherData: () => void;
+  solarRadiationData: { [key: string]: SolarRadiationData };
+  getSolarRadiation: (location: string) => SolarRadiationData;
+  loadSolarRadiationData: () => void;
   getClosestCity: (lat: number, lng: number) => string | null;
 
   pvModules: { [key: string]: PvModel };
@@ -4321,6 +4326,37 @@ export const useStore = create<CommonStoreState>(
           },
           getWeather(location) {
             return get().weatherData[location];
+          },
+          solarRadiationData: {},
+          loadSolarRadiationData() {
+            const radiationData: SolarRadiationData[] = [];
+            Papa.parse(solar_radiation, {
+              download: true,
+              complete: function (results) {
+                for (const row of results.data) {
+                  if (Array.isArray(row) && row.length > 1) {
+                    const data: number[] = [];
+                    for (let i = 2; i < 14; i++) {
+                      data.push(parseFloat(row[i].trim()));
+                    }
+                    const sr = {
+                      city: row[0].trim(),
+                      country: row[1].trim(),
+                      data: data,
+                    } as SolarRadiationData;
+                    radiationData.push(sr);
+                  }
+                }
+                immerSet((state: CommonStoreState) => {
+                  for (const x of radiationData) {
+                    state.solarRadiationData[x.city + ', ' + x.country] = x;
+                  }
+                });
+              },
+            });
+          },
+          getSolarRadiation(location) {
+            return get().solarRadiationData[location];
           },
           getClosestCity(lat, lng) {
             let min: number = Number.MAX_VALUE;

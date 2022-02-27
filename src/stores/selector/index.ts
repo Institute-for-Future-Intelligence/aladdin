@@ -564,9 +564,15 @@ export const weatherData = (state: CommonStoreState) => state.weatherData;
 
 export const loadWeatherData = (state: CommonStoreState) => state.loadWeatherData;
 
+export const solarRadiationData = (state: CommonStoreState) => state.solarRadiationData;
+
+export const loadSolarRadiationData = (state: CommonStoreState) => state.loadSolarRadiationData;
+
 export const getClosestCity = (state: CommonStoreState) => state.getClosestCity;
 
 export const getWeather = (state: CommonStoreState) => state.getWeather;
+
+export const getSolarRadiation = (state: CommonStoreState) => state.getSolarRadiation;
 
 export const sunlightDirection = (state: CommonStoreState) => state.sunlightDirection;
 

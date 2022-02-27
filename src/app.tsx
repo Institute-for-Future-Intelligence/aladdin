@@ -25,10 +25,12 @@ const App = () => {
   const setChanged = useStore(Selector.setChanged);
   const setSkipChange = useStore(Selector.setSkipChange);
   const loadWeatherData = useStore(Selector.loadWeatherData);
+  const loadSolarRadiationData = useStore(Selector.loadSolarRadiationData);
   const loadPvModules = useStore(Selector.loadPvModules);
 
   useEffect(() => {
     loadWeatherData();
+    loadSolarRadiationData();
     loadPvModules();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

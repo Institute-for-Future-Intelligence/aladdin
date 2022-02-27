@@ -33,6 +33,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
   const elements = useStore.getState().elements;
   const getParent = useStore(Selector.getParent);
   const getWeather = useStore(Selector.getWeather);
+  const getSolarRadiation = useStore(Selector.getSolarRadiation);
   const setSensorLabels = useStore(Selector.setSensorLabels);
   const setDailyLightSensorData = useStore(Selector.setDailyLightSensorData);
   const setYearlyLightSensorData = useStore(Selector.setYearlyLightSensorData);
@@ -46,6 +47,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
   const { scene } = useThree();
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
+  const measuredRadiation = getSolarRadiation(city ?? 'Boston MA, USA');
   const elevation = city ? getWeather(city).elevation : 0;
   const timesPerHour = world.timesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
@@ -399,6 +401,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
         }
       }
     }
+    if (measuredRadiation) labels.push('Measured');
     const results = [];
     for (let month = 0; month < 12; month++) {
       const r: DatumEntry = {};
@@ -406,6 +409,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       for (const [i, a] of resultArr.entries()) {
         r['Daylight'] = daylightArrayRef.current[month];
         r['Clearness'] = clearnessArrayRef.current[month] * 100;
+        if (measuredRadiation) r['Measured'] = measuredRadiation.data[month];
         r[labels[i]] = a[month];
       }
       results.push(r);
