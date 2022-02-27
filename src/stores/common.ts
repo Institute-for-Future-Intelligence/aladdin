@@ -711,8 +711,10 @@ export const useStore = create<CommonStoreState>(
           },
           createEmptyFile() {
             immerSet((state: CommonStoreState) => {
+              DefaultWorldModel.resetWorldModel(state.world);
               DefaultViewState.resetViewState(state.viewState);
-              state.world = new DefaultWorldModel();
+              // don't create a new instance like this (otherwise some UI elements may not update):
+              // state.world = new DefaultWorldModel()
               state.elements = [];
               state.cloudFile = undefined;
               state.changed = true;
@@ -720,6 +722,7 @@ export const useStore = create<CommonStoreState>(
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.notes = [];
               state.fileChanged = !state.fileChanged;
+              state.showSolarRadiationHeatmap = false;
             });
           },
           undoManager: new UndoManager(),

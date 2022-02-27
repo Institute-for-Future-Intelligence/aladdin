@@ -71,6 +71,36 @@ export class DefaultWorldModel implements WorldModel {
     this.noAnimationForSolarPanelSimulation = false;
   }
 
+  static resetWorldModel(worldModel: WorldModel) {
+    worldModel.latitude = 42.2844063;
+    worldModel.longitude = -71.3488548;
+    worldModel.address = 'Natick, MA';
+    worldModel.date = new Date(new Date().getFullYear(), 5, 22, 12).toString();
+
+    worldModel.name = 'default';
+    worldModel.ground.albedo = 0.3;
+    worldModel.ground.thermalDiffusivity = 0.05;
+    worldModel.ground.snowReflectionFactors.fill(0);
+
+    worldModel.airAttenuationCoefficient = 0.01;
+
+    worldModel.timesPerHour = 4; // how many times per hour to collect data
+    worldModel.daysPerYear = 12; // how many days per year for sampling
+    worldModel.dustLoss = 0.05;
+    worldModel.pvGridCellSize = 0.5;
+    worldModel.discretization = Discretization.APPROXIMATE;
+    worldModel.solarPanelVisibilityGridCellSize = 0.2;
+    worldModel.solarRadiationHeatmapGridCellSize = 0.5;
+
+    worldModel.cspTimesPerHour = 4;
+    worldModel.cspDaysPerYear = 4;
+    worldModel.cspGridCellSize = 0.5;
+
+    worldModel.noAnimationForHeatmapSimulation = false;
+    worldModel.noAnimationForSensorDataCollection = false;
+    worldModel.noAnimationForSolarPanelSimulation = false;
+  }
+
   getElements() {
     const elements: ElementModel[] = [];
 
