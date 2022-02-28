@@ -140,6 +140,7 @@ const LineGraph = ({
       const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
       const symbol = createSymbol(SYMBOLS[i], symbolSize, symbolCount, opacity);
       if (i === 0) defaultSymbol = symbol;
+      const isMeasured = name.startsWith('Measured');
       lines.push(
         <Line
           key={i}
@@ -147,9 +148,10 @@ const LineGraph = ({
           name={name}
           dataKey={name}
           stroke={PRESET_COLORS[i]}
-          opacity={opacity}
+          strokeDasharray={isMeasured ? '5 5' : ''}
+          opacity={isMeasured ? opacity / 4 : opacity}
           strokeWidth={lineWidth}
-          dot={symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
+          dot={!isMeasured && symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
           isAnimationActive={false}
         />,
       );

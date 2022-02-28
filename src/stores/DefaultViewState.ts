@@ -58,6 +58,8 @@ export class DefaultViewState implements ViewState {
   dailyLightSensorPanelY: number;
   yearlyLightSensorPanelX: number;
   yearlyLightSensorPanelY: number;
+  yearlyLightSensorPanelShowDaylight: boolean;
+  yearlyLightSensorPanelShowClearness: boolean;
   dailyPvYieldPanelX: number;
   dailyPvYieldPanelY: number;
   yearlyPvYieldPanelX: number;
@@ -140,6 +142,8 @@ export class DefaultViewState implements ViewState {
     this.dailyLightSensorPanelY = 0;
     this.yearlyLightSensorPanelX = 0;
     this.yearlyLightSensorPanelY = 0;
+    this.yearlyLightSensorPanelShowDaylight = false;
+    this.yearlyLightSensorPanelShowClearness = false;
     this.dailyPvYieldPanelX = 0;
     this.dailyPvYieldPanelY = 0;
     this.yearlyPvYieldPanelX = 0;
@@ -222,6 +226,8 @@ export class DefaultViewState implements ViewState {
     viewState.dailyLightSensorPanelY = 0;
     viewState.yearlyLightSensorPanelX = 0;
     viewState.yearlyLightSensorPanelY = 0;
+    viewState.yearlyLightSensorPanelShowDaylight = false;
+    viewState.yearlyLightSensorPanelShowClearness = false;
     viewState.dailyPvYieldPanelX = 0;
     viewState.dailyPvYieldPanelY = 0;
     viewState.yearlyPvYieldPanelX = 0;

@@ -33,8 +33,8 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 500px;
-  height: 650px;
+  width: 600px;
+  height: 500px;
   padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
@@ -76,9 +76,9 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   const panelX = useStore(Selector.viewState.yearlyLightSensorPanelX);
   const panelY = useStore(Selector.viewState.yearlyLightSensorPanelY);
   const countElementsByType = useStore(Selector.countElementsByType);
+  const daylightGraph = useStore(Selector.viewState.yearlyLightSensorPanelShowDaylight);
+  const clearnessGraph = useStore(Selector.viewState.yearlyLightSensorPanelShowClearness);
 
-  const [daylightGraph, setDaylightGraph] = useState(true);
-  const [clearnessGraph, setClearnessGraph] = useState(true);
   const [radiationGraph, setRadiationGraph] = useState(true);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 540;
@@ -168,7 +168,9 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                 title={i18n.t('yearlyLightSensorPanel.ShowDaylightResults', lang)}
                 checked={daylightGraph}
                 onChange={(checked) => {
-                  setDaylightGraph(checked);
+                  setCommonStore((state) => {
+                    state.viewState.yearlyLightSensorPanelShowDaylight = checked;
+                  });
                 }}
               />
               {i18n.t('word.Daylight', lang)}
@@ -178,7 +180,9 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                 title={i18n.t('yearlyLightSensorPanel.ShowSkyClearnessResults', lang)}
                 checked={clearnessGraph}
                 onChange={(checked) => {
-                  setClearnessGraph(checked);
+                  setCommonStore((state) => {
+                    state.viewState.yearlyLightSensorPanelShowClearness = checked;
+                  });
                 }}
               />
               {i18n.t('yearlyLightSensorPanel.SkyClearness', lang)}

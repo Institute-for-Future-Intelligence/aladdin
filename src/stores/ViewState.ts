@@ -56,6 +56,8 @@ export interface ViewState {
   dailyLightSensorPanelY: number;
   yearlyLightSensorPanelX: number;
   yearlyLightSensorPanelY: number;
+  yearlyLightSensorPanelShowDaylight: boolean;
+  yearlyLightSensorPanelShowClearness: boolean;
   dailyPvYieldPanelX: number;
   dailyPvYieldPanelY: number;
   yearlyPvYieldPanelX: number;
