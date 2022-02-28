@@ -14,6 +14,7 @@ export interface RoofModel extends ElementModel {
 }
 
 export interface PyramidRoofModel extends RoofModel {}
+export interface GableRoofModel extends RoofModel {}
 
 export interface Point3 {
   x: number;
@@ -23,9 +24,7 @@ export interface Point3 {
 
 export enum RoofType {
   Pyramid = 'Pyramid',
-  Hip = 'Hip',
-  Gambrel = 'Gambrel',
-  Shed = 'Shed',
+  Gable = 'Gable',
 }
 
 export enum RoofTexture {

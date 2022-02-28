@@ -18,4 +18,5 @@ export interface WallModel extends ElementModel {
   roofId?: string | null;
   leftRoofHeight?: number;
   rightRoofHeight?: number;
+  centerRoofHeight?: number[];
 }

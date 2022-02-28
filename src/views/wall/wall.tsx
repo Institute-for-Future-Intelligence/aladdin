@@ -68,6 +68,7 @@ const Wall = ({
   roofId,
   leftRoofHeight,
   rightRoofHeight,
+  centerRoofHeight,
 }: WallModel) => {
   const textureLoader = useMemo(() => {
     let textureImg;
@@ -237,14 +238,16 @@ const Wall = ({
     rightOffset = 0,
     leftRoofHeight?: number,
     rightRoofHeight?: number,
+    centerRoofHeight?: number[],
   ) => {
     const x = lx / 2;
     const y = ly / 2;
     shape.moveTo(cx - x + leftOffset, cy - y); // lower left
     shape.lineTo(cx + x - rightOffset, cy - y); // lower right
-    if (roofId && leftRoofHeight && rightRoofHeight) {
-      shape.lineTo(cx + x - rightOffset, rightRoofHeight - y);
-      shape.lineTo(cx - x + leftOffset, leftRoofHeight - y);
+    if (roofId && (leftRoofHeight || rightRoofHeight || centerRoofHeight)) {
+      shape.lineTo(cx + x - rightOffset, rightRoofHeight ?? cy + 2 * y - y);
+      centerRoofHeight && shape.lineTo(centerRoofHeight[0] * lx, centerRoofHeight[1] - y);
+      shape.lineTo(cx - x + leftOffset, leftRoofHeight ?? cy + 2 * y - y);
     } else {
       shape.lineTo(cx + x - rightOffset, cy + y); // upper right
       shape.lineTo(cx - x + leftOffset, cy + y); // upper left
@@ -255,7 +258,7 @@ const Wall = ({
   // outside wall
   if (outSideWallRef.current) {
     const wallShape = new Shape();
-    drawRectangle(wallShape, lx, lz, 0, 0, 0, 0, leftRoofHeight, rightRoofHeight);
+    drawRectangle(wallShape, lx, lz, 0, 0, 0, 0, leftRoofHeight, rightRoofHeight, centerRoofHeight);
 
     windows.forEach((w) => {
       if (w.id !== invalidWindowIdRef.current) {
@@ -270,7 +273,7 @@ const Wall = ({
   // inside wall
   if (insideWallRef.current) {
     const wallShape = new Shape();
-    drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset, leftRoofHeight, rightRoofHeight);
+    drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset, leftRoofHeight, rightRoofHeight, centerRoofHeight);
 
     windows.forEach((w) => {
       if (w.id !== invalidWindowIdRef.current) {
@@ -338,6 +341,7 @@ const Wall = ({
             (e as WallModel).roofId = null;
             (e as WallModel).leftRoofHeight = undefined;
             (e as WallModel).rightRoofHeight = undefined;
+            (e as WallModel).centerRoofHeight = undefined;
             break;
           }
         }
