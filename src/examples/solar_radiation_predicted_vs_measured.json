@@ -1,0 +1,209 @@
+{
+  "docid": "uPc2AnndH4sMrM9AZMiBAL",
+  "timestamp": 1646169564888,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "date": "Tue Jun 22 2021 12:00:00 GMT-0400 (Eastern Daylight Time)",
+    "timesPerHour": 6,
+    "address": "Tucson, AZ, USA",
+    "latitude": 32.2226066,
+    "longitude": -110.9747108,
+    "name": "default",
+    "orthographic": false,
+    "cameraZoom": 35,
+    "ground": {
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "thermalDiffusivity": 0.05,
+      "albedo": 0.3
+    },
+    "noAnimationForSensorDataCollection": true,
+    "noAnimationForHeatmapSimulation": true
+  },
+  "elements": [
+    {
+      "selected": false,
+      "cz": 0,
+      "cx": -2.454909082526056,
+      "type": "Human",
+      "id": "3NsNQgPftGsbYSoSRa2zV4",
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "cy": -1.9037352844719955,
+      "name": "Jaye",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "lx": 0.6,
+      "ly": 0.6,
+      "lz": 1.65
+    },
+    {
+      "cx": 0.20566332108722207,
+      "color": "gray",
+      "cz": 1.3564241923192988,
+      "type": "Cuboid",
+      "lz": 2.7128483846385976,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "ly": 3.646712311386908,
+      "cy": 0.10935014088128625,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 2.2290047878920136,
+      "id": "2QtCNEmEF6Mcs3vbbR96ZT",
+      "selected": false,
+      "parentId": "Ground"
+    },
+    {
+      "ly": 0.1,
+      "selected": false,
+      "type": "Sensor",
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 0.01,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 0.1,
+      "cz": 0.5000000000000002,
+      "cx": -0.007027589631907428,
+      "cy": 0.03130304552555022,
+      "id": "iqgmPt2Nm3r4bW8A7g6DJy",
+      "label": "Predicted (Hor.)",
+      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT",
+      "foundationId": "2QtCNEmEF6Mcs3vbbR96ZT"
+    },
+    {
+      "lz": 0.01,
+      "showLabel": false,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "cy": -0.4999999988722324,
+      "selected": false,
+      "id": "1GCXGRbm6nuTH23uA8Yngz",
+      "cx": 0.021624712729279145,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "cz": 0.03360969587566309,
+      "ly": 0.1,
+      "type": "Sensor",
+      "label": "Predicted (Ver.)",
+      "lx": 0.1,
+      "parentId": "2QtCNEmEF6Mcs3vbbR96ZT",
+      "foundationId": "2QtCNEmEF6Mcs3vbbR96ZT"
+    }
+  ],
+  "view": {
+    "showDailyLightSensorPanel": false,
+    "showYearlyLightSensorPanel": true,
+    "autoRotate": false,
+    "showGroundPanel": false,
+    "yearlyLightSensorPanelY": 4,
+    "stickyNotePanelX": 6,
+    "mapType": "roadmap",
+    "weatherPanelY": 0,
+    "shadowEnabled": true,
+    "theme": "Default",
+    "stickyNotePanelY": 0,
+    "mapWeatherStations": false,
+    "groundColor": "#16cda5",
+    "heliodon": false,
+    "dailyLightSensorPanelX": -19,
+    "axes": true,
+    "showWeatherPanel": false,
+    "dailyLightSensorPanelY": 15,
+    "mapTilt": 0,
+    "heliodonPanelX": -1235,
+    "groundPanelY": 0,
+    "heliodonPanelY": 7,
+    "groundImage": false,
+    "mapZoom": 16,
+    "showStickyNotePanel": false,
+    "groundPanelX": 0,
+    "weatherPanelX": 0,
+    "yearlyLightSensorPanelX": -8,
+    "showHeliodonPanel": false,
+    "cameraPosition": [
+      7.240868408682273,
+      -7.497741865009099,
+      6.625900252594831
+    ],
+    "panCenter": [
+      4.464757127641991,
+      2.597260416450505,
+      0.5357741885065452
+    ],
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 28.63945562104857,
+    "cameraPosition2D": [
+      0,
+      -0.00004000177797536253,
+      39.99999999997991
+    ],
+    "panCenter2D": [
+      0,
+      0,
+      0
+    ],
+    "showMapPanel": false
+  },
+  "notes": [
+    "Solar radiation to a box\n\nThis model shows the solar radiation the five sides (top, west, east, south, and north sides) of a box receives. There is a sensor on each side. Analyze the daily and annual sensor data to compare the solar radiation the five sides receive.\n\nYou can also change the day and the location to investigate the dependency of the results on these factors. "
+  ]
+}

@@ -10,6 +10,7 @@ import { ElementModel } from '../models/ElementModel';
 import { WeatherModel } from '../models/WeatherModel';
 import weather from '../resources/weather.csv';
 import solar_radiation_horizontal from '../resources/solar_radiation_horizontal.csv';
+import solar_radiation_vertical from '../resources/solar_radiation_vertical.csv';
 import pvmodules from '../resources/pvmodules.csv';
 import Papa from 'papaparse';
 import { Util } from '../Util';
@@ -113,9 +114,12 @@ export interface CommonStoreState {
   weatherData: { [key: string]: WeatherModel };
   getWeather: (location: string) => WeatherModel;
   loadWeatherData: () => void;
-  solarRadiationData: { [key: string]: SolarRadiationData };
-  getSolarRadiation: (location: string) => SolarRadiationData;
-  loadSolarRadiationData: () => void;
+  horizontalSolarRadiationData: { [key: string]: SolarRadiationData };
+  getHorizontalSolarRadiation: (location: string) => SolarRadiationData;
+  loadHorizontalSolarRadiationData: () => void;
+  verticalSolarRadiationData: { [key: string]: SolarRadiationData };
+  getVerticalSolarRadiation: (location: string) => SolarRadiationData;
+  loadVerticalSolarRadiationData: () => void;
   getClosestCity: (lat: number, lng: number) => string | null;
 
   pvModules: { [key: string]: PvModel };
@@ -4327,8 +4331,8 @@ export const useStore = create<CommonStoreState>(
           getWeather(location) {
             return get().weatherData[location];
           },
-          solarRadiationData: {},
-          loadSolarRadiationData() {
+          horizontalSolarRadiationData: {},
+          loadHorizontalSolarRadiationData() {
             const radiationData: SolarRadiationData[] = [];
             Papa.parse(solar_radiation_horizontal, {
               download: true,
@@ -4349,14 +4353,45 @@ export const useStore = create<CommonStoreState>(
                 }
                 immerSet((state: CommonStoreState) => {
                   for (const x of radiationData) {
-                    state.solarRadiationData[x.city + ', ' + x.country] = x;
+                    state.horizontalSolarRadiationData[x.city + ', ' + x.country] = x;
                   }
                 });
               },
             });
           },
-          getSolarRadiation(location) {
-            return get().solarRadiationData[location];
+          getHorizontalSolarRadiation(location) {
+            return get().horizontalSolarRadiationData[location];
+          },
+          verticalSolarRadiationData: {},
+          loadVerticalSolarRadiationData() {
+            const radiationData: SolarRadiationData[] = [];
+            Papa.parse(solar_radiation_vertical, {
+              download: true,
+              complete: function (results) {
+                for (const row of results.data) {
+                  if (Array.isArray(row) && row.length > 1) {
+                    const data: number[] = [];
+                    for (let i = 2; i < 14; i++) {
+                      data.push(parseFloat(row[i].trim()));
+                    }
+                    const sr = {
+                      city: row[0].trim(),
+                      country: row[1].trim(),
+                      data: data,
+                    } as SolarRadiationData;
+                    radiationData.push(sr);
+                  }
+                }
+                immerSet((state: CommonStoreState) => {
+                  for (const x of radiationData) {
+                    state.verticalSolarRadiationData[x.city + ', ' + x.country] = x;
+                  }
+                });
+              },
+            });
+          },
+          getVerticalSolarRadiation(location) {
+            return get().verticalSolarRadiationData[location];
           },
           getClosestCity(lat, lng) {
             let min: number = Number.MAX_VALUE;

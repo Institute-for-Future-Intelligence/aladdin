@@ -212,6 +212,10 @@ export const i18n_en = {
         Heliodon: 'Heliodon',
         SunAndTime: 'Sun & Time',
       },
+      benchmarksSubMenu: 'Benchmarks',
+      benchmarks: {
+        SolarRadiationPredictionVsMeasurement: 'Solar Radiation Prediction vs. Measurement',
+      },
       analysisSubMenu: 'Analysis',
       physicsSubMenu: 'Physics',
       physics: {

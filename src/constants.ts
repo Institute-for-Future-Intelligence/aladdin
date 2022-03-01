@@ -50,6 +50,8 @@ export const ZERO_TOLERANCE = 0.0001;
 
 export const UNIT_VECTOR_POS_Z_ARRAY = [0, 0, 1];
 
+export const UNIT_VECTOR_NEG_Y_ARRAY = [0, -1, 0];
+
 export const UNIT_VECTOR_POS_X = new Vector3(1, 0, 0);
 
 export const UNIT_VECTOR_NEG_X = new Vector3(-1, 0, 0);

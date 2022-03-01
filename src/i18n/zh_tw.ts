@@ -211,6 +211,10 @@ export const i18n_zh_tw = {
         Heliodon: '日影儀',
         SunAndTime: '太陽和時間',
       },
+      benchmarksSubMenu: '基準例子',
+      benchmarks: {
+        SolarRadiationPredictionVsMeasurement: '太陽能輻射模型預測和實際測量的對比',
+      },
       analysisSubMenu: '分析',
       physicsSubMenu: '物理',
       physics: {

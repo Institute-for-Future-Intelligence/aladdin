@@ -564,15 +564,21 @@ export const weatherData = (state: CommonStoreState) => state.weatherData;
 
 export const loadWeatherData = (state: CommonStoreState) => state.loadWeatherData;
 
-export const solarRadiationData = (state: CommonStoreState) => state.solarRadiationData;
-
-export const loadSolarRadiationData = (state: CommonStoreState) => state.loadSolarRadiationData;
-
-export const getClosestCity = (state: CommonStoreState) => state.getClosestCity;
-
 export const getWeather = (state: CommonStoreState) => state.getWeather;
 
-export const getSolarRadiation = (state: CommonStoreState) => state.getSolarRadiation;
+export const horizontalSolarRadiationData = (state: CommonStoreState) => state.horizontalSolarRadiationData;
+
+export const loadHorizontalSolarRadiationData = (state: CommonStoreState) => state.loadHorizontalSolarRadiationData;
+
+export const getHorizontalSolarRadiation = (state: CommonStoreState) => state.getHorizontalSolarRadiation;
+
+export const verticalSolarRadiationData = (state: CommonStoreState) => state.verticalSolarRadiationData;
+
+export const loadVerticalSolarRadiationData = (state: CommonStoreState) => state.loadVerticalSolarRadiationData;
+
+export const getVerticalSolarRadiation = (state: CommonStoreState) => state.getVerticalSolarRadiation;
+
+export const getClosestCity = (state: CommonStoreState) => state.getClosestCity;
 
 export const sunlightDirection = (state: CommonStoreState) => state.sunlightDirection;
 

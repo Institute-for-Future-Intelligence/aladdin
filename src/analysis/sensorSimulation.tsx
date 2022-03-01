@@ -15,7 +15,13 @@ import { useStore } from '../stores/common';
 import { DatumEntry, ObjectType } from '../types';
 import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
-import { MONTHS, UNIT_VECTOR_POS_Z, UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../constants';
+import {
+  MONTHS,
+  UNIT_VECTOR_NEG_Y_ARRAY,
+  UNIT_VECTOR_POS_Z,
+  UNIT_VECTOR_POS_Z_ARRAY,
+  ZERO_TOLERANCE,
+} from '../constants';
 import { SensorModel } from '../models/SensorModel';
 import * as Selector from '../stores/selector';
 import { showInfo } from '../helpers';
@@ -33,7 +39,8 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
   const elements = useStore.getState().elements;
   const getParent = useStore(Selector.getParent);
   const getWeather = useStore(Selector.getWeather);
-  const getSolarRadiation = useStore(Selector.getSolarRadiation);
+  const getHorizontalSolarRadiation = useStore(Selector.getHorizontalSolarRadiation);
+  const getVerticalSolarRadiation = useStore(Selector.getVerticalSolarRadiation);
   const setSensorLabels = useStore(Selector.setSensorLabels);
   const setDailyLightSensorData = useStore(Selector.setDailyLightSensorData);
   const setYearlyLightSensorData = useStore(Selector.setYearlyLightSensorData);
@@ -47,7 +54,8 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
   const { scene } = useThree();
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
-  const measuredRadiation = getSolarRadiation(city ?? 'Boston MA, USA');
+  const measuredHorizontalRadiation = getHorizontalSolarRadiation(city ?? 'Boston MA, USA');
+  const measuredVerticalRadiation = getVerticalSolarRadiation(city ?? 'Boston MA, USA');
   const elevation = city ? getWeather(city).elevation : 0;
   const timesPerHour = world.timesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
@@ -393,6 +401,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     const labels = [];
     let index = 0;
     let hasHorizontalSensor = false;
+    let hasVerticalSensor = false;
     for (const e of elements) {
       if (e.type === ObjectType.Sensor) {
         const result = yearlyDataMapRef.current.get(e.id);
@@ -402,11 +411,16 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
           if (!hasHorizontalSensor && Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
             hasHorizontalSensor = true;
           }
+          if (!hasVerticalSensor && Util.isIdentical(e.normal, UNIT_VECTOR_NEG_Y_ARRAY)) {
+            hasVerticalSensor = true;
+          }
         }
       }
     }
-    const includeMeasured = hasHorizontalSensor && measuredRadiation;
-    if (includeMeasured) labels.push('Measured (Horizontal)');
+    const includeHorizontalMeasurement = hasHorizontalSensor && measuredHorizontalRadiation;
+    if (includeHorizontalMeasurement) labels.push('Measured (Hor.)');
+    const includeVerticalMeasurement = hasVerticalSensor && measuredVerticalRadiation;
+    if (includeVerticalMeasurement) labels.push('Measured (Ver.)');
     const results = [];
     for (let month = 0; month < 12; month++) {
       const r: DatumEntry = {};
@@ -414,7 +428,8 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       for (const [i, a] of resultArr.entries()) {
         r['Daylight'] = daylightArrayRef.current[month];
         r['Clearness'] = clearnessArrayRef.current[month] * 100;
-        if (includeMeasured) r['Measured (Horizontal)'] = measuredRadiation.data[month];
+        if (includeHorizontalMeasurement) r['Measured (Hor.)'] = measuredHorizontalRadiation.data[month];
+        if (includeVerticalMeasurement) r['Measured (Ver.)'] = measuredVerticalRadiation.data[month];
         r[labels[i]] = a[month];
       }
       results.push(r);
