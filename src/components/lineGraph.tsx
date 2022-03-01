@@ -19,6 +19,7 @@ import { createSymbol, SYMBOLS } from './symbols';
 import { PRESET_COLORS } from '../constants';
 import { GraphDataType, DatumEntry } from '../types';
 import { CurveType } from 'recharts/types/shape/Curve';
+import LineGraphMenu from './lineGraphMenu';
 
 export interface LineGraphProps {
   type: GraphDataType;
@@ -232,6 +233,25 @@ const LineGraph = ({
                 )}
               </LineChart>
             </ResponsiveContainer>
+            <LineGraphMenu
+              lineCount={lineCount}
+              symbolSize={symbolSize}
+              lineWidth={lineWidth}
+              horizontalGrid={horizontalGridLines}
+              verticalGrid={verticalGridLines}
+              changeHorizontalGrid={(checked) => {
+                setHorizontalGridLines(checked);
+              }}
+              changeVerticalGrid={(checked) => {
+                setVerticalGridLines(checked);
+              }}
+              changeLineWidth={(value) => {
+                setLineWidth(value);
+              }}
+              changeSymbolSize={(value) => {
+                setSymbolSize(value);
+              }}
+            />
           </div>
         </div>
       )}

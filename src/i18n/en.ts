@@ -216,6 +216,12 @@ export const i18n_en = {
       benchmarks: {
         SolarRadiationPredictionVsMeasurement: 'Solar Radiation Prediction vs. Measurement',
       },
+      graph: {
+        LineWidth: 'Line Width',
+        SymbolSize: 'Symbol Size',
+        ShowHorizontalGridLines: 'Show Horizontal Grid Lines',
+        ShowVerticalGridLines: 'Show Vertical Grid Lines',
+      },
       analysisSubMenu: 'Analysis',
       physicsSubMenu: 'Physics',
       physics: {

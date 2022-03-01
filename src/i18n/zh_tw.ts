@@ -215,6 +215,12 @@ export const i18n_zh_tw = {
       benchmarks: {
         SolarRadiationPredictionVsMeasurement: '太陽能輻射模型預測和實際測量的對比',
       },
+      graph: {
+        LineWidth: '線條寬度',
+        SymbolSize: '符號大小',
+        ShowHorizontalGridLines: '顯示格子的水平線條',
+        ShowVerticalGridLines: '顯示格子的豎直線條',
+      },
       analysisSubMenu: '分析',
       physicsSubMenu: '物理',
       physics: {

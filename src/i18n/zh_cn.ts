@@ -215,6 +215,12 @@ export const i18n_zh_cn = {
       benchmarks: {
         SolarRadiationPredictionVsMeasurement: '太阳能辐射模型预测和实际测量的对比',
       },
+      graph: {
+        LineWidth: '线条宽度',
+        SymbolSize: '符号大小',
+        ShowHorizontalGridLines: '显示格子的水平线条',
+        ShowVerticalGridLines: '显示格子的竖直线条',
+      },
       analysisSubMenu: '分析',
       physicsSubMenu: '物理',
       physics: {
