@@ -9,7 +9,7 @@ import { WorldModel } from '../models/WorldModel';
 import { ElementModel } from '../models/ElementModel';
 import { WeatherModel } from '../models/WeatherModel';
 import weather from '../resources/weather.csv';
-import solar_radiation from '../resources/solar_radiation.csv';
+import solar_radiation_horizontal from '../resources/solar_radiation_horizontal.csv';
 import pvmodules from '../resources/pvmodules.csv';
 import Papa from 'papaparse';
 import { Util } from '../Util';
@@ -4330,7 +4330,7 @@ export const useStore = create<CommonStoreState>(
           solarRadiationData: {},
           loadSolarRadiationData() {
             const radiationData: SolarRadiationData[] = [];
-            Papa.parse(solar_radiation, {
+            Papa.parse(solar_radiation_horizontal, {
               download: true,
               complete: function (results) {
                 for (const row of results.data) {
