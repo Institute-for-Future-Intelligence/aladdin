@@ -271,7 +271,7 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
               title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
                 screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-parabolic-dish-yield', {}).then(() => {
-                  showInfo(i18n.t('message:ScreenshotSaved', lang));
+                  showInfo(i18n.t('message.ScreenshotSaved', lang));
                 });
               }}
             />

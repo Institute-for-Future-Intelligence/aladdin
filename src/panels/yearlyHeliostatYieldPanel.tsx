@@ -270,7 +270,7 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
               title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
                 screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-heliostat-yield', {}).then(() => {
-                  showInfo(i18n.t('message:ScreenshotSaved', lang));
+                  showInfo(i18n.t('message.ScreenshotSaved', lang));
                 });
               }}
             />

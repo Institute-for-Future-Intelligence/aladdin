@@ -162,6 +162,50 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
               {i18n.t('word.Close', lang)}
             </span>
           </Header>
+          {daylightGraph && (
+            <LineGraph
+              type={GraphDataType.DaylightData}
+              dataSource={sensorData.map((e) => ({ Month: e.Month, Daylight: e.Daylight }))}
+              height={responsiveHeight}
+              labelX={labelX}
+              labelY={i18n.t('word.Daylight', lang)}
+              unitY={i18n.t('word.Hour', lang)}
+              yMin={0}
+              curveType={'linear'}
+              fractionDigits={1}
+              referenceX={referenceX}
+            />
+          )}
+          {clearnessGraph && (
+            <BarGraph
+              type={GraphDataType.ClearnessData}
+              dataSource={sensorData.map((e) => ({ Month: e.Month, Clearness: e.Clearness }))}
+              height={responsiveHeight}
+              labelX={labelX}
+              labelY={i18n.t('yearlyLightSensorPanel.SkyClearness', lang)}
+              unitY={'%'}
+              yMin={0}
+              yMax={100}
+              fractionDigits={1}
+              referenceX={referenceX}
+              color={'#66CDAA'}
+            />
+          )}
+          {radiationGraph && (
+            <LineGraph
+              type={GraphDataType.YearlyRadiationSensorData}
+              dataSource={sensorData.map(({ Daylight, Clearness, ...item }) => item)}
+              labels={sensorLabels}
+              height={responsiveHeight}
+              labelX={labelX}
+              labelY={labelY}
+              unitY={'kWh/m²/' + i18n.t('word.Day', lang)}
+              yMin={0}
+              curveType={'linear'}
+              fractionDigits={2}
+              referenceX={referenceX}
+            />
+          )}
           <Space style={{ alignSelf: 'center', padding: '10px' }}>
             <Space>
               <Switch
@@ -225,56 +269,12 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                 title={i18n.t('word.SaveAsImage', lang)}
                 onClick={() => {
                   screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-light-sensor', {}).then(() => {
-                    showInfo(i18n.t('message:ScreenshotSaved', lang));
+                    showInfo(i18n.t('message.ScreenshotSaved', lang));
                   });
                 }}
               />
             </Space>
           </Space>
-          {daylightGraph && (
-            <LineGraph
-              type={GraphDataType.DaylightData}
-              dataSource={sensorData.map((e) => ({ Month: e.Month, Daylight: e.Daylight }))}
-              height={responsiveHeight}
-              labelX={labelX}
-              labelY={i18n.t('word.Daylight', lang)}
-              unitY={i18n.t('word.Hour', lang)}
-              yMin={0}
-              curveType={'linear'}
-              fractionDigits={1}
-              referenceX={referenceX}
-            />
-          )}
-          {clearnessGraph && (
-            <BarGraph
-              type={GraphDataType.ClearnessData}
-              dataSource={sensorData.map((e) => ({ Month: e.Month, Clearness: e.Clearness }))}
-              height={responsiveHeight}
-              labelX={labelX}
-              labelY={i18n.t('yearlyLightSensorPanel.SkyClearness', lang)}
-              unitY={'%'}
-              yMin={0}
-              yMax={100}
-              fractionDigits={1}
-              referenceX={referenceX}
-              color={'#66CDAA'}
-            />
-          )}
-          {radiationGraph && (
-            <LineGraph
-              type={GraphDataType.YearlyRadiationSensorData}
-              dataSource={sensorData.map(({ Daylight, Clearness, ...item }) => item)}
-              labels={sensorLabels}
-              height={responsiveHeight}
-              labelX={labelX}
-              labelY={labelY}
-              unitY={'kWh/m²/' + i18n.t('word.Day', lang)}
-              yMin={0}
-              curveType={'linear'}
-              fractionDigits={2}
-              referenceX={referenceX}
-            />
-          )}
         </ColumnWrapper>
       </Container>
     </ReactDraggable>
