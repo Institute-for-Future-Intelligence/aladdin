@@ -28,7 +28,7 @@ import parabolic_dish_focus_sunlight from './examples/parabolic_dish_focus_sunli
 import parabolic_dish_array from './examples/parabolic_dish_array.json';
 import linear_fresnel_reflectors from './examples/linear_fresnel_reflectors.json';
 import linear_fresnel_reflectors_two_receivers from './examples/linear_fresnel_reflectors_two_receivers.json';
-import effect_receiver_tube_height from './examples/effect_receiver_tube_height.json';
+import effect_receiver_pipe_height from './examples/effect_receiver_pipe_height.json';
 import effect_azimuth_fresnel_reflector from './examples/effect_azimuth_fresnel_reflector.json';
 import cosine_efficiency_heliostats from './examples/cosine_efficiency_heliostats.json';
 import shadowing_blocking_heliostats from './examples/shadowing_blocking_heliostats.json';
@@ -249,8 +249,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'linear_fresnel_reflectors_two_receivers':
         input = linear_fresnel_reflectors_two_receivers;
         break;
-      case 'effect_receiver_tube_height':
-        input = effect_receiver_tube_height;
+      case 'effect_receiver_pipe_height':
+        input = effect_receiver_pipe_height;
         break;
       case 'effect_azimuth_fresnel_reflector':
         input = effect_azimuth_fresnel_reflector;
@@ -1442,8 +1442,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="linear_fresnel_reflectors" onClick={loadFile}>
             {i18n.t('menu.tutorials.LinearFresnelReflectors', lang)}
           </Menu.Item>
-          <Menu.Item key="effect_receiver_tube_height" onClick={loadFile}>
-            {i18n.t('menu.tutorials.EffectOfReceiverTubeHeightForLinearFresnelReflectors', lang)}
+          <Menu.Item key="effect_receiver_pipe_height" onClick={loadFile}>
+            {i18n.t('menu.tutorials.EffectOfReceiverPipeHeightForLinearFresnelReflectors', lang)}
           </Menu.Item>
           <Menu.Item key="effect_azimuth_fresnel_reflector" onClick={loadFile}>
             {i18n.t('menu.tutorials.EffectOfAzimuthOfLinearFresnelReflectors', lang)}

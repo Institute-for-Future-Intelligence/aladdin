@@ -56,7 +56,7 @@
       "lx": 48,
       "selected": false,
       "parentId": "Ground",
-      "solarReceiver": 2,
+      "solarStructure": 2,
       "solarReceiverHeight": 10,
       "locked": false
     },
@@ -513,7 +513,7 @@
         0
       ],
       "parentId": "Ground",
-      "solarReceiver": 2,
+      "solarStructure": 2,
       "solarReceiverHeight": 20,
       "id": "kyxcYJvhUNP9YHtYNAZTvQ",
       "selected": false

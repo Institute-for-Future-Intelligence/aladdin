@@ -60,7 +60,7 @@
       "textureType": "No Foundation Texture",
       "id": "kxHYpYsUs7XEocuTYAj1Qu",
       "selected": false,
-      "solarReceiver": 1,
+      "solarStructure": 1,
       "locked": false,
       "solarReceiverHeight": 16,
       "solarReceiverApertureWidth": 1

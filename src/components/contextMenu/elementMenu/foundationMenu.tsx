@@ -9,7 +9,7 @@ import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { FoundationTexture, ObjectType, SolarReceiver } from '../../../types';
+import { FoundationTexture, ObjectType, SolarStructure } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 import FoundationColorSelection from './foundationColorSelection';
@@ -44,9 +44,11 @@ export const FoundationMenu = () => {
   const addElement = useStore(Selector.addElement);
   const removeElementById = useStore(Selector.removeElementById);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const updateFoundationSolarReceiverById = useStore(Selector.updateFoundationSolarReceiverById);
+  const updateFoundationSolarStructureById = useStore(Selector.updateFoundationSolarStructureById);
 
-  const [selectedSolarReceiver, setSelectedSolarReceiver] = useState(foundation?.solarReceiver);
+  const [selectedSolarStructure, setSelectedSolarStructure] = useState(
+    foundation?.solarStructure ?? SolarStructure.None,
+  );
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
@@ -682,154 +684,159 @@ export const FoundationMenu = () => {
           {i18n.t('foundationMenu.AddPolygon', lang)}
         </Menu.Item>
 
-        {editable && (counter.fresnelReflectorCount > 0 || counter.heliostatCount > 0) && (
+        {editable && (
           <SubMenu
-            key={'select-solar-receiver'}
-            title={i18n.t('foundationMenu.SelectSolarReceiver', lang)}
+            key={'select-solar-structure'}
+            title={i18n.t('foundationMenu.SelectSolarStructure', lang)}
             style={{ paddingLeft: '24px' }}
           >
             <Radio.Group
-              value={selectedSolarReceiver}
+              value={selectedSolarStructure}
               style={{ paddingLeft: '12px' }}
               onChange={(e) => {
                 if (foundation) {
-                  const oldReceiver = foundation.solarReceiver;
-                  const newReceiver = e.target.value;
+                  const oldValue = foundation.solarStructure;
+                  const newValue = e.target.value;
                   const undoableChange = {
-                    name: 'Select Solar Receiver for Selected Foundation',
+                    name: 'Select Solar Structure for Selected Foundation',
                     timestamp: Date.now(),
-                    oldValue: oldReceiver,
-                    newValue: newReceiver,
+                    oldValue: oldValue,
+                    newValue: newValue,
                     changedElementId: foundation.id,
                     undo: () => {
-                      updateFoundationSolarReceiverById(
+                      updateFoundationSolarStructureById(
                         undoableChange.changedElementId,
-                        undoableChange.oldValue as SolarReceiver,
+                        undoableChange.oldValue as SolarStructure,
                       );
                     },
                     redo: () => {
-                      updateFoundationSolarReceiverById(
+                      updateFoundationSolarStructureById(
                         undoableChange.changedElementId,
-                        undoableChange.newValue as SolarReceiver,
+                        undoableChange.newValue as SolarStructure,
                       );
                     },
                   } as UndoableChange;
                   addUndoable(undoableChange);
-                  updateFoundationSolarReceiverById(foundation.id, newReceiver);
-                  setSelectedSolarReceiver(newReceiver);
+                  updateFoundationSolarStructureById(foundation.id, newValue);
+                  setSelectedSolarStructure(newValue);
                 }
               }}
             >
               <Space direction="vertical">
-                <Radio value={undefined}>{i18n.t('word.None', lang)}</Radio>
-                <Radio value={SolarReceiver.Tube}>
-                  {i18n.t('foundationMenu.ReceiverTubeForFresnelReflectors', lang)}
+                <Radio value={SolarStructure.None}>{i18n.t('word.None', lang)}</Radio>
+                <Radio value={SolarStructure.FocusPipe}>
+                  {i18n.t('foundationMenu.ReceiverPipeForFresnelReflectors', lang)}
                 </Radio>
-                <Radio value={SolarReceiver.Tower}>{i18n.t('foundationMenu.ReceiverTowerForHeliostats', lang)}</Radio>
+                <Radio value={SolarStructure.FocusTower}>
+                  {i18n.t('foundationMenu.ReceiverTowerForHeliostats', lang)}
+                </Radio>
+                <Radio value={SolarStructure.UpdraftTower}>{i18n.t('foundationMenu.SolarUpdraftTower', lang)}</Radio>
               </Space>
             </Radio.Group>
           </SubMenu>
         )}
-        {editable && foundation.solarReceiver && (
-          <SubMenu
-            key={'foundation-solar-receiver-physical-properties'}
-            title={i18n.t('foundationMenu.SolarReceiverPhysicalProperties', lang)}
-            style={{ paddingLeft: '24px' }}
-          >
-            <FoundationSolarReceiverHeightInput
-              dialogVisible={receiverHeightDialogVisible}
-              setDialogVisible={setReceiverHeightDialogVisible}
-            />
-            <Menu.Item
-              key={'foundation-solar-receiver-tube-mount-height'}
-              style={{ paddingLeft: '36px' }}
-              onClick={() => {
-                setApplyCount(0);
-                setReceiverHeightDialogVisible(true);
-              }}
+        {editable &&
+          (foundation.solarStructure === SolarStructure.FocusPipe ||
+            foundation.solarStructure === SolarStructure.FocusTower) && (
+            <SubMenu
+              key={'foundation-solar-receiver-physical-properties'}
+              title={i18n.t('foundationMenu.SolarReceiverPhysicalProperties', lang)}
+              style={{ paddingLeft: '24px' }}
             >
-              {i18n.t('foundationMenu.SolarReceiverHeight', lang)} ...
-            </Menu.Item>
+              <FoundationSolarReceiverHeightInput
+                dialogVisible={receiverHeightDialogVisible}
+                setDialogVisible={setReceiverHeightDialogVisible}
+              />
+              <Menu.Item
+                key={'foundation-solar-receiver-pipe-mount-height'}
+                style={{ paddingLeft: '36px' }}
+                onClick={() => {
+                  setApplyCount(0);
+                  setReceiverHeightDialogVisible(true);
+                }}
+              >
+                {i18n.t('foundationMenu.SolarReceiverHeight', lang)} ...
+              </Menu.Item>
 
-            {foundation.solarReceiver === SolarReceiver.Tube && (
-              <>
-                <FoundationSolarReceiverApertureWidthInput
-                  dialogVisible={receiverApertureDialogVisible}
-                  setDialogVisible={setReceiverApertureDialogVisible}
-                />
-                <Menu.Item
-                  key={'foundation-solar-receiver-tube-aperture-width'}
-                  style={{ paddingLeft: '36px' }}
-                  onClick={() => {
-                    setApplyCount(0);
-                    setReceiverApertureDialogVisible(true);
-                  }}
-                >
-                  {i18n.t('foundationMenu.SolarReceiverApertureWidth', lang)} ...
-                </Menu.Item>
-                <FoundationSolarReceiverPoleNumberInput
-                  dialogVisible={receiverPoleNumberDialogVisible}
-                  setDialogVisible={setReceiverPoleNumberDialogVisible}
-                />
-                <Menu.Item
-                  key={'foundation-solar-receiver-tube-pole-number'}
-                  style={{ paddingLeft: '36px' }}
-                  onClick={() => {
-                    setApplyCount(0);
-                    setReceiverPoleNumberDialogVisible(true);
-                  }}
-                >
-                  {i18n.t('foundationMenu.SolarReceiverTubePoleNumber', lang)} ...
-                </Menu.Item>
-              </>
-            )}
+              {foundation.solarStructure === SolarStructure.FocusPipe && (
+                <>
+                  <FoundationSolarReceiverApertureWidthInput
+                    dialogVisible={receiverApertureDialogVisible}
+                    setDialogVisible={setReceiverApertureDialogVisible}
+                  />
+                  <Menu.Item
+                    key={'foundation-solar-receiver-pipe-aperture-width'}
+                    style={{ paddingLeft: '36px' }}
+                    onClick={() => {
+                      setApplyCount(0);
+                      setReceiverApertureDialogVisible(true);
+                    }}
+                  >
+                    {i18n.t('foundationMenu.SolarReceiverApertureWidth', lang)} ...
+                  </Menu.Item>
+                  <FoundationSolarReceiverPoleNumberInput
+                    dialogVisible={receiverPoleNumberDialogVisible}
+                    setDialogVisible={setReceiverPoleNumberDialogVisible}
+                  />
+                  <Menu.Item
+                    key={'foundation-solar-receiver-pipe-pole-number'}
+                    style={{ paddingLeft: '36px' }}
+                    onClick={() => {
+                      setApplyCount(0);
+                      setReceiverPoleNumberDialogVisible(true);
+                    }}
+                  >
+                    {i18n.t('foundationMenu.SolarReceiverPipePoleNumber', lang)} ...
+                  </Menu.Item>
+                </>
+              )}
 
-            <FoundationSolarReceiverAbsorptanceInput
-              dialogVisible={receiverAbsorptanceDialogVisible}
-              setDialogVisible={setReceiverAbsorptanceDialogVisible}
-            />
-            <Menu.Item
-              key={'foundation-solar-receiver-tube-absorptance'}
-              style={{ paddingLeft: '36px' }}
-              onClick={() => {
-                setApplyCount(0);
-                setReceiverAbsorptanceDialogVisible(true);
-              }}
-            >
-              {i18n.t('foundationMenu.SolarReceiverAbsorptance', lang)} ...
-            </Menu.Item>
+              <FoundationSolarReceiverAbsorptanceInput
+                dialogVisible={receiverAbsorptanceDialogVisible}
+                setDialogVisible={setReceiverAbsorptanceDialogVisible}
+              />
+              <Menu.Item
+                key={'foundation-solar-receiver-pipe-absorptance'}
+                style={{ paddingLeft: '36px' }}
+                onClick={() => {
+                  setApplyCount(0);
+                  setReceiverAbsorptanceDialogVisible(true);
+                }}
+              >
+                {i18n.t('foundationMenu.SolarReceiverAbsorptance', lang)} ...
+              </Menu.Item>
 
-            <FoundationSolarReceiverOpticalEfficiencyInput
-              dialogVisible={receiverOpticalEfficiencyDialogVisible}
-              setDialogVisible={setReceiverOpticalEfficiencyDialogVisible}
-            />
-            <Menu.Item
-              key={'foundation-solar-receiver-optical-efficiency'}
-              style={{ paddingLeft: '36px' }}
-              onClick={() => {
-                setApplyCount(0);
-                setReceiverOpticalEfficiencyDialogVisible(true);
-              }}
-            >
-              {i18n.t('foundationMenu.SolarReceiverOpticalEfficiency', lang)} ...
-            </Menu.Item>
+              <FoundationSolarReceiverOpticalEfficiencyInput
+                dialogVisible={receiverOpticalEfficiencyDialogVisible}
+                setDialogVisible={setReceiverOpticalEfficiencyDialogVisible}
+              />
+              <Menu.Item
+                key={'foundation-solar-receiver-optical-efficiency'}
+                style={{ paddingLeft: '36px' }}
+                onClick={() => {
+                  setApplyCount(0);
+                  setReceiverOpticalEfficiencyDialogVisible(true);
+                }}
+              >
+                {i18n.t('foundationMenu.SolarReceiverOpticalEfficiency', lang)} ...
+              </Menu.Item>
 
-            <FoundationSolarReceiverThermalEfficiencyInput
-              dialogVisible={receiverThermalEfficiencyDialogVisible}
-              setDialogVisible={setReceiverThermalEfficiencyDialogVisible}
-            />
-            <Menu.Item
-              key={'foundation-solar-receiver-thermal-efficiency'}
-              style={{ paddingLeft: '36px' }}
-              onClick={() => {
-                setApplyCount(0);
-                setReceiverThermalEfficiencyDialogVisible(true);
-              }}
-            >
-              {i18n.t('foundationMenu.SolarReceiverThermalEfficiency', lang)} ...
-            </Menu.Item>
-          </SubMenu>
-        )}
+              <FoundationSolarReceiverThermalEfficiencyInput
+                dialogVisible={receiverThermalEfficiencyDialogVisible}
+                setDialogVisible={setReceiverThermalEfficiencyDialogVisible}
+              />
+              <Menu.Item
+                key={'foundation-solar-receiver-thermal-efficiency'}
+                style={{ paddingLeft: '36px' }}
+                onClick={() => {
+                  setApplyCount(0);
+                  setReceiverThermalEfficiencyDialogVisible(true);
+                }}
+              >
+                {i18n.t('foundationMenu.SolarReceiverThermalEfficiency', lang)} ...
+              </Menu.Item>
+            </SubMenu>
+          )}
       </Menu.ItemGroup>
     )
   );

@@ -13,7 +13,7 @@ import { Euler, Intersection, Object3D, Quaternion, Raycaster, Vector2, Vector3 
 import { useThree } from '@react-three/fiber';
 import { useStore } from '../stores/common';
 import * as Selector from 'src/stores/selector';
-import { ObjectType, TrackerType } from '../types';
+import { ObjectType, SolarStructure, TrackerType } from '../types';
 import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
 import {
@@ -795,13 +795,14 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const cosRot = zRotZero ? 1 : Math.cos(zRot);
     const sinRot = zRotZero ? 0 : Math.sin(zRot);
     // convert the receiver's coordinates into those relative to the center of this reflector
-    const receiverCenter = foundation.solarReceiver
-      ? new Vector3(
-          (foundation.cx - center.x) * cosRot,
-          (foundation.cy - center.y) * sinRot,
-          foundation.cz - center.z + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 10),
-        )
-      : undefined;
+    const receiverCenter =
+      foundation.solarStructure === SolarStructure.FocusPipe
+        ? new Vector3(
+            (foundation.cx - center.x) * cosRot,
+            (foundation.cy - center.y) * sinRot,
+            foundation.cz - center.z + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 10),
+          )
+        : undefined;
     // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
     const rotationAxis = new Vector3(sinRot, cosRot, 0);
     const shiftedReceiverCenter = new Vector3();
@@ -810,7 +811,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     if (receiverCenter) {
       // the reflector moves only when there is a receiver
       shiftedReceiverCenter.set(receiverCenter.x, receiverCenter.y, receiverCenter.z);
-      // how much the reflected light should shift in the direction of the receiver tube?
+      // how much the reflected light should shift in the direction of the receiver pipe?
       const shift =
         (-receiverCenter.z * (sunDirection.y * rotationAxis.y + sunDirection.x * rotationAxis.x)) / sunDirection.z;
       shiftedReceiverCenter.x += shift * rotationAxis.x;
@@ -907,13 +908,14 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     }
     const rot = parent.rotation[2];
     // convert the receiver's coordinates into those relative to the center of this reflector
-    const receiverCenter = foundation.solarReceiver
-      ? new Vector3(
-          foundation.cx - center.x,
-          foundation.cy - center.y,
-          foundation.cz - center.z + (foundation.solarReceiverHeight ?? 20),
-        )
-      : undefined;
+    const receiverCenter =
+      foundation.solarStructure === SolarStructure.FocusTower
+        ? new Vector3(
+            foundation.cx - center.x,
+            foundation.cy - center.y,
+            foundation.cz - center.z + (foundation.solarReceiverHeight ?? 20),
+          )
+        : undefined;
     let heliostatToReceiver;
     let normalEuler;
     if (receiverCenter) {

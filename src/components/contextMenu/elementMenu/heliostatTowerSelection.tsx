@@ -8,7 +8,7 @@ import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { HeliostatModel } from '../../../models/HeliostatModel';
-import { ObjectType, Scope, SolarReceiver } from '../../../types';
+import { ObjectType, Scope, SolarStructure } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
@@ -50,7 +50,7 @@ const HeliostatTowerSelection = ({
     for (const e of elements) {
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
-        if (f.solarReceiver === SolarReceiver.Tower) {
+        if (f.solarStructure === SolarStructure.FocusTower) {
           towerIds.push(f.id);
         }
       }
@@ -68,7 +68,7 @@ const HeliostatTowerSelection = ({
         if (parent) {
           if (
             parent.type === ObjectType.Foundation &&
-            (parent as FoundationModel).solarReceiver === SolarReceiver.Tower
+            (parent as FoundationModel).solarStructure === SolarStructure.FocusTower
           ) {
             setSelectedTowerId(parent.id);
           }

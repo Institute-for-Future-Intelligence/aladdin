@@ -199,7 +199,7 @@ const FresnelReflector = ({
     if (receiver) {
       if (receiver.type === ObjectType.Foundation) {
         const foundation = receiver as FoundationModel;
-        if (foundation.solarReceiver) {
+        if (foundation.solarStructure) {
           // convert the receiver's coordinates into those relative to the center of this reflector
           return new Vector3(
             (foundation.cx - cx) * (rot ? Math.cos(rot) : 1),
@@ -212,7 +212,7 @@ const FresnelReflector = ({
       if (parent) {
         if (parent.type === ObjectType.Foundation) {
           const foundation = parent as FoundationModel;
-          if (foundation.solarReceiver) {
+          if (foundation.solarStructure) {
             // convert the receiver's coordinates into those relative to the center of this reflector
             return new Vector3(
               (foundation.cx - cx) * (rot ? Math.cos(rot) : 1),
@@ -233,7 +233,7 @@ const FresnelReflector = ({
       // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
       const rotationAxis = rot ? new Vector3(Math.sin(rot), Math.cos(rot), 0) : new Vector3(0, 1, 0);
       shiftedReceiverCenter.current.set(receiverCenter.x, receiverCenter.y, receiverCenter.z);
-      // how much the reflected light should shift in the direction of the receiver tube?
+      // how much the reflected light should shift in the direction of the receiver pipe?
       const shift =
         sunDirection.z < ZERO_TOLERANCE
           ? 0

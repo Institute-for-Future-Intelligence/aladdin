@@ -3,7 +3,7 @@
  */
 
 import { Undoable } from './Undoable';
-import { CuboidTexture, LineStyle, ParabolicDishStructureType, SolarReceiver } from '../types';
+import { CuboidTexture, LineStyle, ParabolicDishStructureType, SolarStructure } from '../types';
 import { Point2 } from '../models/Point2';
 import { Vector3 } from 'three';
 
@@ -17,7 +17,7 @@ export interface UndoableChange extends Undoable {
     | Point2[]
     | LineStyle
     | ParabolicDishStructureType
-    | SolarReceiver;
+    | SolarStructure;
   newValue:
     | boolean
     | string
@@ -27,7 +27,7 @@ export interface UndoableChange extends Undoable {
     | Point2[]
     | LineStyle
     | ParabolicDishStructureType
-    | SolarReceiver;
+    | SolarStructure;
   changedElementId: string;
   changedSideIndex?: number;
   oldChildrenParentIdMap?: Map<string, string>;

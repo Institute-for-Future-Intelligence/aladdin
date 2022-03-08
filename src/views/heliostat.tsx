@@ -161,7 +161,7 @@ const Heliostat = ({
     if (tower) {
       if (tower.type === ObjectType.Foundation) {
         const foundation = tower as FoundationModel;
-        if (foundation.solarReceiver) {
+        if (foundation.solarStructure) {
           // convert the receiver's coordinates into those relative to the center of this heliostat
           return new Vector3(
             foundation.cx - cx,
@@ -174,7 +174,7 @@ const Heliostat = ({
       if (parent) {
         if (parent.type === ObjectType.Foundation) {
           const foundation = parent as FoundationModel;
-          if (foundation.solarReceiver) {
+          if (foundation.solarStructure) {
             // convert the receiver's coordinates into those relative to the center of this heliostat
             return new Vector3(
               foundation.cx - cx,

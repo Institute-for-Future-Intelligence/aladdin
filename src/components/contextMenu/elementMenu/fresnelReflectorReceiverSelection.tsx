@@ -8,7 +8,7 @@ import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { FresnelReflectorModel } from '../../../models/FresnelReflectorModel';
-import { ObjectType, Scope, SolarReceiver } from '../../../types';
+import { ObjectType, Scope, SolarStructure } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
@@ -45,17 +45,17 @@ const FresnelReflectorReceiverSelection = ({
 
   const lang = { lng: language };
 
-  const tubes = useMemo(() => {
-    const tubeIds: string[] = [];
+  const pipes = useMemo(() => {
+    const pipeIds: string[] = [];
     for (const e of elements) {
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
-        if (f.solarReceiver === SolarReceiver.Tube) {
-          tubeIds.push(f.id);
+        if (f.solarStructure === SolarStructure.FocusPipe) {
+          pipeIds.push(f.id);
         }
       }
     }
-    return tubeIds;
+    return pipeIds;
   }, [elements]);
 
   useEffect(() => {
@@ -68,7 +68,7 @@ const FresnelReflectorReceiverSelection = ({
         if (parent) {
           if (
             parent.type === ObjectType.Foundation &&
-            (parent as FoundationModel).solarReceiver === SolarReceiver.Tube
+            (parent as FoundationModel).solarStructure === SolarStructure.FocusPipe
           ) {
             setSelectedReceiverId(parent.id);
           }
@@ -285,7 +285,7 @@ const FresnelReflectorReceiverSelection = ({
                 setSelectedReceiverId(value);
               }}
             >
-              {tubes.map((s, i) => {
+              {pipes.map((s, i) => {
                 return (
                   <Option key={i} value={s}>
                     {i18n.t('fresnelReflectorMenu.Receiver', lang) + ' ' + (i + 1)}

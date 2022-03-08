@@ -7,7 +7,7 @@ import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } 
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { ObjectType, Scope } from 'src/types';
+import { ObjectType, Scope, SolarStructure } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
@@ -32,7 +32,7 @@ const FoundationSolarReceiverPoleNumberInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputPoleNumber, setInputPoleNumber] = useState<number>(foundation?.solarReceiverTubePoleNumber ?? 5);
+  const [inputPoleNumber, setInputPoleNumber] = useState<number>(foundation?.solarReceiverPipePoleNumber ?? 5);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -42,7 +42,7 @@ const FoundationSolarReceiverPoleNumberInput = ({
 
   useEffect(() => {
     if (foundation) {
-      setInputPoleNumber(foundation.solarReceiverTubePoleNumber ?? 5);
+      setInputPoleNumber(foundation.solarReceiverPipePoleNumber ?? 5);
     }
   }, [foundation]);
 
@@ -57,8 +57,8 @@ const FoundationSolarReceiverPoleNumberInput = ({
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarReceiver) {
-              if (f.solarReceiverTubePoleNumber === undefined || f.solarReceiverTubePoleNumber !== value) {
+            if (f.solarStructure === SolarStructure.FocusPipe || f.solarStructure === SolarStructure.FocusTower) {
+              if (f.solarReceiverPipePoleNumber === undefined || f.solarReceiverPipePoleNumber !== value) {
                 return true;
               }
             }
@@ -67,8 +67,8 @@ const FoundationSolarReceiverPoleNumberInput = ({
         break;
       default:
         if (
-          foundation?.solarReceiverTubePoleNumber === undefined ||
-          foundation?.solarReceiverTubePoleNumber !== value
+          foundation?.solarReceiverPipePoleNumber === undefined ||
+          foundation?.solarReceiverPipePoleNumber !== value
         ) {
           return true;
         }
@@ -84,11 +84,11 @@ const FoundationSolarReceiverPoleNumberInput = ({
         const oldValuesAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
-            oldValuesAll.set(elem.id, (elem as FoundationModel).solarReceiverTubePoleNumber ?? 5);
+            oldValuesAll.set(elem.id, (elem as FoundationModel).solarReceiverPipePoleNumber ?? 5);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Solar Receiver Tube Pole Number for All Foundations',
+          name: 'Set Solar Receiver Pipe Pole Number for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -107,10 +107,10 @@ const FoundationSolarReceiverPoleNumberInput = ({
         break;
       default:
         if (foundation) {
-          const oldValue = foundation.solarReceiverTubePoleNumber ?? 5;
+          const oldValue = foundation.solarReceiverPipePoleNumber ?? 5;
           updateById(foundation.id, value);
           const undoableChange = {
-            name: 'Set Solar Receiver Tube Pole Number on Foundation',
+            name: 'Set Solar Receiver Pipe Pole Number on Foundation',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
@@ -143,7 +143,7 @@ const FoundationSolarReceiverPoleNumberInput = ({
   };
 
   const close = () => {
-    setInputPoleNumber(foundation?.solarReceiverTubePoleNumber ?? 5);
+    setInputPoleNumber(foundation?.solarReceiverPipePoleNumber ?? 5);
     setDialogVisible(false);
   };
 
@@ -169,7 +169,7 @@ const FoundationSolarReceiverPoleNumberInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('foundationMenu.SolarReceiverTubePoleNumber', lang)}
+            {i18n.t('foundationMenu.SolarReceiverPipePoleNumber', lang)}
           </div>
         }
         footer={[

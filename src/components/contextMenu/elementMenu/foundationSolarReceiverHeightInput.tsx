@@ -7,7 +7,7 @@ import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } 
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { ObjectType, Scope, SolarReceiver } from 'src/types';
+import { ObjectType, Scope, SolarStructure } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
@@ -34,7 +34,7 @@ const FoundationSolarReceiverHeightInput = ({
   const revertApply = useStore(Selector.revertApply);
 
   const [inputReceiverHeight, setInputReceiverHeight] = useState<number>(
-    foundation?.solarReceiverHeight ?? (foundation?.solarReceiver === SolarReceiver.Tower ? 20 : 10),
+    foundation?.solarReceiverHeight ?? (foundation?.solarStructure === SolarStructure.FocusTower ? 20 : 10),
   );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -46,7 +46,7 @@ const FoundationSolarReceiverHeightInput = ({
   useEffect(() => {
     if (foundation) {
       setInputReceiverHeight(
-        foundation.solarReceiverHeight ?? (foundation.solarReceiver === SolarReceiver.Tube ? 10 : 20),
+        foundation.solarReceiverHeight ?? (foundation.solarStructure === SolarStructure.FocusPipe ? 10 : 20),
       );
     }
   }, [foundation]);
@@ -62,7 +62,7 @@ const FoundationSolarReceiverHeightInput = ({
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarReceiver) {
+            if (f.solarStructure === SolarStructure.FocusPipe || f.solarStructure === SolarStructure.FocusTower) {
               if (
                 f.solarReceiverHeight === undefined ||
                 Math.abs(f.solarReceiverHeight - receiverHeight) > ZERO_TOLERANCE

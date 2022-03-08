@@ -7,7 +7,7 @@ import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } 
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { ObjectType, Scope } from 'src/types';
+import { ObjectType, Scope, SolarStructure } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
@@ -60,7 +60,7 @@ const FoundationSolarReceiverAbsorptanceInput = ({
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarReceiver) {
+            if (f.solarStructure === SolarStructure.FocusPipe || f.solarStructure === SolarStructure.FocusTower) {
               if (
                 f.solarReceiverAbsorptance === undefined ||
                 Math.abs(f.solarReceiverAbsorptance - absorptance) > ZERO_TOLERANCE

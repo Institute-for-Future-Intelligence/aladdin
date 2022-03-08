@@ -8,7 +8,7 @@ import { Euler, Intersection, Object3D, Raycaster, Vector2, Vector3 } from 'thre
 import { useThree } from '@react-three/fiber';
 import { useStore } from '../stores/common';
 import * as Selector from 'src/stores/selector';
-import { DatumEntry, ObjectType } from '../types';
+import { DatumEntry, ObjectType, SolarStructure } from '../types';
 import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
 import { HALF_PI, MONTHS, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
@@ -449,17 +449,15 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const rot = parent.rotation[2];
-    // we do not handle relative azimuth yet, so this is just a placeholder
-    const zRot = rot + heliostat.relativeAzimuth;
-    const zRotZero = Util.isZero(zRot);
     // convert the receiver's coordinates into those relative to the center of this heliostat
-    const receiverCenter = foundation.solarReceiver
-      ? new Vector3(
-          foundation.cx - center.x,
-          foundation.cy - center.y,
-          foundation.cz - center.z + (foundation.solarReceiverHeight ?? 10),
-        )
-      : undefined;
+    const receiverCenter =
+      foundation.solarStructure === SolarStructure.FocusTower
+        ? new Vector3(
+            foundation.cx - center.x,
+            foundation.cy - center.y,
+            foundation.cz - center.z + (foundation.solarReceiverHeight ?? 10),
+          )
+        : undefined;
     let heliostatToReceiver;
     let normalEuler;
     if (receiverCenter) {

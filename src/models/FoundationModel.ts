@@ -3,12 +3,14 @@
  */
 
 import { ElementModel } from './ElementModel';
-import { FoundationTexture, SolarReceiver } from '../types';
+import { FoundationTexture, SolarStructure } from '../types';
 
 export interface FoundationModel extends ElementModel {
   textureType: FoundationTexture;
 
-  solarReceiver?: SolarReceiver;
+  solarStructure?: SolarStructure;
+
+  // solar receiver (CSP pipe or tower)
   solarReceiverAbsorptance?: number; // the percentage of energy absorbed by the receiver
   solarReceiverOpticalEfficiency?: number;
   solarReceiverThermalEfficiency?: number;
@@ -20,7 +22,7 @@ export interface FoundationModel extends ElementModel {
   solarTowerCentralReceiverRadius?: number;
   solarTowerCentralReceiverHeight?: number;
 
-  // tube receiver for Fresnel reflectors
-  solarReceiverTubeRelativeLength?: number;
-  solarReceiverTubePoleNumber?: number;
+  // pipe receiver for Fresnel reflectors
+  solarReceiverPipeRelativeLength?: number;
+  solarReceiverPipePoleNumber?: number;
 }

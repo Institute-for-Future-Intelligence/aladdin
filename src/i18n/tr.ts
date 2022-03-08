@@ -292,8 +292,8 @@ export const i18n_tr = {
         FocusSunlightWithParabolicDish: 'Focus Sunlight with a Parabolic Dish',
         LinearFresnelReflectors: 'Linear Fresnel Reflectors',
         LinearFresnelReflectorsWithTwoReceivers: 'Linear Fresnel Reflectors with Two Receivers',
-        EffectOfReceiverTubeHeightForLinearFresnelReflectors:
-          'Effect of Receiver Tube Height for Linear Fresnel Reflectors',
+        EffectOfReceiverPipeHeightForLinearFresnelReflectors:
+          'Effect of Receiver Pipe Height for Linear Fresnel Reflectors',
         EffectOfAzimuthOfLinearFresnelReflectors: 'Effect of Azimuth of Linear Fresnel Reflectors',
         CosineEfficiencyOfHeliostats: 'Cosine Efficiency of Heliostats',
         ShadowingAndBlockingOfHeliostats: 'Shadowing and Blocking of Heliostats',
@@ -407,16 +407,17 @@ export const i18n_tr = {
       AllConnectedFoundations: 'Tüm Baðlantýlý Temeller',
       AllFoundations: 'Tüm Temeller',
       AddPolygon: 'Poligon Ekle',
-      SelectSolarReceiver: 'Select Solar Receiver',
-      ReceiverTubeForFresnelReflectors: 'Receiver Tube for Fresnel Reflectors',
+      SelectSolarStructure: 'Select Solar Structure',
+      ReceiverPipeForFresnelReflectors: 'Receiver Pipe for Fresnel Reflectors',
       ReceiverTowerForHeliostats: 'Receiver Tower for Heliostats',
       SolarReceiverPhysicalProperties: 'Physical Properties of Solar Receiver',
       SolarReceiverHeight: 'Height of Solar Receiver',
       SolarReceiverApertureWidth: 'Aperture Width of Solar Receiver',
-      SolarReceiverTubePoleNumber: 'Pole Number for Solar Receiver Tube',
+      SolarReceiverPipePoleNumber: 'Pole Number for Solar Receiver Pipe',
       SolarReceiverAbsorptance: 'Absorptance of Solar Receiver',
       SolarReceiverOpticalEfficiency: 'Optical Efficiency of Solar Receiver',
       SolarReceiverThermalEfficiency: 'Thermal Efficiency of Solar Receiver',
+      SolarUpdraftTower: 'Solar Updraft Tower',
     },
 
     cuboidMenu: {

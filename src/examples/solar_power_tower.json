@@ -1696,7 +1696,7 @@
       "parentId": "Ground",
       "selected": false,
       "id": "eskWrngRsrfsVxitmEFwUG",
-      "solarReceiver": 2,
+      "solarStructure": 2,
       "solarReceiverHeight": 40,
       "locked": true
     },

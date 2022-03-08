@@ -123,9 +123,11 @@ export enum ParabolicDishStructureType {
   Quadrupod = 3,
 }
 
-export enum SolarReceiver {
-  Tube = 1,
-  Tower = 2,
+export enum SolarStructure {
+  None = 0,
+  FocusPipe = 1,
+  FocusTower = 2,
+  UpdraftTower = 3,
 }
 
 export enum ActionType {

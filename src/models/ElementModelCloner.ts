@@ -4,7 +4,7 @@
 
 import short from 'short-uuid';
 import { HumanModel } from './HumanModel';
-import { CuboidTexture, ObjectType, SolarReceiver } from '../types';
+import { CuboidTexture, ObjectType, SolarStructure } from '../types';
 import { TreeModel } from './TreeModel';
 import { SensorModel } from './SensorModel';
 import { FoundationModel } from './FoundationModel';
@@ -440,11 +440,11 @@ export class ElementModelCloner {
       parentId: foundation.parentId,
       color: foundation.color,
       textureType: foundation.textureType,
-      solarReceiver: foundation.solarReceiver,
+      solarStructure: foundation.solarStructure,
       solarReceiverApertureWidth: foundation.solarReceiverApertureWidth,
-      solarReceiverTubeRelativeLength: foundation.solarReceiverTubeRelativeLength,
+      solarReceiverPipeRelativeLength: foundation.solarReceiverPipeRelativeLength,
       solarReceiverHeight: foundation.solarReceiverHeight,
-      solarReceiverTubePoleNumber: foundation.solarReceiverTubePoleNumber,
+      solarReceiverPipePoleNumber: foundation.solarReceiverPipePoleNumber,
       solarReceiverAbsorptance: foundation.solarReceiverAbsorptance,
       solarReceiverOpticalEfficiency: foundation.solarReceiverOpticalEfficiency,
       solarReceiverThermalEfficiency: foundation.solarReceiverThermalEfficiency,
