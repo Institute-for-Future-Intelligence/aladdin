@@ -238,6 +238,18 @@ export const updateFoundationSolarReceiverThermalEfficiencyForAll = (state: Comm
 export const updateFoundationSolarReceiverPipeRelativeLengthById = (state: CommonStoreState) =>
   state.updateFoundationSolarReceiverPipeRelativeLengthById;
 
+export const updateFoundationSolarChimneyHeightById = (state: CommonStoreState) =>
+  state.updateFoundationSolarChimneyHeightById;
+
+export const updateFoundationSolarChimneyHeightForAll = (state: CommonStoreState) =>
+  state.updateFoundationSolarChimneyHeightForAll;
+
+export const updateFoundationSolarChimneyRadiusById = (state: CommonStoreState) =>
+  state.updateFoundationSolarChimneyRadiusById;
+
+export const updateFoundationSolarChimneyRadiusForAll = (state: CommonStoreState) =>
+  state.updateFoundationSolarChimneyRadiusForAll;
+
 export const updateFoundationTextureById = (state: CommonStoreState) => state.updateFoundationTextureById;
 
 export const updateFoundationTextureForAll = (state: CommonStoreState) => state.updateFoundationTextureForAll;

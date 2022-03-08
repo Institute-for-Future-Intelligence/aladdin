@@ -25,4 +25,10 @@ export interface FoundationModel extends ElementModel {
   // pipe receiver for Fresnel reflectors
   solarReceiverPipeRelativeLength?: number;
   solarReceiverPipePoleNumber?: number;
+
+  // solar updraft tower
+  solarUpdraftTowerChimneyHeight?: number;
+  solarUpdraftTowerChimneyRadius?: number;
+  solarUpdraftTowerCollectorHeight?: number;
+  solarUpdraftTowerCollectorRadius?: number;
 }

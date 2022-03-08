@@ -30,6 +30,8 @@ import FoundationSolarReceiverOpticalEfficiencyInput from './foundationSolarRece
 import FoundationSolarReceiverThermalEfficiencyInput from './foundationSolarReceiverThermalEfficiencyInput';
 import FoundationSolarReceiverApertureWidthInput from './foundationSolarReceiverApertureWidthInput';
 import FoundationSolarReceiverPoleNumberInput from './foundationSolarReceiverPoleNumberInput';
+import FoundationSolarUpdraftTowerChimneyHeightInput from './foundationSolarUpdraftTowerChimneyHeightInput';
+import FoundationSolarUpdraftTowerChimneyRadiusInput from './foundationSolarUpdraftTowerChimneyRadiusInput';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -61,6 +63,8 @@ export const FoundationMenu = () => {
   const [receiverAbsorptanceDialogVisible, setReceiverAbsorptanceDialogVisible] = useState(false);
   const [receiverOpticalEfficiencyDialogVisible, setReceiverOpticalEfficiencyDialogVisible] = useState(false);
   const [receiverThermalEfficiencyDialogVisible, setReceiverThermalEfficiencyDialogVisible] = useState(false);
+  const [chimneyHeightDialogVisible, setChimneyHeightDialogVisible] = useState(false);
+  const [chimneyRadiusDialogVisible, setChimneyRadiusDialogVisible] = useState(false);
 
   const counter = foundation ? countAllOffspringsByType(foundation.id) : new ElementCounter();
   const lang = { lng: language };
@@ -837,6 +841,44 @@ export const FoundationMenu = () => {
               </Menu.Item>
             </SubMenu>
           )}
+
+        {editable && foundation.solarStructure === SolarStructure.UpdraftTower && (
+          <SubMenu
+            key={'foundation-solar-update-tower-physical-properties'}
+            title={i18n.t('foundationMenu.SolarUpdraftTowerPhysicalProperties', lang)}
+            style={{ paddingLeft: '24px' }}
+          >
+            <FoundationSolarUpdraftTowerChimneyHeightInput
+              dialogVisible={chimneyHeightDialogVisible}
+              setDialogVisible={setChimneyHeightDialogVisible}
+            />
+            <Menu.Item
+              key={'foundation-solar-updraft-tower-chimney-height'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setChimneyHeightDialogVisible(true);
+              }}
+            >
+              {i18n.t('foundationMenu.SolarUpdraftTowerChimneyHeight', lang)} ...
+            </Menu.Item>
+
+            <FoundationSolarUpdraftTowerChimneyRadiusInput
+              dialogVisible={chimneyRadiusDialogVisible}
+              setDialogVisible={setChimneyRadiusDialogVisible}
+            />
+            <Menu.Item
+              key={'foundation-solar-updraft-tower-chimney-radius'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setChimneyRadiusDialogVisible(true);
+              }}
+            >
+              {i18n.t('foundationMenu.SolarUpdraftTowerChimneyRadius', lang)} ...
+            </Menu.Item>
+          </SubMenu>
+        )}
       </Menu.ItemGroup>
     )
   );

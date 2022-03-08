@@ -290,6 +290,10 @@ export interface CommonStoreState {
   updateFoundationSolarReceiverOpticalEfficiencyForAll: (efficiency: number) => void;
   updateFoundationSolarReceiverThermalEfficiencyById: (id: string, efficiency: number) => void;
   updateFoundationSolarReceiverThermalEfficiencyForAll: (efficiency: number) => void;
+  updateFoundationSolarChimneyHeightById: (id: string, height: number) => void;
+  updateFoundationSolarChimneyHeightForAll: (height: number) => void;
+  updateFoundationSolarChimneyRadiusById: (id: string, radius: number) => void;
+  updateFoundationSolarChimneyRadiusForAll: (radius: number) => void;
 
   // for cuboids
   cuboidActionScope: Scope;
@@ -1843,7 +1847,10 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  (e as FoundationModel).solarReceiverPipeRelativeLength = relativeLength;
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.FocusPipe) {
+                    f.solarReceiverPipeRelativeLength = relativeLength;
+                  }
                   break;
                 }
               }
@@ -1853,7 +1860,10 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  (e as FoundationModel).solarReceiverApertureWidth = apertureWidth;
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.FocusPipe) {
+                    f.solarReceiverApertureWidth = apertureWidth;
+                  }
                   break;
                 }
               }
@@ -1864,7 +1874,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && !e.locked) {
                   const f = e as FoundationModel;
-                  if (f.solarStructure) {
+                  if (f.solarStructure === SolarStructure.FocusPipe) {
                     f.solarReceiverApertureWidth = apertureWidth;
                   }
                 }
@@ -1875,7 +1885,10 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  (e as FoundationModel).solarReceiverPipePoleNumber = poleNumber;
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.FocusPipe) {
+                    f.solarReceiverPipePoleNumber = poleNumber;
+                  }
                   break;
                 }
               }
@@ -1886,7 +1899,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && !e.locked) {
                   const f = e as FoundationModel;
-                  if (f.solarStructure) {
+                  if (f.solarStructure === SolarStructure.FocusPipe) {
                     f.solarReceiverPipePoleNumber = poleNumber;
                   }
                 }
@@ -1898,7 +1911,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
                   const f = e as FoundationModel;
-                  if (f.solarStructure) {
+                  if (f.solarStructure === SolarStructure.FocusPipe || f.solarStructure === SolarStructure.FocusTower) {
                     f.solarReceiverHeight = height;
                   }
                   break;
@@ -1911,7 +1924,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && !e.locked) {
                   const f = e as FoundationModel;
-                  if (f.solarStructure) {
+                  if (f.solarStructure === SolarStructure.FocusPipe || f.solarStructure === SolarStructure.FocusTower) {
                     f.solarReceiverHeight = height;
                   }
                 }
@@ -1923,7 +1936,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
                   const f = e as FoundationModel;
-                  if (f.solarStructure) {
+                  if (f.solarStructure === SolarStructure.FocusPipe || f.solarStructure === SolarStructure.FocusTower) {
                     f.solarReceiverAbsorptance = absorptance;
                   }
                   break;
@@ -1936,7 +1949,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && !e.locked) {
                   const f = e as FoundationModel;
-                  if (f.solarStructure) {
+                  if (f.solarStructure === SolarStructure.FocusPipe || f.solarStructure === SolarStructure.FocusTower) {
                     f.solarReceiverAbsorptance = absorptance;
                   }
                 }
@@ -1948,7 +1961,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
                   const f = e as FoundationModel;
-                  if (f.solarStructure) {
+                  if (f.solarStructure === SolarStructure.FocusPipe || f.solarStructure === SolarStructure.FocusTower) {
                     f.solarReceiverOpticalEfficiency = efficiency;
                   }
                   break;
@@ -1961,7 +1974,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && !e.locked) {
                   const f = e as FoundationModel;
-                  if (f.solarStructure) {
+                  if (f.solarStructure === SolarStructure.FocusPipe || f.solarStructure === SolarStructure.FocusTower) {
                     f.solarReceiverOpticalEfficiency = efficiency;
                   }
                 }
@@ -1973,7 +1986,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
                   const f = e as FoundationModel;
-                  if (f.solarStructure) {
+                  if (f.solarStructure === SolarStructure.FocusPipe || f.solarStructure === SolarStructure.FocusTower) {
                     f.solarReceiverThermalEfficiency = efficiency;
                   }
                   break;
@@ -1986,8 +1999,58 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && !e.locked) {
                   const f = e as FoundationModel;
-                  if (f.solarStructure) {
+                  if (f.solarStructure === SolarStructure.FocusPipe || f.solarStructure === SolarStructure.FocusTower) {
                     f.solarReceiverThermalEfficiency = efficiency;
+                  }
+                }
+              }
+            });
+          },
+          updateFoundationSolarChimneyHeightById(id, height) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    f.solarUpdraftTowerChimneyHeight = height;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateFoundationSolarChimneyHeightForAll(height) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    f.solarUpdraftTowerChimneyHeight = height;
+                  }
+                }
+              }
+            });
+          },
+          updateFoundationSolarChimneyRadiusById(id, radius) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    f.solarUpdraftTowerChimneyRadius = radius;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateFoundationSolarChimneyRadiusForAll(radius) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    f.solarUpdraftTowerChimneyRadius = radius;
                   }
                 }
               }

@@ -405,6 +405,9 @@ export const i18n_zh_tw = {
       SolarReceiverOpticalEfficiency: '太陽能吸收器的光效率',
       SolarReceiverThermalEfficiency: '太陽能吸收器的熱效率',
       SolarUpdraftTower: '太陽能上升氣流塔',
+      SolarUpdraftTowerPhysicalProperties: '太陽能上升氣流塔的物理性質',
+      SolarUpdraftTowerChimneyHeight: '太陽能上升氣流塔煙囪的高度',
+      SolarUpdraftTowerChimneyRadius: '太陽能上升氣流塔煙囪的半徑',
     },
 
     cuboidMenu: {

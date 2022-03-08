@@ -417,6 +417,9 @@ export const i18n_es = {
       SolarReceiverOpticalEfficiency: 'Optical Efficiency of Solar Receiver',
       SolarReceiverThermalEfficiency: 'Thermal Efficiency of Solar Receiver',
       SolarUpdraftTower: 'Solar Updraft Tower',
+      SolarUpdraftTowerPhysicalProperties: 'Physical Properties of Solar Updraft Tower',
+      SolarUpdraftTowerChimneyHeight: 'Solar Updraft Tower Chimney Height',
+      SolarUpdraftTowerChimneyRadius: 'Solar Updraft Tower Chimney Radius',
     },
 
     cuboidMenu: {

@@ -13,12 +13,14 @@ import FoundationTexture07 from '../resources/foundation_07.png';
 import GlowImage from '../resources/glow.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Cylinder, Plane, Sphere, useTexture } from '@react-three/drei';
+import { Box, Circle, Cylinder, Plane, Sphere, useTexture } from '@react-three/drei';
 import {
   AdditiveBlending,
   CanvasTexture,
+  Color,
   DoubleSide,
   Euler,
+  FrontSide,
   Group,
   Mesh,
   Raycaster,
@@ -102,6 +104,10 @@ const Foundation = ({
   solarTowerRadius = 0.5,
   solarTowerCentralReceiverRadius = 0.75,
   solarTowerCentralReceiverHeight = 2,
+  solarUpdraftTowerChimneyRadius,
+  solarUpdraftTowerChimneyHeight,
+  solarUpdraftTowerCollectorRadius,
+  solarUpdraftTowerCollectorHeight,
 }: FoundationModel) => {
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic);
@@ -2361,7 +2367,7 @@ const Foundation = ({
             <group>
               <Cylinder
                 userData={{ unintersectable: true }}
-                name={'Tower'}
+                name={'Focus Tower'}
                 castShadow={false}
                 receiveShadow={false}
                 args={[solarTowerRadius, solarTowerRadius, solarReceiverHeight, 6, 2]}
@@ -2401,6 +2407,64 @@ const Foundation = ({
                   </sprite>
                 </mesh>
               )}
+            </group>
+          )}
+          {solarStructure === SolarStructure.UpdraftTower && (
+            <group>
+              <Cylinder
+                userData={{ unintersectable: true }}
+                name={'Updraft Tower Chimney'}
+                castShadow={true}
+                receiveShadow={false}
+                args={[
+                  solarUpdraftTowerChimneyRadius ?? Math.max(1, 0.025 * Math.min(lx, ly)),
+                  solarUpdraftTowerChimneyRadius ?? Math.max(1, 0.025 * Math.min(lx, ly)),
+                  solarUpdraftTowerChimneyHeight ?? Math.max(lx, ly),
+                  16,
+                  2,
+                  true,
+                ]}
+                position={[0, 0, (solarUpdraftTowerChimneyHeight ?? Math.max(lx, ly)) / 2 + lz]}
+                rotation={[HALF_PI, 0, 0]}
+              >
+                <meshStandardMaterial attach="material" color={'white'} />
+              </Cylinder>
+              <Cylinder
+                userData={{ unintersectable: true }}
+                name={'Greenhouse Wall'}
+                castShadow={false}
+                receiveShadow={false}
+                args={[
+                  solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2,
+                  solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2,
+                  solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * lz),
+                  25,
+                  2,
+                  true,
+                ]}
+                position={[0, 0, (solarUpdraftTowerCollectorHeight ?? Math.max(1.5, 5 * lz)) + lz]}
+                rotation={[HALF_PI, 0, 0]}
+              >
+                <meshStandardMaterial attach="material" color={'white'} />
+              </Cylinder>
+              <Circle
+                userData={{ unintersectable: true }}
+                name={'Greenhouse Ceiling'}
+                castShadow={false}
+                receiveShadow={false}
+                args={[solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2, 25, 0, TWO_PI]}
+                position={[0, 0, lz + (solarUpdraftTowerCollectorHeight ?? 5 * lz)]}
+              >
+                <meshPhongMaterial
+                  attach="material"
+                  specular={new Color('white')}
+                  shininess={50}
+                  side={FrontSide}
+                  color={'lightskyblue'}
+                  transparent={true}
+                  opacity={0.5}
+                />
+              </Circle>
             </group>
           )}
         </>

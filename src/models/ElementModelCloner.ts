@@ -448,6 +448,10 @@ export class ElementModelCloner {
       solarReceiverAbsorptance: foundation.solarReceiverAbsorptance,
       solarReceiverOpticalEfficiency: foundation.solarReceiverOpticalEfficiency,
       solarReceiverThermalEfficiency: foundation.solarReceiverThermalEfficiency,
+      solarUpdraftTowerChimneyRadius: foundation.solarUpdraftTowerChimneyRadius,
+      solarUpdraftTowerChimneyHeight: foundation.solarUpdraftTowerChimneyHeight,
+      solarUpdraftTowerCollectorRadius: foundation.solarUpdraftTowerCollectorRadius,
+      solarUpdraftTowerCollectorHeight: foundation.solarUpdraftTowerCollectorHeight,
       id: short.generate() as string,
     } as FoundationModel;
   }
