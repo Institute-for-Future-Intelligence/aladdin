@@ -14,7 +14,7 @@ import { useThree } from '@react-three/fiber';
 import { useStore } from '../stores/common';
 import { DatumEntry, ObjectType } from '../types';
 import { Util } from '../Util';
-import { AirMass } from './analysisConstants';
+import { AirMass, MINUTES_OF_DAY } from './analysisConstants';
 import {
   MONTHS,
   UNIT_VECTOR_NEG_Y_ARRAY,
@@ -73,6 +73,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
   const sampledDayRef = useRef<number>(0);
   const pauseRef = useRef<boolean>(false);
   const pausedDateRef = useRef<Date>(new Date(world.date));
+  const dayRef = useRef<number>(0);
 
   // this is used in daily simulation that should respond to change of date and latitude
   const sunMinutes = useMemo(() => {
@@ -153,8 +154,9 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       pauseRef.current = false;
     } else {
       originalDateRef.current = new Date(world.date);
+      dayRef.current = now.getDay();
       // beginning some minutes before the sunrise hour just in case and to provide a cue
-      now.setHours(Math.floor(sunMinutes.sunrise / 60), minuteInterval / 2 - 30);
+      now.setHours(Math.floor(sunMinutes.sunrise / 60), -minuteInterval / 2);
     }
     simulationCompletedRef.current = false;
     fetchObjects();
@@ -163,8 +165,8 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
 
   const simulateDaily = () => {
     if (runDailyLightSensor && !pauseRef.current) {
-      const totalMinutes = now.getMinutes() + now.getHours() * 60;
-      if (totalMinutes >= sunMinutes.sunset) {
+      const totalMinutes = now.getMinutes() + now.getHours() * 60 + (now.getDay() - dayRef.current) * MINUTES_OF_DAY;
+      if (totalMinutes + minuteInterval >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
           state.runDailyLightSensor = false;
@@ -292,8 +294,9 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       originalDateRef.current = new Date(world.date);
       sampledDayRef.current = 0;
       now.setMonth(0, 22); // begin from January, 22
+      dayRef.current = now.getDay();
       sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
-      now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), minuteInterval / 2 - 30);
+      now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -minuteInterval / 2);
       // set the initial date so that the scene gets a chance to render before the simulation starts
       setCommonStore((state) => {
         state.world.date = now.toString();
@@ -314,7 +317,6 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       sampledDayRef.current = month;
       now.setMonth(month, 22);
       sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
-      now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), minuteInterval / 2 - 30);
       resetDailyDataMap();
       for (const e of elements) {
         if (e.type === ObjectType.Sensor) {
@@ -337,8 +339,8 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
 
   const simulateYearly = () => {
     if (runYearlyLightSensor && !pauseRef.current) {
-      const totalMinutes = now.getMinutes() + now.getHours() * 60;
-      if (totalMinutes < sunMinutesRef.current.sunset) {
+      const totalMinutes = now.getMinutes() + now.getHours() * 60 + (now.getDay() - dayRef.current) * MINUTES_OF_DAY;
+      if (totalMinutes + minuteInterval < sunMinutesRef.current.sunset) {
         // this is where time advances (by incrementing the minutes with the given interval)
         now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
         setCommonStore((state) => {
@@ -370,8 +372,9 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
         }
         // go to the next month
         now.setMonth(sampledDayRef.current, 22);
+        dayRef.current = now.getDay();
         sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
-        now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), minuteInterval / 2 - 30);
+        now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -minuteInterval / 2);
         resetDailyDataMap();
         // recursive call to the next step of the simulation
         requestRef.current = requestAnimationFrame(simulateYearly);
@@ -490,7 +493,8 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     if (output) {
       // the output is the average radiation intensity. if the minutes are greater than 30 or 30, it is counted
       // as the measurement of the next hour to maintain the symmetry around noon
-      output[now.getMinutes() >= 30 ? now.getHours() + 1 : now.getHours()] += result;
+      const index = now.getMinutes() >= 30 ? (now.getHours() + 1 === 24 ? 0 : now.getHours() + 1) : now.getHours();
+      output[index] += result;
     }
   };
 

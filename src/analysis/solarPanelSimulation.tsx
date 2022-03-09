@@ -369,8 +369,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     resetDailyOutputsMap();
     resetYearlyOutputsMap();
     originalDateRef.current = new Date(world.date);
-    sampledDayRef.current = 0;
     for (let month = 0; month < 12; month += monthInterval) {
+      sampledDayRef.current = month;
       now.setMonth(month, 22);
       sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
       resetDailyOutputsMap();
@@ -380,7 +380,6 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         }
       }
       finishMonthly();
-      sampledDayRef.current++;
     }
     setCommonStore((state) => {
       state.runYearlySimulationForSolarPanels = false;
