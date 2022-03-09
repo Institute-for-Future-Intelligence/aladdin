@@ -2438,21 +2438,21 @@ const Foundation = ({
                   solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2,
                   solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2,
                   solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * lz),
-                  25,
+                  50,
                   2,
                   true,
                 ]}
-                position={[0, 0, (solarUpdraftTowerCollectorHeight ?? Math.max(1.5, 5 * lz)) + lz]}
+                position={[0, 0, (solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * lz)) / 2 + lz]}
                 rotation={[HALF_PI, 0, 0]}
               >
-                <meshStandardMaterial attach="material" color={'white'} />
+                <meshStandardMaterial attach="material" color={'white'} side={DoubleSide} />
               </Cylinder>
               <Circle
                 userData={{ unintersectable: true }}
                 name={'Greenhouse Ceiling'}
                 castShadow={false}
                 receiveShadow={false}
-                args={[solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2, 25, 0, TWO_PI]}
+                args={[solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2, 50, 0, TWO_PI]}
                 position={[0, 0, lz + (solarUpdraftTowerCollectorHeight ?? 5 * lz)]}
               >
                 <meshPhongMaterial

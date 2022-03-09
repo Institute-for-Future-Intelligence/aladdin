@@ -408,6 +408,8 @@ export const i18n_zh_cn = {
       SolarUpdraftTowerPhysicalProperties: '太阳能上升气流塔的物理性质',
       SolarUpdraftTowerChimneyHeight: '太阳能上升气流塔烟囱的高度',
       SolarUpdraftTowerChimneyRadius: '太阳能上升气流塔烟囱的半径',
+      SolarUpdraftTowerCollectorHeight: '太阳能上升气流塔集热棚的高度',
+      SolarUpdraftTowerCollectorRadius: '太阳能上升气流塔集热棚的半径',
     },
 
     cuboidMenu: {

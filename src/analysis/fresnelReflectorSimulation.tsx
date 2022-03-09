@@ -517,7 +517,8 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       // the output is the average radiation density, hence we have to divide it by nx * ny
       // if the minutes are greater than 30 or 30, it is counted as the output of the next hour
       // to maintain the symmetry around noon
-      output[now.getMinutes() >= 30 ? now.getHours() + 1 : now.getHours()] += sum / (nx * ny);
+      const index = now.getMinutes() >= 30 ? (now.getHours() + 1 === 24 ? 0 : now.getHours() + 1) : now.getHours();
+      output[index] += sum / (nx * ny);
     }
   };
 

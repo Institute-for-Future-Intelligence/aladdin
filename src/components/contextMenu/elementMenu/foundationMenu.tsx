@@ -32,6 +32,8 @@ import FoundationSolarReceiverApertureWidthInput from './foundationSolarReceiver
 import FoundationSolarReceiverPoleNumberInput from './foundationSolarReceiverPoleNumberInput';
 import FoundationSolarUpdraftTowerChimneyHeightInput from './foundationSolarUpdraftTowerChimneyHeightInput';
 import FoundationSolarUpdraftTowerChimneyRadiusInput from './foundationSolarUpdraftTowerChimneyRadiusInput';
+import FoundationSolarUpdraftTowerCollectorRadiusInput from './foundationSolarUpdraftTowerCollectorRadiusInput';
+import FoundationSolarUpdraftTowerCollectorHeightInput from './foundationSolarUpdraftTowerCollectorHeightInput';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -65,6 +67,8 @@ export const FoundationMenu = () => {
   const [receiverThermalEfficiencyDialogVisible, setReceiverThermalEfficiencyDialogVisible] = useState(false);
   const [chimneyHeightDialogVisible, setChimneyHeightDialogVisible] = useState(false);
   const [chimneyRadiusDialogVisible, setChimneyRadiusDialogVisible] = useState(false);
+  const [collectorHeightDialogVisible, setCollectorHeightDialogVisible] = useState(false);
+  const [collectorRadiusDialogVisible, setCollectorRadiusDialogVisible] = useState(false);
 
   const counter = foundation ? countAllOffspringsByType(foundation.id) : new ElementCounter();
   const lang = { lng: language };
@@ -876,6 +880,36 @@ export const FoundationMenu = () => {
               }}
             >
               {i18n.t('foundationMenu.SolarUpdraftTowerChimneyRadius', lang)} ...
+            </Menu.Item>
+
+            <FoundationSolarUpdraftTowerCollectorHeightInput
+              dialogVisible={collectorHeightDialogVisible}
+              setDialogVisible={setCollectorHeightDialogVisible}
+            />
+            <Menu.Item
+              key={'foundation-solar-updraft-tower-collector-height'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setCollectorHeightDialogVisible(true);
+              }}
+            >
+              {i18n.t('foundationMenu.SolarUpdraftTowerCollectorHeight', lang)} ...
+            </Menu.Item>
+
+            <FoundationSolarUpdraftTowerCollectorRadiusInput
+              dialogVisible={collectorRadiusDialogVisible}
+              setDialogVisible={setCollectorRadiusDialogVisible}
+            />
+            <Menu.Item
+              key={'foundation-solar-updraft-tower-collector-radius'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setCollectorRadiusDialogVisible(true);
+              }}
+            >
+              {i18n.t('foundationMenu.SolarUpdraftTowerCollectorRadius', lang)} ...
             </Menu.Item>
           </SubMenu>
         )}

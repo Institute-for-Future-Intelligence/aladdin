@@ -294,6 +294,10 @@ export interface CommonStoreState {
   updateFoundationSolarChimneyHeightForAll: (height: number) => void;
   updateFoundationSolarChimneyRadiusById: (id: string, radius: number) => void;
   updateFoundationSolarChimneyRadiusForAll: (radius: number) => void;
+  updateFoundationSolarCollectorHeightById: (id: string, height: number) => void;
+  updateFoundationSolarCollectorHeightForAll: (height: number) => void;
+  updateFoundationSolarCollectorRadiusById: (id: string, radius: number) => void;
+  updateFoundationSolarCollectorRadiusForAll: (radius: number) => void;
 
   // for cuboids
   cuboidActionScope: Scope;
@@ -2051,6 +2055,56 @@ export const useStore = create<CommonStoreState>(
                   const f = e as FoundationModel;
                   if (f.solarStructure === SolarStructure.UpdraftTower) {
                     f.solarUpdraftTowerChimneyRadius = radius;
+                  }
+                }
+              }
+            });
+          },
+          updateFoundationSolarCollectorHeightById(id, height) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    f.solarUpdraftTowerCollectorHeight = height;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateFoundationSolarCollectorHeightForAll(height) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    f.solarUpdraftTowerCollectorHeight = height;
+                  }
+                }
+              }
+            });
+          },
+          updateFoundationSolarCollectorRadiusById(id, radius) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    f.solarUpdraftTowerCollectorRadius = radius;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateFoundationSolarCollectorRadiusForAll(radius) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    f.solarUpdraftTowerCollectorRadius = radius;
                   }
                 }
               }

@@ -421,6 +421,8 @@ export const i18n_tr = {
       SolarUpdraftTowerPhysicalProperties: 'Physical Properties of Solar Updraft Tower',
       SolarUpdraftTowerChimneyHeight: 'Solar Updraft Tower Chimney Height',
       SolarUpdraftTowerChimneyRadius: 'Solar Updraft Tower Chimney Radius',
+      SolarUpdraftTowerCollectorHeight: 'Solar Updraft Tower Collector Height',
+      SolarUpdraftTowerCollectorRadius: 'Solar Updraft Tower Collector Radius',
     },
 
     cuboidMenu: {

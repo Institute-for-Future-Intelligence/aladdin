@@ -250,6 +250,18 @@ export const updateFoundationSolarChimneyRadiusById = (state: CommonStoreState) 
 export const updateFoundationSolarChimneyRadiusForAll = (state: CommonStoreState) =>
   state.updateFoundationSolarChimneyRadiusForAll;
 
+export const updateFoundationSolarCollectorHeightById = (state: CommonStoreState) =>
+  state.updateFoundationSolarCollectorHeightById;
+
+export const updateFoundationSolarCollectorHeightForAll = (state: CommonStoreState) =>
+  state.updateFoundationSolarCollectorHeightForAll;
+
+export const updateFoundationSolarCollectorRadiusById = (state: CommonStoreState) =>
+  state.updateFoundationSolarCollectorRadiusById;
+
+export const updateFoundationSolarCollectorRadiusForAll = (state: CommonStoreState) =>
+  state.updateFoundationSolarCollectorRadiusForAll;
+
 export const updateFoundationTextureById = (state: CommonStoreState) => state.updateFoundationTextureById;
 
 export const updateFoundationTextureForAll = (state: CommonStoreState) => state.updateFoundationTextureForAll;
