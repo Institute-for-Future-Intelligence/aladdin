@@ -159,9 +159,9 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const labelY = i18n.t('solarPanelYieldPanel.YieldPerHour', lang);
   let totalTooltip = '';
   if (individualOutputs) {
-    panelSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
+    panelSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(3) + '\n'));
     totalTooltip += '——————————\n';
-    totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
+    totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + i18n.t('word.kWh', lang);
   }
 
   return (
@@ -214,7 +214,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
               </Space>
             ) : (
               <Space style={{ cursor: 'default' }}>
-                {i18n.t('solarPanelYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
+                {i18n.t('solarPanelYieldPanel.DailyTotal', lang)}:{sum.toFixed(3)} {i18n.t('word.kWh', lang)}
               </Space>
             )}
             {solarPanelCount > 1 && (

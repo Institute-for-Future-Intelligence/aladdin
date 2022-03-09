@@ -15,7 +15,7 @@ import { useStore } from '../stores/common';
 import * as Selector from 'src/stores/selector';
 import { DatumEntry, Discretization, ObjectType, Orientation, ShadeTolerance, TrackerType } from '../types';
 import { Util } from '../Util';
-import { AirMass } from './analysisConstants';
+import { AirMass, MINUTES_OF_DAY } from './analysisConstants';
 import { MONTHS, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
@@ -82,6 +82,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const sampledDayRef = useRef<number>(0);
   const pauseRef = useRef<boolean>(false);
   const pausedDateRef = useRef<Date>(new Date(world.date));
+  const dayRef = useRef<number>(0);
 
   // this is used in daily simulation that should respond to change of date and latitude
   const sunMinutes = useMemo(() => {
@@ -175,8 +176,9 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       pauseRef.current = false;
     } else {
       originalDateRef.current = new Date(world.date);
-      // beginning some minutes before the sunrise hour just in case and to provide a cue
-      now.setHours(Math.floor(sunMinutes.sunrise / 60), minuteInterval / 2 - 30);
+      dayRef.current = now.getDay();
+      // beginning before the sunrise hour just in case and to provide a cue
+      now.setHours(Math.floor(sunMinutes.sunrise / 60), -minuteInterval / 2);
     }
     simulationCompletedRef.current = false;
     fetchObjects();
@@ -185,8 +187,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
 
   const simulateDaily = () => {
     if (runDailySimulation && !pauseRef.current) {
-      const totalMinutes = now.getMinutes() + now.getHours() * 60;
-      if (totalMinutes >= sunMinutes.sunset) {
+      const totalMinutes = now.getMinutes() + now.getHours() * 60 + (now.getDay() - dayRef.current) * MINUTES_OF_DAY;
+      if (totalMinutes + minuteInterval >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
           state.runDailySimulationForSolarPanels = false;
@@ -348,8 +350,9 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       originalDateRef.current = new Date(world.date);
       sampledDayRef.current = 0;
       now.setMonth(0, 22); // begin from January, 22
+      dayRef.current = now.getDay();
       sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
-      now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), minuteInterval / 2 - 30);
+      now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -minuteInterval / 2);
       // set the initial date so that the scene gets a chance to render before the simulation starts
       setCommonStore((state) => {
         state.world.date = now.toString();
@@ -370,7 +373,6 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     for (let month = 0; month < 12; month += monthInterval) {
       now.setMonth(month, 22);
       sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
-      now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), minuteInterval / 2 - 30);
       resetDailyOutputsMap();
       for (const e of elements) {
         if (e.type === ObjectType.SolarPanel) {
@@ -394,8 +396,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
 
   const simulateYearly = () => {
     if (runYearlySimulation && !pauseRef.current) {
-      const totalMinutes = now.getMinutes() + now.getHours() * 60;
-      if (totalMinutes < sunMinutesRef.current.sunset) {
+      const totalMinutes = now.getMinutes() + now.getHours() * 60 + (now.getDay() - dayRef.current) * MINUTES_OF_DAY;
+      if (totalMinutes + minuteInterval < sunMinutesRef.current.sunset) {
         // this is where time advances (by incrementing the minutes with the given interval)
         now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
         setCommonStore((state) => {
@@ -427,8 +429,9 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         }
         // go to the next month
         now.setMonth(sampledDayRef.current * monthInterval, 22);
+        dayRef.current = now.getDay();
         sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
-        now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), minuteInterval / 2 - 30);
+        now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -minuteInterval / 2);
         resetDailyOutputsMap();
         // recursive call to the next step of the simulation
         requestRef.current = requestAnimationFrame(simulateYearly);
@@ -826,7 +829,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     if (output) {
       // the output is the average radiation intensity. if the minutes are greater than 30 or 30, it is counted
       // as the measurement of the next hour to maintain the symmetry around noon
-      output[now.getMinutes() >= 30 ? now.getHours() + 1 : now.getHours()] += sum / (nx * ny);
+      const index = now.getMinutes() >= 30 ? (now.getHours() + 1 === 24 ? 0 : now.getHours() + 1) : now.getHours();
+      output[index] += sum / (nx * ny);
     }
   };
 

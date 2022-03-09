@@ -2427,7 +2427,7 @@ const Foundation = ({
                 position={[0, 0, (solarUpdraftTowerChimneyHeight ?? Math.max(lx, ly)) / 2 + lz]}
                 rotation={[HALF_PI, 0, 0]}
               >
-                <meshStandardMaterial attach="material" color={'white'} />
+                <meshStandardMaterial attach="material" color={'white'} side={DoubleSide} />
               </Cylinder>
               <Cylinder
                 userData={{ unintersectable: true }}

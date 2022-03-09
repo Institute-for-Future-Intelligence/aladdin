@@ -206,7 +206,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
             labelY={labelY}
             unitY={i18n.t('word.kWh', lang)}
             yMin={0}
-            curveType={'natural'}
+            curveType={'linear'}
             fractionDigits={2}
             referenceX={referenceX}
           />
