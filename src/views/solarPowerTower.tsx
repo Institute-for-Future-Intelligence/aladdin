@@ -2,15 +2,25 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Cylinder, useTexture } from '@react-three/drei';
-import { AdditiveBlending, Vector3 } from 'three';
+import { AdditiveBlending } from 'three';
 import { FoundationModel } from '../models/FoundationModel';
 import { HALF_PI } from '../constants';
 import GlowImage from '../resources/glow.png';
+import { getSunDirection } from '../analysis/sunTools';
+import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 
-const SolarUpdraftTower = ({ foundation, sunDirection }: { foundation: FoundationModel; sunDirection: Vector3 }) => {
+const SolarPowerTower = ({ foundation }: { foundation: FoundationModel }) => {
+  const date = useStore(Selector.world.date);
+  const latitude = useStore(Selector.world.latitude);
+
   const glowTexture = useTexture(GlowImage);
+
+  const sunDirection = useMemo(() => {
+    return getSunDirection(new Date(date), latitude);
+  }, [date, latitude]);
 
   const {
     lz,
@@ -70,4 +80,4 @@ const SolarUpdraftTower = ({ foundation, sunDirection }: { foundation: Foundatio
   );
 };
 
-export default React.memo(SolarUpdraftTower);
+export default React.memo(SolarPowerTower);

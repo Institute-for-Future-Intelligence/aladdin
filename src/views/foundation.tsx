@@ -65,7 +65,6 @@ import { HorizontalRuler } from './horizontalRuler';
 import { showError } from '../helpers';
 import { SolarCollector } from '../models/SolarCollector';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
-import { getSunDirection } from '../analysis/sunTools';
 import SolarUpdraftTower from './solarUpdraftTower';
 import SolarPowerTower from './solarPowerTower';
 import SolarReceiverPipe from './solarReceiverPipe';
@@ -88,8 +87,6 @@ const Foundation = ({
 }: FoundationModel) => {
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic);
-  const date = useStore(Selector.world.date);
-  const latitude = useStore(Selector.world.latitude);
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const setCommonStore = useStore(Selector.set);
@@ -302,10 +299,6 @@ const Foundation = ({
         return { x: 1, y: 1 };
     }
   };
-
-  const sunDirection = useMemo(() => {
-    return getSunDirection(new Date(date), latitude);
-  }, [date, latitude]);
 
   const textureLoader = useMemo(() => {
     let textureImg;
@@ -2265,9 +2258,7 @@ const Foundation = ({
             />
           )}
           {solarStructure === SolarStructure.FocusPipe && <SolarReceiverPipe foundation={foundationModel} />}
-          {solarStructure === SolarStructure.FocusTower && (
-            <SolarPowerTower foundation={foundationModel} sunDirection={sunDirection} />
-          )}
+          {solarStructure === SolarStructure.FocusTower && <SolarPowerTower foundation={foundationModel} />}
           {solarStructure === SolarStructure.UpdraftTower && <SolarUpdraftTower foundation={foundationModel} />}
         </>
       )}
