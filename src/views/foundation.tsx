@@ -10,25 +10,10 @@ import FoundationTexture04 from '../resources/foundation_04.png';
 import FoundationTexture05 from '../resources/foundation_05.png';
 import FoundationTexture06 from '../resources/foundation_06.png';
 import FoundationTexture07 from '../resources/foundation_07.png';
-import GlowImage from '../resources/glow.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Circle, Cylinder, Plane, Sphere, useTexture } from '@react-three/drei';
-import {
-  AdditiveBlending,
-  CanvasTexture,
-  Color,
-  DoubleSide,
-  Euler,
-  FrontSide,
-  Group,
-  Mesh,
-  Raycaster,
-  RepeatWrapping,
-  TextureLoader,
-  Vector2,
-  Vector3,
-} from 'three';
+import { Box, Plane, Sphere } from '@react-three/drei';
+import { CanvasTexture, Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
 import { FoundationModel } from '../models/FoundationModel';
@@ -81,6 +66,9 @@ import { showError } from '../helpers';
 import { SolarCollector } from '../models/SolarCollector';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import { getSunDirection } from '../analysis/sunTools';
+import SolarUpdraftTower from './solarUpdraftTower';
+import SolarPowerTower from './solarPowerTower';
+import SolarReceiverPipe from './solarReceiverPipe';
 
 const Foundation = ({
   id,
@@ -97,17 +85,6 @@ const Foundation = ({
   selected = false,
   textureType = FoundationTexture.NoTexture,
   solarStructure,
-  solarReceiverApertureWidth = 0.6,
-  solarReceiverHeight = solarStructure === SolarStructure.FocusPipe ? 10 : 20,
-  solarReceiverPipeRelativeLength = 0.9,
-  solarReceiverPipePoleNumber = 5,
-  solarTowerRadius = 0.5,
-  solarTowerCentralReceiverRadius = 0.75,
-  solarTowerCentralReceiverHeight = 2,
-  solarUpdraftTowerChimneyRadius,
-  solarUpdraftTowerChimneyHeight,
-  solarUpdraftTowerCollectorRadius,
-  solarUpdraftTowerCollectorHeight,
 }: FoundationModel) => {
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic);
@@ -211,8 +188,6 @@ const Foundation = ({
   const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
   const rotateHandleSize = 0.6 * ratio;
-  const glowTexture = useTexture(GlowImage);
-  const haloSize = solarTowerCentralReceiverHeight * 2 + 1;
 
   const lowerRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
     return [0, -hy - rotateHandleSize, 0];
@@ -250,16 +225,6 @@ const Foundation = ({
       intersectionPlanePosition.set(0, 0, foundationModel.lz / 2 + poleHeight);
     }
   }
-
-  const solarReceiverPipePoles = useMemo<Vector3[] | undefined>(() => {
-    if (solarStructure !== SolarStructure.FocusPipe) return undefined;
-    const array: Vector3[] = [];
-    const dy = (solarReceiverPipeRelativeLength * ly) / (solarReceiverPipePoleNumber + 1);
-    for (let i = 1; i <= solarReceiverPipePoleNumber; i++) {
-      array.push(new Vector3(0, i * dy - (solarReceiverPipeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz / 2));
-    }
-    return array;
-  }, [solarStructure, lx, ly, lz, solarReceiverPipePoleNumber, solarReceiverHeight, solarReceiverPipeRelativeLength]);
 
   useEffect(() => {
     const unsubscribe = useStore.subscribe((state) => {
@@ -2299,174 +2264,11 @@ const Foundation = ({
               position={[hx, hy, hz + 0.2]}
             />
           )}
-          {solarStructure === SolarStructure.FocusPipe && (
-            <group>
-              <Cylinder
-                userData={{ unintersectable: true }}
-                name={'Receiver Vertical Pipe 1'}
-                castShadow={false}
-                receiveShadow={false}
-                args={[solarReceiverApertureWidth / 4, solarReceiverApertureWidth / 4, solarReceiverHeight, 6, 2]}
-                position={[0, (-solarReceiverPipeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz / 2]}
-                rotation={[HALF_PI, 0, 0]}
-              >
-                <meshStandardMaterial attach="material" color={'white'} />
-              </Cylinder>
-              <Cylinder
-                userData={{ unintersectable: true }}
-                name={'Receiver Vertical Pipe 2'}
-                castShadow={false}
-                receiveShadow={false}
-                args={[solarReceiverApertureWidth / 4, solarReceiverApertureWidth / 4, solarReceiverHeight, 6, 2]}
-                position={[0, (solarReceiverPipeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz / 2]}
-                rotation={[HALF_PI, 0, 0]}
-              >
-                <meshStandardMaterial attach="material" color={'white'} />
-              </Cylinder>
-              <Cylinder
-                userData={{ unintersectable: true }}
-                name={'Receiver Horizontal Pipe'}
-                castShadow={false}
-                receiveShadow={false}
-                args={[
-                  solarReceiverApertureWidth / 2,
-                  solarReceiverApertureWidth / 2,
-                  solarReceiverPipeRelativeLength * ly + solarReceiverApertureWidth / 2,
-                  6,
-                  2,
-                  false,
-                  3 * HALF_PI,
-                  Math.PI,
-                ]}
-                position={[0, 0, solarReceiverHeight + lz / 2 - solarReceiverApertureWidth / 4]}
-                rotation={[0, 0, 0]}
-              >
-                <meshStandardMaterial attach="material" color={'white'} side={DoubleSide} />
-              </Cylinder>
-              {/* draw poles */}
-              {solarReceiverPipePoles &&
-                solarReceiverPipePoles.map((p, i) => {
-                  return (
-                    <Cylinder
-                      userData={{ unintersectable: true }}
-                      key={i}
-                      name={'Solar Receiver Pole ' + i}
-                      castShadow={false}
-                      receiveShadow={false}
-                      args={[solarReceiverApertureWidth / 8, solarReceiverApertureWidth / 8, solarReceiverHeight, 4, 2]}
-                      position={p}
-                      rotation={[HALF_PI, 0, 0]}
-                    >
-                      <meshStandardMaterial attach="material" color={'white'} />
-                    </Cylinder>
-                  );
-                })}
-            </group>
-          )}
+          {solarStructure === SolarStructure.FocusPipe && <SolarReceiverPipe foundation={foundationModel} />}
           {solarStructure === SolarStructure.FocusTower && (
-            <group>
-              <Cylinder
-                userData={{ unintersectable: true }}
-                name={'Focus Tower'}
-                castShadow={false}
-                receiveShadow={false}
-                args={[solarTowerRadius, solarTowerRadius, solarReceiverHeight, 6, 2]}
-                position={[0, 0, solarReceiverHeight / 2 + lz / 2]}
-                rotation={[HALF_PI, 0, 0]}
-              >
-                <meshStandardMaterial attach="material" color={'white'} />
-              </Cylinder>
-              <Cylinder
-                userData={{ unintersectable: true }}
-                name={'Center Receiver'}
-                castShadow={false}
-                receiveShadow={false}
-                args={[
-                  solarTowerCentralReceiverRadius,
-                  solarTowerCentralReceiverRadius,
-                  solarTowerCentralReceiverHeight,
-                  10,
-                  2,
-                ]}
-                position={[0, 0, solarReceiverHeight + lz / 2]}
-                rotation={[HALF_PI, 0, 0]}
-              >
-                <meshStandardMaterial attach="material" color={'white'} />
-              </Cylinder>
-              {/* simple glow effect to create a halo */}
-              {sunDirection.z > 0 && (
-                <mesh position={[0, 0, solarReceiverHeight + lz / 2]}>
-                  <sprite scale={[haloSize, haloSize, haloSize]}>
-                    <spriteMaterial
-                      map={glowTexture}
-                      transparent={false}
-                      color={0xffffff}
-                      blending={AdditiveBlending}
-                      depthWrite={false} // this must be set to hide the rectangle of the texture image
-                    />
-                  </sprite>
-                </mesh>
-              )}
-            </group>
+            <SolarPowerTower foundation={foundationModel} sunDirection={sunDirection} />
           )}
-          {solarStructure === SolarStructure.UpdraftTower && (
-            <group>
-              <Cylinder
-                userData={{ unintersectable: true }}
-                name={'Updraft Tower Chimney'}
-                castShadow={true}
-                receiveShadow={false}
-                args={[
-                  solarUpdraftTowerChimneyRadius ?? Math.max(1, 0.025 * Math.min(lx, ly)),
-                  solarUpdraftTowerChimneyRadius ?? Math.max(1, 0.025 * Math.min(lx, ly)),
-                  solarUpdraftTowerChimneyHeight ?? Math.max(lx, ly),
-                  16,
-                  2,
-                  true,
-                ]}
-                position={[0, 0, (solarUpdraftTowerChimneyHeight ?? Math.max(lx, ly)) / 2 + lz]}
-                rotation={[HALF_PI, 0, 0]}
-              >
-                <meshStandardMaterial attach="material" color={'white'} side={DoubleSide} />
-              </Cylinder>
-              <Cylinder
-                userData={{ unintersectable: true }}
-                name={'Greenhouse Wall'}
-                castShadow={false}
-                receiveShadow={false}
-                args={[
-                  solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2,
-                  solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2,
-                  solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * lz),
-                  50,
-                  2,
-                  true,
-                ]}
-                position={[0, 0, (solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * lz)) / 2 + lz]}
-                rotation={[HALF_PI, 0, 0]}
-              >
-                <meshStandardMaterial attach="material" color={'white'} side={DoubleSide} />
-              </Cylinder>
-              <Circle
-                userData={{ unintersectable: true }}
-                name={'Greenhouse Ceiling'}
-                castShadow={false}
-                receiveShadow={false}
-                args={[solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2, 50, 0, TWO_PI]}
-                position={[0, 0, lz + (solarUpdraftTowerCollectorHeight ?? 5 * lz)]}
-              >
-                <meshPhongMaterial
-                  attach="material"
-                  specular={new Color('white')}
-                  shininess={50}
-                  side={FrontSide}
-                  color={'lightskyblue'}
-                  transparent={true}
-                  opacity={0.5}
-                />
-              </Circle>
-            </group>
-          )}
+          {solarStructure === SolarStructure.UpdraftTower && <SolarUpdraftTower foundation={foundationModel} />}
         </>
       )}
     </group>
