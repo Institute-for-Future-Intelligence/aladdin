@@ -2,14 +2,25 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Circle, Cone, Cylinder, Line } from '@react-three/drei';
-import { Color, DoubleSide, Euler, FrontSide, Vector3 } from 'three';
+import { Color, DoubleSide, Euler, FrontSide, Group, Vector3 } from 'three';
 import { FoundationModel } from '../models/FoundationModel';
 import { HALF_PI, TWO_PI } from '../constants';
 import { LineData } from './LineData';
+import { getSunDirection } from '../analysis/sunTools';
+import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
+import { useFrame } from '@react-three/fiber';
+import { Line2 } from 'three/examples/jsm/lines/Line2';
 
 const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
+  const date = useStore(Selector.world.date);
+  const latitude = useStore(Selector.world.latitude);
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const streamlinesRef = useRef<Group>();
+  const animate = false;
+
   const {
     lx,
     ly,
@@ -20,13 +31,17 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
     solarUpdraftTowerCollectorHeight,
   } = foundation;
 
+  const sunDirection = useMemo(() => {
+    return getSunDirection(new Date(date), latitude);
+  }, [date, latitude]);
+
   const streamlines = useMemo<LineData[]>(() => {
     const array: LineData[] = [];
     const airInletZ = ((solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * lz)) + lz) / 2;
     const airOutletZ = solarUpdraftTowerChimneyHeight ?? Math.max(lx, ly);
     const collectorRadius = solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2;
     const chimneyRadius = solarUpdraftTowerChimneyRadius ?? Math.max(1, 0.025 * Math.min(lx, ly));
-    const airInletR1 = collectorRadius * 1.1;
+    const airInletR1 = collectorRadius * 1.15;
     const airInletR2 = chimneyRadius * 0.5;
     const airOutletR1 = chimneyRadius;
     const airOutletR2 = chimneyRadius * 2;
@@ -80,6 +95,20 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
     }
     return array;
   }, [lx, ly, lz, solarUpdraftTowerCollectorRadius, solarUpdraftTowerCollectorHeight]);
+
+  useFrame((state, delta) => {
+    if (animate) {
+      if (streamlinesRef.current) {
+        streamlinesRef.current.children.forEach((child) => {
+          if (child.name === 'Streamlines') {
+            const line = child as Line2;
+            line.material.uniforms.dashOffset.value -= delta * 10;
+          }
+        });
+        setUpdateFlag(!updateFlag);
+      }
+    }
+  });
 
   return (
     <group>
@@ -143,7 +172,7 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
         castShadow={false}
         receiveShadow={false}
         args={[solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2, 50, 0, TWO_PI]}
-        position={[0, 0, lz + (solarUpdraftTowerCollectorHeight ?? 5 * lz)]}
+        position={[0, 0, lz + (solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * lz))]}
       >
         <meshPhongMaterial
           attach="material"
@@ -152,8 +181,18 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
           side={FrontSide}
           color={'lightskyblue'}
           transparent={true}
-          opacity={0.5}
+          opacity={0.75}
         />
+      </Circle>
+      <Circle
+        userData={{ unintersectable: true }}
+        name={'Greenhouse Ground'}
+        castShadow={false}
+        receiveShadow={false}
+        args={[solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2, 50, 0, TWO_PI]}
+        position={[0, 0, 0.1]}
+      >
+        <meshBasicMaterial attach="material" color={'black'} />
       </Circle>
       {gridLines &&
         gridLines.map((lineData, index) => {
@@ -170,46 +209,50 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
             />
           );
         })}
-      {streamlines &&
-        streamlines.map((lineData, index) => {
-          const x2 = lineData.points[0].x + lineData.points[1].x;
-          const y2 = lineData.points[0].y + lineData.points[1].y;
-          const angle = new Euler(0, 0, (TWO_PI * index) / streamlines.length + HALF_PI);
-          return (
-            <React.Fragment key={index}>
-              <Line
-                name={'Streamlines'}
-                userData={{ unintersectable: true }}
-                points={lineData.points}
-                castShadow={false}
-                receiveShadow={false}
-                lineWidth={0.25}
-                dashed={true}
-                dashSize={3}
-                gapSize={1}
-                color={'white'}
-              />
-              <Cone
-                userData={{ unintersectable: true }}
-                args={[2, 8, 4, 2]}
-                name={'Streamline Inlet Arrow Head'}
-                position={[x2 * 0.1, y2 * 0.1, lineData.points[0].z]}
-                rotation={angle}
-              >
-                <meshStandardMaterial attach="material" color={'white'} />
-              </Cone>
-              <Cone
-                userData={{ unintersectable: true }}
-                args={[2, 8, 4, 2]}
-                name={'Streamline Inlet Arrow Head'}
-                position={[x2 * 0.9, y2 * 0.9, lineData.points[0].z]}
-                rotation={angle}
-              >
-                <meshStandardMaterial attach="material" color={'white'} />
-              </Cone>
-            </React.Fragment>
-          );
-        })}
+      {sunDirection.z > 0 && streamlines && (
+        <group ref={streamlinesRef}>
+          {streamlines.map((lineData, index) => {
+            const x2 = lineData.points[0].x + lineData.points[1].x;
+            const y2 = lineData.points[0].y + lineData.points[1].y;
+            const angle = new Euler(0, 0, (TWO_PI * index) / streamlines.length + HALF_PI);
+            const arrowRadius = (solarUpdraftTowerCollectorRadius ?? 100) * 0.016;
+            return (
+              <React.Fragment key={index}>
+                <Line
+                  name={'Streamlines'}
+                  userData={{ unintersectable: true }}
+                  points={lineData.points}
+                  castShadow={false}
+                  receiveShadow={false}
+                  lineWidth={0.5}
+                  dashed={true}
+                  dashSize={3}
+                  gapSize={1}
+                  color={'white'}
+                />
+                <Cone
+                  userData={{ unintersectable: true }}
+                  args={[arrowRadius, arrowRadius * 4, 4, 2]}
+                  name={'Streamline Inlet Arrow Head'}
+                  position={[x2 * 0.1, y2 * 0.1, lineData.points[0].z]}
+                  rotation={angle}
+                >
+                  <meshStandardMaterial attach="material" color={'white'} />
+                </Cone>
+                <Cone
+                  userData={{ unintersectable: true }}
+                  args={[arrowRadius, arrowRadius * 4, 4, 2]}
+                  name={'Streamline Inlet Arrow Head'}
+                  position={[x2 * 0.9, y2 * 0.9, lineData.points[0].z]}
+                  rotation={angle}
+                >
+                  <meshStandardMaterial attach="material" color={'white'} />
+                </Cone>
+              </React.Fragment>
+            );
+          })}
+        </group>
+      )}
     </group>
   );
 };
