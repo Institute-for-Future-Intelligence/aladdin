@@ -5,6 +5,12 @@
 // in kW, see http://en.wikipedia.org/wiki/Solar_constant
 export const SOLAR_CONSTANT = 1.361;
 
+// in m/s^2
+export const GRAVITATIONAL_ACCELERATION = 9.8067;
+
+// in J/(g*K) (room temperature)
+export const ISOBARIC_SPECIFIC_HEAT = 1.012;
+
 // original ASHRAE_C = [0.058, 0.060, 0.071, 0.097, 0.121, 0.134, 0.136, 0.122, 0.092, 0.073, 0.063, 0.057];
 // http://www.physics.arizona.edu/~cronin/Solar/References/Irradiance%20Models%20and%20Data/WOC01.pdf
 // revised C coefficients found from Iqbal's book

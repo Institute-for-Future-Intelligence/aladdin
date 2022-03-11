@@ -17,9 +17,8 @@ import { Line2 } from 'three/examples/jsm/lines/Line2';
 const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const animate = useStore(Selector.animateSun);
   const streamlinesRef = useRef<Group>();
-  const animate = false;
 
   const {
     lx,
@@ -31,6 +30,7 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
     solarUpdraftTowerCollectorHeight,
   } = foundation;
 
+  const arrowRadius = (solarUpdraftTowerCollectorRadius ?? 100) * 0.016;
   const sunDirection = useMemo(() => {
     return getSunDirection(new Date(date), latitude);
   }, [date, latitude]);
@@ -97,15 +97,14 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
   }, [lx, ly, lz, solarUpdraftTowerCollectorRadius, solarUpdraftTowerCollectorHeight]);
 
   useFrame((state, delta) => {
-    if (animate) {
+    if (animate && sunDirection.z > 0) {
       if (streamlinesRef.current) {
         streamlinesRef.current.children.forEach((child) => {
           if (child.name === 'Streamlines') {
             const line = child as Line2;
-            line.material.uniforms.dashOffset.value -= delta * 10;
+            line.material.uniforms.dashOffset.value -= delta * arrowRadius * 10;
           }
         });
-        setUpdateFlag(!updateFlag);
       }
     }
   });
@@ -188,11 +187,11 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
         userData={{ unintersectable: true }}
         name={'Greenhouse Ground'}
         castShadow={false}
-        receiveShadow={false}
+        receiveShadow={true}
         args={[solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2, 50, 0, TWO_PI]}
         position={[0, 0, 0.1]}
       >
-        <meshBasicMaterial attach="material" color={'black'} />
+        <meshStandardMaterial attach="material" color={'dimgray'} />
       </Circle>
       {gridLines &&
         gridLines.map((lineData, index) => {
@@ -215,7 +214,8 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
             const x2 = lineData.points[0].x + lineData.points[1].x;
             const y2 = lineData.points[0].y + lineData.points[1].y;
             const angle = new Euler(0, 0, (TWO_PI * index) / streamlines.length + HALF_PI);
-            const arrowRadius = (solarUpdraftTowerCollectorRadius ?? 100) * 0.016;
+            const dashSize = arrowRadius;
+            const gapSize = arrowRadius;
             return (
               <React.Fragment key={index}>
                 <Line
@@ -226,8 +226,8 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
                   receiveShadow={false}
                   lineWidth={0.5}
                   dashed={true}
-                  dashSize={3}
-                  gapSize={1}
+                  dashSize={dashSize}
+                  gapSize={gapSize}
                   color={'white'}
                 />
                 <Cone
