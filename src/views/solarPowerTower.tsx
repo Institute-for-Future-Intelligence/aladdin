@@ -22,15 +22,13 @@ const SolarPowerTower = ({ foundation }: { foundation: FoundationModel }) => {
     return getSunDirection(new Date(date), latitude);
   }, [date, latitude]);
 
-  const {
-    lz,
-    solarTowerRadius = 0.5,
-    solarReceiverHeight = 20,
-    solarTowerCentralReceiverRadius,
-    solarTowerCentralReceiverHeight = 2,
-  } = foundation;
+  const { lz, solarPowerTower } = foundation;
 
-  const haloSize = solarTowerCentralReceiverHeight * 2 + 1;
+  const receiverHeight = solarPowerTower?.receiverHeight ?? 2;
+  const receiverRadius = solarPowerTower?.receiverRadius ?? 1;
+  const towerRadius = solarPowerTower?.towerRadius ?? 0.5;
+  const towerHeight = solarPowerTower?.towerHeight ?? 20;
+  const haloSize = receiverHeight * 2 + 1;
 
   return (
     <group>
@@ -39,8 +37,8 @@ const SolarPowerTower = ({ foundation }: { foundation: FoundationModel }) => {
         name={'Focus Tower'}
         castShadow={false}
         receiveShadow={false}
-        args={[solarTowerRadius, solarTowerRadius, solarReceiverHeight, 6, 2]}
-        position={[0, 0, solarReceiverHeight / 2 + lz / 2]}
+        args={[towerRadius, towerRadius, towerHeight, 6, 2]}
+        position={[0, 0, towerHeight / 2 + lz / 2]}
         rotation={[HALF_PI, 0, 0]}
       >
         <meshStandardMaterial attach="material" color={'white'} />
@@ -50,21 +48,15 @@ const SolarPowerTower = ({ foundation }: { foundation: FoundationModel }) => {
         name={'Center Receiver'}
         castShadow={false}
         receiveShadow={false}
-        args={[
-          solarTowerCentralReceiverRadius,
-          solarTowerCentralReceiverRadius,
-          solarTowerCentralReceiverHeight,
-          10,
-          2,
-        ]}
-        position={[0, 0, solarReceiverHeight + lz / 2]}
+        args={[receiverRadius, receiverRadius, receiverHeight, 10, 2]}
+        position={[0, 0, towerHeight + lz / 2]}
         rotation={[HALF_PI, 0, 0]}
       >
         <meshStandardMaterial attach="material" color={'white'} />
       </Cylinder>
       {/* simple glow effect to create a halo */}
       {sunDirection.z > 0 && (
-        <mesh position={[0, 0, solarReceiverHeight + lz / 2]}>
+        <mesh position={[0, 0, towerHeight + lz / 2]}>
           <sprite scale={[haloSize, haloSize, haloSize]}>
             <spriteMaterial
               map={glowTexture}

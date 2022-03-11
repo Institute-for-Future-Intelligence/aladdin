@@ -14,7 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 
-const FoundationSolarReceiverAbsorptanceInput = ({
+const SolarAbsorberPipeApertureWidthInput = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -23,8 +23,8 @@ const FoundationSolarReceiverAbsorptanceInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateReceiverAbsorptanceById = useStore(Selector.updateFoundationSolarReceiverAbsorptanceById);
-  const updateReceiverAbsorptanceForAll = useStore(Selector.updateFoundationSolarReceiverAbsorptanceForAll);
+  const updateApertureWidthById = useStore(Selector.updateSolarAbsorberPipeApertureWidthById);
+  const updateApertureWidthForAll = useStore(Selector.updateSolarAbsorberPipeApertureWidthForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
@@ -33,9 +33,9 @@ const FoundationSolarReceiverAbsorptanceInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputReceiverAbsorptance, setInputReceiverAbsorptance] = useState<number>(
-    foundation?.solarReceiverAbsorptance ?? 0.95,
-  );
+  const absorberPipe = foundation?.solarAbsorberPipe;
+
+  const [inputApertureWidth, setInputApertureWidth] = useState<number>(absorberPipe?.apertureWidth ?? 0.6);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -44,8 +44,8 @@ const FoundationSolarReceiverAbsorptanceInput = ({
   const lang = { lng: language };
 
   useEffect(() => {
-    if (foundation) {
-      setInputReceiverAbsorptance(foundation.solarReceiverAbsorptance ?? 0.95);
+    if (absorberPipe) {
+      setInputApertureWidth(absorberPipe.apertureWidth ?? 0.6);
     }
   }, [foundation]);
 
@@ -54,16 +54,16 @@ const FoundationSolarReceiverAbsorptanceInput = ({
     setUpdateFlag(!updateFlag);
   };
 
-  const needChange = (absorptance: number) => {
+  const needChange = (apertureWidth: number) => {
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.FocusPipe || f.solarStructure === SolarStructure.FocusTower) {
+            if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
               if (
-                f.solarReceiverAbsorptance === undefined ||
-                Math.abs(f.solarReceiverAbsorptance - absorptance) > ZERO_TOLERANCE
+                f.solarAbsorberPipe.apertureWidth === undefined ||
+                Math.abs(f.solarAbsorberPipe.apertureWidth - apertureWidth) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -73,8 +73,8 @@ const FoundationSolarReceiverAbsorptanceInput = ({
         break;
       default:
         if (
-          foundation?.solarReceiverAbsorptance === undefined ||
-          Math.abs(foundation?.solarReceiverAbsorptance - absorptance) > ZERO_TOLERANCE
+          absorberPipe?.apertureWidth === undefined ||
+          Math.abs(absorberPipe?.apertureWidth - apertureWidth) > ZERO_TOLERANCE
         ) {
           return true;
         }
@@ -82,50 +82,53 @@ const FoundationSolarReceiverAbsorptanceInput = ({
     return false;
   };
 
-  const setReceiverAbsorptance = (value: number) => {
-    if (!foundation) return;
+  const setApertureWidth = (value: number) => {
+    if (!foundation || !absorberPipe) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldValuesAll = new Map<string, number>();
+        const oldValues = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
-            oldValuesAll.set(elem.id, (elem as FoundationModel).solarReceiverAbsorptance ?? 0.95);
+            const f = elem as FoundationModel;
+            if (f.solarAbsorberPipe) {
+              oldValues.set(elem.id, f.solarAbsorberPipe.apertureWidth ?? 0.6);
+            }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Solar Receiver Absorptance for All Foundations',
+          name: 'Set Absorber Aperture Width for All Foundations',
           timestamp: Date.now(),
-          oldValues: oldValuesAll,
+          oldValues: oldValues,
           newValue: value,
           undo: () => {
-            for (const [id, ab] of undoableChangeAll.oldValues.entries()) {
-              updateReceiverAbsorptanceById(id, ab as number);
+            for (const [id, aw] of undoableChangeAll.oldValues.entries()) {
+              updateApertureWidthById(id, aw as number);
             }
           },
           redo: () => {
-            updateReceiverAbsorptanceForAll(undoableChangeAll.newValue as number);
+            updateApertureWidthForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateReceiverAbsorptanceForAll(value);
+        updateApertureWidthForAll(value);
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation) {
-          const oldReceiverAbsorptance = foundation.solarReceiverAbsorptance ?? 0.95;
-          updateReceiverAbsorptanceById(foundation.id, value);
+        if (absorberPipe) {
+          const oldValue = absorberPipe.apertureWidth ?? 0.6;
+          updateApertureWidthById(foundation.id, value);
           const undoableChange = {
-            name: 'Set Solar Receiver Absorptance on Foundation',
+            name: 'Set Absorber Aperture Width on Foundation',
             timestamp: Date.now(),
-            oldValue: oldReceiverAbsorptance,
+            oldValue: oldValue,
             newValue: value,
             changedElementId: foundation.id,
             undo: () => {
-              updateReceiverAbsorptanceById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateApertureWidthById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateReceiverAbsorptanceById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateApertureWidthById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -149,7 +152,7 @@ const FoundationSolarReceiverAbsorptanceInput = ({
   };
 
   const close = () => {
-    setInputReceiverAbsorptance(foundation?.solarReceiverAbsorptance ?? 0.95);
+    setInputApertureWidth(absorberPipe?.apertureWidth ?? 0.6);
     setDialogVisible(false);
   };
 
@@ -159,7 +162,7 @@ const FoundationSolarReceiverAbsorptanceInput = ({
   };
 
   const ok = () => {
-    setReceiverAbsorptance(inputReceiverAbsorptance);
+    setApertureWidth(inputApertureWidth);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -167,7 +170,7 @@ const FoundationSolarReceiverAbsorptanceInput = ({
   return (
     <>
       <Modal
-        width={500}
+        width={550}
         visible={dialogVisible}
         title={
           <div
@@ -175,14 +178,14 @@ const FoundationSolarReceiverAbsorptanceInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('foundationMenu.SolarReceiverAbsorptance', lang)}
+            {i18n.t('solarAbsorberPipeMenu.AbsorberApertureWidth', lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
-              setReceiverAbsorptance(inputReceiverAbsorptance);
+              setApertureWidth(inputApertureWidth);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -205,21 +208,24 @@ const FoundationSolarReceiverAbsorptanceInput = ({
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={8}>
+          <Col className="gutter-row" span={6}>
             <InputNumber
-              min={0}
-              max={1}
+              min={0.1}
+              max={2}
               style={{ width: 120 }}
               step={0.01}
               precision={2}
-              value={inputReceiverAbsorptance}
+              value={inputApertureWidth}
               formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputReceiverAbsorptance(value)}
+              onChange={(value) => setInputApertureWidth(value)}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0, 1]
+              {i18n.t('word.Range', lang)}: [0.1, 2] {i18n.t('word.MeterAbbreviation', lang)}
             </div>
+          </Col>
+          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+            {i18n.t('word.MeterAbbreviation', lang)}
           </Col>
           <Col
             className="gutter-row"
@@ -239,4 +245,4 @@ const FoundationSolarReceiverAbsorptanceInput = ({
   );
 };
 
-export default FoundationSolarReceiverAbsorptanceInput;
+export default SolarAbsorberPipeApertureWidthInput;

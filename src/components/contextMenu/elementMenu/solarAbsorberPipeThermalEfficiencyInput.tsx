@@ -14,7 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 
-const FoundationSolarReceiverHeightInput = ({
+const SolarAbsorberPipeThermalEfficiencyInput = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -23,8 +23,8 @@ const FoundationSolarReceiverHeightInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateReceiverHeightById = useStore(Selector.updateFoundationSolarReceiverHeightById);
-  const updateReceiverHeightForAll = useStore(Selector.updateFoundationSolarReceiverHeightForAll);
+  const updateById = useStore(Selector.updateSolarAbsorberPipeThermalEfficiencyById);
+  const updateForAll = useStore(Selector.updateSolarAbsorberPipeThermalEfficiencyForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
@@ -33,8 +33,10 @@ const FoundationSolarReceiverHeightInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputReceiverHeight, setInputReceiverHeight] = useState<number>(
-    foundation?.solarReceiverHeight ?? (foundation?.solarStructure === SolarStructure.FocusTower ? 20 : 10),
+  const absorberPipe = foundation?.solarAbsorberPipe;
+
+  const [inputThermalEfficiency, setInputThermalEfficiency] = useState<number>(
+    absorberPipe?.absorberThermalEfficiency ?? 0.3,
   );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -44,10 +46,8 @@ const FoundationSolarReceiverHeightInput = ({
   const lang = { lng: language };
 
   useEffect(() => {
-    if (foundation) {
-      setInputReceiverHeight(
-        foundation.solarReceiverHeight ?? (foundation.solarStructure === SolarStructure.FocusPipe ? 10 : 20),
-      );
+    if (absorberPipe) {
+      setInputThermalEfficiency(absorberPipe.absorberThermalEfficiency ?? 0.3);
     }
   }, [foundation]);
 
@@ -56,16 +56,16 @@ const FoundationSolarReceiverHeightInput = ({
     setUpdateFlag(!updateFlag);
   };
 
-  const needChange = (receiverHeight: number) => {
+  const needChange = (efficiency: number) => {
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.FocusPipe || f.solarStructure === SolarStructure.FocusTower) {
+            if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
               if (
-                f.solarReceiverHeight === undefined ||
-                Math.abs(f.solarReceiverHeight - receiverHeight) > ZERO_TOLERANCE
+                f.solarAbsorberPipe.absorberThermalEfficiency === undefined ||
+                Math.abs(f.solarAbsorberPipe.absorberThermalEfficiency - efficiency) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -75,8 +75,8 @@ const FoundationSolarReceiverHeightInput = ({
         break;
       default:
         if (
-          foundation?.solarReceiverHeight === undefined ||
-          Math.abs(foundation?.solarReceiverHeight - receiverHeight) > ZERO_TOLERANCE
+          absorberPipe?.absorberThermalEfficiency === undefined ||
+          Math.abs(absorberPipe?.absorberThermalEfficiency - efficiency) > ZERO_TOLERANCE
         ) {
           return true;
         }
@@ -84,50 +84,53 @@ const FoundationSolarReceiverHeightInput = ({
     return false;
   };
 
-  const setReceiverHeight = (value: number) => {
-    if (!foundation) return;
+  const setThermalEfficiency = (value: number) => {
+    if (!foundation || !absorberPipe) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldReceiverHeightsAll = new Map<string, number>();
+        const oldValuesAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
-            oldReceiverHeightsAll.set(elem.id, (elem as FoundationModel).solarReceiverHeight ?? 10);
+            const f = elem as FoundationModel;
+            if (f.solarAbsorberPipe) {
+              oldValuesAll.set(elem.id, f.solarAbsorberPipe.absorberThermalEfficiency ?? 0.3);
+            }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Solar Receiver Height for All Foundations',
+          name: 'Set Absorber Thermal Efficiency for All Foundations',
           timestamp: Date.now(),
-          oldValues: oldReceiverHeightsAll,
+          oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, rh] of undoableChangeAll.oldValues.entries()) {
-              updateReceiverHeightById(id, rh as number);
+            for (const [id, te] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, te as number);
             }
           },
           redo: () => {
-            updateReceiverHeightForAll(undoableChangeAll.newValue as number);
+            updateForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateReceiverHeightForAll(value);
+        updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation) {
-          const oldReceiverHeight = foundation.solarReceiverHeight ?? 10;
-          updateReceiverHeightById(foundation.id, value);
+        if (absorberPipe) {
+          const oldValue = absorberPipe.absorberThermalEfficiency ?? 0.3;
+          updateById(foundation.id, value);
           const undoableChange = {
-            name: 'Set Solar Receiver Height on Foundation',
+            name: 'Set Absorber Thermal Efficiency on Foundation',
             timestamp: Date.now(),
-            oldValue: oldReceiverHeight,
+            oldValue: oldValue,
             newValue: value,
             changedElementId: foundation.id,
             undo: () => {
-              updateReceiverHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateReceiverHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -151,7 +154,7 @@ const FoundationSolarReceiverHeightInput = ({
   };
 
   const close = () => {
-    setInputReceiverHeight(foundation?.solarReceiverHeight ?? 10);
+    setInputThermalEfficiency(absorberPipe?.absorberThermalEfficiency ?? 0.3);
     setDialogVisible(false);
   };
 
@@ -161,7 +164,7 @@ const FoundationSolarReceiverHeightInput = ({
   };
 
   const ok = () => {
-    setReceiverHeight(inputReceiverHeight);
+    setThermalEfficiency(inputThermalEfficiency);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -169,7 +172,7 @@ const FoundationSolarReceiverHeightInput = ({
   return (
     <>
       <Modal
-        width={550}
+        width={500}
         visible={dialogVisible}
         title={
           <div
@@ -177,14 +180,14 @@ const FoundationSolarReceiverHeightInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('foundationMenu.SolarReceiverHeight', lang)}
+            {i18n.t('solarAbsorberPipeMenu.AbsorberThermalEfficiency', lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
-              setReceiverHeight(inputReceiverHeight);
+              setThermalEfficiency(inputThermalEfficiency);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -207,24 +210,21 @@ const FoundationSolarReceiverHeightInput = ({
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={8}>
             <InputNumber
-              min={1}
-              max={50}
+              min={0}
+              max={1}
               style={{ width: 120 }}
-              step={0.5}
-              precision={1}
-              value={inputReceiverHeight}
-              formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setInputReceiverHeight(value)}
+              step={0.01}
+              precision={2}
+              value={inputThermalEfficiency}
+              formatter={(a) => Number(a).toFixed(2)}
+              onChange={(value) => setInputThermalEfficiency(value)}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [1, 50] {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.Range', lang)}: [0, 1]
             </div>
-          </Col>
-          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-            {i18n.t('word.MeterAbbreviation', lang)}
           </Col>
           <Col
             className="gutter-row"
@@ -244,4 +244,4 @@ const FoundationSolarReceiverHeightInput = ({
   );
 };
 
-export default FoundationSolarReceiverHeightInput;
+export default SolarAbsorberPipeThermalEfficiencyInput;

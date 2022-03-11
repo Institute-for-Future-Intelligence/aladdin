@@ -12,8 +12,9 @@ import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
+import { ZERO_TOLERANCE } from 'src/constants';
 
-const FoundationSolarReceiverPoleNumberInput = ({
+const SolarUpdraftTowerCollectorHeightInput = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -22,8 +23,8 @@ const FoundationSolarReceiverPoleNumberInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateById = useStore(Selector.updateFoundationSolarReceiverPoleNumberById);
-  const updateForAll = useStore(Selector.updateFoundationSolarReceiverPoleNumberForAll);
+  const updateCollectorHeightById = useStore(Selector.updateSolarUpdraftTowerCollectorHeightById);
+  const updateCollectorHeightForAll = useStore(Selector.updateSolarUpdraftTowerCollectorHeightForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
@@ -32,7 +33,9 @@ const FoundationSolarReceiverPoleNumberInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputPoleNumber, setInputPoleNumber] = useState<number>(foundation?.solarReceiverPipePoleNumber ?? 5);
+  const [inputCollectorHeight, setInputCollectorHeight] = useState<number>(
+    foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation?.lz),
+  );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -42,7 +45,7 @@ const FoundationSolarReceiverPoleNumberInput = ({
 
   useEffect(() => {
     if (foundation) {
-      setInputPoleNumber(foundation.solarReceiverPipePoleNumber ?? 5);
+      setInputCollectorHeight(foundation.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz));
     }
   }, [foundation]);
 
@@ -51,14 +54,17 @@ const FoundationSolarReceiverPoleNumberInput = ({
     setUpdateFlag(!updateFlag);
   };
 
-  const needChange = (value: number) => {
+  const needChange = (collectorHeight: number) => {
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.FocusPipe || f.solarStructure === SolarStructure.FocusTower) {
-              if (f.solarReceiverPipePoleNumber === undefined || f.solarReceiverPipePoleNumber !== value) {
+            if (f.solarStructure === SolarStructure.UpdraftTower) {
+              if (
+                f.solarUpdraftTower?.collectorHeight === undefined ||
+                Math.abs(f.solarUpdraftTower?.collectorHeight - collectorHeight) > ZERO_TOLERANCE
+              ) {
                 return true;
               }
             }
@@ -67,8 +73,8 @@ const FoundationSolarReceiverPoleNumberInput = ({
         break;
       default:
         if (
-          foundation?.solarReceiverPipePoleNumber === undefined ||
-          foundation?.solarReceiverPipePoleNumber !== value
+          foundation?.solarUpdraftTower?.collectorHeight === undefined ||
+          Math.abs(foundation?.solarUpdraftTower?.collectorHeight - collectorHeight) > ZERO_TOLERANCE
         ) {
           return true;
         }
@@ -76,7 +82,7 @@ const FoundationSolarReceiverPoleNumberInput = ({
     return false;
   };
 
-  const setPoleNumber = (value: number) => {
+  const setCollectorHeight = (value: number) => {
     if (!foundation) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
@@ -84,42 +90,43 @@ const FoundationSolarReceiverPoleNumberInput = ({
         const oldValuesAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
-            oldValuesAll.set(elem.id, (elem as FoundationModel).solarReceiverPipePoleNumber ?? 5);
+            const f = elem as FoundationModel;
+            oldValuesAll.set(elem.id, f.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * f.lz));
           }
         }
         const undoableChangeAll = {
-          name: 'Set Solar Receiver Pipe Pole Number for All Foundations',
+          name: 'Set Solar Collector Height for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, pn] of undoableChangeAll.oldValues.entries()) {
-              updateById(id, pn as number);
+            for (const [id, ch] of undoableChangeAll.oldValues.entries()) {
+              updateCollectorHeightById(id, ch as number);
             }
           },
           redo: () => {
-            updateForAll(undoableChangeAll.newValue as number);
+            updateCollectorHeightForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateForAll(value);
+        updateCollectorHeightForAll(value);
         setApplyCount(applyCount + 1);
         break;
       default:
         if (foundation) {
-          const oldValue = foundation.solarReceiverPipePoleNumber ?? 5;
-          updateById(foundation.id, value);
+          const oldValue = foundation.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz);
+          updateCollectorHeightById(foundation.id, value);
           const undoableChange = {
-            name: 'Set Solar Receiver Pipe Pole Number on Foundation',
+            name: 'Set Solar Collector Height on Foundation',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
             changedElementId: foundation.id,
             undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateCollectorHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateCollectorHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -143,7 +150,7 @@ const FoundationSolarReceiverPoleNumberInput = ({
   };
 
   const close = () => {
-    setInputPoleNumber(foundation?.solarReceiverPipePoleNumber ?? 5);
+    setInputCollectorHeight(foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz));
     setDialogVisible(false);
   };
 
@@ -153,7 +160,7 @@ const FoundationSolarReceiverPoleNumberInput = ({
   };
 
   const ok = () => {
-    setPoleNumber(inputPoleNumber);
+    setCollectorHeight(inputCollectorHeight);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -169,14 +176,14 @@ const FoundationSolarReceiverPoleNumberInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('foundationMenu.SolarReceiverPipePoleNumber', lang)}
+            {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorHeight', lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
-              setPoleNumber(inputPoleNumber);
+              setCollectorHeight(inputCollectorHeight);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -201,19 +208,22 @@ const FoundationSolarReceiverPoleNumberInput = ({
         <Row gutter={6}>
           <Col className="gutter-row" span={6}>
             <InputNumber
-              min={1}
-              max={100}
+              min={2}
+              max={20}
               style={{ width: 120 }}
               step={1}
-              precision={2}
-              value={inputPoleNumber}
-              formatter={(a) => Number(a).toFixed(0)}
-              onChange={(value) => setInputPoleNumber(value)}
+              precision={1}
+              value={inputCollectorHeight}
+              formatter={(a) => Number(a).toFixed(1)}
+              onChange={(value) => setInputCollectorHeight(value)}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [1, 100]
+              {i18n.t('word.Range', lang)}: [2, 20] {i18n.t('word.MeterAbbreviation', lang)}
             </div>
+          </Col>
+          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+            {i18n.t('word.MeterAbbreviation', lang)}
           </Col>
           <Col
             className="gutter-row"
@@ -233,4 +243,4 @@ const FoundationSolarReceiverPoleNumberInput = ({
   );
 };
 
-export default FoundationSolarReceiverPoleNumberInput;
+export default SolarUpdraftTowerCollectorHeightInput;

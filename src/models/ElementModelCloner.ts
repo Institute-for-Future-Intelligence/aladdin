@@ -441,14 +441,9 @@ export class ElementModelCloner {
       color: foundation.color,
       textureType: foundation.textureType,
       solarStructure: foundation.solarStructure,
-      solarReceiverApertureWidth: foundation.solarReceiverApertureWidth,
-      solarReceiverPipeRelativeLength: foundation.solarReceiverPipeRelativeLength,
-      solarReceiverHeight: foundation.solarReceiverHeight,
-      solarReceiverPipePoleNumber: foundation.solarReceiverPipePoleNumber,
-      solarReceiverAbsorptance: foundation.solarReceiverAbsorptance,
-      solarReceiverOpticalEfficiency: foundation.solarReceiverOpticalEfficiency,
-      solarReceiverThermalEfficiency: foundation.solarReceiverThermalEfficiency,
       solarUpdraftTower: { ...foundation.solarUpdraftTower },
+      solarAbsorberPipe: { ...foundation.solarAbsorberPipe },
+      solarPowerTower: { ...foundation.solarPowerTower },
       id: short.generate() as string,
     } as FoundationModel;
   }

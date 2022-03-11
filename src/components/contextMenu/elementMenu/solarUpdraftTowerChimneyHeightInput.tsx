@@ -14,7 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 
-const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
+const SolarUpdraftTowerChimneyHeightInput = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -23,8 +23,8 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateCollectorRadiusById = useStore(Selector.updateFoundationSolarCollectorRadiusById);
-  const updateCollectorRadiusForAll = useStore(Selector.updateFoundationSolarCollectorRadiusForAll);
+  const updateChimneyHeightById = useStore(Selector.updateSolarUpdraftTowerChimneyHeightById);
+  const updateChimneyHeightForAll = useStore(Selector.updateSolarUpdraftTowerChimneyHeightForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
@@ -33,8 +33,8 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputCollectorRadius, setInputCollectorRadius] = useState<number>(
-    foundation?.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(foundation?.lx, foundation?.ly)),
+  const [inputChimneyHeight, setInputChimneyHeight] = useState<number>(
+    foundation?.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation?.lx, foundation?.ly),
   );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -45,9 +45,7 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
 
   useEffect(() => {
     if (foundation) {
-      setInputCollectorRadius(
-        foundation.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly)),
-      );
+      setInputChimneyHeight(foundation.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation.lx, foundation.ly));
     }
   }, [foundation]);
 
@@ -56,7 +54,7 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
     setUpdateFlag(!updateFlag);
   };
 
-  const needChange = (collectorRadius: number) => {
+  const needChange = (chimneyHeight: number) => {
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -64,8 +62,8 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower) {
               if (
-                f.solarUpdraftTower?.collectorRadius === undefined ||
-                Math.abs(f.solarUpdraftTower?.collectorRadius - collectorRadius) > ZERO_TOLERANCE
+                f.solarUpdraftTower?.chimneyHeight === undefined ||
+                Math.abs(f.solarUpdraftTower?.chimneyHeight - chimneyHeight) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -75,8 +73,8 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
         break;
       default:
         if (
-          foundation?.solarUpdraftTower?.collectorRadius === undefined ||
-          Math.abs(foundation?.solarUpdraftTower?.collectorRadius - collectorRadius) > ZERO_TOLERANCE
+          foundation?.solarUpdraftTower?.chimneyHeight === undefined ||
+          Math.abs(foundation?.solarUpdraftTower?.chimneyHeight - chimneyHeight) > ZERO_TOLERANCE
         ) {
           return true;
         }
@@ -84,7 +82,7 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
     return false;
   };
 
-  const setCollectorRadius = (value: number) => {
+  const setChimneyHeight = (value: number) => {
     if (!foundation) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
@@ -93,43 +91,42 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
-            oldValuesAll.set(elem.id, f.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(f.lx, f.ly)));
+            oldValuesAll.set(elem.id, f.solarUpdraftTower?.chimneyHeight ?? Math.max(f.lx, f.ly));
           }
         }
         const undoableChangeAll = {
-          name: 'Set Solar Collector Radius for All Foundations',
+          name: 'Set Solar Chimney Height for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, cr] of undoableChangeAll.oldValues.entries()) {
-              updateCollectorRadiusById(id, cr as number);
+            for (const [id, ch] of undoableChangeAll.oldValues.entries()) {
+              updateChimneyHeightById(id, ch as number);
             }
           },
           redo: () => {
-            updateCollectorRadiusForAll(undoableChangeAll.newValue as number);
+            updateChimneyHeightForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateCollectorRadiusForAll(value);
+        updateChimneyHeightForAll(value);
         setApplyCount(applyCount + 1);
         break;
       default:
         if (foundation) {
-          const oldValue =
-            foundation.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly));
-          updateCollectorRadiusById(foundation.id, value);
+          const oldValue = foundation.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation.lx, foundation.ly);
+          updateChimneyHeightById(foundation.id, value);
           const undoableChange = {
-            name: 'Set Solar Collector Radius on Foundation',
+            name: 'Set Solar Chimney Height on Foundation',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
             changedElementId: foundation.id,
             undo: () => {
-              updateCollectorRadiusById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateChimneyHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateCollectorRadiusById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateChimneyHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -153,9 +150,7 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
   };
 
   const close = () => {
-    setInputCollectorRadius(
-      foundation?.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly)),
-    );
+    setInputChimneyHeight(foundation?.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation.lx, foundation.ly));
     setDialogVisible(false);
   };
 
@@ -165,7 +160,7 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
   };
 
   const ok = () => {
-    setCollectorRadius(inputCollectorRadius);
+    setChimneyHeight(inputChimneyHeight);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -181,14 +176,14 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('foundationMenu.SolarUpdraftTowerCollectorRadius', lang)}
+            {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerChimneyHeight', lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
-              setCollectorRadius(inputCollectorRadius);
+              setChimneyHeight(inputChimneyHeight);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -216,11 +211,11 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
               min={10}
               max={1000}
               style={{ width: 120 }}
-              step={1}
+              step={10}
               precision={1}
-              value={inputCollectorRadius}
+              value={inputChimneyHeight}
               formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setInputCollectorRadius(value)}
+              onChange={(value) => setInputChimneyHeight(value)}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
@@ -248,4 +243,4 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
   );
 };
 
-export default FoundationSolarUpdraftTowerCollectorRadiusInput;
+export default SolarUpdraftTowerChimneyHeightInput;

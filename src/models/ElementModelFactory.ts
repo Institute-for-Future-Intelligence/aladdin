@@ -109,6 +109,8 @@ export class ElementModelFactory {
       parentId: GROUND_ID,
       selected: true,
       solarUpdraftTower: {},
+      solarAbsorberPipe: {},
+      solarPowerTower: {},
       id: short.generate() as string,
     } as FoundationModel;
   }

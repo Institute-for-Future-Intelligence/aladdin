@@ -62,8 +62,10 @@
       "selected": false,
       "solarStructure": 1,
       "locked": false,
-      "solarReceiverHeight": 16,
-      "solarReceiverApertureWidth": 1
+      "solarAbsorberPipe": {
+        "absorberHeight": 16,
+        "apertureWidth": 1
+      }
     },
     {
       "type": "Fresnel Reflector",

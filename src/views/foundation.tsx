@@ -2257,11 +2257,11 @@ const Foundation = ({
               position={[hx, hy, hz + 0.2]}
             />
           )}
-          {solarStructure === SolarStructure.FocusPipe && <SolarReceiverPipe foundation={foundationModel} />}
-          {solarStructure === SolarStructure.FocusTower && <SolarPowerTower foundation={foundationModel} />}
-          {solarStructure === SolarStructure.UpdraftTower && <SolarUpdraftTower foundation={foundationModel} />}
         </>
       )}
+      {solarStructure === SolarStructure.FocusPipe && <SolarReceiverPipe foundation={foundationModel} />}
+      {solarStructure === SolarStructure.FocusTower && <SolarPowerTower foundation={foundationModel} />}
+      {solarStructure === SolarStructure.UpdraftTower && <SolarUpdraftTower foundation={foundationModel} />}
     </group>
   );
 };

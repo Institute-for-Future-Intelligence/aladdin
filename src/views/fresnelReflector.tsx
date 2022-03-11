@@ -19,13 +19,14 @@ import {
   UNIT_VECTOR_POS_Z,
   ZERO_TOLERANCE,
 } from '../constants';
-import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
+import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType, SolarStructure } from '../types';
 import { Util } from '../Util';
 import { getSunDirection } from '../analysis/sunTools';
 import i18n from '../i18n/i18n';
 import { LineData } from './LineData';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import { FoundationModel } from '../models/FoundationModel';
+import { SolarAbsorberPipeModel } from '../models/SolarAbsorberPipeModel';
 
 const FresnelReflector = ({
   id,
@@ -199,12 +200,13 @@ const FresnelReflector = ({
     if (receiver) {
       if (receiver.type === ObjectType.Foundation) {
         const foundation = receiver as FoundationModel;
-        if (foundation.solarStructure) {
+        if (foundation.solarStructure === SolarStructure.FocusPipe) {
+          if (!foundation.solarAbsorberPipe) foundation.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
           // convert the receiver's coordinates into those relative to the center of this reflector
           return new Vector3(
             (foundation.cx - cx) * (rot ? Math.cos(rot) : 1),
             (foundation.cy - cy) * (rot ? Math.sin(rot) : 0),
-            foundation.cz - cz + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 10),
+            foundation.cz - cz + foundation.lz / 2 + (foundation.solarAbsorberPipe.absorberHeight ?? 10),
           );
         }
       }
@@ -212,12 +214,13 @@ const FresnelReflector = ({
       if (parent) {
         if (parent.type === ObjectType.Foundation) {
           const foundation = parent as FoundationModel;
-          if (foundation.solarStructure) {
+          if (foundation.solarStructure === SolarStructure.FocusPipe) {
+            if (!foundation.solarAbsorberPipe) foundation.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
             // convert the receiver's coordinates into those relative to the center of this reflector
             return new Vector3(
               (foundation.cx - cx) * (rot ? Math.cos(rot) : 1),
               (foundation.cy - cy) * (rot ? Math.sin(rot) : 0),
-              foundation.cz - cz + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 10),
+              foundation.cz - cz + foundation.lz / 2 + (foundation.solarAbsorberPipe.absorberHeight ?? 10),
             );
           }
         }

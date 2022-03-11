@@ -5,27 +5,19 @@
 import { ElementModel } from './ElementModel';
 import { FoundationTexture, SolarStructure } from '../types';
 import { SolarUpdraftTowerModel } from './SolarUpdraftTowerModel';
+import { SolarPowerTowerModel } from './SolarPowerTowerModel';
+import { SolarAbsorberPipeModel } from './SolarAbsorberPipeModel';
 
 export interface FoundationModel extends ElementModel {
   textureType: FoundationTexture;
 
   solarStructure?: SolarStructure;
 
-  // solar receiver (CSP pipe or tower)
-  solarReceiverAbsorptance?: number; // the percentage of energy absorbed by the receiver
-  solarReceiverOpticalEfficiency?: number;
-  solarReceiverThermalEfficiency?: number;
-  solarReceiverApertureWidth?: number;
-  solarReceiverHeight?: number;
-
   // tower for heliostats
-  solarTowerRadius?: number;
-  solarTowerCentralReceiverRadius?: number;
-  solarTowerCentralReceiverHeight?: number;
+  solarPowerTower?: SolarPowerTowerModel;
 
-  // pipe receiver for Fresnel reflectors
-  solarReceiverPipeRelativeLength?: number;
-  solarReceiverPipePoleNumber?: number;
+  // absorber pipe for Fresnel reflectors
+  solarAbsorberPipe?: SolarAbsorberPipeModel;
 
   // solar updraft tower
   solarUpdraftTower?: SolarUpdraftTowerModel;

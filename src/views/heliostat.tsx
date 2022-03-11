@@ -10,7 +10,7 @@ import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR, MOVE_HANDLE_RADIUS, UNIT_VECTOR_POS_Z } from '../constants';
-import { ActionType, MoveHandleType, ObjectType } from '../types';
+import { ActionType, MoveHandleType, ObjectType, SolarStructure } from '../types';
 import { Util } from '../Util';
 import { getSunDirection } from '../analysis/sunTools';
 import i18n from '../i18n/i18n';
@@ -161,12 +161,12 @@ const Heliostat = ({
     if (tower) {
       if (tower.type === ObjectType.Foundation) {
         const foundation = tower as FoundationModel;
-        if (foundation.solarStructure) {
+        if (foundation.solarStructure === SolarStructure.FocusTower && foundation.solarPowerTower) {
           // convert the receiver's coordinates into those relative to the center of this heliostat
           return new Vector3(
             foundation.cx - cx,
             foundation.cy - cy,
-            foundation.cz - cz + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 20),
+            foundation.cz - cz + foundation.lz / 2 + (foundation.solarPowerTower.towerHeight ?? 20),
           );
         }
       }
@@ -174,12 +174,12 @@ const Heliostat = ({
       if (parent) {
         if (parent.type === ObjectType.Foundation) {
           const foundation = parent as FoundationModel;
-          if (foundation.solarStructure) {
+          if (foundation.solarStructure === SolarStructure.FocusTower && foundation.solarPowerTower) {
             // convert the receiver's coordinates into those relative to the center of this heliostat
             return new Vector3(
               foundation.cx - cx,
               foundation.cy - cy,
-              foundation.cz - cz + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 20),
+              foundation.cz - cz + foundation.lz / 2 + (foundation.solarPowerTower.towerHeight ?? 20),
             );
           }
         }

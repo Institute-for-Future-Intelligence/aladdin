@@ -395,15 +395,29 @@ export const i18n_zh_tw = {
       AllFoundations: '所有的地基',
       AddPolygon: '添加多邊形',
       SelectSolarStructure: '選擇太陽能構型',
-      ReceiverPipeForFresnelReflectors: '和菲涅爾反射鏡配套的吸熱長管',
-      ReceiverTowerForHeliostats: '和定日鏡配套的吸熱高塔',
-      SolarReceiverPhysicalProperties: '太陽能吸收器的物理性質',
-      SolarReceiverHeight: '太陽能吸收器的安装高度',
-      SolarReceiverApertureWidth: '太陽能吸收器的孔徑',
-      SolarReceiverPipePoleNumber: '太陽能吸收器的支柱數量',
-      SolarReceiverAbsorptance: '太陽能吸收器的吸收率',
-      SolarReceiverOpticalEfficiency: '太陽能吸收器的光效率',
-      SolarReceiverThermalEfficiency: '太陽能吸收器的熱效率',
+    },
+
+    solarPowerTowerMenu: {
+      ReceiverTowerForHeliostats: '和定日鏡配套的吸收塔',
+      ReceiverTowerPhysicalProperties: '太陽能吸收塔的物理性質',
+      ReceiverTowerHeight: '太陽能吸收塔的高度',
+      ReceiverAbsorptance: '太陽能吸收器的吸收率',
+      ReceiverOpticalEfficiency: '太陽能吸收器的光效率',
+      ReceiverThermalEfficiency: '太陽能吸收器的熱效率',
+    },
+
+    solarAbsorberPipeMenu: {
+      AbsorberPipeForFresnelReflectors: '和菲涅爾反射鏡配套的吸收管',
+      AbsorberPipePhysicalProperties: '太陽能吸收管的物理性質',
+      AbsorberHeight: '太陽能吸收管的安装高度',
+      AbsorberApertureWidth: '太陽能吸收管的孔徑',
+      AbsorberPipePoleNumber: '太陽能吸收管的支柱數量',
+      AbsorberAbsorptance: '太陽能吸收管的吸收率',
+      AbsorberOpticalEfficiency: '太陽能吸收管的光效率',
+      AbsorberThermalEfficiency: '太陽能吸收管的熱效率',
+    },
+
+    solarUpdraftTowerMenu: {
       SolarUpdraftTower: '太陽能上升氣流塔',
       SolarUpdraftTowerPhysicalProperties: '太陽能上升氣流塔的物理性質',
       SolarUpdraftTowerChimneyHeight: '太陽能上升氣流塔煙囪的高度',

@@ -14,7 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 
-const FoundationSolarReceiverOpticalEfficiencyInput = ({
+const SolarAbsorberPipeOpticalEfficiencyInput = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -23,8 +23,8 @@ const FoundationSolarReceiverOpticalEfficiencyInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateReceiverOpticalEfficiencyById = useStore(Selector.updateFoundationSolarReceiverOpticalEfficiencyById);
-  const updateReceiverOpticalEfficiencyForAll = useStore(Selector.updateFoundationSolarReceiverOpticalEfficiencyForAll);
+  const updateOpticalEfficiencyById = useStore(Selector.updateSolarAbsorberPipeOpticalEfficiencyById);
+  const updateOpticalEfficiencyForAll = useStore(Selector.updateSolarAbsorberPipeOpticalEfficiencyForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
@@ -33,8 +33,10 @@ const FoundationSolarReceiverOpticalEfficiencyInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputReceiverOpticalEfficiency, setInputReceiverOpticalEfficiency] = useState<number>(
-    foundation?.solarReceiverOpticalEfficiency ?? 0.7,
+  const absorberPipe = foundation?.solarAbsorberPipe;
+
+  const [inputOpticalEfficiency, setInputOpticalEfficiency] = useState<number>(
+    absorberPipe?.absorberOpticalEfficiency ?? 0.7,
   );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -44,8 +46,8 @@ const FoundationSolarReceiverOpticalEfficiencyInput = ({
   const lang = { lng: language };
 
   useEffect(() => {
-    if (foundation) {
-      setInputReceiverOpticalEfficiency(foundation.solarReceiverOpticalEfficiency ?? 0.7);
+    if (absorberPipe) {
+      setInputOpticalEfficiency(absorberPipe.absorberOpticalEfficiency ?? 0.7);
     }
   }, [foundation]);
 
@@ -60,10 +62,10 @@ const FoundationSolarReceiverOpticalEfficiencyInput = ({
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.FocusPipe || f.solarStructure === SolarStructure.FocusTower) {
+            if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
               if (
-                f.solarReceiverOpticalEfficiency === undefined ||
-                Math.abs(f.solarReceiverOpticalEfficiency - efficiency) > ZERO_TOLERANCE
+                f.solarAbsorberPipe.absorberOpticalEfficiency === undefined ||
+                Math.abs(f.solarAbsorberPipe.absorberOpticalEfficiency - efficiency) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -73,8 +75,8 @@ const FoundationSolarReceiverOpticalEfficiencyInput = ({
         break;
       default:
         if (
-          foundation?.solarReceiverOpticalEfficiency === undefined ||
-          Math.abs(foundation?.solarReceiverOpticalEfficiency - efficiency) > ZERO_TOLERANCE
+          absorberPipe?.absorberOpticalEfficiency === undefined ||
+          Math.abs(absorberPipe?.absorberOpticalEfficiency - efficiency) > ZERO_TOLERANCE
         ) {
           return true;
         }
@@ -82,50 +84,53 @@ const FoundationSolarReceiverOpticalEfficiencyInput = ({
     return false;
   };
 
-  const setReceiverOpticalEfficiency = (value: number) => {
-    if (!foundation) return;
+  const setOpticalEfficiency = (value: number) => {
+    if (!foundation || !absorberPipe) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
-            oldValuesAll.set(elem.id, (elem as FoundationModel).solarReceiverOpticalEfficiency ?? 0.7);
+            const f = elem as FoundationModel;
+            if (f.solarAbsorberPipe) {
+              oldValuesAll.set(elem.id, f.solarAbsorberPipe.absorberOpticalEfficiency ?? 0.7);
+            }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Solar Receiver Optical Efficiency for All Foundations',
+          name: 'Set Absorber Optical Efficiency for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
             for (const [id, ab] of undoableChangeAll.oldValues.entries()) {
-              updateReceiverOpticalEfficiencyById(id, ab as number);
+              updateOpticalEfficiencyById(id, ab as number);
             }
           },
           redo: () => {
-            updateReceiverOpticalEfficiencyForAll(undoableChangeAll.newValue as number);
+            updateOpticalEfficiencyForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateReceiverOpticalEfficiencyForAll(value);
+        updateOpticalEfficiencyForAll(value);
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation) {
-          const oldReceiverOpticalEfficiency = foundation.solarReceiverOpticalEfficiency ?? 0.7;
-          updateReceiverOpticalEfficiencyById(foundation.id, value);
+        if (absorberPipe) {
+          const oldValue = absorberPipe.absorberOpticalEfficiency ?? 0.7;
+          updateOpticalEfficiencyById(foundation.id, value);
           const undoableChange = {
-            name: 'Set Solar Receiver Optical Efficiency on Foundation',
+            name: 'Set Absorber Optical Efficiency on Foundation',
             timestamp: Date.now(),
-            oldValue: oldReceiverOpticalEfficiency,
+            oldValue: oldValue,
             newValue: value,
             changedElementId: foundation.id,
             undo: () => {
-              updateReceiverOpticalEfficiencyById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateOpticalEfficiencyById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateReceiverOpticalEfficiencyById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateOpticalEfficiencyById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -149,7 +154,7 @@ const FoundationSolarReceiverOpticalEfficiencyInput = ({
   };
 
   const close = () => {
-    setInputReceiverOpticalEfficiency(foundation?.solarReceiverOpticalEfficiency ?? 0.7);
+    setInputOpticalEfficiency(absorberPipe?.absorberOpticalEfficiency ?? 0.7);
     setDialogVisible(false);
   };
 
@@ -159,7 +164,7 @@ const FoundationSolarReceiverOpticalEfficiencyInput = ({
   };
 
   const ok = () => {
-    setReceiverOpticalEfficiency(inputReceiverOpticalEfficiency);
+    setOpticalEfficiency(inputOpticalEfficiency);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -175,14 +180,14 @@ const FoundationSolarReceiverOpticalEfficiencyInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('foundationMenu.SolarReceiverOpticalEfficiency', lang)}
+            {i18n.t('solarAbsorberPipeMenu.AbsorberOpticalEfficiency', lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
-              setReceiverOpticalEfficiency(inputReceiverOpticalEfficiency);
+              setOpticalEfficiency(inputOpticalEfficiency);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -212,9 +217,9 @@ const FoundationSolarReceiverOpticalEfficiencyInput = ({
               style={{ width: 120 }}
               step={0.01}
               precision={2}
-              value={inputReceiverOpticalEfficiency}
+              value={inputOpticalEfficiency}
               formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputReceiverOpticalEfficiency(value)}
+              onChange={(value) => setInputOpticalEfficiency(value)}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
@@ -239,4 +244,4 @@ const FoundationSolarReceiverOpticalEfficiencyInput = ({
   );
 };
 
-export default FoundationSolarReceiverOpticalEfficiencyInput;
+export default SolarAbsorberPipeOpticalEfficiencyInput;

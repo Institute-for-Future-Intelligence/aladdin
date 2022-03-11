@@ -24,16 +24,16 @@ import { Vector3 } from 'three';
 import { UNIT_VECTOR_POS_Z } from '../../../constants';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { ElementCounter } from '../../../stores/ElementCounter';
-import FoundationSolarReceiverHeightInput from './foundationSolarReceiverHeightInput';
-import FoundationSolarReceiverAbsorptanceInput from './foundationSolarReceiverAbsorptanceInput';
-import FoundationSolarReceiverOpticalEfficiencyInput from './foundationSolarReceiverOpticalEfficiencyInput';
-import FoundationSolarReceiverThermalEfficiencyInput from './foundationSolarReceiverThermalEfficiencyInput';
-import FoundationSolarReceiverApertureWidthInput from './foundationSolarReceiverApertureWidthInput';
-import FoundationSolarReceiverPoleNumberInput from './foundationSolarReceiverPoleNumberInput';
-import FoundationSolarUpdraftTowerChimneyHeightInput from './foundationSolarUpdraftTowerChimneyHeightInput';
-import FoundationSolarUpdraftTowerChimneyRadiusInput from './foundationSolarUpdraftTowerChimneyRadiusInput';
-import FoundationSolarUpdraftTowerCollectorRadiusInput from './foundationSolarUpdraftTowerCollectorRadiusInput';
-import FoundationSolarUpdraftTowerCollectorHeightInput from './foundationSolarUpdraftTowerCollectorHeightInput';
+import SolarAbsorberPipeHeightInput from './solarAbsorberPipeHeightInput';
+import SolarAbsorberPipeAbsorptanceInput from './solarAbsorberPipeAbsorptanceInput';
+import SolarAbsorberPipeOpticalEfficiencyInput from './solarAbsorberPipeOpticalEfficiencyInput';
+import SolarAbsorberPipeThermalEfficiencyInput from './solarAbsorberPipeThermalEfficiencyInput';
+import SolarAbsorberPipeApertureWidthInput from './solarAbsorberPipeApertureWidthInput';
+import SolarAbsorberPipePoleNumberInput from './solarAbsorberPipePoleNumberInput';
+import SolarUpdraftTowerChimneyHeightInput from './solarUpdraftTowerChimneyHeightInput';
+import SolarUpdraftTowerChimneyRadiusInput from './solarUpdraftTowerChimneyRadiusInput';
+import SolarUpdraftTowerCollectorRadiusInput from './solarUpdraftTowerCollectorRadiusInput';
+import SolarUpdraftTowerCollectorHeightInput from './solarUpdraftTowerCollectorHeightInput';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -59,12 +59,14 @@ export const FoundationMenu = () => {
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
-  const [receiverHeightDialogVisible, setReceiverHeightDialogVisible] = useState(false);
-  const [receiverApertureDialogVisible, setReceiverApertureDialogVisible] = useState(false);
-  const [receiverPoleNumberDialogVisible, setReceiverPoleNumberDialogVisible] = useState(false);
-  const [receiverAbsorptanceDialogVisible, setReceiverAbsorptanceDialogVisible] = useState(false);
-  const [receiverOpticalEfficiencyDialogVisible, setReceiverOpticalEfficiencyDialogVisible] = useState(false);
-  const [receiverThermalEfficiencyDialogVisible, setReceiverThermalEfficiencyDialogVisible] = useState(false);
+  const [solarAbsorberPipeHeightDialogVisible, setSolarAbsorberPipeHeightDialogVisible] = useState(false);
+  const [solarAbsorberPipeApertureWidthDialogVisible, setSolarAbsorberPipeApertureWidthDialogVisible] = useState(false);
+  const [solarAbsorberPipePoleNumberDialogVisible, setSolarAbsorberPipePoleNumberDialogVisible] = useState(false);
+  const [solarAbsorberPipeAbsorptanceDialogVisible, setSolarAbsorberPipeAbsorptanceDialogVisible] = useState(false);
+  const [solarAbsorberPipeOpticalEfficiencyDialogVisible, setSolarAbsorberPipeOpticalEfficiencyDialogVisible] =
+    useState(false);
+  const [solarAbsorberPipeThermalEfficiencyDialogVisible, setSolarAbsorberPipeThermalEfficiencyDialogVisible] =
+    useState(false);
   const [chimneyHeightDialogVisible, setChimneyHeightDialogVisible] = useState(false);
   const [chimneyRadiusDialogVisible, setChimneyRadiusDialogVisible] = useState(false);
   const [collectorHeightDialogVisible, setCollectorHeightDialogVisible] = useState(false);
@@ -739,183 +741,181 @@ export const FoundationMenu = () => {
               <Space direction="vertical">
                 <Radio value={SolarStructure.None}>{i18n.t('word.None', lang)}</Radio>
                 <Radio value={SolarStructure.FocusPipe}>
-                  {i18n.t('foundationMenu.ReceiverPipeForFresnelReflectors', lang)}
+                  {i18n.t('solarAbsorberPipeMenu.AbsorberPipeForFresnelReflectors', lang)}
                 </Radio>
                 <Radio value={SolarStructure.FocusTower}>
-                  {i18n.t('foundationMenu.ReceiverTowerForHeliostats', lang)}
+                  {i18n.t('solarPowerTowerMenu.ReceiverTowerForHeliostats', lang)}
                 </Radio>
-                <Radio value={SolarStructure.UpdraftTower}>{i18n.t('foundationMenu.SolarUpdraftTower', lang)}</Radio>
+                <Radio value={SolarStructure.UpdraftTower}>
+                  {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTower', lang)}
+                </Radio>
               </Space>
             </Radio.Group>
           </SubMenu>
         )}
-        {editable &&
-          (foundation.solarStructure === SolarStructure.FocusPipe ||
-            foundation.solarStructure === SolarStructure.FocusTower) && (
-            <SubMenu
-              key={'foundation-solar-receiver-physical-properties'}
-              title={i18n.t('foundationMenu.SolarReceiverPhysicalProperties', lang)}
-              style={{ paddingLeft: '24px' }}
+
+        {editable && foundation.solarStructure === SolarStructure.FocusPipe && (
+          <SubMenu
+            key={'solar-absorber-pipe-physical-properties'}
+            title={i18n.t('solarAbsorberPipeMenu.AbsorberPipePhysicalProperties', lang)}
+            style={{ paddingLeft: '24px' }}
+          >
+            <SolarAbsorberPipeHeightInput
+              dialogVisible={solarAbsorberPipeHeightDialogVisible}
+              setDialogVisible={setSolarAbsorberPipeHeightDialogVisible}
+            />
+            <Menu.Item
+              key={'solar-absorber-pipe-height'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setSolarAbsorberPipeHeightDialogVisible(true);
+              }}
             >
-              <FoundationSolarReceiverHeightInput
-                dialogVisible={receiverHeightDialogVisible}
-                setDialogVisible={setReceiverHeightDialogVisible}
-              />
-              <Menu.Item
-                key={'foundation-solar-receiver-pipe-mount-height'}
-                style={{ paddingLeft: '36px' }}
-                onClick={() => {
-                  setApplyCount(0);
-                  setReceiverHeightDialogVisible(true);
-                }}
-              >
-                {i18n.t('foundationMenu.SolarReceiverHeight', lang)} ...
-              </Menu.Item>
+              {i18n.t('solarAbsorberPipeMenu.AbsorberHeight', lang)} ...
+            </Menu.Item>
 
-              {foundation.solarStructure === SolarStructure.FocusPipe && (
-                <>
-                  <FoundationSolarReceiverApertureWidthInput
-                    dialogVisible={receiverApertureDialogVisible}
-                    setDialogVisible={setReceiverApertureDialogVisible}
-                  />
-                  <Menu.Item
-                    key={'foundation-solar-receiver-pipe-aperture-width'}
-                    style={{ paddingLeft: '36px' }}
-                    onClick={() => {
-                      setApplyCount(0);
-                      setReceiverApertureDialogVisible(true);
-                    }}
-                  >
-                    {i18n.t('foundationMenu.SolarReceiverApertureWidth', lang)} ...
-                  </Menu.Item>
-                  <FoundationSolarReceiverPoleNumberInput
-                    dialogVisible={receiverPoleNumberDialogVisible}
-                    setDialogVisible={setReceiverPoleNumberDialogVisible}
-                  />
-                  <Menu.Item
-                    key={'foundation-solar-receiver-pipe-pole-number'}
-                    style={{ paddingLeft: '36px' }}
-                    onClick={() => {
-                      setApplyCount(0);
-                      setReceiverPoleNumberDialogVisible(true);
-                    }}
-                  >
-                    {i18n.t('foundationMenu.SolarReceiverPipePoleNumber', lang)} ...
-                  </Menu.Item>
-                </>
-              )}
+            <SolarAbsorberPipeApertureWidthInput
+              dialogVisible={solarAbsorberPipeApertureWidthDialogVisible}
+              setDialogVisible={setSolarAbsorberPipeApertureWidthDialogVisible}
+            />
+            <Menu.Item
+              key={'solar-absorber-pipe-aperture-width'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setSolarAbsorberPipeApertureWidthDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarAbsorberPipeMenu.AbsorberApertureWidth', lang)} ...
+            </Menu.Item>
+            <SolarAbsorberPipePoleNumberInput
+              dialogVisible={solarAbsorberPipePoleNumberDialogVisible}
+              setDialogVisible={setSolarAbsorberPipePoleNumberDialogVisible}
+            />
 
-              <FoundationSolarReceiverAbsorptanceInput
-                dialogVisible={receiverAbsorptanceDialogVisible}
-                setDialogVisible={setReceiverAbsorptanceDialogVisible}
-              />
-              <Menu.Item
-                key={'foundation-solar-receiver-pipe-absorptance'}
-                style={{ paddingLeft: '36px' }}
-                onClick={() => {
-                  setApplyCount(0);
-                  setReceiverAbsorptanceDialogVisible(true);
-                }}
-              >
-                {i18n.t('foundationMenu.SolarReceiverAbsorptance', lang)} ...
-              </Menu.Item>
+            <Menu.Item
+              key={'foundation-solar-receiver-pipe-pole-number'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setSolarAbsorberPipePoleNumberDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarAbsorberPipeMenu.AbsorberPipePoleNumber', lang)} ...
+            </Menu.Item>
 
-              <FoundationSolarReceiverOpticalEfficiencyInput
-                dialogVisible={receiverOpticalEfficiencyDialogVisible}
-                setDialogVisible={setReceiverOpticalEfficiencyDialogVisible}
-              />
-              <Menu.Item
-                key={'foundation-solar-receiver-optical-efficiency'}
-                style={{ paddingLeft: '36px' }}
-                onClick={() => {
-                  setApplyCount(0);
-                  setReceiverOpticalEfficiencyDialogVisible(true);
-                }}
-              >
-                {i18n.t('foundationMenu.SolarReceiverOpticalEfficiency', lang)} ...
-              </Menu.Item>
+            <SolarAbsorberPipeAbsorptanceInput
+              dialogVisible={solarAbsorberPipeAbsorptanceDialogVisible}
+              setDialogVisible={setSolarAbsorberPipeAbsorptanceDialogVisible}
+            />
+            <Menu.Item
+              key={'solar-absorber-pipe-absorptance'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setSolarAbsorberPipeAbsorptanceDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarAbsorberPipeMenu.AbsorberAbsorptance', lang)} ...
+            </Menu.Item>
 
-              <FoundationSolarReceiverThermalEfficiencyInput
-                dialogVisible={receiverThermalEfficiencyDialogVisible}
-                setDialogVisible={setReceiverThermalEfficiencyDialogVisible}
-              />
-              <Menu.Item
-                key={'foundation-solar-receiver-thermal-efficiency'}
-                style={{ paddingLeft: '36px' }}
-                onClick={() => {
-                  setApplyCount(0);
-                  setReceiverThermalEfficiencyDialogVisible(true);
-                }}
-              >
-                {i18n.t('foundationMenu.SolarReceiverThermalEfficiency', lang)} ...
-              </Menu.Item>
-            </SubMenu>
-          )}
+            <SolarAbsorberPipeOpticalEfficiencyInput
+              dialogVisible={solarAbsorberPipeOpticalEfficiencyDialogVisible}
+              setDialogVisible={setSolarAbsorberPipeOpticalEfficiencyDialogVisible}
+            />
+            <Menu.Item
+              key={'solar-absorber-optical-efficiency'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setSolarAbsorberPipeOpticalEfficiencyDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarAbsorberPipeMenu.AbsorberOpticalEfficiency', lang)} ...
+            </Menu.Item>
+
+            <SolarAbsorberPipeThermalEfficiencyInput
+              dialogVisible={solarAbsorberPipeThermalEfficiencyDialogVisible}
+              setDialogVisible={setSolarAbsorberPipeThermalEfficiencyDialogVisible}
+            />
+            <Menu.Item
+              key={'solar-absorber-thermal-efficiency'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setSolarAbsorberPipeThermalEfficiencyDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarAbsorberPipeMenu.AbsorberThermalEfficiency', lang)} ...
+            </Menu.Item>
+          </SubMenu>
+        )}
 
         {editable && foundation.solarStructure === SolarStructure.UpdraftTower && (
           <SubMenu
-            key={'foundation-solar-update-tower-physical-properties'}
-            title={i18n.t('foundationMenu.SolarUpdraftTowerPhysicalProperties', lang)}
+            key={'solar-updraft-tower-physical-properties'}
+            title={i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerPhysicalProperties', lang)}
             style={{ paddingLeft: '24px' }}
           >
-            <FoundationSolarUpdraftTowerChimneyHeightInput
+            <SolarUpdraftTowerChimneyHeightInput
               dialogVisible={chimneyHeightDialogVisible}
               setDialogVisible={setChimneyHeightDialogVisible}
             />
             <Menu.Item
-              key={'foundation-solar-updraft-tower-chimney-height'}
+              key={'solar-updraft-tower-chimney-height'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
                 setApplyCount(0);
                 setChimneyHeightDialogVisible(true);
               }}
             >
-              {i18n.t('foundationMenu.SolarUpdraftTowerChimneyHeight', lang)} ...
+              {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerChimneyHeight', lang)} ...
             </Menu.Item>
 
-            <FoundationSolarUpdraftTowerChimneyRadiusInput
+            <SolarUpdraftTowerChimneyRadiusInput
               dialogVisible={chimneyRadiusDialogVisible}
               setDialogVisible={setChimneyRadiusDialogVisible}
             />
             <Menu.Item
-              key={'foundation-solar-updraft-tower-chimney-radius'}
+              key={'solar-updraft-tower-chimney-radius'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
                 setApplyCount(0);
                 setChimneyRadiusDialogVisible(true);
               }}
             >
-              {i18n.t('foundationMenu.SolarUpdraftTowerChimneyRadius', lang)} ...
+              {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerChimneyRadius', lang)} ...
             </Menu.Item>
 
-            <FoundationSolarUpdraftTowerCollectorHeightInput
+            <SolarUpdraftTowerCollectorHeightInput
               dialogVisible={collectorHeightDialogVisible}
               setDialogVisible={setCollectorHeightDialogVisible}
             />
             <Menu.Item
-              key={'foundation-solar-updraft-tower-collector-height'}
+              key={'solar-updraft-tower-collector-height'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
                 setApplyCount(0);
                 setCollectorHeightDialogVisible(true);
               }}
             >
-              {i18n.t('foundationMenu.SolarUpdraftTowerCollectorHeight', lang)} ...
+              {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorHeight', lang)} ...
             </Menu.Item>
 
-            <FoundationSolarUpdraftTowerCollectorRadiusInput
+            <SolarUpdraftTowerCollectorRadiusInput
               dialogVisible={collectorRadiusDialogVisible}
               setDialogVisible={setCollectorRadiusDialogVisible}
             />
             <Menu.Item
-              key={'foundation-solar-updraft-tower-collector-radius'}
+              key={'solar-updraft-tower-collector-radius'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
                 setApplyCount(0);
                 setCollectorRadiusDialogVisible(true);
               }}
             >
-              {i18n.t('foundationMenu.SolarUpdraftTowerCollectorRadius', lang)} ...
+              {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorRadius', lang)} ...
             </Menu.Item>
           </SubMenu>
         )}

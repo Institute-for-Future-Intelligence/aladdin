@@ -14,7 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 
-const FoundationSolarUpdraftTowerChimneyHeightInput = ({
+const SolarAbsorberPipeHeightInput = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -23,8 +23,8 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateChimneyHeightById = useStore(Selector.updateFoundationSolarChimneyHeightById);
-  const updateChimneyHeightForAll = useStore(Selector.updateFoundationSolarChimneyHeightForAll);
+  const updateAbsorberHeightById = useStore(Selector.updateSolarAbsorberPipeHeightById);
+  const updateAbsorberHeightForAll = useStore(Selector.updateSolarAbsorberPipeHeightForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
@@ -33,9 +33,9 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputChimneyHeight, setInputChimneyHeight] = useState<number>(
-    foundation?.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation?.lx, foundation?.ly),
-  );
+  const absorberPipe = foundation?.solarAbsorberPipe;
+
+  const [inputAbsorberHeight, setInputAbsorberHeight] = useState<number>(absorberPipe?.absorberHeight ?? 10);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -44,8 +44,8 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
   const lang = { lng: language };
 
   useEffect(() => {
-    if (foundation) {
-      setInputChimneyHeight(foundation.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation.lx, foundation.ly));
+    if (absorberPipe) {
+      setInputAbsorberHeight(absorberPipe.absorberHeight ?? 10);
     }
   }, [foundation]);
 
@@ -54,16 +54,16 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
     setUpdateFlag(!updateFlag);
   };
 
-  const needChange = (chimneyHeight: number) => {
+  const needChange = (absorberHeight: number) => {
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.UpdraftTower) {
+            if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
               if (
-                f.solarUpdraftTower?.chimneyHeight === undefined ||
-                Math.abs(f.solarUpdraftTower?.chimneyHeight - chimneyHeight) > ZERO_TOLERANCE
+                f.solarAbsorberPipe.absorberHeight === undefined ||
+                Math.abs(f.solarAbsorberPipe.absorberHeight - absorberHeight) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -73,8 +73,8 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
         break;
       default:
         if (
-          foundation?.solarUpdraftTower?.chimneyHeight === undefined ||
-          Math.abs(foundation?.solarUpdraftTower?.chimneyHeight - chimneyHeight) > ZERO_TOLERANCE
+          absorberPipe?.absorberHeight === undefined ||
+          Math.abs(absorberPipe?.absorberHeight - absorberHeight) > ZERO_TOLERANCE
         ) {
           return true;
         }
@@ -82,8 +82,8 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
     return false;
   };
 
-  const setChimneyHeight = (value: number) => {
-    if (!foundation) return;
+  const setAbsorberHeight = (value: number) => {
+    if (!foundation || !absorberPipe) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
@@ -91,42 +91,44 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
-            oldValuesAll.set(elem.id, f.solarUpdraftTower?.chimneyHeight ?? Math.max(f.lx, f.ly));
+            if (f.solarAbsorberPipe) {
+              oldValuesAll.set(elem.id, f.solarAbsorberPipe.absorberHeight ?? 10);
+            }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Solar Chimney Height for All Foundations',
+          name: 'Set Absorber Height for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, ch] of undoableChangeAll.oldValues.entries()) {
-              updateChimneyHeightById(id, ch as number);
+            for (const [id, ah] of undoableChangeAll.oldValues.entries()) {
+              updateAbsorberHeightById(id, ah as number);
             }
           },
           redo: () => {
-            updateChimneyHeightForAll(undoableChangeAll.newValue as number);
+            updateAbsorberHeightForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateChimneyHeightForAll(value);
+        updateAbsorberHeightForAll(value);
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation) {
-          const oldValue = foundation.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation.lx, foundation.ly);
-          updateChimneyHeightById(foundation.id, value);
+        if (absorberPipe) {
+          const oldValue = absorberPipe.absorberHeight ?? 10;
+          updateAbsorberHeightById(foundation.id, value);
           const undoableChange = {
-            name: 'Set Solar Chimney Height on Foundation',
+            name: 'Set Absorber Height on Foundation',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
             changedElementId: foundation.id,
             undo: () => {
-              updateChimneyHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateAbsorberHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateChimneyHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateAbsorberHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -150,7 +152,7 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
   };
 
   const close = () => {
-    setInputChimneyHeight(foundation?.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation.lx, foundation.ly));
+    setInputAbsorberHeight(absorberPipe?.absorberHeight ?? 10);
     setDialogVisible(false);
   };
 
@@ -160,7 +162,7 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
   };
 
   const ok = () => {
-    setChimneyHeight(inputChimneyHeight);
+    setAbsorberHeight(inputAbsorberHeight);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -176,14 +178,14 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('foundationMenu.SolarUpdraftTowerChimneyHeight', lang)}
+            {i18n.t('solarAbsorberPipeMenu.AbsorberHeight', lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
-              setChimneyHeight(inputChimneyHeight);
+              setAbsorberHeight(inputAbsorberHeight);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -208,18 +210,18 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
         <Row gutter={6}>
           <Col className="gutter-row" span={6}>
             <InputNumber
-              min={10}
-              max={1000}
+              min={1}
+              max={50}
               style={{ width: 120 }}
-              step={10}
+              step={0.5}
               precision={1}
-              value={inputChimneyHeight}
+              value={inputAbsorberHeight}
               formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setInputChimneyHeight(value)}
+              onChange={(value) => setInputAbsorberHeight(value)}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [10, 1000] {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.Range', lang)}: [1, 50] {i18n.t('word.MeterAbbreviation', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
@@ -243,4 +245,4 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
   );
 };
 
-export default FoundationSolarUpdraftTowerChimneyHeightInput;
+export default SolarAbsorberPipeHeightInput;

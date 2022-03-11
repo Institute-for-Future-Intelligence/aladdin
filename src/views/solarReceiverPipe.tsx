@@ -9,23 +9,21 @@ import { FoundationModel } from '../models/FoundationModel';
 import { HALF_PI } from '../constants';
 
 const SolarReceiverPipe = ({ foundation }: { foundation: FoundationModel }) => {
-  const {
-    ly,
-    lz,
-    solarReceiverHeight = 10,
-    solarReceiverApertureWidth = 0.6,
-    solarReceiverPipeRelativeLength = 0.9,
-    solarReceiverPipePoleNumber = 5,
-  } = foundation;
+  const { ly, lz, solarAbsorberPipe } = foundation;
+
+  const absorberHeight = solarAbsorberPipe?.absorberHeight ?? 10;
+  const apertureWidth = solarAbsorberPipe?.apertureWidth ?? 0.6;
+  const relativeLength = solarAbsorberPipe?.relativeLength ?? 0.9;
+  const poleNumber = solarAbsorberPipe?.poleNumber ?? 5;
 
   const solarReceiverPipePoles = useMemo<Vector3[] | undefined>(() => {
     const array: Vector3[] = [];
-    const dy = (solarReceiverPipeRelativeLength * ly) / (solarReceiverPipePoleNumber + 1);
-    for (let i = 1; i <= solarReceiverPipePoleNumber; i++) {
-      array.push(new Vector3(0, i * dy - (solarReceiverPipeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz / 2));
+    const dy = (relativeLength * ly) / (poleNumber + 1);
+    for (let i = 1; i <= poleNumber; i++) {
+      array.push(new Vector3(0, i * dy - (relativeLength * ly) / 2, absorberHeight / 2 + lz / 2));
     }
     return array;
-  }, [ly, lz, solarReceiverPipePoleNumber, solarReceiverHeight, solarReceiverPipeRelativeLength]);
+  }, [ly, lz, poleNumber, absorberHeight, relativeLength]);
 
   return (
     <group>
@@ -34,8 +32,8 @@ const SolarReceiverPipe = ({ foundation }: { foundation: FoundationModel }) => {
         name={'Receiver Vertical Pipe 1'}
         castShadow={false}
         receiveShadow={false}
-        args={[solarReceiverApertureWidth / 4, solarReceiverApertureWidth / 4, solarReceiverHeight, 6, 2]}
-        position={[0, (-solarReceiverPipeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz / 2]}
+        args={[apertureWidth / 4, apertureWidth / 4, absorberHeight, 6, 2]}
+        position={[0, (-relativeLength * ly) / 2, absorberHeight / 2 + lz / 2]}
         rotation={[HALF_PI, 0, 0]}
       >
         <meshStandardMaterial attach="material" color={'white'} />
@@ -45,8 +43,8 @@ const SolarReceiverPipe = ({ foundation }: { foundation: FoundationModel }) => {
         name={'Receiver Vertical Pipe 2'}
         castShadow={false}
         receiveShadow={false}
-        args={[solarReceiverApertureWidth / 4, solarReceiverApertureWidth / 4, solarReceiverHeight, 6, 2]}
-        position={[0, (solarReceiverPipeRelativeLength * ly) / 2, solarReceiverHeight / 2 + lz / 2]}
+        args={[apertureWidth / 4, apertureWidth / 4, absorberHeight, 6, 2]}
+        position={[0, (relativeLength * ly) / 2, absorberHeight / 2 + lz / 2]}
         rotation={[HALF_PI, 0, 0]}
       >
         <meshStandardMaterial attach="material" color={'white'} />
@@ -57,16 +55,16 @@ const SolarReceiverPipe = ({ foundation }: { foundation: FoundationModel }) => {
         castShadow={false}
         receiveShadow={false}
         args={[
-          solarReceiverApertureWidth / 2,
-          solarReceiverApertureWidth / 2,
-          solarReceiverPipeRelativeLength * ly + solarReceiverApertureWidth / 2,
+          apertureWidth / 2,
+          apertureWidth / 2,
+          relativeLength * ly + apertureWidth / 2,
           6,
           2,
           false,
           3 * HALF_PI,
           Math.PI,
         ]}
-        position={[0, 0, solarReceiverHeight + lz / 2 - solarReceiverApertureWidth / 4]}
+        position={[0, 0, absorberHeight + lz / 2 - apertureWidth / 4]}
         rotation={[0, 0, 0]}
       >
         <meshStandardMaterial attach="material" color={'white'} side={DoubleSide} />
@@ -81,7 +79,7 @@ const SolarReceiverPipe = ({ foundation }: { foundation: FoundationModel }) => {
               name={'Solar Receiver Pole ' + i}
               castShadow={false}
               receiveShadow={false}
-              args={[solarReceiverApertureWidth / 8, solarReceiverApertureWidth / 8, solarReceiverHeight, 4, 2]}
+              args={[apertureWidth / 8, apertureWidth / 8, absorberHeight, 4, 2]}
               position={p}
               rotation={[HALF_PI, 0, 0]}
             >

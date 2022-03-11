@@ -431,6 +431,8 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
     if (!parent) throw new Error('parent of heliostat does not exist');
     if (parent.type !== ObjectType.Foundation) return;
     const foundation = parent as FoundationModel;
+    const powerTower = foundation.solarPowerTower;
+    if (!powerTower) return;
     const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(heliostat.cx, heliostat.cy, heliostat.cz, parent);
     const normal = new Vector3().fromArray(heliostat.normal);
@@ -455,7 +457,7 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
         ? new Vector3(
             foundation.cx - center.x,
             foundation.cy - center.y,
-            foundation.cz - center.z + (foundation.solarReceiverHeight ?? 10),
+            foundation.cz - center.z + (powerTower.towerHeight ?? 10),
           )
         : undefined;
     let heliostatToReceiver;
@@ -531,10 +533,11 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
     let systemEfficiency = 1;
     if (parent.type === ObjectType.Foundation) {
       const foundation = parent as FoundationModel;
+      const powerTower = foundation.solarPowerTower;
       systemEfficiency *=
-        (foundation.solarReceiverOpticalEfficiency ?? 0.7) *
-        (foundation.solarReceiverThermalEfficiency ?? 0.3) *
-        (foundation.solarReceiverAbsorptance ?? 0.95);
+        (powerTower?.receiverOpticalEfficiency ?? 0.7) *
+        (powerTower?.receiverThermalEfficiency ?? 0.3) *
+        (powerTower?.receiverAbsorptance ?? 0.95);
     }
     return heliostat.lx * heliostat.ly * heliostat.reflectance * systemEfficiency * (1 - dustLoss);
   };

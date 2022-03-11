@@ -407,15 +407,29 @@ export const i18n_es = {
       AllFoundations: 'Todas las bases',
       AddPolygon: 'Añadir polígono',
       SelectSolarStructure: 'Select Solar Structure',
-      ReceiverPipeForFresnelReflectors: 'Receiver Pipe for Fresnel Reflectors',
+    },
+
+    solarPowerTowerMenu: {
       ReceiverTowerForHeliostats: 'Receiver Tower for Heliostats',
-      SolarReceiverPhysicalProperties: 'Physical Properties of Solar Receiver',
-      SolarReceiverHeight: 'Height of Solar Receiver',
-      SolarReceiverApertureWidth: 'Aperture Width of Solar Receiver',
-      SolarReceiverPipePoleNumber: 'Pole Number for Solar Receiver Pipe',
-      SolarReceiverAbsorptance: 'Absorptance of Solar Receiver',
-      SolarReceiverOpticalEfficiency: 'Optical Efficiency of Solar Receiver',
-      SolarReceiverThermalEfficiency: 'Thermal Efficiency of Solar Receiver',
+      ReceiverTowerPhysicalProperties: 'Physical Properties of Receiver Tower',
+      ReceiverTowerHeight: 'Height of Receiver Tower',
+      ReceiverAbsorptance: 'Absorptance of Receiver',
+      ReceiverOpticalEfficiency: 'Optical Efficiency of Receiver',
+      ReceiverThermalEfficiency: 'Thermal Efficiency of Receiver',
+    },
+
+    solarAbsorberPipeMenu: {
+      AbsorberPipeForFresnelReflectors: 'Absorber Pipe for Fresnel Reflectors',
+      AbsorberPipePhysicalProperties: 'Physical Properties of Absorber Pipe',
+      AbsorberHeight: 'Height of Absorber Pipe',
+      AbsorberApertureWidth: 'Aperture Width of Absorber Pipe',
+      AbsorberPipePoleNumber: 'Pole Number for Absorber Pipe',
+      AbsorberAbsorptance: 'Absorptance of Absorber',
+      AbsorberOpticalEfficiency: 'Optical Efficiency of Absorber',
+      AbsorberThermalEfficiency: 'Thermal Efficiency of Absorber',
+    },
+
+    solarUpdraftTowerMenu: {
       SolarUpdraftTower: 'Solar Updraft Tower',
       SolarUpdraftTowerPhysicalProperties: 'Physical Properties of Solar Updraft Tower',
       SolarUpdraftTowerChimneyHeight: 'Solar Updraft Tower Chimney Height',

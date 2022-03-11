@@ -61,7 +61,9 @@
       "id": "kxHYpYsUs7XEocuTYAj1Qu",
       "selected": false,
       "locked": false,
-      "solarReceiverHeight": 10
+      "solarAbsorberPipe": {
+        "absorberHeight": 10
+      }
     },
     {
       "type": "Human",
@@ -366,10 +368,12 @@
       "parentId": "Ground",
       "textureType": "No Foundation Texture",
       "solarStructure": 1,
-      "solarReceiverHeight": 10,
       "id": "1X6Dcn8HZPSPCzJkugC2rm",
       "selected": false,
-      "locked": false
+      "locked": false,
+      "solarAbsorberPipe": {
+        "absorberHeight": 10
+      }
     },
     {
       "type": "Fresnel Reflector",
@@ -615,9 +619,11 @@
       ],
       "parentId": "Ground",
       "textureType": "No Foundation Texture",
-      "solarReceiverHeight": 10,
       "id": "uPxivXJTh4z2zMrqhzNvo3",
-      "selected": false
+      "selected": false,
+      "solarAbsorberPipe": {
+        "absorberHeight": 10
+      }
     },
     {
       "type": "Foundation",
@@ -640,9 +646,11 @@
       "parentId": "Ground",
       "textureType": "No Foundation Texture",
       "solarStructure": 1,
-      "solarReceiverHeight": 10,
       "id": "qFoXmrcbqf43nhfNvsKiMV",
-      "selected": false
+      "selected": false,
+      "solarAbsorberPipe": {
+        "absorberHeight": 10
+      }
     }
   ],
   "view": {

@@ -14,7 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 
-const FoundationSolarUpdraftTowerCollectorHeightInput = ({
+const SolarAbsorberPipeAbsorptanceInput = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -23,8 +23,8 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateCollectorHeightById = useStore(Selector.updateFoundationSolarCollectorHeightById);
-  const updateCollectorHeightForAll = useStore(Selector.updateFoundationSolarCollectorHeightForAll);
+  const updateReceiverAbsorptanceById = useStore(Selector.updateSolarAbsorberPipeAbsorptanceById);
+  const updateReceiverAbsorptanceForAll = useStore(Selector.updateSolarAbsorberPipeAbsorptanceForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
@@ -33,9 +33,9 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputCollectorHeight, setInputCollectorHeight] = useState<number>(
-    foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation?.lz),
-  );
+  const absorberPipe = foundation?.solarAbsorberPipe;
+
+  const [inputAbsorptance, setInputAbsorptance] = useState<number>(absorberPipe?.absorberAbsorptance ?? 0.95);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -44,8 +44,8 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
   const lang = { lng: language };
 
   useEffect(() => {
-    if (foundation) {
-      setInputCollectorHeight(foundation.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz));
+    if (absorberPipe) {
+      setInputAbsorptance(absorberPipe.absorberAbsorptance ?? 0.95);
     }
   }, [foundation]);
 
@@ -54,16 +54,16 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
     setUpdateFlag(!updateFlag);
   };
 
-  const needChange = (collectorHeight: number) => {
+  const needChange = (absorptance: number) => {
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.UpdraftTower) {
+            if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
               if (
-                f.solarUpdraftTower?.collectorHeight === undefined ||
-                Math.abs(f.solarUpdraftTower?.collectorHeight - collectorHeight) > ZERO_TOLERANCE
+                f.solarAbsorberPipe.absorberAbsorptance === undefined ||
+                Math.abs(f.solarAbsorberPipe.absorberAbsorptance - absorptance) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -73,8 +73,8 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
         break;
       default:
         if (
-          foundation?.solarUpdraftTower?.collectorHeight === undefined ||
-          Math.abs(foundation?.solarUpdraftTower?.collectorHeight - collectorHeight) > ZERO_TOLERANCE
+          absorberPipe?.absorberAbsorptance === undefined ||
+          Math.abs(absorberPipe?.absorberAbsorptance - absorptance) > ZERO_TOLERANCE
         ) {
           return true;
         }
@@ -82,8 +82,8 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
     return false;
   };
 
-  const setCollectorHeight = (value: number) => {
-    if (!foundation) return;
+  const setAbsorptance = (value: number) => {
+    if (!foundation || !absorberPipe) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
@@ -91,42 +91,44 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
-            oldValuesAll.set(elem.id, f.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * f.lz));
+            if (f.solarAbsorberPipe) {
+              oldValuesAll.set(elem.id, f.solarAbsorberPipe.absorberAbsorptance ?? 0.95);
+            }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Solar Collector Height for All Foundations',
+          name: 'Set Absorber Pipe Absorptance for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, ch] of undoableChangeAll.oldValues.entries()) {
-              updateCollectorHeightById(id, ch as number);
+            for (const [id, ab] of undoableChangeAll.oldValues.entries()) {
+              updateReceiverAbsorptanceById(id, ab as number);
             }
           },
           redo: () => {
-            updateCollectorHeightForAll(undoableChangeAll.newValue as number);
+            updateReceiverAbsorptanceForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateCollectorHeightForAll(value);
+        updateReceiverAbsorptanceForAll(value);
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation) {
-          const oldValue = foundation.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz);
-          updateCollectorHeightById(foundation.id, value);
+        if (absorberPipe) {
+          const oldValue = absorberPipe.absorberAbsorptance ?? 0.95;
+          updateReceiverAbsorptanceById(foundation.id, value);
           const undoableChange = {
-            name: 'Set Solar Collector Height on Foundation',
+            name: 'Set Absorber Pipe Absorptance on Foundation',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
             changedElementId: foundation.id,
             undo: () => {
-              updateCollectorHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateReceiverAbsorptanceById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateCollectorHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateReceiverAbsorptanceById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -150,7 +152,7 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
   };
 
   const close = () => {
-    setInputCollectorHeight(foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz));
+    setInputAbsorptance(absorberPipe?.absorberAbsorptance ?? 0.95);
     setDialogVisible(false);
   };
 
@@ -160,7 +162,7 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
   };
 
   const ok = () => {
-    setCollectorHeight(inputCollectorHeight);
+    setAbsorptance(inputAbsorptance);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -168,7 +170,7 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
   return (
     <>
       <Modal
-        width={550}
+        width={500}
         visible={dialogVisible}
         title={
           <div
@@ -176,14 +178,14 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('foundationMenu.SolarUpdraftTowerCollectorHeight', lang)}
+            {i18n.t('solarAbsorberPipeMenu.AbsorberAbsorptance', lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
-              setCollectorHeight(inputCollectorHeight);
+              setAbsorptance(inputAbsorptance);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -206,24 +208,21 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={8}>
             <InputNumber
-              min={2}
-              max={20}
+              min={0}
+              max={1}
               style={{ width: 120 }}
-              step={1}
-              precision={1}
-              value={inputCollectorHeight}
-              formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setInputCollectorHeight(value)}
+              step={0.01}
+              precision={2}
+              value={inputAbsorptance}
+              formatter={(a) => Number(a).toFixed(2)}
+              onChange={(value) => setInputAbsorptance(value)}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [2, 20] {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.Range', lang)}: [0, 1]
             </div>
-          </Col>
-          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-            {i18n.t('word.MeterAbbreviation', lang)}
           </Col>
           <Col
             className="gutter-row"
@@ -243,4 +242,4 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
   );
 };
 
-export default FoundationSolarUpdraftTowerCollectorHeightInput;
+export default SolarAbsorberPipeAbsorptanceInput;

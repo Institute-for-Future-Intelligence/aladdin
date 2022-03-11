@@ -764,8 +764,10 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const parent = getParent(reflector);
     if (!parent) throw new Error('parent of Fresnel reflector does not exist');
     if (parent.type !== ObjectType.Foundation) return;
-    const dayOfYear = Util.dayOfYear(now);
     const foundation = parent as FoundationModel;
+    const absorberPipe = foundation.solarAbsorberPipe;
+    if (!absorberPipe) return;
+    const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(reflector.cx, reflector.cy, reflector.cz, parent);
     const normal = new Vector3().fromArray(reflector.normal);
     const originalNormal = normal.clone();
@@ -800,7 +802,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         ? new Vector3(
             (foundation.cx - center.x) * cosRot,
             (foundation.cy - center.y) * sinRot,
-            foundation.cz - center.z + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 10),
+            foundation.cz - center.z + foundation.lz / 2 + (absorberPipe.absorberHeight ?? 10),
           )
         : undefined;
     // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
@@ -881,8 +883,10 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const parent = getParent(heliostat);
     if (!parent) throw new Error('parent of Fresnel reflector does not exist');
     if (parent.type !== ObjectType.Foundation) return;
-    const dayOfYear = Util.dayOfYear(now);
     const foundation = parent as FoundationModel;
+    const powerTower = foundation.solarPowerTower;
+    if (!powerTower) return;
+    const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(heliostat.cx, heliostat.cy, heliostat.cz, parent);
     const normal = new Vector3().fromArray(heliostat.normal);
     const originalNormal = normal.clone();
@@ -913,7 +917,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         ? new Vector3(
             foundation.cx - center.x,
             foundation.cy - center.y,
-            foundation.cz - center.z + (foundation.solarReceiverHeight ?? 20),
+            foundation.cz - center.z + (powerTower.towerHeight ?? 20),
           )
         : undefined;
     let heliostatToReceiver;

@@ -431,6 +431,8 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     if (!parent) throw new Error('parent of Fresnel reflector does not exist');
     if (parent.type !== ObjectType.Foundation) return;
     const foundation = parent as FoundationModel;
+    const absorberPipe = foundation.solarAbsorberPipe;
+    if (!absorberPipe) return;
     const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(reflector.cx, reflector.cy, reflector.cz, parent);
     const normal = new Vector3().fromArray(reflector.normal);
@@ -460,7 +462,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         ? new Vector3(
             (foundation.cx - center.x) * cosRot,
             (foundation.cy - center.y) * sinRot,
-            foundation.cz - center.z + foundation.lz / 2 + (foundation.solarReceiverHeight ?? 10),
+            foundation.cz - center.z + foundation.lz / 2 + (absorberPipe.absorberHeight ?? 10),
           )
         : undefined;
     // the rotation axis is in the north-south direction, so the relative azimuth is zero, which maps to (0, 1, 0)
@@ -540,10 +542,11 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     let systemEfficiency = 1;
     if (parent.type === ObjectType.Foundation) {
       const foundation = parent as FoundationModel;
+      const absorberPipe = foundation.solarAbsorberPipe;
       systemEfficiency *=
-        (foundation.solarReceiverOpticalEfficiency ?? 0.7) *
-        (foundation.solarReceiverThermalEfficiency ?? 0.3) *
-        (foundation.solarReceiverAbsorptance ?? 0.95);
+        (absorberPipe?.absorberOpticalEfficiency ?? 0.7) *
+        (absorberPipe?.absorberThermalEfficiency ?? 0.3) *
+        (absorberPipe?.absorberAbsorptance ?? 0.95);
     }
     return reflector.lx * reflector.ly * reflector.reflectance * systemEfficiency * (1 - dustLoss);
   };

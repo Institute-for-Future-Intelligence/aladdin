@@ -199,68 +199,67 @@ export const setFoundationActionScope = (state: CommonStoreState) => state.setFo
 
 export const updateFoundationSolarStructureById = (state: CommonStoreState) => state.updateFoundationSolarStructureById;
 
-export const updateFoundationSolarReceiverApertureWidthById = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverApertureWidthById;
+export const updateSolarAbsorberPipeApertureWidthById = (state: CommonStoreState) =>
+  state.updateSolarAbsorberPipeApertureWidthById;
 
-export const updateFoundationSolarReceiverApertureWidthForAll = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverApertureWidthForAll;
+export const updateSolarAbsorberPipeApertureWidthForAll = (state: CommonStoreState) =>
+  state.updateSolarAbsorberPipeApertureWidthForAll;
 
-export const updateFoundationSolarReceiverPoleNumberById = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverPoleNumberById;
+export const updateSolarAbsorberPipePoleNumberById = (state: CommonStoreState) =>
+  state.updateSolarAbsorberPipePoleNumberById;
 
-export const updateFoundationSolarReceiverPoleNumberForAll = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverPoleNumberForAll;
+export const updateSolarAbsorberPipePoleNumberForAll = (state: CommonStoreState) =>
+  state.updateSolarAbsorberPipePoleNumberForAll;
 
-export const updateFoundationSolarReceiverHeightById = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverHeightById;
+export const updateSolarAbsorberPipeHeightById = (state: CommonStoreState) => state.updateSolarAbsorberPipeHeightById;
 
-export const updateFoundationSolarReceiverHeightForAll = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverHeightForAll;
+export const updateSolarAbsorberPipeHeightForAll = (state: CommonStoreState) =>
+  state.updateSolarAbsorberPipeHeightForAll;
 
-export const updateFoundationSolarReceiverAbsorptanceById = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverAbsorptanceById;
+export const updateSolarAbsorberPipeAbsorptanceById = (state: CommonStoreState) =>
+  state.updateSolarAbsorberPipeAbsorptanceById;
 
-export const updateFoundationSolarReceiverAbsorptanceForAll = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverAbsorptanceForAll;
+export const updateSolarAbsorberPipeAbsorptanceForAll = (state: CommonStoreState) =>
+  state.updateSolarAbsorberPipeAbsorptanceForAll;
 
-export const updateFoundationSolarReceiverOpticalEfficiencyById = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverOpticalEfficiencyById;
+export const updateSolarAbsorberPipeOpticalEfficiencyById = (state: CommonStoreState) =>
+  state.updateSolarAbsorberPipeOpticalEfficiencyById;
 
-export const updateFoundationSolarReceiverOpticalEfficiencyForAll = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverOpticalEfficiencyForAll;
+export const updateSolarAbsorberPipeOpticalEfficiencyForAll = (state: CommonStoreState) =>
+  state.updateSolarAbsorberPipeOpticalEfficiencyForAll;
 
-export const updateFoundationSolarReceiverThermalEfficiencyById = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverThermalEfficiencyById;
+export const updateSolarAbsorberPipeThermalEfficiencyById = (state: CommonStoreState) =>
+  state.updateSolarAbsorberPipeThermalEfficiencyById;
 
-export const updateFoundationSolarReceiverThermalEfficiencyForAll = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverThermalEfficiencyForAll;
+export const updateSolarAbsorberPipeThermalEfficiencyForAll = (state: CommonStoreState) =>
+  state.updateSolarAbsorberPipeThermalEfficiencyForAll;
 
-export const updateFoundationSolarReceiverPipeRelativeLengthById = (state: CommonStoreState) =>
-  state.updateFoundationSolarReceiverPipeRelativeLengthById;
+export const updateSolarAbsorberPipeRelativeLengthById = (state: CommonStoreState) =>
+  state.updateSolarAbsorberPipeRelativeLengthById;
 
-export const updateFoundationSolarChimneyHeightById = (state: CommonStoreState) =>
-  state.updateFoundationSolarChimneyHeightById;
+export const updateSolarUpdraftTowerChimneyHeightById = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerChimneyHeightById;
 
-export const updateFoundationSolarChimneyHeightForAll = (state: CommonStoreState) =>
-  state.updateFoundationSolarChimneyHeightForAll;
+export const updateSolarUpdraftTowerChimneyHeightForAll = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerChimneyHeightForAll;
 
-export const updateFoundationSolarChimneyRadiusById = (state: CommonStoreState) =>
-  state.updateFoundationSolarChimneyRadiusById;
+export const updateSolarUpdraftTowerChimneyRadiusById = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerChimneyRadiusById;
 
-export const updateFoundationSolarChimneyRadiusForAll = (state: CommonStoreState) =>
-  state.updateFoundationSolarChimneyRadiusForAll;
+export const updateSolarUpdraftTowerChimneyRadiusForAll = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerChimneyRadiusForAll;
 
-export const updateFoundationSolarCollectorHeightById = (state: CommonStoreState) =>
-  state.updateFoundationSolarCollectorHeightById;
+export const updateSolarUpdraftTowerCollectorHeightById = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerCollectorHeightById;
 
-export const updateFoundationSolarCollectorHeightForAll = (state: CommonStoreState) =>
-  state.updateFoundationSolarCollectorHeightForAll;
+export const updateSolarUpdraftTowerCollectorHeightForAll = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerCollectorHeightForAll;
 
-export const updateFoundationSolarCollectorRadiusById = (state: CommonStoreState) =>
-  state.updateFoundationSolarCollectorRadiusById;
+export const updateSolarUpdraftTowerCollectorRadiusById = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerCollectorRadiusById;
 
-export const updateFoundationSolarCollectorRadiusForAll = (state: CommonStoreState) =>
-  state.updateFoundationSolarCollectorRadiusForAll;
+export const updateSolarUpdraftTowerCollectorRadiusForAll = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerCollectorRadiusForAll;
 
 export const updateFoundationTextureById = (state: CommonStoreState) => state.updateFoundationTextureById;
 

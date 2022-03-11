@@ -82,9 +82,11 @@
       "parentId": "Ground",
       "textureType": "No Foundation Texture",
       "solarStructure": 1,
-      "solarReceiverHeight": 20,
       "id": "dzfAzy3H4GMkDSbVLaRN5i",
-      "selected": false
+      "selected": false,
+      "solarAbsorberPipe": {
+        "absorberHeight": 20
+      }
     },
     {
       "type": "Fresnel Reflector",
@@ -181,9 +183,11 @@
       "parentId": "Ground",
       "textureType": "No Foundation Texture",
       "solarStructure": 1,
-      "solarReceiverHeight": 20,
       "id": "5Xds31NJFC5WSWmddVnFan",
-      "selected": false
+      "selected": false,
+      "solarAbsorberPipe": {
+        "absorberHeight": 20
+      }
     },
     {
       "type": "Fresnel Reflector",
