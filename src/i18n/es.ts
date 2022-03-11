@@ -298,6 +298,7 @@ export const i18n_es = {
         ShadowingAndBlockingOfHeliostats: 'Shadowing and Blocking of Heliostats',
         EffectSolarPowerTowerHeight: 'Effect of Solar Power Tower Height',
         SolarPowerTower: 'Solar Power Tower',
+        SolarUpdraftTower: 'Solar Updraft Tower',
       },
       examplesSubMenu: 'Ejemplos',
       solarEnergySubMenu: 'Energía Solar',

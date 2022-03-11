@@ -1,0 +1,162 @@
+{
+  "docid": "pGxh6nAirChrENVCvKbBkW",
+  "timestamp": 1647034223107,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "latitude": 33.4483771,
+    "solarPanelGridCellSize": 0.5,
+    "timesPerHour": 4,
+    "longitude": -112.0740373,
+    "ground": {
+      "albedo": 0.32,
+      "thermalDiffusivity": 0.05,
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "address": "Phoenix, AZ, USA",
+    "date": "Mon Mar 22 2021 09:00:00 GMT-0400 (Eastern Daylight Time)",
+    "name": "default",
+    "orthographic": false,
+    "cameraZoom": 35.16173831821251,
+    "solarRadiationHeatmapGridCellSize": 1
+  },
+  "elements": [
+    {
+      "cy": 0.8227637571854691,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 0.1,
+      "ly": 120,
+      "id": "of4fAMi2p9MKmo6JDUYnfX",
+      "type": "Foundation",
+      "cx": -0.8016636577985707,
+      "cz": 0.05,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 120,
+      "selected": false,
+      "parentId": "Ground",
+      "solarReceiverHeight": 20,
+      "locked": false,
+      "solarStructure": 3,
+      "color": "#cccccc",
+      "solarUpdraftTower": {
+        "collectorHeight": 2,
+        "collectorRadius": 50,
+        "chimneyHeight": 60,
+        "chimneyRadius": 2
+      }
+    },
+    {
+      "type": "Human",
+      "name": "Jack",
+      "cx": -38.26430323011859,
+      "cy": 25.342841182644747,
+      "cz": 0.050000000745065165,
+      "lx": 0.6,
+      "lz": 1.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "mmSGpFPo4x1JzcT9AUeUkr",
+      "selected": false,
+      "ly": 0.6
+    }
+  ],
+  "view": {
+    "yearlyPvYieldPanelX": -25,
+    "autoRotate": false,
+    "mapZoom": 19,
+    "axes": true,
+    "theme": "Default",
+    "showSiteInfoPanel": true,
+    "showDesignInfoPanel": false,
+    "showWeatherPanel": false,
+    "groundPanelX": 0,
+    "dailyPvYieldPanelX": -4,
+    "dailyLightSensorPanelY": 232,
+    "showDailyLightSensorPanel": false,
+    "mapTilt": 0,
+    "yearlyPvYieldPanelY": 16,
+    "yearlyLightSensorPanelX": 0,
+    "showGroundPanel": false,
+    "showHeliodonPanel": true,
+    "heliodon": false,
+    "weatherPanelY": 0,
+    "heliodonPanelX": -26,
+    "dailyPvYieldPanelY": 3,
+    "mapWeatherStations": false,
+    "yearlyLightSensorPanelY": 0,
+    "showPvDailyYieldPanel": true,
+    "showYearlyPvYieldPanel": false,
+    "dailyLightSensorPanelX": -240,
+    "weatherPanelX": 0,
+    "heliodonPanelY": 33,
+    "groundColor": "#68ccca",
+    "groundPanelY": 0,
+    "groundImage": false,
+    "showDailyPvYieldPanel": false,
+    "shadowEnabled": true,
+    "showYearlyLightSensorPanel": false,
+    "mapType": "hybrid",
+    "cameraPosition": [
+      -21.32409358961443,
+      -158.43063714477958,
+      77.76066727852249
+    ],
+    "panCenter": [
+      13.095666057174324,
+      0.4915400294921718,
+      6.384446528703437
+    ],
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 1.8893648827547527,
+    "showInstructionPanel": true,
+    "showMapPanel": false,
+    "cameraPosition2D": [
+      8.410285062152344,
+      12.466838396919735,
+      50.00001246725617
+    ],
+    "panCenter2D": [
+      8.410285062152344,
+      12.466888399142201,
+      0.000012467288726847116
+    ],
+    "solarRadiationHeatMapMaxValue": 6,
+    "showDailyHeliostatYieldPanel": false,
+    "dailyHeliostatYieldPanelX": null,
+    "dailyHeliostatYieldPanelY": null,
+    "showYearlyHeliostatYieldPanel": false
+  },
+  "notes": []
+}

@@ -296,6 +296,7 @@ export const i18n_zh_tw = {
         ShadowingAndBlockingOfHeliostats: '定日鏡的陰影和遮擋',
         EffectSolarPowerTowerHeight: '吸收塔高度對發電量的影響',
         SolarPowerTower: '塔式光熱發電站',
+        SolarUpdraftTower: '太陽能上升氣流塔',
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太陽能',

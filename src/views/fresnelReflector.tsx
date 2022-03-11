@@ -200,8 +200,7 @@ const FresnelReflector = ({
     if (receiver) {
       if (receiver.type === ObjectType.Foundation) {
         const foundation = receiver as FoundationModel;
-        if (foundation.solarStructure === SolarStructure.FocusPipe) {
-          if (!foundation.solarAbsorberPipe) foundation.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
+        if (foundation.solarStructure === SolarStructure.FocusPipe && foundation.solarAbsorberPipe) {
           // convert the receiver's coordinates into those relative to the center of this reflector
           return new Vector3(
             (foundation.cx - cx) * (rot ? Math.cos(rot) : 1),
@@ -214,8 +213,7 @@ const FresnelReflector = ({
       if (parent) {
         if (parent.type === ObjectType.Foundation) {
           const foundation = parent as FoundationModel;
-          if (foundation.solarStructure === SolarStructure.FocusPipe) {
-            if (!foundation.solarAbsorberPipe) foundation.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
+          if (foundation.solarStructure === SolarStructure.FocusPipe && foundation.solarAbsorberPipe) {
             // convert the receiver's coordinates into those relative to the center of this reflector
             return new Vector3(
               (foundation.cx - cx) * (rot ? Math.cos(rot) : 1),

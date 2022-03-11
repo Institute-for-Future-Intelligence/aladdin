@@ -35,6 +35,7 @@ import shadowing_blocking_heliostats from './examples/shadowing_blocking_heliost
 import effect_solar_power_tower_height from './examples/effect_solar_power_tower_height.json';
 import solar_power_tower from './examples/solar_power_tower.json';
 import solar_radiation_predicted_vs_measured from './examples/solar_radiation_predicted_vs_measured.json';
+import solar_updraft_tower from './examples/solar_updraft_tower.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -266,6 +267,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'solar_power_tower':
         input = solar_power_tower;
+        break;
+      case 'solar_updraft_tower':
+        input = solar_updraft_tower;
         break;
       case 'simple_house_01':
         input = simple_house_01;
@@ -1462,6 +1466,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="effect_solar_power_tower_height" onClick={loadFile}>
             {i18n.t('menu.tutorials.EffectSolarPowerTowerHeight', lang)}
+          </Menu.Item>
+          <Menu.Item key="solar_updraft_tower" onClick={loadFile}>
+            {i18n.t('menu.tutorials.SolarUpdraftTower', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>
