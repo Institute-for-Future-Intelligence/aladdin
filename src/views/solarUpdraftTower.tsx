@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { Circle, Cone, Cylinder, Line } from '@react-three/drei';
 import { Color, DoubleSide, Euler, FrontSide, Group, Vector3 } from 'three';
 import { FoundationModel } from '../models/FoundationModel';
@@ -20,27 +20,19 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
   const animate = useStore(Selector.animateSun);
   const streamlinesRef = useRef<Group>();
 
-  const {
-    lx,
-    ly,
-    lz,
-    solarUpdraftTowerChimneyRadius,
-    solarUpdraftTowerChimneyHeight,
-    solarUpdraftTowerCollectorRadius,
-    solarUpdraftTowerCollectorHeight,
-  } = foundation;
+  const { lx, ly, lz, solarUpdraftTower } = foundation;
 
-  const arrowRadius = (solarUpdraftTowerCollectorRadius ?? 100) * 0.016;
+  const arrowRadius = (solarUpdraftTower?.collectorRadius ?? 100) * 0.016;
   const sunDirection = useMemo(() => {
     return getSunDirection(new Date(date), latitude);
   }, [date, latitude]);
 
   const streamlines = useMemo<LineData[]>(() => {
     const array: LineData[] = [];
-    const airInletZ = ((solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * lz)) + lz) / 2;
-    const airOutletZ = solarUpdraftTowerChimneyHeight ?? Math.max(lx, ly);
-    const collectorRadius = solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2;
-    const chimneyRadius = solarUpdraftTowerChimneyRadius ?? Math.max(1, 0.025 * Math.min(lx, ly));
+    const airInletZ = ((solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * lz)) + lz) / 2;
+    const airOutletZ = solarUpdraftTower?.chimneyHeight ?? Math.max(lx, ly);
+    const collectorRadius = solarUpdraftTower?.collectorRadius ?? Math.min(lx, ly) / 2;
+    const chimneyRadius = solarUpdraftTower?.chimneyRadius ?? Math.max(1, 0.025 * Math.min(lx, ly));
     const airInletR1 = collectorRadius * 1.15;
     const airInletR2 = chimneyRadius * 0.5;
     const airOutletR1 = chimneyRadius;
@@ -65,16 +57,16 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
     lx,
     ly,
     lz,
-    solarUpdraftTowerCollectorRadius,
-    solarUpdraftTowerCollectorHeight,
-    solarUpdraftTowerChimneyRadius,
-    solarUpdraftTowerChimneyHeight,
+    solarUpdraftTower?.collectorRadius,
+    solarUpdraftTower?.collectorHeight,
+    solarUpdraftTower?.chimneyRadius,
+    solarUpdraftTower?.chimneyHeight,
   ]);
 
   const gridLines = useMemo<LineData[]>(() => {
     const array: LineData[] = [];
-    const h = (solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * lz)) + lz;
-    const r = solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2;
+    const h = (solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * lz)) + lz;
+    const r = solarUpdraftTower?.collectorRadius ?? Math.min(lx, ly) / 2;
     const n = 25;
     const delta = (2 * r) / n;
     for (let i = 0; i <= n; i++) {
@@ -94,7 +86,7 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
       array.push({ points: line } as LineData);
     }
     return array;
-  }, [lx, ly, lz, solarUpdraftTowerCollectorRadius, solarUpdraftTowerCollectorHeight]);
+  }, [lx, ly, lz, solarUpdraftTower?.collectorRadius, solarUpdraftTower?.collectorHeight]);
 
   useFrame((state, delta) => {
     if (animate && sunDirection.z > 0) {
@@ -112,19 +104,19 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
   return (
     <group>
       <Cylinder
-        userData={{ unintersectable: true }}
+        userData={{ unintersectable: true, simulation: true }}
         name={'Chimney'}
         castShadow={true}
         receiveShadow={false}
         args={[
-          solarUpdraftTowerChimneyRadius ?? Math.max(1, 0.025 * Math.min(lx, ly)),
-          solarUpdraftTowerChimneyRadius ?? Math.max(1, 0.025 * Math.min(lx, ly)),
-          solarUpdraftTowerChimneyHeight ?? Math.max(lx, ly),
+          solarUpdraftTower?.chimneyRadius ?? Math.max(1, 0.025 * Math.min(lx, ly)),
+          solarUpdraftTower?.chimneyRadius ?? Math.max(1, 0.025 * Math.min(lx, ly)),
+          solarUpdraftTower?.chimneyHeight ?? Math.max(lx, ly),
           16,
           2,
           true,
         ]}
-        position={[0, 0, (solarUpdraftTowerChimneyHeight ?? Math.max(lx, ly)) / 2 + lz]}
+        position={[0, 0, (solarUpdraftTower?.chimneyHeight ?? Math.max(lx, ly)) / 2 + lz]}
         rotation={[HALF_PI, 0, 0]}
       >
         <meshStandardMaterial attach="material" color={'white'} side={DoubleSide} />
@@ -135,14 +127,14 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
         castShadow={true}
         receiveShadow={false}
         args={[
-          solarUpdraftTowerChimneyRadius ?? Math.max(1, 0.025 * Math.min(lx, ly)),
-          (solarUpdraftTowerChimneyRadius ?? Math.max(1, 0.025 * Math.min(lx, ly))) * 1.6,
-          (solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * lz)) * 4,
+          solarUpdraftTower?.chimneyRadius ?? Math.max(1, 0.025 * Math.min(lx, ly)),
+          (solarUpdraftTower?.chimneyRadius ?? Math.max(1, 0.025 * Math.min(lx, ly))) * 1.6,
+          (solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * lz)) * 4,
           16,
           2,
           true,
         ]}
-        position={[0, 0, (solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * lz)) * 2 + lz]}
+        position={[0, 0, (solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * lz)) * 2 + lz]}
         rotation={[HALF_PI, 0, 0]}
       >
         <meshStandardMaterial attach="material" color={'white'} side={DoubleSide} />
@@ -153,25 +145,25 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
         castShadow={true}
         receiveShadow={true}
         args={[
-          solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2,
-          solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2,
-          solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * lz),
+          solarUpdraftTower?.collectorRadius ?? Math.min(lx, ly) / 2,
+          solarUpdraftTower?.collectorRadius ?? Math.min(lx, ly) / 2,
+          solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * lz),
           50,
           2,
           true,
         ]}
-        position={[0, 0, (solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * lz)) / 2 + lz]}
+        position={[0, 0, (solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * lz)) / 2 + lz]}
         rotation={[HALF_PI, 0, 0]}
       >
         <meshStandardMaterial attach="material" color={'white'} side={DoubleSide} />
       </Cylinder>
       <Circle
-        userData={{ unintersectable: true }}
+        userData={{ unintersectable: true, simulation: true }}
         name={'Greenhouse Ceiling'}
         castShadow={false}
         receiveShadow={false}
-        args={[solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2, 50, 0, TWO_PI]}
-        position={[0, 0, lz + (solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * lz))]}
+        args={[solarUpdraftTower?.collectorRadius ?? Math.min(lx, ly) / 2, 50, 0, TWO_PI]}
+        position={[0, 0, lz + (solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * lz))]}
       >
         <meshPhongMaterial
           attach="material"
@@ -188,7 +180,7 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
         name={'Greenhouse Ground'}
         castShadow={false}
         receiveShadow={true}
-        args={[solarUpdraftTowerCollectorRadius ?? Math.min(lx, ly) / 2, 50, 0, TWO_PI]}
+        args={[solarUpdraftTower?.collectorRadius ?? Math.min(lx, ly) / 2, 50, 0, TWO_PI]}
         position={[0, 0, 0.1]}
       >
         <meshStandardMaterial attach="material" color={'dimgray'} />

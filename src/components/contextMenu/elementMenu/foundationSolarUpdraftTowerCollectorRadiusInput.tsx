@@ -34,7 +34,7 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
   const revertApply = useStore(Selector.revertApply);
 
   const [inputCollectorRadius, setInputCollectorRadius] = useState<number>(
-    foundation?.solarUpdraftTowerCollectorRadius ?? Math.max(10, 0.5 * Math.min(foundation?.lx, foundation?.ly)),
+    foundation?.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(foundation?.lx, foundation?.ly)),
   );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -46,7 +46,7 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
   useEffect(() => {
     if (foundation) {
       setInputCollectorRadius(
-        foundation.solarUpdraftTowerCollectorRadius ?? Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly)),
+        foundation.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly)),
       );
     }
   }, [foundation]);
@@ -64,8 +64,8 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower) {
               if (
-                f.solarUpdraftTowerCollectorRadius === undefined ||
-                Math.abs(f.solarUpdraftTowerCollectorRadius - collectorRadius) > ZERO_TOLERANCE
+                f.solarUpdraftTower?.collectorRadius === undefined ||
+                Math.abs(f.solarUpdraftTower?.collectorRadius - collectorRadius) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -75,8 +75,8 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
         break;
       default:
         if (
-          foundation?.solarUpdraftTowerCollectorRadius === undefined ||
-          Math.abs(foundation?.solarUpdraftTowerCollectorRadius - collectorRadius) > ZERO_TOLERANCE
+          foundation?.solarUpdraftTower?.collectorRadius === undefined ||
+          Math.abs(foundation?.solarUpdraftTower?.collectorRadius - collectorRadius) > ZERO_TOLERANCE
         ) {
           return true;
         }
@@ -93,7 +93,7 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
-            oldValuesAll.set(elem.id, f.solarUpdraftTowerCollectorRadius ?? Math.max(10, 0.5 * Math.min(f.lx, f.ly)));
+            oldValuesAll.set(elem.id, f.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(f.lx, f.ly)));
           }
         }
         const undoableChangeAll = {
@@ -117,7 +117,7 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
       default:
         if (foundation) {
           const oldValue =
-            foundation.solarUpdraftTowerCollectorRadius ?? Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly));
+            foundation.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly));
           updateCollectorRadiusById(foundation.id, value);
           const undoableChange = {
             name: 'Set Solar Collector Radius on Foundation',
@@ -154,7 +154,7 @@ const FoundationSolarUpdraftTowerCollectorRadiusInput = ({
 
   const close = () => {
     setInputCollectorRadius(
-      foundation?.solarUpdraftTowerCollectorRadius ?? Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly)),
+      foundation?.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly)),
     );
     setDialogVisible(false);
   };

@@ -108,6 +108,7 @@ export class ElementModelFactory {
       rotation: [0, 0, 0],
       parentId: GROUND_ID,
       selected: true,
+      solarUpdraftTower: {},
       id: short.generate() as string,
     } as FoundationModel;
   }

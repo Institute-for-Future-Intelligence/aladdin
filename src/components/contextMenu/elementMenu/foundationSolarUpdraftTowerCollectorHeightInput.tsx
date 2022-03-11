@@ -34,7 +34,7 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
   const revertApply = useStore(Selector.revertApply);
 
   const [inputCollectorHeight, setInputCollectorHeight] = useState<number>(
-    foundation?.solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * foundation?.lz),
+    foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation?.lz),
   );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -45,7 +45,7 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
 
   useEffect(() => {
     if (foundation) {
-      setInputCollectorHeight(foundation.solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * foundation.lz));
+      setInputCollectorHeight(foundation.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz));
     }
   }, [foundation]);
 
@@ -62,8 +62,8 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower) {
               if (
-                f.solarUpdraftTowerCollectorHeight === undefined ||
-                Math.abs(f.solarUpdraftTowerCollectorHeight - collectorHeight) > ZERO_TOLERANCE
+                f.solarUpdraftTower?.collectorHeight === undefined ||
+                Math.abs(f.solarUpdraftTower?.collectorHeight - collectorHeight) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -73,8 +73,8 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
         break;
       default:
         if (
-          foundation?.solarUpdraftTowerCollectorHeight === undefined ||
-          Math.abs(foundation?.solarUpdraftTowerCollectorHeight - collectorHeight) > ZERO_TOLERANCE
+          foundation?.solarUpdraftTower?.collectorHeight === undefined ||
+          Math.abs(foundation?.solarUpdraftTower?.collectorHeight - collectorHeight) > ZERO_TOLERANCE
         ) {
           return true;
         }
@@ -91,7 +91,7 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
-            oldValuesAll.set(elem.id, f.solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * f.lz));
+            oldValuesAll.set(elem.id, f.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * f.lz));
           }
         }
         const undoableChangeAll = {
@@ -114,7 +114,7 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
         break;
       default:
         if (foundation) {
-          const oldValue = foundation.solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * foundation.lz);
+          const oldValue = foundation.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz);
           updateCollectorHeightById(foundation.id, value);
           const undoableChange = {
             name: 'Set Solar Collector Height on Foundation',
@@ -150,7 +150,7 @@ const FoundationSolarUpdraftTowerCollectorHeightInput = ({
   };
 
   const close = () => {
-    setInputCollectorHeight(foundation?.solarUpdraftTowerCollectorHeight ?? Math.max(3, 10 * foundation.lz));
+    setInputCollectorHeight(foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz));
     setDialogVisible(false);
   };
 

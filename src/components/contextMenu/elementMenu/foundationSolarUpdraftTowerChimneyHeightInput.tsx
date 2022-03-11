@@ -34,7 +34,7 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
   const revertApply = useStore(Selector.revertApply);
 
   const [inputChimneyHeight, setInputChimneyHeight] = useState<number>(
-    foundation?.solarUpdraftTowerChimneyHeight ?? Math.max(foundation?.lx, foundation?.ly),
+    foundation?.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation?.lx, foundation?.ly),
   );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -45,7 +45,7 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
 
   useEffect(() => {
     if (foundation) {
-      setInputChimneyHeight(foundation.solarUpdraftTowerChimneyHeight ?? Math.max(foundation.lx, foundation.ly));
+      setInputChimneyHeight(foundation.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation.lx, foundation.ly));
     }
   }, [foundation]);
 
@@ -62,8 +62,8 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower) {
               if (
-                f.solarUpdraftTowerChimneyHeight === undefined ||
-                Math.abs(f.solarUpdraftTowerChimneyHeight - chimneyHeight) > ZERO_TOLERANCE
+                f.solarUpdraftTower?.chimneyHeight === undefined ||
+                Math.abs(f.solarUpdraftTower?.chimneyHeight - chimneyHeight) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -73,8 +73,8 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
         break;
       default:
         if (
-          foundation?.solarUpdraftTowerChimneyHeight === undefined ||
-          Math.abs(foundation?.solarUpdraftTowerChimneyHeight - chimneyHeight) > ZERO_TOLERANCE
+          foundation?.solarUpdraftTower?.chimneyHeight === undefined ||
+          Math.abs(foundation?.solarUpdraftTower?.chimneyHeight - chimneyHeight) > ZERO_TOLERANCE
         ) {
           return true;
         }
@@ -91,7 +91,7 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
-            oldValuesAll.set(elem.id, f.solarUpdraftTowerChimneyHeight ?? Math.max(f.lx, f.ly));
+            oldValuesAll.set(elem.id, f.solarUpdraftTower?.chimneyHeight ?? Math.max(f.lx, f.ly));
           }
         }
         const undoableChangeAll = {
@@ -114,7 +114,7 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
         break;
       default:
         if (foundation) {
-          const oldValue = foundation.solarUpdraftTowerChimneyHeight ?? Math.max(foundation.lx, foundation.ly);
+          const oldValue = foundation.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation.lx, foundation.ly);
           updateChimneyHeightById(foundation.id, value);
           const undoableChange = {
             name: 'Set Solar Chimney Height on Foundation',
@@ -150,7 +150,7 @@ const FoundationSolarUpdraftTowerChimneyHeightInput = ({
   };
 
   const close = () => {
-    setInputChimneyHeight(foundation?.solarUpdraftTowerChimneyHeight ?? Math.max(foundation.lx, foundation.ly));
+    setInputChimneyHeight(foundation?.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation.lx, foundation.ly));
     setDialogVisible(false);
   };
 

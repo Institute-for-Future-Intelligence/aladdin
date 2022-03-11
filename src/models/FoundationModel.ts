@@ -4,6 +4,7 @@
 
 import { ElementModel } from './ElementModel';
 import { FoundationTexture, SolarStructure } from '../types';
+import { SolarUpdraftTowerModel } from './SolarUpdraftTowerModel';
 
 export interface FoundationModel extends ElementModel {
   textureType: FoundationTexture;
@@ -27,8 +28,5 @@ export interface FoundationModel extends ElementModel {
   solarReceiverPipePoleNumber?: number;
 
   // solar updraft tower
-  solarUpdraftTowerChimneyHeight?: number;
-  solarUpdraftTowerChimneyRadius?: number;
-  solarUpdraftTowerCollectorHeight?: number;
-  solarUpdraftTowerCollectorRadius?: number;
+  solarUpdraftTower?: SolarUpdraftTowerModel;
 }

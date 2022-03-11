@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Menu, Modal, Radio, Space } from 'antd';
 import { Copy, Cut, Lock, Paste } from '../menuItems';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -72,6 +72,12 @@ export const FoundationMenu = () => {
 
   const counter = foundation ? countAllOffspringsByType(foundation.id) : new ElementCounter();
   const lang = { lng: language };
+
+  useEffect(() => {
+    if (foundation) {
+      setSelectedSolarStructure(foundation.solarStructure ?? SolarStructure.None);
+    }
+  }, [foundation]);
 
   const legalToPaste = () => {
     if (elementsToPaste && elementsToPaste.length > 0) {
@@ -699,7 +705,7 @@ export const FoundationMenu = () => {
             style={{ paddingLeft: '24px' }}
           >
             <Radio.Group
-              value={selectedSolarStructure}
+              value={selectedSolarStructure ?? SolarStructure.None}
               style={{ paddingLeft: '12px' }}
               onChange={(e) => {
                 if (foundation) {

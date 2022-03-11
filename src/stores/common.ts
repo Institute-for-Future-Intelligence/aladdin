@@ -76,6 +76,7 @@ import { ParabolicCollector } from '../models/ParabolicCollector';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import { HeliostatModel } from '../models/HeliostatModel';
 import { SolarRadiationData } from '../models/SolarRadiationData';
+import { SolarUpdraftTowerModel } from '../models/SolarUpdraftTowerModel';
 
 enableMapSet();
 
@@ -2016,7 +2017,8 @@ export const useStore = create<CommonStoreState>(
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
                   const f = e as FoundationModel;
                   if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    f.solarUpdraftTowerChimneyHeight = height;
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.chimneyHeight = height;
                   }
                   break;
                 }
@@ -2029,7 +2031,8 @@ export const useStore = create<CommonStoreState>(
                 if (e.type === ObjectType.Foundation && !e.locked) {
                   const f = e as FoundationModel;
                   if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    f.solarUpdraftTowerChimneyHeight = height;
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.chimneyHeight = height;
                   }
                 }
               }
@@ -2041,7 +2044,8 @@ export const useStore = create<CommonStoreState>(
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
                   const f = e as FoundationModel;
                   if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    f.solarUpdraftTowerChimneyRadius = radius;
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.chimneyRadius = radius;
                   }
                   break;
                 }
@@ -2054,7 +2058,8 @@ export const useStore = create<CommonStoreState>(
                 if (e.type === ObjectType.Foundation && !e.locked) {
                   const f = e as FoundationModel;
                   if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    f.solarUpdraftTowerChimneyRadius = radius;
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.chimneyRadius = radius;
                   }
                 }
               }
@@ -2066,7 +2071,8 @@ export const useStore = create<CommonStoreState>(
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
                   const f = e as FoundationModel;
                   if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    f.solarUpdraftTowerCollectorHeight = height;
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.collectorHeight = height;
                   }
                   break;
                 }
@@ -2079,7 +2085,8 @@ export const useStore = create<CommonStoreState>(
                 if (e.type === ObjectType.Foundation && !e.locked) {
                   const f = e as FoundationModel;
                   if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    f.solarUpdraftTowerCollectorHeight = height;
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.collectorHeight = height;
                   }
                 }
               }
@@ -2091,7 +2098,8 @@ export const useStore = create<CommonStoreState>(
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
                   const f = e as FoundationModel;
                   if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    f.solarUpdraftTowerCollectorRadius = radius;
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.collectorRadius = radius;
                   }
                   break;
                 }
@@ -2104,7 +2112,8 @@ export const useStore = create<CommonStoreState>(
                 if (e.type === ObjectType.Foundation && !e.locked) {
                   const f = e as FoundationModel;
                   if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    f.solarUpdraftTowerCollectorRadius = radius;
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.collectorRadius = radius;
                   }
                 }
               }
