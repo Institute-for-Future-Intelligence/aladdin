@@ -78,6 +78,7 @@ import { HeliostatModel } from '../models/HeliostatModel';
 import { SolarRadiationData } from '../models/SolarRadiationData';
 import { SolarUpdraftTowerModel } from '../models/SolarUpdraftTowerModel';
 import { SolarAbsorberPipeModel } from '../models/SolarAbsorberPipeModel';
+import { SolarPowerTowerModel } from '../models/SolarPowerTowerModel';
 
 enableMapSet();
 
@@ -294,6 +295,16 @@ export interface CommonStoreState {
   updateSolarAbsorberPipeOpticalEfficiencyForAll: (efficiency: number) => void;
   updateSolarAbsorberPipeThermalEfficiencyById: (id: string, efficiency: number) => void;
   updateSolarAbsorberPipeThermalEfficiencyForAll: (efficiency: number) => void;
+
+  // for solar power towers
+  updateSolarPowerTowerHeightById: (id: string, height: number) => void;
+  updateSolarPowerTowerHeightForAll: (height: number) => void;
+  updateSolarPowerTowerReceiverAbsorptanceById: (id: string, absorptance: number) => void;
+  updateSolarPowerTowerReceiverAbsorptanceForAll: (absorptance: number) => void;
+  updateSolarPowerTowerReceiverOpticalEfficiencyById: (id: string, efficiency: number) => void;
+  updateSolarPowerTowerReceiverOpticalEfficiencyForAll: (efficiency: number) => void;
+  updateSolarPowerTowerReceiverThermalEfficiencyById: (id: string, efficiency: number) => void;
+  updateSolarPowerTowerReceiverThermalEfficiencyForAll: (efficiency: number) => void;
 
   // for solar updraft towers
   updateSolarUpdraftTowerChimneyHeightById: (id: string, height: number) => void;
@@ -2026,6 +2037,116 @@ export const useStore = create<CommonStoreState>(
                   if (f.solarStructure === SolarStructure.FocusPipe) {
                     if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
                     f.solarAbsorberPipe.absorberThermalEfficiency = efficiency;
+                  }
+                }
+              }
+            });
+          },
+
+          // solar power tower for heliostats
+          updateSolarPowerTowerHeightById(id, height) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.FocusTower) {
+                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+                    f.solarPowerTower.towerHeight = height;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarPowerTowerHeightForAll(height) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.FocusTower) {
+                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+                    f.solarPowerTower.towerHeight = height;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarPowerTowerReceiverAbsorptanceById(id, absorptance) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.FocusTower) {
+                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+                    f.solarPowerTower.receiverAbsorptance = absorptance;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarPowerTowerReceiverAbsorptanceForAll(absorptance) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.FocusTower) {
+                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+                    f.solarPowerTower.receiverAbsorptance = absorptance;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarPowerTowerReceiverOpticalEfficiencyById(id, efficiency) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.FocusTower) {
+                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+                    f.solarPowerTower.receiverOpticalEfficiency = efficiency;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarPowerTowerReceiverOpticalEfficiencyForAll(efficiency) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.FocusTower) {
+                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+                    f.solarPowerTower.receiverOpticalEfficiency = efficiency;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarPowerTowerReceiverThermalEfficiencyById(id, efficiency) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.FocusTower) {
+                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+                    f.solarPowerTower.receiverThermalEfficiency = efficiency;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarPowerTowerReceiverThermalEfficiencyForAll(efficiency) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.FocusTower) {
+                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+                    f.solarPowerTower.receiverThermalEfficiency = efficiency;
                   }
                 }
               }

@@ -23,8 +23,8 @@ const SolarAbsorberPipeApertureWidthInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateApertureWidthById = useStore(Selector.updateSolarAbsorberPipeApertureWidthById);
-  const updateApertureWidthForAll = useStore(Selector.updateSolarAbsorberPipeApertureWidthForAll);
+  const updateById = useStore(Selector.updateSolarAbsorberPipeApertureWidthById);
+  const updateForAll = useStore(Selector.updateSolarAbsorberPipeApertureWidthForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
@@ -103,21 +103,21 @@ const SolarAbsorberPipeApertureWidthInput = ({
           newValue: value,
           undo: () => {
             for (const [id, aw] of undoableChangeAll.oldValues.entries()) {
-              updateApertureWidthById(id, aw as number);
+              updateById(id, aw as number);
             }
           },
           redo: () => {
-            updateApertureWidthForAll(undoableChangeAll.newValue as number);
+            updateForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateApertureWidthForAll(value);
+        updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
       default:
         if (absorberPipe) {
           const oldValue = absorberPipe.apertureWidth ?? 0.6;
-          updateApertureWidthById(foundation.id, value);
+          updateById(foundation.id, value);
           const undoableChange = {
             name: 'Set Absorber Aperture Width on Foundation',
             timestamp: Date.now(),
@@ -125,10 +125,10 @@ const SolarAbsorberPipeApertureWidthInput = ({
             newValue: value,
             changedElementId: foundation.id,
             undo: () => {
-              updateApertureWidthById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateApertureWidthById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);

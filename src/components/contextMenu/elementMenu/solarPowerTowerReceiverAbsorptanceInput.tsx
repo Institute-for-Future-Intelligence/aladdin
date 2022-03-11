@@ -14,7 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 
-const SolarAbsorberPipeAbsorptanceInput = ({
+const SolarPowerTowerReceiverAbsorptanceInput = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -23,8 +23,8 @@ const SolarAbsorberPipeAbsorptanceInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateById = useStore(Selector.updateSolarAbsorberPipeAbsorptanceById);
-  const updateForAll = useStore(Selector.updateSolarAbsorberPipeAbsorptanceForAll);
+  const updateById = useStore(Selector.updateSolarPowerTowerReceiverAbsorptanceById);
+  const updateForAll = useStore(Selector.updateSolarPowerTowerReceiverAbsorptanceForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
@@ -33,9 +33,9 @@ const SolarAbsorberPipeAbsorptanceInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const absorberPipe = foundation?.solarAbsorberPipe;
+  const powerTower = foundation?.solarPowerTower;
 
-  const [inputAbsorptance, setInputAbsorptance] = useState<number>(absorberPipe?.absorberAbsorptance ?? 0.95);
+  const [inputAbsorptance, setInputAbsorptance] = useState<number>(powerTower?.receiverAbsorptance ?? 0.95);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -44,8 +44,8 @@ const SolarAbsorberPipeAbsorptanceInput = ({
   const lang = { lng: language };
 
   useEffect(() => {
-    if (absorberPipe) {
-      setInputAbsorptance(absorberPipe.absorberAbsorptance ?? 0.95);
+    if (powerTower) {
+      setInputAbsorptance(powerTower.receiverAbsorptance ?? 0.95);
     }
   }, [foundation]);
 
@@ -60,10 +60,10 @@ const SolarAbsorberPipeAbsorptanceInput = ({
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
+            if (f.solarStructure === SolarStructure.FocusTower && f.solarPowerTower) {
               if (
-                f.solarAbsorberPipe.absorberAbsorptance === undefined ||
-                Math.abs(f.solarAbsorberPipe.absorberAbsorptance - absorptance) > ZERO_TOLERANCE
+                f.solarPowerTower.receiverAbsorptance === undefined ||
+                Math.abs(f.solarPowerTower.receiverAbsorptance - absorptance) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -73,8 +73,8 @@ const SolarAbsorberPipeAbsorptanceInput = ({
         break;
       default:
         if (
-          absorberPipe?.absorberAbsorptance === undefined ||
-          Math.abs(absorberPipe?.absorberAbsorptance - absorptance) > ZERO_TOLERANCE
+          powerTower?.receiverAbsorptance === undefined ||
+          Math.abs(powerTower?.receiverAbsorptance - absorptance) > ZERO_TOLERANCE
         ) {
           return true;
         }
@@ -83,7 +83,7 @@ const SolarAbsorberPipeAbsorptanceInput = ({
   };
 
   const setAbsorptance = (value: number) => {
-    if (!foundation || !absorberPipe) return;
+    if (!foundation || !powerTower) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
@@ -91,13 +91,13 @@ const SolarAbsorberPipeAbsorptanceInput = ({
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
-            if (f.solarAbsorberPipe) {
-              oldValuesAll.set(elem.id, f.solarAbsorberPipe.absorberAbsorptance ?? 0.95);
+            if (f.solarPowerTower) {
+              oldValuesAll.set(elem.id, f.solarPowerTower.receiverAbsorptance ?? 0.95);
             }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Absorber Pipe Absorptance for All Foundations',
+          name: 'Set Receiver Absorptance for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -115,11 +115,11 @@ const SolarAbsorberPipeAbsorptanceInput = ({
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (absorberPipe) {
-          const oldValue = absorberPipe.absorberAbsorptance ?? 0.95;
+        if (powerTower) {
+          const oldValue = powerTower.receiverAbsorptance ?? 0.95;
           updateById(foundation.id, value);
           const undoableChange = {
-            name: 'Set Absorber Pipe Absorptance on Foundation',
+            name: 'Set Receiver Absorptance on Foundation',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
@@ -152,7 +152,7 @@ const SolarAbsorberPipeAbsorptanceInput = ({
   };
 
   const close = () => {
-    setInputAbsorptance(absorberPipe?.absorberAbsorptance ?? 0.95);
+    setInputAbsorptance(powerTower?.receiverAbsorptance ?? 0.95);
     setDialogVisible(false);
   };
 
@@ -178,7 +178,7 @@ const SolarAbsorberPipeAbsorptanceInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('solarAbsorberPipeMenu.AbsorberAbsorptance', lang)}
+            {i18n.t('solarPowerTowerMenu.ReceiverAbsorptance', lang)}
           </div>
         }
         footer={[
@@ -242,4 +242,4 @@ const SolarAbsorberPipeAbsorptanceInput = ({
   );
 };
 
-export default SolarAbsorberPipeAbsorptanceInput;
+export default SolarPowerTowerReceiverAbsorptanceInput;

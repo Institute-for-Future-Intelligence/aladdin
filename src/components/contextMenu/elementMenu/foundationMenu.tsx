@@ -34,6 +34,10 @@ import SolarUpdraftTowerChimneyHeightInput from './solarUpdraftTowerChimneyHeigh
 import SolarUpdraftTowerChimneyRadiusInput from './solarUpdraftTowerChimneyRadiusInput';
 import SolarUpdraftTowerCollectorRadiusInput from './solarUpdraftTowerCollectorRadiusInput';
 import SolarUpdraftTowerCollectorHeightInput from './solarUpdraftTowerCollectorHeightInput';
+import SolarPowerTowerHeightInput from './solarPowerTowerHeightInput';
+import SolarPowerTowerReceiverAbsorptanceInput from './solarPowerTowerReceiverAbsorptanceInput';
+import SolarPowerTowerReceiverOpticalEfficiencyInput from './solarPowerTowerReceiverOpticalEfficiencyInput';
+import SolarPowerTowerReceiverThermalEfficiencyInput from './solarPowerTowerReceiverThermalEfficiencyInput';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -59,6 +63,7 @@ export const FoundationMenu = () => {
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
+
   const [solarAbsorberPipeHeightDialogVisible, setSolarAbsorberPipeHeightDialogVisible] = useState(false);
   const [solarAbsorberPipeApertureWidthDialogVisible, setSolarAbsorberPipeApertureWidthDialogVisible] = useState(false);
   const [solarAbsorberPipePoleNumberDialogVisible, setSolarAbsorberPipePoleNumberDialogVisible] = useState(false);
@@ -67,6 +72,19 @@ export const FoundationMenu = () => {
     useState(false);
   const [solarAbsorberPipeThermalEfficiencyDialogVisible, setSolarAbsorberPipeThermalEfficiencyDialogVisible] =
     useState(false);
+
+  const [solarPowerTowerHeightDialogVisible, setSolarPowerTowerHeightDialogVisible] = useState(false);
+  const [solarPowerTowerReceiverAbsorptanceDialogVisible, setSolarPowerTowerReceiverAbsorptanceDialogVisible] =
+    useState(false);
+  const [
+    solarPowerTowerReceiverOpticalEfficiencyDialogVisible,
+    setSolarPowerTowerReceiverOpticalEfficiencyDialogVisible,
+  ] = useState(false);
+  const [
+    solarPowerTowerReceiverThermalEfficiencyDialogVisible,
+    setSolarPowerTowerReceiverThermalEfficiencyDialogVisible,
+  ] = useState(false);
+
   const [chimneyHeightDialogVisible, setChimneyHeightDialogVisible] = useState(false);
   const [chimneyRadiusDialogVisible, setChimneyRadiusDialogVisible] = useState(false);
   const [collectorHeightDialogVisible, setCollectorHeightDialogVisible] = useState(false);
@@ -848,6 +866,74 @@ export const FoundationMenu = () => {
               }}
             >
               {i18n.t('solarAbsorberPipeMenu.AbsorberThermalEfficiency', lang)} ...
+            </Menu.Item>
+          </SubMenu>
+        )}
+
+        {editable && foundation.solarStructure === SolarStructure.FocusTower && (
+          <SubMenu
+            key={'solar-power-tower-physical-properties'}
+            title={i18n.t('solarPowerTowerMenu.ReceiverTowerPhysicalProperties', lang)}
+            style={{ paddingLeft: '24px' }}
+          >
+            <SolarPowerTowerHeightInput
+              dialogVisible={solarPowerTowerHeightDialogVisible}
+              setDialogVisible={setSolarPowerTowerHeightDialogVisible}
+            />
+            <Menu.Item
+              key={'solar-power-tower-height'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setSolarPowerTowerHeightDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarPowerTowerMenu.ReceiverTowerHeight', lang)} ...
+            </Menu.Item>
+
+            <SolarPowerTowerReceiverAbsorptanceInput
+              dialogVisible={solarPowerTowerReceiverAbsorptanceDialogVisible}
+              setDialogVisible={setSolarPowerTowerReceiverAbsorptanceDialogVisible}
+            />
+            <Menu.Item
+              key={'solar-power-tower-receiver-absorptance'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setSolarPowerTowerReceiverAbsorptanceDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarPowerTowerMenu.ReceiverAbsorptance', lang)} ...
+            </Menu.Item>
+
+            <SolarPowerTowerReceiverOpticalEfficiencyInput
+              dialogVisible={solarPowerTowerReceiverOpticalEfficiencyDialogVisible}
+              setDialogVisible={setSolarPowerTowerReceiverOpticalEfficiencyDialogVisible}
+            />
+            <Menu.Item
+              key={'solar-power-tower-receiver-optical-efficiency'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setSolarPowerTowerReceiverOpticalEfficiencyDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarPowerTowerMenu.ReceiverOpticalEfficiency', lang)} ...
+            </Menu.Item>
+
+            <SolarPowerTowerReceiverThermalEfficiencyInput
+              dialogVisible={solarPowerTowerReceiverThermalEfficiencyDialogVisible}
+              setDialogVisible={setSolarPowerTowerReceiverThermalEfficiencyDialogVisible}
+            />
+            <Menu.Item
+              key={'solar-power-tower-receiver-thermal-efficiency'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setSolarPowerTowerReceiverThermalEfficiencyDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarPowerTowerMenu.ReceiverThermalEfficiency', lang)} ...
             </Menu.Item>
           </SubMenu>
         )}

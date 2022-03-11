@@ -57,8 +57,10 @@
       "selected": false,
       "parentId": "Ground",
       "solarStructure": 2,
-      "solarReceiverHeight": 10,
-      "locked": false
+      "locked": false,
+      "solarPowerTower": {
+        "towerHeight": 10
+      }
     },
     {
       "type": "Human",
@@ -514,9 +516,11 @@
       ],
       "parentId": "Ground",
       "solarStructure": 2,
-      "solarReceiverHeight": 20,
       "id": "kyxcYJvhUNP9YHtYNAZTvQ",
-      "selected": false
+      "selected": false,
+      "solarPowerTower": {
+        "towerHeight": 20
+      }
     }
   ],
   "view": {

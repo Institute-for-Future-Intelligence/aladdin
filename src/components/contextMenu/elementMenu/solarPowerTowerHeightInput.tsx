@@ -14,7 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 
-const SolarAbsorberPipeAbsorptanceInput = ({
+const SolarPowerTowerHeightInput = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -23,8 +23,8 @@ const SolarAbsorberPipeAbsorptanceInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateById = useStore(Selector.updateSolarAbsorberPipeAbsorptanceById);
-  const updateForAll = useStore(Selector.updateSolarAbsorberPipeAbsorptanceForAll);
+  const updateById = useStore(Selector.updateSolarPowerTowerHeightById);
+  const updateForAll = useStore(Selector.updateSolarPowerTowerHeightForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
@@ -33,9 +33,9 @@ const SolarAbsorberPipeAbsorptanceInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const absorberPipe = foundation?.solarAbsorberPipe;
+  const powerTower = foundation?.solarPowerTower;
 
-  const [inputAbsorptance, setInputAbsorptance] = useState<number>(absorberPipe?.absorberAbsorptance ?? 0.95);
+  const [inputTowerHeight, setInputTowerHeight] = useState<number>(powerTower?.towerHeight ?? 20);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -44,8 +44,8 @@ const SolarAbsorberPipeAbsorptanceInput = ({
   const lang = { lng: language };
 
   useEffect(() => {
-    if (absorberPipe) {
-      setInputAbsorptance(absorberPipe.absorberAbsorptance ?? 0.95);
+    if (powerTower) {
+      setInputTowerHeight(powerTower.towerHeight ?? 20);
     }
   }, [foundation]);
 
@@ -54,16 +54,16 @@ const SolarAbsorberPipeAbsorptanceInput = ({
     setUpdateFlag(!updateFlag);
   };
 
-  const needChange = (absorptance: number) => {
+  const needChange = (towerHeight: number) => {
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
+            if (f.solarStructure === SolarStructure.FocusTower && f.solarPowerTower) {
               if (
-                f.solarAbsorberPipe.absorberAbsorptance === undefined ||
-                Math.abs(f.solarAbsorberPipe.absorberAbsorptance - absorptance) > ZERO_TOLERANCE
+                f.solarPowerTower.towerHeight === undefined ||
+                Math.abs(f.solarPowerTower.towerHeight - towerHeight) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -72,18 +72,15 @@ const SolarAbsorberPipeAbsorptanceInput = ({
         }
         break;
       default:
-        if (
-          absorberPipe?.absorberAbsorptance === undefined ||
-          Math.abs(absorberPipe?.absorberAbsorptance - absorptance) > ZERO_TOLERANCE
-        ) {
+        if (powerTower?.towerHeight === undefined || Math.abs(powerTower?.towerHeight - towerHeight) > ZERO_TOLERANCE) {
           return true;
         }
     }
     return false;
   };
 
-  const setAbsorptance = (value: number) => {
-    if (!foundation || !absorberPipe) return;
+  const setTowerHeight = (value: number) => {
+    if (!foundation || !powerTower) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
@@ -91,19 +88,19 @@ const SolarAbsorberPipeAbsorptanceInput = ({
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
-            if (f.solarAbsorberPipe) {
-              oldValuesAll.set(elem.id, f.solarAbsorberPipe.absorberAbsorptance ?? 0.95);
+            if (f.solarPowerTower) {
+              oldValuesAll.set(elem.id, f.solarPowerTower.towerHeight ?? 20);
             }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Absorber Pipe Absorptance for All Foundations',
+          name: 'Set Tower Height for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, ab] of undoableChangeAll.oldValues.entries()) {
-              updateById(id, ab as number);
+            for (const [id, th] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, th as number);
             }
           },
           redo: () => {
@@ -115,11 +112,11 @@ const SolarAbsorberPipeAbsorptanceInput = ({
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (absorberPipe) {
-          const oldValue = absorberPipe.absorberAbsorptance ?? 0.95;
+        if (powerTower) {
+          const oldValue = powerTower.towerHeight ?? 20;
           updateById(foundation.id, value);
           const undoableChange = {
-            name: 'Set Absorber Pipe Absorptance on Foundation',
+            name: 'Set Tower Height on Foundation',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
@@ -152,7 +149,7 @@ const SolarAbsorberPipeAbsorptanceInput = ({
   };
 
   const close = () => {
-    setInputAbsorptance(absorberPipe?.absorberAbsorptance ?? 0.95);
+    setInputTowerHeight(powerTower?.towerHeight ?? 20);
     setDialogVisible(false);
   };
 
@@ -162,7 +159,7 @@ const SolarAbsorberPipeAbsorptanceInput = ({
   };
 
   const ok = () => {
-    setAbsorptance(inputAbsorptance);
+    setTowerHeight(inputTowerHeight);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -170,7 +167,7 @@ const SolarAbsorberPipeAbsorptanceInput = ({
   return (
     <>
       <Modal
-        width={500}
+        width={550}
         visible={dialogVisible}
         title={
           <div
@@ -178,14 +175,14 @@ const SolarAbsorberPipeAbsorptanceInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('solarAbsorberPipeMenu.AbsorberAbsorptance', lang)}
+            {i18n.t('solarPowerTowerMenu.ReceiverTowerHeight', lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
-              setAbsorptance(inputAbsorptance);
+              setTowerHeight(inputTowerHeight);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -208,21 +205,24 @@ const SolarAbsorberPipeAbsorptanceInput = ({
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={8}>
+          <Col className="gutter-row" span={6}>
             <InputNumber
-              min={0}
-              max={1}
+              min={10}
+              max={500}
               style={{ width: 120 }}
-              step={0.01}
-              precision={2}
-              value={inputAbsorptance}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputAbsorptance(value)}
+              step={1}
+              precision={1}
+              value={inputTowerHeight}
+              formatter={(a) => Number(a).toFixed(1)}
+              onChange={(value) => setInputTowerHeight(value)}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0, 1]
+              {i18n.t('word.Range', lang)}: [10, 500] {i18n.t('word.MeterAbbreviation', lang)}
             </div>
+          </Col>
+          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+            {i18n.t('word.MeterAbbreviation', lang)}
           </Col>
           <Col
             className="gutter-row"
@@ -242,4 +242,4 @@ const SolarAbsorberPipeAbsorptanceInput = ({
   );
 };
 
-export default SolarAbsorberPipeAbsorptanceInput;
+export default SolarPowerTowerHeightInput;

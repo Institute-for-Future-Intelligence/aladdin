@@ -23,8 +23,8 @@ const SolarAbsorberPipeOpticalEfficiencyInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateOpticalEfficiencyById = useStore(Selector.updateSolarAbsorberPipeOpticalEfficiencyById);
-  const updateOpticalEfficiencyForAll = useStore(Selector.updateSolarAbsorberPipeOpticalEfficiencyForAll);
+  const updateById = useStore(Selector.updateSolarAbsorberPipeOpticalEfficiencyById);
+  const updateForAll = useStore(Selector.updateSolarAbsorberPipeOpticalEfficiencyForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
@@ -104,22 +104,22 @@ const SolarAbsorberPipeOpticalEfficiencyInput = ({
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, ab] of undoableChangeAll.oldValues.entries()) {
-              updateOpticalEfficiencyById(id, ab as number);
+            for (const [id, oe] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, oe as number);
             }
           },
           redo: () => {
-            updateOpticalEfficiencyForAll(undoableChangeAll.newValue as number);
+            updateForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateOpticalEfficiencyForAll(value);
+        updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
       default:
         if (absorberPipe) {
           const oldValue = absorberPipe.absorberOpticalEfficiency ?? 0.7;
-          updateOpticalEfficiencyById(foundation.id, value);
+          updateById(foundation.id, value);
           const undoableChange = {
             name: 'Set Absorber Optical Efficiency on Foundation',
             timestamp: Date.now(),
@@ -127,10 +127,10 @@ const SolarAbsorberPipeOpticalEfficiencyInput = ({
             newValue: value,
             changedElementId: foundation.id,
             undo: () => {
-              updateOpticalEfficiencyById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateOpticalEfficiencyById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);

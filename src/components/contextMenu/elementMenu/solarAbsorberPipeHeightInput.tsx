@@ -23,8 +23,8 @@ const SolarAbsorberPipeHeightInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateAbsorberHeightById = useStore(Selector.updateSolarAbsorberPipeHeightById);
-  const updateAbsorberHeightForAll = useStore(Selector.updateSolarAbsorberPipeHeightForAll);
+  const updateById = useStore(Selector.updateSolarAbsorberPipeHeightById);
+  const updateForAll = useStore(Selector.updateSolarAbsorberPipeHeightForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
@@ -103,21 +103,21 @@ const SolarAbsorberPipeHeightInput = ({
           newValue: value,
           undo: () => {
             for (const [id, ah] of undoableChangeAll.oldValues.entries()) {
-              updateAbsorberHeightById(id, ah as number);
+              updateById(id, ah as number);
             }
           },
           redo: () => {
-            updateAbsorberHeightForAll(undoableChangeAll.newValue as number);
+            updateForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateAbsorberHeightForAll(value);
+        updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
       default:
         if (absorberPipe) {
           const oldValue = absorberPipe.absorberHeight ?? 10;
-          updateAbsorberHeightById(foundation.id, value);
+          updateById(foundation.id, value);
           const undoableChange = {
             name: 'Set Absorber Height on Foundation',
             timestamp: Date.now(),
@@ -125,10 +125,10 @@ const SolarAbsorberPipeHeightInput = ({
             newValue: value,
             changedElementId: foundation.id,
             undo: () => {
-              updateAbsorberHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateAbsorberHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);

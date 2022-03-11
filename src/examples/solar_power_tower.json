@@ -56,8 +56,10 @@
       "lx": 168.62126759233155,
       "selected": false,
       "parentId": "Ground",
-      "solarReceiverHeight": 40,
-      "locked": true
+      "locked": true,
+      "solarPowerTower": {
+        "towerHeight": 40
+      }
     },
     {
       "type": "Human",
@@ -1697,8 +1699,10 @@
       "selected": false,
       "id": "eskWrngRsrfsVxitmEFwUG",
       "solarStructure": 2,
-      "solarReceiverHeight": 40,
-      "locked": true
+      "locked": true,
+      "solarPowerTower": {
+        "towerHeight": 40
+      }
     },
     {
       "type": "Human",

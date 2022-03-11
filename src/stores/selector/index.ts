@@ -237,6 +237,28 @@ export const updateSolarAbsorberPipeThermalEfficiencyForAll = (state: CommonStor
 export const updateSolarAbsorberPipeRelativeLengthById = (state: CommonStoreState) =>
   state.updateSolarAbsorberPipeRelativeLengthById;
 
+export const updateSolarPowerTowerHeightById = (state: CommonStoreState) => state.updateSolarPowerTowerHeightById;
+
+export const updateSolarPowerTowerHeightForAll = (state: CommonStoreState) => state.updateSolarPowerTowerHeightForAll;
+
+export const updateSolarPowerTowerReceiverAbsorptanceById = (state: CommonStoreState) =>
+  state.updateSolarPowerTowerReceiverAbsorptanceById;
+
+export const updateSolarPowerTowerReceiverAbsorptanceForAll = (state: CommonStoreState) =>
+  state.updateSolarPowerTowerReceiverAbsorptanceForAll;
+
+export const updateSolarPowerTowerReceiverOpticalEfficiencyById = (state: CommonStoreState) =>
+  state.updateSolarPowerTowerReceiverOpticalEfficiencyById;
+
+export const updateSolarPowerTowerReceiverOpticalEfficiencyForAll = (state: CommonStoreState) =>
+  state.updateSolarPowerTowerReceiverOpticalEfficiencyForAll;
+
+export const updateSolarPowerTowerReceiverThermalEfficiencyById = (state: CommonStoreState) =>
+  state.updateSolarPowerTowerReceiverThermalEfficiencyById;
+
+export const updateSolarPowerTowerReceiverThermalEfficiencyForAll = (state: CommonStoreState) =>
+  state.updateSolarPowerTowerReceiverThermalEfficiencyForAll;
+
 export const updateSolarUpdraftTowerChimneyHeightById = (state: CommonStoreState) =>
   state.updateSolarUpdraftTowerChimneyHeightById;
 
