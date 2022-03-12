@@ -290,7 +290,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             bottom: '10px',
             left: '10px',
             zIndex: 999,
-            fontSize: '12px',
+            fontSize: '8px',
             userSelect: 'none',
             color: 'antiquewhite',
           }}
@@ -303,6 +303,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             title={i18n.t('tooltip.gotoIFI', lang)}
             onClick={visitIFI}
           />
+          {' V ' + VERSION}
         </div>
       ) : (
         <div

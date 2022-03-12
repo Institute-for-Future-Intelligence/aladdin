@@ -2,9 +2,9 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Circle, Cone, Cylinder, Line } from '@react-three/drei';
-import { Color, DoubleSide, Euler, FrontSide, Group, Vector3 } from 'three';
+import { CanvasTexture, Color, DoubleSide, Euler, FrontSide, Group, Vector3 } from 'three';
 import { FoundationModel } from '../models/FoundationModel';
 import { HALF_PI, TWO_PI } from '../constants';
 import { LineData } from './LineData';
@@ -13,11 +13,19 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useFrame } from '@react-three/fiber';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
+import { Util } from '../Util';
 
 const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
   const animate = useStore(Selector.animateSun);
+  const simulationInProgress = useStore(Selector.simulationInProgress);
+  const simulationPaused = useStore(Selector.simulationPaused);
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+  const getHeatmap = useStore(Selector.getHeatmap);
+
+  const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
   const streamlinesRef = useRef<Group>();
 
   const { lx, ly, lz, solarUpdraftTower } = foundation;
@@ -88,8 +96,17 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
     return array;
   }, [lx, ly, lz, solarUpdraftTower?.collectorRadius, solarUpdraftTower?.collectorHeight]);
 
+  useEffect(() => {
+    if (foundation && showSolarRadiationHeatmap) {
+      const heatmap = getHeatmap(foundation.id + '-sut');
+      if (heatmap) {
+        setHeatmapTexture(Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5));
+      }
+    }
+  }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
+
   useFrame((state, delta) => {
-    if (animate && sunDirection.z > 0) {
+    if ((animate || (simulationInProgress && !simulationPaused)) && sunDirection.z > 0) {
       if (streamlinesRef.current) {
         streamlinesRef.current.children.forEach((child) => {
           if (child.name === 'Streamlines') {
@@ -165,15 +182,19 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
         args={[solarUpdraftTower?.collectorRadius ?? Math.min(lx, ly) / 2, 50, 0, TWO_PI]}
         position={[0, 0, lz + (solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * lz))]}
       >
-        <meshPhongMaterial
-          attach="material"
-          specular={new Color('white')}
-          shininess={50}
-          side={FrontSide}
-          color={'lightskyblue'}
-          transparent={true}
-          opacity={0.75}
-        />
+        {showSolarRadiationHeatmap && heatmapTexture ? (
+          <meshBasicMaterial attach="material" side={FrontSide} map={heatmapTexture} />
+        ) : (
+          <meshPhongMaterial
+            attach="material"
+            specular={new Color('white')}
+            shininess={50}
+            side={FrontSide}
+            color={'lightskyblue'}
+            transparent={true}
+            opacity={0.75}
+          />
+        )}
       </Circle>
       <Circle
         userData={{ unintersectable: true }}

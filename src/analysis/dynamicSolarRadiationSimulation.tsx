@@ -174,6 +174,26 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           break;
       }
     }
+    for (const e of elements) {
+      if (e.type === ObjectType.Foundation) {
+        const foundation = e as FoundationModel;
+        if (foundation.solarUpdraftTower) {
+          const data = cellOutputsMapRef.current.get(e.id + '-sut');
+          if (data) {
+            for (let i = 0; i < data.length; i++) {
+              for (let j = 0; j < data[i].length; j++) {
+                data[i][j] *= scaleFactor;
+              }
+            }
+            // send a copy of the heat map data to common store for visualization
+            setHeatmap(
+              e.id + '-sut',
+              data.map((a) => [...a]),
+            );
+          }
+        }
+      }
+    }
   };
 
   const setCuboidHeatmap = (id: string, side: string, scaleFactor: number) => {
@@ -233,7 +253,11 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         for (const e of elements) {
           switch (e.type) {
             case ObjectType.Foundation:
-              calculateFoundation(e as FoundationModel);
+              const foundation = e as FoundationModel;
+              calculateFoundation(foundation);
+              if (foundation.solarUpdraftTower) {
+                calculateSolarUpdraftTower(foundation);
+              }
               break;
             case ObjectType.Cuboid:
               calculateCuboid(e as CuboidModel);
@@ -983,6 +1007,57 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
             if (!inShadow(heliostat.id, v, sunDirection)) {
               cellOutputs[ku][kv] += dot * peakRadiation;
             }
+          }
+        }
+      }
+    }
+  };
+
+  const calculateSolarUpdraftTower = (foundation: FoundationModel) => {
+    const solarUpdraftTower = foundation.solarUpdraftTower;
+    if (!solarUpdraftTower) return;
+    const sunDirection = getSunDirection(now, world.latitude);
+    if (sunDirection.z <= 0) return; // when the sun is not out
+    const dayOfYear = Util.dayOfYear(now);
+    const normal = new Vector3().fromArray(foundation.normal);
+    const radius = solarUpdraftTower.collectorRadius;
+    const max = Math.max(2, Math.round((radius * 2) / cellSize));
+    // shift half cell size to the center of each grid cell
+    const x0 = foundation.cx - radius + cellSize / 2;
+    const y0 = foundation.cy - radius + cellSize / 2;
+    const z = foundation.lz + solarUpdraftTower.collectorHeight;
+    let cellOutputs = cellOutputsMapRef.current.get(foundation.id + '-sut');
+    if (!cellOutputs || cellOutputs.length !== max || cellOutputs[0].length !== max) {
+      cellOutputs = Array(max)
+        .fill(0)
+        .map(() => Array(max).fill(0));
+      cellOutputsMapRef.current.set(foundation.id + '-sut', cellOutputs);
+    }
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+    const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+      world.ground,
+      now.getMonth(),
+      normal,
+      peakRadiation,
+    );
+    const v = new Vector3();
+    const dot = normal.dot(sunDirection);
+    let tmpX = 0;
+    let tmpY = 0;
+    let disX = 0;
+    let disY = 0;
+    for (let ku = 0; ku < max; ku++) {
+      tmpX = x0 + ku * cellSize;
+      disX = tmpX - foundation.cx;
+      for (let kv = 0; kv < max; kv++) {
+        tmpY = y0 + kv * cellSize;
+        disY = tmpY - foundation.cy;
+        if (disX * disX + disY * disY > radius * radius) continue;
+        cellOutputs[ku][kv] += indirectRadiation;
+        if (dot > 0) {
+          v.set(tmpX, tmpY, z);
+          if (!inShadow(foundation.id, v, sunDirection)) {
+            cellOutputs[ku][kv] += dot * peakRadiation;
           }
         }
       }
