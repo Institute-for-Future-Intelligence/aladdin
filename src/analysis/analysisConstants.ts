@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-// in kW, see http://en.wikipedia.org/wiki/Solar_constant
+// in kW/m^2, see http://en.wikipedia.org/wiki/Solar_constant
 export const SOLAR_CONSTANT = 1.361;
 
 // in m/s^2

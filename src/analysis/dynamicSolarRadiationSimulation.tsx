@@ -1040,18 +1040,14 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     );
     const vec = new Vector3(0, 0, z0);
     const dot = normal.dot(sunDirection);
-    let tmpX = 0;
-    let tmpY = 0;
     const rsq = radius * radius;
     for (let u = 0; u < max; u++) {
-      tmpX = x0 + u * cellSize;
+      vec.x = x0 + u * cellSize;
       for (let v = 0; v < max; v++) {
-        tmpY = y0 + v * cellSize;
-        if (tmpX * tmpX + tmpY * tmpY > rsq) continue;
+        vec.y = y0 + v * cellSize;
+        if (vec.x * vec.x + vec.y * vec.y > rsq) continue;
         cellOutputs[u][v] += indirectRadiation;
         if (dot > 0) {
-          vec.x = tmpX;
-          vec.y = tmpY;
           if (!inShadow(foundation.id, vec, sunDirection)) {
             cellOutputs[u][v] += dot * peakRadiation;
           }

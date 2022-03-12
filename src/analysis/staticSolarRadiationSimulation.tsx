@@ -8,7 +8,7 @@ import { Euler, Intersection, Object3D, Raycaster, Vector2, Vector3 } from 'thre
 import { useThree } from '@react-three/fiber';
 import { useStore } from '../stores/common';
 import * as Selector from 'src/stores/selector';
-import { ObjectType, TrackerType } from '../types';
+import { ObjectType, SolarStructure, TrackerType } from '../types';
 import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
 import {
@@ -95,7 +95,11 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     for (const e of elements) {
       switch (e.type) {
         case ObjectType.Foundation:
-          generateHeatmapForFoundation(e as FoundationModel);
+          const f = e as FoundationModel;
+          generateHeatmapForFoundation(f);
+          if (f.solarStructure === SolarStructure.UpdraftTower) {
+            generateHeatmapForSolarUpdraftTower(f);
+          }
           break;
         case ObjectType.Cuboid:
           generateHeatmapForCuboid(e as CuboidModel);
@@ -341,6 +345,65 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     applyScaleFactor(cellOutputTotals, scaleFactor);
     // send heat map data to common store for visualization
     setHeatmap(foundation.id, cellOutputTotals);
+  };
+
+  const generateHeatmapForSolarUpdraftTower = (foundation: FoundationModel) => {
+    const solarUpdraftTower = foundation.solarUpdraftTower;
+    if (!solarUpdraftTower) return;
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const date = now.getDate();
+    const dayOfYear = Util.dayOfYear(now);
+    const radius = solarUpdraftTower.collectorRadius;
+    const max = Math.max(2, Math.round((radius * 2) / cellSize));
+    // shift half cell size to the center of each grid cell
+    const x0 = -radius + cellSize / 2;
+    const y0 = -radius + cellSize / 2;
+    const z0 = foundation.lz + solarUpdraftTower.collectorHeight;
+    const cellOutputTotals = Array(max)
+      .fill(0)
+      .map(() => Array(max).fill(0));
+    const v = new Vector3(0, 0, z0);
+    const rsq = radius * radius;
+    let count = 0;
+    for (let i = 0; i < 24; i++) {
+      for (let j = 0; j < world.timesPerHour; j++) {
+        const currentTime = new Date(year, month, date, i, j * interval);
+        const sunDirection = getSunDirection(currentTime, world.latitude);
+        if (sunDirection.z > 0) {
+          // when the sun is out
+          count++;
+          const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+          const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+            world.ground,
+            month,
+            UNIT_VECTOR_POS_Z,
+            peakRadiation,
+          );
+          const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
+          for (let kx = 0; kx < max; kx++) {
+            v.x = x0 + kx * cellSize;
+            for (let ky = 0; ky < max; ky++) {
+              v.y = y0 + ky * cellSize;
+              if (v.x * v.x + v.y * v.y > rsq) continue;
+              cellOutputTotals[kx][ky] += indirectRadiation;
+              if (dot > 0) {
+                if (!inShadow(foundation.id, v, sunDirection)) {
+                  cellOutputTotals[kx][ky] += dot * peakRadiation;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+    const daylight = (count * interval) / 60;
+    const scaleFactor =
+      daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
+    applyScaleFactor(cellOutputTotals, scaleFactor);
+    // send heat map data to common store for visualization
+    setHeatmap(foundation.id + '-sut', cellOutputTotals);
   };
 
   const generateHeatmapForSolarPanel = (panel: SolarPanelModel) => {
