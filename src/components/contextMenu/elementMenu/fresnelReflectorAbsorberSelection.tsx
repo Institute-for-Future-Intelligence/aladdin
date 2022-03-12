@@ -16,7 +16,7 @@ import { FoundationModel } from '../../../models/FoundationModel';
 
 const { Option } = Select;
 
-const FresnelReflectorReceiverSelection = ({
+const FresnelReflectorAbsorberSelection = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -237,7 +237,7 @@ const FresnelReflectorReceiverSelection = ({
   return fresnelReflector?.type === ObjectType.FresnelReflector ? (
     <>
       <Modal
-        width={600}
+        width={640}
         visible={dialogVisible}
         title={
           <div
@@ -245,7 +245,7 @@ const FresnelReflectorReceiverSelection = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('fresnelReflectorMenu.SelectReceiverToReflectSunlightTo', lang)}
+            {i18n.t('fresnelReflectorMenu.SelectAbsorberToReflectSunlightTo', lang)}
           </div>
         }
         footer={[
@@ -277,9 +277,9 @@ const FresnelReflectorReceiverSelection = ({
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={8}>
+          <Col className="gutter-row" span={9}>
             <Select
-              style={{ width: '120px' }}
+              style={{ width: '160px' }}
               value={selectedReceiverId}
               onChange={(value) => {
                 setSelectedReceiverId(value);
@@ -288,7 +288,7 @@ const FresnelReflectorReceiverSelection = ({
               {pipes.map((s, i) => {
                 return (
                   <Option key={i} value={s}>
-                    {i18n.t('fresnelReflectorMenu.Receiver', lang) + ' ' + (i + 1)}
+                    {i18n.t('fresnelReflectorMenu.AbsorberPipe', lang) + ' ' + (i + 1)}
                   </Option>
                 );
               })}
@@ -297,7 +297,7 @@ const FresnelReflectorReceiverSelection = ({
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            span={15}
           >
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
@@ -321,4 +321,4 @@ const FresnelReflectorReceiverSelection = ({
   );
 };
 
-export default FresnelReflectorReceiverSelection;
+export default FresnelReflectorAbsorberSelection;

@@ -16,7 +16,7 @@ import FresnelReflectorWidthInput from './fresnelReflectorWidthInput';
 import FresnelReflectorPoleHeightInput from './fresnelReflectorPoleHeightInput';
 import FresnelReflectorModuleLengthInput from './fresnelReflectorModuleLengthInput';
 import FresnelReflectorReflectanceInput from './fresnelReflectorReflectanceInput';
-import FresnelReflectorReceiverSelection from './fresnelReflectorReceiverSelection';
+import FresnelReflectorAbsorberSelection from './fresnelReflectorAbsorberSelection';
 import FresnelReflectorDrawSunBeamSelection from './fresnelReflectorDrawSunBeamSelection';
 
 export const FresnelReflectorMenu = () => {
@@ -96,7 +96,7 @@ export const FresnelReflectorMenu = () => {
       {fresnelReflector && editable && (
         <>
           {/* receiver */}
-          <FresnelReflectorReceiverSelection
+          <FresnelReflectorAbsorberSelection
             dialogVisible={receiverDialogVisible}
             setDialogVisible={setReceiverDialogVisible}
           />
@@ -108,7 +108,7 @@ export const FresnelReflectorMenu = () => {
               setReceiverDialogVisible(true);
             }}
           >
-            {i18n.t('fresnelReflectorMenu.SelectReceiverToReflectSunlightTo', lang)} ...
+            {i18n.t('fresnelReflectorMenu.SelectAbsorberToReflectSunlightTo', lang)} ...
           </Menu.Item>
 
           {/* reflector length */}

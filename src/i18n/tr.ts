@@ -291,9 +291,8 @@ export const i18n_tr = {
         EffectOfLatusRectumOfParabolicTrough: 'Effect of Latus Rectum of a Parabolic Trough',
         FocusSunlightWithParabolicDish: 'Focus Sunlight with a Parabolic Dish',
         LinearFresnelReflectors: 'Linear Fresnel Reflectors',
-        LinearFresnelReflectorsWithTwoReceivers: 'Linear Fresnel Reflectors with Two Receivers',
-        EffectOfReceiverPipeHeightForLinearFresnelReflectors:
-          'Effect of Receiver Pipe Height for Linear Fresnel Reflectors',
+        EffectOfAbsorberPipeHeightForLinearFresnelReflectors:
+          'Effect of Absorber Pipe Height for Linear Fresnel Reflectors',
         EffectOfAzimuthOfLinearFresnelReflectors: 'Effect of Azimuth of Linear Fresnel Reflectors',
         CosineEfficiencyOfHeliostats: 'Cosine Efficiency of Heliostats',
         ShadowingAndBlockingOfHeliostats: 'Shadowing and Blocking of Heliostats',
@@ -309,6 +308,8 @@ export const i18n_tr = {
         SolarFarm: 'Güneþ Tarlasý',
         ParabolicTroughArray: 'Parabolic Trough Array',
         ParabolicDishArray: 'Parabolic Dish Array',
+        TucsonLinearFresnelReflectors: 'Tucson Linear Fresnel Reflectors',
+        LinearFresnelReflectorsWithTwoAbsorbers: 'Linear Fresnel Reflectors with Two Absorbers',
         SolarCanopyFormFactors: 'Solar Canopy Form Factors',
         VegetativeBuffer: 'Vegetative Buffer',
         SolarFarmInRealWorld: 'Gerçek Dünyada Güneþ Tarlasý',
@@ -603,8 +604,8 @@ export const i18n_tr = {
     },
 
     fresnelReflectorMenu: {
-      Receiver: 'Receiver',
-      SelectReceiverToReflectSunlightTo: 'Select Receiver to Reflect Sunlight to',
+      AbsorberPipe: 'Absorber Pipe',
+      SelectAbsorberToReflectSunlightTo: 'Select Absorber to Reflect Sunlight to',
       ModuleLength: 'Module Length',
       Modules: 'modules',
       ModulesLong: 'modules long',

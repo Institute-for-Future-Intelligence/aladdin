@@ -173,11 +173,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           setCuboidHeatmap(e.id, 'east', scaleFactor);
           break;
       }
-    }
-    for (const e of elements) {
       if (e.type === ObjectType.Foundation) {
         const foundation = e as FoundationModel;
-        if (foundation.solarUpdraftTower) {
+        if (foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
           const data = cellOutputsMapRef.current.get(e.id + '-sut');
           if (data) {
             for (let i = 0; i < data.length; i++) {
@@ -255,7 +253,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
             case ObjectType.Foundation:
               const foundation = e as FoundationModel;
               calculateFoundation(foundation);
-              if (foundation.solarUpdraftTower) {
+              if (foundation.solarStructure === SolarStructure.UpdraftTower) {
                 calculateSolarUpdraftTower(foundation);
               }
               break;
@@ -1023,9 +1021,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const radius = solarUpdraftTower.collectorRadius;
     const max = Math.max(2, Math.round((radius * 2) / cellSize));
     // shift half cell size to the center of each grid cell
-    const x0 = foundation.cx - radius + cellSize / 2;
-    const y0 = foundation.cy - radius + cellSize / 2;
-    const z = foundation.lz + solarUpdraftTower.collectorHeight;
+    const x0 = -radius + cellSize / 2;
+    const y0 = -radius + cellSize / 2;
+    const z0 = foundation.lz + solarUpdraftTower.collectorHeight;
     let cellOutputs = cellOutputsMapRef.current.get(foundation.id + '-sut');
     if (!cellOutputs || cellOutputs.length !== max || cellOutputs[0].length !== max) {
       cellOutputs = Array(max)
@@ -1040,24 +1038,22 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       normal,
       peakRadiation,
     );
-    const v = new Vector3();
+    const vec = new Vector3(0, 0, z0);
     const dot = normal.dot(sunDirection);
     let tmpX = 0;
     let tmpY = 0;
-    let disX = 0;
-    let disY = 0;
-    for (let ku = 0; ku < max; ku++) {
-      tmpX = x0 + ku * cellSize;
-      disX = tmpX - foundation.cx;
-      for (let kv = 0; kv < max; kv++) {
-        tmpY = y0 + kv * cellSize;
-        disY = tmpY - foundation.cy;
-        if (disX * disX + disY * disY > radius * radius) continue;
-        cellOutputs[ku][kv] += indirectRadiation;
+    const rsq = radius * radius;
+    for (let u = 0; u < max; u++) {
+      tmpX = x0 + u * cellSize;
+      for (let v = 0; v < max; v++) {
+        tmpY = y0 + v * cellSize;
+        if (tmpX * tmpX + tmpY * tmpY > rsq) continue;
+        cellOutputs[u][v] += indirectRadiation;
         if (dot > 0) {
-          v.set(tmpX, tmpY, z);
-          if (!inShadow(foundation.id, v, sunDirection)) {
-            cellOutputs[ku][kv] += dot * peakRadiation;
+          vec.x = tmpX;
+          vec.y = tmpY;
+          if (!inShadow(foundation.id, vec, sunDirection)) {
+            cellOutputs[u][v] += dot * peakRadiation;
           }
         }
       }

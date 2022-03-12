@@ -27,8 +27,8 @@ import parabolic_trough_array from './examples/parabolic_trough_array.json';
 import parabolic_dish_focus_sunlight from './examples/parabolic_dish_focus_sunlight.json';
 import parabolic_dish_array from './examples/parabolic_dish_array.json';
 import linear_fresnel_reflectors from './examples/linear_fresnel_reflectors.json';
-import linear_fresnel_reflectors_two_receivers from './examples/linear_fresnel_reflectors_two_receivers.json';
-import effect_receiver_pipe_height from './examples/effect_receiver_pipe_height.json';
+import linear_fresnel_reflectors_two_absorbers from './examples/linear_fresnel_reflectors_two_absorbers.json';
+import effect_absorber_pipe_height from './examples/effect_absorber_pipe_height.json';
 import effect_azimuth_fresnel_reflector from './examples/effect_azimuth_fresnel_reflector.json';
 import cosine_efficiency_heliostats from './examples/cosine_efficiency_heliostats.json';
 import shadowing_blocking_heliostats from './examples/shadowing_blocking_heliostats.json';
@@ -36,6 +36,7 @@ import effect_solar_power_tower_height from './examples/effect_solar_power_tower
 import solar_power_tower from './examples/solar_power_tower.json';
 import solar_radiation_predicted_vs_measured from './examples/solar_radiation_predicted_vs_measured.json';
 import solar_updraft_tower from './examples/solar_updraft_tower.json';
+import tucson_sundt_station from './examples/tucson_sundt_station.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -247,11 +248,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'linear_fresnel_reflectors':
         input = linear_fresnel_reflectors;
         break;
-      case 'linear_fresnel_reflectors_two_receivers':
-        input = linear_fresnel_reflectors_two_receivers;
+      case 'linear_fresnel_reflectors_two_absorbers':
+        input = linear_fresnel_reflectors_two_absorbers;
         break;
-      case 'effect_receiver_pipe_height':
-        input = effect_receiver_pipe_height;
+      case 'effect_absorber_pipe_height':
+        input = effect_absorber_pipe_height;
         break;
       case 'effect_azimuth_fresnel_reflector':
         input = effect_azimuth_fresnel_reflector;
@@ -276,6 +277,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'solar_radiation_predicted_vs_measured':
         input = solar_radiation_predicted_vs_measured;
+        break;
+      case 'tucson_sundt_station':
+        input = tucson_sundt_station;
         break;
     }
     if (input) {
@@ -1446,14 +1450,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="linear_fresnel_reflectors" onClick={loadFile}>
             {i18n.t('menu.tutorials.LinearFresnelReflectors', lang)}
           </Menu.Item>
-          <Menu.Item key="effect_receiver_pipe_height" onClick={loadFile}>
-            {i18n.t('menu.tutorials.EffectOfReceiverPipeHeightForLinearFresnelReflectors', lang)}
+          <Menu.Item key="effect_absorber_pipe_height" onClick={loadFile}>
+            {i18n.t('menu.tutorials.EffectOfAbsorberPipeHeightForLinearFresnelReflectors', lang)}
           </Menu.Item>
           <Menu.Item key="effect_azimuth_fresnel_reflector" onClick={loadFile}>
             {i18n.t('menu.tutorials.EffectOfAzimuthOfLinearFresnelReflectors', lang)}
-          </Menu.Item>
-          <Menu.Item key="linear_fresnel_reflectors_two_receivers" onClick={loadFile}>
-            {i18n.t('menu.tutorials.LinearFresnelReflectorsWithTwoReceivers', lang)}
           </Menu.Item>
           <Menu.Item key="solar_power_tower" onClick={loadFile}>
             {i18n.t('menu.tutorials.SolarPowerTower', lang)}
@@ -1494,6 +1495,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="parabolic_dish_array" onClick={loadFile}>
             {i18n.t('menu.examples.ParabolicDishArray', lang)}
+          </Menu.Item>
+          <Menu.Item key="tucson_sundt_station" onClick={loadFile}>
+            {i18n.t('menu.examples.TucsonLinearFresnelReflectors', lang)}
+          </Menu.Item>
+          <Menu.Item key="linear_fresnel_reflectors_two_absorbers" onClick={loadFile}>
+            {i18n.t('menu.examples.LinearFresnelReflectorsWithTwoAbsorbers', lang)}
           </Menu.Item>
           <Menu.Item key="solar_farm_02" onClick={loadFile}>
             {i18n.t('menu.examples.SolarFarmInRealWorld', lang)}
