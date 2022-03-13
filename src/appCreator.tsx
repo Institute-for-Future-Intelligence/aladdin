@@ -68,6 +68,7 @@ import { Util } from './Util';
 import DailyHeliostatYieldPanel from './panels/dailyHeliostatYieldPanel';
 import YearlyHeliostatYieldPanel from './panels/yearlyHeliostatYieldPanel';
 import HeliostatSimulation from './analysis/heliostatSimulation';
+import SolarUpdraftTowerSimulation from './analysis/solarUpdraftTowerSimulation';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -398,6 +399,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             <ParabolicDishSimulation city={city} />
             <FresnelReflectorSimulation city={city} />
             <HeliostatSimulation city={city} />
+            <SolarUpdraftTowerSimulation city={city} />
           </Canvas>
           <KeyboardListener
             canvas={canvasRef.current}

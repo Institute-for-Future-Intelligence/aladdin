@@ -571,6 +571,19 @@ export interface CommonStoreState {
   heliostatLabels: string[];
   setHeliostatLabels: (labels: string[]) => void;
 
+  runDailySimulationForUpdraftTower: boolean;
+  runYearlySimulationForUpdraftTower: boolean;
+  pauseDailySimulationForUpdraftTower: boolean;
+  pauseYearlySimulationForUpdraftTower: boolean;
+  dailyUpdraftTowerYield: DatumEntry[];
+  dailyUpdraftTowerIndividualOutputs: boolean;
+  setDailyUpdraftTowerYield: (data: DatumEntry[]) => void;
+  yearlyUpdraftTowerYield: DatumEntry[];
+  yearlyUpdraftTowerIndividualOutputs: boolean;
+  setYearlyUpdraftTowerYield: (data: DatumEntry[]) => void;
+  updraftTowerLabels: string[];
+  setUpdraftTowerLabels: (labels: string[]) => void;
+
   sunlightDirection: Vector3;
   setSunlightDirection: (vector: Vector3) => void;
 
@@ -913,6 +926,31 @@ export const useStore = create<CommonStoreState>(
           setHeliostatLabels(labels) {
             immerSet((state: CommonStoreState) => {
               state.heliostatLabels = [...labels];
+            });
+          },
+
+          runDailySimulationForUpdraftTower: false,
+          runYearlySimulationForUpdraftTower: false,
+          pauseDailySimulationForUpdraftTower: false,
+          pauseYearlySimulationForUpdraftTower: false,
+          dailyUpdraftTowerYield: [],
+          dailyUpdraftTowerIndividualOutputs: false,
+          setDailyUpdraftTowerYield(data) {
+            immerSet((state: CommonStoreState) => {
+              state.dailyUpdraftTowerYield = [...data];
+            });
+          },
+          yearlyUpdraftTowerYield: [],
+          yearlyUpdraftTowerIndividualOutputs: false,
+          setYearlyUpdraftTowerYield(data) {
+            immerSet((state: CommonStoreState) => {
+              state.yearlyUpdraftTowerYield = [...data];
+            });
+          },
+          updraftTowerLabels: [],
+          setUpdraftTowerLabels(labels) {
+            immerSet((state: CommonStoreState) => {
+              state.updraftTowerLabels = [...labels];
             });
           },
 

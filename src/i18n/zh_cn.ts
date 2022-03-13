@@ -271,6 +271,11 @@ export const i18n_zh_cn = {
         AnalyzeDailyYield: '分析当天产出',
         AnalyzeYearlyYield: '分析全年产出',
       },
+      solarUpdraftTowerSubMenu: '太阳能上升气流塔',
+      solarUpdraftTower: {
+        AnalyzeDailyYield: '分析当天产出',
+        AnalyzeYearlyYield: '分析全年产出',
+      },
       tutorialsSubMenu: '教程',
       solarEnergyScienceSubMenu: '太阳能科学',
       photovoltaicSolarPowerSubMenu: '光伏发电',
@@ -780,6 +785,7 @@ export const i18n_zh_cn = {
       NoParabolicTroughForAnalysis: '沒有抛物线槽可以分析。',
       NoFresnelReflectorForAnalysis: '沒有菲涅耳反射镜可以分析。',
       NoHeliostatForAnalysis: '沒有定日镜可以分析。',
+      NoSolarUpdraftTowerForAnalysis: '沒有太阳能上升气流塔可以分析。',
     },
 
     toolbar: {

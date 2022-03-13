@@ -1399,6 +1399,52 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <CspSimulationSettings name={'heliostat'} />
         </SubMenu>
+
+        {/* solar updraft tower */}
+        <SubMenu key={'solar-updraft-tower'} title={i18n.t('menu.solarUpdraftTowerSubMenu', lang)}>
+          <Menu.Item
+            key={'solar-updraft-tower-daily-yield'}
+            onClick={() => {
+              const towerCount = countElementsByType(ObjectType.Foundation);
+              if (towerCount === 0) {
+                showInfo(i18n.t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.dailyUpdraftTowerIndividualOutputs = false;
+                  state.runDailySimulationForUpdraftTower = true;
+                });
+              }, 100);
+            }}
+          >
+            {i18n.t('menu.solarUpdraftTower.AnalyzeDailyYield', lang)}
+          </Menu.Item>
+          <Menu.Item
+            key={'solar-updraft-tower-yearly-yield'}
+            onClick={() => {
+              const towerCount = countElementsByType(ObjectType.Foundation);
+              if (towerCount === 0) {
+                showInfo(i18n.t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
+                return;
+              }
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.yearlyUpdraftTowerIndividualOutputs = false;
+                  state.runYearlySimulationForUpdraftTower = true;
+                });
+              }, 100);
+            }}
+          >
+            {i18n.t('menu.solarUpdraftTower.AnalyzeYearlyYield', lang)}
+          </Menu.Item>
+        </SubMenu>
       </SubMenu>
 
       {/* tutorials menu */}

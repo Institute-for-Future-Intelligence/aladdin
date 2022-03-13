@@ -179,3 +179,17 @@ export const showYearlyHeliostatYieldPanel = (state: CommonStoreState) => state.
 export const yearlyHeliostatYieldPanelX = (state: CommonStoreState) => state.viewState.yearlyHeliostatYieldPanelX;
 
 export const yearlyHeliostatYieldPanelY = (state: CommonStoreState) => state.viewState.yearlyHeliostatYieldPanelY;
+
+export const showDailyUpdraftTowerYieldPanel = (state: CommonStoreState) =>
+  state.viewState.showDailyUpdraftTowerYieldPanel;
+
+export const dailyUpdraftTowerYieldPanelX = (state: CommonStoreState) => state.viewState.dailyUpdraftTowerYieldPanelX;
+
+export const dailyUpdraftTowerYieldPanelY = (state: CommonStoreState) => state.viewState.dailyUpdraftTowerYieldPanelY;
+
+export const showYearlyUpdraftTowerYieldPanel = (state: CommonStoreState) =>
+  state.viewState.showYearlyUpdraftTowerYieldPanel;
+
+export const yearlyUpdraftTowerYieldPanelX = (state: CommonStoreState) => state.viewState.yearlyUpdraftTowerYieldPanelX;
+
+export const yearlyUpdraftTowerYieldPanelY = (state: CommonStoreState) => state.viewState.yearlyUpdraftTowerYieldPanelY;

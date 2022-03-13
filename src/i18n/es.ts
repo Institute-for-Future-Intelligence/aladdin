@@ -272,6 +272,11 @@ export const i18n_es = {
         AnalyzeDailyYield: 'Analyze Daily Yield',
         AnalyzeYearlyYield: 'Analyze Yearly Yield',
       },
+      solarUpdraftTowerSubMenu: 'Solar Updraft Tower',
+      solarUpdraftTower: {
+        AnalyzeDailyYield: 'Analyze Daily Yield',
+        AnalyzeYearlyYield: 'Analyze Yearly Yield',
+      },
       tutorialsSubMenu: 'Tutorials',
       solarEnergyScienceSubMenu: 'Solar Science',
       photovoltaicSolarPowerSubMenu: 'Photovoltaic Solar Power',
@@ -797,6 +802,7 @@ export const i18n_es = {
       NoParabolicTroughForAnalysis: 'There is no parabolic trough for analysis.',
       NoFresnelReflectorForAnalysis: 'There is no Fresnel reflector for analysis.',
       NoHeliostatForAnalysis: 'There is no heliostat for analysis.',
+      NoSolarUpdraftTowerForAnalysis: 'There is no solar updraft tower for analysis.',
     },
 
     toolbar: {

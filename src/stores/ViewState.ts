@@ -43,6 +43,8 @@ export interface ViewState {
   showYearlyFresnelReflectorYieldPanel: boolean;
   showDailyHeliostatYieldPanel: boolean;
   showYearlyHeliostatYieldPanel: boolean;
+  showDailyUpdraftTowerYieldPanel: boolean;
+  showYearlyUpdraftTowerYieldPanel: boolean;
 
   heliodonPanelX: number;
   heliodonPanelY: number;
@@ -80,6 +82,10 @@ export interface ViewState {
   dailyHeliostatYieldPanelY: number;
   yearlyHeliostatYieldPanelX: number;
   yearlyHeliostatYieldPanelY: number;
+  dailyUpdraftTowerYieldPanelX: number;
+  dailyUpdraftTowerYieldPanelY: number;
+  yearlyUpdraftTowerYieldPanelX: number;
+  yearlyUpdraftTowerYieldPanelY: number;
 
   mapZoom: number;
   mapType: string;

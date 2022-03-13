@@ -44,6 +44,8 @@ export class DefaultViewState implements ViewState {
   showYearlyFresnelReflectorYieldPanel: boolean;
   showDailyHeliostatYieldPanel: boolean;
   showYearlyHeliostatYieldPanel: boolean;
+  showDailyUpdraftTowerYieldPanel: boolean;
+  showYearlyUpdraftTowerYieldPanel: boolean;
   autoRotate: boolean;
 
   heliodonPanelX: number;
@@ -82,6 +84,10 @@ export class DefaultViewState implements ViewState {
   dailyHeliostatYieldPanelY: number;
   yearlyHeliostatYieldPanelX: number;
   yearlyHeliostatYieldPanelY: number;
+  dailyUpdraftTowerYieldPanelX: number;
+  dailyUpdraftTowerYieldPanelY: number;
+  yearlyUpdraftTowerYieldPanelX: number;
+  yearlyUpdraftTowerYieldPanelY: number;
 
   mapZoom: number;
   mapType: string;
@@ -128,6 +134,8 @@ export class DefaultViewState implements ViewState {
     this.showYearlyFresnelReflectorYieldPanel = false;
     this.showDailyHeliostatYieldPanel = false;
     this.showYearlyHeliostatYieldPanel = false;
+    this.showDailyUpdraftTowerYieldPanel = false;
+    this.showYearlyUpdraftTowerYieldPanel = false;
     this.autoRotate = false;
 
     this.heliodonPanelX = 0;
@@ -166,6 +174,10 @@ export class DefaultViewState implements ViewState {
     this.dailyHeliostatYieldPanelY = 0;
     this.yearlyHeliostatYieldPanelX = 0;
     this.yearlyHeliostatYieldPanelY = 0;
+    this.dailyUpdraftTowerYieldPanelX = 0;
+    this.dailyUpdraftTowerYieldPanelY = 0;
+    this.yearlyUpdraftTowerYieldPanelX = 0;
+    this.yearlyUpdraftTowerYieldPanelY = 0;
 
     this.mapZoom = 18;
     this.mapType = 'roadmap';
@@ -212,6 +224,8 @@ export class DefaultViewState implements ViewState {
     viewState.showYearlyFresnelReflectorYieldPanel = false;
     viewState.showDailyHeliostatYieldPanel = false;
     viewState.showYearlyHeliostatYieldPanel = false;
+    viewState.showDailyUpdraftTowerYieldPanel = false;
+    viewState.showYearlyUpdraftTowerYieldPanel = false;
     viewState.autoRotate = false;
 
     viewState.heliodonPanelX = 0;
@@ -250,6 +264,10 @@ export class DefaultViewState implements ViewState {
     viewState.dailyHeliostatYieldPanelY = 0;
     viewState.yearlyHeliostatYieldPanelX = 0;
     viewState.yearlyHeliostatYieldPanelY = 0;
+    viewState.dailyUpdraftTowerYieldPanelX = 0;
+    viewState.dailyUpdraftTowerYieldPanelY = 0;
+    viewState.yearlyUpdraftTowerYieldPanelX = 0;
+    viewState.yearlyUpdraftTowerYieldPanelY = 0;
 
     viewState.mapZoom = 18;
     viewState.mapType = 'roadmap';

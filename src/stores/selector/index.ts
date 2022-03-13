@@ -752,6 +752,35 @@ export const heliostatLabels = (state: CommonStoreState) => state.heliostatLabel
 
 export const setHeliostatLabels = (state: CommonStoreState) => state.setHeliostatLabels;
 
+// solar updraft towers
+
+export const runDailySimulationForUpdraftTower = (state: CommonStoreState) => state.runDailySimulationForUpdraftTower;
+
+export const runYearlySimulationForUpdraftTower = (state: CommonStoreState) => state.runYearlySimulationForUpdraftTower;
+
+export const pauseDailySimulationForUpdraftTower = (state: CommonStoreState) =>
+  state.pauseDailySimulationForUpdraftTower;
+
+export const pauseYearlySimulationForUpdraftTower = (state: CommonStoreState) =>
+  state.pauseYearlySimulationForUpdraftTower;
+
+export const dailyUpdraftTowerYield = (state: CommonStoreState) => state.dailyUpdraftTowerYield;
+
+export const dailyUpdraftTowerIndividualOutputs = (state: CommonStoreState) => state.dailyUpdraftTowerIndividualOutputs;
+
+export const setDailyUpdraftTowerYield = (state: CommonStoreState) => state.setDailyUpdraftTowerYield;
+
+export const yearlyUpdraftTowerYield = (state: CommonStoreState) => state.yearlyUpdraftTowerYield;
+
+export const yearlyUpdraftTowerIndividualOutputs = (state: CommonStoreState) =>
+  state.yearlyUpdraftTowerIndividualOutputs;
+
+export const setYearlyUpdraftTowerYield = (state: CommonStoreState) => state.setYearlyUpdraftTowerYield;
+
+export const updraftTowerLabels = (state: CommonStoreState) => state.updraftTowerLabels;
+
+export const setUpdraftTowerLabels = (state: CommonStoreState) => state.setUpdraftTowerLabels;
+
 // parabolic dishes (CSP)
 
 export const runDailySimulationForParabolicDishes = (state: CommonStoreState) =>
