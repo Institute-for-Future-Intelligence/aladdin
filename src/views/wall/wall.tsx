@@ -245,9 +245,9 @@ const Wall = ({
     shape.moveTo(cx - x + leftOffset, cy - y); // lower left
     shape.lineTo(cx + x - rightOffset, cy - y); // lower right
     if (roofId && (leftRoofHeight || rightRoofHeight || centerRoofHeight)) {
-      shape.lineTo(cx + x - rightOffset, rightRoofHeight ?? cy + 2 * y - y);
+      shape.lineTo(cx + x - rightOffset, rightRoofHeight ? rightRoofHeight - y : cy + 2 * y - y);
       centerRoofHeight && shape.lineTo(centerRoofHeight[0] * lx, centerRoofHeight[1] - y);
-      shape.lineTo(cx - x + leftOffset, leftRoofHeight ?? cy + 2 * y - y);
+      shape.lineTo(cx - x + leftOffset, leftRoofHeight ? leftRoofHeight - y : cy + 2 * y - y);
     } else {
       shape.lineTo(cx + x - rightOffset, cy + y); // upper right
       shape.lineTo(cx - x + leftOffset, cy + y); // upper left
@@ -595,7 +595,7 @@ const Wall = ({
         switch (objectTypeToAddRef.current) {
           case ObjectType.Roof: {
             if (parent && !roofId) {
-              const roof = ElementModelFactory.makeRoof(lz, parent, [wallModel.id]);
+              const roof = ElementModelFactory.makeRoof(lz, parent, [wallModel.id], lx / 2);
               setCommonStore((state) => {
                 state.elements.push(roof);
               });

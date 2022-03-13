@@ -4,13 +4,14 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { useStore } from '../../stores/common';
-import { GableRoofModel, PyramidRoofModel, RoofModel, RoofType } from '../../models/RoofModel';
+import { GableRoofModel, HipRoofModel, PyramidRoofModel, RoofModel, RoofType } from '../../models/RoofModel';
 import { Extrude, Sphere } from '@react-three/drei';
 import { Shape, Vector3 } from 'three';
 import * as Selector from '../../stores/selector';
 import { ActionType, ObjectType } from '../../types';
 import PyramidRoof from './pyramidRoof';
 import GableRoof from './gableRoof';
+import HipRoof from './hipRoof';
 
 const Roof = ({ ...props }: RoofModel) => {
   const { id, wallsId, roofType } = props;
@@ -29,13 +30,16 @@ const Roof = ({ ...props }: RoofModel) => {
         return <PyramidRoof {...(props as PyramidRoofModel)} />;
       case RoofType.Gable:
         return <GableRoof {...(props as GableRoofModel)} />;
+      case RoofType.Hip:
+        return <HipRoof {...(props as HipRoofModel)} />;
     }
     return null;
   };
 
   // return renderRoof();
   // return <PyramidRoof {...(props as PyramidRoofModel)} />;
-  return <GableRoof {...(props as GableRoofModel)} />;
+  // return <GableRoof {...(props as GableRoofModel)} />;
+  return <HipRoof {...(props as HipRoofModel)} />;
 };
 
 export default Roof;

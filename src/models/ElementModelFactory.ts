@@ -23,7 +23,7 @@ import { FoundationModel } from './FoundationModel';
 import { SolarPanelModel } from './SolarPanelModel';
 import { PvModel } from './PvModel';
 import { WallModel } from './WallModel';
-import { Point3, RoofModel, RoofTexture, RoofType } from './RoofModel';
+import { HipRoofModel, Point3, RoofModel, RoofTexture, RoofType } from './RoofModel';
 import { GROUND_ID } from '../constants';
 import { WindowModel } from './WindowModel';
 import { Point2 } from './Point2';
@@ -473,7 +473,7 @@ export class ElementModelFactory {
     } as WindowModel;
   }
 
-  static makeRoof(lz: number, parent: ElementModel, wallsId: string[]) {
+  static makeRoof(lz: number, parent: ElementModel, wallsId: string[], ridgeLength?: number) {
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -481,7 +481,7 @@ export class ElementModelFactory {
       cz: 0,
       lx: 0,
       ly: 0,
-      lz: lz,
+      lz: lz * 1.5,
       roofType: RoofType.Pyramid,
       wallsId: [...wallsId],
       texture: RoofTexture.Default,
@@ -492,6 +492,8 @@ export class ElementModelFactory {
       parentId: parent.id,
       foundationId: parent.id,
       id: short.generate() as string,
-    } as RoofModel;
+      leftRidgeLength: (ridgeLength ?? 2) / 2,
+      rightRidgeLength: (ridgeLength ?? 2) / 2,
+    } as HipRoofModel; // todo
   }
 }

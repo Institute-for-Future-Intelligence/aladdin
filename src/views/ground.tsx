@@ -1330,7 +1330,15 @@ const Ground = () => {
                   for (const e of state.elements) {
                     if (e.id === grabRef.current?.id) {
                       e.cz = Math.max(0.5, p.z / 2);
-                      e.lz = Math.max(1, p.z);
+                      let parentLz = 0;
+                      for (const p of state.elements) {
+                        if (p.id === e.parentId) {
+                          parentLz = p.lz;
+                          break;
+                        }
+                      }
+                      e.lz = Math.max(1, p.z) - parentLz;
+                      break;
                     }
                   }
                   state.selectedElementHeight = Math.max(1, p.z);
