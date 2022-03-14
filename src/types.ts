@@ -78,6 +78,8 @@ export enum GraphDataType {
   DailyFresnelReflectorYield = 15,
   YearlyHeliostatYield = 16,
   DailyHeliostatYield = 17,
+  YearlyUpdraftTowerYield = 18,
+  DailyUpdraftTowerYield = 19,
 }
 
 export enum Theme {

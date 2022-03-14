@@ -9,8 +9,8 @@ export interface SolarUpdraftTowerModel {
   collectorHeight: number;
   collectorRadius: number;
 
-  airSpeed?: number;
-  airTemperature?: number;
+  turbineEfficiency?: number;
+
   dailyYield?: number;
   yearlyYield?: number;
 }

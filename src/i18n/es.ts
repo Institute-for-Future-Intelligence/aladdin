@@ -763,6 +763,17 @@ export const i18n_es = {
       ShowOutputsOfIndividualHeliostats: 'Show outputs of individual heliostats',
     },
 
+    updraftTowerYieldPanel: {
+      UpdraftTowerDailyYield: 'Solar Updraft Tower Daily Yield',
+      UpdraftTowerYearlyYield: 'Solar Updraft Tower Yearly Yield',
+      Yield: 'Yield',
+      YieldPerHour: 'Yield per Hour',
+      DailyTotal: 'Daily Total',
+      YearlyTotal: 'Yearly Total',
+      HoverForBreakdown: 'Hover for breakdown',
+      ShowOutputsOfIndividualUpdraftTowers: 'Show outputs of individual updraft towers',
+    },
+
     heliodonPanel: {
       SunAndTimeSettings: 'Sun & Time Settings',
       SunAngles: 'Ángulos',

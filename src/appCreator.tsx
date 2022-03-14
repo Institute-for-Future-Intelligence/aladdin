@@ -69,6 +69,7 @@ import DailyHeliostatYieldPanel from './panels/dailyHeliostatYieldPanel';
 import YearlyHeliostatYieldPanel from './panels/yearlyHeliostatYieldPanel';
 import HeliostatSimulation from './analysis/heliostatSimulation';
 import SolarUpdraftTowerSimulation from './analysis/solarUpdraftTowerSimulation';
+import DailySolarUpdraftTowerYieldPanel from './panels/dailySolarUpdraftTowerYieldPanel';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -115,6 +116,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showYearlyFresnelReflectorYieldPanel = useStore(Selector.viewState.showYearlyFresnelReflectorYieldPanel);
   const showDailyHeliostatYieldPanel = useStore(Selector.viewState.showDailyHeliostatYieldPanel);
   const showYearlyHeliostatYieldPanel = useStore(Selector.viewState.showYearlyHeliostatYieldPanel);
+  const showDailyUpdraftTowerYieldPanel = useStore(Selector.viewState.showDailyUpdraftTowerYieldPanel);
+  const showYearlyUpdraftTowerYieldPanel = useStore(Selector.viewState.showYearlyUpdraftTowerYieldPanel);
   const addedFoundationId = useStore(Selector.addedFoundationId);
   const addedCuboidId = useStore(Selector.addedCuboidId);
 
@@ -364,6 +367,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {showYearlyFresnelReflectorYieldPanel && <YearlyFresnelReflectorYieldPanel city={city} />}
       {showDailyHeliostatYieldPanel && <DailyHeliostatYieldPanel city={city} />}
       {showYearlyHeliostatYieldPanel && <YearlyHeliostatYieldPanel city={city} />}
+      {showDailyUpdraftTowerYieldPanel && <DailySolarUpdraftTowerYieldPanel city={city} />}
+      {/*{showYearlyUpdraftTowerYieldPanel && <YearlyUpdraftTowerYieldPane city={city} />}*/}
       {showSolarRadiationHeatmap && <HeatmapControlPanel />}
       <DropdownContextMenu>
         <div>

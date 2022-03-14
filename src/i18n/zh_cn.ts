@@ -746,6 +746,17 @@ export const i18n_zh_cn = {
       ShowOutputsOfIndividualHeliostats: '显示每个定日镜单独发电量',
     },
 
+    updraftTowerYieldPanel: {
+      UpdraftTowerDailyYield: '太阳能上升气流塔日发电量',
+      UpdraftTowerYearlyYield: '太阳能上升气流塔年发电量',
+      Yield: '发电量',
+      YieldPerHour: '每小时发电量',
+      DailyTotal: '日发电总量',
+      YearlyTotal: '年发电总量',
+      HoverForBreakdown: '在此停留鼠标分列发电量',
+      ShowOutputsOfIndividualUpdraftTowers: '显示每个太阳能上升气流塔单独发电量',
+    },
+
     heliodonPanel: {
       SunAndTimeSettings: '太阳和时间设置',
       SunAngles: '角度',

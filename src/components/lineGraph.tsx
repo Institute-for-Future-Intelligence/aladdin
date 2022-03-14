@@ -137,6 +137,10 @@ const LineGraph = ({
             name = labels && labels[i] ? labels[i] : 'Heliostat' + (i + 1);
           }
           break;
+        case GraphDataType.DailyUpdraftTowerYield:
+        case GraphDataType.YearlyUpdraftTowerYield:
+          name = labels && labels[i] ? labels[i] : 'Tower' + (i + 1);
+          break;
       }
       const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
       const symbol = createSymbol(SYMBOLS[i], symbolSize, symbolCount, opacity);

@@ -50,7 +50,6 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   const noAnimation = useStore(Selector.world.noAnimationForSensorDataCollection); // TODO
   const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5; // TODO
 
-  const [currentTemperature, setCurrentTemperature] = useState<number>(20);
   const { scene } = useThree();
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
@@ -78,19 +77,6 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
 
   // this is used in yearly simulation in which the date is changed programmatically based on the current latitude
   const sunMinutesRef = useRef<SunMinutes>(sunMinutes);
-
-  useEffect(() => {
-    if (city) {
-      const weather = getWeather(city);
-      if (weather) {
-        const n = new Date(world.date);
-        const t = computeOutsideTemperature(n, weather.lowestTemperatures, weather.highestTemperatures);
-        const c = getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(n));
-        setCurrentTemperature(c);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [city, world.date]);
 
   /* do the daily simulation to generate daily yield */
 
@@ -219,17 +205,29 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
         if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
+          const turbineEfficiency = f.solarUpdraftTower.turbineEfficiency ?? 0.45;
           const chimneyArea = Math.PI * f.solarUpdraftTower.chimneyRadius * f.solarUpdraftTower.chimneyRadius;
           const a = AIR_DENSITY * AIR_ISOBARIC_SPECIFIC_HEAT * chimneyArea;
+          const b = (0.5 * turbineEfficiency * AIR_DENSITY * chimneyArea) / 1000; // convert to kWh
           const c = 2 * GRAVITATIONAL_ACCELERATION * f.solarUpdraftTower.chimneyHeight;
           const result = dailyDataMapRef.current.get(e.id + '-sut');
           if (result) {
+            const date = new Date(world.date);
             for (let i = 0; i < result.length; i++) {
               if (result[i] !== 0) {
+                let currentTemperature = 20;
+                if (city) {
+                  const weather = getWeather(city);
+                  if (weather) {
+                    date.setHours(i);
+                    const t = computeOutsideTemperature(date, weather.lowestTemperatures, weather.highestTemperatures);
+                    currentTemperature = getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(date));
+                  }
+                }
                 result[i] *= timeFactor;
                 const airTemperature = currentTemperature * (1 + Math.cbrt((result[i] * result[i]) / (a * a * c)));
                 const airSpeed = Math.sqrt(c * (airTemperature / currentTemperature - 1));
-                result[i] = airSpeed;
+                result[i] = b * airSpeed * airSpeed * airSpeed;
               }
             }
           }
